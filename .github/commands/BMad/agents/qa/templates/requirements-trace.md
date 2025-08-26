@@ -32,7 +32,7 @@ R1. Patient Data Integrity
    ✓ Validation Method: {unit/integration/e2e tests}
    ⚠ Coverage Gaps: {list any uncovered scenarios}
 
-R2. Patient Registration Workflow  
+R2. Patient Registration Workflow
    ✓ Test Coverage: {describe test scenarios}
    ✓ Validation Method: {unit/integration/e2e tests}
    ⚠ Coverage Gaps: {list any uncovered scenarios}
@@ -135,21 +135,21 @@ R15. AI Performance Standards
 
 | Requirement ID | Requirement Name          | Test Type            | Coverage % | Status | Gaps            |
 | -------------- | ------------------------- | -------------------- | ---------- | ------ | --------------- |
-| R1             | Patient Data Integrity    | Unit/Integration     | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R2             | Patient Registration      | E2E                  | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R3             | Medical History Access    | Integration          | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R4             | Appointment Scheduling    | E2E                  | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R5             | Calendar Integration      | Integration          | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R6             | Real-time Availability    | Unit/Integration     | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R7             | LGPD Privacy              | Unit/E2E             | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R8             | ANVISA Compliance         | Integration          | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R9             | CFM Standards             | Unit/Integration     | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R10            | AI Chat Interface         | Unit/Integration/E2E | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R11            | AI Prediction Accuracy    | Unit/Integration     | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R12            | AI-Healthcare Integration | Integration/E2E      | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R13            | AI-Patient Data Security  | Unit/Integration     | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R14            | AI Fallback Behavior      | Unit/Integration/E2E | {X}%       | ✓/⚠/✗  | {describe gaps} |
-| R15            | AI Performance Standards  | Integration/E2E      | {X}%       | ✓/⚠/✗  | {describe gaps} |
+| R1             | Patient Data Integrity    | Unit/Integration     | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R2             | Patient Registration      | E2E                  | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R3             | Medical History Access    | Integration          | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R4             | Appointment Scheduling    | E2E                  | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R5             | Calendar Integration      | Integration          | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R6             | Real-time Availability    | Unit/Integration     | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R7             | LGPD Privacy              | Unit/E2E             | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R8             | ANVISA Compliance         | Integration          | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R9             | CFM Standards             | Unit/Integration     | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R10            | AI Chat Interface         | Unit/Integration/E2E | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R11            | AI Prediction Accuracy    | Unit/Integration     | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R12            | AI-Healthcare Integration | Integration/E2E      | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R13            | AI-Patient Data Security  | Unit/Integration     | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R14            | AI Fallback Behavior      | Unit/Integration/E2E | {X}%       | ✓/⚠/✗ | {describe gaps} |
+| R15            | AI Performance Standards  | Integration/E2E      | {X}%       | ✓/⚠/✗ | {describe gaps} |
 
 ### Coverage Summary
 
@@ -197,7 +197,7 @@ L3. Legacy Compliance Reporting
 
 /api/appointments/* - Appointment management endpoints
    Breaking Changes: {Yes/No - list changes}
-   Test Coverage: {describe validation approach}  
+   Test Coverage: {describe validation approach}
    Consumer Impact: {list affected external systems}
 
 /api/compliance/* - Compliance reporting endpoints

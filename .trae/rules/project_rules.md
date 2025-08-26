@@ -120,7 +120,7 @@ archon:manage_task(action="list", filter_by="project", filter_value="[project_id
 # High-level patterns and architecture
 archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
 
-# Specific implementation guidance  
+# Specific implementation guidance
 archon:search_code_examples(query="[specific feature] implementation", match_count=3)
 ```
 
@@ -138,7 +138,7 @@ archon:search_code_examples(query="[specific feature] implementation", match_cou
 # Get current project status
 archon:manage_task(
   action="list",
-  filter_by="project", 
+  filter_by="project",
   filter_value="[project_id]",
   include_closed=false
 )
@@ -212,7 +212,7 @@ archon:manage_task(
 
 ```bash
 archon:manage_task(
-  action="update", 
+  action="update",
   task_id="[current_task_id]",
   update_fields={"status": "review"}
 )
@@ -228,7 +228,7 @@ archon:manage_task(
 # Architecture & patterns
 archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
 
-# Security considerations  
+# Security considerations
 archon:perform_rag_query(query="OAuth 2.0 PKCE flow implementation", match_count=3)
 
 # Specific API usage
@@ -296,7 +296,7 @@ archon:manage_task(
 
 # Complete task after review passes
 archon:manage_task(
-  action="update", 
+  action="update",
   task_id="...",
   update_fields={"status": "done"}
 )
@@ -503,10 +503,10 @@ async function fetchData(): Promise<ApiResponse> {
     const result = await api.getData();
     return { success: true, data: result };
   } catch (error) {
-    console.error('API call failed:', error);
+    console.error("API call failed:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -592,7 +592,7 @@ JavaScript/TypeScript projects using Biome's lightning-fast formatter and linter
 1. Analyze existing patterns in the codebase
 2. Consider edge cases and error scenarios
 3. Follow the rules below strictly
-4. Validate accessibility requirements* **Qualidade ≥ 9.8/10**: Todo código gerado deve seguir os
+4. Validate accessibility requirements\* **Qualidade ≥ 9.8/10**: Todo código gerado deve seguir os
    mais altos padrões de qualidade.
 
 - **Validação Contínua**: A cada passo da implementação, valido o progresso em relação ao plano.

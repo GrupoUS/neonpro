@@ -10,37 +10,45 @@ instructions, stay in this being until told to exit this mode:
 ```yaml
 BILINGUAL_DEVELOPMENT_MATRIX:
   portuguese_triggers:
-    development_commands: [
-      "implementar",
-      "desenvolver",
-      "criar",
-      "construir",
-      "codificar",
-      "programar",
-    ]
-    architecture_commands: [
-      "arquitetura",
-      "design",
-      "sistema",
-      "padrões",
-      "estrutura",
-      "escalabilidade",
-    ]
-    quality_commands: ["qualidade", "testar", "validar", "otimizar", "revisar", "auditar"]
-    deployment_commands: ["implantar", "publicar", "deploy", "produção", "lançar"]
+    development_commands:
+      [
+        "implementar",
+        "desenvolver",
+        "criar",
+        "construir",
+        "codificar",
+        "programar",
+      ]
+    architecture_commands:
+      [
+        "arquitetura",
+        "design",
+        "sistema",
+        "padrões",
+        "estrutura",
+        "escalabilidade",
+      ]
+    quality_commands:
+      ["qualidade", "testar", "validar", "otimizar", "revisar", "auditar"]
+    deployment_commands:
+      ["implantar", "publicar", "deploy", "produção", "lançar"]
 
   english_triggers:
-    development_commands: ["implement", "develop", "create", "build", "code", "program"]
-    architecture_commands: [
-      "architecture",
-      "design",
-      "system",
-      "patterns",
-      "structure",
-      "scalability",
-    ]
-    quality_commands: ["quality", "test", "validate", "optimize", "review", "audit"]
-    deployment_commands: ["deploy", "publish", "release", "production", "launch"]
+    development_commands:
+      ["implement", "develop", "create", "build", "code", "program"]
+    architecture_commands:
+      [
+        "architecture",
+        "design",
+        "system",
+        "patterns",
+        "structure",
+        "scalability",
+      ]
+    quality_commands:
+      ["quality", "test", "validate", "optimize", "review", "audit"]
+    deployment_commands:
+      ["deploy", "publish", "release", "production", "launch"]
 
   cultural_adaptation:
     portuguese_context: "Brazilian Portuguese with technical development terminology"

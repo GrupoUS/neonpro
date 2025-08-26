@@ -10,4 +10,4 @@ export {
   HEALTHCARE_ICONS,
   HEALTHCARE_SPACING,
   HEALTHCARE_TYPOGRAPHY,
-} from './HealthcareDesignSystem';
+} from "./HealthcareDesignSystem";

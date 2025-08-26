@@ -85,12 +85,12 @@ const lgpdComplianceData = {
 ```typescript
 const financialData = {
   revenue: {
-    monthly: 487650.00, // Formato R$
+    monthly: 487650.0, // Formato R$
     // PIX, cartões, dinheiro
   },
   taxes: {
-    irpj: 23456.00,
-    csll: 15234.00,
+    irpj: 23456.0,
+    csll: 15234.0,
     // Todos os tributos brasileiros
   },
 };
@@ -115,7 +115,7 @@ const clinicalData = {
 ```typescript
 const pdfGenerator = new HealthcarePDFGenerator();
 const pdfData = pdfGenerator.generateLGPDReport();
-downloadReport(pdfData, 'relatorio-lgpd.pdf', 'pdf');
+downloadReport(pdfData, "relatorio-lgpd.pdf", "pdf");
 ```
 
 **Características dos PDFs:**
@@ -130,7 +130,7 @@ downloadReport(pdfData, 'relatorio-lgpd.pdf', 'pdf');
 
 ```typescript
 const excelData = HealthcareExcelExporter.generateComprehensiveReport();
-downloadReport(excelData, 'relatorio-completo.xlsx', 'excel');
+downloadReport(excelData, "relatorio-completo.xlsx", "excel");
 ```
 
 **Planilhas Incluídas:**
@@ -143,8 +143,8 @@ downloadReport(excelData, 'relatorio-completo.xlsx', 'excel');
 ### **CSV Export**
 
 ```typescript
-const csvData = generateCSVReport('lgpd');
-downloadReport(csvData, 'lgpd-compliance.csv', 'csv');
+const csvData = generateCSVReport("lgpd");
+downloadReport(csvData, "lgpd-compliance.csv", "csv");
 ```
 
 ## 📅 Sistema de Agendamento
@@ -163,9 +163,9 @@ downloadReport(csvData, 'lgpd-compliance.csv', 'csv');
 const scheduleConfig = {
   lgpdCompliant: true,
   retentionDays: 90,
-  recipients: ['compliance@neonpro.com.br'],
-  format: 'pdf',
-  deliveryMethod: 'email',
+  recipients: ["compliance@neonpro.com.br"],
+  format: "pdf",
+  deliveryMethod: "email",
 };
 ```
 
@@ -191,9 +191,9 @@ const scheduleConfig = {
 
 ```typescript
 const announcements = {
-  REPORT_GENERATING: 'Relatório sendo gerado. Por favor aguarde.',
-  REPORT_READY: 'Relatório pronto para download.',
-  EXPORT_COMPLETED: 'Arquivo exportado com sucesso.',
+  REPORT_GENERATING: "Relatório sendo gerado. Por favor aguarde.",
+  REPORT_READY: "Relatório pronto para download.",
+  EXPORT_COMPLETED: "Arquivo exportado com sucesso.",
   SEARCH_RESULTS_UPDATED: (count) => `${count} relatórios encontrados.`,
 };
 ```
@@ -248,13 +248,13 @@ const announcements = {
 
 ```typescript
 // Gerar relatório
-handleGenerateReport('lgpd-compliance');
+handleGenerateReport("lgpd-compliance");
 
 // Exportar em PDF
-handleExportReport('lgpd-compliance', 'pdf');
+handleExportReport("lgpd-compliance", "pdf");
 
 // Agendar automaticamente
-handleScheduleReport('lgpd-compliance');
+handleScheduleReport("lgpd-compliance");
 ```
 
 ### **4. Agendamento Automático**

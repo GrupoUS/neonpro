@@ -244,7 +244,7 @@ export function IntegrationExample() {
 
               {appointmentsLoading ? (
                 <p>Carregando agendamentos...</p>
-              ) : (appointments?.data && appointments.data.length > 0 ? (
+              ) : appointments?.data && appointments.data.length > 0 ? (
                 <div className="space-y-2">
                   {appointments.data.map((appointment) => (
                     <div
@@ -267,7 +267,7 @@ export function IntegrationExample() {
                 </div>
               ) : (
                 <p className="text-gray-600">Nenhum agendamento encontrado.</p>
-              ))}
+              )}
 
               {createAppointmentMutation.error && (
                 <p className="mt-2 text-red-600 text-sm">

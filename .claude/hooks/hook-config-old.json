@@ -1,0 +1,166 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema#",
+	"title": "Claude Code Enhanced Hook Configuration",
+	"description": "NEONPRO Healthcare optimized configuration with PNPM, oxlint, dprint, and Archon MCP integration",
+	"version": "3.0.0",
+
+	"taskCompletionCommands": {
+		"description": "Enhanced commands executed when tasks complete - Healthcare optimized",
+		"always": [
+			{
+				"command": "echo",
+				"args": ["✓ Task completed - ARCHON-FIRST workflow"],
+				"timeout": 5,
+				"continueOnFailure": true
+			}
+		],
+		"onSuccess": [
+			{
+				"command": "npx",
+				"args": ["run", "format"],
+				"timeout": 15,
+				"continueOnFailure": true,
+				"description": "dprint + prettier auto-format for ≥9.5/10 quality",
+				"conditions": {
+					"fileExists": "package.json",
+					"hasTypeScriptFiles": true
+				}
+			},
+			{
+				"command": "pnpm",
+				"args": ["run", "lint"],
+				"timeout": 30,
+				"continueOnFailure": true,
+				"description": "PNPM lint execution (PNPM over NPM)",
+				"conditions": {
+					"fileExists": "package.json",
+					"scriptExists": "lint"
+				},
+				"fallback": {
+					"command": "npm",
+					"args": ["run", "lint"],
+					"description": "NPM fallback if PNPM not available"
+				}
+			}
+		],
+		"healthcare": [
+			{
+				"command": "echo",
+				"args": ["🏥 Healthcare task validation initiated"],
+				"timeout": 5,
+				"continueOnFailure": true
+			},
+			{
+				"command": "pnpm",
+				"args": ["audit", "--severity", "high"],
+				"timeout": 45,
+				"continueOnFailure": true,
+				"description": "Healthcare security audit",
+				"conditions": {
+					"fileExists": "pnpm-lock.yaml"
+				}
+			}
+		]
+	},
+
+	"planCompletionCommands": {
+		"description": "Enhanced commands executed when plans complete - 30-Second Reality Check integration",
+		"always": [
+			{
+				"command": "echo",
+				"args": ["✓ Plan completed - Reality Check initiated"],
+				"timeout": 5,
+				"continueOnFailure": true
+			}
+		],
+		"onSuccess": [
+			{
+				"command": "npx",
+				"args": ["run", "format:check"],
+				"timeout": 15,
+				"continueOnFailure": true,
+				"description": "dprint format check validation",
+				"conditions": {
+					"fileExists": "package.json"
+				}
+			},
+			{
+				"command": "pnpm",
+				"args": ["build"],
+				"timeout": 180,
+				"continueOnFailure": true,
+				"description": "PNPM production build (healthcare optimized)",
+				"conditions": {
+					"fileExists": "package.json",
+					"scriptExists": "build"
+				},
+				"fallback": {
+					"command": "npm",
+					"args": ["run", "build"],
+					"description": "NPM fallback build"
+				}
+			},
+			{
+				"command": "pnpm",
+				"args": ["test"],
+				"timeout": 120,
+				"continueOnFailure": true,
+				"description": "PNPM test execution with healthcare validation",
+				"conditions": {
+					"fileExists": "package.json",
+					"scriptExists": "test",
+					"previousCommandSuccess": true
+				},
+				"fallback": {
+					"command": "npm",
+					"args": ["run", "test"],
+					"description": "NPM fallback test"
+				}
+			}
+		],
+		"realityCheck": [
+			{
+				"command": "echo",
+				"args": ["🔍 30-Second Reality Check execution"],
+				"timeout": 5,
+				"continueOnFailure": true
+			}
+		]
+	},
+
+	"workflowTemplates": {
+		"development": {
+			"name": "Development Workflow",
+			"taskCommands": ["lint"],
+			"planCommands": ["build", "test"]
+		},
+		"healthcare": {
+			"name": "Healthcare Workflow",
+			"taskCommands": ["lint", "compliance-check"],
+			"planCommands": ["build", "test", "security-scan"]
+		}
+	},
+
+	"settings": {
+		"enableLogging": true,
+		"logLevel": "info",
+		"logFile": ".claude\\hooks\\claude-hooks.log",
+		"maxRetries": 2,
+		"retryDelay": 1000,
+		"defaultTimeout": 30,
+		"enableStateTracking": true,
+		"stateFile": ".claude\\.cache\\current-plan-state.json",
+		"parallelExecution": false,
+		"errorHandling": {
+			"stopOnFirstFailure": false,
+			"notifyOnFailure": true
+		}
+	},
+
+	"environmentVariables": {
+		"CLAUDE_HOOK_TYPE": "task_completion or plan_completion",
+		"CLAUDE_HOOK_STATUS": "success or failure",
+		"CLAUDE_PROJECT_ROOT": "Project root directory path",
+		"CLAUDE_TIMESTAMP": "ISO timestamp when hook executed"
+	}
+}

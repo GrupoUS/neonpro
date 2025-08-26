@@ -90,7 +90,8 @@ export function useRealtimeAppointments(clinicId?: string) {
         },
       )
       .subscribe((status) => {
-        if (status === "SUBSCRIBED") {} else if (status === "CHANNEL_ERROR") {
+        if (status === "SUBSCRIBED") {
+        } else if (status === "CHANNEL_ERROR") {
           setError("Real-time connection failed");
         }
       });
@@ -134,7 +135,8 @@ export function useRealtimeNotifications(userId?: string) {
         }
         setNotifications(data || []);
         setUnreadCount(data?.length || 0);
-      } catch {} finally {
+      } catch {
+      } finally {
         setLoading(false);
       }
     };
@@ -241,7 +243,8 @@ export function useRealtimeProfessionalAvailability(professionalId?: string) {
           throw error;
         }
         setAvailability(data || []);
-      } catch {} finally {
+      } catch {
+      } finally {
         setLoading(false);
       }
     };

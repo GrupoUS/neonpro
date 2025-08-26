@@ -1,4 +1,4 @@
-import type { BaseEntity } from './common';
+import type { BaseEntity } from "./common";
 
 export interface Appointment extends BaseEntity {
   patient_id: string;
@@ -11,9 +11,9 @@ export interface Appointment extends BaseEntity {
 }
 
 export enum AppointmentStatus {
-  SCHEDULED = 'scheduled',
-  CONFIRMED = 'confirmed',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  SCHEDULED = "scheduled",
+  CONFIRMED = "confirmed",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }

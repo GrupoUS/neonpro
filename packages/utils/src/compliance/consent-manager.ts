@@ -17,7 +17,7 @@ export interface ConsentPurpose {
   name: string;
   description: string;
   required: boolean;
-  category: 'essential' | 'functional' | 'analytics' | 'marketing';
+  category: "essential" | "functional" | "analytics" | "marketing";
 }
 
 export class LGPDConsentManager {
@@ -33,39 +33,41 @@ export class LGPDConsentManager {
   // LGPD consent purposes for healthcare
   private readonly consentPurposes: ConsentPurpose[] = [
     {
-      id: 'essential',
-      name: 'Funcionamento Essencial',
-      description: 'Dados necessários para operação básica da plataforma médica',
+      id: "essential",
+      name: "Funcionamento Essencial",
+      description:
+        "Dados necessários para operação básica da plataforma médica",
       required: true,
-      category: 'essential',
+      category: "essential",
     },
     {
-      id: 'medical_treatment',
-      name: 'Atendimento Médico',
-      description: 'Processamento de dados médicos para consultas e tratamentos',
+      id: "medical_treatment",
+      name: "Atendimento Médico",
+      description:
+        "Processamento de dados médicos para consultas e tratamentos",
       required: true,
-      category: 'essential',
+      category: "essential",
     },
     {
-      id: 'appointment_management',
-      name: 'Gestão de Consultas',
-      description: 'Agendamento e gerenciamento de consultas médicas',
+      id: "appointment_management",
+      name: "Gestão de Consultas",
+      description: "Agendamento e gerenciamento de consultas médicas",
       required: false,
-      category: 'functional',
+      category: "functional",
     },
     {
-      id: 'analytics',
-      name: 'Análises e Melhorias',
-      description: 'Análise de uso para melhorar a experiência e qualidade',
+      id: "analytics",
+      name: "Análises e Melhorias",
+      description: "Análise de uso para melhorar a experiência e qualidade",
       required: false,
-      category: 'analytics',
+      category: "analytics",
     },
     {
-      id: 'marketing',
-      name: 'Comunicação e Marketing',
-      description: 'Envio de informativos sobre tratamentos e promoções',
+      id: "marketing",
+      name: "Comunicação e Marketing",
+      description: "Envio de informativos sobre tratamentos e promoções",
       required: false,
-      category: 'marketing',
+      category: "marketing",
     },
   ];
 
@@ -73,7 +75,7 @@ export class LGPDConsentManager {
     userId: string,
     purposeId: string,
     ipAddress: string,
-    version = '1.0',
+    version = "1.0",
   ): Promise<ConsentRecord> {
     const purpose = this.consentPurposes.find((p) => p.id === purposeId);
     if (!purpose) {
@@ -106,7 +108,7 @@ export class LGPDConsentManager {
       granted: false,
       timestamp: new Date(),
       ipAddress,
-      version: '1.0',
+      version: "1.0",
     };
 
     await this.storeConsentRecord(consent);

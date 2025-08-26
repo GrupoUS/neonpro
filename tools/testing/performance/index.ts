@@ -13,7 +13,7 @@ export {
   formatBytes,
   generateBundleReport,
   runBundleAnalysis,
-} from './bundle-analyzer';
+} from "./bundle-analyzer";
 // Caching Strategies
 export {
   CACHE_CONFIG,
@@ -25,7 +25,7 @@ export {
   CachePerformanceMonitor,
   CDNOptimization,
   withCache,
-} from './caching';
+} from "./caching";
 // Production Deployment
 export {
   BuildOptimizer,
@@ -33,7 +33,7 @@ export {
   DeploymentAutomation,
   PreBuildOptimizer,
   ProductionHealthCheck,
-} from './deployment';
+} from "./deployment";
 
 // React Performance Hooks
 export {
@@ -47,7 +47,7 @@ export {
   usePreloadResources,
   useRenderPerformance,
   useVirtualScrolling,
-} from './react-hooks';
+} from "./react-hooks";
 // Core Web Vitals and Performance Monitoring
 export {
   getPerformanceGrade,
@@ -56,20 +56,20 @@ export {
   reportWebVitals,
   sendToAnalytics,
   usePerformanceMonitoring,
-} from './web-vitals';
+} from "./web-vitals";
 
 // Performance utility functions
 export const PerformanceSuite = {
   // Initialize all performance monitoring
   init: () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Start Web Vitals monitoring
-      import('./web-vitals').then(({ reportWebVitals }) => {
+      import("./web-vitals").then(({ reportWebVitals }) => {
         reportWebVitals();
       });
 
       // Start resource timing monitoring
-      import('./web-vitals').then(({ PerformanceUtils }) => {
+      import("./web-vitals").then(({ PerformanceUtils }) => {
         PerformanceUtils.observeResourceTiming();
       });
     }
@@ -77,25 +77,25 @@ export const PerformanceSuite = {
 
   // Production build optimization
   build: async () => {
-    const { BuildOptimizer } = await import('./deployment');
+    const { BuildOptimizer } = await import("./deployment");
     return BuildOptimizer.optimizedBuild();
   },
 
   // Health checks for production
   healthCheck: async () => {
-    const { ProductionHealthCheck } = await import('./deployment');
+    const { ProductionHealthCheck } = await import("./deployment");
     return ProductionHealthCheck.runHealthChecks();
   },
 
   // Bundle analysis
   analyzeBundle: async (statsPath?: string) => {
-    const { runBundleAnalysis } = await import('./bundle-analyzer');
+    const { runBundleAnalysis } = await import("./bundle-analyzer");
     return runBundleAnalysis(statsPath);
   },
 
   // Cache performance stats
   getCacheStats: () => {
-    const { cacheManager, CachePerformanceMonitor } = require('./caching');
+    const { cacheManager, CachePerformanceMonitor } = require("./caching");
     return {
       cache: cacheManager.getStats(),
       performance: CachePerformanceMonitor.getStats(),
@@ -140,9 +140,9 @@ export const PERFORMANCE_CONSTANTS = {
 } as const;
 
 // Type definitions for external use
-export type PerformanceGrade = 'good' | 'needs-improvement' | 'poor';
-export type CacheStrategy = 'static' | 'api' | 'dynamic' | 'private';
-export type DeploymentEnvironment = 'development' | 'staging' | 'production';
+export type PerformanceGrade = "good" | "needs-improvement" | "poor";
+export type CacheStrategy = "static" | "api" | "dynamic" | "private";
+export type DeploymentEnvironment = "development" | "staging" | "production";
 
 // Performance monitoring configuration
 export interface PerformanceConfig {
@@ -162,7 +162,7 @@ export interface PerformanceConfig {
     maxMemoryUsage: number;
   };
   monitoring: {
-    logLevel: 'debug' | 'info' | 'warn' | 'error';
+    logLevel: "debug" | "info" | "warn" | "error";
     enableDevTools: boolean;
     memoryMonitoring: boolean;
   };
@@ -175,7 +175,7 @@ export const DEFAULT_PERFORMANCE_CONFIG: PerformanceConfig = {
     sampleRate: 1,
   },
   bundleAnalysis: {
-    enabled: process.env.NODE_ENV === 'production',
+    enabled: process.env.NODE_ENV === "production",
     warningThreshold: 100 * 1024, // 100KB
     errorThreshold: 250 * 1024, // 250KB
   },
@@ -185,14 +185,14 @@ export const DEFAULT_PERFORMANCE_CONFIG: PerformanceConfig = {
     maxMemoryUsage: 50 * 1024 * 1024, // 50MB
   },
   monitoring: {
-    logLevel: process.env.NODE_ENV === 'development' ? 'debug' : 'warn',
-    enableDevTools: process.env.NODE_ENV === 'development',
-    memoryMonitoring: process.env.NODE_ENV === 'development',
+    logLevel: process.env.NODE_ENV === "development" ? "debug" : "warn",
+    enableDevTools: process.env.NODE_ENV === "development",
+    memoryMonitoring: process.env.NODE_ENV === "development",
   },
 };
 
 // Initialize performance suite on import (client-side only)
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   // Auto-initialize with default config
   PerformanceSuite.init();
 }
@@ -201,37 +201,37 @@ if (typeof window !== 'undefined') {
 export const EXPERT_RECOMMENDATIONS = {
   // From MCP research findings
   nextjs15: [
-    'Use React Server Components by default for better performance',
-    'Enable Turbopack for faster development builds',
-    'Implement proper caching strategies with opt-in approach',
-    'Use Next.js Image component with AVIF/WebP formats',
-    'Enable bundle analysis in production builds',
-    'Implement proper error boundaries and loading states',
+    "Use React Server Components by default for better performance",
+    "Enable Turbopack for faster development builds",
+    "Implement proper caching strategies with opt-in approach",
+    "Use Next.js Image component with AVIF/WebP formats",
+    "Enable bundle analysis in production builds",
+    "Implement proper error boundaries and loading states",
   ],
 
   react19: [
-    'Use React Compiler for automatic memoization',
-    'Leverage startTransition for better UX',
-    'Implement proper Suspense boundaries',
-    'Use useOptimistic for instant UI updates',
-    'Avoid premature optimization - measure first',
+    "Use React Compiler for automatic memoization",
+    "Leverage startTransition for better UX",
+    "Implement proper Suspense boundaries",
+    "Use useOptimistic for instant UI updates",
+    "Avoid premature optimization - measure first",
   ],
 
   deployment: [
-    'Run health checks before deployment',
-    'Implement proper security headers',
-    'Use CDN for static assets',
-    'Enable compression and minification',
-    'Monitor Core Web Vitals in production',
-    'Implement proper cache invalidation strategies',
+    "Run health checks before deployment",
+    "Implement proper security headers",
+    "Use CDN for static assets",
+    "Enable compression and minification",
+    "Monitor Core Web Vitals in production",
+    "Implement proper cache invalidation strategies",
   ],
 
   analytics: [
-    'Use server-side rendering for SEO',
-    'Implement lazy loading for charts',
-    'Optimize data processing with Web Workers',
-    'Use virtual scrolling for large datasets',
-    'Implement proper error tracking',
+    "Use server-side rendering for SEO",
+    "Implement lazy loading for charts",
+    "Optimize data processing with Web Workers",
+    "Use virtual scrolling for large datasets",
+    "Implement proper error tracking",
   ],
 } as const;
 

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import type { ConnectivityLevel, RegionalSettings } from '../types';
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import type { ConnectivityLevel, RegionalSettings } from "../types";
 
 interface ResponsiveLayoutProps {
   children: ReactNode;
@@ -17,56 +17,58 @@ export function ResponsiveLayout({
   connectivity,
   regional,
   emergencyMode = false,
-  className = '',
+  className = "",
 }: ResponsiveLayoutProps) {
-  const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>(
-    'desktop',
+  const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">(
+    "desktop",
   );
   const [isLowBandwidth, setIsLowBandwidth] = useState(false);
-  const [connectionSpeed, setConnectionSpeed] = useState<string>('unknown');
+  const [connectionSpeed, setConnectionSpeed] = useState<string>("unknown");
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width < 768) {
-        setViewport('mobile');
+        setViewport("mobile");
       } else if (width < 1024) {
-        setViewport('tablet');
+        setViewport("tablet");
       } else {
-        setViewport('desktop');
+        setViewport("desktop");
       }
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Monitor connectivity for Brazilian network conditions
   useEffect(() => {
     if (connectivity) {
-      const isSlow = connectivity.type === '2G'
-        || (connectivity.type === '3G' && connectivity.strength === 'weak')
-        || connectivity.latency > 1000;
+      const isSlow =
+        connectivity.type === "2G" ||
+        (connectivity.type === "3G" && connectivity.strength === "weak") ||
+        connectivity.latency > 1000;
       setIsLowBandwidth(isSlow);
       setConnectionSpeed(`${connectivity.type} ${connectivity.strength}`);
     }
 
     // Use Network Information API if available
-    if ('connection' in navigator) {
+    if ("connection" in navigator) {
       const connection = (navigator as any).connection;
       const updateConnectionInfo = () => {
-        setConnectionSpeed(connection.effectiveType || 'unknown');
+        setConnectionSpeed(connection.effectiveType || "unknown");
         setIsLowBandwidth(
-          connection.effectiveType === 'slow-2g'
-            || connection.effectiveType === '2g',
+          connection.effectiveType === "slow-2g" ||
+            connection.effectiveType === "2g",
         );
       };
 
       updateConnectionInfo();
-      connection.addEventListener('change', updateConnectionInfo);
+      connection.addEventListener("change", updateConnectionInfo);
 
-      return () => connection.removeEventListener('change', updateConnectionInfo);
+      return () =>
+        connection.removeEventListener("change", updateConnectionInfo);
     }
   }, [connectivity]);
 
@@ -78,13 +80,13 @@ export function ResponsiveLayout({
 
     const baseOptimizations = {
       // All regions: Touch-friendly, high contrast for sunlight
-      minTouchTarget: '12px', // 48px minimum as per spacing.12
+      minTouchTarget: "12px", // 48px minimum as per spacing.12
       highContrast: true,
     };
 
     switch (regional.region) {
-      case 'Norte':
-      case 'Nordeste': {
+      case "Norte":
+      case "Nordeste": {
         // Rural areas, often slower connections
         return {
           ...baseOptimizations,
@@ -94,8 +96,8 @@ export function ResponsiveLayout({
         };
       }
 
-      case 'Sudeste':
-      case 'Sul': {
+      case "Sudeste":
+      case "Sul": {
         // Urban areas, better connectivity
         return {
           ...baseOptimizations,
@@ -115,25 +117,27 @@ export function ResponsiveLayout({
   return (
     <div
       className={`responsive-layout min-h-screen ${
-        emergencyMode ? 'emergency-mode' : ''
+        emergencyMode ? "emergency-mode" : ""
       } ${className}`}
       data-connectivity={connectionSpeed}
       data-viewport={viewport}
-      style={{
-        '--min-touch-target': (optimizations as any).minTouchTarget || '48px',
-      } as React.CSSProperties}
+      style={
+        {
+          "--min-touch-target": (optimizations as any).minTouchTarget || "48px",
+        } as React.CSSProperties
+      }
     >
       {/* Connectivity Status Bar - Critical for Brazilian healthcare */}
       <div
         className={`connectivity-bar border-b p-2 text-sm ${
           isLowBandwidth
-            ? 'border-yellow-200 bg-yellow-50 text-yellow-800'
-            : 'border-green-200 bg-green-50 text-green-800'
+            ? "border-yellow-200 bg-yellow-50 text-yellow-800"
+            : "border-green-200 bg-green-50 text-green-800"
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center">
-            <span className="mr-2">{isLowBandwidth ? '📶' : '📶'}</span>
+            <span className="mr-2">{isLowBandwidth ? "📶" : "📶"}</span>
             <span>
               {connectionSpeed} • {regional?.region}
             </span>
@@ -156,14 +160,14 @@ export function ResponsiveLayout({
       {/* Main Layout */}
       <div
         className={`layout-container ${
-          viewport === 'mobile'
-            ? 'mobile-layout'
-            : (viewport === 'tablet'
-            ? 'tablet-layout'
-            : 'desktop-layout')
+          viewport === "mobile"
+            ? "mobile-layout"
+            : viewport === "tablet"
+              ? "tablet-layout"
+              : "desktop-layout"
         }`}
       >
-        {viewport === 'mobile' && (
+        {viewport === "mobile" && (
           <MobileLayout
             isLowBandwidth={isLowBandwidth}
             optimizations={optimizations}
@@ -172,7 +176,7 @@ export function ResponsiveLayout({
           </MobileLayout>
         )}
 
-        {viewport === 'tablet' && (
+        {viewport === "tablet" && (
           <TabletLayout
             isLowBandwidth={isLowBandwidth}
             optimizations={optimizations}
@@ -181,7 +185,7 @@ export function ResponsiveLayout({
           </TabletLayout>
         )}
 
-        {viewport === 'desktop' && (
+        {viewport === "desktop" && (
           <DesktopLayout
             isLowBandwidth={isLowBandwidth}
             optimizations={optimizations}

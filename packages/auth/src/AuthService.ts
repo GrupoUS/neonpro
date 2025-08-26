@@ -3,13 +3,13 @@
  * Full integration with EnhancedServiceBase and enterprise security
  */
 
-import { EnhancedServiceBase } from '@neonpro/core-services';
-import { createClient } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import QRCode from 'qrcode';
-import speakeasy from 'speakeasy';
+import { EnhancedServiceBase } from "@neonpro/core-services";
+import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import QRCode from "qrcode";
+import speakeasy from "speakeasy";
 import type {
   AuthConfig,
   AuthSession,
@@ -22,7 +22,7 @@ import type {
   SecurityEvent,
   TokenPayload,
   User,
-} from './types';
+} from "./types";
 
 /**
  * Healthcare-compliant authentication service with enterprise features
@@ -33,7 +33,7 @@ export class AuthService extends EnhancedServiceBase {
   private readonly rolePermissions: RolePermissions;
 
   constructor(config: AuthConfig, supabaseUrl: string, supabaseKey: string) {
-    super('auth-service', {
+    super("auth-service", {
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -54,7 +54,7 @@ export class AuthService extends EnhancedServiceBase {
    * Authenticate user with enterprise security features
    */
   async login(credentials: LoginCredentials): Promise<LoginResult> {
-    const startTime = this.startTiming('auth_login');
+    const startTime = this.startTiming("auth_login");
 
     try {
       // Security: Rate limiting check
@@ -66,47 +66,50 @@ export class AuthService extends EnhancedServiceBase {
 
       if (attempts >= this.config.maxLoginAttempts) {
         await this.logSecurityEvent({
-          type: 'failed_login',
-          ip: credentials.deviceInfo?.ip || '',
-          userAgent: credentials.deviceInfo?.userAgent || '',
+          type: "failed_login",
+          ip: credentials.deviceInfo?.ip || "",
+          userAgent: credentials.deviceInfo?.userAgent || "",
           timestamp: new Date(),
-          details: { email: credentials.email, reason: 'rate_limited' },
+          details: { email: credentials.email, reason: "rate_limited" },
           riskScore: 8,
         });
 
         return {
           success: false,
-          error: 'Too many login attempts. Please try again later.',
+          error: "Too many login attempts. Please try again later.",
         };
       }
 
       // Fetch user from database
       const { data: user, error } = await this.supabase
-        .from('users')
-        .select('*')
-        .eq('email', credentials.email)
+        .from("users")
+        .select("*")
+        .eq("email", credentials.email)
         .single();
 
       if (error || !user) {
         await this.incrementLoginAttempts(credentials.email);
-        return { success: false, error: 'Invalid credentials' };
+        return { success: false, error: "Invalid credentials" };
       }
 
       // Verify password
-      const passwordValid = await bcrypt.compare(credentials.password, user.password_hash);
+      const passwordValid = await bcrypt.compare(
+        credentials.password,
+        user.password_hash,
+      );
       if (!passwordValid) {
         await this.incrementLoginAttempts(credentials.email);
         await this.logSecurityEvent({
-          type: 'failed_login',
+          type: "failed_login",
           userId: user.id,
-          ip: credentials.deviceInfo?.ip || '',
-          userAgent: credentials.deviceInfo?.userAgent || '',
+          ip: credentials.deviceInfo?.ip || "",
+          userAgent: credentials.deviceInfo?.userAgent || "",
           timestamp: new Date(),
-          details: { email: credentials.email, reason: 'invalid_password' },
+          details: { email: credentials.email, reason: "invalid_password" },
           riskScore: 6,
         });
 
-        return { success: false, error: 'Invalid credentials' };
+        return { success: false, error: "Invalid credentials" };
       }
 
       // Check if MFA is required
@@ -114,7 +117,7 @@ export class AuthService extends EnhancedServiceBase {
         return {
           success: false,
           requiresMfa: true,
-          error: 'MFA code required',
+          error: "MFA code required",
         };
       }
 
@@ -122,23 +125,23 @@ export class AuthService extends EnhancedServiceBase {
       if (user.mfa_enabled && credentials.mfaCode) {
         const mfaValid = speakeasy.totp.verify({
           secret: user.mfa_secret,
-          encoding: 'base32',
+          encoding: "base32",
           token: credentials.mfaCode,
           window: 2,
         });
 
         if (!mfaValid) {
           await this.logSecurityEvent({
-            type: 'mfa_failure',
+            type: "mfa_failure",
             userId: user.id,
-            ip: credentials.deviceInfo?.ip || '',
-            userAgent: credentials.deviceInfo?.userAgent || '',
+            ip: credentials.deviceInfo?.ip || "",
+            userAgent: credentials.deviceInfo?.userAgent || "",
             timestamp: new Date(),
             details: { email: credentials.email },
             riskScore: 7,
           });
 
-          return { success: false, error: 'Invalid MFA code' };
+          return { success: false, error: "Invalid MFA code" };
         }
       }
 
@@ -151,10 +154,10 @@ export class AuthService extends EnhancedServiceBase {
 
       // Log successful login
       await this.logSecurityEvent({
-        type: 'login',
+        type: "login",
         userId: user.id,
-        ip: credentials.deviceInfo?.ip || '',
-        userAgent: credentials.deviceInfo?.userAgent || '',
+        ip: credentials.deviceInfo?.ip || "",
+        userAgent: credentials.deviceInfo?.userAgent || "",
         timestamp: new Date(),
         details: { email: credentials.email, sessionId: session.id },
         riskScore: 1,
@@ -164,14 +167,14 @@ export class AuthService extends EnhancedServiceBase {
       await this.security.clearRateLimit(rateLimitKey);
 
       // Track analytics
-      await this.analytics.trackEvent('user_login', {
+      await this.analytics.trackEvent("user_login", {
         userId: user.id,
         role: user.role,
         mfaEnabled: user.mfa_enabled,
         deviceTrusted: credentials.deviceInfo?.trusted || false,
       });
 
-      this.endTiming('auth_login', startTime);
+      this.endTiming("auth_login", startTime);
 
       return {
         success: true,
@@ -181,9 +184,9 @@ export class AuthService extends EnhancedServiceBase {
         sessionId: session.id,
       };
     } catch (error) {
-      this.endTiming('auth_login', startTime, { error: true });
+      this.endTiming("auth_login", startTime, { error: true });
 
-      await this.audit.logOperation('login_error', {
+      await this.audit.logOperation("login_error", {
         email: credentials.email,
         error: error.message,
         timestamp: new Date(),
@@ -191,7 +194,7 @@ export class AuthService extends EnhancedServiceBase {
 
       return {
         success: false,
-        error: 'Authentication service error',
+        error: "Authentication service error",
       };
     }
   }
@@ -204,14 +207,17 @@ export class AuthService extends EnhancedServiceBase {
       const session = await this.getSession(sessionId);
       if (session) {
         // Invalidate session
-        await this.supabase.from('auth_sessions').update({ is_active: false }).eq('id', sessionId);
+        await this.supabase
+          .from("auth_sessions")
+          .update({ is_active: false })
+          .eq("id", sessionId);
 
         // Log security event
         await this.logSecurityEvent({
-          type: 'logout',
+          type: "logout",
           userId: session.userId,
-          ip: '',
-          userAgent: '',
+          ip: "",
+          userAgent: "",
           timestamp: new Date(),
           details: { sessionId },
           riskScore: 1,
@@ -221,7 +227,7 @@ export class AuthService extends EnhancedServiceBase {
         await this.cache.delete(`session_${sessionId}`);
       }
     } catch (error) {
-      await this.audit.logOperation('logout_error', {
+      await this.audit.logOperation("logout_error", {
         sessionId,
         error: error.message,
         timestamp: new Date(),
@@ -233,18 +239,24 @@ export class AuthService extends EnhancedServiceBase {
 
   async refreshToken(refreshToken: string): Promise<LoginResult> {
     try {
-      const payload = jwt.verify(refreshToken, this.config.jwtSecret) as TokenPayload;
+      const payload = jwt.verify(
+        refreshToken,
+        this.config.jwtSecret,
+      ) as TokenPayload;
 
       const session = await this.getSession(payload.sessionId);
       if (!session || !session.isActive) {
-        return { success: false, error: 'Invalid session' };
+        return { success: false, error: "Invalid session" };
       }
 
-      const { data: user } = await this.supabase.from('users').select('*').eq('id', payload.userId)
+      const { data: user } = await this.supabase
+        .from("users")
+        .select("*")
+        .eq("id", payload.userId)
         .single();
 
       if (!user) {
-        return { success: false, error: 'User not found' };
+        return { success: false, error: "User not found" };
       }
 
       // Generate new access token
@@ -257,7 +269,7 @@ export class AuthService extends EnhancedServiceBase {
         sessionId: session.id,
       };
     } catch {
-      return { success: false, error: 'Invalid refresh token' };
+      return { success: false, error: "Invalid refresh token" };
     }
   }
 
@@ -268,15 +280,16 @@ export class AuthService extends EnhancedServiceBase {
     try {
       const secret = speakeasy.generateSecret({
         name: `NeonPro Healthcare (${userId})`,
-        issuer: 'NeonPro',
+        issuer: "NeonPro",
       });
 
-      const qrCode = secret.otpauth_url ? await QRCode.toDataURL(secret.otpauth_url) : '';
+      const qrCode = secret.otpauth_url
+        ? await QRCode.toDataURL(secret.otpauth_url)
+        : "";
 
       // Generate backup codes
-      const backupCodes = Array.from(
-        { length: 10 },
-        () => Math.random().toString(36).slice(2, 10).toUpperCase(),
+      const backupCodes = Array.from({ length: 10 }, () =>
+        Math.random().toString(36).slice(2, 10).toUpperCase(),
       );
 
       // Store MFA secret temporarily (user must verify to activate)
@@ -291,12 +304,12 @@ export class AuthService extends EnhancedServiceBase {
       );
 
       return {
-        secret: secret.base32 || '',
+        secret: secret.base32 || "",
         qrCode,
         backupCodes,
       };
     } catch {
-      throw new Error('Failed to setup MFA');
+      throw new Error("Failed to setup MFA");
     }
   }
 
@@ -312,7 +325,7 @@ export class AuthService extends EnhancedServiceBase {
 
       const verified = speakeasy.totp.verify({
         secret: setup.secret,
-        encoding: 'base32',
+        encoding: "base32",
         token: code,
         window: 2,
       });
@@ -320,15 +333,15 @@ export class AuthService extends EnhancedServiceBase {
       if (verified) {
         // Activate MFA for user
         await this.supabase
-          .from('users')
+          .from("users")
           .update({
             mfa_enabled: true,
             mfa_secret: setup.secret,
           })
-          .eq('id', userId);
+          .eq("id", userId);
 
         // Store backup codes
-        await this.supabase.from('user_backup_codes').insert(
+        await this.supabase.from("user_backup_codes").insert(
           setup.backupCodes.map((code: string) => ({
             user_id: userId,
             code: code,
@@ -339,7 +352,7 @@ export class AuthService extends EnhancedServiceBase {
         // Clear setup cache
         await this.cache.delete(`mfa_setup_${userId}`);
 
-        await this.audit.logOperation('mfa_enabled', {
+        await this.audit.logOperation("mfa_enabled", {
           userId,
           timestamp: new Date(),
         });
@@ -356,18 +369,25 @@ export class AuthService extends EnhancedServiceBase {
   /**
    * Check user permissions for resource access
    */
-  async hasPermission(userId: string, resource: string, action: string): Promise<boolean> {
+  async hasPermission(
+    userId: string,
+    resource: string,
+    action: string,
+  ): Promise<boolean> {
     try {
       const cacheKey = `permissions_${userId}`;
       let userPermissions = await this.cache.get(cacheKey);
 
       if (!userPermissions) {
-        const { data: user } = await this.supabase.from('users').select('role, permissions').eq(
-          'id',
-          userId,
-        ).single();
+        const { data: user } = await this.supabase
+          .from("users")
+          .select("role, permissions")
+          .eq("id", userId)
+          .single();
 
-        if (!user) {return false;}
+        if (!user) {
+          return false;
+        }
 
         // Get role-based permissions
         const rolePerms = this.rolePermissions[user.role] || [];
@@ -379,8 +399,9 @@ export class AuthService extends EnhancedServiceBase {
         await this.cache.set(cacheKey, userPermissions, 300_000);
       }
 
-      return userPermissions.some((perm: Permission) =>
-        perm.resource === resource && perm.action === action
+      return userPermissions.some(
+        (perm: Permission) =>
+          perm.resource === resource && perm.action === action,
       );
     } catch {
       return false;
@@ -393,11 +414,11 @@ export class AuthService extends EnhancedServiceBase {
   async getUserSessions(userId: string): Promise<AuthSession[]> {
     try {
       const { data: sessions } = await this.supabase
-        .from('auth_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('last_activity', { ascending: false });
+        .from("auth_sessions")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("last_activity", { ascending: false });
 
       return sessions || [];
     } catch {
@@ -410,7 +431,10 @@ export class AuthService extends EnhancedServiceBase {
    */
   async revokeSession(sessionId: string): Promise<void> {
     try {
-      await this.supabase.from('auth_sessions').update({ is_active: false }).eq('id', sessionId);
+      await this.supabase
+        .from("auth_sessions")
+        .update({ is_active: false })
+        .eq("id", sessionId);
 
       await this.cache.delete(`session_${sessionId}`);
     } catch {
@@ -427,7 +451,9 @@ export class AuthService extends EnhancedServiceBase {
       permissions: this.rolePermissions[user.role] || [],
       sessionId,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + this.parseTimeToSeconds(this.config.jwtExpiresIn),
+      exp:
+        Math.floor(Date.now() / 1000) +
+        this.parseTimeToSeconds(this.config.jwtExpiresIn),
     };
 
     return jwt.sign(payload, this.config.jwtSecret);
@@ -437,16 +463,20 @@ export class AuthService extends EnhancedServiceBase {
     const payload = {
       userId,
       sessionId,
-      type: 'refresh',
+      type: "refresh",
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000)
-        + this.parseTimeToSeconds(this.config.refreshTokenExpiresIn),
+      exp:
+        Math.floor(Date.now() / 1000) +
+        this.parseTimeToSeconds(this.config.refreshTokenExpiresIn),
     };
 
     return jwt.sign(payload, this.config.jwtSecret);
   }
 
-  private async createSession(user: User, deviceInfo?: DeviceInfo): Promise<AuthSession> {
+  private async createSession(
+    user: User,
+    deviceInfo?: DeviceInfo,
+  ): Promise<AuthSession> {
     const session = {
       id: `session_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       user_id: user.id,
@@ -456,10 +486,14 @@ export class AuthService extends EnhancedServiceBase {
       is_active: true,
     };
 
-    await this.supabase.from('auth_sessions').insert(session);
+    await this.supabase.from("auth_sessions").insert(session);
 
     // Cache session for quick access
-    await this.cache.set(`session_${session.id}`, session, this.config.sessionTimeout);
+    await this.cache.set(
+      `session_${session.id}`,
+      session,
+      this.config.sessionTimeout,
+    );
 
     return {
       id: session.id,
@@ -481,10 +515,10 @@ export class AuthService extends EnhancedServiceBase {
 
       // Fallback to database
       const { data: session } = await this.supabase
-        .from('auth_sessions')
-        .select('*')
-        .eq('id', sessionId)
-        .eq('is_active', true)
+        .from("auth_sessions")
+        .select("*")
+        .eq("id", sessionId)
+        .eq("is_active", true)
         .single();
 
       if (session) {
@@ -510,11 +544,11 @@ export class AuthService extends EnhancedServiceBase {
 
   private async logSecurityEvent(event: SecurityEvent): Promise<void> {
     try {
-      await this.supabase.from('security_events').insert(event);
+      await this.supabase.from("security_events").insert(event);
 
       // High-risk events need immediate audit
       if (event.riskScore >= 7) {
-        await this.audit.logOperation('high_risk_security_event', event);
+        await this.audit.logOperation("high_risk_security_event", event);
       }
     } catch {
       // Continue execution even if logging fails
@@ -550,7 +584,9 @@ export class AuthService extends EnhancedServiceBase {
     };
 
     const match = timeString.match(/^(\d+)([smhd])$/);
-    if (!match) {return 3600;} // default 1 hour
+    if (!match) {
+      return 3600;
+    } // default 1 hour
 
     const [, value, unit] = match;
     return Number.parseInt(value, 10) * units[unit];
@@ -558,46 +594,46 @@ export class AuthService extends EnhancedServiceBase {
 
   private initializeRolePermissions(): RolePermissions {
     return {
-      admin: [{ resource: '*', action: '*' }],
+      admin: [{ resource: "*", action: "*" }],
       manager: [
-        { resource: 'patients', action: 'read' },
-        { resource: 'patients', action: 'write' },
-        { resource: 'appointments', action: '*' },
-        { resource: 'reports', action: '*' },
-        { resource: 'staff', action: 'read' },
+        { resource: "patients", action: "read" },
+        { resource: "patients", action: "write" },
+        { resource: "appointments", action: "*" },
+        { resource: "reports", action: "*" },
+        { resource: "staff", action: "read" },
       ],
       doctor: [
-        { resource: 'patients', action: 'read' },
-        { resource: 'patients', action: 'write' },
-        { resource: 'appointments', action: 'read' },
-        { resource: 'appointments', action: 'write' },
-        { resource: 'medical_records', action: '*' },
-        { resource: 'prescriptions', action: '*' },
+        { resource: "patients", action: "read" },
+        { resource: "patients", action: "write" },
+        { resource: "appointments", action: "read" },
+        { resource: "appointments", action: "write" },
+        { resource: "medical_records", action: "*" },
+        { resource: "prescriptions", action: "*" },
       ],
       nurse: [
-        { resource: 'patients', action: 'read' },
-        { resource: 'appointments', action: 'read' },
-        { resource: 'medical_records', action: 'read' },
-        { resource: 'vital_signs', action: '*' },
+        { resource: "patients", action: "read" },
+        { resource: "appointments", action: "read" },
+        { resource: "medical_records", action: "read" },
+        { resource: "vital_signs", action: "*" },
       ],
       receptionist: [
-        { resource: 'patients', action: 'read' },
-        { resource: 'appointments', action: '*' },
-        { resource: 'scheduling', action: '*' },
+        { resource: "patients", action: "read" },
+        { resource: "appointments", action: "*" },
+        { resource: "scheduling", action: "*" },
       ],
       patient: [
-        { resource: 'own_data', action: 'read' },
-        { resource: 'own_appointments', action: 'read' },
-        { resource: 'own_medical_records', action: 'read' },
+        { resource: "own_data", action: "read" },
+        { resource: "own_appointments", action: "read" },
+        { resource: "own_medical_records", action: "read" },
       ],
       auditor: [
-        { resource: 'audit_logs', action: 'read' },
-        { resource: 'compliance_reports', action: 'read' },
-        { resource: 'security_events', action: 'read' },
+        { resource: "audit_logs", action: "read" },
+        { resource: "compliance_reports", action: "read" },
+        { resource: "security_events", action: "read" },
       ],
       system: [
-        { resource: '*', action: 'read' },
-        { resource: 'system_operations', action: '*' },
+        { resource: "*", action: "read" },
+        { resource: "system_operations", action: "*" },
       ],
     };
   }

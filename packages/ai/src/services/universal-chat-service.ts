@@ -1,6 +1,11 @@
-import { EnhancedServiceBase } from '@neonpro/core-services';
-import { createClient } from '@supabase/supabase-js';
-import type { ChatMessage, ChatSession, ComplianceMetrics, HealthcareChatContext } from '../types';
+import { EnhancedServiceBase } from "@neonpro/core-services";
+import { createClient } from "@supabase/supabase-js";
+import type {
+  ChatMessage,
+  ChatSession,
+  ComplianceMetrics,
+  HealthcareChatContext,
+} from "../types";
 
 interface ChatServiceInput {
   message: string;
@@ -8,7 +13,7 @@ interface ChatServiceInput {
   userId: string;
   clinicId: string;
   context?: HealthcareChatContext;
-  language?: 'pt-BR' | 'en';
+  language?: "pt-BR" | "en";
 }
 
 interface ChatServiceOutput {
@@ -22,16 +27,16 @@ interface ChatServiceOutput {
 }
 
 export class UniversalChatService extends EnhancedServiceBase {
-  protected serviceId = 'universal-chat';
-  protected version = '1.0.0';
+  protected serviceId = "universal-chat";
+  protected version = "1.0.0";
   protected description =
-    'AI-powered universal chat system for healthcare with Portuguese optimization';
+    "AI-powered universal chat system for healthcare with Portuguese optimization";
   private readonly supabase: ReturnType<typeof createClient>;
 
   constructor() {
     super({
-      serviceName: 'universal-chat',
-      version: '1.0.0',
+      serviceName: "universal-chat",
+      version: "1.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -40,7 +45,7 @@ export class UniversalChatService extends EnhancedServiceBase {
         maxItems: 1000,
       },
       securityOptions: {
-        auditLevel: 'healthcare',
+        auditLevel: "healthcare",
         encryptSensitiveData: true,
       },
     });
@@ -69,7 +74,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 
       // Execute using base class patterns
       return await this.executeOperation(
-        'chat-completion',
+        "chat-completion",
         async () => {
           return await this.processChat(input);
         },
@@ -100,7 +105,7 @@ export class UniversalChatService extends EnhancedServiceBase {
     const prompt = await this.buildHealthcarePrompt(input, session);
 
     // Call OpenAI API with healthcare specialization
-    const aiResponse = await this.callOpenAI(prompt, input.language || 'pt-BR');
+    const aiResponse = await this.callOpenAI(prompt, input.language || "pt-BR");
 
     // Process response for healthcare compliance
     const processedResponse = await this.processHealthcareResponse(
@@ -125,24 +130,25 @@ export class UniversalChatService extends EnhancedServiceBase {
       sessionId: input.sessionId,
       context: input.context,
     };
-    return `chat:${Buffer.from(JSON.stringify(keyData)).toString('base64').slice(0, 32)}`;
+    return `chat:${Buffer.from(JSON.stringify(keyData)).toString("base64").slice(0, 32)}`;
   }
 
   private async validateInput(input: ChatServiceInput): Promise<void> {
     if (!input.message?.trim()) {
-      throw new Error('CHAT_EMPTY_MESSAGE: Message cannot be empty');
+      throw new Error("CHAT_EMPTY_MESSAGE: Message cannot be empty");
     }
 
     if (input.message.length > 4000) {
-      throw new Error('CHAT_MESSAGE_TOO_LONG: Message exceeds maximum length');
+      throw new Error("CHAT_MESSAGE_TOO_LONG: Message exceeds maximum length");
     }
 
     if (!(input.userId && input.clinicId)) {
-      throw new Error('CHAT_MISSING_CONTEXT: User and clinic IDs are required');
+      throw new Error("CHAT_MISSING_CONTEXT: User and clinic IDs are required");
     }
 
     // Healthcare-specific validation
-    if (await this.containsSensitiveData(input.message)) {}
+    if (await this.containsSensitiveData(input.message)) {
+    }
   }
 
   private async loadChatSession(
@@ -152,12 +158,12 @@ export class UniversalChatService extends EnhancedServiceBase {
     try {
       // Try to load existing session
       const { data: sessionData, error: sessionError } = await this.supabase
-        .from('ai_chat_sessions')
-        .select('*')
-        .eq('id', sessionId)
+        .from("ai_chat_sessions")
+        .select("*")
+        .eq("id", sessionId)
         .single();
 
-      if (sessionError && sessionError.code !== 'PGRST116') {
+      if (sessionError && sessionError.code !== "PGRST116") {
         // PGRST116 = not found
         throw sessionError;
       }
@@ -165,10 +171,10 @@ export class UniversalChatService extends EnhancedServiceBase {
       // If session exists, load its messages
       if (sessionData) {
         const { data: messagesData, error: messagesError } = await this.supabase
-          .from('ai_chat_messages')
-          .select('*')
-          .eq('session_id', sessionId)
-          .order('created_at', { ascending: true });
+          .from("ai_chat_messages")
+          .select("*")
+          .eq("session_id", sessionId)
+          .order("created_at", { ascending: true });
 
         if (messagesError) {
           throw messagesError;
@@ -176,7 +182,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 
         const messages: ChatMessage[] = messagesData.map((msg) => ({
           id: msg.id,
-          role: msg.role as 'user' | 'assistant' | 'system',
+          role: msg.role as "user" | "assistant" | "system",
           content: msg.content,
           timestamp: new Date(msg.created_at),
           confidence: msg.confidence_score || undefined,
@@ -188,7 +194,7 @@ export class UniversalChatService extends EnhancedServiceBase {
         return {
           id: sessionData.id,
           userId: sessionData.user_id || userId,
-          status: sessionData.status === 'active' ? 'active' : 'archived',
+          status: sessionData.status === "active" ? "active" : "archived",
           startedAt: new Date(sessionData.created_at),
           messageCount: messages.length,
           messages,
@@ -197,15 +203,15 @@ export class UniversalChatService extends EnhancedServiceBase {
 
       // Create new session if not found
       const { data: newSession, error: createError } = await this.supabase
-        .from('ai_chat_sessions')
+        .from("ai_chat_sessions")
         .insert({
           id: sessionId,
           user_id: userId,
-          session_type: 'universal_chat',
-          title: `Chat - ${new Date().toLocaleString('pt-BR')}`,
-          status: 'active',
+          session_type: "universal_chat",
+          title: `Chat - ${new Date().toLocaleString("pt-BR")}`,
+          status: "active",
           context: {},
-          metadata: { interface: 'external' },
+          metadata: { interface: "external" },
         })
         .select()
         .single();
@@ -217,7 +223,7 @@ export class UniversalChatService extends EnhancedServiceBase {
       return {
         id: newSession.id,
         userId,
-        status: 'active',
+        status: "active",
         startedAt: new Date(newSession.created_at),
         messageCount: 0,
         messages: [],
@@ -228,7 +234,7 @@ export class UniversalChatService extends EnhancedServiceBase {
         id: sessionId,
         userId,
         startedAt: new Date(),
-        status: 'active',
+        status: "active",
         messageCount: 0,
         messages: [],
       };
@@ -263,22 +269,22 @@ export class UniversalChatService extends EnhancedServiceBase {
     - NÃO acesse dados médicos confidenciais sem autorização
     
     HISTÓRICO DA CONVERSA:
-    ${session.messages.map((m) => `${m.role}: ${m.content}`).join('\n')}
+    ${session.messages.map((m) => `${m.role}: ${m.content}`).join("\n")}
     `;
 
     return `${systemPrompt}\n\nPaciente: ${input.message}`;
   }
 
   private async callOpenAI(prompt: string, _language: string): Promise<string> {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
-        messages: [{ role: 'system', content: prompt }],
+        model: "gpt-4-turbo-preview",
+        messages: [{ role: "system", content: prompt }],
         temperature: 0.7,
         max_tokens: 1000,
         presence_penalty: 0.1,
@@ -339,29 +345,29 @@ export class UniversalChatService extends EnhancedServiceBase {
       lgpdCompliant: true,
       anvisaCompliant: true,
       cfmCompliant: true,
-      riskLevel: 'low',
+      riskLevel: "low",
       warnings: [],
     };
 
     // Check for medical diagnosis language
     if (/\b(diagnóstico|doença|patologia)\b/i.test(response)) {
       flags.cfmCompliant = false;
-      flags.riskLevel = 'high';
-      flags.warnings.push('Potential medical diagnosis detected');
+      flags.riskLevel = "high";
+      flags.warnings.push("Potential medical diagnosis detected");
     }
 
     // Check for medication recommendations
     if (/\b(medicamento|remédio|prescrição|dose)\b/i.test(response)) {
       flags.cfmCompliant = false;
-      flags.riskLevel = 'high';
-      flags.warnings.push('Medication recommendation detected');
+      flags.riskLevel = "high";
+      flags.warnings.push("Medication recommendation detected");
     }
 
     // Check for personal data exposure
     if (/\b(CPF|RG|cartão|telefone|endereço)\b/i.test(response)) {
       flags.lgpdCompliant = false;
-      flags.riskLevel = 'medium';
-      flags.warnings.push('Potential personal data exposure');
+      flags.riskLevel = "medium";
+      flags.warnings.push("Potential personal data exposure");
     }
 
     return flags;
@@ -374,10 +380,10 @@ export class UniversalChatService extends EnhancedServiceBase {
     try {
       // Save user message
       const { error: userError } = await this.supabase
-        .from('ai_chat_messages')
+        .from("ai_chat_messages")
         .insert({
           session_id: input.sessionId,
-          role: 'user',
+          role: "user",
           content: input.message,
           metadata: {
             userId: input.userId,
@@ -387,14 +393,15 @@ export class UniversalChatService extends EnhancedServiceBase {
           },
         });
 
-      if (userError) {}
+      if (userError) {
+      }
 
       // Save assistant response
       const { error: assistantError } = await this.supabase
-        .from('ai_chat_messages')
+        .from("ai_chat_messages")
         .insert({
           session_id: input.sessionId,
-          role: 'assistant',
+          role: "assistant",
           content: output.response,
           confidence_score: output.confidence,
           compliance_flags: output.complianceFlags || {},
@@ -406,18 +413,20 @@ export class UniversalChatService extends EnhancedServiceBase {
           },
         });
 
-      if (assistantError) {}
+      if (assistantError) {
+      }
 
       // Update session last_message_at
       const { error: sessionError } = await this.supabase
-        .from('ai_chat_sessions')
+        .from("ai_chat_sessions")
         .update({
           last_message_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
-        .eq('id', input.sessionId);
+        .eq("id", input.sessionId);
 
-      if (sessionError) {}
+      if (sessionError) {
+      }
     } catch {
       // Don't throw - we don't want to break the chat flow due to save errors
     }
@@ -430,7 +439,7 @@ export class UniversalChatService extends EnhancedServiceBase {
   ): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('ai_chat_sessions')
+        .from("ai_chat_sessions")
         .update({
           last_message_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -440,9 +449,10 @@ export class UniversalChatService extends EnhancedServiceBase {
             lastActivity: new Date().toISOString(),
           },
         })
-        .eq('id', session.id);
+        .eq("id", session.id);
 
-      if (error) {}
+      if (error) {
+      }
     } catch {}
   }
 
@@ -467,10 +477,10 @@ export class UniversalChatService extends EnhancedServiceBase {
     if (response.length > 50) {
       confidence += 0.1;
     }
-    if (response.includes('consulta presencial')) {
+    if (response.includes("consulta presencial")) {
       confidence += 0.1; // Appropriate medical guidance
     }
-    if (response.includes('não posso diagnosticar')) {
+    if (response.includes("não posso diagnosticar")) {
       confidence += 0.1; // Proper boundaries
     }
 
@@ -482,20 +492,20 @@ export class UniversalChatService extends EnhancedServiceBase {
     input: ChatServiceInput,
   ): Promise<boolean> {
     const escalationKeywords = [
-      'emergência',
-      'urgente',
-      'dor intensa',
-      'sangramento',
-      'falta de ar',
-      'desmaio',
-      'convulsão',
-      'alergia grave',
+      "emergência",
+      "urgente",
+      "dor intensa",
+      "sangramento",
+      "falta de ar",
+      "desmaio",
+      "convulsão",
+      "alergia grave",
     ];
 
     return escalationKeywords.some(
       (keyword) =>
-        input.message.toLowerCase().includes(keyword)
-        || response.toLowerCase().includes(keyword),
+        input.message.toLowerCase().includes(keyword) ||
+        response.toLowerCase().includes(keyword),
     );
   }
 
@@ -505,19 +515,19 @@ export class UniversalChatService extends EnhancedServiceBase {
   ): Promise<string[]> {
     const actions: string[] = [];
 
-    if (response.includes('agendar')) {
-      actions.push('schedule_appointment');
+    if (response.includes("agendar")) {
+      actions.push("schedule_appointment");
     }
 
-    if (response.includes('consulta presencial')) {
-      actions.push('book_consultation');
+    if (response.includes("consulta presencial")) {
+      actions.push("book_consultation");
     }
 
     if (await this.detectEscalationNeed(response, input)) {
-      actions.push('escalate_to_professional');
+      actions.push("escalate_to_professional");
     }
 
-    actions.push('continue_conversation');
+    actions.push("continue_conversation");
 
     return actions;
   }

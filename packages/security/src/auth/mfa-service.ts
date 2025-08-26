@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Constants for magic numbers
 const HOTP_OFFSET_BYTES = 3;
@@ -21,10 +21,10 @@ const BACKUP_CODE_REGEX = /^[A-Z0-9]{4}-[A-Z0-9]{4}$/;
  * MFA method types supported by the system
  */
 export const MfaMethod = {
-  TOTP: 'totp',
-  SMS: 'sms',
-  EMAIL: 'email',
-  BACKUP_CODES: 'backup_codes',
+  TOTP: "totp",
+  SMS: "sms",
+  EMAIL: "email",
+  BACKUP_CODES: "backup_codes",
 } as const;
 
 export type MfaMethod = (typeof MfaMethod)[keyof typeof MfaMethod];
@@ -33,11 +33,11 @@ export type MfaMethod = (typeof MfaMethod)[keyof typeof MfaMethod];
  * MFA setup request schema
  */
 export const mfaSetupSchema = z.object({
-  userId: z.string().uuid('User ID deve ser um UUID válido'),
+  userId: z.string().uuid("User ID deve ser um UUID válido"),
   method: z.enum(
     [MfaMethod.TOTP, MfaMethod.SMS, MfaMethod.EMAIL, MfaMethod.BACKUP_CODES],
     {
-      errorMap: () => ({ message: 'Método MFA inválido' }),
+      errorMap: () => ({ message: "Método MFA inválido" }),
     },
   ),
   phoneNumber: z
@@ -59,11 +59,11 @@ const COUNTER_BUFFER_SIZE = 8;
 const HIGH_BITS_DIVISOR = 0x1_00_00_00_00;
 const BUFFER_OFFSET_HIGH_BITS = 4;
 // Bitwise operation constants for HOTP algorithm (RFC 4226)
-const BYTE_MASK = 0xFF; // 255 - masks lower 8 bits
-const HOTP_MASK = 0x7F; // 127 - masks lower 7 bits for sign bit removal
+const BYTE_MASK = 0xff; // 255 - masks lower 8 bits
+const HOTP_MASK = 0x7f; // 127 - masks lower 7 bits for sign bit removal
 
 export const mfaVerificationSchema = z.object({
-  userId: z.string().uuid('User ID deve ser um UUID válido'),
+  userId: z.string().uuid("User ID deve ser um UUID válido"),
   method: z.enum([
     MfaMethod.TOTP,
     MfaMethod.SMS,
@@ -74,8 +74,8 @@ export const mfaVerificationSchema = z.object({
     .string()
     .min(MIN_CODE_LENGTH)
     .max(MAX_CODE_LENGTH)
-    .regex(/^\d+$/, 'Código deve conter apenas dígitos'),
-  sessionId: z.string().uuid('Session ID deve ser um UUID válido'),
+    .regex(/^\d+$/, "Código deve conter apenas dígitos"),
+  sessionId: z.string().uuid("Session ID deve ser um UUID válido"),
 });
 
 /**
@@ -111,7 +111,7 @@ export interface MfaVerificationResult {
 /**
  * TOTP configuration constants
  */
-const TOTP_ALGORITHM = 'SHA1';
+const TOTP_ALGORITHM = "SHA1";
 const TOTP_DIGITS = 6;
 const TOTP_PERIOD = 30; // seconds
 const TOTP_WINDOW = 1; // Allow 1 time step tolerance
@@ -121,8 +121,8 @@ const TOTP_WINDOW = 1; // Allow 1 time step tolerance
  * Implements RFC 6238 standard for authenticator apps
  */
 export function generateTotpSecret(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-  let secret = '';
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let secret = "";
   for (let i = 0; i < TOTP_SECRET_LENGTH; i++) {
     secret += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -135,7 +135,7 @@ export function generateTotpSecret(): string {
 export function generateTotpQrCodeUrl(
   secret: string,
   accountName: string,
-  issuer = 'NeonPro Healthcare',
+  issuer = "NeonPro Healthcare",
 ): string {
   const params = new URLSearchParams({
     secret,
@@ -145,11 +145,9 @@ export function generateTotpQrCodeUrl(
     period: TOTP_PERIOD.toString(),
   });
 
-  return `otpauth://totp/${encodeURIComponent(issuer)}:${
-    encodeURIComponent(
-      accountName,
-    )
-  }?${params}`;
+  return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(
+    accountName,
+  )}?${params}`;
 }
 
 /**
@@ -196,30 +194,31 @@ function generateHotp(secret: string, counter: number): string {
   const counterBuffer = Buffer.alloc(COUNTER_BUFFER_SIZE);
   counterBuffer.writeUInt32BE(Math.floor(counter / HIGH_BITS_DIVISOR), 0);
   // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise mask required for 32-bit integer extraction in HOTP
-  counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
+  counterBuffer.writeUInt32BE(counter & 0xff_ff_ff_ff, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
-  const crypto = require('node:crypto');
-  const hmac = crypto.createHmac('sha1', key);
+  const crypto = require("node:crypto");
+  const hmac = crypto.createHmac("sha1", key);
   hmac.update(counterBuffer);
   const digest = hmac.digest();
 
   // Dynamic truncation
   // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise operations are required for HOTP cryptographic algorithm
-  const offset = digest.at(-1) & 0x0F;
+  const offset = digest.at(-1) & 0x0f;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
   // biome-ignore lint/suspicious/noBitwiseOperators: HOTP algorithm requires bitwise operations
-  const code = ((digest[offset] & HOTP_MASK) << 24)
-    | ((digest[offset + 1] & BYTE_MASK) << 16)
-    | ((digest[offset + 2] & BYTE_MASK) << 8)
-    | (digest[offset + 3] & BYTE_MASK);
+  const code =
+    ((digest[offset] & HOTP_MASK) << 24) |
+    ((digest[offset + 1] & BYTE_MASK) << 16) |
+    ((digest[offset + 2] & BYTE_MASK) << 8) |
+    (digest[offset + 3] & BYTE_MASK);
   digest[offset + HOTP_OFFSET_BYTES] & BYTE_MASK;
 
-  return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, '0');
+  return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, "0");
 }
 
 // Base32 decoding constants
-const BASE32_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+const BASE32_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 const BASE32_PADDING_REGEX = /=+$/;
 const BASE32_BITS_PER_CHAR = 5;
 const BYTE_SIZE = 8;
@@ -228,7 +227,7 @@ const BYTE_SIZE = 8;
  * Decode Base32 string to buffer
  */
 function base32Decode(encoded: string): Buffer {
-  const cleanEncoded = encoded.toUpperCase().replace(BASE32_PADDING_REGEX, '');
+  const cleanEncoded = encoded.toUpperCase().replace(BASE32_PADDING_REGEX, "");
 
   let bits = 0;
   let value = 0;
@@ -236,7 +235,8 @@ function base32Decode(encoded: string): Buffer {
 
   for (let i = 0; i < cleanEncoded.length; i++) {
     // biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
-    value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
+    value =
+      (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
     bits += BASE32_BITS_PER_CHAR;
 
     if (bits >= BYTE_SIZE) {
@@ -260,7 +260,7 @@ const SMS_CODE_LENGTH = 6;
 export function generateSmsCode(): string {
   return Math.floor(Math.random() * 10 ** SMS_CODE_LENGTH)
     .toString()
-    .padStart(SMS_CODE_LENGTH, '0');
+    .padStart(SMS_CODE_LENGTH, "0");
 }
 
 /**
@@ -313,12 +313,12 @@ export function generateBackupCodes(): string[] {
  * Generate single backup code
  */
 function generateSingleCode(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
 
   for (let i = 0; i < CODE_LENGTH; i++) {
     if (i === BACKUP_CODE_SEPARATOR_POSITION) {
-      code += '-'; // Add separator for readability
+      code += "-"; // Add separator for readability
     }
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -372,7 +372,7 @@ export async function setupMfa(
           success: true,
           secret,
           qrCode,
-          message: 'Configure seu app autenticador com o QR code',
+          message: "Configure seu app autenticador com o QR code",
         };
       }
 
@@ -380,7 +380,7 @@ export async function setupMfa(
         if (!(phoneNumber && validatePhoneNumber(phoneNumber))) {
           return {
             success: false,
-            message: 'Número de telefone válido é obrigatório para SMS MFA',
+            message: "Número de telefone válido é obrigatório para SMS MFA",
           };
         }
 
@@ -390,12 +390,12 @@ export async function setupMfa(
         if (!smsSent) {
           return {
             success: false,
-            message: 'Falha ao enviar código SMS',
+            message: "Falha ao enviar código SMS",
           };
         }
 
         // Store the code and phone number
-        await storeVerificationCode(userId, smsCode, 'sms', phoneNumber);
+        await storeVerificationCode(userId, smsCode, "sms", phoneNumber);
 
         const settings = await mfaDb.getMfaSettings(userId);
         await mfaDb.upsertMfaSettings({
@@ -407,7 +407,7 @@ export async function setupMfa(
 
         return {
           success: true,
-          message: 'Código enviado via SMS',
+          message: "Código enviado via SMS",
         };
       }
 
@@ -415,7 +415,7 @@ export async function setupMfa(
         if (!(email && z.string().email().safeParse(email).success)) {
           return {
             success: false,
-            message: 'Email válido é obrigatório para Email MFA',
+            message: "Email válido é obrigatório para Email MFA",
           };
         }
 
@@ -426,7 +426,7 @@ export async function setupMfa(
         await storeVerificationCode(
           userId,
           emailCode,
-          'email',
+          "email",
           undefined,
           email,
         );
@@ -441,7 +441,7 @@ export async function setupMfa(
 
         return {
           success: true,
-          message: 'Código enviado via email',
+          message: "Código enviado via email",
         };
       }
 
@@ -459,21 +459,21 @@ export async function setupMfa(
         return {
           success: true,
           backupCodes,
-          message: 'Códigos de backup gerados. Armazene em local seguro.',
+          message: "Códigos de backup gerados. Armazene em local seguro.",
         };
       }
 
       default: {
         return {
           success: false,
-          message: 'Método MFA não suportado',
+          message: "Método MFA não suportado",
         };
       }
     }
   } catch {
     return {
       success: false,
-      message: 'Erro interno ao configurar MFA',
+      message: "Erro interno ao configurar MFA",
     };
   }
 }
@@ -494,7 +494,8 @@ export async function verifyMfa(
         success: false,
         method,
         lockoutUntil: lockoutResult.lockoutUntil,
-        message: 'Conta temporariamente bloqueada devido a tentativas excessivas',
+        message:
+          "Conta temporariamente bloqueada devido a tentativas excessivas",
       };
     }
 
@@ -516,7 +517,7 @@ export async function verifyMfa(
 
       case MfaMethod.EMAIL: {
         verified = await mfaDb
-          .verifyCode(userId, code, 'email')
+          .verifyCode(userId, code, "email")
           .then((r) => r.valid);
         break;
       }
@@ -527,8 +528,8 @@ export async function verifyMfa(
       }
 
       default: {
-        await recordFailedMfa(userId, method, 'Invalid MFA method');
-        return { success: false, method, message: 'Método MFA inválido' };
+        await recordFailedMfa(userId, method, "Invalid MFA method");
+        return { success: false, method, message: "Método MFA inválido" };
       }
     }
 
@@ -537,11 +538,11 @@ export async function verifyMfa(
       return {
         success: true,
         method,
-        message: 'MFA verificado com sucesso',
+        message: "MFA verificado com sucesso",
       };
     }
 
-    await recordFailedMfa(userId, method, 'Invalid verification code');
+    await recordFailedMfa(userId, method, "Invalid verification code");
 
     // Check lockout status after failed attempt
     const newLockoutStatus = await checkLockout(userId);
@@ -551,30 +552,31 @@ export async function verifyMfa(
         method,
         remainingAttempts: 0,
         lockoutUntil: newLockoutStatus.lockoutUntil,
-        message: 'Muitas tentativas incorretas. Conta bloqueada temporariamente.',
+        message:
+          "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
       };
     }
 
     return {
       success: false,
       method,
-      message: 'Código de verificação inválido',
+      message: "Código de verificação inválido",
     };
   } catch {
     await recordFailedMfa(
       request.userId,
       request.method,
-      'Internal verification error',
+      "Internal verification error",
     );
     return {
       success: false,
       method: request.method,
-      message: 'Erro interno na verificação MFA',
+      message: "Erro interno na verificação MFA",
     };
   }
 }
 
-import { MfaDatabaseService } from './mfa-database-service';
+import { MfaDatabaseService } from "./mfa-database-service";
 
 // Global database service instance
 const mfaDb = new MfaDatabaseService();
@@ -603,9 +605,9 @@ async function checkLockout(userId: string): Promise<{
 async function getUserTotpSecret(userId: string): Promise<string | null> {
   try {
     const settings = await mfaDb.getMfaSettings(userId);
-    return settings?.totpSecret || undefined;
+    return settings?.totpSecret || null;
   } catch {
-    return;
+    return null;
   }
 }
 
@@ -617,7 +619,7 @@ async function verifySmsCodeForUser(
   code: string,
 ): Promise<boolean> {
   try {
-    const result = await mfaDb.verifyCode(userId, code, 'sms');
+    const result = await mfaDb.verifyCode(userId, code, "sms");
     return result.valid;
   } catch {
     return false;
@@ -632,7 +634,7 @@ async function verifyBackupCodeForUser(
   code: string,
 ): Promise<boolean> {
   try {
-    const result = await mfaDb.verifyCode(userId, code, 'recovery');
+    const result = await mfaDb.verifyCode(userId, code, "recovery");
     return result.valid;
   } catch {
     return false;
@@ -645,7 +647,7 @@ async function verifyBackupCodeForUser(
 async function storeVerificationCode(
   userId: string,
   code: string,
-  type: 'sms' | 'email',
+  type: "sms" | "email",
   phoneNumber?: string,
   email?: string,
 ): Promise<void> {
@@ -675,7 +677,7 @@ async function recordSuccessfulMfa(
   try {
     await mfaDb.logAuditEvent({
       userId,
-      eventType: 'mfa_verification_success',
+      eventType: "mfa_verification_success",
       eventDescription: `Successful MFA verification using ${method}`,
       success: true,
       metadata: { method },
@@ -719,7 +721,7 @@ async function recordFailedMfa(
   try {
     await mfaDb.logAuditEvent({
       userId,
-      eventType: 'mfa_verification_failure',
+      eventType: "mfa_verification_failure",
       eventDescription: `Failed MFA verification using ${method}`,
       success: false,
       errorMessage,

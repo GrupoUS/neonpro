@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useAuth } from "../../hooks/enhanced/use-auth";
 
 // Mock Next.js router
-vi.mock<typeof import('next/navigation')>("next/navigation", () => ({
+vi.mock<typeof import("next/navigation")>("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),

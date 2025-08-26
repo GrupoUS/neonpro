@@ -4,9 +4,9 @@
  * Migração do PatientService para usar o Enhanced Service Layer Pattern
  */
 
-import { EnhancedServiceBase } from '../base/EnhancedServiceBase';
-import type { ServiceConfig } from '../base/EnhancedServiceBase';
-import type { ServiceContext } from '../types';
+import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
+import type { ServiceConfig } from "../base/EnhancedServiceBase";
+import type { ServiceContext } from "../types";
 
 // Temporary type definitions for build - will be replaced with proper types
 interface PatientRepository {
@@ -51,9 +51,9 @@ interface PatientStats {
   averageAge: number;
 }
 enum PatientStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  BLOCKED = 'BLOCKED',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  BLOCKED = "BLOCKED",
 }
 
 // Simple date difference function
@@ -69,8 +69,8 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 
   constructor(repository: PatientRepository) {
     const config: ServiceConfig = {
-      serviceName: 'patient-service',
-      version: '2.0.0',
+      serviceName: "patient-service",
+      version: "2.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -91,11 +91,11 @@ export class EnhancedPatientService extends EnhancedServiceBase {
   }
 
   getServiceName(): string {
-    return 'enhanced-patient-service';
+    return "enhanced-patient-service";
   }
 
   getServiceVersion(): string {
-    return '2.0.0';
+    return "2.0.0";
   }
 
   /**
@@ -106,21 +106,21 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient> {
     return this.executeOperation(
-      'createPatient',
+      "createPatient",
       async () => {
         // Check if patient already exists
         const existingPatient = await this.repository.getPatientByEmail(
           data.email,
         );
         if (existingPatient) {
-          throw new Error('Patient with this email already exists');
+          throw new Error("Patient with this email already exists");
         }
 
         // Validate age (must be 18+ for aesthetic treatments)
         const age = differenceInYears(new Date(), data.dateOfBirth);
         if (age < 18) {
           throw new Error(
-            'Patient must be 18 years or older for aesthetic treatments',
+            "Patient must be 18 years or older for aesthetic treatments",
           );
         }
 
@@ -144,7 +144,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient | null> {
     return this.executeOperation(
-      'getPatient',
+      "getPatient",
       async () => {
         return this.repository.getPatient(id);
       },
@@ -167,11 +167,11 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient> {
     return this.executeOperation(
-      'updatePatient',
+      "updatePatient",
       async () => {
         const existingPatient = await this.repository.getPatient(id);
         if (!existingPatient) {
-          throw new Error('Patient not found');
+          throw new Error("Patient not found");
         }
 
         // If email is being updated, check for duplicates
@@ -180,7 +180,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
             data.email,
           );
           if (emailExists && emailExists.id !== id) {
-            throw new Error('Another patient with this email already exists');
+            throw new Error("Another patient with this email already exists");
           }
         }
 
@@ -208,10 +208,10 @@ export class EnhancedPatientService extends EnhancedServiceBase {
   ): Promise<Patient[]> {
     const cacheKey = filters
       ? `patients_filtered_${JSON.stringify(filters)}`
-      : 'patients_all';
+      : "patients_all";
 
     return this.executeOperation(
-      'getPatients',
+      "getPatients",
       async () => {
         return this.repository.getPatients(filters);
       },
@@ -234,11 +234,11 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     patientConsent = true,
   ): Promise<void> {
     return this.executeOperation(
-      'updateMedicalHistory',
+      "updateMedicalHistory",
       async () => {
         const patient = await this.repository.getPatient(patientId);
         if (!patient) {
-          throw new Error('Patient not found');
+          throw new Error("Patient not found");
         }
 
         await this.repository.updateMedicalHistory(patientId, history);
@@ -267,13 +267,13 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Patient[]> {
     return this.executeOperation(
-      'searchPatients',
+      "searchPatients",
       async () => {
         return this.repository.searchPatients(query);
       },
       context,
       {
-        cacheKey: `search_patients_${Buffer.from(query).toString('base64')}`,
+        cacheKey: `search_patients_${Buffer.from(query).toString("base64")}`,
         cacheTTL: 600_000, // 10 minutes
         requiresAuth: true,
       },
@@ -285,13 +285,13 @@ export class EnhancedPatientService extends EnhancedServiceBase {
    */
   async getPatientStats(context: ServiceContext): Promise<PatientStats> {
     return this.executeOperation(
-      'getPatientStats',
+      "getPatientStats",
       async () => {
         return this.repository.getPatientStats();
       },
       context,
       {
-        cacheKey: 'patient_stats',
+        cacheKey: "patient_stats",
         cacheTTL: 1_800_000, // 30 minutes
         requiresAuth: true,
       },
@@ -307,11 +307,11 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<void> {
     return this.executeOperation(
-      'addConsentForm',
+      "addConsentForm",
       async () => {
         const patient = await this.repository.getPatient(patientId);
         if (!patient) {
-          throw new Error('Patient not found');
+          throw new Error("Patient not found");
         }
 
         await this.repository.addConsentForm(patientId, form);
@@ -336,14 +336,14 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<boolean> {
     return this.executeOperation(
-      'hasValidConsent',
+      "hasValidConsent",
       async () => {
         const consentForms = await this.repository.getConsentForms(patientId);
         return consentForms.some(
           (form) =>
-            form.treatmentType === treatmentType
-            && form.isActive
-            && form.signedDate,
+            form.treatmentType === treatmentType &&
+            form.isActive &&
+            form.signedDate,
         );
       },
       context,
@@ -364,7 +364,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<number | null> {
     return this.executeOperation(
-      'getPatientAge',
+      "getPatientAge",
       async () => {
         const patient = await this.repository.getPatient(patientId);
         if (!patient) {
@@ -402,8 +402,8 @@ export class EnhancedPatientService extends EnhancedServiceBase {
       },
       dependencies: [
         {
-          name: 'patient-repository',
-          status: 'UP', // TODO: Implement real health check
+          name: "patient-repository",
+          status: "UP", // TODO: Implement real health check
           responseTime: 0,
         },
       ],

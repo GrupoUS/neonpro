@@ -246,7 +246,8 @@ export function DigitalSignature({
       setSignatureData(signature);
       setCurrentStep("validation");
       await validateSignature(signature);
-    } catch {} finally {
+    } catch {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -364,18 +365,18 @@ export function DigitalSignature({
                 className={`flex items-center gap-2 ${
                   currentStep === "certificate"
                     ? "text-blue-600"
-                    : (currentStep !== "certificate"
+                    : currentStep !== "certificate"
                       ? "text-green-600"
-                      : "text-gray-400")
+                      : "text-gray-400"
                 }`}
               >
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
                     currentStep === "certificate"
                       ? "border-blue-600 bg-blue-50"
-                      : (currentStep !== "certificate"
+                      : currentStep !== "certificate"
                         ? "border-green-600 bg-green-50"
-                        : "border-gray-300")
+                        : "border-gray-300"
                   }`}
                 >
                   {currentStep !== "certificate" ? (
@@ -399,19 +400,19 @@ export function DigitalSignature({
                 className={`flex items-center gap-2 ${
                   currentStep === "signature"
                     ? "text-blue-600"
-                    : (currentStep === "validation" || currentStep === "complete"
+                    : currentStep === "validation" || currentStep === "complete"
                       ? "text-green-600"
-                      : "text-gray-400")
+                      : "text-gray-400"
                 }`}
               >
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
                     currentStep === "signature"
                       ? "border-blue-600 bg-blue-50"
-                      : (currentStep === "validation" ||
+                      : currentStep === "validation" ||
                           currentStep === "complete"
                         ? "border-green-600 bg-green-50"
-                        : "border-gray-300")
+                        : "border-gray-300"
                   }`}
                 >
                   {currentStep === "validation" ||
@@ -434,18 +435,18 @@ export function DigitalSignature({
                 className={`flex items-center gap-2 ${
                   currentStep === "validation"
                     ? "text-blue-600"
-                    : (currentStep === "complete"
+                    : currentStep === "complete"
                       ? "text-green-600"
-                      : "text-gray-400")
+                      : "text-gray-400"
                 }`}
               >
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
                     currentStep === "validation"
                       ? "border-blue-600 bg-blue-50"
-                      : (currentStep === "complete"
+                      : currentStep === "complete"
                         ? "border-green-600 bg-green-50"
-                        : "border-gray-300")
+                        : "border-gray-300"
                   }`}
                 >
                   {currentStep === "complete" ? (

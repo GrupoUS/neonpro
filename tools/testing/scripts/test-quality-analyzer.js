@@ -1,5 +1,5 @@
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
 class TestQualityAnalyzer {
   constructor() {
@@ -16,10 +16,10 @@ class TestQualityAnalyzer {
   // Discover all test files
   discoverTestFiles() {
     const testPaths = [
-      'tests/integration/bank-reconciliation-api.test.ts',
-      'tests/security/security-audit.test.ts',
-      'tests/performance/load-testing.test.ts',
-      'playwright/tests/bank-reconciliation.spec.ts',
+      "tests/integration/bank-reconciliation-api.test.ts",
+      "tests/security/security-audit.test.ts",
+      "tests/performance/load-testing.test.ts",
+      "playwright/tests/bank-reconciliation.spec.ts",
     ];
 
     testPaths.forEach((testPath) => {
@@ -43,19 +43,19 @@ class TestQualityAnalyzer {
   }
 
   getTestType(filePath) {
-    if (filePath.includes('integration')) {
-      return 'INTEGRATION';
+    if (filePath.includes("integration")) {
+      return "INTEGRATION";
     }
-    if (filePath.includes('security')) {
-      return 'SECURITY';
+    if (filePath.includes("security")) {
+      return "SECURITY";
     }
-    if (filePath.includes('performance')) {
-      return 'PERFORMANCE';
+    if (filePath.includes("performance")) {
+      return "PERFORMANCE";
     }
-    if (filePath.includes('playwright')) {
-      return 'E2E';
+    if (filePath.includes("playwright")) {
+      return "E2E";
     }
-    return 'UNIT';
+    return "UNIT";
   }
 
   // Analyze test file content for structure and quality
@@ -64,8 +64,8 @@ class TestQualityAnalyzer {
       return;
     }
 
-    const content = fs.readFileSync(testFile.fullPath, 'utf8');
-    const lines = content.split('\n');
+    const content = fs.readFileSync(testFile.fullPath, "utf8");
+    const lines = content.split("\n");
 
     const analysis = {
       totalLines: lines.length,
@@ -75,31 +75,42 @@ class TestQualityAnalyzer {
       expectations: (content.match(/expect\(/g) || []).length,
 
       // Healthcare compliance patterns
-      lgpdCompliance: content.includes('lgpd') || content.includes('LGPD'),
-      anvisaCompliance: content.includes('anvisa') || content.includes('ANVISA'),
-      cfmCompliance: content.includes('cfm') || content.includes('CFM'),
-      auditTrail: content.includes('audit') || content.includes('Audit'),
+      lgpdCompliance: content.includes("lgpd") || content.includes("LGPD"),
+      anvisaCompliance:
+        content.includes("anvisa") || content.includes("ANVISA"),
+      cfmCompliance: content.includes("cfm") || content.includes("CFM"),
+      auditTrail: content.includes("audit") || content.includes("Audit"),
 
       // Security patterns
-      authenticationTests: content.includes('authentication') || content.includes('auth'),
-      authorizationTests: content.includes('authorization') || content.includes('rbac'),
-      encryptionTests: content.includes('encryption') || content.includes('encrypt'),
-      sqlInjectionTests: content.includes('injection') || content.includes('malicious'),
+      authenticationTests:
+        content.includes("authentication") || content.includes("auth"),
+      authorizationTests:
+        content.includes("authorization") || content.includes("rbac"),
+      encryptionTests:
+        content.includes("encryption") || content.includes("encrypt"),
+      sqlInjectionTests:
+        content.includes("injection") || content.includes("malicious"),
 
       // Performance patterns
-      performanceTests: content.includes('performance') || content.includes('load'),
-      concurrencyTests: content.includes('concurrent') || content.includes('parallel'),
-      timeoutValidation: content.includes('timeout') || content.includes('executionTime'),
+      performanceTests:
+        content.includes("performance") || content.includes("load"),
+      concurrencyTests:
+        content.includes("concurrent") || content.includes("parallel"),
+      timeoutValidation:
+        content.includes("timeout") || content.includes("executionTime"),
 
       // Quality patterns
       errorHandling: (content.match(/catch|error|Error/g) || []).length,
-      cleanup: content.includes('afterAll') || content.includes('cleanup'),
-      mockingPatterns: content.includes('mock') || content.includes('jest.fn'),
+      cleanup: content.includes("afterAll") || content.includes("cleanup"),
+      mockingPatterns: content.includes("mock") || content.includes("jest.fn"),
 
       // Healthcare-specific patterns
-      patientDataProtection: content.includes('patient') && content.includes('privacy'),
-      clinicIsolation: content.includes('clinic') && content.includes('isolation'),
-      medicalCompliance: content.includes('medical') || content.includes('healthcare'),
+      patientDataProtection:
+        content.includes("patient") && content.includes("privacy"),
+      clinicIsolation:
+        content.includes("clinic") && content.includes("isolation"),
+      medicalCompliance:
+        content.includes("medical") || content.includes("healthcare"),
     };
 
     return analysis;
@@ -113,16 +124,16 @@ class TestQualityAnalyzer {
       }
 
       try {
-        const content = fs.readFileSync(testFile.fullPath, 'utf8');
+        const content = fs.readFileSync(testFile.fullPath, "utf8");
 
         // Basic syntax checks
         const syntaxChecks = {
-          hasImports: content.includes('import'),
-          hasDescribe: content.includes('describe('),
-          hasTests: content.includes('it('),
-          hasExpects: content.includes('expect('),
-          hasValidComments: content.includes('/**') || content.includes('//'),
-          noSyntaxErrors: !content.includes('# '), // Check for remaining markdown
+          hasImports: content.includes("import"),
+          hasDescribe: content.includes("describe("),
+          hasTests: content.includes("it("),
+          hasExpects: content.includes("expect("),
+          hasValidComments: content.includes("/**") || content.includes("//"),
+          noSyntaxErrors: !content.includes("# "), // Check for remaining markdown
         };
 
         const passedChecks = Object.values(syntaxChecks).filter(Boolean).length;
@@ -131,7 +142,8 @@ class TestQualityAnalyzer {
 
         if (quality < 80) {
           Object.entries(syntaxChecks).forEach(([_check, passed]) => {
-            if (!passed) {}
+            if (!passed) {
+            }
           });
         }
 
@@ -235,15 +247,24 @@ class TestQualityAnalyzer {
       const maxScore = 9;
       const percentage = (complianceScore / maxScore) * 100;
 
-      if (analysis.lgpdCompliance) {}
-      if (analysis.anvisaCompliance) {}
-      if (analysis.cfmCompliance) {}
-      if (analysis.auditTrail) {}
-      if (analysis.authenticationTests) {}
-      if (analysis.authorizationTests) {}
-      if (analysis.encryptionTests) {}
-      if (analysis.patientDataProtection) {}
-      if (analysis.clinicIsolation) {}
+      if (analysis.lgpdCompliance) {
+      }
+      if (analysis.anvisaCompliance) {
+      }
+      if (analysis.cfmCompliance) {
+      }
+      if (analysis.auditTrail) {
+      }
+      if (analysis.authenticationTests) {
+      }
+      if (analysis.authorizationTests) {
+      }
+      if (analysis.encryptionTests) {
+      }
+      if (analysis.patientDataProtection) {
+      }
+      if (analysis.clinicIsolation) {
+      }
 
       complianceResults[testFile.type] = {
         score: complianceScore,
@@ -252,10 +273,11 @@ class TestQualityAnalyzer {
       };
     });
 
-    const avgCompliance = Object.values(complianceResults).reduce(
-      (sum, result) => sum + result.percentage,
-      0,
-    ) / Object.keys(complianceResults).length;
+    const avgCompliance =
+      Object.values(complianceResults).reduce(
+        (sum, result) => sum + result.percentage,
+        0,
+      ) / Object.keys(complianceResults).length;
 
     this.analysisResults.complianceValidation = {
       complianceResults,
@@ -266,22 +288,29 @@ class TestQualityAnalyzer {
   // Generate production readiness report
   generateProductionReadinessReport() {
     const metrics = {
-      testFilesComplete: this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
-      syntaxQuality: Object.values(this.analysisResults.syntaxValidation).reduce(
-        (sum, result) => sum + result.quality,
-        0,
-      ) / this.testFiles.filter((f) => f.exists).length,
+      testFilesComplete:
+        this.testFiles.filter((f) => f.exists).length / this.testFiles.length,
+      syntaxQuality:
+        Object.values(this.analysisResults.syntaxValidation).reduce(
+          (sum, result) => sum + result.quality,
+          0,
+        ) / this.testFiles.filter((f) => f.exists).length,
       complianceScore: this.analysisResults.complianceValidation.avgCompliance,
       totalTestCount: this.analysisResults.coverageAnalysis.totalTests,
-      totalExpectations: this.analysisResults.coverageAnalysis.totalExpectations,
+      totalExpectations:
+        this.analysisResults.coverageAnalysis.totalExpectations,
     };
 
-    const readinessScore = metrics.testFilesComplete * 25
-      + metrics.syntaxQuality * 0.25
-      + metrics.complianceScore * 0.3
-      + Math.min(100, metrics.totalTestCount * 2) * 0.2;
+    const readinessScore =
+      metrics.testFilesComplete * 25 +
+      metrics.syntaxQuality * 0.25 +
+      metrics.complianceScore * 0.3 +
+      Math.min(100, metrics.totalTestCount * 2) * 0.2;
 
-    if (readinessScore >= 85) {} else if (readinessScore >= 70) {} else {}
+    if (readinessScore >= 85) {
+    } else if (readinessScore >= 70) {
+    } else {
+    }
 
     this.analysisResults.productionReadiness = { metrics, readinessScore };
   }
@@ -302,15 +331,18 @@ class TestQualityAnalyzer {
       summary: {
         filesAnalyzed: this.testFiles.filter((f) => f.exists).length,
         totalTests: this.analysisResults.coverageAnalysis.totalTests,
-        totalExpectations: this.analysisResults.coverageAnalysis.totalExpectations,
-        complianceScore: this.analysisResults.complianceValidation.avgCompliance,
+        totalExpectations:
+          this.analysisResults.coverageAnalysis.totalExpectations,
+        complianceScore:
+          this.analysisResults.complianceValidation.avgCompliance,
         readinessScore: this.analysisResults.productionReadiness.readinessScore,
-        productionReady: this.analysisResults.productionReadiness.readinessScore >= 70,
+        productionReady:
+          this.analysisResults.productionReadiness.readinessScore >= 70,
       },
     };
 
     fs.writeFileSync(
-      'test-quality-analysis-report.json',
+      "test-quality-analysis-report.json",
       JSON.stringify(reportData, undefined, 2),
     );
 

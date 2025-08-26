@@ -722,7 +722,8 @@ export class RiskScoringEngine {
     }
 
     // Log warning if processing time exceeds target
-    if (processingTime > 100) {}
+    if (processingTime > 100) {
+    }
   }
 
   /**

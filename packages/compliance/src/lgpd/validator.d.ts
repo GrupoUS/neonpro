@@ -3,16 +3,16 @@
  * Constitutional compliance validation with privacy protection
  * Compliance: LGPD + Constitutional Privacy + ≥9.9/10 Standards
  */
-import type { Database } from '@neonpro/types';
-import { z } from 'zod';
+import type { Database } from "@neonpro/types";
+import { z } from "zod";
 export declare const LGPDValidationConfigSchema: z.ZodObject<
   {
     validation_type: z.ZodEnum<
       [
-        'data_processing',
-        'consent_management',
-        'data_transfer',
-        'breach_assessment',
+        "data_processing",
+        "consent_management",
+        "data_transfer",
+        "breach_assessment",
       ]
     >;
     strict_mode: z.ZodDefault<z.ZodBoolean>;
@@ -20,25 +20,25 @@ export declare const LGPDValidationConfigSchema: z.ZodObject<
     audit_trail: z.ZodDefault<z.ZodBoolean>;
     privacy_impact_assessment: z.ZodDefault<z.ZodBoolean>;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     audit_trail: boolean;
     constitutional_validation: boolean;
     validation_type:
-      | 'data_transfer'
-      | 'data_processing'
-      | 'consent_management'
-      | 'breach_assessment';
+      | "data_transfer"
+      | "data_processing"
+      | "consent_management"
+      | "breach_assessment";
     strict_mode: boolean;
     privacy_impact_assessment: boolean;
   },
   {
     validation_type:
-      | 'data_transfer'
-      | 'data_processing'
-      | 'consent_management'
-      | 'breach_assessment';
+      | "data_transfer"
+      | "data_processing"
+      | "consent_management"
+      | "breach_assessment";
     audit_trail?: boolean | undefined;
     constitutional_validation?: boolean | undefined;
     strict_mode?: boolean | undefined;
@@ -57,15 +57,15 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
         {
           category: z.ZodString;
           description: z.ZodString;
-          severity: z.ZodEnum<['low', 'medium', 'high', 'critical']>;
+          severity: z.ZodEnum<["low", "medium", "high", "critical"]>;
           article_reference: z.ZodString;
           constitutional_impact: z.ZodBoolean;
           remediation_required: z.ZodBoolean;
         },
-        'strip',
+        "strip",
         z.ZodTypeAny,
         {
-          severity: 'low' | 'medium' | 'high' | 'critical';
+          severity: "low" | "medium" | "high" | "critical";
           constitutional_impact: boolean;
           category: string;
           description: string;
@@ -73,7 +73,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
           remediation_required: boolean;
         },
         {
-          severity: 'low' | 'medium' | 'high' | 'critical';
+          severity: "low" | "medium" | "high" | "critical";
           constitutional_impact: boolean;
           category: string;
           description: string;
@@ -81,7 +81,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
           remediation_required: boolean;
         }
       >,
-      'many'
+      "many"
     >;
     constitutional_validation: z.ZodObject<
       {
@@ -91,7 +91,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
         transparency_maintained: z.ZodBoolean;
         legal_basis_valid: z.ZodBoolean;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         data_minimization_applied: boolean;
@@ -111,35 +111,35 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
     recommendations: z.ZodArray<
       z.ZodObject<
         {
-          priority: z.ZodEnum<['low', 'medium', 'high', 'critical']>;
+          priority: z.ZodEnum<["low", "medium", "high", "critical"]>;
           description: z.ZodString;
           implementation_timeline: z.ZodString;
           constitutional_requirement: z.ZodBoolean;
         },
-        'strip',
+        "strip",
         z.ZodTypeAny,
         {
           description: string;
-          priority: 'low' | 'medium' | 'high' | 'critical';
+          priority: "low" | "medium" | "high" | "critical";
           implementation_timeline: string;
           constitutional_requirement: boolean;
         },
         {
           description: string;
-          priority: 'low' | 'medium' | 'high' | 'critical';
+          priority: "low" | "medium" | "high" | "critical";
           implementation_timeline: string;
           constitutional_requirement: boolean;
         }
       >,
-      'many'
+      "many"
     >;
     audit_trail: z.ZodObject<
       {
         validated_by: z.ZodString;
-        validation_steps: z.ZodArray<z.ZodString, 'many'>;
+        validation_steps: z.ZodArray<z.ZodString, "many">;
         quality_score: z.ZodNumber;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         quality_score: number;
@@ -153,7 +153,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
       }
     >;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     audit_trail: {
@@ -165,7 +165,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
     valid: boolean;
     recommendations: {
       description: string;
-      priority: 'low' | 'medium' | 'high' | 'critical';
+      priority: "low" | "medium" | "high" | "critical";
       implementation_timeline: string;
       constitutional_requirement: boolean;
     }[];
@@ -177,7 +177,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
       legal_basis_valid: boolean;
     };
     violations: {
-      severity: 'low' | 'medium' | 'high' | 'critical';
+      severity: "low" | "medium" | "high" | "critical";
       constitutional_impact: boolean;
       category: string;
       description: string;
@@ -198,7 +198,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
     valid: boolean;
     recommendations: {
       description: string;
-      priority: 'low' | 'medium' | 'high' | 'critical';
+      priority: "low" | "medium" | "high" | "critical";
       implementation_timeline: string;
       constitutional_requirement: boolean;
     }[];
@@ -210,7 +210,7 @@ export declare const LGPDValidationResultSchema: z.ZodObject<
       legal_basis_valid: boolean;
     };
     violations: {
-      severity: 'low' | 'medium' | 'high' | 'critical';
+      severity: "low" | "medium" | "high" | "critical";
       constitutional_impact: boolean;
       category: string;
       description: string;

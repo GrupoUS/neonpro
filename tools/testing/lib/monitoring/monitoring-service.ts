@@ -12,7 +12,7 @@ export interface MetricData {
 
 export interface Alert {
   id: string;
-  type: 'error' | 'warning' | 'info' | 'critical';
+  type: "error" | "warning" | "info" | "critical";
   message: string;
   source: string;
   timestamp: number;
@@ -21,7 +21,7 @@ export interface Alert {
 }
 
 export interface SystemHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   uptime: number;
   memory: {
     used: number;
@@ -33,14 +33,14 @@ export interface SystemHealth {
     cores: number;
   };
   database: {
-    status: 'connected' | 'disconnected' | 'error';
+    status: "connected" | "disconnected" | "error";
     latency: number;
     connections: number;
   };
   services: Record<
     string,
     {
-      status: 'running' | 'stopped' | 'error';
+      status: "running" | "stopped" | "error";
       lastCheck: number;
       responseTime: number;
     }
@@ -131,7 +131,7 @@ class MonitoringService {
    * Create an alert
    */
   createAlert(
-    type: Alert['type'],
+    type: Alert["type"],
     message: string,
     source: string,
     metadata?: Record<string, any>,
@@ -149,7 +149,7 @@ class MonitoringService {
     this.alerts.push(alert);
 
     // Auto-resolve info alerts after 5 minutes
-    if (type === 'info') {
+    if (type === "info") {
       setTimeout(
         () => {
           this.resolveAlert(alert.id);
@@ -184,7 +184,8 @@ class MonitoringService {
    */
   getSystemHealth(): SystemHealth {
     // Simulate dynamic values
-    this.healthData.uptime = Date.now() - (this.healthData.uptime || Date.now());
+    this.healthData.uptime =
+      Date.now() - (this.healthData.uptime || Date.now());
     this.healthData.memory.percentage = Math.floor(Math.random() * 20) + 60; // 60-80%
     this.healthData.cpu.usage = Math.floor(Math.random() * 30) + 20; // 20-50%
     this.healthData.database.latency = Math.floor(Math.random() * 10) + 5; // 5-15ms
@@ -197,8 +198,10 @@ class MonitoringService {
    */
   getPerformanceMetrics(): PerformanceMetrics {
     // Simulate dynamic values
-    this.performanceData.responseTime.avg = Math.floor(Math.random() * 100) + 50;
-    this.performanceData.throughput.requestsPerSecond = Math.floor(Math.random() * 100) + 200;
+    this.performanceData.responseTime.avg =
+      Math.floor(Math.random() * 100) + 50;
+    this.performanceData.throughput.requestsPerSecond =
+      Math.floor(Math.random() * 100) + 200;
     this.performanceData.errorRate.percentage = Math.random() * 2; // 0-2%
 
     return { ...this.performanceData };
@@ -208,11 +211,11 @@ class MonitoringService {
 
   logError(error: Error, context?: Record<string, any>): void {
     this.recordMetric(
-      'errors',
+      "errors",
       1,
       {
         type: error.name,
-        source: context?.source || 'unknown',
+        source: context?.source || "unknown",
       },
       {
         message: error.message,
@@ -222,9 +225,9 @@ class MonitoringService {
     );
 
     this.createAlert(
-      'error',
+      "error",
       `${error.name}: ${error.message}`,
-      context?.source || 'system',
+      context?.source || "system",
       {
         error: error.message,
         context,
@@ -240,8 +243,8 @@ class MonitoringService {
     source: string,
     metadata?: Record<string, any>,
   ): void {
-    this.recordMetric('warnings', 1, { source }, metadata);
-    this.createAlert('warning', message, source, metadata);
+    this.recordMetric("warnings", 1, { source }, metadata);
+    this.createAlert("warning", message, source, metadata);
   }
 
   /**
@@ -252,8 +255,8 @@ class MonitoringService {
     source: string,
     metadata?: Record<string, any>,
   ): void {
-    this.recordMetric('info_events', 1, { source }, metadata);
-    this.createAlert('info', message, source, metadata);
+    this.recordMetric("info_events", 1, { source }, metadata);
+    this.createAlert("info", message, source, metadata);
   }
 
   /**
@@ -265,20 +268,20 @@ class MonitoringService {
     responseTime: number,
     statusCode: number,
   ): void {
-    this.recordMetric('api_response_time', responseTime, {
+    this.recordMetric("api_response_time", responseTime, {
       endpoint,
       method,
       status: statusCode.toString(),
     });
 
-    this.recordMetric('api_requests', 1, {
+    this.recordMetric("api_requests", 1, {
       endpoint,
       method,
       status: statusCode.toString(),
     });
 
     if (statusCode >= 400) {
-      this.recordMetric('api_errors', 1, {
+      this.recordMetric("api_errors", 1, {
         endpoint,
         method,
         status: statusCode.toString(),
@@ -305,7 +308,7 @@ class MonitoringService {
 
   private initializeMockData(): void {
     this.healthData = {
-      status: 'healthy',
+      status: "healthy",
       uptime: Date.now(),
       memory: {
         used: 1024 * 1024 * 512, // 512MB
@@ -317,28 +320,28 @@ class MonitoringService {
         cores: 8,
       },
       database: {
-        status: 'connected',
+        status: "connected",
         latency: 8,
         connections: 12,
       },
       services: {
-        'auth-service': {
-          status: 'running',
+        "auth-service": {
+          status: "running",
           lastCheck: Date.now(),
           responseTime: 45,
         },
-        'api-gateway': {
-          status: 'running',
+        "api-gateway": {
+          status: "running",
           lastCheck: Date.now(),
           responseTime: 23,
         },
-        'patient-service': {
-          status: 'running',
+        "patient-service": {
+          status: "running",
           lastCheck: Date.now(),
           responseTime: 67,
         },
-        'appointment-service': {
-          status: 'running',
+        "appointment-service": {
+          status: "running",
           lastCheck: Date.now(),
           responseTime: 34,
         },

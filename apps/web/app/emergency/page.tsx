@@ -306,9 +306,9 @@ const PatientCriticalInfo: React.FC<{
                   >
                     {contraindication.severity === "high"
                       ? "Alta"
-                      : (contraindication.severity === "moderate"
+                      : contraindication.severity === "moderate"
                         ? "Moderada"
-                        : "Baixa")}
+                        : "Baixa"}
                   </Badge>
                 </div>
               ))}
@@ -343,16 +343,16 @@ const PatientCriticalInfo: React.FC<{
                     variant={
                       condition.status === "active"
                         ? "destructive"
-                        : (condition.status === "controlled"
+                        : condition.status === "controlled"
                           ? "secondary"
-                          : "outline")
+                          : "outline"
                     }
                   >
                     {condition.status === "active"
                       ? "Ativa"
-                      : (condition.status === "controlled"
+                      : condition.status === "controlled"
                         ? "Controlada"
-                        : "Resolvida")}
+                        : "Resolvida"}
                   </Badge>
                   <div className="mt-1 text-green-600 text-xs">
                     Atualização: {condition.lastUpdate}

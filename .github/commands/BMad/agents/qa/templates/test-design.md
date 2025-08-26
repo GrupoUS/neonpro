@@ -75,7 +75,7 @@
 ```
 {List regulatory workflows requiring validation}
 - LGPD Workflow: {Specific test requirements}
-- ANVISA Workflow: {Specific test requirements}  
+- ANVISA Workflow: {Specific test requirements}
 - CFM Workflow: {Specific test requirements}
 ```
 
@@ -179,7 +179,7 @@ Real-time Update Latency: <100ms (current average: {A}ms)
    - Patient data integrity validation
    - Appointment system functionality
    - Compliance reporting verification
-   
+
 2. Performance Baseline Maintenance
    - Dashboard <2s load time
    - Real-time update <100ms latency

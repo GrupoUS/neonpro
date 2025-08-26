@@ -144,7 +144,7 @@ CREATE TABLE ai_conversations (
 -- RLS Policies for AI Conversations
 CREATE POLICY "ai_conversations_user_access" ON ai_conversations
 FOR ALL USING (
-  auth.uid() = user_id OR 
+  auth.uid() = user_id OR
   (auth.jwt() ->> 'role' = 'staff' AND clinic_id = (auth.jwt() ->> 'clinic_id')::UUID)
 );
 
@@ -181,8 +181,8 @@ CREATE TABLE appointment_predictions (
 CREATE POLICY "predictions_clinic_access" ON appointment_predictions
 FOR ALL USING (
   EXISTS (
-    SELECT 1 FROM appointments a 
-    WHERE a.id = appointment_id 
+    SELECT 1 FROM appointments a
+    WHERE a.id = appointment_id
     AND a.clinic_id = (auth.jwt() ->> 'clinic_id')::UUID
   )
 );
@@ -268,17 +268,17 @@ export const aiCache = {
   async setChatResponse(key: string, response: any, ttl = 3600) {
     await redis.setex(`ai:chat:${key}`, ttl, JSON.stringify(response))
   },
-  
+
   async getChatResponse(key: string) {
     const cached = await redis.get(`ai:chat:${key}`)
     return cached ? JSON.parse(cached) : null
   },
-  
+
   // Cache ML predictions
   async setPrediction(appointmentId: string, prediction: any, ttl = 7200) {
     await redis.setex(`ai:prediction:${appointmentId}`, ttl, JSON.stringify(prediction))
   },
-  
+
   async getPrediction(appointmentId: string) {
     const cached = await redis.get(`ai:prediction:${appointmentId}`)
     return cached ? JSON.parse(cached) : null
@@ -296,18 +296,19 @@ export const aiCache = {
 
 ```typescript
 // packages/ai/src/services/enhanced-service-base.ts (NEW FILE)
-import { aiCache } from '@neonpro/cache';
-import type { CacheService, LoggerService, MetricsService } from '@neonpro/core-services';
+import { aiCache } from "@neonpro/cache";
+import type {
+  CacheService,
+  LoggerService,
+  MetricsService,
+} from "@neonpro/core-services";
 
 export abstract class EnhancedAIService<TInput, TOutput> {
   protected cache: typeof aiCache;
   protected logger: LoggerService;
   protected metrics: MetricsService;
 
-  constructor(
-    logger: LoggerService,
-    metrics: MetricsService,
-  ) {
+  constructor(logger: LoggerService, metrics: MetricsService) {
     this.cache = aiCache;
     this.logger = logger;
     this.metrics = metrics;
@@ -320,7 +321,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
     const operationId = `${this.constructor.name}-${Date.now()}`;
 
     try {
-      this.logger.info('Starting AI operation', { operationId, input });
+      this.logger.info("Starting AI operation", { operationId, input });
 
       const result = await this.execute(input);
       const duration = Date.now() - startTime;
@@ -331,7 +332,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
         operationId,
       });
 
-      this.logger.info('AI operation completed', { operationId, duration });
+      this.logger.info("AI operation completed", { operationId, duration });
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -343,13 +344,21 @@ export abstract class EnhancedAIService<TInput, TOutput> {
         operationId,
       });
 
-      this.logger.error('AI operation failed', { operationId, error, duration });
+      this.logger.error("AI operation failed", {
+        operationId,
+        error,
+        duration,
+      });
       throw error;
     }
   }
 
   // Performance monitoring
-  protected async recordPerformanceMetric(type: string, value: number, metadata?: any) {
+  protected async recordPerformanceMetric(
+    type: string,
+    value: number,
+    metadata?: any,
+  ) {
     await this.metrics.record({
       type: `ai_${type}`,
       value,
@@ -364,11 +373,19 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
 ```typescript
 // packages/ai/src/chat/universal-chat-service.ts (NEW FILE)
-import { OpenAI } from 'openai';
-import { EnhancedAIService } from '../services/enhanced-service-base';
-import type { ChatRequest, ChatResponse, PatientContext, StaffContext } from '../types';
+import { OpenAI } from "openai";
+import { EnhancedAIService } from "../services/enhanced-service-base";
+import type {
+  ChatRequest,
+  ChatResponse,
+  PatientContext,
+  StaffContext,
+} from "../types";
 
-export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatResponse> {
+export class UniversalAIChatService extends EnhancedAIService<
+  ChatRequest,
+  ChatResponse
+> {
   private openai: OpenAI;
 
   constructor(logger: LoggerService, metrics: MetricsService) {
@@ -384,7 +401,7 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
     // Check cache first
     const cached = await this.cache.getChatResponse(cacheKey);
     if (cached && !request.skipCache) {
-      await this.recordPerformanceMetric('cache_hit', 1);
+      await this.recordPerformanceMetric("cache_hit", 1);
       return cached;
     }
 
@@ -396,8 +413,11 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
       await this.cache.setChatResponse(cacheKey, response);
     }
 
-    await this.recordPerformanceMetric('response_time', response.processingTime);
-    await this.recordPerformanceMetric('confidence', response.confidence);
+    await this.recordPerformanceMetric(
+      "response_time",
+      response.processingTime,
+    );
+    await this.recordPerformanceMetric("confidence", response.confidence);
 
     return response;
   }
@@ -407,10 +427,10 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
 
     const systemPrompt = this.buildSystemPrompt(request.context);
     const completion = await this.openai.chat.completions.create({
-      model: process.env.OPENAI_MODEL_VERSION || 'gpt-4-turbo-preview',
+      model: process.env.OPENAI_MODEL_VERSION || "gpt-4-turbo-preview",
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: request.query },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: request.query },
       ],
       temperature: 0.3,
       max_tokens: 1000,
@@ -419,7 +439,7 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
     const processingTime = Date.now() - startTime;
 
     return {
-      response: completion.choices[0].message.content || '',
+      response: completion.choices[0].message.content || "",
       confidence: this.calculateConfidence(completion),
       processingTime,
       requiresEscalation: this.shouldEscalate(completion),
@@ -441,24 +461,30 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
       - Respeite protocolos de privacidade e confidencialidade médica
     `;
 
-    if (context.type === 'patient') {
-      return basePrompt + `
+    if (context.type === "patient") {
+      return (
+        basePrompt +
+        `
         CONTEXTO: Paciente externo fazendo perguntas sobre a clínica.
         OBJETIVO: Fornecer informações gerais, ajudar com agendamentos e esclarecer dúvidas.
         LIMITAÇÕES: Não dar conselhos médicos específicos ou diagnósticos.
-      `;
+      `
+      );
     } else {
-      return basePrompt + `
+      return (
+        basePrompt +
+        `
         CONTEXTO: Funcionário da clínica buscando informações operacionais.
         OBJETIVO: Ajudar com consultas ao banco de dados, relatórios e insights.
         CAPACIDADES: Acesso a dados internos e análises operacionais.
-      `;
+      `
+      );
     }
   }
 
   private calculateConfidence(completion: any): number {
     // Simple confidence calculation based on response characteristics
-    const response = completion.choices[0].message.content || '';
+    const response = completion.choices[0].message.content || "";
     const baseConfidence = 0.7;
 
     // Increase confidence for longer, more detailed responses
@@ -471,7 +497,7 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
   }
 
   private shouldEscalate(completion: any): boolean {
-    const response = completion.choices[0].message.content || '';
+    const response = completion.choices[0].message.content || "";
     const confidence = this.calculateConfidence(completion);
 
     // Escalate if confidence is too low
@@ -479,13 +505,15 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
 
     // Escalate if response contains uncertainty indicators
     const uncertaintyIndicators = [
-      'não tenho certeza',
-      'preciso consultar',
-      'recomendo falar com',
-      'não posso responder',
+      "não tenho certeza",
+      "preciso consultar",
+      "recomendo falar com",
+      "não posso responder",
     ];
 
-    return uncertaintyIndicators.some(indicator => response.toLowerCase().includes(indicator));
+    return uncertaintyIndicators.some((indicator) =>
+      response.toLowerCase().includes(indicator),
+    );
   }
 }
 ```
@@ -494,20 +522,25 @@ export class UniversalAIChatService extends EnhancedAIService<ChatRequest, ChatR
 
 ```typescript
 // packages/ai/src/prediction/no-show-prediction-service.ts (NEW FILE)
-import * as tf from '@tensorflow/tfjs';
-import { EnhancedAIService } from '../services/enhanced-service-base';
-import type { AppointmentData, RiskFactor, RiskScore } from '../types';
+import * as tf from "@tensorflow/tfjs";
+import { EnhancedAIService } from "../services/enhanced-service-base";
+import type { AppointmentData, RiskFactor, RiskScore } from "../types";
 
-export class NoShowPredictionService extends EnhancedAIService<AppointmentData, RiskScore> {
+export class NoShowPredictionService extends EnhancedAIService<
+  AppointmentData,
+  RiskScore
+> {
   private model: tf.LayersModel | null = null;
 
   async execute(appointmentData: AppointmentData): Promise<RiskScore> {
     const cacheKey = `prediction:${appointmentData.appointmentId}`;
 
     // Check cache first (predictions valid for 24 hours)
-    const cached = await this.cache.getPrediction(appointmentData.appointmentId);
+    const cached = await this.cache.getPrediction(
+      appointmentData.appointmentId,
+    );
     if (cached) {
-      await this.recordPerformanceMetric('cache_hit', 1);
+      await this.recordPerformanceMetric("cache_hit", 1);
       return cached;
     }
 
@@ -520,7 +553,11 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
     const riskScore = await this.calculateRiskScore(appointmentData);
 
     // Cache the prediction
-    await this.cache.setPrediction(appointmentData.appointmentId, riskScore, 86400); // 24 hours
+    await this.cache.setPrediction(
+      appointmentData.appointmentId,
+      riskScore,
+      86400,
+    ); // 24 hours
 
     return riskScore;
   }
@@ -528,10 +565,12 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
   private async loadModel(): Promise<void> {
     try {
       // Load pre-trained model (placeholder - will be implemented with real model)
-      this.model = await tf.loadLayersModel('/models/no-show-predictor/model.json');
-      this.logger.info('No-show prediction model loaded successfully');
+      this.model = await tf.loadLayersModel(
+        "/models/no-show-predictor/model.json",
+      );
+      this.logger.info("No-show prediction model loaded successfully");
     } catch (error) {
-      this.logger.error('Failed to load prediction model', { error });
+      this.logger.error("Failed to load prediction model", { error });
       // Use fallback heuristic model
       this.model = this.createFallbackModel();
     }
@@ -541,25 +580,29 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
     // Simple fallback model for development
     const model = tf.sequential({
       layers: [
-        tf.layers.dense({ inputShape: [10], units: 16, activation: 'relu' }),
+        tf.layers.dense({ inputShape: [10], units: 16, activation: "relu" }),
         tf.layers.dropout({ rate: 0.2 }),
-        tf.layers.dense({ units: 8, activation: 'relu' }),
-        tf.layers.dense({ units: 1, activation: 'sigmoid' }),
+        tf.layers.dense({ units: 8, activation: "relu" }),
+        tf.layers.dense({ units: 1, activation: "sigmoid" }),
       ],
     });
 
     model.compile({
-      optimizer: 'adam',
-      loss: 'binaryCrossentropy',
-      metrics: ['accuracy'],
+      optimizer: "adam",
+      loss: "binaryCrossentropy",
+      metrics: ["accuracy"],
     });
 
     return model;
   }
 
-  private async calculateRiskScore(appointmentData: AppointmentData): Promise<RiskScore> {
+  private async calculateRiskScore(
+    appointmentData: AppointmentData,
+  ): Promise<RiskScore> {
     const features = this.extractFeatures(appointmentData);
-    const prediction = this.model!.predict(tf.tensor2d([features])) as tf.Tensor;
+    const prediction = this.model!.predict(
+      tf.tensor2d([features]),
+    ) as tf.Tensor;
     const riskProbability = await prediction.data();
 
     const riskScore = Math.round(riskProbability[0] * 100);
@@ -571,7 +614,7 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
       confidence: this.calculatePredictionConfidence(riskScore, features),
       recommendedActions: this.generateRecommendations(riskScore),
       metadata: {
-        modelVersion: '1.0.0',
+        modelVersion: "1.0.0",
         featuresUsed: features.length,
         calculatedAt: new Date().toISOString(),
       },
@@ -601,32 +644,35 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
     ];
   }
 
-  private identifyRiskFactors(appointmentData: AppointmentData, features: number[]): RiskFactor[] {
+  private identifyRiskFactors(
+    appointmentData: AppointmentData,
+    features: number[],
+  ): RiskFactor[] {
     const factors: RiskFactor[] = [];
 
     if (appointmentData.patient.previousNoShows > 2) {
       factors.push({
-        type: 'patient_history',
-        description: 'Paciente tem histórico de faltas',
-        impact: 'high',
+        type: "patient_history",
+        description: "Paciente tem histórico de faltas",
+        impact: "high",
         weight: 0.4,
       });
     }
 
     if (appointmentData.daysUntilAppointment > 14) {
       factors.push({
-        type: 'appointment_timing',
-        description: 'Agendamento com muita antecedência',
-        impact: 'medium',
+        type: "appointment_timing",
+        description: "Agendamento com muita antecedência",
+        impact: "medium",
         weight: 0.2,
       });
     }
 
     if (appointmentData.weatherData?.precipitation > 5) {
       factors.push({
-        type: 'weather',
-        description: 'Previsão de chuva no dia do agendamento',
-        impact: 'low',
+        type: "weather",
+        description: "Previsão de chuva no dia do agendamento",
+        impact: "low",
         weight: 0.1,
       });
     }
@@ -634,9 +680,13 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
     return factors;
   }
 
-  private calculatePredictionConfidence(riskScore: number, features: number[]): number {
+  private calculatePredictionConfidence(
+    riskScore: number,
+    features: number[],
+  ): number {
     // Base confidence on feature completeness and risk score certainty
-    const featureCompleteness = features.filter(f => f !== 0).length / features.length;
+    const featureCompleteness =
+      features.filter((f) => f !== 0).length / features.length;
     const scoreCertainty = riskScore > 70 || riskScore < 30 ? 0.9 : 0.7;
 
     return Math.min(featureCompleteness * scoreCertainty, 0.95);
@@ -646,12 +696,12 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
     const recommendations: string[] = [];
 
     if (riskScore > 70) {
-      recommendations.push('Enviar lembrete adicional 24h antes');
-      recommendations.push('Confirmar presença por telefone');
-      recommendations.push('Considerar reagendamento se necessário');
+      recommendations.push("Enviar lembrete adicional 24h antes");
+      recommendations.push("Confirmar presença por telefone");
+      recommendations.push("Considerar reagendamento se necessário");
     } else if (riskScore > 40) {
-      recommendations.push('Enviar lembrete padrão');
-      recommendations.push('Monitorar confirmação de presença');
+      recommendations.push("Enviar lembrete padrão");
+      recommendations.push("Monitorar confirmação de presença");
     }
 
     return recommendations;
@@ -669,29 +719,29 @@ export class NoShowPredictionService extends EnhancedAIService<AppointmentData, 
 
 ```typescript
 // packages/ai/vitest.config.ts (UPDATED)
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./vitest.setup.ts'],
+    environment: "happy-dom",
+    setupFiles: ["./vitest.setup.ts"],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       exclude: [
-        'node_modules/',
-        'dist/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/mock-*',
+        "node_modules/",
+        "dist/",
+        "**/*.d.ts",
+        "**/*.config.*",
+        "**/mock-*",
       ],
     },
   },
   define: {
     // Mock AI services for testing
-    'process.env.OPENAI_API_KEY': '"test-key"',
-    'process.env.AI_TESTING_ENABLED': '"true"',
+    "process.env.OPENAI_API_KEY": '"test-key"',
+    "process.env.AI_TESTING_ENABLED": '"true"',
   },
 });
 ```
@@ -701,12 +751,12 @@ export default defineConfig({
 ```typescript
 // packages/ai/src/__mocks__/ai-services.ts (NEW FILE)
 export const mockChatResponse = {
-  response: 'Olá! Como posso ajudá-lo hoje?',
+  response: "Olá! Como posso ajudá-lo hoje?",
   confidence: 0.9,
   processingTime: 150,
   requiresEscalation: false,
   metadata: {
-    model: 'gpt-4-turbo-preview',
+    model: "gpt-4-turbo-preview",
     tokens: 25,
   },
 };
@@ -715,16 +765,16 @@ export const mockRiskScore = {
   score: 35,
   factors: [
     {
-      type: 'patient_history',
-      description: 'Paciente pontual',
-      impact: 'low',
+      type: "patient_history",
+      description: "Paciente pontual",
+      impact: "low",
       weight: 0.1,
     },
   ],
   confidence: 0.85,
-  recommendedActions: ['Enviar lembrete padrão'],
+  recommendedActions: ["Enviar lembrete padrão"],
   metadata: {
-    modelVersion: '1.0.0',
+    modelVersion: "1.0.0",
     featuresUsed: 10,
     calculatedAt: new Date().toISOString(),
   },
@@ -745,26 +795,26 @@ import { Badge } from '@neonpro/ui/badge'
 
 export default function AIDashboardPage() {
   const [metrics, setMetrics] = useState(null)
-  
+
   useEffect(() => {
     const fetchMetrics = async () => {
       const response = await fetch('/api/ai/metrics')
       const data = await response.json()
       setMetrics(data)
     }
-    
+
     fetchMetrics()
     const interval = setInterval(fetchMetrics, 30000) // Update every 30 seconds
-    
+
     return () => clearInterval(interval)
   }, [])
-  
+
   if (!metrics) return <div>Loading AI metrics...</div>
-  
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">AI Services Dashboard</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader>
@@ -777,7 +827,7 @@ export default function AIDashboardPage() {
             </Badge>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Accuracy Rate</CardTitle>
@@ -789,7 +839,7 @@ export default function AIDashboardPage() {
             </Badge>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Cache Hit Rate</CardTitle>
@@ -801,7 +851,7 @@ export default function AIDashboardPage() {
             </Badge>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Error Rate</CardTitle>
@@ -853,7 +903,7 @@ export default function AIDashboardPage() {
 #### **Integration Checklist**
 
 - [ ] **Existing System** zero breaking changes confirmed
-- [ ] **API Routes** /api/ai/* responding correctly
+- [ ] **API Routes** /api/ai/\* responding correctly
 - [ ] **Authentication** extended for AI services
 - [ ] **Database Queries** performance acceptable
 - [ ] **Real-time Features** WebSocket integration working

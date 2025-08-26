@@ -9,8 +9,8 @@
 
 import { driftDetector } from "@/lib/ai/drift-detection";
 import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -124,9 +124,9 @@ export async function GET(request: NextRequest) {
         systemHealth:
           alerts.length < 5
             ? "good"
-            : (alerts.length < 10
+            : alerts.length < 10
               ? "warning"
-              : "critical"),
+              : "critical",
       },
     });
   } catch (error) {

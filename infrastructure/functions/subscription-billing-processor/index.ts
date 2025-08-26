@@ -7,12 +7,13 @@
  * and manages subscription status updates.
  */
 
-import { serve } from 'https://deno.land/std@0.208.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.208.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface Database {
@@ -25,16 +26,16 @@ interface Database {
           user_id: string;
           plan_id: string;
           status:
-            | 'trial'
-            | 'active'
-            | 'past_due'
-            | 'canceled'
-            | 'unpaid'
-            | 'paused';
+            | "trial"
+            | "active"
+            | "past_due"
+            | "canceled"
+            | "unpaid"
+            | "paused";
           current_period_start: string;
           current_period_end: string;
           trial_end: string;
-          billing_cycle: 'monthly' | 'quarterly' | 'yearly';
+          billing_cycle: "monthly" | "quarterly" | "yearly";
           next_billing_date: string;
           payment_provider: string;
           external_subscription_id: string;
@@ -69,13 +70,13 @@ interface Database {
 
 serve(async (req) => {
   // Handle CORS
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
     // Process trial expirations
@@ -93,22 +94,22 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Subscription billing processing completed',
+        message: "Subscription billing processing completed",
         timestamp: new Date().toISOString(),
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );
   } catch (error) {
     return new Response(
       JSON.stringify({
-        error: 'Billing processing failed',
+        error: "Billing processing failed",
         details: error.message,
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );
   }
@@ -120,10 +121,10 @@ async function processTrialExpirations(supabase: any) {
 
     // Find expired trials
     const { data: expiredTrials, error } = await supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('status', 'trial')
-      .lt('trial_end', now);
+      .from("user_subscriptions")
+      .select("*")
+      .eq("status", "trial")
+      .lt("trial_end", now);
 
     if (error) {
       return;
@@ -133,24 +134,24 @@ async function processTrialExpirations(supabase: any) {
       try {
         // Update subscription status to unpaid
         await supabase
-          .from('user_subscriptions')
+          .from("user_subscriptions")
           .update({
-            status: 'unpaid',
+            status: "unpaid",
             updated_at: now,
           })
-          .eq('id', subscription.id);
+          .eq("id", subscription.id);
 
         // Create billing event
-        await supabase.from('billing_events').insert({
+        await supabase.from("billing_events").insert({
           subscription_id: subscription.id,
-          event_type: 'trial_expired',
+          event_type: "trial_expired",
           amount: 0,
-          currency: 'BRL',
-          status: 'processed',
+          currency: "BRL",
+          status: "processed",
           processed_at: now,
           metadata: {
             trial_end: subscription.trial_end,
-            processed_by: 'billing-processor',
+            processed_by: "billing-processor",
           },
         });
 
@@ -168,16 +169,16 @@ async function processBillingRenewals(supabase: any) {
 
     // Find subscriptions due for renewal
     const { data: renewalDue, error } = await supabase
-      .from('user_subscriptions')
+      .from("user_subscriptions")
       .select(
         `
         *,
         plan:subscription_plans(*)
       `,
       )
-      .eq('status', 'active')
-      .lt('next_billing_date', renewalWindow.toISOString())
-      .gt('next_billing_date', now.toISOString());
+      .eq("status", "active")
+      .lt("next_billing_date", renewalWindow.toISOString())
+      .gt("next_billing_date", now.toISOString());
 
     if (error) {
       return;
@@ -199,15 +200,15 @@ async function processBillingRenewals(supabase: any) {
         let amount = 0;
 
         switch (subscription.billing_cycle) {
-          case 'monthly': {
+          case "monthly": {
             amount = plan.price_monthly;
             break;
           }
-          case 'quarterly': {
+          case "quarterly": {
             amount = plan.price_quarterly;
             break;
           }
-          case 'yearly': {
+          case "yearly": {
             amount = plan.price_yearly;
             break;
           }
@@ -215,27 +216,27 @@ async function processBillingRenewals(supabase: any) {
 
         // Update subscription for next period
         await supabase
-          .from('user_subscriptions')
+          .from("user_subscriptions")
           .update({
             current_period_start: nextPeriodStart.toISOString(),
             current_period_end: nextPeriodEnd.toISOString(),
             next_billing_date: nextBillingDate.toISOString(),
             updated_at: now.toISOString(),
           })
-          .eq('id', subscription.id);
+          .eq("id", subscription.id);
 
         // Create billing event for renewal
-        await supabase.from('billing_events').insert({
+        await supabase.from("billing_events").insert({
           subscription_id: subscription.id,
-          event_type: 'subscription_renewed',
+          event_type: "subscription_renewed",
           amount,
-          currency: 'BRL',
-          status: 'pending',
+          currency: "BRL",
+          status: "pending",
           metadata: {
             billing_cycle: subscription.billing_cycle,
             period_start: nextPeriodStart.toISOString(),
             period_end: nextPeriodEnd.toISOString(),
-            processed_by: 'billing-processor',
+            processed_by: "billing-processor",
           },
         });
 
@@ -252,11 +253,11 @@ async function processSubscriptionCancellations(supabase: any) {
 
     // Find subscriptions to cancel at period end
     const { data: toCancelSubs, error } = await supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('cancel_at_period_end', true)
-      .in('status', ['active', 'trial'])
-      .lt('current_period_end', now);
+      .from("user_subscriptions")
+      .select("*")
+      .eq("cancel_at_period_end", true)
+      .in("status", ["active", "trial"])
+      .lt("current_period_end", now);
 
     if (error) {
       return;
@@ -266,26 +267,26 @@ async function processSubscriptionCancellations(supabase: any) {
       try {
         // Cancel subscription
         await supabase
-          .from('user_subscriptions')
+          .from("user_subscriptions")
           .update({
-            status: 'canceled',
+            status: "canceled",
             canceled_at: now,
             updated_at: now,
           })
-          .eq('id', subscription.id);
+          .eq("id", subscription.id);
 
         // Create billing event
-        await supabase.from('billing_events').insert({
+        await supabase.from("billing_events").insert({
           subscription_id: subscription.id,
-          event_type: 'subscription_canceled',
+          event_type: "subscription_canceled",
           amount: 0,
-          currency: 'BRL',
-          status: 'processed',
+          currency: "BRL",
+          status: "processed",
           processed_at: now,
           metadata: {
             cancellation_reason: subscription.cancellation_reason,
             period_end: subscription.current_period_end,
-            processed_by: 'billing-processor',
+            processed_by: "billing-processor",
           },
         });
 
@@ -303,12 +304,12 @@ async function processFailedPaymentRetries(supabase: any) {
 
     // Find failed payments to retry
     const { data: failedPayments, error } = await supabase
-      .from('billing_events')
-      .select('*')
-      .eq('status', 'failed')
-      .eq('event_type', 'invoice_payment_failed')
-      .lt('processing_attempts', 3)
-      .gt('created_at', retryWindow.toISOString());
+      .from("billing_events")
+      .select("*")
+      .eq("status", "failed")
+      .eq("event_type", "invoice_payment_failed")
+      .lt("processing_attempts", 3)
+      .gt("created_at", retryWindow.toISOString());
 
     if (error) {
       return;
@@ -318,25 +319,25 @@ async function processFailedPaymentRetries(supabase: any) {
       try {
         // Update attempt count
         await supabase
-          .from('billing_events')
+          .from("billing_events")
           .update({
             processing_attempts: payment.processing_attempts + 1,
             last_processing_error: undefined,
             updated_at: now.toISOString(),
           })
-          .eq('id', payment.id);
+          .eq("id", payment.id);
 
         // TODO: Trigger payment retry
         // await retryPaymentProcessing(payment);
       } catch (error) {
         // Update error information
         await supabase
-          .from('billing_events')
+          .from("billing_events")
           .update({
             last_processing_error: error.message,
             updated_at: now.toISOString(),
           })
-          .eq('id', payment.id);
+          .eq("id", payment.id);
       }
     }
   } catch {}
@@ -346,15 +347,15 @@ function calculateNextPeriodEnd(periodStart: Date, billingCycle: string): Date {
   const nextPeriodEnd = new Date(periodStart);
 
   switch (billingCycle) {
-    case 'monthly': {
+    case "monthly": {
       nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + 1);
       break;
     }
-    case 'quarterly': {
+    case "quarterly": {
       nextPeriodEnd.setMonth(nextPeriodEnd.getMonth() + 3);
       break;
     }
-    case 'yearly': {
+    case "yearly": {
       nextPeriodEnd.setFullYear(nextPeriodEnd.getFullYear() + 1);
       break;
     }

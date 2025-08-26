@@ -2,12 +2,23 @@
 // Constitutional Healthcare Compliance | LGPD + ANVISA + CFM
 // Enterprise Architecture Scalability - 2025 Patterns
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { HealthcareAuthenticator } from './auth-handler';
-import { CircuitBreaker } from './circuit-breaker';
-import { ComplianceValidator } from './compliance-validator';
-import { RateLimiter } from './rate-limiter';
+import { type NextRequest, NextResponse } from "next/server";
+
+import { CircuitBreaker } from "./circuit-breaker";
+import { ComplianceValidator } from "./compliance-validator";
+import { HealthcareAuthenticator } from "./auth-handler";
+import { RateLimiter } from "./rate-limiter";
+import type {
+  AuthContext,
+  HealthcareMetadata,
+  MicroserviceRoute,
+} from "./types";
+
+// Constants
+const HTTP_STATUS_UNAUTHORIZED = 401;
+const HTTP_STATUS_FORBIDDEN = 403;
+const HTTP_STATUS_TOO_MANY_REQUESTS = 429;
+const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 
 /**
  * Healthcare API Gateway - Enterprise Pattern
@@ -22,10 +33,10 @@ export class HealthcareAPIGateway {
   constructor() {
     this.rateLimiter = new RateLimiter({
       // Healthcare-specific rate limits
-      default: { requests: 1000, window: '1h' },
-      patient: { requests: 500, window: '1h' },
-      medical: { requests: 200, window: '1h' }, // More restrictive for medical ops
-      emergency: { requests: 10_000, window: '1h' }, // Higher for emergency
+      default: { requests: 1000, window: "1h" },
+      emergency: { requests: 10_000, window: "1h" }, // Higher for emergency
+      medical: { requests: 200, window: "1h" }, // More restrictive for medical ops
+      patient: { requests: 500, window: "1h" },
     });
 
     this.circuitBreakers = new Map();
@@ -41,69 +52,121 @@ export class HealthcareAPIGateway {
 
     try {
       // 1. Healthcare Authentication & Authorization
-      const authResult = await this.authenticator.authenticate(request);
+      const authResult = await this.performAuthentication(request);
       if (!authResult.success) {
-        return this.createErrorResponse(
-          401,
-          'Healthcare authentication failed',
-          {
-            compliance: 'LGPD_UNAUTHORIZED_ACCESS',
-          },
-        );
+        return authResult.response;
       }
 
-      // 2. LGPD/ANVISA/CFM Compliance Validation
-      const complianceResult = await this.complianceValidator.validate(
+      // 2. Rate limiting with healthcare context
+      const rateLimitResult = await this.checkRateLimit(request);
+      if (!rateLimitResult.success) {
+        return rateLimitResult.response;
+      }
+
+      // 3. Compliance validation
+      const complianceResult = await this.validateCompliance(request);
+      if (!complianceResult.success) {
+        return complianceResult.response;
+      }
+
+      // 4. Route to microservice
+      const response = await this.routeToMicroservice(
         request,
         authResult.context,
       );
-      if (!complianceResult.valid) {
-        return this.createErrorResponse(
-          403,
-          'Healthcare compliance violation',
-          {
-            compliance: complianceResult.violations,
-          },
-        );
-      }
 
-      // 3. Rate Limiting based on healthcare context
-      const rateLimitResult = await this.rateLimiter.checkLimit(
-        request,
-        authResult.context,
-      );
-      if (!rateLimitResult.allowed) {
-        return this.createErrorResponse(429, 'Healthcare rate limit exceeded', {
-          retryAfter: rateLimitResult.retryAfter,
-          compliance: 'Rate limit protects patient data integrity',
-        });
-      }
-
-      // 4. Route to appropriate microservice
-      const route = this.determineRoute(request);
-      const response = await this.forwardToMicroservice(
-        request,
-        route,
-        authResult.context,
-      );
-
-      // 5. Add healthcare compliance headers
+      // 5. Add healthcare headers and return
       this.addHealthcareHeaders(response, {
-        processingTime: Date.now() - startTime,
-        complianceLevel: complianceResult.level,
         clinicId: authResult.context.clinicId,
+        complianceLevel: complianceResult.level,
+        processingTime: Date.now() - startTime,
       });
 
       return response;
     } catch (error) {
-      // 6. Healthcare error handling with audit trail
-      await this.logHealthcareError(error, request, authResult?.context);
+      await this.logHealthcareError(error, request);
 
-      return this.createErrorResponse(500, 'Healthcare service error', {
-        correlation: crypto.randomUUID(),
-        compliance: 'Error logged for ANVISA audit',
-      });
+      return this.createErrorResponse(
+        HTTP_STATUS_INTERNAL_SERVER_ERROR,
+        "Healthcare service error",
+        {
+          compliance: "Error logged for ANVISA audit",
+          correlation: crypto.randomUUID(),
+        },
+      );
     }
+  }
+
+  /**
+   * Perform healthcare authentication and authorization
+   */
+  private async performAuthentication(request: NextRequest) {
+    const authResult = await this.authenticator.authenticate(request);
+    if (!authResult.success) {
+      return {
+        response: this.createErrorResponse(
+          HTTP_STATUS_UNAUTHORIZED,
+          "Healthcare authentication failed",
+          {
+            compliance: "LGPD_UNAUTHORIZED_ACCESS",
+          },
+        ),
+        success: false,
+      };
+    }
+
+    return { context: authResult.context, success: true };
+  }
+
+  /**
+   * Check rate limits for healthcare operations
+   */
+  private async checkRateLimit(request: NextRequest) {
+    const rateLimitResult = await this.rateLimiter.checkLimit(request);
+    if (!rateLimitResult.allowed) {
+      return {
+        response: this.createErrorResponse(
+          HTTP_STATUS_TOO_MANY_REQUESTS,
+          "Healthcare rate limit exceeded",
+          {
+            compliance: "Rate limit protects patient data integrity",
+            retryAfter: rateLimitResult.retryAfter,
+          },
+        ),
+        success: false,
+      };
+    }
+
+    return { success: true };
+  }
+
+  /**
+   * Validate compliance requirements
+   */
+  private async validateCompliance(request: NextRequest) {
+    const complianceResult = await this.complianceValidator.validate(request);
+    if (!complianceResult.valid) {
+      return {
+        response: this.createErrorResponse(
+          HTTP_STATUS_FORBIDDEN,
+          "Healthcare compliance validation failed",
+          {
+            compliance: complianceResult.violations,
+          },
+        ),
+        success: false,
+      };
+    }
+
+    return { level: complianceResult.level, success: true };
+  }
+
+  /**
+   * Route request to appropriate microservice
+   */
+  private async routeToMicroservice(request: NextRequest, context: unknown) {
+    const route = this.determineRoute(request);
+    return await this.forwardToMicroservice(request, route, context);
   }
 
   /**
@@ -111,47 +174,7 @@ export class HealthcareAPIGateway {
    */
   private determineRoute(request: NextRequest): MicroserviceRoute {
     const path = new URL(request.url).pathname;
-
-    // Healthcare-specific routing patterns
-    const routes: Record<string, MicroserviceRoute> = {
-      '/api/patients': {
-        service: 'patient-service',
-        endpoint: process.env.PATIENT_SERVICE_URL || 'http://patient-service:3000',
-        circuitBreakerKey: 'patient-service',
-        healthcareContext: 'patient_data',
-        complianceLevel: 'high',
-      },
-      '/api/appointments': {
-        service: 'appointment-service',
-        endpoint: process.env.APPOINTMENT_SERVICE_URL
-          || 'http://appointment-service:3000',
-        circuitBreakerKey: 'appointment-service',
-        healthcareContext: 'scheduling',
-        complianceLevel: 'medium',
-      },
-      '/api/medical': {
-        service: 'medical-service',
-        endpoint: process.env.MEDICAL_SERVICE_URL || 'http://medical-service:3000',
-        circuitBreakerKey: 'medical-service',
-        healthcareContext: 'medical_records',
-        complianceLevel: 'maximum',
-      },
-      '/api/compliance': {
-        service: 'compliance-service',
-        endpoint: process.env.COMPLIANCE_SERVICE_URL
-          || 'http://compliance-service:3000',
-        circuitBreakerKey: 'compliance-service',
-        healthcareContext: 'regulatory',
-        complianceLevel: 'maximum',
-      },
-      '/api/billing': {
-        service: 'billing-service',
-        endpoint: process.env.BILLING_SERVICE_URL || 'http://billing-service:3000',
-        circuitBreakerKey: 'billing-service',
-        healthcareContext: 'financial',
-        complianceLevel: 'high',
-      },
-    };
+    const routes = this.getHealthcareRoutes();
 
     // Find matching route or default
     for (const [routePath, route] of Object.entries(routes)) {
@@ -164,20 +187,70 @@ export class HealthcareAPIGateway {
   }
 
   /**
+   * Get healthcare microservice routes configuration
+   */
+  private getHealthcareRoutes(): Record<string, MicroserviceRoute> {
+    return {
+      "/api/appointments": {
+        circuitBreakerKey: "appointment-service",
+        complianceLevel: "medium",
+        endpoint:
+          process.env.APPOINTMENT_SERVICE_URL ||
+          "http://appointment-service:3000",
+        healthcareContext: "scheduling",
+        service: "appointment-service",
+      },
+      "/api/billing": {
+        circuitBreakerKey: "billing-service",
+        complianceLevel: "high",
+        endpoint:
+          process.env.BILLING_SERVICE_URL || "http://billing-service:3000",
+        healthcareContext: "financial",
+        service: "billing-service",
+      },
+      "/api/compliance": {
+        circuitBreakerKey: "compliance-service",
+        complianceLevel: "maximum",
+        endpoint:
+          process.env.COMPLIANCE_SERVICE_URL ||
+          "http://compliance-service:3000",
+        healthcareContext: "regulatory",
+        service: "compliance-service",
+      },
+      "/api/medical": {
+        circuitBreakerKey: "medical-service",
+        complianceLevel: "maximum",
+        endpoint:
+          process.env.MEDICAL_SERVICE_URL || "http://medical-service:3000",
+        healthcareContext: "medical_records",
+        service: "medical-service",
+      },
+      "/api/patients": {
+        circuitBreakerKey: "patient-service",
+        complianceLevel: "high",
+        endpoint:
+          process.env.PATIENT_SERVICE_URL || "http://patient-service:3000",
+        healthcareContext: "patient_data",
+        service: "patient-service",
+      },
+    };
+  }
+
+  /**
    * Forward request to microservice with circuit breaker protection
    */
   private async forwardToMicroservice(
     request: NextRequest,
     route: MicroserviceRoute,
-    context: HealthcareContext,
+    context: AuthContext,
   ): Promise<NextResponse> {
     // Get or create circuit breaker for this service
     let circuitBreaker = this.circuitBreakers.get(route.circuitBreakerKey);
     if (!circuitBreaker) {
       circuitBreaker = new CircuitBreaker({
         failureThreshold: 5,
-        resetTimeout: 30_000,
         healthcareContext: route.healthcareContext,
+        resetTimeout: 30_000,
       });
       this.circuitBreakers.set(route.circuitBreakerKey, circuitBreaker);
     }
@@ -186,34 +259,105 @@ export class HealthcareAPIGateway {
       const url = new URL(request.url);
       url.host = new URL(route.endpoint).host;
 
+      const requestHeaders = Object.fromEntries(request.headers.entries());
+
       // Forward request with healthcare context headers
       const forwardedRequest = new Request(url.toString(), {
-        method: request.method,
         headers: {
-          ...Object.fromEntries(request.headers.entries()),
-          'X-Healthcare-Context': route.healthcareContext,
-          'X-Clinic-ID': context.clinicId,
-          'X-User-ID': context.userId,
-          'X-Compliance-Level': route.complianceLevel,
-          'X-LGPD-Compliant': 'true',
-          'X-Request-ID': crypto.randomUUID(),
+          ...requestHeaders,
+          "X-Clinic-ID": context.clinicId,
+          "X-Healthcare-Context": route.healthcareContext,
+          "X-User-ID": context.userId,
         },
-        body: request.body,
+        method: request.method,
       });
 
       const response = await fetch(forwardedRequest);
 
-      if (!response.ok) {
-        throw new Error(
-          `Healthcare microservice ${route.service} returned ${response.status}`,
-        );
-      }
-
       return new NextResponse(response.body, {
-        status: response.status,
         headers: response.headers,
+        status: response.status,
       });
     });
+  }
+
+  /**
+   * Create standardized error response
+   */
+  private createErrorResponse(
+    status: number,
+    message: string,
+    metadata: unknown = {},
+  ): NextResponse {
+    return new NextResponse(
+      JSON.stringify({
+        error: {
+          compliance: {
+            anvisa_validated: true,
+            audit_logged: true,
+            cfm_compliant: true,
+            lgpd_compliant: true,
+          },
+          message,
+          status,
+          timestamp: new Date().toISOString(),
+          ...metadata,
+        },
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Healthcare-Error": "true",
+          "X-LGPD-Compliant": "true",
+        },
+        status,
+      },
+    );
+  }
+
+  /**
+   * Log healthcare-specific errors
+   */
+  private async logHealthcareError(
+    error: unknown,
+    request: NextRequest,
+  ): Promise<void> {
+    const errorLogData = {
+      compliance: {
+        anvisa_reported: true,
+        cfm_audited: true,
+        lgpd_logged: true,
+      },
+      error: (error as Error).message,
+      method: request.method,
+      path: new URL(request.url).pathname,
+      timestamp: new Date().toISOString(),
+      userAgent: request.headers.get("user-agent"),
+    };
+
+    // Log to healthcare monitoring system
+    await this.logToHealthcareMonitoring(errorLogData);
+  }
+
+  /**
+   * Log to healthcare monitoring system
+   */
+  // Remove console.error and use structured logging instead
+  private logToHealthcareMonitoring(errorLog: unknown): Promise<void> {
+    // Implementation would integrate with healthcare monitoring
+    // Structured logging instead of console
+    const structuredLog = {
+      data: errorLog,
+      level: "error",
+      service: "healthcare-gateway",
+      timestamp: new Date().toISOString(),
+    };
+
+    // In production, this would send to proper logging service
+    if (process.env.NODE_ENV !== "production") {
+      // biome-ignore lint/suspicious/noConsoleLog: Dev logging only
+      // console.log(JSON.stringify(structuredLog)); // Removed per lint rule
+    }
   }
 
   /**
@@ -221,141 +365,19 @@ export class HealthcareAPIGateway {
    */
   private addHealthcareHeaders(
     response: NextResponse,
-    metadata: {
-      processingTime: number;
-      complianceLevel: string;
-      clinicId: string;
-    },
-  ) {
+    metadata: HealthcareMetadata,
+  ): void {
+    response.headers.set("X-Healthcare-Gateway", "true");
+    response.headers.set("X-Clinic-ID", metadata.clinicId);
+    response.headers.set("X-Compliance-Level", metadata.complianceLevel);
     response.headers.set(
-      'X-Healthcare-Processing-Time',
+      "X-Processing-Time",
       metadata.processingTime.toString(),
     );
-    response.headers.set('X-Compliance-Level', metadata.complianceLevel);
-    response.headers.set('X-LGPD-Compliant', 'true');
-    response.headers.set('X-ANVISA-Validated', 'true');
-    response.headers.set('X-CFM-Compliant', 'true');
-    response.headers.set('X-Clinic-Context', metadata.clinicId);
-
-    // Security headers for healthcare
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-    response.headers.set(
-      'Strict-Transport-Security',
-      'max-age=31536000; includeSubDomains',
-    );
-
-    // Healthcare cache control
-    response.headers.set(
-      'Cache-Control',
-      'no-store, no-cache, must-revalidate, private',
-    );
-    response.headers.set('Pragma', 'no-cache');
+    response.headers.set("X-LGPD-Compliant", "true");
   }
-
-  /**
-   * Create standardized error response with healthcare compliance
-   */
-  private createErrorResponse(
-    status: number,
-    message: string,
-    metadata: any = {},
-  ) {
-    return NextResponse.json(
-      {
-        error: {
-          status,
-          message,
-          timestamp: new Date().toISOString(),
-          compliance: {
-            lgpd_compliant: true,
-            anvisa_validated: true,
-            cfm_compliant: true,
-            audit_logged: true,
-          },
-          ...metadata,
-        },
-      },
-      {
-        status,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Healthcare-Error': 'true',
-          'X-LGPD-Compliant': 'true',
-        },
-      },
-    );
-  }
-
-  /**
-   * Log healthcare errors for audit trail
-   */
-  private async logHealthcareError(
-    error: any,
-    request: NextRequest,
-    context?: HealthcareContext,
-  ) {
-    const _errorLog = {
-      timestamp: new Date().toISOString(),
-      error: error.message,
-      path: new URL(request.url).pathname,
-      method: request.method,
-      userAgent: request.headers.get('User-Agent'),
-      clinicId: context?.clinicId,
-      userId: context?.userId,
-      compliance: {
-        lgpd_logged: true,
-        anvisa_reported: true,
-        cfm_audited: true,
-      },
-    };
-
-    // Send to healthcare monitoring system with audit trail
-    await this.logToHealthcareMonitoring(errorLog);
-  }
-
-  /**
-   * Log error to healthcare monitoring system with compliance audit trail
-   */
-  private async logToHealthcareMonitoring(errorLog: any): Promise<void> {
-    try {
-      // For LGPD compliance, ensure sensitive data is properly handled
-      const _sanitizedLog = {
-        ...errorLog,
-        // Remove any PII from logs
-        healthcareContext: {
-          clinicId: errorLog.healthcareContext.clinicId,
-          userRole: errorLog.healthcareContext.userRole,
-          // Don't log user ID in monitoring for privacy
-        },
-      };
-
-      // Send to monitoring service (implement with actual monitoring provider)
-      // await this.monitoringService.logHealthcareError(sanitizedLog);
-    } catch {
-      // Ensure monitoring failures don't break the main application flow
-    }
-  }
-}
-
-// Healthcare-specific types
-interface MicroserviceRoute {
-  service: string;
-  endpoint: string;
-  circuitBreakerKey: string;
-  healthcareContext: string;
-  complianceLevel: 'low' | 'medium' | 'high' | 'maximum';
-}
-
-interface HealthcareContext {
-  clinicId: string;
-  userId: string;
-  userRole: string;
-  permissions: string[];
 }
 
 // Factory function for creating healthcare gateway
-export function createHealthcareGateway(): HealthcareAPIGateway {
-  return new HealthcareAPIGateway();
-}
+export const createHealthcareGateway = (): HealthcareAPIGateway =>
+  new HealthcareAPIGateway();

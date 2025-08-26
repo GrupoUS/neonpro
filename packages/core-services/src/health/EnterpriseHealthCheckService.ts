@@ -8,19 +8,19 @@
  * - Alertas automáticos
  */
 
-import { EnterpriseAnalyticsService } from '../enterprise/analytics/EnterpriseAnalyticsService';
-import { EnterpriseAuditService } from '../enterprise/audit/EnterpriseAuditService';
-import { EnterpriseCacheService } from '../enterprise/cache/EnterpriseCacheService';
-import { EnterpriseSecurityService } from '../enterprise/security/EnterpriseSecurityService';
+import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
+import { EnterpriseAuditService } from "../enterprise/audit/EnterpriseAuditService";
+import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
+import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
 
 export interface HealthCheckResult {
   service: string;
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   responseTime: number;
   timestamp: string;
   details: {
     connectivity: boolean;
-    performance: 'excellent' | 'good' | 'slow' | 'critical';
+    performance: "excellent" | "good" | "slow" | "critical";
     errors: string[];
     warnings: string[];
     metrics: Record<string, any>;
@@ -28,7 +28,7 @@ export interface HealthCheckResult {
 }
 
 export interface SystemHealthReport {
-  overall: 'healthy' | 'degraded' | 'unhealthy';
+  overall: "healthy" | "degraded" | "unhealthy";
   services: HealthCheckResult[];
   summary: {
     totalServices: number;
@@ -67,7 +67,7 @@ export class EnterpriseHealthCheckService {
   private initializeServices(): void {
     // Mock service instances for health checking
     this.services.set(
-      'cache',
+      "cache",
       new EnterpriseCacheService({
         layers: {
           memory: {
@@ -77,10 +77,10 @@ export class EnterpriseHealthCheckService {
           },
           redis: {
             enabled: false, // Disable Redis for health checks
-            host: 'localhost',
+            host: "localhost",
             port: 6379,
             ttl: 60_000,
-            keyPrefix: 'health:',
+            keyPrefix: "health:",
           },
           database: {
             enabled: false, // Disable DB for health checks
@@ -99,22 +99,22 @@ export class EnterpriseHealthCheckService {
       }),
     );
 
-    this.services.set('analytics', new EnterpriseAnalyticsService());
+    this.services.set("analytics", new EnterpriseAnalyticsService());
 
     this.services.set(
-      'security',
+      "security",
       new EnterpriseSecurityService({
         enableEncryption: false, // Simplified for health checks
         enableAuditLogging: false,
         enableAccessControl: false,
-        encryptionAlgorithm: 'aes-256-gcm',
+        encryptionAlgorithm: "aes-256-gcm",
         auditRetentionDays: 1,
         requireSecureChannel: false,
-        allowedOrigins: ['*'],
+        allowedOrigins: ["*"],
       }),
     );
 
-    this.services.set('audit', new EnterpriseAuditService());
+    this.services.set("audit", new EnterpriseAuditService());
 
     // Initialize health history
     for (const serviceName of this.services.keys()) {
@@ -139,12 +139,12 @@ export class EnterpriseHealthCheckService {
     if (!service) {
       return {
         service: serviceName,
-        status: 'unhealthy',
+        status: "unhealthy",
         responseTime: 0,
         timestamp: new Date().toISOString(),
         details: {
           connectivity: false,
-          performance: 'critical',
+          performance: "critical",
           errors: [`Service ${serviceName} not found`],
           warnings: [],
           metrics: {},
@@ -154,12 +154,12 @@ export class EnterpriseHealthCheckService {
 
     const result: HealthCheckResult = {
       service: serviceName,
-      status: 'healthy',
+      status: "healthy",
       responseTime: 0,
       timestamp: new Date().toISOString(),
       details: {
         connectivity: false,
-        performance: 'excellent',
+        performance: "excellent",
         errors: [],
         warnings: [],
         metrics: {},
@@ -169,19 +169,19 @@ export class EnterpriseHealthCheckService {
     try {
       // Test connectivity and basic operations
       switch (serviceName) {
-        case 'cache': {
+        case "cache": {
           await this.testCacheService(service, result);
           break;
         }
-        case 'analytics': {
+        case "analytics": {
           await this.testAnalyticsService(service, result);
           break;
         }
-        case 'security': {
+        case "security": {
           await this.testSecurityService(service, result);
           break;
         }
-        case 'audit': {
+        case "audit": {
           await this.testAuditService(service, result);
           break;
         }
@@ -195,19 +195,19 @@ export class EnterpriseHealthCheckService {
 
       // Determine overall status
       if (result.details.errors.length > 0) {
-        result.status = 'unhealthy';
+        result.status = "unhealthy";
       } else if (
-        result.details.warnings.length > 0
-        || result.details.performance === 'slow'
+        result.details.warnings.length > 0 ||
+        result.details.performance === "slow"
       ) {
-        result.status = 'degraded';
+        result.status = "degraded";
       } else {
-        result.status = 'healthy';
+        result.status = "healthy";
       }
     } catch (error) {
       result.responseTime = performance.now() - startTime;
-      result.status = 'unhealthy';
-      result.details.performance = 'critical';
+      result.status = "unhealthy";
+      result.details.performance = "critical";
       result.details.errors.push((error as Error).message);
     }
 
@@ -222,27 +222,30 @@ export class EnterpriseHealthCheckService {
    */
   async performFullHealthCheck(): Promise<SystemHealthReport> {
     const serviceChecks = await Promise.all(
-      [...this.services.keys()].map((serviceName) => this.checkServiceHealth(serviceName)),
+      [...this.services.keys()].map((serviceName) =>
+        this.checkServiceHealth(serviceName),
+      ),
     );
 
     const healthyServices = serviceChecks.filter(
-      (check) => check.status === 'healthy',
+      (check) => check.status === "healthy",
     ).length;
     const degradedServices = serviceChecks.filter(
-      (check) => check.status === 'degraded',
+      (check) => check.status === "degraded",
     ).length;
     const unhealthyServices = serviceChecks.filter(
-      (check) => check.status === 'unhealthy',
+      (check) => check.status === "unhealthy",
     ).length;
 
-    const averageResponseTime = serviceChecks.reduce((sum, check) => sum + check.responseTime, 0)
-      / serviceChecks.length;
+    const averageResponseTime =
+      serviceChecks.reduce((sum, check) => sum + check.responseTime, 0) /
+      serviceChecks.length;
 
-    let overall: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
+    let overall: "healthy" | "degraded" | "unhealthy" = "healthy";
     if (unhealthyServices >= this.alertThresholds.unhealthyThreshold) {
-      overall = 'unhealthy';
+      overall = "unhealthy";
     } else if (degradedServices >= this.alertThresholds.degradedThreshold) {
-      overall = 'degraded';
+      overall = "degraded";
     }
 
     const report: SystemHealthReport = {
@@ -282,7 +285,7 @@ export class EnterpriseHealthCheckService {
     // Test get operation
     const retrieved = await cacheService.get(testKey);
     if (JSON.stringify(retrieved) !== JSON.stringify(testValue)) {
-      result.details.errors.push('Cache get/set operation failed');
+      result.details.errors.push("Cache get/set operation failed");
     }
 
     // Test delete operation
@@ -290,7 +293,7 @@ export class EnterpriseHealthCheckService {
     const afterDelete = await cacheService.get(testKey);
     if (afterDelete !== null) {
       result.details.warnings.push(
-        'Cache delete operation may not have worked correctly',
+        "Cache delete operation may not have worked correctly",
       );
     }
 
@@ -301,7 +304,7 @@ export class EnterpriseHealthCheckService {
     // Check memory usage
     const stats = result.details.metrics;
     if (stats.memoryUsage && stats.memoryUsage > 0.9) {
-      result.details.warnings.push('High memory usage detected');
+      result.details.warnings.push("High memory usage detected");
     }
   }
 
@@ -315,22 +318,22 @@ export class EnterpriseHealthCheckService {
     // Test event tracking
     await analyticsService.trackEvent({
       id: `${Date.now()}-${Math.random()}`,
-      type: 'health_check',
-      category: 'health',
-      action: 'health_check',
+      type: "health_check",
+      category: "health",
+      action: "health_check",
       properties: { test: true },
       timestamp: Date.now(),
       metadata: {
-        source: 'health-monitor',
-        version: '1.0.0',
+        source: "health-monitor",
+        version: "1.0.0",
       },
     });
 
     // Test metric recording
     await analyticsService.recordMetric({
-      name: 'health_check_test',
+      name: "health_check_test",
       value: 1,
-      tags: { service: 'health' },
+      tags: { service: "health" },
     });
 
     // Get health metrics
@@ -340,7 +343,7 @@ export class EnterpriseHealthCheckService {
     // Check for data processing lag
     const metrics = result.details.metrics;
     if (metrics.processingLag && metrics.processingLag > 10_000) {
-      result.details.warnings.push('High processing lag detected');
+      result.details.warnings.push("High processing lag detected");
     }
   }
 
@@ -352,18 +355,18 @@ export class EnterpriseHealthCheckService {
     result: HealthCheckResult,
   ): Promise<void> {
     // Test encryption/decryption
-    const testData = 'health check test data';
+    const testData = "health check test data";
     const encrypted = await securityService.encryptData(testData);
     const decrypted = await securityService.decryptData(encrypted);
 
     if (decrypted !== testData) {
-      result.details.errors.push('Encryption/decryption test failed');
+      result.details.errors.push("Encryption/decryption test failed");
     }
 
     // Test permission validation (mock)
     const _hasPermission = await securityService.validatePermission(
-      'health_check_user',
-      'read',
+      "health_check_user",
+      "read",
     );
     // For health check, we expect this to work (even if it returns false for unknown user)
 
@@ -374,7 +377,7 @@ export class EnterpriseHealthCheckService {
     // Check session counts
     const metrics = result.details.metrics;
     if (metrics.activeSessions && metrics.activeSessions > 10_000) {
-      result.details.warnings.push('High number of active sessions');
+      result.details.warnings.push("High number of active sessions");
     }
   }
 
@@ -388,11 +391,11 @@ export class EnterpriseHealthCheckService {
     // Test audit logging
     await auditService.logEvent({
       id: `health_check_${Date.now()}`,
-      service: 'health-monitor',
-      eventType: 'HEALTH_CHECK',
+      service: "health-monitor",
+      eventType: "HEALTH_CHECK",
       timestamp: new Date().toISOString(),
       details: { test: true },
-      version: '1.0.0',
+      version: "1.0.0",
     });
 
     // Test chain integrity
@@ -411,7 +414,7 @@ export class EnterpriseHealthCheckService {
     const stats = result.details.metrics;
     if (stats.total && stats.total > 1_000_000) {
       result.details.warnings.push(
-        'Large audit trail detected - consider archiving',
+        "Large audit trail detected - consider archiving",
       );
     }
   }
@@ -421,17 +424,17 @@ export class EnterpriseHealthCheckService {
    */
   private assessPerformance(
     responseTime: number,
-  ): 'excellent' | 'good' | 'slow' | 'critical' {
+  ): "excellent" | "good" | "slow" | "critical" {
     if (responseTime < 100) {
-      return 'excellent';
+      return "excellent";
     }
     if (responseTime < 500) {
-      return 'good';
+      return "good";
     }
     if (responseTime < 2000) {
-      return 'slow';
+      return "slow";
     }
-    return 'critical';
+    return "critical";
   }
 
   /**
@@ -459,15 +462,15 @@ export class EnterpriseHealthCheckService {
     const alerts: string[] = [];
 
     // Check overall system health
-    if (report.overall === 'unhealthy') {
-      alerts.push('CRITICAL: System is unhealthy');
-    } else if (report.overall === 'degraded') {
-      alerts.push('WARNING: System performance is degraded');
+    if (report.overall === "unhealthy") {
+      alerts.push("CRITICAL: System is unhealthy");
+    } else if (report.overall === "degraded") {
+      alerts.push("WARNING: System performance is degraded");
     }
 
     // Check individual services
     for (const service of report.services) {
-      if (service.status === 'unhealthy') {
+      if (service.status === "unhealthy") {
         alerts.push(`CRITICAL: ${service.service} service is unhealthy`);
       } else if (service.responseTime > this.alertThresholds.responseTime) {
         alerts.push(
@@ -520,12 +523,13 @@ export class EnterpriseHealthCheckService {
     }
 
     const healthyChecks = recentHistory.filter(
-      (r) => r.status === 'healthy',
+      (r) => r.status === "healthy",
     ).length;
     const availability = (healthyChecks / recentHistory.length) * 100;
 
-    const avgResponseTime = recentHistory.reduce((sum, r) => sum + r.responseTime, 0)
-      / recentHistory.length;
+    const avgResponseTime =
+      recentHistory.reduce((sum, r) => sum + r.responseTime, 0) /
+      recentHistory.length;
 
     const errorsCount = recentHistory.filter(
       (r) => r.details.errors.length > 0,
@@ -588,7 +592,7 @@ export class EnterpriseHealthCheckService {
    * Get current system status summary
    */
   async getSystemStatus(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     uptime: number;
     lastCheck: string;
     services: {

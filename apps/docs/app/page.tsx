@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Button } from '@neonpro/ui/button';
+import { Button } from "@neonpro/ui/button";
 
 export default function Home() {
   return (
@@ -35,8 +35,9 @@ export default function Home() {
             Welcome to NeonPro Documentation
           </h2>
           <p className="mx-auto mb-12 max-w-2xl text-slate-600 text-xl dark:text-slate-300">
-            Comprehensive documentation for the NeonPro healthcare platform, including API
-            references, component guides, and compliance documentation.
+            Comprehensive documentation for the NeonPro healthcare platform,
+            including API references, component guides, and compliance
+            documentation.
           </p>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">

@@ -5,11 +5,14 @@
 // =====================================================================================
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import { RetentionStrategyStatus, RetentionStrategyType } from '@/app/types/retention-analytics';
-import type { CreateRetentionStrategy } from '@/app/types/retention-analytics';
+import {
+  RetentionStrategyStatus,
+  RetentionStrategyType,
+} from "@/app/types/retention-analytics";
+import type { CreateRetentionStrategy } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 // =====================================================================================
@@ -196,9 +199,9 @@ export async function GET(
       }
 
       if (sortOrder === "desc") {
-        return valueA > valueB ? -1 : (valueA < valueB ? 1 : 0);
+        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
       }
-      return valueA < valueB ? -1 : (valueA > valueB ? 1 : 0);
+      return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
     });
 
     // Apply pagination

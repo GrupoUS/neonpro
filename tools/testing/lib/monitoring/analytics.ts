@@ -14,7 +14,7 @@ export class AnalyticsService {
     metadata?: Record<string, any>,
   ): void {
     AnalyticsService.track({
-      name: 'user_action',
+      name: "user_action",
       properties: {
         action,
         userId,

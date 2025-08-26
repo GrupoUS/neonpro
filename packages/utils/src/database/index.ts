@@ -1,10 +1,10 @@
 /**
- * @fileoverview Healthcare Database Utilities
+ * @file Healthcare Database Utilities
  * LGPD-compliant database operations and audit functions
  *
- * @compliance LGPD + ANVISA + CFM
+ * @see LGPD + ANVISA + CFM compliance requirements
  */
 
-export * from './anonymization';
-export * from './audit';
-export * from './rls';
+export * from "./anonymization";
+export * from "./audit";
+export * from "./rls";

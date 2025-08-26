@@ -5,7 +5,7 @@
 // Features: 3D modeling, treatment simulation, AR visualization, outcome prediction
 // =============================================================================
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 // =============================================================================
 // TYPES & INTERFACES
@@ -15,7 +15,7 @@ export interface ARSimulation {
   id: string;
   patientId: string;
   treatmentType: string;
-  status: 'initializing' | 'processing' | 'ready' | 'completed' | 'failed';
+  status: "initializing" | "processing" | "ready" | "completed" | "failed";
 
   inputData: {
     photos: PhotoInput[];
@@ -46,11 +46,11 @@ export interface ARSimulation {
 
 export interface PhotoInput {
   id: string;
-  type: 'front' | 'profile_left' | 'profile_right' | 'smile' | 'closeup';
+  type: "front" | "profile_left" | "profile_right" | "smile" | "closeup";
   url: string;
   quality: number; // 0-100
-  lighting: 'good' | 'poor' | 'excellent';
-  resolution: { width: number; height: number; };
+  lighting: "good" | "poor" | "excellent";
+  resolution: { width: number; height: number };
   landmarks: FacialLandmark[];
 }
 
@@ -68,7 +68,7 @@ export interface FacialMeasurements {
 }
 
 export interface PatientPreferences {
-  intensityLevel: 'subtle' | 'moderate' | 'dramatic';
+  intensityLevel: "subtle" | "moderate" | "dramatic";
   concerns: string[];
   goals: string[];
   referenceImages?: string[];
@@ -77,11 +77,11 @@ export interface PatientPreferences {
 
 export interface TreatmentParameters {
   treatmentType:
-    | 'botox'
-    | 'filler'
-    | 'facial_harmonization'
-    | 'thread_lift'
-    | 'peeling';
+    | "botox"
+    | "filler"
+    | "facial_harmonization"
+    | "thread_lift"
+    | "peeling";
   areas: TreatmentArea[];
   technique: string;
   expectedUnits?: number;
@@ -126,7 +126,7 @@ export interface OutcomeMetrics {
 
 export interface RecoveryStage {
   day: number;
-  phase: 'immediate' | 'early' | 'intermediate' | 'final';
+  phase: "immediate" | "early" | "intermediate" | "final";
   description: string;
   expectedAppearance: string;
   restrictions: string[];
@@ -140,12 +140,12 @@ export interface SimulationRequest {
   photos: File[];
   preferences: PatientPreferences;
   treatmentParameters: TreatmentParameters;
-  priority?: 'low' | 'normal' | 'high';
+  priority?: "low" | "normal" | "high";
 }
 
 export interface SimulationComparison {
   simulationIds: string[];
-  comparisonType: 'before_after' | 'treatment_options' | 'timeline_progression';
+  comparisonType: "before_after" | "treatment_options" | "timeline_progression";
   metrics: ComparisonMetric[];
   recommendation?: string;
   reasoning?: string;
@@ -207,10 +207,10 @@ interface CameraPosition {
 }
 
 interface Transformation {
-  type: 'translate' | 'rotate' | 'scale';
+  type: "translate" | "rotate" | "scale";
   target: string;
   values: number[];
-  easing: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
+  easing: "linear" | "ease-in" | "ease-out" | "ease-in-out";
 }
 
 interface BlendShape {
@@ -229,7 +229,7 @@ interface MaintenanceSchedule {
 interface RiskFactor {
   factor: string;
   probability: number; // 0-100
-  severity: 'low' | 'medium' | 'high';
+  severity: "low" | "medium" | "high";
   mitigation: string;
 }
 
@@ -280,14 +280,15 @@ export class ARResultsSimulatorService {
       );
 
       // Extract facial measurements from photos
-      const measurements = await this.extractFacialMeasurements(validatedPhotos);
+      const measurements =
+        await this.extractFacialMeasurements(validatedPhotos);
 
       // Create simulation record
       const simulation: ARSimulation = {
         id: `ar_sim_${Date.now()}`,
         patientId: request.patientId,
         treatmentType: request.treatmentType,
-        status: 'initializing',
+        status: "initializing",
         inputData: {
           photos: validatedPhotos,
           measurements,
@@ -296,7 +297,7 @@ export class ARResultsSimulatorService {
         },
         outputData: {} as any, // Will be populated during processing
         metadata: {
-          modelVersion: '2.1.0',
+          modelVersion: "2.1.0",
           processingTime: 0,
           accuracy: 0,
           createdAt: new Date(),
@@ -312,7 +313,7 @@ export class ARResultsSimulatorService {
       this.processSimulationAsync(simulation.id);
       return simulation;
     } catch {
-      throw new Error('Failed to create AR simulation');
+      throw new Error("Failed to create AR simulation");
     }
   }
 
@@ -323,11 +324,11 @@ export class ARResultsSimulatorService {
     try {
       const simulation = await this.getSimulation(simulationId);
       if (!simulation) {
-        throw new Error('Simulation not found');
+        throw new Error("Simulation not found");
       }
 
       // Update status
-      simulation.status = 'processing';
+      simulation.status = "processing";
       await this.storeSimulation(simulation);
 
       const startTime = Date.now();
@@ -389,14 +390,14 @@ export class ARResultsSimulatorService {
       simulation.metadata.processingTime = processingTime;
       simulation.metadata.accuracy = confidenceScore;
       simulation.metadata.updatedAt = new Date();
-      simulation.status = 'ready';
+      simulation.status = "ready";
 
       await this.storeSimulation(simulation);
     } catch {
       // Update simulation status to failed
       const simulation = await this.getSimulation(simulationId);
       if (simulation) {
-        simulation.status = 'failed';
+        simulation.status = "failed";
         await this.storeSimulation(simulation);
       }
     }
@@ -408,9 +409,9 @@ export class ARResultsSimulatorService {
   async getSimulation(simulationId: string): Promise<ARSimulation | null> {
     try {
       const { data, error } = await supabase
-        .from('ar_simulations')
-        .select('*')
-        .eq('id', simulationId)
+        .from("ar_simulations")
+        .select("*")
+        .eq("id", simulationId)
         .single();
 
       if (error) {
@@ -432,10 +433,10 @@ export class ARResultsSimulatorService {
   async getPatientSimulations(patientId: string): Promise<ARSimulation[]> {
     try {
       const { data, error } = await supabase
-        .from('ar_simulations')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: false });
+        .from("ar_simulations")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("created_at", { ascending: false });
 
       if (error) {
         throw error;
@@ -452,7 +453,7 @@ export class ARResultsSimulatorService {
    */
   async compareSimulations(
     simulationIds: string[],
-    comparisonType: SimulationComparison['comparisonType'],
+    comparisonType: SimulationComparison["comparisonType"],
   ): Promise<SimulationComparison> {
     const simulations = await Promise.all(
       simulationIds.map((id) => this.getSimulation(id)),
@@ -463,7 +464,7 @@ export class ARResultsSimulatorService {
     ) as ARSimulation[];
 
     if (validSimulations.length < 2) {
-      throw new Error('At least 2 valid simulations required for comparison');
+      throw new Error("At least 2 valid simulations required for comparison");
     }
 
     const metrics = await this.calculateComparisonMetrics(
@@ -501,7 +502,8 @@ export class ARResultsSimulatorService {
       const quality = await this.assessPhotoQuality(photo);
       const landmarks = await this.detectFacialLandmarks(photo);
 
-      if (quality < 60) {}
+      if (quality < 60) {
+      }
 
       processedPhotos.push({
         id: `photo_${i}_${Date.now()}`,
@@ -521,9 +523,9 @@ export class ARResultsSimulatorService {
     photos: PhotoInput[],
   ): Promise<FacialMeasurements> {
     // Use the front-facing photo for primary measurements
-    const frontPhoto = photos.find((p) => p.type === 'front');
+    const frontPhoto = photos.find((p) => p.type === "front");
     if (!frontPhoto) {
-      throw new Error('Front-facing photo required for measurements');
+      throw new Error("Front-facing photo required for measurements");
     }
 
     // Extract measurements using facial landmarks
@@ -559,7 +561,7 @@ export class ARResultsSimulatorService {
       textureData: new ArrayBuffer(2048), // Mock texture data
       materialProperties: [
         {
-          name: 'skin',
+          name: "skin",
           albedo: [0.8, 0.7, 0.6],
           metallic: 0,
           roughness: 0.8,
@@ -581,13 +583,13 @@ export class ARResultsSimulatorService {
           position: { x: 0, y: 0, z: 2 },
           target: { x: 0, y: 0, z: 0 },
           fov: 45,
-          name: 'front',
+          name: "front",
         },
         {
           position: { x: 1.5, y: 0, z: 1.5 },
           target: { x: 0, y: 0, z: 0 },
           fov: 45,
-          name: 'angle',
+          name: "angle",
         },
       ],
     };
@@ -610,26 +612,26 @@ export class ARResultsSimulatorService {
 
     // Apply treatment-specific modifications
     switch (treatmentParams.treatmentType) {
-      case 'botox': {
+      case "botox": {
         await this.applyBotoxEffects(treatedModel, treatmentParams.areas);
         break;
       }
-      case 'filler': {
+      case "filler": {
         await this.applyFillerEffects(treatedModel, treatmentParams.areas);
         break;
       }
-      case 'facial_harmonization': {
+      case "facial_harmonization": {
         await this.applyHarmonizationEffects(
           treatedModel,
           treatmentParams.areas,
         );
         break;
       }
-      case 'thread_lift': {
+      case "thread_lift": {
         await this.applyThreadLiftEffects(treatedModel, treatmentParams.areas);
         break;
       }
-      case 'peeling': {
+      case "peeling": {
         await this.applyPeelingEffects(treatedModel, treatmentParams.areas);
         break;
       }
@@ -665,11 +667,12 @@ export class ARResultsSimulatorService {
         timestamp,
         transformations,
         blendShapes: [],
-        description: i === 0
-          ? 'Before treatment'
-          : (i === frameCount
-          ? 'After treatment'
-          : `Treatment progress ${Math.round(progress * 100)}%`),
+        description:
+          i === 0
+            ? "Before treatment"
+            : i === frameCount
+              ? "After treatment"
+              : `Treatment progress ${Math.round(progress * 100)}%`,
       });
     }
 
@@ -708,7 +711,8 @@ export class ARResultsSimulatorService {
       satisfactionPrediction,
     );
 
-    const maintenanceRequired = await this.calculateMaintenanceSchedule(treatmentParams);
+    const maintenanceRequired =
+      await this.calculateMaintenanceSchedule(treatmentParams);
     const riskFactors = await this.assessRiskFactors(treatmentParams);
 
     return {
@@ -733,7 +737,7 @@ export class ARResultsSimulatorService {
     recoveryData.stages.forEach((stage, _index) => {
       timeline.push({
         day: stage.day,
-        phase: stage.phase as RecoveryStage['phase'],
+        phase: stage.phase as RecoveryStage["phase"],
         description: stage.description,
         expectedAppearance: stage.appearance,
         restrictions: stage.restrictions,
@@ -753,7 +757,8 @@ export class ARResultsSimulatorService {
     let confidence = 85; // Base confidence
 
     // Adjust based on photo quality
-    const avgPhotoQuality = photos.reduce((sum, p) => sum + p.quality, 0) / photos.length;
+    const avgPhotoQuality =
+      photos.reduce((sum, p) => sum + p.quality, 0) / photos.length;
     confidence *= avgPhotoQuality / 100;
 
     // Adjust based on facial symmetry (better symmetry = more predictable results)
@@ -800,18 +805,18 @@ export class ARResultsSimulatorService {
         stages: [
           {
             day: 0,
-            phase: 'immediate',
-            description: 'Imediatamente após o procedimento',
-            appearance: 'Pequenos pontos vermelhos nos locais de aplicação',
+            phase: "immediate",
+            description: "Imediatamente após o procedimento",
+            appearance: "Pequenos pontos vermelhos nos locais de aplicação",
             restrictions: [
-              'Não deitar por 4 horas',
-              'Evitar exercícios intensos',
+              "Não deitar por 4 horas",
+              "Evitar exercícios intensos",
             ],
-            care: ['Aplicar gelo se necessário', 'Não massagear a área'],
+            care: ["Aplicar gelo se necessário", "Não massagear a área"],
             changes: [
               {
-                area: 'pontos de aplicação',
-                description: 'vermelhidão leve',
+                area: "pontos de aplicação",
+                description: "vermelhidão leve",
                 severity: 2,
                 duration: 1,
               },
@@ -819,15 +824,15 @@ export class ARResultsSimulatorService {
           },
           {
             day: 3,
-            phase: 'early',
-            description: 'Início dos efeitos',
-            appearance: 'Redução gradual das linhas de expressão',
-            restrictions: ['Evitar saunas e calor excessivo'],
-            care: ['Manter hidratação da pele'],
+            phase: "early",
+            description: "Início dos efeitos",
+            appearance: "Redução gradual das linhas de expressão",
+            restrictions: ["Evitar saunas e calor excessivo"],
+            care: ["Manter hidratação da pele"],
             changes: [
               {
-                area: 'músculos tratados',
-                description: 'relaxamento inicial',
+                area: "músculos tratados",
+                description: "relaxamento inicial",
                 severity: 3,
                 duration: 7,
               },
@@ -835,15 +840,15 @@ export class ARResultsSimulatorService {
           },
           {
             day: 14,
-            phase: 'final',
-            description: 'Resultado completo',
-            appearance: 'Efeito máximo do botox, aparência natural',
+            phase: "final",
+            description: "Resultado completo",
+            appearance: "Efeito máximo do botox, aparência natural",
             restrictions: [],
-            care: ['Cuidados normais de skincare'],
+            care: ["Cuidados normais de skincare"],
             changes: [
               {
-                area: 'linhas de expressão',
-                description: 'redução significativa',
+                area: "linhas de expressão",
+                description: "redução significativa",
                 severity: 8,
                 duration: 120,
               },
@@ -855,15 +860,15 @@ export class ARResultsSimulatorService {
         stages: [
           {
             day: 0,
-            phase: 'immediate',
-            description: 'Logo após a aplicação',
-            appearance: 'Inchaço e vermelhidão nos locais tratados',
-            restrictions: ['Não massagear', 'Evitar maquiagem por 24h'],
-            care: ['Aplicar gelo', 'Dormir com a cabeça elevada'],
+            phase: "immediate",
+            description: "Logo após a aplicação",
+            appearance: "Inchaço e vermelhidão nos locais tratados",
+            restrictions: ["Não massagear", "Evitar maquiagem por 24h"],
+            care: ["Aplicar gelo", "Dormir com a cabeça elevada"],
             changes: [
               {
-                area: 'área tratada',
-                description: 'inchaço moderado',
+                area: "área tratada",
+                description: "inchaço moderado",
                 severity: 5,
                 duration: 3,
               },
@@ -871,15 +876,15 @@ export class ARResultsSimulatorService {
           },
           {
             day: 7,
-            phase: 'intermediate',
-            description: 'Resolução do inchaço',
-            appearance: 'Resultado mais próximo do final',
-            restrictions: ['Evitar exercícios intensos'],
-            care: ['Hidratação adequada'],
+            phase: "intermediate",
+            description: "Resolução do inchaço",
+            appearance: "Resultado mais próximo do final",
+            restrictions: ["Evitar exercícios intensos"],
+            care: ["Hidratação adequada"],
             changes: [
               {
-                area: 'área tratada',
-                description: 'forma definitiva',
+                area: "área tratada",
+                description: "forma definitiva",
                 severity: 2,
                 duration: 7,
               },
@@ -887,15 +892,15 @@ export class ARResultsSimulatorService {
           },
           {
             day: 14,
-            phase: 'final',
-            description: 'Resultado definitivo',
-            appearance: 'Aparência natural e harmônica',
+            phase: "final",
+            description: "Resultado definitivo",
+            appearance: "Aparência natural e harmônica",
             restrictions: [],
-            care: ['Manutenção regular'],
+            care: ["Manutenção regular"],
             changes: [
               {
-                area: 'área tratada',
-                description: 'resultado final',
+                area: "área tratada",
+                description: "resultado final",
                 severity: 9,
                 duration: 365,
               },
@@ -918,22 +923,22 @@ export class ARResultsSimulatorService {
     // Mock landmark detection
     return [
       {
-        id: 'nose_tip',
+        id: "nose_tip",
         coordinates: { x: 0, y: -0.1, z: 0.1 },
         confidence: 0.95,
-        type: 'nose',
+        type: "nose",
       },
       {
-        id: 'left_eye',
+        id: "left_eye",
         coordinates: { x: -0.3, y: 0.2, z: 0 },
         confidence: 0.92,
-        type: 'eye',
+        type: "eye",
       },
       {
-        id: 'right_eye',
+        id: "right_eye",
         coordinates: { x: 0.3, y: 0.2, z: 0 },
         confidence: 0.93,
-        type: 'eye',
+        type: "eye",
       },
     ];
   }
@@ -941,14 +946,14 @@ export class ARResultsSimulatorService {
   private determinePhotoType(
     _photo: File,
     _landmarks: FacialLandmark[],
-  ): PhotoInput['type'] {
+  ): PhotoInput["type"] {
     // Mock photo type determination
-    const types: PhotoInput['type'][] = [
-      'front',
-      'profile_left',
-      'profile_right',
-      'smile',
-      'closeup',
+    const types: PhotoInput["type"][] = [
+      "front",
+      "profile_left",
+      "profile_right",
+      "smile",
+      "closeup",
     ];
     return types[Math.floor(Math.random() * types.length)];
   }
@@ -958,15 +963,15 @@ export class ARResultsSimulatorService {
     return `https://storage.example.com/photos/${photo.name}`;
   }
 
-  private assessLighting(_photo: File): PhotoInput['lighting'] {
+  private assessLighting(_photo: File): PhotoInput["lighting"] {
     // Mock lighting assessment
-    const options: PhotoInput['lighting'][] = ['good', 'poor', 'excellent'];
+    const options: PhotoInput["lighting"][] = ["good", "poor", "excellent"];
     return options[Math.floor(Math.random() * options.length)];
   }
 
   private async getPhotoResolution(
     _photo: File,
-  ): Promise<{ width: number; height: number; }> {
+  ): Promise<{ width: number; height: number }> {
     // Mock resolution detection
     return { width: 1920, height: 1080 };
   }
@@ -1055,7 +1060,7 @@ export class ARResultsSimulatorService {
 
   private async adjustIntensity(
     _model: Model3D,
-    intensity: PatientPreferences['intensityLevel'],
+    intensity: PatientPreferences["intensityLevel"],
   ): Promise<void> {
     const intensityMultipliers = { subtle: 0.6, moderate: 0.8, dramatic: 1 };
     const _multiplier = intensityMultipliers[intensity];
@@ -1070,10 +1075,10 @@ export class ARResultsSimulatorService {
     // Mock interpolation
     return [
       {
-        type: 'translate',
-        target: 'cheek_area',
+        type: "translate",
+        target: "cheek_area",
         values: [progress * 0.1, 0, 0],
-        easing: 'ease-out',
+        easing: "ease-out",
       },
     ];
   }
@@ -1131,7 +1136,7 @@ export class ARResultsSimulatorService {
       touchUpInterval: schedule.touchUp,
       fullRefreshInterval: schedule.fullRefresh,
       estimatedCostPerYear: schedule.cost,
-      additionalTreatments: ['skincare', 'sun_protection'],
+      additionalTreatments: ["skincare", "sun_protection"],
     };
   }
 
@@ -1141,30 +1146,30 @@ export class ARResultsSimulatorService {
     const risksByTreatment = {
       botox: [
         {
-          factor: 'Temporary bruising',
+          factor: "Temporary bruising",
           probability: 15,
-          severity: 'low' as const,
-          mitigation: 'Apply ice, avoid blood thinners',
+          severity: "low" as const,
+          mitigation: "Apply ice, avoid blood thinners",
         },
         {
-          factor: 'Asymmetry',
+          factor: "Asymmetry",
           probability: 5,
-          severity: 'medium' as const,
-          mitigation: 'Touch-up session if needed',
+          severity: "medium" as const,
+          mitigation: "Touch-up session if needed",
         },
       ],
       filler: [
         {
-          factor: 'Swelling',
+          factor: "Swelling",
           probability: 80,
-          severity: 'low' as const,
-          mitigation: 'Normal recovery, resolves in 3-7 days',
+          severity: "low" as const,
+          mitigation: "Normal recovery, resolves in 3-7 days",
         },
         {
-          factor: 'Vascular occlusion',
+          factor: "Vascular occlusion",
           probability: 0.1,
-          severity: 'high' as const,
-          mitigation: 'Immediate medical attention',
+          severity: "high" as const,
+          mitigation: "Immediate medical attention",
         },
       ],
     };
@@ -1174,7 +1179,7 @@ export class ARResultsSimulatorService {
 
   private async calculateComparisonMetrics(
     simulations: ARSimulation[],
-    _comparisonType: SimulationComparison['comparisonType'],
+    _comparisonType: SimulationComparison["comparisonType"],
   ): Promise<ComparisonMetric[]> {
     const metrics: ComparisonMetric[] = [];
 
@@ -1183,23 +1188,25 @@ export class ARResultsSimulatorService {
       const sim2 = simulations[1];
 
       metrics.push({
-        name: 'Satisfaction Prediction',
+        name: "Satisfaction Prediction",
         value1: sim1.outputData.estimatedOutcome.satisfactionPrediction,
         value2: sim2.outputData.estimatedOutcome.satisfactionPrediction,
-        difference: sim2.outputData.estimatedOutcome.satisfactionPrediction
-          - sim1.outputData.estimatedOutcome.satisfactionPrediction,
-        unit: '%',
-        interpretation: 'Higher is better',
+        difference:
+          sim2.outputData.estimatedOutcome.satisfactionPrediction -
+          sim1.outputData.estimatedOutcome.satisfactionPrediction,
+        unit: "%",
+        interpretation: "Higher is better",
       });
 
       metrics.push({
-        name: 'Naturalness Score',
+        name: "Naturalness Score",
         value1: sim1.outputData.estimatedOutcome.naturalness,
         value2: sim2.outputData.estimatedOutcome.naturalness,
-        difference: sim2.outputData.estimatedOutcome.naturalness
-          - sim1.outputData.estimatedOutcome.naturalness,
-        unit: '%',
-        interpretation: 'Higher indicates more natural result',
+        difference:
+          sim2.outputData.estimatedOutcome.naturalness -
+          sim1.outputData.estimatedOutcome.naturalness,
+        unit: "%",
+        interpretation: "Higher indicates more natural result",
       });
     }
 
@@ -1209,26 +1216,25 @@ export class ARResultsSimulatorService {
   private async generateRecommendation(
     simulations: ARSimulation[],
     metrics: ComparisonMetric[],
-  ): Promise<{ recommendation: string; reasoning: string; }> {
+  ): Promise<{ recommendation: string; reasoning: string }> {
     // Simple recommendation logic
     if (metrics.length === 0) {
       return {
-        recommendation: 'Insufficient data for recommendation',
-        reasoning: 'More simulations needed for comparison',
+        recommendation: "Insufficient data for recommendation",
+        reasoning: "More simulations needed for comparison",
       };
     }
 
     const bestSim = simulations.reduce((best, current) =>
-      current.outputData.estimatedOutcome.satisfactionPrediction
-          > best.outputData.estimatedOutcome.satisfactionPrediction
+      current.outputData.estimatedOutcome.satisfactionPrediction >
+      best.outputData.estimatedOutcome.satisfactionPrediction
         ? current
-        : best
+        : best,
     );
 
     return {
       recommendation: `Treatment option ${simulations.indexOf(bestSim) + 1} recommended`,
-      reasoning:
-        `Highest predicted satisfaction (${bestSim.outputData.estimatedOutcome.satisfactionPrediction}%) with good naturalness score`,
+      reasoning: `Highest predicted satisfaction (${bestSim.outputData.estimatedOutcome.satisfactionPrediction}%) with good naturalness score`,
     };
   }
 
@@ -1237,7 +1243,7 @@ export class ARResultsSimulatorService {
   // =============================================================================
 
   private async storeSimulation(simulation: ARSimulation): Promise<void> {
-    const { error } = await supabase.from('ar_simulations').upsert({
+    const { error } = await supabase.from("ar_simulations").upsert({
       id: simulation.id,
       patient_id: simulation.patientId,
       treatment_type: simulation.treatmentType,
@@ -1281,7 +1287,7 @@ export class ARResultsSimulatorService {
 
   async incrementViewCount(simulationId: string): Promise<void> {
     try {
-      const { error } = await supabase.rpc('increment_simulation_views', {
+      const { error } = await supabase.rpc("increment_simulation_views", {
         simulation_id: simulationId,
       });
 
@@ -1293,9 +1299,9 @@ export class ARResultsSimulatorService {
 
   async deleteSimulation(simulationId: string): Promise<void> {
     const { error } = await supabase
-      .from('ar_simulations')
+      .from("ar_simulations")
       .delete()
-      .eq('id', simulationId);
+      .eq("id", simulationId);
 
     if (error) {
       throw error;
@@ -1303,14 +1309,14 @@ export class ARResultsSimulatorService {
   }
 
   async getSimulationsByStatus(
-    status: ARSimulation['status'],
+    status: ARSimulation["status"],
   ): Promise<ARSimulation[]> {
     try {
       const { data, error } = await supabase
-        .from('ar_simulations')
-        .select('*')
-        .eq('status', status)
-        .order('created_at', { ascending: false });
+        .from("ar_simulations")
+        .select("*")
+        .eq("status", status)
+        .order("created_at", { ascending: false });
 
       if (error) {
         throw error;

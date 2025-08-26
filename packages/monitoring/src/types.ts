@@ -5,25 +5,25 @@
  * and healthcare-specific metrics.
  */
 
-import type { Metric } from 'web-vitals';
+import type { Metric } from "web-vitals";
 
 /**
  * Web Vitals metric names
  */
-export type WebVitalName = 'CLS' | 'FCP' | 'FID' | 'INP' | 'LCP' | 'TTFB';
+export type WebVitalName = "CLS" | "FCP" | "FID" | "INP" | "LCP" | "TTFB";
 
 /**
  * Healthcare-specific performance metric names
  */
 export type HealthcareMetricName =
-  | 'patient_search_time'
-  | 'form_submission_time'
-  | 'data_encryption_time'
-  | 'database_query_time'
-  | 'image_upload_time'
-  | 'report_generation_time'
-  | 'auth_verification_time'
-  | 'compliance_check_time';
+  | "patient_search_time"
+  | "form_submission_time"
+  | "data_encryption_time"
+  | "database_query_time"
+  | "image_upload_time"
+  | "report_generation_time"
+  | "auth_verification_time"
+  | "compliance_check_time";
 
 /**
  * Custom metric type
@@ -31,7 +31,7 @@ export type HealthcareMetricName =
 export interface CustomMetric {
   name: HealthcareMetricName;
   value: number;
-  rating: 'good' | 'needs-improvement' | 'poor';
+  rating: "good" | "needs-improvement" | "poor";
   delta?: number;
   entries?: PerformanceEntry[];
   id?: string;
@@ -44,7 +44,7 @@ export interface CustomMetric {
     procedureId?: string;
     feature?: string;
     environment?: string;
-    userRole?: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist';
+    userRole?: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
   };
 }
 
@@ -119,10 +119,15 @@ export interface AlertConfig {
  * Healthcare-specific monitoring context
  */
 export interface HealthcareContext {
-  feature: 'patient-management' | 'procedures' | 'compliance' | 'reports' | 'auth';
-  sensitivity: 'low' | 'medium' | 'high' | 'critical';
-  complianceLevel: 'basic' | 'healthcare' | 'anvisa' | 'cfm';
-  userRole: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist';
+  feature:
+    | "patient-management"
+    | "procedures"
+    | "compliance"
+    | "reports"
+    | "auth";
+  sensitivity: "low" | "medium" | "high" | "critical";
+  complianceLevel: "basic" | "healthcare" | "anvisa" | "cfm";
+  userRole: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
 }
 
 /**
@@ -154,12 +159,12 @@ export interface PerformanceReport {
       median: number;
       p95: number;
       samples: number;
-      trend: 'improving' | 'degrading' | 'stable';
+      trend: "improving" | "degrading" | "stable";
     };
   };
   alerts: {
-    type: 'error_rate' | 'performance' | 'availability';
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    type: "error_rate" | "performance" | "availability";
+    severity: "low" | "medium" | "high" | "critical";
     message: string;
     timestamp: Date;
     resolved: boolean;
@@ -189,7 +194,7 @@ export interface ErrorEvent {
   userAgent: string;
   userId?: string;
   context?: HealthcareContext;
-  severity: 'info' | 'warning' | 'error' | 'fatal';
+  severity: "info" | "warning" | "error" | "fatal";
   fingerprint: string;
   tags: Record<string, string>;
 }
@@ -256,8 +261,8 @@ export interface DashboardMetrics {
  * Alert data structure
  */
 export interface AlertData {
-  type: 'error_rate' | 'performance' | 'availability';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  type: "error_rate" | "performance" | "availability";
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   timestamp: Date;
   resolved: boolean;
@@ -267,10 +272,10 @@ export interface AlertData {
  * Compliance status structure
  */
 export interface ComplianceStatus {
-  lgpd: { status: string; lastCheck: Date; score: number; };
-  anvisa: { status: string; lastCheck: Date; score: number; };
-  cfm: { status: string; lastCheck: Date; score: number; };
-  security: { status: string; lastCheck: Date; score: number; };
+  lgpd: { status: string; lastCheck: Date; score: number };
+  anvisa: { status: string; lastCheck: Date; score: number };
+  cfm: { status: string; lastCheck: Date; score: number };
+  security: { status: string; lastCheck: Date; score: number };
 }
 
 /**
@@ -294,6 +299,8 @@ export interface MonitoringHooks {
   onMetric?: (metric: Metric | CustomMetric) => void;
   onError?: (error: ErrorEvent) => void;
   onAlert?: (alert: Record<string, unknown>) => void;
-  beforeSend?: (data: Record<string, unknown>) => Record<string, unknown> | null;
+  beforeSend?: (
+    data: Record<string, unknown>,
+  ) => Record<string, unknown> | null;
   afterSend?: (response: Response) => void;
 }

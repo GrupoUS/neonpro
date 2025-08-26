@@ -5,8 +5,8 @@
  * Based on 2025 performance best practices
  */
 
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 // Bundle size thresholds (in bytes)
 export const BUNDLE_THRESHOLDS = {
@@ -26,7 +26,7 @@ export interface BundleAnalysis {
     size: number;
     gzippedSize: number;
     modules: string[];
-    status: 'good' | 'warning' | 'error';
+    status: "good" | "warning" | "error";
   }[];
   duplicates: {
     module: string;
@@ -46,7 +46,7 @@ export async function analyzeBundleStats(
   statsPath: string,
 ): Promise<BundleAnalysis> {
   try {
-    const statsContent = await fs.readFile(statsPath, 'utf8');
+    const statsContent = await fs.readFile(statsPath, "utf8");
     const stats = JSON.parse(statsContent);
 
     const analysis: BundleAnalysis = {
@@ -86,24 +86,24 @@ export async function analyzeBundleStats(
 
     return analysis;
   } catch {
-    throw new Error('Failed to analyze bundle stats');
+    throw new Error("Failed to analyze bundle stats");
   }
 }
 
 // Determine chunk status based on size
-function getChunkStatus(size: number): 'good' | 'warning' | 'error' {
+function getChunkStatus(size: number): "good" | "warning" | "error" {
   if (size > BUNDLE_THRESHOLDS.ERROR) {
-    return 'error';
+    return "error";
   }
   if (size > BUNDLE_THRESHOLDS.WARNING) {
-    return 'warning';
+    return "warning";
   }
-  return 'good';
+  return "good";
 }
 
 // Analyze modules for optimization opportunities
 function analyzeModules(modules: any[], analysis: BundleAnalysis) {
-  const moduleMap = new Map<string, { chunk: string; size: number; }[]>();
+  const moduleMap = new Map<string, { chunk: string; size: number }[]>();
 
   for (const module of modules) {
     const moduleName = cleanModuleName(module.name);
@@ -115,7 +115,7 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
     }
 
     moduleMap.get(moduleName)?.push({
-      chunk: module.chunks?.[0] || 'unknown',
+      chunk: module.chunks?.[0] || "unknown",
       size: moduleSize,
     });
 
@@ -124,7 +124,7 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
       analysis.largeModules.push({
         name: moduleName,
         size: moduleSize,
-        chunk: module.chunks?.[0] || 'unknown',
+        chunk: module.chunks?.[0] || "unknown",
       });
     }
   }
@@ -132,8 +132,9 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
   // Find duplicate modules
   for (const [moduleName, occurrences] of moduleMap) {
     if (occurrences.length > 1) {
-      const totalWasted = occurrences.reduce((sum, occ) => sum + occ.size, 0)
-        - Math.max(...occurrences.map((occ) => occ.size));
+      const totalWasted =
+        occurrences.reduce((sum, occ) => sum + occ.size, 0) -
+        Math.max(...occurrences.map((occ) => occ.size));
 
       if (totalWasted > 1024) {
         // Only report if > 1KB wasted
@@ -154,17 +155,17 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
 // Clean module names for better readability
 function cleanModuleName(name: string): string {
   if (!name) {
-    return 'unknown';
+    return "unknown";
   }
 
   // Remove webpack loader syntax
-  name = name.replace(/^.*!/, '');
+  name = name.replace(/^.*!/, "");
 
   // Simplify node_modules paths
-  name = name.replace(/.*node_modules\//, '');
+  name = name.replace(/.*node_modules\//, "");
 
   // Remove query parameters
-  name = name.replace(/\?.*$/, '');
+  name = name.replace(/\?.*$/, "");
 
   return name;
 }
@@ -176,17 +177,17 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
   // Bundle size recommendations
   if (analysis.totalSize > BUNDLE_THRESHOLDS.TOTAL_ERROR) {
     recommendations.push(
-      '🚨 Total bundle size exceeds 2MB - implement aggressive code splitting',
+      "🚨 Total bundle size exceeds 2MB - implement aggressive code splitting",
     );
   } else if (analysis.totalSize > BUNDLE_THRESHOLDS.TOTAL_WARNING) {
     recommendations.push(
-      '⚠️ Total bundle size exceeds 1MB - consider code splitting',
+      "⚠️ Total bundle size exceeds 1MB - consider code splitting",
     );
   }
 
   // Large chunk recommendations
   const largeChunks = analysis.chunks.filter(
-    (chunk) => chunk.status === 'error',
+    (chunk) => chunk.status === "error",
   );
   if (largeChunks.length > 0) {
     recommendations.push(
@@ -201,11 +202,9 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
       0,
     );
     recommendations.push(
-      `📦 ${analysis.duplicates.length} duplicate modules waste ${
-        formatBytes(
-          totalWasted,
-        )
-      } - optimize imports`,
+      `📦 ${analysis.duplicates.length} duplicate modules waste ${formatBytes(
+        totalWasted,
+      )} - optimize imports`,
     );
   }
 
@@ -217,14 +216,16 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
   }
 
   // Specific library recommendations
-  const recharts = analysis.largeModules.find((m) => m.name.includes('recharts'));
+  const recharts = analysis.largeModules.find((m) =>
+    m.name.includes("recharts"),
+  );
   if (recharts) {
     recommendations.push(
       '📊 Recharts detected - use selective imports: import { LineChart } from "recharts"',
     );
   }
 
-  const lodash = analysis.largeModules.find((m) => m.name.includes('lodash'));
+  const lodash = analysis.largeModules.find((m) => m.name.includes("lodash"));
   if (lodash) {
     recommendations.push(
       '🛠️ Lodash detected - use individual imports: import debounce from "lodash/debounce"',
@@ -237,11 +238,11 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
 // Format bytes for human readability
 export function formatBytes(bytes: number): string {
   if (bytes === 0) {
-    return '0 B';
+    return "0 B";
   }
 
   const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
@@ -249,10 +250,10 @@ export function formatBytes(bytes: number): string {
 
 // Generate bundle report
 export function generateBundleReport(analysis: BundleAnalysis): string {
-  let report = '# Bundle Analysis Report\n\n';
+  let report = "# Bundle Analysis Report\n\n";
 
   // Summary
-  report += '## Summary\n';
+  report += "## Summary\n";
   report += `- **Total Size**: ${formatBytes(analysis.totalSize)}\n`;
   report += `- **Estimated Gzipped**: ${formatBytes(analysis.gzippedSize)}\n`;
   report += `- **Chunks**: ${analysis.chunks.length}\n`;
@@ -261,20 +262,25 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
 
   // Recommendations
   if (analysis.recommendations.length > 0) {
-    report += '## Recommendations\n';
+    report += "## Recommendations\n";
     analysis.recommendations.forEach((rec) => {
       report += `- ${rec}\n`;
     });
-    report += '\n';
+    report += "\n";
   }
 
   // Chunk details
-  report += '## Chunks\n';
+  report += "## Chunks\n";
   analysis.chunks.forEach((chunk) => {
-    const status = chunk.status === 'error' ? '🚨' : (chunk.status === 'warning' ? '⚠️' : '✅');
+    const status =
+      chunk.status === "error"
+        ? "🚨"
+        : chunk.status === "warning"
+          ? "⚠️"
+          : "✅";
     report += `- ${status} **${chunk.name}**: ${formatBytes(chunk.size)}\n`;
   });
-  report += '\n';
+  report += "\n";
 
   // Large modules
   if (analysis.largeModules.length > 0) {
@@ -282,18 +288,16 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
     analysis.largeModules.slice(0, 10).forEach((module) => {
       report += `- **${module.name}**: ${formatBytes(module.size)} (${module.chunk})\n`;
     });
-    report += '\n';
+    report += "\n";
   }
 
   // Duplicates
   if (analysis.duplicates.length > 0) {
-    report += '## Duplicate Modules\n';
+    report += "## Duplicate Modules\n";
     analysis.duplicates.slice(0, 10).forEach((dup) => {
-      report += `- **${dup.module}**: ${
-        formatBytes(
-          dup.wastedBytes,
-        )
-      } wasted across ${dup.chunks.length} chunks\n`;
+      report += `- **${dup.module}**: ${formatBytes(
+        dup.wastedBytes,
+      )} wasted across ${dup.chunks.length} chunks\n`;
     });
   }
 
@@ -304,9 +308,9 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
 export async function runBundleAnalysis(statsPath?: string) {
   const defaultStatsPath = path.join(
     process.cwd(),
-    '.next',
-    'analyze',
-    'stats.json',
+    ".next",
+    "analyze",
+    "stats.json",
   );
   const finalStatsPath = statsPath || defaultStatsPath;
 
@@ -314,7 +318,7 @@ export async function runBundleAnalysis(statsPath?: string) {
     const analysis = await analyzeBundleStats(finalStatsPath);
 
     // Write report to file
-    const reportPath = path.join(process.cwd(), 'bundle-analysis-report.md');
+    const reportPath = path.join(process.cwd(), "bundle-analysis-report.md");
     await fs.writeFile(reportPath, generateBundleReport(analysis));
 
     return analysis;

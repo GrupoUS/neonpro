@@ -248,12 +248,14 @@ DATABASE_URL=your-database-url
 ### Common Issues
 
 1. **Connection Timeouts**
+
    ```bash
    # Increase timeout in config
    "testDuration": 120
    ```
 
 2. **Memory Issues**
+
    ```bash
    # Reduce concurrent users
    --users=5

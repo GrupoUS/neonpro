@@ -8,40 +8,46 @@ import {
   Shield,
   User,
   UserCheck,
-} from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { formatDate } from '../utils/formatters';
-import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
-import { Badge } from './Badge';
-import { Button } from './Button';
-import { Input } from './Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select';
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { formatDate } from "../utils/formatters";
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
+import { Input } from "./Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
 
 export type AuditEventType =
-  | 'login'
-  | 'logout'
-  | 'patient_view'
-  | 'patient_edit'
-  | 'patient_create'
-  | 'patient_delete'
-  | 'appointment_view'
-  | 'appointment_create'
-  | 'appointment_edit'
-  | 'appointment_cancel'
-  | 'treatment_view'
-  | 'treatment_edit'
-  | 'document_view'
-  | 'document_download'
-  | 'consent_given'
-  | 'consent_withdrawn'
-  | 'data_export'
-  | 'data_deletion'
-  | 'backup_access'
-  | 'system_config'
-  | 'emergency_access';
+  | "login"
+  | "logout"
+  | "patient_view"
+  | "patient_edit"
+  | "patient_create"
+  | "patient_delete"
+  | "appointment_view"
+  | "appointment_create"
+  | "appointment_edit"
+  | "appointment_cancel"
+  | "treatment_view"
+  | "treatment_edit"
+  | "document_view"
+  | "document_download"
+  | "consent_given"
+  | "consent_withdrawn"
+  | "data_export"
+  | "data_deletion"
+  | "backup_access"
+  | "system_config"
+  | "emergency_access";
 
-export type AuditSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type AuditSeverity = "low" | "medium" | "high" | "critical";
 
 export interface AuditEvent {
   id: string;
@@ -64,7 +70,7 @@ export interface AuditEvent {
   success: boolean;
   errorMessage?: string;
   dataAccessed?: string[];
-  consentStatus?: 'granted' | 'required' | 'withdrawn';
+  consentStatus?: "granted" | "required" | "withdrawn";
   lgpdBasis?: string;
   metadata?: Record<string, any>;
 }
@@ -111,7 +117,7 @@ export interface AuditTrailViewerProps {
   onFilterChange?: (filters: {
     eventTypes?: AuditEventType[];
     severities?: AuditSeverity[];
-    dateRange?: { start: Date; end: Date; };
+    dateRange?: { start: Date; end: Date };
     searchQuery?: string;
   }) => void;
   /**
@@ -129,27 +135,27 @@ export interface AuditTrailViewerProps {
 }
 
 const eventTypeLabels: Record<AuditEventType, string> = {
-  login: 'Login',
-  logout: 'Logout',
-  patient_view: 'Visualização de Paciente',
-  patient_edit: 'Edição de Paciente',
-  patient_create: 'Criação de Paciente',
-  patient_delete: 'Exclusão de Paciente',
-  appointment_view: 'Visualização de Agendamento',
-  appointment_create: 'Criação de Agendamento',
-  appointment_edit: 'Edição de Agendamento',
-  appointment_cancel: 'Cancelamento de Agendamento',
-  treatment_view: 'Visualização de Tratamento',
-  treatment_edit: 'Edição de Tratamento',
-  document_view: 'Visualização de Documento',
-  document_download: 'Download de Documento',
-  consent_given: 'Consentimento Concedido',
-  consent_withdrawn: 'Consentimento Retirado',
-  data_export: 'Exportação de Dados',
-  data_deletion: 'Exclusão de Dados',
-  backup_access: 'Acesso a Backup',
-  system_config: 'Configuração do Sistema',
-  emergency_access: 'Acesso de Emergência',
+  login: "Login",
+  logout: "Logout",
+  patient_view: "Visualização de Paciente",
+  patient_edit: "Edição de Paciente",
+  patient_create: "Criação de Paciente",
+  patient_delete: "Exclusão de Paciente",
+  appointment_view: "Visualização de Agendamento",
+  appointment_create: "Criação de Agendamento",
+  appointment_edit: "Edição de Agendamento",
+  appointment_cancel: "Cancelamento de Agendamento",
+  treatment_view: "Visualização de Tratamento",
+  treatment_edit: "Edição de Tratamento",
+  document_view: "Visualização de Documento",
+  document_download: "Download de Documento",
+  consent_given: "Consentimento Concedido",
+  consent_withdrawn: "Consentimento Retirado",
+  data_export: "Exportação de Dados",
+  data_deletion: "Exclusão de Dados",
+  backup_access: "Acesso a Backup",
+  system_config: "Configuração do Sistema",
+  emergency_access: "Acesso de Emergência",
 };
 
 const getEventIcon = (eventType: AuditEventType) => {
@@ -183,37 +189,37 @@ const getEventIcon = (eventType: AuditEventType) => {
 
 const getSeverityVariant = (severity: AuditSeverity) => {
   switch (severity) {
-    case 'low': {
-      return 'confirmed';
+    case "low": {
+      return "confirmed";
     }
-    case 'medium': {
-      return 'medium';
+    case "medium": {
+      return "medium";
     }
-    case 'high': {
-      return 'high';
+    case "high": {
+      return "high";
     }
-    case 'critical': {
-      return 'urgent';
+    case "critical": {
+      return "urgent";
     }
     default: {
-      return 'default';
+      return "default";
     }
   }
 };
 
 const getSeverityLabel = (severity: AuditSeverity) => {
   switch (severity) {
-    case 'low': {
-      return 'Baixa';
+    case "low": {
+      return "Baixa";
     }
-    case 'medium': {
-      return 'Média';
+    case "medium": {
+      return "Média";
     }
-    case 'high': {
-      return 'Alta';
+    case "high": {
+      return "Alta";
     }
-    case 'critical': {
-      return 'Crítica';
+    case "critical": {
+      return "Crítica";
     }
     default: {
       return severity;
@@ -234,10 +240,10 @@ const AuditEventCard: React.FC<{
         <div className="flex flex-col items-center gap-2">
           <div
             className={cn(
-              'flex h-10 w-10 items-center justify-center rounded-full',
+              "flex h-10 w-10 items-center justify-center rounded-full",
               event.success
-                ? 'bg-green-100 text-green-700'
-                : 'bg-red-100 text-red-700',
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700",
             )}
           >
             {getEventIcon(event.eventType)}
@@ -264,9 +270,9 @@ const AuditEventCard: React.FC<{
                   <AvatarImage alt={event.userName} src={event.userAvatar} />
                   <AvatarFallback>
                     {event.userName
-                      .split(' ')
+                      .split(" ")
                       .map((n) => n[0])
-                      .join('')
+                      .join("")
                       .toUpperCase()
                       .slice(0, 2)}
                   </AvatarFallback>
@@ -282,7 +288,8 @@ const AuditEventCard: React.FC<{
               {/* Patient Info */}
               {event.patientName && (
                 <div className="mt-1 text-muted-foreground text-sm">
-                  Paciente: <span className="font-medium">{event.patientName}</span>
+                  Paciente:{" "}
+                  <span className="font-medium">{event.patientName}</span>
                 </div>
               )}
             </div>
@@ -291,36 +298,36 @@ const AuditEventCard: React.FC<{
             <div className="text-right text-sm">
               <div className="font-medium">{formatDate(event.timestamp)}</div>
               <div className="text-muted-foreground text-xs">
-                {event.location || 'Local não informado'}
+                {event.location || "Local não informado"}
               </div>
             </div>
           </div>
 
           {/* LGPD Data Access Details */}
-          {showDataAccessDetails
-            && event.dataAccessed
-            && event.dataAccessed.length > 0 && (
-            <div className="mt-3 rounded-lg bg-muted p-3">
-              <div className="mb-2 flex items-center gap-2">
-                <Shield className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium text-sm">
-                  Dados Acessados (LGPD Art. 20)
-                </span>
+          {showDataAccessDetails &&
+            event.dataAccessed &&
+            event.dataAccessed.length > 0 && (
+              <div className="mt-3 rounded-lg bg-muted p-3">
+                <div className="mb-2 flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium text-sm">
+                    Dados Acessados (LGPD Art. 20)
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {event.dataAccessed.map((data, index) => (
+                    <Badge key={index} size="sm" variant="outline">
+                      {data}
+                    </Badge>
+                  ))}
+                </div>
+                {event.lgpdBasis && (
+                  <p className="mt-2 text-muted-foreground text-xs">
+                    Base legal: {event.lgpdBasis}
+                  </p>
+                )}
               </div>
-              <div className="flex flex-wrap gap-1">
-                {event.dataAccessed.map((data, index) => (
-                  <Badge key={index} size="sm" variant="outline">
-                    {data}
-                  </Badge>
-                ))}
-              </div>
-              {event.lgpdBasis && (
-                <p className="mt-2 text-muted-foreground text-xs">
-                  Base legal: {event.lgpdBasis}
-                </p>
-              )}
-            </div>
-          )}
+            )}
 
           {/* Expandable Details */}
           {(event.userAgent || event.ipAddress || event.metadata) && (
@@ -331,7 +338,7 @@ const AuditEventCard: React.FC<{
                 size="sm"
                 variant="ghost"
               >
-                {expanded ? 'Ocultar' : 'Ver'} detalhes técnicos
+                {expanded ? "Ocultar" : "Ver"} detalhes técnicos
               </Button>
 
               {expanded && (
@@ -350,7 +357,7 @@ const AuditEventCard: React.FC<{
                     <div>
                       <span className="font-medium">Metadados:</span>
                       <pre className="mt-1 text-xs">
-												{JSON.stringify(event.metadata, undefined, 2)}
+                        {JSON.stringify(event.metadata, undefined, 2)}
                       </pre>
                     </div>
                   )}
@@ -385,7 +392,7 @@ export const AuditTrailViewer = React.forwardRef<
       eventTypeFilter = [],
       severityFilter = [],
       dateRange,
-      searchQuery = '',
+      searchQuery = "",
       onFilterChange,
       onExportAuditLog,
       showDataAccessDetails = true,
@@ -395,8 +402,10 @@ export const AuditTrailViewer = React.forwardRef<
     ref,
   ) => {
     const [localSearchQuery, setLocalSearchQuery] = React.useState(searchQuery);
-    const [selectedEventType, setSelectedEventType] = React.useState<string>('all');
-    const [selectedSeverity, setSelectedSeverity] = React.useState<string>('all');
+    const [selectedEventType, setSelectedEventType] =
+      React.useState<string>("all");
+    const [selectedSeverity, setSelectedSeverity] =
+      React.useState<string>("all");
 
     const handleSearchChange = (query: string) => {
       setLocalSearchQuery(query);
@@ -405,13 +414,13 @@ export const AuditTrailViewer = React.forwardRef<
 
     const handleEventTypeChange = (value: string) => {
       setSelectedEventType(value);
-      const eventTypes = value === 'all' ? [] : [value as AuditEventType];
+      const eventTypes = value === "all" ? [] : [value as AuditEventType];
       onFilterChange?.({ eventTypes });
     };
 
     const handleSeverityChange = (value: string) => {
       setSelectedSeverity(value);
-      const severities = value === 'all' ? [] : [value as AuditSeverity];
+      const severities = value === "all" ? [] : [value as AuditSeverity];
       onFilterChange?.({ severities });
     };
 
@@ -427,7 +436,7 @@ export const AuditTrailViewer = React.forwardRef<
 
     return (
       <div
-        className={cn('space-y-6', className)}
+        className={cn("space-y-6", className)}
         ref={ref}
         {...props}
         aria-labelledby="audit-trail-title"
@@ -441,8 +450,8 @@ export const AuditTrailViewer = React.forwardRef<
             </h3>
             <p className="text-muted-foreground text-sm">
               {patientId
-                ? 'Registro de acesso aos dados do paciente (LGPD Art. 20)'
-                : 'Registro completo de atividades do sistema'}
+                ? "Registro de acesso aos dados do paciente (LGPD Art. 20)"
+                : "Registro completo de atividades do sistema"}
             </p>
           </div>
 
@@ -502,60 +511,59 @@ export const AuditTrailViewer = React.forwardRef<
         )}
 
         {/* Events List */}
-        {loading
-          ? (
-            <div className="space-y-4">
-              {new Array(5).fill().map((_, index) => (
-                <div
-                  className="animate-pulse rounded-lg border bg-card p-4"
-                  key={index}
-                >
-                  <div className="flex gap-4">
-                    <div className="h-10 w-10 rounded-full bg-muted" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-3/4 rounded bg-muted" />
-                      <div className="h-3 w-1/2 rounded bg-muted" />
-                      <div className="h-3 w-1/4 rounded bg-muted" />
-                    </div>
+        {loading ? (
+          <div className="space-y-4">
+            {new Array(5).fill().map((_, index) => (
+              <div
+                className="animate-pulse rounded-lg border bg-card p-4"
+                key={index}
+              >
+                <div className="flex gap-4">
+                  <div className="h-10 w-10 rounded-full bg-muted" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-3/4 rounded bg-muted" />
+                    <div className="h-3 w-1/2 rounded bg-muted" />
+                    <div className="h-3 w-1/4 rounded bg-muted" />
                   </div>
                 </div>
-              ))}
-            </div>
-          )
-          : (events.length === 0
-          ? (
-            <div className="rounded-lg border bg-card p-8 text-center">
-              <Activity className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-              <p className="text-muted-foreground">
-                Nenhum evento de auditoria encontrado para os filtros selecionados.
-              </p>
-            </div>
-          )
-          : (
-            <div
-              aria-label="Eventos de auditoria"
-              className="space-y-4"
-              role="list"
-            >
-              {events.map((event) => (
-                <AuditEventCard
-                  event={event}
-                  key={event.id}
-                  showDataAccessDetails={showDataAccessDetails}
-                />
-              ))}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
+        ) : events.length === 0 ? (
+          <div className="rounded-lg border bg-card p-8 text-center">
+            <Activity className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+            <p className="text-muted-foreground">
+              Nenhum evento de auditoria encontrado para os filtros
+              selecionados.
+            </p>
+          </div>
+        ) : (
+          <div
+            aria-label="Eventos de auditoria"
+            className="space-y-4"
+            role="list"
+          >
+            {events.map((event) => (
+              <AuditEventCard
+                event={event}
+                key={event.id}
+                showDataAccessDetails={showDataAccessDetails}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Summary */}
         {events.length > 0 && (
           <div className="rounded-lg bg-muted p-4 text-sm">
             <div className="flex items-center justify-between">
               <span>
-                Total de {events.length} evento{events.length !== 1 ? 's' : ''} de auditoria
+                Total de {events.length} evento{events.length !== 1 ? "s" : ""}{" "}
+                de auditoria
               </span>
               <span className="text-muted-foreground">
-                Último evento: {events[0] ? formatDate(events[0].timestamp) : 'N/A'}
+                Último evento:{" "}
+                {events[0] ? formatDate(events[0].timestamp) : "N/A"}
               </span>
             </div>
           </div>
@@ -565,4 +573,4 @@ export const AuditTrailViewer = React.forwardRef<
   },
 );
 
-AuditTrailViewer.displayName = 'AuditTrailViewer';
+AuditTrailViewer.displayName = "AuditTrailViewer";

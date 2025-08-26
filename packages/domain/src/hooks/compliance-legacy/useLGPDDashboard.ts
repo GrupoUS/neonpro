@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 // Mock toast function since sonner is not available
-const toast = (_options: { title: string; description: string; }) => {};
+const toast = (_options: { title: string; description: string }) => {};
 
 // Mock types based on the LGPD types found in the project
 export interface LGPDMetrics {
@@ -44,13 +44,13 @@ export interface DataSubjectRequest {
   id: string;
   user_id: string;
   request_type:
-    | 'access'
-    | 'rectification'
-    | 'erasure'
-    | 'portability'
-    | 'restriction'
-    | 'objection';
-  status: 'pending' | 'in_progress' | 'completed' | 'rejected';
+    | "access"
+    | "rectification"
+    | "erasure"
+    | "portability"
+    | "restriction"
+    | "objection";
+  status: "pending" | "in_progress" | "completed" | "rejected";
   description: string | null;
   requested_at: string;
   processed_at: string | null;
@@ -65,8 +65,8 @@ export interface BreachIncident {
   id: string;
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  status: 'active' | 'investigating' | 'resolved' | 'closed';
+  severity: "low" | "medium" | "high" | "critical";
+  status: "active" | "investigating" | "resolved" | "closed";
   affected_users: number;
   data_types: string[];
   discovered_at: string;
@@ -79,7 +79,7 @@ export interface ComplianceAssessment {
   id: string;
   assessment_type: string;
   score: number;
-  status: 'pending' | 'in_progress' | 'completed';
+  status: "pending" | "in_progress" | "completed";
   findings: string[];
   recommendations: string[];
   assessed_by: string;
@@ -113,7 +113,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: ConsentRecord[]; }> {
+  }): Promise<{ data: ConsentRecord[] }> {
     // Mock implementation
     return {
       data: [],
@@ -125,7 +125,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: DataSubjectRequest[]; }> {
+  }): Promise<{ data: DataSubjectRequest[] }> {
     // Mock implementation
     return {
       data: [],
@@ -137,7 +137,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: BreachIncident[]; }> {
+  }): Promise<{ data: BreachIncident[] }> {
     // Mock implementation
     return {
       data: [],
@@ -148,7 +148,7 @@ class LGPDComplianceManager {
     limit: number;
     sortBy: string;
     sortOrder: string;
-  }): Promise<{ data: ComplianceAssessment[]; }> {
+  }): Promise<{ data: ComplianceAssessment[] }> {
     // Mock implementation
     return {
       data: [],
@@ -203,43 +203,44 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
       // Load recent consents (last 10)
       const consentsData = await complianceManager.getConsents({
         limit: 10,
-        sortBy: 'created_at',
-        sortOrder: 'desc',
+        sortBy: "created_at",
+        sortOrder: "desc",
       });
       setRecentConsents(consentsData.data);
 
       // Load pending requests
       const requestsData = await complianceManager.getDataSubjectRequests({
-        status: 'pending',
+        status: "pending",
         limit: 10,
-        sortBy: 'created_at',
-        sortOrder: 'desc',
+        sortBy: "created_at",
+        sortOrder: "desc",
       });
       setPendingRequests(requestsData.data);
 
       // Load active incidents
       const incidentsData = await complianceManager.getBreachIncidents({
-        status: 'active',
+        status: "active",
         limit: 5,
-        sortBy: 'created_at',
-        sortOrder: 'desc',
+        sortBy: "created_at",
+        sortOrder: "desc",
       });
       setActiveIncidents(incidentsData.data);
 
       // Load recent assessments
       const assessmentsData = await complianceManager.getComplianceAssessments({
         limit: 5,
-        sortBy: 'created_at',
-        sortOrder: 'desc',
+        sortBy: "created_at",
+        sortOrder: "desc",
       });
       setRecentAssessments(assessmentsData.data);
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : 'Erro ao carregar dados do dashboard';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Erro ao carregar dados do dashboard";
       setError(errorMessage);
       toast({
-        title: 'Erro',
+        title: "Erro",
         description: errorMessage,
       });
     }
@@ -251,8 +252,8 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
     setIsRefreshing(false);
 
     toast({
-      title: 'Dashboard atualizado',
-      description: 'Dados do dashboard LGPD foram atualizados com sucesso.',
+      title: "Dashboard atualizado",
+      description: "Dados do dashboard LGPD foram atualizados com sucesso.",
     });
   }, [loadDashboardData]);
 
@@ -260,53 +261,46 @@ export function useLGPDDashboard(): UseLGPDDashboardReturn {
     try {
       if (!metrics) {
         toast({
-          title: 'Erro',
-          description: 'Nenhuma métrica disponível para exportação.',
+          title: "Erro",
+          description: "Nenhuma métrica disponível para exportação.",
         });
         return;
       }
 
       // Create CSV content
       const csvContent = [
-        'Métrica,Valor,Data de Geração',
-        `Conformidade Geral,${metrics.overallCompliance || metrics.compliance_percentage}%,${
-          new Date().toISOString()
-        }`,
-        `Consentimentos Ativos,${metrics.activeConsents || metrics.active_consents},${
-          new Date().toISOString()
-        }`,
-        `Solicitações Pendentes,${metrics.pendingRequests || metrics.pending_requests},${
-          new Date().toISOString()
-        }`,
-        `Incidentes Ativos,${metrics.activeIncidents || metrics.active_breaches},${
-          new Date().toISOString()
-        }`,
+        "Métrica,Valor,Data de Geração",
+        `Conformidade Geral,${metrics.overallCompliance || metrics.compliance_percentage}%,${new Date().toISOString()}`,
+        `Consentimentos Ativos,${metrics.activeConsents || metrics.active_consents},${new Date().toISOString()}`,
+        `Solicitações Pendentes,${metrics.pendingRequests || metrics.pending_requests},${new Date().toISOString()}`,
+        `Incidentes Ativos,${metrics.activeIncidents || metrics.active_breaches},${new Date().toISOString()}`,
         `Avaliações Concluídas,${metrics.completedAssessments || 0},${new Date().toISOString()}`,
         `Pontuação Média,${metrics.averageScore || 0},${new Date().toISOString()}`,
-      ].join('\n');
+      ].join("\n");
 
       // Create and download file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
+      link.setAttribute("href", url);
       link.setAttribute(
-        'download',
-        `lgpd-metrics-${new Date().toISOString().split('T')[0]}.csv`,
+        "download",
+        `lgpd-metrics-${new Date().toISOString().split("T")[0]}.csv`,
       );
-      link.style.visibility = 'hidden';
+      link.style.visibility = "hidden";
       document.body.append(link);
       link.click();
       document.body.removeChild(link);
 
       toast({
-        title: 'Exportação concluída',
-        description: 'Métricas LGPD exportadas com sucesso.',
+        title: "Exportação concluída",
+        description: "Métricas LGPD exportadas com sucesso.",
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao exportar métricas';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro ao exportar métricas";
       toast({
-        title: 'Erro na exportação',
+        title: "Erro na exportação",
         description: errorMessage,
       });
     }

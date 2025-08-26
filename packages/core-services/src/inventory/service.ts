@@ -1,5 +1,5 @@
-import { differenceInDays } from 'date-fns';
-import { InventoryStatus } from '../types';
+import { differenceInDays } from "date-fns";
+import { InventoryStatus } from "../types";
 import type {
   CreateProductData,
   CreateStockItemData,
@@ -10,9 +10,9 @@ import type {
   StockItem,
   StockMovement,
   Supplier,
-} from './types';
-import { AlertSeverity, AlertType, MovementType, OrderStatus } from './types';
-import type { ProductCategory } from './types';
+} from "./types";
+import { AlertSeverity, AlertType, MovementType, OrderStatus } from "./types";
+import type { ProductCategory } from "./types";
 
 export interface InventoryRepository {
   // Product operations
@@ -30,7 +30,7 @@ export interface InventoryRepository {
 
   // Stock movements
   createStockMovement(
-    data: Omit<StockMovement, 'id' | 'createdAt' | 'updatedAt'>,
+    data: Omit<StockMovement, "id" | "createdAt" | "updatedAt">,
   ): Promise<StockMovement>;
   getStockMovements(stockItemId: string): Promise<StockMovement[]>;
 
@@ -42,7 +42,7 @@ export interface InventoryRepository {
 
   // Purchase orders
   createPurchaseOrder(
-    data: Omit<PurchaseOrder, 'id' | 'createdAt' | 'updatedAt'>,
+    data: Omit<PurchaseOrder, "id" | "createdAt" | "updatedAt">,
   ): Promise<PurchaseOrder>;
   updatePurchaseOrder(
     id: string,
@@ -53,7 +53,7 @@ export interface InventoryRepository {
 
   // Alerts
   createAlert(
-    data: Omit<InventoryAlert, 'id' | 'createdAt'>,
+    data: Omit<InventoryAlert, "id" | "createdAt">,
   ): Promise<InventoryAlert>;
   getAlerts(filters?: AlertFilters): Promise<InventoryAlert[]>;
   acknowledgeAlert(id: string, acknowledgedBy: string): Promise<void>;
@@ -86,7 +86,7 @@ export interface InventoryStats {
   outOfStockItems: number;
   expiringItems: number;
   totalValue: number;
-  topCategories: { category: ProductCategory; count: number; value: number; }[];
+  topCategories: { category: ProductCategory; count: number; value: number }[];
   pendingOrders: number;
 }
 
@@ -98,7 +98,7 @@ export class InventoryService {
     // Check if SKU already exists
     const existingProduct = await this.repository.getProductBySku(data.sku);
     if (existingProduct) {
-      throw new Error('Product with this SKU already exists');
+      throw new Error("Product with this SKU already exists");
     }
 
     const product = await this.repository.createProduct(data);
@@ -109,7 +109,7 @@ export class InventoryService {
     if (data.sku) {
       const existingProduct = await this.repository.getProductBySku(data.sku);
       if (existingProduct && existingProduct.id !== id) {
-        throw new Error('Another product with this SKU already exists');
+        throw new Error("Another product with this SKU already exists");
       }
     }
 
@@ -128,7 +128,7 @@ export class InventoryService {
   async receiveStock(data: CreateStockItemData): Promise<StockItem> {
     const product = await this.repository.getProduct(data.productId);
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error("Product not found");
     }
 
     const stockItem = await this.repository.createStockItem(data);
@@ -140,8 +140,8 @@ export class InventoryService {
       quantity: data.quantity,
       previousQuantity: 0,
       newQuantity: data.quantity,
-      reason: 'Stock received',
-      performedBy: 'system', // This should be the actual user ID
+      reason: "Stock received",
+      performedBy: "system", // This should be the actual user ID
     });
 
     // Check if this resolves any low stock alerts
@@ -161,7 +161,7 @@ export class InventoryService {
     );
 
     if (availableStock.length === 0) {
-      throw new Error('No stock available for this product');
+      throw new Error("No stock available for this product");
     }
 
     // Calculate total available quantity
@@ -194,7 +194,8 @@ export class InventoryService {
       // Update stock item
       await this.repository.updateStockItem(stockItem.id, {
         quantity: newQuantity,
-        status: newQuantity === 0 ? InventoryStatus.OUT_OF_STOCK : stockItem.status,
+        status:
+          newQuantity === 0 ? InventoryStatus.OUT_OF_STOCK : stockItem.status,
       });
 
       // Record movement
@@ -206,7 +207,7 @@ export class InventoryService {
         newQuantity,
         reason,
         reference,
-        performedBy: 'system', // This should be the actual user ID
+        performedBy: "system", // This should be the actual user ID
       });
 
       movements.push(movement);
@@ -221,8 +222,8 @@ export class InventoryService {
   async checkLowStock(productId?: string): Promise<InventoryAlert[]> {
     const products = productId
       ? ([await this.repository.getProduct(productId)].filter(
-        Boolean,
-      ) as Product[])
+          Boolean,
+        ) as Product[])
       : await this.repository.getProducts({ isActive: true });
 
     const alerts: InventoryAlert[] = [];
@@ -279,7 +280,7 @@ export class InventoryService {
           type: AlertType.EXPIRED,
           productId: item.productId,
           stockItemId: item.id,
-          message: `Stock item has expired (Batch: ${item.batchNumber || 'N/A'})`,
+          message: `Stock item has expired (Batch: ${item.batchNumber || "N/A"})`,
           severity: AlertSeverity.CRITICAL,
           isRead: false,
         });
@@ -291,9 +292,10 @@ export class InventoryService {
           productId: item.productId,
           stockItemId: item.id,
           message: `Stock item expires in ${daysUntilExpiry} days (Batch: ${
-            item.batchNumber || 'N/A'
+            item.batchNumber || "N/A"
           })`,
-          severity: daysUntilExpiry <= 7 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
+          severity:
+            daysUntilExpiry <= 7 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
           isRead: false,
         });
         alerts.push(alert);
@@ -354,14 +356,14 @@ export class InventoryService {
 
     const categoryStats = new Map<
       ProductCategory,
-      { count: number; value: number; }
+      { count: number; value: number }
     >();
 
     for (const product of activeProducts) {
       const productStockItems = stockItems.filter(
         (item) =>
-          item.productId === product.id
-          && item.status === InventoryStatus.IN_STOCK,
+          item.productId === product.id &&
+          item.status === InventoryStatus.IN_STOCK,
       );
 
       const totalStock = productStockItems.reduce(
@@ -384,7 +386,8 @@ export class InventoryService {
       // Check for expiring items
       const today = new Date();
       const expiringItems = productStockItems.filter(
-        (item) => item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
+        (item) =>
+          item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
       );
       expiringCount += expiringItems.length;
 
@@ -436,7 +439,8 @@ export class InventoryService {
 
     const today = new Date();
     const expiringItems = availableItems.filter(
-      (item) => item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
+      (item) =>
+        item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
     );
     const expiringStock = expiringItems.reduce(
       (sum, item) => sum + item.quantity,
@@ -457,7 +461,7 @@ export class InventoryService {
       product: Product;
       currentStock: number;
       suggestedOrderQuantity: number;
-      priority: 'low' | 'medium' | 'high' | 'critical';
+      priority: "low" | "medium" | "high" | "critical";
     }[]
   > {
     const products = await this.repository.getProducts({ isActive: true });
@@ -467,14 +471,14 @@ export class InventoryService {
       const stockLevel = await this.getStockLevel(product.id);
 
       if (stockLevel.totalStock <= product.reorderPoint) {
-        let priority: 'low' | 'medium' | 'high' | 'critical';
+        let priority: "low" | "medium" | "high" | "critical";
 
         if (stockLevel.totalStock === 0) {
-          priority = 'critical';
+          priority = "critical";
         } else if (stockLevel.totalStock <= product.minimumStock) {
-          priority = 'high';
+          priority = "high";
         } else {
-          priority = 'medium';
+          priority = "medium";
         }
 
         suggestions.push({

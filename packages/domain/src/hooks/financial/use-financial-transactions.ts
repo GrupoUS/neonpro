@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 export interface FinancialTransaction {
   id: string;
   appointment_id?: string;
   patient_id: string;
   professional_id: string;
-  type: 'payment' | 'refund' | 'adjustment' | 'fee';
+  type: "payment" | "refund" | "adjustment" | "fee";
   amount: number;
   currency: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  status: "pending" | "processing" | "completed" | "failed" | "cancelled";
   payment_method?: string;
   description?: string;
   created_at: string;
@@ -20,7 +20,7 @@ export interface FinancialTransaction {
 
 export interface PaymentMethod {
   id: string;
-  type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash';
+  type: "credit_card" | "debit_card" | "pix" | "bank_transfer" | "cash";
   provider?: string;
   last_four?: string;
   is_default: boolean;
@@ -40,7 +40,7 @@ export interface UseFinancialTransactionsReturn {
     refunded: number;
   };
   createTransaction: (
-    transaction: Omit<FinancialTransaction, 'id' | 'created_at' | 'updated_at'>,
+    transaction: Omit<FinancialTransaction, "id" | "created_at" | "updated_at">,
   ) => Promise<string | null>;
   updateTransaction: (
     id: string,
@@ -55,7 +55,7 @@ export interface UseFinancialTransactionsReturn {
     amount?: number,
   ) => Promise<string | null>;
   addPaymentMethod: (
-    method: Omit<PaymentMethod, 'id'>,
+    method: Omit<PaymentMethod, "id">,
   ) => Promise<string | null>;
   removePaymentMethod: (methodId: string) => Promise<boolean>;
   refreshData: () => Promise<void>;
@@ -75,15 +75,15 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
       // Placeholder implementation
       const mockTransactions: FinancialTransaction[] = [
         {
-          id: '1',
-          patient_id: 'patient-1',
-          professional_id: 'prof-1',
-          type: 'payment',
+          id: "1",
+          patient_id: "patient-1",
+          professional_id: "prof-1",
+          type: "payment",
           amount: 150,
-          currency: 'BRL',
-          status: 'completed',
-          payment_method: 'credit_card',
-          description: 'Consultation payment',
+          currency: "BRL",
+          status: "completed",
+          payment_method: "credit_card",
+          description: "Consultation payment",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -91,7 +91,8 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
 
       setTransactions(mockTransactions);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to refresh data';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh data";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -102,7 +103,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
     async (
       _transaction: Omit<
         FinancialTransaction,
-        'id' | 'created_at' | 'updated_at'
+        "id" | "created_at" | "updated_at"
       >,
     ): Promise<string | null> => {
       try {
@@ -111,7 +112,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
         setError(
           error instanceof Error
             ? error.message
-            : 'Failed to create transaction',
+            : "Failed to create transaction",
         );
         return;
       }
@@ -130,7 +131,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
         setError(
           error instanceof Error
             ? error.message
-            : 'Failed to update transaction',
+            : "Failed to update transaction",
         );
         return false;
       }
@@ -147,7 +148,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
         return true;
       } catch (error) {
         setError(
-          error instanceof Error ? error.message : 'Failed to process payment',
+          error instanceof Error ? error.message : "Failed to process payment",
         );
         return false;
       }
@@ -164,7 +165,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
         return `refund-${Date.now()}`;
       } catch (error) {
         setError(
-          error instanceof Error ? error.message : 'Failed to process refund',
+          error instanceof Error ? error.message : "Failed to process refund",
         );
         return;
       }
@@ -173,14 +174,14 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
   );
 
   const addPaymentMethod = useCallback(
-    async (_method: Omit<PaymentMethod, 'id'>): Promise<string | null> => {
+    async (_method: Omit<PaymentMethod, "id">): Promise<string | null> => {
       try {
         return `method-${Date.now()}`;
       } catch (error) {
         setError(
           error instanceof Error
             ? error.message
-            : 'Failed to add payment method',
+            : "Failed to add payment method",
         );
         return;
       }
@@ -196,7 +197,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
         setError(
           error instanceof Error
             ? error.message
-            : 'Failed to remove payment method',
+            : "Failed to remove payment method",
         );
         return false;
       }
@@ -206,14 +207,14 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
 
   // Computed values
   const totalAmount = transactions.reduce((sum, transaction) => {
-    return transaction.status === 'completed' ? sum + transaction.amount : sum;
+    return transaction.status === "completed" ? sum + transaction.amount : sum;
   }, 0);
 
   const summary = {
-    pending: transactions.filter((t) => t.status === 'pending').length,
-    completed: transactions.filter((t) => t.status === 'completed').length,
-    failed: transactions.filter((t) => t.status === 'failed').length,
-    refunded: transactions.filter((t) => t.type === 'refund').length,
+    pending: transactions.filter((t) => t.status === "pending").length,
+    completed: transactions.filter((t) => t.status === "completed").length,
+    failed: transactions.filter((t) => t.status === "failed").length,
+    refunded: transactions.filter((t) => t.type === "refund").length,
   };
 
   // Initialize data

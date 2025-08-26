@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Import the modules we're testing
-import { POST as sessionExtendHandler } from '../../app/api/auth/session/extend/route';
-import { POST as sessionValidateHandler } from '../../app/api/auth/session/validate/route';
-import { POST as securityAuditHandler } from '../../app/api/security/audit/route';
-import { PerformanceTracker } from '../../lib/auth/performance-tracker';
-import { securityAuditFramework } from '../../lib/auth/security-audit-framework';
-import { sessionManager } from '../../lib/auth/session-manager';
+import { POST as sessionExtendHandler } from "../../app/api/auth/session/extend/route";
+import { POST as sessionValidateHandler } from "../../app/api/auth/session/validate/route";
+import { POST as securityAuditHandler } from "../../app/api/security/audit/route";
+import { PerformanceTracker } from "../../lib/auth/performance-tracker";
+import { securityAuditFramework } from "../../lib/auth/security-audit-framework";
+import { sessionManager } from "../../lib/auth/session-manager";
 
-describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
+describe("tASK-002: Core Foundation Enhancement Integration Test", () => {
   let performanceTracker: any;
 
   beforeEach(() => {
@@ -25,20 +25,20 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
     vi.clearAllMocks();
   });
 
-  describe('advanced Session Management', () => {
-    it('should extend session successfully with proper validation', async () => {
+  describe("advanced Session Management", () => {
+    it("should extend session successfully with proper validation", async () => {
       // Mock request with session token
       const mockRequest = {
         json: vi.fn().mockResolvedValue({
-          sessionToken: 'valid-session-token',
+          sessionToken: "valid-session-token",
           extensionMinutes: 30,
         }),
         headers: {
           get: vi.fn().mockImplementation((header) => {
             const headers: Record<string, string> = {
-              authorization: 'Bearer valid-session-token',
-              'user-agent': 'Mozilla/5.0 (Test Browser)',
-              'x-forwarded-for': '192.168.1.100',
+              authorization: "Bearer valid-session-token",
+              "user-agent": "Mozilla/5.0 (Test Browser)",
+              "x-forwarded-for": "192.168.1.100",
             };
             return headers[header.toLowerCase()] || undefined;
           }),
@@ -50,23 +50,23 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(response).toBeInstanceOf(NextResponse);
 
       // Verify session extension logic
-      const result = await sessionManager.extendSession('user-123', 30);
+      const result = await sessionManager.extendSession("user-123", 30);
       expect(result.success).toBeTruthy();
       expect(result.newExpiresAt).toBeDefined();
       expect(result.metadata).toBeDefined();
     });
 
-    it('should validate sessions with comprehensive security checks', async () => {
+    it("should validate sessions with comprehensive security checks", async () => {
       const mockRequest = {
         json: vi.fn().mockResolvedValue({
-          sessionToken: 'valid-session-token',
+          sessionToken: "valid-session-token",
         }),
         headers: {
           get: vi.fn().mockImplementation((header) => {
             const headers: Record<string, string> = {
-              authorization: 'Bearer valid-session-token',
-              'user-agent': 'Mozilla/5.0 (Test Browser)',
-              'x-forwarded-for': '192.168.1.100',
+              authorization: "Bearer valid-session-token",
+              "user-agent": "Mozilla/5.0 (Test Browser)",
+              "x-forwarded-for": "192.168.1.100",
             };
             return headers[header.toLowerCase()] || undefined;
           }),
@@ -79,14 +79,14 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
 
       // Verify session validation logic
       const validation = await sessionManager.validateSession(
-        'valid-session-token',
+        "valid-session-token",
       );
       expect(validation.isValid).toBeTruthy();
       expect(validation.user).toBeDefined();
       expect(validation.securityFlags).toBeDefined();
     });
 
-    it('should handle session cleanup and security monitoring', async () => {
+    it("should handle session cleanup and security monitoring", async () => {
       // Test cleanup of expired sessions
       const cleanupResult = await sessionManager.cleanupExpiredSessions();
       expect(cleanupResult.cleanedCount).toBeGreaterThanOrEqual(0);
@@ -94,11 +94,11 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
 
       // Test security event monitoring
       const securityEvent = await sessionManager.logSecurityEvent(
-        'user-123',
-        'SUSPICIOUS_LOGIN',
+        "user-123",
+        "SUSPICIOUS_LOGIN",
         {
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Test Browser)',
+          ipAddress: "192.168.1.100",
+          userAgent: "Mozilla/5.0 (Test Browser)",
           timestamp: new Date().toISOString(),
         },
       );
@@ -108,18 +108,18 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
     });
   });
 
-  describe('security Audit Framework', () => {
-    it('should perform comprehensive security audit', async () => {
+  describe("security Audit Framework", () => {
+    it("should perform comprehensive security audit", async () => {
       const mockRequest = {
         json: vi.fn().mockResolvedValue({
-          auditType: 'full',
+          auditType: "full",
           includeCompliance: true,
         }),
         headers: {
           get: vi.fn().mockImplementation((header) => {
             const headers: Record<string, string> = {
-              authorization: 'Bearer admin-token',
-              'content-type': 'application/json',
+              authorization: "Bearer admin-token",
+              "content-type": "application/json",
             };
             return headers[header.toLowerCase()] || undefined;
           }),
@@ -131,23 +131,23 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(response).toBeInstanceOf(NextResponse);
 
       // Test audit framework directly
-      const auditResult = await securityAuditFramework.performAudit('full');
+      const auditResult = await securityAuditFramework.performAudit("full");
       expect(auditResult.success).toBeTruthy();
       expect(auditResult.findings).toBeDefined();
       expect(auditResult.riskScore).toBeGreaterThanOrEqual(0);
       expect(auditResult.riskScore).toBeLessThanOrEqual(10);
     });
 
-    it('should detect and log security threats', async () => {
+    it("should detect and log security threats", async () => {
       // Test threat detection
       const threatData = {
-        type: 'BRUTE_FORCE_ATTEMPT',
-        source: '192.168.1.100',
-        target: 'user-123',
-        severity: 'high' as const,
+        type: "BRUTE_FORCE_ATTEMPT",
+        source: "192.168.1.100",
+        target: "user-123",
+        severity: "high" as const,
         metadata: {
           attemptCount: 5,
-          timeWindow: '5m',
+          timeWindow: "5m",
         },
       };
 
@@ -157,7 +157,7 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(detection.actionsTaken).toBeDefined();
     });
 
-    it('should validate compliance and generate reports', async () => {
+    it("should validate compliance and generate reports", async () => {
       // Test compliance validation
       const complianceCheck = await securityAuditFramework.validateCompliance();
       expect(complianceCheck.success).toBeTruthy();
@@ -165,9 +165,9 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
       expect(complianceCheck.violations).toBeDefined();
 
       // Test report generation
-      const report = await securityAuditFramework.generateReport('security', {
+      const report = await securityAuditFramework.generateReport("security", {
         includeRecommendations: true,
-        format: 'json',
+        format: "json",
       });
 
       expect(report.success).toBeTruthy();
@@ -176,10 +176,10 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
     });
   });
 
-  describe('performance Monitoring', () => {
-    it('should track performance metrics accurately', () => {
+  describe("performance Monitoring", () => {
+    it("should track performance metrics accurately", () => {
       // Test performance tracking
-      performanceTracker.startTracking('session-extension');
+      performanceTracker.startTracking("session-extension");
 
       // Simulate some work
       const metrics = {
@@ -188,29 +188,29 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
         cpuUsage: 25.3,
       };
 
-      performanceTracker.recordMetric('session-extension', metrics);
-      performanceTracker.endTracking('session-extension');
+      performanceTracker.recordMetric("session-extension", metrics);
+      performanceTracker.endTracking("session-extension");
 
       // Verify metrics collection
       const collectedMetrics = performanceTracker.getMetrics();
       expect(collectedMetrics).toBeDefined();
     });
 
-    it('should integrate with session management performance', async () => {
+    it("should integrate with session management performance", async () => {
       // Start tracking session operations
-      performanceTracker.startTracking('session-validation');
+      performanceTracker.startTracking("session-validation");
 
       // Perform session validation
-      const validation = await sessionManager.validateSession('test-token');
+      const validation = await sessionManager.validateSession("test-token");
 
       // Record performance data
-      performanceTracker.recordMetric('session-validation', {
+      performanceTracker.recordMetric("session-validation", {
         duration: 100,
         memoryUsage: 30.2,
         cpuUsage: 15.5,
       });
 
-      performanceTracker.endTracking('session-validation');
+      performanceTracker.endTracking("session-validation");
 
       // Verify integration
       expect(validation).toBeDefined();
@@ -219,8 +219,8 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
     });
   });
 
-  describe('accessibility Integration', () => {
-    it('should maintain WCAG 2.1 AA compliance standards', () => {
+  describe("accessibility Integration", () => {
+    it("should maintain WCAG 2.1 AA compliance standards", () => {
       // Test accessibility features
       const accessibilityFeatures = {
         keyboardNavigation: true,
@@ -236,14 +236,17 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
       });
     });
 
-    it('should provide accessible error handling and feedback', () => {
+    it("should provide accessible error handling and feedback", () => {
       // Test accessible error messages
       const errorStates = {
-        authenticationFailed: 'Authentication failed. Please check your credentials and try again.',
-        sessionExpired: 'Your session has expired. Please log in again to continue.',
+        authenticationFailed:
+          "Authentication failed. Please check your credentials and try again.",
+        sessionExpired:
+          "Your session has expired. Please log in again to continue.",
         securityAlert:
-          'Security alert detected. Please contact support if you believe this is an error.',
-        networkError: 'Network connection error. Please check your connection and try again.',
+          "Security alert detected. Please contact support if you believe this is an error.",
+        networkError:
+          "Network connection error. Please check your connection and try again.",
       };
 
       // Verify error messages are descriptive and accessible
@@ -255,56 +258,57 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
     });
   });
 
-  describe('end-to-End Integration', () => {
-    it('should handle complete authentication flow with all enhancements', async () => {
+  describe("end-to-End Integration", () => {
+    it("should handle complete authentication flow with all enhancements", async () => {
       // 1. Start performance tracking
-      performanceTracker.startTracking('full-auth-flow');
+      performanceTracker.startTracking("full-auth-flow");
 
       // 2. Validate initial session
-      const initialValidation = await sessionManager.validateSession('initial-token');
+      const initialValidation =
+        await sessionManager.validateSession("initial-token");
       expect(initialValidation).toBeDefined();
 
       // 3. Extend session
-      const extension = await sessionManager.extendSession('user-123', 60);
+      const extension = await sessionManager.extendSession("user-123", 60);
       expect(extension.success).toBeTruthy();
 
       // 4. Log security event
       const securityLog = await sessionManager.logSecurityEvent(
-        'user-123',
-        'LOGIN_SUCCESS',
+        "user-123",
+        "LOGIN_SUCCESS",
         {
-          ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Test Browser)',
+          ipAddress: "192.168.1.100",
+          userAgent: "Mozilla/5.0 (Test Browser)",
           timestamp: new Date().toISOString(),
         },
       );
       expect(securityLog.success).toBeTruthy();
 
       // 5. Perform security audit
-      const audit = await securityAuditFramework.performAudit('targeted');
+      const audit = await securityAuditFramework.performAudit("targeted");
       expect(audit.success).toBeTruthy();
 
       // 6. End performance tracking
-      performanceTracker.recordMetric('full-auth-flow', {
+      performanceTracker.recordMetric("full-auth-flow", {
         duration: 500,
         memoryUsage: 75.2,
         cpuUsage: 45.8,
       });
-      performanceTracker.endTracking('full-auth-flow');
+      performanceTracker.endTracking("full-auth-flow");
 
       // Verify complete flow
       const metrics = performanceTracker.getMetrics();
       expect(metrics).toBeDefined();
     });
 
-    it('should maintain system integrity under load conditions', async () => {
+    it("should maintain system integrity under load conditions", async () => {
       // Simulate multiple concurrent operations
       const operations = [
-        sessionManager.validateSession('token-1'),
-        sessionManager.validateSession('token-2'),
-        sessionManager.extendSession('user-1', 30),
-        sessionManager.extendSession('user-2', 45),
-        securityAuditFramework.performAudit('quick'),
+        sessionManager.validateSession("token-1"),
+        sessionManager.validateSession("token-2"),
+        sessionManager.extendSession("user-1", 30),
+        sessionManager.extendSession("user-2", 45),
+        securityAuditFramework.performAudit("quick"),
         sessionManager.cleanupExpiredSessions(),
       ];
 
@@ -313,46 +317,47 @@ describe('tASK-002: Core Foundation Enhancement Integration Test', () => {
 
       // Verify all operations completed successfully
       results.forEach((result, _index) => {
-        expect(result.status).toBe('fulfilled');
-        if (result.status === 'fulfilled') {
+        expect(result.status).toBe("fulfilled");
+        if (result.status === "fulfilled") {
           expect(result.value).toBeDefined();
         }
       });
     });
   });
 
-  describe('error Handling and Edge Cases', () => {
-    it('should handle invalid session tokens gracefully', async () => {
-      const invalidTokenValidation = await sessionManager.validateSession('invalid-token');
+  describe("error Handling and Edge Cases", () => {
+    it("should handle invalid session tokens gracefully", async () => {
+      const invalidTokenValidation =
+        await sessionManager.validateSession("invalid-token");
       expect(invalidTokenValidation.isValid).toBeFalsy();
       expect(invalidTokenValidation.error).toBeDefined();
     });
 
-    it('should handle security audit failures with proper fallbacks', async () => {
+    it("should handle security audit failures with proper fallbacks", async () => {
       // Test audit with invalid parameters
       const invalidAudit = await securityAuditFramework.performAudit(
-        'invalid-type' as any,
+        "invalid-type" as any,
       );
       expect(invalidAudit.success).toBeFalsy();
       expect(invalidAudit.error).toBeDefined();
     });
 
-    it('should maintain performance tracking integrity during errors', () => {
+    it("should maintain performance tracking integrity during errors", () => {
       // Test performance tracking with errors
-      performanceTracker.startTracking('error-test');
+      performanceTracker.startTracking("error-test");
 
       try {
-        throw new Error('Test error');
+        throw new Error("Test error");
       } catch (error) {
-        performanceTracker.recordMetric('error-test', {
+        performanceTracker.recordMetric("error-test", {
           duration: 10,
           memoryUsage: 10,
           cpuUsage: 5,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
 
-      performanceTracker.endTracking('error-test');
+      performanceTracker.endTracking("error-test");
 
       const metrics = performanceTracker.getMetrics();
       expect(metrics).toBeDefined();

@@ -8,8 +8,8 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
-import { modelManager } from './model-management';
-import type { ModelPerformanceMetrics } from './model-management';
+import { modelManager } from "./model-management";
+import type { ModelPerformanceMetrics } from "./model-management";
 
 interface PatientProfile {
   id: string;

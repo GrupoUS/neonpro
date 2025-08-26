@@ -55,13 +55,19 @@ interface AuditTrailEntry {
 const mockLGPDService = (globalThis as any).mockLgpdService;
 const mockSupabaseClient = (globalThis as any).mockSupabaseClient;
 
-vi.mock<typeof import('@supabase/supabase-js')>("@supabase/supabase-js", () => ({
-  createClient: () => mockSupabaseClient,
-}));
+vi.mock<typeof import("@supabase/supabase-js")>(
+  "@supabase/supabase-js",
+  () => ({
+    createClient: () => mockSupabaseClient,
+  }),
+);
 
-vi.mock<typeof import('../../lib/services/lgpd-service')>("../../lib/services/lgpd-service", () => ({
-  LGPDService: mockLGPDService,
-}));
+vi.mock<typeof import("../../lib/services/lgpd-service")>(
+  "../../lib/services/lgpd-service",
+  () => ({
+    LGPDService: mockLGPDService,
+  }),
+);
 
 // Test data
 const mockPatientData = {

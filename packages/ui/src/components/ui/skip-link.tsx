@@ -1,7 +1,7 @@
-import { cva } from 'class-variance-authority';
-import type { VariantProps } from 'class-variance-authority';
-import * as React from 'react';
-import { cn } from '../../lib/utils';
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
+import * as React from "react";
+import { cn } from "../../lib/utils";
 
 /**
  * NEONPRO HEALTHCARE - SKIP LINK COMPONENT
@@ -16,38 +16,39 @@ import { cn } from '../../lib/utils';
  */
 
 const skipLinkVariants = cva(
-  '-translate-x-1/2 absolute top-4 left-1/2 z-[9999] transform rounded-md px-4 py-2 font-medium text-sm shadow-lg transition-all duration-200 ease-in-out focus:ring-2 focus:ring-offset-2 focus:ring-offset-background',
+  "-translate-x-1/2 absolute top-4 left-1/2 z-[9999] transform rounded-md px-4 py-2 font-medium text-sm shadow-lg transition-all duration-200 ease-in-out focus:ring-2 focus:ring-offset-2 focus:ring-offset-background",
   {
     variants: {
       variant: {
-        default: 'border-2 border-primary bg-primary text-primary-foreground focus:ring-primary',
+        default:
+          "border-2 border-primary bg-primary text-primary-foreground focus:ring-primary",
         healthcare:
-          'border-2 border-primary/50 bg-gradient-primary text-primary-foreground shadow-healthcare-lg backdrop-blur-sm focus:ring-primary',
+          "border-2 border-primary/50 bg-gradient-primary text-primary-foreground shadow-healthcare-lg backdrop-blur-sm focus:ring-primary",
         emergency:
-          'animate-pulse-healthcare border-2 border-destructive bg-gradient-to-br from-destructive via-red-600 to-destructive text-destructive-foreground shadow-healthcare-xl focus:ring-destructive',
+          "animate-pulse-healthcare border-2 border-destructive bg-gradient-to-br from-destructive via-red-600 to-destructive text-destructive-foreground shadow-healthcare-xl focus:ring-destructive",
       },
       position: {
-        'top-left': 'top-4 left-4 translate-x-0',
-        'top-center': '-translate-x-1/2 top-4 left-1/2',
-        'top-right': 'top-4 right-4 translate-x-0',
+        "top-left": "top-4 left-4 translate-x-0",
+        "top-center": "-translate-x-1/2 top-4 left-1/2",
+        "top-right": "top-4 right-4 translate-x-0",
       },
       size: {
-        sm: 'px-3 py-1.5 text-xs',
-        default: 'px-4 py-2 text-sm',
-        lg: 'px-6 py-3 text-base',
+        sm: "px-3 py-1.5 text-xs",
+        default: "px-4 py-2 text-sm",
+        lg: "px-6 py-3 text-base",
       },
     },
     defaultVariants: {
-      variant: 'healthcare',
-      position: 'top-center',
-      size: 'default',
+      variant: "healthcare",
+      position: "top-center",
+      size: "default",
     },
   },
 );
 
 interface SkipLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement>, VariantProps<typeof skipLinkVariants>
-{
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    VariantProps<typeof skipLinkVariants> {
   targetId: string;
   children?: React.ReactNode;
   showOnFocus?: boolean;
@@ -59,11 +60,11 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
   (
     {
       className,
-      variant = 'healthcare',
-      position = 'top-center',
-      size = 'default',
+      variant = "healthcare",
+      position = "top-center",
+      size = "default",
       targetId,
-      children = 'Pular para o conteúdo principal',
+      children = "Pular para o conteúdo principal",
       showOnFocus = true,
       medicalContext = false,
       emergencyMode = false,
@@ -73,10 +74,10 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
   ) => {
     // Auto-detect variant based on context
     const finalVariant = emergencyMode
-      ? 'emergency'
-      : (medicalContext
-      ? 'healthcare'
-      : variant);
+      ? "emergency"
+      : medicalContext
+        ? "healthcare"
+        : variant;
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
@@ -89,33 +90,33 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
 
       // Focus the target element
       // Make it focusable if it isn't already
-      const originalTabIndex = targetElement.getAttribute('tabindex');
+      const originalTabIndex = targetElement.getAttribute("tabindex");
       if (targetElement.tabIndex < 0) {
-        targetElement.setAttribute('tabindex', '-1');
+        targetElement.setAttribute("tabindex", "-1");
       }
 
       targetElement.focus();
 
       // Restore original tabindex after focus
       if (originalTabIndex === null) {
-        targetElement.removeAttribute('tabindex');
+        targetElement.removeAttribute("tabindex");
       } else {
-        targetElement.setAttribute('tabindex', originalTabIndex);
+        targetElement.setAttribute("tabindex", originalTabIndex);
       }
 
       // Smooth scroll to target
       targetElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
+        behavior: "smooth",
+        block: "start",
       });
 
       // Announce to screen readers
-      const announcement = document.createElement('div');
-      announcement.setAttribute('aria-live', 'polite');
-      announcement.setAttribute('aria-atomic', 'true');
-      announcement.className = 'sr-only';
+      const announcement = document.createElement("div");
+      announcement.setAttribute("aria-live", "polite");
+      announcement.setAttribute("aria-atomic", "true");
+      announcement.className = "sr-only";
       announcement.textContent = `Saltou para ${
-        targetElement.textContent?.slice(0, 50) || 'conteúdo principal'
+        targetElement.textContent?.slice(0, 50) || "conteúdo principal"
       }`;
 
       document.body.append(announcement);
@@ -134,9 +135,9 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
         className={cn(
           skipLinkVariants({ variant: finalVariant, position, size }),
           // Hide by default, show on focus (unless showOnFocus is false)
-          showOnFocus
-            && '-translate-y-full opacity-0 focus:translate-y-0 focus:opacity-100',
-          !showOnFocus && 'translate-y-0 opacity-100',
+          showOnFocus &&
+            "-translate-y-full opacity-0 focus:translate-y-0 focus:opacity-100",
+          !showOnFocus && "translate-y-0 opacity-100",
           className,
         )}
         data-emergency={emergencyMode}
@@ -154,42 +155,42 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
   },
 );
 
-SkipLink.displayName = 'SkipLink';
+SkipLink.displayName = "SkipLink";
 
 /**
  * SkipToContent - Specialized skip link for main content
  */
 const SkipToContent = React.forwardRef<
   HTMLAnchorElement,
-  Omit<SkipLinkProps, 'targetId' | 'children'>
+  Omit<SkipLinkProps, "targetId" | "children">
 >(({ ...props }, ref) => (
   <SkipLink ref={ref} targetId="main-content" {...props}>
     Pular para o conteúdo principal
   </SkipLink>
 ));
 
-SkipToContent.displayName = 'SkipToContent';
+SkipToContent.displayName = "SkipToContent";
 
 /**
  * SkipToNavigation - Skip link for main navigation
  */
 const SkipToNavigation = React.forwardRef<
   HTMLAnchorElement,
-  Omit<SkipLinkProps, 'targetId' | 'children'>
+  Omit<SkipLinkProps, "targetId" | "children">
 >(({ ...props }, ref) => (
   <SkipLink ref={ref} targetId="main-navigation" {...props}>
     Pular para a navegação principal
   </SkipLink>
 ));
 
-SkipToNavigation.displayName = 'SkipToNavigation';
+SkipToNavigation.displayName = "SkipToNavigation";
 
 /**
  * SkipToEmergency - Emergency skip link for critical medical interfaces
  */
 const SkipToEmergency = React.forwardRef<
   HTMLAnchorElement,
-  Omit<SkipLinkProps, 'targetId' | 'children' | 'emergencyMode'>
+  Omit<SkipLinkProps, "targetId" | "children" | "emergencyMode">
 >(({ ...props }, ref) => (
   <SkipLink
     emergencyMode
@@ -202,7 +203,7 @@ const SkipToEmergency = React.forwardRef<
   </SkipLink>
 ));
 
-SkipToEmergency.displayName = 'SkipToEmergency';
+SkipToEmergency.displayName = "SkipToEmergency";
 
 /**
  * SkipLinkContainer - Container for multiple skip links
@@ -229,9 +230,9 @@ const SkipLinkContainer = React.forwardRef<
   ) => (
     <div
       className={cn(
-        'skip-link-container relative z-[9999]',
-        medicalContext && 'healthcare-context',
-        emergencyMode && 'emergency-context',
+        "skip-link-container relative z-[9999]",
+        medicalContext && "healthcare-context",
+        emergencyMode && "emergency-context",
         className,
       )}
       data-emergency={emergencyMode}
@@ -244,7 +245,7 @@ const SkipLinkContainer = React.forwardRef<
   ),
 );
 
-SkipLinkContainer.displayName = 'SkipLinkContainer';
+SkipLinkContainer.displayName = "SkipLinkContainer";
 
 export {
   SkipLink,

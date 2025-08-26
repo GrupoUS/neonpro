@@ -166,9 +166,7 @@ jobs:
       - name: 🎨 Code formatting check
         run: pnpm exec ultracite lint
 
-      - name: ⚡ Build diagnostics
-        run: node scripts/build-diagnostics.js
-        continue-on-error: true
+      # Build diagnostics removed - functionality integrated into other validation scripts
 
   # Build stage
   build:

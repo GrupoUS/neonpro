@@ -3,7 +3,7 @@
  * Valida todo o fluxo: login → acesso protegido → refresh → logout
  */
 
-import { authTokenManager } from './auth-token-manager';
+import { authTokenManager } from "./auth-token-manager";
 
 export interface TestCredentials {
   email: string;
@@ -32,7 +32,7 @@ export interface E2ETestResult {
  */
 export async function runAuthE2ETest(
   credentials: TestCredentials,
-  baseUrl = '',
+  baseUrl = "",
 ): Promise<E2ETestResult> {
   const result: E2ETestResult = {
     success: false,
@@ -57,9 +57,9 @@ export async function runAuthE2ETest(
     const loginStart = performance.now();
 
     const loginResponse = await fetch(`${baseUrl}/api/v1/auth/login`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(credentials),
     });
@@ -74,7 +74,7 @@ export async function runAuthE2ETest(
     const loginData = await loginResponse.json();
 
     if (!(loginData.success && loginData.data?.tokens)) {
-      result.errors.push('Login response format invalid');
+      result.errors.push("Login response format invalid");
       return result;
     }
 
@@ -87,7 +87,7 @@ export async function runAuthE2ETest(
     const refreshToken = authTokenManager.getRefreshToken();
 
     if (!(hasTokens && accessToken && refreshToken)) {
-      result.errors.push('Token storage failed');
+      result.errors.push("Token storage failed");
       return result;
     }
 
@@ -96,7 +96,7 @@ export async function runAuthE2ETest(
     const protectedResponse = await fetch(`${baseUrl}/api/v1/auth/me`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -110,7 +110,7 @@ export async function runAuthE2ETest(
     const userData = await protectedResponse.json();
 
     if (!(userData.success && userData.data)) {
-      result.errors.push('Protected route response invalid');
+      result.errors.push("Protected route response invalid");
       return result;
     }
 
@@ -121,14 +121,14 @@ export async function runAuthE2ETest(
     result.timing.refreshTime = performance.now() - refreshStart;
 
     if (!refreshSuccess) {
-      result.errors.push('Token refresh failed');
+      result.errors.push("Token refresh failed");
       return result;
     }
 
     // Verificar se novo token é válido
     const newToken = authTokenManager.getAccessToken();
     if (!newToken || newToken === accessToken) {
-      result.errors.push('Token refresh did not provide new token');
+      result.errors.push("Token refresh did not provide new token");
       return result;
     }
 
@@ -136,10 +136,10 @@ export async function runAuthE2ETest(
     const logoutStart = performance.now();
 
     await fetch(`${baseUrl}/api/v1/auth/logout`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${newToken}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         refreshToken: authTokenManager.getRefreshToken(),
@@ -153,7 +153,7 @@ export async function runAuthE2ETest(
 
     // Verificar se tokens foram limpos
     if (authTokenManager.hasValidTokens()) {
-      result.errors.push('Tokens not cleared after logout');
+      result.errors.push("Tokens not cleared after logout");
       return result;
     }
 
@@ -161,12 +161,12 @@ export async function runAuthE2ETest(
     const postLogoutResponse = await fetch(`${baseUrl}/api/v1/auth/me`, {
       headers: {
         Authorization: `Bearer ${newToken}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
     if (postLogoutResponse.ok) {
-      result.errors.push('Still can access protected route after logout');
+      result.errors.push("Still can access protected route after logout");
       return result;
     }
 
@@ -177,7 +177,8 @@ export async function runAuthE2ETest(
 
     return result;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     result.errors.push(`Test execution error: ${errorMessage}`);
 
     // Limpar estado em caso de erro
@@ -194,8 +195,8 @@ export async function testSessionPersistence(): Promise<boolean> {
   try {
     // Simular tokens válidos
     const mockTokens = {
-      accessToken: 'mock-access-token',
-      refreshToken: 'mock-refresh-token',
+      accessToken: "mock-access-token",
+      refreshToken: "mock-refresh-token",
       expiresIn: 3600,
     };
 
@@ -229,7 +230,7 @@ export async function testSessionPersistence(): Promise<boolean> {
  */
 export async function runAllAuthTests(
   credentials: TestCredentials,
-  baseUrl = '',
+  baseUrl = "",
 ): Promise<{
   e2eTest: E2ETestResult;
   persistenceTest: boolean;

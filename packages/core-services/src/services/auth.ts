@@ -3,12 +3,12 @@
 // Centralized authentication and authorization microservice
 // ================================================
 
-import { createClient } from '@supabase/supabase-js';
-import { sign, verify } from 'jsonwebtoken';
-import { randomBytes, scrypt } from 'node:crypto';
-import { promisify } from 'node:util';
-import { config } from './configuration';
-import { monitoring } from './monitoring';
+import { createClient } from "@supabase/supabase-js";
+import { sign, verify } from "jsonwebtoken";
+import { randomBytes, scrypt } from "node:crypto";
+import { promisify } from "node:util";
+import { config } from "./configuration";
+import { monitoring } from "./monitoring";
 
 const _scryptAsync = promisify(scrypt);
 
@@ -48,7 +48,7 @@ interface AuthToken {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
-  tokenType: 'Bearer';
+  tokenType: "Bearer";
   scope?: string[];
 }
 
@@ -100,7 +100,7 @@ export class AuthenticationService {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
-  private readonly jwtSecret = process.env.JWT_SECRET || 'default-secret';
+  private readonly jwtSecret = process.env.JWT_SECRET || "default-secret";
   private jwtExpiryMinutes = 60; // 1 hour
   private refreshTokenExpiryDays = 30; // 30 days
 
@@ -125,21 +125,22 @@ export class AuthenticationService {
       ipAddress: string;
       userAgent?: string;
     },
-  ): Promise<{ authToken: AuthToken; user: User; session: Session; } | null> {
+  ): Promise<{ authToken: AuthToken; user: User; session: Session } | null> {
     try {
-      monitoring.info('Login attempt', 'auth-service', {
+      monitoring.info("Login attempt", "auth-service", {
         email: credentials.email,
         deviceId: credentials.deviceId,
       });
 
       // Authenticate with Supabase
-      const { data: authData, error } = await this.supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
-      });
+      const { data: authData, error } =
+        await this.supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        });
 
       if (error || !authData.user) {
-        monitoring.warn('Login failed - invalid credentials', 'auth-service', {
+        monitoring.warn("Login failed - invalid credentials", "auth-service", {
           email: credentials.email,
           error: error?.message,
         });
@@ -149,7 +150,7 @@ export class AuthenticationService {
       // Get user profile
       const user = await this.getUserProfile(authData.user.id);
       if (!user?.isActive) {
-        monitoring.warn('Login failed - user inactive', 'auth-service', {
+        monitoring.warn("Login failed - user inactive", "auth-service", {
           userId: authData.user.id,
         });
         return;
@@ -157,16 +158,16 @@ export class AuthenticationService {
 
       // Check MFA if enabled
       if (user.mfaEnabled && !credentials.mfaCode) {
-        monitoring.info('MFA required for login', 'auth-service', {
+        monitoring.info("MFA required for login", "auth-service", {
           userId: user.id,
         });
-        throw new Error('MFA_REQUIRED');
+        throw new Error("MFA_REQUIRED");
       }
 
       if (user.mfaEnabled && credentials.mfaCode) {
         const mfaValid = await this.verifyMfaCode(user.id, credentials.mfaCode);
         if (!mfaValid) {
-          monitoring.warn('Login failed - invalid MFA code', 'auth-service', {
+          monitoring.warn("Login failed - invalid MFA code", "auth-service", {
             userId: user.id,
           });
           return;
@@ -187,7 +188,7 @@ export class AuthenticationService {
       // Update last login
       await this.updateLastLogin(user.id);
 
-      monitoring.info('Login successful', 'auth-service', {
+      monitoring.info("Login successful", "auth-service", {
         userId: user.id,
         sessionId: session.id,
         tenantId: user.tenantId,
@@ -195,7 +196,7 @@ export class AuthenticationService {
 
       return { authToken, user, session };
     } catch (error) {
-      monitoring.error('Login error', 'auth-service', error as Error, {
+      monitoring.error("Login error", "auth-service", error as Error, {
         email: credentials.email,
       });
       throw error;
@@ -204,30 +205,31 @@ export class AuthenticationService {
 
   async register(
     registerData: RegisterData,
-  ): Promise<{ user: User; requiresVerification: boolean; }> {
+  ): Promise<{ user: User; requiresVerification: boolean }> {
     try {
-      monitoring.info('Registration attempt', 'auth-service', {
+      monitoring.info("Registration attempt", "auth-service", {
         email: registerData.email,
         tenantId: registerData.tenantId,
       });
 
       // Create user in Supabase Auth
-      const { data: authData, error } = await this.supabase.auth.admin.createUser({
-        email: registerData.email,
-        password: registerData.password,
-        email_confirm: false, // We'll handle verification separately
-      });
+      const { data: authData, error } =
+        await this.supabase.auth.admin.createUser({
+          email: registerData.email,
+          password: registerData.password,
+          email_confirm: false, // We'll handle verification separately
+        });
 
       if (error || !authData.user) {
         monitoring.error(
-          'Registration failed',
-          'auth-service',
+          "Registration failed",
+          "auth-service",
           new Error(error?.message),
           {
             email: registerData.email,
           },
         );
-        throw new Error(error?.message || 'Registration failed');
+        throw new Error(error?.message || "Registration failed");
       }
 
       // Create user profile
@@ -238,8 +240,8 @@ export class AuthenticationService {
 
       // Send verification email if required
       const requiresVerification = await config.getConfiguration(
-        'auth.email_verification_required',
-        { environment: process.env.NODE_ENV || 'development' },
+        "auth.email_verification_required",
+        { environment: process.env.NODE_ENV || "development" },
         true,
       );
 
@@ -247,7 +249,7 @@ export class AuthenticationService {
         await this.sendVerificationEmail(userProfile.email);
       }
 
-      monitoring.info('Registration successful', 'auth-service', {
+      monitoring.info("Registration successful", "auth-service", {
         userId: userProfile.id,
         email: userProfile.email,
         tenantId: userProfile.tenantId,
@@ -255,7 +257,7 @@ export class AuthenticationService {
 
       return { user: userProfile, requiresVerification };
     } catch (error) {
-      monitoring.error('Registration error', 'auth-service', error as Error, {
+      monitoring.error("Registration error", "auth-service", error as Error, {
         email: registerData.email,
       });
       throw error;
@@ -264,21 +266,21 @@ export class AuthenticationService {
 
   async logout(sessionId: string): Promise<boolean> {
     try {
-      monitoring.info('Logout attempt', 'auth-service', { sessionId });
+      monitoring.info("Logout attempt", "auth-service", { sessionId });
 
       // Deactivate session
       const { error } = await this.supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({
           is_active: false,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
       if (error) {
         monitoring.error(
-          'Logout failed',
-          'auth-service',
+          "Logout failed",
+          "auth-service",
           new Error(error.message),
           {
             sessionId,
@@ -287,10 +289,10 @@ export class AuthenticationService {
         return false;
       }
 
-      monitoring.info('Logout successful', 'auth-service', { sessionId });
+      monitoring.info("Logout successful", "auth-service", { sessionId });
       return true;
     } catch (error) {
-      monitoring.error('Logout error', 'auth-service', error as Error, {
+      monitoring.error("Logout error", "auth-service", error as Error, {
         sessionId,
       });
       return false;
@@ -299,7 +301,7 @@ export class AuthenticationService {
 
   async refreshToken(refreshToken: string): Promise<AuthToken | null> {
     try {
-      monitoring.debug('Token refresh attempt', 'auth-service');
+      monitoring.debug("Token refresh attempt", "auth-service");
 
       // Verify refresh token
       const payload = verify(refreshToken, this.jwtSecret) as any;
@@ -308,8 +310,8 @@ export class AuthenticationService {
       const session = await this.getSession(payload.sessionId);
       if (!session?.isActive) {
         monitoring.warn(
-          'Token refresh failed - invalid session',
-          'auth-service',
+          "Token refresh failed - invalid session",
+          "auth-service",
           {
             sessionId: payload.sessionId,
           },
@@ -321,8 +323,8 @@ export class AuthenticationService {
       const user = await this.getUserProfile(session.userId);
       if (!user?.isActive) {
         monitoring.warn(
-          'Token refresh failed - user inactive',
-          'auth-service',
+          "Token refresh failed - user inactive",
+          "auth-service",
           {
             userId: session.userId,
           },
@@ -336,14 +338,14 @@ export class AuthenticationService {
       // Generate new tokens
       const authToken = await this.generateTokens(user, session);
 
-      monitoring.debug('Token refresh successful', 'auth-service', {
+      monitoring.debug("Token refresh successful", "auth-service", {
         userId: user.id,
         sessionId: session.id,
       });
 
       return authToken;
     } catch (error) {
-      monitoring.error('Token refresh error', 'auth-service', error as Error);
+      monitoring.error("Token refresh error", "auth-service", error as Error);
       return;
     }
   }
@@ -379,7 +381,7 @@ export class AuthenticationService {
         tenantId: user.tenantId,
       };
     } catch (error) {
-      monitoring.debug('Token validation failed', 'auth-service', {
+      monitoring.debug("Token validation failed", "auth-service", {
         error: (error as Error).message,
       });
       return;
@@ -424,8 +426,8 @@ export class AuthenticationService {
       return false;
     } catch (error) {
       monitoring.error(
-        'Permission check error',
-        'auth-service',
+        "Permission check error",
+        "auth-service",
         error as Error,
         {
           userId,
@@ -443,7 +445,7 @@ export class AuthenticationService {
 
   async requestPasswordReset(request: PasswordResetRequest): Promise<boolean> {
     try {
-      monitoring.info('Password reset requested', 'auth-service', {
+      monitoring.info("Password reset requested", "auth-service", {
         email: request.email,
       });
 
@@ -456,8 +458,8 @@ export class AuthenticationService {
 
       if (error) {
         monitoring.error(
-          'Password reset request failed',
-          'auth-service',
+          "Password reset request failed",
+          "auth-service",
           new Error(error.message),
           {
             email: request.email,
@@ -466,13 +468,13 @@ export class AuthenticationService {
         return false;
       }
 
-      monitoring.info('Password reset email sent', 'auth-service', {
+      monitoring.info("Password reset email sent", "auth-service", {
         email: request.email,
       });
 
       return true;
     } catch (error) {
-      monitoring.error('Password reset error', 'auth-service', error as Error, {
+      monitoring.error("Password reset error", "auth-service", error as Error, {
         email: request.email,
       });
       return false;
@@ -485,7 +487,7 @@ export class AuthenticationService {
     newPassword: string,
   ): Promise<boolean> {
     try {
-      monitoring.info('Password change attempt', 'auth-service', { userId });
+      monitoring.info("Password change attempt", "auth-service", { userId });
 
       // Get user
       const user = await this.getUserProfile(userId);
@@ -494,15 +496,16 @@ export class AuthenticationService {
       }
 
       // Verify old password
-      const { error: signInError } = await this.supabase.auth.signInWithPassword({
-        email: user.email,
-        password: oldPassword,
-      });
+      const { error: signInError } =
+        await this.supabase.auth.signInWithPassword({
+          email: user.email,
+          password: oldPassword,
+        });
 
       if (signInError) {
         monitoring.warn(
-          'Password change failed - invalid old password',
-          'auth-service',
+          "Password change failed - invalid old password",
+          "auth-service",
           {
             userId,
           },
@@ -511,14 +514,15 @@ export class AuthenticationService {
       }
 
       // Update password
-      const { error: updateError } = await this.supabase.auth.admin.updateUserById(userId, {
-        password: newPassword,
-      });
+      const { error: updateError } =
+        await this.supabase.auth.admin.updateUserById(userId, {
+          password: newPassword,
+        });
 
       if (updateError) {
         monitoring.error(
-          'Password change failed',
-          'auth-service',
+          "Password change failed",
+          "auth-service",
           new Error(updateError.message),
           {
             userId,
@@ -530,14 +534,14 @@ export class AuthenticationService {
       // Invalidate all sessions except current
       await this.invalidateUserSessions(userId);
 
-      monitoring.info('Password changed successfully', 'auth-service', {
+      monitoring.info("Password changed successfully", "auth-service", {
         userId,
       });
       return true;
     } catch (error) {
       monitoring.error(
-        'Password change error',
-        'auth-service',
+        "Password change error",
+        "auth-service",
         error as Error,
         { userId },
       );
@@ -551,7 +555,7 @@ export class AuthenticationService {
 
   async setupMfa(userId: string): Promise<MfaSetupData | null> {
     try {
-      monitoring.info('MFA setup initiated', 'auth-service', { userId });
+      monitoring.info("MFA setup initiated", "auth-service", { userId });
 
       const user = await this.getUserProfile(userId);
       if (!user) {
@@ -559,22 +563,21 @@ export class AuthenticationService {
       }
 
       // Generate TOTP secret
-      const secret = randomBytes(32).toString('base32');
+      const secret = randomBytes(32).toString("base32");
 
       // Generate QR code URL
-      const issuer = 'NeonPro';
+      const issuer = "NeonPro";
       const qrCodeUrl = `otpauth://totp/${issuer}:${user.email}?secret=${secret}&issuer=${issuer}`;
 
       // Generate backup codes
-      const backupCodes = Array.from(
-        { length: 10 },
-        () => randomBytes(4).toString('hex').toUpperCase(),
+      const backupCodes = Array.from({ length: 10 }, () =>
+        randomBytes(4).toString("hex").toUpperCase(),
       );
 
       // Store MFA data (temporarily, until user confirms)
       await this.storeTempMfaData(userId, secret, backupCodes);
 
-      monitoring.info('MFA setup data generated', 'auth-service', { userId });
+      monitoring.info("MFA setup data generated", "auth-service", { userId });
 
       return {
         userId,
@@ -583,7 +586,7 @@ export class AuthenticationService {
         backupCodes,
       };
     } catch (error) {
-      monitoring.error('MFA setup error', 'auth-service', error as Error, {
+      monitoring.error("MFA setup error", "auth-service", error as Error, {
         userId,
       });
       return;
@@ -592,7 +595,7 @@ export class AuthenticationService {
 
   async confirmMfa(userId: string, code: string): Promise<boolean> {
     try {
-      monitoring.info('MFA confirmation attempt', 'auth-service', { userId });
+      monitoring.info("MFA confirmation attempt", "auth-service", { userId });
 
       // Get temporary MFA data
       const tempMfaData = await this.getTempMfaData(userId);
@@ -604,8 +607,8 @@ export class AuthenticationService {
       const isValid = await this.verifyTotpCode(tempMfaData.secret, code);
       if (!isValid) {
         monitoring.warn(
-          'MFA confirmation failed - invalid code',
-          'auth-service',
+          "MFA confirmation failed - invalid code",
+          "auth-service",
           { userId },
         );
         return false;
@@ -621,12 +624,12 @@ export class AuthenticationService {
       // Clean up temporary data
       await this.clearTempMfaData(userId);
 
-      monitoring.info('MFA enabled successfully', 'auth-service', { userId });
+      monitoring.info("MFA enabled successfully", "auth-service", { userId });
       return true;
     } catch (error) {
       monitoring.error(
-        'MFA confirmation error',
-        'auth-service',
+        "MFA confirmation error",
+        "auth-service",
         error as Error,
         { userId },
       );
@@ -636,7 +639,7 @@ export class AuthenticationService {
 
   async disableMfa(userId: string, password: string): Promise<boolean> {
     try {
-      monitoring.info('MFA disable attempt', 'auth-service', { userId });
+      monitoring.info("MFA disable attempt", "auth-service", { userId });
 
       const user = await this.getUserProfile(userId);
       if (!user) {
@@ -644,15 +647,16 @@ export class AuthenticationService {
       }
 
       // Verify password
-      const { error: signInError } = await this.supabase.auth.signInWithPassword({
-        email: user.email,
-        password,
-      });
+      const { error: signInError } =
+        await this.supabase.auth.signInWithPassword({
+          email: user.email,
+          password,
+        });
 
       if (signInError) {
         monitoring.warn(
-          'MFA disable failed - invalid password',
-          'auth-service',
+          "MFA disable failed - invalid password",
+          "auth-service",
           { userId },
         );
         return false;
@@ -660,14 +664,14 @@ export class AuthenticationService {
 
       // Disable MFA
       const { error } = await this.supabase
-        .from('user_mfa')
+        .from("user_mfa")
         .delete()
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       if (error) {
         monitoring.error(
-          'MFA disable failed',
-          'auth-service',
+          "MFA disable failed",
+          "auth-service",
           new Error(error.message),
           {
             userId,
@@ -678,14 +682,14 @@ export class AuthenticationService {
 
       // Update user profile
       await this.supabase
-        .from('user_profiles')
+        .from("user_profiles")
         .update({ mfa_enabled: false })
-        .eq('id', userId);
+        .eq("id", userId);
 
-      monitoring.info('MFA disabled successfully', 'auth-service', { userId });
+      monitoring.info("MFA disabled successfully", "auth-service", { userId });
       return true;
     } catch (error) {
-      monitoring.error('MFA disable error', 'auth-service', error as Error, {
+      monitoring.error("MFA disable error", "auth-service", error as Error, {
         userId,
       });
       return false;
@@ -699,11 +703,11 @@ export class AuthenticationService {
   async getUserSessions(userId: string): Promise<Session[]> {
     try {
       const { data, error } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .from("user_sessions")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
 
       if (error) {
         throw new Error(error.message);
@@ -712,8 +716,8 @@ export class AuthenticationService {
       return data.map(this.mapSessionFromDb);
     } catch (error) {
       monitoring.error(
-        'Get user sessions error',
-        'auth-service',
+        "Get user sessions error",
+        "auth-service",
         error as Error,
         { userId },
       );
@@ -724,18 +728,18 @@ export class AuthenticationService {
   async invalidateSession(sessionId: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({
           is_active: false,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
       return !error;
     } catch (error) {
       monitoring.error(
-        'Invalidate session error',
-        'auth-service',
+        "Invalidate session error",
+        "auth-service",
         error as Error,
         { sessionId },
       );
@@ -749,15 +753,15 @@ export class AuthenticationService {
   ): Promise<boolean> {
     try {
       let query = this.supabase
-        .from('user_sessions')
+        .from("user_sessions")
         .update({
           is_active: false,
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
       if (excludeSessionId) {
-        query = query.neq('id', excludeSessionId);
+        query = query.neq("id", excludeSessionId);
       }
 
       const { error } = await query;
@@ -765,8 +769,8 @@ export class AuthenticationService {
       return !error;
     } catch (error) {
       monitoring.error(
-        'Invalidate all user sessions error',
-        'auth-service',
+        "Invalidate all user sessions error",
+        "auth-service",
         error as Error,
         {
           userId,
@@ -782,14 +786,14 @@ export class AuthenticationService {
 
   private async initializeConfiguration(): Promise<void> {
     this.jwtExpiryMinutes = await config.getConfiguration(
-      'auth.jwt_expiry_minutes',
-      { environment: process.env.NODE_ENV || 'development' },
+      "auth.jwt_expiry_minutes",
+      { environment: process.env.NODE_ENV || "development" },
       60,
     );
 
     this.refreshTokenExpiryDays = await config.getConfiguration(
-      'auth.refresh_token_expiry_days',
-      { environment: process.env.NODE_ENV || 'development' },
+      "auth.refresh_token_expiry_days",
+      { environment: process.env.NODE_ENV || "development" },
       30,
     );
   }
@@ -797,13 +801,15 @@ export class AuthenticationService {
   private async getUserProfile(userId: string): Promise<User | null> {
     try {
       const { data, error } = await this.supabase
-        .from('user_profiles')
-        .select(`
+        .from("user_profiles")
+        .select(
+          `
           *,
           user_roles!inner(role_name),
           role_permissions(permission_name)
-        `)
-        .eq('id', userId)
+        `,
+        )
+        .eq("id", userId)
         .single();
 
       if (error || !data) {
@@ -813,8 +819,8 @@ export class AuthenticationService {
       return this.mapUserFromDb(data);
     } catch (error) {
       monitoring.error(
-        'Get user profile error',
-        'auth-service',
+        "Get user profile error",
+        "auth-service",
         error as Error,
         { userId },
       );
@@ -827,7 +833,7 @@ export class AuthenticationService {
     registerData: RegisterData,
   ): Promise<User> {
     const { data, error } = await this.supabase
-      .from('user_profiles')
+      .from("user_profiles")
       .insert({
         id: userId,
         email: registerData.email,
@@ -847,7 +853,7 @@ export class AuthenticationService {
     }
 
     // Assign default roles
-    const roles = registerData.roles || ['user'];
+    const roles = registerData.roles || ["user"];
     for (const role of roles) {
       await this.assignUserRole(userId, role);
     }
@@ -874,7 +880,7 @@ export class AuthenticationService {
     expiresAt.setHours(expiresAt.getHours() + expiryHours);
 
     const { data, error } = await this.supabase
-      .from('user_sessions')
+      .from("user_sessions")
       .insert({
         user_id: userId,
         device_id: sessionData.deviceId,
@@ -908,7 +914,7 @@ export class AuthenticationService {
     const refreshTokenPayload = {
       userId: user.id,
       sessionId: session.id,
-      type: 'refresh',
+      type: "refresh",
     };
 
     const accessToken = sign(accessTokenPayload, this.jwtSecret, {
@@ -923,23 +929,23 @@ export class AuthenticationService {
       accessToken,
       refreshToken,
       expiresIn: this.jwtExpiryMinutes * 60,
-      tokenType: 'Bearer',
+      tokenType: "Bearer",
     };
   }
 
   private async updateLastLogin(userId: string): Promise<void> {
     await this.supabase
-      .from('user_profiles')
+      .from("user_profiles")
       .update({ last_login_at: new Date().toISOString() })
-      .eq('id', userId);
+      .eq("id", userId);
   }
 
   private async getSession(sessionId: string): Promise<Session | null> {
     try {
       const { data, error } = await this.supabase
-        .from('user_sessions')
-        .select('*')
-        .eq('id', sessionId)
+        .from("user_sessions")
+        .select("*")
+        .eq("id", sessionId)
         .single();
 
       if (error || !data) {
@@ -954,17 +960,17 @@ export class AuthenticationService {
 
   private async updateSessionAccess(sessionId: string): Promise<void> {
     await this.supabase
-      .from('user_sessions')
+      .from("user_sessions")
       .update({ last_accessed_at: new Date().toISOString() })
-      .eq('id', sessionId);
+      .eq("id", sessionId);
   }
 
   private async getRolePermissions(role: string): Promise<string[]> {
     try {
       const { data, error } = await this.supabase
-        .from('role_permissions')
-        .select('permission_name')
-        .eq('role_name', role);
+        .from("role_permissions")
+        .select("permission_name")
+        .eq("role_name", role);
 
       if (error) {
         return [];
@@ -982,10 +988,10 @@ export class AuthenticationService {
   ): Promise<string[]> {
     try {
       const { data, error } = await this.supabase
-        .from('user_resource_permissions')
-        .select('permission_name')
-        .eq('user_id', userId)
-        .eq('resource_id', resourceId);
+        .from("user_resource_permissions")
+        .select("permission_name")
+        .eq("user_id", userId)
+        .eq("resource_id", resourceId);
 
       if (error) {
         return [];
@@ -998,7 +1004,7 @@ export class AuthenticationService {
   }
 
   private async assignUserRole(userId: string, role: string): Promise<void> {
-    await this.supabase.from('user_roles').insert({
+    await this.supabase.from("user_roles").insert({
       user_id: userId,
       role_name: role,
     });
@@ -1006,7 +1012,7 @@ export class AuthenticationService {
 
   private async sendVerificationEmail(email: string): Promise<void> {
     // Implementation would integrate with email service
-    monitoring.info('Verification email sent', 'auth-service', { email });
+    monitoring.info("Verification email sent", "auth-service", { email });
   }
 
   private async verifyMfaCode(
@@ -1035,7 +1041,7 @@ export class AuthenticationService {
 
   private async getTempMfaData(
     _userId: string,
-  ): Promise<{ secret: string; backupCodes: string[]; } | null> {
+  ): Promise<{ secret: string; backupCodes: string[] } | null> {
     // Implementation would retrieve temporary MFA data
     return;
   }
@@ -1054,9 +1060,9 @@ export class AuthenticationService {
 
   private async invalidateUserSessions(userId: string): Promise<void> {
     await this.supabase
-      .from('user_sessions')
+      .from("user_sessions")
       .update({ is_active: false })
-      .eq('user_id', userId);
+      .eq("user_id", userId);
   }
 
   private mapUserFromDb(data: any): User {
@@ -1065,7 +1071,8 @@ export class AuthenticationService {
       email: data.email,
       roles: data.user_roles?.map((r: any) => r.role_name) || [],
       tenantId: data.tenant_id,
-      permissions: data.role_permissions?.map((p: any) => p.permission_name) || [],
+      permissions:
+        data.role_permissions?.map((p: any) => p.permission_name) || [],
       metadata: data.metadata || {},
       isActive: data.is_active,
       lastLoginAt: data.last_login_at
@@ -1107,7 +1114,7 @@ export async function authenticate(token: string): Promise<AuthContext | null> {
 export async function requireAuth(token: string): Promise<AuthContext> {
   const authContext = await authenticate(token);
   if (!authContext) {
-    throw new Error('Authentication required');
+    throw new Error("Authentication required");
   }
   return authContext;
 }

@@ -4,8 +4,8 @@
  * Implements comprehensive ANVISA regulatory compliance validation
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { ComplianceMetrics } from '../types/testing';
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import type { ComplianceMetrics } from "../types/testing";
 
 export interface ANVISAComplianceConfig {
   enableMedicalDeviceValidation: boolean;
@@ -58,12 +58,12 @@ export class ComplianceTester {
       ? 9.9
       : this.calculatePartialScore(validationChecks);
 
-    this.testResults.set('medical_device_registration', {
+    this.testResults.set("medical_device_registration", {
       score,
       passed: isCompliant,
       details: validationChecks,
       timestamp: new Date(),
-      regulation: 'RDC_185_2001',
+      regulation: "RDC_185_2001",
     });
 
     return {
@@ -92,12 +92,12 @@ export class ComplianceTester {
       ? 9.9
       : this.calculatePartialScore(validationChecks);
 
-    this.testResults.set('adverse_event_reporting', {
+    this.testResults.set("adverse_event_reporting", {
       score,
       passed: isCompliant,
       details: validationChecks,
       timestamp: new Date(),
-      regulation: 'RDC_4_2009',
+      regulation: "RDC_4_2009",
     });
 
     return {
@@ -114,7 +114,8 @@ export class ComplianceTester {
   ): Promise<ProcedureValidationResult> {
     const validationChecks = {
       procedureClassification: this.validateProcedureClass(procedure),
-      professionalRequirements: await this.validateProfessionalRequirements(procedure),
+      professionalRequirements:
+        await this.validateProfessionalRequirements(procedure),
       equipmentRequirements: this.validateEquipmentRequirements(procedure),
       facilityRequirements: this.validateFacilityRequirements(procedure),
       patientConsentRequirements: this.validatePatientConsent(procedure),
@@ -126,12 +127,12 @@ export class ComplianceTester {
       ? 9.9
       : this.calculatePartialScore(validationChecks);
 
-    this.testResults.set('aesthetic_procedure_classification', {
+    this.testResults.set("aesthetic_procedure_classification", {
       score,
       passed: isCompliant,
       details: validationChecks,
       timestamp: new Date(),
-      regulation: 'RDC_302_2005',
+      regulation: "RDC_302_2005",
     });
 
     return {
@@ -166,12 +167,12 @@ export class ComplianceTester {
       ? 9.9
       : this.calculatePartialScore(validationChecks);
 
-    this.testResults.set('sanitary_license', {
+    this.testResults.set("sanitary_license", {
       score,
       passed: isCompliant,
       details: validationChecks,
       timestamp: new Date(),
-      regulation: 'RDC_63_2011',
+      regulation: "RDC_63_2011",
     });
 
     return {
@@ -204,12 +205,12 @@ export class ComplianceTester {
       ? 9.9
       : this.calculatePartialScore(validationChecks);
 
-    this.testResults.set('quality_management_system', {
+    this.testResults.set("quality_management_system", {
       score,
       passed: isCompliant,
       details: validationChecks,
       timestamp: new Date(),
-      regulation: 'ISO_13485',
+      regulation: "ISO_13485",
     });
 
     return { isCompliant, validationChecks, score, qmsApproved: isCompliant };
@@ -239,12 +240,12 @@ export class ComplianceTester {
       ? 9.9
       : this.calculatePartialScore(validationChecks);
 
-    this.testResults.set('product_traceability', {
+    this.testResults.set("product_traceability", {
       score,
       passed: isCompliant,
       details: validationChecks,
       timestamp: new Date(),
-      regulation: 'ANVISA_TRACEABILITY',
+      regulation: "ANVISA_TRACEABILITY",
     });
 
     return {
@@ -261,7 +262,7 @@ export class ComplianceTester {
   ): Promise<boolean> {
     // Mock ANVISA database check
     return (
-      registrationNumber.length > 0 && registrationNumber.startsWith('REG-')
+      registrationNumber.length > 0 && registrationNumber.startsWith("REG-")
     );
   }
 
@@ -269,37 +270,37 @@ export class ComplianceTester {
     docs: TechnicalDocumentation,
   ): boolean {
     return (
-      docs.technicalFile !== null
-      && docs.riskAnalysis !== null
-      && docs.clinicalEvaluation !== null
-      && docs.labelingInstructions !== null
+      docs.technicalFile !== null &&
+      docs.riskAnalysis !== null &&
+      docs.clinicalEvaluation !== null &&
+      docs.labelingInstructions !== null
     );
   }
 
   private validateQualityCertification(certs: Certification[]): boolean {
     return (
       certs.some(
-        (cert) => cert.type === 'ISO13485' && cert.status === 'valid',
-      )
-      && certs.some(
-        (cert) => cert.type === 'CE_MARKING' && cert.status === 'valid',
+        (cert) => cert.type === "ISO13485" && cert.status === "valid",
+      ) &&
+      certs.some(
+        (cert) => cert.type === "CE_MARKING" && cert.status === "valid",
       )
     );
   }
 
   private validateClinicalEvidence(clinicalData: ClinicalData[]): boolean {
     return (
-      clinicalData.length > 0
-      && clinicalData.every((data) => data.ethicsApproval === true)
+      clinicalData.length > 0 &&
+      clinicalData.every((data) => data.ethicsApproval === true)
     );
   }
 
   private validateLabeling(labeling: ProductLabeling): boolean {
     return (
-      labeling.portugueseLanguage === true
-      && labeling.requiredInformation.includes('manufacturer')
-      && labeling.requiredInformation.includes('registration_number')
-      && labeling.requiredInformation.includes('intended_use')
+      labeling.portugueseLanguage === true &&
+      labeling.requiredInformation.includes("manufacturer") &&
+      labeling.requiredInformation.includes("registration_number") &&
+      labeling.requiredInformation.includes("intended_use")
     );
   }
 
@@ -307,9 +308,9 @@ export class ComplianceTester {
     surveillance: PostMarketSurveillance,
   ): boolean {
     return (
-      surveillance.plan !== null
-      && surveillance.periodicReports === true
-      && surveillance.adverseEventMonitoring === true
+      surveillance.plan !== null &&
+      surveillance.periodicReports === true &&
+      surveillance.adverseEventMonitoring === true
     );
   }
 
@@ -321,10 +322,10 @@ export class ComplianceTester {
 
   private validateEventInformation(event: AdverseEvent): boolean {
     return (
-      event.patientInformation !== null
-      && event.deviceInformation !== null
-      && event.eventDescription !== null
-      && event.outcomeInformation !== null
+      event.patientInformation !== null &&
+      event.deviceInformation !== null &&
+      event.eventDescription !== null &&
+      event.outcomeInformation !== null
     );
   }
 
@@ -337,7 +338,8 @@ export class ComplianceTester {
   // Public reporting methods
   generateANVISAComplianceReport(): ANVISAComplianceReport {
     const results = [...this.testResults.values()];
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {
@@ -356,22 +358,22 @@ export class ComplianceTester {
     for (const [testName, result] of this.testResults) {
       if (!result.passed) {
         switch (testName) {
-          case 'medical_device_registration': {
+          case "medical_device_registration": {
             recommendations.push(
-              'Update medical device registration documentation',
+              "Update medical device registration documentation",
             );
             break;
           }
-          case 'adverse_event_reporting': {
-            recommendations.push('Improve adverse event reporting procedures');
+          case "adverse_event_reporting": {
+            recommendations.push("Improve adverse event reporting procedures");
             break;
           }
-          case 'aesthetic_procedure_classification': {
-            recommendations.push('Review aesthetic procedure compliance');
+          case "aesthetic_procedure_classification": {
+            recommendations.push("Review aesthetic procedure compliance");
             break;
           }
-          case 'sanitary_license': {
-            recommendations.push('Update sanitary license requirements');
+          case "sanitary_license": {
+            recommendations.push("Update sanitary license requirements");
             break;
           }
         }
@@ -398,11 +400,11 @@ export function createComplianceTestSuite(
       vi.restoreAllMocks();
     });
 
-    it('medical Device Registration Validation', async () => {
+    it("medical Device Registration Validation", async () => {
       const mockDevice: MedicalDevice = {
-        registrationNumber: 'REG-12345',
-        deviceName: 'Test Medical Device',
-        classification: 'Class II',
+        registrationNumber: "REG-12345",
+        deviceName: "Test Medical Device",
+        classification: "Class II",
         documentation: {
           technicalFile: {},
           riskAnalysis: {},
@@ -410,16 +412,16 @@ export function createComplianceTestSuite(
           labelingInstructions: {},
         },
         certifications: [
-          { type: 'ISO13485', status: 'valid', expiryDate: new Date() },
-          { type: 'CE_MARKING', status: 'valid', expiryDate: new Date() },
+          { type: "ISO13485", status: "valid", expiryDate: new Date() },
+          { type: "CE_MARKING", status: "valid", expiryDate: new Date() },
         ],
-        clinicalData: [{ studyType: 'clinical_trial', ethicsApproval: true }],
+        clinicalData: [{ studyType: "clinical_trial", ethicsApproval: true }],
         labeling: {
           portugueseLanguage: true,
           requiredInformation: [
-            'manufacturer',
-            'registration_number',
-            'intended_use',
+            "manufacturer",
+            "registration_number",
+            "intended_use",
           ],
         },
         surveillance: {
@@ -429,7 +431,8 @@ export function createComplianceTestSuite(
         },
       };
 
-      const result = await complianceTester.validateMedicalDeviceRegistration(mockDevice);
+      const result =
+        await complianceTester.validateMedicalDeviceRegistration(mockDevice);
       expect(result.isCompliant).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
@@ -444,7 +447,7 @@ export async function validateRegulatoryCompliance(
 ): Promise<boolean> {
   const tester = new ComplianceTester();
 
-  if (regulatoryData.type === 'medical_device') {
+  if (regulatoryData.type === "medical_device") {
     const result = await tester.validateMedicalDeviceRegistration(
       regulatoryData as MedicalDevice,
     );
@@ -456,7 +459,7 @@ export async function validateRegulatoryCompliance(
 
 export async function testHealthcareCompliance(
   _healthcareData: HealthcareComplianceData,
-): Promise<ComplianceMetrics['anvisa']> {
+): Promise<ComplianceMetrics["anvisa"]> {
   const tester = new ComplianceTester();
 
   const results = await Promise.all([
@@ -466,7 +469,8 @@ export async function testHealthcareCompliance(
   ]);
 
   const scores = results.map((r) => r.score);
-  const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  const averageScore =
+    scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
   return {
     medicalDevice: scores[0],
@@ -497,7 +501,7 @@ interface TechnicalDocumentation {
 
 interface Certification {
   type: string;
-  status: 'valid' | 'expired' | 'pending';
+  status: "valid" | "expired" | "pending";
   expiryDate: Date;
 }
 
@@ -544,7 +548,7 @@ interface HealthcareFacility {
 
 interface SanitaryLicense {
   number: string;
-  status: 'valid' | 'expired' | 'suspended';
+  status: "valid" | "expired" | "suspended";
   expiryDate: Date;
 }
 

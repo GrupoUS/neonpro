@@ -1,6 +1,6 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { getRealtimeManager } from '../connection-manager';
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { getRealtimeManager } from "../connection-manager";
 
 // Types for compliance monitoring
 export interface ComplianceLog {
@@ -17,11 +17,11 @@ export interface ComplianceLog {
 }
 
 export interface RealtimeCompliancePayload {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  eventType: "INSERT" | "UPDATE" | "DELETE";
   complianceType: keyof ComplianceEventType;
   new?: ComplianceLog;
   old?: ComplianceLog;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   requiresAction: boolean;
 }
 
@@ -38,7 +38,7 @@ export interface ComplianceEventType {
 
 export interface UseRealtimeComplianceOptions {
   tenantId: string;
-  complianceType?: keyof ComplianceEventType | 'ALL';
+  complianceType?: keyof ComplianceEventType | "ALL";
   enabled?: boolean;
   enableAuditLog?: boolean;
   onComplianceEvent?: (payload: RealtimeCompliancePayload) => void;
@@ -83,8 +83,7 @@ export function useRealtimeCompliance(
   const [criticalEvents, setCriticalEvents] = useState(0);
   const [lastEvent, setLastEvent] = useState<ComplianceLog | null>();
   const [complianceScore, setComplianceScore] = useState(100);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
-    );
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
 
   /**
    * Determine compliance type based on payload
@@ -94,46 +93,46 @@ export function useRealtimeCompliance(
       const eventData = payload.new || payload.old;
 
       if (!eventData) {
-        return 'LGPD_DATA_ACCESS';
+        return "LGPD_DATA_ACCESS";
       }
 
       // Map based on action categories
-      if (eventData.action?.includes('consent')) {
-        return eventData.action === 'consent_granted'
-          ? 'LGPD_CONSENT_GRANTED'
-          : 'LGPD_CONSENT_REVOKED';
+      if (eventData.action?.includes("consent")) {
+        return eventData.action === "consent_granted"
+          ? "LGPD_CONSENT_GRANTED"
+          : "LGPD_CONSENT_REVOKED";
       }
 
       if (
-        eventData.action?.includes('deletion')
-        || eventData.action?.includes('delete')
+        eventData.action?.includes("deletion") ||
+        eventData.action?.includes("delete")
       ) {
-        return 'LGPD_DATA_DELETION';
+        return "LGPD_DATA_DELETION";
       }
 
-      if (eventData.action?.includes('anvisa')) {
+      if (eventData.action?.includes("anvisa")) {
         const metadata = (eventData.metadata as Record<string, any>) || {};
-        if (metadata.severity === 'CRITICAL') {
-          return 'ANVISA_VIOLATION';
+        if (metadata.severity === "CRITICAL") {
+          return "ANVISA_VIOLATION";
         }
-        return 'ANVISA_COMPLIANCE_CHECK';
+        return "ANVISA_COMPLIANCE_CHECK";
       }
 
       if (
-        eventData.action?.includes('breach')
-        || eventData.action?.includes('vazamento')
+        eventData.action?.includes("breach") ||
+        eventData.action?.includes("vazamento")
       ) {
-        return 'DATA_BREACH_DETECTED';
+        return "DATA_BREACH_DETECTED";
       }
 
       if (
-        eventData.action?.includes('unauthorized')
-        || eventData.action?.includes('nao_autorizado')
+        eventData.action?.includes("unauthorized") ||
+        eventData.action?.includes("nao_autorizado")
       ) {
-        return 'UNAUTHORIZED_ACCESS';
+        return "UNAUTHORIZED_ACCESS";
       }
 
-      return 'LGPD_DATA_ACCESS';
+      return "LGPD_DATA_ACCESS";
     },
     [],
   );
@@ -142,41 +141,41 @@ export function useRealtimeCompliance(
    * Determine severity level based on compliance event
    */
   const determineSeverity = useCallback(
-    (payload: any): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' => {
+    (payload: any): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
       const eventData = payload.new || payload.old;
       const eventType = payload.eventType;
 
       // Critical severity scenarios
       if (
-        eventData?.action?.includes('breach')
-        || eventData?.action?.includes('unauthorized')
-        || eventData?.action?.includes('violation')
-        || eventData?.action?.includes('vazamento')
-        || eventData?.action?.includes('nao_autorizado')
+        eventData?.action?.includes("breach") ||
+        eventData?.action?.includes("unauthorized") ||
+        eventData?.action?.includes("violation") ||
+        eventData?.action?.includes("vazamento") ||
+        eventData?.action?.includes("nao_autorizado")
       ) {
-        return 'CRITICAL';
+        return "CRITICAL";
       }
 
       // High severity scenarios
       if (
-        eventType === 'DELETE'
-        || eventData?.action?.includes('consent_revoked')
-        || eventData?.action?.includes('data_deletion')
-        || eventData?.action?.includes('anvisa_violation')
+        eventType === "DELETE" ||
+        eventData?.action?.includes("consent_revoked") ||
+        eventData?.action?.includes("data_deletion") ||
+        eventData?.action?.includes("anvisa_violation")
       ) {
-        return 'HIGH';
+        return "HIGH";
       }
 
       // Medium severity scenarios
       if (
-        eventData?.action?.includes('consent_granted')
-        || eventData?.action?.includes('data_export')
-        || eventData?.action?.includes('anvisa_compliance_check')
+        eventData?.action?.includes("consent_granted") ||
+        eventData?.action?.includes("data_export") ||
+        eventData?.action?.includes("anvisa_compliance_check")
       ) {
-        return 'MEDIUM';
+        return "MEDIUM";
       }
 
-      return 'LOW';
+      return "LOW";
     },
     [],
   );
@@ -190,7 +189,7 @@ export function useRealtimeCompliance(
         // Determine compliance type and severity
         const complianceType = determineComplianceType(payload);
         const severity = determineSeverity(payload);
-        const requiresAction = severity === 'HIGH' || severity === 'CRITICAL';
+        const requiresAction = severity === "HIGH" || severity === "CRITICAL";
 
         const realtimePayload: RealtimeCompliancePayload = {
           eventType: payload.eventType,
@@ -205,7 +204,7 @@ export function useRealtimeCompliance(
         setTotalEvents((prev) => prev + 1);
         setLastEvent(realtimePayload.new || realtimePayload.old || undefined);
 
-        if (severity === 'CRITICAL' || severity === 'HIGH') {
+        if (severity === "CRITICAL" || severity === "HIGH") {
           setCriticalEvents((prev) => prev + 1);
           if (onCriticalViolation) {
             onCriticalViolation(realtimePayload);
@@ -253,8 +252,8 @@ export function useRealtimeCompliance(
         id: `audit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
         clinic_id: tenantId,
         action: `${payload.complianceType}_${payload.eventType}`,
-        user_id: 'system',
-        resource_type: 'compliance_audit',
+        user_id: "system",
+        resource_type: "compliance_audit",
         resource_id: payload.new?.id || payload.old?.id || undefined,
         metadata: {
           compliance_type: payload.complianceType,
@@ -262,8 +261,8 @@ export function useRealtimeCompliance(
           requires_action: payload.requiresAction,
           event_type: payload.eventType,
         },
-        ip_address: '127.0.0.1',
-        user_agent: 'NeonPro-Compliance-System',
+        ip_address: "127.0.0.1",
+        user_agent: "NeonPro-Compliance-System",
         timestamp: new Date().toISOString(),
       };
     },
@@ -276,28 +275,30 @@ export function useRealtimeCompliance(
 
       // Update compliance logs cache
       queryClient.setQueryData(
-        ['compliance-logs', tenantId],
+        ["compliance-logs", tenantId],
         (oldCache: ComplianceLog[] | undefined) => {
           if (!oldCache) {
             return oldCache;
           }
 
           switch (eventType) {
-            case 'INSERT': {
+            case "INSERT": {
               if (newData && newData.clinic_id === tenantId) {
                 return [newData, ...oldCache].slice(0, 1000); // Keep only last 1000 events
               }
               return oldCache;
             }
 
-            case 'UPDATE': {
+            case "UPDATE": {
               if (newData) {
-                return oldCache.map((log) => log.id === newData.id ? newData : log);
+                return oldCache.map((log) =>
+                  log.id === newData.id ? newData : log,
+                );
               }
               return oldCache;
             }
 
-            case 'DELETE': {
+            case "DELETE": {
               if (oldData) {
                 return oldCache.filter((log) => log.id !== oldData.id);
               }
@@ -313,12 +314,12 @@ export function useRealtimeCompliance(
 
       // Update compliance statistics
       queryClient.invalidateQueries({
-        queryKey: ['compliance-stats', tenantId],
+        queryKey: ["compliance-stats", tenantId],
       });
       queryClient.invalidateQueries({
-        queryKey: ['compliance-score', tenantId],
+        queryKey: ["compliance-score", tenantId],
       });
-      queryClient.invalidateQueries({ queryKey: ['audit-trail', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["audit-trail", tenantId] });
     },
     [queryClient, tenantId],
   );
@@ -332,34 +333,34 @@ export function useRealtimeCompliance(
 
         // Score penalties based on severity
         switch (severity) {
-          case 'CRITICAL': {
+          case "CRITICAL": {
             scoreDelta = -15; // Major penalty for critical issues
             break;
           }
-          case 'HIGH': {
+          case "HIGH": {
             scoreDelta = -8;
             break;
           }
-          case 'MEDIUM': {
+          case "MEDIUM": {
             scoreDelta = -3;
             break;
           }
-          case 'LOW': {
+          case "LOW": {
             scoreDelta = -1;
             break;
           }
         }
 
         // Additional penalties for specific violations
-        if (complianceType === 'DATA_BREACH_DETECTED') {
+        if (complianceType === "DATA_BREACH_DETECTED") {
           scoreDelta -= 20;
         }
-        if (complianceType === 'UNAUTHORIZED_ACCESS') {
+        if (complianceType === "UNAUTHORIZED_ACCESS") {
           scoreDelta -= 10;
         }
 
         // Positive adjustments for good compliance actions
-        if (complianceType === 'LGPD_CONSENT_GRANTED') {
+        if (complianceType === "LGPD_CONSENT_GRANTED") {
           scoreDelta = 1; // Small positive for consent
         }
 
@@ -383,14 +384,14 @@ export function useRealtimeCompliance(
     const realtimeManager = getRealtimeManager();
 
     let filter = `clinic_id=eq.${tenantId}`;
-    if (complianceType && complianceType !== 'ALL') {
+    if (complianceType && complianceType !== "ALL") {
       filter += `,action=like.%${complianceType.toLowerCase()}%`;
     }
 
     const unsubscribe = realtimeManager.subscribe(
       `compliance:${filter}`,
       {
-        table: 'compliance_audit_logs',
+        table: "compliance_audit_logs",
         filter,
       },
       handleComplianceChange,

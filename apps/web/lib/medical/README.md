@@ -143,133 +143,133 @@ npm install crypto-js
 ### Registros Médicos
 
 ```typescript
-import { MedicalRecordsManager } from '@/lib/medical/medical-records';
+import { MedicalRecordsManager } from "@/lib/medical/medical-records";
 
 const manager = new MedicalRecordsManager();
 
 // Criar registro
 const result = await manager.createMedicalRecord(
   {
-    patientId: 'patient-123',
-    clinicId: 'clinic-456',
-    type: 'consultation',
-    title: 'Consulta de Avaliação',
-    content: 'Paciente interessado em procedimento de harmonização facial',
-    priority: 'normal',
-    tags: ['avaliacao', 'harmonizacao'],
+    patientId: "patient-123",
+    clinicId: "clinic-456",
+    type: "consultation",
+    title: "Consulta de Avaliação",
+    content: "Paciente interessado em procedimento de harmonização facial",
+    priority: "normal",
+    tags: ["avaliacao", "harmonizacao"],
     metadata: {
-      procedureType: 'facial_harmonization',
+      procedureType: "facial_harmonization",
       estimatedCost: 2500,
     },
   },
-  'user-789',
+  "user-789",
 );
 
 if (result.success) {
-  console.log('Registro criado:', result.data);
+  console.log("Registro criado:", result.data);
 }
 ```
 
 ### Upload de Documentos
 
 ```typescript
-import { MedicalDocumentManager } from '@/lib/medical/document-manager';
+import { MedicalDocumentManager } from "@/lib/medical/document-manager";
 
 const docManager = new MedicalDocumentManager();
 
 // Upload de documento
-const file = new File([blob], 'exame.pdf', { type: 'application/pdf' });
+const file = new File([blob], "exame.pdf", { type: "application/pdf" });
 
 const result = await docManager.uploadDocument(
   {
-    patientId: 'patient-123',
-    clinicId: 'clinic-456',
+    patientId: "patient-123",
+    clinicId: "clinic-456",
     file,
-    category: 'exam',
-    subcategory: 'blood_test',
-    description: 'Exames pré-operatórios',
-    tags: ['pre-op', 'blood'],
-    accessLevel: 'restricted',
+    category: "exam",
+    subcategory: "blood_test",
+    description: "Exames pré-operatórios",
+    tags: ["pre-op", "blood"],
+    accessLevel: "restricted",
   },
-  'user-789',
+  "user-789",
 );
 ```
 
 ### Assinatura Digital
 
 ```typescript
-import { DigitalSignatureManager } from '@/lib/medical/digital-signature';
+import { DigitalSignatureManager } from "@/lib/medical/digital-signature";
 
 const sigManager = new DigitalSignatureManager();
 
 // Assinar documento
 const result = await sigManager.signDocument({
-  documentId: 'doc-123',
-  signerId: 'user-456',
-  signerRole: 'patient',
-  signatureType: 'digital_certificate',
+  documentId: "doc-123",
+  signerId: "user-456",
+  signerRole: "patient",
+  signatureType: "digital_certificate",
   certificateData: certificateBlob,
-  reason: 'Consentimento para procedimento',
-  location: 'Clínica NeonPro',
+  reason: "Consentimento para procedimento",
+  location: "Clínica NeonPro",
 });
 ```
 
 ### Formulários de Consentimento
 
 ```typescript
-import { ConsentFormsManager } from '@/lib/medical/consent-forms';
+import { ConsentFormsManager } from "@/lib/medical/consent-forms";
 
 const consentManager = new ConsentFormsManager();
 
 // Criar formulário
 const form = await consentManager.createForm(
   {
-    title: 'Termo de Consentimento - Botox',
-    description: 'Autorização para aplicação de toxina botulínica',
-    type: 'treatment_consent',
-    category: 'aesthetic',
+    title: "Termo de Consentimento - Botox",
+    description: "Autorização para aplicação de toxina botulínica",
+    type: "treatment_consent",
+    category: "aesthetic",
     content: {
       sections: [
         {
-          id: 'patient_info',
-          title: 'Informações do Paciente',
-          fields: ['name', 'cpf', 'birth_date'],
+          id: "patient_info",
+          title: "Informações do Paciente",
+          fields: ["name", "cpf", "birth_date"],
         },
         {
-          id: 'consent',
-          title: 'Consentimento',
-          fields: ['treatment_consent', 'risks_understood'],
+          id: "consent",
+          title: "Consentimento",
+          fields: ["treatment_consent", "risks_understood"],
         },
       ],
       fields: [
         {
-          id: 'name',
-          name: 'patient_name',
-          label: 'Nome Completo',
-          type: 'text',
+          id: "name",
+          name: "patient_name",
+          label: "Nome Completo",
+          type: "text",
           isRequired: true,
         },
         {
-          id: 'treatment_consent',
-          name: 'treatment_consent',
-          label: 'Autorizo o procedimento',
-          type: 'consent',
+          id: "treatment_consent",
+          name: "treatment_consent",
+          label: "Autorizo o procedimento",
+          type: "consent",
           isRequired: true,
         },
       ],
     },
     legalBasis: [
       {
-        type: 'consent',
-        description: 'Consentimento do titular',
-        article: 'Art. 7º, I da LGPD',
+        type: "consent",
+        description: "Consentimento do titular",
+        article: "Art. 7º, I da LGPD",
         isRequired: true,
       },
     ],
-    dataCategories: ['personal_data', 'health_data'],
+    dataCategories: ["personal_data", "health_data"],
     retentionPeriod: 20,
   },
-  'user-789',
+  "user-789",
 );
 ```
 
@@ -292,12 +292,12 @@ npm run test medical-records.test.ts
 
 ```typescript
 // Exemplo de teste
-describe('MedicalRecordsManager', () => {
-  describe('createMedicalRecord', () => {
-    it('should create a medical record successfully', async () => {
+describe("MedicalRecordsManager", () => {
+  describe("createMedicalRecord", () => {
+    it("should create a medical record successfully", async () => {
       const result = await manager.createMedicalRecord(validData, userId);
       expect(result.success).toBe(true);
-      expect(result.data).toHaveProperty('id');
+      expect(result.data).toHaveProperty("id");
     });
   });
 });
@@ -347,9 +347,9 @@ describe('MedicalRecordsManager', () => {
 ```typescript
 // Exemplo de métricas
 const analytics = await manager.getAnalytics({
-  startDate: new Date('2024-01-01'),
-  endDate: new Date('2024-12-31'),
-  clinicId: 'clinic-123',
+  startDate: new Date("2024-01-01"),
+  endDate: new Date("2024-12-31"),
+  clinicId: "clinic-123",
 });
 
 console.log(analytics.data);
@@ -370,25 +370,25 @@ console.log(analytics.data);
 ```typescript
 // Configurar validações customizadas
 const customValidation: ValidationRule = {
-  type: 'custom',
+  type: "custom",
   value: {
-    function: 'validateCPF',
+    function: "validateCPF",
     params: { strict: true },
   },
-  message: 'CPF inválido',
+  message: "CPF inválido",
   isActive: true,
 };
 
 // Adicionar campos personalizados
 const customField: FormField = {
-  id: 'custom_field',
-  name: 'procedure_area',
-  label: 'Área do Procedimento',
-  type: 'select',
+  id: "custom_field",
+  name: "procedure_area",
+  label: "Área do Procedimento",
+  type: "select",
   options: [
-    { value: 'face', label: 'Facial' },
-    { value: 'body', label: 'Corporal' },
-    { value: 'hair', label: 'Capilar' },
+    { value: "face", label: "Facial" },
+    { value: "body", label: "Corporal" },
+    { value: "hair", label: "Capilar" },
   ],
   isRequired: true,
   validation: [customValidation],
@@ -400,15 +400,15 @@ const customField: FormField = {
 ```typescript
 // Webhook para notificações
 const webhookConfig = {
-  url: 'https://api.clinic.com/webhooks/medical',
-  events: ['record.created', 'document.uploaded', 'consent.signed'],
-  secret: 'webhook-secret-key',
+  url: "https://api.clinic.com/webhooks/medical",
+  events: ["record.created", "document.uploaded", "consent.signed"],
+  secret: "webhook-secret-key",
 };
 
 // API externa para validação
 const externalValidation = {
-  endpoint: 'https://api.cfm.org.br/validate',
-  apiKey: 'cfm-api-key',
+  endpoint: "https://api.cfm.org.br/validate",
+  apiKey: "cfm-api-key",
   timeout: 5000,
 };
 ```
@@ -442,13 +442,13 @@ Solução: Verificar RLS policies e permissões do usuário
 
 ```typescript
 // Habilitar logs detalhados
-process.env.DEBUG_MEDICAL = 'true';
+process.env.DEBUG_MEDICAL = "true";
 
 // Verificar logs de auditoria
 const auditLogs = await AuditLogger.getLogs({
-  entityType: 'medical_record',
-  entityId: 'record-123',
-  startDate: new Date('2024-01-01'),
+  entityType: "medical_record",
+  entityId: "record-123",
+  startDate: new Date("2024-01-01"),
 });
 ```
 

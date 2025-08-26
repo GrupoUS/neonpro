@@ -10,7 +10,7 @@ export interface SecurityEvent {
   ipAddress?: string;
   userAgent?: string;
   deviceId?: string;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   success: boolean;
   metadata?: Record<string, any>;
 }
@@ -34,8 +34,8 @@ export interface ComplianceReport {
 
 export interface AuditResult {
   auditId: string;
-  auditType: 'quick' | 'targeted' | 'full';
-  status: 'completed' | 'failed' | 'in_progress';
+  auditType: "quick" | "targeted" | "full";
+  status: "completed" | "failed" | "in_progress";
   findings: AuditFinding[];
   riskScore: number;
   recommendations: string[];
@@ -43,7 +43,7 @@ export interface AuditResult {
 }
 
 export interface AuditFinding {
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: "info" | "warning" | "error" | "critical";
   category: string;
   description: string;
   recommendation?: string;
@@ -53,7 +53,7 @@ export interface AuditFinding {
 export interface ThreatData {
   source: string;
   type: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   metadata?: Record<string, any>;
 }
 
@@ -61,7 +61,7 @@ export interface ThreatDetection {
   threatId: string;
   detected: boolean;
   confidence: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   actions: string[];
   metadata?: Record<string, any>;
 }
@@ -90,7 +90,7 @@ export class SecurityAuditFramework {
    * Perform security audit
    */
   async performAudit(
-    type: 'quick' | 'targeted' | 'full' = 'quick',
+    type: "quick" | "targeted" | "full" = "quick",
   ): Promise<AuditResult> {
     const auditId = `audit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
@@ -98,46 +98,47 @@ export class SecurityAuditFramework {
     let riskScore = 0;
 
     // Quick audit - basic security checks
-    if (type === 'quick') {
+    if (type === "quick") {
       findings.push({
-        severity: 'info',
-        category: 'authentication',
-        description: 'Basic authentication checks completed',
-        recommendation: 'Continue monitoring authentication patterns',
+        severity: "info",
+        category: "authentication",
+        description: "Basic authentication checks completed",
+        recommendation: "Continue monitoring authentication patterns",
       });
       riskScore = 10;
     }
 
     // Targeted audit - specific area focus
-    if (type === 'targeted') {
+    if (type === "targeted") {
       findings.push({
-        severity: 'warning',
-        category: 'webauthn',
-        description: 'WebAuthn implementation requires security review',
-        recommendation: 'Review WebAuthn credential storage and validation',
+        severity: "warning",
+        category: "webauthn",
+        description: "WebAuthn implementation requires security review",
+        recommendation: "Review WebAuthn credential storage and validation",
       });
       riskScore = 25;
     }
 
     // Full audit - comprehensive security review
-    if (type === 'full') {
+    if (type === "full") {
       findings.push(
         {
-          severity: 'info',
-          category: 'database',
-          description: 'Database security configuration verified',
+          severity: "info",
+          category: "database",
+          description: "Database security configuration verified",
         },
         {
-          severity: 'warning',
-          category: 'api',
-          description: 'API rate limiting needs enhancement',
-          recommendation: 'Implement stricter rate limiting on authentication endpoints',
+          severity: "warning",
+          category: "api",
+          description: "API rate limiting needs enhancement",
+          recommendation:
+            "Implement stricter rate limiting on authentication endpoints",
         },
         {
-          severity: 'error',
-          category: 'logging',
-          description: 'Security event logging incomplete',
-          recommendation: 'Ensure all security events are properly logged',
+          severity: "error",
+          category: "logging",
+          description: "Security event logging incomplete",
+          recommendation: "Ensure all security events are properly logged",
         },
       );
       riskScore = 45;
@@ -146,7 +147,7 @@ export class SecurityAuditFramework {
     const result: AuditResult = {
       auditId,
       auditType: type,
-      status: 'completed',
+      status: "completed",
       findings,
       riskScore,
       recommendations: findings
@@ -164,22 +165,24 @@ export class SecurityAuditFramework {
    */
   async detectThreat(threatData: ThreatData): Promise<ThreatDetection> {
     // Mock threat detection logic
-    const confidence = threatData.severity === 'critical'
-      ? 0.9
-      : threatData.severity === 'high'
-      ? 0.7
-      : threatData.severity === 'medium'
-      ? 0.5
-      : 0.2;
+    const confidence =
+      threatData.severity === "critical"
+        ? 0.9
+        : threatData.severity === "high"
+          ? 0.7
+          : threatData.severity === "medium"
+            ? 0.5
+            : 0.2;
 
     const detection: ThreatDetection = {
       threatId: `threat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       detected: confidence > 0.6,
       confidence,
       riskLevel: threatData.severity,
-      actions: confidence > 0.6
-        ? ['alert_security_team', 'increase_monitoring']
-        : ['log_event', 'continue_monitoring'],
+      actions:
+        confidence > 0.6
+          ? ["alert_security_team", "increase_monitoring"]
+          : ["log_event", "continue_monitoring"],
       metadata: {
         ...threatData.metadata,
         detectedAt: new Date().toISOString(),
@@ -188,7 +191,7 @@ export class SecurityAuditFramework {
 
     // Log the threat detection as a security event
     await this.logSecurityEvent({
-      eventType: 'threat_detection',
+      eventType: "threat_detection",
       eventDescription: `Threat detected: ${threatData.type}`,
       riskLevel: threatData.severity,
       success: detection.detected,
@@ -216,19 +219,19 @@ export class SecurityAuditFramework {
     // Mock compliance checks
     if (this.events.length === 0) {
       issues.push(
-        'No security events logged - logging system may not be functioning',
+        "No security events logged - logging system may not be functioning",
       );
       score -= 20;
     }
 
     if (this.auditHistory.length === 0) {
-      issues.push('No security audits performed - regular audits are required');
+      issues.push("No security audits performed - regular audits are required");
       score -= 15;
     }
 
     // Check for high-risk events
     const highRiskEvents = this.events.filter(
-      (e) => e.riskLevel === 'high' || e.riskLevel === 'critical',
+      (e) => e.riskLevel === "high" || e.riskLevel === "critical",
     );
     if (highRiskEvents.length > 0) {
       issues.push(
@@ -248,12 +251,12 @@ export class SecurityAuditFramework {
    * Generate security/compliance report
    */
   async generateReport(
-    type: 'security' | 'compliance',
-    options: { period?: string; format?: string; } = {},
+    type: "security" | "compliance",
+    options: { period?: string; format?: string } = {},
   ): Promise<any> {
-    const { period = '30d', format = 'json' } = options;
+    const { period = "30d", format = "json" } = options;
 
-    if (type === 'compliance') {
+    if (type === "compliance") {
       return this.generateComplianceReport(period);
     }
 
@@ -268,16 +271,17 @@ export class SecurityAuditFramework {
 
     return {
       reportId: `report_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-      type: 'security',
+      type: "security",
       period,
       format,
       totalEvents: this.events.length,
       totalAudits: this.auditHistory.length,
       riskDistribution,
-      averageRiskScore: this.auditHistory.length > 0
-        ? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0)
-          / this.auditHistory.length
-        : 0,
+      averageRiskScore:
+        this.auditHistory.length > 0
+          ? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0) /
+            this.auditHistory.length
+          : 0,
       generatedAt: new Date().toISOString(),
       data: {
         events: this.events,
@@ -289,7 +293,7 @@ export class SecurityAuditFramework {
   /**
    * Generate compliance report
    */
-  async generateComplianceReport(period = '30d'): Promise<ComplianceReport> {
+  async generateComplianceReport(period = "30d"): Promise<ComplianceReport> {
     const now = new Date();
     const startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
 
@@ -315,14 +319,14 @@ export class SecurityAuditFramework {
 
     const recommendations: string[] = [];
     if (riskDistribution.critical > 0) {
-      recommendations.push('Address critical security issues immediately');
+      recommendations.push("Address critical security issues immediately");
     }
     if (riskDistribution.high > 5) {
-      recommendations.push('Review and resolve high-risk security events');
+      recommendations.push("Review and resolve high-risk security events");
     }
     if (complianceScore < 80) {
       recommendations.push(
-        'Implement additional security controls to improve compliance score',
+        "Implement additional security controls to improve compliance score",
       );
     }
 
@@ -332,7 +336,7 @@ export class SecurityAuditFramework {
       endDate: now.toISOString(),
       totalEvents: periodEvents.length,
       securityEvents: periodEvents.filter(
-        (e) => e.eventType.includes('security') || e.riskLevel !== 'low',
+        (e) => e.eventType.includes("security") || e.riskLevel !== "low",
       ).length,
       riskDistribution,
       complianceScore,

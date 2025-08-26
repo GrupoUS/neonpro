@@ -49,13 +49,13 @@ const MetricCard: React.FC<MetricCardProps> = ({
               className={`mt-2 flex items-center text-sm ${
                 trend > 0
                   ? "text-green-600"
-                  : (trend < 0
+                  : trend < 0
                     ? "text-red-600"
-                    : "text-gray-600")
+                    : "text-gray-600"
               }`}
             >
               <span className="mr-1">
-                {trend > 0 ? "↗" : (trend < 0 ? "↘" : "→")}
+                {trend > 0 ? "↗" : trend < 0 ? "↘" : "→"}
               </span>
               {Math.abs(trend).toFixed(1)}% vs last period
             </div>
@@ -74,8 +74,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 export const SchedulingAnalyticsDashboard: React.FC<
   SchedulingAnalyticsDashboardProps
 > = ({ tenantId, timeRange, onTimeRangeChange }) => {
-  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>(
-    );
+  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<
     "overview" | "efficiency" | "staff" | "predictions"

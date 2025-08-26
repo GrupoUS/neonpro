@@ -8,8 +8,8 @@
 import { modelManager } from "@/lib/ai/model-management";
 import { createServerClient } from "@neonpro/db";
 import { cookies } from "next/headers";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Get model management status and active models
 export async function GET(request: NextRequest) {

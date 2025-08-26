@@ -1,15 +1,15 @@
 // Placeholder for @supabase/auth-helpers-react
 export const useUser = () => ({
-  id: 'mock-user-id',
-  email: 'mock@example.com',
+  id: "mock-user-id",
+  email: "mock@example.com",
 });
 
 export const useSession = () => ({
   user: {
-    id: 'mock-user-id',
-    email: 'mock@example.com',
+    id: "mock-user-id",
+    email: "mock@example.com",
   },
-  access_token: 'mock-token',
+  access_token: "mock-token",
 });
 
 export const useSupabaseClient = () => ({

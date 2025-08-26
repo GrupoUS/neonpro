@@ -4,9 +4,9 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 // Placeholder types until real types are available
 interface InventoryItem {
@@ -57,7 +57,7 @@ export function useInventory(
     try {
       // Placeholder implementation
       const mockItems: InventoryItem[] = [
-        { id: '1', name: 'Sample Item', quantity: 10 },
+        { id: "1", name: "Sample Item", quantity: 10 },
       ];
 
       setState((prev) => ({
@@ -68,7 +68,7 @@ export function useInventory(
     } catch (error) {
       setState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         loading: false,
       }));
     }
@@ -78,7 +78,7 @@ export function useInventory(
     // Placeholder implementation
     const newItem: InventoryItem = {
       id: Date.now().toString(),
-      name: item.name || 'New Item',
+      name: item.name || "New Item",
       quantity: item.quantity || 0,
       barcode: item.barcode,
     };
@@ -93,7 +93,9 @@ export function useInventory(
     async (id: string, updates: Partial<InventoryItem>) => {
       setState((prev) => ({
         ...prev,
-        items: prev.items.map((item) => item.id === id ? { ...item, ...updates } : item),
+        items: prev.items.map((item) =>
+          item.id === id ? { ...item, ...updates } : item,
+        ),
       }));
     },
     [],

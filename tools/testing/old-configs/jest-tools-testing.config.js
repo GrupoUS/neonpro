@@ -6,28 +6,28 @@
  * Compliance: LGPD + ANVISA + CFM
  */
 
-const { createJestConfig } = require('./jest.shared');
+const { createJestConfig } = require("./jest.shared");
 
 /** @type {import('jest').Config} */
 const config = {
   // Healthcare Testing Environment
-  testEnvironment: 'jsdom',
-  preset: 'ts-jest',
+  testEnvironment: "jsdom",
+  preset: "ts-jest",
 
   // Monorepo Projects Configuration
   projects: [
-    '<rootDir>/apps/web',
-    '<rootDir>/packages/ui',
-    '<rootDir>/packages/ai',
-    '<rootDir>/packages/compliance',
-    '<rootDir>/packages/db',
+    "<rootDir>/apps/web",
+    "<rootDir>/packages/ui",
+    "<rootDir>/packages/ai",
+    "<rootDir>/packages/compliance",
+    "<rootDir>/packages/db",
   ],
 
   // Healthcare Test Setup
   setupFilesAfterEnv: [
-    '<rootDir>/test-setup/healthcare-setup.js',
-    '<rootDir>/test-setup/accessibility-matchers.js',
-    '<rootDir>/test-setup/lgpd-compliance-helpers.js',
+    "<rootDir>/test-setup/healthcare-setup.js",
+    "<rootDir>/test-setup/accessibility-matchers.js",
+    "<rootDir>/test-setup/lgpd-compliance-helpers.js",
   ],
 
   // Healthcare Coverage Thresholds (≥90% requirement)
@@ -39,21 +39,21 @@ const config = {
       statements: 90,
     },
     // Critical Healthcare Paths (≥95% requirement)
-    '**/healthcare/**/*.{ts,tsx}': {
+    "**/healthcare/**/*.{ts,tsx}": {
       branches: 95,
       functions: 95,
       lines: 95,
       statements: 95,
     },
     // Compliance Code (≥95% requirement)
-    '**/compliance/**/*.{ts,tsx}': {
+    "**/compliance/**/*.{ts,tsx}": {
       branches: 95,
       functions: 95,
       lines: 95,
       statements: 95,
     },
     // Patient Data Handlers (100% requirement)
-    '**/patient/**/*.{ts,tsx}': {
+    "**/patient/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
@@ -63,76 +63,76 @@ const config = {
 
   // Coverage Collection
   collectCoverageFrom: [
-    'apps/**/*.{ts,tsx}',
-    'packages/**/*.{ts,tsx}',
-    '!**/*.d.ts',
-    '!**/*.stories.{ts,tsx}',
-    '!**/*.config.{js,ts}',
-    '!**/node_modules/**',
-    '!**/dist/**',
-    '!**/coverage/**',
+    "apps/**/*.{ts,tsx}",
+    "packages/**/*.{ts,tsx}",
+    "!**/*.d.ts",
+    "!**/*.stories.{ts,tsx}",
+    "!**/*.config.{js,ts}",
+    "!**/node_modules/**",
+    "!**/dist/**",
+    "!**/coverage/**",
   ],
 
   // Healthcare Coverage Reporting
   coverageReporters: [
-    'clover',
-    'json',
-    'lcov',
-    ['text', { skipFull: true }],
-    ['html', { subdir: 'html' }],
+    "clover",
+    "json",
+    "lcov",
+    ["text", { skipFull: true }],
+    ["html", { subdir: "html" }],
     // Healthcare Compliance Reporter
-    ['json-summary', { file: 'coverage/healthcare-summary.json' }],
+    ["json-summary", { file: "coverage/healthcare-summary.json" }],
   ],
 
   // Test Match Patterns
   testMatch: [
-    '**/__tests__/**/*.(ts|tsx)',
-    '**/*.(test|spec).(ts|tsx)',
-    '**/tests/healthcare/**/*.(ts|tsx)',
-    '**/tests/compliance/**/*.(ts|tsx)',
+    "**/__tests__/**/*.(ts|tsx)",
+    "**/*.(test|spec).(ts|tsx)",
+    "**/tests/healthcare/**/*.(ts|tsx)",
+    "**/tests/compliance/**/*.(ts|tsx)",
   ],
 
   // Module Name Mapping for Healthcare Paths
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/apps/web/src/$1',
-    '^@neonpro/ui/(.*)$': '<rootDir>/packages/ui/src/$1',
-    '^@neonpro/ai/(.*)$': '<rootDir>/packages/ai/src/$1',
-    '^@neonpro/compliance/(.*)$': '<rootDir>/packages/compliance/src/$1',
-    '^@neonpro/db/(.*)$': '<rootDir>/packages/db/src/$1',
-    '^@test/(.*)$': '<rootDir>/test-utils/$1',
+    "^@/(.*)$": "<rootDir>/apps/web/src/$1",
+    "^@neonpro/ui/(.*)$": "<rootDir>/packages/ui/src/$1",
+    "^@neonpro/ai/(.*)$": "<rootDir>/packages/ai/src/$1",
+    "^@neonpro/compliance/(.*)$": "<rootDir>/packages/compliance/src/$1",
+    "^@neonpro/db/(.*)$": "<rootDir>/packages/db/src/$1",
+    "^@test/(.*)$": "<rootDir>/test-utils/$1",
     // CSS and Asset Mocking
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/test-utils/file-mock.js',
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+    "\\.(jpg|jpeg|png|gif|svg)$": "<rootDir>/test-utils/file-mock.js",
   },
 
   // Healthcare Test Environment Options
   testEnvironmentOptions: {
-    url: 'http://localhost:3000',
+    url: "http://localhost:3000",
     // Healthcare-specific jsdom options
-    customExportConditions: ['healthcare', 'node'],
+    customExportConditions: ["healthcare", "node"],
   },
 
   // Transform Configuration
   transform: {
-    '^.+\\.(ts|tsx)$': [
-      'ts-jest',
+    "^.+\\.(ts|tsx)$": [
+      "ts-jest",
       {
-        tsconfig: '<rootDir>/tsconfig.json',
+        tsconfig: "<rootDir>/tsconfig.json",
         isolatedModules: true,
       },
     ],
-    '^.+\\.(js|jsx)$': [
-      'babel-jest',
+    "^.+\\.(js|jsx)$": [
+      "babel-jest",
       {
-        presets: ['next/babel'],
+        presets: ["next/babel"],
       },
     ],
   },
 
   // Global Test Configuration
   globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.json',
+    "ts-jest": {
+      tsconfig: "<rootDir>/tsconfig.json",
     },
     // Healthcare Testing Globals
     __HEALTHCARE_MODE__: true,
@@ -146,18 +146,18 @@ const config = {
 
   // Reporters for Healthcare Quality
   reporters: [
-    'default',
+    "default",
     [
-      'jest-junit',
+      "jest-junit",
       {
-        outputDirectory: 'coverage',
-        outputName: 'healthcare-junit.xml',
-        suiteNameTemplate: '{title} - Healthcare Test Suite',
+        outputDirectory: "coverage",
+        outputName: "healthcare-junit.xml",
+        suiteNameTemplate: "{title} - Healthcare Test Suite",
       },
     ],
     // Healthcare Compliance Reporter
     [
-      './test-utils/healthcare-reporter.js',
+      "./test-utils/healthcare-reporter.js",
       {
         lgpdCompliance: true,
         anvisaValidation: true,
@@ -167,7 +167,7 @@ const config = {
   ],
 
   // Cache Configuration
-  cacheDirectory: '<rootDir>/node_modules/.cache/jest',
+  cacheDirectory: "<rootDir>/node_modules/.cache/jest",
 
   // Error Handling for Healthcare Tests
   errorOnDeprecated: true,
@@ -180,15 +180,15 @@ const config = {
 
   // Module Path Ignore Patterns
   modulePathIgnorePatterns: [
-    '<rootDir>/dist/',
-    '<rootDir>/.next/',
-    '<rootDir>/node_modules/',
+    "<rootDir>/dist/",
+    "<rootDir>/.next/",
+    "<rootDir>/node_modules/",
   ],
 
   // Watch Plugins for Development
   watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname',
+    "jest-watch-typeahead/filename",
+    "jest-watch-typeahead/testname",
   ],
 };
 

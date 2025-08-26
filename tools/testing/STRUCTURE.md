@@ -14,7 +14,7 @@ tools/testing/
 ├── 📁 e2e/                        # End-to-End Tests
 │   ├── tests/                     # All E2E test specifications
 │   │   ├── auth/                  # Authentication & authorization tests
-│   │   ├── healthcare/            # Healthcare-specific workflow tests  
+│   │   ├── healthcare/            # Healthcare-specific workflow tests
 │   │   ├── patient-management/    # Patient management E2E tests
 │   │   ├── core/                  # Core system functionality tests
 │   │   ├── security/              # Security & compliance tests
@@ -91,8 +91,8 @@ outputDir: "tools/testing/reports/test-results/e2e"
 // vitest.config.ts - UPDATED EXCLUDES
 exclude: [
   // ... existing patterns ...
-  '**/tools/testing/reports/**',
-  '**/tools/testing/e2e/**',
+  "**/tools/testing/reports/**",
+  "**/tools/testing/e2e/**",
 ];
 ```
 
@@ -101,7 +101,7 @@ exclude: [
 ```json
 // turbo.json - UPDATED OUTPUTS
 "test": {
-  "dependsOn": ["build"], 
+  "dependsOn": ["build"],
   "outputs": ["coverage/**", "tools/testing/reports/**"]
 }
 ```
@@ -114,7 +114,7 @@ exclude: [
 # Verify Playwright finds tests correctly
 pnpm playwright test --list
 
-# Verify reports generate in new locations  
+# Verify reports generate in new locations
 pnpm playwright test --reporter=html
 ls -la tools/testing/reports/e2e/html/
 
@@ -140,16 +140,18 @@ pnpm turbo run build --dry-run
 If issues occur, execute these steps:
 
 1. **Stop Migration Process**
+
    ```bash
    # Document any issues in MIGRATION_LOG.md
    ```
 
 2. **Restore from Backups** (if backups were created)
+
    ```bash
    # Restore original e2e directory
    cp -r e2e.backup e2e/
 
-   # Restore original tests directory  
+   # Restore original tests directory
    cp -r tests.backup tests/
 
    # Restore tools/testing
@@ -159,7 +161,7 @@ If issues occur, execute these steps:
 3. **Revert Configuration Changes**
    ```bash
    git checkout playwright.config.ts
-   git checkout playwright.config.minimal.ts  
+   git checkout playwright.config.minimal.ts
    git checkout vitest.config.ts
    git checkout biome.jsonc
    git checkout turbo.json

@@ -312,8 +312,8 @@ export default function ConsentManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
-  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(
-    );
+  const [selectedConsent, setSelectedConsent] =
+    useState<ConsentRecord | null>();
   const [_isLoading, _setIsLoading] = useState(false);
 
   // Filter functions

@@ -10,7 +10,7 @@
  * - CFM: Professional AI service monitoring and quality assurance
  */
 
-import type { LoggerService, MetricsService } from '@neonpro/core-services';
+import type { LoggerService, MetricsService } from "@neonpro/core-services";
 
 // AI Service Types
 export interface AIServiceMetrics {
@@ -96,14 +96,14 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   async executeWithMetrics(
     input: TInput,
-    context?: { userId?: string; clinicId?: string; },
+    context?: { userId?: string; clinicId?: string },
   ): Promise<TOutput> {
     const startTime = Date.now();
     const operationId = this.generateOperationId();
 
     // Create audit trail entry
     if (this.config.enableAuditTrail) {
-      await this.createAuditTrailEntry(operationId, 'started', {
+      await this.createAuditTrailEntry(operationId, "started", {
         input,
         context,
       });
@@ -120,7 +120,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
         cacheHit = result !== null;
 
         if (result) {
-          this.logger.debug('Cache hit for AI operation', {
+          this.logger.debug("Cache hit for AI operation", {
             operationId,
             serviceName: this.serviceName,
             cacheKey,
@@ -130,7 +130,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
       // Execute if not cached
       if (!result) {
-        this.logger.info('Starting AI operation', {
+        this.logger.info("Starting AI operation", {
           operationId,
           serviceName: this.serviceName,
           inputSize: JSON.stringify(input).length,
@@ -164,7 +164,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
       }
 
       // Log success
-      this.logger.info('AI operation completed successfully', {
+      this.logger.info("AI operation completed successfully", {
         operationId,
         serviceName: this.serviceName,
         duration,
@@ -174,7 +174,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
       // Update audit trail
       if (this.config.enableAuditTrail) {
-        await this.createAuditTrailEntry(operationId, 'completed', {
+        await this.createAuditTrailEntry(operationId, "completed", {
           result: this.sanitizeForAudit(result),
           duration,
           cacheHit,
@@ -183,7 +183,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
       // Performance warning
       if (duration > this.config.performanceThreshold) {
-        this.logger.warn('AI operation exceeded performance threshold', {
+        this.logger.warn("AI operation exceeded performance threshold", {
           operationId,
           serviceName: this.serviceName,
           duration,
@@ -202,14 +202,14 @@ export abstract class EnhancedAIService<TInput, TOutput> {
           serviceName: this.serviceName,
           duration,
           success: false,
-          errorType: error.name || 'UnknownError',
+          errorType: error.name || "UnknownError",
           userId: context?.userId,
           clinicId: context?.clinicId,
         });
       }
 
       // Log error
-      this.logger.error('AI operation failed', {
+      this.logger.error("AI operation failed", {
         operationId,
         serviceName: this.serviceName,
         error: error.message,
@@ -219,7 +219,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
       // Update audit trail
       if (this.config.enableAuditTrail) {
-        await this.createAuditTrailEntry(operationId, 'failed', {
+        await this.createAuditTrailEntry(operationId, "failed", {
           error: error.message,
           duration,
         });
@@ -241,7 +241,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
     } catch (error) {
       // Retry for specific error types
       if (this.shouldRetry(error) && retryCount < this.config.errorRetryCount) {
-        this.logger.warn('Retrying AI operation after error', {
+        this.logger.warn("Retrying AI operation after error", {
           serviceName: this.serviceName,
           error: error.message,
           retryCount: retryCount + 1,
@@ -280,8 +280,8 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   protected hashInput(input: TInput): string {
     const inputString = JSON.stringify(input, Object.keys(input).sort());
     return Buffer.from(inputString)
-      .toString('base64')
-      .replaceAll(/[+/=]/g, '')
+      .toString("base64")
+      .replaceAll(/[+/=]/g, "")
       .slice(0, 32);
   }
 
@@ -290,9 +290,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   protected extractConfidence(result: TOutput): number | undefined {
     if (
-      typeof result === 'object'
-      && result !== null
-      && 'confidence' in result
+      typeof result === "object" &&
+      result !== null &&
+      "confidence" in result
     ) {
       return (result as any).confidence;
     }
@@ -304,7 +304,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   protected sanitizeForAudit(result: TOutput): any {
     // Default implementation - override in subclasses for specific sanitization
-    if (typeof result === 'object' && result !== null) {
+    if (typeof result === "object" && result !== null) {
       const sanitized = { ...(result as any) };
 
       // Remove common sensitive fields
@@ -325,17 +325,17 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   protected shouldRetry(error: any): boolean {
     // Retry for network errors, rate limits, and temporary service issues
     const retryableErrors = [
-      'NetworkError',
-      'TimeoutError',
-      'RateLimitError',
-      'ServiceUnavailable',
-      'InternalServerError',
+      "NetworkError",
+      "TimeoutError",
+      "RateLimitError",
+      "ServiceUnavailable",
+      "InternalServerError",
     ];
 
     return retryableErrors.some(
       (errorType) =>
-        error.name?.includes(errorType)
-        || error.message?.includes(errorType.toLowerCase()),
+        error.name?.includes(errorType) ||
+        error.message?.includes(errorType.toLowerCase()),
     );
   }
 
@@ -346,7 +346,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
     metrics: AIServiceMetrics,
   ): Promise<void> {
     try {
-      await this.metrics.record('ai_operation_success', {
+      await this.metrics.record("ai_operation_success", {
         value: metrics.duration,
         tags: {
           service: metrics.serviceName,
@@ -365,7 +365,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
       // Record separate confidence metric if available
       if (metrics.confidence !== undefined) {
-        await this.metrics.record('ai_confidence_score', {
+        await this.metrics.record("ai_confidence_score", {
           value: metrics.confidence,
           tags: {
             service: metrics.serviceName,
@@ -374,7 +374,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
         });
       }
     } catch (error) {
-      this.logger.error('Failed to record success metrics', {
+      this.logger.error("Failed to record success metrics", {
         error: error.message,
       });
     }
@@ -385,7 +385,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   protected async recordErrorMetrics(metrics: AIServiceMetrics): Promise<void> {
     try {
-      await this.metrics.record('ai_operation_error', {
+      await this.metrics.record("ai_operation_error", {
         value: 1,
         tags: {
           service: metrics.serviceName,
@@ -399,7 +399,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
         },
       });
     } catch (error) {
-      this.logger.error('Failed to record error metrics', {
+      this.logger.error("Failed to record error metrics", {
         error: error.message,
       });
     }
@@ -410,7 +410,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   protected async createAuditTrailEntry(
     operationId: string,
-    status: 'started' | 'completed' | 'failed',
+    status: "started" | "completed" | "failed",
     data: any,
   ): Promise<void> {
     try {
@@ -424,9 +424,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
       };
 
       // Store in audit log (implementation depends on your audit system)
-      this.logger.info('Audit trail entry', auditEntry);
+      this.logger.info("Audit trail entry", auditEntry);
     } catch (error) {
-      this.logger.error('Failed to create audit trail entry', {
+      this.logger.error("Failed to create audit trail entry", {
         error: error.message,
       });
     }
@@ -463,7 +463,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
         },
       });
     } catch (error) {
-      this.logger.error('Failed to record performance metric', {
+      this.logger.error("Failed to record performance metric", {
         error: error.message,
         type,
         value,
@@ -474,7 +474,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   /**
    * Health check for AI service
    */
-  async healthCheck(): Promise<{ healthy: boolean; details: any; }> {
+  async healthCheck(): Promise<{ healthy: boolean; details: any }> {
     try {
       // Basic connectivity and configuration check
       const checks = {
@@ -511,10 +511,10 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   private async checkCacheConnection(): Promise<boolean> {
     try {
       const testKey = `healthcheck:${this.serviceName}:${Date.now()}`;
-      await this.cache.set(testKey, 'test', 10);
+      await this.cache.set(testKey, "test", 10);
       const result = await this.cache.get(testKey);
       await this.cache.invalidate(testKey);
-      return result === 'test';
+      return result === "test";
     } catch {
       return false;
     }
@@ -525,9 +525,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   private validateConfiguration(): boolean {
     return (
-      this.config.cacheTTL > 0
-      && this.config.performanceThreshold > 0
-      && this.config.errorRetryCount >= 0
+      this.config.cacheTTL > 0 &&
+      this.config.performanceThreshold > 0 &&
+      this.config.errorRetryCount >= 0
     );
   }
 }

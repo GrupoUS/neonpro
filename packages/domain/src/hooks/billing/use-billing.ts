@@ -1,7 +1,7 @@
 /**
  * Placeholder billing hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useBilling = () => {
   const [invoices, setInvoices] = useState<unknown[]>([]);
@@ -18,7 +18,7 @@ export const useBilling = () => {
       }, 1000);
     },
     createInvoice: async (_data: unknown) => {
-      return { id: 'placeholder' };
+      return { id: "placeholder" };
     },
     payInvoice: async (_invoiceId: string) => {
       return { success: true };

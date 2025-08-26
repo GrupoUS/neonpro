@@ -1,5 +1,5 @@
 // Monitoring dashboard component for NeonPro Healthcare System
-import type React from 'react';
+import type React from "react";
 
 interface MonitoringDashboardProps {
   metrics?: Record<string, number>;

@@ -3,7 +3,7 @@
  * Component for managing professional certifications and authorizations
  */
 
-'use client';
+"use client";
 
 import {
   AlertTriangle,
@@ -15,21 +15,27 @@ import {
   Shield,
   Users,
   XCircle,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { cn } from '../../lib/utils';
-import { Alert, AlertDescription } from '../Alert';
-import { Badge } from '../Badge';
-import { Button } from '../Button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { cn } from "../../lib/utils";
+import { Alert, AlertDescription } from "../Alert";
+import { Badge } from "../Badge";
+import { Button } from "../Button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../Card";
 
 interface Professional {
   id: string;
   name: string;
   crm_number: string;
   specialty: string;
-  certification_status: 'active' | 'pending' | 'expired' | 'suspended';
-  authorization_level: 'basic' | 'intermediate' | 'advanced' | 'expert';
+  certification_status: "active" | "pending" | "expired" | "suspended";
+  authorization_level: "basic" | "intermediate" | "advanced" | "expert";
   compliance_score: number;
   authorized_procedures: string[];
   certification_expiry: string;
@@ -55,10 +61,10 @@ export function ANVISAProfessionalManagement({
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [_formData, _setFormData] = useState<ProfessionalFormData>({
-    name: '',
-    crm_number: '',
-    specialty: '',
-    certification_level: '',
+    name: "",
+    crm_number: "",
+    specialty: "",
+    certification_level: "",
     authorized_procedures: [],
   });
   const [error, setError] = useState<string | null>();
@@ -75,7 +81,7 @@ export function ANVISAProfessionalManagement({
         setProfessionals(data.data);
       }
     } catch {
-      setError('Erro ao carregar profissionais');
+      setError("Erro ao carregar profissionais");
     } finally {
       setLoading(false);
     }
@@ -105,7 +111,7 @@ export function ANVISAProfessionalManagement({
     try {
       const response = await fetch(
         `/api/anvisa/professionals?clinic_id=${clinicId}&action=update_compliance_score&professional_id=${professionalId}`,
-        { method: 'GET' },
+        { method: "GET" },
       );
       if (response.ok) {
         const data = await response.json();
@@ -114,30 +120,30 @@ export function ANVISAProfessionalManagement({
           prev.map((p) =>
             p.id === professionalId
               ? { ...p, compliance_score: data.data.compliance_score }
-              : p
-          )
+              : p,
+          ),
         );
         setSuccess(
           `Score de conformidade atualizado: ${data.data.compliance_score}%`,
         );
       }
     } catch {
-      setError('Erro ao atualizar score de conformidade');
+      setError("Erro ao atualizar score de conformidade");
     }
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': {
+      case "active": {
         return <Badge className="bg-green-500 text-white">Ativo</Badge>;
       }
-      case 'pending': {
+      case "pending": {
         return <Badge variant="outline">Pendente</Badge>;
       }
-      case 'expired': {
+      case "expired": {
         return <Badge variant="destructive">Expirado</Badge>;
       }
-      case 'suspended': {
+      case "suspended": {
         return <Badge variant="secondary">Suspenso</Badge>;
       }
       default: {
@@ -148,16 +154,16 @@ export function ANVISAProfessionalManagement({
 
   const getAuthorizationBadge = (level: string) => {
     switch (level) {
-      case 'expert': {
+      case "expert": {
         return <Badge className="bg-purple-500 text-white">Especialista</Badge>;
       }
-      case 'advanced': {
+      case "advanced": {
         return <Badge className="bg-blue-500 text-white">Avançado</Badge>;
       }
-      case 'intermediate': {
+      case "intermediate": {
         return <Badge className="bg-green-500 text-white">Intermediário</Badge>;
       }
-      case 'basic': {
+      case "basic": {
         return <Badge variant="outline">Básico</Badge>;
       }
       default: {
@@ -168,15 +174,15 @@ export function ANVISAProfessionalManagement({
 
   const getComplianceColor = (score: number) => {
     if (score >= 90) {
-      return 'text-green-600';
+      return "text-green-600";
     }
     if (score >= 75) {
-      return 'text-blue-600';
+      return "text-blue-600";
     }
     if (score >= 60) {
-      return 'text-yellow-600';
+      return "text-yellow-600";
     }
-    return 'text-red-600';
+    return "text-red-600";
   };
 
   const isNearExpiry = (expiryDate: string) => {
@@ -294,7 +300,7 @@ export function ANVISAProfessionalManagement({
                 <div className="flex items-center space-x-2">
                   <span
                     className={cn(
-                      'font-semibold text-sm',
+                      "font-semibold text-sm",
                       getComplianceColor(professional.compliance_score),
                     )}
                   >
@@ -314,14 +320,14 @@ export function ANVISAProfessionalManagement({
                 <span className="text-muted-foreground text-sm">Validade:</span>
                 <span
                   className={cn(
-                    'text-sm',
-                    isNearExpiry(professional.certification_expiry)
-                      && 'font-medium text-yellow-600',
+                    "text-sm",
+                    isNearExpiry(professional.certification_expiry) &&
+                      "font-medium text-yellow-600",
                   )}
                 >
                   {new Date(
                     professional.certification_expiry,
-                  ).toLocaleDateString('pt-BR')}
+                  ).toLocaleDateString("pt-BR")}
                 </span>
               </div>
 
@@ -353,14 +359,14 @@ export function ANVISAProfessionalManagement({
 
               <div className="flex items-center justify-between border-t pt-2">
                 <div className="flex space-x-1">
-                  {professional.certification_status === 'active' && (
+                  {professional.certification_status === "active" && (
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   )}
-                  {professional.certification_status === 'pending' && (
+                  {professional.certification_status === "pending" && (
                     <Clock className="h-4 w-4 text-yellow-500" />
                   )}
-                  {(professional.certification_status === 'expired'
-                    || professional.certification_status === 'suspended') && (
+                  {(professional.certification_status === "expired" ||
+                    professional.certification_status === "suspended") && (
                     <XCircle className="h-4 w-4 text-red-500" />
                   )}
                 </div>
@@ -386,7 +392,8 @@ export function ANVISAProfessionalManagement({
               Nenhum profissional cadastrado
             </h3>
             <p className="mb-4 text-center text-muted-foreground">
-              Adicione profissionais para gerenciar certificações e autorizações ANVISA
+              Adicione profissionais para gerenciar certificações e autorizações
+              ANVISA
             </p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />
@@ -421,9 +428,11 @@ export function ANVISAProfessionalManagement({
                     Ativos
                   </p>
                   <p className="font-bold text-2xl text-green-600">
-                    {professionals.filter(
-                      (p) => p.certification_status === 'active',
-                    ).length}
+                    {
+                      professionals.filter(
+                        (p) => p.certification_status === "active",
+                      ).length
+                    }
                   </p>
                 </div>
                 <CheckCircle className="h-4 w-4 text-green-500" />
@@ -439,9 +448,11 @@ export function ANVISAProfessionalManagement({
                     Pendentes
                   </p>
                   <p className="font-bold text-2xl text-yellow-600">
-                    {professionals.filter(
-                      (p) => p.certification_status === 'pending',
-                    ).length}
+                    {
+                      professionals.filter(
+                        (p) => p.certification_status === "pending",
+                      ).length
+                    }
                   </p>
                 </div>
                 <Clock className="h-4 w-4 text-yellow-500" />
@@ -457,7 +468,11 @@ export function ANVISAProfessionalManagement({
                     Próximos ao Vencimento
                   </p>
                   <p className="font-bold text-2xl text-orange-600">
-                    {professionals.filter((p) => isNearExpiry(p.certification_expiry)).length}
+                    {
+                      professionals.filter((p) =>
+                        isNearExpiry(p.certification_expiry),
+                      ).length
+                    }
                   </p>
                 </div>
                 <AlertTriangle className="h-4 w-4 text-orange-500" />

@@ -5,11 +5,11 @@
  * Analyzes webpack bundles for healthcare-specific optimizations
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 const {
   HealthcareBundleAnalyzer,
-} = require('../dist/bundle-analysis/bundle-analyzer');
+} = require("../dist/bundle-analysis/bundle-analyzer");
 
 async function analyzeBundles() {
   try {
@@ -17,10 +17,10 @@ async function analyzeBundles() {
 
     // Look for webpack stats file
     const possibleStatsPaths = [
-      path.join(process.cwd(), 'webpack-stats.json'),
-      path.join(process.cwd(), '.next', 'bundle-stats.json'),
-      path.join(process.cwd(), 'stats.json'),
-      path.join(process.cwd(), 'bundle-analyzer-stats.json'),
+      path.join(process.cwd(), "webpack-stats.json"),
+      path.join(process.cwd(), ".next", "bundle-stats.json"),
+      path.join(process.cwd(), "stats.json"),
+      path.join(process.cwd(), "bundle-analyzer-stats.json"),
     ];
 
     let statsPath;
@@ -45,19 +45,19 @@ async function analyzeBundles() {
     const optimizationScript = analyzer.generateOptimizationScript(analysis);
     const optimizationPath = path.join(
       process.cwd(),
-      'webpack.healthcare-optimization.js',
+      "webpack.healthcare-optimization.js",
     );
     fs.writeFileSync(optimizationPath, optimizationScript);
 
     // Save detailed analysis
     const analysisPath = path.join(
       process.cwd(),
-      'healthcare-bundle-analysis.json',
+      "healthcare-bundle-analysis.json",
     );
     fs.writeFileSync(analysisPath, JSON.stringify(analysis, undefined, 2));
 
     const highPriorityRecs = analysis.recommendations.filter(
-      (r) => r.priority === 'high',
+      (r) => r.priority === "high",
     );
     if (highPriorityRecs.length > 0) {
       highPriorityRecs.forEach((_rec, _index) => {});

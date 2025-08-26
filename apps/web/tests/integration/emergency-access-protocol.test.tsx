@@ -79,17 +79,26 @@ const mockEmergencyAuth = {
 // Use global notification service from vitest.setup.ts
 const mockNotificationService = (globalThis as any).mockNotificationService;
 
-vi.mock<typeof import('../../lib/services/emergency-access-service')>("../../lib/services/emergency-access-service", () => ({
-  EmergencyAccessService: mockEmergencyService,
-}));
+vi.mock<typeof import("../../lib/services/emergency-access-service")>(
+  "../../lib/services/emergency-access-service",
+  () => ({
+    EmergencyAccessService: mockEmergencyService,
+  }),
+);
 
-vi.mock<typeof import('../../lib/auth/emergency-auth')>("../../lib/auth/emergency-auth", () => ({
-  EmergencyAuthService: mockEmergencyAuth,
-}));
+vi.mock<typeof import("../../lib/auth/emergency-auth")>(
+  "../../lib/auth/emergency-auth",
+  () => ({
+    EmergencyAuthService: mockEmergencyAuth,
+  }),
+);
 
-vi.mock<typeof import('../../lib/notifications/emergency-notifications')>("../../lib/notifications/emergency-notifications", () => ({
-  EmergencyNotificationService: mockNotificationService,
-})); // Test data
+vi.mock<typeof import("../../lib/notifications/emergency-notifications")>(
+  "../../lib/notifications/emergency-notifications",
+  () => ({
+    EmergencyNotificationService: mockNotificationService,
+  }),
+); // Test data
 const mockEmergencyPatient = {
   id: "patient-emergency-123",
   name: "João Silva Santos",
@@ -440,7 +449,9 @@ describe("emergency Access Protocol Integration Tests", () => {
 
       expect(complianceResult.lgpd_compliant).toBeTruthy();
       expect(complianceResult.legal_basis).toBe("vital_interests");
-      expect(complianceResult.access_minimization.only_necessary_data).toBeTruthy();
+      expect(
+        complianceResult.access_minimization.only_necessary_data,
+      ).toBeTruthy();
       expect(complianceResult.compliance_score).toBeGreaterThan(0.95);
     });
 
@@ -656,14 +667,18 @@ describe("emergency Access Protocol Integration Tests", () => {
         },
       };
 
-      expect(hospitalSystemsIntegration.patient_monitoring.alerted).toBeTruthy();
+      expect(
+        hospitalSystemsIntegration.patient_monitoring.alerted,
+      ).toBeTruthy();
       expect(
         hospitalSystemsIntegration.pharmacy.emergency_medications_prepared,
       ).toBeTruthy();
       expect(
         hospitalSystemsIntegration.laboratory.priority_processing_enabled,
       ).toBeTruthy();
-      expect(hospitalSystemsIntegration.radiology.emergency_imaging_queue).toBeTruthy();
+      expect(
+        hospitalSystemsIntegration.radiology.emergency_imaging_queue,
+      ).toBeTruthy();
     });
 
     it("should maintain emergency access logs for regulatory compliance", async () => {

@@ -1,7 +1,7 @@
 /**
  * Placeholder RBAC hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useRBAC = () => {
   const [permissions, setPermissions] = useState<string[]>([]);
@@ -13,8 +13,8 @@ export const useRBAC = () => {
     hasPermission: (permission: string) => permissions.includes(permission),
     hasRole: (role: string) => roles.includes(role),
     loadPermissions: async (_userId: string) => {
-      setPermissions(['read', 'write']);
-      setRoles(['user']);
+      setPermissions(["read", "write"]);
+      setRoles(["user"]);
     },
   };
 };

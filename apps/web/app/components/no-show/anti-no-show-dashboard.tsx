@@ -1276,9 +1276,9 @@ function PatientRiskCard({
                   <Badge className="text-xs" variant="outline">
                     {action.priority === "urgent"
                       ? "🚨"
-                      : (action.priority === "high"
+                      : action.priority === "high"
                         ? "⚡"
-                        : "📋")}
+                        : "📋"}
                   </Badge>
                   <div className="flex-1">
                     <p className="font-medium">{action.description}</p>

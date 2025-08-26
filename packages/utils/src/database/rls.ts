@@ -2,7 +2,7 @@
  * Row Level Security (RLS) Healthcare Utilities
  * Multi-tenant data isolation for patient privacy
  *
- * @compliance LGPD + ANVISA + CFM
+ * @see LGPD + ANVISA + CFM compliance requirements
  */
 
 export interface RLSPolicy {
@@ -30,23 +30,24 @@ export class DatabaseRLS {
   getHealthcareRLSPolicies(): RLSPolicy[] {
     return [
       {
-        table: 'patients',
-        policy: 'Patient data isolation',
-        roles: ['patient', 'doctor', 'nurse'],
-        condition: 'user_id = auth.uid() OR has_clinic_access(clinic_id)',
+        table: "patients",
+        policy: "Patient data isolation",
+        roles: ["patient", "doctor", "nurse"],
+        condition: "user_id = auth.uid() OR has_clinic_access(clinic_id)",
       },
       {
-        table: 'appointments',
-        policy: 'Appointment access control',
-        roles: ['patient', 'doctor', 'receptionist'],
-        condition: 'patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())',
-      },
-      {
-        table: 'medical_records',
-        policy: 'Medical record confidentiality',
-        roles: ['doctor', 'nurse'],
+        table: "appointments",
+        policy: "Appointment access control",
+        roles: ["patient", "doctor", "receptionist"],
         condition:
-          'provider_id = auth.uid() OR patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())',
+          "patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+      },
+      {
+        table: "medical_records",
+        policy: "Medical record confidentiality",
+        roles: ["doctor", "nurse"],
+        condition:
+          "provider_id = auth.uid() OR patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
       },
     ];
   }
@@ -59,7 +60,7 @@ export class DatabaseRLS {
       CREATE POLICY "${policy.policy}" 
       ON ${policy.table} 
       FOR ALL 
-      TO ${policy.roles.join(', ')} 
+      TO ${policy.roles.join(", ")} 
       USING (${policy.condition});
     `;
   }

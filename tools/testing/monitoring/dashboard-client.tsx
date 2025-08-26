@@ -5,8 +5,8 @@
  * com WebSocket integration e visualizações interativas.
  */
 
-import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -15,10 +15,10 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from 'recharts';
-import { io } from 'socket.io-client';
-import type { Socket } from 'socket.io-client';
-import { logger } from '../../../apps/api/src/lib/logger.js';
+} from "recharts";
+import { io } from "socket.io-client";
+import type { Socket } from "socket.io-client";
+import { logger } from "../../../apps/api/src/lib/logger.js";
 
 interface MetricValue {
   timestamp: number;
@@ -28,14 +28,14 @@ interface MetricValue {
 
 interface Alert {
   id: string;
-  level: 'info' | 'warning' | 'error' | 'critical';
+  level: "info" | "warning" | "error" | "critical";
   message: string;
   timestamp: number;
   resolved: boolean;
 }
 
 interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'down';
+  status: "healthy" | "degraded" | "down";
   score: number;
   lastCheck: number;
   issues: string[];
@@ -48,20 +48,20 @@ interface DashboardData {
 }
 
 const COLORS = {
-  healthy: '#10B981',
-  degraded: '#F59E0B',
-  down: '#EF4444',
-  info: '#3B82F6',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  critical: '#DC2626',
+  healthy: "#10B981",
+  degraded: "#F59E0B",
+  down: "#EF4444",
+  info: "#3B82F6",
+  warning: "#F59E0B",
+  error: "#EF4444",
+  critical: "#DC2626",
 };
 
 export const RealTimeDashboard: React.FC = () => {
   const [_socket, setSocket] = useState<Socket | null>();
   const [data, setData] = useState<DashboardData>({
     health: {
-      status: 'healthy',
+      status: "healthy",
       score: 100,
       lastCheck: Date.now(),
       issues: [],
@@ -71,34 +71,34 @@ export const RealTimeDashboard: React.FC = () => {
   });
   const [connected, setConnected] = useState(false);
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'metrics' | 'alerts' | 'health'
-  >('overview');
+    "overview" | "metrics" | "alerts" | "health"
+  >("overview");
 
   // 🔌 Configurar WebSocket connection
   useEffect(() => {
-    const newSocket = io('http://localhost:3003');
+    const newSocket = io("http://localhost:3003");
 
-    newSocket.on('connect', () => {
+    newSocket.on("connect", () => {
       setConnected(true);
-      logger.info('📱 Conectado ao monitor');
+      logger.info("📱 Conectado ao monitor");
     });
 
-    newSocket.on('disconnect', () => {
+    newSocket.on("disconnect", () => {
       setConnected(false);
-      logger.info('📱 Desconectado do monitor');
+      logger.info("📱 Desconectado do monitor");
     });
 
-    newSocket.on('initial-data', (initialData: DashboardData) => {
+    newSocket.on("initial-data", (initialData: DashboardData) => {
       setData(initialData);
     });
 
-    newSocket.on('health-update', (health: HealthStatus) => {
+    newSocket.on("health-update", (health: HealthStatus) => {
       setData((prev) => ({ ...prev, health }));
     });
 
     newSocket.on(
-      'metrics-update',
-      (update: { timestamp: number; metrics: any; }) => {
+      "metrics-update",
+      (update: { timestamp: number; metrics: any }) => {
         setData((prev) => {
           const newMetrics = { ...prev.metrics };
 
@@ -122,7 +122,7 @@ export const RealTimeDashboard: React.FC = () => {
       },
     );
 
-    newSocket.on('new-alert', (alert: Alert) => {
+    newSocket.on("new-alert", (alert: Alert) => {
       setData((prev) => ({
         ...prev,
         alerts: [alert, ...prev.alerts].slice(0, 20), // Manter últimos 20
@@ -151,7 +151,7 @@ export const RealTimeDashboard: React.FC = () => {
 
   // 🎨 Obter cor baseada no status
   const _getStatusColor = (status: string) => {
-    return COLORS[status as keyof typeof COLORS] || '#6B7280';
+    return COLORS[status as keyof typeof COLORS] || "#6B7280";
   };
 
   // 📈 Componente de métricas overview
@@ -167,16 +167,16 @@ export const RealTimeDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-gray-600 text-sm capitalize">
-                  {key.replaceAll(/([A-Z])/g, ' $1').trim()}
+                  {key.replaceAll(/([A-Z])/g, " $1").trim()}
                 </p>
                 <p className="font-bold text-2xl text-gray-900">
                   {latestValue.toFixed(1)}%
                 </p>
               </div>
               <div
-                className={`text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                className={`text-sm ${trend >= 0 ? "text-green-600" : "text-red-600"}`}
               >
-                {trend >= 0 ? '↗' : '↘'} {Math.abs(trend).toFixed(1)}
+                {trend >= 0 ? "↗" : "↘"} {Math.abs(trend).toFixed(1)}
               </div>
             </div>
             <div className="mt-2">
@@ -184,10 +184,10 @@ export const RealTimeDashboard: React.FC = () => {
                 <div
                   className={`h-2 rounded-full ${
                     latestValue >= 90
-                      ? 'bg-green-500'
-                      : (latestValue >= 70
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500')
+                      ? "bg-green-500"
+                      : latestValue >= 70
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
                   }`}
                   style={{ width: `${Math.min(latestValue, 100)}%` }}
                 />
@@ -206,11 +206,11 @@ export const RealTimeDashboard: React.FC = () => {
         <h3 className="font-semibold text-gray-900 text-lg">System Health</h3>
         <div
           className={`rounded-full px-3 py-1 font-medium text-sm ${
-            data.health.status === 'healthy'
-              ? 'bg-green-100 text-green-800'
-              : (data.health.status === 'degraded'
-              ? 'bg-yellow-100 text-yellow-800'
-              : 'bg-red-100 text-red-800')
+            data.health.status === "healthy"
+              ? "bg-green-100 text-green-800"
+              : data.health.status === "degraded"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
           }`}
         >
           {data.health.status.toUpperCase()}
@@ -228,10 +228,10 @@ export const RealTimeDashboard: React.FC = () => {
           <div
             className={`h-3 rounded-full transition-all duration-300 ${
               data.health.score >= 90
-                ? 'bg-green-500'
-                : (data.health.score >= 70
-                ? 'bg-yellow-500'
-                : 'bg-red-500')
+                ? "bg-green-500"
+                : data.health.score >= 70
+                  ? "bg-yellow-500"
+                  : "bg-red-500"
             }`}
             style={{ width: `${data.health.score}%` }}
           />
@@ -266,30 +266,32 @@ export const RealTimeDashboard: React.FC = () => {
         Recent Alerts
       </h3>
       <div className="max-h-96 space-y-2 overflow-y-auto">
-        {data.alerts.length === 0 ? <p className="py-8 text-center text-gray-500">No alerts</p> : (
+        {data.alerts.length === 0 ? (
+          <p className="py-8 text-center text-gray-500">No alerts</p>
+        ) : (
           data.alerts.map((alert) => (
             <div
               className={`rounded border-l-4 p-3 ${
-                alert.level === 'critical'
-                  ? 'border-red-500 bg-red-50'
-                  : alert.level === 'error'
-                  ? 'border-red-400 bg-red-50'
-                  : alert.level === 'warning'
-                  ? 'border-yellow-400 bg-yellow-50'
-                  : 'border-blue-400 bg-blue-50'
+                alert.level === "critical"
+                  ? "border-red-500 bg-red-50"
+                  : alert.level === "error"
+                    ? "border-red-400 bg-red-50"
+                    : alert.level === "warning"
+                      ? "border-yellow-400 bg-yellow-50"
+                      : "border-blue-400 bg-blue-50"
               }`}
               key={alert.id}
             >
               <div className="flex items-center justify-between">
                 <span
                   className={`font-medium text-xs uppercase ${
-                    alert.level === 'critical'
-                      ? 'text-red-800'
-                      : alert.level === 'error'
-                      ? 'text-red-700'
-                      : alert.level === 'warning'
-                      ? 'text-yellow-700'
-                      : 'text-blue-700'
+                    alert.level === "critical"
+                      ? "text-red-800"
+                      : alert.level === "error"
+                        ? "text-red-700"
+                        : alert.level === "warning"
+                          ? "text-yellow-700"
+                          : "text-blue-700"
                   }`}
                 >
                   {alert.level}
@@ -318,7 +320,7 @@ export const RealTimeDashboard: React.FC = () => {
             key={metricName}
           >
             <h3 className="mb-4 font-semibold text-gray-900 text-lg capitalize">
-              {metricName.replaceAll(/([A-Z])/g, ' $1').trim()}
+              {metricName.replaceAll(/([A-Z])/g, " $1").trim()}
             </h3>
             <ResponsiveContainer height={250} width="100%">
               <LineChart data={chartData}>
@@ -339,7 +341,7 @@ export const RealTimeDashboard: React.FC = () => {
                 <Line
                   activeDot={{ r: 6 }}
                   dataKey="value"
-                  dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+                  dot={{ fill: "#3B82F6", strokeWidth: 2, r: 4 }}
                   stroke="#3B82F6"
                   strokeWidth={2}
                   type="monotone"
@@ -364,27 +366,27 @@ export const RealTimeDashboard: React.FC = () => {
               </h1>
               <div
                 className={`ml-4 flex items-center ${
-                  connected ? 'text-green-600' : 'text-red-600'
+                  connected ? "text-green-600" : "text-red-600"
                 }`}
               >
                 <span
                   className={`mr-2 h-2 w-2 rounded-full ${
-                    connected ? 'bg-green-500' : 'bg-red-500'
+                    connected ? "bg-green-500" : "bg-red-500"
                   }`}
                 />
                 <span className="font-medium text-sm">
-                  {connected ? 'Connected' : 'Disconnected'}
+                  {connected ? "Connected" : "Disconnected"}
                 </span>
               </div>
             </div>
 
             <nav className="flex space-x-4">
-              {['overview', 'metrics', 'alerts', 'health'].map((tab) => (
+              {["overview", "metrics", "alerts", "health"].map((tab) => (
                 <button
                   className={`rounded-md px-3 py-2 font-medium text-sm capitalize ${
                     activeTab === tab
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-500 hover:text-gray-700"
                   }`}
                   key={tab}
                   onClick={() => setActiveTab(tab as any)}
@@ -399,7 +401,7 @@ export const RealTimeDashboard: React.FC = () => {
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {activeTab === 'overview' && (
+        {activeTab === "overview" && (
           <div>
             <MetricsOverview />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -409,15 +411,15 @@ export const RealTimeDashboard: React.FC = () => {
           </div>
         )}
 
-        {activeTab === 'metrics' && <MetricsCharts />}
+        {activeTab === "metrics" && <MetricsCharts />}
 
-        {activeTab === 'alerts' && (
+        {activeTab === "alerts" && (
           <div className="max-w-4xl">
             <AlertsList />
           </div>
         )}
 
-        {activeTab === 'health' && (
+        {activeTab === "health" && (
           <div className="max-w-2xl">
             <HealthStatus />
           </div>

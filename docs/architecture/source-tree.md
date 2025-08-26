@@ -696,19 +696,19 @@ CONSTITUTIONAL_PERFORMANCE:
     - Self-healing trigger: <500ms response time
     - Governance compliance: 99.9% adherence
     - Constitutional audit: <5ms per action
-    
+
   AI_Performance:
     - Model inference: <200ms average response
     - Streaming first token: <100ms
     - Chat response generation: <2s for 500 tokens
     - Prediction accuracy: >95% for no-show prediction
-    
+
   Real_Time_Capabilities:
     - WebSocket establishment: <50ms
     - Real-time event propagation: <100ms
     - Streaming throughput: >1000 events/second
     - Constitutional event validation: <20ms
-    
+
   Healthcare_Compliance:
     - LGPD validation: <50ms per operation
     - Audit trail logging: <10ms per event

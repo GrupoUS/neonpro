@@ -238,7 +238,7 @@ Model Training Pipeline: <4 hours for weekly model updates
    - Provider scheduling workflow enhancement without disruption
    - Patient care access protected and improved through intervention strategies
    - Emergency care appointments prioritized over no-show predictions
-   
+
 2. ML Prediction Accuracy and Reliability
    - No-show prediction accuracy >85% for 7-day forecasts
    - Risk score calibration within ±10% of actual probability

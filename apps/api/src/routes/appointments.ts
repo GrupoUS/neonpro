@@ -1,12 +1,12 @@
-import { Hono } from 'hono';
-import { HTTP_STATUS, RESPONSE_MESSAGES } from '../lib/constants';
+import { Hono } from "hono";
+import { HTTP_STATUS, RESPONSE_MESSAGES } from "../lib/constants";
 
 export const appointmentRoutes = new Hono();
 
 // Authentication middleware for all appointment routes
-appointmentRoutes.use('*', async (c, next) => {
-  const auth = c.req.header('Authorization');
-  if (!auth?.startsWith('Bearer ')) {
+appointmentRoutes.use("*", async (c, next) => {
+  const auth = c.req.header("Authorization");
+  if (!auth?.startsWith("Bearer ")) {
     return c.json(
       { error: RESPONSE_MESSAGES.AUTH_REQUIRED },
       HTTP_STATUS.UNAUTHORIZED,
@@ -15,16 +15,16 @@ appointmentRoutes.use('*', async (c, next) => {
   await next();
 });
 
-appointmentRoutes.get('/', (c) => {
+appointmentRoutes.get("/", (c) => {
   return c.json(
     { message: RESPONSE_MESSAGES.NOT_IMPLEMENTED },
     HTTP_STATUS.NOT_IMPLEMENTED,
   );
 });
 
-appointmentRoutes.post('/', async (c) => {
+appointmentRoutes.post("/", async (c) => {
   const body = await c.req.json().catch(() => ({
-    error: 'Invalid JSON payload',
+    error: "Invalid JSON payload",
   }));
 
   // Validate appointment data

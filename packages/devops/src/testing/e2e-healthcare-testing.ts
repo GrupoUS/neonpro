@@ -4,7 +4,7 @@
  * Implements comprehensive end-to-end healthcare workflow validation
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 export interface HealthcareE2EConfig {
   enablePatientJourney: boolean;
@@ -58,7 +58,7 @@ export class HealthcareE2ETester {
       ? 9.9
       : this.calculateJourneyScore(journeySteps);
 
-    this.testResults.set('patient_journey', {
+    this.testResults.set("patient_journey", {
       score,
       passed: allStepsSuccessful,
       details: journeySteps,
@@ -98,7 +98,7 @@ export class HealthcareE2ETester {
       ? 9.9
       : this.calculateWorkflowScore(workflowSteps);
 
-    this.testResults.set('professional_workflow', {
+    this.testResults.set("professional_workflow", {
       score,
       passed: allStepsSuccessful,
       details: workflowSteps,
@@ -137,7 +137,7 @@ export class HealthcareE2ETester {
       ? 9.9
       : this.calculateOperationsScore(operationalAreas);
 
-    this.testResults.set('clinic_operations', {
+    this.testResults.set("clinic_operations", {
       score,
       passed: allAreasOperational,
       details: operationalAreas,
@@ -149,7 +149,8 @@ export class HealthcareE2ETester {
       success: allAreasOperational,
       score,
       operationalAreas,
-      operationalEfficiency: this.calculateOperationalEfficiency(operationalAreas),
+      operationalEfficiency:
+        this.calculateOperationalEfficiency(operationalAreas),
       costOptimization: this.calculateCostOptimization(operationalAreas),
     };
   }
@@ -175,7 +176,7 @@ export class HealthcareE2ETester {
     const allStepsSuccessful = Object.values(flowSteps).every(Boolean);
     const score = allStepsSuccessful ? 9.9 : this.calculateFlowScore(flowSteps);
 
-    this.testResults.set('appointment_flow', {
+    this.testResults.set("appointment_flow", {
       score,
       passed: allStepsSuccessful,
       details: flowSteps,
@@ -214,7 +215,7 @@ export class HealthcareE2ETester {
       ? 9.9
       : this.calculateProtocolScore(protocols);
 
-    this.testResults.set('emergency_protocols', {
+    this.testResults.set("emergency_protocols", {
       score,
       passed: allProtocolsEffective,
       details: protocols,
@@ -253,7 +254,7 @@ export class HealthcareE2ETester {
       ? 9.9
       : this.calculateComplianceScore(complianceSteps);
 
-    this.testResults.set('compliance_flow', {
+    this.testResults.set("compliance_flow", {
       score,
       passed: allStepsCompliant,
       details: complianceSteps,
@@ -283,12 +284,13 @@ export class HealthcareE2ETester {
       backupIntegration: await this.testBackupIntegration(),
     };
 
-    const allIntegrationsWorking = Object.values(integrationTests).every(Boolean);
+    const allIntegrationsWorking =
+      Object.values(integrationTests).every(Boolean);
     const score = allIntegrationsWorking
       ? 9.9
       : this.calculateIntegrationScore(integrationTests);
 
-    this.testResults.set('system_integration', {
+    this.testResults.set("system_integration", {
       score,
       passed: allIntegrationsWorking,
       details: integrationTests,
@@ -321,7 +323,7 @@ export class HealthcareE2ETester {
     const allTestsPassed = Object.values(loadTests).every(Boolean);
     const score = allTestsPassed ? 9.9 : this.calculateLoadTestScore(loadTests);
 
-    this.testResults.set('performance_load', {
+    this.testResults.set("performance_load", {
       score,
       passed: allTestsPassed,
       details: loadTests,
@@ -341,101 +343,101 @@ export class HealthcareE2ETester {
   // Private test implementation methods (mock implementations)
   private async testPatientRegistration(): Promise<boolean> {
     // Mock patient registration test
-    await this.testEnvironment.simulateUserAction('patient_registration');
+    await this.testEnvironment.simulateUserAction("patient_registration");
     return true;
   }
 
   private async testPatientAuthentication(): Promise<boolean> {
     // Mock patient authentication test
-    await this.testEnvironment.simulateUserAction('patient_login');
+    await this.testEnvironment.simulateUserAction("patient_login");
     return true;
   }
 
   private async testAppointmentBooking(): Promise<boolean> {
     // Mock appointment booking test
-    await this.testEnvironment.simulateUserAction('appointment_booking');
+    await this.testEnvironment.simulateUserAction("appointment_booking");
     return true;
   }
 
   private async testPatientCheckIn(): Promise<boolean> {
     // Mock patient check-in test
-    await this.testEnvironment.simulateUserAction('patient_checkin');
+    await this.testEnvironment.simulateUserAction("patient_checkin");
     return true;
   }
 
   private async testPatientConsultation(): Promise<boolean> {
     // Mock patient consultation test
-    await this.testEnvironment.simulateUserAction('patient_consultation');
+    await this.testEnvironment.simulateUserAction("patient_consultation");
     return true;
   }
 
   private async testTreatmentPlanReview(): Promise<boolean> {
     // Mock treatment plan review test
-    await this.testEnvironment.simulateUserAction('treatment_plan_review');
+    await this.testEnvironment.simulateUserAction("treatment_plan_review");
     return true;
   }
 
   private async testFollowUpScheduling(): Promise<boolean> {
     // Mock follow-up scheduling test
-    await this.testEnvironment.simulateUserAction('followup_scheduling');
+    await this.testEnvironment.simulateUserAction("followup_scheduling");
     return true;
   }
 
   private async testPatientBilling(): Promise<boolean> {
     // Mock patient billing test
-    await this.testEnvironment.simulateUserAction('patient_billing');
+    await this.testEnvironment.simulateUserAction("patient_billing");
     return true;
   }
 
   private async testPatientFeedback(): Promise<boolean> {
     // Mock patient feedback test
-    await this.testEnvironment.simulateUserAction('patient_feedback');
+    await this.testEnvironment.simulateUserAction("patient_feedback");
     return true;
   }
 
   // Professional workflow test methods
   private async testProfessionalAuthentication(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('professional_login');
+    await this.testEnvironment.simulateUserAction("professional_login");
     return true;
   }
 
   private async testScheduleReview(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('schedule_review');
+    await this.testEnvironment.simulateUserAction("schedule_review");
     return true;
   }
 
   private async testPatientRecordsAccess(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('patient_records_access');
+    await this.testEnvironment.simulateUserAction("patient_records_access");
     return true;
   }
 
   private async testDiagnosisEntry(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('diagnosis_entry');
+    await this.testEnvironment.simulateUserAction("diagnosis_entry");
     return true;
   }
 
   private async testTreatmentPrescription(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('treatment_prescription');
+    await this.testEnvironment.simulateUserAction("treatment_prescription");
     return true;
   }
 
   private async testProcedureDocumentation(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('procedure_documentation');
+    await this.testEnvironment.simulateUserAction("procedure_documentation");
     return true;
   }
 
   private async testFollowUpPlanning(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('followup_planning');
+    await this.testEnvironment.simulateUserAction("followup_planning");
     return true;
   }
 
   private async testReportGeneration(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('report_generation');
+    await this.testEnvironment.simulateUserAction("report_generation");
     return true;
   }
 
   private async testComplianceChecks(): Promise<boolean> {
-    await this.testEnvironment.simulateUserAction('compliance_checks');
+    await this.testEnvironment.simulateUserAction("compliance_checks");
     return true;
   }
 
@@ -712,7 +714,8 @@ export class HealthcareE2ETester {
   // Public reporting methods
   generateE2EReport(): HealthcareE2EReport {
     const results = [...this.testResults.values()];
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {
@@ -732,36 +735,36 @@ export class HealthcareE2ETester {
     for (const [testName, result] of this.testResults) {
       if (!result.passed) {
         switch (testName) {
-          case 'patient_journey': {
+          case "patient_journey": {
             recommendations.push(
-              'Improve patient journey experience and anxiety reduction',
+              "Improve patient journey experience and anxiety reduction",
             );
             break;
           }
-          case 'professional_workflow': {
+          case "professional_workflow": {
             recommendations.push(
-              'Optimize healthcare professional workflow efficiency',
+              "Optimize healthcare professional workflow efficiency",
             );
             break;
           }
-          case 'clinic_operations': {
-            recommendations.push('Enhance clinic operational procedures');
+          case "clinic_operations": {
+            recommendations.push("Enhance clinic operational procedures");
             break;
           }
-          case 'appointment_flow': {
+          case "appointment_flow": {
             recommendations.push(
-              'Streamline appointment scheduling and management',
+              "Streamline appointment scheduling and management",
             );
             break;
           }
-          case 'emergency_protocols': {
+          case "emergency_protocols": {
             recommendations.push(
-              'Review and improve emergency response protocols',
+              "Review and improve emergency response protocols",
             );
             break;
           }
-          case 'compliance_flow': {
-            recommendations.push('Strengthen regulatory compliance processes');
+          case "compliance_flow": {
+            recommendations.push("Strengthen regulatory compliance processes");
             break;
           }
         }
@@ -807,21 +810,21 @@ export function createHealthcareE2ETestSuite(
       vi.restoreAllMocks();
     });
 
-    it('complete Patient Journey', async () => {
+    it("complete Patient Journey", async () => {
       const result = await e2eTester.validatePatientJourney();
       expect(result.success).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
       expect(result.anxietyReduction).toBeGreaterThanOrEqual(50);
     });
 
-    it('healthcare Professional Workflow', async () => {
+    it("healthcare Professional Workflow", async () => {
       const result = await e2eTester.validateHealthcareProfessionalWorkflow();
       expect(result.success).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
       expect(result.efficiencyGain).toBeGreaterThanOrEqual(80);
     });
 
-    it('clinic Operations', async () => {
+    it("clinic Operations", async () => {
       const result = await e2eTester.validateClinicOperations();
       expect(result.success).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);

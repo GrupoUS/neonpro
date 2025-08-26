@@ -3,9 +3,9 @@
  * Gerencia estado de autenticação, login, logout e refresh automático
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { authTokenManager } from './auth-token-manager';
-import type { AuthTokens } from './auth-token-manager';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { authTokenManager } from "./auth-token-manager";
+import type { AuthTokens } from "./auth-token-manager";
 
 export interface AuthUser {
   id: string;
@@ -71,10 +71,10 @@ export function useAuthToken() {
         return;
       }
 
-      const response = await fetch('/api/v1/auth/me', {
+      const response = await fetch("/api/v1/auth/me", {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -129,7 +129,7 @@ export function useAuthToken() {
               updateAuthState({
                 user: undefined,
                 isAuthenticated: false,
-                error: 'Sessão expirada. Faça login novamente.',
+                error: "Sessão expirada. Faça login novamente.",
               });
             }
           }
@@ -174,7 +174,7 @@ export function useAuthToken() {
         user: undefined,
         isAuthenticated: false,
         isLoading: false,
-        error: 'Erro ao carregar autenticação',
+        error: "Erro ao carregar autenticação",
       });
     }
   }, [loadCurrentUser, scheduleTokenRefresh, updateAuthState]);
@@ -185,14 +185,14 @@ export function useAuthToken() {
   const login = useCallback(
     async (
       credentials: LoginCredentials,
-    ): Promise<{ success: boolean; error?: string; }> => {
+    ): Promise<{ success: boolean; error?: string }> => {
       updateAuthState({ isLoading: true, error: undefined });
 
       try {
-        const response = await fetch('/api/v1/auth/login', {
-          method: 'POST',
+        const response = await fetch("/api/v1/auth/login", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(credentials),
         });
@@ -200,7 +200,7 @@ export function useAuthToken() {
         const data: LoginResponse = await response.json();
 
         if (!(response.ok && data.success)) {
-          const errorMessage = data.error || data.message || 'Erro no login';
+          const errorMessage = data.error || data.message || "Erro no login";
           updateAuthState({
             isLoading: false,
             error: errorMessage,
@@ -226,9 +226,10 @@ export function useAuthToken() {
           return { success: true };
         }
 
-        return { success: false, error: 'Resposta inválida do servidor' };
+        return { success: false, error: "Resposta inválida do servidor" };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro de rede';
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro de rede";
         updateAuthState({
           isLoading: false,
           error: errorMessage,
@@ -257,11 +258,11 @@ export function useAuthToken() {
 
       if (token) {
         try {
-          await fetch('/api/v1/auth/logout', {
-            method: 'POST',
+          await fetch("/api/v1/auth/logout", {
+            method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               refreshToken: authTokenManager.getRefreshToken(),

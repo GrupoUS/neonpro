@@ -485,7 +485,7 @@ export function OfflineIndicator() {
   const { isOnline, cacheStatus } = useHealthcareServiceWorker();
 
   if (isOnline) {
-    return ;
+    return;
   }
 
   return (

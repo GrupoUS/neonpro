@@ -5,10 +5,10 @@
  * performance monitoring for healthcare applications.
  */
 
-'use client';
+"use client";
 
-import { onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from 'web-vitals';
-import type { Metric } from 'web-vitals';
+import { onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from "web-vitals";
+import type { Metric } from "web-vitals";
 import type {
   CustomMetric,
   ErrorInfo,
@@ -17,7 +17,7 @@ import type {
   MonitoringConfig,
   MonitoringHooks,
   ResourceData,
-} from '../types';
+} from "../types";
 
 /**
  * Default monitoring configuration
@@ -50,9 +50,9 @@ const DEFAULT_CONFIG: MonitoringConfig = {
     errors: 1,
   },
   endpoints: {
-    metrics: '/api/monitoring/metrics',
-    errors: '/api/monitoring/errors',
-    vitals: '/api/monitoring/vitals',
+    metrics: "/api/monitoring/metrics",
+    errors: "/api/monitoring/errors",
+    vitals: "/api/monitoring/vitals",
   },
   context: {
     includeUserInfo: true,
@@ -61,7 +61,7 @@ const DEFAULT_CONFIG: MonitoringConfig = {
   },
   privacy: {
     hashSensitiveData: true,
-    excludeFields: ['cpf', 'password', 'medicalHistory'],
+    excludeFields: ["cpf", "password", "medicalHistory"],
     retentionDays: 90,
   },
 };
@@ -76,7 +76,10 @@ export class PerformanceMonitor {
   private readonly sessionId: string;
   private isInitialized = false;
 
-  constructor(config: Partial<MonitoringConfig> = {}, hooks: MonitoringHooks = {}) {
+  constructor(
+    config: Partial<MonitoringConfig> = {},
+    hooks: MonitoringHooks = {},
+  ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.hooks = hooks;
     this.sessionId = this.generateSessionId();
@@ -111,7 +114,7 @@ export class PerformanceMonitor {
     value: number,
     context?: Record<string, string | number | boolean>,
   ): void {
-    if (!this.shouldSample('customMetrics')) {
+    if (!this.shouldSample("customMetrics")) {
       return;
     }
 
@@ -136,15 +139,19 @@ export class PerformanceMonitor {
    */
   trackFormSubmission(formType: string, startTime: number): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('form_submission_time', duration, { formType });
+    this.trackCustomMetric("form_submission_time", duration, { formType });
   }
 
   /**
    * Track patient search performance
    */
-  trackPatientSearch(searchType: string, resultCount: number, startTime: number): void {
+  trackPatientSearch(
+    searchType: string,
+    resultCount: number,
+    startTime: number,
+  ): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('patient_search_time', duration, {
+    this.trackCustomMetric("patient_search_time", duration, {
       searchType,
       resultCount,
     });
@@ -155,7 +162,7 @@ export class PerformanceMonitor {
    */
   trackFileUpload(fileType: string, fileSize: number, startTime: number): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('image_upload_time', duration, {
+    this.trackCustomMetric("image_upload_time", duration, {
       fileType,
       fileSize,
     });
@@ -166,7 +173,7 @@ export class PerformanceMonitor {
    */
   trackAuth(authType: string, startTime: number): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('auth_verification_time', duration, { authType });
+    this.trackCustomMetric("auth_verification_time", duration, { authType });
   }
 
   /**
@@ -174,7 +181,7 @@ export class PerformanceMonitor {
    */
   trackComplianceCheck(checkType: string, startTime: number): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('compliance_check_time', duration, { checkType });
+    this.trackCustomMetric("compliance_check_time", duration, { checkType });
   }
 
   /**
@@ -182,15 +189,19 @@ export class PerformanceMonitor {
    */
   trackDatabaseOperation(operation: string, startTime: number): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('database_query_time', duration, { operation });
+    this.trackCustomMetric("database_query_time", duration, { operation });
   }
 
   /**
    * Track report generation performance
    */
-  trackReportGeneration(reportType: string, recordCount: number, startTime: number): void {
+  trackReportGeneration(
+    reportType: string,
+    recordCount: number,
+    startTime: number,
+  ): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('report_generation_time', duration, {
+    this.trackCustomMetric("report_generation_time", duration, {
       reportType,
       recordCount,
     });
@@ -201,7 +212,7 @@ export class PerformanceMonitor {
    */
   trackEncryption(dataType: string, dataSize: number, startTime: number): void {
     const duration = performance.now() - startTime;
-    this.trackCustomMetric('data_encryption_time', duration, {
+    this.trackCustomMetric("data_encryption_time", duration, {
       dataType,
       dataSize,
     });
@@ -240,7 +251,7 @@ export class PerformanceMonitor {
    */
   private setupWebVitals(): void {
     const sendToAnalytics = (metric: Metric) => {
-      if (!this.shouldSample('webVitals')) {
+      if (!this.shouldSample("webVitals")) {
         return;
       }
 
@@ -260,7 +271,7 @@ export class PerformanceMonitor {
    * Setup error tracking
    */
   private setupErrorTracking(): void {
-    window.addEventListener('error', (event) => {
+    window.addEventListener("error", (event) => {
       this.trackError({
         message: event.message,
         filename: event.filename,
@@ -270,7 +281,7 @@ export class PerformanceMonitor {
       });
     });
 
-    window.addEventListener('unhandledrejection', (event) => {
+    window.addEventListener("unhandledrejection", (event) => {
       this.trackError({
         message: `Unhandled Promise Rejection: ${event.reason}`,
         error: event.reason,
@@ -282,14 +293,14 @@ export class PerformanceMonitor {
    * Setup performance observer
    */
   private setupPerformanceObserver(): void {
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       // Observe navigation timing
       const navObserver = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           this.trackNavigationTiming(entry as PerformanceNavigationTiming);
         }
       });
-      navObserver.observe({ entryTypes: ['navigation'] });
+      navObserver.observe({ entryTypes: ["navigation"] });
 
       // Observe resource timing
       const resourceObserver = new PerformanceObserver((list) => {
@@ -297,7 +308,7 @@ export class PerformanceMonitor {
           this.trackResourceTiming(entry as PerformanceResourceTiming);
         }
       });
-      resourceObserver.observe({ entryTypes: ['resource'] });
+      resourceObserver.observe({ entryTypes: ["resource"] });
     }
   }
 
@@ -337,7 +348,7 @@ export class PerformanceMonitor {
    * Track JavaScript errors
    */
   private trackError(errorInfo: ErrorInfo): void {
-    if (!this.shouldSample('errors')) {
+    if (!this.shouldSample("errors")) {
       return;
     }
 
@@ -349,7 +360,7 @@ export class PerformanceMonitor {
       url: window.location.href,
       userAgent: navigator.userAgent,
       context: this.getCompleteContext(),
-      severity: 'error' as const,
+      severity: "error" as const,
       fingerprint: this.generateErrorFingerprint(errorInfo),
       tags: this.getErrorTags(),
     };
@@ -369,8 +380,8 @@ export class PerformanceMonitor {
       }
 
       const response = await fetch(this.config.endpoints.metrics, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -395,8 +406,8 @@ export class PerformanceMonitor {
       }
 
       const response = await fetch(this.config.endpoints.vitals, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalPayload),
       });
 
@@ -415,8 +426,8 @@ export class PerformanceMonitor {
       }
 
       const response = await fetch(this.config.endpoints.errors, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -427,13 +438,15 @@ export class PerformanceMonitor {
   /**
    * Send navigation metrics
    */
-  private async sendNavigationMetrics(metrics: Record<string, number>): Promise<void> {
+  private async sendNavigationMetrics(
+    metrics: Record<string, number>,
+  ): Promise<void> {
     try {
       await fetch(this.config.endpoints.metrics, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: 'navigation',
+          type: "navigation",
           metrics,
           sessionId: this.sessionId,
           context: this.getBaseContext(),
@@ -448,10 +461,10 @@ export class PerformanceMonitor {
   private async sendSlowResource(resource: ResourceData): Promise<void> {
     try {
       await fetch(this.config.endpoints.metrics, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: 'slow_resource',
+          type: "slow_resource",
           resource,
           sessionId: this.sessionId,
           context: this.getBaseContext(),
@@ -466,21 +479,21 @@ export class PerformanceMonitor {
   private getRating(
     name: HealthcareMetricName,
     value: number,
-  ): 'good' | 'needs-improvement' | 'poor' {
+  ): "good" | "needs-improvement" | "poor" {
     const thresholds = this.config.thresholds.healthcare[name];
     if (value <= thresholds.good) {
-      return 'good';
+      return "good";
     }
     if (value <= thresholds.needsImprovement) {
-      return 'needs-improvement';
+      return "needs-improvement";
     }
-    return 'poor';
+    return "poor";
   }
 
   /**
    * Check if should sample this metric type
    */
-  private shouldSample(type: keyof MonitoringConfig['sampling']): boolean {
+  private shouldSample(type: keyof MonitoringConfig["sampling"]): boolean {
     return Math.random() < this.config.sampling[type];
   }
 
@@ -507,9 +520,10 @@ export class PerformanceMonitor {
     if (this.config.context.includeEnvironmentInfo) {
       context.environment = process.env.NODE_ENV;
       // Check for network connection info safely
-      const navConnection =
-        (navigator as Navigator & { connection?: { effectiveType?: string; }; }).connection;
-      context.connection = navConnection?.effectiveType || 'unknown';
+      const navConnection = (
+        navigator as Navigator & { connection?: { effectiveType?: string } }
+      ).connection;
+      context.connection = navConnection?.effectiveType || "unknown";
     }
 
     return context;
@@ -549,10 +563,10 @@ export class PerformanceMonitor {
    */
   private getCompleteContext(): HealthcareContext {
     return {
-      feature: this.context.feature || 'patient-management',
-      sensitivity: this.context.sensitivity || 'medium',
-      complianceLevel: this.context.complianceLevel || 'basic',
-      userRole: this.context.userRole || 'patient',
+      feature: this.context.feature || "patient-management",
+      sensitivity: this.context.sensitivity || "medium",
+      complianceLevel: this.context.complianceLevel || "basic",
+      userRole: this.context.userRole || "patient",
     };
   }
 
@@ -561,9 +575,9 @@ export class PerformanceMonitor {
    */
   private getErrorTags(): Record<string, string> {
     return {
-      environment: process.env.NODE_ENV || 'unknown',
-      feature: (this.context.feature as string) || 'unknown',
-      userRole: (this.context.userRole as string) || 'unknown',
+      environment: process.env.NODE_ENV || "unknown",
+      feature: (this.context.feature as string) || "unknown",
+      userRole: (this.context.userRole as string) || "unknown",
     };
   }
 
@@ -571,22 +585,22 @@ export class PerformanceMonitor {
    * Get resource type from URL
    */
   private getResourceType(url: string): string {
-    if (url.includes('/api/')) {
-      return 'api';
+    if (url.includes("/api/")) {
+      return "api";
     }
     if (/\.(js|ts)$/.test(url)) {
-      return 'script';
+      return "script";
     }
     if (/\.(css)$/.test(url)) {
-      return 'stylesheet';
+      return "stylesheet";
     }
     if (/\.(png|jpg|jpeg|gif|svg|webp)$/.test(url)) {
-      return 'image';
+      return "image";
     }
     if (/\.(woff|woff2|ttf|eot)$/.test(url)) {
-      return 'font';
+      return "font";
     }
-    return 'other';
+    return "other";
   }
 }
 

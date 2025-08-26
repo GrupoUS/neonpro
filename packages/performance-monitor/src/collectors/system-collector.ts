@@ -1,5 +1,5 @@
-import { MetricType, MetricUnit } from '../types';
-import type { MetricCollector, PerformanceMetric } from '../types';
+import { MetricType, MetricUnit } from "../types";
+import type { MetricCollector, PerformanceMetric } from "../types";
 
 export class SystemMetricsCollector implements MetricCollector {
   private enabled = true;
@@ -22,8 +22,8 @@ export class SystemMetricsCollector implements MetricCollector {
         type: MetricType.ERROR_RATE,
         value: 1,
         unit: MetricUnit.COUNT,
-        tags: { component: 'system', error: 'collection_failed' },
-        source: 'system-metrics-collector',
+        tags: { component: "system", error: "collection_failed" },
+        source: "system-metrics-collector",
         context: {
           error: error instanceof Error ? error.message : String(error),
         },
@@ -46,8 +46,8 @@ export class SystemMetricsCollector implements MetricCollector {
       type: MetricType.CPU_USAGE,
       value: cpuUsage,
       unit: MetricUnit.PERCENTAGE,
-      tags: { component: 'system', resource: 'cpu' },
-      source: 'system-metrics-collector',
+      tags: { component: "system", resource: "cpu" },
+      source: "system-metrics-collector",
     });
   }
 
@@ -64,8 +64,8 @@ export class SystemMetricsCollector implements MetricCollector {
       type: MetricType.MEMORY_USAGE,
       value: memoryInfo.percentage,
       unit: MetricUnit.PERCENTAGE,
-      tags: { component: 'system', resource: 'memory' },
-      source: 'system-metrics-collector',
+      tags: { component: "system", resource: "memory" },
+      source: "system-metrics-collector",
       context: {
         used: memoryInfo.used,
         total: memoryInfo.total,
@@ -89,8 +89,8 @@ export class SystemMetricsCollector implements MetricCollector {
       type: MetricType.DATABASE_QUERIES,
       value: queriesPerSecond,
       unit: MetricUnit.REQUESTS_PER_SECOND,
-      tags: { component: 'database', metric: 'throughput' },
-      source: 'system-metrics-collector',
+      tags: { component: "database", metric: "throughput" },
+      source: "system-metrics-collector",
     });
 
     // Average query response time
@@ -100,8 +100,8 @@ export class SystemMetricsCollector implements MetricCollector {
       type: MetricType.RESPONSE_TIME,
       value: avgQueryTime,
       unit: MetricUnit.MILLISECONDS,
-      tags: { component: 'database', metric: 'query_time' },
-      source: 'system-metrics-collector',
+      tags: { component: "database", metric: "query_time" },
+      source: "system-metrics-collector",
     });
 
     // Database connection count
@@ -111,8 +111,8 @@ export class SystemMetricsCollector implements MetricCollector {
       type: MetricType.DATABASE_QUERIES,
       value: dbConnectionCount,
       unit: MetricUnit.COUNT,
-      tags: { component: 'database', metric: 'connections' },
-      source: 'system-metrics-collector',
+      tags: { component: "database", metric: "connections" },
+      source: "system-metrics-collector",
     });
   }
 

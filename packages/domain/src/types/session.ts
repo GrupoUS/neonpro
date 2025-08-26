@@ -44,21 +44,21 @@ export interface SessionSecurityEvent {
   id: string;
   sessionId: string;
   eventType: SecurityEventType;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   details?: Record<string, any>;
   timestamp: Date;
   resolved?: boolean;
 }
 
 export type SecurityEventType =
-  | 'suspicious_login'
-  | 'multiple_failed_attempts'
-  | 'unusual_location'
-  | 'device_change'
-  | 'concurrent_sessions'
-  | 'session_hijack_attempt'
-  | 'privilege_escalation'
-  | 'data_access_violation';
+  | "suspicious_login"
+  | "multiple_failed_attempts"
+  | "unusual_location"
+  | "device_change"
+  | "concurrent_sessions"
+  | "session_hijack_attempt"
+  | "privilege_escalation"
+  | "data_access_violation";
 
 export interface SessionAnalytics {
   totalSessions: number;

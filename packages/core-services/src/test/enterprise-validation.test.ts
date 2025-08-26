@@ -3,12 +3,12 @@
  * Tests all FASE 2 enterprise services functionality
  */
 
-import { EnhancedServiceBase } from '../base/EnhancedServiceBase';
-import { EnterpriseAnalyticsService } from '../enterprise/analytics/EnterpriseAnalyticsService';
-import { EnterpriseAuditService } from '../enterprise/audit/EnterpriseAuditService';
-import { EnterpriseCacheService } from '../enterprise/cache/EnterpriseCacheService';
-import { EnterpriseSecurityService } from '../enterprise/security/EnterpriseSecurityService';
-import { EnterpriseHealthCheckService } from '../health/EnterpriseHealthCheckService';
+import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
+import { EnterpriseAnalyticsService } from "../enterprise/analytics/EnterpriseAnalyticsService";
+import { EnterpriseAuditService } from "../enterprise/audit/EnterpriseAuditService";
+import { EnterpriseCacheService } from "../enterprise/cache/EnterpriseCacheService";
+import { EnterpriseSecurityService } from "../enterprise/security/EnterpriseSecurityService";
+import { EnterpriseHealthCheckService } from "../health/EnterpriseHealthCheckService";
 
 interface TestContext {
   userId: string;
@@ -30,7 +30,7 @@ const mockRepo: TestRepo = {
 class TestEnterpriseService extends EnhancedServiceBase<TestRepo> {
   constructor() {
     super(mockRepo, {
-      serviceName: 'test-enterprise-service',
+      serviceName: "test-enterprise-service",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -40,7 +40,7 @@ class TestEnterpriseService extends EnhancedServiceBase<TestRepo> {
 
   async testOperation(id: string, context: TestContext) {
     return this.executeOperation(
-      'testOperation',
+      "testOperation",
       async () => {
         const result = await this.repository.findData(id);
         return { ...result, processed: true };
@@ -51,7 +51,7 @@ class TestEnterpriseService extends EnhancedServiceBase<TestRepo> {
 
   async testCachedOperation(id: string, context: TestContext) {
     return this.executeOperation(
-      'testCachedOperation',
+      "testCachedOperation",
       async () => {
         const result = await this.repository.findData(id);
         return { ...result, cached: true };
@@ -67,48 +67,48 @@ async function testEnterpriseServices() {
   try {
     const cacheService = new EnterpriseCacheService();
 
-    await cacheService.set('test-key', { value: 'test-data' });
-    const _cachedData = await cacheService.get('test-key');
+    await cacheService.set("test-key", { value: "test-data" });
+    const _cachedData = await cacheService.get("test-key");
     const analyticsService = new EnterpriseAnalyticsService();
 
     await analyticsService.trackEvent({
-      type: 'test_event',
+      type: "test_event",
       timestamp: Date.now(),
       properties: { test: true },
     });
     const securityService = new EnterpriseSecurityService();
 
-    const _hasAccess = await securityService.validateAccess('testOperation', {
-      userId: 'test-user',
-      resource: 'test-resource',
-      action: 'read',
+    const _hasAccess = await securityService.validateAccess("testOperation", {
+      userId: "test-user",
+      resource: "test-resource",
+      action: "read",
     });
     const auditService = new EnterpriseAuditService();
 
     await auditService.logEvent({
       id: `test-audit-${Date.now()}`,
-      service: 'test-service',
-      userId: 'test-user',
-      action: 'test_action',
-      eventType: 'TEST_EVENT',
+      service: "test-service",
+      userId: "test-user",
+      action: "test_action",
+      eventType: "TEST_EVENT",
       timestamp: new Date(),
       data: { test: true },
     });
     const healthService = new EnterpriseHealthCheckService();
 
-    const _healthResult = await healthService.checkHealth('cache');
+    const _healthResult = await healthService.checkHealth("cache");
     const testService = new TestEnterpriseService();
 
     const context: TestContext = {
-      userId: 'test-user',
-      operation: 'test',
-      ipAddress: '127.0.0.1',
+      userId: "test-user",
+      operation: "test",
+      ipAddress: "127.0.0.1",
     };
 
-    const _result1 = await testService.testOperation('test-id-1', context);
+    const _result1 = await testService.testOperation("test-id-1", context);
 
     const _result2 = await testService.testCachedOperation(
-      'test-id-2',
+      "test-id-2",
       context,
     );
 

@@ -1,23 +1,23 @@
-import { createClient } from '@supabase/supabase-js';
-import { Hono } from 'hono';
+import { createClient } from "@supabase/supabase-js";
+import { Hono } from "hono";
 
 const universalChatHealth = new Hono();
 
 interface ChatServiceHealthCheck {
-  service: 'universal-chat';
+  service: "universal-chat";
   healthy: boolean;
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   response_time_ms: number;
   version: string;
   details: {
-    database_connectivity: 'ok' | 'error';
-    ai_model_availability: 'ok' | 'error' | 'degraded';
-    session_management: 'ok' | 'error';
-    compliance_validation: 'ok' | 'error';
-    message_processing: 'ok' | 'error';
-    cache_connectivity: 'ok' | 'error';
-    feature_flags: 'ok' | 'error';
+    database_connectivity: "ok" | "error";
+    ai_model_availability: "ok" | "error" | "degraded";
+    session_management: "ok" | "error";
+    compliance_validation: "ok" | "error";
+    message_processing: "ok" | "error";
+    cache_connectivity: "ok" | "error";
+    feature_flags: "ok" | "error";
     error_details?: string[];
   };
   metrics: {
@@ -29,7 +29,7 @@ interface ChatServiceHealthCheck {
 }
 
 class UniversalChatHealthService {
-  private static async checkDatabaseConnectivity(): Promise<'ok' | 'error'> {
+  private static async checkDatabaseConnectivity(): Promise<"ok" | "error"> {
     try {
       const supabase = createClient(
         process.env.SUPABASE_URL!,
@@ -37,40 +37,40 @@ class UniversalChatHealthService {
       );
 
       const { error } = await supabase
-        .from('ai_chat_sessions')
-        .select('count')
+        .from("ai_chat_sessions")
+        .select("count")
         .limit(1);
 
-      return error ? 'error' : 'ok';
+      return error ? "error" : "ok";
     } catch {
-      return 'error';
+      return "error";
     }
   }
 
   private static async checkAIModelAvailability(): Promise<
-    'ok' | 'error' | 'degraded'
+    "ok" | "error" | "degraded"
   > {
     try {
       // Test OpenAI API connectivity with a minimal request
-      const response = await fetch('https://api.openai.com/v1/models', {
-        method: 'GET',
+      const response = await fetch("https://api.openai.com/v1/models", {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
-        return response.status >= 500 ? 'error' : 'degraded';
+        return response.status >= 500 ? "error" : "degraded";
       }
 
-      return 'ok';
+      return "ok";
     } catch {
-      return 'error';
+      return "error";
     }
   }
 
-  private static async checkSessionManagement(): Promise<'ok' | 'error'> {
+  private static async checkSessionManagement(): Promise<"ok" | "error"> {
     try {
       const supabase = createClient(
         process.env.SUPABASE_URL!,
@@ -80,28 +80,28 @@ class UniversalChatHealthService {
       // Test session creation and retrieval
       const testSessionId = `health-check-${Date.now()}`;
       const { error: insertError } = await supabase
-        .from('ai_chat_sessions')
+        .from("ai_chat_sessions")
         .insert({
           session_id: testSessionId,
-          user_id: 'health-check-user',
-          language: 'pt-BR',
-          status: 'active',
+          user_id: "health-check-user",
+          language: "pt-BR",
+          status: "active",
           created_at: new Date().toISOString(),
         });
 
       if (insertError) {
-        return 'error';
+        return "error";
       }
 
       // Clean up test session
       await supabase
-        .from('ai_chat_sessions')
+        .from("ai_chat_sessions")
         .delete()
-        .eq('session_id', testSessionId);
+        .eq("session_id", testSessionId);
 
-      return 'ok';
+      return "ok";
     } catch {
-      return 'error';
+      return "error";
     }
   }
 
@@ -116,15 +116,15 @@ class UniversalChatHealthService {
 
       // Get active sessions count
       const { data: activeSessions } = await supabase
-        .from('ai_chat_sessions')
-        .select('count')
-        .eq('status', 'active');
+        .from("ai_chat_sessions")
+        .select("count")
+        .eq("status", "active");
 
       // Get messages processed in last hour
       const { data: recentMessages } = await supabase
-        .from('ai_chat_messages')
-        .select('count')
-        .gte('created_at', oneHourAgo);
+        .from("ai_chat_messages")
+        .select("count")
+        .gte("created_at", oneHourAgo);
 
       return {
         active_sessions: activeSessions?.[0]?.count || 0,
@@ -146,66 +146,67 @@ class UniversalChatHealthService {
     const startTime = Date.now();
 
     try {
-      const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] = await Promise.all([
-        UniversalChatHealthService.checkDatabaseConnectivity(),
-        UniversalChatHealthService.checkAIModelAvailability(),
-        UniversalChatHealthService.checkSessionManagement(),
-        UniversalChatHealthService.getServiceMetrics(),
-      ]);
+      const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] =
+        await Promise.all([
+          UniversalChatHealthService.checkDatabaseConnectivity(),
+          UniversalChatHealthService.checkAIModelAvailability(),
+          UniversalChatHealthService.checkSessionManagement(),
+          UniversalChatHealthService.getServiceMetrics(),
+        ]);
 
       const details = {
         database_connectivity: dbConnectivity,
         ai_model_availability: aiModelAvailability,
         session_management: sessionManagement,
-        compliance_validation: 'ok' as const,
-        message_processing: 'ok' as const,
-        cache_connectivity: 'ok' as const,
-        feature_flags: 'ok' as const,
+        compliance_validation: "ok" as const,
+        message_processing: "ok" as const,
+        cache_connectivity: "ok" as const,
+        feature_flags: "ok" as const,
       };
 
       // Determine overall health status
       const errorCount = Object.values(details).filter(
-        (v) => v === 'error',
+        (v) => v === "error",
       ).length;
       const degradedCount = Object.values(details).filter(
-        (v) => v === 'degraded',
+        (v) => v === "degraded",
       ).length;
 
-      let status: 'healthy' | 'degraded' | 'unhealthy';
+      let status: "healthy" | "degraded" | "unhealthy";
       if (errorCount > 0) {
-        status = errorCount > 2 ? 'unhealthy' : 'degraded';
+        status = errorCount > 2 ? "unhealthy" : "degraded";
       } else if (degradedCount > 0) {
-        status = 'degraded';
+        status = "degraded";
       } else {
-        status = 'healthy';
+        status = "healthy";
       }
 
       return {
-        service: 'universal-chat',
-        healthy: status === 'healthy',
+        service: "universal-chat",
+        healthy: status === "healthy",
         status,
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        version: '2.0.0',
+        version: "2.0.0",
         details,
         metrics,
       };
     } catch (error) {
       return {
-        service: 'universal-chat',
+        service: "universal-chat",
         healthy: false,
-        status: 'unhealthy',
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
-        version: '2.0.0',
+        version: "2.0.0",
         details: {
-          database_connectivity: 'error',
-          ai_model_availability: 'error',
-          session_management: 'error',
-          compliance_validation: 'error',
-          message_processing: 'error',
-          cache_connectivity: 'error',
-          feature_flags: 'error',
+          database_connectivity: "error",
+          ai_model_availability: "error",
+          session_management: "error",
+          compliance_validation: "error",
+          message_processing: "error",
+          cache_connectivity: "error",
+          feature_flags: "error",
           error_details: [`Health check failed: ${error.message}`],
         },
         metrics: {
@@ -219,7 +220,7 @@ class UniversalChatHealthService {
   }
 }
 
-universalChatHealth.get('/health', async (c) => {
+universalChatHealth.get("/health", async (c) => {
   const healthCheck = await UniversalChatHealthService.performHealthCheck();
   const statusCode = healthCheck.healthy ? 200 : 503;
 

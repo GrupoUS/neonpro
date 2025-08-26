@@ -1,12 +1,16 @@
 // Batch Prediction API Endpoints - Proactive ML Predictions at Scale
 // RESTful API for managing large-scale batch prediction jobs
 
-import { zValidator } from '@hono/zod-validator';
-import type { CacheService, LoggerService, MetricsService } from '@neonpro/core-services';
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { BatchPredictionService } from '../../../../../packages/ai/src/services/batch-prediction-service';
-import { EnhancedNoShowPredictionService } from '../../../../../packages/ai/src/services/enhanced-no-show-prediction-service';
+import { zValidator } from "@hono/zod-validator";
+import type {
+  CacheService,
+  LoggerService,
+  MetricsService,
+} from "@neonpro/core-services";
+import { Hono } from "hono";
+import { z } from "zod";
+import { BatchPredictionService } from "../../../../../packages/ai/src/services/batch-prediction-service";
+import { EnhancedNoShowPredictionService } from "../../../../../packages/ai/src/services/enhanced-no-show-prediction-service";
 
 // Validation Schemas
 const BatchJobParametersSchema = z.object({
@@ -14,13 +18,13 @@ const BatchJobParametersSchema = z.object({
     .object({
       start_date: z
         .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
       end_date: z
         .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
     })
     .refine((data) => new Date(data.start_date) <= new Date(data.end_date), {
-      message: 'Start date must be before or equal to end date',
+      message: "Start date must be before or equal to end date",
     }),
   filters: z
     .object({
@@ -28,7 +32,7 @@ const BatchJobParametersSchema = z.object({
       doctor_ids: z.array(z.string()).optional(),
       appointment_types: z.array(z.string()).optional(),
       priority_levels: z
-        .array(z.enum(['low', 'medium', 'high', 'urgent']))
+        .array(z.enum(["low", "medium", "high", "urgent"]))
         .optional(),
       min_risk_threshold: z.number().min(0).max(1).optional(),
     })
@@ -39,25 +43,25 @@ const BatchJobParametersSchema = z.object({
 
 const CreateBatchJobSchema = z.object({
   type: z.enum([
-    'daily_predictions',
-    'weekly_forecast',
-    'intervention_planning',
-    'risk_assessment',
+    "daily_predictions",
+    "weekly_forecast",
+    "intervention_planning",
+    "risk_assessment",
   ]),
   parameters: BatchJobParametersSchema,
-  created_by: z.string().optional().default('api_user'),
+  created_by: z.string().optional().default("api_user"),
 });
 
 const BatchJobFiltersSchema = z.object({
   status: z
-    .enum(['queued', 'processing', 'completed', 'failed', 'cancelled'])
+    .enum(["queued", "processing", "completed", "failed", "cancelled"])
     .optional(),
   type: z
     .enum([
-      'daily_predictions',
-      'weekly_forecast',
-      'intervention_planning',
-      'risk_assessment',
+      "daily_predictions",
+      "weekly_forecast",
+      "intervention_planning",
+      "risk_assessment",
     ])
     .optional(),
   created_by: z.string().optional(),
@@ -104,7 +108,7 @@ const batchPredictionService = new BatchPredictionService(
 export const batchPredictionRoutes = new Hono();
 
 // Middleware for performance monitoring
-batchPredictionRoutes.use('*', async (c, next) => {
+batchPredictionRoutes.use("*", async (c, next) => {
   const startTime = performance.now();
   const _path = c.req.path;
   const _method = c.req.method;
@@ -115,16 +119,17 @@ batchPredictionRoutes.use('*', async (c, next) => {
   const _responseStatus = c.res.status;
 
   // Log slow requests (>2000ms)
-  if (processingTime > 2000) {}
+  if (processingTime > 2000) {
+  }
 });
 
 // Health check endpoint
-batchPredictionRoutes.get('/health', async (c) => {
+batchPredictionRoutes.get("/health", async (c) => {
   const health = {
-    status: 'healthy',
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    service: 'batch-prediction-api',
-    version: '1.0.0',
+    service: "batch-prediction-api",
+    version: "1.0.0",
     uptime_seconds: Math.floor(process.uptime()),
     memory_usage: {
       used_mb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
@@ -137,13 +142,13 @@ batchPredictionRoutes.get('/health', async (c) => {
 
 // Create a new batch prediction job
 batchPredictionRoutes.post(
-  '/jobs',
-  zValidator('json', CreateBatchJobSchema),
+  "/jobs",
+  zValidator("json", CreateBatchJobSchema),
   async (c) => {
     const startTime = performance.now();
 
     try {
-      const body = c.req.valid('json');
+      const body = c.req.valid("json");
 
       // Validate date range is reasonable
       const startDate = new Date(body.parameters.date_range.start_date);
@@ -156,7 +161,7 @@ batchPredictionRoutes.post(
         return c.json(
           {
             success: false,
-            error: 'Date range cannot exceed 90 days',
+            error: "Date range cannot exceed 90 days",
           },
           400,
         );
@@ -174,8 +179,8 @@ batchPredictionRoutes.post(
         {
           success: true,
           job_id: jobId,
-          message: 'Batch prediction job created successfully',
-          estimated_processing_time: '5-15 minutes',
+          message: "Batch prediction job created successfully",
+          estimated_processing_time: "5-15 minutes",
           processing_time_ms: Math.round(processingTime),
         },
         201,
@@ -186,9 +191,10 @@ batchPredictionRoutes.post(
       return c.json(
         {
           success: false,
-          error: error instanceof Error
-            ? error.message
-            : 'Failed to create batch job',
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to create batch job",
           processing_time_ms: Math.round(processingTime),
         },
         500,
@@ -198,17 +204,17 @@ batchPredictionRoutes.post(
 );
 
 // Get batch job status
-batchPredictionRoutes.get('/jobs/:jobId', async (c) => {
+batchPredictionRoutes.get("/jobs/:jobId", async (c) => {
   const startTime = performance.now();
 
   try {
-    const jobId = c.req.param('jobId');
+    const jobId = c.req.param("jobId");
 
     if (!jobId) {
       return c.json(
         {
           success: false,
-          error: 'Job ID is required',
+          error: "Job ID is required",
         },
         400,
       );
@@ -220,7 +226,7 @@ batchPredictionRoutes.get('/jobs/:jobId', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Batch job not found',
+          error: "Batch job not found",
         },
         404,
       );
@@ -239,7 +245,8 @@ batchPredictionRoutes.get('/jobs/:jobId', async (c) => {
     return c.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get job status',
+        error:
+          error instanceof Error ? error.message : "Failed to get job status",
         processing_time_ms: Math.round(processingTime),
       },
       500,
@@ -248,17 +255,17 @@ batchPredictionRoutes.get('/jobs/:jobId', async (c) => {
 });
 
 // Get batch job results
-batchPredictionRoutes.get('/jobs/:jobId/results', async (c) => {
+batchPredictionRoutes.get("/jobs/:jobId/results", async (c) => {
   const startTime = performance.now();
 
   try {
-    const jobId = c.req.param('jobId');
+    const jobId = c.req.param("jobId");
 
     if (!jobId) {
       return c.json(
         {
           success: false,
-          error: 'Job ID is required',
+          error: "Job ID is required",
         },
         400,
       );
@@ -271,13 +278,13 @@ batchPredictionRoutes.get('/jobs/:jobId/results', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Batch job not found',
+          error: "Batch job not found",
         },
         404,
       );
     }
 
-    if (job.status !== 'completed') {
+    if (job.status !== "completed") {
       return c.json(
         {
           success: false,
@@ -295,7 +302,7 @@ batchPredictionRoutes.get('/jobs/:jobId/results', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Job results not found',
+          error: "Job results not found",
         },
         404,
       );
@@ -314,7 +321,8 @@ batchPredictionRoutes.get('/jobs/:jobId/results', async (c) => {
     return c.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to get job results',
+        error:
+          error instanceof Error ? error.message : "Failed to get job results",
         processing_time_ms: Math.round(processingTime),
       },
       500,
@@ -324,13 +332,13 @@ batchPredictionRoutes.get('/jobs/:jobId/results', async (c) => {
 
 // List batch jobs with filtering
 batchPredictionRoutes.get(
-  '/jobs',
-  zValidator('query', BatchJobFiltersSchema),
+  "/jobs",
+  zValidator("query", BatchJobFiltersSchema),
   async (c) => {
     const startTime = performance.now();
 
     try {
-      const query = c.req.valid('query');
+      const query = c.req.valid("query");
 
       const jobs = await batchPredictionService.listBatchJobs({
         status: query.status,
@@ -353,9 +361,10 @@ batchPredictionRoutes.get(
       return c.json(
         {
           success: false,
-          error: error instanceof Error
-            ? error.message
-            : 'Failed to list batch jobs',
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to list batch jobs",
           processing_time_ms: Math.round(processingTime),
         },
         500,
@@ -365,17 +374,17 @@ batchPredictionRoutes.get(
 );
 
 // Cancel a batch job
-batchPredictionRoutes.delete('/jobs/:jobId', async (c) => {
+batchPredictionRoutes.delete("/jobs/:jobId", async (c) => {
   const startTime = performance.now();
 
   try {
-    const jobId = c.req.param('jobId');
+    const jobId = c.req.param("jobId");
 
     if (!jobId) {
       return c.json(
         {
           success: false,
-          error: 'Job ID is required',
+          error: "Job ID is required",
         },
         400,
       );
@@ -387,7 +396,7 @@ batchPredictionRoutes.delete('/jobs/:jobId', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Job not found or cannot be cancelled',
+          error: "Job not found or cannot be cancelled",
         },
         404,
       );
@@ -397,7 +406,7 @@ batchPredictionRoutes.delete('/jobs/:jobId', async (c) => {
 
     return c.json({
       success: true,
-      message: 'Batch job cancelled successfully',
+      message: "Batch job cancelled successfully",
       job_id: jobId,
       processing_time_ms: Math.round(processingTime),
     });
@@ -407,7 +416,8 @@ batchPredictionRoutes.delete('/jobs/:jobId', async (c) => {
     return c.json(
       {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to cancel batch job',
+        error:
+          error instanceof Error ? error.message : "Failed to cancel batch job",
         processing_time_ms: Math.round(processingTime),
       },
       500,
@@ -416,7 +426,7 @@ batchPredictionRoutes.delete('/jobs/:jobId', async (c) => {
 });
 
 // Get batch job metrics and analytics
-batchPredictionRoutes.get('/analytics', async (c) => {
+batchPredictionRoutes.get("/analytics", async (c) => {
   const startTime = performance.now();
 
   try {
@@ -426,27 +436,28 @@ batchPredictionRoutes.get('/analytics', async (c) => {
     });
 
     const completedJobs = recentJobs.filter(
-      (job) => job.status === 'completed',
+      (job) => job.status === "completed",
     );
-    const failedJobs = recentJobs.filter((job) => job.status === 'failed');
+    const failedJobs = recentJobs.filter((job) => job.status === "failed");
     const processingJobs = recentJobs.filter(
-      (job) => job.status === 'processing',
+      (job) => job.status === "processing",
     );
-    const queuedJobs = recentJobs.filter((job) => job.status === 'queued');
+    const queuedJobs = recentJobs.filter((job) => job.status === "queued");
 
     // Calculate performance metrics
-    const avgProcessingTime = completedJobs.length > 0
-      ? completedJobs.reduce((sum, job) => {
-        if (job.completed_at && job.started_at) {
-          return (
-            sum
-            + (new Date(job.completed_at).getTime()
-              - new Date(job.started_at).getTime())
-          );
-        }
-        return sum;
-      }, 0) / completedJobs.length
-      : 0;
+    const avgProcessingTime =
+      completedJobs.length > 0
+        ? completedJobs.reduce((sum, job) => {
+            if (job.completed_at && job.started_at) {
+              return (
+                sum +
+                (new Date(job.completed_at).getTime() -
+                  new Date(job.started_at).getTime())
+              );
+            }
+            return sum;
+          }, 0) / completedJobs.length
+        : 0;
 
     const totalPredictionsProcessed = completedJobs.reduce(
       (sum, job) => sum + job.progress.processed_appointments,
@@ -460,32 +471,35 @@ batchPredictionRoutes.get('/analytics', async (c) => {
         failed_jobs: failedJobs.length,
         processing_jobs: processingJobs.length,
         queued_jobs: queuedJobs.length,
-        success_rate_percentage: recentJobs.length > 0
-          ? Math.round((completedJobs.length / recentJobs.length) * 100)
-          : 0,
+        success_rate_percentage:
+          recentJobs.length > 0
+            ? Math.round((completedJobs.length / recentJobs.length) * 100)
+            : 0,
       },
       performance: {
         avg_processing_time_ms: Math.round(avgProcessingTime),
         total_predictions_processed: totalPredictionsProcessed,
-        avg_predictions_per_job: completedJobs.length > 0
-          ? Math.round(totalPredictionsProcessed / completedJobs.length)
-          : 0,
-        estimated_throughput_per_hour: totalPredictionsProcessed > 0 && avgProcessingTime > 0
-          ? Math.round(
-            (totalPredictionsProcessed / avgProcessingTime) * 3_600_000,
-          )
-          : 0,
+        avg_predictions_per_job:
+          completedJobs.length > 0
+            ? Math.round(totalPredictionsProcessed / completedJobs.length)
+            : 0,
+        estimated_throughput_per_hour:
+          totalPredictionsProcessed > 0 && avgProcessingTime > 0
+            ? Math.round(
+                (totalPredictionsProcessed / avgProcessingTime) * 3_600_000,
+              )
+            : 0,
       },
       job_types: {
         daily_predictions: recentJobs.filter(
-          (j) => j.type === 'daily_predictions',
+          (j) => j.type === "daily_predictions",
         ).length,
-        weekly_forecast: recentJobs.filter((j) => j.type === 'weekly_forecast')
+        weekly_forecast: recentJobs.filter((j) => j.type === "weekly_forecast")
           .length,
         intervention_planning: recentJobs.filter(
-          (j) => j.type === 'intervention_planning',
+          (j) => j.type === "intervention_planning",
         ).length,
-        risk_assessment: recentJobs.filter((j) => j.type === 'risk_assessment')
+        risk_assessment: recentJobs.filter((j) => j.type === "risk_assessment")
           .length,
       },
       recent_activity: recentJobs.slice(0, 10).map((job) => ({
@@ -511,9 +525,10 @@ batchPredictionRoutes.get('/analytics', async (c) => {
     return c.json(
       {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Failed to generate analytics',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to generate analytics",
         processing_time_ms: Math.round(processingTime),
       },
       500,
@@ -522,20 +537,20 @@ batchPredictionRoutes.get('/analytics', async (c) => {
 });
 
 // Batch job templates for common scenarios
-batchPredictionRoutes.get('/templates', async (c) => {
+batchPredictionRoutes.get("/templates", async (c) => {
   const templates = {
     daily_morning_predictions: {
-      type: 'daily_predictions',
-      description: 'Predict no-shows for appointments in the next 24 hours',
+      type: "daily_predictions",
+      description: "Predict no-shows for appointments in the next 24 hours",
       parameters: {
         date_range: {
-          start_date: new Date().toISOString().split('T')[0],
+          start_date: new Date().toISOString().split("T")[0],
           end_date: new Date(Date.now() + 24 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0],
+            .split("T")[0],
         },
         filters: {
-          priority_levels: ['high', 'urgent'],
+          priority_levels: ["high", "urgent"],
           min_risk_threshold: 0.3,
         },
         batch_size: 100,
@@ -543,46 +558,48 @@ batchPredictionRoutes.get('/templates', async (c) => {
       },
     },
     weekly_forecast: {
-      type: 'weekly_forecast',
-      description: 'Generate weekly no-show risk forecast for capacity planning',
+      type: "weekly_forecast",
+      description:
+        "Generate weekly no-show risk forecast for capacity planning",
       parameters: {
         date_range: {
-          start_date: new Date().toISOString().split('T')[0],
+          start_date: new Date().toISOString().split("T")[0],
           end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0],
+            .split("T")[0],
         },
         batch_size: 500,
         priority: 3,
       },
     },
     high_risk_intervention: {
-      type: 'intervention_planning',
-      description: 'Identify high-risk appointments needing immediate intervention',
+      type: "intervention_planning",
+      description:
+        "Identify high-risk appointments needing immediate intervention",
       parameters: {
         date_range: {
-          start_date: new Date().toISOString().split('T')[0],
+          start_date: new Date().toISOString().split("T")[0],
           end_date: new Date(Date.now() + 48 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0],
+            .split("T")[0],
         },
         filters: {
           min_risk_threshold: 0.7,
-          priority_levels: ['high', 'urgent'],
+          priority_levels: ["high", "urgent"],
         },
         batch_size: 50,
         priority: 1,
       },
     },
     monthly_risk_assessment: {
-      type: 'risk_assessment',
-      description: 'Comprehensive monthly risk assessment for all appointments',
+      type: "risk_assessment",
+      description: "Comprehensive monthly risk assessment for all appointments",
       parameters: {
         date_range: {
-          start_date: new Date().toISOString().split('T')[0],
+          start_date: new Date().toISOString().split("T")[0],
           end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             .toISOString()
-            .split('T')[0],
+            .split("T")[0],
         },
         batch_size: 200,
         priority: 4,
@@ -593,15 +610,16 @@ batchPredictionRoutes.get('/templates', async (c) => {
   return c.json({
     success: true,
     templates,
-    message: 'Use these templates to quickly create common batch prediction jobs',
+    message:
+      "Use these templates to quickly create common batch prediction jobs",
   });
 });
 
 // Bulk job creation endpoint for creating multiple related jobs
 batchPredictionRoutes.post(
-  '/jobs/bulk',
+  "/jobs/bulk",
   zValidator(
-    'json',
+    "json",
     z.object({
       jobs: z.array(CreateBatchJobSchema).min(1).max(10),
       bulk_operation_id: z.string().optional(),
@@ -611,9 +629,9 @@ batchPredictionRoutes.post(
     const startTime = performance.now();
 
     try {
-      const body = c.req.valid('json');
+      const body = c.req.valid("json");
       const jobIds: string[] = [];
-      const errors: { index: number; error: string; }[] = [];
+      const errors: { index: number; error: string }[] = [];
 
       for (let i = 0; i < body.jobs.length; i++) {
         try {
@@ -621,13 +639,13 @@ batchPredictionRoutes.post(
           const jobId = await batchPredictionService.createBatchJob(
             job.type,
             job.parameters,
-            job.created_by || 'bulk_api_user',
+            job.created_by || "bulk_api_user",
           );
           jobIds.push(jobId);
         } catch (error) {
           errors.push({
             index: i,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -651,9 +669,10 @@ batchPredictionRoutes.post(
       return c.json(
         {
           success: false,
-          error: error instanceof Error
-            ? error.message
-            : 'Failed to create bulk batch jobs',
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to create bulk batch jobs",
           processing_time_ms: Math.round(processingTime),
         },
         500,

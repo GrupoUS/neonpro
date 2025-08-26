@@ -6,17 +6,17 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require('node:path');
-const fs = require('node:fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
-  green: '\u001B[32m',
-  red: '\u001B[31m',
-  yellow: '\u001B[33m',
-  blue: '\u001B[34m',
-  reset: '\u001B[0m',
-  bold: '\u001B[1m',
+  green: "\u001B[32m",
+  red: "\u001B[31m",
+  yellow: "\u001B[33m",
+  blue: "\u001B[34m",
+  reset: "\u001B[0m",
+  bold: "\u001B[1m",
 };
 
 function log(_message, _color = colors.reset) {}
@@ -38,23 +38,23 @@ function logError(message) {
 }
 
 async function validateMigrationFiles() {
-  logHeader('Migration Files Validation');
+  logHeader("Migration Files Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
 
     if (!fs.existsSync(migrationsPath)) {
-      logError('Supabase migrations directory not found');
+      logError("Supabase migrations directory not found");
       return false;
     }
 
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'))
+      .filter((file) => file.endsWith(".sql"))
       .sort();
 
     if (migrationFiles.length === 0) {
-      logError('No migration files found');
+      logError("No migration files found");
       return false;
     }
 
@@ -81,40 +81,40 @@ async function validateMigrationFiles() {
 }
 
 async function validateHealthcareTables() {
-  logHeader('Healthcare Tables Schema Validation');
+  logHeader("Healthcare Tables Schema Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     // Required healthcare tables
     const requiredTables = [
-      'clinics',
-      'patients',
-      'healthcare_professionals',
-      'medical_specialties',
-      'consent_records',
-      'data_subject_requests',
-      'activity_logs',
-      'data_access_logs',
-      'security_events',
-      'compliance_checks',
-      'data_retention_policies',
+      "clinics",
+      "patients",
+      "healthcare_professionals",
+      "medical_specialties",
+      "consent_records",
+      "data_subject_requests",
+      "activity_logs",
+      "data_access_logs",
+      "security_events",
+      "compliance_checks",
+      "data_retention_policies",
     ];
 
     const foundTables = new Set();
 
     // Check each migration file for table definitions
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
       for (const table of requiredTables) {
         if (
-          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`)
-          || content.includes(`CREATE TABLE ${table}`)
-          || content.includes(`ALTER TABLE ${table}`)
+          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) ||
+          content.includes(`CREATE TABLE ${table}`) ||
+          content.includes(`ALTER TABLE ${table}`)
         ) {
           foundTables.add(table);
         }
@@ -153,13 +153,13 @@ async function validateHealthcareTables() {
 }
 
 async function validateRLSPolicies() {
-  logHeader('Row Level Security (RLS) Policies Validation');
+  logHeader("Row Level Security (RLS) Policies Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     let hasRLSEnable = false;
     let policyCount = 0;
@@ -167,10 +167,10 @@ async function validateRLSPolicies() {
 
     // Check for RLS and policies in migration files
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
       // Check for RLS enablement
-      if (content.includes('ENABLE ROW LEVEL SECURITY')) {
+      if (content.includes("ENABLE ROW LEVEL SECURITY")) {
         hasRLSEnable = true;
         logSuccess(`RLS enablement found in: ${file}`);
       }
@@ -188,7 +188,7 @@ async function validateRLSPolicies() {
     }
 
     if (!hasRLSEnable) {
-      logError('Row Level Security not enabled on tables');
+      logError("Row Level Security not enabled on tables");
       return false;
     }
 
@@ -211,13 +211,13 @@ async function validateRLSPolicies() {
 }
 
 async function validateHealthcareCompliance() {
-  logHeader('Healthcare Compliance Features Validation');
+  logHeader("Healthcare Compliance Features Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     const complianceFeatures = {
       anvisa_license: false,
@@ -230,33 +230,33 @@ async function validateHealthcareCompliance() {
 
     // Check for compliance features in migration files
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
-      if (content.includes('anvisa_license')) {
+      if (content.includes("anvisa_license")) {
         complianceFeatures.anvisa_license = true;
       }
-      if (content.includes('cfm_registration')) {
+      if (content.includes("cfm_registration")) {
         complianceFeatures.cfm_registration = true;
       }
       if (
-        content.includes('consent_records')
-        || content.includes('lgpd_consent')
+        content.includes("consent_records") ||
+        content.includes("lgpd_consent")
       ) {
         complianceFeatures.lgpd_consent = true;
       }
-      if (content.includes('activity_logs') || content.includes('audit')) {
+      if (content.includes("activity_logs") || content.includes("audit")) {
         complianceFeatures.audit_trail = true;
       }
       if (
-        content.includes('data_retention_policies')
-        || content.includes('retention_period')
+        content.includes("data_retention_policies") ||
+        content.includes("retention_period")
       ) {
         complianceFeatures.data_retention = true;
       }
       if (
-        content.includes('encrypted')
-        || content.includes('hash')
-        || content.includes('pgp_sym_encrypt')
+        content.includes("encrypted") ||
+        content.includes("hash") ||
+        content.includes("pgp_sym_encrypt")
       ) {
         complianceFeatures.encryption_fields = true;
       }
@@ -288,20 +288,20 @@ async function validateHealthcareCompliance() {
 }
 
 async function validateIndexes() {
-  logHeader('Database Indexes Validation');
+  logHeader("Database Indexes Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     let indexCount = 0;
     const foundIndexes = [];
 
     // Check for indexes in migration files
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
       const indexMatches = content.match(
         /CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)/gi,
@@ -331,20 +331,20 @@ async function validateIndexes() {
 }
 
 async function validateTriggers() {
-  logHeader('Database Triggers Validation');
+  logHeader("Database Triggers Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     let triggerCount = 0;
     const foundTriggers = [];
 
     // Check for triggers in migration files
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
       const triggerMatches = content.match(/CREATE\s+TRIGGER\s+(\w+)/gi);
       if (triggerMatches) {
@@ -359,10 +359,10 @@ async function validateTriggers() {
     // Check for update_updated_at triggers (common pattern)
     let hasUpdatedAtTriggers = false;
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
       if (
-        content.includes('update_updated_at_column')
-        || content.includes('updated_at')
+        content.includes("update_updated_at_column") ||
+        content.includes("updated_at")
       ) {
         hasUpdatedAtTriggers = true;
         break;
@@ -370,10 +370,10 @@ async function validateTriggers() {
     }
 
     if (hasUpdatedAtTriggers) {
-      logSuccess('Updated_at triggers found - good for audit trails');
+      logSuccess("Updated_at triggers found - good for audit trails");
     } else {
       logWarning(
-        'No updated_at triggers found - consider adding for audit trails',
+        "No updated_at triggers found - consider adding for audit trails",
       );
     }
 
@@ -386,19 +386,19 @@ async function validateTriggers() {
 }
 
 async function validateForeignKeys() {
-  logHeader('Foreign Key Constraints Validation');
+  logHeader("Foreign Key Constraints Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     let foreignKeyCount = 0;
 
     // Check for foreign key references
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
       // Count REFERENCES clauses
       const fkMatches = content.match(/REFERENCES\s+\w+\s*\(\s*\w+\s*\)/gi);
@@ -428,14 +428,14 @@ async function validateForeignKeys() {
 }
 
 async function validateSupabaseConfig() {
-  logHeader('Supabase Configuration Validation');
+  logHeader("Supabase Configuration Validation");
 
   try {
     // Check for Supabase config files
     const configFiles = [
-      'supabase/config.toml',
-      '.env.local.example',
-      '.env.example',
+      "supabase/config.toml",
+      ".env.local.example",
+      ".env.example",
     ];
 
     let foundConfigs = 0;
@@ -452,18 +452,18 @@ async function validateSupabaseConfig() {
 
     // Check package.json for Supabase dependency
     const packageJsonPaths = [
-      path.resolve(process.cwd(), 'apps/web/package.json'),
-      path.resolve(process.cwd(), 'package.json'),
+      path.resolve(process.cwd(), "apps/web/package.json"),
+      path.resolve(process.cwd(), "package.json"),
     ];
 
     let hasSupabaseDep = false;
 
     for (const packagePath of packageJsonPaths) {
       if (fs.existsSync(packagePath)) {
-        const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+        const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
         if (
-          packageJson.dependencies?.['@supabase/supabase-js']
-          || packageJson.devDependencies?.['@supabase/supabase-js']
+          packageJson.dependencies?.["@supabase/supabase-js"] ||
+          packageJson.devDependencies?.["@supabase/supabase-js"]
         ) {
           hasSupabaseDep = true;
           logSuccess(`Supabase dependency found in ${packagePath}`);
@@ -473,7 +473,7 @@ async function validateSupabaseConfig() {
     }
 
     if (!hasSupabaseDep) {
-      logError('Supabase JavaScript client dependency not found');
+      logError("Supabase JavaScript client dependency not found");
       return false;
     }
 
@@ -485,12 +485,12 @@ async function validateSupabaseConfig() {
 }
 
 async function validateEnvironmentVariables() {
-  logHeader('Environment Variables Validation');
+  logHeader("Environment Variables Validation");
 
   const requiredEnvVars = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   ];
 
   const allValid = true;
@@ -508,18 +508,18 @@ async function validateEnvironmentVariables() {
 }
 
 async function runSupabaseValidation() {
-  logHeader('Supabase Database Schema Validation Suite');
+  logHeader("Supabase Database Schema Validation Suite");
 
   const validations = [
-    { name: 'Migration Files', fn: validateMigrationFiles },
-    { name: 'Healthcare Tables', fn: validateHealthcareTables },
-    { name: 'RLS Policies', fn: validateRLSPolicies },
-    { name: 'Healthcare Compliance', fn: validateHealthcareCompliance },
-    { name: 'Database Indexes', fn: validateIndexes },
-    { name: 'Database Triggers', fn: validateTriggers },
-    { name: 'Foreign Key Constraints', fn: validateForeignKeys },
-    { name: 'Supabase Configuration', fn: validateSupabaseConfig },
-    { name: 'Environment Variables', fn: validateEnvironmentVariables },
+    { name: "Migration Files", fn: validateMigrationFiles },
+    { name: "Healthcare Tables", fn: validateHealthcareTables },
+    { name: "RLS Policies", fn: validateRLSPolicies },
+    { name: "Healthcare Compliance", fn: validateHealthcareCompliance },
+    { name: "Database Indexes", fn: validateIndexes },
+    { name: "Database Triggers", fn: validateTriggers },
+    { name: "Foreign Key Constraints", fn: validateForeignKeys },
+    { name: "Supabase Configuration", fn: validateSupabaseConfig },
+    { name: "Environment Variables", fn: validateEnvironmentVariables },
   ];
 
   let allPassed = true;
@@ -549,14 +549,14 @@ async function runSupabaseValidation() {
   }
 
   // Summary
-  logHeader('Supabase Validation Summary');
+  logHeader("Supabase Validation Summary");
 
   results.forEach((result) => {
     if (result.passed) {
       logSuccess(`${result.name}: PASSED`);
     } else {
       logError(
-        `${result.name}: FAILED${result.error ? ` (${result.error})` : ''}`,
+        `${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
       );
     }
   });

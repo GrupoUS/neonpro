@@ -1,4 +1,4 @@
-import type { AnalyticsData, CohortData, ExportData } from '@/types/analytics';
+import type { AnalyticsData, CohortData, ExportData } from "@/types/analytics";
 
 // Mock Analytics Data
 export const mockAnalyticsData: AnalyticsData = {
@@ -9,14 +9,14 @@ export const mockAnalyticsData: AnalyticsData = {
   monthlyGrowth: 0.15,
   trends: {
     patients: [
-      { date: '2024-01-01', value: 100 },
-      { date: '2024-02-01', value: 120 },
-      { date: '2024-03-01', value: 150 },
+      { date: "2024-01-01", value: 100 },
+      { date: "2024-02-01", value: 120 },
+      { date: "2024-03-01", value: 150 },
     ],
     revenue: [
-      { date: '2024-01-01', value: 10_000 },
-      { date: '2024-02-01', value: 12_000 },
-      { date: '2024-03-01', value: 15_000 },
+      { date: "2024-01-01", value: 10_000 },
+      { date: "2024-02-01", value: 12_000 },
+      { date: "2024-03-01", value: 15_000 },
     ],
   },
 };
@@ -24,13 +24,13 @@ export const mockAnalyticsData: AnalyticsData = {
 // Mock Cohort Data
 export const mockCohortData: CohortData[] = [
   {
-    cohort: '2024-01',
+    cohort: "2024-01",
     totalPatients: 100,
     retentionRates: [1, 0.8, 0.6, 0.5, 0.4],
     monthlyRevenue: [5000, 4000, 3000, 2500, 2000],
   },
   {
-    cohort: '2024-02',
+    cohort: "2024-02",
     totalPatients: 120,
     retentionRates: [1, 0.85, 0.65, 0.55, 0.45],
     monthlyRevenue: [6000, 5100, 3900, 3300, 2700],
@@ -39,19 +39,19 @@ export const mockCohortData: CohortData[] = [
 
 // Mock Export Data
 export const mockExportData: ExportData = {
-  reportId: 'test-report-123',
-  title: 'Test Analytics Report',
-  generatedAt: new Date('2024-01-15T10:00:00Z'),
+  reportId: "test-report-123",
+  title: "Test Analytics Report",
+  generatedAt: new Date("2024-01-15T10:00:00Z"),
   period: {
-    start: new Date('2024-01-01T00:00:00Z'),
-    end: new Date('2024-01-31T23:59:59Z'),
+    start: new Date("2024-01-01T00:00:00Z"),
+    end: new Date("2024-01-31T23:59:59Z"),
   },
   data: mockAnalyticsData,
   cohorts: mockCohortData,
   filters: {
-    dateRange: { start: '2024-01-01', end: '2024-01-31' },
-    treatments: ['facial', 'botox'],
-    status: 'active',
+    dateRange: { start: "2024-01-01", end: "2024-01-31" },
+    treatments: ["facial", "botox"],
+    status: "active",
   },
 };
 
@@ -61,39 +61,39 @@ export const mockSupabaseResponse = {
   error: undefined,
   count: undefined,
   status: 200,
-  statusText: 'OK',
+  statusText: "OK",
 };
 
 // Mock Error Response
 export const mockErrorResponse = {
   data: undefined,
   error: {
-    message: 'Database connection failed',
-    details: 'Connection timeout',
-    hint: 'Check your network connection',
-    code: 'DB_CONNECTION_ERROR',
+    message: "Database connection failed",
+    details: "Connection timeout",
+    hint: "Check your network connection",
+    code: "DB_CONNECTION_ERROR",
   },
   count: undefined,
   status: 500,
-  statusText: 'Internal Server Error',
+  statusText: "Internal Server Error",
 };
 
 // Mock User for Testing
 export const mockUser = {
-  id: 'user-123',
-  email: 'test@neonpro.com',
-  role: 'admin',
-  clinic_id: 'clinic-456',
-  created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
+  id: "user-123",
+  email: "test@neonpro.com",
+  role: "admin",
+  clinic_id: "clinic-456",
+  created_at: "2024-01-01T00:00:00Z",
+  updated_at: "2024-01-01T00:00:00Z",
 };
 
 // Mock Session
 export const mockSession = {
-  access_token: 'mock-access-token',
-  refresh_token: 'mock-refresh-token',
+  access_token: "mock-access-token",
+  refresh_token: "mock-refresh-token",
   expires_in: 3600,
   expires_at: Date.now() + 3_600_000,
-  token_type: 'bearer',
+  token_type: "bearer",
   user: mockUser,
 };

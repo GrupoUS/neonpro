@@ -4,9 +4,9 @@
  * Otimizado para ambiente healthcare com alta disponibilidade
  */
 
-import type { Database } from '@neonpro/db';
-import { createClient } from '@supabase/supabase-js';
-import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from "@neonpro/db";
+import { createClient } from "@supabase/supabase-js";
+import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 
 export interface ConnectionConfig {
   url: string;
@@ -30,7 +30,7 @@ export interface ChannelSubscription {
     table?: string;
     schema?: string;
     filter?: string;
-    event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*';
+    event?: "INSERT" | "UPDATE" | "DELETE" | "*";
   };
 }
 
@@ -99,19 +99,20 @@ export class SupabaseRealtimeManager {
 
     try {
       // Setup connection event handlers using a monitoring channel
-      const monitorChannel = this.client.channel('system_monitor');
+      const monitorChannel = this.client.channel("system_monitor");
 
       monitorChannel.subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
+        if (status === "SUBSCRIBED") {
           this.handleConnectionOpen();
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
           this.handleConnectionError(new Error(`Connection status: ${status}`));
-        } else if (status === 'CLOSED') {
+        } else if (status === "CLOSED") {
           this.handleConnectionClose();
         }
       });
 
-      if (this.config.enableLogging) {}
+      if (this.config.enableLogging) {
+      }
     } catch (error) {
       this.handleConnectionError(error as Error);
     }
@@ -129,7 +130,8 @@ export class SupabaseRealtimeManager {
       healthScore: 100,
     };
 
-    if (this.config.enableLogging) {}
+    if (this.config.enableLogging) {
+    }
 
     // Resubscribe to all channels
     this.resubscribeAllChannels();
@@ -152,7 +154,8 @@ export class SupabaseRealtimeManager {
       healthScore: 0,
     };
 
-    if (this.config.enableLogging) {}
+    if (this.config.enableLogging) {
+    }
 
     this.markAllChannelsInactive();
     this.notifyStatusListeners();
@@ -165,7 +168,8 @@ export class SupabaseRealtimeManager {
   private handleConnectionError(_error: Error): void {
     this.connectionStatus.totalRetries++;
 
-    if (this.config.enableLogging) {}
+    if (this.config.enableLogging) {
+    }
 
     // Calculate health score based on errors
     this.updateHealthScore();
@@ -194,7 +198,8 @@ export class SupabaseRealtimeManager {
       this.initializeConnection();
     }, delay);
 
-    if (this.config.enableLogging) {}
+    if (this.config.enableLogging) {
+    }
   }
 
   /**
@@ -210,12 +215,12 @@ export class SupabaseRealtimeManager {
    * Setup window focus/blur handlers for reconnection
    */
   private setupVisibilityHandlers(): void {
-    if (typeof window === 'undefined' || !this.config.reconnectOnFocus) {
+    if (typeof window === "undefined" || !this.config.reconnectOnFocus) {
       return;
     }
 
-    window.addEventListener('focus', this.handleWindowFocus.bind(this));
-    window.addEventListener('blur', this.handleWindowBlur.bind(this));
+    window.addEventListener("focus", this.handleWindowFocus.bind(this));
+    window.addEventListener("blur", this.handleWindowBlur.bind(this));
   } /**
    * Subscribe to a realtime channel
    */
@@ -226,7 +231,7 @@ export class SupabaseRealtimeManager {
       table?: string;
       schema?: string;
       filter?: string;
-      event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*';
+      event?: "INSERT" | "UPDATE" | "DELETE" | "*";
     },
     callback: (payload: T) => void,
   ): () => void {
@@ -273,7 +278,7 @@ export class SupabaseRealtimeManager {
       table?: string;
       schema?: string;
       filter?: string;
-      event?: 'INSERT' | 'UPDATE' | 'DELETE' | '*';
+      event?: "INSERT" | "UPDATE" | "DELETE" | "*";
     },
   ): void {
     const { channel, callbacks } = subscription;
@@ -281,10 +286,10 @@ export class SupabaseRealtimeManager {
     // Setup postgres changes listener with configuration
     if (config?.table) {
       channel.on(
-        'postgres_changes' as any,
+        "postgres_changes" as any,
         {
-          event: config.event || '*',
-          schema: config.schema || 'public',
+          event: config.event || "*",
+          schema: config.schema || "public",
           table: config.table,
           filter: config.filter,
         },
@@ -299,8 +304,8 @@ export class SupabaseRealtimeManager {
     } else {
       // Setup generic postgres changes listener for backwards compatibility
       channel.on(
-        'postgres_changes' as any,
-        { event: '*', schema: 'public' },
+        "postgres_changes" as any,
+        { event: "*", schema: "public" },
         (payload: any) => {
           callbacks.forEach((callback) => {
             try {
@@ -313,12 +318,12 @@ export class SupabaseRealtimeManager {
 
     // Subscribe to channel
     channel.subscribe((status) => {
-      subscription.isActive = status === 'SUBSCRIBED';
+      subscription.isActive = status === "SUBSCRIBED";
 
-      if (status === 'SUBSCRIBED') {
+      if (status === "SUBSCRIBED") {
         subscription.retryCount = 0;
         this.connectionStatus.activeChannels = this.subscriptions.size;
-      } else if (status === 'CHANNEL_ERROR') {
+      } else if (status === "CHANNEL_ERROR") {
         this.handleChannelError(subscription);
       }
 
@@ -354,7 +359,8 @@ export class SupabaseRealtimeManager {
       `Channel ${subscription.channelName} error`,
     );
 
-    if (this.config.enableLogging) {}
+    if (this.config.enableLogging) {
+    }
 
     // Retry channel subscription if under limit
     if (subscription.retryCount < this.config.maxRetries) {
@@ -407,8 +413,8 @@ export class SupabaseRealtimeManager {
 
     const maxScore = 100;
     const retryPenalty = this.connectionStatus.totalRetries * 10;
-    const inactiveChannelPenalty = (this.subscriptions.size - this.connectionStatus.activeChannels)
-      * 5;
+    const inactiveChannelPenalty =
+      (this.subscriptions.size - this.connectionStatus.activeChannels) * 5;
 
     return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty);
   }
@@ -506,9 +512,9 @@ export class SupabaseRealtimeManager {
     this.client.realtime.disconnect();
 
     // Remove event listeners
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('focus', this.handleWindowFocus.bind(this));
-      window.removeEventListener('blur', this.handleWindowBlur.bind(this));
+    if (typeof window !== "undefined") {
+      window.removeEventListener("focus", this.handleWindowFocus.bind(this));
+      window.removeEventListener("blur", this.handleWindowBlur.bind(this));
     }
 
     // Clear status listeners
@@ -544,13 +550,13 @@ export class SupabaseRealtimeManager {
  * Default configuration for healthcare applications
  */
 export const DEFAULT_CONFIG: ConnectionConfig = {
-  url: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+  url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
   maxRetries: 5,
   retryDelay: 1000, // 1 second base delay
   heartbeatInterval: 30_000, // 30 seconds
   reconnectOnFocus: true,
-  enableLogging: process.env.NODE_ENV === 'development',
+  enableLogging: process.env.NODE_ENV === "development",
 };
 
 /**

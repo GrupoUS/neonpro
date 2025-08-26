@@ -150,7 +150,7 @@ PERSISTENCE_ENABLED=true
 ### Configuração Básica
 
 ```typescript
-import { createNotificationSystem } from '@/lib/notifications';
+import { createNotificationSystem } from "@/lib/notifications";
 
 const notifications = createNotificationSystem({
   features: {
@@ -165,14 +165,14 @@ const notifications = createNotificationSystem({
 ### Configuração Avançada
 
 ```typescript
-import { NotificationSystemConfig } from '@/lib/notifications/config';
+import { NotificationSystemConfig } from "@/lib/notifications/config";
 
 const config: NotificationSystemConfig = {
   email: {
-    provider: 'resend',
+    provider: "resend",
     apiKey: process.env.EMAIL_API_KEY!,
-    fromEmail: 'noreply@neonpro.com.br',
-    fromName: 'NeonPro',
+    fromEmail: "noreply@neonpro.com.br",
+    fromName: "NeonPro",
   },
   rateLimits: {
     EMAIL: { perMinute: 100, perHour: 1000, perDay: 10000 },
@@ -186,18 +186,18 @@ const config: NotificationSystemConfig = {
 ### Enviar Notificação Simples
 
 ```typescript
-import { notificationManager } from '@/lib/notifications';
+import { notificationManager } from "@/lib/notifications";
 
 // Notificação simples
 await notificationManager.send({
   type: NotificationType.APPOINTMENT,
   channel: NotificationChannel.EMAIL,
   recipient: {
-    id: 'user-123',
-    email: 'user@example.com',
+    id: "user-123",
+    email: "user@example.com",
   },
-  subject: 'Lembrete de Consulta',
-  content: 'Sua consulta é amanhã às 14:00',
+  subject: "Lembrete de Consulta",
+  content: "Sua consulta é amanhã às 14:00",
 });
 ```
 
@@ -206,17 +206,17 @@ await notificationManager.send({
 ```typescript
 // Com template
 await notificationManager.sendFromTemplate({
-  templateId: 'appointment-reminder',
+  templateId: "appointment-reminder",
   channel: NotificationChannel.SMS,
   recipient: {
-    id: 'patient-456',
-    phone: '+5511999999999',
+    id: "patient-456",
+    phone: "+5511999999999",
   },
   variables: {
-    'patient.firstName': 'João',
-    'appointment.time': '14:00',
-    'appointment.date': '2024-01-15',
-    'doctor.name': 'Dr. Silva',
+    "patient.firstName": "João",
+    "appointment.time": "14:00",
+    "appointment.date": "2024-01-15",
+    "doctor.name": "Dr. Silva",
   },
 });
 ```
@@ -226,16 +226,16 @@ await notificationManager.sendFromTemplate({
 ```typescript
 // Enviar para múltiplos canais
 await notificationManager.sendMultiChannel({
-  templateId: 'payment-confirmation',
+  templateId: "payment-confirmation",
   channels: [NotificationChannel.EMAIL, NotificationChannel.SMS],
   recipient: {
-    id: 'user-789',
-    email: 'user@example.com',
-    phone: '+5511888888888',
+    id: "user-789",
+    email: "user@example.com",
+    phone: "+5511888888888",
   },
   variables: {
-    'payment.amount': 'R$ 150,00',
-    'payment.reference': 'PAY-123456',
+    "payment.amount": "R$ 150,00",
+    "payment.reference": "PAY-123456",
   },
 });
 ```
@@ -319,14 +319,14 @@ const inAppConfig = {
 ### Criar Template
 
 ```typescript
-import { templateEngine } from '@/lib/notifications';
+import { templateEngine } from "@/lib/notifications";
 
 const template = await templateEngine.createTemplate({
-  name: 'welcome',
-  description: 'Boas-vindas para novos usuários',
+  name: "welcome",
+  description: "Boas-vindas para novos usuários",
   type: NotificationType.SYSTEM,
   channels: [NotificationChannel.EMAIL, NotificationChannel.IN_APP],
-  subject: 'Bem-vindo ao NeonPro!',
+  subject: "Bem-vindo ao NeonPro!",
   content: `
     Olá {{user.firstName}},
     
@@ -339,7 +339,7 @@ const template = await templateEngine.createTemplate({
     Atenciosamente,
     Equipe NeonPro
   `,
-  variables: ['user.firstName', 'user.isFirstTime'],
+  variables: ["user.firstName", "user.isFirstTime"],
 });
 ```
 
@@ -377,31 +377,31 @@ const template = await templateEngine.createTemplate({
 ### Criar Regra de Automação
 
 ```typescript
-import { automationEngine } from '@/lib/notifications';
+import { automationEngine } from "@/lib/notifications";
 
 const rule = await automationEngine.createRule({
-  name: 'Lembrete de Consulta',
-  description: 'Enviar lembrete 24h antes da consulta',
+  name: "Lembrete de Consulta",
+  description: "Enviar lembrete 24h antes da consulta",
   trigger: {
-    type: 'SCHEDULE',
+    type: "SCHEDULE",
     config: {
-      event: 'appointment.created',
-      delay: '-24h', // 24 horas antes
+      event: "appointment.created",
+      delay: "-24h", // 24 horas antes
     },
   },
   conditions: [
     {
-      field: 'appointment.status',
-      operator: 'equals',
-      value: 'confirmed',
+      field: "appointment.status",
+      operator: "equals",
+      value: "confirmed",
     },
   ],
   actions: [
     {
-      type: 'SEND_NOTIFICATION',
+      type: "SEND_NOTIFICATION",
       config: {
-        templateId: 'appointment-reminder',
-        channels: ['SMS', 'PUSH'],
+        templateId: "appointment-reminder",
+        channels: ["SMS", "PUSH"],
       },
     },
   ],
@@ -412,17 +412,17 @@ const rule = await automationEngine.createRule({
 
 ```typescript
 // Eventos do sistema
-'user.created'; // Usuário criado
-'appointment.created'; // Consulta agendada
-'appointment.updated'; // Consulta alterada
-'payment.completed'; // Pagamento confirmado
-'alert.triggered'; // Alerta disparado
+"user.created"; // Usuário criado
+"appointment.created"; // Consulta agendada
+"appointment.updated"; // Consulta alterada
+"payment.completed"; // Pagamento confirmado
+"alert.triggered"; // Alerta disparado
 
 // Agendamentos
-'schedule.daily'; // Diário
-'schedule.weekly'; // Semanal
-'schedule.monthly'; // Mensal
-'schedule.custom'; // Personalizado
+"schedule.daily"; // Diário
+"schedule.weekly"; // Semanal
+"schedule.monthly"; // Mensal
+"schedule.custom"; // Personalizado
 ```
 
 ## 📊 Analytics
@@ -439,22 +439,22 @@ import { NotificationDashboard } from '@/components/notifications';
 ### Métricas Programáticas
 
 ```typescript
-import { notificationManager } from '@/lib/notifications';
+import { notificationManager } from "@/lib/notifications";
 
 // Estatísticas gerais
 const stats = await notificationManager.getStats({
-  startDate: '2024-01-01',
-  endDate: '2024-01-31',
-  groupBy: 'channel',
+  startDate: "2024-01-01",
+  endDate: "2024-01-31",
+  groupBy: "channel",
 });
 
 // Métricas por canal
-const channelStats = await notificationManager.getChannelStats('EMAIL');
+const channelStats = await notificationManager.getChannelStats("EMAIL");
 
 // Taxa de entrega
 const deliveryRate = await notificationManager.getDeliveryRate({
-  channel: 'SMS',
-  period: 'last_30_days',
+  channel: "SMS",
+  period: "last_30_days",
 });
 ```
 
@@ -522,14 +522,18 @@ class TemplateEngine {
 ### Exemplo Completo: Sistema de Lembretes
 
 ```typescript
-import { automationEngine, notificationManager, templateEngine } from '@/lib/notifications';
+import {
+  automationEngine,
+  notificationManager,
+  templateEngine,
+} from "@/lib/notifications";
 
 // 1. Criar template
 const reminderTemplate = await templateEngine.createTemplate({
-  name: 'appointment-reminder-24h',
+  name: "appointment-reminder-24h",
   type: NotificationType.APPOINTMENT,
   channels: [NotificationChannel.SMS, NotificationChannel.PUSH],
-  subject: 'Lembrete: Consulta amanhã',
+  subject: "Lembrete: Consulta amanhã",
   content: `
     Olá {{patient.firstName}},
     
@@ -542,43 +546,43 @@ const reminderTemplate = await templateEngine.createTemplate({
     Em caso de dúvidas, entre em contato conosco.
   `,
   variables: [
-    'patient.firstName',
-    'appointment.date',
-    'appointment.time',
-    'doctor.name',
-    'appointment.location',
+    "patient.firstName",
+    "appointment.date",
+    "appointment.time",
+    "doctor.name",
+    "appointment.location",
   ],
 });
 
 // 2. Criar regra de automação
 const reminderRule = await automationEngine.createRule({
-  name: 'Lembrete 24h Antes',
+  name: "Lembrete 24h Antes",
   trigger: {
-    type: 'EVENT',
+    type: "EVENT",
     config: {
-      event: 'appointment.confirmed',
-      delay: '-24h',
+      event: "appointment.confirmed",
+      delay: "-24h",
     },
   },
   conditions: [
     {
-      field: 'appointment.status',
-      operator: 'equals',
-      value: 'confirmed',
+      field: "appointment.status",
+      operator: "equals",
+      value: "confirmed",
     },
     {
-      field: 'patient.preferences.reminders',
-      operator: 'equals',
+      field: "patient.preferences.reminders",
+      operator: "equals",
       value: true,
     },
   ],
   actions: [
     {
-      type: 'SEND_NOTIFICATION',
+      type: "SEND_NOTIFICATION",
       config: {
         templateId: reminderTemplate.id,
-        channels: ['SMS', 'PUSH'],
-        priority: 'HIGH',
+        channels: ["SMS", "PUSH"],
+        priority: "HIGH",
       },
     },
   ],
@@ -586,26 +590,26 @@ const reminderRule = await automationEngine.createRule({
 
 // 3. Simular evento de consulta confirmada
 const appointment = {
-  id: 'apt-123',
-  patientId: 'patient-456',
-  doctorId: 'doctor-789',
-  date: '2024-01-16',
-  time: '14:00',
-  status: 'confirmed',
-  location: 'Consultório 1',
+  id: "apt-123",
+  patientId: "patient-456",
+  doctorId: "doctor-789",
+  date: "2024-01-16",
+  time: "14:00",
+  status: "confirmed",
+  location: "Consultório 1",
 };
 
 // Disparar automação
-await automationEngine.trigger('appointment.confirmed', {
+await automationEngine.trigger("appointment.confirmed", {
   appointment,
   patient: {
-    id: 'patient-456',
-    firstName: 'João',
+    id: "patient-456",
+    firstName: "João",
     preferences: { reminders: true },
   },
   doctor: {
-    id: 'doctor-789',
-    name: 'Dr. Silva',
+    id: "doctor-789",
+    name: "Dr. Silva",
   },
 });
 ```
@@ -632,35 +636,35 @@ const logs = await notificationManager.getLogs({
 
 ```typescript
 // Testar template
-const result = await templateEngine.render('template-id', {
-  'user.firstName': 'João',
+const result = await templateEngine.render("template-id", {
+  "user.firstName": "João",
 });
-console.log('Template renderizado:', result);
+console.log("Template renderizado:", result);
 ```
 
 #### 3. Rate limiting
 
 ```typescript
 // Verificar limites
-const limit = getRateLimit(config, NotificationChannel.EMAIL, 'minute');
-console.log('Limite por minuto:', limit);
+const limit = getRateLimit(config, NotificationChannel.EMAIL, "minute");
+console.log("Limite por minuto:", limit);
 
 // Verificar uso atual
-const usage = await notificationManager.getRateLimitUsage('EMAIL');
-console.log('Uso atual:', usage);
+const usage = await notificationManager.getRateLimitUsage("EMAIL");
+console.log("Uso atual:", usage);
 ```
 
 ### Logs e Debugging
 
 ```typescript
 // Habilitar logs detalhados
-process.env.LOG_LEVEL = 'debug';
+process.env.LOG_LEVEL = "debug";
 
 // Modo de teste
-process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = "test";
 
 // Mock providers
-process.env.MOCK_PROVIDERS = 'true';
+process.env.MOCK_PROVIDERS = "true";
 ```
 
 ### Monitoramento de Saúde
@@ -668,11 +672,11 @@ process.env.MOCK_PROVIDERS = 'true';
 ```typescript
 // Verificar saúde dos canais
 const health = await notificationManager.getChannelHealth();
-console.log('Saúde dos canais:', health);
+console.log("Saúde dos canais:", health);
 
 // Verificar conectividade
 const connectivity = await notificationManager.testConnectivity();
-console.log('Conectividade:', connectivity);
+console.log("Conectividade:", connectivity);
 ```
 
 ## 🚀 Próximos Passos

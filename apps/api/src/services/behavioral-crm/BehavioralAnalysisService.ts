@@ -5,7 +5,7 @@
 // Features: Real-time scoring, pattern detection, predictive modeling
 // =============================================================================
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from "@/lib/supabase";
 
 // =============================================================================
 // TYPES & INTERFACES
@@ -21,14 +21,14 @@ export interface PatientBehaviorProfile {
     compliance: number; // 0-100: Treatment adherence
   };
   patterns: {
-    communicationStyle: 'formal' | 'casual' | 'direct' | 'detailed';
-    responseTime: 'immediate' | 'hours' | 'days' | 'delayed';
-    preferredChannel: 'whatsapp' | 'email' | 'phone' | 'sms';
-    appointmentBehavior: 'punctual' | 'early' | 'late' | 'reschedules';
+    communicationStyle: "formal" | "casual" | "direct" | "detailed";
+    responseTime: "immediate" | "hours" | "days" | "delayed";
+    preferredChannel: "whatsapp" | "email" | "phone" | "sms";
+    appointmentBehavior: "punctual" | "early" | "late" | "reschedules";
     seasonalTrends: string[];
   };
-  personalityType: 'analytical' | 'expressive' | 'driver' | 'amiable';
-  segment: 'vip' | 'loyal' | 'at-risk' | 'new' | 'inactive';
+  personalityType: "analytical" | "expressive" | "driver" | "amiable";
+  segment: "vip" | "loyal" | "at-risk" | "new" | "inactive";
   lifetimeValue: number;
   lastAnalyzed: Date;
 }
@@ -36,24 +36,24 @@ export interface PatientBehaviorProfile {
 export interface BehavioralEvent {
   patientId: string;
   eventType:
-    | 'appointment'
-    | 'communication'
-    | 'treatment'
-    | 'payment'
-    | 'referral';
+    | "appointment"
+    | "communication"
+    | "treatment"
+    | "payment"
+    | "referral";
   eventSubtype: string;
   timestamp: Date;
-  outcome: 'positive' | 'neutral' | 'negative';
+  outcome: "positive" | "neutral" | "negative";
   metadata: Record<string, any>;
   impact: number; // -100 to +100
 }
 
 export interface MLInsight {
-  type: 'pattern' | 'anomaly' | 'prediction' | 'opportunity';
+  type: "pattern" | "anomaly" | "prediction" | "opportunity";
   confidence: number; // 0-100
   description: string;
   actionable: boolean;
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
   recommendedActions: string[];
 }
 
@@ -127,7 +127,7 @@ export class BehavioralAnalysisService {
 
       return profile;
     } catch {
-      throw new Error('Failed to analyze patient behavior');
+      throw new Error("Failed to analyze patient behavior");
     }
   }
 
@@ -149,9 +149,10 @@ export class BehavioralAnalysisService {
       try {
         const chunkResults = await Promise.allSettled(chunkPromises);
         chunkResults.forEach((result, _index) => {
-          if (result.status === 'fulfilled') {
+          if (result.status === "fulfilled") {
             results.push(result.value);
-          } else {}
+          } else {
+          }
         });
       } catch {}
     }
@@ -166,7 +167,7 @@ export class BehavioralAnalysisService {
   private async calculateBehavioralScores(
     _patientId: string,
     events: BehavioralEvent[],
-  ): Promise<PatientBehaviorProfile['scores']> {
+  ): Promise<PatientBehaviorProfile["scores"]> {
     // Base scores
     let engagementScore = 50;
     let loyaltyScore = 50;
@@ -181,11 +182,11 @@ export class BehavioralAnalysisService {
 
     // Engagement Analysis
     const communicationEvents = recentEvents.filter(
-      (e) => e.eventType === 'communication',
+      (e) => e.eventType === "communication",
     );
     const responseRate = this.calculateResponseRate(communicationEvents);
     const proactiveInteractions = communicationEvents.filter(
-      (e) => e.metadata?.initiatedBy === 'patient',
+      (e) => e.metadata?.initiatedBy === "patient",
     ).length;
 
     engagementScore = Math.min(
@@ -195,11 +196,12 @@ export class BehavioralAnalysisService {
 
     // Loyalty Analysis
     const appointmentEvents = recentEvents.filter(
-      (e) => e.eventType === 'appointment',
+      (e) => e.eventType === "appointment",
     );
-    const consistentAttendance = this.calculateAttendanceConsistency(appointmentEvents);
+    const consistentAttendance =
+      this.calculateAttendanceConsistency(appointmentEvents);
     const referrals = recentEvents.filter(
-      (e) => e.eventType === 'referral',
+      (e) => e.eventType === "referral",
     ).length;
 
     loyaltyScore = Math.min(
@@ -209,10 +211,10 @@ export class BehavioralAnalysisService {
 
     // Satisfaction Analysis
     const positiveOutcomes = recentEvents.filter(
-      (e) => e.outcome === 'positive',
+      (e) => e.outcome === "positive",
     ).length;
     const negativeOutcomes = recentEvents.filter(
-      (e) => e.outcome === 'negative',
+      (e) => e.outcome === "negative",
     ).length;
     const totalOutcomes = positiveOutcomes + negativeOutcomes;
 
@@ -222,13 +224,13 @@ export class BehavioralAnalysisService {
 
     // Risk Analysis (inverse relationship - higher risk = lower score)
     const noShows = appointmentEvents.filter(
-      (e) => e.eventSubtype === 'no_show',
+      (e) => e.eventSubtype === "no_show",
     ).length;
     const latePayments = recentEvents.filter(
-      (e) => e.eventType === 'payment' && e.outcome === 'negative',
+      (e) => e.eventType === "payment" && e.outcome === "negative",
     ).length;
     const complaints = recentEvents.filter(
-      (e) => e.eventSubtype === 'complaint',
+      (e) => e.eventSubtype === "complaint",
     ).length;
 
     riskScore = Math.max(
@@ -238,10 +240,10 @@ export class BehavioralAnalysisService {
 
     // Compliance Analysis
     const treatmentEvents = recentEvents.filter(
-      (e) => e.eventType === 'treatment',
+      (e) => e.eventType === "treatment",
     );
     const completedTreatments = treatmentEvents.filter(
-      (e) => e.outcome === 'positive',
+      (e) => e.outcome === "positive",
     ).length;
 
     if (treatmentEvents.length > 0) {
@@ -264,7 +266,7 @@ export class BehavioralAnalysisService {
   private async detectBehavioralPatterns(
     events: BehavioralEvent[],
     interactions: any[],
-  ): Promise<PatientBehaviorProfile['patterns']> {
+  ): Promise<PatientBehaviorProfile["patterns"]> {
     // Communication Style Analysis
     const communicationStyle = this.analyzeCommunicationStyle(interactions);
 
@@ -291,57 +293,59 @@ export class BehavioralAnalysisService {
 
   private analyzeCommunicationStyle(
     interactions: any[],
-  ): PatientBehaviorProfile['patterns']['communicationStyle'] {
+  ): PatientBehaviorProfile["patterns"]["communicationStyle"] {
     // Analyze language patterns, message length, formality
-    const avgMessageLength = interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0)
-      / interactions.length;
+    const avgMessageLength =
+      interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0) /
+      interactions.length;
 
     const formalWords = interactions.filter(
-      (i) => i.message?.includes('Senhor') || i.message?.includes('Senhora'),
+      (i) => i.message?.includes("Senhor") || i.message?.includes("Senhora"),
     ).length;
 
     if (avgMessageLength > 100 && formalWords > interactions.length * 0.3) {
-      return 'formal';
+      return "formal";
     }
     if (avgMessageLength > 50) {
-      return 'detailed';
+      return "detailed";
     }
     if (avgMessageLength < 20) {
-      return 'direct';
+      return "direct";
     }
-    return 'casual';
+    return "casual";
   }
 
   private analyzeResponseTime(
     interactions: any[],
-  ): PatientBehaviorProfile['patterns']['responseTime'] {
+  ): PatientBehaviorProfile["patterns"]["responseTime"] {
     const responseTimes = interactions
       .map((i) => i.responseTimeHours)
       .filter((t) => t !== undefined);
 
     if (responseTimes.length === 0) {
-      return 'delayed';
+      return "delayed";
     }
 
-    const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+    const avgResponseTime =
+      responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
 
     if (avgResponseTime < 1) {
-      return 'immediate';
+      return "immediate";
     }
     if (avgResponseTime < 24) {
-      return 'hours';
+      return "hours";
     }
     if (avgResponseTime < 72) {
-      return 'days';
+      return "days";
     }
-    return 'delayed';
+    return "delayed";
   }
 
   private analyzePreferredChannel(
     events: BehavioralEvent[],
-  ): PatientBehaviorProfile['patterns']['preferredChannel'] {
+  ): PatientBehaviorProfile["patterns"]["preferredChannel"] {
     const channelCounts = events
-      .filter((e) => e.eventType === 'communication')
+      .filter((e) => e.eventType === "communication")
       .reduce(
         (acc, e) => {
           const channel = e.metadata?.channel as string;
@@ -353,41 +357,41 @@ export class BehavioralAnalysisService {
 
     return (
       (Object.keys(channelCounts).reduce((a, b) =>
-        channelCounts[a] > channelCounts[b] ? a : b
-      ) as PatientBehaviorProfile['patterns']['preferredChannel']) || 'whatsapp'
+        channelCounts[a] > channelCounts[b] ? a : b,
+      ) as PatientBehaviorProfile["patterns"]["preferredChannel"]) || "whatsapp"
     );
   }
 
   private analyzeAppointmentBehavior(
     events: BehavioralEvent[],
-  ): PatientBehaviorProfile['patterns']['appointmentBehavior'] {
+  ): PatientBehaviorProfile["patterns"]["appointmentBehavior"] {
     const appointmentEvents = events.filter(
-      (e) => e.eventType === 'appointment',
+      (e) => e.eventType === "appointment",
     );
 
     const punctualCount = appointmentEvents.filter(
-      (e) => e.eventSubtype === 'attended_on_time',
+      (e) => e.eventSubtype === "attended_on_time",
     ).length;
     const earlyCount = appointmentEvents.filter(
-      (e) => e.eventSubtype === 'attended_early',
+      (e) => e.eventSubtype === "attended_early",
     ).length;
     const _lateCount = appointmentEvents.filter(
-      (e) => e.eventSubtype === 'attended_late',
+      (e) => e.eventSubtype === "attended_late",
     ).length;
     const rescheduleCount = appointmentEvents.filter(
-      (e) => e.eventSubtype === 'rescheduled',
+      (e) => e.eventSubtype === "rescheduled",
     ).length;
 
     if (rescheduleCount > appointmentEvents.length * 0.3) {
-      return 'reschedules';
+      return "reschedules";
     }
     if (punctualCount > appointmentEvents.length * 0.7) {
-      return 'punctual';
+      return "punctual";
     }
     if (earlyCount > appointmentEvents.length * 0.4) {
-      return 'early';
+      return "early";
     }
-    return 'late';
+    return "late";
   }
 
   private analyzeSeasonalTrends(events: BehavioralEvent[]): string[] {
@@ -404,29 +408,30 @@ export class BehavioralAnalysisService {
     );
 
     // Identify peak months
-    const avgActivity = Object.values(monthlyActivity).reduce((a, b) => a + b, 0) / 12;
+    const avgActivity =
+      Object.values(monthlyActivity).reduce((a, b) => a + b, 0) / 12;
     const peakMonths = Object.entries(monthlyActivity)
       .filter(([_, count]) => count > avgActivity * 1.3)
       .map(([month, _]) => {
         const monthNames = [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
         ];
         return monthNames[Number.parseInt(month, 10)];
       });
 
     if (peakMonths.length > 0) {
-      trends.push(`Mais ativo em: ${peakMonths.join(', ')}`);
+      trends.push(`Mais ativo em: ${peakMonths.join(", ")}`);
     }
 
     // Summer/Winter patterns
@@ -440,9 +445,9 @@ export class BehavioralAnalysisService {
     );
 
     if (summerActivity > winterActivity * 1.5) {
-      trends.push('Prefere procedimentos no verão');
+      trends.push("Prefere procedimentos no verão");
     } else if (winterActivity > summerActivity * 1.5) {
-      trends.push('Mais ativo no inverno');
+      trends.push("Mais ativo no inverno");
     }
 
     return trends;
@@ -455,7 +460,7 @@ export class BehavioralAnalysisService {
   private async analyzePersonalityType(
     events: BehavioralEvent[],
     interactions: any[],
-  ): Promise<PatientBehaviorProfile['personalityType']> {
+  ): Promise<PatientBehaviorProfile["personalityType"]> {
     let analyticalScore = 0;
     let expressiveScore = 0;
     let driverScore = 0;
@@ -472,7 +477,9 @@ export class BehavioralAnalysisService {
     }
 
     // Information seeking behavior (Analytical)
-    const questionsAsked = interactions.filter((i) => i.message?.includes('?')).length;
+    const questionsAsked = interactions.filter((i) =>
+      i.message?.includes("?"),
+    ).length;
     if (questionsAsked > interactions.length * 0.4) {
       analyticalScore += 2;
     }
@@ -480,8 +487,8 @@ export class BehavioralAnalysisService {
     // Social interaction level (Expressive vs Analytical)
     const socialReferences = interactions.filter(
       (i) =>
-        i.message?.toLowerCase().includes('família')
-        || i.message?.toLowerCase().includes('amigo'),
+        i.message?.toLowerCase().includes("família") ||
+        i.message?.toLowerCase().includes("amigo"),
     ).length;
     if (socialReferences > interactions.length * 0.2) {
       expressiveScore += 2;
@@ -491,7 +498,7 @@ export class BehavioralAnalysisService {
 
     // Communication style preference
     const casualTone = interactions.filter(
-      (i) => i.message?.includes('😊') || i.message?.includes('rs'),
+      (i) => i.message?.includes("😊") || i.message?.includes("rs"),
     ).length;
     if (casualTone > interactions.length * 0.3) {
       expressiveScore += 1;
@@ -509,8 +516,8 @@ export class BehavioralAnalysisService {
     return Object.keys(scores).reduce((a, b) =>
       scores[a as keyof typeof scores] > scores[b as keyof typeof scores]
         ? a
-        : b
-    ) as PatientBehaviorProfile['personalityType'];
+        : b,
+    ) as PatientBehaviorProfile["personalityType"];
   }
 
   // =============================================================================
@@ -518,38 +525,39 @@ export class BehavioralAnalysisService {
   // =============================================================================
 
   private async determinePatientSegment(
-    scores: PatientBehaviorProfile['scores'],
-    _patterns: PatientBehaviorProfile['patterns'],
-  ): Promise<PatientBehaviorProfile['segment']> {
-    const avgScore = (scores.engagement + scores.loyalty + scores.satisfaction) / 3;
+    scores: PatientBehaviorProfile["scores"],
+    _patterns: PatientBehaviorProfile["patterns"],
+  ): Promise<PatientBehaviorProfile["segment"]> {
+    const avgScore =
+      (scores.engagement + scores.loyalty + scores.satisfaction) / 3;
 
     // VIP: High value, high loyalty, low risk
     if (avgScore > 85 && scores.risk < 20 && scores.loyalty > 90) {
-      return 'vip';
+      return "vip";
     }
 
     // Loyal: Good engagement, established relationship
     if (avgScore > 70 && scores.loyalty > 75 && scores.risk < 40) {
-      return 'loyal';
+      return "loyal";
     }
 
     // At-risk: High risk score or declining patterns
     if (scores.risk > 60 || (avgScore < 50 && scores.engagement < 40)) {
-      return 'at-risk';
+      return "at-risk";
     }
 
     // New: Recent patients (would need historical data to determine)
     // For now, using engagement patterns
     if (scores.engagement > 60 && scores.loyalty < 50) {
-      return 'new';
+      return "new";
     }
 
     // Inactive: Low scores across the board
     if (avgScore < 40) {
-      return 'inactive';
+      return "inactive";
     }
 
-    return 'loyal'; // Default fallback
+    return "loyal"; // Default fallback
   }
 
   // =============================================================================
@@ -563,10 +571,10 @@ export class BehavioralAnalysisService {
     try {
       // Get historical financial data
       const { data: payments, error } = await supabase
-        .from('patient_payments')
-        .select('amount, created_at')
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: true });
+        .from("patient_payments")
+        .select("amount, created_at")
+        .eq("patient_id", patientId)
+        .order("created_at", { ascending: true });
 
       if (error) {
         throw error;
@@ -583,8 +591,8 @@ export class BehavioralAnalysisService {
         monthsActive = Math.max(
           1,
           Math.ceil(
-            (lastPayment.getTime() - firstPayment.getTime())
-              / (1000 * 60 * 60 * 24 * 30),
+            (lastPayment.getTime() - firstPayment.getTime()) /
+              (1000 * 60 * 60 * 24 * 30),
           ),
         );
       }
@@ -595,7 +603,7 @@ export class BehavioralAnalysisService {
       const segmentMultipliers = {
         vip: 36, // 3 years projected retention
         loyal: 24, // 2 years projected retention
-        'at-risk': 6, // 6 months projected retention
+        "at-risk": 6, // 6 months projected retention
         new: 18, // 1.5 years projected retention
         inactive: 3, // 3 months projected retention
       };
@@ -620,27 +628,29 @@ export class BehavioralAnalysisService {
 
       // Collect appointment events
       const { data: appointments } = await supabase
-        .from('appointments')
-        .select('*')
-        .eq('patient_id', patientId);
+        .from("appointments")
+        .select("*")
+        .eq("patient_id", patientId);
 
       appointments?.forEach((apt) => {
         events.push({
           patientId,
-          eventType: 'appointment',
+          eventType: "appointment",
           eventSubtype: apt.status,
           timestamp: new Date(apt.scheduled_at),
-          outcome: apt.status === 'completed'
-            ? 'positive'
-            : (apt.status === 'no_show'
-            ? 'negative'
-            : 'neutral'),
+          outcome:
+            apt.status === "completed"
+              ? "positive"
+              : apt.status === "no_show"
+                ? "negative"
+                : "neutral",
           metadata: { appointmentId: apt.id },
-          impact: apt.status === 'completed'
-            ? 10
-            : (apt.status === 'no_show'
-            ? -20
-            : 0),
+          impact:
+            apt.status === "completed"
+              ? 10
+              : apt.status === "no_show"
+                ? -20
+                : 0,
         });
       });
 
@@ -663,10 +673,10 @@ export class BehavioralAnalysisService {
   private async getAppointmentHistory(patientId: string): Promise<any[]> {
     try {
       const { data, error } = await supabase
-        .from('appointments')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('scheduled_at', { ascending: false });
+        .from("appointments")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("scheduled_at", { ascending: false });
 
       if (error) {
         throw error;
@@ -685,7 +695,7 @@ export class BehavioralAnalysisService {
     profile: PatientBehaviorProfile,
   ): Promise<void> {
     const { error } = await supabase
-      .from('patient_behavioral_profiles')
+      .from("patient_behavioral_profiles")
       .upsert({
         patient_id: profile.patientId,
         scores: profile.scores,
@@ -710,10 +720,10 @@ export class BehavioralAnalysisService {
     communicationEvents: BehavioralEvent[],
   ): number {
     const sentMessages = communicationEvents.filter(
-      (e) => e.metadata?.direction === 'outbound',
+      (e) => e.metadata?.direction === "outbound",
     ).length;
     const responses = communicationEvents.filter(
-      (e) => e.metadata?.direction === 'inbound',
+      (e) => e.metadata?.direction === "inbound",
     ).length;
 
     return sentMessages > 0 ? (responses / sentMessages) * 100 : 0;
@@ -723,7 +733,7 @@ export class BehavioralAnalysisService {
     appointmentEvents: BehavioralEvent[],
   ): number {
     const completed = appointmentEvents.filter(
-      (e) => e.outcome === 'positive',
+      (e) => e.outcome === "positive",
     ).length;
 
     return appointmentEvents.length > 0

@@ -29,9 +29,10 @@ class CacheService {
     const ttl = options.ttl ?? this.defaultTtl;
     const expires = ttl > 0 ? Date.now() + ttl : Number.MAX_SAFE_INTEGER;
 
-    const serializedValue = options.serialize !== false
-      ? JSON.parse(JSON.stringify(value)) // Deep clone
-      : value;
+    const serializedValue =
+      options.serialize !== false
+        ? JSON.parse(JSON.stringify(value)) // Deep clone
+        : value;
 
     this.cache.set(key, {
       value: serializedValue,
@@ -116,7 +117,7 @@ class CacheService {
    */
 
   async mset<T = any>(
-    entries: { key: string; value: T; options?: CacheOptions; }[],
+    entries: { key: string; value: T; options?: CacheOptions }[],
   ): Promise<void> {
     for (const entry of entries) {
       await this.set(entry.key, entry.value, entry.options);
@@ -164,9 +165,10 @@ class CacheService {
 
     return {
       size: this.cache.size,
-      hitRate: totalAccesses > 0
-        ? totalAccesses / (totalAccesses + this.cache.size)
-        : 0,
+      hitRate:
+        totalAccesses > 0
+          ? totalAccesses / (totalAccesses + this.cache.size)
+          : 0,
       totalAccesses,
       memoryUsage,
     };
@@ -200,8 +202,8 @@ class CacheService {
 
     // Simple pattern matching with * wildcard
     const regex = new RegExp(
-      pattern.replaceAll("\\*", '.*').replaceAll("\\?", '.'),
-      'i',
+      pattern.replaceAll("\\*", ".*").replaceAll("\\?", "."),
+      "i",
     );
 
     return keys.filter((key) => regex.test(key));

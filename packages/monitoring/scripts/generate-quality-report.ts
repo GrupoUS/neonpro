@@ -7,14 +7,14 @@
  * performance, accessibility, and compliance metrics.
  */
 
-import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { execSync } from "node:child_process";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const rootDir = path.resolve(__dirname, '..');
+const rootDir = path.resolve(__dirname, "..");
 
 interface QualityMetrics {
   coverage: CoverageMetrics;
@@ -111,11 +111,14 @@ class QualityReportGenerator {
   private async collectCoverageMetrics(): Promise<void> {
     try {
       // Run coverage tests
-      execSync('pnpm test:coverage', { cwd: rootDir, stdio: 'pipe' });
+      execSync("pnpm test:coverage", { cwd: rootDir, stdio: "pipe" });
 
-      const coveragePath = path.join(rootDir, 'tests/unit/coverage/coverage-summary.json');
+      const coveragePath = path.join(
+        rootDir,
+        "tests/unit/coverage/coverage-summary.json",
+      );
       if (existsSync(coveragePath)) {
-        const coverage = JSON.parse(readFileSync(coveragePath, 'utf8'));
+        const coverage = JSON.parse(readFileSync(coveragePath, "utf8"));
 
         this.metrics.coverage = {
           statements: coverage.total.statements.pct,
@@ -147,10 +150,10 @@ class QualityReportGenerator {
   private async collectSecurityMetrics(): Promise<void> {
     try {
       // Run security audit
-      const auditOutput = execSync('pnpm audit --json', {
+      const auditOutput = execSync("pnpm audit --json", {
         cwd: rootDir,
-        stdio: 'pipe',
-        encoding: 'utf8',
+        stdio: "pipe",
+        encoding: "utf8",
       });
 
       const audit = JSON.parse(auditOutput);
@@ -177,11 +180,13 @@ class QualityReportGenerator {
   private async collectPerformanceMetrics(): Promise<void> {
     const buildStart = Date.now();
     try {
-      execSync('pnpm build', { cwd: rootDir, stdio: 'pipe' });
+      execSync("pnpm build", { cwd: rootDir, stdio: "pipe" });
     } catch {}
     const buildTime = Date.now() - buildStart;
 
-    const packageJson = JSON.parse(readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
+    const packageJson = JSON.parse(
+      readFileSync(path.join(rootDir, "package.json"), "utf8"),
+    );
 
     this.metrics.performance = {
       bundleSize: this.calculateBundleSize(),
@@ -194,7 +199,7 @@ class QualityReportGenerator {
   private async collectAccessibilityMetrics(): Promise<void> {
     // Simulate accessibility scan
     this.metrics.accessibility = {
-      wcagCompliance: 'AA',
+      wcagCompliance: "AA",
       score: 95,
       issues: [],
     };
@@ -229,10 +234,11 @@ class QualityReportGenerator {
 
   private calculateSecurityScore(audit: any): number {
     const vulnerabilities = audit.metadata?.vulnerabilities || {};
-    const total = (vulnerabilities.critical || 0) * 4
-      + (vulnerabilities.high || 0) * 3
-      + (vulnerabilities.moderate || 0) * 2
-      + (vulnerabilities.low || 0) * 1;
+    const total =
+      (vulnerabilities.critical || 0) * 4 +
+      (vulnerabilities.high || 0) * 3 +
+      (vulnerabilities.moderate || 0) * 2 +
+      (vulnerabilities.low || 0) * 1;
 
     return Math.max(0, 10 - total * 0.1);
   }
@@ -246,7 +252,7 @@ class QualityReportGenerator {
   private calculateBundleSize(): number {
     // Calculate bundle size from build output
     try {
-      const nextConfig = path.join(rootDir, 'apps/web/.next');
+      const nextConfig = path.join(rootDir, "apps/web/.next");
       if (existsSync(nextConfig)) {
         // Read .next build stats
         return 1.2; // MB
@@ -259,7 +265,7 @@ class QualityReportGenerator {
 
   private async generateHtmlReport(): Promise<void> {
     const html = this.createHtmlReport();
-    const reportPath = path.join(rootDir, 'reports/quality-report.html');
+    const reportPath = path.join(rootDir, "reports/quality-report.html");
 
     // Ensure reports directory exists
     execSync(`mkdir -p ${path.dirname(reportPath)}`, { cwd: rootDir });
@@ -273,7 +279,7 @@ class QualityReportGenerator {
       summary: this.generateSummaryData(),
     };
 
-    const reportPath = path.join(rootDir, 'reports/quality-report.json');
+    const reportPath = path.join(rootDir, "reports/quality-report.json");
     writeFileSync(reportPath, JSON.stringify(report, undefined, 2));
   }
 
@@ -304,7 +310,7 @@ class QualityReportGenerator {
     <div class="header">
         <h1>🏥 NeonPro Healthcare Platform</h1>
         <h2>📊 Quality Assurance Report</h2>
-        <p>Generated on ${new Date().toLocaleString('pt-BR')}</p>
+        <p>Generated on ${new Date().toLocaleString("pt-BR")}</p>
     </div>
 
     <div class="metrics">
@@ -327,9 +333,14 @@ class QualityReportGenerator {
   private createCoverageCard(): string {
     const coverage = this.metrics.coverage!;
     const overallScore = Math.round(
-      (coverage.statements + coverage.branches + coverage.functions + coverage.lines) / 4,
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+        4,
     );
-    const statusClass = overallScore >= 90 ? 'pass' : (overallScore >= 80 ? 'warn' : 'fail');
+    const statusClass =
+      overallScore >= 90 ? "pass" : overallScore >= 80 ? "warn" : "fail";
 
     return `
     <div class="metric-card">
@@ -341,8 +352,12 @@ class QualityReportGenerator {
         <div>Lines: ${coverage.lines}%</div>
         <div class="progress-bar">
             <div class="progress-fill ${statusClass}" style="width: ${overallScore}%; background-color: ${
-      statusClass === 'pass' ? '#4CAF50' : (statusClass === 'warn' ? '#FF9800' : '#F44336')
-    };"></div>
+              statusClass === "pass"
+                ? "#4CAF50"
+                : statusClass === "warn"
+                  ? "#FF9800"
+                  : "#F44336"
+            };"></div>
         </div>
     </div>`;
   }
@@ -350,9 +365,10 @@ class QualityReportGenerator {
   private createSecurityCard(): string {
     const security = this.metrics.security!;
     const statusClass =
-      security.vulnerabilities.critical === 0 && security.vulnerabilities.high === 0
-        ? 'pass'
-        : 'fail';
+      security.vulnerabilities.critical === 0 &&
+      security.vulnerabilities.high === 0
+        ? "pass"
+        : "fail";
 
     return `
     <div class="metric-card">
@@ -367,11 +383,12 @@ class QualityReportGenerator {
 
   private createPerformanceCard(): string {
     const performance = this.metrics.performance!;
-    const statusClass = performance.bundleSize < 2
-      ? 'pass'
-      : (performance.bundleSize < 3.0
-      ? 'warn'
-      : 'fail');
+    const statusClass =
+      performance.bundleSize < 2
+        ? "pass"
+        : performance.bundleSize < 3.0
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -385,11 +402,12 @@ class QualityReportGenerator {
 
   private createAccessibilityCard(): string {
     const accessibility = this.metrics.accessibility!;
-    const statusClass = accessibility.score >= 95
-      ? 'pass'
-      : (accessibility.score >= 80
-      ? 'warn'
-      : 'fail');
+    const statusClass =
+      accessibility.score >= 95
+        ? "pass"
+        : accessibility.score >= 80
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -402,11 +420,12 @@ class QualityReportGenerator {
 
   private createComplianceCard(): string {
     const compliance = this.metrics.compliance!;
-    const statusClass = compliance.overallScore >= 90
-      ? 'pass'
-      : (compliance.overallScore >= 80
-      ? 'warn'
-      : 'fail');
+    const statusClass =
+      compliance.overallScore >= 90
+        ? "pass"
+        : compliance.overallScore >= 80
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -421,11 +440,12 @@ class QualityReportGenerator {
 
   private createComplexityCard(): string {
     const complexity = this.metrics.complexity!;
-    const statusClass = complexity.averageCyclomatic <= 5
-      ? 'pass'
-      : (complexity.averageCyclomatic <= 10
-      ? 'warn'
-      : 'fail');
+    const statusClass =
+      complexity.averageCyclomatic <= 5
+        ? "pass"
+        : complexity.averageCyclomatic <= 10
+          ? "warn"
+          : "fail";
 
     return `
     <div class="metric-card">
@@ -443,23 +463,32 @@ class QualityReportGenerator {
     const security = this.metrics.security!;
     const performance = this.metrics.performance!;
 
-    if ((coverage.statements + coverage.branches + coverage.functions + coverage.lines) / 4 < 90) {
-      recommendations.push('• Increase test coverage to at least 90%');
+    if (
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+        4 <
+      90
+    ) {
+      recommendations.push("• Increase test coverage to at least 90%");
     }
 
     if (security.vulnerabilities.critical > 0) {
-      recommendations.push('• Address critical security vulnerabilities immediately');
+      recommendations.push(
+        "• Address critical security vulnerabilities immediately",
+      );
     }
 
     if (performance.bundleSize > 2.5) {
-      recommendations.push('• Optimize bundle size to reduce loading times');
+      recommendations.push("• Optimize bundle size to reduce loading times");
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('• All quality gates passed! 🎉');
+      recommendations.push("• All quality gates passed! 🎉");
     }
 
-    return `<ul>${recommendations.map((rec) => `<li>${rec}</li>`).join('')}</ul>`;
+    return `<ul>${recommendations.map((rec) => `<li>${rec}</li>`).join("")}</ul>`;
   }
 
   private generateSummaryData() {
@@ -483,16 +512,26 @@ class QualityReportGenerator {
     const compliance = this.metrics.compliance!;
 
     const coverageScore =
-      (coverage.statements + coverage.branches + coverage.functions + coverage.lines) / 4;
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+      4;
     const securityScore = security.securityScore * 10;
-    const performanceScore = performance.bundleSize < 2
-      ? 100
-      : 100 - (performance.bundleSize - 2) * 20;
+    const performanceScore =
+      performance.bundleSize < 2
+        ? 100
+        : 100 - (performance.bundleSize - 2) * 20;
     const accessibilityScore = accessibility.score;
     const complianceScore = compliance.overallScore;
 
     return Math.round(
-      (coverageScore + securityScore + performanceScore + accessibilityScore + complianceScore) / 5,
+      (coverageScore +
+        securityScore +
+        performanceScore +
+        accessibilityScore +
+        complianceScore) /
+        5,
     );
   }
 
@@ -501,10 +540,20 @@ class QualityReportGenerator {
     const coverage = this.metrics.coverage!;
     const security = this.metrics.security!;
 
-    if ((coverage.statements + coverage.branches + coverage.functions + coverage.lines) / 4 >= 90) {
+    if (
+      (coverage.statements +
+        coverage.branches +
+        coverage.functions +
+        coverage.lines) /
+        4 >=
+      90
+    ) {
       passed++;
     }
-    if (security.vulnerabilities.critical === 0 && security.vulnerabilities.high === 0) {
+    if (
+      security.vulnerabilities.critical === 0 &&
+      security.vulnerabilities.high === 0
+    ) {
       passed++;
     }
     if (this.metrics.performance?.bundleSize < 2.5) {
@@ -525,9 +574,9 @@ class QualityReportGenerator {
 
   private getTextRecommendations(): string[] {
     return this.generateRecommendations()
-      .replaceAll(/<[^>]*>/g, '')
-      .split('\n')
-      .filter((line) => line.trim().startsWith('•'))
+      .replaceAll(/<[^>]*>/g, "")
+      .split("\n")
+      .filter((line) => line.trim().startsWith("•"))
       .map((line) => line.trim());
   }
 
@@ -536,20 +585,22 @@ class QualityReportGenerator {
     const _duration = (Date.now() - this.startTime) / 1000;
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
     console.log(
-      `   • Coverage: ${
-        Math.round(
-          (this.metrics.coverage?.statements
-            + this.metrics.coverage?.branches
-            + this.metrics.coverage?.functions
-            + this.metrics.coverage?.lines)
-            / 4,
-        )
-      }%`,
+      `   • Coverage: ${Math.round(
+        (this.metrics.coverage?.statements +
+          this.metrics.coverage?.branches +
+          this.metrics.coverage?.functions +
+          this.metrics.coverage?.lines) /
+          4,
+      )}%`,
     );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
-    console.log(`   • Security Score: ${this.metrics.security?.securityScore.toFixed(1)}/10`);
+    console.log(
+      `   • Security Score: ${this.metrics.security?.securityScore.toFixed(1)}/10`,
+    );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
-    console.log(`   • Bundle Size: ${this.metrics.performance?.bundleSize.toFixed(1)}MB`);
+    console.log(
+      `   • Bundle Size: ${this.metrics.performance?.bundleSize.toFixed(1)}MB`,
+    );
 
     if (summary.recommendations.length > 0) {
       summary.recommendations.forEach((_rec) => {});

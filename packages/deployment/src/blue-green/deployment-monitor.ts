@@ -5,10 +5,10 @@
 
 export interface DeploymentMetrics {
   deploymentId: string;
-  environment: 'blue' | 'green';
+  environment: "blue" | "green";
   startTime: Date;
   endTime?: Date;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed';
+  status: "pending" | "in-progress" | "completed" | "failed";
   version: string;
   healthScore: number;
   errorCount: number;
@@ -30,14 +30,14 @@ export class DeploymentMonitor {
    */
   startDeployment(
     deploymentId: string,
-    environment: 'blue' | 'green',
+    environment: "blue" | "green",
     version: string,
   ): void {
     this.currentDeployment = {
       deploymentId,
       environment,
       startTime: new Date(),
-      status: 'in-progress',
+      status: "in-progress",
       version,
       healthScore: 0,
       errorCount: 0,
@@ -63,7 +63,7 @@ export class DeploymentMonitor {
     }
 
     this.currentDeployment.endTime = new Date();
-    this.currentDeployment.status = success ? 'completed' : 'failed';
+    this.currentDeployment.status = success ? "completed" : "failed";
 
     // Add to history
     this.deploymentHistory.push(this.currentDeployment);
@@ -103,19 +103,21 @@ export class DeploymentMonitor {
   } {
     const total = this.deploymentHistory.length;
     const successful = this.deploymentHistory.filter(
-      (d) => d.status === 'completed',
+      (d) => d.status === "completed",
     ).length;
     const successRate = total > 0 ? (successful / total) * 100 : 0;
 
     const completedDeployments = this.deploymentHistory.filter(
       (d) => d.endTime,
     );
-    const averageTime = completedDeployments.length > 0
-      ? completedDeployments.reduce((sum, d) => {
-        const duration = (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
-        return sum + duration;
-      }, 0) / completedDeployments.length
-      : 0;
+    const averageTime =
+      completedDeployments.length > 0
+        ? completedDeployments.reduce((sum, d) => {
+            const duration =
+              (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
+            return sum + duration;
+          }, 0) / completedDeployments.length
+        : 0;
 
     return {
       totalDeployments: total,

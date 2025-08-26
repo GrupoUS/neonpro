@@ -6,9 +6,9 @@
  * @version 1.0.0
  * @since 2025-01-25
  */
-import type { Database } from '@neonpro/types';
-import type { createClient } from '@supabase/supabase-js';
-import { type ComplianceMonitoringResponse } from '../enterprise/audit/real-time-monitor.js';
+import type { Database } from "@neonpro/types";
+import type { createClient } from "@supabase/supabase-js";
+import { type ComplianceMonitoringResponse } from "../enterprise/audit/real-time-monitor.js";
 /**
  * Compliance Automation Configuration
  * Constitutional compliance configuration with Brazilian healthcare requirements
@@ -47,10 +47,10 @@ export type ComplianceAutomationConfig = {
 export type ComplianceAutomationResponse = {
   /** Overall compliance status */
   overall_status:
-    | 'compliant'
-    | 'warning'
-    | 'critical'
-    | 'constitutional_violation';
+    | "compliant"
+    | "warning"
+    | "critical"
+    | "constitutional_violation";
   /** Overall compliance score ≥9.9 */
   overall_score: number;
   /** LGPD compliance results */
@@ -156,5 +156,5 @@ export declare function createBrazilianComplianceAutomationService(
  */
 export declare const DEFAULT_COMPLIANCE_CONFIG: Omit<
   ComplianceAutomationConfig,
-  'tenant_id'
+  "tenant_id"
 >;

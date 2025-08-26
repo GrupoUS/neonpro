@@ -9,8 +9,8 @@ import { openai } from "@ai-sdk/openai";
 import { HealthcareAIEngine } from "@neonpro/ai/chat/engine";
 import type { ChatMessage } from "@neonpro/types/ai-chat";
 import { streamText } from "ai";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export const runtime = "edge";
 

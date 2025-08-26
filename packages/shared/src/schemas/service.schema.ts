@@ -1,99 +1,99 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Service Category Schema (Brazilian healthcare/aesthetic market)
 export const ServiceCategorySchema = z.enum([
   // Medical Consultations
-  'consultation_general',
-  'consultation_specialist',
-  'consultation_emergency',
-  'consultation_follow_up',
-  'consultation_online',
+  "consultation_general",
+  "consultation_specialist",
+  "consultation_emergency",
+  "consultation_follow_up",
+  "consultation_online",
 
   // Aesthetic Procedures - Face
-  'facial_treatments',
-  'botox_dysport',
-  'dermal_fillers',
-  'chemical_peeling',
-  'microneedling',
-  'laser_facial',
-  'harmonizacao_facial',
-  'bioestimuladores',
+  "facial_treatments",
+  "botox_dysport",
+  "dermal_fillers",
+  "chemical_peeling",
+  "microneedling",
+  "laser_facial",
+  "harmonizacao_facial",
+  "bioestimuladores",
 
   // Aesthetic Procedures - Body
-  'body_treatments',
-  'laser_hair_removal',
-  'cryolipolysis',
-  'radiofrequency',
-  'ultrasound_therapy',
-  'lymphatic_drainage',
-  'body_contouring',
-  'cellulite_treatment',
+  "body_treatments",
+  "laser_hair_removal",
+  "cryolipolysis",
+  "radiofrequency",
+  "ultrasound_therapy",
+  "lymphatic_drainage",
+  "body_contouring",
+  "cellulite_treatment",
 
   // Dental Procedures
-  'dental_consultation',
-  'dental_cleaning',
-  'dental_restoration',
-  'dental_surgery',
-  'orthodontics',
-  'dental_implants',
-  'dental_whitening',
+  "dental_consultation",
+  "dental_cleaning",
+  "dental_restoration",
+  "dental_surgery",
+  "orthodontics",
+  "dental_implants",
+  "dental_whitening",
 
   // Nursing Services
-  'nursing_care',
-  'vaccination',
-  'wound_care',
-  'medication_administration',
+  "nursing_care",
+  "vaccination",
+  "wound_care",
+  "medication_administration",
 
   // Diagnostic Services
-  'laboratory_tests',
-  'imaging_exams',
-  'cardiology_exams',
-  'endoscopy',
+  "laboratory_tests",
+  "imaging_exams",
+  "cardiology_exams",
+  "endoscopy",
 
   // Therapeutic Services
-  'physiotherapy',
-  'psychological_therapy',
-  'nutritional_counseling',
-  'speech_therapy',
+  "physiotherapy",
+  "psychological_therapy",
+  "nutritional_counseling",
+  "speech_therapy",
 
   // Wellness
-  'wellness',
-  'massage_therapy',
-  'acupuncture',
-  'aromatherapy',
+  "wellness",
+  "massage_therapy",
+  "acupuncture",
+  "aromatherapy",
 
   // Other
-  'other',
+  "other",
 ]);
 
 // Service Type Schema
 export const ServiceTypeSchema = z.enum([
-  'procedure', // Procedimento
-  'consultation', // Consulta
-  'exam', // Exame
-  'therapy', // Terapia
-  'treatment', // Tratamento
-  'maintenance', // Manutenção
-  'emergency', // Emergência
-  'follow_up', // Acompanhamento
+  "procedure", // Procedimento
+  "consultation", // Consulta
+  "exam", // Exame
+  "therapy", // Terapia
+  "treatment", // Tratamento
+  "maintenance", // Manutenção
+  "emergency", // Emergência
+  "follow_up", // Acompanhamento
 ]);
 
 // Service Status Schema
 export const ServiceStatusSchema = z.enum([
-  'active', // Ativo
-  'inactive', // Inativo
-  'pending', // Pendente aprovação
-  'suspended', // Suspenso
-  'discontinued', // Descontinuado
+  "active", // Ativo
+  "inactive", // Inativo
+  "pending", // Pendente aprovação
+  "suspended", // Suspenso
+  "discontinued", // Descontinuado
 ]);
 
 // ANVISA Risk Classification
 export const AnvisaRiskClassificationSchema = z.enum([
-  'class_i', // Classe I - Baixo risco
-  'class_ii', // Classe II - Médio risco
-  'class_iii', // Classe III - Alto risco
-  'class_iv', // Classe IV - Máximo risco
-  'not_applicable', // Não se aplica
+  "class_i", // Classe I - Baixo risco
+  "class_ii", // Classe II - Médio risco
+  "class_iii", // Classe III - Alto risco
+  "class_iv", // Classe IV - Máximo risco
+  "not_applicable", // Não se aplica
 ]);
 
 // Age Restriction Schema
@@ -108,9 +108,9 @@ export const ContraindicationSchema = z.object({
   id: z.string().uuid().optional(),
   condition: z
     .string()
-    .min(2, 'Condição deve ter pelo menos 2 caracteres')
-    .max(200, 'Condição deve ter no máximo 200 caracteres'),
-  severity: z.enum(['absolute', 'relative']).default('relative'),
+    .min(2, "Condição deve ter pelo menos 2 caracteres")
+    .max(200, "Condição deve ter no máximo 200 caracteres"),
+  severity: z.enum(["absolute", "relative"]).default("relative"),
   description: z.string().max(500).optional(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -121,9 +121,9 @@ export const PreCareInstructionSchema = z.object({
   id: z.string().uuid().optional(),
   instruction: z
     .string()
-    .min(5, 'Instrução deve ter pelo menos 5 caracteres')
-    .max(500, 'Instrução deve ter no máximo 500 caracteres'),
-  timing: z.string().max(100, 'Tempo deve ter no máximo 100 caracteres'), // "24h antes", "1 semana antes"
+    .min(5, "Instrução deve ter pelo menos 5 caracteres")
+    .max(500, "Instrução deve ter no máximo 500 caracteres"),
+  timing: z.string().max(100, "Tempo deve ter no máximo 100 caracteres"), // "24h antes", "1 semana antes"
   is_mandatory: z.boolean().default(false),
   priority: z.number().min(1).max(10).default(5),
 });
@@ -133,9 +133,9 @@ export const PostCareInstructionSchema = z.object({
   id: z.string().uuid().optional(),
   instruction: z
     .string()
-    .min(5, 'Instrução deve ter pelo menos 5 caracteres')
-    .max(500, 'Instrução deve ter no máximo 500 caracteres'),
-  duration: z.string().max(100, 'Duração deve ter no máximo 100 caracteres'), // "7 dias", "2 semanas"
+    .min(5, "Instrução deve ter pelo menos 5 caracteres")
+    .max(500, "Instrução deve ter no máximo 500 caracteres"),
+  duration: z.string().max(100, "Duração deve ter no máximo 100 caracteres"), // "7 dias", "2 semanas"
   is_mandatory: z.boolean().default(false),
   priority: z.number().min(1).max(10).default(5),
 });
@@ -145,8 +145,8 @@ export const RequiredEquipmentSchema = z.object({
   id: z.string().uuid().optional(),
   equipment_name: z
     .string()
-    .min(2, 'Nome do equipamento deve ter pelo menos 2 caracteres')
-    .max(200, 'Nome do equipamento deve ter no máximo 200 caracteres'),
+    .min(2, "Nome do equipamento deve ter pelo menos 2 caracteres")
+    .max(200, "Nome do equipamento deve ter no máximo 200 caracteres"),
   brand: z.string().max(100).optional(),
   model: z.string().max(100).optional(),
   is_mandatory: z.boolean().default(true),
@@ -161,8 +161,8 @@ export const MaterialSupplySchema = z.object({
   id: z.string().uuid().optional(),
   material_name: z
     .string()
-    .min(2, 'Nome do material deve ter pelo menos 2 caracteres')
-    .max(200, 'Nome do material deve ter no máximo 200 caracteres'),
+    .min(2, "Nome do material deve ter pelo menos 2 caracteres")
+    .max(200, "Nome do material deve ter no máximo 200 caracteres"),
   brand: z.string().max(100).optional(),
   quantity_per_service: z.number().min(0),
   unit: z.string().max(20), // "ml", "unidade", "g"
@@ -177,8 +177,8 @@ export const PricingTierSchema = z.object({
   id: z.string().uuid().optional(),
   tier_name: z
     .string()
-    .min(2, 'Nome do nível deve ter pelo menos 2 caracteres')
-    .max(50, 'Nome do nível deve ter no máximo 50 caracteres'),
+    .min(2, "Nome do nível deve ter pelo menos 2 caracteres")
+    .max(50, "Nome do nível deve ter no máximo 50 caracteres"),
   price: z.number().min(0),
   description: z.string().max(300).optional(),
   conditions: z.string().max(500).optional(), // "Para novos pacientes", "Pacote com 3 sessões"
@@ -192,8 +192,8 @@ export const ServiceVariationSchema = z.object({
   id: z.string().uuid().optional(),
   variation_name: z
     .string()
-    .min(2, 'Nome da variação deve ter pelo menos 2 caracteres')
-    .max(100, 'Nome da variação deve ter no máximo 100 caracteres'),
+    .min(2, "Nome da variação deve ter pelo menos 2 caracteres")
+    .max(100, "Nome da variação deve ter no máximo 100 caracteres"),
   description: z.string().max(500).optional(),
   additional_cost: z.number().default(0),
   duration_modifier: z.number().default(0), // minutes to add/subtract
@@ -207,12 +207,12 @@ export const ServiceProtocolSchema = z.object({
   step_number: z.number().min(1),
   step_title: z
     .string()
-    .min(3, 'Título da etapa deve ter pelo menos 3 caracteres')
-    .max(200, 'Título da etapa deve ter no máximo 200 caracteres'),
+    .min(3, "Título da etapa deve ter pelo menos 3 caracteres")
+    .max(200, "Título da etapa deve ter no máximo 200 caracteres"),
   step_description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
   estimated_duration: z.number().min(1).optional(), // minutes
   materials_needed: z.array(z.string()).default([]),
   safety_considerations: z.string().max(1000).optional(),
@@ -226,15 +226,15 @@ export const ServiceBaseSchema = z.object({
   // Basic Information
   name: z
     .string()
-    .min(3, 'Nome do serviço deve ter pelo menos 3 caracteres')
-    .max(200, 'Nome do serviço deve ter no máximo 200 caracteres'),
+    .min(3, "Nome do serviço deve ter pelo menos 3 caracteres")
+    .max(200, "Nome do serviço deve ter no máximo 200 caracteres"),
   description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
   short_description: z
     .string()
-    .max(300, 'Descrição curta deve ter no máximo 300 caracteres')
+    .max(300, "Descrição curta deve ter no máximo 300 caracteres")
     .optional(),
 
   // Categorization
@@ -244,7 +244,7 @@ export const ServiceBaseSchema = z.object({
   tags: z.array(z.string()).default([]),
 
   // Status and Availability
-  status: ServiceStatusSchema.default('pending'),
+  status: ServiceStatusSchema.default("pending"),
   is_active: z.boolean().default(true),
   is_featured: z.boolean().default(false),
 
@@ -278,15 +278,15 @@ export const ServiceBaseSchema = z.object({
   payment_methods: z
     .array(
       z.enum([
-        'cash',
-        'credit_card',
-        'debit_card',
-        'pix',
-        'bank_transfer',
-        'insurance',
+        "cash",
+        "credit_card",
+        "debit_card",
+        "pix",
+        "bank_transfer",
+        "insurance",
       ]),
     )
-    .default(['cash', 'credit_card']),
+    .default(["cash", "credit_card"]),
   installment_options: z
     .array(
       z.object({
@@ -314,7 +314,7 @@ export const ServiceBaseSchema = z.object({
   protocol_steps: z.array(ServiceProtocolSchema).default([]),
 
   // Regulatory Compliance
-  anvisa_risk_class: AnvisaRiskClassificationSchema.default('not_applicable'),
+  anvisa_risk_class: AnvisaRiskClassificationSchema.default("not_applicable"),
   anvisa_registration: z.string().optional(),
   requires_medical_supervision: z.boolean().default(false),
   requires_anesthesia: z.boolean().default(false),
@@ -394,28 +394,28 @@ export const ServiceQuerySchema = z.object({
   // Sorting
   sort_by: z
     .enum([
-      'name',
-      'created_at',
-      'base_price',
-      'duration_minutes',
-      'total_bookings',
-      'average_rating',
-      'display_order',
+      "name",
+      "created_at",
+      "base_price",
+      "duration_minutes",
+      "total_bookings",
+      "average_rating",
+      "display_order",
     ])
-    .default('display_order'),
-  sort_order: z.enum(['asc', 'desc']).default('asc'),
+    .default("display_order"),
+  sort_order: z.enum(["asc", "desc"]).default("asc"),
 });
 
 // Create Service Schema
 export const CreateServiceSchema = z.object({
   name: z
     .string()
-    .min(3, 'Nome do serviço deve ter pelo menos 3 caracteres')
-    .max(200, 'Nome do serviço deve ter no máximo 200 caracteres'),
+    .min(3, "Nome do serviço deve ter pelo menos 3 caracteres")
+    .max(200, "Nome do serviço deve ter no máximo 200 caracteres"),
   description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
   category: ServiceCategorySchema,
   type: ServiceTypeSchema,
   clinic_id: z.string().uuid(),
@@ -444,7 +444,7 @@ export const CreateServiceSchema = z.object({
   required_equipment: z.array(RequiredEquipmentSchema).optional(),
   materials_supplies: z.array(MaterialSupplySchema).optional(),
 
-  anvisa_risk_class: AnvisaRiskClassificationSchema.default('not_applicable'),
+  anvisa_risk_class: AnvisaRiskClassificationSchema.default("not_applicable"),
   requires_medical_supervision: z.boolean().default(false),
   requires_informed_consent: z.boolean().default(true),
 
@@ -459,13 +459,13 @@ export const CreateServiceSchema = z.object({
 export const UpdateServiceSchema = z.object({
   name: z
     .string()
-    .min(3, 'Nome do serviço deve ter pelo menos 3 caracteres')
-    .max(200, 'Nome do serviço deve ter no máximo 200 caracteres')
+    .min(3, "Nome do serviço deve ter pelo menos 3 caracteres")
+    .max(200, "Nome do serviço deve ter no máximo 200 caracteres")
     .optional(),
   description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres')
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres")
     .optional(),
   short_description: z.string().max(300).optional(),
 

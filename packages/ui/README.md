@@ -108,10 +108,10 @@ pnpm storybook
 
 ```typescript
 // Before (complex):
-import { Button } from '@neonpro/ui/atoms/Button';
-import { SearchBox } from '@neonpro/ui/molecules/SearchBox';
-import { PatientTable } from '@neonpro/ui/organisms/PatientTable';
+import { Button } from "@neonpro/ui/atoms/Button";
+import { SearchBox } from "@neonpro/ui/molecules/SearchBox";
+import { PatientTable } from "@neonpro/ui/organisms/PatientTable";
 
 // After (simple):
-import { Button, PatientTable, SearchBox } from '@neonpro/ui';
+import { Button, PatientTable, SearchBox } from "@neonpro/ui";
 ```

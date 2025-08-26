@@ -5,10 +5,10 @@
 
 export interface NotificationChannel {
   id: string;
-  type: 'email' | 'sms' | 'push' | 'webhook' | 'in_app';
+  type: "email" | "sms" | "push" | "webhook" | "in_app";
   endpoint: string;
   enabled: boolean;
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
   retryAttempts: number;
   cooldownPeriod: number; // seconds
 }
@@ -17,15 +17,15 @@ export interface NotificationTemplate {
   id: string;
   name: string;
   type:
-    | 'medical_alert'
-    | 'appointment_reminder'
-    | 'system_notification'
-    | 'compliance_alert';
+    | "medical_alert"
+    | "appointment_reminder"
+    | "system_notification"
+    | "compliance_alert";
   subject: string;
   body: string;
   variables: string[]; // Available template variables
-  channels: NotificationChannel['type'][];
-  priority: NotificationChannel['priority'];
+  channels: NotificationChannel["type"][];
+  priority: NotificationChannel["priority"];
 }
 
 export interface NotificationMessage {
@@ -37,8 +37,8 @@ export interface NotificationMessage {
     phone?: string;
     deviceToken?: string;
   };
-  channel: NotificationChannel['type'];
-  priority: NotificationChannel['priority'];
+  channel: NotificationChannel["type"];
+  priority: NotificationChannel["priority"];
   subject: string;
   body: string;
   metadata: Record<string, any>;
@@ -46,7 +46,7 @@ export interface NotificationMessage {
   sentAt?: Date;
   deliveredAt?: Date;
   readAt?: Date;
-  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  status: "pending" | "sent" | "delivered" | "read" | "failed";
   retryCount: number;
   errors: string[];
 }
@@ -54,7 +54,7 @@ export interface NotificationMessage {
 export interface NotificationPreferences {
   userId: string;
   channels: {
-    [K in NotificationChannel['type']]: {
+    [K in NotificationChannel["type"]]: {
       enabled: boolean;
       endpoint?: string;
       quietHours?: {
@@ -81,7 +81,7 @@ export interface NotificationStats {
   readRate: number; // percentage
   errorRate: number; // percentage
   byChannel: Record<
-    NotificationChannel['type'],
+    NotificationChannel["type"],
     {
       sent: number;
       delivered: number;
@@ -90,7 +90,7 @@ export interface NotificationStats {
     }
   >;
   byPriority: Record<
-    NotificationChannel['priority'],
+    NotificationChannel["priority"],
     {
       sent: number;
       delivered: number;
@@ -103,7 +103,8 @@ class MockNotificationService {
   private readonly channels: Map<string, NotificationChannel> = new Map();
   private readonly templates: Map<string, NotificationTemplate> = new Map();
   private readonly messages: NotificationMessage[] = [];
-  private readonly preferences: Map<string, NotificationPreferences> = new Map();
+  private readonly preferences: Map<string, NotificationPreferences> =
+    new Map();
 
   constructor() {
     this.initializeDefaultChannels();
@@ -115,9 +116,9 @@ class MockNotificationService {
    */
   async sendNotification(request: {
     templateId: string;
-    recipient: NotificationMessage['recipient'];
+    recipient: NotificationMessage["recipient"];
     variables?: Record<string, string>;
-    priority?: NotificationChannel['priority'];
+    priority?: NotificationChannel["priority"];
     scheduledAt?: Date;
     metadata?: Record<string, any>;
   }): Promise<NotificationMessage> {
@@ -158,7 +159,7 @@ class MockNotificationService {
       body: processedBody,
       metadata: request.metadata || {},
       scheduledAt: request.scheduledAt,
-      status: 'pending',
+      status: "pending",
       retryCount: 0,
       errors: [],
     };
@@ -175,11 +176,11 @@ class MockNotificationService {
    */
 
   async sendCustomNotification(request: {
-    recipient: NotificationMessage['recipient'];
-    channel: NotificationChannel['type'];
+    recipient: NotificationMessage["recipient"];
+    channel: NotificationChannel["type"];
     subject: string;
     body: string;
-    priority?: NotificationChannel['priority'];
+    priority?: NotificationChannel["priority"];
     scheduledAt?: Date;
     metadata?: Record<string, any>;
   }): Promise<NotificationMessage> {
@@ -187,12 +188,12 @@ class MockNotificationService {
       id: `msg_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       recipient: request.recipient,
       channel: request.channel,
-      priority: request.priority || 'medium',
+      priority: request.priority || "medium",
       subject: request.subject,
       body: request.body,
       metadata: request.metadata || {},
       scheduledAt: request.scheduledAt,
-      status: 'pending',
+      status: "pending",
       retryCount: 0,
       errors: [],
     };
@@ -255,9 +256,9 @@ class MockNotificationService {
     userId: string,
     options?: {
       limit?: number;
-      status?: NotificationMessage['status'];
-      channel?: NotificationChannel['type'];
-      priority?: NotificationChannel['priority'];
+      status?: NotificationMessage["status"];
+      channel?: NotificationChannel["type"];
+      priority?: NotificationChannel["priority"];
     },
   ): Promise<NotificationMessage[]> {
     let userMessages = this.messages.filter(
@@ -301,8 +302,8 @@ class MockNotificationService {
    */
   async markAsRead(messageId: string): Promise<boolean> {
     const message = this.messages.find((msg) => msg.id === messageId);
-    if (message && message.status === 'delivered') {
-      message.status = 'read';
+    if (message && message.status === "delivered") {
+      message.status = "read";
       message.readAt = new Date();
       return true;
     }
@@ -328,29 +329,30 @@ class MockNotificationService {
     }
 
     const totalSent = filteredMessages.filter(
-      (msg) => msg.status !== 'pending',
+      (msg) => msg.status !== "pending",
     ).length;
     const totalDelivered = filteredMessages.filter(
-      (msg) => msg.status === 'delivered' || msg.status === 'read',
+      (msg) => msg.status === "delivered" || msg.status === "read",
     ).length;
     const totalRead = filteredMessages.filter(
-      (msg) => msg.status === 'read',
+      (msg) => msg.status === "read",
     ).length;
     const totalFailed = filteredMessages.filter(
-      (msg) => msg.status === 'failed',
+      (msg) => msg.status === "failed",
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const readRate = totalDelivered > 0 ? (totalRead / totalDelivered) * 100 : 0;
+    const readRate =
+      totalDelivered > 0 ? (totalRead / totalDelivered) * 100 : 0;
     const errorRate = totalSent > 0 ? (totalFailed / totalSent) * 100 : 0;
 
     // Calculate stats by channel
-    const channels: NotificationChannel['type'][] = [
-      'email',
-      'sms',
-      'push',
-      'webhook',
-      'in_app',
+    const channels: NotificationChannel["type"][] = [
+      "email",
+      "sms",
+      "push",
+      "webhook",
+      "in_app",
     ];
     const byChannel = channels.reduce(
       (acc, channel) => {
@@ -358,13 +360,13 @@ class MockNotificationService {
           (msg) => msg.channel === channel,
         );
         const sent = channelMessages.filter(
-          (msg) => msg.status !== 'pending',
+          (msg) => msg.status !== "pending",
         ).length;
         const delivered = channelMessages.filter(
-          (msg) => msg.status === 'delivered' || msg.status === 'read',
+          (msg) => msg.status === "delivered" || msg.status === "read",
         ).length;
         const failed = channelMessages.filter(
-          (msg) => msg.status === 'failed',
+          (msg) => msg.status === "failed",
         ).length;
 
         acc[channel] = {
@@ -375,15 +377,15 @@ class MockNotificationService {
         };
         return acc;
       },
-      {} as NotificationStats['byChannel'],
+      {} as NotificationStats["byChannel"],
     );
 
     // Calculate stats by priority
-    const priorities: NotificationChannel['priority'][] = [
-      'low',
-      'medium',
-      'high',
-      'critical',
+    const priorities: NotificationChannel["priority"][] = [
+      "low",
+      "medium",
+      "high",
+      "critical",
     ];
     const byPriority = priorities.reduce(
       (acc, priority) => {
@@ -391,13 +393,13 @@ class MockNotificationService {
           (msg) => msg.priority === priority,
         );
         const sent = priorityMessages.filter(
-          (msg) => msg.status !== 'pending',
+          (msg) => msg.status !== "pending",
         ).length;
         const delivered = priorityMessages.filter(
-          (msg) => msg.status === 'delivered' || msg.status === 'read',
+          (msg) => msg.status === "delivered" || msg.status === "read",
         ).length;
         const failed = priorityMessages.filter(
-          (msg) => msg.status === 'failed',
+          (msg) => msg.status === "failed",
         ).length;
 
         acc[priority] = {
@@ -407,7 +409,7 @@ class MockNotificationService {
         };
         return acc;
       },
-      {} as NotificationStats['byPriority'],
+      {} as NotificationStats["byPriority"],
     );
 
     return {
@@ -426,7 +428,7 @@ class MockNotificationService {
    */
 
   async createTemplate(
-    template: Omit<NotificationTemplate, 'id'>,
+    template: Omit<NotificationTemplate, "id">,
   ): Promise<NotificationTemplate> {
     const newTemplate: NotificationTemplate = {
       ...template,
@@ -457,8 +459,8 @@ class MockNotificationService {
   async processPendingNotifications(): Promise<void> {
     const pendingMessages = this.messages.filter(
       (msg) =>
-        msg.status === 'pending'
-        && (!msg.scheduledAt || msg.scheduledAt <= new Date()),
+        msg.status === "pending" &&
+        (!msg.scheduledAt || msg.scheduledAt <= new Date()),
     );
 
     for (const message of pendingMessages) {
@@ -471,47 +473,47 @@ class MockNotificationService {
   private initializeDefaultChannels(): void {
     const defaultChannels: NotificationChannel[] = [
       {
-        id: 'email_primary',
-        type: 'email',
-        endpoint: 'smtp://localhost:587',
+        id: "email_primary",
+        type: "email",
+        endpoint: "smtp://localhost:587",
         enabled: true,
-        priority: 'medium',
+        priority: "medium",
         retryAttempts: 3,
         cooldownPeriod: 300,
       },
       {
-        id: 'sms_primary',
-        type: 'sms',
-        endpoint: 'sms://api.provider.com',
+        id: "sms_primary",
+        type: "sms",
+        endpoint: "sms://api.provider.com",
         enabled: true,
-        priority: 'high',
+        priority: "high",
         retryAttempts: 2,
         cooldownPeriod: 60,
       },
       {
-        id: 'push_primary',
-        type: 'push',
-        endpoint: 'fcm://googleapis.com',
+        id: "push_primary",
+        type: "push",
+        endpoint: "fcm://googleapis.com",
         enabled: true,
-        priority: 'medium',
+        priority: "medium",
         retryAttempts: 3,
         cooldownPeriod: 120,
       },
       {
-        id: 'webhook_primary',
-        type: 'webhook',
-        endpoint: 'https://api.webhook.site',
+        id: "webhook_primary",
+        type: "webhook",
+        endpoint: "https://api.webhook.site",
         enabled: true,
-        priority: 'low',
+        priority: "low",
         retryAttempts: 5,
         cooldownPeriod: 180,
       },
       {
-        id: 'in_app_primary',
-        type: 'in_app',
-        endpoint: 'internal://notifications',
+        id: "in_app_primary",
+        type: "in_app",
+        endpoint: "internal://notifications",
         enabled: true,
-        priority: 'low',
+        priority: "low",
         retryAttempts: 1,
         cooldownPeriod: 0,
       },
@@ -523,58 +525,54 @@ class MockNotificationService {
   }
 
   private initializeDefaultTemplates(): void {
-    const defaultTemplates: Omit<NotificationTemplate, 'id'>[] = [
+    const defaultTemplates: Omit<NotificationTemplate, "id">[] = [
       {
-        name: 'Medical Alert - Critical',
-        type: 'medical_alert',
-        subject: 'URGENT: Critical Medical Alert - {{patientName}}',
-        body:
-          'Critical medical alert for patient {{patientName}} (ID: {{patientId}}).\n\nAlert: {{alertMessage}}\n\nImmediate attention required.\n\nTime: {{timestamp}}\nProvider: {{providerName}}',
+        name: "Medical Alert - Critical",
+        type: "medical_alert",
+        subject: "URGENT: Critical Medical Alert - {{patientName}}",
+        body: "Critical medical alert for patient {{patientName}} (ID: {{patientId}}).\n\nAlert: {{alertMessage}}\n\nImmediate attention required.\n\nTime: {{timestamp}}\nProvider: {{providerName}}",
         variables: [
-          'patientName',
-          'patientId',
-          'alertMessage',
-          'timestamp',
-          'providerName',
+          "patientName",
+          "patientId",
+          "alertMessage",
+          "timestamp",
+          "providerName",
         ],
-        channels: ['sms', 'email', 'push'],
-        priority: 'critical',
+        channels: ["sms", "email", "push"],
+        priority: "critical",
       },
       {
-        name: 'Appointment Reminder',
-        type: 'appointment_reminder',
-        subject: 'Appointment Reminder - {{appointmentDate}}',
-        body:
-          'Hello {{patientName}},\n\nThis is a reminder for your upcoming appointment:\n\nDate: {{appointmentDate}}\nTime: {{appointmentTime}}\nProvider: {{providerName}}\nLocation: {{location}}\n\nPlease confirm your attendance or reschedule if needed.',
+        name: "Appointment Reminder",
+        type: "appointment_reminder",
+        subject: "Appointment Reminder - {{appointmentDate}}",
+        body: "Hello {{patientName}},\n\nThis is a reminder for your upcoming appointment:\n\nDate: {{appointmentDate}}\nTime: {{appointmentTime}}\nProvider: {{providerName}}\nLocation: {{location}}\n\nPlease confirm your attendance or reschedule if needed.",
         variables: [
-          'patientName',
-          'appointmentDate',
-          'appointmentTime',
-          'providerName',
-          'location',
+          "patientName",
+          "appointmentDate",
+          "appointmentTime",
+          "providerName",
+          "location",
         ],
-        channels: ['email', 'sms', 'in_app'],
-        priority: 'medium',
+        channels: ["email", "sms", "in_app"],
+        priority: "medium",
       },
       {
-        name: 'System Maintenance Notice',
-        type: 'system_notification',
-        subject: 'System Maintenance - {{maintenanceDate}}',
-        body:
-          'Dear User,\n\nScheduled system maintenance will occur on {{maintenanceDate}} from {{startTime}} to {{endTime}}.\n\nDuring this time, the system may be unavailable.\n\nWe apologize for any inconvenience.',
-        variables: ['maintenanceDate', 'startTime', 'endTime'],
-        channels: ['email', 'in_app'],
-        priority: 'low',
+        name: "System Maintenance Notice",
+        type: "system_notification",
+        subject: "System Maintenance - {{maintenanceDate}}",
+        body: "Dear User,\n\nScheduled system maintenance will occur on {{maintenanceDate}} from {{startTime}} to {{endTime}}.\n\nDuring this time, the system may be unavailable.\n\nWe apologize for any inconvenience.",
+        variables: ["maintenanceDate", "startTime", "endTime"],
+        channels: ["email", "in_app"],
+        priority: "low",
       },
       {
-        name: 'Compliance Alert',
-        type: 'compliance_alert',
-        subject: 'Compliance Alert - Action Required',
-        body:
-          'Compliance alert detected:\n\nType: {{complianceType}}\nSeverity: {{severity}}\nDescription: {{description}}\n\nAction required by: {{dueDate}}\n\nPlease review and take appropriate action.',
-        variables: ['complianceType', 'severity', 'description', 'dueDate'],
-        channels: ['email', 'webhook'],
-        priority: 'high',
+        name: "Compliance Alert",
+        type: "compliance_alert",
+        subject: "Compliance Alert - Action Required",
+        body: "Compliance alert detected:\n\nType: {{complianceType}}\nSeverity: {{severity}}\nDescription: {{description}}\n\nAction required by: {{dueDate}}\n\nPlease review and take appropriate action.",
+        variables: ["complianceType", "severity", "description", "dueDate"],
+        channels: ["email", "webhook"],
+        priority: "high",
       },
     ];
 
@@ -603,9 +601,9 @@ class MockNotificationService {
   }
 
   private selectOptimalChannel(
-    availableChannels: NotificationChannel['type'][],
+    availableChannels: NotificationChannel["type"][],
     userPrefs?: NotificationPreferences | null,
-  ): NotificationChannel['type'] {
+  ): NotificationChannel["type"] {
     if (userPrefs) {
       // Use user preferences
       for (const channel of availableChannels) {
@@ -615,12 +613,12 @@ class MockNotificationService {
       }
     } else {
       // Default priority: push > email > sms > in_app > webhook
-      const priorityOrder: NotificationChannel['type'][] = [
-        'push',
-        'email',
-        'sms',
-        'in_app',
-        'webhook',
+      const priorityOrder: NotificationChannel["type"][] = [
+        "push",
+        "email",
+        "sms",
+        "in_app",
+        "webhook",
       ];
       for (const channel of priorityOrder) {
         if (availableChannels.includes(channel)) {
@@ -630,7 +628,7 @@ class MockNotificationService {
     }
 
     // Fallback to first available channel
-    return availableChannels[0] || 'email';
+    return availableChannels[0] || "email";
   }
 
   private processTemplate(
@@ -640,7 +638,7 @@ class MockNotificationService {
     let processed = template;
 
     for (const [key, value] of Object.entries(variables)) {
-      const regex = new RegExp(`{{${key}}}`, 'g');
+      const regex = new RegExp(`{{${key}}}`, "g");
       processed = processed.replace(regex, value);
     }
 
@@ -652,33 +650,35 @@ class MockNotificationService {
   ): Promise<void> {
     try {
       // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 100 + 50));
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.random() * 100 + 50),
+      );
 
       // Simulate delivery success/failure (95% success rate)
       const success = Math.random() > 0.05;
 
       if (success) {
-        message.status = 'sent';
+        message.status = "sent";
         message.sentAt = new Date();
 
         // Simulate delivery confirmation (90% of sent messages)
         if (Math.random() > 0.1) {
           setTimeout(
             () => {
-              message.status = 'delivered';
+              message.status = "delivered";
               message.deliveredAt = new Date();
             },
             Math.random() * 5000 + 1000,
           ); // 1-6 seconds
         }
       } else {
-        message.status = 'failed';
-        message.errors.push('Simulated delivery failure');
+        message.status = "failed";
+        message.errors.push("Simulated delivery failure");
       }
     } catch (error) {
-      message.status = 'failed';
+      message.status = "failed";
       message.errors.push(
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.message : "Unknown error",
       );
     }
   }

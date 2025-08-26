@@ -3,13 +3,13 @@
  * Demonstra integração de todos os componentes implementados
  */
 
-'use client';
+"use client";
 
-import React from 'react';
-import { AuthProvider, ProtectedRoute, useAuth, withAuth } from './index';
+import React from "react";
+import { AuthProvider, ProtectedRoute, useAuth, withAuth } from "./index";
 
 // === 1. CONFIGURAÇÃO DO PROVIDER NO ROOT LAYOUT ===
-export function RootLayout({ children }: { children: React.ReactNode; }) {
+export function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
@@ -22,15 +22,16 @@ export function RootLayout({ children }: { children: React.ReactNode; }) {
 // === 2. COMPONENTE DE LOGIN ===
 function LoginPage() {
   const { login, isLoading, error } = useAuth();
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const result = await login({ email, password });
 
-    if (result.success) {}
+    if (result.success) {
+    }
   };
 
   return (
@@ -76,7 +77,7 @@ function LoginPage() {
               disabled={isLoading}
               type="submit"
             >
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              {isLoading ? "Entrando..." : "Entrar"}
             </button>
           </div>
         </form>
@@ -137,10 +138,10 @@ function DashboardPage() {
     try {
       const token = await getValidToken();
 
-      const response = await fetch('/api/v1/patients', {
+      const response = await fetch("/api/v1/patients", {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -148,7 +149,8 @@ function DashboardPage() {
         const result = await response.json();
         setData(result.data);
       }
-    } catch {} finally {
+    } catch {
+    } finally {
       setLoading(false);
     }
   };
@@ -166,25 +168,23 @@ function DashboardPage() {
 
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="px-4 py-5 sm:p-6">
-            {loading
-              ? (
-                <div className="text-center">
-                  <div className="mx-auto h-6 w-6 animate-spin rounded-full border-indigo-600 border-b-2" />
-                  <p className="mt-2 text-gray-500 text-sm">
-                    Carregando dados...
-                  </p>
-                </div>
-              )
-              : (
-                <div>
-                  <h3 className="mb-4 font-medium text-gray-900 text-lg">
-                    Dados Protegidos
-                  </h3>
-                  <pre className="rounded bg-gray-100 p-4 text-sm">
-									{JSON.stringify(data, undefined, 2)}
-                  </pre>
-                </div>
-              )}
+            {loading ? (
+              <div className="text-center">
+                <div className="mx-auto h-6 w-6 animate-spin rounded-full border-indigo-600 border-b-2" />
+                <p className="mt-2 text-gray-500 text-sm">
+                  Carregando dados...
+                </p>
+              </div>
+            ) : (
+              <div>
+                <h3 className="mb-4 font-medium text-gray-900 text-lg">
+                  Dados Protegidos
+                </h3>
+                <pre className="rounded bg-gray-100 p-4 text-sm">
+                  {JSON.stringify(data, undefined, 2)}
+                </pre>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -194,7 +194,7 @@ function DashboardPage() {
 
 // Versão protegida do Dashboard usando HOC
 export const ProtectedDashboard = withAuth(DashboardPage, {
-  requiredRole: 'healthcare_professional',
+  requiredRole: "healthcare_professional",
 });
 
 // === 5. PÁGINA ADMINISTRATIVA (APENAS ADMINS) ===
@@ -273,7 +273,7 @@ export function useApiCall() {
       return fetch(url, {
         ...options,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...(authHeader && { Authorization: authHeader }),
           ...options.headers,
         },
@@ -287,11 +287,11 @@ export function useApiCall() {
 
 // === 9. EXEMPLO DE TESTE E VALIDAÇÃO ===
 export async function validateAuthSystem() {
-  const { runAllAuthTests } = await import('./auth-e2e-test');
+  const { runAllAuthTests } = await import("./auth-e2e-test");
 
   const testCredentials = {
-    email: 'admin@neonpro.com.br',
-    password: 'test123',
+    email: "admin@neonpro.com.br",
+    password: "test123",
   };
 
   const results = await runAllAuthTests(testCredentials);

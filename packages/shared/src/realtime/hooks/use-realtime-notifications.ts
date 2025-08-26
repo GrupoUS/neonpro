@@ -4,10 +4,10 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
-import type { Notification } from '@neonpro/db';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { getRealtimeManager } from '../connection-manager';
+import type { Notification } from "@neonpro/db";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getRealtimeManager } from "../connection-manager";
 
 // Using the actual notifications table
 type NotificationRow = Notification;
@@ -18,14 +18,14 @@ export interface ExtendedNotification extends NotificationRow {
 }
 
 export interface NotificationPriority {
-  EMERGENCY: 'emergency'; // Emergências médicas
-  HIGH: 'high'; // Alterações críticas
-  MEDIUM: 'medium'; // Lembretes importantes
-  LOW: 'low'; // Informações gerais
+  EMERGENCY: "emergency"; // Emergências médicas
+  HIGH: "high"; // Alterações críticas
+  MEDIUM: "medium"; // Lembretes importantes
+  LOW: "low"; // Informações gerais
 }
 
 export interface RealtimeNotificationPayload {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  eventType: "INSERT" | "UPDATE" | "DELETE";
   new?: ExtendedNotification;
   old?: ExtendedNotification;
   errors?: string[];
@@ -34,7 +34,7 @@ export interface RealtimeNotificationPayload {
 export interface UseRealtimeNotificationsOptions {
   tenantId: string;
   userId?: string;
-  priority?: keyof NotificationPriority | 'ALL';
+  priority?: keyof NotificationPriority | "ALL";
   enabled?: boolean;
   enableAudio?: boolean;
   enableToast?: boolean;
@@ -79,10 +79,10 @@ export function useRealtimeNotifications(
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [lastNotification, setLastNotification] = useState<NotificationRow | null>();
+  const [lastNotification, setLastNotification] =
+    useState<NotificationRow | null>();
   const [emergencyCount, setEmergencyCount] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
-    );
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /**
@@ -90,17 +90,17 @@ export function useRealtimeNotifications(
    */
   const playNotificationSound = useCallback(
     (priority: keyof NotificationPriority) => {
-      if (!enableAudio || typeof window === 'undefined') {
+      if (!enableAudio || typeof window === "undefined") {
         return;
       }
 
       try {
         // Different sounds for different priorities
         const soundMap = {
-          EMERGENCY: '/sounds/emergency-alert.mp3', // Critical medical alerts
-          HIGH: '/sounds/urgent-notification.mp3', // Important changes
-          MEDIUM: '/sounds/standard-notification.mp3', // Regular updates
-          LOW: '/sounds/soft-notification.mp3', // Info notifications
+          EMERGENCY: "/sounds/emergency-alert.mp3", // Critical medical alerts
+          HIGH: "/sounds/urgent-notification.mp3", // Important changes
+          MEDIUM: "/sounds/standard-notification.mp3", // Regular updates
+          LOW: "/sounds/soft-notification.mp3", // Info notifications
         };
 
         const soundUrl = soundMap[priority] || soundMap.LOW;
@@ -110,7 +110,7 @@ export function useRealtimeNotifications(
         }
 
         audioRef.current.src = soundUrl;
-        audioRef.current.volume = priority === 'EMERGENCY' ? 1 : 0.7;
+        audioRef.current.volume = priority === "EMERGENCY" ? 1 : 0.7;
 
         // Play sound with fallback
         const playPromise = audioRef.current.play();
@@ -118,12 +118,12 @@ export function useRealtimeNotifications(
           playPromise.catch((_error) => {
             // Fallback to system notification sound
             if (
-              'Notification' in window
-              && Notification.permission === 'granted'
+              "Notification" in window &&
+              Notification.permission === "granted"
             ) {
-              new Notification('NeonPro Healthcare', {
-                body: 'Nova notificação recebida',
-                icon: '/icons/healthcare-notification.png',
+              new Notification("NeonPro Healthcare", {
+                body: "Nova notificação recebida",
+                icon: "/icons/healthcare-notification.png",
                 silent: false,
               });
             }
@@ -139,7 +139,7 @@ export function useRealtimeNotifications(
    */
   const showToastNotification = useCallback(
     (_notification: ExtendedNotification) => {
-      if (!enableToast || typeof window === 'undefined') {
+      if (!enableToast || typeof window === "undefined") {
         return;
       }
     },
@@ -155,30 +155,30 @@ export function useRealtimeNotifications(
 
       // Update notifications cache
       queryClient.setQueryData(
-        ['notifications', tenantId, userId],
+        ["notifications", tenantId, userId],
         (oldCache: NotificationRow[] | undefined) => {
           if (!oldCache) {
             return oldCache;
           }
 
           switch (eventType) {
-            case 'INSERT': {
+            case "INSERT": {
               if (newData && newData.user_id === userId) {
                 return [newData, ...oldCache].slice(0, 500); // Keep manageable
               }
               return oldCache;
             }
 
-            case 'UPDATE': {
+            case "UPDATE": {
               if (newData) {
                 return oldCache.map((notification) =>
-                  notification.id === newData.id ? newData : notification
+                  notification.id === newData.id ? newData : notification,
                 );
               }
               return oldCache;
             }
 
-            case 'DELETE': {
+            case "DELETE": {
               if (oldData) {
                 return oldCache.filter(
                   (notification) => notification.id !== oldData.id,
@@ -196,7 +196,7 @@ export function useRealtimeNotifications(
 
       // Update unread count
       queryClient.invalidateQueries({
-        queryKey: ['notifications-unread', tenantId, userId],
+        queryKey: ["notifications-unread", tenantId, userId],
       });
     },
     [queryClient, tenantId, userId],
@@ -215,12 +215,12 @@ export function useRealtimeNotifications(
         };
 
         // Update state metrics
-        if (realtimePayload.eventType === 'INSERT' && realtimePayload.new) {
+        if (realtimePayload.eventType === "INSERT" && realtimePayload.new) {
           setUnreadCount((prev) => prev + 1);
           setLastNotification(realtimePayload.new as NotificationRow);
 
           // Track emergency notifications
-          if (realtimePayload.new.priority === 'EMERGENCY') {
+          if (realtimePayload.new.priority === "EMERGENCY") {
             setEmergencyCount((prev) => prev + 1);
 
             // Trigger emergency callback
@@ -231,7 +231,7 @@ export function useRealtimeNotifications(
 
           // Play audio alert based on priority
           if (enableAudio) {
-            playNotificationSound(realtimePayload.new.priority || 'LOW');
+            playNotificationSound(realtimePayload.new.priority || "LOW");
           }
 
           // Show toast notification
@@ -279,14 +279,14 @@ export function useRealtimeNotifications(
     if (tenantId) {
       filter += `,tenant_id=eq.${tenantId}`;
     }
-    if (priority && priority !== 'ALL') {
+    if (priority && priority !== "ALL") {
       filter += `,priority=eq.${priority}`;
     }
 
     const unsubscribe = realtimeManager.subscribe(
       `notifications:${filter}`,
       {
-        table: 'notifications',
+        table: "notifications",
         filter,
       },
       handleNotificationChange,

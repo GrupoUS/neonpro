@@ -6,13 +6,13 @@
 export interface DataSubjectRequest {
   id: string;
   userId: string;
-  requestType: 'access' | 'rectification' | 'deletion' | 'portability';
-  status: 'pending' | 'processing' | 'completed' | 'rejected';
+  requestType: "access" | "rectification" | "deletion" | "portability";
+  status: "pending" | "processing" | "completed" | "rejected";
   requestDate: Date;
   completionDate?: Date;
   details: string;
   ipAddress: string;
-  verification: 'pending' | 'verified' | 'rejected';
+  verification: "pending" | "verified" | "rejected";
 }
 
 export interface PersonalDataExport {
@@ -26,7 +26,7 @@ export interface PersonalDataExport {
     financial: any[];
     communications: any[];
   };
-  format: 'json' | 'csv' | 'pdf';
+  format: "json" | "csv" | "pdf";
 }
 
 export class LGPDDataSubjectRights {
@@ -47,12 +47,12 @@ export class LGPDDataSubjectRights {
     const request: DataSubjectRequest = {
       id: this.generateRequestId(),
       userId,
-      requestType: 'access',
-      status: 'pending',
+      requestType: "access",
+      status: "pending",
       requestDate: new Date(),
       details,
       ipAddress,
-      verification: 'pending',
+      verification: "pending",
     };
 
     await this.storeDataSubjectRequest(request);
@@ -68,12 +68,12 @@ export class LGPDDataSubjectRights {
     const request: DataSubjectRequest = {
       id: this.generateRequestId(),
       userId,
-      requestType: 'rectification',
-      status: 'pending',
+      requestType: "rectification",
+      status: "pending",
       requestDate: new Date(),
       details,
       ipAddress,
-      verification: 'pending',
+      verification: "pending",
     };
 
     await this.storeDataSubjectRequest(request);
@@ -89,12 +89,12 @@ export class LGPDDataSubjectRights {
     const request: DataSubjectRequest = {
       id: this.generateRequestId(),
       userId,
-      requestType: 'deletion',
-      status: 'pending',
+      requestType: "deletion",
+      status: "pending",
       requestDate: new Date(),
       details,
       ipAddress,
-      verification: 'pending',
+      verification: "pending",
     };
 
     await this.storeDataSubjectRequest(request);
@@ -105,17 +105,17 @@ export class LGPDDataSubjectRights {
   async requestDataPortability(
     userId: string,
     ipAddress: string,
-    format: 'json' | 'csv' | 'pdf' = 'json',
+    format: "json" | "csv" | "pdf" = "json",
   ): Promise<DataSubjectRequest> {
     const request: DataSubjectRequest = {
       id: this.generateRequestId(),
       userId,
-      requestType: 'portability',
-      status: 'pending',
+      requestType: "portability",
+      status: "pending",
       requestDate: new Date(),
       details: `Data export in ${format} format`,
       ipAddress,
-      verification: 'pending',
+      verification: "pending",
     };
 
     await this.storeDataSubjectRequest(request);
@@ -125,7 +125,7 @@ export class LGPDDataSubjectRights {
 
   async exportUserData(
     userId: string,
-    format: 'json' | 'csv' | 'pdf' = 'json',
+    format: "json" | "csv" | "pdf" = "json",
   ): Promise<PersonalDataExport> {
     // Collect all user data from different sources
     const exportData: PersonalDataExport = {
@@ -170,7 +170,7 @@ export class LGPDDataSubjectRights {
 
   async updateRequestStatus(
     _requestId: string,
-    _status: DataSubjectRequest['status'],
+    _status: DataSubjectRequest["status"],
     _details?: string,
   ): Promise<boolean> {
     return true;

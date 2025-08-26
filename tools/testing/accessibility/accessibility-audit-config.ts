@@ -1,5 +1,5 @@
 // tools/testing/accessibility/accessibility-audit-config.ts
-import type { AxeConfig } from 'axe-core';
+import type { AxeConfig } from "axe-core";
 
 /**
  * NEONPRO HEALTHCARE - WCAG 2.1 AA COMPLIANCE CONFIGURATION
@@ -11,28 +11,28 @@ import type { AxeConfig } from 'axe-core';
 export const WCAG_AA_CONFIG: AxeConfig = {
   rules: {
     // WCAG 2.1 Level A Rules - Critical
-    'area-alt': { enabled: true },
-    'aria-allowed-attr': { enabled: true },
-    'aria-command-name': { enabled: true },
-    'aria-hidden-body': { enabled: true },
-    'aria-hidden-focus': { enabled: true },
-    'aria-input-field-name': { enabled: true },
-    'aria-meter-name': { enabled: true },
-    'aria-progressbar-name': { enabled: true },
-    'aria-required-attr': { enabled: true },
-    'aria-required-children': { enabled: true },
-    'aria-required-parent': { enabled: true },
-    'aria-roledescription': { enabled: true },
-    'aria-roles': { enabled: true },
-    'aria-toggle-field-name': { enabled: true },
-    'aria-tooltip-name': { enabled: true },
-    'aria-valid-attr': { enabled: true },
-    'aria-valid-attr-value': { enabled: true },
-    'audio-caption': { enabled: true },
+    "area-alt": { enabled: true },
+    "aria-allowed-attr": { enabled: true },
+    "aria-command-name": { enabled: true },
+    "aria-hidden-body": { enabled: true },
+    "aria-hidden-focus": { enabled: true },
+    "aria-input-field-name": { enabled: true },
+    "aria-meter-name": { enabled: true },
+    "aria-progressbar-name": { enabled: true },
+    "aria-required-attr": { enabled: true },
+    "aria-required-children": { enabled: true },
+    "aria-required-parent": { enabled: true },
+    "aria-roledescription": { enabled: true },
+    "aria-roles": { enabled: true },
+    "aria-toggle-field-name": { enabled: true },
+    "aria-tooltip-name": { enabled: true },
+    "aria-valid-attr": { enabled: true },
+    "aria-valid-attr-value": { enabled: true },
+    "audio-caption": { enabled: true },
     blink: { enabled: true },
-    'button-name': { enabled: true },
+    "button-name": { enabled: true },
     bypass: { enabled: true },
-    'color-contrast': {
+    "color-contrast": {
       enabled: true,
       options: {
         noScroll: true,
@@ -44,40 +44,40 @@ export const WCAG_AA_CONFIG: AxeConfig = {
         },
       },
     },
-    'definition-list': { enabled: true },
+    "definition-list": { enabled: true },
     dlitem: { enabled: true },
-    'document-title': { enabled: true },
-    'duplicate-id': { enabled: true },
-    'duplicate-id-active': { enabled: true },
-    'duplicate-id-aria': { enabled: true },
-    'form-field-multiple-labels': { enabled: true },
-    'frame-title': { enabled: true },
-    'html-has-lang': { enabled: true },
-    'html-lang-valid': { enabled: true },
-    'html-xml-lang-mismatch': { enabled: true },
-    'image-alt': { enabled: true },
-    'input-button-name': { enabled: true },
-    'input-image-alt': { enabled: true },
+    "document-title": { enabled: true },
+    "duplicate-id": { enabled: true },
+    "duplicate-id-active": { enabled: true },
+    "duplicate-id-aria": { enabled: true },
+    "form-field-multiple-labels": { enabled: true },
+    "frame-title": { enabled: true },
+    "html-has-lang": { enabled: true },
+    "html-lang-valid": { enabled: true },
+    "html-xml-lang-mismatch": { enabled: true },
+    "image-alt": { enabled: true },
+    "input-button-name": { enabled: true },
+    "input-image-alt": { enabled: true },
     label: { enabled: true },
-    'link-name': { enabled: true },
+    "link-name": { enabled: true },
     list: { enabled: true },
     listitem: { enabled: true },
     marquee: { enabled: true },
-    'meta-refresh': { enabled: true },
-    'object-alt': { enabled: true },
-    'role-img-alt': { enabled: true },
-    'scrollable-region-focusable': { enabled: true },
-    'server-side-image-map': { enabled: true },
-    'svg-img-alt': { enabled: true },
-    'td-headers-attr': { enabled: true },
-    'th-has-data-cells': { enabled: true },
-    'valid-lang': { enabled: true },
-    'video-caption': { enabled: true },
+    "meta-refresh": { enabled: true },
+    "object-alt": { enabled: true },
+    "role-img-alt": { enabled: true },
+    "scrollable-region-focusable": { enabled: true },
+    "server-side-image-map": { enabled: true },
+    "svg-img-alt": { enabled: true },
+    "td-headers-attr": { enabled: true },
+    "th-has-data-cells": { enabled: true },
+    "valid-lang": { enabled: true },
+    "video-caption": { enabled: true },
 
     // WCAG 2.1 Level AA Rules - Enhanced
-    'autocomplete-valid': { enabled: true },
-    'avoid-inline-spacing': { enabled: true },
-    'color-contrast-enhanced': {
+    "autocomplete-valid": { enabled: true },
+    "avoid-inline-spacing": { enabled: true },
+    "color-contrast-enhanced": {
       enabled: true,
       options: {
         // Healthcare-specific enhanced contrast
@@ -87,59 +87,59 @@ export const WCAG_AA_CONFIG: AxeConfig = {
         },
       },
     },
-    'focus-order-semantics': { enabled: true },
-    'hidden-content': { enabled: true },
-    'image-redundant-alt': { enabled: true },
-    'label-title-only': { enabled: true },
-    'landmark-banner-is-top-level': { enabled: true },
-    'landmark-complementary-is-top-level': { enabled: true },
-    'landmark-contentinfo-is-top-level': { enabled: true },
-    'landmark-main-is-top-level': { enabled: true },
-    'landmark-no-duplicate-banner': { enabled: true },
-    'landmark-no-duplicate-contentinfo': { enabled: true },
-    'landmark-no-duplicate-main': { enabled: true },
-    'landmark-one-main': { enabled: true },
-    'landmark-unique': { enabled: true },
-    'link-in-text-block': { enabled: true },
-    'no-autoplay-audio': { enabled: true },
-    'page-has-heading-one': { enabled: true },
+    "focus-order-semantics": { enabled: true },
+    "hidden-content": { enabled: true },
+    "image-redundant-alt": { enabled: true },
+    "label-title-only": { enabled: true },
+    "landmark-banner-is-top-level": { enabled: true },
+    "landmark-complementary-is-top-level": { enabled: true },
+    "landmark-contentinfo-is-top-level": { enabled: true },
+    "landmark-main-is-top-level": { enabled: true },
+    "landmark-no-duplicate-banner": { enabled: true },
+    "landmark-no-duplicate-contentinfo": { enabled: true },
+    "landmark-no-duplicate-main": { enabled: true },
+    "landmark-one-main": { enabled: true },
+    "landmark-unique": { enabled: true },
+    "link-in-text-block": { enabled: true },
+    "no-autoplay-audio": { enabled: true },
+    "page-has-heading-one": { enabled: true },
     region: { enabled: true },
-    'scope-attr-valid': { enabled: true },
-    'skip-link': { enabled: true },
+    "scope-attr-valid": { enabled: true },
+    "skip-link": { enabled: true },
   },
 
   // Healthcare-specific tags for targeted testing
   tags: [
-    'wcag2a',
-    'wcag2aa',
-    'wcag21a',
-    'wcag21aa',
-    'best-practice',
-    'ACT', // Accessibility Conformance Testing
-    'section508', // US Federal compliance
-    'experimental', // Latest WCAG 2.2 draft rules
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "best-practice",
+    "ACT", // Accessibility Conformance Testing
+    "section508", // US Federal compliance
+    "experimental", // Latest WCAG 2.2 draft rules
   ],
 
   // Enhanced reporting for medical applications
-  reporter: 'v2',
-  resultTypes: ['violations', 'incomplete', 'passes'],
+  reporter: "v2",
+  resultTypes: ["violations", "incomplete", "passes"],
 
   // Healthcare-specific element selectors
   include: [
-    '[data-medical-context]',
-    '[data-sensitive]',
-    '[data-lgpd]',
-    '[data-emergency]',
-    '[data-priority]',
-    'form[data-form-type]',
-    'table[data-patient-data]',
+    "[data-medical-context]",
+    "[data-sensitive]",
+    "[data-lgpd]",
+    "[data-emergency]",
+    "[data-priority]",
+    "form[data-form-type]",
+    "table[data-patient-data]",
     '[role="alert"]',
     '[role="alertdialog"]',
-    '[aria-live]',
+    "[aria-live]",
   ],
 
   // Exclude third-party components that are already audited
-  exclude: ['#storybook-root', '.sb-show-main', '[data-test-ignore-a11y]'],
+  exclude: ["#storybook-root", ".sb-show-main", "[data-test-ignore-a11y]"],
 };
 
 /**
@@ -151,7 +151,7 @@ export const HEALTHCARE_A11Y_SCENARIOS = {
     selectors: [
       '[data-priority="critical"]',
       '[data-emergency="true"]',
-      '.emergency-alert',
+      ".emergency-alert",
       '[role="alert"][data-medical-context="emergency"]',
     ],
     requirements: {
@@ -182,10 +182,10 @@ export const HEALTHCARE_A11Y_SCENARIOS = {
   // Form Interfaces
   forms: {
     selectors: [
-      'form[data-form-type]',
-      'input[data-medical-type]',
-      '[data-validation]',
-      '.form-section',
+      "form[data-form-type]",
+      "input[data-medical-type]",
+      "[data-validation]",
+      ".form-section",
     ],
     requirements: {
       labelAssociation: true,
@@ -198,10 +198,10 @@ export const HEALTHCARE_A11Y_SCENARIOS = {
   // Navigation and Layout
   navigation: {
     selectors: [
-      'nav',
+      "nav",
       '[role="navigation"]',
-      '.breadcrumb',
-      '[data-skip-link]',
+      ".breadcrumb",
+      "[data-skip-link]",
     ],
     requirements: {
       skipLinks: true,
@@ -213,7 +213,7 @@ export const HEALTHCARE_A11Y_SCENARIOS = {
 
   // Data Tables
   tables: {
-    selectors: ['table', '[role="table"]', '[role="grid"]', '.data-table'],
+    selectors: ["table", '[role="table"]', '[role="grid"]', ".data-table"],
     requirements: {
       tableHeaders: true,
       sortingIndicators: true,
@@ -237,12 +237,12 @@ export const HEALTHCARE_COLOR_CONTRAST = {
 
   // Critical color combinations for medical contexts
   criticalPairs: [
-    { background: '#ffffff', foreground: '#000000' }, // Maximum contrast
-    { background: '#f8f9fa', foreground: '#212529' }, // Light theme
-    { background: '#212529', foreground: '#ffffff' }, // Dark theme
-    { background: '#dc3545', foreground: '#ffffff' }, // Emergency red
-    { background: '#28a745', foreground: '#ffffff' }, // Success green
-    { background: '#ffc107', foreground: '#000000' }, // Warning yellow
+    { background: "#ffffff", foreground: "#000000" }, // Maximum contrast
+    { background: "#f8f9fa", foreground: "#212529" }, // Light theme
+    { background: "#212529", foreground: "#ffffff" }, // Dark theme
+    { background: "#dc3545", foreground: "#ffffff" }, // Emergency red
+    { background: "#28a745", foreground: "#ffffff" }, // Success green
+    { background: "#ffc107", foreground: "#000000" }, // Warning yellow
   ],
 };
 
@@ -251,22 +251,22 @@ export const HEALTHCARE_COLOR_CONTRAST = {
  */
 export const KEYBOARD_NAVIGATION_TESTS = {
   tabOrder: [
-    'Skip links should be first in tab order',
-    'Main navigation should follow logical sequence',
-    'Form fields should follow visual order',
-    'Interactive elements should be focusable',
-    'Modal dialogs should trap focus',
-    'Dropdown menus should be keyboard accessible',
+    "Skip links should be first in tab order",
+    "Main navigation should follow logical sequence",
+    "Form fields should follow visual order",
+    "Interactive elements should be focusable",
+    "Modal dialogs should trap focus",
+    "Dropdown menus should be keyboard accessible",
   ],
 
   keyPatterns: {
-    Tab: 'Move to next focusable element',
-    'Shift+Tab': 'Move to previous focusable element',
-    Enter: 'Activate buttons and links',
-    Space: 'Activate buttons and checkboxes',
-    'Arrow keys': 'Navigate within component groups',
-    Escape: 'Close modals and menus',
-    'Home/End': 'Move to first/last item in lists',
+    Tab: "Move to next focusable element",
+    "Shift+Tab": "Move to previous focusable element",
+    Enter: "Activate buttons and links",
+    Space: "Activate buttons and checkboxes",
+    "Arrow keys": "Navigate within component groups",
+    Escape: "Close modals and menus",
+    "Home/End": "Move to first/last item in lists",
   },
 };
 
@@ -275,24 +275,24 @@ export const KEYBOARD_NAVIGATION_TESTS = {
  */
 export const SCREEN_READER_TESTS = {
   landmarks: [
-    'Page should have proper landmark structure',
-    'Main content should be identifiable',
-    'Navigation areas should be labeled',
-    'Form sections should be grouped logically',
+    "Page should have proper landmark structure",
+    "Main content should be identifiable",
+    "Navigation areas should be labeled",
+    "Form sections should be grouped logically",
   ],
 
   announcements: [
-    'Form validation errors should be announced',
-    'Dynamic content changes should be announced',
-    'Loading states should be announced',
-    'Success messages should be announced',
+    "Form validation errors should be announced",
+    "Dynamic content changes should be announced",
+    "Loading states should be announced",
+    "Success messages should be announced",
   ],
 
   labels: [
-    'All form controls should have accessible names',
-    'Images should have appropriate alt text',
-    'Icons should have text alternatives',
-    'Data tables should have proper headers',
+    "All form controls should have accessible names",
+    "Images should have appropriate alt text",
+    "Icons should have text alternatives",
+    "Data tables should have proper headers",
   ],
 };
 

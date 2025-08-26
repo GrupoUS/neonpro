@@ -1,4 +1,4 @@
-import type { NextRequest } from 'next/server';
+import type { NextRequest } from "next/server";
 
 /**
  * Rate limiting configuration for healthcare API endpoints
@@ -39,7 +39,7 @@ export interface RateLimitStore {
   increment(
     key: string,
     windowSeconds: number,
-  ): Promise<{ count: number; remaining: number; resetTime: number; }>;
+  ): Promise<{ count: number; remaining: number; resetTime: number }>;
   reset(key: string): Promise<void>;
 }
 
@@ -50,13 +50,13 @@ export interface RateLimitStore {
 export class MemoryRateLimitStore implements RateLimitStore {
   private readonly store = new Map<
     string,
-    { count: number; resetTime: number; }
+    { count: number; resetTime: number }
   >();
 
   increment(
     key: string,
     windowSeconds: number,
-  ): Promise<{ count: number; remaining: number; resetTime: number; }> {
+  ): Promise<{ count: number; remaining: number; resetTime: number }> {
     const now = Date.now();
     const windowMs = windowSeconds * MILLISECONDS_PER_SECOND;
 
@@ -110,7 +110,7 @@ export const RATE_LIMIT_CONFIGS = {
     maxRequests: 5,
     windowSeconds: 300, // 5 minutes
     includeIpAddress: true,
-    keySuffix: 'auth',
+    keySuffix: "auth",
   } as RateLimitConfig,
 
   // Patient data access - moderate limits
@@ -119,7 +119,7 @@ export const RATE_LIMIT_CONFIGS = {
     windowSeconds: 60, // 1 minute
     includeUserId: true,
     includeIpAddress: true,
-    keySuffix: 'patient-data',
+    keySuffix: "patient-data",
   } as RateLimitConfig,
 
   // General API endpoints - generous limits
@@ -127,7 +127,7 @@ export const RATE_LIMIT_CONFIGS = {
     maxRequests: 1000,
     windowSeconds: 60, // 1 minute
     includeUserId: true,
-    keySuffix: 'api',
+    keySuffix: "api",
   } as RateLimitConfig,
 
   // File uploads - very strict limits
@@ -136,7 +136,7 @@ export const RATE_LIMIT_CONFIGS = {
     windowSeconds: 60, // 1 minute
     includeUserId: true,
     includeIpAddress: true,
-    keySuffix: 'uploads',
+    keySuffix: "uploads",
   } as RateLimitConfig,
 
   // Password reset - very strict limits
@@ -144,7 +144,7 @@ export const RATE_LIMIT_CONFIGS = {
     maxRequests: 3,
     windowSeconds: 3600, // 1 hour
     includeIpAddress: true,
-    keySuffix: 'password-reset',
+    keySuffix: "password-reset",
   } as RateLimitConfig,
 
   // LGPD data requests - strict limits
@@ -153,7 +153,7 @@ export const RATE_LIMIT_CONFIGS = {
     windowSeconds: 3600, // 1 hour
     includeUserId: true,
     includeIpAddress: true,
-    keySuffix: 'lgpd-requests',
+    keySuffix: "lgpd-requests",
   } as RateLimitConfig,
 } as const;
 
@@ -247,7 +247,7 @@ export class RateLimiter {
     request: NextRequest,
     config: RateLimitConfig,
   ): string {
-    const keyParts = ['rate-limit'];
+    const keyParts = ["rate-limit"];
 
     // Add key suffix if specified
     if (config.keySuffix) {
@@ -268,7 +268,7 @@ export class RateLimiter {
       }
     }
 
-    return keyParts.join(':');
+    return keyParts.join(":");
   }
 
   /**
@@ -277,26 +277,26 @@ export class RateLimiter {
    */
   private getClientIP(request: NextRequest): string {
     // Check for Cloudflare CF-Connecting-IP
-    const cfConnectingIP = request.headers.get('cf-connecting-ip');
+    const cfConnectingIP = request.headers.get("cf-connecting-ip");
     if (cfConnectingIP) {
       return cfConnectingIP;
     }
 
     // Check for X-Forwarded-For (proxy chain)
-    const xForwardedFor = request.headers.get('x-forwarded-for');
+    const xForwardedFor = request.headers.get("x-forwarded-for");
     if (xForwardedFor) {
-      const ips = xForwardedFor.split(',');
+      const ips = xForwardedFor.split(",");
       return ips[0].trim();
     }
 
     // Check for X-Real-IP
-    const xRealIP = request.headers.get('x-real-ip');
+    const xRealIP = request.headers.get("x-real-ip");
     if (xRealIP) {
       return xRealIP;
     }
 
     // Fallback to unknown if no IP headers are present
-    return 'unknown';
+    return "unknown";
   }
 
   /**
@@ -305,25 +305,25 @@ export class RateLimiter {
    */
   private getUserId(request: NextRequest): string | null {
     // Try to get from Authorization header (JWT)
-    const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ')) {
+    const authHeader = request.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
       try {
         const token = authHeader.slice(BEARER_TOKEN_PREFIX_LENGTH);
         // In a real implementation, decode and validate JWT here
         // For now, return a placeholder
         return `jwt:${token.slice(0, TOKEN_DISPLAY_LENGTH)}`;
       } catch {
-        return;
+        return null;
       }
     }
 
     // Try to get from session cookie
-    const sessionCookie = request.cookies.get('session');
+    const sessionCookie = request.cookies.get("session");
     if (sessionCookie) {
       return `session:${sessionCookie.value.slice(0, TOKEN_DISPLAY_LENGTH)}`;
     }
 
-    return;
+    return null;
   }
 }
 
@@ -338,16 +338,17 @@ export const defaultRateLimiter = new RateLimiter();
  */
 export const RateLimitLevel = {
   /** Normal operation - no alerts */
-  NORMAL: 'normal',
+  NORMAL: "normal",
   /** Warning level - 80% of limit reached */
-  WARNING: 'warning',
+  WARNING: "warning",
   /** Critical level - 95% of limit reached */
-  CRITICAL: 'critical',
+  CRITICAL: "critical",
   /** Exceeded - limit has been exceeded */
-  EXCEEDED: 'exceeded',
+  EXCEEDED: "exceeded",
 } as const;
 
-export type RateLimitLevel = (typeof RateLimitLevel)[keyof typeof RateLimitLevel];
+export type RateLimitLevel =
+  (typeof RateLimitLevel)[keyof typeof RateLimitLevel];
 
 /**
  * Determine alert level based on current usage

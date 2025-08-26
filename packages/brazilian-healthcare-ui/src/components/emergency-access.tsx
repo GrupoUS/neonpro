@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { EmergencyAlert, PatientInfo } from '../types';
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { EmergencyAlert, PatientInfo } from "../types";
 
 interface EmergencyAccessProps {
   onPatientSelect: (patientId: string) => void;
@@ -14,13 +14,12 @@ export function EmergencyAccessInterface({
   onPatientSelect,
   onEmergencySearch,
   emergencyAlerts = [],
-  className = '',
+  className = "",
 }: EmergencyAccessProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PatientInfo[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [searchStartTime, setSearchStartTime] = useState<number | null>(
-    );
+  const [searchStartTime, setSearchStartTime] = useState<number | null>();
   const [responseTime, setResponseTime] = useState<number | null>();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,7 +50,8 @@ export function EmergencyAccessInterface({
           setResponseTime(elapsed);
 
           // Log performance warning if >5s (half of target)
-          if (elapsed > 5000) {}
+          if (elapsed > 5000) {
+          }
         }
       } catch {
         setSearchResults([]);
@@ -78,12 +78,12 @@ export function EmergencyAccessInterface({
 
   // Keyboard shortcuts for fast navigation
   const handleKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && searchResults.length === 1) {
+    if (event.key === "Enter" && searchResults.length === 1) {
       handleQuickSelect(searchResults[0].id);
     }
 
-    if (event.key === 'Escape') {
-      setSearchQuery('');
+    if (event.key === "Escape") {
+      setSearchQuery("");
       setSearchResults([]);
     }
   };
@@ -103,10 +103,10 @@ export function EmergencyAccessInterface({
             <div
               className={`rounded px-2 py-1 text-sm ${
                 responseTime < 5000
-                  ? 'bg-green-500'
-                  : (responseTime < 10_000
-                  ? 'bg-yellow-500'
-                  : 'bg-red-600')
+                  ? "bg-green-500"
+                  : responseTime < 10_000
+                    ? "bg-yellow-500"
+                    : "bg-red-600"
               }`}
             >
               {responseTime}ms
@@ -114,9 +114,9 @@ export function EmergencyAccessInterface({
           )}
         </div>
         <p className="mt-1 text-red-100 text-sm">
-          Busca rápida de pacientes • Meta: {'<10s'}
+          Busca rápida de pacientes • Meta: {"<10s"}
         </p>
-      </div>{' '}
+      </div>{" "}
       {/* Active Alerts */}
       {emergencyAlerts.length > 0 && (
         <div className="border-red-200 border-b bg-red-50 p-3">
@@ -128,14 +128,16 @@ export function EmergencyAccessInterface({
               <div
                 className="flex cursor-pointer items-center text-red-700 text-sm hover:text-red-900"
                 key={alert.id}
-                onClick={() => alert.patientId && handleQuickSelect(alert.patientId)}
+                onClick={() =>
+                  alert.patientId && handleQuickSelect(alert.patientId)
+                }
               >
                 <span className="mr-2">
-                  {alert.type === 'critical'
-                    ? '🔴'
-                    : (alert.type === 'high'
-                    ? '🟠'
-                    : '🟡')}
+                  {alert.type === "critical"
+                    ? "🔴"
+                    : alert.type === "high"
+                      ? "🟠"
+                      : "🟡"}
                 </span>
                 <span className="truncate">
                   {alert.roomNumber && `Quarto ${alert.roomNumber} • `}
@@ -190,12 +192,14 @@ export function EmergencyAccessInterface({
                 <div
                   className={`cursor-pointer rounded-lg border p-3 transition-all duration-150 hover:shadow-md ${
                     index === 0
-                      ? 'border-red-300 bg-red-50'
-                      : 'border-gray-200 hover:border-red-300'
+                      ? "border-red-300 bg-red-50"
+                      : "border-gray-200 hover:border-red-300"
                   }`}
                   key={patient.id}
                   onClick={() => handleQuickSelect(patient.id)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleQuickSelect(patient.id)}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && handleQuickSelect(patient.id)
+                  }
                   role="button"
                   tabIndex={0}
                 >
@@ -206,11 +210,15 @@ export function EmergencyAccessInterface({
                       </div>
                       <div className="mt-1 text-gray-600 text-sm">
                         <span>CPF: {patient.cpf}</span>
-                        {patient.sus && <span className="ml-3">SUS: {patient.sus}</span>}
+                        {patient.sus && (
+                          <span className="ml-3">SUS: {patient.sus}</span>
+                        )}
                       </div>
                       <div className="mt-1 text-gray-500 text-sm">
-                        Tel: {patient.phone} • {new Date().getFullYear()
-                          - new Date(patient.birthDate).getFullYear()} anos
+                        Tel: {patient.phone} •{" "}
+                        {new Date().getFullYear() -
+                          new Date(patient.birthDate).getFullYear()}{" "}
+                        anos
                       </div>
                     </div>
                     <div className="text-right">
@@ -228,17 +236,17 @@ export function EmergencyAccessInterface({
         )}
 
         {/* No Results */}
-        {searchQuery.length >= 3
-          && !isSearching
-          && searchResults.length === 0 && (
-          <div className="mt-4 py-8 text-center text-gray-500">
-            <span className="mb-2 block text-2xl">🔍</span>
-            <p>Nenhum paciente encontrado</p>
-            <p className="mt-1 text-sm">
-              Verifique CPF, SUS ou nome completo
-            </p>
-          </div>
-        )}
+        {searchQuery.length >= 3 &&
+          !isSearching &&
+          searchResults.length === 0 && (
+            <div className="mt-4 py-8 text-center text-gray-500">
+              <span className="mb-2 block text-2xl">🔍</span>
+              <p>Nenhum paciente encontrado</p>
+              <p className="mt-1 text-sm">
+                Verifique CPF, SUS ou nome completo
+              </p>
+            </div>
+          )}
       </div>
     </div>
   );

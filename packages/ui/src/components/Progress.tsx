@@ -1,5 +1,6 @@
 // Placeholder import for @neonpro/utils
-const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' ');
+const cn = (...classes: (string | undefined)[]) =>
+  classes.filter(Boolean).join(" ");
 
 interface ProgressProps {
   value?: number;
@@ -20,7 +21,7 @@ export function Progress({
   return (
     <div
       className={cn(
-        'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
+        "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
         className,
       )}
       {...props}

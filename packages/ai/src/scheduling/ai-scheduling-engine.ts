@@ -16,7 +16,7 @@ import type {
   SchedulingResponse,
   TimeSlot,
   TreatmentDuration,
-} from './types';
+} from "./types";
 
 export class AISchedulingEngine {
   private readonly performanceMetrics: PerformanceMetrics;
@@ -39,7 +39,7 @@ export class AISchedulingEngine {
 
       this.isInitialized = true;
     } catch {
-      throw new Error('AI Scheduling Engine initialization failed');
+      throw new Error("AI Scheduling Engine initialization failed");
     }
   }
 
@@ -52,7 +52,7 @@ export class AISchedulingEngine {
     const startTime = performance.now();
 
     if (!this.isInitialized) {
-      throw new Error('AI Scheduling Engine not initialized');
+      throw new Error("AI Scheduling Engine not initialized");
     }
 
     try {
@@ -100,7 +100,8 @@ export class AISchedulingEngine {
       );
 
       // Step 9: Apply final optimizations
-      const optimizedAppointment = await this.applyFinalOptimizations(appointment);
+      const optimizedAppointment =
+        await this.applyFinalOptimizations(appointment);
 
       const processingTime = performance.now() - startTime;
       this.updatePerformanceMetrics(processingTime, true);
@@ -129,7 +130,7 @@ export class AISchedulingEngine {
         optimizationApplied: false,
         confidenceScore: 0,
         processingTime,
-        recommendations: ['Please try again or contact support'],
+        recommendations: ["Please try again or contact support"],
       };
     }
   }
@@ -363,7 +364,7 @@ export class AISchedulingEngine {
       scheduledStart: slot.slot.start,
       scheduledEnd: slot.slot.end,
       estimatedDuration: treatmentDuration.estimatedMinutes,
-      status: 'scheduled',
+      status: "scheduled",
       priority: request.urgency,
 
       // AI-specific fields
@@ -388,8 +389,8 @@ export class AISchedulingEngine {
       // Base entity fields
       createdAt: new Date(),
       updatedAt: new Date(),
-      createdBy: '', // To be set by calling service
-      updatedBy: '', // To be set by calling service
+      createdBy: "", // To be set by calling service
+      updatedBy: "", // To be set by calling service
     };
   }
 
@@ -439,10 +440,10 @@ export class AISchedulingEngine {
 
   private validateSchedulingRequest(request: SchedulingRequest): void {
     if (!(request.patientId && request.treatmentId)) {
-      throw new Error('Patient ID and Treatment ID are required');
+      throw new Error("Patient ID and Treatment ID are required");
     }
     if (!request.preferredDates || request.preferredDates.length === 0) {
-      throw new Error('At least one preferred date is required');
+      throw new Error("At least one preferred date is required");
     }
   }
 
@@ -469,22 +470,22 @@ export class AISchedulingEngine {
     // In production, this would call the treatment service
     return {
       treatmentId,
-      treatmentType: 'facial',
+      treatmentType: "facial",
       estimatedMinutes: 60,
       minDuration: 45,
       maxDuration: 90,
       bufferTime: 15,
-      equipmentRequired: ['facial_machine'],
-      staffRequired: ['aesthetician'],
+      equipmentRequired: ["facial_machine"],
+      staffRequired: ["aesthetician"],
       roomType: {
-        id: 'treatment_room',
-        name: 'Treatment Room',
+        id: "treatment_room",
+        name: "Treatment Room",
         capacity: 1,
-        equipment: ['facial_machine'],
-        suitableFor: ['facial', 'skincare'],
+        equipment: ["facial_machine"],
+        suitableFor: ["facial", "skincare"],
         availability: [],
       },
-      complexity: 'medium',
+      complexity: "medium",
     };
   }
 
@@ -665,7 +666,7 @@ export class AISchedulingEngine {
   }
 
   private determineFollowUpRequirement(duration: TreatmentDuration): boolean {
-    return duration.complexity !== 'low';
+    return duration.complexity !== "low";
   }
 
   private calculateDurationAdjustment(
@@ -692,23 +693,23 @@ export class AISchedulingEngine {
 
   private categorizeRiskLevel(
     probability: number,
-  ): 'low' | 'medium' | 'high' | 'critical' {
+  ): "low" | "medium" | "high" | "critical" {
     if (probability < 0.1) {
-      return 'low';
+      return "low";
     }
     if (probability < 0.3) {
-      return 'medium';
+      return "medium";
     }
     if (probability < 0.5) {
-      return 'high';
+      return "high";
     }
-    return 'critical';
+    return "critical";
   }
 
   private generateNoShowMitigationActions(probability: number): string[] {
-    const actions = ['Send reminder 24h before', 'Confirm appointment'];
+    const actions = ["Send reminder 24h before", "Confirm appointment"];
     if (probability > 0.3) {
-      actions.push('Call patient to confirm', 'Offer reschedule option');
+      actions.push("Call patient to confirm", "Offer reschedule option");
     }
     return actions;
   }
@@ -725,9 +726,9 @@ export class AISchedulingEngine {
     _context: any,
   ): Promise<string[]> {
     return [
-      'Appointment optimally scheduled',
-      'No conflicts detected',
-      'High confidence score achieved',
+      "Appointment optimally scheduled",
+      "No conflicts detected",
+      "High confidence score achieved",
     ];
   }
 }

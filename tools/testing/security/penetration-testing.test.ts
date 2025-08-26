@@ -13,9 +13,9 @@
  * - Emergency access vulnerability testing
  */
 
-import { chromium } from '@playwright/test';
-import type { Browser, Page } from '@playwright/test';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { chromium } from "@playwright/test";
+import type { Browser, Page } from "@playwright/test";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // Security testing thresholds and configurations
 const _PENETRATION_TEST_CONFIG = {
@@ -57,23 +57,23 @@ const ATTACK_PAYLOADS = {
   ],
 
   LDAP_INJECTION: [
-    '*)(&(objectClass=user)(name=*)',
-    '*)(mail=*)((cn=*',
-    'admin)(&(objectClass=user)(|(password=*)',
+    "*)(&(objectClass=user)(name=*)",
+    "*)(mail=*)((cn=*",
+    "admin)(&(objectClass=user)(|(password=*)",
   ],
 
   COMMAND_INJECTION: [
-    '; cat /etc/passwd',
-    '&& dir C:\\',
-    '| whoami',
-    '; rm -rf /*',
-    '&& net user hacker password123 /add',
+    "; cat /etc/passwd",
+    "&& dir C:\\",
+    "| whoami",
+    "; rm -rf /*",
+    "&& net user hacker password123 /add",
   ],
 };
 
 interface SecurityTestResult {
   vulnerability: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   exploitable: boolean;
   details: string;
   remediation: string;
@@ -89,9 +89,9 @@ class PenetrationTester {
     this.browser = await chromium.launch({
       headless: true,
       args: [
-        '--disable-web-security',
-        '--allow-running-insecure-content',
-        '--disable-features=VizDisplayCompositor',
+        "--disable-web-security",
+        "--allow-running-insecure-content",
+        "--disable-features=VizDisplayCompositor",
       ],
     });
 
@@ -100,7 +100,7 @@ class PenetrationTester {
     // Configure for security testing
     await this.page.setViewportSize({ width: 1920, height: 1080 });
     await this.page.setExtraHTTPHeaders({
-      'User-Agent': 'SecurityTester/1.0 (PenetrationTest)',
+      "User-Agent": "SecurityTester/1.0 (PenetrationTest)",
     });
   }
 
@@ -118,8 +118,8 @@ class PenetrationTester {
     for (const payload of ATTACK_PAYLOADS.SQL_INJECTION) {
       try {
         const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ [parameter]: payload }),
         });
 
@@ -134,28 +134,31 @@ class PenetrationTester {
           /Microsoft.*ODBC.*SQL Server/i,
         ];
 
-        const hasErrors = sqlErrorPatterns.some((pattern) => pattern.test(responseText));
-        const unexpectedSuccess = response.status === 200 && responseText.includes('admin');
+        const hasErrors = sqlErrorPatterns.some((pattern) =>
+          pattern.test(responseText),
+        );
+        const unexpectedSuccess =
+          response.status === 200 && responseText.includes("admin");
 
         if (hasErrors || unexpectedSuccess) {
           results.push({
-            vulnerability: 'SQL Injection',
-            severity: 'CRITICAL',
+            vulnerability: "SQL Injection",
+            severity: "CRITICAL",
             exploitable: true,
             details: `SQL injection possible with payload: ${payload}`,
-            remediation: 'Use parameterized queries and input validation',
+            remediation: "Use parameterized queries and input validation",
             cvssScore: 9.8,
           });
         }
       } catch (error) {
         // Network errors might indicate successful DoS via injection
-        if (error.message.includes('timeout')) {
+        if (error.message.includes("timeout")) {
           results.push({
-            vulnerability: 'SQL Injection DoS',
-            severity: 'HIGH',
+            vulnerability: "SQL Injection DoS",
+            severity: "HIGH",
             exploitable: true,
             details: `SQL injection caused timeout with payload: ${payload}`,
-            remediation: 'Implement query timeouts and validation',
+            remediation: "Implement query timeouts and validation",
             cvssScore: 7.5,
           });
         }
@@ -173,8 +176,8 @@ class PenetrationTester {
     for (const payload of ATTACK_PAYLOADS.XSS_ATTACKS) {
       try {
         const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: payload }),
         });
 
@@ -182,15 +185,16 @@ class PenetrationTester {
 
         // Check if payload is reflected without encoding
         if (
-          responseText.includes(payload)
-          && !responseText.includes('&lt;script&gt;')
+          responseText.includes(payload) &&
+          !responseText.includes("&lt;script&gt;")
         ) {
           results.push({
-            vulnerability: 'Cross-Site Scripting (XSS)',
-            severity: 'HIGH',
+            vulnerability: "Cross-Site Scripting (XSS)",
+            severity: "HIGH",
             exploitable: true,
             details: `XSS vulnerability detected with payload: ${payload}`,
-            remediation: 'Implement output encoding and Content Security Policy',
+            remediation:
+              "Implement output encoding and Content Security Policy",
             cvssScore: 8.1,
           });
         }
@@ -215,19 +219,19 @@ class PenetrationTester {
     exploitable: number;
   } {
     return {
-      critical: this.vulnerabilities.filter((v) => v.severity === 'CRITICAL')
+      critical: this.vulnerabilities.filter((v) => v.severity === "CRITICAL")
         .length,
-      high: this.vulnerabilities.filter((v) => v.severity === 'HIGH').length,
-      medium: this.vulnerabilities.filter((v) => v.severity === 'MEDIUM')
+      high: this.vulnerabilities.filter((v) => v.severity === "HIGH").length,
+      medium: this.vulnerabilities.filter((v) => v.severity === "MEDIUM")
         .length,
-      low: this.vulnerabilities.filter((v) => v.severity === 'LOW').length,
+      low: this.vulnerabilities.filter((v) => v.severity === "LOW").length,
       total: this.vulnerabilities.length,
       exploitable: this.vulnerabilities.filter((v) => v.exploitable).length,
     };
   }
 }
 
-describe('🎯 Comprehensive Penetration Testing', () => {
+describe("🎯 Comprehensive Penetration Testing", () => {
   let penTester: PenetrationTester;
 
   beforeAll(async () => {
@@ -239,13 +243,13 @@ describe('🎯 Comprehensive Penetration Testing', () => {
     await penTester.cleanup();
   });
 
-  describe('🔍 OWASP Top 10 Vulnerability Assessment', () => {
-    it('should test for injection vulnerabilities (A03:2021)', async () => {
+  describe("🔍 OWASP Top 10 Vulnerability Assessment", () => {
+    it("should test for injection vulnerabilities (A03:2021)", async () => {
       const injectionEndpoints = [
-        { endpoint: '/api/v1/patients/search', parameter: 'query' },
-        { endpoint: '/api/v1/appointments/filter', parameter: 'filter' },
-        { endpoint: '/api/v1/professionals/search', parameter: 'name' },
-        { endpoint: '/api/v1/analytics/query', parameter: 'sql' },
+        { endpoint: "/api/v1/patients/search", parameter: "query" },
+        { endpoint: "/api/v1/appointments/filter", parameter: "filter" },
+        { endpoint: "/api/v1/professionals/search", parameter: "name" },
+        { endpoint: "/api/v1/analytics/query", parameter: "sql" },
       ];
 
       for (const target of injectionEndpoints) {
@@ -261,40 +265,41 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
 
-    it('should test for broken authentication (A07:2021)', async () => {
+    it("should test for broken authentication (A07:2021)", async () => {
       const authTests = [
         // Test weak password policies
-        { username: 'admin', password: '123' },
-        { username: 'admin', password: 'admin' },
-        { username: 'admin', password: 'password' },
+        { username: "admin", password: "123" },
+        { username: "admin", password: "admin" },
+        { username: "admin", password: "password" },
 
         // Test default credentials
-        { username: 'administrator', password: 'administrator' },
-        { username: 'root', password: 'root' },
-        { username: 'guest', password: 'guest' },
+        { username: "administrator", password: "administrator" },
+        { username: "root", password: "root" },
+        { username: "guest", password: "guest" },
 
         // Test SQL injection in auth
-        { username: "admin'--", password: 'anything' },
-        { username: "admin' OR '1'='1'--", password: '' },
+        { username: "admin'--", password: "anything" },
+        { username: "admin' OR '1'='1'--", password: "" },
       ];
 
       let weakAuthFound = 0;
 
       for (const creds of authTests) {
-        const response = await fetch('/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/v1/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(creds),
         });
 
         if (response.status === 200) {
           weakAuthFound++;
           penTester.recordVulnerability({
-            vulnerability: 'Broken Authentication',
-            severity: 'CRITICAL',
+            vulnerability: "Broken Authentication",
+            severity: "CRITICAL",
             exploitable: true,
             details: `Weak credentials accepted: ${creds.username}/${creds.password}`,
-            remediation: 'Implement strong password policies and account lockouts',
+            remediation:
+              "Implement strong password policies and account lockouts",
             cvssScore: 9.8,
           });
         }
@@ -303,14 +308,14 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       expect(weakAuthFound).toBe(0);
     });
 
-    it('should test for sensitive data exposure (A02:2021)', async () => {
+    it("should test for sensitive data exposure (A02:2021)", async () => {
       const sensitiveEndpoints = [
-        '/api/v1/patients',
-        '/api/v1/medical-records',
-        '/api/v1/professionals',
-        '/api/v1/analytics/sensitive',
-        '/config/database.json',
-        '/logs/application.log',
+        "/api/v1/patients",
+        "/api/v1/medical-records",
+        "/api/v1/professionals",
+        "/api/v1/analytics/sensitive",
+        "/config/database.json",
+        "/logs/application.log",
       ];
 
       for (const endpoint of sensitiveEndpoints) {
@@ -330,15 +335,18 @@ describe('🎯 Comprehensive Penetration Testing', () => {
             /Bearer\s+[a-zA-Z0-9\-_.]+/,
           ];
 
-          const hasSensitiveData = sensitivePatterns.some((pattern) => pattern.test(responseText));
+          const hasSensitiveData = sensitivePatterns.some((pattern) =>
+            pattern.test(responseText),
+          );
 
           if (hasSensitiveData) {
             penTester.recordVulnerability({
-              vulnerability: 'Sensitive Data Exposure',
-              severity: 'CRITICAL',
+              vulnerability: "Sensitive Data Exposure",
+              severity: "CRITICAL",
               exploitable: true,
               details: `Sensitive data exposed at ${endpoint} without authentication`,
-              remediation: 'Implement proper authentication and data encryption',
+              remediation:
+                "Implement proper authentication and data encryption",
               cvssScore: 9.1,
             });
           }
@@ -346,12 +354,12 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
 
-    it('should test for cross-site scripting (A03:2021)', async () => {
+    it("should test for cross-site scripting (A03:2021)", async () => {
       const xssEndpoints = [
-        '/api/v1/patients/notes',
-        '/api/v1/appointments/comments',
-        '/api/v1/feedback',
-        '/search',
+        "/api/v1/patients/notes",
+        "/api/v1/appointments/comments",
+        "/api/v1/feedback",
+        "/search",
       ];
 
       for (const endpoint of xssEndpoints) {
@@ -363,13 +371,13 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
   });
-  describe('🏥 Healthcare-Specific Security Testing', () => {
-    it('should test medical device API security', async () => {
+  describe("🏥 Healthcare-Specific Security Testing", () => {
+    it("should test medical device API security", async () => {
       const medicalDeviceEndpoints = [
-        '/api/v1/devices/ecg/readings',
-        '/api/v1/devices/monitors/vitals',
-        '/api/v1/devices/pumps/medication',
-        '/api/v1/devices/ventilators/settings',
+        "/api/v1/devices/ecg/readings",
+        "/api/v1/devices/monitors/vitals",
+        "/api/v1/devices/pumps/medication",
+        "/api/v1/devices/ventilators/settings",
       ];
 
       for (const endpoint of medicalDeviceEndpoints) {
@@ -378,7 +386,8 @@ describe('🎯 Comprehensive Penetration Testing', () => {
         expect(deviceBypassTest.bypassSuccessful).toBeFalsy();
 
         // Test device command injection
-        const commandInjectionTest = await testMedicalDeviceCommandInjection(endpoint);
+        const commandInjectionTest =
+          await testMedicalDeviceCommandInjection(endpoint);
         expect(commandInjectionTest.vulnerabilityFound).toBeFalsy();
 
         // Test unauthorized device control
@@ -387,20 +396,20 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
 
-    it('should test emergency access bypass vulnerabilities', async () => {
+    it("should test emergency access bypass vulnerabilities", async () => {
       const emergencyBypassTests = [
         {
-          type: 'privilege_escalation',
-          endpoint: '/api/v1/emergency/override',
+          type: "privilege_escalation",
+          endpoint: "/api/v1/emergency/override",
         },
-        { type: 'temporal_bypass', endpoint: '/api/v1/emergency/access' },
+        { type: "temporal_bypass", endpoint: "/api/v1/emergency/access" },
         {
-          type: 'authentication_skip',
-          endpoint: '/api/v1/emergency/patient-data',
+          type: "authentication_skip",
+          endpoint: "/api/v1/emergency/patient-data",
         },
         {
-          type: 'audit_bypass',
-          endpoint: '/api/v1/emergency/untracked-access',
+          type: "audit_bypass",
+          endpoint: "/api/v1/emergency/untracked-access",
         },
       ];
 
@@ -415,22 +424,22 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
 
-    it('should test patient data segregation', async () => {
+    it("should test patient data segregation", async () => {
       const dataSeparationTests = [
         {
-          patientId: 'pat_123',
-          attackerId: 'pat_456',
-          dataType: 'medical_records',
+          patientId: "pat_123",
+          attackerId: "pat_456",
+          dataType: "medical_records",
         },
         {
-          patientId: 'pat_123',
-          attackerId: 'prof_999',
-          dataType: 'personal_info',
+          patientId: "pat_123",
+          attackerId: "prof_999",
+          dataType: "personal_info",
         },
         {
-          patientId: 'pat_456',
-          attackerId: 'admin_fake',
-          dataType: 'billing_data',
+          patientId: "pat_456",
+          attackerId: "admin_fake",
+          dataType: "billing_data",
         },
       ];
 
@@ -443,13 +452,13 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
 
-    it('should test HIPAA/LGPD compliance bypass attempts', async () => {
+    it("should test HIPAA/LGPD compliance bypass attempts", async () => {
       const complianceBypassTests = [
-        'consent_override',
-        'audit_log_tampering',
-        'data_retention_bypass',
-        'cross_border_transfer_bypass',
-        'anonymization_reversal',
+        "consent_override",
+        "audit_log_tampering",
+        "data_retention_bypass",
+        "cross_border_transfer_bypass",
+        "anonymization_reversal",
       ];
 
       for (const bypassType of complianceBypassTests) {
@@ -462,35 +471,35 @@ describe('🎯 Comprehensive Penetration Testing', () => {
     });
   });
 
-  describe('🔐 Authentication & Session Security', () => {
-    it('should test session fixation vulnerabilities', async () => {
+  describe("🔐 Authentication & Session Security", () => {
+    it("should test session fixation vulnerabilities", async () => {
       // Get initial session
-      const initialResponse = await fetch('/api/v1/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const initialResponse = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: 'test@example.com',
-          password: 'testpass',
+          email: "test@example.com",
+          password: "testpass",
         }),
       });
 
-      const initialCookies = initialResponse.headers.get('Set-Cookie');
+      const initialCookies = initialResponse.headers.get("Set-Cookie");
       const sessionId = extractSessionId(initialCookies);
 
       // Attempt to fix session ID
-      const fixationTest = await fetch('/api/v1/auth/login', {
-        method: 'POST',
+      const fixationTest = await fetch("/api/v1/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Cookie: `sessionId=${sessionId}`,
         },
         body: JSON.stringify({
-          email: 'admin@example.com',
-          password: 'adminpass',
+          email: "admin@example.com",
+          password: "adminpass",
         }),
       });
 
-      const newCookies = fixationTest.headers.get('Set-Cookie');
+      const newCookies = fixationTest.headers.get("Set-Cookie");
       const newSessionId = extractSessionId(newCookies);
 
       // Session ID should change after successful authentication
@@ -498,19 +507,19 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       expect(newSessionId).toBeTruthy();
     });
 
-    it('should test concurrent session limits', async () => {
+    it("should test concurrent session limits", async () => {
       const userCredentials = {
-        email: 'test@example.com',
-        password: 'testpass',
+        email: "test@example.com",
+        password: "testpass",
       };
       const sessions = [];
       const maxAllowedSessions = 5;
 
       // Create multiple sessions
       for (let i = 0; i < maxAllowedSessions + 2; i++) {
-        const response = await fetch('/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/v1/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(userCredentials),
         });
 
@@ -524,13 +533,13 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       expect(sessions.length).toBeLessThanOrEqual(maxAllowedSessions);
     });
 
-    it('should test JWT token security', async () => {
+    it("should test JWT token security", async () => {
       const tokenSecurityTests = [
-        'jwt_algorithm_confusion',
-        'jwt_signature_bypass',
-        'jwt_weak_secret',
-        'jwt_token_manipulation',
-        'jwt_expiration_bypass',
+        "jwt_algorithm_confusion",
+        "jwt_signature_bypass",
+        "jwt_weak_secret",
+        "jwt_token_manipulation",
+        "jwt_expiration_bypass",
       ];
 
       for (const testType of tokenSecurityTests) {
@@ -542,15 +551,15 @@ describe('🎯 Comprehensive Penetration Testing', () => {
     });
   });
 
-  describe('🌐 Network & Infrastructure Security', () => {
-    it('should test for server information disclosure', async () => {
+  describe("🌐 Network & Infrastructure Security", () => {
+    it("should test for server information disclosure", async () => {
       const infoDisclosureTests = [
-        { path: '/.well-known/security.txt', expectFound: true },
-        { path: '/robots.txt', expectSensitiveInfo: false },
-        { path: '/sitemap.xml', expectSensitiveInfo: false },
-        { path: '/.env', expectFound: false },
-        { path: '/config.json', expectFound: false },
-        { path: '/package.json', expectFound: false },
+        { path: "/.well-known/security.txt", expectFound: true },
+        { path: "/robots.txt", expectSensitiveInfo: false },
+        { path: "/sitemap.xml", expectSensitiveInfo: false },
+        { path: "/.env", expectFound: false },
+        { path: "/config.json", expectFound: false },
+        { path: "/package.json", expectFound: false },
       ];
 
       for (const test of infoDisclosureTests) {
@@ -570,33 +579,33 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       }
     });
 
-    it('should test SSL/TLS configuration security', async () => {
+    it("should test SSL/TLS configuration security", async () => {
       const sslTests = await testSSLConfiguration();
 
-      expect(sslTests.minTLSVersion).toBe('1.2');
+      expect(sslTests.minTLSVersion).toBe("1.2");
       expect(sslTests.strongCiphers).toBeTruthy();
       expect(sslTests.certificateValid).toBeTruthy();
       expect(sslTests.hstsEnabled).toBeTruthy();
       expect(sslTests.weakProtocolsDisabled).toBeTruthy();
     });
 
-    it('should test HTTP security headers', async () => {
-      const response = await fetch('/');
+    it("should test HTTP security headers", async () => {
+      const response = await fetch("/");
       const headers = response.headers;
 
       const requiredHeaders = {
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'X-XSS-Protection': '1; mode=block',
-        'Strict-Transport-Security': { contains: 'max-age' },
-        'Content-Security-Policy': { exists: true },
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+        "Strict-Transport-Security": { contains: "max-age" },
+        "Content-Security-Policy": { exists: true },
+        "Referrer-Policy": "strict-origin-when-cross-origin",
       };
 
       Object.entries(requiredHeaders).forEach(([headerName, expectedValue]) => {
         const headerValue = headers.get(headerName);
 
-        if (typeof expectedValue === 'string') {
+        if (typeof expectedValue === "string") {
           expect(headerValue).toBe(expectedValue);
         } else if (expectedValue.contains) {
           expect(headerValue).toContain(expectedValue.contains);
@@ -607,8 +616,8 @@ describe('🎯 Comprehensive Penetration Testing', () => {
     });
   });
 
-  describe('📊 Comprehensive Security Assessment Report', () => {
-    it('should generate security vulnerability report', async () => {
+  describe("📊 Comprehensive Security Assessment Report", () => {
+    it("should generate security vulnerability report", async () => {
       const report = penTester.getVulnerabilityReport();
 
       // Healthcare platforms should have ZERO critical vulnerabilities
@@ -627,7 +636,7 @@ describe('🎯 Comprehensive Penetration Testing', () => {
       expect(detailedReport.overallRiskScore).toBeLessThanOrEqual(3); // Low to Medium risk
     });
 
-    it('should validate security compliance against healthcare standards', async () => {
+    it("should validate security compliance against healthcare standards", async () => {
       const complianceValidation = await validateHealthcareSecurityCompliance();
 
       expect(complianceValidation.hipaaTechnicalSafeguards).toBeTruthy();
@@ -719,7 +728,7 @@ function checkForSensitiveInformation(content: string): boolean {
 
 async function testSSLConfiguration() {
   return {
-    minTLSVersion: '1.2',
+    minTLSVersion: "1.2",
     strongCiphers: true,
     certificateValid: true,
     hstsEnabled: true,
@@ -741,16 +750,17 @@ function generateSecurityAssessmentReport(
     return sum + riskScores[vuln.severity];
   }, 0);
 
-  const averageRisk = vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
+  const averageRisk =
+    vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
 
   return {
     overallRiskScore: averageRisk,
     totalVulnerabilities: vulnerabilities.length,
     recommendations: [
-      'Continue regular security assessments',
-      'Implement automated vulnerability scanning',
-      'Enhance security awareness training',
-      'Review and update security policies regularly',
+      "Continue regular security assessments",
+      "Implement automated vulnerability scanning",
+      "Enhance security awareness training",
+      "Review and update security policies regularly",
     ],
   };
 }
@@ -763,11 +773,11 @@ async function validateHealthcareSecurityCompliance() {
     cfmDataProtection: true,
     overallComplianceScore: 98,
     complianceDetails: {
-      accessControl: 'COMPLIANT',
-      auditControls: 'COMPLIANT',
-      integrity: 'COMPLIANT',
-      personOrEntityAuthentication: 'COMPLIANT',
-      transmissionSecurity: 'COMPLIANT',
+      accessControl: "COMPLIANT",
+      auditControls: "COMPLIANT",
+      integrity: "COMPLIANT",
+      personOrEntityAuthentication: "COMPLIANT",
+      transmissionSecurity: "COMPLIANT",
     },
   };
 }

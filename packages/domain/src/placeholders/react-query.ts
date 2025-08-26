@@ -1,5 +1,5 @@
 // Placeholder for @tanstack/react-query
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
 export interface QueryResult<T> {
   data?: T;
@@ -24,7 +24,7 @@ export const useQuery = <T>(
       const result = await fn();
       setData(result);
     } catch (error) {
-      setError(error instanceof Error ? error : new Error('Query failed'));
+      setError(error instanceof Error ? error : new Error("Query failed"));
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +50,8 @@ export const useMutation = <T, V>(fn: (variables: V) => Promise<T>) => {
         setError(undefined);
         return await fn(variables);
       } catch {
-        const error = error instanceof Error ? error : new Error('Mutation failed');
+        const error =
+          error instanceof Error ? error : new Error("Mutation failed");
         setError(error);
         throw error;
       } finally {

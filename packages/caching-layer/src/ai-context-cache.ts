@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats } from './types';
+import type { CacheOperation, CacheStats } from "./types";
 
 export class AIContextCacheLayer implements CacheOperation {
   private stats: CacheStats = {
@@ -73,8 +73,8 @@ export class AIContextCacheLayer implements CacheOperation {
     value: T,
     ttl?: number,
     metadata?: {
-      contextType: 'conversation' | 'knowledge' | 'embedding' | 'reasoning';
-      importance: 'low' | 'medium' | 'high' | 'critical';
+      contextType: "conversation" | "knowledge" | "embedding" | "reasoning";
+      importance: "low" | "medium" | "high" | "critical";
       userId?: string;
       sessionId?: string;
     },
@@ -120,7 +120,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
   async clear(): Promise<void> {
     try {
-      const keys = await this.redis.keys('neonpro:ai:*');
+      const keys = await this.redis.keys("neonpro:ai:*");
       if (keys.length > 0) {
         await Promise.all(keys.map((key: string) => this.redis.del(key)));
       }
@@ -129,15 +129,16 @@ export class AIContextCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate = this.stats.totalRequests > 0
-      ? (this.stats.hits / this.stats.totalRequests) * 100
-      : 0;
+    this.stats.hitRate =
+      this.stats.totalRequests > 0
+        ? (this.stats.hits / this.stats.totalRequests) * 100
+        : 0;
     return { ...this.stats };
   }
 
   async invalidateByTags(tags: string[]): Promise<void> {
     try {
-      const keys = await this.redis.keys('neonpro:ai:*');
+      const keys = await this.redis.keys("neonpro:ai:*");
       for (const key of keys) {
         const cached = await this.redis.get(key);
         if (cached) {
@@ -164,19 +165,19 @@ export class AIContextCacheLayer implements CacheOperation {
 
     // Extend TTL for critical/important content
     switch (metadata.importance) {
-      case 'critical': {
+      case "critical": {
         multiplier *= 2;
         break;
       }
-      case 'high': {
+      case "high": {
         multiplier *= 1.5;
         break;
       }
-      case 'medium': {
+      case "medium": {
         multiplier *= 1;
         break;
       }
-      case 'low': {
+      case "low": {
         multiplier *= 0.5;
         break;
       }
@@ -184,19 +185,19 @@ export class AIContextCacheLayer implements CacheOperation {
 
     // Context type adjustments
     switch (metadata.contextType) {
-      case 'knowledge': {
+      case "knowledge": {
         multiplier *= 1.8;
         break;
       }
-      case 'reasoning': {
+      case "reasoning": {
         multiplier *= 1.2;
         break;
       }
-      case 'conversation': {
+      case "conversation": {
         multiplier *= 1;
         break;
       }
-      case 'embedding': {
+      case "embedding": {
         multiplier *= 2;
         break;
       }
@@ -208,7 +209,7 @@ export class AIContextCacheLayer implements CacheOperation {
   private async updateAccessPattern(key: string): Promise<void> {
     const patternKey = `${this.buildKey(key)}:pattern`;
     try {
-      await this.redis.hset(patternKey, 'lastAccess', Date.now().toString());
+      await this.redis.hset(patternKey, "lastAccess", Date.now().toString());
     } catch {}
   }
 
@@ -255,8 +256,9 @@ export class AIContextCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
-      / this.responseTimeBuffer.length;
+    this.stats.averageResponseTime =
+      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+      this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {
@@ -274,7 +276,7 @@ export class AIContextCacheLayer implements CacheOperation {
   async optimizeContextRetention(): Promise<void> {
     try {
       // Analyze access patterns and optimize cache retention
-      const patterns = await this.redis.keys('neonpro:ai:patterns:*');
+      const patterns = await this.redis.keys("neonpro:ai:patterns:*");
       for (const pattern of patterns) {
         const _data = await this.redis.hgetall(pattern);
       }

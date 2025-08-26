@@ -1,28 +1,28 @@
 // Behavioral CRM Service - Advanced Patient Relationship Management with ML
 // Personalized healthcare engagement through behavioral analytics and automation
 
-import type { LoggerService, MetricsService } from '@neonpro/core-services';
-import type { AIServiceConfig, CacheService } from './enhanced-service-base';
-import { EnhancedAIService } from './enhanced-service-base';
+import type { LoggerService, MetricsService } from "@neonpro/core-services";
+import type { AIServiceConfig, CacheService } from "./enhanced-service-base";
+import { EnhancedAIService } from "./enhanced-service-base";
 
 // Behavioral Analytics Types
 export interface PatientBehavior {
   patient_id: string;
   behavioral_profile: {
-    engagement_level: 'low' | 'medium' | 'high' | 'very_high';
+    engagement_level: "low" | "medium" | "high" | "very_high";
     communication_preference:
-      | 'sms'
-      | 'email'
-      | 'phone'
-      | 'whatsapp'
-      | 'app_notification';
+      | "sms"
+      | "email"
+      | "phone"
+      | "whatsapp"
+      | "app_notification";
     appointment_booking_pattern:
-      | 'early_planner'
-      | 'last_minute'
-      | 'habitual'
-      | 'sporadic';
-    treatment_adherence: 'compliant' | 'partial' | 'non_compliant';
-    price_sensitivity: 'low' | 'medium' | 'high';
+      | "early_planner"
+      | "last_minute"
+      | "habitual"
+      | "sporadic";
+    treatment_adherence: "compliant" | "partial" | "non_compliant";
+    price_sensitivity: "low" | "medium" | "high";
     loyalty_score: number; // 0-100
     churn_risk: number; // 0-1 probability
   };
@@ -45,12 +45,12 @@ export interface PatientBehavior {
     scheduling_lead_time_days: number;
   };
   lifecycle_stage:
-    | 'prospect'
-    | 'new_patient'
-    | 'active'
-    | 'returning'
-    | 'at_risk'
-    | 'churned';
+    | "prospect"
+    | "new_patient"
+    | "active"
+    | "returning"
+    | "at_risk"
+    | "churned";
   segmentation_tags: string[];
   last_updated: string;
 }
@@ -67,9 +67,9 @@ export interface PersonalizationRule {
   };
   personalization_actions: {
     message_customization: {
-      tone: 'professional' | 'friendly' | 'casual' | 'urgent';
-      content_focus: 'benefits' | 'education' | 'social_proof' | 'urgency';
-      language_complexity: 'simple' | 'technical' | 'detailed';
+      tone: "professional" | "friendly" | "casual" | "urgent";
+      content_focus: "benefits" | "education" | "social_proof" | "urgency";
+      language_complexity: "simple" | "technical" | "detailed";
     };
     timing_optimization: {
       preferred_send_times: string[];
@@ -93,7 +93,7 @@ export interface PersonalizationRule {
     roi_per_patient: number;
     last_performance_review: string;
   };
-  status: 'active' | 'testing' | 'paused' | 'archived';
+  status: "active" | "testing" | "paused" | "archived";
   created_at: string;
   last_modified: string;
 }
@@ -103,19 +103,19 @@ export interface BehavioralCampaign {
   name: string;
   description: string;
   campaign_type:
-    | 'onboarding'
-    | 'retention'
-    | 'reactivation'
-    | 'upsell'
-    | 'educational'
-    | 'seasonal';
+    | "onboarding"
+    | "retention"
+    | "reactivation"
+    | "upsell"
+    | "educational"
+    | "seasonal";
   target_segments: string[];
 
   trigger_rules: {
     behavioral_triggers: {
       event_type: string;
       conditions: Record<string, any>;
-      timing: 'immediate' | 'delayed' | 'scheduled';
+      timing: "immediate" | "delayed" | "scheduled";
       delay_hours?: number;
     }[];
     audience_filters: {
@@ -135,13 +135,13 @@ export interface BehavioralCampaign {
     call_to_action: {
       text: string;
       action_type:
-        | 'book_appointment'
-        | 'call_clinic'
-        | 'view_treatment'
-        | 'download_content';
+        | "book_appointment"
+        | "call_clinic"
+        | "view_treatment"
+        | "download_content";
       action_url?: string;
     };
-    message_priority: 'low' | 'medium' | 'high' | 'urgent';
+    message_priority: "low" | "medium" | "high" | "urgent";
   }[];
 
   automation_flow: {
@@ -169,7 +169,7 @@ export interface BehavioralCampaign {
     start_date: string;
     end_date?: string;
     recurring: boolean;
-    frequency?: 'daily' | 'weekly' | 'monthly';
+    frequency?: "daily" | "weekly" | "monthly";
     active_hours: {
       start_time: string;
       end_time: string;
@@ -177,7 +177,7 @@ export interface BehavioralCampaign {
     };
   };
 
-  status: 'draft' | 'active' | 'paused' | 'completed' | 'archived';
+  status: "draft" | "active" | "paused" | "completed" | "archived";
   created_by: string;
   created_at: string;
   last_modified: string;
@@ -186,10 +186,10 @@ export interface BehavioralCampaign {
 export interface BehavioralInsight {
   insight_id: string;
   insight_type:
-    | 'pattern_discovery'
-    | 'anomaly_detection'
-    | 'conversion_optimization'
-    | 'churn_prediction';
+    | "pattern_discovery"
+    | "anomaly_detection"
+    | "conversion_optimization"
+    | "churn_prediction";
   title: string;
   description: string;
 
@@ -205,13 +205,13 @@ export interface BehavioralInsight {
 
   key_findings: {
     finding: string;
-    impact_level: 'high' | 'medium' | 'low';
+    impact_level: "high" | "medium" | "low";
     supporting_data: Record<string, any>;
     recommendations: string[];
   }[];
 
   visualizations: {
-    chart_type: 'line' | 'bar' | 'pie' | 'heatmap' | 'funnel';
+    chart_type: "line" | "bar" | "pie" | "heatmap" | "funnel";
     title: string;
     data_points: Array<{
       label: string;
@@ -223,15 +223,15 @@ export interface BehavioralInsight {
 
   actionable_recommendations: {
     recommendation: string;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     estimated_impact: string;
-    implementation_effort: 'low' | 'medium' | 'high';
+    implementation_effort: "low" | "medium" | "high";
     success_metrics: string[];
   }[];
 
   generated_at: string;
   expires_at?: string;
-  status: 'new' | 'reviewed' | 'implementing' | 'completed' | 'archived';
+  status: "new" | "reviewed" | "implementing" | "completed" | "archived";
 }
 
 export interface CrmDashboardData {
@@ -252,7 +252,7 @@ export interface CrmDashboardData {
     avg_engagement_score: number;
     conversion_rate: number;
     revenue_contribution: number;
-    growth_trend: 'increasing' | 'stable' | 'decreasing';
+    growth_trend: "increasing" | "stable" | "decreasing";
   }[];
 
   campaign_performance: {
@@ -310,7 +310,8 @@ export interface CrmDashboardData {
 
 export class BehavioralCrmService extends EnhancedAIService {
   private readonly patientBehaviors: Map<string, PatientBehavior> = new Map();
-  private readonly personalizationRules: Map<string, PersonalizationRule> = new Map();
+  private readonly personalizationRules: Map<string, PersonalizationRule> =
+    new Map();
   private readonly activeCampaigns: Map<string, BehavioralCampaign> = new Map();
   private readonly behavioralInsights: BehavioralInsight[] = [];
   private automationIntervals: NodeJS.Timeout[] = [];
@@ -328,13 +329,13 @@ export class BehavioralCrmService extends EnhancedAIService {
   }
 
   private async initializeBehavioralCrm(): Promise<void> {
-    this.logger?.info('Initializing Behavioral CRM Service', {
-      service: 'BehavioralCrmService',
+    this.logger?.info("Initializing Behavioral CRM Service", {
+      service: "BehavioralCrmService",
       features: [
-        'behavioral_analytics',
-        'personalization',
-        'automation',
-        'insights',
+        "behavioral_analytics",
+        "personalization",
+        "automation",
+        "insights",
       ],
     });
 
@@ -359,7 +360,8 @@ export class BehavioralCrmService extends EnhancedAIService {
     try {
       // In production, fetch real data from Supabase
       const behaviorData = await this.fetchPatientBehaviorData(patientId);
-      const analyzedBehavior = await this.computeBehavioralProfile(behaviorData);
+      const analyzedBehavior =
+        await this.computeBehavioralProfile(behaviorData);
 
       // Store in cache
       this.patientBehaviors.set(patientId, analyzedBehavior);
@@ -368,7 +370,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       await this.updatePatientSegmentation(analyzedBehavior);
 
       const processingTime = performance.now() - startTime;
-      await this.recordMetrics('behavioral_analysis', {
+      await this.recordMetrics("behavioral_analysis", {
         patient_id: patientId,
         processing_time_ms: processingTime,
         engagement_level: analyzedBehavior.behavioral_profile.engagement_level,
@@ -377,11 +379,11 @@ export class BehavioralCrmService extends EnhancedAIService {
 
       return analyzedBehavior;
     } catch (error) {
-      this.logger?.error('Failed to analyze patient behavior', {
+      this.logger?.error("Failed to analyze patient behavior", {
         patient_id: patientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
-      throw new Error('Failed to analyze patient behavior');
+      throw new Error("Failed to analyze patient behavior");
     }
   }
 
@@ -390,7 +392,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     lifecycle_stages?: string[];
     churn_risk_threshold?: number;
     custom_tags?: string[];
-  }): Promise<(PatientBehavior & { segment_score: number; })[]> {
+  }): Promise<(PatientBehavior & { segment_score: number })[]> {
     const startTime = performance.now();
 
     try {
@@ -402,20 +404,25 @@ export class BehavioralCrmService extends EnhancedAIService {
           patients = patients.filter((p) =>
             criteria.engagement_levels?.includes(
               p.behavioral_profile.engagement_level,
-            )
+            ),
           );
         }
         if (criteria.lifecycle_stages) {
-          patients = patients.filter((p) => criteria.lifecycle_stages?.includes(p.lifecycle_stage));
+          patients = patients.filter((p) =>
+            criteria.lifecycle_stages?.includes(p.lifecycle_stage),
+          );
         }
         if (criteria.churn_risk_threshold !== undefined) {
           patients = patients.filter(
-            (p) => p.behavioral_profile.churn_risk >= criteria.churn_risk_threshold!,
+            (p) =>
+              p.behavioral_profile.churn_risk >= criteria.churn_risk_threshold!,
           );
         }
         if (criteria.custom_tags) {
           patients = patients.filter((p) =>
-            p.segmentation_tags.some((tag) => criteria.custom_tags?.includes(tag))
+            p.segmentation_tags.some((tag) =>
+              criteria.custom_tags?.includes(tag),
+            ),
           );
         }
       }
@@ -430,7 +437,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       segmentedPatients.sort((a, b) => b.segment_score - a.segment_score);
 
       const processingTime = performance.now() - startTime;
-      this.logger?.info('Patient segmentation completed', {
+      this.logger?.info("Patient segmentation completed", {
         total_patients: patients.length,
         segmented_patients: segmentedPatients.length,
         processing_time_ms: processingTime,
@@ -439,11 +446,11 @@ export class BehavioralCrmService extends EnhancedAIService {
 
       return segmentedPatients;
     } catch (error) {
-      this.logger?.error('Failed to segment patients', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger?.error("Failed to segment patients", {
+        error: error instanceof Error ? error.message : "Unknown error",
         criteria,
       });
-      throw new Error('Failed to segment patients');
+      throw new Error("Failed to segment patients");
     }
   }
 
@@ -490,7 +497,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       );
 
       const processingTime = performance.now() - startTime;
-      await this.recordMetrics('personalization', {
+      await this.recordMetrics("personalization", {
         patient_id: patientId,
         processing_time_ms: processingTime,
         optimal_channel: optimalChannel,
@@ -505,16 +512,16 @@ export class BehavioralCrmService extends EnhancedAIService {
         personalization_score: personalizationScore,
       };
     } catch (error) {
-      this.logger?.error('Failed to generate personalized message', {
+      this.logger?.error("Failed to generate personalized message", {
         patient_id: patientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
-      throw new Error('Failed to generate personalized message');
+      throw new Error("Failed to generate personalized message");
     }
   }
 
   async createPersonalizationRule(
-    rule: Omit<PersonalizationRule, 'rule_id' | 'created_at' | 'last_modified'>,
+    rule: Omit<PersonalizationRule, "rule_id" | "created_at" | "last_modified">,
   ): Promise<string> {
     const ruleId = `rule_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
@@ -527,7 +534,7 @@ export class BehavioralCrmService extends EnhancedAIService {
 
     this.personalizationRules.set(ruleId, newRule);
 
-    this.logger?.info('Personalization rule created', {
+    this.logger?.info("Personalization rule created", {
       rule_id: ruleId,
       rule_name: rule.name,
       status: rule.status,
@@ -541,7 +548,7 @@ export class BehavioralCrmService extends EnhancedAIService {
   async createBehavioralCampaign(
     campaign: Omit<
       BehavioralCampaign,
-      'campaign_id' | 'created_at' | 'last_modified'
+      "campaign_id" | "created_at" | "last_modified"
     >,
   ): Promise<string> {
     const campaignId = `campaign_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -565,7 +572,7 @@ export class BehavioralCrmService extends EnhancedAIService {
 
     this.activeCampaigns.set(campaignId, newCampaign);
 
-    this.logger?.info('Behavioral campaign created', {
+    this.logger?.info("Behavioral campaign created", {
       campaign_id: campaignId,
       campaign_name: campaign.name,
       campaign_type: campaign.campaign_type,
@@ -586,20 +593,20 @@ export class BehavioralCrmService extends EnhancedAIService {
     try {
       const campaign = this.activeCampaigns.get(campaignId);
       if (!campaign) {
-        throw new Error('Campaign not found');
+        throw new Error("Campaign not found");
       }
 
       const step = campaign.automation_flow.find((s) => s.step_id === stepId);
       if (!step) {
-        throw new Error('Campaign step not found');
+        throw new Error("Campaign step not found");
       }
 
       // Check step conditions
       if (
-        step.conditions
-        && !(await this.evaluateStepConditions(step.conditions, patientId))
+        step.conditions &&
+        !(await this.evaluateStepConditions(step.conditions, patientId))
       ) {
-        this.logger?.debug('Campaign step conditions not met', {
+        this.logger?.debug("Campaign step conditions not met", {
           campaign_id: campaignId,
           step_id: stepId,
           patient_id: patientId,
@@ -612,7 +619,7 @@ export class BehavioralCrmService extends EnhancedAIService {
         (t) => t.template_id === step.message_template_id,
       );
       if (!template) {
-        throw new Error('Message template not found');
+        throw new Error("Message template not found");
       }
 
       // Generate personalized message
@@ -645,7 +652,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       }
 
       const processingTime = performance.now() - startTime;
-      this.logger?.info('Campaign step executed', {
+      this.logger?.info("Campaign step executed", {
         campaign_id: campaignId,
         step_id: stepId,
         patient_id: patientId,
@@ -656,11 +663,11 @@ export class BehavioralCrmService extends EnhancedAIService {
 
       return sent;
     } catch (error) {
-      this.logger?.error('Failed to execute campaign step', {
+      this.logger?.error("Failed to execute campaign step", {
         campaign_id: campaignId,
         step_id: stepId,
         patient_id: patientId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       return false;
     }
@@ -689,7 +696,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       };
 
       const processingTime = performance.now() - startTime;
-      this.logger?.debug('CRM dashboard data generated', {
+      this.logger?.debug("CRM dashboard data generated", {
         processing_time_ms: processingTime,
         total_patients: overviewMetrics.total_patients,
         active_campaigns: campaignPerformance.length,
@@ -697,10 +704,10 @@ export class BehavioralCrmService extends EnhancedAIService {
 
       return dashboardData;
     } catch (error) {
-      this.logger?.error('Failed to generate CRM dashboard data', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger?.error("Failed to generate CRM dashboard data", {
+        error: error instanceof Error ? error.message : "Unknown error",
       });
-      throw new Error('Failed to generate CRM dashboard data');
+      throw new Error("Failed to generate CRM dashboard data");
     }
   }
 
@@ -723,7 +730,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       ); // Keep last 50
 
       const processingTime = performance.now() - startTime;
-      this.logger?.info('Behavioral insights generated', {
+      this.logger?.info("Behavioral insights generated", {
         insights_count: insights.length,
         processing_time_ms: processingTime,
         insight_types: insights.map((i) => i.insight_type),
@@ -731,10 +738,10 @@ export class BehavioralCrmService extends EnhancedAIService {
 
       return insights;
     } catch (error) {
-      this.logger?.error('Failed to generate behavioral insights', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger?.error("Failed to generate behavioral insights", {
+        error: error instanceof Error ? error.message : "Unknown error",
       });
-      throw new Error('Failed to generate behavioral insights');
+      throw new Error("Failed to generate behavioral insights");
     }
   }
 
@@ -752,7 +759,7 @@ export class BehavioralCrmService extends EnhancedAIService {
         no_show_count: Math.floor(Math.random() * 2),
         reschedule_count: Math.floor(Math.random() * 4),
         avg_booking_lead_time: Math.floor(Math.random() * 14) + 1,
-        preferred_times: ['09:00', '10:00', '14:00', '15:00'],
+        preferred_times: ["09:00", "10:00", "14:00", "15:00"],
         last_appointment_date: new Date(
           Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000,
         ).toISOString(),
@@ -775,13 +782,13 @@ export class BehavioralCrmService extends EnhancedAIService {
       },
       demographics: {
         age: Math.floor(Math.random() * 50) + 20,
-        gender: Math.random() > 0.5 ? 'female' : 'male',
-        location: 'São Paulo',
+        gender: Math.random() > 0.5 ? "female" : "male",
+        location: "São Paulo",
         referral_source: [
-          'google',
-          'referral',
-          'social_media',
-          'advertisement',
+          "google",
+          "referral",
+          "social_media",
+          "advertisement",
         ][Math.floor(Math.random() * 4)],
       },
     };
@@ -806,7 +813,8 @@ export class BehavioralCrmService extends EnhancedAIService {
     const engagementLevel = this.mapEngagementLevel(engagementScore);
 
     // Determine communication preference
-    const communicationPreference = this.determineCommunicationPreference(communications);
+    const communicationPreference =
+      this.determineCommunicationPreference(communications);
 
     // Analyze appointment patterns
     const appointmentPattern = this.analyzeAppointmentPattern(appointments);
@@ -853,8 +861,10 @@ export class BehavioralCrmService extends EnhancedAIService {
       interaction_history: {
         total_touchpoints: communications.total_interactions,
         avg_response_time_hours: communications.avg_response_time_hours,
-        preferred_contact_times: this.calculateOptimalContactTimes(communications),
-        channel_effectiveness: this.calculateChannelEffectiveness(communications),
+        preferred_contact_times:
+          this.calculateOptimalContactTimes(communications),
+        channel_effectiveness:
+          this.calculateChannelEffectiveness(communications),
         last_interaction_date: appointments.last_appointment_date,
         interaction_frequency: communications.total_interactions / 12, // per month approximation
       },
@@ -885,7 +895,8 @@ export class BehavioralCrmService extends EnhancedAIService {
     appointments: any,
     communications: any,
   ): number {
-    const appointmentScore = Math.min(appointments.completed_count / 10, 1) * 0.4;
+    const appointmentScore =
+      Math.min(appointments.completed_count / 10, 1) * 0.4;
     const communicationScore = Math.min(communications.response_rate, 1) * 0.3;
     const consistencyScore = Math.min(appointments.total_count / 15, 1) * 0.3;
 
@@ -894,22 +905,22 @@ export class BehavioralCrmService extends EnhancedAIService {
 
   private mapEngagementLevel(
     score: number,
-  ): 'low' | 'medium' | 'high' | 'very_high' {
+  ): "low" | "medium" | "high" | "very_high" {
     if (score >= 85) {
-      return 'very_high';
+      return "very_high";
     }
     if (score >= 70) {
-      return 'high';
+      return "high";
     }
     if (score >= 50) {
-      return 'medium';
+      return "medium";
     }
-    return 'low';
+    return "low";
   }
 
   private determineCommunicationPreference(
     communications: any,
-  ): 'sms' | 'email' | 'phone' | 'whatsapp' | 'app_notification' {
+  ): "sms" | "email" | "phone" | "whatsapp" | "app_notification" {
     const channels = {
       sms: communications.sms_interactions,
       email: communications.email_interactions,
@@ -918,59 +929,60 @@ export class BehavioralCrmService extends EnhancedAIService {
     };
 
     return Object.entries(channels).reduce((a, b) =>
-      channels[a] > channels[b[1]] ? a : b[0]
+      channels[a] > channels[b[1]] ? a : b[0],
     ) as any;
   }
 
   private analyzeAppointmentPattern(
     appointments: any,
-  ): 'early_planner' | 'last_minute' | 'habitual' | 'sporadic' {
+  ): "early_planner" | "last_minute" | "habitual" | "sporadic" {
     const leadTime = appointments.avg_booking_lead_time;
     const consistency = appointments.completed_count / appointments.total_count;
 
     if (leadTime > 7 && consistency > 0.8) {
-      return 'early_planner';
+      return "early_planner";
     }
     if (leadTime < 2) {
-      return 'last_minute';
+      return "last_minute";
     }
     if (consistency > 0.7) {
-      return 'habitual';
+      return "habitual";
     }
-    return 'sporadic';
+    return "sporadic";
   }
 
   private assessTreatmentAdherence(
     appointments: any,
-  ): 'compliant' | 'partial' | 'non_compliant' {
-    const adherenceRate = appointments.completed_count
-      / (appointments.completed_count
-        + appointments.no_show_count
-        + appointments.cancelled_count);
+  ): "compliant" | "partial" | "non_compliant" {
+    const adherenceRate =
+      appointments.completed_count /
+      (appointments.completed_count +
+        appointments.no_show_count +
+        appointments.cancelled_count);
 
     if (adherenceRate >= 0.85) {
-      return 'compliant';
+      return "compliant";
     }
     if (adherenceRate >= 0.6) {
-      return 'partial';
+      return "partial";
     }
-    return 'non_compliant';
+    return "non_compliant";
   }
 
   private calculatePriceSensitivity(
     financial: any,
     _demographics: any,
-  ): 'low' | 'medium' | 'high' {
+  ): "low" | "medium" | "high" {
     const avgValue = financial.avg_appointment_value;
     const discountUsage = financial.discount_usage;
 
     if (avgValue > 400 && discountUsage < 0.1) {
-      return 'low';
+      return "low";
     }
     if (avgValue > 200 || discountUsage < 0.2) {
-      return 'medium';
+      return "medium";
     }
-    return 'high';
+    return "high";
   }
 
   private calculateLoyaltyScore(
@@ -978,7 +990,8 @@ export class BehavioralCrmService extends EnhancedAIService {
     financial: any,
     communications: any,
   ): number {
-    const appointmentLoyalty = Math.min(appointments.completed_count / 20, 1) * 40;
+    const appointmentLoyalty =
+      Math.min(appointments.completed_count / 20, 1) * 40;
     const financialLoyalty = Math.min(financial.total_revenue / 5000, 1) * 35;
     const engagementLoyalty = Math.min(communications.response_rate, 1) * 25;
 
@@ -993,11 +1006,12 @@ export class BehavioralCrmService extends EnhancedAIService {
     _financial: any,
   ): number {
     const daysSinceLastAppointment =
-      (Date.now() - new Date(appointments.last_appointment_date).getTime())
-      / (1000 * 60 * 60 * 24);
+      (Date.now() - new Date(appointments.last_appointment_date).getTime()) /
+      (1000 * 60 * 60 * 24);
     const timeFactor = Math.min(daysSinceLastAppointment / 180, 1) * 0.4;
     const engagementFactor = (1 - communications.response_rate) * 0.3;
-    const frequencyFactor = Math.max(0, (6 - appointments.completed_count) / 10) * 0.3;
+    const frequencyFactor =
+      Math.max(0, (6 - appointments.completed_count) / 10) * 0.3;
 
     return Math.min(timeFactor + engagementFactor + frequencyFactor, 1);
   }
@@ -1007,39 +1021,38 @@ export class BehavioralCrmService extends EnhancedAIService {
     _communications: any,
     _financial: any,
   ):
-    | 'prospect'
-    | 'new_patient'
-    | 'active'
-    | 'returning'
-    | 'at_risk'
-    | 'churned'
-  {
+    | "prospect"
+    | "new_patient"
+    | "active"
+    | "returning"
+    | "at_risk"
+    | "churned" {
     const daysSinceLastContact =
-      (Date.now() - new Date(appointments.last_appointment_date).getTime())
-      / (1000 * 60 * 60 * 24);
+      (Date.now() - new Date(appointments.last_appointment_date).getTime()) /
+      (1000 * 60 * 60 * 24);
     const totalAppointments = appointments.completed_count;
 
     if (totalAppointments === 0) {
-      return 'prospect';
+      return "prospect";
     }
     if (totalAppointments <= 2) {
-      return 'new_patient';
+      return "new_patient";
     }
     if (daysSinceLastContact > 365) {
-      return 'churned';
+      return "churned";
     }
     if (daysSinceLastContact > 180) {
-      return 'at_risk';
+      return "at_risk";
     }
     if (totalAppointments > 5 && daysSinceLastContact < 90) {
-      return 'active';
+      return "active";
     }
-    return 'returning';
+    return "returning";
   }
 
   private calculateOptimalContactTimes(_communications: any): string[] {
     // Simulate optimal contact times based on interaction patterns
-    const times = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'];
+    const times = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"];
     return times.slice(0, Math.floor(Math.random() * 3) + 2);
   }
 
@@ -1048,25 +1061,25 @@ export class BehavioralCrmService extends EnhancedAIService {
   ): Record<string, number> {
     return {
       sms: Math.min(
-        (communications.sms_interactions / communications.total_interactions)
-          * 2,
+        (communications.sms_interactions / communications.total_interactions) *
+          2,
         1,
       ),
       email: Math.min(
-        (communications.email_interactions
-          / communications.total_interactions)
-          * 2,
+        (communications.email_interactions /
+          communications.total_interactions) *
+          2,
         1,
       ),
       phone: Math.min(
-        (communications.phone_interactions
-          / communications.total_interactions)
-          * 2,
+        (communications.phone_interactions /
+          communications.total_interactions) *
+          2,
         1,
       ),
       app_notification: Math.min(
-        (communications.app_interactions / communications.total_interactions)
-          * 2,
+        (communications.app_interactions / communications.total_interactions) *
+          2,
         1,
       ),
     };
@@ -1077,10 +1090,10 @@ export class BehavioralCrmService extends EnhancedAIService {
     _demographics: any,
   ): string[] {
     const categories = [
-      'general_consultation',
-      'preventive_care',
-      'aesthetic_procedures',
-      'dental_care',
+      "general_consultation",
+      "preventive_care",
+      "aesthetic_procedures",
+      "dental_care",
     ];
     const count = Math.floor(Math.random() * 3) + 1;
     return categories.slice(0, count);
@@ -1097,9 +1110,9 @@ export class BehavioralCrmService extends EnhancedAIService {
     ];
 
     if (demographics.age < 30) {
-      tags.push('young_adult');
+      tags.push("young_adult");
     } else if (demographics.age > 50) {
-      tags.push('mature_adult');
+      tags.push("mature_adult");
     }
 
     tags.push(demographics.gender);
@@ -1112,15 +1125,14 @@ export class BehavioralCrmService extends EnhancedAIService {
     behavior: PatientBehavior,
   ): Promise<void> {
     // Update internal segmentation cache
-    const segmentKey =
-      `${behavior.behavioral_profile.engagement_level}_${behavior.lifecycle_stage}`;
+    const segmentKey = `${behavior.behavioral_profile.engagement_level}_${behavior.lifecycle_stage}`;
     await this.cache?.set(
       `segment:${behavior.patient_id}`,
       segmentKey,
       24 * 60 * 60,
     ); // 24 hours
 
-    this.logger?.debug('Patient segmentation updated', {
+    this.logger?.debug("Patient segmentation updated", {
       patient_id: behavior.patient_id,
       segment_key: segmentKey,
       engagement_level: behavior.behavioral_profile.engagement_level,
@@ -1131,37 +1143,37 @@ export class BehavioralCrmService extends EnhancedAIService {
   private async loadDefaultPersonalizationRules(): Promise<void> {
     const defaultRules: Omit<
       PersonalizationRule,
-      'rule_id' | 'created_at' | 'last_modified'
+      "rule_id" | "created_at" | "last_modified"
     >[] = [
       {
-        name: 'High Value Patient Engagement',
-        description: 'Personalized messaging for high-value, loyal patients',
+        name: "High Value Patient Engagement",
+        description: "Personalized messaging for high-value, loyal patients",
         trigger_conditions: {
           behavioral_criteria: {
             loyalty_score_min: 80,
-            lifecycle_stage: 'active',
+            lifecycle_stage: "active",
           },
         },
         personalization_actions: {
           message_customization: {
-            tone: 'professional',
-            content_focus: 'benefits',
-            language_complexity: 'detailed',
+            tone: "professional",
+            content_focus: "benefits",
+            language_complexity: "detailed",
           },
           timing_optimization: {
-            preferred_send_times: ['09:00', '14:00'],
+            preferred_send_times: ["09:00", "14:00"],
             frequency_cap: 2,
             delay_between_messages_hours: 48,
           },
           channel_selection: {
-            primary_channel: 'email',
-            fallback_channels: ['sms', 'phone'],
+            primary_channel: "email",
+            fallback_channels: ["sms", "phone"],
             avoid_channels: [],
           },
           content_recommendations: {
-            treatment_suggestions: ['premium_services'],
-            educational_content: ['advanced_care_tips'],
-            promotional_offers: ['loyalty_rewards'],
+            treatment_suggestions: ["premium_services"],
+            educational_content: ["advanced_care_tips"],
+            promotional_offers: ["loyalty_rewards"],
           },
         },
         effectiveness_metrics: {
@@ -1170,37 +1182,37 @@ export class BehavioralCrmService extends EnhancedAIService {
           roi_per_patient: 450,
           last_performance_review: new Date().toISOString(),
         },
-        status: 'active',
+        status: "active",
       },
       {
-        name: 'At-Risk Patient Retention',
-        description: 'Re-engagement strategy for patients at risk of churning',
+        name: "At-Risk Patient Retention",
+        description: "Re-engagement strategy for patients at risk of churning",
         trigger_conditions: {
           behavioral_criteria: {
             churn_risk_min: 0.6,
-            lifecycle_stage: 'at_risk',
+            lifecycle_stage: "at_risk",
           },
         },
         personalization_actions: {
           message_customization: {
-            tone: 'friendly',
-            content_focus: 'urgency',
-            language_complexity: 'simple',
+            tone: "friendly",
+            content_focus: "urgency",
+            language_complexity: "simple",
           },
           timing_optimization: {
-            preferred_send_times: ['10:00', '15:00'],
+            preferred_send_times: ["10:00", "15:00"],
             frequency_cap: 3,
             delay_between_messages_hours: 24,
           },
           channel_selection: {
-            primary_channel: 'sms',
-            fallback_channels: ['phone', 'email'],
+            primary_channel: "sms",
+            fallback_channels: ["phone", "email"],
             avoid_channels: [],
           },
           content_recommendations: {
-            treatment_suggestions: ['checkup_reminder'],
-            educational_content: ['health_tips'],
-            promotional_offers: ['comeback_discount'],
+            treatment_suggestions: ["checkup_reminder"],
+            educational_content: ["health_tips"],
+            promotional_offers: ["comeback_discount"],
           },
         },
         effectiveness_metrics: {
@@ -1209,36 +1221,36 @@ export class BehavioralCrmService extends EnhancedAIService {
           roi_per_patient: 180,
           last_performance_review: new Date().toISOString(),
         },
-        status: 'active',
+        status: "active",
       },
       {
-        name: 'New Patient Onboarding',
-        description: 'Welcome sequence for new patients to improve retention',
+        name: "New Patient Onboarding",
+        description: "Welcome sequence for new patients to improve retention",
         trigger_conditions: {
           behavioral_criteria: {
-            lifecycle_stage: 'new_patient',
+            lifecycle_stage: "new_patient",
           },
         },
         personalization_actions: {
           message_customization: {
-            tone: 'friendly',
-            content_focus: 'education',
-            language_complexity: 'simple',
+            tone: "friendly",
+            content_focus: "education",
+            language_complexity: "simple",
           },
           timing_optimization: {
-            preferred_send_times: ['09:00', '16:00'],
+            preferred_send_times: ["09:00", "16:00"],
             frequency_cap: 1,
             delay_between_messages_hours: 72,
           },
           channel_selection: {
-            primary_channel: 'email',
-            fallback_channels: ['sms'],
-            avoid_channels: ['phone'],
+            primary_channel: "email",
+            fallback_channels: ["sms"],
+            avoid_channels: ["phone"],
           },
           content_recommendations: {
-            treatment_suggestions: ['comprehensive_checkup'],
-            educational_content: ['clinic_introduction', 'what_to_expect'],
-            promotional_offers: ['new_patient_discount'],
+            treatment_suggestions: ["comprehensive_checkup"],
+            educational_content: ["clinic_introduction", "what_to_expect"],
+            promotional_offers: ["new_patient_discount"],
           },
         },
         effectiveness_metrics: {
@@ -1247,7 +1259,7 @@ export class BehavioralCrmService extends EnhancedAIService {
           roi_per_patient: 320,
           last_performance_review: new Date().toISOString(),
         },
-        status: 'active',
+        status: "active",
       },
     ];
 
@@ -1256,7 +1268,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       await this.createPersonalizationRule(rule);
     }
 
-    this.logger?.info('Default personalization rules loaded', {
+    this.logger?.info("Default personalization rules loaded", {
       rules_count: defaultRules.length,
     });
   }
@@ -1273,12 +1285,12 @@ export class BehavioralCrmService extends EnhancedAIService {
           await this.analyzePatientBehavior(patientId);
         }
 
-        this.logger?.debug('Periodic behavioral analysis completed', {
+        this.logger?.debug("Periodic behavioral analysis completed", {
           patients_analyzed: Math.min(patientIds.length, 10),
         });
       } catch (error) {
-        this.logger?.error('Periodic behavioral analysis failed', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        this.logger?.error("Periodic behavioral analysis failed", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }, 60_000); // Every minute
@@ -1291,7 +1303,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     const campaignInterval = setInterval(async () => {
       try {
         for (const [campaignId, campaign] of this.activeCampaigns.entries()) {
-          if (campaign.status !== 'active') {
+          if (campaign.status !== "active") {
             continue;
           }
 
@@ -1299,8 +1311,8 @@ export class BehavioralCrmService extends EnhancedAIService {
           await this.processCampaignAutomation(campaignId);
         }
       } catch (error) {
-        this.logger?.error('Campaign automation failed', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        this.logger?.error("Campaign automation failed", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }, 30_000); // Every 30 seconds
@@ -1324,7 +1336,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     const applicableRules: PersonalizationRule[] = [];
 
     for (const rule of this.personalizationRules.values()) {
-      if (rule.status !== 'active') {
+      if (rule.status !== "active") {
         continue;
       }
 
@@ -1334,16 +1346,16 @@ export class BehavioralCrmService extends EnhancedAIService {
       const behavioralCriteria = rule.trigger_conditions.behavioral_criteria;
       for (const [key, value] of Object.entries(behavioralCriteria)) {
         switch (key) {
-          case 'loyalty_score_min': {
+          case "loyalty_score_min": {
             if (
-              patientBehavior.behavioral_profile.loyalty_score
-                < (value as number)
+              patientBehavior.behavioral_profile.loyalty_score <
+              (value as number)
             ) {
               isApplicable = false;
             }
             break;
           }
-          case 'churn_risk_min': {
+          case "churn_risk_min": {
             if (
               patientBehavior.behavioral_profile.churn_risk < (value as number)
             ) {
@@ -1351,13 +1363,13 @@ export class BehavioralCrmService extends EnhancedAIService {
             }
             break;
           }
-          case 'lifecycle_stage': {
+          case "lifecycle_stage": {
             if (patientBehavior.lifecycle_stage !== value) {
               isApplicable = false;
             }
             break;
           }
-          case 'engagement_level': {
+          case "engagement_level": {
             if (patientBehavior.behavioral_profile.engagement_level !== value) {
               isApplicable = false;
             }
@@ -1377,8 +1389,8 @@ export class BehavioralCrmService extends EnhancedAIService {
 
     return applicableRules.sort(
       (a, b) =>
-        b.effectiveness_metrics.roi_per_patient
-        - a.effectiveness_metrics.roi_per_patient,
+        b.effectiveness_metrics.roi_per_patient -
+        a.effectiveness_metrics.roi_per_patient,
     );
   }
 
@@ -1392,21 +1404,22 @@ export class BehavioralCrmService extends EnhancedAIService {
 
     // Apply personalization variables
     const personalizations = {
-      '{patient_name}': `Patient ${patientBehavior.patient_id}`,
-      '{loyalty_level}': this.getLoyaltyLevel(
+      "{patient_name}": `Patient ${patientBehavior.patient_id}`,
+      "{loyalty_level}": this.getLoyaltyLevel(
         patientBehavior.behavioral_profile.loyalty_score,
       ),
-      '{preferred_time}': patientBehavior.treatment_preferences.preferred_appointment_times[0]
-        || '10:00',
-      '{last_visit}': this.formatLastVisitDate(
+      "{preferred_time}":
+        patientBehavior.treatment_preferences.preferred_appointment_times[0] ||
+        "10:00",
+      "{last_visit}": this.formatLastVisitDate(
         patientBehavior.interaction_history.last_interaction_date,
       ),
-      '{engagement_level}': patientBehavior.behavioral_profile.engagement_level,
+      "{engagement_level}": patientBehavior.behavioral_profile.engagement_level,
     };
 
     for (const [variable, value] of Object.entries(personalizations)) {
       personalizedContent = personalizedContent.replaceAll(
-        new RegExp(variable, 'g'),
+        new RegExp(variable, "g"),
         value,
       );
     }
@@ -1414,7 +1427,8 @@ export class BehavioralCrmService extends EnhancedAIService {
     // Apply tone and complexity based on rules
     if (rules.length > 0) {
       const primaryRule = rules[0];
-      const messageCustomization = primaryRule.personalization_actions.message_customization;
+      const messageCustomization =
+        primaryRule.personalization_actions.message_customization;
 
       personalizedContent = this.adjustMessageTone(
         personalizedContent,
@@ -1434,10 +1448,11 @@ export class BehavioralCrmService extends EnhancedAIService {
   }
 
   private calculateOptimalSendTime(patientBehavior: PatientBehavior): string {
-    const preferredTimes = patientBehavior.interaction_history.preferred_contact_times;
+    const preferredTimes =
+      patientBehavior.interaction_history.preferred_contact_times;
     return (
-      preferredTimes[Math.floor(Math.random() * preferredTimes.length)]
-      || '10:00'
+      preferredTimes[Math.floor(Math.random() * preferredTimes.length)] ||
+      "10:00"
     );
   }
 
@@ -1452,9 +1467,9 @@ export class BehavioralCrmService extends EnhancedAIService {
     score += rules.length * 0.1;
 
     // Add points for high engagement patients
-    if (patientBehavior.behavioral_profile.engagement_level === 'very_high') {
+    if (patientBehavior.behavioral_profile.engagement_level === "very_high") {
       score += 0.2;
-    } else if (patientBehavior.behavioral_profile.engagement_level === 'high') {
+    } else if (patientBehavior.behavioral_profile.engagement_level === "high") {
       score += 0.1;
     }
 
@@ -1469,7 +1484,8 @@ export class BehavioralCrmService extends EnhancedAIService {
 
     // Engagement weight (40%)
     const engagementWeights = { very_high: 40, high: 30, medium: 20, low: 10 };
-    score += engagementWeights[patient.behavioral_profile.engagement_level] || 10;
+    score +=
+      engagementWeights[patient.behavioral_profile.engagement_level] || 10;
 
     // Loyalty weight (30%)
     score += (patient.behavioral_profile.loyalty_score / 100) * 30;
@@ -1500,25 +1516,25 @@ export class BehavioralCrmService extends EnhancedAIService {
     // Evaluate conditions against patient behavior
     for (const [key, value] of Object.entries(conditions)) {
       switch (key) {
-        case 'min_loyalty_score': {
+        case "min_loyalty_score": {
           if (patientBehavior.behavioral_profile.loyalty_score < value) {
             return false;
           }
           break;
         }
-        case 'max_churn_risk': {
+        case "max_churn_risk": {
           if (patientBehavior.behavioral_profile.churn_risk > value) {
             return false;
           }
           break;
         }
-        case 'required_lifecycle_stage': {
+        case "required_lifecycle_stage": {
           if (patientBehavior.lifecycle_stage !== value) {
             return false;
           }
           break;
         }
-        case 'required_engagement_level': {
+        case "required_engagement_level": {
           if (patientBehavior.behavioral_profile.engagement_level !== value) {
             return false;
           }
@@ -1541,7 +1557,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     },
   ): Promise<boolean> {
     // Simulate sending message through various channels
-    this.logger?.info('Message sent to patient', {
+    this.logger?.info("Message sent to patient", {
       patient_id: patientId,
       channel,
       priority: message.priority,
@@ -1594,7 +1610,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       // Check target segments
       if (campaign.target_segments.length > 0) {
         const hasMatchingSegment = campaign.target_segments.some((segment) =>
-          behavior.segmentation_tags.includes(segment)
+          behavior.segmentation_tags.includes(segment),
         );
         if (!hasMatchingSegment) {
           isEligible = false;
@@ -1604,8 +1620,8 @@ export class BehavioralCrmService extends EnhancedAIService {
       // Check lifecycle stages
       const audienceFilters = campaign.trigger_rules.audience_filters;
       if (
-        audienceFilters.lifecycle_stages.length > 0
-        && !audienceFilters.lifecycle_stages.includes(behavior.lifecycle_stage)
+        audienceFilters.lifecycle_stages.length > 0 &&
+        !audienceFilters.lifecycle_stages.includes(behavior.lifecycle_stage)
       ) {
         isEligible = false;
       }
@@ -1620,21 +1636,21 @@ export class BehavioralCrmService extends EnhancedAIService {
 
   private async calculateOverviewMetrics(): Promise<any> {
     const totalPatients = this.patientBehaviors.size;
-    const activePatients =
-      [...this.patientBehaviors.values()].filter((p) =>
-        ['active', 'returning'].includes(p.lifecycle_stage)
-      ).length;
+    const activePatients = [...this.patientBehaviors.values()].filter((p) =>
+      ["active", "returning"].includes(p.lifecycle_stage),
+    ).length;
     const newPatientsThisMonth = [...this.patientBehaviors.values()].filter(
-      (p) => p.lifecycle_stage === 'new_patient',
+      (p) => p.lifecycle_stage === "new_patient",
     ).length;
     const churnRiskPatients = [...this.patientBehaviors.values()].filter(
       (p) => p.behavioral_profile.churn_risk > 0.5,
     ).length;
 
-    const avgLifetimeValue = [...this.patientBehaviors.values()].reduce(
-          (sum, p) => sum + p.behavioral_profile.loyalty_score * 10,
-          0,
-        ) / totalPatients || 0;
+    const avgLifetimeValue =
+      [...this.patientBehaviors.values()].reduce(
+        (sum, p) => sum + p.behavioral_profile.loyalty_score * 10,
+        0,
+      ) / totalPatients || 0;
 
     return {
       total_patients: totalPatients,
@@ -1649,13 +1665,12 @@ export class BehavioralCrmService extends EnhancedAIService {
   private async analyzeBehavioralSegments(): Promise<any[]> {
     const segments = new Map<
       string,
-      { patients: PatientBehavior[]; metrics: any; }
+      { patients: PatientBehavior[]; metrics: any }
     >();
 
     // Group patients by behavioral segments
     for (const behavior of this.patientBehaviors.values()) {
-      const segmentKey =
-        `${behavior.behavioral_profile.engagement_level}_${behavior.lifecycle_stage}`;
+      const segmentKey = `${behavior.behavioral_profile.engagement_level}_${behavior.lifecycle_stage}`;
 
       if (!segments.has(segmentKey)) {
         segments.set(segmentKey, { patients: [], metrics: {} });
@@ -1668,7 +1683,7 @@ export class BehavioralCrmService extends EnhancedAIService {
     for (const [segmentName, data] of segments.entries()) {
       const patients = data.patients;
       const segmentAnalysis_item = {
-        segment_name: segmentName.replace('_', ' '),
+        segment_name: segmentName.replace("_", " "),
         patient_count: patients.length,
         percentage: Math.round(
           (patients.length / this.patientBehaviors.size) * 100,
@@ -1676,8 +1691,8 @@ export class BehavioralCrmService extends EnhancedAIService {
         avg_engagement_score: Math.round(
           patients.reduce(
             (sum, p) =>
-              sum
-              + this.calculateEngagementScore(
+              sum +
+              this.calculateEngagementScore(
                 { completed_count: p.behavioral_profile.loyalty_score / 10 },
                 { response_rate: 0.8 },
               ),
@@ -1691,7 +1706,7 @@ export class BehavioralCrmService extends EnhancedAIService {
             0,
           ),
         ),
-        growth_trend: ['increasing', 'stable', 'decreasing'][
+        growth_trend: ["increasing", "stable", "decreasing"][
           Math.floor(Math.random() * 3)
         ] as any,
       };
@@ -1706,8 +1721,9 @@ export class BehavioralCrmService extends EnhancedAIService {
       campaign_name: campaign.name,
       status: campaign.status,
       sent_count: campaign.performance_metrics.sent_count,
-      conversion_rate: campaign.performance_metrics.converted_count
-        / Math.max(campaign.performance_metrics.sent_count, 1),
+      conversion_rate:
+        campaign.performance_metrics.converted_count /
+        Math.max(campaign.performance_metrics.sent_count, 1),
       roi_percentage: campaign.performance_metrics.roi_percentage,
       revenue_generated: campaign.performance_metrics.revenue_generated,
     }));
@@ -1750,22 +1766,22 @@ export class BehavioralCrmService extends EnhancedAIService {
       ],
       content_performance: [
         {
-          content_type: 'appointment_reminder',
+          content_type: "appointment_reminder",
           engagement_rate: 0.88,
           conversion_impact: 0.22,
         },
         {
-          content_type: 'health_education',
+          content_type: "health_education",
           engagement_rate: 0.65,
           conversion_impact: 0.08,
         },
         {
-          content_type: 'promotional_offer',
+          content_type: "promotional_offer",
           engagement_rate: 0.45,
           conversion_impact: 0.18,
         },
         {
-          content_type: 'preventive_care',
+          content_type: "preventive_care",
           engagement_rate: 0.72,
           conversion_impact: 0.15,
         },
@@ -1793,14 +1809,14 @@ export class BehavioralCrmService extends EnhancedAIService {
       },
       growth_opportunities: [
         {
-          opportunity: 'Increase appointment frequency for high-value patients',
+          opportunity: "Increase appointment frequency for high-value patients",
           potential_revenue: 45_000,
-          required_actions: ['targeted_campaigns', 'preventive_care_packages'],
+          required_actions: ["targeted_campaigns", "preventive_care_packages"],
         },
         {
-          opportunity: 'Re-engage at-risk patients with personalized offers',
+          opportunity: "Re-engage at-risk patients with personalized offers",
           potential_revenue: 28_000,
-          required_actions: ['retention_campaigns', 'loyalty_rewards'],
+          required_actions: ["retention_campaigns", "loyalty_rewards"],
         },
       ],
     };
@@ -1809,15 +1825,15 @@ export class BehavioralCrmService extends EnhancedAIService {
   // Utility methods
   private getLoyaltyLevel(score: number): string {
     if (score >= 80) {
-      return 'Premium';
+      return "Premium";
     }
     if (score >= 60) {
-      return 'Gold';
+      return "Gold";
     }
     if (score >= 40) {
-      return 'Silver';
+      return "Silver";
     }
-    return 'Bronze';
+    return "Bronze";
   }
 
   private formatLastVisitDate(dateString: string): string {
@@ -1828,10 +1844,10 @@ export class BehavioralCrmService extends EnhancedAIService {
     );
 
     if (diffInDays === 0) {
-      return 'today';
+      return "today";
     }
     if (diffInDays === 1) {
-      return 'yesterday';
+      return "yesterday";
     }
     if (diffInDays < 7) {
       return `${diffInDays} days ago`;
@@ -1844,14 +1860,14 @@ export class BehavioralCrmService extends EnhancedAIService {
 
   private adjustMessageTone(
     content: string,
-    tone: 'professional' | 'friendly' | 'casual' | 'urgent',
+    tone: "professional" | "friendly" | "casual" | "urgent",
   ): string {
     // Simulate tone adjustment (in production, would use NLP processing)
     const toneModifiers = {
-      professional: content.replaceAll("!", '.'),
-      friendly: content.replaceAll("\\.", '!'),
+      professional: content.replaceAll("!", "."),
+      friendly: content.replaceAll("\\.", "!"),
       casual: content.toLowerCase(),
-      urgent: content.toUpperCase().replaceAll("\\.", '!'),
+      urgent: content.toUpperCase().replaceAll("\\.", "!"),
     };
 
     return toneModifiers[tone] || content;
@@ -1859,7 +1875,7 @@ export class BehavioralCrmService extends EnhancedAIService {
 
   private adjustContentComplexity(
     content: string,
-    _complexity: 'simple' | 'technical' | 'detailed',
+    _complexity: "simple" | "technical" | "detailed",
   ): string {
     // Simulate complexity adjustment
     return content;
@@ -1869,16 +1885,16 @@ export class BehavioralCrmService extends EnhancedAIService {
     const factors: string[] = [];
 
     if (behavior.behavioral_profile.churn_risk > 0.7) {
-      factors.push('high_churn_risk');
+      factors.push("high_churn_risk");
     }
-    if (behavior.behavioral_profile.engagement_level === 'low') {
-      factors.push('low_engagement');
+    if (behavior.behavioral_profile.engagement_level === "low") {
+      factors.push("low_engagement");
     }
     if (behavior.behavioral_profile.loyalty_score < 40) {
-      factors.push('low_loyalty');
+      factors.push("low_loyalty");
     }
-    if (behavior.lifecycle_stage === 'at_risk') {
-      factors.push('lifecycle_risk');
+    if (behavior.lifecycle_stage === "at_risk") {
+      factors.push("lifecycle_risk");
     }
 
     return factors;
@@ -1888,13 +1904,13 @@ export class BehavioralCrmService extends EnhancedAIService {
     const interventions: string[] = [];
 
     if (behavior.behavioral_profile.churn_risk > 0.6) {
-      interventions.push('personal_outreach', 'retention_offer');
+      interventions.push("personal_outreach", "retention_offer");
     }
-    if (behavior.behavioral_profile.engagement_level === 'low') {
-      interventions.push('educational_content', 'simplified_communication');
+    if (behavior.behavioral_profile.engagement_level === "low") {
+      interventions.push("educational_content", "simplified_communication");
     }
     if (behavior.behavioral_profile.loyalty_score < 50) {
-      interventions.push('loyalty_program', 'value_demonstration');
+      interventions.push("loyalty_program", "value_demonstration");
     }
 
     return interventions;
@@ -1905,10 +1921,10 @@ export class BehavioralCrmService extends EnhancedAIService {
   > {
     const insight: BehavioralInsight = {
       insight_id: `insight_${Date.now()}_pattern`,
-      insight_type: 'pattern_discovery',
-      title: 'Peak Engagement Times for Healthcare Communications',
+      insight_type: "pattern_discovery",
+      title: "Peak Engagement Times for Healthcare Communications",
       description:
-        'Analysis reveals optimal timing patterns for patient engagement across different communication channels.',
+        "Analysis reveals optimal timing patterns for patient engagement across different communication channels.",
       data_analysis: {
         analyzed_period: {
           start_date: new Date(
@@ -1922,54 +1938,57 @@ export class BehavioralCrmService extends EnhancedAIService {
       },
       key_findings: [
         {
-          finding: 'Highest patient response rates occur between 9-10 AM (92% open rate)',
-          impact_level: 'high',
+          finding:
+            "Highest patient response rates occur between 9-10 AM (92% open rate)",
+          impact_level: "high",
           supporting_data: { peak_hour: 10, response_rate: 0.92 },
           recommendations: [
-            'Schedule important communications during peak hours',
-            'Implement time-based campaign optimization',
+            "Schedule important communications during peak hours",
+            "Implement time-based campaign optimization",
           ],
         },
         {
-          finding: 'SMS messages have 3x higher engagement than email for appointment reminders',
-          impact_level: 'high',
+          finding:
+            "SMS messages have 3x higher engagement than email for appointment reminders",
+          impact_level: "high",
           supporting_data: { sms_engagement: 0.85, email_engagement: 0.28 },
           recommendations: [
-            'Prioritize SMS for urgent communications',
-            'Use email for detailed information sharing',
+            "Prioritize SMS for urgent communications",
+            "Use email for detailed information sharing",
           ],
         },
       ],
       visualizations: [
         {
-          chart_type: 'line',
-          title: 'Response Rates by Hour of Day',
+          chart_type: "line",
+          title: "Response Rates by Hour of Day",
           data_points: [
-            { label: '8:00', value: 0.75 },
-            { label: '9:00', value: 0.85 },
-            { label: '10:00', value: 0.92 },
-            { label: '11:00', value: 0.78 },
-            { label: '14:00', value: 0.68 },
-            { label: '15:00', value: 0.72 },
-            { label: '16:00', value: 0.65 },
+            { label: "8:00", value: 0.75 },
+            { label: "9:00", value: 0.85 },
+            { label: "10:00", value: 0.92 },
+            { label: "11:00", value: 0.78 },
+            { label: "14:00", value: 0.68 },
+            { label: "15:00", value: 0.72 },
+            { label: "16:00", value: 0.65 },
           ],
           insights: [
-            'Clear peak at 10 AM',
-            'Afternoon engagement drops significantly',
+            "Clear peak at 10 AM",
+            "Afternoon engagement drops significantly",
           ],
         },
       ],
       actionable_recommendations: [
         {
-          recommendation: 'Implement time-based campaign scheduling with 10 AM priority',
-          priority: 'high',
-          estimated_impact: '25% improvement in engagement rates',
-          implementation_effort: 'medium',
-          success_metrics: ['open_rate_improvement', 'response_time_reduction'],
+          recommendation:
+            "Implement time-based campaign scheduling with 10 AM priority",
+          priority: "high",
+          estimated_impact: "25% improvement in engagement rates",
+          implementation_effort: "medium",
+          success_metrics: ["open_rate_improvement", "response_time_reduction"],
         },
       ],
       generated_at: new Date().toISOString(),
-      status: 'new',
+      status: "new",
     };
 
     return [insight];
@@ -1980,10 +1999,10 @@ export class BehavioralCrmService extends EnhancedAIService {
   > {
     const insight: BehavioralInsight = {
       insight_id: `insight_${Date.now()}_anomaly`,
-      insight_type: 'anomaly_detection',
-      title: 'Unusual Drop in Patient Engagement Detected',
+      insight_type: "anomaly_detection",
+      title: "Unusual Drop in Patient Engagement Detected",
       description:
-        'System detected a 15% decrease in patient engagement over the past week across high-value patient segments.',
+        "System detected a 15% decrease in patient engagement over the past week across high-value patient segments.",
       data_analysis: {
         analyzed_period: {
           start_date: new Date(
@@ -1997,49 +2016,51 @@ export class BehavioralCrmService extends EnhancedAIService {
       },
       key_findings: [
         {
-          finding: 'High-value patient segment showing 15% decline in appointment booking rates',
-          impact_level: 'medium',
+          finding:
+            "High-value patient segment showing 15% decline in appointment booking rates",
+          impact_level: "medium",
           supporting_data: {
             baseline_rate: 0.85,
             current_rate: 0.72,
             decline_percentage: 0.15,
           },
           recommendations: [
-            'Investigate potential causes',
-            'Implement immediate retention campaigns',
+            "Investigate potential causes",
+            "Implement immediate retention campaigns",
           ],
         },
       ],
       visualizations: [
         {
-          chart_type: 'line',
-          title: 'Patient Engagement Trend - Last 14 Days',
+          chart_type: "line",
+          title: "Patient Engagement Trend - Last 14 Days",
           data_points: [
-            { label: 'Day 1', value: 0.85 },
-            { label: 'Day 7', value: 0.82 },
-            { label: 'Day 8', value: 0.78 },
-            { label: 'Day 14', value: 0.72 },
+            { label: "Day 1", value: 0.85 },
+            { label: "Day 7", value: 0.82 },
+            { label: "Day 8", value: 0.78 },
+            { label: "Day 14", value: 0.72 },
           ],
           insights: [
-            'Steady decline starting day 8',
-            'Requires immediate attention',
+            "Steady decline starting day 8",
+            "Requires immediate attention",
           ],
         },
       ],
       actionable_recommendations: [
         {
-          recommendation: 'Launch targeted retention campaign for affected segment',
-          priority: 'high',
-          estimated_impact: 'Recovery of 10% engagement within 2 weeks',
-          implementation_effort: 'medium',
+          recommendation:
+            "Launch targeted retention campaign for affected segment",
+          priority: "high",
+          estimated_impact: "Recovery of 10% engagement within 2 weeks",
+          implementation_effort: "medium",
           success_metrics: [
-            'engagement_rate_recovery',
-            'appointment_booking_increase',
+            "engagement_rate_recovery",
+            "appointment_booking_increase",
           ],
         },
       ],
       generated_at: new Date().toISOString(),
-      status: 'new',
+      status: "new",
     };
 
     return [insight];
@@ -2050,10 +2071,10 @@ export class BehavioralCrmService extends EnhancedAIService {
   > {
     const insight: BehavioralInsight = {
       insight_id: `insight_${Date.now()}_conversion`,
-      insight_type: 'conversion_optimization',
-      title: 'Personalized Message Templates Increase Conversion by 34%',
+      insight_type: "conversion_optimization",
+      title: "Personalized Message Templates Increase Conversion by 34%",
       description:
-        'A/B testing reveals significant improvement in appointment booking rates when using behavioral personalization.',
+        "A/B testing reveals significant improvement in appointment booking rates when using behavioral personalization.",
       data_analysis: {
         analyzed_period: {
           start_date: new Date(
@@ -2067,44 +2088,47 @@ export class BehavioralCrmService extends EnhancedAIService {
       },
       key_findings: [
         {
-          finding: 'Personalized messages based on patient behavior increase conversion by 34%',
-          impact_level: 'high',
+          finding:
+            "Personalized messages based on patient behavior increase conversion by 34%",
+          impact_level: "high",
           supporting_data: {
             control_rate: 0.18,
             personalized_rate: 0.24,
             improvement: 0.34,
           },
           recommendations: [
-            'Roll out personalization to all campaigns',
-            'Expand behavioral data collection',
+            "Roll out personalization to all campaigns",
+            "Expand behavioral data collection",
           ],
         },
       ],
       visualizations: [
         {
-          chart_type: 'bar',
-          title: 'Conversion Rates: Generic vs Personalized Messages',
+          chart_type: "bar",
+          title: "Conversion Rates: Generic vs Personalized Messages",
           data_points: [
-            { label: 'Generic Messages', value: 18 },
-            { label: 'Personalized Messages', value: 24 },
+            { label: "Generic Messages", value: 18 },
+            { label: "Personalized Messages", value: 24 },
           ],
           insights: [
-            '34% improvement with personalization',
-            'Statistically significant results',
+            "34% improvement with personalization",
+            "Statistically significant results",
           ],
         },
       ],
       actionable_recommendations: [
         {
-          recommendation: 'Implement behavioral personalization across all patient communications',
-          priority: 'high',
-          estimated_impact: 'Additional $45,000 monthly revenue from improved conversions',
-          implementation_effort: 'medium',
-          success_metrics: ['conversion_rate_increase', 'revenue_per_campaign'],
+          recommendation:
+            "Implement behavioral personalization across all patient communications",
+          priority: "high",
+          estimated_impact:
+            "Additional $45,000 monthly revenue from improved conversions",
+          implementation_effort: "medium",
+          success_metrics: ["conversion_rate_increase", "revenue_per_campaign"],
         },
       ],
       generated_at: new Date().toISOString(),
-      status: 'new',
+      status: "new",
     };
 
     return [insight];
@@ -2119,10 +2143,10 @@ export class BehavioralCrmService extends EnhancedAIService {
 
     const insight: BehavioralInsight = {
       insight_id: `insight_${Date.now()}_churn`,
-      insight_type: 'churn_prediction',
+      insight_type: "churn_prediction",
       title: `${churnRiskPatients} Patients at High Risk of Churning`,
       description:
-        'Predictive model identifies patients with >70% probability of not returning within 6 months.',
+        "Predictive model identifies patients with >70% probability of not returning within 6 months.",
       data_analysis: {
         analyzed_period: {
           start_date: new Date(
@@ -2137,57 +2161,56 @@ export class BehavioralCrmService extends EnhancedAIService {
       key_findings: [
         {
           finding: `${churnRiskPatients} patients identified with high churn probability`,
-          impact_level: 'high',
+          impact_level: "high",
           supporting_data: {
             high_risk_count: churnRiskPatients,
             avg_patient_value: 850,
             potential_revenue_loss: churnRiskPatients * 850,
           },
           recommendations: [
-            'Implement immediate retention campaigns',
-            'Personalized re-engagement strategies',
+            "Implement immediate retention campaigns",
+            "Personalized re-engagement strategies",
           ],
         },
       ],
       visualizations: [
         {
-          chart_type: 'pie',
-          title: 'Patient Churn Risk Distribution',
+          chart_type: "pie",
+          title: "Patient Churn Risk Distribution",
           data_points: [
             {
-              label: 'Low Risk (0-30%)',
+              label: "Low Risk (0-30%)",
               value: Math.floor(this.patientBehaviors.size * 0.6),
             },
             {
-              label: 'Medium Risk (30-50%)',
+              label: "Medium Risk (30-50%)",
               value: Math.floor(this.patientBehaviors.size * 0.25),
             },
-            { label: 'High Risk (50%+)', value: churnRiskPatients },
+            { label: "High Risk (50%+)", value: churnRiskPatients },
           ],
           insights: [
-            'Focus retention efforts on high-risk segment',
-            'Monitor medium-risk for early intervention',
+            "Focus retention efforts on high-risk segment",
+            "Monitor medium-risk for early intervention",
           ],
         },
       ],
       actionable_recommendations: [
         {
-          recommendation: 'Launch targeted retention campaign for high-risk patients',
-          priority: 'high',
-          estimated_impact: `Retain 40% of at-risk patients, saving $${
-            Math.round(
-              churnRiskPatients * 850 * 0.4,
-            )
-          } in revenue`,
-          implementation_effort: 'high',
+          recommendation:
+            "Launch targeted retention campaign for high-risk patients",
+          priority: "high",
+          estimated_impact: `Retain 40% of at-risk patients, saving $${Math.round(
+            churnRiskPatients * 850 * 0.4,
+          )} in revenue`,
+          implementation_effort: "high",
           success_metrics: [
-            'churn_rate_reduction',
-            'patient_retention_increase',
+            "churn_rate_reduction",
+            "patient_retention_increase",
           ],
         },
       ],
       generated_at: new Date().toISOString(),
-      status: 'new',
+      status: "new",
     };
 
     return [insight];
@@ -2201,6 +2224,6 @@ export class BehavioralCrmService extends EnhancedAIService {
     }
     this.automationIntervals = [];
 
-    this.logger?.info('Behavioral CRM Service cleaned up');
+    this.logger?.info("Behavioral CRM Service cleaned up");
   }
 }

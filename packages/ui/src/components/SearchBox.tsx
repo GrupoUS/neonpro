@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 export interface FilterOption {
   id: string;
@@ -27,8 +27,8 @@ export interface SearchBoxProps {
 const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
   (
     {
-      placeholder = 'Buscar...',
-      value = '',
+      placeholder = "Buscar...",
+      value = "",
       onValueChange,
       filters = [],
       activeFilters = [],
@@ -72,8 +72,8 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
     };
 
     const handleClearSearch = () => {
-      setSearchValue('');
-      onValueChange?.('');
+      setSearchValue("");
+      onValueChange?.("");
     };
 
     const handleFilterToggle = (filterId: string) => {
@@ -84,7 +84,7 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
     const hasFilters = filters && filters.length > 0;
 
     return (
-      <div {...props} className={cn('space-y-3', className)} ref={ref}>
+      <div {...props} className={cn("space-y-3", className)} ref={ref}>
         {/* Search Input */}
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -173,13 +173,13 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
               return (
                 <Button
                   className={cn(
-                    'justify-start',
-                    isActive && 'bg-primary text-primary-foreground',
+                    "justify-start",
+                    isActive && "bg-primary text-primary-foreground",
                   )}
                   key={filter.id}
                   onClick={() => handleFilterToggle(filter.id)}
                   size="sm"
-                  variant={isActive ? 'default' : 'outline'}
+                  variant={isActive ? "default" : "outline"}
                 >
                   {filter.label}
                   {filter.count !== undefined && (
@@ -233,6 +233,6 @@ const SearchBox = React.forwardRef<HTMLDivElement, SearchBoxProps>(
   },
 );
 
-SearchBox.displayName = 'SearchBox';
+SearchBox.displayName = "SearchBox";
 
 export { SearchBox };

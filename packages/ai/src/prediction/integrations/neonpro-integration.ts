@@ -1,6 +1,6 @@
-import { predictionPerformanceMonitor } from '../analytics/performance-monitor';
-import { aestheticInferenceAPI } from '../api/inference-api';
-import type { PatientProfile, TreatmentRequest } from '../types';
+import { predictionPerformanceMonitor } from "../analytics/performance-monitor";
+import { aestheticInferenceAPI } from "../api/inference-api";
+import type { PatientProfile, TreatmentRequest } from "../types";
 
 /**
  * NeonPro Core Services Integration Layer
@@ -57,30 +57,30 @@ export class NeonProAIIntegration {
         treatmentType: treatmentType as any,
         targetAreas: targetAreas.map((area) => ({
           region: area as any,
-          concern: 'wrinkles' as any, // Default, would be specified
+          concern: "wrinkles" as any, // Default, would be specified
           severity: 5, // Default, would be assessed
           priority: 1, // Default
         })),
         goals: {
-          primary: 'Aesthetic improvement',
+          primary: "Aesthetic improvement",
           secondary: [],
-          expectations: 'moderate' as any,
+          expectations: "moderate" as any,
           maintenance: false,
           naturalLook: true,
         },
-        urgency: 'moderate' as any,
+        urgency: "moderate" as any,
         budgetRange: {
           min: 1000,
           max: 5000,
-          currency: 'BRL',
-          flexibility: 'moderate',
+          currency: "BRL",
+          flexibility: "moderate",
         },
         timeframe: {
           earliestStart: new Date(),
           latestCompletion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-          flexibility: 'moderate',
+          flexibility: "moderate",
           preferredDays: [1, 2, 3, 4, 5],
-          preferredTimes: [{ start: '09:00', end: '17:00' }],
+          preferredTimes: [{ start: "09:00", end: "17:00" }],
         },
       };
 
@@ -92,12 +92,12 @@ export class NeonProAIIntegration {
       );
 
       if (!prediction.success) {
-        throw new Error(prediction.error || 'Prediction failed');
+        throw new Error(prediction.error || "Prediction failed");
       }
 
       // Log prediction for monitoring
       predictionPerformanceMonitor.logPrediction(
-        'treatment-outcome',
+        "treatment-outcome",
         prediction.metadata.processingTime,
         prediction.metadata.accuracyScore,
         true,
@@ -121,16 +121,16 @@ export class NeonProAIIntegration {
     } catch (error) {
       // Log error for monitoring
       predictionPerformanceMonitor.logPrediction(
-        'treatment-outcome',
+        "treatment-outcome",
         performance.now() - startTime,
         0,
         false,
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.message : "Unknown error",
       );
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         metadata: {
           processingTime: performance.now() - startTime,
           confidence: 0,
@@ -172,11 +172,11 @@ export class NeonProAIIntegration {
         };
       }
 
-      throw new Error(result.error || 'Botox optimization failed');
+      throw new Error(result.error || "Botox optimization failed");
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -185,7 +185,7 @@ export class NeonProAIIntegration {
    * Get AI system health and performance metrics
    */
   async getSystemHealth(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     accuracy: Record<string, number>;
     performance: Record<string, number>;
     recommendations: string[];
@@ -196,13 +196,13 @@ export class NeonProAIIntegration {
 
       // Check accuracy targets for all models
       const accuracyChecks = [
-        'treatment-outcome',
-        'risk-assessment',
-        'botox-optimization',
-        'filler-volume',
-        'laser-settings',
-        'duration-estimation',
-        'success-probability',
+        "treatment-outcome",
+        "risk-assessment",
+        "botox-optimization",
+        "filler-volume",
+        "laser-settings",
+        "duration-estimation",
+        "success-probability",
       ].map((modelType) => {
         const check = predictionPerformanceMonitor.checkAccuracyTarget(
           modelType as any,
@@ -221,21 +221,21 @@ export class NeonProAIIntegration {
       const recommendations: string[] = [];
 
       // Generate recommendations based on health status
-      if (healthCheck.status !== 'healthy') {
+      if (healthCheck.status !== "healthy") {
         recommendations.push(
-          'AI system health degraded - check model performance',
+          "AI system health degraded - check model performance",
         );
       }
 
       if (dashboard.successRate < 0.95) {
         recommendations.push(
-          'High error rate detected - review system stability',
+          "High error rate detected - review system stability",
         );
       }
 
       if (dashboard.averageResponseTime > 2000) {
         recommendations.push(
-          'Response time above 2s target - optimize inference pipeline',
+          "Response time above 2s target - optimize inference pipeline",
         );
       }
 
@@ -251,11 +251,11 @@ export class NeonProAIIntegration {
       };
     } catch {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         accuracy: {},
         performance: {},
         recommendations: [
-          'System health check failed - investigate immediately',
+          "System health check failed - investigate immediately",
         ],
       };
     }
@@ -274,8 +274,8 @@ export class NeonProAIIntegration {
     return {
       id: patientId,
       age: 35,
-      gender: 'female',
-      skinType: 'fitzpatrick-3',
+      gender: "female",
+      skinType: "fitzpatrick-3",
       medicalHistory: {
         allergies: [],
         medications: [],
@@ -287,8 +287,8 @@ export class NeonProAIIntegration {
       lifestyle: {
         smoking: false,
         alcohol: false,
-        sunExposure: 'moderate',
-        exerciseLevel: 'moderate',
+        sunExposure: "moderate",
+        exerciseLevel: "moderate",
         stressLevel: 5,
         sleepQuality: 7,
         skincare: {
@@ -302,9 +302,9 @@ export class NeonProAIIntegration {
       },
       previousTreatments: [],
       goals: {
-        primary: 'Wrinkle reduction',
-        secondary: ['Preventive care'],
-        expectations: 'moderate',
+        primary: "Wrinkle reduction",
+        secondary: ["Preventive care"],
+        expectations: "moderate",
         maintenance: true,
         naturalLook: true,
       },
@@ -312,7 +312,7 @@ export class NeonProAIIntegration {
         dataProcessingConsent: true,
         aiPredictionConsent: true,
         consentDate: new Date(),
-        consentVersion: '1.0',
+        consentVersion: "1.0",
         dataRetentionPeriod: 365,
         anonymizationRequested: false,
       },

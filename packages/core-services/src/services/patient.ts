@@ -3,8 +3,8 @@
 // Centralized patient management microservice
 // ================================================
 
-import { createClient } from '@supabase/supabase-js';
-import { monitoring } from './monitoring';
+import { createClient } from "@supabase/supabase-js";
+import { monitoring } from "./monitoring";
 
 // ================================================
 // TYPES AND INTERFACES
@@ -33,7 +33,7 @@ interface PersonalInfo {
   lastName: string;
   fullName: string;
   dateOfBirth: Date;
-  gender: 'M' | 'F' | 'O' | 'N'; // Male, Female, Other, Not specified
+  gender: "M" | "F" | "O" | "N"; // Male, Female, Other, Not specified
   cpf?: string;
   rg?: string;
   nationality?: string;
@@ -47,7 +47,7 @@ interface ContactInfo {
   phone: string;
   whatsapp?: string;
   address: Address;
-  preferredContactMethod: 'email' | 'phone' | 'whatsapp' | 'sms';
+  preferredContactMethod: "email" | "phone" | "whatsapp" | "sms";
 }
 
 interface Address {
@@ -67,9 +67,9 @@ interface MedicalInfo {
   medications: string[];
   medicalConditions: string[];
   familyHistory: string[];
-  smokingStatus: 'never' | 'former' | 'current';
-  alcoholConsumption: 'none' | 'occasional' | 'regular' | 'heavy';
-  exerciseFrequency: 'none' | 'light' | 'moderate' | 'intense';
+  smokingStatus: "never" | "former" | "current";
+  alcoholConsumption: "none" | "occasional" | "regular" | "heavy";
+  exerciseFrequency: "none" | "light" | "moderate" | "intense";
   notes?: string;
 }
 
@@ -98,12 +98,12 @@ interface PatientPreferences {
 
 interface PatientStatus {
   isActive: boolean;
-  registrationStatus: 'pending' | 'active' | 'inactive' | 'blocked';
+  registrationStatus: "pending" | "active" | "inactive" | "blocked";
   lastVisit?: Date;
   totalVisits: number;
   totalSpent: number;
-  loyaltyLevel: 'bronze' | 'silver' | 'gold' | 'platinum';
-  riskLevel: 'low' | 'medium' | 'high';
+  loyaltyLevel: "bronze" | "silver" | "gold" | "platinum";
+  riskLevel: "low" | "medium" | "high";
 }
 
 interface PatientSearchFilters {
@@ -124,13 +124,13 @@ interface PatientSearchFilters {
   limit?: number;
   offset?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 interface PatientCreateRequest {
   tenantId: string;
   clinicId: string;
-  personalInfo: Omit<PersonalInfo, 'fullName'>;
+  personalInfo: Omit<PersonalInfo, "fullName">;
   contactInfo: ContactInfo;
   medicalInfo?: Partial<MedicalInfo>;
   emergencyContact?: EmergencyContact;
@@ -207,7 +207,7 @@ export class PatientService {
     userId: string,
   ): Promise<Patient> {
     try {
-      monitoring.info('Creating patient', 'patient-service', {
+      monitoring.info("Creating patient", "patient-service", {
         tenantId: request.tenantId,
         clinicId: request.clinicId,
         email: request.contactInfo.email,
@@ -219,11 +219,12 @@ export class PatientService {
       // Check for duplicate patients
       const duplicate = await this.findDuplicatePatient(request);
       if (duplicate) {
-        throw new Error('Patient already exists with this email or CPF');
+        throw new Error("Patient already exists with this email or CPF");
       }
 
       // Generate full name
-      const fullName = `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
+      const fullName =
+        `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
 
       // Prepare patient data
       const patientData = {
@@ -261,9 +262,9 @@ export class PatientService {
         medications: request.medicalInfo?.medications || [],
         medical_conditions: request.medicalInfo?.medicalConditions || [],
         family_history: request.medicalInfo?.familyHistory || [],
-        smoking_status: request.medicalInfo?.smokingStatus || 'never',
-        alcohol_consumption: request.medicalInfo?.alcoholConsumption || 'none',
-        exercise_frequency: request.medicalInfo?.exerciseFrequency || 'none',
+        smoking_status: request.medicalInfo?.smokingStatus || "never",
+        alcohol_consumption: request.medicalInfo?.alcoholConsumption || "none",
+        exercise_frequency: request.medicalInfo?.exerciseFrequency || "none",
         medical_notes: request.medicalInfo?.notes,
         // Emergency contact
         emergency_contact_name: request.emergencyContact?.name,
@@ -271,8 +272,8 @@ export class PatientService {
         emergency_contact_phone: request.emergencyContact?.phone,
         emergency_contact_email: request.emergencyContact?.email,
         // Preferences
-        language: request.preferences?.language || 'pt-BR',
-        timezone: request.preferences?.timezone || 'America/Sao_Paulo',
+        language: request.preferences?.language || "pt-BR",
+        timezone: request.preferences?.timezone || "America/Sao_Paulo",
         communication_preferences: request.preferences
           ?.communicationPreferences || {
           appointmentReminders: true,
@@ -287,11 +288,11 @@ export class PatientService {
         },
         // Status
         is_active: true,
-        registration_status: 'active',
+        registration_status: "active",
         total_visits: 0,
         total_spent: 0,
-        loyalty_level: 'bronze',
-        risk_level: 'low',
+        loyalty_level: "bronze",
+        risk_level: "low",
         // Metadata
         tags: request.tags || [],
         metadata: request.metadata || {},
@@ -301,15 +302,15 @@ export class PatientService {
 
       // Insert patient
       const { data, error } = await this.supabase
-        .from('patients')
+        .from("patients")
         .insert(patientData)
         .select()
         .single();
 
       if (error) {
         monitoring.error(
-          'Patient creation failed',
-          'patient-service',
+          "Patient creation failed",
+          "patient-service",
           new Error(error.message),
           {
             tenantId: request.tenantId,
@@ -324,14 +325,14 @@ export class PatientService {
       // Log patient creation
       await this.logPatientHistory(
         patient.id,
-        'created',
+        "created",
         undefined,
         undefined,
         undefined,
         userId,
       );
 
-      monitoring.info('Patient created successfully', 'patient-service', {
+      monitoring.info("Patient created successfully", "patient-service", {
         patientId: patient.id,
         tenantId: patient.tenantId,
         email: patient.contactInfo.email,
@@ -340,8 +341,8 @@ export class PatientService {
       return patient;
     } catch (error) {
       monitoring.error(
-        'Patient creation error',
-        'patient-service',
+        "Patient creation error",
+        "patient-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -354,12 +355,12 @@ export class PatientService {
 
   async getPatient(patientId: string, userId: string): Promise<Patient | null> {
     try {
-      monitoring.debug('Getting patient', 'patient-service', { patientId });
+      monitoring.debug("Getting patient", "patient-service", { patientId });
 
       const { data, error } = await this.supabase
-        .from('patients')
-        .select('*')
-        .eq('id', patientId)
+        .from("patients")
+        .select("*")
+        .eq("id", patientId)
         .single();
 
       if (error || !data) {
@@ -371,7 +372,7 @@ export class PatientService {
 
       return this.mapPatientFromDb(data);
     } catch (error) {
-      monitoring.error('Get patient error', 'patient-service', error as Error, {
+      monitoring.error("Get patient error", "patient-service", error as Error, {
         patientId,
       });
       return;
@@ -384,12 +385,12 @@ export class PatientService {
     userId: string,
   ): Promise<Patient | null> {
     try {
-      monitoring.info('Updating patient', 'patient-service', { patientId });
+      monitoring.info("Updating patient", "patient-service", { patientId });
 
       // Get current patient
       const currentPatient = await this.getPatient(patientId, userId);
       if (!currentPatient) {
-        throw new Error('Patient not found');
+        throw new Error("Patient not found");
       }
 
       // Validate tenant access
@@ -410,14 +411,17 @@ export class PatientService {
           updateData.last_name = updates.personalInfo.lastName;
         }
         if (updates.personalInfo.firstName || updates.personalInfo.lastName) {
-          const firstName = updates.personalInfo.firstName
-            || currentPatient.personalInfo.firstName;
-          const lastName = updates.personalInfo.lastName
-            || currentPatient.personalInfo.lastName;
+          const firstName =
+            updates.personalInfo.firstName ||
+            currentPatient.personalInfo.firstName;
+          const lastName =
+            updates.personalInfo.lastName ||
+            currentPatient.personalInfo.lastName;
           updateData.full_name = `${firstName} ${lastName}`.trim();
         }
         if (updates.personalInfo.dateOfBirth) {
-          updateData.date_of_birth = updates.personalInfo.dateOfBirth.toISOString();
+          updateData.date_of_birth =
+            updates.personalInfo.dateOfBirth.toISOString();
         }
         if (updates.personalInfo.gender) {
           updateData.gender = updates.personalInfo.gender;
@@ -454,7 +458,8 @@ export class PatientService {
           updateData.whatsapp = updates.contactInfo.whatsapp;
         }
         if (updates.contactInfo.preferredContactMethod) {
-          updateData.preferred_contact_method = updates.contactInfo.preferredContactMethod;
+          updateData.preferred_contact_method =
+            updates.contactInfo.preferredContactMethod;
         }
 
         if (updates.contactInfo.address) {
@@ -506,7 +511,8 @@ export class PatientService {
           updateData.smoking_status = updates.medicalInfo.smokingStatus;
         }
         if (updates.medicalInfo.alcoholConsumption) {
-          updateData.alcohol_consumption = updates.medicalInfo.alcoholConsumption;
+          updateData.alcohol_consumption =
+            updates.medicalInfo.alcoholConsumption;
         }
         if (updates.medicalInfo.exerciseFrequency) {
           updateData.exercise_frequency = updates.medicalInfo.exerciseFrequency;
@@ -522,7 +528,8 @@ export class PatientService {
           updateData.emergency_contact_name = updates.emergencyContact.name;
         }
         if (updates.emergencyContact.relationship !== undefined) {
-          updateData.emergency_contact_relationship = updates.emergencyContact.relationship;
+          updateData.emergency_contact_relationship =
+            updates.emergencyContact.relationship;
         }
         if (updates.emergencyContact.phone !== undefined) {
           updateData.emergency_contact_phone = updates.emergencyContact.phone;
@@ -567,16 +574,16 @@ export class PatientService {
 
       // Update patient
       const { data, error } = await this.supabase
-        .from('patients')
+        .from("patients")
         .update(updateData)
-        .eq('id', patientId)
+        .eq("id", patientId)
         .select()
         .single();
 
       if (error) {
         monitoring.error(
-          'Patient update failed',
-          'patient-service',
+          "Patient update failed",
+          "patient-service",
           new Error(error.message),
           {
             patientId,
@@ -590,22 +597,22 @@ export class PatientService {
       // Log patient update
       await this.logPatientHistory(
         patientId,
-        'updated',
+        "updated",
         undefined,
         currentPatient,
         updatedPatient,
         userId,
       );
 
-      monitoring.info('Patient updated successfully', 'patient-service', {
+      monitoring.info("Patient updated successfully", "patient-service", {
         patientId,
       });
 
       return updatedPatient;
     } catch (error) {
       monitoring.error(
-        'Patient update error',
-        'patient-service',
+        "Patient update error",
+        "patient-service",
         error as Error,
         { patientId },
       );
@@ -615,12 +622,12 @@ export class PatientService {
 
   async deletePatient(patientId: string, userId: string): Promise<boolean> {
     try {
-      monitoring.info('Deleting patient', 'patient-service', { patientId });
+      monitoring.info("Deleting patient", "patient-service", { patientId });
 
       // Get current patient
       const currentPatient = await this.getPatient(patientId, userId);
       if (!currentPatient) {
-        throw new Error('Patient not found');
+        throw new Error("Patient not found");
       }
 
       // Validate tenant access
@@ -628,19 +635,19 @@ export class PatientService {
 
       // Soft delete (deactivate)
       const { error } = await this.supabase
-        .from('patients')
+        .from("patients")
         .update({
           is_active: false,
-          registration_status: 'inactive',
+          registration_status: "inactive",
           updated_by: userId,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', patientId);
+        .eq("id", patientId);
 
       if (error) {
         monitoring.error(
-          'Patient deletion failed',
-          'patient-service',
+          "Patient deletion failed",
+          "patient-service",
           new Error(error.message),
           {
             patientId,
@@ -652,22 +659,22 @@ export class PatientService {
       // Log patient deletion
       await this.logPatientHistory(
         patientId,
-        'deleted',
+        "deleted",
         undefined,
         undefined,
         undefined,
         userId,
       );
 
-      monitoring.info('Patient deleted successfully', 'patient-service', {
+      monitoring.info("Patient deleted successfully", "patient-service", {
         patientId,
       });
 
       return true;
     } catch (error) {
       monitoring.error(
-        'Patient deletion error',
-        'patient-service',
+        "Patient deletion error",
+        "patient-service",
         error as Error,
         { patientId },
       );
@@ -682,9 +689,9 @@ export class PatientService {
   async searchPatients(
     filters: PatientSearchFilters,
     userId: string,
-  ): Promise<{ patients: Patient[]; total: number; }> {
+  ): Promise<{ patients: Patient[]; total: number }> {
     try {
-      monitoring.debug('Searching patients', 'patient-service', { filters });
+      monitoring.debug("Searching patients", "patient-service", { filters });
 
       // Validate tenant access if specified
       if (filters.tenantId) {
@@ -692,24 +699,24 @@ export class PatientService {
       }
 
       let query = this.supabase
-        .from('patients')
-        .select('*', { count: 'exact' });
+        .from("patients")
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (filters.tenantId) {
-        query = query.eq('tenant_id', filters.tenantId);
+        query = query.eq("tenant_id", filters.tenantId);
       }
 
       if (filters.clinicId) {
-        query = query.eq('clinic_id', filters.clinicId);
+        query = query.eq("clinic_id", filters.clinicId);
       }
 
       if (filters.name) {
-        query = query.ilike('full_name', `%${filters.name}%`);
+        query = query.ilike("full_name", `%${filters.name}%`);
       }
 
       if (filters.email) {
-        query = query.ilike('email', `%${filters.email}%`);
+        query = query.ilike("email", `%${filters.email}%`);
       }
 
       if (filters.phone) {
@@ -719,48 +726,48 @@ export class PatientService {
       }
 
       if (filters.cpf) {
-        query = query.eq('cpf', filters.cpf);
+        query = query.eq("cpf", filters.cpf);
       }
 
       if (filters.status) {
-        query = query.eq('registration_status', filters.status);
+        query = query.eq("registration_status", filters.status);
       }
 
       if (filters.tags && filters.tags.length > 0) {
-        query = query.overlaps('tags', filters.tags);
+        query = query.overlaps("tags", filters.tags);
       }
 
       if (filters.dateOfBirthFrom) {
         query = query.gte(
-          'date_of_birth',
+          "date_of_birth",
           filters.dateOfBirthFrom.toISOString(),
         );
       }
 
       if (filters.dateOfBirthTo) {
-        query = query.lte('date_of_birth', filters.dateOfBirthTo.toISOString());
+        query = query.lte("date_of_birth", filters.dateOfBirthTo.toISOString());
       }
 
       if (filters.createdFrom) {
-        query = query.gte('created_at', filters.createdFrom.toISOString());
+        query = query.gte("created_at", filters.createdFrom.toISOString());
       }
 
       if (filters.createdTo) {
-        query = query.lte('created_at', filters.createdTo.toISOString());
+        query = query.lte("created_at", filters.createdTo.toISOString());
       }
 
       if (filters.loyaltyLevel) {
-        query = query.eq('loyalty_level', filters.loyaltyLevel);
+        query = query.eq("loyalty_level", filters.loyaltyLevel);
       }
 
       if (filters.riskLevel) {
-        query = query.eq('risk_level', filters.riskLevel);
+        query = query.eq("risk_level", filters.riskLevel);
       }
 
       // Apply sorting
-      const sortBy = filters.sortBy || 'created_at';
-      const sortOrder = filters.sortOrder || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = filters.sortBy || "created_at";
+      const sortOrder = filters.sortOrder || "desc";
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const limit = Math.min(filters.limit || 50, 100);
@@ -771,8 +778,8 @@ export class PatientService {
 
       if (error) {
         monitoring.error(
-          'Patient search failed',
-          'patient-service',
+          "Patient search failed",
+          "patient-service",
           new Error(error.message),
           {
             filters,
@@ -783,7 +790,7 @@ export class PatientService {
 
       const patients = data.map(this.mapPatientFromDb);
 
-      monitoring.debug('Patient search completed', 'patient-service', {
+      monitoring.debug("Patient search completed", "patient-service", {
         resultCount: patients.length,
         totalCount: count,
       });
@@ -791,8 +798,8 @@ export class PatientService {
       return { patients, total: count || 0 };
     } catch (error) {
       monitoring.error(
-        'Patient search error',
-        'patient-service',
+        "Patient search error",
+        "patient-service",
         error as Error,
         { filters },
       );
@@ -831,21 +838,21 @@ export class PatientService {
     userId: string,
   ): Promise<PatientHistory[]> {
     try {
-      monitoring.debug('Getting patient history', 'patient-service', {
+      monitoring.debug("Getting patient history", "patient-service", {
         patientId,
       });
 
       // Validate access to patient
       const patient = await this.getPatient(patientId, userId);
       if (!patient) {
-        throw new Error('Patient not found');
+        throw new Error("Patient not found");
       }
 
       const { data, error } = await this.supabase
-        .from('patient_history')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('changed_at', { ascending: false });
+        .from("patient_history")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("changed_at", { ascending: false });
 
       if (error) {
         throw new Error(error.message);
@@ -854,8 +861,8 @@ export class PatientService {
       return data.map(this.mapPatientHistoryFromDb);
     } catch (error) {
       monitoring.error(
-        'Get patient history error',
-        'patient-service',
+        "Get patient history error",
+        "patient-service",
         error as Error,
         {
           patientId,
@@ -876,10 +883,10 @@ export class PatientService {
     consentText: string,
     version: string,
     userId: string,
-    clientInfo?: { ipAddress?: string; userAgent?: string; },
+    clientInfo?: { ipAddress?: string; userAgent?: string },
   ): Promise<PatientConsent> {
     try {
-      monitoring.info('Recording patient consent', 'patient-service', {
+      monitoring.info("Recording patient consent", "patient-service", {
         patientId,
         consentType,
         consentGiven,
@@ -888,11 +895,11 @@ export class PatientService {
       // Validate access to patient
       const patient = await this.getPatient(patientId, userId);
       if (!patient) {
-        throw new Error('Patient not found');
+        throw new Error("Patient not found");
       }
 
       const { data, error } = await this.supabase
-        .from('patient_consents')
+        .from("patient_consents")
         .insert({
           patient_id: patientId,
           consent_type: consentType,
@@ -915,14 +922,14 @@ export class PatientService {
       // Log consent recording
       await this.logPatientHistory(
         patientId,
-        'consent_recorded',
+        "consent_recorded",
         `consent_${consentType}`,
         undefined,
         { consentGiven, version },
         userId,
       );
 
-      monitoring.info('Patient consent recorded', 'patient-service', {
+      monitoring.info("Patient consent recorded", "patient-service", {
         patientId,
         consentId: consent.id,
         consentType,
@@ -931,8 +938,8 @@ export class PatientService {
       return consent;
     } catch (error) {
       monitoring.error(
-        'Record consent error',
-        'patient-service',
+        "Record consent error",
+        "patient-service",
         error as Error,
         {
           patientId,
@@ -951,14 +958,14 @@ export class PatientService {
       // Validate access to patient
       const patient = await this.getPatient(patientId, userId);
       if (!patient) {
-        throw new Error('Patient not found');
+        throw new Error("Patient not found");
       }
 
       const { data, error } = await this.supabase
-        .from('patient_consents')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('consent_date', { ascending: false });
+        .from("patient_consents")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("consent_date", { ascending: false });
 
       if (error) {
         throw new Error(error.message);
@@ -967,8 +974,8 @@ export class PatientService {
       return data.map(this.mapPatientConsentFromDb);
     } catch (error) {
       monitoring.error(
-        'Get patient consents error',
-        'patient-service',
+        "Get patient consents error",
+        "patient-service",
         error as Error,
         {
           patientId,
@@ -995,7 +1002,7 @@ export class PatientService {
     genderDistribution: Record<string, number>;
   }> {
     try {
-      monitoring.debug('Getting patient statistics', 'patient-service', {
+      monitoring.debug("Getting patient statistics", "patient-service", {
         tenantId,
       });
 
@@ -1004,15 +1011,15 @@ export class PatientService {
 
       // Get total and active patients
       const { count: totalPatients } = await this.supabase
-        .from('patients')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId);
+        .from("patients")
+        .select("*", { count: "exact", head: true })
+        .eq("tenant_id", tenantId);
 
       const { count: activePatients } = await this.supabase
-        .from('patients')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId)
-        .eq('is_active', true);
+        .from("patients")
+        .select("*", { count: "exact", head: true })
+        .eq("tenant_id", tenantId)
+        .eq("is_active", true);
 
       // Get new patients this month
       const startOfMonth = new Date();
@@ -1020,53 +1027,59 @@ export class PatientService {
       startOfMonth.setHours(0, 0, 0, 0);
 
       const { count: newPatientsThisMonth } = await this.supabase
-        .from('patients')
-        .select('*', { count: 'exact', head: true })
-        .eq('tenant_id', tenantId)
-        .gte('created_at', startOfMonth.toISOString());
+        .from("patients")
+        .select("*", { count: "exact", head: true })
+        .eq("tenant_id", tenantId)
+        .gte("created_at", startOfMonth.toISOString());
 
       // Get patients for detailed analysis
       const { data: patients } = await this.supabase
-        .from('patients')
-        .select('loyalty_level, risk_level, date_of_birth, gender')
-        .eq('tenant_id', tenantId)
-        .eq('is_active', true);
+        .from("patients")
+        .select("loyalty_level, risk_level, date_of_birth, gender")
+        .eq("tenant_id", tenantId)
+        .eq("is_active", true);
 
       // Analyze loyalty levels
-      const patientsByLoyaltyLevel = patients?.reduce(
-        (acc, patient) => {
-          acc[patient.loyalty_level] = (acc[patient.loyalty_level] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      ) || {};
+      const patientsByLoyaltyLevel =
+        patients?.reduce(
+          (acc, patient) => {
+            acc[patient.loyalty_level] = (acc[patient.loyalty_level] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {};
 
       // Analyze risk levels
-      const patientsByRiskLevel = patients?.reduce(
-        (acc, patient) => {
-          acc[patient.risk_level] = (acc[patient.risk_level] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      ) || {};
+      const patientsByRiskLevel =
+        patients?.reduce(
+          (acc, patient) => {
+            acc[patient.risk_level] = (acc[patient.risk_level] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {};
 
       // Calculate average age
       const currentYear = new Date().getFullYear();
-      const ages = patients?.map(
-        (patient) => currentYear - new Date(patient.date_of_birth).getFullYear(),
-      ) || [];
-      const averageAge = ages.length > 0
-        ? ages.reduce((sum, age) => sum + age, 0) / ages.length
-        : 0;
+      const ages =
+        patients?.map(
+          (patient) =>
+            currentYear - new Date(patient.date_of_birth).getFullYear(),
+        ) || [];
+      const averageAge =
+        ages.length > 0
+          ? ages.reduce((sum, age) => sum + age, 0) / ages.length
+          : 0;
 
       // Analyze gender distribution
-      const genderDistribution = patients?.reduce(
-        (acc, patient) => {
-          acc[patient.gender] = (acc[patient.gender] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      ) || {};
+      const genderDistribution =
+        patients?.reduce(
+          (acc, patient) => {
+            acc[patient.gender] = (acc[patient.gender] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ) || {};
 
       return {
         totalPatients: totalPatients || 0,
@@ -1079,8 +1092,8 @@ export class PatientService {
       };
     } catch (error) {
       monitoring.error(
-        'Get patient stats error',
-        'patient-service',
+        "Get patient stats error",
+        "patient-service",
         error as Error,
         { tenantId },
       );
@@ -1105,10 +1118,10 @@ export class PatientService {
   ): Promise<Patient | null> {
     try {
       let query = this.supabase
-        .from('patients')
-        .select('*')
-        .eq('tenant_id', request.tenantId)
-        .eq('is_active', true);
+        .from("patients")
+        .select("*")
+        .eq("tenant_id", request.tenantId)
+        .eq("is_active", true);
 
       // Check by email or CPF
       if (request.personalInfo.cpf) {
@@ -1116,7 +1129,7 @@ export class PatientService {
           `email.eq.${request.contactInfo.email},cpf.eq.${request.personalInfo.cpf}`,
         );
       } else {
-        query = query.eq('email', request.contactInfo.email);
+        query = query.eq("email", request.contactInfo.email);
       }
 
       const { data, error } = await query.single();
@@ -1141,7 +1154,7 @@ export class PatientService {
     reason?: string,
   ): Promise<void> {
     try {
-      await this.supabase.from('patient_history').insert({
+      await this.supabase.from("patient_history").insert({
         patient_id: patientId,
         action,
         field_changed: fieldChanged,
@@ -1152,8 +1165,8 @@ export class PatientService {
       });
     } catch (error) {
       monitoring.error(
-        'Log patient history error',
-        'patient-service',
+        "Log patient history error",
+        "patient-service",
         error as Error,
         {
           patientId,

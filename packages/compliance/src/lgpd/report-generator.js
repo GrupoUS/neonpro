@@ -3,14 +3,14 @@
  * Constitutional compliance reporting with privacy protection
  * Compliance: LGPD + Constitutional Privacy + ≥9.9/10 Standards
  */
-import { z } from 'zod';
+import { z } from "zod";
 // Report Configuration Schema
 export const LGPDReportConfigSchema = z.object({
   report_type: z.enum([
-    'compliance_audit',
-    'data_mapping',
-    'consent_status',
-    'breach_report',
+    "compliance_audit",
+    "data_mapping",
+    "consent_status",
+    "breach_report",
   ]),
   date_range: z.object({
     start_date: z.string(),
@@ -18,8 +18,8 @@ export const LGPDReportConfigSchema = z.object({
   }),
   include_personal_data: z.boolean().default(false),
   anonymization_level: z
-    .enum(['basic', 'advanced', 'k_anonymity'])
-    .default('advanced'),
+    .enum(["basic", "advanced", "k_anonymity"])
+    .default("advanced"),
   constitutional_validation: z.boolean().default(true),
   audit_trail: z.boolean().default(true),
 });
@@ -42,7 +42,7 @@ export const LGPDReportSchema = z.object({
     z.object({
       category: z.string(),
       description: z.string(),
-      severity: z.enum(['low', 'medium', 'high', 'critical']),
+      severity: z.enum(["low", "medium", "high", "critical"]),
       recommendation: z.string(),
       constitutional_impact: z.boolean(),
     }),
@@ -74,7 +74,8 @@ export class LGPDReportGenerator {
   async generateReport() {
     const reportId = `lgpd_report_${Date.now()}`;
     // Validate constitutional compliance
-    const constitutionalValidation = await this.validateConstitutionalCompliance();
+    const constitutionalValidation =
+      await this.validateConstitutionalCompliance();
     // Generate report summary
     const summary = await this.generateSummary();
     // Generate findings
@@ -88,12 +89,12 @@ export class LGPDReportGenerator {
       findings,
       constitutional_validation: constitutionalValidation,
       audit_trail: {
-        generated_by: 'LGPDReportGenerator',
+        generated_by: "LGPDReportGenerator",
         validation_steps: [
-          'Constitutional compliance validation',
-          'Data minimization check',
-          'Purpose limitation verification',
-          'Transparency assessment',
+          "Constitutional compliance validation",
+          "Data minimization check",
+          "Purpose limitation verification",
+          "Transparency assessment",
         ],
         quality_score: 9.9,
       },
@@ -128,10 +129,11 @@ export class LGPDReportGenerator {
   async generateFindings() {
     return [
       {
-        category: 'Data Protection',
-        description: 'All personal data processing activities comply with LGPD requirements',
-        severity: 'low',
-        recommendation: 'Continue current practices',
+        category: "Data Protection",
+        description:
+          "All personal data processing activities comply with LGPD requirements",
+        severity: "low",
+        recommendation: "Continue current practices",
         constitutional_impact: false,
       },
     ];
@@ -141,13 +143,13 @@ export class LGPDReportGenerator {
    */
   async exportReport(report, format) {
     switch (format) {
-      case 'json': {
+      case "json": {
         return JSON.stringify(report, undefined, 2);
       }
-      case 'pdf': {
+      case "pdf": {
         return this.generatePdfReport(report);
       }
-      case 'csv': {
+      case "csv": {
         return this.generateCsvReport(report);
       }
       default: {
@@ -210,9 +212,9 @@ BT
 50 750 Td
 (RELATORIO LGPD) Tj
 0 -20 Td
-(Gerado em: ${new Date().toLocaleDateString('pt-BR')}) Tj
+(Gerado em: ${new Date().toLocaleDateString("pt-BR")}) Tj
 0 -20 Td
-(Tenant ID: ${report.tenantId || 'N/A'}) Tj
+(Tenant ID: ${report.tenantId || "N/A"}) Tj
 0 -20 Td
 (Periodo: ${report.startDate} - ${report.endDate}) Tj
 0 -40 Td
@@ -251,17 +253,17 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
    */
   formatPdfContent(items) {
     if (items.length === 0) {
-      return '0 -15 Td\n(Nenhum registro encontrado) Tj';
+      return "0 -15 Td\n(Nenhum registro encontrado) Tj";
     }
     return items
       .slice(0, 10)
       .map(
         (item, index) =>
-          `0 -15 Td\n(${index + 1}. ${item.id || item.type || 'Item'}: ${
-            item.status || item.description || 'N/A'
+          `0 -15 Td\n(${index + 1}. ${item.id || item.type || "Item"}: ${
+            item.status || item.description || "N/A"
           }) Tj`,
       )
-      .join('\n');
+      .join("\n");
   }
   /**
    * Generate CSV report
@@ -269,54 +271,54 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
   generateCsvReport(report) {
     const csvLines = [];
     // Header
-    csvLines.push(`RELATÓRIO LGPD - ${new Date().toLocaleDateString('pt-BR')}`);
-    csvLines.push(`Tenant ID,${report.tenantId || 'N/A'}`);
+    csvLines.push(`RELATÓRIO LGPD - ${new Date().toLocaleDateString("pt-BR")}`);
+    csvLines.push(`Tenant ID,${report.tenantId || "N/A"}`);
     csvLines.push(
-      `Período,${report.startDate || ''} - ${report.endDate || ''}`,
+      `Período,${report.startDate || ""} - ${report.endDate || ""}`,
     );
-    csvLines.push('');
+    csvLines.push("");
     // Consentimentos
     if (report.consents && report.consents.length > 0) {
-      csvLines.push('CONSENTIMENTOS');
-      csvLines.push('ID,Tipo,Status,Data,Finalidade');
+      csvLines.push("CONSENTIMENTOS");
+      csvLines.push("ID,Tipo,Status,Data,Finalidade");
       report.consents.forEach((consent) => {
         csvLines.push(
-          `${consent.id || ''},${consent.type || ''},${consent.status || ''},${
-            consent.createdAt || ''
-          },${consent.purpose || ''}`,
+          `${consent.id || ""},${consent.type || ""},${consent.status || ""},${
+            consent.createdAt || ""
+          },${consent.purpose || ""}`,
         );
       });
-      csvLines.push('');
+      csvLines.push("");
     }
     // Violações
     if (report.breaches && report.breaches.length > 0) {
-      csvLines.push('VIOLAÇÕES DE DADOS');
-      csvLines.push('ID,Categoria,Severidade,Data,Descrição,Status');
+      csvLines.push("VIOLAÇÕES DE DADOS");
+      csvLines.push("ID,Categoria,Severidade,Data,Descrição,Status");
       report.breaches.forEach((breach) => {
         csvLines.push(
-          `${breach.id || ''},${breach.category || ''},${breach.severity || ''},${
-            breach.detectedAt || ''
-          },${(breach.description || '').replaceAll(",", ';')},${breach.status || ''}`,
+          `${breach.id || ""},${breach.category || ""},${breach.severity || ""},${
+            breach.detectedAt || ""
+          },${(breach.description || "").replaceAll(",", ";")},${breach.status || ""}`,
         );
       });
-      csvLines.push('');
+      csvLines.push("");
     }
     // Exercício de direitos
     if (report.rightsExercises && report.rightsExercises.length > 0) {
-      csvLines.push('EXERCÍCIO DE DIREITOS');
-      csvLines.push('ID,Tipo,Status,Data Solicitação,Data Conclusão');
+      csvLines.push("EXERCÍCIO DE DIREITOS");
+      csvLines.push("ID,Tipo,Status,Data Solicitação,Data Conclusão");
       report.rightsExercises.forEach((exercise) => {
         csvLines.push(
-          `${exercise.id || ''},${exercise.type || ''},${exercise.status || ''},${
-            exercise.requestedAt || ''
-          },${exercise.completedAt || ''}`,
+          `${exercise.id || ""},${exercise.type || ""},${exercise.status || ""},${
+            exercise.requestedAt || ""
+          },${exercise.completedAt || ""}`,
         );
       });
-      csvLines.push('');
+      csvLines.push("");
     }
     // Estatísticas
-    csvLines.push('ESTATÍSTICAS');
-    csvLines.push('Métrica,Valor');
+    csvLines.push("ESTATÍSTICAS");
+    csvLines.push("Métrica,Valor");
     csvLines.push(`Total de Consentimentos,${report.consents?.length || 0}`);
     csvLines.push(`Total de Violações,${report.breaches?.length || 0}`);
     csvLines.push(
@@ -325,7 +327,7 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
     csvLines.push(
       `Score de Compliance,${report.complianceScore?.overall || 0}`,
     );
-    return csvLines.join('\n');
+    return csvLines.join("\n");
   }
 }
 /**
@@ -344,16 +346,16 @@ export async function validateLGPDReportConfig(config) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       violations.push(
-        ...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
+        ...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
       );
     }
   }
   // Constitutional validation
   if (!config.constitutional_validation) {
-    violations.push('Constitutional validation must be enabled');
+    violations.push("Constitutional validation must be enabled");
   }
   if (!config.audit_trail) {
-    violations.push('Audit trail must be enabled for compliance');
+    violations.push("Audit trail must be enabled for compliance");
   }
   return {
     valid: violations.length === 0,

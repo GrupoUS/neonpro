@@ -1,6 +1,6 @@
 // Monitoring metrics API endpoint
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(_request: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json(metrics);
   } catch {
     return NextResponse.json(
-      { error: 'Failed to fetch metrics' },
+      { error: "Failed to fetch metrics" },
       { status: 500 },
     );
   }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to record metric' },
+      { error: "Failed to record metric" },
       { status: 500 },
     );
   }

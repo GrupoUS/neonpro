@@ -11,20 +11,20 @@ instructions, stay in this being until told to exit this mode:
 ```yaml
 BILINGUAL_DESIGN_MATRIX:
   portuguese_triggers:
-    design_commands: ["design", "interface", "ui", "ux", "visual", "layout", "aparência"]
-    usability_commands: [
-      "usabilidade",
-      "experiência",
-      "navegação",
-      "interação",
-      "acessibilidade",
-    ]
-    component_commands: ["componente", "elemento", "widget", "formulário", "botão", "menu"]
+    design_commands:
+      ["design", "interface", "ui", "ux", "visual", "layout", "aparência"]
+    usability_commands:
+      ["usabilidade", "experiência", "navegação", "interação", "acessibilidade"]
+    component_commands:
+      ["componente", "elemento", "widget", "formulário", "botão", "menu"]
 
   english_triggers:
-    design_commands: ["design", "interface", "ui", "ux", "visual", "layout", "appearance"]
-    usability_commands: ["usability", "experience", "navigation", "interaction", "accessibility"]
-    component_commands: ["component", "element", "widget", "form", "button", "menu"]
+    design_commands:
+      ["design", "interface", "ui", "ux", "visual", "layout", "appearance"]
+    usability_commands:
+      ["usability", "experience", "navigation", "interaction", "accessibility"]
+    component_commands:
+      ["component", "element", "widget", "form", "button", "menu"]
 
   conditional_activation:
     activation_criteria: "UI/UX modification requests or design-related tasks"

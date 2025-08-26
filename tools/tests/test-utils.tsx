@@ -2,10 +2,10 @@
  * Testing utilities following official TanStack Query + React Testing Library patterns
  */
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, renderHook } from '@testing-library/react';
-import type { RenderOptions } from '@testing-library/react';
-import type React from 'react';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, renderHook } from "@testing-library/react";
+import type { RenderOptions } from "@testing-library/react";
+import type React from "react";
 
 /**
  * Create a test QueryClient following official docs
@@ -32,12 +32,12 @@ export const renderWithClient = (
   ui: React.ReactElement,
   options?: {
     client?: QueryClient;
-    renderOptions?: Omit<RenderOptions, 'wrapper'>;
+    renderOptions?: Omit<RenderOptions, "wrapper">;
   },
 ) => {
   const { client = createTestQueryClient(), renderOptions } = options || {};
 
-  const wrapper = ({ children }: { children: React.ReactNode; }) => (
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
 
@@ -59,7 +59,7 @@ export const renderHookWithClient = <TResult, TProps>(
 ) => {
   const { client = createTestQueryClient(), initialProps } = options || {};
 
-  const wrapper = ({ children }: { children: React.ReactNode; }) => (
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
 
@@ -75,7 +75,9 @@ export const renderHookWithClient = <TResult, TProps>(
 export const getGlobalMocks = () => ({
   supabaseClient: (globalThis as any).mockSupabaseClient,
   notificationService: (globalThis as any).mockNotificationService,
-  lgpdService: (globalThis as any).mockLGPDService || (globalThis as any).mockLgpdService,
+  lgpdService:
+    (globalThis as any).mockLGPDService || (globalThis as any).mockLgpdService,
   cpfValidator: (globalThis as any).mockCpfValidator,
-  queryClient: (globalThis as any).testQueryClient || (globalThis as any).queryClient,
+  queryClient:
+    (globalThis as any).testQueryClient || (globalThis as any).queryClient,
 });

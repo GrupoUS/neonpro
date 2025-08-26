@@ -1,6 +1,6 @@
-import { HEALTHCARE_DATA_RETENTION_DAYS } from '@neonpro/types/constants/healthcare-constants';
-import { addDays } from 'date-fns';
-import { z } from 'zod';
+import { HEALTHCARE_DATA_RETENTION_DAYS } from "@neonpro/types/constants/healthcare-constants";
+import { addDays } from "date-fns";
+import { z } from "zod";
 /**
  * LGPD (Lei Geral de Proteção de Dados) Compliance Service
  * Implements automated compliance workflows for Brazilian data protection law
@@ -17,62 +17,62 @@ import { z } from 'zod';
  */
 export let LgpdLawfulBasis;
 ((LgpdLawfulBasis) => {
-  LgpdLawfulBasis.CONSENT = 'consent';
-  LgpdLawfulBasis.CONTRACT = 'contract';
-  LgpdLawfulBasis.LEGAL_OBLIGATION = 'legal_obligation';
-  LgpdLawfulBasis.VITAL_INTERESTS = 'vital_interests';
-  LgpdLawfulBasis.PUBLIC_TASK = 'public_task';
-  LgpdLawfulBasis.LEGITIMATE_INTERESTS = 'legitimate_interests';
+  LgpdLawfulBasis.CONSENT = "consent";
+  LgpdLawfulBasis.CONTRACT = "contract";
+  LgpdLawfulBasis.LEGAL_OBLIGATION = "legal_obligation";
+  LgpdLawfulBasis.VITAL_INTERESTS = "vital_interests";
+  LgpdLawfulBasis.PUBLIC_TASK = "public_task";
+  LgpdLawfulBasis.LEGITIMATE_INTERESTS = "legitimate_interests";
 })(LgpdLawfulBasis || (LgpdLawfulBasis = {}));
 /**
  * Data processing purposes
  */
 export let DataProcessingPurpose;
 ((DataProcessingPurpose) => {
-  DataProcessingPurpose.MEDICAL_TREATMENT = 'medical_treatment';
-  DataProcessingPurpose.APPOINTMENT_SCHEDULING = 'appointment_scheduling';
-  DataProcessingPurpose.BILLING = 'billing';
-  DataProcessingPurpose.MARKETING = 'marketing';
-  DataProcessingPurpose.RESEARCH = 'research';
-  DataProcessingPurpose.LEGAL_COMPLIANCE = 'legal_compliance';
-  DataProcessingPurpose.SECURITY = 'security';
+  DataProcessingPurpose.MEDICAL_TREATMENT = "medical_treatment";
+  DataProcessingPurpose.APPOINTMENT_SCHEDULING = "appointment_scheduling";
+  DataProcessingPurpose.BILLING = "billing";
+  DataProcessingPurpose.MARKETING = "marketing";
+  DataProcessingPurpose.RESEARCH = "research";
+  DataProcessingPurpose.LEGAL_COMPLIANCE = "legal_compliance";
+  DataProcessingPurpose.SECURITY = "security";
 })(DataProcessingPurpose || (DataProcessingPurpose = {}));
 /**
  * Data categories for processing
  */
 export let DataCategory;
 ((DataCategory) => {
-  DataCategory.PERSONAL = 'personal';
-  DataCategory.HEALTH = 'health';
-  DataCategory.FINANCIAL = 'financial';
-  DataCategory.BEHAVIORAL = 'behavioral';
-  DataCategory.SENSITIVE = 'sensitive';
-  DataCategory.BIOMETRIC = 'biometric';
+  DataCategory.PERSONAL = "personal";
+  DataCategory.HEALTH = "health";
+  DataCategory.FINANCIAL = "financial";
+  DataCategory.BEHAVIORAL = "behavioral";
+  DataCategory.SENSITIVE = "sensitive";
+  DataCategory.BIOMETRIC = "biometric";
 })(DataCategory || (DataCategory = {}));
 /**
  * Data subject rights under LGPD
  */
 export let DataSubjectRight;
 ((DataSubjectRight) => {
-  DataSubjectRight.ACCESS = 'access';
-  DataSubjectRight.RECTIFICATION = 'rectification';
-  DataSubjectRight.ERASURE = 'erasure';
-  DataSubjectRight.PORTABILITY = 'portability';
-  DataSubjectRight.OBJECTION = 'objection';
-  DataSubjectRight.RESTRICTION = 'restriction';
-  DataSubjectRight.INFORMATION = 'information';
+  DataSubjectRight.ACCESS = "access";
+  DataSubjectRight.RECTIFICATION = "rectification";
+  DataSubjectRight.ERASURE = "erasure";
+  DataSubjectRight.PORTABILITY = "portability";
+  DataSubjectRight.OBJECTION = "objection";
+  DataSubjectRight.RESTRICTION = "restriction";
+  DataSubjectRight.INFORMATION = "information";
 })(DataSubjectRight || (DataSubjectRight = {}));
 /**
  * Consent record schema
  */
 export const consentSchema = z.object({
-  userId: z.string().uuid('User ID deve ser um UUID válido'),
+  userId: z.string().uuid("User ID deve ser um UUID válido"),
   purpose: z.nativeEnum(DataProcessingPurpose),
   lawfulBasis: z.nativeEnum(LgpdLawfulBasis),
   dataCategories: z.array(z.nativeEnum(DataCategory)),
   consentText: z.string().min(10).max(5000),
-  version: z.string().default('1.0'),
-  language: z.string().length(2).default('pt'),
+  version: z.string().default("1.0"),
+  language: z.string().length(2).default("pt"),
   retentionPeriod: z.number().min(1).max(3650), // Days
   canWithdraw: z.boolean().default(true),
   granularConsent: z.record(z.boolean()).optional(),
@@ -87,10 +87,10 @@ export const dataSubjectRequestSchema = z.object({
   userId: z.string().uuid(),
   requestType: z.nativeEnum(DataSubjectRight),
   description: z.string().min(10).max(1000),
-  preferredFormat: z.enum(['json', 'pdf', 'csv']).default('json'),
-  deliveryMethod: z.enum(['email', 'download', 'postal']).default('email'),
+  preferredFormat: z.enum(["json", "pdf", "csv"]).default("json"),
+  deliveryMethod: z.enum(["email", "download", "postal"]).default("email"),
   specificData: z.array(z.string()).optional(),
-  verificationMethod: z.enum(['email', 'sms', 'in_person']).default('email'),
+  verificationMethod: z.enum(["email", "sms", "in_person"]).default("email"),
 });
 /**
  * LGPD Service Implementation
@@ -115,7 +115,7 @@ export class LgpdService {
     const auditEntry = {
       id: crypto.randomUUID(),
       timestamp: new Date(),
-      action: 'given',
+      action: "given",
       userId: consent.userId,
       ipAddress,
       details: {
@@ -139,20 +139,21 @@ export class LgpdService {
       if (!consent || consent.userId !== userId) {
         return {
           success: false,
-          message: 'Consentimento não encontrado ou não autorizado',
+          message: "Consentimento não encontrado ou não autorizado",
         };
       }
       if (!consent.isActive) {
         return {
           success: false,
-          message: 'Consentimento já foi retirado anteriormente',
+          message: "Consentimento já foi retirado anteriormente",
         };
       }
       // Check if consent can be withdrawn
       if (!consent.canWithdraw) {
         return {
           success: false,
-          message: 'Este consentimento não pode ser retirado devido a obrigações legais',
+          message:
+            "Este consentimento não pode ser retirado devido a obrigações legais",
         };
       }
       // Update consent record
@@ -163,7 +164,7 @@ export class LgpdService {
       const auditEntry = {
         id: crypto.randomUUID(),
         timestamp: new Date(),
-        action: 'withdrawn',
+        action: "withdrawn",
         userId,
         ipAddress,
         details: { reason },
@@ -177,13 +178,13 @@ export class LgpdService {
       const retentionInfo = await LgpdService.getDataRetentionInfo(consent);
       return {
         success: true,
-        message: 'Consentimento retirado com sucesso',
+        message: "Consentimento retirado com sucesso",
         dataRetention: retentionInfo,
       };
     } catch {
       return {
         success: false,
-        message: 'Erro interno ao retirar consentimento',
+        message: "Erro interno ao retirar consentimento",
       };
     }
   }
@@ -196,10 +197,10 @@ export class LgpdService {
     const request = {
       ...validated,
       id: crypto.randomUUID(),
-      status: 'pending',
+      status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
-      verificationStatus: 'pending',
+      verificationStatus: "pending",
       processingNotes: [],
     };
     // Store request
@@ -216,7 +217,7 @@ export class LgpdService {
   static async processAccessRequest(requestId) {
     const request = await LgpdService.getDataSubjectRequest(requestId);
     if (!request || request.requestType !== DataSubjectRight.ACCESS) {
-      throw new Error('Invalid access request');
+      throw new Error("Invalid access request");
     }
     // Gather all user data
     const userData = await LgpdService.gatherUserData(request.userId);
@@ -236,7 +237,7 @@ export class LgpdService {
       maxDownloads: 5,
     };
     // Update request status
-    await LgpdService.updateRequestStatus(requestId, 'completed', response);
+    await LgpdService.updateRequestStatus(requestId, "completed", response);
     return response;
   }
   /**
@@ -245,7 +246,7 @@ export class LgpdService {
   static async processErasureRequest(requestId) {
     const request = await LgpdService.getDataSubjectRequest(requestId);
     if (!request || request.requestType !== DataSubjectRight.ERASURE) {
-      throw new Error('Invalid erasure request');
+      throw new Error("Invalid erasure request");
     }
     const result = {
       deleted: [],
@@ -262,10 +263,11 @@ export class LgpdService {
         if (legalObligations.includes(category)) {
           // Cannot delete due to legal obligation
           result.retained.push(category);
-          result.reasons[category] = 'Legal obligation (healthcare records retention)';
+          result.reasons[category] =
+            "Legal obligation (healthcare records retention)";
         } else if (
-          consent.lawfulBasis === LgpdLawfulBasis.CONSENT
-          && !consent.isActive
+          consent.lawfulBasis === LgpdLawfulBasis.CONSENT &&
+          !consent.isActive
         ) {
           // Can delete - consent withdrawn and no legal basis
           await LgpdService.deleteUserDataByCategory(request.userId, category);
@@ -284,13 +286,14 @@ export class LgpdService {
             result.deleted.push(category);
           } else {
             result.retained.push(category);
-            result.reasons[category] = 'Legitimate interests or contract performance';
+            result.reasons[category] =
+              "Legitimate interests or contract performance";
           }
         }
       }
     }
     // Update request status
-    await LgpdService.updateRequestStatus(requestId, 'completed');
+    await LgpdService.updateRequestStatus(requestId, "completed");
     return result;
   }
   /**
@@ -303,60 +306,63 @@ export class LgpdService {
     // Assess risk factors
     if (processingActivity.dataCategories.includes(DataCategory.HEALTH)) {
       riskScore += 3;
-      riskFactors.push('Processing of health data (special category)');
-      mitigationMeasures.push('Implement encryption at rest and in transit');
-      mitigationMeasures.push('Strict access controls and audit logging');
+      riskFactors.push("Processing of health data (special category)");
+      mitigationMeasures.push("Implement encryption at rest and in transit");
+      mitigationMeasures.push("Strict access controls and audit logging");
     }
     if (processingActivity.dataCategories.includes(DataCategory.BIOMETRIC)) {
       riskScore += 3;
-      riskFactors.push('Processing of biometric data (special category)');
-      mitigationMeasures.push('Biometric template protection');
+      riskFactors.push("Processing of biometric data (special category)");
+      mitigationMeasures.push("Biometric template protection");
     }
     if (processingActivity.automatedDecisionMaking) {
       riskScore += 2;
-      riskFactors.push('Automated decision-making');
-      mitigationMeasures.push('Human oversight and review mechanisms');
-      mitigationMeasures.push('Transparency about decision logic');
+      riskFactors.push("Automated decision-making");
+      mitigationMeasures.push("Human oversight and review mechanisms");
+      mitigationMeasures.push("Transparency about decision logic");
     }
     if (processingActivity.internationalTransfer) {
       riskScore += 2;
-      riskFactors.push('International data transfer');
-      mitigationMeasures.push('Adequacy decision or appropriate safeguards');
+      riskFactors.push("International data transfer");
+      mitigationMeasures.push("Adequacy decision or appropriate safeguards");
     }
     if (processingActivity.retentionPeriod > HEALTHCARE_DATA_RETENTION_DAYS) {
       // > 7 years
       riskScore += 1;
-      riskFactors.push('Long retention period');
-      mitigationMeasures.push('Regular review of retention necessity');
+      riskFactors.push("Long retention period");
+      mitigationMeasures.push("Regular review of retention necessity");
     }
     // Determine risk level
     let riskLevel;
     if (riskScore <= 2) {
-      riskLevel = 'low';
+      riskLevel = "low";
     } else if (riskScore <= 4) {
-      riskLevel = 'medium';
+      riskLevel = "medium";
     } else if (riskScore <= 6) {
-      riskLevel = 'high';
+      riskLevel = "high";
     } else {
-      riskLevel = 'very_high';
+      riskLevel = "very_high";
     }
     // Generate recommendation
     let recommendation;
     switch (riskLevel) {
-      case 'low': {
-        recommendation = 'Standard data protection measures are sufficient.';
+      case "low": {
+        recommendation = "Standard data protection measures are sufficient.";
         break;
       }
-      case 'medium': {
-        recommendation = 'Additional safeguards recommended. Regular monitoring required.';
+      case "medium": {
+        recommendation =
+          "Additional safeguards recommended. Regular monitoring required.";
         break;
       }
-      case 'high': {
-        recommendation = 'Enhanced security measures mandatory. DPO consultation required.';
+      case "high": {
+        recommendation =
+          "Enhanced security measures mandatory. DPO consultation required.";
         break;
       }
-      case 'very_high': {
-        recommendation = 'Prior consultation with ANPD required. Comprehensive DPIA mandatory.';
+      case "very_high": {
+        recommendation =
+          "Prior consultation with ANPD required. Comprehensive DPIA mandatory.";
         break;
       }
     }
@@ -379,12 +385,13 @@ export class LgpdService {
       severity,
     );
     // ANPD notification requirements (LGPD Art. 48)
-    const anpdNotificationRequired = isHighRisk || severity === 'critical';
+    const anpdNotificationRequired = isHighRisk || severity === "critical";
     // User notification requirements
-    const userNotificationRequired = isHighRisk
-      && (dataCategories.includes(DataCategory.HEALTH)
-        || dataCategories.includes(DataCategory.SENSITIVE)
-        || dataCategories.includes(DataCategory.BIOMETRIC));
+    const userNotificationRequired =
+      isHighRisk &&
+      (dataCategories.includes(DataCategory.HEALTH) ||
+        dataCategories.includes(DataCategory.SENSITIVE) ||
+        dataCategories.includes(DataCategory.BIOMETRIC));
     // Calculate notification deadline (72 hours from discovery)
     const notificationDeadline = anpdNotificationRequired
       ? addDays(incident.discoveredAt, 3)
@@ -426,13 +433,13 @@ export class LgpdService {
   static async stopDataProcessing(_userId, _purpose) {}
   static async getDataRetentionInfo(_consent) {
     // Return retention information based on legal requirements
-    return 'Dados serão retidos conforme obrigações legais (7 anos para registros médicos)';
+    return "Dados serão retidos conforme obrigações legais (7 anos para registros médicos)";
   }
   static async initiateVerification(_request) {}
   static async scheduleRequestProcessing(_requestId) {}
   static async gatherUserData(userId) {
     // Gather all user data from various sources
-    return { userId, message: 'Mock user data' };
+    return { userId, message: "Mock user data" };
   }
   static async formatUserData(data, _format) {
     // Format data according to requested format
@@ -454,9 +461,9 @@ export class LgpdService {
   static async deleteUserDataByCategory(_userId, _category) {}
   static assessBreachRisk(dataCategories, affectedCount, severity) {
     return (
-      dataCategories.includes(DataCategory.HEALTH)
-      || affectedCount > 100
-      || severity === 'critical'
+      dataCategories.includes(DataCategory.HEALTH) ||
+      affectedCount > 100 ||
+      severity === "critical"
     );
   }
   static generateBreachRiskAssessment(incident) {

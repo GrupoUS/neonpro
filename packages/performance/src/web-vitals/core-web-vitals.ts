@@ -3,14 +3,21 @@
  * Optimized for clinical workflows and medical data handling
  */
 
-import type { CLSMetric, FCPMetric, FIDMetric, INPMetric, LCPMetric, TTFBMetric } from 'web-vitals';
-import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from 'web-vitals';
+import type {
+  CLSMetric,
+  FCPMetric,
+  FIDMetric,
+  INPMetric,
+  LCPMetric,
+  TTFBMetric,
+} from "web-vitals";
+import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from "web-vitals";
 import type {
   HealthcareVitalsMetric,
   PerformanceEventHandler,
   PerformanceThresholds,
   WebVitalsMetric,
-} from '../types';
+} from "../types";
 
 // Healthcare-optimized thresholds (stricter than standard)
 export const HEALTHCARE_THRESHOLDS: PerformanceThresholds = {
@@ -34,15 +41,15 @@ class HealthcareWebVitals {
   private readonly thresholds: PerformanceThresholds;
   private healthcareContext: {
     workflowType?:
-      | 'patient-registration'
-      | 'medical-form'
-      | 'procedure-scheduling'
-      | 'medical-history'
-      | 'real-time-update';
+      | "patient-registration"
+      | "medical-form"
+      | "procedure-scheduling"
+      | "medical-history"
+      | "real-time-update";
     clinicId?: string;
     userId?: string;
-    deviceType?: 'desktop' | 'tablet' | 'mobile';
-    networkConnection?: 'fast' | 'slow' | 'offline';
+    deviceType?: "desktop" | "tablet" | "mobile";
+    networkConnection?: "fast" | "slow" | "offline";
   } = {};
 
   constructor(thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS) {
@@ -103,7 +110,8 @@ class HealthcareWebVitals {
     this.handlers.forEach((handler) => handler(healthcareMetric));
 
     // Log critical performance issues
-    if (healthcareMetric.rating === 'poor' && healthcareMetric.criticalPath) {}
+    if (healthcareMetric.rating === "poor" && healthcareMetric.criticalPath) {
+    }
   }
 
   /**
@@ -189,19 +197,19 @@ class HealthcareWebVitals {
    */
   private calculateHealthcareRating(
     metric: WebVitalsMetric,
-  ): 'good' | 'needs-improvement' | 'poor' {
+  ): "good" | "needs-improvement" | "poor" {
     const threshold = this.thresholds[metric.name];
     if (!threshold) {
       return metric.rating;
     }
 
     if (metric.value <= threshold.good) {
-      return 'good';
+      return "good";
     }
     if (metric.value <= threshold.poor) {
-      return 'needs-improvement';
+      return "needs-improvement";
     }
-    return 'poor';
+    return "poor";
   }
 
   /**
@@ -209,13 +217,13 @@ class HealthcareWebVitals {
    */
   private isCriticalHealthcarePath(_metricName: string): boolean {
     const criticalWorkflows = [
-      'patient-registration',
-      'medical-form',
-      'real-time-update',
+      "patient-registration",
+      "medical-form",
+      "real-time-update",
     ];
 
     return criticalWorkflows.includes(
-      this.healthcareContext.workflowType || '',
+      this.healthcareContext.workflowType || "",
     );
   }
 
@@ -243,24 +251,25 @@ class HealthcareWebVitals {
     const observer = new PerformanceObserver((list) => {
       list.getEntries().forEach((entry) => {
         if (
-          entry.name.includes('patient-lookup')
-          || entry.name.includes('/api/patients')
+          entry.name.includes("patient-lookup") ||
+          entry.name.includes("/api/patients")
         ) {
           const metric: HealthcareVitalsMetric = {
-            name: 'TTFB',
+            name: "TTFB",
             value: entry.duration,
             delta: entry.duration,
-            rating: entry.duration <= this.thresholds.patientLookup.good
-              ? 'good'
-              : (entry.duration <= this.thresholds.patientLookup.poor
-              ? 'needs-improvement'
-              : 'poor'),
+            rating:
+              entry.duration <= this.thresholds.patientLookup.good
+                ? "good"
+                : entry.duration <= this.thresholds.patientLookup.poor
+                  ? "needs-improvement"
+                  : "poor",
             id: `patient-lookup-${Date.now()}`,
-            navigationType: 'navigate',
+            navigationType: "navigate",
             timestamp: Date.now(),
             url: window.location.href,
             userAgent: navigator.userAgent,
-            workflowType: 'patient-registration' as const,
+            workflowType: "patient-registration" as const,
             ...this.healthcareContext,
             criticalPath: true,
           };
@@ -270,7 +279,7 @@ class HealthcareWebVitals {
       });
     });
 
-    observer.observe({ entryTypes: ['navigation', 'resource'] });
+    observer.observe({ entryTypes: ["navigation", "resource"] });
   }
 
   /**
@@ -280,30 +289,31 @@ class HealthcareWebVitals {
     // Monitor form rendering performance
     const formObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
+        if (mutation.type === "childList") {
           mutation.addedNodes.forEach((node) => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const element = node as Element;
               if (
-                element.tagName === 'FORM'
-                || element.classList.contains('medical-form')
+                element.tagName === "FORM" ||
+                element.classList.contains("medical-form")
               ) {
                 const renderTime = performance.now();
                 const metric: HealthcareVitalsMetric = {
-                  name: 'LCP',
+                  name: "LCP",
                   value: renderTime,
                   delta: renderTime,
-                  rating: renderTime <= this.thresholds.medicalFormLoad.good
-                    ? 'good'
-                    : (renderTime <= this.thresholds.medicalFormLoad.poor
-                    ? 'needs-improvement'
-                    : 'poor'),
+                  rating:
+                    renderTime <= this.thresholds.medicalFormLoad.good
+                      ? "good"
+                      : renderTime <= this.thresholds.medicalFormLoad.poor
+                        ? "needs-improvement"
+                        : "poor",
                   id: `medical-form-${Date.now()}`,
-                  navigationType: 'navigate',
+                  navigationType: "navigate",
                   timestamp: Date.now(),
                   url: window.location.href,
                   userAgent: navigator.userAgent,
-                  workflowType: 'medical-form' as const,
+                  workflowType: "medical-form" as const,
                   ...this.healthcareContext,
                   criticalPath: true,
                 };
@@ -327,25 +337,26 @@ class HealthcareWebVitals {
     let lastUpdateTime = performance.now();
 
     // Listen for custom real-time update events
-    document.addEventListener('healthcare-realtime-update', () => {
+    document.addEventListener("healthcare-realtime-update", () => {
       const updateTime = performance.now();
       const timeSinceLastUpdate = updateTime - lastUpdateTime;
 
       const metric: HealthcareVitalsMetric = {
-        name: 'INP',
+        name: "INP",
         value: timeSinceLastUpdate,
         delta: timeSinceLastUpdate,
-        rating: timeSinceLastUpdate <= this.thresholds.realTimeUpdate.good
-          ? 'good'
-          : (timeSinceLastUpdate <= this.thresholds.realTimeUpdate.poor
-          ? 'needs-improvement'
-          : 'poor'),
+        rating:
+          timeSinceLastUpdate <= this.thresholds.realTimeUpdate.good
+            ? "good"
+            : timeSinceLastUpdate <= this.thresholds.realTimeUpdate.poor
+              ? "needs-improvement"
+              : "poor",
         id: `realtime-update-${Date.now()}`,
-        navigationType: 'navigate',
+        navigationType: "navigate",
         timestamp: Date.now(),
         url: window.location.href,
         userAgent: navigator.userAgent,
-        workflowType: 'real-time-update' as const,
+        workflowType: "real-time-update" as const,
         ...this.healthcareContext,
         criticalPath: true,
       };
@@ -360,31 +371,32 @@ class HealthcareWebVitals {
    */
   private monitorProcedureScheduling(): void {
     // Monitor calendar and scheduling interactions
-    document.addEventListener('click', (event) => {
+    document.addEventListener("click", (event) => {
       const target = event.target as Element;
       if (
-        target.closest('.scheduling-calendar')
-        || target.closest('.appointment-form')
+        target.closest(".scheduling-calendar") ||
+        target.closest(".appointment-form")
       ) {
         const interactionTime = performance.now();
 
         setTimeout(() => {
           const responseTime = performance.now() - interactionTime;
           const metric: HealthcareVitalsMetric = {
-            name: 'FID',
+            name: "FID",
             value: responseTime,
             delta: responseTime,
-            rating: responseTime <= this.thresholds.procedureScheduling.good
-              ? 'good'
-              : (responseTime <= this.thresholds.procedureScheduling.poor
-              ? 'needs-improvement'
-              : 'poor'),
+            rating:
+              responseTime <= this.thresholds.procedureScheduling.good
+                ? "good"
+                : responseTime <= this.thresholds.procedureScheduling.poor
+                  ? "needs-improvement"
+                  : "poor",
             id: `procedure-scheduling-${Date.now()}`,
-            navigationType: 'navigate',
+            navigationType: "navigate",
             timestamp: Date.now(),
             url: window.location.href,
             userAgent: navigator.userAgent,
-            workflowType: 'procedure-scheduling' as const,
+            workflowType: "procedure-scheduling" as const,
             ...this.healthcareContext,
             criticalPath: false,
           };
@@ -401,15 +413,15 @@ class HealthcareWebVitals {
   private detectDeviceType(): void {
     const userAgent = navigator.userAgent.toLowerCase();
     if (/tablet|ipad|playbook|silk/.test(userAgent)) {
-      this.healthcareContext.deviceType = 'tablet';
+      this.healthcareContext.deviceType = "tablet";
     } else if (
       /mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/.test(
         userAgent,
       )
     ) {
-      this.healthcareContext.deviceType = 'mobile';
+      this.healthcareContext.deviceType = "mobile";
     } else {
-      this.healthcareContext.deviceType = 'desktop';
+      this.healthcareContext.deviceType = "desktop";
     }
   }
 
@@ -417,17 +429,17 @@ class HealthcareWebVitals {
    * Detect network connection
    */
   private detectNetworkConnection(): void {
-    if ('connection' in navigator) {
+    if ("connection" in navigator) {
       const connection = (navigator as any).connection;
-      if (connection.effectiveType === '4g') {
-        this.healthcareContext.networkConnection = 'fast';
-      } else if (connection.effectiveType === '3g') {
-        this.healthcareContext.networkConnection = 'slow';
+      if (connection.effectiveType === "4g") {
+        this.healthcareContext.networkConnection = "fast";
+      } else if (connection.effectiveType === "3g") {
+        this.healthcareContext.networkConnection = "slow";
       } else {
-        this.healthcareContext.networkConnection = 'slow';
+        this.healthcareContext.networkConnection = "slow";
       }
     } else {
-      this.healthcareContext.networkConnection = 'fast'; // Default assumption
+      this.healthcareContext.networkConnection = "fast"; // Default assumption
     }
   }
 }

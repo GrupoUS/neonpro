@@ -5,23 +5,23 @@
  * Quality Standard: ≥9.9/10
  */
 
-export * from './audit-service';
+export * from "./audit-service";
 // Re-export for convenience
-export { AuditService } from './audit-service';
-export * from './compliance-audit';
-export { ComplianceAuditService } from './compliance-audit';
+export { AuditService } from "./audit-service";
+export * from "./compliance-audit";
+export { ComplianceAuditService } from "./compliance-audit";
 export type {
   AuditConfig,
   AuditEvent,
   AuditFilters,
   AuditLog,
   ComplianceAuditReport,
-} from './types';
-export * from './types';
+} from "./types";
+export * from "./types";
 
 // Import classes for factory function
-import { AuditService } from './audit-service';
-import { ComplianceAuditService } from './compliance-audit';
+import { AuditService } from "./audit-service";
+import { ComplianceAuditService } from "./compliance-audit";
 
 /**
  * Audit Service Factory
@@ -52,13 +52,15 @@ export async function validateAuditCompliance(
     const complianceAuditService = new ComplianceAuditService(supabaseClient);
 
     // Validate audit trail completeness
-    const auditTrailCompliance = await auditService.validateAuditTrail(tenantId);
+    const auditTrailCompliance =
+      await auditService.validateAuditTrail(tenantId);
 
     // Validate compliance audit requirements
-    const complianceAuditReport = await complianceAuditService.generateComplianceReport(
-      tenantId,
-      'system-auditor',
-    );
+    const complianceAuditReport =
+      await complianceAuditService.generateComplianceReport(
+        tenantId,
+        "system-auditor",
+      );
 
     const violations: string[] = [];
     const recommendations: string[] = [];
@@ -66,21 +68,21 @@ export async function validateAuditCompliance(
 
     // Check audit trail completeness
     if (!auditTrailCompliance.isComplete) {
-      violations.push('Incomplete audit trail detected');
+      violations.push("Incomplete audit trail detected");
       recommendations.push(
-        'Ensure all healthcare operations are properly logged',
+        "Ensure all healthcare operations are properly logged",
       );
       score -= 2;
     }
 
     // Check compliance audit frequency
     if (
-      complianceAuditReport.report?.lastAuditDate
-      && Date.now() - complianceAuditReport.report.lastAuditDate.getTime()
-        > 30 * 24 * 60 * 60 * 1000
+      complianceAuditReport.report?.lastAuditDate &&
+      Date.now() - complianceAuditReport.report.lastAuditDate.getTime() >
+        30 * 24 * 60 * 60 * 1000
     ) {
-      violations.push('Compliance audit overdue (>30 days)');
-      recommendations.push('Schedule regular compliance audits');
+      violations.push("Compliance audit overdue (>30 days)");
+      recommendations.push("Schedule regular compliance audits");
       score -= 1;
     }
 
@@ -94,9 +96,9 @@ export async function validateAuditCompliance(
     return {
       isCompliant: false,
       score: 0,
-      violations: ['Audit compliance validation system failure'],
+      violations: ["Audit compliance validation system failure"],
       recommendations: [
-        'Contact system administrator to resolve audit validation issues',
+        "Contact system administrator to resolve audit validation issues",
       ],
     };
   }

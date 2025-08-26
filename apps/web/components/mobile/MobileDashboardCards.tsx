@@ -257,9 +257,9 @@ export function MobileDashboardCard({
       ? `. Tendência: ${
           trend.direction === "up"
             ? "subindo"
-            : (trend.direction === "down"
+            : trend.direction === "down"
               ? "descendo"
-              : "estável")
+              : "estável"
         } ${trend.value}%`
       : "";
 
@@ -268,7 +268,7 @@ export function MobileDashboardCard({
 
   const getTrendIcon = () => {
     if (!trend) {
-      return ;
+      return;
     }
     switch (trend.direction) {
       case "up": {
@@ -278,7 +278,7 @@ export function MobileDashboardCard({
         return <TrendingDown className="h-3 w-3 text-red-600" />;
       }
       default: {
-        return ;
+        return;
       }
     }
   };
@@ -334,7 +334,7 @@ export function MobileDashboardCard({
                     className="h-3 w-3 text-green-500"
                     aria-label="Online"
                   />
-                ) : (hasCachedData ? (
+                ) : hasCachedData ? (
                   <Download
                     className="h-3 w-3 text-blue-500"
                     aria-label="Dados em cache disponíveis"
@@ -344,7 +344,7 @@ export function MobileDashboardCard({
                     className="h-3 w-3 text-red-500"
                     aria-label="Offline - dados indisponíveis"
                   />
-                ))}
+                )}
               </div>
             )}
 
@@ -423,9 +423,9 @@ export function MobileDashboardCard({
                 className={
                   trend.direction === "up"
                     ? "text-green-600"
-                    : (trend.direction === "down"
+                    : trend.direction === "down"
                       ? "text-red-600"
-                      : "text-muted-foreground")
+                      : "text-muted-foreground"
                 }
               >
                 {trend.value > 0 ? "+" : ""}

@@ -45,7 +45,7 @@ export interface AlertThresholds {
 export interface ReportingConfig {
   interval: number;
   retentionDays: number;
-  exportFormats: ('json' | 'csv' | 'pdf')[];
+  exportFormats: ("json" | "csv" | "pdf")[];
   recipients: string[];
   dashboardUrl?: string;
 }
@@ -84,15 +84,15 @@ export interface Alert {
   metadata?: Record<string, string | number | boolean>;
 }
 
-export type AlertType = 'CRITICAL' | 'WARNING' | 'INFO';
+export type AlertType = "CRITICAL" | "WARNING" | "INFO";
 export type AlertCategory =
-  | 'SYSTEM_HEALTH'
-  | 'PERFORMANCE'
-  | 'SECURITY'
-  | 'COMPLIANCE'
-  | 'AI_GOVERNANCE'
-  | 'QUALITY';
-export type AlertSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  | "SYSTEM_HEALTH"
+  | "PERFORMANCE"
+  | "SECURITY"
+  | "COMPLIANCE"
+  | "AI_GOVERNANCE"
+  | "QUALITY";
+export type AlertSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 export interface MonitoringReport {
   timestamp: string;

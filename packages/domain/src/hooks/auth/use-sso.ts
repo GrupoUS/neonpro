@@ -1,13 +1,13 @@
 /**
  * Placeholder SSO hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useSSO = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [providers, _setProviders] = useState<string[]>([
-    'google',
-    'microsoft',
+    "google",
+    "microsoft",
   ]);
 
   return {

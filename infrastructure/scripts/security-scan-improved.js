@@ -4,31 +4,31 @@
  * Detecta API keys expostas com redução de falsos positivos
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Patterns de API keys REALMENTE sensíveis
 const SENSITIVE_PATTERNS = [
   // OpenAI
-  { pattern: /sk-[a-zA-Z0-9]{40,}/g, name: 'OpenAI API Key' },
+  { pattern: /sk-[a-zA-Z0-9]{40,}/g, name: "OpenAI API Key" },
   // Anthropic
-  { pattern: /sk-ant-api03-[a-zA-Z0-9_-]+/g, name: 'Anthropic API Key' },
+  { pattern: /sk-ant-api03-[a-zA-Z0-9_-]+/g, name: "Anthropic API Key" },
   // OpenRouter
-  { pattern: /sk-or-v1-[a-zA-Z0-9_-]+/g, name: 'OpenRouter API Key' },
+  { pattern: /sk-or-v1-[a-zA-Z0-9_-]+/g, name: "OpenRouter API Key" },
   // Google API
-  { pattern: /AIzaSy[a-zA-Z0-9_-]{33}/g, name: 'Google API Key' },
+  { pattern: /AIzaSy[a-zA-Z0-9_-]{33}/g, name: "Google API Key" },
   // Supabase
-  { pattern: /sbp_[a-zA-Z0-9]{40}/g, name: 'Supabase Service Key' },
+  { pattern: /sbp_[a-zA-Z0-9]{40}/g, name: "Supabase Service Key" },
   // Tavily
-  { pattern: /tvly-[a-zA-Z0-9_-]+/g, name: 'Tavily API Key' },
+  { pattern: /tvly-[a-zA-Z0-9_-]+/g, name: "Tavily API Key" },
   // Stripe REAL keys (não exemplos)
   {
     pattern: /sk_live_[a-zA-Z0-9]+/g,
-    name: 'Stripe LIVE Secret Key (CRÍTICO!)',
+    name: "Stripe LIVE Secret Key (CRÍTICO!)",
   },
   {
     pattern: /pk_live_[a-zA-Z0-9]+/g,
-    name: 'Stripe LIVE Publishable Key (CRÍTICO!)',
+    name: "Stripe LIVE Publishable Key (CRÍTICO!)",
   },
 ];
 
@@ -48,28 +48,28 @@ const IGNORED_PATTERNS = [
 
 // Arquivos a ignorar
 const IGNORE_FILES = [
-  '.env.local',
-  '.env',
-  '.env.example',
-  'node_modules',
-  '.git',
-  'package-lock.json',
-  'pnpm-lock.yaml',
-  'yarn.lock',
+  ".env.local",
+  ".env",
+  ".env.example",
+  "node_modules",
+  ".git",
+  "package-lock.json",
+  "pnpm-lock.yaml",
+  "yarn.lock",
 ];
 
 // Extensões de arquivo para verificar
 const CHECK_EXTENSIONS = [
-  '.js',
-  '.ts',
-  '.tsx',
-  '.jsx',
-  '.ps1',
-  '.sh',
-  '.md',
-  '.json',
-  '.yml',
-  '.yaml',
+  ".js",
+  ".ts",
+  ".tsx",
+  ".jsx",
+  ".ps1",
+  ".sh",
+  ".md",
+  ".json",
+  ".yml",
+  ".yaml",
 ];
 
 function isIgnored(filePath) {
@@ -87,7 +87,7 @@ function isIgnored(filePath) {
 
 function scanFile(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(filePath, "utf8");
     const violations = [];
 
     SENSITIVE_PATTERNS.forEach(({ pattern, name }) => {
@@ -97,7 +97,7 @@ function scanFile(filePath) {
           file: filePath,
           pattern: name,
           match: `${match[0].substring(0, 20)}...`,
-          line: content.substring(0, match.index).split('\n').length,
+          line: content.substring(0, match.index).split("\n").length,
         });
       }
     });
@@ -124,8 +124,8 @@ function scanDirectory(dirPath) {
       if (item.isDirectory()) {
         violations.push(...scanDirectory(fullPath));
       } else if (
-        item.isFile()
-        && CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
+        item.isFile() &&
+        CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
       ) {
         violations.push(...scanFile(fullPath));
       }

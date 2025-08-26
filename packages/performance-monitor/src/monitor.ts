@@ -1,5 +1,12 @@
-import { AlertSeverity, HealthStatus, InsightType, MetricType } from './types';
-import type { Alert, AlertRule, HealthCheckResult, MetricCollector, PerformanceInsight, PerformanceMetric } from './types';
+import { AlertSeverity, HealthStatus, InsightType, MetricType } from "./types";
+import type {
+  Alert,
+  AlertRule,
+  HealthCheckResult,
+  MetricCollector,
+  PerformanceInsight,
+  PerformanceMetric,
+} from "./types";
 
 export class PerformanceMonitor {
   private readonly collectors = new Map<string, MetricCollector>();
@@ -15,8 +22,8 @@ export class PerformanceMonitor {
       maxMetricsRetention: 24 * 60 * 60 * 1000, // 24 hours
       alertCooldownPeriod: 300_000, // 5 minutes
       enableRealTimeAnalysis: true,
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
     },
   ) {}
 
@@ -29,8 +36,9 @@ export class PerformanceMonitor {
     // Initialize collectors
     for (const [name, collector] of this.collectors) {
       if (collector.isEnabled()) {
-        const interval = collector.getCollectionInterval()
-          || this.config.defaultCollectionInterval;
+        const interval =
+          collector.getCollectionInterval() ||
+          this.config.defaultCollectionInterval;
         const intervalId = setInterval(async () => {
           try {
             const metrics = await collector.collect();
@@ -88,7 +96,7 @@ export class PerformanceMonitor {
     // Store in Supabase for persistence and real-time access
     try {
       const supabase = await this.getSupabaseClient();
-      const { error } = await supabase.from('performance_metrics').insert(
+      const { error } = await supabase.from("performance_metrics").insert(
         metrics.map((metric) => ({
           metric_id: metric.id,
           timestamp: new Date(metric.timestamp).toISOString(),
@@ -101,7 +109,8 @@ export class PerformanceMonitor {
         })),
       );
 
-      if (error) {}
+      if (error) {
+      }
     } catch {}
   }
   private async checkAlertRules(metric: PerformanceMetric): Promise<void> {
@@ -118,8 +127,7 @@ export class PerformanceMonitor {
           ruleId: rule.id,
           timestamp: Date.now(),
           severity: rule.severity,
-          message:
-            `${rule.name}: ${metric.type} ${rule.condition} ${rule.threshold}${metric.unit} (actual: ${metric.value}${metric.unit})`,
+          message: `${rule.name}: ${metric.type} ${rule.condition} ${rule.threshold}${metric.unit} (actual: ${metric.value}${metric.unit})`,
           metric,
           acknowledged: false,
         };
@@ -135,16 +143,16 @@ export class PerformanceMonitor {
     metric: PerformanceMetric,
   ): boolean {
     switch (rule.condition) {
-      case 'gt': {
+      case "gt": {
         return metric.value > rule.threshold;
       }
-      case 'lt': {
+      case "lt": {
         return metric.value < rule.threshold;
       }
-      case 'eq': {
+      case "eq": {
         return metric.value === rule.threshold;
       }
-      case 'ne': {
+      case "ne": {
         return metric.value !== rule.threshold;
       }
       default: {
@@ -167,7 +175,7 @@ export class PerformanceMonitor {
     try {
       // Store alert in Supabase
       const supabase = await this.getSupabaseClient();
-      const { error } = await supabase.from('performance_alerts').insert({
+      const { error } = await supabase.from("performance_alerts").insert({
         alert_id: alert.id,
         rule_id: alert.ruleId,
         timestamp: new Date(alert.timestamp).toISOString(),
@@ -177,12 +185,13 @@ export class PerformanceMonitor {
         acknowledged: false,
       });
 
-      if (error) {}
+      if (error) {
+      }
 
       // Real-time notification via Supabase channel
-      await supabase.channel('performance_alerts').send({
-        type: 'broadcast',
-        event: 'new_alert',
+      await supabase.channel("performance_alerts").send({
+        type: "broadcast",
+        event: "new_alert",
         payload: alert,
       });
     } catch {}
@@ -204,17 +213,18 @@ export class PerformanceMonitor {
 
     // Analyze cache hit rate trends
     const { data: cacheMetrics } = await supabase
-      .from('performance_metrics')
-      .select('*')
-      .eq('type', MetricType.CACHE_HIT_RATE)
-      .gte('timestamp', new Date(Date.now() - 60 * 60 * 1000).toISOString()) // Last hour
-      .order('timestamp', { ascending: false });
+      .from("performance_metrics")
+      .select("*")
+      .eq("type", MetricType.CACHE_HIT_RATE)
+      .gte("timestamp", new Date(Date.now() - 60 * 60 * 1000).toISOString()) // Last hour
+      .order("timestamp", { ascending: false });
 
     if (cacheMetrics && cacheMetrics.length > 10) {
-      const avgHitRate = cacheMetrics.reduce(
-        (sum: number, m: PerformanceMetric) => sum + m.value,
-        0,
-      ) / cacheMetrics.length;
+      const avgHitRate =
+        cacheMetrics.reduce(
+          (sum: number, m: PerformanceMetric) => sum + m.value,
+          0,
+        ) / cacheMetrics.length;
 
       if (avgHitRate < 85) {
         // Target is 85%
@@ -223,11 +233,13 @@ export class PerformanceMonitor {
           timestamp: Date.now(),
           type: InsightType.OPTIMIZATION_OPPORTUNITY,
           severity: avgHitRate < 70 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
-          title: 'Cache Performance Below Target',
+          title: "Cache Performance Below Target",
           description: `Current cache hit rate is ${avgHitRate.toFixed(1)}%, below target of 85%`,
-          recommendation: 'Review cache TTL settings and invalidation strategies',
+          recommendation:
+            "Review cache TTL settings and invalidation strategies",
           metrics: cacheMetrics,
-          potentialImpact: 'Improved cache performance can reduce API costs by up to 40%',
+          potentialImpact:
+            "Improved cache performance can reduce API costs by up to 40%",
           estimatedROI: 187_200 * ((85 - avgHitRate) / 85), // Proportional to gap
         };
 
@@ -244,14 +256,14 @@ export class PerformanceMonitor {
     const supabase = await this.getSupabaseClient();
 
     const { data: costMetrics } = await supabase
-      .from('performance_metrics')
-      .select('*')
-      .eq('type', MetricType.AI_COST)
+      .from("performance_metrics")
+      .select("*")
+      .eq("type", MetricType.AI_COST)
       .gte(
-        'timestamp',
+        "timestamp",
         new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
       ) // Last 24h
-      .order('timestamp', { ascending: false });
+      .order("timestamp", { ascending: false });
 
     if (costMetrics && costMetrics.length > 0) {
       const totalCost = costMetrics.reduce(
@@ -267,17 +279,16 @@ export class PerformanceMonitor {
           id: `ai_cost_insight_${Date.now()}`,
           timestamp: Date.now(),
           type: InsightType.COST_OPTIMIZATION,
-          severity: avgCostPerHour > 100 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
-          title: 'AI Costs Above Budget Threshold',
-          description: `AI costs averaging $${
-            avgCostPerHour.toFixed(
-              2,
-            )
-          }/hour, exceeding $50/hour threshold`,
+          severity:
+            avgCostPerHour > 100 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
+          title: "AI Costs Above Budget Threshold",
+          description: `AI costs averaging $${avgCostPerHour.toFixed(
+            2,
+          )}/hour, exceeding $50/hour threshold`,
           recommendation:
-            'Optimize model selection, implement better caching, review API usage patterns',
+            "Optimize model selection, implement better caching, review API usage patterns",
           metrics: costMetrics,
-          potentialImpact: 'Cost optimization can save up to $187,200/year',
+          potentialImpact: "Cost optimization can save up to $187,200/year",
           estimatedROI: 187_200 * ((avgCostPerHour - 50) / avgCostPerHour),
         };
 
@@ -289,7 +300,7 @@ export class PerformanceMonitor {
   private async storeInsight(insight: PerformanceInsight): Promise<void> {
     try {
       const supabase = await this.getSupabaseClient();
-      const { error } = await supabase.from('performance_insights').insert({
+      const { error } = await supabase.from("performance_insights").insert({
         insight_id: insight.id,
         timestamp: new Date(insight.timestamp).toISOString(),
         type: insight.type,
@@ -302,12 +313,13 @@ export class PerformanceMonitor {
         metrics_data: insight.metrics,
       });
 
-      if (error) {}
+      if (error) {
+      }
 
       // Broadcast insight to dashboard
-      await supabase.channel('performance_insights').send({
-        type: 'broadcast',
-        event: 'new_insight',
+      await supabase.channel("performance_insights").send({
+        type: "broadcast",
+        event: "new_insight",
         payload: insight,
       });
     } catch {}
@@ -321,20 +333,20 @@ export class PerformanceMonitor {
     try {
       const supabase = await this.getSupabaseClient();
       const { data, error } = await supabase
-        .from('performance_metrics')
-        .select('count')
+        .from("performance_metrics")
+        .select("count")
         .limit(1);
 
       results.push({
-        component: 'Supabase Database',
+        component: "Supabase Database",
         status: error ? HealthStatus.UNHEALTHY : HealthStatus.HEALTHY,
-        message: error ? error.message : 'Connection successful',
+        message: error ? error.message : "Connection successful",
         responseTime: Date.now() - startTime,
         timestamp: Date.now(),
       });
     } catch (error) {
       results.push({
-        component: 'Supabase Database',
+        component: "Supabase Database",
         status: HealthStatus.CRITICAL,
         message: `Connection failed: ${error}`,
         responseTime: Date.now() - startTime,
@@ -351,10 +363,11 @@ export class PerformanceMonitor {
 
         results.push({
           component: `Collector: ${name}`,
-          status: isEnabled && hasInterval
-            ? HealthStatus.HEALTHY
-            : HealthStatus.DEGRADED,
-          message: isEnabled ? 'Collector running' : 'Collector disabled',
+          status:
+            isEnabled && hasInterval
+              ? HealthStatus.HEALTHY
+              : HealthStatus.DEGRADED,
+          message: isEnabled ? "Collector running" : "Collector disabled",
           responseTime: Date.now() - collectorStartTime,
           details: {
             enabled: isEnabled,
@@ -400,13 +413,13 @@ export class PerformanceMonitor {
       try {
         const supabase = await this.getSupabaseClient();
         await supabase
-          .from('performance_alerts')
+          .from("performance_alerts")
           .update({
             acknowledged: true,
             acknowledged_by: acknowledgedBy,
             acknowledged_at: new Date().toISOString(),
           })
-          .eq('alert_id', alertId);
+          .eq("alert_id", alertId);
       } catch {}
     }
   }

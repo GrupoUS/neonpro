@@ -378,7 +378,7 @@ Date: {YYYYMMDD} Designed by: Test Architect (Quinn)
 @qa *design "universal-ai-chat-patient-interface"
 
 # During development
-@qa *trace "universal-ai-chat-patient-interface" 
+@qa *trace "universal-ai-chat-patient-interface"
 @qa *nfr "universal-ai-chat-patient-interface"
 
 # After development complete

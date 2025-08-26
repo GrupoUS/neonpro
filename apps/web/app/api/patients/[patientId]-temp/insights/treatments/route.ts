@@ -2,8 +2,8 @@
 
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const patientInsights = new PatientInsightsIntegration();
 

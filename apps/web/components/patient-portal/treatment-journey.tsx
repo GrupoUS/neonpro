@@ -503,16 +503,16 @@ function PhotoTimeline({ photos }: { photos: any[] }) {
                 variant={
                   photo.type === "before"
                     ? "secondary"
-                    : (photo.type === "progress"
+                    : photo.type === "progress"
                       ? "default"
-                      : "secondary")
+                      : "secondary"
                 }
               >
                 {photo.type === "before"
                   ? "Antes"
-                  : (photo.type === "progress"
+                  : photo.type === "progress"
                     ? "Progresso"
-                    : "Depois")}
+                    : "Depois"}
               </Badge>
               <span className="text-muted-foreground text-sm">
                 {new Date(photo.date).toLocaleDateString("pt-BR")}
@@ -583,18 +583,18 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
                     "flex h-8 w-8 items-center justify-center rounded-full",
                     milestone.status === "completed"
                       ? "bg-green-100 text-green-600"
-                      : (milestone.status === "scheduled"
+                      : milestone.status === "scheduled"
                         ? "bg-blue-100 text-blue-600"
-                        : "bg-gray-100 text-gray-600"),
+                        : "bg-gray-100 text-gray-600",
                   )}
                 >
                   {milestone.status === "completed" ? (
                     <CheckCircle className="h-4 w-4" />
-                  ) : (milestone.status === "scheduled" ? (
+                  ) : milestone.status === "scheduled" ? (
                     <Clock className="h-4 w-4" />
                   ) : (
                     <div className="h-2 w-2 rounded-full bg-current" />
-                  ))}
+                  )}
                 </div>
                 {index < milestones.length - 1 && (
                   <div className="mt-2 h-12 w-px bg-gray-200" />
@@ -620,16 +620,16 @@ function TreatmentMilestones({ milestones }: { milestones: any[] }) {
                     variant={
                       milestone.status === "completed"
                         ? "secondary"
-                        : (milestone.status === "scheduled"
+                        : milestone.status === "scheduled"
                           ? "default"
-                          : "outline")
+                          : "outline"
                     }
                   >
                     {milestone.status === "completed"
                       ? "Concluído"
-                      : (milestone.status === "scheduled"
+                      : milestone.status === "scheduled"
                         ? "Agendado"
-                        : "Pendente")}
+                        : "Pendente"}
                   </Badge>
                 </div>
 

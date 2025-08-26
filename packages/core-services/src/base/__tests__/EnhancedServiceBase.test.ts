@@ -4,16 +4,16 @@
  * Testes unitários para validar o Enhanced Service Layer Pattern
  */
 
-import type { ServiceContext } from '../../types';
-import { EnhancedServiceBase } from '../EnhancedServiceBase';
-import type { ServiceConfig } from '../EnhancedServiceBase';
+import type { ServiceContext } from "../../types";
+import { EnhancedServiceBase } from "../EnhancedServiceBase";
+import type { ServiceConfig } from "../EnhancedServiceBase";
 
 // Mock implementation for testing
 class TestEnhancedService extends EnhancedServiceBase {
   constructor() {
     const config: ServiceConfig = {
-      serviceName: 'test-service',
-      version: '1.0.0',
+      serviceName: "test-service",
+      version: "1.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -26,11 +26,11 @@ class TestEnhancedService extends EnhancedServiceBase {
   }
 
   getServiceName(): string {
-    return 'test-service';
+    return "test-service";
   }
 
   getServiceVersion(): string {
-    return '1.0.0';
+    return "1.0.0";
   }
 
   // Public wrapper for testing protected method

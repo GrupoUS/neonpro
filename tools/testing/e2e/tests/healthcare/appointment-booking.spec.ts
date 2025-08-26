@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 /**
  * 📅 CRITICAL Appointment Booking E2E Tests for NeonPro Healthcare
@@ -19,38 +19,40 @@ import { expect, test } from '@playwright/test';
  * - Patient notification and reminder systems
  */
 
-test.describe('📅 Appointment Booking - Critical E2E', () => {
+test.describe("📅 Appointment Booking - Critical E2E", () => {
   test.beforeEach(async ({ page }) => {
     // Clear state and login as healthcare professional
     await page.context().clearCookies();
     await page.evaluate(() => localStorage.clear());
 
-    await page.goto('/login');
-    await page.waitForLoadState('networkidle');
+    await page.goto("/login");
+    await page.waitForLoadState("networkidle");
 
     // Use healthcare professional credentials with robust fallback
     await page.fill(
       '[data-testid="email"], input[type="email"]',
-      'dr.silva@neonpro.com.br',
+      "dr.silva@neonpro.com.br",
     );
     await page.fill(
       '[data-testid="password"], input[type="password"]',
-      'HealthcareTest2024!',
+      "HealthcareTest2024!",
     );
 
     // Fill CRM if field exists (healthcare-specific)
     const crmField = page.locator('[data-testid="crm-number"]');
     if ((await crmField.count()) > 0) {
-      await crmField.fill('CRM/SP 123456');
+      await crmField.fill("CRM/SP 123456");
     }
 
     await page.click('[data-testid="login-submit"], button[type="submit"]');
-    await page.waitForURL('**/dashboard');
-    await page.waitForLoadState('networkidle');
+    await page.waitForURL("**/dashboard");
+    await page.waitForLoadState("networkidle");
   });
 
-  test.describe('🔍 Search Availability & Booking Flow', () => {
-    test('should display available appointment slots with healthcare context', async ({ page }) => {
+  test.describe("🔍 Search Availability & Booking Flow", () => {
+    test("should display available appointment slots with healthcare context", async ({
+      page,
+    }) => {
       // Navigate to appointment scheduling using multiple strategies
       const appointmentsNav = page.locator(
         '[data-testid="nav-appointments"], [data-testid="appointments-menu"], text=Agendamentos',
@@ -58,9 +60,9 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       if ((await appointmentsNav.count()) > 0) {
         await appointmentsNav.click();
       } else {
-        await page.goto('/appointments/schedule');
+        await page.goto("/appointments/schedule");
       }
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState("networkidle");
 
       // Should display appointment calendar/interface
       await expect(
@@ -82,7 +84,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
         '[data-testid="doctor-select"], select[name="doctor"], select[name="professional"]',
       );
       if ((await doctorSelect.count()) > 0) {
-        await doctorSelect.selectOption('dr-ana-silva');
+        await doctorSelect.selectOption("dr-ana-silva");
       }
 
       // Healthcare-specific: Select medical service/procedure type
@@ -92,9 +94,9 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       if ((await serviceSelect.count()) > 0) {
         // Healthcare-specific procedures
         const services = [
-          'consulta-dermatologica',
-          'consulta-geral',
-          'exame-rotina',
+          "consulta-dermatologica",
+          "consulta-geral",
+          "exame-rotina",
         ];
         for (const service of services) {
           try {
@@ -107,7 +109,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       // Select date (tomorrow) with proper date handling
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
       const dateInput = page.locator(
         '[data-testid="appointment-date"], input[type="date"]',
@@ -125,10 +127,12 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
     });
 
-    test('should book new appointment with complete healthcare workflow', async ({ page }) => {
+    test("should book new appointment with complete healthcare workflow", async ({
+      page,
+    }) => {
       // Navigate to appointments
-      await page.goto('/appointments');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/appointments");
+      await page.waitForLoadState("networkidle");
 
       // Start new appointment booking
       const newAppointmentBtn = page.locator(
@@ -146,15 +150,15 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
         '[data-testid="patient-select"], select[name="patient"]',
       );
       if ((await patientSelect.count()) > 0) {
-        await patientSelect.selectOption('patient-12345');
+        await patientSelect.selectOption("patient-12345");
       } else {
         // Alternative: search for patient
         const patientSearch = page.locator(
           '[data-testid="patient-search"], input[placeholder*="paciente"]',
         );
         if ((await patientSearch.count()) > 0) {
-          await patientSearch.fill('João Silva');
-          await page.keyboard.press('Enter');
+          await patientSearch.fill("João Silva");
+          await page.keyboard.press("Enter");
         }
       }
 
@@ -163,13 +167,13 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
         '[data-testid="appointment-type"], select[name="type"]',
       );
       if ((await appointmentType.count()) > 0) {
-        await appointmentType.selectOption('consulta');
+        await appointmentType.selectOption("consulta");
       }
 
       // Select date and time
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
       await page.fill(
         '[data-testid="appointment-date"], input[type="date"]',
@@ -190,7 +194,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       );
       if ((await clinicalNotes.count()) > 0) {
         await clinicalNotes.fill(
-          'Consulta de rotina - acompanhamento dermatológico',
+          "Consulta de rotina - acompanhamento dermatológico",
         );
       }
 
@@ -210,14 +214,16 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       await page.waitForURL(/appointments/);
     });
 
-    test('should handle appointment conflicts and availability checks', async ({ page }) => {
-      await page.goto('/appointments/schedule');
-      await page.waitForLoadState('networkidle');
+    test("should handle appointment conflicts and availability checks", async ({
+      page,
+    }) => {
+      await page.goto("/appointments/schedule");
+      await page.waitForLoadState("networkidle");
 
       // Try to book appointment at same time as existing one
       const conflictDate = new Date();
       conflictDate.setDate(conflictDate.getDate() + 1);
-      const conflictDateStr = conflictDate.toISOString().split('T')[0];
+      const conflictDateStr = conflictDate.toISOString().split("T")[0];
 
       await page.fill(
         '[data-testid="appointment-date"], input[type="date"]',
@@ -241,9 +247,11 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
     });
 
-    test('should validate required fields in appointment form', async ({ page }) => {
-      await page.goto('/appointments/schedule');
-      await page.waitForLoadState('networkidle');
+    test("should validate required fields in appointment form", async ({
+      page,
+    }) => {
+      await page.goto("/appointments/schedule");
+      await page.waitForLoadState("networkidle");
 
       const newAppointmentBtn = page.locator(
         '[data-testid="schedule-appointment-btn"], button:has-text("Agendar")',
@@ -264,8 +272,8 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
 
       // Healthcare-specific validations
-      const patientError = page.locator('text=Paciente é obrigatório');
-      const dateError = page.locator('text=Data é obrigatória');
+      const patientError = page.locator("text=Paciente é obrigatório");
+      const dateError = page.locator("text=Data é obrigatória");
 
       if ((await patientError.count()) > 0) {
         await expect(patientError).toBeVisible();
@@ -276,10 +284,12 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
     });
   });
 
-  test.describe('📋 Appointment Management', () => {
-    test('should display existing appointments in calendar view', async ({ page }) => {
-      await page.goto('/appointments');
-      await page.waitForLoadState('networkidle');
+  test.describe("📋 Appointment Management", () => {
+    test("should display existing appointments in calendar view", async ({
+      page,
+    }) => {
+      await page.goto("/appointments");
+      await page.waitForLoadState("networkidle");
 
       // Should show calendar or list view
       const calendarView = page.locator(
@@ -304,9 +314,9 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
     });
 
-    test('should reschedule existing appointment', async ({ page }) => {
-      await page.goto('/appointments');
-      await page.waitForLoadState('networkidle');
+    test("should reschedule existing appointment", async ({ page }) => {
+      await page.goto("/appointments");
+      await page.waitForLoadState("networkidle");
 
       // Find an existing appointment to reschedule
       const appointmentItem = page
@@ -330,7 +340,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
           // Select new date (day after tomorrow)
           const newDate = new Date();
           newDate.setDate(newDate.getDate() + 2);
-          const newDateStr = newDate.toISOString().split('T')[0];
+          const newDateStr = newDate.toISOString().split("T")[0];
 
           await page.fill(
             '[data-testid="new-date"], input[type="date"]',
@@ -361,9 +371,11 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
     });
 
-    test('should cancel appointment with proper confirmation', async ({ page }) => {
-      await page.goto('/appointments');
-      await page.waitForLoadState('networkidle');
+    test("should cancel appointment with proper confirmation", async ({
+      page,
+    }) => {
+      await page.goto("/appointments");
+      await page.waitForLoadState("networkidle");
 
       // Find an existing appointment to cancel
       const appointmentItem = page
@@ -391,7 +403,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
               '[data-testid="cancellation-reason"], select[name="reason"]',
             );
             if ((await reasonSelect.count()) > 0) {
-              await reasonSelect.selectOption('paciente-solicitou');
+              await reasonSelect.selectOption("paciente-solicitou");
             }
 
             // Confirm cancellation
@@ -412,10 +424,10 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
     });
   });
 
-  test.describe('🏥 Healthcare-Specific Features', () => {
-    test('should support medical procedure scheduling', async ({ page }) => {
-      await page.goto('/appointments/schedule');
-      await page.waitForLoadState('networkidle');
+  test.describe("🏥 Healthcare-Specific Features", () => {
+    test("should support medical procedure scheduling", async ({ page }) => {
+      await page.goto("/appointments/schedule");
+      await page.waitForLoadState("networkidle");
 
       const newAppointmentBtn = page.locator(
         '[data-testid="schedule-appointment-btn"], button:has-text("Agendar")',
@@ -427,7 +439,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
         '[data-testid="procedure-type"], select[name="procedure"]',
       );
       if ((await procedureType.count()) > 0) {
-        const procedures = ['biopsia', 'cirurgia-menor', 'exame-especializado'];
+        const procedures = ["biopsia", "cirurgia-menor", "exame-especializado"];
         for (const procedure of procedures) {
           try {
             await procedureType.selectOption(procedure);
@@ -440,14 +452,14 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
           '[data-testid="duration"], select[name="duration"]',
         );
         if ((await duration.count()) > 0) {
-          await duration.selectOption('60'); // 60 minutes for procedures
+          await duration.selectOption("60"); // 60 minutes for procedures
         }
       }
     });
 
-    test('should handle emergency appointment scheduling', async ({ page }) => {
-      await page.goto('/appointments/schedule');
-      await page.waitForLoadState('networkidle');
+    test("should handle emergency appointment scheduling", async ({ page }) => {
+      await page.goto("/appointments/schedule");
+      await page.waitForLoadState("networkidle");
 
       const emergencyBtn = page.locator(
         '[data-testid="emergency-appointment"], button:has-text("Emergência")',
@@ -470,16 +482,18 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
     });
 
-    test('should validate professional availability and credentials', async ({ page }) => {
-      await page.goto('/appointments/schedule');
-      await page.waitForLoadState('networkidle');
+    test("should validate professional availability and credentials", async ({
+      page,
+    }) => {
+      await page.goto("/appointments/schedule");
+      await page.waitForLoadState("networkidle");
 
       // Check professional availability
       const professionalSelect = page.locator(
         '[data-testid="professional-select"], select[name="doctor"]',
       );
       if ((await professionalSelect.count()) > 0) {
-        await professionalSelect.selectOption('dr-especialista');
+        await professionalSelect.selectOption("dr-especialista");
 
         // Should show professional credentials and specialties
         const credentials = page.locator(
@@ -500,11 +514,13 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
     });
   });
 
-  test.describe('📱 Patient Notifications & Communication', () => {
-    test('should send appointment confirmation notifications', async ({ page }) => {
+  test.describe("📱 Patient Notifications & Communication", () => {
+    test("should send appointment confirmation notifications", async ({
+      page,
+    }) => {
       // This test verifies notification system exists
-      await page.goto('/appointments/schedule');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/appointments/schedule");
+      await page.waitForLoadState("networkidle");
 
       const newAppointmentBtn = page.locator(
         '[data-testid="schedule-appointment-btn"]',
@@ -533,9 +549,11 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
       }
     });
 
-    test('should handle appointment reminders configuration', async ({ page }) => {
-      await page.goto('/appointments/reminders');
-      await page.waitForLoadState('networkidle');
+    test("should handle appointment reminders configuration", async ({
+      page,
+    }) => {
+      await page.goto("/appointments/reminders");
+      await page.waitForLoadState("networkidle");
 
       // Check reminder settings page
       const reminderSettings = page.locator(
@@ -545,7 +563,7 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
         await expect(reminderSettings).toBeVisible();
 
         // Healthcare-specific reminder options
-        const reminderTimes = ['24h', '2h', '30min'];
+        const reminderTimes = ["24h", "2h", "30min"];
         for (const time of reminderTimes) {
           const timeOption = page.locator(`input[value="${time}"]`);
           if ((await timeOption.count()) > 0) {
@@ -556,10 +574,12 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
     });
   });
 
-  test.describe('📊 Reporting & Analytics', () => {
-    test('should display appointment statistics for healthcare professionals', async ({ page }) => {
-      await page.goto('/appointments/reports');
-      await page.waitForLoadState('networkidle');
+  test.describe("📊 Reporting & Analytics", () => {
+    test("should display appointment statistics for healthcare professionals", async ({
+      page,
+    }) => {
+      await page.goto("/appointments/reports");
+      await page.waitForLoadState("networkidle");
 
       // Check for appointment analytics
       const appointmentStats = page.locator(
@@ -588,30 +608,34 @@ test.describe('📅 Appointment Booking - Critical E2E', () => {
     });
   });
 
-  test.describe('♿ Accessibility & Performance', () => {
-    test('should be accessible for users with disabilities', async ({ page }) => {
-      await page.goto('/appointments');
-      await page.waitForLoadState('networkidle');
+  test.describe("♿ Accessibility & Performance", () => {
+    test("should be accessible for users with disabilities", async ({
+      page,
+    }) => {
+      await page.goto("/appointments");
+      await page.waitForLoadState("networkidle");
 
       // Test keyboard navigation
-      await page.keyboard.press('Tab');
-      const focusedElement = page.locator(':focus');
+      await page.keyboard.press("Tab");
+      const focusedElement = page.locator(":focus");
       await expect(focusedElement).toBeVisible();
 
       // Test screen reader support
-      const headings = page.locator('h1, h2, h3');
+      const headings = page.locator("h1, h2, h3");
       if ((await headings.count()) > 0) {
         for (let i = 0; i < Math.min(3, await headings.count()); i++) {
-          await expect(headings.nth(i)).toHaveAttribute('role');
+          await expect(headings.nth(i)).toHaveAttribute("role");
         }
       }
     });
 
-    test('should load appointment calendar within performance budget', async ({ page }) => {
+    test("should load appointment calendar within performance budget", async ({
+      page,
+    }) => {
       const startTime = Date.now();
 
-      await page.goto('/appointments');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/appointments");
+      await page.waitForLoadState("networkidle");
 
       const loadTime = Date.now() - startTime;
 

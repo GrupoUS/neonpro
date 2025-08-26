@@ -4,9 +4,9 @@
  * Comprehensive performance testing and optimization utilities
  */
 
-import lighthouse from 'lighthouse';
-import { performance } from 'node:perf_hooks';
-import puppeteer from 'puppeteer';
+import lighthouse from "lighthouse";
+import { performance } from "node:perf_hooks";
+import puppeteer from "puppeteer";
 
 export interface PerformanceMetrics {
   pageLoadTime: number;
@@ -33,7 +33,7 @@ export class PerformanceAuditor {
   async initialize(): Promise<void> {
     this.browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
   }
 
@@ -55,32 +55,35 @@ export class PerformanceAuditor {
   }> {
     const result = await lighthouse(url, {
       port: 9222,
-      onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
+      onlyCategories: ["performance", "accessibility", "best-practices", "seo"],
       settings: {
         maxWaitForFcp: 15 * 1000,
         maxWaitForLoad: 35 * 1000,
-        formFactor: 'desktop',
+        formFactor: "desktop",
       },
     });
 
     const lhr = result?.lhr;
     if (!lhr) {
-      throw new Error('Lighthouse audit failed');
+      throw new Error("Lighthouse audit failed");
     }
 
     return {
       performance: Math.round(lhr.categories.performance.score! * 100),
       accessibility: Math.round(lhr.categories.accessibility.score! * 100),
-      bestPractices: Math.round(lhr.categories['best-practices'].score! * 100),
+      bestPractices: Math.round(lhr.categories["best-practices"].score! * 100),
       seo: Math.round(lhr.categories.seo.score! * 100),
       metrics: {
-        pageLoadTime: lhr.audits['speed-index'].numericValue || 0,
-        firstContentfulPaint: lhr.audits['first-contentful-paint'].numericValue || 0,
-        largestContentfulPaint: lhr.audits['largest-contentful-paint'].numericValue || 0,
-        firstInputDelay: lhr.audits['max-potential-fid'].numericValue || 0,
-        cumulativeLayoutShift: lhr.audits['cumulative-layout-shift'].numericValue || 0,
+        pageLoadTime: lhr.audits["speed-index"].numericValue || 0,
+        firstContentfulPaint:
+          lhr.audits["first-contentful-paint"].numericValue || 0,
+        largestContentfulPaint:
+          lhr.audits["largest-contentful-paint"].numericValue || 0,
+        firstInputDelay: lhr.audits["max-potential-fid"].numericValue || 0,
+        cumulativeLayoutShift:
+          lhr.audits["cumulative-layout-shift"].numericValue || 0,
         timeToInteractive: lhr.audits.interactive.numericValue || 0,
-        speedIndex: lhr.audits['speed-index'].numericValue || 0,
+        speedIndex: lhr.audits["speed-index"].numericValue || 0,
       },
     };
   }
@@ -92,7 +95,7 @@ export class PerformanceAuditor {
     baseUrl: string,
   ): Promise<HealthcarePerformanceMetrics> {
     if (!this.browser) {
-      throw new Error('Browser not initialized');
+      throw new Error("Browser not initialized");
     }
 
     const page = await this.browser.newPage();
@@ -127,8 +130,8 @@ export class PerformanceAuditor {
       await page.waitForSelector('[data-testid="patient-form"]');
 
       const formStart = performance.now();
-      await page.fill('[name="name"]', 'Test Patient');
-      await page.fill('[name="email"]', 'test@example.com');
+      await page.fill('[name="name"]', "Test Patient");
+      await page.fill('[name="email"]', "test@example.com");
       await page.click('[type="submit"]');
       await page.waitForSelector('[data-testid="success-message"]', {
         timeout: 3000,

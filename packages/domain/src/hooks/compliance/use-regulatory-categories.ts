@@ -1,7 +1,7 @@
 /**
  * Placeholder regulatory categories hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useRegulatoryCategories = () => {
   const [categories, setCategories] = useState<unknown[]>([]);
@@ -14,8 +14,8 @@ export const useRegulatoryCategories = () => {
       setIsLoading(true);
       setTimeout(() => {
         setCategories([
-          { id: '1', name: 'ANVISA', description: 'Health regulation' },
-          { id: '2', name: 'CFM', description: 'Medical council' },
+          { id: "1", name: "ANVISA", description: "Health regulation" },
+          { id: "2", name: "CFM", description: "Medical council" },
         ]);
         setIsLoading(false);
       }, 1000);

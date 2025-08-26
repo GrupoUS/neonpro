@@ -159,7 +159,7 @@ function SimulationControls({
 
 function ResultsPanel({ simulationData }: { simulationData: SimulationData }) {
   if (!simulationData) {
-    return ;
+    return;
   }
 
   return (

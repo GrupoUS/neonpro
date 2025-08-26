@@ -7,7 +7,7 @@ export interface HealthcareQualityGate {
   name: string;
   threshold: number;
   required: boolean;
-  category: 'security' | 'compliance' | 'performance' | 'accessibility';
+  category: "security" | "compliance" | "performance" | "accessibility";
 }
 
 export interface CIPipelineConfig {
@@ -25,46 +25,46 @@ export interface CIPipelineConfig {
 
 export const HEALTHCARE_QUALITY_GATES: HealthcareQualityGate[] = [
   {
-    name: 'Code Coverage',
+    name: "Code Coverage",
     threshold: 90,
     required: true,
-    category: 'security',
+    category: "security",
   },
   {
-    name: 'LGPD Compliance',
+    name: "LGPD Compliance",
     threshold: 100,
     required: true,
-    category: 'compliance',
+    category: "compliance",
   },
   {
-    name: 'ANVISA Compliance',
+    name: "ANVISA Compliance",
     threshold: 100,
     required: true,
-    category: 'compliance',
+    category: "compliance",
   },
   {
-    name: 'CFM Compliance',
+    name: "CFM Compliance",
     threshold: 100,
     required: true,
-    category: 'compliance',
+    category: "compliance",
   },
   {
-    name: 'Security Scan',
+    name: "Security Scan",
     threshold: 100,
     required: true,
-    category: 'security',
+    category: "security",
   },
   {
-    name: 'Performance Score',
+    name: "Performance Score",
     threshold: 90,
     required: true,
-    category: 'performance',
+    category: "performance",
   },
   {
-    name: 'Accessibility Score',
+    name: "Accessibility Score",
     threshold: 95,
     required: true,
-    category: 'accessibility',
+    category: "accessibility",
   },
 ];
 
@@ -142,29 +142,27 @@ Generated: ${new Date().toISOString()}
 
 ## Quality Gate Results
 Overall Score: ${qualityResults.score}/10
-Status: ${qualityResults.passed ? '✅ PASSED' : '❌ FAILED'}
+Status: ${qualityResults.passed ? "✅ PASSED" : "❌ FAILED"}
 
 ### Individual Gates:
-${
-      qualityResults.results
-        .map(
-          (result) =>
-            `- ${result.name}: ${result.actual}% (threshold: ${result.threshold}%) ${
-              result.passed ? '✅' : '❌'
-            }`,
-        )
-        .join('\n')
-    }
+${qualityResults.results
+  .map(
+    (result) =>
+      `- ${result.name}: ${result.actual}% (threshold: ${result.threshold}%) ${
+        result.passed ? "✅" : "❌"
+      }`,
+  )
+  .join("\n")}
 
 ## Healthcare Compliance Status:
-- LGPD Compliance: ${this.config.complianceValidation.lgpd ? '✅ Enabled' : '❌ Disabled'}
-- ANVISA Compliance: ${this.config.complianceValidation.anvisa ? '✅ Enabled' : '❌ Disabled'}
-- CFM Compliance: ${this.config.complianceValidation.cfm ? '✅ Enabled' : '❌ Disabled'}
+- LGPD Compliance: ${this.config.complianceValidation.lgpd ? "✅ Enabled" : "❌ Disabled"}
+- ANVISA Compliance: ${this.config.complianceValidation.anvisa ? "✅ Enabled" : "❌ Disabled"}
+- CFM Compliance: ${this.config.complianceValidation.cfm ? "✅ Enabled" : "❌ Disabled"}
 
 ## Security & Performance:
-- Security Scanning: ${this.config.securityScanning ? '✅ Enabled' : '❌ Disabled'}
-- Performance Monitoring: ${this.config.performanceMonitoring ? '✅ Enabled' : '❌ Disabled'}
-- Accessibility Testing: ${this.config.accessibilityTesting ? '✅ Enabled' : '❌ Disabled'}
+- Security Scanning: ${this.config.securityScanning ? "✅ Enabled" : "❌ Disabled"}
+- Performance Monitoring: ${this.config.performanceMonitoring ? "✅ Enabled" : "❌ Disabled"}
+- Accessibility Testing: ${this.config.accessibilityTesting ? "✅ Enabled" : "❌ Disabled"}
 
 Quality Threshold: ≥${this.config.qualityThreshold}/10 (Healthcare Grade)
     `;
@@ -173,6 +171,6 @@ Quality Threshold: ≥${this.config.qualityThreshold}/10 (Healthcare Grade)
   }
 }
 
-export * from './deployment-pipeline';
-export * from './github-actions';
-export * from './quality-gates';
+export * from "./deployment-pipeline";
+export * from "./github-actions";
+export * from "./quality-gates";

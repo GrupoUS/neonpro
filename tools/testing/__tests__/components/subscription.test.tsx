@@ -8,15 +8,15 @@
  * @created 2025-07-22
  */
 
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import type React from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderWithProviders } from '../../utils/test-utils';
+import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type React from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderWithProviders } from "../../utils/test-utils";
 
 // Mock subscription components (to be imported when they exist)
 const MockSubscriptionStatusCard = ({
-  variant = 'default',
+  variant = "default",
 }: {
   variant?: string;
 }) => (
@@ -46,46 +46,46 @@ const MockFeatureGate = ({
 // Component Tests
 // ============================================================================
 
-describe('subscription Components', () => {
+describe("subscription Components", () => {
   const user = userEvent.setup();
 
   beforeEach(() => {
     vi.clearAllMocks();
     // Clean up any DOM pollution from previous tests
-    document.body.innerHTML = '';
+    document.body.innerHTML = "";
   });
 
   // ============================================================================
   // Status Card Tests
   // ============================================================================
 
-  describe('subscriptionStatusCard', () => {
-    it('should render status card with correct information', () => {
+  describe("subscriptionStatusCard", () => {
+    it("should render status card with correct information", () => {
       renderWithProviders(<MockSubscriptionStatusCard />);
 
       expect(
-        screen.getByTestId('subscription-status-card'),
+        screen.getByTestId("subscription-status-card"),
       ).toBeInTheDocument();
-      expect(screen.getByText('Subscription Status')).toBeInTheDocument();
-      expect(screen.getByText('Premium Plan - Active')).toBeInTheDocument();
+      expect(screen.getByText("Subscription Status")).toBeInTheDocument();
+      expect(screen.getByText("Premium Plan - Active")).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: 'Upgrade' }),
+        screen.getByRole("button", { name: "Upgrade" }),
       ).toBeInTheDocument();
     });
 
-    it('should handle different variants correctly', () => {
+    it("should handle different variants correctly", () => {
       const { unmount } = renderWithProviders(
         <MockSubscriptionStatusCard variant="compact" />,
       );
 
-      const card = screen.getByTestId('subscription-status-card');
-      expect(card).toHaveAttribute('data-variant', 'compact');
+      const card = screen.getByTestId("subscription-status-card");
+      expect(card).toHaveAttribute("data-variant", "compact");
 
       // Clean up this test's render
       unmount();
     });
 
-    it('should handle click events on upgrade button', async () => {
+    it("should handle click events on upgrade button", async () => {
       const mockClick = vi.fn();
 
       renderWithProviders(
@@ -96,7 +96,7 @@ describe('subscription Components', () => {
         </div>,
       );
 
-      const upgradeButton = screen.getByTestId('upgrade-button');
+      const upgradeButton = screen.getByTestId("upgrade-button");
       await user.click(upgradeButton);
 
       expect(mockClick).toHaveBeenCalledTimes(1);
@@ -107,22 +107,22 @@ describe('subscription Components', () => {
   // Feature Gate Tests
   // ============================================================================
 
-  describe('featureGate', () => {
-    it('should render children when feature is available', () => {
+  describe("featureGate", () => {
+    it("should render children when feature is available", () => {
       renderWithProviders(
         <MockFeatureGate feature="premium-analytics">
           <div data-testid="premium-content">Premium Analytics Dashboard</div>
         </MockFeatureGate>,
       );
 
-      expect(screen.getByTestId('feature-gate')).toBeInTheDocument();
-      expect(screen.getByTestId('premium-content')).toBeInTheDocument();
+      expect(screen.getByTestId("feature-gate")).toBeInTheDocument();
+      expect(screen.getByTestId("premium-content")).toBeInTheDocument();
       expect(
-        screen.getByText('Premium Analytics Dashboard'),
+        screen.getByText("Premium Analytics Dashboard"),
       ).toBeInTheDocument();
     });
 
-    it('should render fallback for restricted features', () => {
+    it("should render fallback for restricted features", () => {
       const { unmount } = renderWithProviders(
         <MockFeatureGate
           fallback={
@@ -136,21 +136,21 @@ describe('subscription Components', () => {
         </MockFeatureGate>,
       );
 
-      expect(screen.getByTestId('feature-gate')).toBeInTheDocument();
+      expect(screen.getByTestId("feature-gate")).toBeInTheDocument();
 
       // Clean up this test's render
       unmount();
     });
 
-    it('should pass correct feature attribute', () => {
+    it("should pass correct feature attribute", () => {
       const { unmount } = renderWithProviders(
         <MockFeatureGate feature="advanced-reports">
           <div>Advanced Reports</div>
         </MockFeatureGate>,
       );
 
-      const gate = screen.getByTestId('feature-gate');
-      expect(gate).toHaveAttribute('data-feature', 'advanced-reports');
+      const gate = screen.getByTestId("feature-gate");
+      expect(gate).toHaveAttribute("data-feature", "advanced-reports");
 
       // Clean up this test's render
       unmount();
@@ -161,8 +161,8 @@ describe('subscription Components', () => {
   // Notification Tests
   // ============================================================================
 
-  describe('subscriptionNotifications', () => {
-    it('should display subscription expiration warnings', () => {
+  describe("subscriptionNotifications", () => {
+    it("should display subscription expiration warnings", () => {
       const mockNotification = (
         <div data-testid="subscription-notification" role="alert">
           <p>Your subscription expires in 7 days</p>
@@ -173,11 +173,11 @@ describe('subscription Components', () => {
       renderWithProviders(mockNotification);
 
       expect(
-        screen.getByTestId('subscription-notification'),
+        screen.getByTestId("subscription-notification"),
       ).toBeInTheDocument();
-      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByRole("alert")).toBeInTheDocument();
       expect(
-        screen.getByText('Your subscription expires in 7 days'),
+        screen.getByText("Your subscription expires in 7 days"),
       ).toBeInTheDocument();
     });
   });

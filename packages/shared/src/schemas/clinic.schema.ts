@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * 🏥 Clinic Schemas - NeonPro Healthcare
@@ -12,26 +12,26 @@ import { z } from 'zod';
 export const BusinessHoursSchema = z
   .object({
     day: z.enum([
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday',
-      'sunday',
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
     ]),
     isOpen: z.boolean(),
     openTime: z
       .string()
       .regex(
         /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-        'Horário deve estar no formato HH:MM',
+        "Horário deve estar no formato HH:MM",
       ),
     closeTime: z
       .string()
       .regex(
         /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
-        'Horário deve estar no formato HH:MM',
+        "Horário deve estar no formato HH:MM",
       ),
   })
   .refine((data) => {
@@ -39,8 +39,8 @@ export const BusinessHoursSchema = z
       return true;
     }
 
-    const openTimeParts = data.openTime.split(':').map(Number);
-    const closeTimeParts = data.closeTime.split(':').map(Number);
+    const openTimeParts = data.openTime.split(":").map(Number);
+    const closeTimeParts = data.closeTime.split(":").map(Number);
 
     if (openTimeParts.length !== 2 || closeTimeParts.length !== 2) {
       return false;
@@ -52,14 +52,14 @@ export const BusinessHoursSchema = z
     const closeMin = closeTimeParts[1];
 
     if (
-      typeof openHour !== 'number'
-      || typeof openMin !== 'number'
-      || typeof closeHour !== 'number'
-      || typeof closeMin !== 'number'
-      || Number.isNaN(openHour)
-      || Number.isNaN(openMin)
-      || Number.isNaN(closeHour)
-      || Number.isNaN(closeMin)
+      typeof openHour !== "number" ||
+      typeof openMin !== "number" ||
+      typeof closeHour !== "number" ||
+      typeof closeMin !== "number" ||
+      Number.isNaN(openHour) ||
+      Number.isNaN(openMin) ||
+      Number.isNaN(closeHour) ||
+      Number.isNaN(closeMin)
     ) {
       return false;
     }
@@ -68,17 +68,17 @@ export const BusinessHoursSchema = z
     const closeMinutes = closeHour * 60 + closeMin;
 
     return openMinutes < closeMinutes;
-  }, 'Horário de abertura deve ser anterior ao de fechamento');
+  }, "Horário de abertura deve ser anterior ao de fechamento");
 
 // Contact information schema
 export const ContactInfoSchema = z.object({
-  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Telefone inválido'),
+  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Telefone inválido"),
   whatsapp: z
     .string()
-    .regex(/^\+?[1-9]\d{1,14}$/, 'WhatsApp inválido')
+    .regex(/^\+?[1-9]\d{1,14}$/, "WhatsApp inválido")
     .optional(),
-  email: z.string().email('Email inválido'),
-  website: z.string().url('Website deve ser uma URL válida').optional(),
+  email: z.string().email("Email inválido"),
+  website: z.string().url("Website deve ser uma URL válida").optional(),
   socialMedia: z
     .object({
       instagram: z.string().max(100).optional(),
@@ -95,9 +95,9 @@ export const ClinicAddressSchema = z.object({
   complement: z.string().max(100).optional(),
   neighborhood: z.string().max(100),
   city: z.string().max(100),
-  state: z.string().length(2, 'Estado deve ter 2 caracteres'),
-  zipCode: z.string().regex(/^\d{8}$/, 'CEP deve conter 8 dígitos'),
-  country: z.string().default('Brasil'),
+  state: z.string().length(2, "Estado deve ter 2 caracteres"),
+  zipCode: z.string().regex(/^\d{8}$/, "CEP deve conter 8 dígitos"),
+  country: z.string().default("Brasil"),
 
   // Geographic coordinates for maps
   latitude: z.number().min(-90).max(90).optional(),
@@ -113,14 +113,14 @@ export const ClinicAddressSchema = z.object({
 export const ClinicServiceSchema = z.object({
   name: z.string().min(2).max(100),
   category: z.enum([
-    'injectables', // Injetáveis (botox, preenchimento)
-    'laser', // Tratamentos a laser
-    'skincare', // Cuidados com a pele
-    'body_treatments', // Tratamentos corporais
-    'hair_removal', // Depilação
-    'wellness', // Bem-estar
-    'consultation', // Consultas
-    'other',
+    "injectables", // Injetáveis (botox, preenchimento)
+    "laser", // Tratamentos a laser
+    "skincare", // Cuidados com a pele
+    "body_treatments", // Tratamentos corporais
+    "hair_removal", // Depilação
+    "wellness", // Bem-estar
+    "consultation", // Consultas
+    "other",
   ]),
   description: z.string().max(500).optional(),
   duration: z.number().min(15).max(480), // minutes
@@ -133,12 +133,12 @@ export const ClinicStaffSchema = z.object({
   id: z.string().uuid(),
   fullName: z.string().min(2).max(100),
   role: z.enum([
-    'doctor',
-    'nurse',
-    'aesthetician',
-    'receptionist',
-    'manager',
-    'owner',
+    "doctor",
+    "nurse",
+    "aesthetician",
+    "receptionist",
+    "manager",
+    "owner",
   ]),
   specialization: z.string().max(100).optional(),
   licenseNumber: z.string().max(50).optional(), // CRM, COREN, etc.
@@ -150,27 +150,27 @@ export const ClinicBaseSchema = z.object({
   // Basic information
   name: z
     .string()
-    .min(2, 'Nome deve ter pelo menos 2 caracteres')
-    .max(200, 'Nome deve ter no máximo 200 caracteres'),
+    .min(2, "Nome deve ter pelo menos 2 caracteres")
+    .max(200, "Nome deve ter no máximo 200 caracteres"),
 
   tradeName: z
     .string()
-    .max(200, 'Nome fantasia deve ter no máximo 200 caracteres')
+    .max(200, "Nome fantasia deve ter no máximo 200 caracteres")
     .optional(),
 
   description: z
     .string()
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres')
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres")
     .optional(),
 
   // Legal information (Brazil)
   cnpj: z
     .string()
-    .regex(/^\d{14}$/, 'CNPJ deve conter 14 dígitos')
+    .regex(/^\d{14}$/, "CNPJ deve conter 14 dígitos")
     .refine((val) => {
       // Basic CNPJ validation would go here
       return val.length === 14;
-    }, 'CNPJ inválido'),
+    }, "CNPJ inválido"),
 
   stateRegistration: z.string().max(50).optional(),
   municipalRegistration: z.string().max(50).optional(),
@@ -178,7 +178,7 @@ export const ClinicBaseSchema = z.object({
   // ANVISA compliance
   anvisaLicense: z
     .string()
-    .min(5, 'Licença ANVISA deve ter pelo menos 5 caracteres')
+    .min(5, "Licença ANVISA deve ter pelo menos 5 caracteres")
     .max(50)
     .optional(),
 
@@ -197,15 +197,15 @@ export const ClinicBaseSchema = z.object({
   acceptedPaymentMethods: z
     .array(
       z.enum([
-        'cash',
-        'credit_card',
-        'debit_card',
-        'pix',
-        'bank_transfer',
-        'installments',
+        "cash",
+        "credit_card",
+        "debit_card",
+        "pix",
+        "bank_transfer",
+        "installments",
       ]),
     )
-    .default(['cash']),
+    .default(["cash"]),
 
   // Branding
   logo: z.string().url().optional(),
@@ -235,7 +235,7 @@ export const CreateClinicSchema = ClinicBaseSchema.omit({
 
 // Update clinic schema
 export const UpdateClinicSchema = ClinicBaseSchema.partial().extend({
-  id: z.string().uuid('ID deve ser um UUID válido'),
+  id: z.string().uuid("ID deve ser um UUID válido"),
 });
 
 // Clinic response schema
@@ -260,7 +260,7 @@ export const ClinicResponseSchema = ClinicBaseSchema.extend({
   staff: z.array(ClinicStaffSchema).default([]),
 
   // Remove sensitive data
-  cnpj: z.string().transform((_val) => '**.***.***/****-**'),
+  cnpj: z.string().transform((_val) => "**.***.***/****-**"),
 });
 
 // Search/filter clinics
@@ -270,14 +270,14 @@ export const ClinicSearchSchema = z.object({
   state: z.string().length(2).optional(),
   serviceCategory: z
     .enum([
-      'injectables',
-      'laser',
-      'skincare',
-      'body_treatments',
-      'hair_removal',
-      'wellness',
-      'consultation',
-      'other',
+      "injectables",
+      "laser",
+      "skincare",
+      "body_treatments",
+      "hair_removal",
+      "wellness",
+      "consultation",
+      "other",
     ])
     .optional(),
   acceptsInsurance: z.boolean().optional(),
@@ -292,9 +292,9 @@ export const ClinicSearchSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(50).default(20),
   sortBy: z
-    .enum(['name', 'createdAt', 'averageRating', 'totalPatients'])
-    .default('name'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+    .enum(["name", "createdAt", "averageRating", "totalPatients"])
+    .default("name"),
+  sortOrder: z.enum(["asc", "desc"]).default("asc"),
 });
 
 // Clinic availability schema

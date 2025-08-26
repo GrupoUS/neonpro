@@ -1,9 +1,9 @@
 // Healthcare Monitoring Service - Real-time System Health & Compliance Monitoring
 // Comprehensive monitoring for healthcare AI platform with LGPD/ANVISA/CFM compliance
 
-import type { LoggerService, MetricsService } from '@neonpro/core-services';
-import type { AIServiceConfig, CacheService } from './enhanced-service-base';
-import { EnhancedAIService } from './enhanced-service-base';
+import type { LoggerService, MetricsService } from "@neonpro/core-services";
+import type { AIServiceConfig, CacheService } from "./enhanced-service-base";
+import { EnhancedAIService } from "./enhanced-service-base";
 
 // Healthcare-Specific Monitoring Types
 export interface HealthcareMetrics {
@@ -51,25 +51,25 @@ export interface HealthcareMetrics {
 
 export interface HealthAlert {
   id: string;
-  severity: 'critical' | 'high' | 'medium' | 'low' | 'info';
+  severity: "critical" | "high" | "medium" | "low" | "info";
   category:
-    | 'patient_safety'
-    | 'ai_performance'
-    | 'business'
-    | 'system'
-    | 'compliance'
-    | 'security';
+    | "patient_safety"
+    | "ai_performance"
+    | "business"
+    | "system"
+    | "compliance"
+    | "security";
   title: string;
   description: string;
   metric_name: string;
   current_value: number;
   threshold_value: number;
   impact:
-    | 'patient_safety'
-    | 'service_disruption'
-    | 'compliance_risk'
-    | 'performance_degradation'
-    | 'business_impact';
+    | "patient_safety"
+    | "service_disruption"
+    | "compliance_risk"
+    | "performance_degradation"
+    | "business_impact";
   created_at: string;
   resolved_at?: string;
   resolution_actions?: string[];
@@ -126,30 +126,30 @@ export interface MonitoringConfig {
     email: {
       enabled: boolean;
       recipients: string[];
-      severity_threshold: HealthAlert['severity'];
+      severity_threshold: HealthAlert["severity"];
     };
     sms: {
       enabled: boolean;
       recipients: string[];
-      severity_threshold: HealthAlert['severity'];
+      severity_threshold: HealthAlert["severity"];
     };
     webhook: {
       enabled: boolean;
       url: string;
-      severity_threshold: HealthAlert['severity'];
+      severity_threshold: HealthAlert["severity"];
     };
     slack: {
       enabled: boolean;
       webhook_url: string;
       channel: string;
-      severity_threshold: HealthAlert['severity'];
+      severity_threshold: HealthAlert["severity"];
     };
   };
 }
 
 export interface DashboardData {
   last_updated: string;
-  system_status: 'healthy' | 'warning' | 'critical' | 'maintenance';
+  system_status: "healthy" | "warning" | "critical" | "maintenance";
   overall_health_score: number;
   current_metrics: HealthcareMetrics;
   active_alerts: HealthAlert[];
@@ -160,7 +160,7 @@ export interface DashboardData {
         timestamp: string;
         value: number;
       }[];
-      trend_direction: 'up' | 'down' | 'stable';
+      trend_direction: "up" | "down" | "stable";
       trend_percentage: number;
     }[];
   };
@@ -175,7 +175,7 @@ export interface DashboardData {
     action_id: string;
     title: string;
     description: string;
-    severity: 'normal' | 'urgent';
+    severity: "normal" | "urgent";
     estimated_time: string;
   }[];
 }
@@ -184,7 +184,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   private readonly config: MonitoringConfig;
   private readonly metricsHistory: Map<
     string,
-    { timestamp: number; value: number; }[]
+    { timestamp: number; value: number }[]
   > = new Map();
   private readonly activeAlerts: Map<string, HealthAlert> = new Map();
   private monitoringIntervals: NodeJS.Timeout[] = [];
@@ -194,7 +194,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     cache: CacheService,
     logger: LoggerService,
     metrics: MetricsService,
-    config?: AIServiceConfig & { monitoringConfig?: MonitoringConfig; },
+    config?: AIServiceConfig & { monitoringConfig?: MonitoringConfig },
   ) {
     super(cache, logger, metrics, config);
     this.config = config?.monitoringConfig || this.getDefaultConfig();
@@ -251,32 +251,32 @@ export class HealthcareMonitoringService extends EnhancedAIService {
       notification_channels: {
         email: {
           enabled: true,
-          recipients: ['admin@neonpro.health', 'alerts@neonpro.health'],
-          severity_threshold: 'high',
+          recipients: ["admin@neonpro.health", "alerts@neonpro.health"],
+          severity_threshold: "high",
         },
         sms: {
           enabled: true,
-          recipients: ['+5511999887766'],
-          severity_threshold: 'critical',
+          recipients: ["+5511999887766"],
+          severity_threshold: "critical",
         },
         webhook: {
           enabled: false,
-          url: '',
-          severity_threshold: 'medium',
+          url: "",
+          severity_threshold: "medium",
         },
         slack: {
           enabled: true,
-          webhook_url: 'https://hooks.slack.com/services/...',
-          channel: '#healthcare-alerts',
-          severity_threshold: 'medium',
+          webhook_url: "https://hooks.slack.com/services/...",
+          channel: "#healthcare-alerts",
+          severity_threshold: "medium",
         },
       },
     };
   }
 
   private async initializeMonitoring(): Promise<void> {
-    this.logger?.info('Initializing Healthcare Monitoring Service', {
-      service: 'HealthcareMonitoringService',
+    this.logger?.info("Initializing Healthcare Monitoring Service", {
+      service: "HealthcareMonitoringService",
       collection_interval: this.config.collection_interval_ms,
       alert_interval: this.config.alert_evaluation_interval_ms,
       dashboard_update_interval: this.config.real_time_dashboard_update_ms,
@@ -313,17 +313,17 @@ export class HealthcareMonitoringService extends EnhancedAIService {
       await this.storeMetricsHistory(metrics);
 
       const processingTime = performance.now() - startTime;
-      await this.recordMetrics('metric_collection', {
+      await this.recordMetrics("metric_collection", {
         processing_time_ms: processingTime,
         timestamp: new Date().toISOString(),
       });
 
       return metrics;
     } catch (error) {
-      this.logger?.error('Failed to collect current metrics', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger?.error("Failed to collect current metrics", {
+        error: error instanceof Error ? error.message : "Unknown error",
       });
-      throw new Error('Failed to collect current metrics');
+      throw new Error("Failed to collect current metrics");
     }
   }
 
@@ -333,7 +333,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     try {
       const currentMetrics = await this.getCurrentMetrics();
       const activeAlerts = [...this.activeAlerts.values()];
-      const overallHealthScore = this.calculateOverallHealthScore(currentMetrics);
+      const overallHealthScore =
+        this.calculateOverallHealthScore(currentMetrics);
       const systemStatus = this.determineSystemStatus(
         overallHealthScore,
         activeAlerts,
@@ -346,8 +347,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
         current_metrics: currentMetrics,
         active_alerts: activeAlerts.sort(
           (a, b) =>
-            this.getSeverityWeight(b.severity)
-            - this.getSeverityWeight(a.severity),
+            this.getSeverityWeight(b.severity) -
+            this.getSeverityWeight(a.severity),
         ),
         trends: await this.generateTrendData(),
         sla_status: await this.calculateSLAStatus(currentMetrics),
@@ -358,7 +359,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
       };
 
       const processingTime = performance.now() - startTime;
-      this.logger?.debug('Dashboard data generated', {
+      this.logger?.debug("Dashboard data generated", {
         processing_time_ms: processingTime,
         active_alerts_count: activeAlerts.length,
         system_status: systemStatus,
@@ -367,16 +368,16 @@ export class HealthcareMonitoringService extends EnhancedAIService {
 
       return dashboardData;
     } catch (error) {
-      this.logger?.error('Failed to generate dashboard data', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger?.error("Failed to generate dashboard data", {
+        error: error instanceof Error ? error.message : "Unknown error",
       });
-      throw new Error('Failed to generate dashboard data');
+      throw new Error("Failed to generate dashboard data");
     }
   }
 
   async getActiveAlerts(filters?: {
-    severity?: HealthAlert['severity'];
-    category?: HealthAlert['category'];
+    severity?: HealthAlert["severity"];
+    category?: HealthAlert["category"];
     limit?: number;
   }): Promise<HealthAlert[]> {
     let alerts = [...this.activeAlerts.values()];
@@ -395,7 +396,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
 
     return alerts.sort((a, b) => {
       // Sort by severity first, then by creation time
-      const severityDiff = this.getSeverityWeight(b.severity) - this.getSeverityWeight(a.severity);
+      const severityDiff =
+        this.getSeverityWeight(b.severity) - this.getSeverityWeight(a.severity);
       if (severityDiff !== 0) {
         return severityDiff;
       }
@@ -422,7 +424,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
       `Acknowledged by ${acknowledgedBy} at ${new Date().toISOString()}`,
     );
 
-    this.logger?.info('Alert acknowledged', {
+    this.logger?.info("Alert acknowledged", {
       alert_id: alertId,
       acknowledged_by: acknowledgedBy,
       alert_severity: alert.severity,
@@ -451,13 +453,13 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     // Remove from active alerts
     this.activeAlerts.delete(alertId);
 
-    this.logger?.info('Alert resolved', {
+    this.logger?.info("Alert resolved", {
       alert_id: alertId,
       resolved_by: resolvedBy,
       resolution,
       alert_duration_ms: alert.resolved_at
-        ? new Date(alert.resolved_at).getTime()
-          - new Date(alert.created_at).getTime()
+        ? new Date(alert.resolved_at).getTime() -
+          new Date(alert.created_at).getTime()
         : 0,
     });
 
@@ -467,7 +469,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   // Metric Collection Methods
 
   private async collectPatientSafetyMetrics(): Promise<
-    HealthcareMetrics['patient_safety']
+    HealthcareMetrics["patient_safety"]
   > {
     // In production, collect from various system components
     return {
@@ -480,7 +482,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private async collectAIPerformanceMetrics(): Promise<
-    HealthcareMetrics['ai_performance']
+    HealthcareMetrics["ai_performance"]
   > {
     return {
       streaming_latency_ms: 150 + Math.random() * 100, // 150-250ms
@@ -493,7 +495,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private async collectBusinessMetrics(): Promise<
-    HealthcareMetrics['business_metrics']
+    HealthcareMetrics["business_metrics"]
   > {
     return {
       patient_satisfaction_score: 4.3 + Math.random() * 0.6, // 4.3-4.9 out of 5
@@ -506,7 +508,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private async collectSystemPerformanceMetrics(): Promise<
-    HealthcareMetrics['system_performance']
+    HealthcareMetrics["system_performance"]
   > {
     return {
       api_response_time_ms: 180 + Math.random() * 120, // 180-300ms
@@ -520,7 +522,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private async collectComplianceMetrics(): Promise<
-    HealthcareMetrics['compliance_status']
+    HealthcareMetrics["compliance_status"]
   > {
     return {
       lgpd_compliance_score: 96 + Math.random() * 3, // 96-99%
@@ -537,8 +539,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
       try {
         await this.getCurrentMetrics();
       } catch (error) {
-        this.logger?.error('Metric collection failed', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        this.logger?.error("Metric collection failed", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }, this.config.collection_interval_ms);
@@ -552,8 +554,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
         const currentMetrics = await this.getCurrentMetrics();
         await this.evaluateAlerts(currentMetrics);
       } catch (error) {
-        this.logger?.error('Alert evaluation failed', {
-          error: error instanceof Error ? error.message : 'Unknown error',
+        this.logger?.error("Alert evaluation failed", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }, this.config.alert_evaluation_interval_ms);
@@ -568,8 +570,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
           const dashboardData = await this.getDashboardData();
           this.broadcastToClients(dashboardData);
         } catch (error) {
-          this.logger?.error('Dashboard update failed', {
-            error: error instanceof Error ? error.message : 'Unknown error',
+          this.logger?.error("Dashboard update failed", {
+            error: error instanceof Error ? error.message : "Unknown error",
           });
         }
       }
@@ -583,271 +585,255 @@ export class HealthcareMonitoringService extends EnhancedAIService {
 
     // Patient Safety Alerts
     if (
-      metrics.patient_safety.emergency_access_response_time_ms
-        > this.config.thresholds.patient_safety.max_emergency_response_time_ms
+      metrics.patient_safety.emergency_access_response_time_ms >
+      this.config.thresholds.patient_safety.max_emergency_response_time_ms
     ) {
       alerts.push(
         this.createAlert(
-          'critical',
-          'patient_safety',
-          'Emergency Access Response Time Exceeded',
+          "critical",
+          "patient_safety",
+          "Emergency Access Response Time Exceeded",
           `Emergency access response time of ${metrics.patient_safety.emergency_access_response_time_ms}ms exceeds maximum allowed threshold of ${this.config.thresholds.patient_safety.max_emergency_response_time_ms}ms`,
-          'emergency_access_response_time_ms',
+          "emergency_access_response_time_ms",
           metrics.patient_safety.emergency_access_response_time_ms,
           this.config.thresholds.patient_safety.max_emergency_response_time_ms,
-          'patient_safety',
+          "patient_safety",
         ),
       );
     }
 
     if (
-      metrics.patient_safety.critical_data_availability_percentage
-        < this.config.thresholds.patient_safety.min_critical_data_availability
+      metrics.patient_safety.critical_data_availability_percentage <
+      this.config.thresholds.patient_safety.min_critical_data_availability
     ) {
       alerts.push(
         this.createAlert(
-          'critical',
-          'patient_safety',
-          'Critical Data Availability Below Threshold',
-          `Critical data availability at ${
-            metrics.patient_safety.critical_data_availability_percentage.toFixed(
-              2,
-            )
-          }% is below minimum required ${this.config.thresholds.patient_safety.min_critical_data_availability}%`,
-          'critical_data_availability_percentage',
+          "critical",
+          "patient_safety",
+          "Critical Data Availability Below Threshold",
+          `Critical data availability at ${metrics.patient_safety.critical_data_availability_percentage.toFixed(
+            2,
+          )}% is below minimum required ${this.config.thresholds.patient_safety.min_critical_data_availability}%`,
+          "critical_data_availability_percentage",
           metrics.patient_safety.critical_data_availability_percentage,
           this.config.thresholds.patient_safety.min_critical_data_availability,
-          'service_disruption',
+          "service_disruption",
         ),
       );
     }
 
     if (
-      metrics.patient_safety.compliance_violations_count
-        > this.config.thresholds.patient_safety.max_compliance_violations
+      metrics.patient_safety.compliance_violations_count >
+      this.config.thresholds.patient_safety.max_compliance_violations
     ) {
       alerts.push(
         this.createAlert(
-          'high',
-          'compliance',
-          'Compliance Violations Detected',
+          "high",
+          "compliance",
+          "Compliance Violations Detected",
           `${metrics.patient_safety.compliance_violations_count} compliance violations detected exceeding maximum allowed of ${this.config.thresholds.patient_safety.max_compliance_violations}`,
-          'compliance_violations_count',
+          "compliance_violations_count",
           metrics.patient_safety.compliance_violations_count,
           this.config.thresholds.patient_safety.max_compliance_violations,
-          'compliance_risk',
+          "compliance_risk",
         ),
       );
     }
 
     // AI Performance Alerts
     if (
-      metrics.ai_performance.streaming_latency_ms
-        > this.config.thresholds.ai_performance.max_streaming_latency_ms
+      metrics.ai_performance.streaming_latency_ms >
+      this.config.thresholds.ai_performance.max_streaming_latency_ms
     ) {
       alerts.push(
         this.createAlert(
-          'medium',
-          'ai_performance',
-          'AI Streaming Latency High',
+          "medium",
+          "ai_performance",
+          "AI Streaming Latency High",
           `AI streaming latency of ${metrics.ai_performance.streaming_latency_ms}ms exceeds target of ${this.config.thresholds.ai_performance.max_streaming_latency_ms}ms`,
-          'streaming_latency_ms',
+          "streaming_latency_ms",
           metrics.ai_performance.streaming_latency_ms,
           this.config.thresholds.ai_performance.max_streaming_latency_ms,
-          'performance_degradation',
+          "performance_degradation",
         ),
       );
     }
 
     if (
-      metrics.ai_performance.ai_accuracy_percentage
-        < this.config.thresholds.ai_performance.min_ai_accuracy_percentage
+      metrics.ai_performance.ai_accuracy_percentage <
+      this.config.thresholds.ai_performance.min_ai_accuracy_percentage
     ) {
       alerts.push(
         this.createAlert(
-          'high',
-          'ai_performance',
-          'AI Model Accuracy Below Threshold',
-          `AI model accuracy at ${
-            metrics.ai_performance.ai_accuracy_percentage.toFixed(
-              2,
-            )
-          }% is below minimum required ${this.config.thresholds.ai_performance.min_ai_accuracy_percentage}%`,
-          'ai_accuracy_percentage',
+          "high",
+          "ai_performance",
+          "AI Model Accuracy Below Threshold",
+          `AI model accuracy at ${metrics.ai_performance.ai_accuracy_percentage.toFixed(
+            2,
+          )}% is below minimum required ${this.config.thresholds.ai_performance.min_ai_accuracy_percentage}%`,
+          "ai_accuracy_percentage",
           metrics.ai_performance.ai_accuracy_percentage,
           this.config.thresholds.ai_performance.min_ai_accuracy_percentage,
-          'patient_safety',
+          "patient_safety",
         ),
       );
     }
 
     if (
-      metrics.ai_performance.error_rate_percentage
-        > this.config.thresholds.ai_performance.max_error_rate_percentage
+      metrics.ai_performance.error_rate_percentage >
+      this.config.thresholds.ai_performance.max_error_rate_percentage
     ) {
       alerts.push(
         this.createAlert(
-          'medium',
-          'ai_performance',
-          'AI Error Rate Elevated',
-          `AI error rate at ${
-            metrics.ai_performance.error_rate_percentage.toFixed(
-              2,
-            )
-          }% exceeds maximum allowed ${this.config.thresholds.ai_performance.max_error_rate_percentage}%`,
-          'error_rate_percentage',
+          "medium",
+          "ai_performance",
+          "AI Error Rate Elevated",
+          `AI error rate at ${metrics.ai_performance.error_rate_percentage.toFixed(
+            2,
+          )}% exceeds maximum allowed ${this.config.thresholds.ai_performance.max_error_rate_percentage}%`,
+          "error_rate_percentage",
           metrics.ai_performance.error_rate_percentage,
           this.config.thresholds.ai_performance.max_error_rate_percentage,
-          'service_disruption',
+          "service_disruption",
         ),
       );
     }
 
     // System Performance Alerts
     if (
-      metrics.system_performance.api_response_time_ms
-        > this.config.thresholds.system.max_api_response_time_ms
+      metrics.system_performance.api_response_time_ms >
+      this.config.thresholds.system.max_api_response_time_ms
     ) {
       alerts.push(
         this.createAlert(
-          'medium',
-          'system',
-          'API Response Time High',
+          "medium",
+          "system",
+          "API Response Time High",
           `API response time of ${metrics.system_performance.api_response_time_ms}ms exceeds target of ${this.config.thresholds.system.max_api_response_time_ms}ms`,
-          'api_response_time_ms',
+          "api_response_time_ms",
           metrics.system_performance.api_response_time_ms,
           this.config.thresholds.system.max_api_response_time_ms,
-          'performance_degradation',
+          "performance_degradation",
         ),
       );
     }
 
     if (
-      metrics.system_performance.memory_usage_percentage
-        > this.config.thresholds.system.max_memory_usage_percentage
+      metrics.system_performance.memory_usage_percentage >
+      this.config.thresholds.system.max_memory_usage_percentage
     ) {
       alerts.push(
         this.createAlert(
-          'high',
-          'system',
-          'High Memory Usage',
-          `Memory usage at ${
-            metrics.system_performance.memory_usage_percentage.toFixed(
-              1,
-            )
-          }% exceeds threshold of ${this.config.thresholds.system.max_memory_usage_percentage}%`,
-          'memory_usage_percentage',
+          "high",
+          "system",
+          "High Memory Usage",
+          `Memory usage at ${metrics.system_performance.memory_usage_percentage.toFixed(
+            1,
+          )}% exceeds threshold of ${this.config.thresholds.system.max_memory_usage_percentage}%`,
+          "memory_usage_percentage",
           metrics.system_performance.memory_usage_percentage,
           this.config.thresholds.system.max_memory_usage_percentage,
-          'service_disruption',
+          "service_disruption",
         ),
       );
     }
 
     if (
-      metrics.system_performance.cache_hit_rate_percentage
-        < this.config.thresholds.system.min_cache_hit_rate
+      metrics.system_performance.cache_hit_rate_percentage <
+      this.config.thresholds.system.min_cache_hit_rate
     ) {
       alerts.push(
         this.createAlert(
-          'low',
-          'system',
-          'Cache Hit Rate Low',
-          `Cache hit rate at ${
-            metrics.system_performance.cache_hit_rate_percentage.toFixed(
-              1,
-            )
-          }% is below target of ${this.config.thresholds.system.min_cache_hit_rate}%`,
-          'cache_hit_rate_percentage',
+          "low",
+          "system",
+          "Cache Hit Rate Low",
+          `Cache hit rate at ${metrics.system_performance.cache_hit_rate_percentage.toFixed(
+            1,
+          )}% is below target of ${this.config.thresholds.system.min_cache_hit_rate}%`,
+          "cache_hit_rate_percentage",
           metrics.system_performance.cache_hit_rate_percentage,
           this.config.thresholds.system.min_cache_hit_rate,
-          'performance_degradation',
+          "performance_degradation",
         ),
       );
     }
 
     // Compliance Alerts
     if (
-      metrics.compliance_status.lgpd_compliance_score
-        < this.config.thresholds.compliance.min_lgpd_score
+      metrics.compliance_status.lgpd_compliance_score <
+      this.config.thresholds.compliance.min_lgpd_score
     ) {
       alerts.push(
         this.createAlert(
-          'critical',
-          'compliance',
-          'LGPD Compliance Score Low',
-          `LGPD compliance score at ${
-            metrics.compliance_status.lgpd_compliance_score.toFixed(
-              2,
-            )
-          }% is below minimum required ${this.config.thresholds.compliance.min_lgpd_score}%`,
-          'lgpd_compliance_score',
+          "critical",
+          "compliance",
+          "LGPD Compliance Score Low",
+          `LGPD compliance score at ${metrics.compliance_status.lgpd_compliance_score.toFixed(
+            2,
+          )}% is below minimum required ${this.config.thresholds.compliance.min_lgpd_score}%`,
+          "lgpd_compliance_score",
           metrics.compliance_status.lgpd_compliance_score,
           this.config.thresholds.compliance.min_lgpd_score,
-          'compliance_risk',
+          "compliance_risk",
         ),
       );
     }
 
     if (
-      metrics.compliance_status.anvisa_compliance_score
-        < this.config.thresholds.compliance.min_anvisa_score
+      metrics.compliance_status.anvisa_compliance_score <
+      this.config.thresholds.compliance.min_anvisa_score
     ) {
       alerts.push(
         this.createAlert(
-          'critical',
-          'compliance',
-          'ANVISA Compliance Score Low',
-          `ANVISA compliance score at ${
-            metrics.compliance_status.anvisa_compliance_score.toFixed(
-              2,
-            )
-          }% is below minimum required ${this.config.thresholds.compliance.min_anvisa_score}%`,
-          'anvisa_compliance_score',
+          "critical",
+          "compliance",
+          "ANVISA Compliance Score Low",
+          `ANVISA compliance score at ${metrics.compliance_status.anvisa_compliance_score.toFixed(
+            2,
+          )}% is below minimum required ${this.config.thresholds.compliance.min_anvisa_score}%`,
+          "anvisa_compliance_score",
           metrics.compliance_status.anvisa_compliance_score,
           this.config.thresholds.compliance.min_anvisa_score,
-          'compliance_risk',
+          "compliance_risk",
         ),
       );
     }
 
     if (
-      metrics.compliance_status.cfm_compliance_score
-        < this.config.thresholds.compliance.min_cfm_score
+      metrics.compliance_status.cfm_compliance_score <
+      this.config.thresholds.compliance.min_cfm_score
     ) {
       alerts.push(
         this.createAlert(
-          'critical',
-          'compliance',
-          'CFM Compliance Score Low',
-          `CFM compliance score at ${
-            metrics.compliance_status.cfm_compliance_score.toFixed(
-              2,
-            )
-          }% is below minimum required ${this.config.thresholds.compliance.min_cfm_score}%`,
-          'cfm_compliance_score',
+          "critical",
+          "compliance",
+          "CFM Compliance Score Low",
+          `CFM compliance score at ${metrics.compliance_status.cfm_compliance_score.toFixed(
+            2,
+          )}% is below minimum required ${this.config.thresholds.compliance.min_cfm_score}%`,
+          "cfm_compliance_score",
           metrics.compliance_status.cfm_compliance_score,
           this.config.thresholds.compliance.min_cfm_score,
-          'compliance_risk',
+          "compliance_risk",
         ),
       );
     }
 
     // Business Metrics Alerts
     if (
-      metrics.business_metrics.roi_monthly
-        < this.config.thresholds.business.min_monthly_roi
+      metrics.business_metrics.roi_monthly <
+      this.config.thresholds.business.min_monthly_roi
     ) {
       alerts.push(
         this.createAlert(
-          'medium',
-          'business',
-          'Monthly ROI Below Target',
+          "medium",
+          "business",
+          "Monthly ROI Below Target",
           `Monthly ROI of $${metrics.business_metrics.roi_monthly.toLocaleString()} is below target of $${this.config.thresholds.business.min_monthly_roi.toLocaleString()}`,
-          'roi_monthly',
+          "roi_monthly",
           metrics.business_metrics.roi_monthly,
           this.config.thresholds.business.min_monthly_roi,
-          'business_impact',
+          "business_impact",
         ),
       );
     }
@@ -859,14 +845,14 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private createAlert(
-    severity: HealthAlert['severity'],
-    category: HealthAlert['category'],
+    severity: HealthAlert["severity"],
+    category: HealthAlert["category"],
     title: string,
     description: string,
     metricName: string,
     currentValue: number,
     thresholdValue: number,
-    impact: HealthAlert['impact'],
+    impact: HealthAlert["impact"],
   ): HealthAlert {
     const alertId = `alert_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
@@ -894,9 +880,9 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     // Check if this alert already exists (avoid duplicates)
     const existingAlert = [...this.activeAlerts.values()].find(
       (existing) =>
-        existing.metric_name === alert.metric_name
-        && existing.category === alert.category
-        && !existing.resolved_at,
+        existing.metric_name === alert.metric_name &&
+        existing.category === alert.category &&
+        !existing.resolved_at,
     );
 
     if (existingAlert) {
@@ -909,7 +895,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     // Add new alert
     this.activeAlerts.set(alert.id, alert);
 
-    this.logger?.warn('New alert created', {
+    this.logger?.warn("New alert created", {
       alert_id: alert.id,
       severity: alert.severity,
       category: alert.category,
@@ -923,7 +909,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private async sendNotifications(alert: HealthAlert): Promise<void> {
-    const shouldNotify = (threshold: HealthAlert['severity']) => {
+    const shouldNotify = (threshold: HealthAlert["severity"]) => {
       const severityLevels = {
         info: 0,
         low: 1,
@@ -937,41 +923,41 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     try {
       // Email notifications
       if (
-        this.config.notification_channels.email.enabled
-        && shouldNotify(this.config.notification_channels.email.severity_threshold)
+        this.config.notification_channels.email.enabled &&
+        shouldNotify(this.config.notification_channels.email.severity_threshold)
       ) {
         await this.sendEmailNotification(alert);
       }
 
       // SMS notifications
       if (
-        this.config.notification_channels.sms.enabled
-        && shouldNotify(this.config.notification_channels.sms.severity_threshold)
+        this.config.notification_channels.sms.enabled &&
+        shouldNotify(this.config.notification_channels.sms.severity_threshold)
       ) {
         await this.sendSMSNotification(alert);
       }
 
       // Slack notifications
       if (
-        this.config.notification_channels.slack.enabled
-        && shouldNotify(this.config.notification_channels.slack.severity_threshold)
+        this.config.notification_channels.slack.enabled &&
+        shouldNotify(this.config.notification_channels.slack.severity_threshold)
       ) {
         await this.sendSlackNotification(alert);
       }
 
       // Webhook notifications
       if (
-        this.config.notification_channels.webhook.enabled
-        && shouldNotify(
+        this.config.notification_channels.webhook.enabled &&
+        shouldNotify(
           this.config.notification_channels.webhook.severity_threshold,
         )
       ) {
         await this.sendWebhookNotification(alert);
       }
     } catch (error) {
-      this.logger?.error('Failed to send notifications for alert', {
+      this.logger?.error("Failed to send notifications for alert", {
         alert_id: alert.id,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -1000,7 +986,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     };
 
     const weightedScore = Object.entries(scores).reduce(
-      (sum, [category, score]) => sum + score * weights[category as keyof typeof weights],
+      (sum, [category, score]) =>
+        sum + score * weights[category as keyof typeof weights],
       0,
     );
 
@@ -1008,15 +995,16 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private calculatePatientSafetyScore(
-    metrics: HealthcareMetrics['patient_safety'],
+    metrics: HealthcareMetrics["patient_safety"],
   ): number {
     const responseTimeScore = Math.max(
       0,
-      (this.config.thresholds.patient_safety.max_emergency_response_time_ms
-        - metrics.emergency_access_response_time_ms)
-        / this.config.thresholds.patient_safety.max_emergency_response_time_ms,
+      (this.config.thresholds.patient_safety.max_emergency_response_time_ms -
+        metrics.emergency_access_response_time_ms) /
+        this.config.thresholds.patient_safety.max_emergency_response_time_ms,
     );
-    const availabilityScore = metrics.critical_data_availability_percentage / 100;
+    const availabilityScore =
+      metrics.critical_data_availability_percentage / 100;
     const complianceScore = metrics.compliance_violations_count === 0 ? 1 : 0.5;
     const uptimeScore = Math.max(
       0,
@@ -1024,79 +1012,80 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     ); // 300s = 5 min max downtime
 
     return (
-      responseTimeScore * 0.3
-      + availabilityScore * 0.4
-      + complianceScore * 0.2
-      + uptimeScore * 0.1
+      responseTimeScore * 0.3 +
+      availabilityScore * 0.4 +
+      complianceScore * 0.2 +
+      uptimeScore * 0.1
     );
   }
 
   private calculateAIPerformanceScore(
-    metrics: HealthcareMetrics['ai_performance'],
+    metrics: HealthcareMetrics["ai_performance"],
   ): number {
     const latencyScore = Math.max(
       0,
-      (this.config.thresholds.ai_performance.max_streaming_latency_ms
-        - metrics.streaming_latency_ms)
-        / this.config.thresholds.ai_performance.max_streaming_latency_ms,
+      (this.config.thresholds.ai_performance.max_streaming_latency_ms -
+        metrics.streaming_latency_ms) /
+        this.config.thresholds.ai_performance.max_streaming_latency_ms,
     );
     const accuracyScore = metrics.ai_accuracy_percentage / 100;
     const confidenceScore = metrics.prediction_confidence_avg;
     const errorScore = Math.max(
       0,
-      (this.config.thresholds.ai_performance.max_error_rate_percentage
-        - metrics.error_rate_percentage)
-        / this.config.thresholds.ai_performance.max_error_rate_percentage,
+      (this.config.thresholds.ai_performance.max_error_rate_percentage -
+        metrics.error_rate_percentage) /
+        this.config.thresholds.ai_performance.max_error_rate_percentage,
     );
 
     return (
-      latencyScore * 0.2
-      + accuracyScore * 0.4
-      + confidenceScore * 0.3
-      + errorScore * 0.1
+      latencyScore * 0.2 +
+      accuracyScore * 0.4 +
+      confidenceScore * 0.3 +
+      errorScore * 0.1
     );
   }
 
   private calculateComplianceScore(
-    metrics: HealthcareMetrics['compliance_status'],
+    metrics: HealthcareMetrics["compliance_status"],
   ): number {
     const lgpdScore = metrics.lgpd_compliance_score / 100;
     const anvisaScore = metrics.anvisa_compliance_score / 100;
     const cfmScore = metrics.cfm_compliance_score / 100;
-    const violationScore = metrics.data_retention_violations + metrics.access_control_violations
-        === 0
-      ? 1
-      : 0.5;
+    const violationScore =
+      metrics.data_retention_violations + metrics.access_control_violations ===
+      0
+        ? 1
+        : 0.5;
 
     return (
-      lgpdScore * 0.3
-      + anvisaScore * 0.3
-      + cfmScore * 0.3
-      + violationScore * 0.1
+      lgpdScore * 0.3 +
+      anvisaScore * 0.3 +
+      cfmScore * 0.3 +
+      violationScore * 0.1
     );
   }
 
   private calculateSystemPerformanceScore(
-    metrics: HealthcareMetrics['system_performance'],
+    metrics: HealthcareMetrics["system_performance"],
   ): number {
     const apiScore = Math.max(
       0,
-      (this.config.thresholds.system.max_api_response_time_ms
-        - metrics.api_response_time_ms)
-        / this.config.thresholds.system.max_api_response_time_ms,
+      (this.config.thresholds.system.max_api_response_time_ms -
+        metrics.api_response_time_ms) /
+        this.config.thresholds.system.max_api_response_time_ms,
     );
     const cacheScore = metrics.cache_hit_rate_percentage / 100;
     const memoryScore = Math.max(
       0,
-      (this.config.thresholds.system.max_memory_usage_percentage
-        - metrics.memory_usage_percentage)
-        / this.config.thresholds.system.max_memory_usage_percentage,
+      (this.config.thresholds.system.max_memory_usage_percentage -
+        metrics.memory_usage_percentage) /
+        this.config.thresholds.system.max_memory_usage_percentage,
     );
     const cpuScore = Math.max(
       0,
-      (this.config.thresholds.system.max_cpu_usage_percentage
-        - metrics.cpu_usage_percentage)
-        / this.config.thresholds.system.max_cpu_usage_percentage,
+      (this.config.thresholds.system.max_cpu_usage_percentage -
+        metrics.cpu_usage_percentage) /
+        this.config.thresholds.system.max_cpu_usage_percentage,
     );
 
     return (
@@ -1105,7 +1094,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private calculateBusinessScore(
-    metrics: HealthcareMetrics['business_metrics'],
+    metrics: HealthcareMetrics["business_metrics"],
   ): number {
     const roiScore = Math.min(
       1,
@@ -1114,52 +1103,52 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     const satisfactionScore = metrics.patient_satisfaction_score / 5; // Out of 5
     const outcomeScore = Math.min(
       1,
-      metrics.healthcare_outcome_improvement
-        / this.config.thresholds.business.min_outcome_improvement,
+      metrics.healthcare_outcome_improvement /
+        this.config.thresholds.business.min_outcome_improvement,
     );
     const noShowScore = Math.min(
       1,
-      metrics.no_show_reduction_percentage
-        / this.config.thresholds.business.min_no_show_reduction,
+      metrics.no_show_reduction_percentage /
+        this.config.thresholds.business.min_no_show_reduction,
     );
 
     return (
-      roiScore * 0.3
-      + satisfactionScore * 0.3
-      + outcomeScore * 0.2
-      + noShowScore * 0.2
+      roiScore * 0.3 +
+      satisfactionScore * 0.3 +
+      outcomeScore * 0.2 +
+      noShowScore * 0.2
     );
   }
 
   private determineSystemStatus(
     healthScore: number,
     activeAlerts: HealthAlert[],
-  ): DashboardData['system_status'] {
+  ): DashboardData["system_status"] {
     const criticalAlerts = activeAlerts.filter(
-      (a) => a.severity === 'critical',
+      (a) => a.severity === "critical",
     );
-    const highAlerts = activeAlerts.filter((a) => a.severity === 'high');
+    const highAlerts = activeAlerts.filter((a) => a.severity === "high");
 
     if (criticalAlerts.length > 0 || healthScore < 0.7) {
-      return 'critical';
+      return "critical";
     }
     if (highAlerts.length > 0 || healthScore < 0.8) {
-      return 'warning';
+      return "warning";
     }
     if (healthScore >= 0.95) {
-      return 'healthy';
+      return "healthy";
     }
-    return 'warning';
+    return "warning";
   }
 
-  private getSeverityWeight(severity: HealthAlert['severity']): number {
+  private getSeverityWeight(severity: HealthAlert["severity"]): number {
     const weights = { info: 0, low: 1, medium: 2, high: 3, critical: 4 };
     return weights[severity];
   }
 
   private estimateAffectedUsers(
-    category: HealthAlert['category'],
-    severity: HealthAlert['severity'],
+    category: HealthAlert["category"],
+    severity: HealthAlert["severity"],
   ): number {
     const baseCounts = {
       patient_safety: 1000,
@@ -1182,15 +1171,15 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private estimateResolutionTime(
-    severity: HealthAlert['severity'],
-    _category: HealthAlert['category'],
+    severity: HealthAlert["severity"],
+    _category: HealthAlert["category"],
   ): string {
     const resolutionTimes = {
-      critical: '15-30 minutes',
-      high: '1-2 hours',
-      medium: '4-8 hours',
-      low: '1-2 days',
-      info: '2-5 days',
+      critical: "15-30 minutes",
+      high: "1-2 hours",
+      medium: "4-8 hours",
+      low: "1-2 days",
+      info: "2-5 days",
     };
 
     return resolutionTimes[severity];
@@ -1199,28 +1188,28 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   // Notification Methods (placeholder implementations)
 
   private async sendEmailNotification(alert: HealthAlert): Promise<void> {
-    this.logger?.info('Email notification sent', {
+    this.logger?.info("Email notification sent", {
       alert_id: alert.id,
       recipients: this.config.notification_channels.email.recipients,
     });
   }
 
   private async sendSMSNotification(alert: HealthAlert): Promise<void> {
-    this.logger?.info('SMS notification sent', {
+    this.logger?.info("SMS notification sent", {
       alert_id: alert.id,
       recipients: this.config.notification_channels.sms.recipients,
     });
   }
 
   private async sendSlackNotification(alert: HealthAlert): Promise<void> {
-    this.logger?.info('Slack notification sent', {
+    this.logger?.info("Slack notification sent", {
       alert_id: alert.id,
       channel: this.config.notification_channels.slack.channel,
     });
   }
 
   private async sendWebhookNotification(alert: HealthAlert): Promise<void> {
-    this.logger?.info('Webhook notification sent', {
+    this.logger?.info("Webhook notification sent", {
       alert_id: alert.id,
       url: this.config.notification_channels.webhook.url,
     });
@@ -1244,7 +1233,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
         history.push({ timestamp, value: value as number });
 
         // Keep only recent data (based on retention period)
-        const cutoffTime = timestamp - this.config.metric_retention_days * 24 * 60 * 60 * 1000;
+        const cutoffTime =
+          timestamp - this.config.metric_retention_days * 24 * 60 * 60 * 1000;
         const filteredHistory = history.filter(
           (point) => point.timestamp > cutoffTime,
         );
@@ -1253,23 +1243,24 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     }
   }
 
-  private async generateTrendData(): Promise<DashboardData['trends']> {
-    const trends: DashboardData['trends']['last_24h'] = [];
+  private async generateTrendData(): Promise<DashboardData["trends"]> {
+    const trends: DashboardData["trends"]["last_24h"] = [];
     const last24h = Date.now() - 24 * 60 * 60 * 1000;
 
     // Get key metrics for trending
     const keyMetrics = [
-      'patient_safety.emergency_access_response_time_ms',
-      'ai_performance.ai_accuracy_percentage',
-      'system_performance.api_response_time_ms',
-      'compliance_status.lgpd_compliance_score',
-      'business_metrics.roi_monthly',
+      "patient_safety.emergency_access_response_time_ms",
+      "ai_performance.ai_accuracy_percentage",
+      "system_performance.api_response_time_ms",
+      "compliance_status.lgpd_compliance_score",
+      "business_metrics.roi_monthly",
     ];
 
     for (const metricKey of keyMetrics) {
-      const history = this.metricsHistory
-        .get(metricKey)
-        ?.filter((point) => point.timestamp > last24h) || [];
+      const history =
+        this.metricsHistory
+          .get(metricKey)
+          ?.filter((point) => point.timestamp > last24h) || [];
 
       if (history.length > 1) {
         const values = history.map((point) => ({
@@ -1279,15 +1270,14 @@ export class HealthcareMonitoringService extends EnhancedAIService {
 
         const firstValue = history[0].value;
         const lastValue = history.at(-1).value;
-        const trendPercentage = firstValue !== 0
-          ? ((lastValue - firstValue) / firstValue) * 100
-          : 0;
+        const trendPercentage =
+          firstValue !== 0 ? ((lastValue - firstValue) / firstValue) * 100 : 0;
 
-        let trendDirection: 'up' | 'down' | 'stable';
+        let trendDirection: "up" | "down" | "stable";
         if (Math.abs(trendPercentage) < 2) {
-          trendDirection = 'stable';
+          trendDirection = "stable";
         } else {
-          trendDirection = trendPercentage > 0 ? 'up' : 'down';
+          trendDirection = trendPercentage > 0 ? "up" : "down";
         }
 
         trends.push({
@@ -1304,73 +1294,80 @@ export class HealthcareMonitoringService extends EnhancedAIService {
 
   private async calculateSLAStatus(
     metrics: HealthcareMetrics,
-  ): Promise<DashboardData['sla_status']> {
+  ): Promise<DashboardData["sla_status"]> {
     // Calculate uptime based on system downtime
     const uptimePercentage = Math.max(
       0,
-      100
-        - (metrics.patient_safety.system_downtime_seconds / (24 * 60 * 60)) * 100,
+      100 -
+        (metrics.patient_safety.system_downtime_seconds / (24 * 60 * 60)) * 100,
     );
 
     return {
       uptime_percentage: Math.round(uptimePercentage * 100) / 100,
       availability_target: 99.95,
-      performance_target_met: metrics.system_performance.api_response_time_ms
-        <= this.config.thresholds.system.max_api_response_time_ms,
-      compliance_target_met: metrics.compliance_status.lgpd_compliance_score
-          >= this.config.thresholds.compliance.min_lgpd_score
-        && metrics.compliance_status.anvisa_compliance_score
-          >= this.config.thresholds.compliance.min_anvisa_score
-        && metrics.compliance_status.cfm_compliance_score
-          >= this.config.thresholds.compliance.min_cfm_score,
-      patient_safety_incidents: metrics.patient_safety.compliance_violations_count,
+      performance_target_met:
+        metrics.system_performance.api_response_time_ms <=
+        this.config.thresholds.system.max_api_response_time_ms,
+      compliance_target_met:
+        metrics.compliance_status.lgpd_compliance_score >=
+          this.config.thresholds.compliance.min_lgpd_score &&
+        metrics.compliance_status.anvisa_compliance_score >=
+          this.config.thresholds.compliance.min_anvisa_score &&
+        metrics.compliance_status.cfm_compliance_score >=
+          this.config.thresholds.compliance.min_cfm_score,
+      patient_safety_incidents:
+        metrics.patient_safety.compliance_violations_count,
     };
   }
 
   private async generateQuickActions(
     metrics: HealthcareMetrics,
     alerts: HealthAlert[],
-  ): Promise<DashboardData['quick_actions']> {
-    const actions: DashboardData['quick_actions'] = [];
+  ): Promise<DashboardData["quick_actions"]> {
+    const actions: DashboardData["quick_actions"] = [];
 
     // Add actions based on current metrics and alerts
     if (metrics.system_performance.memory_usage_percentage > 75) {
       actions.push({
-        action_id: 'optimize_memory',
-        title: 'Optimize Memory Usage',
-        description: 'Memory usage is high. Consider restarting services or clearing caches.',
-        severity: 'normal',
-        estimated_time: '10-15 minutes',
+        action_id: "optimize_memory",
+        title: "Optimize Memory Usage",
+        description:
+          "Memory usage is high. Consider restarting services or clearing caches.",
+        severity: "normal",
+        estimated_time: "10-15 minutes",
       });
     }
 
     if (metrics.ai_performance.error_rate_percentage > 1.5) {
       actions.push({
-        action_id: 'check_ai_models',
-        title: 'Check AI Model Health',
-        description: 'AI error rate is elevated. Review model performance and logs.',
-        severity: 'urgent',
-        estimated_time: '20-30 minutes',
+        action_id: "check_ai_models",
+        title: "Check AI Model Health",
+        description:
+          "AI error rate is elevated. Review model performance and logs.",
+        severity: "urgent",
+        estimated_time: "20-30 minutes",
       });
     }
 
-    if (alerts.some((a) => a.severity === 'critical')) {
+    if (alerts.some((a) => a.severity === "critical")) {
       actions.push({
-        action_id: 'address_critical_alerts',
-        title: 'Address Critical Alerts',
-        description: 'Critical alerts require immediate attention for patient safety.',
-        severity: 'urgent',
-        estimated_time: '5-15 minutes',
+        action_id: "address_critical_alerts",
+        title: "Address Critical Alerts",
+        description:
+          "Critical alerts require immediate attention for patient safety.",
+        severity: "urgent",
+        estimated_time: "5-15 minutes",
       });
     }
 
     if (metrics.compliance_status.data_retention_violations > 0) {
       actions.push({
-        action_id: 'fix_retention_policy',
-        title: 'Fix Data Retention Issues',
-        description: 'Data retention policy violations detected. Review and clean up old data.',
-        severity: 'normal',
-        estimated_time: '30-60 minutes',
+        action_id: "fix_retention_policy",
+        title: "Fix Data Retention Issues",
+        description:
+          "Data retention policy violations detected. Review and clean up old data.",
+        severity: "normal",
+        estimated_time: "30-60 minutes",
       });
     }
 
@@ -1390,7 +1387,8 @@ export class HealthcareMonitoringService extends EnhancedAIService {
   }
 
   private cleanupOldData(): void {
-    const cutoffTime = Date.now() - this.config.metric_retention_days * 24 * 60 * 60 * 1000;
+    const cutoffTime =
+      Date.now() - this.config.metric_retention_days * 24 * 60 * 60 * 1000;
 
     // Cleanup metrics history
     for (const [key, history] of this.metricsHistory) {
@@ -1400,7 +1398,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
       this.metricsHistory.set(key, filteredHistory);
     }
 
-    this.logger?.info('Old metrics data cleaned up', {
+    this.logger?.info("Old metrics data cleaned up", {
       retention_days: this.config.metric_retention_days,
       cutoff_time: new Date(cutoffTime).toISOString(),
     });
@@ -1408,7 +1406,7 @@ export class HealthcareMonitoringService extends EnhancedAIService {
 
   private broadcastToClients(data: DashboardData): void {
     // In production, implement WebSocket broadcasting to connected dashboard clients
-    this.logger?.debug('Broadcasting dashboard update to clients', {
+    this.logger?.debug("Broadcasting dashboard update to clients", {
       client_count: this.dashboardClients.size,
       system_status: data.system_status,
       active_alerts: data.active_alerts.length,
@@ -1430,6 +1428,6 @@ export class HealthcareMonitoringService extends EnhancedAIService {
     this.monitoringIntervals = [];
     this.dashboardClients.clear();
 
-    this.logger?.info('Healthcare Monitoring Service destroyed');
+    this.logger?.info("Healthcare Monitoring Service destroyed");
   }
 }

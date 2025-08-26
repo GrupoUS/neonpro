@@ -4,8 +4,8 @@
 
 import { createClient } from "@/app/utils/supabase/client";
 import type { AuthError, Session, User } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 
 // Types
 interface AuthContextType {
@@ -71,11 +71,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error,
         } = await supabase.auth.getSession();
 
-        if (error) {} else {
+        if (error) {
+        } else {
           setSession(session);
           setUser(session?.user ?? undefined);
         }
-      } catch {} finally {
+      } catch {
+      } finally {
         setLoading(false);
       }
     };

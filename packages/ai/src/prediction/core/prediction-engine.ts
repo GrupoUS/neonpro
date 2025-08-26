@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs';
+import * as tf from "@tensorflow/tfjs";
 import type {
   BotoxOptimization,
   DurationEstimation,
@@ -13,10 +13,10 @@ import type {
   SuccessProbability,
   TreatmentOutcomePrediction,
   TreatmentRequest,
-} from '../types';
-import { AestheticFeatureExtractor } from './feature-extractor';
-import { aiModelManager } from './model-manager';
-import { AestheticPostProcessor } from './post-processor';
+} from "../types";
+import { AestheticFeatureExtractor } from "./feature-extractor";
+import { aiModelManager } from "./model-manager";
+import { AestheticPostProcessor } from "./post-processor";
 
 /**
  * Core AI Prediction Engine for NeonPro Aesthetic Treatments
@@ -62,7 +62,7 @@ export class AestheticPredictionEngine {
 
     try {
       // Load the treatment outcome model
-      const model = await aiModelManager.loadModel('treatment-outcome');
+      const model = await aiModelManager.loadModel("treatment-outcome");
 
       // Extract and prepare features
       const features = await this.extractTreatmentFeatures(patient, treatment);
@@ -86,11 +86,11 @@ export class AestheticPredictionEngine {
       const processingTime = performance.now() - startTime;
 
       return {
-        modelType: 'treatment-outcome',
+        modelType: "treatment-outcome",
         confidence: processedResult.confidence,
         accuracy: 0.87, // Model's known accuracy
         timestamp: new Date(),
-        version: '2.1.0',
+        version: "2.1.0",
         inputs: {
           patientFeatures: features.slice(0, 15),
           treatmentFeatures: features.slice(15, 21),
@@ -100,7 +100,7 @@ export class AestheticPredictionEngine {
         outputs: processedResult,
         metadata: {
           processingTime,
-          modelVersion: '2.1.0',
+          modelVersion: "2.1.0",
           featureImportance: this.calculateFeatureImportance(features),
           recommendations: this.generateTreatmentRecommendations(
             processedResult,
@@ -123,7 +123,7 @@ export class AestheticPredictionEngine {
     const startTime = performance.now();
 
     try {
-      const model = await aiModelManager.loadModel('botox-optimization');
+      const model = await aiModelManager.loadModel("botox-optimization");
 
       // Extract Botox-specific features
       const features = await this.extractBotoxFeatures(
@@ -145,11 +145,11 @@ export class AestheticPredictionEngine {
       prediction.dispose();
 
       return {
-        modelType: 'botox-optimization',
+        modelType: "botox-optimization",
         confidence: result.confidence,
         accuracy: 0.88,
         timestamp: new Date(),
-        version: '1.1.0',
+        version: "1.1.0",
         inputs: {
           patientFeatures: features.slice(0, 12),
           treatmentFeatures: features.slice(12, 18),
@@ -159,7 +159,7 @@ export class AestheticPredictionEngine {
         outputs: result,
         metadata: {
           processingTime: performance.now() - startTime,
-          modelVersion: '1.1.0',
+          modelVersion: "1.1.0",
           recommendations: this.generateBotoxRecommendations(result, patient),
         },
       };
@@ -179,7 +179,7 @@ export class AestheticPredictionEngine {
     const startTime = performance.now();
 
     try {
-      const model = await aiModelManager.loadModel('filler-volume');
+      const model = await aiModelManager.loadModel("filler-volume");
 
       const features = await this.extractFillerFeatures(
         patient,
@@ -197,11 +197,11 @@ export class AestheticPredictionEngine {
       prediction.dispose();
 
       return {
-        modelType: 'filler-volume',
+        modelType: "filler-volume",
         confidence: result.confidence,
         accuracy: 0.86,
         timestamp: new Date(),
-        version: '1.0.2',
+        version: "1.0.2",
         inputs: {
           patientFeatures: features.slice(0, 14),
           treatmentFeatures: features.slice(14, 20),
@@ -211,7 +211,7 @@ export class AestheticPredictionEngine {
         outputs: result,
         metadata: {
           processingTime: performance.now() - startTime,
-          modelVersion: '1.0.2',
+          modelVersion: "1.0.2",
           recommendations: this.generateFillerRecommendations(result, patient),
         },
       };
@@ -231,7 +231,7 @@ export class AestheticPredictionEngine {
     const startTime = performance.now();
 
     try {
-      const model = await aiModelManager.loadModel('laser-settings');
+      const model = await aiModelManager.loadModel("laser-settings");
 
       const features = await this.extractLaserFeatures(
         patient,
@@ -249,11 +249,11 @@ export class AestheticPredictionEngine {
       prediction.dispose();
 
       return {
-        modelType: 'laser-settings',
+        modelType: "laser-settings",
         confidence: result.confidence,
         accuracy: 0.92,
         timestamp: new Date(),
-        version: '2.1.1',
+        version: "2.1.1",
         inputs: {
           patientFeatures: features.slice(0, 16),
           treatmentFeatures: features.slice(16, 22),
@@ -263,7 +263,7 @@ export class AestheticPredictionEngine {
         outputs: result,
         metadata: {
           processingTime: performance.now() - startTime,
-          modelVersion: '2.1.1',
+          modelVersion: "2.1.1",
           recommendations: this.generateLaserRecommendations(result, patient),
         },
       };
@@ -279,13 +279,13 @@ export class AestheticPredictionEngine {
 
     // Map all model types to the same extractor instance
     // In production, you might have specialized extractors
-    this.featureExtractors.set('treatment-outcome', extractor as any);
-    this.featureExtractors.set('duration-estimation', extractor as any);
-    this.featureExtractors.set('success-probability', extractor as any);
-    this.featureExtractors.set('risk-assessment', extractor as any);
-    this.featureExtractors.set('botox-optimization', extractor as any);
-    this.featureExtractors.set('filler-volume', extractor as any);
-    this.featureExtractors.set('laser-settings', extractor as any);
+    this.featureExtractors.set("treatment-outcome", extractor as any);
+    this.featureExtractors.set("duration-estimation", extractor as any);
+    this.featureExtractors.set("success-probability", extractor as any);
+    this.featureExtractors.set("risk-assessment", extractor as any);
+    this.featureExtractors.set("botox-optimization", extractor as any);
+    this.featureExtractors.set("filler-volume", extractor as any);
+    this.featureExtractors.set("laser-settings", extractor as any);
   }
 
   /**
@@ -295,13 +295,13 @@ export class AestheticPredictionEngine {
     const processor = new AestheticPostProcessor();
 
     // Map all model types to the same processor instance
-    this.postProcessors.set('treatment-outcome', processor as any);
-    this.postProcessors.set('duration-estimation', processor as any);
-    this.postProcessors.set('success-probability', processor as any);
-    this.postProcessors.set('risk-assessment', processor as any);
-    this.postProcessors.set('botox-optimization', processor as any);
-    this.postProcessors.set('filler-volume', processor as any);
-    this.postProcessors.set('laser-settings', processor as any);
+    this.postProcessors.set("treatment-outcome", processor as any);
+    this.postProcessors.set("duration-estimation", processor as any);
+    this.postProcessors.set("success-probability", processor as any);
+    this.postProcessors.set("risk-assessment", processor as any);
+    this.postProcessors.set("botox-optimization", processor as any);
+    this.postProcessors.set("filler-volume", processor as any);
+    this.postProcessors.set("laser-settings", processor as any);
   }
 
   /**
@@ -311,9 +311,9 @@ export class AestheticPredictionEngine {
     patient: PatientProfile,
     treatment: TreatmentRequest,
   ): Promise<number[]> {
-    const extractor = this.featureExtractors.get('treatment-outcome');
+    const extractor = this.featureExtractors.get("treatment-outcome");
     if (!extractor) {
-      throw new Error('Feature extractor not initialized');
+      throw new Error("Feature extractor not initialized");
     }
     return extractor.extractTreatmentFeatures(patient, treatment);
   }
@@ -326,9 +326,9 @@ export class AestheticPredictionEngine {
     targetAreas: string[],
     desiredIntensity: number,
   ): Promise<number[]> {
-    const extractor = this.featureExtractors.get('botox-optimization');
+    const extractor = this.featureExtractors.get("botox-optimization");
     if (!extractor) {
-      throw new Error('Botox feature extractor not initialized');
+      throw new Error("Botox feature extractor not initialized");
     }
     return extractor.extractBotoxFeatures(
       patient,
@@ -345,9 +345,9 @@ export class AestheticPredictionEngine {
     targetAreas: string[],
     volumeGoals: Record<string, number>,
   ): Promise<number[]> {
-    const extractor = this.featureExtractors.get('filler-volume');
+    const extractor = this.featureExtractors.get("filler-volume");
     if (!extractor) {
-      throw new Error('Filler feature extractor not initialized');
+      throw new Error("Filler feature extractor not initialized");
     }
     return extractor.extractFillerFeatures(patient, targetAreas, volumeGoals);
   }
@@ -360,9 +360,9 @@ export class AestheticPredictionEngine {
     laserType: string,
     treatmentGoal: string,
   ): Promise<number[]> {
-    const extractor = this.featureExtractors.get('laser-settings');
+    const extractor = this.featureExtractors.get("laser-settings");
     if (!extractor) {
-      throw new Error('Laser feature extractor not initialized');
+      throw new Error("Laser feature extractor not initialized");
     }
     return extractor.extractLaserFeatures(patient, laserType, treatmentGoal);
   }
@@ -374,10 +374,10 @@ export class AestheticPredictionEngine {
     rawOutput: Float32Array,
     patient: PatientProfile,
     treatment: TreatmentRequest,
-  ): TreatmentOutcomePrediction['outputs'] {
-    const processor = this.postProcessors.get('treatment-outcome');
+  ): TreatmentOutcomePrediction["outputs"] {
+    const processor = this.postProcessors.get("treatment-outcome");
     if (!processor) {
-      throw new Error('Post-processor not initialized');
+      throw new Error("Post-processor not initialized");
     }
     return processor.postProcessTreatmentOutcome(rawOutput, patient, treatment);
   }
@@ -388,10 +388,10 @@ export class AestheticPredictionEngine {
   private postProcessBotoxOptimization(
     rawOutput: Float32Array,
     targetAreas: string[],
-  ): BotoxOptimization['outputs'] {
-    const processor = this.postProcessors.get('botox-optimization');
+  ): BotoxOptimization["outputs"] {
+    const processor = this.postProcessors.get("botox-optimization");
     if (!processor) {
-      throw new Error('Botox post-processor not initialized');
+      throw new Error("Botox post-processor not initialized");
     }
     return processor.postProcessBotoxOptimization(rawOutput, targetAreas);
   }
@@ -402,10 +402,10 @@ export class AestheticPredictionEngine {
   private postProcessFillerVolume(
     rawOutput: Float32Array,
     targetAreas: string[],
-  ): FillerVolumePrediction['outputs'] {
-    const processor = this.postProcessors.get('filler-volume');
+  ): FillerVolumePrediction["outputs"] {
+    const processor = this.postProcessors.get("filler-volume");
     if (!processor) {
-      throw new Error('Filler post-processor not initialized');
+      throw new Error("Filler post-processor not initialized");
     }
     return processor.postProcessFillerVolume(rawOutput, targetAreas);
   }
@@ -415,10 +415,10 @@ export class AestheticPredictionEngine {
    */
   private postProcessLaserSettings(
     rawOutput: Float32Array,
-  ): LaserSettingsPrediction['outputs'] {
-    const processor = this.postProcessors.get('laser-settings');
+  ): LaserSettingsPrediction["outputs"] {
+    const processor = this.postProcessors.get("laser-settings");
     if (!processor) {
-      throw new Error('Laser post-processor not initialized');
+      throw new Error("Laser post-processor not initialized");
     }
     return processor.postProcessLaserSettings(rawOutput);
   }
@@ -427,9 +427,9 @@ export class AestheticPredictionEngine {
    * Calculate feature importance for interpretability
    */
   private calculateFeatureImportance(features: number[]): FeatureImportance[] {
-    const processor = this.postProcessors.get('treatment-outcome');
+    const processor = this.postProcessors.get("treatment-outcome");
     if (!processor) {
-      throw new Error('Post-processor not initialized');
+      throw new Error("Post-processor not initialized");
     }
     return processor.calculateFeatureImportance(features);
   }
@@ -441,9 +441,9 @@ export class AestheticPredictionEngine {
     result: any,
     patient: PatientProfile,
   ): string[] {
-    const processor = this.postProcessors.get('treatment-outcome');
+    const processor = this.postProcessors.get("treatment-outcome");
     if (!processor) {
-      throw new Error('Post-processor not initialized');
+      throw new Error("Post-processor not initialized");
     }
     return processor.generateTreatmentRecommendations(result, patient);
   }
@@ -452,12 +452,12 @@ export class AestheticPredictionEngine {
    * Generate Botox-specific recommendations
    */
   private generateBotoxRecommendations(
-    result: BotoxOptimization['outputs'],
+    result: BotoxOptimization["outputs"],
     patient: PatientProfile,
   ): string[] {
-    const processor = this.postProcessors.get('botox-optimization');
+    const processor = this.postProcessors.get("botox-optimization");
     if (!processor) {
-      throw new Error('Botox post-processor not initialized');
+      throw new Error("Botox post-processor not initialized");
     }
     return processor.generateBotoxRecommendations(result, patient);
   }
@@ -466,12 +466,12 @@ export class AestheticPredictionEngine {
    * Generate filler-specific recommendations
    */
   private generateFillerRecommendations(
-    result: FillerVolumePrediction['outputs'],
+    result: FillerVolumePrediction["outputs"],
     patient: PatientProfile,
   ): string[] {
-    const processor = this.postProcessors.get('filler-volume');
+    const processor = this.postProcessors.get("filler-volume");
     if (!processor) {
-      throw new Error('Filler post-processor not initialized');
+      throw new Error("Filler post-processor not initialized");
     }
     return processor.generateFillerRecommendations(result, patient);
   }
@@ -480,12 +480,12 @@ export class AestheticPredictionEngine {
    * Generate laser-specific recommendations
    */
   private generateLaserRecommendations(
-    result: LaserSettingsPrediction['outputs'],
+    result: LaserSettingsPrediction["outputs"],
     patient: PatientProfile,
   ): string[] {
-    const processor = this.postProcessors.get('laser-settings');
+    const processor = this.postProcessors.get("laser-settings");
     if (!processor) {
-      throw new Error('Laser post-processor not initialized');
+      throw new Error("Laser post-processor not initialized");
     }
     return processor.generateLaserRecommendations(result, patient);
   }
@@ -494,22 +494,22 @@ export class AestheticPredictionEngine {
    * Get feature names for interpretability
    */
   private getTreatmentFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get('treatment-outcome') as any;
+    const extractor = this.featureExtractors.get("treatment-outcome") as any;
     return extractor?.getTreatmentFeatureNames() || [];
   }
 
   private getBotoxFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get('botox-optimization') as any;
+    const extractor = this.featureExtractors.get("botox-optimization") as any;
     return extractor?.getBotoxFeatureNames() || [];
   }
 
   private getFillerFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get('filler-volume') as any;
+    const extractor = this.featureExtractors.get("filler-volume") as any;
     return extractor?.getFillerFeatureNames() || [];
   }
 
   private getLaserFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get('laser-settings') as any;
+    const extractor = this.featureExtractors.get("laser-settings") as any;
     return extractor?.getLaserFeatureNames() || [];
   }
 
@@ -523,7 +523,7 @@ export class AestheticPredictionEngine {
     const startTime = performance.now();
 
     try {
-      const model = await aiModelManager.loadModel('risk-assessment');
+      const model = await aiModelManager.loadModel("risk-assessment");
 
       // Extract risk-specific features
       const features = await this.extractRiskAssessmentFeatures(
@@ -545,11 +545,11 @@ export class AestheticPredictionEngine {
       prediction.dispose();
 
       return {
-        modelType: 'risk-assessment',
+        modelType: "risk-assessment",
         confidence: result.confidence,
         accuracy: 0.93,
         timestamp: new Date(),
-        version: '2.2.0',
+        version: "2.2.0",
         inputs: {
           patientFeatures: features.slice(0, 18),
           treatmentFeatures: features.slice(18, 24),
@@ -559,7 +559,7 @@ export class AestheticPredictionEngine {
         outputs: result,
         metadata: {
           processingTime: performance.now() - startTime,
-          modelVersion: '2.2.0',
+          modelVersion: "2.2.0",
           recommendations: this.generateRiskRecommendations(result, patient),
         },
       };
@@ -578,7 +578,7 @@ export class AestheticPredictionEngine {
     const startTime = performance.now();
 
     try {
-      const model = await aiModelManager.loadModel('duration-estimation');
+      const model = await aiModelManager.loadModel("duration-estimation");
 
       const features = await this.extractDurationFeatures(patient, treatment);
       const inputTensor = tf.tensor2d([features]);
@@ -596,11 +596,11 @@ export class AestheticPredictionEngine {
       prediction.dispose();
 
       return {
-        modelType: 'duration-estimation',
+        modelType: "duration-estimation",
         confidence: result.confidence,
         accuracy: 0.91,
         timestamp: new Date(),
-        version: '1.3.0',
+        version: "1.3.0",
         inputs: {
           patientFeatures: features.slice(0, 12),
           treatmentFeatures: features.slice(12, 16),
@@ -610,7 +610,7 @@ export class AestheticPredictionEngine {
         outputs: result,
         metadata: {
           processingTime: performance.now() - startTime,
-          modelVersion: '1.3.0',
+          modelVersion: "1.3.0",
           recommendations: this.generateDurationRecommendations(
             result,
             patient,
@@ -632,7 +632,7 @@ export class AestheticPredictionEngine {
     const startTime = performance.now();
 
     try {
-      const model = await aiModelManager.loadModel('success-probability');
+      const model = await aiModelManager.loadModel("success-probability");
 
       const features = await this.extractSuccessFeatures(patient, treatment);
       const inputTensor = tf.tensor2d([features]);
@@ -650,11 +650,11 @@ export class AestheticPredictionEngine {
       prediction.dispose();
 
       return {
-        modelType: 'success-probability',
+        modelType: "success-probability",
         confidence: result.confidence,
         accuracy: 0.89,
         timestamp: new Date(),
-        version: '3.0.1',
+        version: "3.0.1",
         inputs: {
           patientFeatures: features.slice(0, 20),
           treatmentFeatures: features.slice(20, 28),
@@ -664,7 +664,7 @@ export class AestheticPredictionEngine {
         outputs: result,
         metadata: {
           processingTime: performance.now() - startTime,
-          modelVersion: '3.0.1',
+          modelVersion: "3.0.1",
           recommendations: this.generateSuccessRecommendations(result, patient),
         },
       };
@@ -704,7 +704,7 @@ export class AestheticPredictionEngine {
    * Health check for prediction engine
    */
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     details: Record<string, any>;
   }> {
     const modelHealth = await aiModelManager.healthCheck();
@@ -717,13 +717,13 @@ export class AestheticPredictionEngine {
       ...modelHealth.details,
     };
 
-    let status: 'healthy' | 'degraded' | 'unhealthy';
-    if (this.isInitialized && modelHealth.status === 'healthy') {
-      status = 'healthy';
-    } else if (this.isInitialized && modelHealth.status === 'degraded') {
-      status = 'degraded';
+    let status: "healthy" | "degraded" | "unhealthy";
+    if (this.isInitialized && modelHealth.status === "healthy") {
+      status = "healthy";
+    } else if (this.isInitialized && modelHealth.status === "degraded") {
+      status = "degraded";
     } else {
-      status = 'unhealthy';
+      status = "unhealthy";
     }
 
     return { status, details };
@@ -766,22 +766,22 @@ export class AestheticPredictionEngine {
     rawOutput: Float32Array,
     patient: PatientProfile,
     treatment: TreatmentRequest,
-  ): RiskAssessment['outputs'] {
+  ): RiskAssessment["outputs"] {
     // Raw outputs: [overall_risk, specific_risk_1, specific_risk_2, ...]
     const overallRiskScore = Math.max(0, Math.min(1, rawOutput[0]));
 
     // Convert risk score to risk level
-    let overallRisk: 'very-low' | 'low' | 'moderate' | 'high' | 'very-high';
+    let overallRisk: "very-low" | "low" | "moderate" | "high" | "very-high";
     if (overallRiskScore < 0.2) {
-      overallRisk = 'very-low';
+      overallRisk = "very-low";
     } else if (overallRiskScore < 0.4) {
-      overallRisk = 'low';
+      overallRisk = "low";
     } else if (overallRiskScore < 0.6) {
-      overallRisk = 'moderate';
+      overallRisk = "moderate";
     } else if (overallRiskScore < 0.8) {
-      overallRisk = 'high';
+      overallRisk = "high";
     } else {
-      overallRisk = 'very-high';
+      overallRisk = "very-high";
     }
 
     const confidence = Math.max(0, Math.min(1, rawOutput[1] || 0.8));
@@ -814,7 +814,7 @@ export class AestheticPredictionEngine {
     rawOutput: Float32Array,
     patient: PatientProfile,
     treatment: TreatmentRequest,
-  ): DurationEstimation['outputs'] {
+  ): DurationEstimation["outputs"] {
     // Raw outputs: [session_duration_hours, recovery_days]
     const sessionDuration = Math.max(0.25, Math.min(8, rawOutput[0] * 4)) * 60; // Convert to minutes
     const recoveryTime = Math.max(0, Math.min(30, rawOutput[1] * 14)); // Days
@@ -839,7 +839,7 @@ export class AestheticPredictionEngine {
     rawOutput: Float32Array,
     patient: PatientProfile,
     treatment: TreatmentRequest,
-  ): SuccessProbability['outputs'] {
+  ): SuccessProbability["outputs"] {
     // Raw outputs: [success_probability, confidence, risk_factor_1, risk_factor_2, ...]
     const successProbability = Math.max(0, Math.min(1, rawOutput[0]));
     const confidence = Math.max(0, Math.min(1, rawOutput[1]));
@@ -870,57 +870,57 @@ export class AestheticPredictionEngine {
     riskOutputs: Float32Array,
   ): {
     type:
-      | 'allergic-reaction'
-      | 'infection'
-      | 'asymmetry'
-      | 'overcorrection'
-      | 'undercorrection'
-      | 'bruising'
-      | 'swelling'
-      | 'nerve-damage'
-      | 'scarring'
-      | 'pigmentation-changes';
+      | "allergic-reaction"
+      | "infection"
+      | "asymmetry"
+      | "overcorrection"
+      | "undercorrection"
+      | "bruising"
+      | "swelling"
+      | "nerve-damage"
+      | "scarring"
+      | "pigmentation-changes";
     probability: number;
-    severity: 'minor' | 'moderate' | 'major' | 'severe';
+    severity: "minor" | "moderate" | "major" | "severe";
     mitigation: string[];
   }[] {
     const riskTypes: (
-      | 'allergic-reaction'
-      | 'infection'
-      | 'asymmetry'
-      | 'overcorrection'
-      | 'undercorrection'
-      | 'bruising'
-      | 'swelling'
-      | 'nerve-damage'
-      | 'scarring'
-      | 'pigmentation-changes'
+      | "allergic-reaction"
+      | "infection"
+      | "asymmetry"
+      | "overcorrection"
+      | "undercorrection"
+      | "bruising"
+      | "swelling"
+      | "nerve-damage"
+      | "scarring"
+      | "pigmentation-changes"
     )[] = [
-      'allergic-reaction',
-      'infection',
-      'asymmetry',
-      'overcorrection',
-      'undercorrection',
-      'bruising',
-      'swelling',
-      'nerve-damage',
-      'scarring',
-      'pigmentation-changes',
+      "allergic-reaction",
+      "infection",
+      "asymmetry",
+      "overcorrection",
+      "undercorrection",
+      "bruising",
+      "swelling",
+      "nerve-damage",
+      "scarring",
+      "pigmentation-changes",
     ];
 
     return riskTypes
       .map((type, index) => {
         const probability = Math.max(0, Math.min(1, riskOutputs[index] || 0.1));
 
-        let severity: 'minor' | 'moderate' | 'major' | 'severe';
+        let severity: "minor" | "moderate" | "major" | "severe";
         if (probability < 0.2) {
-          severity = 'minor';
+          severity = "minor";
         } else if (probability < 0.5) {
-          severity = 'moderate';
+          severity = "moderate";
         } else if (probability < 0.8) {
-          severity = 'major';
+          severity = "major";
         } else {
-          severity = 'severe';
+          severity = "severe";
         }
 
         const mitigation = this.getRiskMitigation(type, patient, treatment);
@@ -935,13 +935,13 @@ export class AestheticPredictionEngine {
     _treatment: TreatmentRequest,
   ): {
     condition: string;
-    severity: 'relative' | 'absolute';
+    severity: "relative" | "absolute";
     reason: string;
     alternatives: string[];
   }[] {
     const contraindications: {
       condition: string;
-      severity: 'relative' | 'absolute';
+      severity: "relative" | "absolute";
       reason: string;
       alternatives: string[];
     }[] = [];
@@ -949,11 +949,11 @@ export class AestheticPredictionEngine {
     // Pregnancy contraindications
     if (patient.medicalHistory.pregnancyStatus) {
       contraindications.push({
-        condition: 'Pregnancy',
-        severity: 'absolute',
-        reason: 'Safety not established during pregnancy',
+        condition: "Pregnancy",
+        severity: "absolute",
+        reason: "Safety not established during pregnancy",
         alternatives: [
-          'Postpone treatment until after pregnancy and breastfeeding',
+          "Postpone treatment until after pregnancy and breastfeeding",
         ],
       });
     }
@@ -961,12 +961,12 @@ export class AestheticPredictionEngine {
     // Blood thinner considerations
     if (patient.medicalHistory.bloodThinnersUse) {
       contraindications.push({
-        condition: 'Anticoagulant use',
-        severity: 'relative',
-        reason: 'Increased bleeding and bruising risk',
+        condition: "Anticoagulant use",
+        severity: "relative",
+        reason: "Increased bleeding and bruising risk",
         alternatives: [
-          'Coordinate with prescribing physician',
-          'Consider timing with medication',
+          "Coordinate with prescribing physician",
+          "Consider timing with medication",
         ],
       });
     }
@@ -974,13 +974,13 @@ export class AestheticPredictionEngine {
     // Autoimmune disease considerations
     if (patient.medicalHistory.autoimmuneDiseases.length > 0) {
       contraindications.push({
-        condition: 'Autoimmune conditions',
-        severity: 'relative',
-        reason: 'Altered healing response and immune reaction risk',
+        condition: "Autoimmune conditions",
+        severity: "relative",
+        reason: "Altered healing response and immune reaction risk",
         alternatives: [
-          'Conservative approach',
-          'Extended monitoring',
-          'Specialist consultation',
+          "Conservative approach",
+          "Extended monitoring",
+          "Specialist consultation",
         ],
       });
     }
@@ -994,23 +994,23 @@ export class AestheticPredictionEngine {
   ): string[] {
     const recommendations: string[] = [];
 
-    if (overallRisk === 'high' || overallRisk === 'very-high') {
+    if (overallRisk === "high" || overallRisk === "very-high") {
       recommendations.push(
-        'Consider postponing treatment until risk factors are addressed',
+        "Consider postponing treatment until risk factors are addressed",
       );
-      recommendations.push('Require specialist consultation before proceeding');
+      recommendations.push("Require specialist consultation before proceeding");
     }
 
-    if (specificRisks.some((r) => r.type === 'infection')) {
-      recommendations.push('Implement strict sterile technique');
-      recommendations.push('Consider prophylactic antibiotics');
+    if (specificRisks.some((r) => r.type === "infection")) {
+      recommendations.push("Implement strict sterile technique");
+      recommendations.push("Consider prophylactic antibiotics");
     }
 
-    if (specificRisks.some((r) => r.type === 'bruising')) {
+    if (specificRisks.some((r) => r.type === "bruising")) {
       recommendations.push(
-        'Discontinue blood thinners if medically appropriate',
+        "Discontinue blood thinners if medically appropriate",
       );
-      recommendations.push('Consider arnica supplementation');
+      recommendations.push("Consider arnica supplementation");
     }
 
     return recommendations;
@@ -1035,27 +1035,27 @@ export class AestheticPredictionEngine {
     // Age factor
     if (patient.age > 65) {
       factors.push({
-        factor: 'Advanced age',
+        factor: "Advanced age",
         impact: 2, // +2 days recovery
-        reasoning: 'Slower healing response in older patients',
+        reasoning: "Slower healing response in older patients",
       });
     }
 
     // Smoking factor
     if (patient.lifestyle.smoking) {
       factors.push({
-        factor: 'Smoking',
+        factor: "Smoking",
         impact: 3, // +3 days recovery
-        reasoning: 'Impaired circulation and healing',
+        reasoning: "Impaired circulation and healing",
       });
     }
 
     // Treatment complexity
     if (treatment.targetAreas.length > 3) {
       factors.push({
-        factor: 'Multiple treatment areas',
+        factor: "Multiple treatment areas",
         impact: 15, // +15 minutes session
-        reasoning: 'Additional time required for multiple areas',
+        reasoning: "Additional time required for multiple areas",
       });
     }
 
@@ -1082,9 +1082,9 @@ export class AestheticPredictionEngine {
     // Age as non-modifiable risk factor
     if (patient.age > 60) {
       factors.push({
-        factor: 'Advanced age',
+        factor: "Advanced age",
         impact: 0.8, // 20% reduction in success probability
-        reasoning: 'Decreased skin elasticity and healing capacity',
+        reasoning: "Decreased skin elasticity and healing capacity",
         modifiable: false,
       });
     }
@@ -1092,19 +1092,19 @@ export class AestheticPredictionEngine {
     // Smoking as modifiable risk factor
     if (patient.lifestyle.smoking) {
       factors.push({
-        factor: 'Tobacco use',
+        factor: "Tobacco use",
         impact: 0.7, // 30% reduction in success probability
-        reasoning: 'Impaired circulation and collagen synthesis',
+        reasoning: "Impaired circulation and collagen synthesis",
         modifiable: true,
       });
     }
 
     // Unrealistic expectations
-    if (treatment.goals.expectations === 'dramatic') {
+    if (treatment.goals.expectations === "dramatic") {
       factors.push({
-        factor: 'High expectations',
+        factor: "High expectations",
         impact: 0.85, // 15% reduction in success probability
-        reasoning: 'Dramatic results may not be achievable safely',
+        reasoning: "Dramatic results may not be achievable safely",
         modifiable: true,
       });
     }
@@ -1119,20 +1119,20 @@ export class AestheticPredictionEngine {
     const recommendations: string[] = [];
 
     if (successProbability < 0.7) {
-      recommendations.push('Consider alternative treatment approaches');
-      recommendations.push('Discuss realistic expectations with patient');
+      recommendations.push("Consider alternative treatment approaches");
+      recommendations.push("Discuss realistic expectations with patient");
     }
 
     // Address modifiable risk factors
     const modifiableFactors = riskFactors.filter((f) => f.modifiable);
-    if (modifiableFactors.some((f) => f.factor.includes('Tobacco'))) {
+    if (modifiableFactors.some((f) => f.factor.includes("Tobacco"))) {
       recommendations.push(
-        'Smoking cessation program recommended before treatment',
+        "Smoking cessation program recommended before treatment",
       );
     }
 
-    if (modifiableFactors.some((f) => f.factor.includes('expectations'))) {
-      recommendations.push('Comprehensive consultation to align expectations');
+    if (modifiableFactors.some((f) => f.factor.includes("expectations"))) {
+      recommendations.push("Comprehensive consultation to align expectations");
     }
 
     return recommendations;
@@ -1144,29 +1144,29 @@ export class AestheticPredictionEngine {
     _treatment: TreatmentRequest,
   ): string[] {
     const mitigationMap: Record<string, string[]> = {
-      'allergic-reaction': [
-        'Patch test if history of allergies',
-        'Have emergency medications available',
-        'Start with smaller doses',
+      "allergic-reaction": [
+        "Patch test if history of allergies",
+        "Have emergency medications available",
+        "Start with smaller doses",
       ],
       infection: [
-        'Strict sterile technique',
-        'Proper post-treatment care instructions',
-        'Monitor for signs of infection',
+        "Strict sterile technique",
+        "Proper post-treatment care instructions",
+        "Monitor for signs of infection",
       ],
       bruising: [
-        'Avoid blood thinners when possible',
-        'Ice application post-treatment',
-        'Arnica supplementation',
+        "Avoid blood thinners when possible",
+        "Ice application post-treatment",
+        "Arnica supplementation",
       ],
       asymmetry: [
-        'Conservative initial treatment',
-        'Detailed anatomical mapping',
-        'Follow-up assessment protocol',
+        "Conservative initial treatment",
+        "Detailed anatomical mapping",
+        "Follow-up assessment protocol",
       ],
     };
 
-    return mitigationMap[riskType] || ['Standard monitoring and care'];
+    return mitigationMap[riskType] || ["Standard monitoring and care"];
   }
 
   // ==================== FEATURE NAME METHODS ====================
@@ -1201,13 +1201,13 @@ export class AestheticPredictionEngine {
     if (result.sessionDuration > 180) {
       // > 3 hours
       recommendations.push(
-        'Consider breaking treatment into multiple sessions',
+        "Consider breaking treatment into multiple sessions",
       );
     }
 
     if (result.recoveryTime > 7) {
-      recommendations.push('Plan for extended downtime');
-      recommendations.push('Consider timing around work/social commitments');
+      recommendations.push("Plan for extended downtime");
+      recommendations.push("Consider timing around work/social commitments");
     }
 
     return recommendations;

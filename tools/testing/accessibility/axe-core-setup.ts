@@ -1,7 +1,10 @@
 // tools/testing/accessibility/axe-core-setup.ts
-import { configureAxe, getViolations } from 'jest-axe';
-import type { Result } from 'jest-axe';
-import { HEALTHCARE_A11Y_SCENARIOS, WCAG_AA_CONFIG } from './accessibility-audit-config';
+import { configureAxe, getViolations } from "jest-axe";
+import type { Result } from "jest-axe";
+import {
+  HEALTHCARE_A11Y_SCENARIOS,
+  WCAG_AA_CONFIG,
+} from "./accessibility-audit-config";
 
 /**
  * NEONPRO HEALTHCARE - AXE-CORE TEST SETUP
@@ -47,10 +50,10 @@ export class HealthcareAccessibilityTester {
 
       // Summary
       score: this.calculateAccessibilityScore(results),
-      criticalIssues: violations.filter((v) => v.impact === 'critical'),
-      seriousIssues: violations.filter((v) => v.impact === 'serious'),
-      moderateIssues: violations.filter((v) => v.impact === 'moderate'),
-      minorIssues: violations.filter((v) => v.impact === 'minor'),
+      criticalIssues: violations.filter((v) => v.impact === "critical"),
+      seriousIssues: violations.filter((v) => v.impact === "serious"),
+      moderateIssues: violations.filter((v) => v.impact === "moderate"),
+      minorIssues: violations.filter((v) => v.impact === "minor"),
     };
 
     return healthcareResult;
@@ -101,8 +104,8 @@ export class HealthcareAccessibilityTester {
       violation.nodes.forEach((node) => {
         const element = node.element;
         if (
-          element?.hasAttribute('data-lgpd')
-          || element?.hasAttribute('data-sensitive')
+          element?.hasAttribute("data-lgpd") ||
+          element?.hasAttribute("data-sensitive")
         ) {
           issues.push(
             `LGPD-protected element has accessibility violation: ${violation.description}`,
@@ -132,9 +135,9 @@ export class HealthcareAccessibilityTester {
       violation.nodes.forEach((node) => {
         const element = node.element;
         if (
-          element?.hasAttribute('data-emergency')
-          || (element?.hasAttribute('data-priority')
-            && element.getAttribute('data-priority') === 'critical')
+          element?.hasAttribute("data-emergency") ||
+          (element?.hasAttribute("data-priority") &&
+            element.getAttribute("data-priority") === "critical")
         ) {
           emergencyElementsCount++;
           issues.push(
@@ -157,9 +160,10 @@ export class HealthcareAccessibilityTester {
    * Calculate overall accessibility score (0-100)
    */
   private calculateAccessibilityScore(results: Result): number {
-    const totalRules = results.passes.length
-      + results.violations.length
-      + results.incomplete.length;
+    const totalRules =
+      results.passes.length +
+      results.violations.length +
+      results.incomplete.length;
     if (totalRules === 0) {
       return 100;
     }
@@ -167,16 +171,16 @@ export class HealthcareAccessibilityTester {
     const _passedRules = results.passes.length;
     const violationWeight = results.violations.reduce((weight, violation) => {
       switch (violation.impact) {
-        case 'critical': {
+        case "critical": {
           return weight + 4;
         }
-        case 'serious': {
+        case "serious": {
           return weight + 3;
         }
-        case 'moderate': {
+        case "moderate": {
           return weight + 2;
         }
-        case 'minor': {
+        case "minor": {
           return weight + 1;
         }
         default: {
@@ -200,17 +204,17 @@ export class HealthcareAccessibilityTester {
   ): boolean {
     // Implementation depends on specific requirement
     switch (requirement) {
-      case 'colorContrast': {
-        return results.violations.some((v) => v.id === 'color-contrast');
+      case "colorContrast": {
+        return results.violations.some((v) => v.id === "color-contrast");
       }
-      case 'focusManagement': {
-        return results.violations.some((v) => v.id.includes('focus'));
+      case "focusManagement": {
+        return results.violations.some((v) => v.id.includes("focus"));
       }
-      case 'screenReaderSupport': {
-        return results.violations.some((v) => v.tags.includes('screen-reader'));
+      case "screenReaderSupport": {
+        return results.violations.some((v) => v.tags.includes("screen-reader"));
       }
-      case 'keyboardNavigation': {
-        return results.violations.some((v) => v.tags.includes('keyboard'));
+      case "keyboardNavigation": {
+        return results.violations.some((v) => v.tags.includes("keyboard"));
       }
       default: {
         return false;
@@ -221,14 +225,14 @@ export class HealthcareAccessibilityTester {
   private countLGPDElements(_results: Result): number {
     // Count elements with LGPD attributes
     const allElements = document.querySelectorAll(
-      '[data-lgpd], [data-sensitive]',
+      "[data-lgpd], [data-sensitive]",
     );
     return allElements.length;
   }
 
   private checkMultiModalSupport(_results: Result): boolean {
     // Check for visual, audio, and haptic feedback support
-    const hasAriaLive = document.querySelector('[aria-live]') !== null;
+    const hasAriaLive = document.querySelector("[aria-live]") !== null;
     const hasRoleAlert = document.querySelector('[role="alert"]') !== null;
     return hasAriaLive && hasRoleAlert;
   }
@@ -237,8 +241,8 @@ export class HealthcareAccessibilityTester {
     // Check if critical elements meet enhanced contrast ratio
     return !results.violations.some(
       (v) =>
-        v.id === 'color-contrast'
-        && v.nodes.some((node) => node.element?.hasAttribute('data-emergency')),
+        v.id === "color-contrast" &&
+        v.nodes.some((node) => node.element?.hasAttribute("data-emergency")),
     );
   }
 }
@@ -254,7 +258,7 @@ export const healthcareA11yTests = {
     container: HTMLElement,
   ): Promise<HealthcareAccessibilityResult> {
     const tester = new HealthcareAccessibilityTester();
-    return await tester.auditComponent(container, 'emergency');
+    return await tester.auditComponent(container, "emergency");
   },
 
   /**
@@ -264,7 +268,7 @@ export const healthcareA11yTests = {
     container: HTMLElement,
   ): Promise<HealthcareAccessibilityResult> {
     const tester = new HealthcareAccessibilityTester();
-    return await tester.auditComponent(container, 'patientData');
+    return await tester.auditComponent(container, "patientData");
   },
 
   /**
@@ -274,7 +278,7 @@ export const healthcareA11yTests = {
     container: HTMLElement,
   ): Promise<HealthcareAccessibilityResult> {
     const tester = new HealthcareAccessibilityTester();
-    return await tester.auditComponent(container, 'forms');
+    return await tester.auditComponent(container, "forms");
   },
 
   /**
@@ -284,7 +288,7 @@ export const healthcareA11yTests = {
     container: HTMLElement,
   ): Promise<HealthcareAccessibilityResult> {
     const tester = new HealthcareAccessibilityTester();
-    return await tester.auditComponent(container, 'navigation');
+    return await tester.auditComponent(container, "navigation");
   },
 
   /**
@@ -294,7 +298,7 @@ export const healthcareA11yTests = {
     container: HTMLElement,
   ): Promise<HealthcareAccessibilityResult> {
     const tester = new HealthcareAccessibilityTester();
-    return await tester.auditComponent(container, 'tables');
+    return await tester.auditComponent(container, "tables");
   },
 };
 
@@ -309,26 +313,27 @@ export const toBeAccessibleForHealthcare = (
     const tester = new HealthcareAccessibilityTester();
     const result = await tester.auditComponent(container, scenario);
 
-    const pass = result.violations.length === 0 && result.healthcareCompliance.compliant;
+    const pass =
+      result.violations.length === 0 && result.healthcareCompliance.compliant;
 
     resolve({
       pass,
       message: () => {
         if (pass) {
-          return 'Expected element to have accessibility violations, but none were found.';
+          return "Expected element to have accessibility violations, but none were found.";
         }
 
         const violationMessages = result.violations
           .map((violation) => `${violation.id}: ${violation.description}`)
-          .join('\n');
+          .join("\n");
 
-        const healthcareIssues = result.healthcareCompliance.issues.join('\n');
+        const healthcareIssues = result.healthcareCompliance.issues.join("\n");
 
         return (
-          'Expected element to be accessible but found violations:\n\n'
-          + `WCAG Violations:\n${violationMessages}\n\n`
-          + `Healthcare Compliance Issues:\n${healthcareIssues}\n\n`
-          + `Accessibility Score: ${result.score}/100`
+          "Expected element to be accessible but found violations:\n\n" +
+          `WCAG Violations:\n${violationMessages}\n\n` +
+          `Healthcare Compliance Issues:\n${healthcareIssues}\n\n` +
+          `Accessibility Score: ${result.score}/100`
         );
       },
     });

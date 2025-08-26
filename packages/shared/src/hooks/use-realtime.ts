@@ -10,30 +10,30 @@ import type {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
   SupabaseClient,
-} from '@supabase/supabase-js';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+} from "@supabase/supabase-js";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   LGPDRealtimeConfig,
   RealtimeEventHandler,
   RealtimeHealthCheck,
   UseRealtimeConfig,
   UseRealtimeQueryConfig,
-} from '../types/realtime.types';
+} from "../types/realtime.types";
 
 // Re-export types for other hooks
-export type { UseRealtimeConfig } from '../types/realtime.types';
+export type { UseRealtimeConfig } from "../types/realtime.types";
 
 // LGPD compliance utilities
 const sanitizeRealtimeData = (data: any, sensitiveFields: string[] = []) => {
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     return data;
   }
 
   const sanitized = { ...data };
   sensitiveFields.forEach((field) => {
     if (field in sanitized) {
-      sanitized[field] = '***PROTECTED***';
+      sanitized[field] = "***PROTECTED***";
     }
   });
 
@@ -67,7 +67,7 @@ export function useRealtime<
 
   const handleRealtimeEvent = useCallback(
     (
-      eventType: 'INSERT' | 'UPDATE' | 'DELETE',
+      eventType: "INSERT" | "UPDATE" | "DELETE",
       payload: any,
       handler?: RealtimeEventHandler<T>,
     ) => {
@@ -78,7 +78,7 @@ export function useRealtime<
             enableAuditLogging: config.auditLogging ?? false,
             enableDataMinimization: true,
             enableConsentValidation: true,
-            sensitiveFields: ['cpf', 'rg', 'email', 'phone', 'address'],
+            sensitiveFields: ["cpf", "rg", "email", "phone", "address"],
           });
         }
 
@@ -93,7 +93,8 @@ export function useRealtime<
         // Clear any previous errors
         setError(undefined);
       } catch {
-        const error = error instanceof Error ? error : new Error('Realtime event error');
+        const error =
+          error instanceof Error ? error : new Error("Realtime event error");
         setError(error);
         config.onError?.(error);
       }
@@ -110,26 +111,26 @@ export function useRealtime<
     const channel = supabaseClient
       .channel(`realtime:${config.table}`)
       .on(
-        'postgres_changes' as any,
+        "postgres_changes" as any,
         {
-          event: config.event || '*',
-          schema: 'public',
+          event: config.event || "*",
+          schema: "public",
           table: config.table,
           filter: config.filter,
         },
         (payload: RealtimePostgresChangesPayload<T>) => {
-          const eventType = payload.eventType as 'INSERT' | 'UPDATE' | 'DELETE';
+          const eventType = payload.eventType as "INSERT" | "UPDATE" | "DELETE";
 
           switch (eventType) {
-            case 'INSERT': {
+            case "INSERT": {
               handleRealtimeEvent(eventType, payload, config.onInsert);
               break;
             }
-            case 'UPDATE': {
+            case "UPDATE": {
               handleRealtimeEvent(eventType, payload, config.onUpdate);
               break;
             }
-            case 'DELETE': {
+            case "DELETE": {
               handleRealtimeEvent(eventType, payload, config.onDelete);
               break;
             }
@@ -137,10 +138,10 @@ export function useRealtime<
         },
       )
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
+        if (status === "SUBSCRIBED") {
           setIsConnected(true);
           setError(undefined);
-        } else if (status === 'CHANNEL_ERROR') {
+        } else if (status === "CHANNEL_ERROR") {
           setIsConnected(false);
           const error = new Error(`Real-time subscription error: ${status}`);
           setError(error);
@@ -198,12 +199,13 @@ export function useRealtimeQuery<
 
   const invalidateQueries = useCallback(
     (eventType: string) => {
-      const shouldInvalidate = (eventType === 'INSERT'
-        && config.queryOptions?.invalidateOnInsert !== false)
-        || (eventType === 'UPDATE'
-          && config.queryOptions?.invalidateOnUpdate !== false)
-        || (eventType === 'DELETE'
-          && config.queryOptions?.invalidateOnDelete !== false);
+      const shouldInvalidate =
+        (eventType === "INSERT" &&
+          config.queryOptions?.invalidateOnInsert !== false) ||
+        (eventType === "UPDATE" &&
+          config.queryOptions?.invalidateOnUpdate !== false) ||
+        (eventType === "DELETE" &&
+          config.queryOptions?.invalidateOnDelete !== false);
 
       if (shouldInvalidate) {
         queryClient.invalidateQueries({ queryKey: config.queryKey });
@@ -220,15 +222,15 @@ export function useRealtimeQuery<
     ...config,
     onInsert: (payload) => {
       config.onInsert?.(payload);
-      invalidateQueries('INSERT');
+      invalidateQueries("INSERT");
     },
     onUpdate: (payload) => {
       config.onUpdate?.(payload);
-      invalidateQueries('UPDATE');
+      invalidateQueries("UPDATE");
     },
     onDelete: (payload) => {
       config.onDelete?.(payload);
-      invalidateQueries('DELETE');
+      invalidateQueries("DELETE");
     },
   };
 

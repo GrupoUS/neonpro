@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from "vitest";
 
 // Context for controlling mock behavior during tests
 let mockContext = {
   shouldReturnExistingPatient: false,
-  currentTestTable: '',
+  currentTestTable: "",
   queryConditions: new Map<string, any>(),
 };
 
@@ -16,7 +16,7 @@ export function setMockContext(context: Partial<typeof mockContext>) {
 export function resetMockContext() {
   mockContext = {
     shouldReturnExistingPatient: false,
-    currentTestTable: '',
+    currentTestTable: "",
     queryConditions: new Map<string, any>(),
   };
 }
@@ -28,12 +28,12 @@ export const mockSupabaseClient = {
     getUser: vi.fn(async () => ({
       data: {
         user: {
-          id: 'user-123',
-          email: 'test@neonpro.com',
-          role: 'authenticated',
+          id: "user-123",
+          email: "test@neonpro.com",
+          role: "authenticated",
           user_metadata: {
-            name: 'Test User',
-            role: 'doctor',
+            name: "Test User",
+            role: "doctor",
           },
         },
       },
@@ -42,8 +42,8 @@ export const mockSupabaseClient = {
 
     signInWithPassword: vi.fn(async () => ({
       data: {
-        user: { id: 'user-123', email: 'test@neonpro.com' },
-        session: { access_token: 'test-token' },
+        user: { id: "user-123", email: "test@neonpro.com" },
+        session: { access_token: "test-token" },
       },
       error: undefined,
     })),
@@ -91,10 +91,11 @@ export const mockSupabaseClient = {
         // Check if this is a duplicate check for createPatient
         // Duplicate check happens when we query by medical_record_number AND clinic_id
         const hasMedicalRecord = mockContext.queryConditions.has(
-          'medical_record_number',
+          "medical_record_number",
         );
-        const hasClinicId = mockContext.queryConditions.has('clinic_id');
-        const isDuplicateCheck = table === 'patients' && hasMedicalRecord && hasClinicId;
+        const hasClinicId = mockContext.queryConditions.has("clinic_id");
+        const isDuplicateCheck =
+          table === "patients" && hasMedicalRecord && hasClinicId;
 
         if (isDuplicateCheck) {
           // For createPatient duplicate checks, return null (no duplicate found)
@@ -111,9 +112,9 @@ export const mockSupabaseClient = {
       maybeSingle: vi.fn(async () => {
         // Same logic as single for maybeSingle
         if (
-          table === 'patients'
-          && mockContext.queryConditions.has('medical_record_number')
-          && !mockContext.shouldReturnExistingPatient
+          table === "patients" &&
+          mockContext.queryConditions.has("medical_record_number") &&
+          !mockContext.shouldReturnExistingPatient
         ) {
           return { data: undefined, error: undefined };
         }
@@ -135,7 +136,7 @@ export const mockSupabaseClient = {
         let data;
 
         // For search operations that should return arrays
-        if (table === 'patients' && mockContext.queryConditions.size === 0) {
+        if (table === "patients" && mockContext.queryConditions.size === 0) {
           data = [getMockData(table)]; // Return array for search
         } else {
           data = getMockData(table); // Return single object
@@ -145,7 +146,7 @@ export const mockSupabaseClient = {
           data,
           error: undefined,
           status: 200,
-          statusText: 'OK',
+          statusText: "OK",
         };
         return callback ? callback(result) : result;
       }),
@@ -160,14 +161,14 @@ export const mockSupabaseClient = {
       upload: vi.fn(async () => ({
         data: {
           path: `${bucket}/test-file.pdf`,
-          id: 'file-123',
+          id: "file-123",
           fullPath: `${bucket}/test-file.pdf`,
         },
         error: undefined,
       })),
 
       download: vi.fn(async () => ({
-        data: new Blob(['test file content']),
+        data: new Blob(["test file content"]),
         error: undefined,
       })),
 
@@ -179,8 +180,8 @@ export const mockSupabaseClient = {
       list: vi.fn(async () => ({
         data: [
           {
-            name: 'test-file.pdf',
-            id: 'file-123',
+            name: "test-file.pdf",
+            id: "file-123",
             updated_at: new Date().toISOString(),
             size: 1024,
           },
@@ -199,8 +200,8 @@ export const mockSupabaseClient = {
   // Realtime subscriptions mock
   channel: vi.fn(() => ({
     on: vi.fn().mockReturnThis(),
-    subscribe: vi.fn(async () => ({ status: 'SUBSCRIBED' })),
-    unsubscribe: vi.fn(async () => ({ status: 'CLOSED' })),
+    subscribe: vi.fn(async () => ({ status: "SUBSCRIBED" })),
+    unsubscribe: vi.fn(async () => ({ status: "CLOSED" })),
   })),
 
   // RPC (Remote Procedure Call) mock for custom functions
@@ -221,8 +222,9 @@ export const mockSupabaseClient = {
     };
 
     return {
-      data: mockRpcResults[functionName as keyof typeof mockRpcResults]
-        || undefined,
+      data:
+        mockRpcResults[functionName as keyof typeof mockRpcResults] ||
+        undefined,
       error: undefined,
     };
   }),
@@ -232,16 +234,16 @@ export const mockSupabaseClient = {
 export function getMockData(table: string): any {
   const mockDataMap = {
     patients: {
-      id: 'patient-123',
-      clinic_id: 'clinic-123',
-      user_id: 'user-123',
-      cpf: '123.456.789-09',
-      full_name: 'João Silva Santos',
-      email: 'joao.silva@email.com',
-      phone: '+55 11 99999-9999',
-      birth_date: '1990-05-15',
-      gender: 'M',
-      medical_record_number: 'MR001',
+      id: "patient-123",
+      clinic_id: "clinic-123",
+      user_id: "user-123",
+      cpf: "123.456.789-09",
+      full_name: "João Silva Santos",
+      email: "joao.silva@email.com",
+      phone: "+55 11 99999-9999",
+      birth_date: "1990-05-15",
+      gender: "M",
+      medical_record_number: "MR001",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       lgpd_consent: true,
@@ -253,9 +255,9 @@ export function getMockData(table: string): any {
     },
 
     patient_consents: {
-      id: 'consent-123',
-      patient_id: 'patient-123',
-      consent_type: 'lgpd',
+      id: "consent-123",
+      patient_id: "patient-123",
+      consent_type: "lgpd",
       consent_given: true,
       consent_date: new Date().toISOString(),
       created_at: new Date().toISOString(),
@@ -263,79 +265,79 @@ export function getMockData(table: string): any {
     },
 
     profiles: {
-      id: 'user-123',
-      clinic_id: 'clinic-123',
-      user_id: 'user-123',
-      name: 'Test User',
-      email: 'test@neonpro.com',
-      role: 'doctor',
-      specialties: ['dermatologia'],
+      id: "user-123",
+      clinic_id: "clinic-123",
+      user_id: "user-123",
+      name: "Test User",
+      email: "test@neonpro.com",
+      role: "doctor",
+      specialties: ["dermatologia"],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
 
     treatments: {
-      id: 'treatment-123',
-      patient_id: 'patient-123',
-      doctor_id: 'doctor-123',
-      type: 'aesthetic-consultation',
+      id: "treatment-123",
+      patient_id: "patient-123",
+      doctor_id: "doctor-123",
+      type: "aesthetic-consultation",
       scheduled_date: new Date().toISOString(),
       duration_minutes: 60,
-      status: 'scheduled',
-      notes: 'Initial consultation',
+      status: "scheduled",
+      notes: "Initial consultation",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
 
     medical_records: {
-      id: 'record-123',
-      patient_id: 'patient-123',
-      treatment_id: 'treatment-123',
-      doctor_id: 'doctor-123',
+      id: "record-123",
+      patient_id: "patient-123",
+      treatment_id: "treatment-123",
+      doctor_id: "doctor-123",
       record_date: new Date().toISOString(),
-      record_type: 'consultation',
-      diagnosis: 'Test diagnosis',
-      treatment_plan: 'Test treatment plan',
-      notes: 'Patient consultation notes',
-      digital_signature: 'signature-hash-123',
+      record_type: "consultation",
+      diagnosis: "Test diagnosis",
+      treatment_plan: "Test treatment plan",
+      notes: "Patient consultation notes",
+      digital_signature: "signature-hash-123",
       created_at: new Date().toISOString(),
     },
 
     doctors: {
-      id: 'doctor-123',
-      name: 'Dr. Ana Costa',
-      crm_number: '12345-SP',
-      crm_state: 'SP',
-      specialty: 'Dermatologia',
-      email: 'dr.ana@neonpro.com',
-      phone: '+55 11 88888-8888',
-      license_status: 'active',
-      license_expiry: '2025-12-31',
+      id: "doctor-123",
+      name: "Dr. Ana Costa",
+      crm_number: "12345-SP",
+      crm_state: "SP",
+      specialty: "Dermatologia",
+      email: "dr.ana@neonpro.com",
+      phone: "+55 11 88888-8888",
+      license_status: "active",
+      license_expiry: "2025-12-31",
       created_at: new Date().toISOString(),
     },
 
     appointments: {
-      id: 'appointment-123',
-      patient_id: 'patient-123',
-      doctor_id: 'doctor-123',
+      id: "appointment-123",
+      patient_id: "patient-123",
+      doctor_id: "doctor-123",
       scheduled_date: new Date().toISOString(),
       duration_minutes: 60,
-      status: 'scheduled',
-      type: 'consultation',
-      notes: 'Regular check-up',
+      status: "scheduled",
+      type: "consultation",
+      notes: "Regular check-up",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
 
     audit_logs: {
-      id: 'audit-123',
-      user_id: 'user-123',
-      action: 'view_patient',
-      resource_type: 'patient',
-      resource_id: 'patient-123',
+      id: "audit-123",
+      user_id: "user-123",
+      action: "view_patient",
+      resource_type: "patient",
+      resource_id: "patient-123",
       timestamp: new Date().toISOString(),
-      ip_address: '127.0.0.1',
-      user_agent: 'test-agent',
+      ip_address: "127.0.0.1",
+      user_agent: "test-agent",
       metadata: {},
     },
   };
@@ -355,17 +357,23 @@ export function setupSupabaseMocks() {
   resetMockContext();
 
   // Mock the Supabase client creation
-  vi.mock<typeof import('@supabase/supabase-js')>('@supabase/supabase-js', () => ({
-    createClient: vi.fn(() => mockSupabaseClient),
-  }));
+  vi.mock<typeof import("@supabase/supabase-js")>(
+    "@supabase/supabase-js",
+    () => ({
+      createClient: vi.fn(() => mockSupabaseClient),
+    }),
+  );
 
   // Mock Supabase SSR
-  vi.mock<typeof import('@supabase/ssr')>('@supabase/ssr', () => mockSupabaseSSR);
+  vi.mock<typeof import("@supabase/ssr")>(
+    "@supabase/ssr",
+    () => mockSupabaseSSR,
+  );
 
   // Mock environment variables
-  process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321';
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-  process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "http://localhost:54321";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-key";
 }
 
 // Cleanup function for test teardown
@@ -379,7 +387,7 @@ export const testDatabaseUtils = {
   // Create test data
   createTestPatient: async (data?: Partial<any>) => {
     const patient = {
-      ...getMockData('patients'),
+      ...getMockData("patients"),
       ...data,
     };
     return { data: patient, error: undefined };
@@ -387,7 +395,7 @@ export const testDatabaseUtils = {
 
   createTestTreatment: async (patientId: string, data?: Partial<any>) => {
     const treatment = {
-      ...getMockData('treatments'),
+      ...getMockData("treatments"),
       patient_id: patientId,
       ...data,
     };
@@ -400,7 +408,7 @@ export const testDatabaseUtils = {
     data?: Partial<any>,
   ) => {
     const record = {
-      ...getMockData('medical_records'),
+      ...getMockData("medical_records"),
       patient_id: patientId,
       treatment_id: treatmentId,
       ...data,
@@ -412,9 +420,9 @@ export const testDatabaseUtils = {
   simulateRLS: {
     patientCanOnlyAccessOwnData: vi.fn((userId: string, patientId: string) => {
       return (
-        userId === `patient-${patientId}`
-        || userId.includes('doctor')
-        || userId.includes('admin')
+        userId === `patient-${patientId}` ||
+        userId.includes("doctor") ||
+        userId.includes("admin")
       );
     }),
 
@@ -426,7 +434,7 @@ export const testDatabaseUtils = {
     ),
 
     adminCanAccessAllData: vi.fn((userId: string) => {
-      return userId.includes('admin');
+      return userId.includes("admin");
     }),
   },
 };

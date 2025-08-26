@@ -1,7 +1,7 @@
 import { TreatmentSuccessService } from "@/app/lib/services/treatment-success";
 import { updateTreatmentOutcomeSchema } from "@/app/lib/validations/treatment-success";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const treatmentSuccessService = new TreatmentSuccessService();
 

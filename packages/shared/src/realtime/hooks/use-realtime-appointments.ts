@@ -4,16 +4,16 @@
  * Crítico para ambiente healthcare com notificações urgentes
  */
 
-import type { Database } from '@neonpro/db';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { getRealtimeManager } from '../connection-manager';
+import type { Database } from "@neonpro/db";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { getRealtimeManager } from "../connection-manager";
 
 // Explicitly use database appointment type (snake_case) not entities type (camelCase)
-type AppointmentRow = Database['public']['Tables']['appointments']['Row'];
+type AppointmentRow = Database["public"]["Tables"]["appointments"]["Row"];
 
 export interface RealtimeAppointmentPayload {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  eventType: "INSERT" | "UPDATE" | "DELETE";
   new?: AppointmentRow;
   old?: AppointmentRow;
   errors?: string[];
@@ -55,7 +55,7 @@ export function useRealtimeAppointments(
     onAppointmentChange,
     onUrgentChange,
     onError,
-    queryKey = ['appointments', tenantId],
+    queryKey = ["appointments", tenantId],
   } = options;
 
   const queryClient = useQueryClient();
@@ -64,8 +64,7 @@ export function useRealtimeAppointments(
   const [lastUpdate, setLastUpdate] = useState<Date | null>();
   const [totalUpdates, setTotalUpdates] = useState(0);
   const [urgentUpdates, setUrgentUpdates] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
-    );
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
 
   /**
    * Detect urgent appointment changes
@@ -75,28 +74,29 @@ export function useRealtimeAppointments(
       const { eventType, new: newData, old: oldData } = payload;
 
       // Critical scenarios for healthcare
-      if (eventType === 'DELETE') {
+      if (eventType === "DELETE") {
         return true; // Appointment cancellation
       }
 
-      if (eventType === 'UPDATE' && newData && oldData) {
+      if (eventType === "UPDATE" && newData && oldData) {
         // Status changes to cancelled
-        if (newData.status === 'cancelled' && oldData.status !== 'cancelled') {
+        if (newData.status === "cancelled" && oldData.status !== "cancelled") {
           return true;
         }
         // Urgent status changes
-        if (newData.status === 'confirmed' && oldData.status === 'scheduled') {
+        if (newData.status === "confirmed" && oldData.status === "scheduled") {
           return true;
         }
 
         // Date/time changes within 24 hours
         const scheduledDate = new Date(newData.appointment_date);
         const now = new Date();
-        const hoursDifference = (scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+        const hoursDifference =
+          (scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
         if (
-          hoursDifference <= 24
-          && newData.appointment_date !== oldData.appointment_date
+          hoursDifference <= 24 &&
+          newData.appointment_date !== oldData.appointment_date
         ) {
           return true;
         }
@@ -107,9 +107,9 @@ export function useRealtimeAppointments(
         }
       }
 
-      if (eventType === 'INSERT' && newData) {
+      if (eventType === "INSERT" && newData) {
         // New confirmed appointments (urgent)
-        if (newData.status === 'confirmed') {
+        if (newData.status === "confirmed") {
           return true;
         }
 
@@ -142,35 +142,35 @@ export function useRealtimeAppointments(
           }
 
           switch (eventType) {
-            case 'INSERT': {
+            case "INSERT": {
               if (newData && newData.clinic_id === tenantId) {
                 // Insert em ordem cronológica
                 const newCache = [...oldCache, newData];
                 return newCache.sort(
                   (a, b) =>
-                    new Date(a.appointment_date).getTime()
-                    - new Date(b.appointment_date).getTime(),
+                    new Date(a.appointment_date).getTime() -
+                    new Date(b.appointment_date).getTime(),
                 );
               }
               return oldCache;
             }
 
-            case 'UPDATE': {
+            case "UPDATE": {
               if (newData) {
                 const updatedCache = oldCache.map((appointment) =>
-                  appointment.id === newData.id ? newData : appointment
+                  appointment.id === newData.id ? newData : appointment,
                 );
                 // Re-sort after update
                 return updatedCache.sort(
                   (a, b) =>
-                    new Date(a.appointment_date).getTime()
-                    - new Date(b.appointment_date).getTime(),
+                    new Date(a.appointment_date).getTime() -
+                    new Date(b.appointment_date).getTime(),
                 );
               }
               return oldCache;
             }
 
-            case 'DELETE': {
+            case "DELETE": {
               if (oldData) {
                 return oldCache.filter(
                   (appointment) => appointment.id !== oldData.id,
@@ -188,23 +188,23 @@ export function useRealtimeAppointments(
 
       // Update individual appointment cache
       if (newData) {
-        queryClient.setQueryData(['appointment', newData.id], newData);
-      } else if (oldData && eventType === 'DELETE') {
-        queryClient.removeQueries({ queryKey: ['appointment', oldData.id] });
+        queryClient.setQueryData(["appointment", newData.id], newData);
+      } else if (oldData && eventType === "DELETE") {
+        queryClient.removeQueries({ queryKey: ["appointment", oldData.id] });
       }
 
       // Invalidate related queries
       queryClient.invalidateQueries({
-        queryKey: ['appointment-analytics', tenantId],
+        queryKey: ["appointment-analytics", tenantId],
       });
       if (patientId) {
         queryClient.invalidateQueries({
-          queryKey: ['patient-appointments', patientId],
+          queryKey: ["patient-appointments", patientId],
         });
       }
       if (professionalId) {
         queryClient.invalidateQueries({
-          queryKey: ['professional-schedule', professionalId],
+          queryKey: ["professional-schedule", professionalId],
         });
       }
     },
@@ -280,7 +280,7 @@ export function useRealtimeAppointments(
     const unsubscribe = realtimeManager.subscribe(
       `appointments:${filter}`,
       {
-        table: 'appointments',
+        table: "appointments",
         filter,
       },
       handleAppointmentChange,
@@ -354,7 +354,7 @@ export function useOptimisticAppointments(tenantId: string) {
     (appointmentId: string, updates: Partial<AppointmentRow>) => {
       // Update appointments list optimistically
       queryClient.setQueryData(
-        ['appointments', tenantId],
+        ["appointments", tenantId],
         (oldCache: AppointmentRow[] | undefined) => {
           if (!oldCache) {
             return oldCache;
@@ -362,14 +362,14 @@ export function useOptimisticAppointments(tenantId: string) {
           const updatedCache = oldCache.map((appointment) =>
             appointment.id === appointmentId
               ? { ...appointment, ...updates }
-              : appointment
+              : appointment,
           );
           // Re-sort if date changed
           if (updates.appointment_date) {
             return updatedCache.sort(
               (a, b) =>
-                new Date(a.appointment_date).getTime()
-                - new Date(b.appointment_date).getTime(),
+                new Date(a.appointment_date).getTime() -
+                new Date(b.appointment_date).getTime(),
             );
           }
           return updatedCache;
@@ -378,7 +378,7 @@ export function useOptimisticAppointments(tenantId: string) {
 
       // Update individual appointment cache
       queryClient.setQueryData(
-        ['appointment', appointmentId],
+        ["appointment", appointmentId],
         (oldData: AppointmentRow | undefined) => {
           if (!oldData) {
             return oldData;
@@ -393,9 +393,9 @@ export function useOptimisticAppointments(tenantId: string) {
   const rollbackUpdate = useCallback(
     (appointmentId: string) => {
       // Invalidate caches to fetch fresh data
-      queryClient.invalidateQueries({ queryKey: ['appointments', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["appointments", tenantId] });
       queryClient.invalidateQueries({
-        queryKey: ['appointment', appointmentId],
+        queryKey: ["appointment", appointmentId],
       });
     },
     [queryClient, tenantId],

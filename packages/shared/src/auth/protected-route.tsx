@@ -3,12 +3,12 @@
  * Redireciona usuários não autenticados para login
  */
 
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import type React from 'react';
-import type { ReactNode } from 'react';
-import { useAuth } from './auth-provider';
+import { useRouter } from "next/navigation";
+import type React from "react";
+import type { ReactNode } from "react";
+import { useAuth } from "./auth-provider";
 
 export interface ProtectedRouteProps {
   children: ReactNode;
@@ -52,7 +52,7 @@ function DefaultUnauthorizedFallback() {
 export function ProtectedRoute({
   children,
   fallback = <DefaultLoadingFallback />,
-  redirectTo = '/login',
+  redirectTo = "/login",
   requireAuth = true,
   requiredRole,
   requiredPermissions = [],
@@ -85,8 +85,9 @@ export function ProtectedRoute({
   if (requiredPermissions.length > 0) {
     // TODO: Implementar sistema de permissões mais robusto
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
-    const hasPermissions = user.role === 'admin'
-      || requiredPermissions.every((_permission) => {
+    const hasPermissions =
+      user.role === "admin" ||
+      requiredPermissions.every((_permission) => {
         // Lógica de permissões específica pode ser implementada aqui
         return true; // Placeholder
       });
@@ -105,7 +106,7 @@ export function ProtectedRoute({
  */
 export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
-  options?: Omit<ProtectedRouteProps, 'children'>,
+  options?: Omit<ProtectedRouteProps, "children">,
 ) {
   const WrappedComponent = (props: P) => {
     return (
@@ -133,7 +134,7 @@ export function usePermissions() {
   const hasPermission = (_permission: string): boolean => {
     // TODO: Implementar lógica de permissões mais sofisticada
     // Por enquanto, admin tem todas as permissões
-    if (user?.role === 'admin') {
+    if (user?.role === "admin") {
       return true;
     }
 
@@ -154,8 +155,8 @@ export function usePermissions() {
     hasPermission,
     hasAnyPermission,
     hasAllPermissions,
-    isAdmin: hasRole('admin'),
-    isUser: hasRole('user'),
-    isHealthcareProfessional: hasRole('healthcare_professional'),
+    isAdmin: hasRole("admin"),
+    isUser: hasRole("user"),
+    isHealthcareProfessional: hasRole("healthcare_professional"),
   };
 }

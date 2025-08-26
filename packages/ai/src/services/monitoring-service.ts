@@ -1,10 +1,10 @@
 // Monitoring Service for AI Services
 // Real-time metrics collection, alerting, and performance analysis
 
-import { createClient } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { EnhancedAIService } from './enhanced-service-base';
-import type { AIServiceInput, AIServiceOutput } from './enhanced-service-base';
+import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { EnhancedAIService } from "./enhanced-service-base";
+import type { AIServiceInput, AIServiceOutput } from "./enhanced-service-base";
 
 // Monitoring Types and Interfaces
 export interface MonitoringMetric {
@@ -33,7 +33,7 @@ export interface AlertRule {
   service?: string;
   condition: AlertCondition;
   threshold_value: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   enabled: boolean;
   notification_channels: string[];
   cooldown_minutes: number;
@@ -43,10 +43,10 @@ export interface AlertRule {
 }
 
 export interface AlertCondition {
-  operator: '>' | '<' | '>=' | '<=' | '==' | '!=' | 'contains' | 'not_contains';
+  operator: ">" | "<" | ">=" | "<=" | "==" | "!=" | "contains" | "not_contains";
   time_window_minutes?: number;
-  aggregation?: 'avg' | 'sum' | 'min' | 'max' | 'count' | 'rate';
-  comparison_type?: 'absolute' | 'percentage_change' | 'moving_average';
+  aggregation?: "avg" | "sum" | "min" | "max" | "count" | "rate";
+  comparison_type?: "absolute" | "percentage_change" | "moving_average";
 }
 
 export interface AlertRuleMetadata {
@@ -65,7 +65,7 @@ export interface Alert {
   current_value: number;
   threshold_value: number;
   severity: string;
-  status: 'active' | 'acknowledged' | 'resolved';
+  status: "active" | "acknowledged" | "resolved";
   triggered_at: string;
   resolved_at?: string;
   acknowledged_at?: string;
@@ -76,17 +76,17 @@ export interface Alert {
 
 export interface MonitoringInput extends AIServiceInput {
   action:
-    | 'record_metric'
-    | 'get_metrics'
-    | 'create_alert_rule'
-    | 'update_alert_rule'
-    | 'delete_alert_rule'
-    | 'list_alert_rules'
-    | 'get_alerts'
-    | 'acknowledge_alert'
-    | 'resolve_alert'
-    | 'get_service_health'
-    | 'bulk_record_metrics';
+    | "record_metric"
+    | "get_metrics"
+    | "create_alert_rule"
+    | "update_alert_rule"
+    | "delete_alert_rule"
+    | "list_alert_rules"
+    | "get_alerts"
+    | "acknowledge_alert"
+    | "resolve_alert"
+    | "get_service_health"
+    | "bulk_record_metrics";
 
   // Metric recording
   service?: string;
@@ -113,7 +113,7 @@ export interface MonitoringInput extends AIServiceInput {
     tags?: Record<string, string>;
   };
   aggregation?: {
-    function: 'avg' | 'sum' | 'min' | 'max' | 'count';
+    function: "avg" | "sum" | "min" | "max" | "count";
     interval_minutes: number;
   };
 
@@ -149,7 +149,7 @@ export interface MetricStatistics {
   avg_value: number;
   sum_value: number;
   latest_value: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
+  trend: "increasing" | "decreasing" | "stable";
   rate_of_change?: number;
   percentiles?: {
     p50: number;
@@ -161,7 +161,7 @@ export interface MetricStatistics {
 
 export interface ServiceHealthStatus {
   service: string;
-  overall_health: 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
+  overall_health: "healthy" | "degraded" | "unhealthy" | "unknown";
   last_check: string;
   metrics_summary: {
     response_time_ms: MetricStatistics;
@@ -171,7 +171,7 @@ export interface ServiceHealthStatus {
     uptime_percent: number;
   };
   recent_alerts: Alert[];
-  performance_grade: 'A' | 'B' | 'C' | 'D' | 'F';
+  performance_grade: "A" | "B" | "C" | "D" | "F";
   recommendations?: string[];
 }
 
@@ -189,7 +189,7 @@ export class MonitoringService extends EnhancedAIService<
   private readonly ALERT_CHECK_INTERVAL_MS = 30_000; // 30 seconds
 
   constructor() {
-    super('monitoring_service');
+    super("monitoring_service");
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -216,37 +216,37 @@ export class MonitoringService extends EnhancedAIService<
 
     try {
       switch (input.action) {
-        case 'record_metric': {
+        case "record_metric": {
           return await this.recordMetric(input);
         }
-        case 'get_metrics': {
+        case "get_metrics": {
           return await this.getMetrics(input);
         }
-        case 'create_alert_rule': {
+        case "create_alert_rule": {
           return await this.createAlertRule(input);
         }
-        case 'update_alert_rule': {
+        case "update_alert_rule": {
           return await this.updateAlertRule(input);
         }
-        case 'delete_alert_rule': {
+        case "delete_alert_rule": {
           return await this.deleteAlertRule(input);
         }
-        case 'list_alert_rules': {
+        case "list_alert_rules": {
           return await this.listAlertRules(input);
         }
-        case 'get_alerts': {
+        case "get_alerts": {
           return await this.getAlerts(input);
         }
-        case 'acknowledge_alert': {
+        case "acknowledge_alert": {
           return await this.acknowledgeAlert(input);
         }
-        case 'resolve_alert': {
+        case "resolve_alert": {
           return await this.resolveAlert(input);
         }
-        case 'get_service_health': {
+        case "get_service_health": {
           return await this.getServiceHealth(input);
         }
-        case 'bulk_record_metrics': {
+        case "bulk_record_metrics": {
           return await this.bulkRecordMetrics(input);
         }
         default: {
@@ -255,7 +255,7 @@ export class MonitoringService extends EnhancedAIService<
       }
     } finally {
       const duration = performance.now() - startTime;
-      this.recordInternalMetric('monitoring_operation_duration', duration, {
+      this.recordInternalMetric("monitoring_operation_duration", duration, {
         action: input.action,
         buffer_size: this.metricBuffer.length.toString(),
       });
@@ -266,10 +266,10 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (
-      !(input.service && input.metric_name)
-      || input.metric_value === undefined
+      !(input.service && input.metric_name) ||
+      input.metric_value === undefined
     ) {
-      throw new Error('service, metric_name, and metric_value are required');
+      throw new Error("service, metric_name, and metric_value are required");
     }
 
     const metric: MonitoringMetric = {
@@ -279,8 +279,8 @@ export class MonitoringService extends EnhancedAIService<
       metric_value: input.metric_value,
       tags: input.tags || {},
       metadata: {
-        source: 'monitoring_service',
-        environment: process.env.NODE_ENV || 'development',
+        source: "monitoring_service",
+        environment: process.env.NODE_ENV || "development",
         ...input.metadata,
       },
       timestamp: new Date().toISOString(),
@@ -307,7 +307,7 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!input.bulk_metrics || input.bulk_metrics.length === 0) {
-      throw new Error('bulk_metrics is required for bulk recording');
+      throw new Error("bulk_metrics is required for bulk recording");
     }
 
     const results: {
@@ -320,12 +320,12 @@ export class MonitoringService extends EnhancedAIService<
     for (const metricData of input.bulk_metrics) {
       try {
         if (
-          !(metricData.service && metricData.metric_name)
-          || metricData.metric_value === undefined
+          !(metricData.service && metricData.metric_name) ||
+          metricData.metric_value === undefined
         ) {
           results.push({
             success: false,
-            error: 'service, metric_name, and metric_value are required',
+            error: "service, metric_name, and metric_value are required",
           });
           continue;
         }
@@ -337,8 +337,8 @@ export class MonitoringService extends EnhancedAIService<
           metric_value: metricData.metric_value,
           tags: metricData.tags || {},
           metadata: {
-            source: 'monitoring_service',
-            environment: process.env.NODE_ENV || 'development',
+            source: "monitoring_service",
+            environment: process.env.NODE_ENV || "development",
             ...metricData.metadata,
           },
           timestamp: new Date().toISOString(),
@@ -371,33 +371,33 @@ export class MonitoringService extends EnhancedAIService<
 
   private async getMetrics(input: MonitoringInput): Promise<MonitoringOutput> {
     let query = this.supabase
-      .from('ai_monitoring_metrics')
-      .select('*')
-      .order('timestamp', {
+      .from("ai_monitoring_metrics")
+      .select("*")
+      .order("timestamp", {
         ascending: false,
       });
 
     // Apply time range filter
     if (input.time_range) {
       query = query
-        .gte('timestamp', input.time_range.start)
-        .lte('timestamp', input.time_range.end);
+        .gte("timestamp", input.time_range.start)
+        .lte("timestamp", input.time_range.end);
     }
 
     // Apply service filter
     if (input.filters?.services && input.filters.services.length > 0) {
-      query = query.in('service', input.filters.services);
+      query = query.in("service", input.filters.services);
     }
 
     // Apply metric name filter
     if (input.filters?.metric_names && input.filters.metric_names.length > 0) {
-      query = query.in('metric_name', input.filters.metric_names);
+      query = query.in("metric_name", input.filters.metric_names);
     }
 
     // Apply tag filters
     if (input.filters?.tags) {
       Object.entries(input.filters.tags).forEach(([key, value]) => {
-        query = query.contains('tags', { [key]: value });
+        query = query.contains("tags", { [key]: value });
       });
     }
 
@@ -443,26 +443,26 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!input.alert_rule) {
-      throw new Error('alert_rule is required');
+      throw new Error("alert_rule is required");
     }
 
     const alertRule: AlertRule = {
       id: `alert_rule_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-      name: input.alert_rule.name || 'Unnamed Alert Rule',
-      description: input.alert_rule.description || '',
+      name: input.alert_rule.name || "Unnamed Alert Rule",
+      description: input.alert_rule.description || "",
       metric_name: input.alert_rule.metric_name!,
       service: input.alert_rule.service,
       condition: input.alert_rule.condition!,
       threshold_value: input.alert_rule.threshold_value!,
-      severity: input.alert_rule.severity || 'medium',
+      severity: input.alert_rule.severity || "medium",
       enabled: input.alert_rule.enabled !== false,
       notification_channels: input.alert_rule.notification_channels || [
-        'email',
+        "email",
       ],
       cooldown_minutes: input.alert_rule.cooldown_minutes || 15,
       metadata: {
-        category: 'custom',
-        owner: 'system',
+        category: "custom",
+        owner: "system",
         ...input.alert_rule.metadata,
       },
       created_at: new Date().toISOString(),
@@ -470,7 +470,7 @@ export class MonitoringService extends EnhancedAIService<
     };
 
     const { data, error } = await this.supabase
-      .from('ai_alert_rules')
+      .from("ai_alert_rules")
       .insert(alertRule)
       .select()
       .single();
@@ -483,8 +483,8 @@ export class MonitoringService extends EnhancedAIService<
     this.alertRules.set(data.id, data);
 
     await this.auditLog({
-      action: 'alert_rule_created',
-      resource_type: 'alert_rule',
+      action: "alert_rule_created",
+      resource_type: "alert_rule",
       resource_id: data.id,
       details: {
         rule_name: data.name,
@@ -503,7 +503,7 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!(input.rule_id && input.alert_rule)) {
-      throw new Error('rule_id and alert_rule are required');
+      throw new Error("rule_id and alert_rule are required");
     }
 
     const updateData = {
@@ -512,9 +512,9 @@ export class MonitoringService extends EnhancedAIService<
     };
 
     const { data, error } = await this.supabase
-      .from('ai_alert_rules')
+      .from("ai_alert_rules")
       .update(updateData)
-      .eq('id', input.rule_id)
+      .eq("id", input.rule_id)
       .select()
       .single();
 
@@ -535,13 +535,13 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!input.rule_id) {
-      throw new Error('rule_id is required');
+      throw new Error("rule_id is required");
     }
 
     const { error } = await this.supabase
-      .from('ai_alert_rules')
+      .from("ai_alert_rules")
       .delete()
-      .eq('id', input.rule_id);
+      .eq("id", input.rule_id);
 
     if (error) {
       throw new Error(`Failed to delete alert rule: ${error.message}`);
@@ -559,14 +559,14 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     let query = this.supabase
-      .from('ai_alert_rules')
-      .select('*')
-      .order('created_at', {
+      .from("ai_alert_rules")
+      .select("*")
+      .order("created_at", {
         ascending: false,
       });
 
     if (input.filters?.services && input.filters.services.length > 0) {
-      query = query.in('service', input.filters.services);
+      query = query.in("service", input.filters.services);
     }
 
     const { data, error } = await query;
@@ -583,22 +583,22 @@ export class MonitoringService extends EnhancedAIService<
 
   private async getAlerts(input: MonitoringInput): Promise<MonitoringOutput> {
     let query = this.supabase
-      .from('ai_alerts')
-      .select('*')
-      .order('triggered_at', {
+      .from("ai_alerts")
+      .select("*")
+      .order("triggered_at", {
         ascending: false,
       });
 
     // Apply time range filter
     if (input.time_range) {
       query = query
-        .gte('triggered_at', input.time_range.start)
-        .lte('triggered_at', input.time_range.end);
+        .gte("triggered_at", input.time_range.start)
+        .lte("triggered_at", input.time_range.end);
     }
 
     // Apply service filter
     if (input.filters?.services && input.filters.services.length > 0) {
-      query = query.in('service', input.filters.services);
+      query = query.in("service", input.filters.services);
     }
 
     const { data, error } = await query.limit(500);
@@ -617,17 +617,17 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!input.alert_id) {
-      throw new Error('alert_id is required');
+      throw new Error("alert_id is required");
     }
 
     const { data, error } = await this.supabase
-      .from('ai_alerts')
+      .from("ai_alerts")
       .update({
-        status: 'acknowledged',
+        status: "acknowledged",
         acknowledged_at: new Date().toISOString(),
-        acknowledged_by: input.user_id || 'system',
+        acknowledged_by: input.user_id || "system",
       })
-      .eq('id', input.alert_id)
+      .eq("id", input.alert_id)
       .select()
       .single();
 
@@ -645,16 +645,16 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!input.alert_id) {
-      throw new Error('alert_id is required');
+      throw new Error("alert_id is required");
     }
 
     const { data, error } = await this.supabase
-      .from('ai_alerts')
+      .from("ai_alerts")
       .update({
-        status: 'resolved',
+        status: "resolved",
         resolved_at: new Date().toISOString(),
       })
-      .eq('id', input.alert_id)
+      .eq("id", input.alert_id)
       .select()
       .single();
 
@@ -675,7 +675,7 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (!input.service) {
-      throw new Error('service is required');
+      throw new Error("service is required");
     }
 
     const service = input.service;
@@ -684,11 +684,11 @@ export class MonitoringService extends EnhancedAIService<
 
     // Get recent metrics for the service
     const { data: metrics, error: metricsError } = await this.supabase
-      .from('ai_monitoring_metrics')
-      .select('*')
-      .eq('service', service)
-      .gte('timestamp', oneHourAgo)
-      .order('timestamp', { ascending: false });
+      .from("ai_monitoring_metrics")
+      .select("*")
+      .eq("service", service)
+      .gte("timestamp", oneHourAgo)
+      .order("timestamp", { ascending: false });
 
     if (metricsError) {
       throw new Error(
@@ -698,11 +698,11 @@ export class MonitoringService extends EnhancedAIService<
 
     // Get active alerts for the service
     const { data: alerts, error: alertsError } = await this.supabase
-      .from('ai_alerts')
-      .select('*')
-      .eq('service', service)
-      .eq('status', 'active')
-      .order('triggered_at', { ascending: false });
+      .from("ai_alerts")
+      .select("*")
+      .eq("service", service)
+      .eq("status", "active")
+      .order("triggered_at", { ascending: false });
 
     if (alertsError) {
       throw new Error(
@@ -712,13 +712,13 @@ export class MonitoringService extends EnhancedAIService<
 
     // Calculate health metrics
     const responseTimeMetrics = (metrics || []).filter(
-      (m) => m.metric_name === 'response_time_ms',
+      (m) => m.metric_name === "response_time_ms",
     );
     const errorRateMetrics = (metrics || []).filter(
-      (m) => m.metric_name === 'error_rate_percent',
+      (m) => m.metric_name === "error_rate_percent",
     );
     const throughputMetrics = (metrics || []).filter(
-      (m) => m.metric_name === 'throughput_rps',
+      (m) => m.metric_name === "throughput_rps",
     );
 
     const responseTimeStats = this.calculateMetricStatistics(
@@ -732,29 +732,30 @@ export class MonitoringService extends EnhancedAIService<
     );
 
     // Determine overall health
-    let overallHealth: 'healthy' | 'degraded' | 'unhealthy' | 'unknown' = 'unknown';
+    let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" =
+      "unknown";
     if (
-      responseTimeStats.avg_value > 0
-      || errorRateStats.avg_value >= 0
-      || throughputStats.avg_value > 0
+      responseTimeStats.avg_value > 0 ||
+      errorRateStats.avg_value >= 0 ||
+      throughputStats.avg_value > 0
     ) {
       if ((alerts?.length || 0) === 0 && errorRateStats.avg_value < 5) {
-        overallHealth = 'healthy';
+        overallHealth = "healthy";
       } else if (errorRateStats.avg_value < 15 && (alerts?.length || 0) < 5) {
-        overallHealth = 'degraded';
+        overallHealth = "degraded";
       } else {
-        overallHealth = 'unhealthy';
+        overallHealth = "unhealthy";
       }
     }
 
     // Calculate performance grade
-    let grade: 'A' | 'B' | 'C' | 'D' | 'F' = 'F';
-    if (overallHealth === 'healthy') {
-      grade = responseTimeStats.avg_value < 1000 ? 'A' : 'B';
-    } else if (overallHealth === 'degraded') {
-      grade = 'C';
-    } else if (overallHealth === 'unhealthy') {
-      grade = 'D';
+    let grade: "A" | "B" | "C" | "D" | "F" = "F";
+    if (overallHealth === "healthy") {
+      grade = responseTimeStats.avg_value < 1000 ? "A" : "B";
+    } else if (overallHealth === "degraded") {
+      grade = "C";
+    } else if (overallHealth === "unhealthy") {
+      grade = "D";
     }
 
     const healthStatus: ServiceHealthStatus = {
@@ -787,7 +788,7 @@ export class MonitoringService extends EnhancedAIService<
         avg_value: 0,
         sum_value: 0,
         latest_value: 0,
-        trend: 'stable',
+        trend: "stable",
       };
     }
 
@@ -812,9 +813,9 @@ export class MonitoringService extends EnhancedAIService<
 
   private calculateTrend(
     values: number[],
-  ): 'increasing' | 'decreasing' | 'stable' {
+  ): "increasing" | "decreasing" | "stable" {
     if (values.length < 2) {
-      return 'stable';
+      return "stable";
     }
 
     const firstHalf = values.slice(0, Math.floor(values.length / 2));
@@ -826,12 +827,12 @@ export class MonitoringService extends EnhancedAIService<
     const changePercent = ((secondAvg - firstAvg) / firstAvg) * 100;
 
     if (changePercent > 5) {
-      return 'increasing';
+      return "increasing";
     }
     if (changePercent < -5) {
-      return 'decreasing';
+      return "decreasing";
     }
-    return 'stable';
+    return "stable";
   }
 
   private async flushMetricBuffer(): Promise<void> {
@@ -844,7 +845,7 @@ export class MonitoringService extends EnhancedAIService<
 
     try {
       const { error } = await this.supabase
-        .from('ai_monitoring_metrics')
+        .from("ai_monitoring_metrics")
         .insert(metricsToFlush);
 
       if (error) {
@@ -858,9 +859,9 @@ export class MonitoringService extends EnhancedAIService<
 
   private async loadAlertRules(): Promise<void> {
     const { data, error } = await this.supabase
-      .from('ai_alert_rules')
-      .select('*')
-      .eq('enabled', true);
+      .from("ai_alert_rules")
+      .select("*")
+      .eq("enabled", true);
 
     if (error) {
       return;
@@ -877,9 +878,9 @@ export class MonitoringService extends EnhancedAIService<
   ): Promise<void> {
     const relevantRules = [...this.alertRules.values()].filter(
       (rule) =>
-        rule.enabled
-        && rule.metric_name === metric.metric_name
-        && (!rule.service || rule.service === metric.service),
+        rule.enabled &&
+        rule.metric_name === metric.metric_name &&
+        (!rule.service || rule.service === metric.service),
     );
 
     for (const rule of relevantRules) {
@@ -899,22 +900,22 @@ export class MonitoringService extends EnhancedAIService<
     const value = metric.metric_value;
 
     switch (operator) {
-      case '>': {
+      case ">": {
         return value > threshold_value;
       }
-      case '<': {
+      case "<": {
         return value < threshold_value;
       }
-      case '>=': {
+      case ">=": {
         return value >= threshold_value;
       }
-      case '<=': {
+      case "<=": {
         return value <= threshold_value;
       }
-      case '==': {
+      case "==": {
         return value === threshold_value;
       }
-      case '!=': {
+      case "!=": {
         return value !== threshold_value;
       }
       default: {
@@ -926,10 +927,10 @@ export class MonitoringService extends EnhancedAIService<
   private isInCooldown(rule: AlertRule): boolean {
     const existingAlert = [...this.activeAlerts.values()].find(
       (alert) =>
-        alert.rule_id === rule.id
-        && alert.status === 'active'
-        && Date.now() - new Date(alert.triggered_at).getTime()
-          < rule.cooldown_minutes * 60 * 1000,
+        alert.rule_id === rule.id &&
+        alert.status === "active" &&
+        Date.now() - new Date(alert.triggered_at).getTime() <
+          rule.cooldown_minutes * 60 * 1000,
     );
 
     return !!existingAlert;
@@ -947,10 +948,9 @@ export class MonitoringService extends EnhancedAIService<
       current_value: metric.metric_value,
       threshold_value: rule.threshold_value,
       severity: rule.severity,
-      status: 'active',
+      status: "active",
       triggered_at: new Date().toISOString(),
-      message:
-        `${rule.name}: ${metric.metric_name} is ${metric.metric_value} (threshold: ${rule.threshold_value})`,
+      message: `${rule.name}: ${metric.metric_name} is ${metric.metric_value} (threshold: ${rule.threshold_value})`,
       context: {
         metric_tags: metric.tags,
         rule_condition: rule.condition,
@@ -959,7 +959,7 @@ export class MonitoringService extends EnhancedAIService<
     };
 
     // Store in database
-    const { error } = await this.supabase.from('ai_alerts').insert(alert);
+    const { error } = await this.supabase.from("ai_alerts").insert(alert);
 
     if (error) {
       return;
@@ -988,8 +988,8 @@ export class MonitoringService extends EnhancedAIService<
     // Use setTimeout to avoid blocking the main execution
     setTimeout(() => {
       this.recordMetric({
-        action: 'record_metric',
-        service: 'monitoring_service',
+        action: "record_metric",
+        service: "monitoring_service",
         metric_name: metricName,
         metric_value: value,
         tags,
@@ -1019,9 +1019,9 @@ export class MonitoringService extends EnhancedAIService<
     tags: Record<string, string> = {},
   ): Promise<boolean> {
     const result = await this.execute({
-      action: 'record_metric',
+      action: "record_metric",
       service,
-      metric_name: 'response_time_ms',
+      metric_name: "response_time_ms",
       metric_value: durationMs,
       tags: { operation, ...tags },
     });
@@ -1035,9 +1035,9 @@ export class MonitoringService extends EnhancedAIService<
     tags: Record<string, string> = {},
   ): Promise<boolean> {
     const result = await this.execute({
-      action: 'record_metric',
+      action: "record_metric",
       service,
-      metric_name: 'error_rate_percent',
+      metric_name: "error_rate_percent",
       metric_value: errorRate,
       tags,
     });
@@ -1051,9 +1051,9 @@ export class MonitoringService extends EnhancedAIService<
     tags: Record<string, string> = {},
   ): Promise<boolean> {
     const result = await this.execute({
-      action: 'record_metric',
+      action: "record_metric",
       service,
-      metric_name: 'throughput_rps',
+      metric_name: "throughput_rps",
       metric_value: requestsPerSecond,
       tags,
     });

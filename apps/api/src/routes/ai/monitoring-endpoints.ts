@@ -1,12 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
-import { Hono } from 'hono';
+import { createClient } from "@supabase/supabase-js";
+import { Hono } from "hono";
 
 const monitoring = new Hono();
 
 interface ServiceHealthSummary {
   service: string;
   healthy: boolean;
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   response_time_ms: number;
   last_updated: string;
   error_rate: number;
@@ -28,10 +28,10 @@ interface ServiceMetricsData {
 interface ComplianceAlert {
   id: string;
   service: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   message: string;
   timestamp: string;
-  compliance_type: 'lgpd' | 'anvisa' | 'cfm';
+  compliance_type: "lgpd" | "anvisa" | "cfm";
   resolved: boolean;
 }
 
@@ -42,13 +42,13 @@ class MonitoringService {
   );
 
   private static AI_SERVICES = [
-    'universal-chat',
-    'feature-flags',
-    'cache-management',
-    'monitoring',
-    'no-show-prediction',
-    'appointment-optimization',
-    'compliance-automation',
+    "universal-chat",
+    "feature-flags",
+    "cache-management",
+    "monitoring",
+    "no-show-prediction",
+    "appointment-optimization",
+    "compliance-automation",
   ];
 
   static async getServicesHealth(): Promise<ServiceHealthSummary[]> {
@@ -60,10 +60,10 @@ class MonitoringService {
         const response = await fetch(
           `${process.env.API_BASE_URL}/api/ai/${service}/health`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
               Authorization: `Bearer ${process.env.HEALTH_CHECK_TOKEN}`,
-              'User-Agent': 'NeonPro-Monitoring/1.0',
+              "User-Agent": "NeonPro-Monitoring/1.0",
             },
             timeout: 5000,
           },
@@ -78,14 +78,15 @@ class MonitoringService {
             response_time_ms: healthData.response_time_ms || 0,
             last_updated: new Date().toISOString(),
             error_rate: healthData.metrics?.error_rate_percent || 0,
-            uptime_percentage: MonitoringService.calculateUptimePercentage(service),
+            uptime_percentage:
+              MonitoringService.calculateUptimePercentage(service),
             details: healthData.details || {},
           });
         } else {
           healthChecks.push({
             service,
             healthy: false,
-            status: 'unhealthy',
+            status: "unhealthy",
             response_time_ms: 0,
             last_updated: new Date().toISOString(),
             error_rate: 100,
@@ -97,7 +98,7 @@ class MonitoringService {
         healthChecks.push({
           service,
           healthy: false,
-          status: 'unhealthy',
+          status: "unhealthy",
           response_time_ms: 0,
           last_updated: new Date().toISOString(),
           error_rate: 100,
@@ -119,10 +120,10 @@ class MonitoringService {
       ).toISOString();
 
       const { data: healthChecks, error } = await MonitoringService.supabase
-        .from('ai_service_health_logs')
-        .select('healthy')
-        .eq('service', service)
-        .gte('timestamp', last24Hours);
+        .from("ai_service_health_logs")
+        .select("healthy")
+        .eq("service", service)
+        .gte("timestamp", last24Hours);
 
       if (error || !healthChecks || healthChecks.length === 0) {
         return 95; // Default assumption
@@ -138,14 +139,14 @@ class MonitoringService {
   }
 
   static async getServiceMetrics(
-    timeRange = '1h',
+    timeRange = "1h",
   ): Promise<ServiceMetricsData[]> {
     try {
-      const timeRangeMap: { [key: string]: number; } = {
-        '1h': 60,
-        '6h': 360,
-        '24h': 1440,
-        '7d': 10_080,
+      const timeRangeMap: { [key: string]: number } = {
+        "1h": 60,
+        "6h": 360,
+        "24h": 1440,
+        "7d": 10_080,
       };
 
       const minutes = timeRangeMap[timeRange] || 60;
@@ -154,20 +155,18 @@ class MonitoringService {
       ).toISOString();
 
       const { data: metricsData, error } = await MonitoringService.supabase
-        .from('ai_service_metrics')
-        .select('*')
-        .gte('timestamp', startTime)
-        .order('timestamp', { ascending: true });
+        .from("ai_service_metrics")
+        .select("*")
+        .gte("timestamp", startTime)
+        .order("timestamp", { ascending: true });
 
       if (error) {
         return [];
       }
 
       // Group and aggregate metrics by service and time intervals
-      const aggregatedMetrics = MonitoringService.aggregateMetricsByTimeInterval(
-        metricsData,
-        minutes,
-      );
+      const aggregatedMetrics =
+        MonitoringService.aggregateMetricsByTimeInterval(metricsData, minutes);
 
       return aggregatedMetrics;
     } catch {
@@ -181,13 +180,13 @@ class MonitoringService {
   ): ServiceMetricsData[] {
     // Group metrics by 5-minute intervals for better visualization
     const intervalMinutes = Math.max(5, Math.floor(totalMinutes / 50));
-    const intervals: { [key: string]: any[]; } = {};
+    const intervals: { [key: string]: any[] } = {};
 
     metricsData.forEach((metric) => {
       const timestamp = new Date(metric.timestamp);
       const intervalKey = new Date(
-        Math.floor(timestamp.getTime() / (intervalMinutes * 60 * 1000))
-          * (intervalMinutes * 60 * 1000),
+        Math.floor(timestamp.getTime() / (intervalMinutes * 60 * 1000)) *
+          (intervalMinutes * 60 * 1000),
       ).toISOString();
 
       if (!intervals[intervalKey]) {
@@ -210,11 +209,11 @@ class MonitoringService {
 
         acc[metric.service].response_times.push(metric.metric_value);
 
-        if (metric.metric_name === 'request_count') {
+        if (metric.metric_name === "request_count") {
           acc[metric.service].request_counts.push(metric.metric_value);
-        } else if (metric.metric_name === 'error_count') {
+        } else if (metric.metric_name === "error_count") {
           acc[metric.service].error_counts.push(metric.metric_value);
-        } else if (metric.metric_name === 'success_count') {
+        } else if (metric.metric_name === "success_count") {
           acc[metric.service].success_counts.push(metric.metric_value);
         }
 
@@ -222,7 +221,7 @@ class MonitoringService {
       }, {});
 
       // Calculate aggregated values for the most active service in this interval
-      const primaryService = Object.keys(serviceMetrics)[0] || 'universal-chat';
+      const primaryService = Object.keys(serviceMetrics)[0] || "universal-chat";
       const serviceData = serviceMetrics[primaryService] || {
         response_times: [1000],
         request_counts: [10],
@@ -233,14 +232,16 @@ class MonitoringService {
       return {
         service: primaryService,
         timestamp,
-        requests_per_minute: serviceData.request_counts.reduce(
-          (a: number, b: number) => a + b,
-          0,
-        ) / intervalMinutes,
-        avg_response_time: serviceData.response_times.reduce(
-          (a: number, b: number) => a + b,
-          0,
-        ) / serviceData.response_times.length,
+        requests_per_minute:
+          serviceData.request_counts.reduce(
+            (a: number, b: number) => a + b,
+            0,
+          ) / intervalMinutes,
+        avg_response_time:
+          serviceData.response_times.reduce(
+            (a: number, b: number) => a + b,
+            0,
+          ) / serviceData.response_times.length,
         error_count: serviceData.error_counts.reduce(
           (a: number, b: number) => a + b,
           0,
@@ -260,12 +261,12 @@ class MonitoringService {
   ): Promise<ComplianceAlert[]> {
     try {
       let query = MonitoringService.supabase
-        .from('ai_compliance_alerts')
-        .select('*')
-        .order('timestamp', { ascending: false });
+        .from("ai_compliance_alerts")
+        .select("*")
+        .order("timestamp", { ascending: false });
 
       if (activeOnly) {
-        query = query.eq('resolved', false);
+        query = query.eq("resolved", false);
       }
 
       const { data: alertsData, error } = await query.limit(50);
@@ -292,7 +293,7 @@ class MonitoringService {
     try {
       const [servicesHealth, metrics] = await Promise.all([
         MonitoringService.getServicesHealth(),
-        MonitoringService.getServiceMetrics('1h'),
+        MonitoringService.getServiceMetrics("1h"),
       ]);
 
       // Calculate system overview metrics
@@ -300,18 +301,22 @@ class MonitoringService {
         (sum, m) => sum + m.requests_per_minute * 60,
         0,
       );
-      const avgResponseTime = metrics.reduce((sum, m) => sum + m.avg_response_time, 0)
-          / metrics.length || 0;
-      const errorRate = metrics.reduce(
-            (sum, m) => sum + (m.error_count / (m.error_count + m.success_count)) * 100,
-            0,
-          ) / metrics.length || 0;
+      const avgResponseTime =
+        metrics.reduce((sum, m) => sum + m.avg_response_time, 0) /
+          metrics.length || 0;
+      const errorRate =
+        metrics.reduce(
+          (sum, m) =>
+            sum + (m.error_count / (m.error_count + m.success_count)) * 100,
+          0,
+        ) / metrics.length || 0;
 
       // Get active chat sessions
-      const { data: activeSessions, error: sessionsError } = await MonitoringService.supabase
-        .from('ai_chat_sessions')
-        .select('count')
-        .eq('status', 'active');
+      const { data: activeSessions, error: sessionsError } =
+        await MonitoringService.supabase
+          .from("ai_chat_sessions")
+          .select("count")
+          .eq("status", "active");
 
       const activeSessionsCount = activeSessions?.[0]?.count || 0;
 
@@ -327,10 +332,10 @@ class MonitoringService {
         compliance_score: Number(complianceScore.toFixed(1)),
         healthy_services: servicesHealth.filter((s) => s.healthy).length,
         total_services: servicesHealth.length,
-        degraded_services: servicesHealth.filter((s) => s.status === 'degraded')
+        degraded_services: servicesHealth.filter((s) => s.status === "degraded")
           .length,
         unhealthy_services: servicesHealth.filter(
-          (s) => s.status === 'unhealthy',
+          (s) => s.status === "unhealthy",
         ).length,
       };
     } catch {
@@ -354,7 +359,7 @@ class MonitoringService {
     details: any = {},
   ): Promise<void> {
     try {
-      await MonitoringService.supabase.from('ai_service_health_logs').insert({
+      await MonitoringService.supabase.from("ai_service_health_logs").insert({
         service,
         healthy,
         details,
@@ -365,7 +370,7 @@ class MonitoringService {
 }
 
 // Get overall services health
-monitoring.get('/services-health', async (c) => {
+monitoring.get("/services-health", async (c) => {
   try {
     const servicesHealth = await MonitoringService.getServicesHealth();
 
@@ -387,9 +392,9 @@ monitoring.get('/services-health', async (c) => {
 });
 
 // Get service metrics with time range
-monitoring.get('/metrics', async (c) => {
+monitoring.get("/metrics", async (c) => {
   try {
-    const timeRange = c.req.query('time_range') || '1h';
+    const timeRange = c.req.query("time_range") || "1h";
     const metrics = await MonitoringService.getServiceMetrics(timeRange);
 
     return c.json({
@@ -411,7 +416,7 @@ monitoring.get('/metrics', async (c) => {
 });
 
 // Get system overview
-monitoring.get('/overview', async (c) => {
+monitoring.get("/overview", async (c) => {
   try {
     const overview = await MonitoringService.getSystemOverview();
 
@@ -433,13 +438,13 @@ monitoring.get('/overview', async (c) => {
 });
 
 // Get service-specific metrics
-monitoring.post('/service-metrics', async (c) => {
+monitoring.post("/service-metrics", async (c) => {
   try {
     const body = await c.req.json();
     const { service, time_range_minutes } = body;
 
     if (!service) {
-      return c.json({ success: false, error: 'Service name required' }, 400);
+      return c.json({ success: false, error: "Service name required" }, 400);
     }
 
     const timeRangeMinutes = time_range_minutes || 60;
@@ -448,10 +453,10 @@ monitoring.post('/service-metrics', async (c) => {
     ).toISOString();
 
     const { data: metricsData, error } = await MonitoringService.supabase
-      .from('ai_service_metrics')
-      .select('*')
-      .eq('service', service)
-      .gte('timestamp', startTime);
+      .from("ai_service_metrics")
+      .select("*")
+      .eq("service", service)
+      .gte("timestamp", startTime);
 
     if (error) {
       return c.json({ success: false, error: error.message }, 500);
@@ -459,25 +464,27 @@ monitoring.post('/service-metrics', async (c) => {
 
     // Calculate aggregated metrics
     const responseTimeSum = metricsData
-      .filter((m) => m.metric_name === 'response_time')
+      .filter((m) => m.metric_name === "response_time")
       .reduce((sum, m) => sum + m.metric_value, 0);
     const responseTimeCount = metricsData.filter(
-      (m) => m.metric_name === 'response_time',
+      (m) => m.metric_name === "response_time",
     ).length;
 
     const errorCount = metricsData
-      .filter((m) => m.metric_name === 'error_count')
+      .filter((m) => m.metric_name === "error_count")
       .reduce((sum, m) => sum + m.metric_value, 0);
 
     const successCount = metricsData
-      .filter((m) => m.metric_name === 'success_count')
+      .filter((m) => m.metric_name === "success_count")
       .reduce((sum, m) => sum + m.metric_value, 0);
 
     const aggregatedMetrics = {
-      avg_response_time: responseTimeCount > 0 ? responseTimeSum / responseTimeCount : 0,
-      error_rate: errorCount + successCount > 0
-        ? (errorCount / (errorCount + successCount)) * 100
-        : 0,
+      avg_response_time:
+        responseTimeCount > 0 ? responseTimeSum / responseTimeCount : 0,
+      error_rate:
+        errorCount + successCount > 0
+          ? (errorCount / (errorCount + successCount)) * 100
+          : 0,
       total_requests: errorCount + successCount,
       error_count: errorCount,
       success_count: successCount,
@@ -503,16 +510,16 @@ monitoring.post('/service-metrics', async (c) => {
 });
 
 // Log a health check result
-monitoring.post('/log-health-check', async (c) => {
+monitoring.post("/log-health-check", async (c) => {
   try {
     const body = await c.req.json();
     const { service, healthy, details } = body;
 
-    if (!service || typeof healthy !== 'boolean') {
+    if (!service || typeof healthy !== "boolean") {
       return c.json(
         {
           success: false,
-          error: 'Service name and healthy status required',
+          error: "Service name and healthy status required",
         },
         400,
       );
@@ -522,7 +529,7 @@ monitoring.post('/log-health-check', async (c) => {
 
     return c.json({
       success: true,
-      message: 'Health check logged successfully',
+      message: "Health check logged successfully",
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

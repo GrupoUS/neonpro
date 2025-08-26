@@ -227,12 +227,10 @@ export function SchedulingSystem({
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"week" | "day">("week");
-  const [draggedSchedule, setDraggedSchedule] = useState<Schedule | null>(
-    );
+  const [draggedSchedule, setDraggedSchedule] = useState<Schedule | null>();
   const [showConflicts, setShowConflicts] = useState(true);
   const [_isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [_selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
-    ); // Filter schedules by department
+  const [_selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(); // Filter schedules by department
   const filteredSchedules = useMemo(() => {
     if (selectedDepartment === "all") {
       return mockScheduleData;

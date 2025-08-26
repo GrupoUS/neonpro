@@ -4,7 +4,7 @@
  * Ensures LGPD compliance and tenant isolation in tests
  */
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Mock Supabase Types for Healthcare
 export interface MockSupabaseClient {
@@ -29,7 +29,7 @@ export interface MockQueryBuilder {
   in: (column: string, values: any[]) => MockQueryBuilder;
   order: (
     column: string,
-    options?: { ascending?: boolean; },
+    options?: { ascending?: boolean },
   ) => MockQueryBuilder;
   limit: (count: number) => MockQueryBuilder;
   range: (from: number, to: number) => MockQueryBuilder;
@@ -39,11 +39,11 @@ export interface MockQueryBuilder {
 }
 
 export interface MockAuthClient {
-  getUser: () => Promise<{ data: { user: any; } | null; error: any; }>;
-  getSession: () => Promise<{ data: { session: any; } | null; error: any; }>;
-  signUp: (credentials: any) => Promise<{ data: any; error: any; }>;
-  signInWithPassword: (credentials: any) => Promise<{ data: any; error: any; }>;
-  signOut: () => Promise<{ error: any; }>;
+  getUser: () => Promise<{ data: { user: any } | null; error: any }>;
+  getSession: () => Promise<{ data: { session: any } | null; error: any }>;
+  signUp: (credentials: any) => Promise<{ data: any; error: any }>;
+  signInWithPassword: (credentials: any) => Promise<{ data: any; error: any }>;
+  signOut: () => Promise<{ error: any }>;
 }
 
 export interface MockStorageClient {
@@ -51,10 +51,10 @@ export interface MockStorageClient {
 }
 
 export interface MockBucket {
-  upload: (path: string, file: any) => Promise<{ data: any; error: any; }>;
-  download: (path: string) => Promise<{ data: any; error: any; }>;
-  remove: (paths: string[]) => Promise<{ data: any; error: any; }>;
-  list: (path?: string) => Promise<{ data: any; error: any; }>;
+  upload: (path: string, file: any) => Promise<{ data: any; error: any }>;
+  download: (path: string) => Promise<{ data: any; error: any }>;
+  remove: (paths: string[]) => Promise<{ data: any; error: any }>;
+  list: (path?: string) => Promise<{ data: any; error: any }>;
 }
 
 export interface MockChannel {
@@ -66,20 +66,20 @@ class HealthcareMockDataStore {
   private readonly data: Map<string, any[]> = new Map();
   private readonly tenantId: string;
 
-  constructor(tenantId = 'test-tenant-healthcare') {
+  constructor(tenantId = "test-tenant-healthcare") {
     this.tenantId = tenantId;
     this.initializeTestData();
   }
 
   private initializeTestData() {
     // Initialize with empty healthcare tables
-    this.data.set('patients', []);
-    this.data.set('appointments', []);
-    this.data.set('providers', []);
-    this.data.set('procedures', []);
-    this.data.set('medical_records', []);
-    this.data.set('audit_logs', []);
-    this.data.set('lgpd_consents', []);
+    this.data.set("patients", []);
+    this.data.set("appointments", []);
+    this.data.set("providers", []);
+    this.data.set("procedures", []);
+    this.data.set("medical_records", []);
+    this.data.set("audit_logs", []);
+    this.data.set("lgpd_consents", []);
   }
 
   getTable(tableName: string): any[] {
@@ -92,8 +92,9 @@ class HealthcareMockDataStore {
 
   addRecord(tableName: string, record: any): any {
     const table = this.getTable(tableName);
-    const id = record.id
-      || `${tableName}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const id =
+      record.id ||
+      `${tableName}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const tenantRecord = {
       ...record,
       id,
@@ -115,7 +116,7 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
   private readonly tableName: string;
   private readonly dataStore: HealthcareMockDataStore;
   private readonly query: any = {};
-  private operation: 'select' | 'insert' | 'update' | 'delete' = 'select';
+  private operation: "select" | "insert" | "update" | "delete" = "select";
 
   constructor(tableName: string, dataStore: HealthcareMockDataStore) {
     this.tableName = tableName;
@@ -123,71 +124,71 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
   }
 
   select(columns?: string): MockQueryBuilder {
-    this.operation = 'select';
+    this.operation = "select";
     this.query.columns = columns;
     return this;
   }
 
   insert(data: any): MockQueryBuilder {
-    this.operation = 'insert';
+    this.operation = "insert";
     this.query.data = data;
     return this;
   }
 
   update(data: any): MockQueryBuilder {
-    this.operation = 'update';
+    this.operation = "update";
     this.query.data = data;
     return this;
   }
 
   delete(): MockQueryBuilder {
-    this.operation = 'delete';
+    this.operation = "delete";
     return this;
   }
 
   eq(column: string, value: any): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'eq', column, value });
+    this.query.filters.push({ type: "eq", column, value });
     return this;
   }
 
   neq(column: string, value: any): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'neq', column, value });
+    this.query.filters.push({ type: "neq", column, value });
     return this;
   }
 
   gte(column: string, value: any): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'gte', column, value });
+    this.query.filters.push({ type: "gte", column, value });
     return this;
   }
 
   lte(column: string, value: any): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'lte', column, value });
+    this.query.filters.push({ type: "lte", column, value });
     return this;
   }
 
   like(column: string, pattern: string): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'like', column, value: pattern });
+    this.query.filters.push({ type: "like", column, value: pattern });
     return this;
   }
 
   ilike(column: string, pattern: string): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'ilike', column, value: pattern });
+    this.query.filters.push({ type: "ilike", column, value: pattern });
     return this;
   }
 
   in(column: string, values: any[]): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
-    this.query.filters.push({ type: 'in', column, value: values });
+    this.query.filters.push({ type: "in", column, value: values });
     return this;
   }
 
-  order(column: string, options?: { ascending?: boolean; }): MockQueryBuilder {
+  order(column: string, options?: { ascending?: boolean }): MockQueryBuilder {
     this.query.order = { column, ascending: options?.ascending !== false };
     return this;
   }
@@ -225,27 +226,27 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
           return this.query.filters.every((filter: any) => {
             const value = record[filter.column];
             switch (filter.type) {
-              case 'eq': {
+              case "eq": {
                 return value === filter.value;
               }
-              case 'neq': {
+              case "neq": {
                 return value !== filter.value;
               }
-              case 'gte': {
+              case "gte": {
                 return value >= filter.value;
               }
-              case 'lte': {
+              case "lte": {
                 return value <= filter.value;
               }
-              case 'like': {
-                return String(value).includes(filter.value.replace('%', ''));
+              case "like": {
+                return String(value).includes(filter.value.replace("%", ""));
               }
-              case 'ilike': {
+              case "ilike": {
                 return String(value)
                   .toLowerCase()
-                  .includes(filter.value.replace('%', '').toLowerCase());
+                  .includes(filter.value.replace("%", "").toLowerCase());
               }
-              case 'in': {
+              case "in": {
                 return filter.value.includes(value);
               }
               default: {
@@ -257,13 +258,13 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
       }
 
       switch (this.operation) {
-        case 'select': {
+        case "select": {
           // Apply ordering
           if (this.query.order) {
             data.sort((a, b) => {
               const aVal = a[this.query.order.column];
               const bVal = b[this.query.order.column];
-              const comparison = aVal < bVal ? -1 : (aVal > bVal ? 1 : 0);
+              const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
               return this.query.order.ascending ? comparison : -comparison;
             });
           }
@@ -282,7 +283,7 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
           return { data, error: undefined };
         }
 
-        case 'insert': {
+        case "insert": {
           const insertedRecord = this.dataStore.addRecord(
             this.tableName,
             this.query.data,
@@ -290,14 +291,15 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
           return { data: insertedRecord, error: undefined };
         }
 
-        case 'update': {
+        case "update": {
           // Update matching records
           const table = this.dataStore.getTable(this.tableName);
           const updatedRecords = table.map((record) => {
-            const matches = !this.query.filters
-              || this.query.filters.every((filter: any) => {
+            const matches =
+              !this.query.filters ||
+              this.query.filters.every((filter: any) => {
                 const value = record[filter.column];
-                return filter.type === 'eq' ? value === filter.value : true;
+                return filter.type === "eq" ? value === filter.value : true;
               });
 
             if (matches) {
@@ -317,15 +319,15 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
           };
         }
 
-        case 'delete': {
+        case "delete": {
           const remainingRecords = this.dataStore
             .getTable(this.tableName)
             .filter((record) => {
               return this.query.filters
                 ? !this.query.filters.every((filter: any) => {
-                  const value = record[filter.column];
-                  return filter.type === 'eq' ? value === filter.value : true;
-                })
+                    const value = record[filter.column];
+                    return filter.type === "eq" ? value === filter.value : true;
+                  })
                 : false;
             });
 
@@ -334,7 +336,7 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
         }
 
         default: {
-          return { data: undefined, error: new Error('Unknown operation') };
+          return { data: undefined, error: new Error("Unknown operation") };
         }
       }
     } catch (error) {
@@ -358,9 +360,9 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
       return {
         data: {
           user: {
-            id: 'test-user-id',
-            email: 'test@healthcare.com',
-            app_metadata: { tenant_id: 'test-tenant-healthcare' },
+            id: "test-user-id",
+            email: "test@healthcare.com",
+            app_metadata: { tenant_id: "test-tenant-healthcare" },
           },
         },
         error: undefined,
@@ -371,8 +373,8 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
       return {
         data: {
           session: {
-            access_token: 'test-access-token',
-            user: { id: 'test-user-id', email: 'test@healthcare.com' },
+            access_token: "test-access-token",
+            user: { id: "test-user-id", email: "test@healthcare.com" },
           },
         },
         error: undefined,
@@ -381,14 +383,14 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
 
     async signUp(credentials: any) {
       return {
-        data: { user: { id: 'new-user-id', ...credentials } },
+        data: { user: { id: "new-user-id", ...credentials } },
         error: undefined,
       };
     },
 
     async signInWithPassword(credentials: any) {
       return {
-        data: { user: { id: 'test-user-id', email: credentials.email } },
+        data: { user: { id: "test-user-id", email: credentials.email } },
         error: undefined,
       };
     },
@@ -404,7 +406,7 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
         return { data: { path, size: 1024 }, error: undefined };
       },
       async download(_path: string) {
-        return { data: new Blob(['test data']), error: undefined };
+        return { data: new Blob(["test data"]), error: undefined };
       },
       async remove(paths: string[]) {
         return { data: paths, error: undefined };
@@ -422,27 +424,30 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
         return this.channel(name);
       },
       subscribe: () => this.channel(name),
-      unsubscribe: async () => ({ status: 'ok' }),
+      unsubscribe: async () => ({ status: "ok" }),
     };
   }
 
   async rpc(fn: string, _params?: any) {
     // Mock RPC calls for healthcare functions
     switch (fn) {
-      case 'get_patient_analytics': {
+      case "get_patient_analytics": {
         return {
           data: { total_patients: 100, active_patients: 85 },
           error: undefined,
         };
       }
-      case 'validate_lgpd_compliance': {
+      case "validate_lgpd_compliance": {
         return {
           data: { compliant: true, last_check: new Date().toISOString() },
           error: undefined,
         };
       }
       default: {
-        return { data: undefined, error: new Error(`Unknown RPC function: ${fn}`) };
+        return {
+          data: undefined,
+          error: new Error(`Unknown RPC function: ${fn}`),
+        };
       }
     }
   }
@@ -461,11 +466,14 @@ export const setupMockSupabase = () => {
   (globalThis as any).__MOCK_DATA_STORE__ = mockDataStore;
 
   // Mock Supabase imports
-  vi.doMock<typeof import('@supabase/supabase-js')>('@supabase/supabase-js', () => ({
-    createClient: () => mockSupabaseClient,
-  }));
+  vi.doMock<typeof import("@supabase/supabase-js")>(
+    "@supabase/supabase-js",
+    () => ({
+      createClient: () => mockSupabaseClient,
+    }),
+  );
 
-  vi.doMock<typeof import('@supabase/ssr')>('@supabase/ssr', () => ({
+  vi.doMock<typeof import("@supabase/ssr")>("@supabase/ssr", () => ({
     createServerClient: () => mockSupabaseClient,
     createBrowserClient: () => mockSupabaseClient,
   }));

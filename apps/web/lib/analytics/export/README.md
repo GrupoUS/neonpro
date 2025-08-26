@@ -83,28 +83,28 @@ EXPORT_STORAGE_BUCKET=analytics-exports
 ### Basic Export Service
 
 ```typescript
-import { AnalyticsExportService } from '@/lib/analytics/export';
+import { AnalyticsExportService } from "@/lib/analytics/export";
 
 const exportService = new AnalyticsExportService();
 
 // Generate PDF export
 const pdfResult = await exportService.generatePDFExport({
-  format: 'pdf',
-  reportType: 'revenue',
+  format: "pdf",
+  reportType: "revenue",
   dateRange: {
-    startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-01-31'),
+    startDate: new Date("2024-01-01"),
+    endDate: new Date("2024-01-31"),
   },
   includeSummary: true,
 });
 
 // Generate Excel export
 const excelResult = await exportService.generateExcelExport({
-  format: 'excel',
-  reportType: 'comprehensive',
+  format: "excel",
+  reportType: "comprehensive",
   dateRange: {
-    startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-01-31'),
+    startDate: new Date("2024-01-01"),
+    endDate: new Date("2024-01-31"),
   },
 });
 ```
@@ -142,36 +142,36 @@ function AnalyticsPage() {
 
 ```typescript
 // POST /api/analytics/export
-const response = await fetch('/api/analytics/export', {
-  method: 'POST',
+const response = await fetch("/api/analytics/export", {
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   body: JSON.stringify({
     config: {
-      format: 'pdf',
-      reportType: 'revenue',
+      format: "pdf",
+      reportType: "revenue",
       dateRange: {
-        startDate: '2024-01-01',
-        endDate: '2024-01-31',
+        startDate: "2024-01-01",
+        endDate: "2024-01-31",
       },
       includeSummary: true,
       customization: {
-        title: 'Monthly Revenue Report',
-        subtitle: 'January 2024',
+        title: "Monthly Revenue Report",
+        subtitle: "January 2024",
       },
     },
     pdfOptions: {
-      orientation: 'portrait',
-      pageSize: 'A4',
+      orientation: "portrait",
+      pageSize: "A4",
     },
     notifyOnComplete: true,
-    email: 'user@example.com',
+    email: "user@example.com",
   }),
 });
 
 const result = await response.json();
-console.log('Export ID:', result.id);
+console.log("Export ID:", result.id);
 ```
 
 #### Check Export Status
@@ -181,9 +181,9 @@ console.log('Export ID:', result.id);
 const response = await fetch(`/api/analytics/export/${exportId}`);
 const status = await response.json();
 
-console.log('Status:', status.status);
-console.log('Progress:', status.progress);
-console.log('Download URL:', status.downloadUrl);
+console.log("Status:", status.status);
+console.log("Progress:", status.progress);
+console.log("Download URL:", status.downloadUrl);
 ```
 
 #### Cancel Export
@@ -191,7 +191,7 @@ console.log('Download URL:', status.downloadUrl);
 ```typescript
 // DELETE /api/analytics/export/[id]
 const response = await fetch(`/api/analytics/export/${exportId}`, {
-  method: 'DELETE',
+  method: "DELETE",
 });
 ```
 
@@ -201,8 +201,8 @@ const response = await fetch(`/api/analytics/export/${exportId}`, {
 
 ```typescript
 const pdfOptions: PDFExportOptions = {
-  orientation: 'portrait', // 'portrait' | 'landscape'
-  pageSize: 'A4', // 'A4' | 'A3' | 'letter' | 'legal'
+  orientation: "portrait", // 'portrait' | 'landscape'
+  pageSize: "A4", // 'A4' | 'A3' | 'letter' | 'legal'
   margins: {
     top: 20,
     right: 20,
@@ -210,15 +210,15 @@ const pdfOptions: PDFExportOptions = {
     left: 20,
   },
   styling: {
-    fontFamily: 'helvetica',
+    fontFamily: "helvetica",
     fontSize: 12,
-    primaryColor: '#1f2937',
-    secondaryColor: '#6b7280',
+    primaryColor: "#1f2937",
+    secondaryColor: "#6b7280",
   },
   header: {
-    text: 'Analytics Report',
+    text: "Analytics Report",
     fontSize: 16,
-    alignment: 'center',
+    alignment: "center",
   },
   footer: {
     includePageNumbers: true,
@@ -248,11 +248,11 @@ const excelOptions: ExcelExportOptions = {
     autoWidth: true,
     freezeHeaders: true,
     alternatingRows: true,
-    numberFormat: '#,##0.00',
+    numberFormat: "#,##0.00",
   },
   charts: {
     includeCharts: true,
-    chartTypes: ['line', 'bar', 'pie'],
+    chartTypes: ["line", "bar", "pie"],
   },
 };
 ```
@@ -261,10 +261,10 @@ const excelOptions: ExcelExportOptions = {
 
 ```typescript
 const csvOptions: CSVExportOptions = {
-  delimiter: ',', // ',' | ';' | '\t' | '|'
-  encoding: 'utf8', // 'utf8' | 'utf16' | 'ascii'
+  delimiter: ",", // ',' | ';' | '\t' | '|'
+  encoding: "utf8", // 'utf8' | 'utf16' | 'ascii'
   includeHeaders: true,
-  compression: 'gzip', // 'none' | 'gzip' | 'zip'
+  compression: "gzip", // 'none' | 'gzip' | 'zip'
 };
 ```
 
@@ -428,10 +428,10 @@ npm test:performance export
 
 ```typescript
 // Enable debug logging
-process.env.EXPORT_DEBUG = 'true';
+process.env.EXPORT_DEBUG = "true";
 
 // Detailed error messages
-process.env.EXPORT_VERBOSE_ERRORS = 'true';
+process.env.EXPORT_VERBOSE_ERRORS = "true";
 ```
 
 ## 📝 Contributing

@@ -1,6 +1,12 @@
-import { z } from 'zod';
-import { DateSchema, EmailSchema, NotificationType, PhoneSchema, UUIDSchema } from '../types';
-import type { BaseEntity } from '../types';
+import { z } from "zod";
+import {
+  DateSchema,
+  EmailSchema,
+  NotificationType,
+  PhoneSchema,
+  UUIDSchema,
+} from "../types";
+import type { BaseEntity } from "../types";
 
 // Notification interfaces for aesthetic clinic communications
 export interface Notification extends BaseEntity {
@@ -78,11 +84,11 @@ export interface NotificationCampaign extends BaseEntity {
 export interface AudienceFilter {
   patientIds?: string[];
   tags?: string[];
-  ageRange?: { min: number; max: number; };
+  ageRange?: { min: number; max: number };
   gender?: string;
   treatmentHistory?: string[];
-  lastVisitDate?: { from: Date; to: Date; };
-  totalSpent?: { min: number; max: number; };
+  lastVisitDate?: { from: Date; to: Date };
+  totalSpent?: { min: number; max: number };
   city?: string[];
   marketingConsent: boolean;
   excludePatientIds?: string[];
@@ -103,7 +109,7 @@ export interface ABTestConfig {
   variantB: ABTestVariant;
   trafficSplit: number; // Percentage for variant A (0-100)
   testDuration: number; // Days
-  winnerMetric: 'open_rate' | 'click_rate' | 'conversion_rate';
+  winnerMetric: "open_rate" | "click_rate" | "conversion_rate";
 }
 
 export interface ABTestVariant {
@@ -149,83 +155,83 @@ export interface NotificationLog extends BaseEntity {
   location?: string;
 } // Enums
 export enum NotificationChannel {
-  EMAIL = 'email',
-  SMS = 'sms',
-  WHATSAPP = 'whatsapp',
-  PUSH = 'push',
-  IN_APP = 'in_app',
+  EMAIL = "email",
+  SMS = "sms",
+  WHATSAPP = "whatsapp",
+  PUSH = "push",
+  IN_APP = "in_app",
 }
 
 export enum NotificationStatus {
-  DRAFT = 'draft',
-  SCHEDULED = 'scheduled',
-  QUEUED = 'queued',
-  SENDING = 'sending',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  OPENED = 'opened',
-  CLICKED = 'clicked',
-  FAILED = 'failed',
-  BOUNCED = 'bounced',
-  SPAM = 'spam',
-  UNSUBSCRIBED = 'unsubscribed',
+  DRAFT = "draft",
+  SCHEDULED = "scheduled",
+  QUEUED = "queued",
+  SENDING = "sending",
+  SENT = "sent",
+  DELIVERED = "delivered",
+  OPENED = "opened",
+  CLICKED = "clicked",
+  FAILED = "failed",
+  BOUNCED = "bounced",
+  SPAM = "spam",
+  UNSUBSCRIBED = "unsubscribed",
 }
 
 export enum NotificationPriority {
-  LOW = 'low',
-  NORMAL = 'normal',
-  HIGH = 'high',
-  URGENT = 'urgent',
+  LOW = "low",
+  NORMAL = "normal",
+  HIGH = "high",
+  URGENT = "urgent",
 }
 
 export enum CampaignType {
-  PROMOTIONAL = 'promotional',
-  TRANSACTIONAL = 'transactional',
-  REMINDER = 'reminder',
-  FOLLOWUP = 'followup',
-  EDUCATIONAL = 'educational',
-  ANNOUNCEMENT = 'announcement',
+  PROMOTIONAL = "promotional",
+  TRANSACTIONAL = "transactional",
+  REMINDER = "reminder",
+  FOLLOWUP = "followup",
+  EDUCATIONAL = "educational",
+  ANNOUNCEMENT = "announcement",
 }
 
 export enum CampaignStatus {
-  DRAFT = 'draft',
-  SCHEDULED = 'scheduled',
-  RUNNING = 'running',
-  PAUSED = 'paused',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  FAILED = 'failed',
+  DRAFT = "draft",
+  SCHEDULED = "scheduled",
+  RUNNING = "running",
+  PAUSED = "paused",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+  FAILED = "failed",
 }
 
 export enum RecurringFrequency {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly',
-  YEARLY = 'yearly',
+  DAILY = "daily",
+  WEEKLY = "weekly",
+  MONTHLY = "monthly",
+  QUARTERLY = "quarterly",
+  YEARLY = "yearly",
 }
 
 export enum VariableType {
-  STRING = 'string',
-  NUMBER = 'number',
-  DATE = 'date',
-  BOOLEAN = 'boolean',
-  URL = 'url',
-  EMAIL = 'email',
-  PHONE = 'phone',
+  STRING = "string",
+  NUMBER = "number",
+  DATE = "date",
+  BOOLEAN = "boolean",
+  URL = "url",
+  EMAIL = "email",
+  PHONE = "phone",
 }
 
 export enum NotificationEvent {
-  CREATED = 'created',
-  SCHEDULED = 'scheduled',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  OPENED = 'opened',
-  CLICKED = 'clicked',
-  BOUNCED = 'bounced',
-  FAILED = 'failed',
-  UNSUBSCRIBED = 'unsubscribed',
-  SPAM_REPORTED = 'spam_reported',
+  CREATED = "created",
+  SCHEDULED = "scheduled",
+  SENT = "sent",
+  DELIVERED = "delivered",
+  OPENED = "opened",
+  CLICKED = "clicked",
+  BOUNCED = "bounced",
+  FAILED = "failed",
+  UNSUBSCRIBED = "unsubscribed",
+  SPAM_REPORTED = "spam_reported",
 } // Validation schemas
 export const TemplateVariableSchema = z.object({
   name: z.string().min(1),
@@ -244,7 +250,7 @@ export const CreateNotificationTemplateSchema = z.object({
   content: z.string().min(1),
   variables: z.array(TemplateVariableSchema).default([]),
   isActive: z.boolean().default(true),
-  language: z.string().default('pt-BR'),
+  language: z.string().default("pt-BR"),
   previewText: z.string().optional(),
   tags: z.array(z.string()).default([]),
 });
@@ -327,8 +333,8 @@ export const NotificationPreferenceSchema = z.object({
     evening: z.boolean().default(false),
     weekend: z.boolean().default(false),
   }),
-  timezone: z.string().default('America/Sao_Paulo'),
-  language: z.string().default('pt-BR'),
+  timezone: z.string().default("America/Sao_Paulo"),
+  language: z.string().default("pt-BR"),
 });
 
 export type CreateNotificationTemplateData = z.infer<

@@ -32,7 +32,7 @@ export {
   validateEnterpriseAnalyticsCompliance,
   validateHealthcareIntelligence,
   validatePrivacyPreservingAnalytics,
-} from './analytics';
+} from "./analytics";
 // Enterprise Audit Module
 export {
   type AuditTrailConfiguration,
@@ -58,7 +58,7 @@ export {
   validateComplianceScoring,
   validateEnterpriseAuditCompliance,
   validateRealTimeComplianceMonitor,
-} from './audit';
+} from "./audit";
 
 // Enterprise Management Module
 export {
@@ -70,19 +70,35 @@ export {
   MultiClinicManagementService,
   type TenantManagement,
   validateMultiClinicManagement,
-} from './management/multi-clinic-management';
+} from "./management/multi-clinic-management";
 
 // Import validation functions for internal use
-import type { createClient } from '@supabase/supabase-js';
-import { createEnterpriseAnalyticsServices, validateEnterpriseAnalyticsCompliance } from './analytics';
-import type { createComplianceDashboardService, createHealthcareIntelligenceService, createPrivacyPreservingAnalyticsService } from './analytics';
-import { createEnterpriseAuditServices, validateEnterpriseAuditCompliance } from './audit';
+import type { createClient } from "@supabase/supabase-js";
+import {
+  createEnterpriseAnalyticsServices,
+  validateEnterpriseAnalyticsCompliance,
+} from "./analytics";
+import type {
+  createComplianceDashboardService,
+  createHealthcareIntelligenceService,
+  createPrivacyPreservingAnalyticsService,
+} from "./analytics";
+import {
+  createEnterpriseAuditServices,
+  validateEnterpriseAuditCompliance,
+} from "./audit";
 import {
   createMultiClinicManagementService,
   validateMultiClinicManagement,
-} from './management/multi-clinic-management';
-import { createEnterpriseSecurityServices, validateEnterpriseSecurityCompliance } from './security';
-import type { createApiRateLimitingService, createHealthcareRbacService } from './security';
+} from "./management/multi-clinic-management";
+import {
+  createEnterpriseSecurityServices,
+  validateEnterpriseSecurityCompliance,
+} from "./security";
+import type {
+  createApiRateLimitingService,
+  createHealthcareRbacService,
+} from "./security";
 
 // Enterprise Security Module
 export {
@@ -106,7 +122,7 @@ export {
   validateApiRateLimiting,
   validateEnterpriseSecurityCompliance,
   validateHealthcareRbac,
-} from './security';
+} from "./security";
 
 /**
  * Complete Enterprise Healthcare Services Factory
@@ -185,7 +201,7 @@ export async function validateEnterpriseHealthcareCompliance(
   try {
     const auditValidation = validateEnterpriseAuditCompliance(supabaseClient);
     if (!auditValidation) {
-      violations.push('Enterprise Audit: Configuration validation failed');
+      violations.push("Enterprise Audit: Configuration validation failed");
     }
     moduleScores.audit = auditValidation ? 10 : 0;
   } catch (error) {
@@ -217,7 +233,8 @@ export async function validateEnterpriseHealthcareCompliance(
 
   // Validate Enterprise Management compliance
   try {
-    const managementValidation = await validateMultiClinicManagement(managementConfig);
+    const managementValidation =
+      await validateMultiClinicManagement(managementConfig);
     if (!managementValidation.valid) {
       violations.push(
         ...managementValidation.violations.map(
@@ -251,7 +268,8 @@ export async function validateEnterpriseHealthcareCompliance(
   }
 
   // Calculate overall compliance score
-  const averageScore = Object.values(moduleScores).reduce((sum, score) => sum + score, 0) / 4;
+  const averageScore =
+    Object.values(moduleScores).reduce((sum, score) => sum + score, 0) / 4;
 
   return {
     valid: violations.length === 0 && averageScore >= 9.9,
@@ -266,68 +284,71 @@ export async function validateEnterpriseHealthcareCompliance(
  * Complete enterprise features for constitutional healthcare compliance
  */
 export const ENTERPRISE_HEALTHCARE_MODULE = {
-  name: 'Enterprise Healthcare',
-  version: '1.0.0',
+  name: "Enterprise Healthcare",
+  version: "1.0.0",
   compliance_standards: [
-    'LGPD (Lei Geral de Proteção de Dados)',
-    'ANVISA (Agência Nacional de Vigilância Sanitária)',
-    'CFM (Conselho Federal de Medicina)',
-    'Constitutional Healthcare Rights',
-    'Medical Ethics and Professional Standards',
+    "LGPD (Lei Geral de Proteção de Dados)",
+    "ANVISA (Agência Nacional de Vigilância Sanitária)",
+    "CFM (Conselho Federal de Medicina)",
+    "Constitutional Healthcare Rights",
+    "Medical Ethics and Professional Standards",
   ],
   quality_score: 9.9,
   modules: {
     audit: {
-      name: 'Enterprise Audit',
+      name: "Enterprise Audit",
       services: 3,
-      description: 'Real-time compliance monitoring, scoring, and audit trail generation',
+      description:
+        "Real-time compliance monitoring, scoring, and audit trail generation",
       constitutional_features: [
-        'Real-time constitutional compliance monitoring',
-        'Automated compliance scoring with ≥9.9/10 standards',
-        'Comprehensive audit trail generation with cryptographic integrity',
+        "Real-time constitutional compliance monitoring",
+        "Automated compliance scoring with ≥9.9/10 standards",
+        "Comprehensive audit trail generation with cryptographic integrity",
       ],
     },
     analytics: {
-      name: 'Enterprise Analytics',
+      name: "Enterprise Analytics",
       services: 3,
       description:
-        'Privacy-preserving analytics, compliance dashboard, and healthcare intelligence',
+        "Privacy-preserving analytics, compliance dashboard, and healthcare intelligence",
       constitutional_features: [
-        'Privacy-preserving patient analytics with differential privacy',
-        'Real-time compliance monitoring dashboard',
-        'AI-driven healthcare insights with constitutional medical ethics',
+        "Privacy-preserving patient analytics with differential privacy",
+        "Real-time compliance monitoring dashboard",
+        "AI-driven healthcare insights with constitutional medical ethics",
       ],
     },
     management: {
-      name: 'Enterprise Management',
+      name: "Enterprise Management",
       services: 1,
-      description: 'Multi-clinic and multi-tenant management with regulatory compliance',
+      description:
+        "Multi-clinic and multi-tenant management with regulatory compliance",
       constitutional_features: [
-        'Constitutional healthcare multi-clinic management',
-        'Tenant isolation with LGPD compliance',
-        'Cross-clinic operations with privacy protection',
+        "Constitutional healthcare multi-clinic management",
+        "Tenant isolation with LGPD compliance",
+        "Cross-clinic operations with privacy protection",
       ],
     },
     security: {
-      name: 'Enterprise Security',
+      name: "Enterprise Security",
       services: 2,
-      description: 'Healthcare RBAC and API rate limiting with constitutional protection',
+      description:
+        "Healthcare RBAC and API rate limiting with constitutional protection",
       constitutional_features: [
-        'Constitutional healthcare access control with CFM validation',
-        'API protection with healthcare priority routing',
-        'Emergency access protocols for critical healthcare situations',
+        "Constitutional healthcare access control with CFM validation",
+        "API protection with healthcare priority routing",
+        "Emergency access protocols for critical healthcare situations",
       ],
     },
   },
   total_services: 9,
   constitutional_guarantees: [
-    'Patient privacy protection through advanced anonymization and differential privacy',
-    'Medical professional standards validation with CFM compliance',
-    'Real-time compliance monitoring with ≥9.9/10 constitutional standards',
-    'Comprehensive audit trails for regulatory compliance and transparency',
-    'Emergency access protocols for critical healthcare situations',
-    'Multi-clinic management with tenant isolation and privacy protection',
-    'AI ethics compliance with explainable healthcare intelligence',
-    'Constitutional healthcare access control with patient consent management',
+    "Patient privacy protection through advanced anonymization and differential privacy",
+    "Medical professional standards validation with CFM compliance",
+    "Real-time compliance monitoring with ≥9.9/10 constitutional standards",
+    "Comprehensive audit trails for regulatory compliance and transparency",
+    "Emergency access protocols for critical healthcare situations",
+    "Multi-clinic management with tenant isolation and privacy protection",
+    "AI ethics compliance with explainable healthcare intelligence",
+    "Constitutional healthcare access control with patient consent management",
   ],
 } as const;

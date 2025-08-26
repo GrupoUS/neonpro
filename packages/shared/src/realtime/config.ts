@@ -98,7 +98,7 @@ export const HEALTHCARE_REALTIME_CONFIG: HealthcareRealtimeConfig = {
  * Environment-specific configurations
  */
 export const getEnvironmentConfig = (): Partial<HealthcareRealtimeConfig> => {
-  const env = process.env.NODE_ENV || 'development';
+  const env = process.env.NODE_ENV || "development";
 
   const configurations: Record<string, Partial<HealthcareRealtimeConfig>> = {
     development: {
@@ -200,29 +200,29 @@ export const getRealtimeConfig = (): HealthcareRealtimeConfig => {
 export const HEALTHCARE_PRIORITIES = {
   EMERGENCY: {
     score: 100,
-    audioFile: '/sounds/emergency-alert.mp3',
-    color: '#dc2626',
+    audioFile: "/sounds/emergency-alert.mp3",
+    color: "#dc2626",
     timeout: 0, // Never auto-dismiss
     vibrate: [200, 100, 200, 100, 200],
   },
   HIGH: {
     score: 75,
-    audioFile: '/sounds/urgent-notification.mp3',
-    color: '#ea580c',
+    audioFile: "/sounds/urgent-notification.mp3",
+    color: "#ea580c",
     timeout: 10_000,
     vibrate: [100, 50, 100],
   },
   MEDIUM: {
     score: 50,
-    audioFile: '/sounds/standard-notification.mp3',
-    color: '#2563eb',
+    audioFile: "/sounds/standard-notification.mp3",
+    color: "#2563eb",
     timeout: 5000,
     vibrate: [100],
   },
   LOW: {
     score: 25,
-    audioFile: '/sounds/soft-notification.mp3',
-    color: '#059669',
+    audioFile: "/sounds/soft-notification.mp3",
+    color: "#059669",
     timeout: 3000,
     vibrate: [50],
   },
@@ -233,34 +233,34 @@ export const HEALTHCARE_PRIORITIES = {
  */
 export const COMPLIANCE_EVENT_TYPES = {
   // LGPD Events
-  LGPD_CONSENT_GRANTED: { severity: 'LOW', retention: 1825, reportable: false },
-  LGPD_CONSENT_REVOKED: { severity: 'HIGH', retention: 1825, reportable: true },
-  LGPD_DATA_ACCESS: { severity: 'LOW', retention: 1825, reportable: false },
-  LGPD_DATA_DELETION: { severity: 'MEDIUM', retention: 1825, reportable: true },
+  LGPD_CONSENT_GRANTED: { severity: "LOW", retention: 1825, reportable: false },
+  LGPD_CONSENT_REVOKED: { severity: "HIGH", retention: 1825, reportable: true },
+  LGPD_DATA_ACCESS: { severity: "LOW", retention: 1825, reportable: false },
+  LGPD_DATA_DELETION: { severity: "MEDIUM", retention: 1825, reportable: true },
   LGPD_DATA_PORTABILITY: {
-    severity: 'MEDIUM',
+    severity: "MEDIUM",
     retention: 1825,
     reportable: true,
   },
 
   // ANVISA Events
-  ANVISA_AUDIT_START: { severity: 'MEDIUM', retention: 3650, reportable: true },
+  ANVISA_AUDIT_START: { severity: "MEDIUM", retention: 3650, reportable: true },
   ANVISA_COMPLIANCE_CHECK: {
-    severity: 'LOW',
+    severity: "LOW",
     retention: 3650,
     reportable: false,
   },
-  ANVISA_VIOLATION: { severity: 'CRITICAL', retention: 3650, reportable: true },
+  ANVISA_VIOLATION: { severity: "CRITICAL", retention: 3650, reportable: true },
 
   // Security Events
   DATA_BREACH_DETECTED: {
-    severity: 'CRITICAL',
+    severity: "CRITICAL",
     retention: 3650,
     reportable: true,
   },
-  UNAUTHORIZED_ACCESS: { severity: 'HIGH', retention: 3650, reportable: true },
+  UNAUTHORIZED_ACCESS: { severity: "HIGH", retention: 3650, reportable: true },
   SUSPICIOUS_ACTIVITY: {
-    severity: 'MEDIUM',
+    severity: "MEDIUM",
     retention: 1825,
     reportable: true,
   },

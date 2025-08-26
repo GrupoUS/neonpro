@@ -206,7 +206,7 @@ export function KeyboardHelper() {
   ];
 
   if (!showHelper) {
-    return ;
+    return;
   }
 
   return (

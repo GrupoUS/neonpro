@@ -30,8 +30,10 @@ export function GoogleAuthButton({
         },
       });
 
-      if (error) {}
-    } catch {} finally {
+      if (error) {
+      }
+    } catch {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -68,9 +70,9 @@ export function GoogleAuthButton({
       </svg>
       {isLoading
         ? "Carregando..."
-        : (mode === "signin"
+        : mode === "signin"
           ? "Entrar com Google"
-          : "Cadastrar com Google")}
+          : "Cadastrar com Google"}
     </Button>
   );
 }

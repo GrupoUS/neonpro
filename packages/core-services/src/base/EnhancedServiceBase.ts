@@ -14,9 +14,14 @@ import {
   EnterpriseAuditService,
   EnterpriseCacheService,
   EnterpriseSecurityService,
-} from '../enterprise';
-import { EnterpriseHealthCheckService } from '../health';
-import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from '../types';
+} from "../enterprise";
+import { EnterpriseHealthCheckService } from "../health";
+import type {
+  AuditEvent,
+  PerformanceMetrics,
+  SecurityConfig,
+  ServiceContext,
+} from "../types";
 
 // Core service interfaces
 interface ICacheService {
@@ -91,10 +96,10 @@ export abstract class EnhancedServiceBase {
         },
         redis: {
           enabled: true,
-          host: process.env.REDIS_HOST || 'localhost',
-          port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
+          host: process.env.REDIS_HOST || "localhost",
+          port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
           ttl: 1_800_000, // 30 minutes
-          keyPrefix: 'neonpro:',
+          keyPrefix: "neonpro:",
         },
         database: {
           enabled: true,
@@ -118,10 +123,10 @@ export abstract class EnhancedServiceBase {
       enableEncryption: true,
       enableAuditLogging: true,
       enableAccessControl: true,
-      encryptionAlgorithm: 'aes-256-gcm',
+      encryptionAlgorithm: "aes-256-gcm",
       auditRetentionDays: 2555, // 7 years for healthcare compliance
       requireSecureChannel: true,
-      allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || ['*'],
+      allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || ["*"],
     });
 
     this.audit = new EnterpriseAuditService();
@@ -133,7 +138,7 @@ export abstract class EnhancedServiceBase {
     this.security = this.initializeSecurityService();
 
     // Register service startup
-    this.auditServiceLifecycle('SERVICE_STARTED', {
+    this.auditServiceLifecycle("SERVICE_STARTED", {
       service: config.serviceName,
       version: config.version,
       timestamp: new Date().toISOString(),
@@ -178,7 +183,7 @@ export abstract class EnhancedServiceBase {
             performance.now() - startTime,
             true,
           );
-          await this.auditOperation('CACHE_HIT', {
+          await this.auditOperation("CACHE_HIT", {
             operationName,
             cacheKey: options.cacheKey,
           });
@@ -199,7 +204,7 @@ export abstract class EnhancedServiceBase {
       await this.recordOperationMetrics(operationName, duration, false);
 
       if (options?.sensitiveData) {
-        await this.auditOperation('SENSITIVE_DATA_ACCESS', {
+        await this.auditOperation("SENSITIVE_DATA_ACCESS", {
           operationName,
           operationId,
           duration,
@@ -221,7 +226,7 @@ export abstract class EnhancedServiceBase {
       });
 
       // Security audit for failed operations
-      await this.auditOperation('OPERATION_FAILED', {
+      await this.auditOperation("OPERATION_FAILED", {
         operationName,
         operationId,
         error: (error as Error).message,
@@ -256,7 +261,7 @@ export abstract class EnhancedServiceBase {
         const delay = 2 ** (attempt - 1) * 1000;
         await new Promise((resolve) => setTimeout(resolve, delay));
 
-        await this.auditOperation('OPERATION_RETRY', {
+        await this.auditOperation("OPERATION_RETRY", {
           operationName,
           attempt,
           error: lastError.message,
@@ -277,7 +282,7 @@ export abstract class EnhancedServiceBase {
     ttl?: number,
   ): Promise<void> {
     if (!patientConsent) {
-      await this.auditOperation('CACHE_DENIED_NO_CONSENT', {
+      await this.auditOperation("CACHE_DENIED_NO_CONSENT", {
         key,
         patientConsent,
       });
@@ -290,8 +295,8 @@ export abstract class EnhancedServiceBase {
       ttl || this.config.cacheOptions?.defaultTTL,
     );
 
-    await this.auditOperation('HEALTHCARE_DATA_CACHED', {
-      key: key.replace(/patient_\d+/, 'patient_***'), // Mask patient ID in logs
+    await this.auditOperation("HEALTHCARE_DATA_CACHED", {
+      key: key.replace(/patient_\d+/, "patient_***"), // Mask patient ID in logs
       ttl,
       patientConsent,
     });
@@ -347,7 +352,7 @@ export abstract class EnhancedServiceBase {
     event: string,
     details: any,
   ): Promise<void> {
-    await this.auditOperation('SERVICE_LIFECYCLE', { event, ...details });
+    await this.auditOperation("SERVICE_LIFECYCLE", { event, ...details });
   }
 
   /**
@@ -403,8 +408,8 @@ export abstract class EnhancedServiceBase {
       },
       async invalidate(pattern: string): Promise<void> {
         // Use invalidatePatientData for now as a pattern-based invalidation
-        if (pattern.includes('patient_')) {
-          const patientId = pattern.replace('patient_', '');
+        if (pattern.includes("patient_")) {
+          const patientId = pattern.replace("patient_", "");
           await self.enterpriseCache.invalidatePatientData(patientId);
         }
       },
@@ -424,7 +429,7 @@ export abstract class EnhancedServiceBase {
         await self.enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
           type: event,
-          category: 'service',
+          category: "service",
           action: event,
           properties,
           timestamp: Date.now(),
@@ -447,9 +452,9 @@ export abstract class EnhancedServiceBase {
       async recordError(error: Error, context: any): Promise<void> {
         await self.enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
-          type: 'error',
-          category: 'service',
-          action: 'error',
+          type: "error",
+          category: "service",
+          action: "error",
           properties: {
             error: error.message,
             stack: error.stack,
@@ -520,7 +525,7 @@ export abstract class EnhancedServiceBase {
    * Enterprise service health validation
    */
   public async validateEnterpriseServices(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     services: Record<string, any>;
     errors: string[];
   }> {
@@ -530,19 +535,19 @@ export abstract class EnhancedServiceBase {
     try {
       // Test cache service
       const cacheHealth = await this.enterpriseCache.getHealthMetrics();
-      results.cache = { status: 'healthy', ...cacheHealth };
+      results.cache = { status: "healthy", ...cacheHealth };
     } catch (error) {
-      results.cache = { status: 'unhealthy', error: (error as Error).message };
+      results.cache = { status: "unhealthy", error: (error as Error).message };
       errors.push(`Cache service error: ${(error as Error).message}`);
     }
 
     try {
       // Test analytics service
       const analyticsHealth = await this.enterpriseAnalytics.getHealthMetrics();
-      results.analytics = { status: 'healthy', ...analyticsHealth };
+      results.analytics = { status: "healthy", ...analyticsHealth };
     } catch (error) {
       results.analytics = {
-        status: 'unhealthy',
+        status: "unhealthy",
         error: (error as Error).message,
       };
       errors.push(`Analytics service error: ${(error as Error).message}`);
@@ -551,10 +556,10 @@ export abstract class EnhancedServiceBase {
     try {
       // Test security service
       const securityHealth = await this.enterpriseSecurity.getHealthMetrics();
-      results.security = { ...securityHealth, status: 'healthy' };
+      results.security = { ...securityHealth, status: "healthy" };
     } catch (error) {
       results.security = {
-        status: 'unhealthy',
+        status: "unhealthy",
         error: (error as Error).message,
       };
       errors.push(`Security service error: ${(error as Error).message}`);
@@ -563,17 +568,18 @@ export abstract class EnhancedServiceBase {
     try {
       // Test audit service
       const auditStats = await this.audit.getAuditStats();
-      results.audit = { status: 'healthy', ...auditStats };
+      results.audit = { status: "healthy", ...auditStats };
     } catch (error) {
-      results.audit = { status: 'unhealthy', error: (error as Error).message };
+      results.audit = { status: "unhealthy", error: (error as Error).message };
       errors.push(`Audit service error: ${(error as Error).message}`);
     }
 
-    const status = errors.length === 0
-      ? 'healthy'
-      : (errors.length <= 2
-      ? 'degraded'
-      : 'unhealthy');
+    const status =
+      errors.length === 0
+        ? "healthy"
+        : errors.length <= 2
+          ? "degraded"
+          : "unhealthy";
 
     return { status, services: results, errors };
   }
@@ -583,7 +589,7 @@ export abstract class EnhancedServiceBase {
    */
   public async shutdown(): Promise<void> {
     // Log shutdown start
-    await this.auditServiceLifecycle('SERVICE_SHUTDOWN_STARTED', {
+    await this.auditServiceLifecycle("SERVICE_SHUTDOWN_STARTED", {
       service: this.config.serviceName,
       timestamp: new Date().toISOString(),
     });
@@ -603,7 +609,7 @@ export abstract class EnhancedServiceBase {
     ]);
 
     // Log shutdown complete
-    await this.auditServiceLifecycle('SERVICE_SHUTDOWN_COMPLETED', {
+    await this.auditServiceLifecycle("SERVICE_SHUTDOWN_COMPLETED", {
       service: this.config.serviceName,
       timestamp: new Date().toISOString(),
       uptime: Date.now() - this.startTime,

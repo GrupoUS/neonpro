@@ -8,31 +8,37 @@ import {
   Unlock,
   User,
   Zap,
-} from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
-import { Input } from './Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select';
-import { Textarea } from './Textarea';
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
+import { Input } from "./Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
+import { Textarea } from "./Textarea";
 
 export type EmergencyAccessLevel =
-  | 'basic'
-  | 'standard'
-  | 'critical'
-  | 'life_threatening';
+  | "basic"
+  | "standard"
+  | "critical"
+  | "life_threatening";
 
 export type EmergencyAccessReason =
-  | 'cardiac_arrest'
-  | 'allergic_reaction'
-  | 'trauma'
-  | 'respiratory_distress'
-  | 'neurological_emergency'
-  | 'hemorrhage'
-  | 'poisoning'
-  | 'psychiatric_emergency'
-  | 'other_medical_emergency';
+  | "cardiac_arrest"
+  | "allergic_reaction"
+  | "trauma"
+  | "respiratory_distress"
+  | "neurological_emergency"
+  | "hemorrhage"
+  | "poisoning"
+  | "psychiatric_emergency"
+  | "other_medical_emergency";
 
 export interface EmergencyAccessRequest {
   id?: string;
@@ -141,56 +147,56 @@ export interface EmergencyAccessPanelProps {
 }
 
 const emergencyReasons: Record<EmergencyAccessReason, string> = {
-  cardiac_arrest: 'Parada Cardíaca',
-  allergic_reaction: 'Reação Alérgica Grave',
-  trauma: 'Trauma/Acidente',
-  respiratory_distress: 'Insuficiência Respiratória',
-  neurological_emergency: 'Emergência Neurológica',
-  hemorrhage: 'Hemorragia Grave',
-  poisoning: 'Intoxicação',
-  psychiatric_emergency: 'Emergência Psiquiátrica',
-  other_medical_emergency: 'Outra Emergência Médica',
+  cardiac_arrest: "Parada Cardíaca",
+  allergic_reaction: "Reação Alérgica Grave",
+  trauma: "Trauma/Acidente",
+  respiratory_distress: "Insuficiência Respiratória",
+  neurological_emergency: "Emergência Neurológica",
+  hemorrhage: "Hemorragia Grave",
+  poisoning: "Intoxicação",
+  psychiatric_emergency: "Emergência Psiquiátrica",
+  other_medical_emergency: "Outra Emergência Médica",
 };
 
 const accessLevelLabels: Record<EmergencyAccessLevel, string> = {
-  basic: 'Básico - Dados de Contato',
-  standard: 'Padrão - Histórico Recente',
-  critical: 'Crítico - Histórico Completo',
-  life_threatening: 'Risco de Vida - Acesso Total',
+  basic: "Básico - Dados de Contato",
+  standard: "Padrão - Histórico Recente",
+  critical: "Crítico - Histórico Completo",
+  life_threatening: "Risco de Vida - Acesso Total",
 };
 
 const getAccessLevelVariant = (level: EmergencyAccessLevel) => {
   switch (level) {
-    case 'basic': {
-      return 'confirmed';
+    case "basic": {
+      return "confirmed";
     }
-    case 'standard': {
-      return 'medium';
+    case "standard": {
+      return "medium";
     }
-    case 'critical': {
-      return 'high';
+    case "critical": {
+      return "high";
     }
-    case 'life_threatening': {
-      return 'urgent';
+    case "life_threatening": {
+      return "urgent";
     }
     default: {
-      return 'default';
+      return "default";
     }
   }
 };
 
 const getTimeoutOptions = (level: EmergencyAccessLevel): number[] => {
   switch (level) {
-    case 'basic': {
+    case "basic": {
       return [15, 30, 60];
     }
-    case 'standard': {
+    case "standard": {
       return [30, 60, 120];
     }
-    case 'critical': {
+    case "critical": {
       return [60, 120, 240];
     }
-    case 'life_threatening': {
+    case "life_threatening": {
       return [120, 240, 480];
     }
     default: {
@@ -224,22 +230,22 @@ export const EmergencyAccessPanel = React.forwardRef<
     const [formData, setFormData] = React.useState<
       Partial<EmergencyAccessRequest>
     >({
-      patientId: patientInfo?.id || '',
-      patientName: patientInfo?.name || '',
-      accessLevel: 'standard',
-      reason: 'other_medical_emergency',
+      patientId: patientInfo?.id || "",
+      patientName: patientInfo?.name || "",
+      accessLevel: "standard",
+      reason: "other_medical_emergency",
       timeoutMinutes: 60,
-      justification: '',
+      justification: "",
       requestingPhysician: currentUser?.crm
         ? {
-          id: currentUser.id,
-          name: currentUser.name,
-          crm: currentUser.crm,
-        }
+            id: currentUser.id,
+            name: currentUser.name,
+            crm: currentUser.crm,
+          }
         : undefined,
     });
 
-    const [denyReason, setDenyReason] = React.useState('');
+    const [denyReason, setDenyReason] = React.useState("");
     const [showDenyForm, setShowDenyForm] = React.useState(false);
 
     const updateFormData = <K extends keyof EmergencyAccessRequest>(
@@ -253,9 +259,9 @@ export const EmergencyAccessPanel = React.forwardRef<
       e.preventDefault();
       if (
         !(
-          onRequestEmergencyAccess
-          && formData.patientId
-          && formData.justification
+          onRequestEmergencyAccess &&
+          formData.patientId &&
+          formData.justification
         )
       ) {
         return;
@@ -264,8 +270,8 @@ export const EmergencyAccessPanel = React.forwardRef<
       const completeRequest: EmergencyAccessRequest = {
         patientId: formData.patientId,
         patientName: formData.patientName,
-        accessLevel: formData.accessLevel || 'standard',
-        reason: formData.reason || 'other_medical_emergency',
+        accessLevel: formData.accessLevel || "standard",
+        reason: formData.reason || "other_medical_emergency",
         customReason: formData.customReason,
         requestingPhysician: formData.requestingPhysician!,
         timeoutMinutes: formData.timeoutMinutes || 60,
@@ -288,12 +294,12 @@ export const EmergencyAccessPanel = React.forwardRef<
       if (request?.id && onDenyAccess && denyReason.trim()) {
         onDenyAccess(request.id, denyReason);
         setShowDenyForm(false);
-        setDenyReason('');
+        setDenyReason("");
       }
     };
 
     const timeoutOptions = getTimeoutOptions(
-      formData.accessLevel || 'standard',
+      formData.accessLevel || "standard",
     );
 
     // If showing approval interface
@@ -301,7 +307,7 @@ export const EmergencyAccessPanel = React.forwardRef<
       return (
         <div
           className={cn(
-            'rounded-lg border border-red-200 bg-red-50 p-6 text-red-900',
+            "rounded-lg border border-red-200 bg-red-50 p-6 text-red-900",
             className,
           )}
           ref={ref}
@@ -340,7 +346,8 @@ export const EmergencyAccessPanel = React.forwardRef<
                       Médico Solicitante:
                     </span>
                     <p className="text-sm">
-                      {request.requestingPhysician.name} (CRM: {request.requestingPhysician.crm})
+                      {request.requestingPhysician.name} (CRM:{" "}
+                      {request.requestingPhysician.crm})
                     </p>
                   </div>
                 </div>
@@ -382,14 +389,14 @@ export const EmergencyAccessPanel = React.forwardRef<
                     <span className="font-medium text-sm">Solicitado em:</span>
                     <p className="text-sm">
                       {request.timestamp
-                        ? new Intl.DateTimeFormat('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        }).format(request.timestamp)
-                        : 'N/A'}
+                        ? new Intl.DateTimeFormat("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }).format(request.timestamp)
+                        : "N/A"}
                     </p>
                   </div>
                 </div>
@@ -461,7 +468,7 @@ export const EmergencyAccessPanel = React.forwardRef<
     return (
       <div
         className={cn(
-          'rounded-lg border border-orange-200 bg-orange-50 p-6',
+          "rounded-lg border border-orange-200 bg-orange-50 p-6",
           className,
         )}
         ref={ref}
@@ -486,7 +493,8 @@ export const EmergencyAccessPanel = React.forwardRef<
               className="text-orange-700 text-sm"
               id="emergency-access-description"
             >
-              Protocolo constitucional para acesso emergencial a dados do paciente
+              Protocolo constitucional para acesso emergencial a dados do
+              paciente
             </p>
           </div>
         </div>
@@ -538,55 +546,55 @@ export const EmergencyAccessPanel = React.forwardRef<
                 </div>
               )}
 
-              {patientInfo.criticalAllergies
-                && patientInfo.criticalAllergies.length > 0 && (
-                <div>
-                  <span className="font-medium text-red-700 text-sm">
-                    Alergias Críticas:
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.criticalAllergies.map((allergy, index) => (
-                      <Badge key={index} size="sm" variant="urgent">
-                        {allergy}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {patientInfo.criticalMedications
-                && patientInfo.criticalMedications.length > 0 && (
-                <div>
-                  <span className="font-medium text-blue-700 text-sm">
-                    Medicações Críticas:
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.criticalMedications.map(
-                      (medication, index) => (
-                        <Badge key={index} size="sm" variant="medium">
-                          {medication}
+              {patientInfo.criticalAllergies &&
+                patientInfo.criticalAllergies.length > 0 && (
+                  <div>
+                    <span className="font-medium text-red-700 text-sm">
+                      Alergias Críticas:
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.criticalAllergies.map((allergy, index) => (
+                        <Badge key={index} size="sm" variant="urgent">
+                          {allergy}
                         </Badge>
-                      ),
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {patientInfo.medicalAlerts
-                && patientInfo.medicalAlerts.length > 0 && (
-                <div>
-                  <span className="font-medium text-orange-700 text-sm">
-                    Alertas Médicos:
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {patientInfo.medicalAlerts.map((alert, index) => (
-                      <Badge key={index} size="sm" variant="high">
-                        {alert}
-                      </Badge>
-                    ))}
+              {patientInfo.criticalMedications &&
+                patientInfo.criticalMedications.length > 0 && (
+                  <div>
+                    <span className="font-medium text-blue-700 text-sm">
+                      Medicações Críticas:
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.criticalMedications.map(
+                        (medication, index) => (
+                          <Badge key={index} size="sm" variant="medium">
+                            {medication}
+                          </Badge>
+                        ),
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
+              {patientInfo.medicalAlerts &&
+                patientInfo.medicalAlerts.length > 0 && (
+                  <div>
+                    <span className="font-medium text-orange-700 text-sm">
+                      Alertas Médicos:
+                    </span>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {patientInfo.medicalAlerts.map((alert, index) => (
+                        <Badge key={index} size="sm" variant="high">
+                          {alert}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
             </div>
           </div>
         )}
@@ -600,7 +608,8 @@ export const EmergencyAccessPanel = React.forwardRef<
               </label>
               <Select
                 onValueChange={(value: EmergencyAccessLevel) =>
-                  updateFormData('accessLevel', value)}
+                  updateFormData("accessLevel", value)
+                }
                 value={formData.accessLevel}
               >
                 <SelectTrigger>
@@ -621,7 +630,9 @@ export const EmergencyAccessPanel = React.forwardRef<
                 Motivo da Emergência
               </label>
               <Select
-                onValueChange={(value: EmergencyAccessReason) => updateFormData('reason', value)}
+                onValueChange={(value: EmergencyAccessReason) =>
+                  updateFormData("reason", value)
+                }
                 value={formData.reason}
               >
                 <SelectTrigger>
@@ -638,16 +649,16 @@ export const EmergencyAccessPanel = React.forwardRef<
             </div>
           </div>
 
-          {formData.reason === 'other_medical_emergency' && (
+          {formData.reason === "other_medical_emergency" && (
             <div>
               <label className="mb-2 block font-medium text-sm">
                 Especificar Motivo
               </label>
               <Input
-                onChange={(e) => updateFormData('customReason', e.target.value)}
+                onChange={(e) => updateFormData("customReason", e.target.value)}
                 placeholder="Descreva a emergência médica..."
                 required
-                value={formData.customReason || ''}
+                value={formData.customReason || ""}
               />
             </div>
           )}
@@ -658,7 +669,8 @@ export const EmergencyAccessPanel = React.forwardRef<
             </label>
             <Select
               onValueChange={(value) =>
-                updateFormData('timeoutMinutes', Number.parseInt(value, 10))}
+                updateFormData("timeoutMinutes", Number.parseInt(value, 10))
+              }
               value={formData.timeoutMinutes?.toString()}
             >
               <SelectTrigger>
@@ -679,11 +691,11 @@ export const EmergencyAccessPanel = React.forwardRef<
               Justificativa Médica (Obrigatória)
             </label>
             <Textarea
-              onChange={(e) => updateFormData('justification', e.target.value)}
+              onChange={(e) => updateFormData("justification", e.target.value)}
               placeholder="Descreva detalhadamente a necessidade médica para acesso emergencial aos dados do paciente..."
               required
               rows={4}
-              value={formData.justification || ''}
+              value={formData.justification || ""}
             />
           </div>
 
@@ -698,14 +710,14 @@ export const EmergencyAccessPanel = React.forwardRef<
                     (p) => p.id === value,
                   );
                   if (physician) {
-                    updateFormData('witnessPhysician', {
+                    updateFormData("witnessPhysician", {
                       id: physician.id,
                       name: physician.name,
                       crm: physician.crm,
                     });
                   }
                 }}
-                value={formData.witnessPhysician?.id || ''}
+                value={formData.witnessPhysician?.id || ""}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar médico testemunha" />
@@ -716,8 +728,8 @@ export const EmergencyAccessPanel = React.forwardRef<
                     .map((physician) => (
                       <SelectItem key={physician.id} value={physician.id}>
                         {physician.name} - CRM: {physician.crm}
-                        {physician.specialization
-                          && ` (${physician.specialization})`}
+                        {physician.specialization &&
+                          ` (${physician.specialization})`}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -730,9 +742,11 @@ export const EmergencyAccessPanel = React.forwardRef<
               Protocolo Institucional (Opcional)
             </label>
             <Input
-              onChange={(e) => updateFormData('institutionProtocol', e.target.value)}
+              onChange={(e) =>
+                updateFormData("institutionProtocol", e.target.value)
+              }
               placeholder="Número do protocolo institucional de emergência..."
-              value={formData.institutionProtocol || ''}
+              value={formData.institutionProtocol || ""}
             />
           </div>
 
@@ -744,14 +758,18 @@ export const EmergencyAccessPanel = React.forwardRef<
 
             <Button
               className="bg-orange-600 hover:bg-orange-700"
-              disabled={loading
-                || !formData.justification
-                || !formData.requestingPhysician}
+              disabled={
+                loading ||
+                !formData.justification ||
+                !formData.requestingPhysician
+              }
               type="submit"
             >
-              {loading
-                ? <Timer className="mr-2 h-4 w-4 animate-spin" />
-                : <Stethoscope className="mr-2 h-4 w-4" />}
+              {loading ? (
+                <Timer className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Stethoscope className="mr-2 h-4 w-4" />
+              )}
               Solicitar Acesso de Emergência
             </Button>
           </div>
@@ -761,4 +779,4 @@ export const EmergencyAccessPanel = React.forwardRef<
   },
 );
 
-EmergencyAccessPanel.displayName = 'EmergencyAccessPanel';
+EmergencyAccessPanel.displayName = "EmergencyAccessPanel";

@@ -6,17 +6,17 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require('node:path');
-const fs = require('node:fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
-  green: '\u001B[32m',
-  red: '\u001B[31m',
-  yellow: '\u001B[33m',
-  blue: '\u001B[34m',
-  reset: '\u001B[0m',
-  bold: '\u001B[1m',
+  green: "\u001B[32m",
+  red: "\u001B[31m",
+  yellow: "\u001B[33m",
+  blue: "\u001B[34m",
+  reset: "\u001B[0m",
+  bold: "\u001B[1m",
 };
 
 function log(_message, _color = colors.reset) {}
@@ -38,12 +38,12 @@ function logError(message) {
 }
 
 async function validateProjectStructure() {
-  logHeader('ANVISA Project Structure Validation');
+  logHeader("ANVISA Project Structure Validation");
 
   const requiredFiles = [
-    'packages/compliance/src/anvisa',
-    'packages/utils/src/compliance/anvisa.ts',
-    'apps/web/lib/healthcare/anvisa-samd-compliance.ts',
+    "packages/compliance/src/anvisa",
+    "packages/utils/src/compliance/anvisa.ts",
+    "apps/web/lib/healthcare/anvisa-samd-compliance.ts",
   ];
 
   let allValid = true;
@@ -62,28 +62,28 @@ async function validateProjectStructure() {
 }
 
 async function validateComplianceModules() {
-  logHeader('ANVISA Compliance Modules Validation');
+  logHeader("ANVISA Compliance Modules Validation");
 
   try {
     // Check if we can load the compliance modules
     const compliancePath = path.resolve(
       process.cwd(),
-      'packages/compliance/src/anvisa',
+      "packages/compliance/src/anvisa",
     );
 
     if (!fs.existsSync(compliancePath)) {
-      logError('ANVISA compliance modules not found');
+      logError("ANVISA compliance modules not found");
       return false;
     }
 
     const files = fs.readdirSync(compliancePath);
     const expectedModules = [
-      'index.ts',
-      'regulatory-documentation-service.ts',
-      'product-registration-service.ts',
-      'procedure-classification-service.ts',
-      'medical-device-service.ts',
-      'adverse-event-service.ts',
+      "index.ts",
+      "regulatory-documentation-service.ts",
+      "product-registration-service.ts",
+      "procedure-classification-service.ts",
+      "medical-device-service.ts",
+      "adverse-event-service.ts",
     ];
 
     const allModulesPresent = true;
@@ -104,11 +104,11 @@ async function validateComplianceModules() {
 }
 
 async function validateEnvironmentVariables() {
-  logHeader('Environment Variables Validation');
+  logHeader("Environment Variables Validation");
 
   const requiredEnvVars = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
   ];
 
   const allValid = true;
@@ -126,40 +126,41 @@ async function validateEnvironmentVariables() {
 }
 
 async function validateANVISAConfiguration() {
-  logHeader('ANVISA Configuration Validation');
+  logHeader("ANVISA Configuration Validation");
 
   try {
     // Check package.json for ANVISA-related dependencies - look in apps/web first
     const webPackageJsonPath = path.resolve(
       process.cwd(),
-      'apps/web/package.json',
+      "apps/web/package.json",
     );
-    const rootPackageJsonPath = path.resolve(process.cwd(), 'package.json');
+    const rootPackageJsonPath = path.resolve(process.cwd(), "package.json");
 
     let packageJsonPath = webPackageJsonPath;
 
     if (!fs.existsSync(webPackageJsonPath)) {
       if (!fs.existsSync(rootPackageJsonPath)) {
-        logError('package.json not found in apps/web or root');
+        logError("package.json not found in apps/web or root");
         return false;
       }
       packageJsonPath = rootPackageJsonPath;
     }
 
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     // Check for Supabase client (required for ANVISA compliance)
-    const hasSupabase = packageJson.dependencies?.['@supabase/supabase-js']
-      || packageJson.devDependencies?.['@supabase/supabase-js'];
+    const hasSupabase =
+      packageJson.dependencies?.["@supabase/supabase-js"] ||
+      packageJson.devDependencies?.["@supabase/supabase-js"];
 
     if (hasSupabase) {
       logSuccess(
         `Supabase client dependency found in ${
-          packageJsonPath.includes('apps/web') ? 'apps/web' : 'root'
+          packageJsonPath.includes("apps/web") ? "apps/web" : "root"
         }`,
       );
     } else {
-      logError('Supabase client dependency missing');
+      logError("Supabase client dependency missing");
       return false;
     }
 
@@ -171,13 +172,13 @@ async function validateANVISAConfiguration() {
 }
 
 async function runANVISAValidation() {
-  logHeader('ANVISA Compliance Validation Suite');
+  logHeader("ANVISA Compliance Validation Suite");
 
   const validations = [
-    { name: 'Project Structure', fn: validateProjectStructure },
-    { name: 'Compliance Modules', fn: validateComplianceModules },
-    { name: 'Environment Variables', fn: validateEnvironmentVariables },
-    { name: 'ANVISA Configuration', fn: validateANVISAConfiguration },
+    { name: "Project Structure", fn: validateProjectStructure },
+    { name: "Compliance Modules", fn: validateComplianceModules },
+    { name: "Environment Variables", fn: validateEnvironmentVariables },
+    { name: "ANVISA Configuration", fn: validateANVISAConfiguration },
   ];
 
   let allPassed = true;
@@ -207,14 +208,14 @@ async function runANVISAValidation() {
   }
 
   // Summary
-  logHeader('ANVISA Validation Summary');
+  logHeader("ANVISA Validation Summary");
 
   results.forEach((result) => {
     if (result.passed) {
       logSuccess(`${result.name}: PASSED`);
     } else {
       logError(
-        `${result.name}: FAILED${result.error ? ` (${result.error})` : ''}`,
+        `${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
       );
     }
   });

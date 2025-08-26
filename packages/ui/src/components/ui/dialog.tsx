@@ -1,10 +1,18 @@
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { cva } from 'class-variance-authority';
-import type { VariantProps } from 'class-variance-authority';
-import { AlertTriangle, CheckCircle, FileText, Heart, Info, Shield, X } from 'lucide-react';
-import * as React from 'react';
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
+import {
+  AlertTriangle,
+  CheckCircle,
+  FileText,
+  Heart,
+  Info,
+  Shield,
+  X,
+} from "lucide-react";
+import * as React from "react";
 
-import { cn } from '../../lib/utils';
+import { cn } from "../../lib/utils";
 
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
@@ -17,7 +25,7 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     className={cn(
-      'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-gradient-to-br from-black/60 via-black/80 to-black/60 backdrop-blur-md transition-all duration-500 data-[state=closed]:animate-out data-[state=open]:animate-in',
+      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-gradient-to-br from-black/60 via-black/80 to-black/60 backdrop-blur-md transition-all duration-500 data-[state=closed]:animate-out data-[state=open]:animate-in",
       className,
     )}
     ref={ref}
@@ -27,43 +35,41 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const dialogContentVariants = cva(
-  'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-gradient-card p-6 shadow-healthcare-xl backdrop-blur-xl duration-500 data-[state=closed]:animate-out data-[state=open]:animate-in sm:rounded-lg',
+  "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-gradient-card p-6 shadow-healthcare-xl backdrop-blur-xl duration-500 data-[state=closed]:animate-out data-[state=open]:animate-in sm:rounded-lg",
   {
     variants: {
       variant: {
-        default: 'border-border/60',
+        default: "border-border/60",
         medical:
-          'border-border/60 border-l-4 border-l-primary bg-gradient-to-br from-primary/8 via-primary/4 to-transparent shadow-primary/10',
+          "border-border/60 border-l-4 border-l-primary bg-gradient-to-br from-primary/8 via-primary/4 to-transparent shadow-primary/10",
         alert:
-          'animate-pulse-healthcare border-border/60 border-l-4 border-l-destructive bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-destructive/20',
+          "animate-pulse-healthcare border-border/60 border-l-4 border-l-destructive bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-destructive/20",
         warning:
-          'border-border/60 border-l-4 border-l-warning bg-gradient-to-br from-warning/8 via-warning/4 to-transparent shadow-warning/15',
+          "border-border/60 border-l-4 border-l-warning bg-gradient-to-br from-warning/8 via-warning/4 to-transparent shadow-warning/15",
         success:
-          'border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/8 via-success/4 to-transparent shadow-success/15',
-        info:
-          'border-border/60 border-l-4 border-l-info bg-gradient-to-br from-info/8 via-info/4 to-transparent shadow-info/15',
-        lgpd:
-          'border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/10 via-success/5 to-transparent shadow-success/20 ring-2 ring-success/20',
+          "border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/8 via-success/4 to-transparent shadow-success/15",
+        info: "border-border/60 border-l-4 border-l-info bg-gradient-to-br from-info/8 via-info/4 to-transparent shadow-info/15",
+        lgpd: "border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/10 via-success/5 to-transparent shadow-success/20 ring-2 ring-success/20",
       },
       size: {
-        default: 'max-w-lg',
-        sm: 'max-w-md',
-        lg: 'max-w-2xl',
-        xl: 'max-w-4xl',
-        full: 'max-h-[95vh] max-w-[95vw]',
+        default: "max-w-lg",
+        sm: "max-w-md",
+        lg: "max-w-2xl",
+        xl: "max-w-4xl",
+        full: "max-h-[95vh] max-w-[95vw]",
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: "default",
+      size: "default",
     },
   },
 );
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  & React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
-  & VariantProps<typeof dialogContentVariants>
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> &
+    VariantProps<typeof dialogContentVariants>
 >(({ className, children, variant, size, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
@@ -87,13 +93,13 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
+      "flex flex-col space-y-1.5 text-center sm:text-left",
       className,
     )}
     {...props}
   />
 );
-DialogHeader.displayName = 'DialogHeader';
+DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = ({
   className,
@@ -101,13 +107,13 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
       className,
     )}
     {...props}
   />
 );
-DialogFooter.displayName = 'DialogFooter';
+DialogFooter.displayName = "DialogFooter";
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -115,7 +121,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     className={cn(
-      'font-semibold text-foreground text-lg leading-none tracking-tight',
+      "font-semibold text-foreground text-lg leading-none tracking-tight",
       className,
     )}
     ref={ref}
@@ -129,17 +135,15 @@ const DialogDescription = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
-    className={cn('text-muted-foreground text-sm leading-relaxed', className)}
+    className={cn("text-muted-foreground text-sm leading-relaxed", className)}
     ref={ref}
     {...props}
   />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName; // NEONPROV1 Healthcare-specific dialog components
 interface HealthcareDialogProps
-  extends
-    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
-    VariantProps<typeof dialogContentVariants>
-{
+  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+    VariantProps<typeof dialogContentVariants> {
   title?: string;
   description?: string;
   icon?: React.ReactNode;
@@ -151,11 +155,11 @@ interface HealthcareDialogProps
   isDestructive?: boolean;
   lgpdRequired?: boolean;
   medicalContext?:
-    | 'appointment'
-    | 'patient-data'
-    | 'treatment'
-    | 'emergency'
-    | 'consent';
+    | "appointment"
+    | "patient-data"
+    | "treatment"
+    | "emergency"
+    | "consent";
 }
 
 const ConfirmationDialog = React.forwardRef<
@@ -164,17 +168,17 @@ const ConfirmationDialog = React.forwardRef<
 >(
   (
     {
-      title = 'Confirmar Ação',
+      title = "Confirmar Ação",
       description,
       icon,
       showIcon = true,
       onConfirm,
       onCancel,
-      confirmText = 'Confirmar',
-      cancelText = 'Cancelar',
+      confirmText = "Confirmar",
+      cancelText = "Cancelar",
       isDestructive = false,
       lgpdRequired = false,
-      medicalContext = 'appointment',
+      medicalContext = "appointment",
       variant,
       children,
       ...props
@@ -190,23 +194,27 @@ const ConfirmationDialog = React.forwardRef<
       }
 
       if (isDestructive) {
-        return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+        return (
+          <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
+        );
       }
 
       switch (medicalContext) {
-        case 'appointment': {
+        case "appointment": {
           return <Info className="h-6 w-6 text-info" />;
         }
-        case 'patient-data': {
+        case "patient-data": {
           return <Shield className="h-6 w-6 text-success" />;
         }
-        case 'treatment': {
+        case "treatment": {
           return <Heart className="h-6 w-6 animate-pulse text-destructive" />;
         }
-        case 'emergency': {
-          return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+        case "emergency": {
+          return (
+            <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
+          );
         }
-        case 'consent': {
+        case "consent": {
           return <FileText className="h-6 w-6 text-primary" />;
         }
         default: {
@@ -220,24 +228,24 @@ const ConfirmationDialog = React.forwardRef<
         return variant;
       }
       if (isDestructive) {
-        return 'alert';
+        return "alert";
       }
       if (lgpdRequired) {
-        return 'lgpd';
+        return "lgpd";
       }
 
       switch (medicalContext) {
-        case 'emergency': {
-          return 'alert';
+        case "emergency": {
+          return "alert";
         }
-        case 'patient-data': {
-          return 'lgpd';
+        case "patient-data": {
+          return "lgpd";
         }
-        case 'treatment': {
-          return 'medical';
+        case "treatment": {
+          return "medical";
         }
         default: {
-          return 'default';
+          return "default";
         }
       }
     };
@@ -258,8 +266,8 @@ const ConfirmationDialog = React.forwardRef<
           <div className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-success/15 via-success/10 to-success/5 p-3 text-sm shadow-healthcare-sm backdrop-blur-sm">
             <Shield className="h-4 w-4 text-success" />
             <span className="text-success">
-              Esta ação está em conformidade com a LGPD e os dados serão processados de forma
-              segura.
+              Esta ação está em conformidade com a LGPD e os dados serão
+              processados de forma segura.
             </span>
           </div>
         )}
@@ -276,10 +284,10 @@ const ConfirmationDialog = React.forwardRef<
           </DialogClose>
           <button
             className={cn(
-              'inline-flex h-10 items-center justify-center rounded-md px-4 py-2 font-medium text-sm shadow-healthcare-md transition-all duration-300 hover:scale-105 hover:shadow-healthcare-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+              "inline-flex h-10 items-center justify-center rounded-md px-4 py-2 font-medium text-sm shadow-healthcare-md transition-all duration-300 hover:scale-105 hover:shadow-healthcare-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
               isDestructive
-                ? 'bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground hover:from-destructive/90 hover:to-destructive/80'
-                : 'bg-gradient-primary text-primary-foreground hover:shadow-primary/30',
+                ? "bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground hover:from-destructive/90 hover:to-destructive/80"
+                : "bg-gradient-primary text-primary-foreground hover:shadow-primary/30",
             )}
             onClick={onConfirm}
             type="button"
@@ -291,7 +299,7 @@ const ConfirmationDialog = React.forwardRef<
     );
   },
 );
-ConfirmationDialog.displayName = 'ConfirmationDialog'; // NEONPROV1 Healthcare-specific specialized dialogs
+ConfirmationDialog.displayName = "ConfirmationDialog"; // NEONPROV1 Healthcare-specific specialized dialogs
 interface LGPDConsentDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -308,12 +316,12 @@ const LGPDConsentDialog = ({
   onAccept,
   onReject,
   dataTypes = [
-    'Dados pessoais básicos',
-    'Informações de contato',
-    'Histórico médico',
+    "Dados pessoais básicos",
+    "Informações de contato",
+    "Histórico médico",
   ],
-  purpose = 'Prestação de serviços de saúde e acompanhamento médico',
-  retentionPeriod = '5 anos ou conforme legislação vigente',
+  purpose = "Prestação de serviços de saúde e acompanhamento médico",
+  retentionPeriod = "5 anos ou conforme legislação vigente",
 }: LGPDConsentDialogProps) => {
   return (
     <Dialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
@@ -326,8 +334,8 @@ const LGPDConsentDialog = ({
             </DialogTitle>
           </div>
           <DialogDescription>
-            Precisamos do seu consentimento para processar seus dados pessoais de acordo com a Lei
-            Geral de Proteção de Dados (LGPD).
+            Precisamos do seu consentimento para processar seus dados pessoais
+            de acordo com a Lei Geral de Proteção de Dados (LGPD).
           </DialogDescription>
         </DialogHeader>
 
@@ -337,7 +345,9 @@ const LGPDConsentDialog = ({
               Dados que serão coletados:
             </h4>
             <ul className="list-disc space-y-1 pl-4 text-muted-foreground text-sm">
-              {dataTypes.map((type, index) => <li key={index}>{type}</li>)}
+              {dataTypes.map((type, index) => (
+                <li key={index}>{type}</li>
+              ))}
             </ul>
           </div>
 
@@ -357,9 +367,10 @@ const LGPDConsentDialog = ({
 
           <div className="rounded-lg bg-gradient-to-br from-success/15 via-success/10 to-success/5 p-4 shadow-healthcare-sm ring-1 ring-success/20 backdrop-blur-sm">
             <p className="font-medium text-success text-xs leading-relaxed">
-              Seus dados serão protegidos com medidas de segurança adequadas e você poderá exercer
-              seus direitos (acesso, correção, exclusão, portabilidade) a qualquer momento através
-              do nosso canal de atendimento.
+              Seus dados serão protegidos com medidas de segurança adequadas e
+              você poderá exercer seus direitos (acesso, correção, exclusão,
+              portabilidade) a qualquer momento através do nosso canal de
+              atendimento.
             </p>
           </div>
         </div>
@@ -388,7 +399,7 @@ const LGPDConsentDialog = ({
 interface MedicalAlertDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  alertType: 'critical' | 'urgent' | 'info';
+  alertType: "critical" | "urgent" | "info";
   title: string;
   message: string;
   patientName?: string;
@@ -408,13 +419,15 @@ const MedicalAlertDialog = ({
 }: MedicalAlertDialogProps) => {
   const getAlertIcon = () => {
     switch (alertType) {
-      case 'critical': {
-        return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+      case "critical": {
+        return (
+          <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
+        );
       }
-      case 'urgent': {
+      case "urgent": {
         return <AlertTriangle className="h-6 w-6 text-warning" />;
       }
-      case 'info': {
+      case "info": {
         return <Info className="h-6 w-6 text-info" />;
       }
       default: {
@@ -425,12 +438,12 @@ const MedicalAlertDialog = ({
 
   const getVariant = () => {
     switch (alertType) {
-      case 'critical':
-      case 'urgent': {
-        return 'alert';
+      case "critical":
+      case "urgent": {
+        return "alert";
       }
       default: {
-        return 'info';
+        return "info";
       }
     }
   };
@@ -442,21 +455,24 @@ const MedicalAlertDialog = ({
           <div className="mb-2 flex items-center gap-3">
             {getAlertIcon()}
             <DialogTitle
-              className={alertType === 'critical'
-                ? 'animate-pulse text-destructive'
-                : 'text-gradient'}
+              className={
+                alertType === "critical"
+                  ? "animate-pulse text-destructive"
+                  : "text-gradient"
+              }
             >
               {title}
             </DialogTitle>
           </div>
           {patientName && (
             <div className="rounded-md bg-gradient-to-br from-muted/40 via-muted/20 to-muted/10 p-2 font-medium text-foreground text-sm backdrop-blur-sm">
-              Paciente: <span className="font-semibold text-primary">{patientName}</span>
+              Paciente:{" "}
+              <span className="font-semibold text-primary">{patientName}</span>
             </div>
           )}
           {timestamp && (
             <div className="text-muted-foreground text-xs">
-              {timestamp.toLocaleString('pt-BR')}
+              {timestamp.toLocaleString("pt-BR")}
             </div>
           )}
         </DialogHeader>

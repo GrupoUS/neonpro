@@ -1,7 +1,7 @@
 /**
  * Placeholder backup system hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useBackupSystem = () => {
   const [backups, setBackups] = useState<unknown[]>([]);
@@ -15,10 +15,10 @@ export const useBackupSystem = () => {
       setTimeout(() => {
         setBackups([
           {
-            id: '1',
+            id: "1",
             date: new Date().toISOString(),
-            size: '1.2GB',
-            status: 'completed',
+            size: "1.2GB",
+            status: "completed",
           },
         ]);
         setIsLoading(false);

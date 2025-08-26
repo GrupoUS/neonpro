@@ -32,10 +32,10 @@ export interface CacheKey {
 }
 
 export enum CacheLayer {
-  BROWSER = 'browser',
-  EDGE = 'edge',
-  DATABASE = 'database',
-  AI_CONTEXT = 'ai_context',
+  BROWSER = "browser",
+  EDGE = "edge",
+  DATABASE = "database",
+  AI_CONTEXT = "ai_context",
 }
 
 export interface CacheOperation {
@@ -49,7 +49,7 @@ export interface CacheOperation {
 
 export interface HealthcareDataPolicy {
   requiresConsent: boolean;
-  dataClassification: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+  dataClassification: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
   retentionPeriod?: number;
   auditRequired: boolean;
 }

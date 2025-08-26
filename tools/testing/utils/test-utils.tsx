@@ -8,11 +8,11 @@
  * @created 2025-08-20
  */
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
-import type { RenderOptions } from '@testing-library/react';
-import type React from 'react';
-import { vi } from 'vitest';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render } from "@testing-library/react";
+import type { RenderOptions } from "@testing-library/react";
+import type React from "react";
+import { vi } from "vitest";
 
 // ============================================================================
 // Types
@@ -62,12 +62,12 @@ export interface SubscriptionStatus {
 export const createMockUserProfile = (
   overrides: Partial<UserProfile> = {},
 ): UserProfile => ({
-  id: 'test-user-123',
-  email: 'test@example.com',
-  name: 'Test User',
-  role: 'user',
-  createdAt: new Date('2025-01-01'),
-  updatedAt: new Date('2025-07-22'),
+  id: "test-user-123",
+  email: "test@example.com",
+  name: "Test User",
+  role: "user",
+  createdAt: new Date("2025-01-01"),
+  updatedAt: new Date("2025-07-22"),
   ...overrides,
 });
 
@@ -77,14 +77,14 @@ export const createMockUserProfile = (
 export const createMockSubscription = (
   overrides: Partial<SubscriptionStatus> = {},
 ): SubscriptionStatus => ({
-  id: 'test-subscription-123',
-  userId: 'test-user-123',
-  tier: 'premium',
-  status: 'active',
-  startDate: new Date('2025-01-01'),
-  endDate: new Date('2025-12-31'),
+  id: "test-subscription-123",
+  userId: "test-user-123",
+  tier: "premium",
+  status: "active",
+  startDate: new Date("2025-01-01"),
+  endDate: new Date("2025-12-31"),
   autoRenew: true,
-  features: ['feature1', 'feature2', 'premium-feature'],
+  features: ["feature1", "feature2", "premium-feature"],
   limits: {
     maxUsers: 100,
     maxProjects: 50,
@@ -96,8 +96,8 @@ export const createMockSubscription = (
     storage: 1000,
   },
   metadata: {
-    source: 'test',
-    environment: 'testing',
+    source: "test",
+    environment: "testing",
   },
   ...overrides,
 });
@@ -135,7 +135,9 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
   children,
   queryClient = createTestQueryClient(),
 }) => {
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 };
 
 // ============================================================================
@@ -145,7 +147,7 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
 /**
  * Custom render function with providers
  */
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
   queryClient?: QueryClient;
 }
 
@@ -155,7 +157,7 @@ export const renderWithProviders = (
 ) => {
   const { queryClient, ...renderOptions } = options;
 
-  const Wrapper: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <AllTheProviders queryClient={queryClient}>{children}</AllTheProviders>
   );
 
@@ -165,7 +167,7 @@ export const renderWithProviders = (
 // Legacy custom render (for backward compatibility)
 const customRender = (
   ui: React.ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
+  options?: Omit<RenderOptions, "wrapper">,
 ) => render(ui, { wrapper: AllTheProviders, ...options });
 
 // ============================================================================
@@ -208,6 +210,6 @@ export const createMockResponse = (data: any, status = 200) => ({
 });
 
 // Re-export testing library utilities
-export * from '@testing-library/react';
-export { default as userEvent } from '@testing-library/user-event';
+export * from "@testing-library/react";
+export { default as userEvent } from "@testing-library/user-event";
 export { customRender as render };

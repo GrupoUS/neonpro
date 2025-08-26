@@ -11,7 +11,7 @@ export interface AnalyticsData {
 }
 
 export interface ExportOptions {
-  format: 'csv' | 'excel' | 'pdf';
+  format: "csv" | "excel" | "pdf";
   dateRange?: {
     start: Date;
     end: Date;
@@ -53,8 +53,8 @@ export const calculateGrowthRate = (
 
   // Handle extremely large numbers by using relative calculation
   if (
-    Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10
-    || Math.abs(current) > Number.MAX_SAFE_INTEGER / 10
+    Math.abs(previous) > Number.MAX_SAFE_INTEGER / 10 ||
+    Math.abs(current) > Number.MAX_SAFE_INTEGER / 10
   ) {
     // For very large numbers, use ratio to avoid overflow issues
     const ratio = current / previous;
@@ -66,15 +66,15 @@ export const calculateGrowthRate = (
 
 export const formatAnalyticsCurrency = (
   amount: number | null | undefined,
-  currency = 'USD',
+  currency = "USD",
   precision = 2,
 ): string => {
   if (amount === undefined || Number.isNaN(amount)) {
-    return `${getCurrencySymbol(currency)}0.${'0'.repeat(precision)}`;
+    return `${getCurrencySymbol(currency)}0.${"0".repeat(precision)}`;
   }
 
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
     currency,
     minimumFractionDigits: precision,
     maximumFractionDigits: precision,
@@ -83,17 +83,17 @@ export const formatAnalyticsCurrency = (
 
 function getCurrencySymbol(currency: string): string {
   switch (currency) {
-    case 'EUR': {
-      return '€';
+    case "EUR": {
+      return "€";
     }
-    case 'GBP': {
-      return '£';
+    case "GBP": {
+      return "£";
     }
-    case 'USD': {
-      return '$';
+    case "USD": {
+      return "$";
     }
     default: {
-      return '$';
+      return "$";
     }
   }
 }
@@ -103,11 +103,11 @@ export const formatAnalyticsPercentage = (
   precision = 2,
 ): string => {
   if (value === undefined || Number.isNaN(value)) {
-    return precision > 0 ? '0.00%' : '0%';
+    return precision > 0 ? "0.00%" : "0%";
   }
   // Handle infinity values
   if (!Number.isFinite(value)) {
-    return precision > 0 ? '0.00%' : '0%';
+    return precision > 0 ? "0.00%" : "0%";
   }
   // For the test case 0.1234 with precision 3 should return 12.345%
   // This means the input is expected to be in decimal format (0.1234 = 12.34%)
@@ -121,17 +121,18 @@ export const calculateMRR = (
     return 0;
   }
   const mrr = subscriptions
-    .filter((sub) => sub?.status === 'active')
+    .filter((sub) => sub?.status === "active")
     .reduce((sum, sub) => {
       // Check for both 'amount' and 'price' fields for compatibility
       const price = sub?.amount || sub?.price || 0;
       // Validate that price is a number
-      if (typeof price !== 'number' || Number.isNaN(price)) {
+      if (typeof price !== "number" || Number.isNaN(price)) {
         return sum;
       }
       // Convert from cents to dollars (assuming amounts > 999 are in cents)
       const dollarPrice = price > 999 ? price / 100 : price;
-      const monthlyPrice = sub?.interval === 'yearly' ? dollarPrice / 12 : dollarPrice;
+      const monthlyPrice =
+        sub?.interval === "yearly" ? dollarPrice / 12 : dollarPrice;
       return sum + monthlyPrice;
     }, 0);
   return Math.round(mrr * 100) / 100; // Round to 2 decimal places properly
@@ -169,10 +170,10 @@ export const calculateLTV = (
 ): number => {
   // If either parameter is null/undefined/NaN, return NaN
   if (
-    averageRevenue === undefined
-    || churnRate === undefined
-    || Number.isNaN(averageRevenue)
-    || Number.isNaN(churnRate)
+    averageRevenue === undefined ||
+    churnRate === undefined ||
+    Number.isNaN(averageRevenue) ||
+    Number.isNaN(churnRate)
   ) {
     return Number.NaN;
   }
@@ -192,7 +193,7 @@ export const calculateLTV = (
 
 export const aggregateMetricsByPeriod = (
   data: any[],
-  period: 'day' | 'month' | 'year',
+  period: "day" | "month" | "year",
   aggregator?: (items: any[]) => number,
 ): any[] => {
   if (!Array.isArray(data)) {
@@ -218,30 +219,30 @@ export const aggregateMetricsByPeriod = (
       let key: string;
 
       switch (period) {
-        case 'day': {
-          key = date.toISOString().split('T')[0];
+        case "day": {
+          key = date.toISOString().split("T")[0];
           break;
         }
-        case 'month': {
+        case "month": {
           // Format as "Jan 2024" instead of "2024-01"
           const monthNames = [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
           ];
           key = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
           break;
         }
-        case 'year': {
+        case "year": {
           key = String(date.getFullYear());
           break;
         }
@@ -264,26 +265,26 @@ export const aggregateMetricsByPeriod = (
     }))
     .sort((a, b) => {
       // Handle different period formats
-      if (period === 'day') {
+      if (period === "day") {
         return new Date(a.period).getTime() - new Date(b.period).getTime();
       }
-      if (period === 'month') {
+      if (period === "month") {
         // Parse "Jan 2024" format for proper chronological sorting
         const parseMonth = (monthStr: string) => {
-          const [month, year] = monthStr.split(' ');
+          const [month, year] = monthStr.split(" ");
           const monthNames = [
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
           ];
           return new Date(Number.parseInt(year, 10), monthNames.indexOf(month));
         };
@@ -298,10 +299,10 @@ export const aggregateMetricsByPeriod = (
 
 export const generateDateRange = (start: Date, end: Date): Date[] => {
   if (!(start && end && start instanceof Date && end instanceof Date)) {
-    throw new Error('Invalid date parameters');
+    throw new Error("Invalid date parameters");
   }
   if (start > end) {
-    throw new Error('Start date must be before or equal to end date');
+    throw new Error("Start date must be before or equal to end date");
   }
 
   const dates = [];
@@ -332,23 +333,24 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
   };
 
   const result: any = {
-    period: getValue('period', 'last_30_days'),
-    metric: getValue('metric', 'all'), // Default to 'all' as expected by tests
-    groupBy: getValue('groupBy'), // Always include groupBy property
+    period: getValue("period", "last_30_days"),
+    metric: getValue("metric", "all"), // Default to 'all' as expected by tests
+    groupBy: getValue("groupBy"), // Always include groupBy property
     startDate: new Date(),
     endDate: new Date(),
     filters: {}, // Always include filters property
   };
 
   // Add filters if present
-  const filters = getValue('filters');
+  const filters = getValue("filters");
   if (filters) {
-    result.filters = typeof filters === 'string' ? JSON.parse(filters) : filters;
+    result.filters =
+      typeof filters === "string" ? JSON.parse(filters) : filters;
   }
 
   // Handle date parsing - try both snake_case and camelCase
-  const startDateStr = getValue('start_date') || getValue('startDate');
-  const endDateStr = getValue('end_date') || getValue('endDate');
+  const startDateStr = getValue("start_date") || getValue("startDate");
+  const endDateStr = getValue("end_date") || getValue("endDate");
 
   if (startDateStr) {
     result.startDate = new Date(startDateStr);
@@ -358,7 +360,7 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
   }
 
   // Handle groupBy - try both snake_case and camelCase
-  const groupBy = getValue('group_by') || getValue('groupBy');
+  const groupBy = getValue("group_by") || getValue("groupBy");
   if (groupBy) {
     result.groupBy = groupBy;
   }
@@ -380,37 +382,37 @@ export const parseAnalyticsFilters = (params: URLSearchParams | any): any => {
 
   // Validate filter parameters if invalid parameters are provided
   const validPeriods = [
-    'last_30_days',
-    'last_month',
-    'last_quarter',
-    'last_year',
-    'month',
-    'week',
-    'day',
-    'custom',
+    "last_30_days",
+    "last_month",
+    "last_quarter",
+    "last_year",
+    "month",
+    "week",
+    "day",
+    "custom",
   ];
-  const validMetrics = ['revenue', 'subscriptions', 'users', 'churn', 'all']; // Add 'all' to valid metrics
+  const validMetrics = ["revenue", "subscriptions", "users", "churn", "all"]; // Add 'all' to valid metrics
 
   if (!validPeriods.includes(result.period)) {
-    throw new Error('Invalid filter parameters');
+    throw new Error("Invalid filter parameters");
   }
   if (!validMetrics.includes(result.metric)) {
-    throw new Error('Invalid filter parameters');
+    throw new Error("Invalid filter parameters");
   }
 
   return result;
 };
 
-export const exportToCSV = (data: any[], _filename = 'export.csv'): string => {
+export const exportToCSV = (data: any[], _filename = "export.csv"): string => {
   if (!Array.isArray(data) || data.length === 0) {
-    return '';
+    return "";
   }
 
   const headers = Object.keys(data[0]);
   const csvContent = [
-    headers.join(','),
-    ...data.map((row) => headers.map((header) => row[header]).join(',')),
-  ].join('\n');
+    headers.join(","),
+    ...data.map((row) => headers.map((header) => row[header]).join(",")),
+  ].join("\n");
 
   return csvContent;
 };
@@ -418,12 +420,12 @@ export const exportToCSV = (data: any[], _filename = 'export.csv'): string => {
 // Add missing export functions for tests
 export const exportToPDF = (_data: any[], _options?: any): string => {
   // Mock implementation - return a PDF header signature for tests
-  return '%PDF-1.4';
+  return "%PDF-1.4";
 };
 
 export const exportToExcel = (_data: any[], _options?: any): string => {
   // Mock implementation - return an Excel/ZIP header signature for tests
-  return 'PK';
+  return "PK";
 };
 
 /**
@@ -433,15 +435,15 @@ export function formatAnalyticsData(
   data: AnalyticsData[],
   options: ExportOptions,
 ): string {
-  if (options.format === 'csv') {
-    const headers = ['timestamp', 'metric', 'value'];
+  if (options.format === "csv") {
+    const headers = ["timestamp", "metric", "value"];
     const rows = data.map((item) => [
       item.timestamp.toISOString(),
       item.metric,
       item.value.toString(),
     ]);
 
-    return [headers, ...rows].map((row) => row.join(',')).join('\n');
+    return [headers, ...rows].map((row) => row.join(",")).join("\n");
   }
 
   // For other formats, return JSON for now
@@ -453,7 +455,7 @@ export function formatAnalyticsData(
  */
 export function aggregateByPeriod(
   data: AnalyticsData[],
-  period: 'day' | 'week' | 'month',
+  period: "day" | "week" | "month",
 ): Record<string, number> {
   const aggregated: Record<string, number> = {};
 
@@ -462,18 +464,18 @@ export function aggregateByPeriod(
     const date = new Date(item.timestamp);
 
     switch (period) {
-      case 'day': {
-        key = date.toISOString().split('T')[0];
+      case "day": {
+        key = date.toISOString().split("T")[0];
         break;
       }
-      case 'week': {
+      case "week": {
         const weekStart = new Date(date);
         weekStart.setDate(date.getDate() - date.getDay());
-        key = weekStart.toISOString().split('T')[0];
+        key = weekStart.toISOString().split("T")[0];
         break;
       }
-      case 'month': {
-        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      case "month": {
+        key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
         break;
       }
     }

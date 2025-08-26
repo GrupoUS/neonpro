@@ -3,7 +3,10 @@
  * Monitors Supabase/PostgreSQL queries with healthcare-specific insights
  */
 
-import type { DatabaseOptimizationSuggestion, DatabasePerformanceMetric } from '../types';
+import type {
+  DatabaseOptimizationSuggestion,
+  DatabasePerformanceMetric,
+} from "../types";
 
 // Removed unused type declarations QueryExecutionPlan and SupabaseQueryLog
 
@@ -11,18 +14,18 @@ export class HealthcareDatabaseMonitor {
   private metrics: DatabasePerformanceMetric[] = [];
   private readonly slowQueryThreshold: number; // 1 second
   private readonly healthcareTableMap = new Map([
-    ['patients', 'patient'],
-    ['patient_records', 'patient'],
-    ['medical_records', 'medical-record'],
-    ['appointments', 'appointment'],
-    ['prescriptions', 'medical-record'],
-    ['procedures', 'medical-record'],
-    ['billing', 'billing'],
-    ['audit_logs', 'audit'],
-    ['vital_signs', 'medical-record'],
-    ['lab_results', 'medical-record'],
-    ['imaging_studies', 'medical-record'],
-    ['medications', 'medical-record'],
+    ["patients", "patient"],
+    ["patient_records", "patient"],
+    ["medical_records", "medical-record"],
+    ["appointments", "appointment"],
+    ["prescriptions", "medical-record"],
+    ["procedures", "medical-record"],
+    ["billing", "billing"],
+    ["audit_logs", "audit"],
+    ["vital_signs", "medical-record"],
+    ["lab_results", "medical-record"],
+    ["imaging_studies", "medical-record"],
+    ["medications", "medical-record"],
   ]);
 
   constructor(slowQueryThreshold = 1000) {
@@ -36,7 +39,7 @@ export class HealthcareDatabaseMonitor {
     _query: string,
     executionTime: number,
     table: string,
-    queryType: 'select' | 'insert' | 'update' | 'delete',
+    queryType: "select" | "insert" | "update" | "delete",
     rowsAffected?: number,
     queryPlan?: string,
   ): void {
@@ -45,7 +48,7 @@ export class HealthcareDatabaseMonitor {
       table,
       executionTime,
       rowsAffected: rowsAffected ?? 0,
-      queryPlan: queryPlan ?? '',
+      queryPlan: queryPlan ?? "",
       timestamp: Date.now(),
       isSlowQuery: executionTime > this.slowQueryThreshold,
       healthcareDataType: this.healthcareTableMap.get(table) as any,
@@ -54,7 +57,8 @@ export class HealthcareDatabaseMonitor {
     this.metrics.push(metric);
 
     // Log slow queries immediately
-    if (metric.isSlowQuery) {}
+    if (metric.isSlowQuery) {
+    }
 
     // Keep only last 1000 metrics to prevent memory bloat
     if (this.metrics.length > 1000) {
@@ -80,7 +84,8 @@ export class HealthcareDatabaseMonitor {
   } {
     const slowQueries = this.metrics.filter((m) => m.isSlowQuery);
     const tablePerformance = this.analyzeTablePerformance();
-    const optimizationSuggestions = this.generateOptimizationSuggestions(tablePerformance);
+    const optimizationSuggestions =
+      this.generateOptimizationSuggestions(tablePerformance);
 
     return {
       slowQueries,
@@ -148,12 +153,10 @@ export class HealthcareDatabaseMonitor {
       if (stats.avgExecutionTime > this.slowQueryThreshold) {
         suggestions.push({
           table,
-          type: 'index',
-          description: `Table "${table}" has slow average query time (${
-            Math.round(
-              stats.avgExecutionTime,
-            )
-          }ms). Consider adding indexes on frequently queried columns.`,
+          type: "index",
+          description: `Table "${table}" has slow average query time (${Math.round(
+            stats.avgExecutionTime,
+          )}ms). Consider adding indexes on frequently queried columns.`,
           expectedImprovement: Math.min(
             90,
             Math.round(
@@ -168,41 +171,38 @@ export class HealthcareDatabaseMonitor {
       }
 
       // Suggest caching for frequently accessed healthcare data
-      if (stats.queryCount > 100 && stats.healthcareDataType === 'patient') {
+      if (stats.queryCount > 100 && stats.healthcareDataType === "patient") {
         suggestions.push({
           table,
-          type: 'caching',
-          description:
-            `Table "${table}" is frequently accessed (${stats.queryCount} queries). Implement query result caching for patient lookups.`,
+          type: "caching",
+          description: `Table "${table}" is frequently accessed (${stats.queryCount} queries). Implement query result caching for patient lookups.`,
           expectedImprovement: 80,
-          healthcareImpact: 'critical',
+          healthcareImpact: "critical",
         });
       }
 
       // Suggest query rewriting for medical records with many slow queries
       if (
-        stats.slowQueryCount > 5
-        && stats.healthcareDataType === 'medical-record'
+        stats.slowQueryCount > 5 &&
+        stats.healthcareDataType === "medical-record"
       ) {
         suggestions.push({
           table,
-          type: 'query-rewrite',
-          description:
-            `Table "${table}" has ${stats.slowQueryCount} slow queries. Review and optimize medical record queries for better performance.`,
+          type: "query-rewrite",
+          description: `Table "${table}" has ${stats.slowQueryCount} slow queries. Review and optimize medical record queries for better performance.`,
           expectedImprovement: 60,
-          healthcareImpact: 'important',
+          healthcareImpact: "important",
         });
       }
 
       // Suggest partitioning for large audit tables
-      if (table.includes('audit') && stats.queryCount > 500) {
+      if (table.includes("audit") && stats.queryCount > 500) {
         suggestions.push({
           table,
-          type: 'partitioning',
-          description:
-            `Audit table "${table}" has high query volume. Consider time-based partitioning for better performance.`,
+          type: "partitioning",
+          description: `Audit table "${table}" has high query volume. Consider time-based partitioning for better performance.`,
           expectedImprovement: 50,
-          healthcareImpact: 'minor',
+          healthcareImpact: "minor",
         });
       }
     });
@@ -225,17 +225,17 @@ export class HealthcareDatabaseMonitor {
   private getHealthcareImpact(
     dataType?: string,
     executionTime = 0,
-  ): 'critical' | 'important' | 'minor' {
-    if (dataType === 'patient' && executionTime > 2000) {
-      return 'critical'; // Patient data access is critical
+  ): "critical" | "important" | "minor" {
+    if (dataType === "patient" && executionTime > 2000) {
+      return "critical"; // Patient data access is critical
     }
-    if (dataType === 'medical-record' && executionTime > 1500) {
-      return 'important'; // Medical records are important
+    if (dataType === "medical-record" && executionTime > 1500) {
+      return "important"; // Medical records are important
     }
-    if (dataType === 'appointment' && executionTime > 1000) {
-      return 'important'; // Appointment scheduling is important
+    if (dataType === "appointment" && executionTime > 1000) {
+      return "important"; // Appointment scheduling is important
     }
-    return 'minor';
+    return "minor";
   }
 
   /**
@@ -245,8 +245,8 @@ export class HealthcareDatabaseMonitor {
     const analysis = this.analyzePerformance();
     const totalQueries = this.metrics.length;
     const slowQueryPercentage = (
-      (analysis.slowQueries.length / totalQueries)
-      * 100
+      (analysis.slowQueries.length / totalQueries) *
+      100
     ).toFixed(2);
 
     const report = `
@@ -259,47 +259,41 @@ export class HealthcareDatabaseMonitor {
 - Slow Query Threshold: ${this.slowQueryThreshold}ms
 
 📋 Table Performance:
-${
-      [...analysis.tablePerformance.entries()]
-        .map(
-          ([table, stats]) => `
-- ${table} (${stats.healthcareDataType || 'general'}):
+${[...analysis.tablePerformance.entries()]
+  .map(
+    ([table, stats]) => `
+- ${table} (${stats.healthcareDataType || "general"}):
   • Avg Execution Time: ${Math.round(stats.avgExecutionTime)}ms
   • Query Count: ${stats.queryCount}
   • Slow Queries: ${stats.slowQueryCount}
   • Performance: ${
-            stats.avgExecutionTime > this.slowQueryThreshold
-              ? '❌ Needs Attention'
-              : '✅ Good'
-          }
+    stats.avgExecutionTime > this.slowQueryThreshold
+      ? "❌ Needs Attention"
+      : "✅ Good"
+  }
 `,
-        )
-        .join('')
-    }
+  )
+  .join("")}
 
 🎯 Optimization Recommendations:
-${
-      analysis.optimizationSuggestions
-        .map(
-          (suggestion, index) => `
-${
-            index + 1
-          }. [${suggestion.healthcareImpact.toUpperCase()}] ${suggestion.table}
+${analysis.optimizationSuggestions
+  .map(
+    (suggestion, index) => `
+${index + 1}. [${suggestion.healthcareImpact.toUpperCase()}] ${suggestion.table}
    🔧 ${suggestion.type}: ${suggestion.description}
    📈 Expected Improvement: ${suggestion.expectedImprovement}%
 `,
-        )
-        .join('')
-    }
+  )
+  .join("")}
 
 🏥 Healthcare-Specific Insights:
 ${this.getHealthcareInsights(analysis)}
 
 ${
-      analysis.slowQueries.length === 0
-        ? '✅ All database queries are performing well!'
-        : '⚠️  Some queries need optimization for optimal healthcare performance.'
-    }
+  analysis.slowQueries.length === 0
+    ? "✅ All database queries are performing well!"
+    : "⚠️  Some queries need optimization for optimal healthcare performance."
+}
 `;
 
     return report;
@@ -310,45 +304,43 @@ ${
    */
   private getHealthcareInsights(_analysis: any): string {
     const patientQueries = this.metrics.filter(
-      (m) => m.healthcareDataType === 'patient',
+      (m) => m.healthcareDataType === "patient",
     );
     const medicalRecordQueries = this.metrics.filter(
-      (m) => m.healthcareDataType === 'medical-record',
+      (m) => m.healthcareDataType === "medical-record",
     );
     const appointmentQueries = this.metrics.filter(
-      (m) => m.healthcareDataType === 'appointment',
+      (m) => m.healthcareDataType === "appointment",
     );
 
-    let insights = '';
+    let insights = "";
 
     if (patientQueries.length > 0) {
-      const avgPatientQueryTime = patientQueries.reduce((sum, q) => sum + q.executionTime, 0)
-        / patientQueries.length;
-      insights += `- Patient Data Access: ${
-        Math.round(
-          avgPatientQueryTime,
-        )
-      }ms avg (target: <500ms)\n`;
+      const avgPatientQueryTime =
+        patientQueries.reduce((sum, q) => sum + q.executionTime, 0) /
+        patientQueries.length;
+      insights += `- Patient Data Access: ${Math.round(
+        avgPatientQueryTime,
+      )}ms avg (target: <500ms)\n`;
     }
 
     if (medicalRecordQueries.length > 0) {
-      const avgMedicalQueryTime = medicalRecordQueries.reduce((sum, q) => sum + q.executionTime, 0)
-        / medicalRecordQueries.length;
+      const avgMedicalQueryTime =
+        medicalRecordQueries.reduce((sum, q) => sum + q.executionTime, 0) /
+        medicalRecordQueries.length;
       insights += `- Medical Records: ${Math.round(avgMedicalQueryTime)}ms avg (target: <800ms)\n`;
     }
 
     if (appointmentQueries.length > 0) {
-      const avgAppointmentQueryTime = appointmentQueries.reduce((sum, q) =>
-        sum + q.executionTime, 0)
-        / appointmentQueries.length;
-      insights += `- Appointment Scheduling: ${
-        Math.round(
-          avgAppointmentQueryTime,
-        )
-      }ms avg (target: <600ms)\n`;
+      const avgAppointmentQueryTime =
+        appointmentQueries.reduce((sum, q) => sum + q.executionTime, 0) /
+        appointmentQueries.length;
+      insights += `- Appointment Scheduling: ${Math.round(
+        avgAppointmentQueryTime,
+      )}ms avg (target: <600ms)\n`;
     }
 
-    return insights || '- No healthcare-specific data available yet';
+    return insights || "- No healthcare-specific data available yet";
   }
 
   /**
@@ -358,24 +350,24 @@ ${
     suggestions: DatabaseOptimizationSuggestion[],
   ): string {
     const sqlCommands: string[] = [
-      '-- Healthcare Database Optimization SQL',
+      "-- Healthcare Database Optimization SQL",
       `-- Generated on ${new Date().toISOString()}`,
-      '',
+      "",
     ];
 
     suggestions.forEach((suggestion) => {
-      if (suggestion.type === 'index') {
+      if (suggestion.type === "index") {
         sqlCommands.push(`-- ${suggestion.description}`);
         sqlCommands.push(this.generateIndexSQL(suggestion.table));
-        sqlCommands.push('');
+        sqlCommands.push("");
       }
     });
 
     // Add healthcare-specific indexes
-    sqlCommands.push('-- Healthcare-Specific Indexes');
+    sqlCommands.push("-- Healthcare-Specific Indexes");
     sqlCommands.push(this.generateHealthcareIndexes());
 
-    return sqlCommands.join('\n');
+    return sqlCommands.join("\n");
   }
 
   /**
@@ -384,25 +376,25 @@ ${
   private generateIndexSQL(table: string): string {
     const commonIndexes = {
       patients: [
-        'CREATE INDEX IF NOT EXISTS idx_patients_cpf ON patients(cpf);',
-        'CREATE INDEX IF NOT EXISTS idx_patients_email ON patients(email);',
-        'CREATE INDEX IF NOT EXISTS idx_patients_created_at ON patients(created_at);',
+        "CREATE INDEX IF NOT EXISTS idx_patients_cpf ON patients(cpf);",
+        "CREATE INDEX IF NOT EXISTS idx_patients_email ON patients(email);",
+        "CREATE INDEX IF NOT EXISTS idx_patients_created_at ON patients(created_at);",
       ],
       appointments: [
-        'CREATE INDEX IF NOT EXISTS idx_appointments_patient_id ON appointments(patient_id);',
-        'CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(appointment_date);',
-        'CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);',
+        "CREATE INDEX IF NOT EXISTS idx_appointments_patient_id ON appointments(patient_id);",
+        "CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(appointment_date);",
+        "CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);",
       ],
       medical_records: [
-        'CREATE INDEX IF NOT EXISTS idx_medical_records_patient_id ON medical_records(patient_id);',
-        'CREATE INDEX IF NOT EXISTS idx_medical_records_date ON medical_records(created_at);',
-        'CREATE INDEX IF NOT EXISTS idx_medical_records_type ON medical_records(record_type);',
+        "CREATE INDEX IF NOT EXISTS idx_medical_records_patient_id ON medical_records(patient_id);",
+        "CREATE INDEX IF NOT EXISTS idx_medical_records_date ON medical_records(created_at);",
+        "CREATE INDEX IF NOT EXISTS idx_medical_records_type ON medical_records(record_type);",
       ],
     };
 
     return (
-      commonIndexes[table as keyof typeof commonIndexes]?.join('\n')
-      || `-- No specific indexes suggested for ${table}`
+      commonIndexes[table as keyof typeof commonIndexes]?.join("\n") ||
+      `-- No specific indexes suggested for ${table}`
     );
   }
 

@@ -1,5 +1,5 @@
-import { MetricType, MetricUnit } from '../types';
-import type { MetricCollector, PerformanceMetric } from '../types';
+import { MetricType, MetricUnit } from "../types";
+import type { MetricCollector, PerformanceMetric } from "../types";
 
 export class CacheMetricsCollector implements MetricCollector {
   private enabled = true;
@@ -32,8 +32,8 @@ export class CacheMetricsCollector implements MetricCollector {
           type: MetricType.CACHE_HIT_RATE,
           value: layerStats.hitRate,
           unit: MetricUnit.PERCENTAGE,
-          tags: { layer, component: 'cache' },
-          source: 'cache-collector',
+          tags: { layer, component: "cache" },
+          source: "cache-collector",
           context: {
             hits: layerStats.hits,
             misses: layerStats.misses,
@@ -48,8 +48,8 @@ export class CacheMetricsCollector implements MetricCollector {
           type: MetricType.RESPONSE_TIME,
           value: layerStats.averageResponseTime,
           unit: MetricUnit.MILLISECONDS,
-          tags: { layer, component: 'cache', operation: 'read' },
-          source: 'cache-collector',
+          tags: { layer, component: "cache", operation: "read" },
+          source: "cache-collector",
         });
       }
 
@@ -61,8 +61,8 @@ export class CacheMetricsCollector implements MetricCollector {
         type: MetricType.CACHE_HIT_RATE,
         value: overallHitRate,
         unit: MetricUnit.PERCENTAGE,
-        tags: { layer: 'all', component: 'cache', metric: 'efficiency' },
-        source: 'cache-collector',
+        tags: { layer: "all", component: "cache", metric: "efficiency" },
+        source: "cache-collector",
         context: { allStats },
       });
     } catch {}

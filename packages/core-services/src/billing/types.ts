@@ -1,6 +1,11 @@
-import { z } from 'zod';
-import { DateSchema, NonNegativeNumberSchema, PositiveNumberSchema, UUIDSchema } from '../types';
-import type { BaseEntity, BillingStatus } from '../types';
+import { z } from "zod";
+import {
+  DateSchema,
+  NonNegativeNumberSchema,
+  PositiveNumberSchema,
+  UUIDSchema,
+} from "../types";
+import type { BaseEntity, BillingStatus } from "../types";
 
 // Invoice and billing interfaces for aesthetic clinic
 export interface Invoice extends BaseEntity {
@@ -137,63 +142,63 @@ export interface Refund extends BaseEntity {
 
 // Enums
 export enum PaymentMethod {
-  CASH = 'cash',
-  CREDIT_CARD = 'credit_card',
-  DEBIT_CARD = 'debit_card',
-  PIX = 'pix',
-  BANK_TRANSFER = 'bank_transfer',
-  CHECK = 'check',
-  FINANCING = 'financing',
-  INSURANCE = 'insurance',
-  GIFT_CARD = 'gift_card',
+  CASH = "cash",
+  CREDIT_CARD = "credit_card",
+  DEBIT_CARD = "debit_card",
+  PIX = "pix",
+  BANK_TRANSFER = "bank_transfer",
+  CHECK = "check",
+  FINANCING = "financing",
+  INSURANCE = "insurance",
+  GIFT_CARD = "gift_card",
 }
 
 export enum PaymentStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  REFUNDED = 'refunded',
-  PARTIALLY_REFUNDED = 'partially_refunded',
+  PENDING = "pending",
+  PROCESSING = "processing",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
+  REFUNDED = "refunded",
+  PARTIALLY_REFUNDED = "partially_refunded",
 }
 
 export enum InstallmentFrequency {
-  WEEKLY = 'weekly',
-  BIWEEKLY = 'biweekly',
-  MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly',
+  WEEKLY = "weekly",
+  BIWEEKLY = "biweekly",
+  MONTHLY = "monthly",
+  QUARTERLY = "quarterly",
 }
 
 export enum PaymentPlanStatus {
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  DEFAULTED = 'defaulted',
-  CANCELLED = 'cancelled',
-  PAUSED = 'paused',
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  DEFAULTED = "defaulted",
+  CANCELLED = "cancelled",
+  PAUSED = "paused",
 }
 
 export enum InstallmentStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  OVERDUE = 'overdue',
-  LATE = 'late',
-  WAIVED = 'waived',
+  PENDING = "pending",
+  PAID = "paid",
+  OVERDUE = "overdue",
+  LATE = "late",
+  WAIVED = "waived",
 }
 
 export enum DiscountType {
-  PERCENTAGE = 'percentage',
-  FIXED_AMOUNT = 'fixed_amount',
-  BUY_ONE_GET_ONE = 'buy_one_get_one',
-  PACKAGE_DEAL = 'package_deal',
+  PERCENTAGE = "percentage",
+  FIXED_AMOUNT = "fixed_amount",
+  BUY_ONE_GET_ONE = "buy_one_get_one",
+  PACKAGE_DEAL = "package_deal",
 }
 
 export enum RefundStatus {
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  PROCESSED = 'processed',
-  REJECTED = 'rejected',
-  FAILED = 'failed',
+  PENDING = "pending",
+  APPROVED = "approved",
+  PROCESSED = "processed",
+  REJECTED = "rejected",
+  FAILED = "failed",
 } // Validation schemas
 export const InvoiceItemSchema = z.object({
   productId: UUIDSchema.optional(),
@@ -214,7 +219,7 @@ export const CreateInvoiceSchema = z.object({
   items: z.array(InvoiceItemSchema).min(1),
   discountAmount: NonNegativeNumberSchema.default(0),
   discountPercentage: z.number().min(0).max(100).default(0),
-  paymentTerms: z.string().default('Net 30'),
+  paymentTerms: z.string().default("Net 30"),
   notes: z.string().optional(),
   isRecurring: z.boolean().default(false),
 });

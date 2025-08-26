@@ -1062,9 +1062,9 @@ export function PerformanceAnalytics({
                           variant={
                             professional.cfmLicense.includes("Expira")
                               ? "destructive"
-                              : (professional.cfmLicense === "N/A"
+                              : professional.cfmLicense === "N/A"
                                 ? "secondary"
-                                : "default")
+                                : "default"
                           }
                         >
                           {professional.cfmLicense}

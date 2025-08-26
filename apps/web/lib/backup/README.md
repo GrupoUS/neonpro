@@ -94,46 +94,46 @@ Execute o arquivo `database/schema.sql` no seu banco Supabase para criar as tabe
 ### Inicialização do Sistema
 
 ```typescript
-import { BackupSystem, initializeBackupSystem } from './lib/backup';
+import { BackupSystem, initializeBackupSystem } from "./lib/backup";
 
 // Inicializar sistema
 const result = await initializeBackupSystem({
-  provider: 'LOCAL', // ou 'S3', 'GCS', 'AZURE'
+  provider: "LOCAL", // ou 'S3', 'GCS', 'AZURE'
   local: {
-    basePath: './backups',
+    basePath: "./backups",
   },
 });
 
 if (result.success) {
-  console.log('Sistema de backup inicializado!');
+  console.log("Sistema de backup inicializado!");
 }
 ```
 
 ### Configuração de Backup
 
 ```typescript
-import { BackupFrequency, BackupType, getBackupSystem } from './lib/backup';
+import { BackupFrequency, BackupType, getBackupSystem } from "./lib/backup";
 
 const backupSystem = getBackupSystem();
 
 // Backup de arquivos
 const fileBackup = await backupSystem.setupFileBackup(
-  'Documentos Importantes',
-  ['/path/to/documents', '/path/to/configs'],
+  "Documentos Importantes",
+  ["/path/to/documents", "/path/to/configs"],
   {
     frequency: BackupFrequency.DAILY,
-    time: '02:00',
-    excludePatterns: ['*.tmp', '*.log'],
+    time: "02:00",
+    excludePatterns: ["*.tmp", "*.log"],
   },
 );
 
 // Backup de banco de dados
 const dbBackup = await backupSystem.setupDatabaseBackup(
-  'NeonPro Database',
-  'postgresql://user:pass@localhost:5432/neonpro',
+  "NeonPro Database",
+  "postgresql://user:pass@localhost:5432/neonpro",
   {
     frequency: BackupFrequency.DAILY,
-    time: '01:00',
+    time: "01:00",
     retention: 30,
   },
 );
@@ -143,7 +143,7 @@ const dbBackup = await backupSystem.setupDatabaseBackup(
 
 ```typescript
 // Executar backup imediatamente
-const result = await backupSystem.runBackupNow(configId, 'user-id');
+const result = await backupSystem.runBackupNow(configId, "user-id");
 
 if (result.success) {
   console.log(`Backup iniciado: ${result.data}`);
@@ -155,16 +155,16 @@ if (result.success) {
 ```typescript
 // Obter métricas em tempo real
 const metrics = await backupSystem.monitor.getRealTimeMetrics();
-console.log('Backups ativos:', metrics.data.activeBackups);
-console.log('Taxa de sucesso:', metrics.data.successRate);
+console.log("Backups ativos:", metrics.data.activeBackups);
+console.log("Taxa de sucesso:", metrics.data.successRate);
 
 // Obter alertas ativos
 const alerts = await backupSystem.monitor.getActiveAlerts();
-console.log('Alertas:', alerts.data);
+console.log("Alertas:", alerts.data);
 
 // Health check
 const health = await backupSystem.monitor.performHealthCheck();
-console.log('Status geral:', health.overall);
+console.log("Status geral:", health.overall);
 ```
 
 ### Recovery
@@ -176,20 +176,20 @@ const recoveryPoints = await backupSystem.recover.getRecoveryPoints();
 // Solicitar recovery
 const recoveryRequest = await backupSystem.recover.createRecoveryRequest(
   backupId,
-  'FULL_RESTORE',
+  "FULL_RESTORE",
   {
-    targetPath: '/restore/path',
+    targetPath: "/restore/path",
     overwrite: true,
-    priority: 'HIGH',
+    priority: "HIGH",
   },
-  'user-id',
+  "user-id",
 );
 
 // Acompanhar progresso
 const status = await backupSystem.recover.getRecoveryStatus(
   recoveryRequest.data.id,
 );
-console.log('Progresso:', status.data.progress);
+console.log("Progresso:", status.data.progress);
 ```
 
 ## 🏗️ Arquitetura
@@ -351,8 +351,8 @@ const retention = {
   monthly: 24, // 24 meses
   yearly: 10, // 10 anos
   custom: [
-    { pattern: 'first-of-month', keep: 60 },
-    { pattern: 'last-of-year', keep: 'forever' },
+    { pattern: "first-of-month", keep: 60 },
+    { pattern: "last-of-year", keep: "forever" },
   ],
 };
 ```
@@ -361,15 +361,15 @@ const retention = {
 
 ```typescript
 const filters = {
-  includePatterns: ['**/*.sql', '**/*.json', 'config/**'],
+  includePatterns: ["**/*.sql", "**/*.json", "config/**"],
   excludePatterns: [
-    '**/node_modules/**',
-    '**/.git/**',
-    '**/tmp/**',
-    '**/*.log',
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/tmp/**",
+    "**/*.log",
   ],
   sizeLimit: 1073741824, // 1GB
-  modifiedSince: '2024-01-01',
+  modifiedSince: "2024-01-01",
 };
 ```
 
@@ -418,15 +418,15 @@ const alertConfig = {
 
 ```typescript
 // Habilitar debug
-process.env.DEBUG = 'backup:*';
+process.env.DEBUG = "backup:*";
 
 // Logs estruturados
 const logger = {
-  level: 'debug',
-  format: 'json',
+  level: "debug",
+  format: "json",
   transports: [
-    { type: 'file', filename: 'backup.log' },
-    { type: 'console', colorize: true },
+    { type: "file", filename: "backup.log" },
+    { type: "console", colorize: true },
   ],
 };
 ```

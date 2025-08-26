@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Supabase Mock for Healthcare Testing
 // LGPD-compliant data mocking and healthcare-specific scenarios
@@ -58,23 +58,23 @@ function setupPatientDataMocks(mock: any) {
   // Mock LGPD-compliant patient data
   const mockPatients = [
     {
-      id: 'test-patient-1',
-      name: 'João Test Silva',
-      cpf: '123.456.789-00',
+      id: "test-patient-1",
+      name: "João Test Silva",
+      cpf: "123.456.789-00",
       consent_given: true,
       data_processing_consent: new Date().toISOString(),
     },
     {
-      id: 'test-patient-2',
-      name: 'Maria Test Santos',
-      cpf: '987.654.321-00',
+      id: "test-patient-2",
+      name: "Maria Test Santos",
+      cpf: "987.654.321-00",
       consent_given: true,
       data_processing_consent: new Date().toISOString(),
     },
   ];
 
   mock.from.mockImplementation((table: string) => {
-    if (table === 'patients') {
+    if (table === "patients") {
       return {
         select: () => ({ data: mockPatients, error: undefined }),
         insert: () => ({ data: mockPatients[0], error: undefined }),
@@ -90,10 +90,10 @@ function setupAnvisaDataMocks(_mock: any) {
   // Mock ANVISA device registration data
   const _mockDevices = [
     {
-      id: 'device-001',
-      name: 'Test Medical Device',
-      anvisa_registration: 'REG-001-2024',
-      status: 'approved',
+      id: "device-001",
+      name: "Test Medical Device",
+      anvisa_registration: "REG-001-2024",
+      status: "approved",
       validation_date: new Date().toISOString(),
     },
   ];
@@ -103,11 +103,11 @@ function setupCFMDataMocks(_mock: any) {
   // Mock CFM professional validation data
   const _mockProfessionals = [
     {
-      id: 'prof-001',
-      name: 'Dr. Test Professional',
-      cfm_license: 'CRM-12345',
-      specialty: 'Dermatologia',
-      status: 'active',
+      id: "prof-001",
+      name: "Dr. Test Professional",
+      cfm_license: "CRM-12345",
+      specialty: "Dermatologia",
+      status: "active",
       validation_date: new Date().toISOString(),
     },
   ];
@@ -117,11 +117,11 @@ function setupAuditTrailMocks(_mock: any) {
   // Mock audit trail for compliance
   const _mockAuditLogs = [
     {
-      id: 'audit-001',
-      action: 'patient_data_access',
-      user_id: 'user-001',
+      id: "audit-001",
+      action: "patient_data_access",
+      user_id: "user-001",
       timestamp: new Date().toISOString(),
-      ip_address: '127.0.0.1',
+      ip_address: "127.0.0.1",
       compliance_validated: true,
     },
   ];

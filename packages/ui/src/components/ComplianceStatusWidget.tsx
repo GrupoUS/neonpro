@@ -1,15 +1,21 @@
-import { AlertCircle, AlertTriangle, CheckCircle, Clock, Shield } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Shield,
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 export type ComplianceStatus =
-  | 'compliant'
-  | 'warning'
-  | 'non_compliant'
-  | 'pending'
-  | 'unknown';
+  | "compliant"
+  | "warning"
+  | "non_compliant"
+  | "pending"
+  | "unknown";
 
 export interface ComplianceCheck {
   id: string;
@@ -68,16 +74,16 @@ export interface ComplianceStatusWidgetProps {
 
 const getStatusIcon = (status: ComplianceStatus) => {
   switch (status) {
-    case 'compliant': {
+    case "compliant": {
       return <CheckCircle className="h-4 w-4" />;
     }
-    case 'warning': {
+    case "warning": {
       return <AlertTriangle className="h-4 w-4" />;
     }
-    case 'non_compliant': {
+    case "non_compliant": {
       return <AlertCircle className="h-4 w-4" />;
     }
-    case 'pending': {
+    case "pending": {
       return <Clock className="h-4 w-4" />;
     }
     default: {
@@ -88,51 +94,51 @@ const getStatusIcon = (status: ComplianceStatus) => {
 
 const getStatusBadgeVariant = (status: ComplianceStatus) => {
   switch (status) {
-    case 'compliant': {
-      return 'confirmed';
+    case "compliant": {
+      return "confirmed";
     }
-    case 'warning': {
-      return 'medium';
+    case "warning": {
+      return "medium";
     }
-    case 'non_compliant': {
-      return 'urgent';
+    case "non_compliant": {
+      return "urgent";
     }
-    case 'pending': {
-      return 'pending';
+    case "pending": {
+      return "pending";
     }
     default: {
-      return 'inactive';
+      return "inactive";
     }
   }
 };
 
 const getStatusText = (status: ComplianceStatus) => {
   switch (status) {
-    case 'compliant': {
-      return 'Conforme';
+    case "compliant": {
+      return "Conforme";
     }
-    case 'warning': {
-      return 'Atenção';
+    case "warning": {
+      return "Atenção";
     }
-    case 'non_compliant': {
-      return 'Não Conforme';
+    case "non_compliant": {
+      return "Não Conforme";
     }
-    case 'pending': {
-      return 'Pendente';
+    case "pending": {
+      return "Pendente";
     }
     default: {
-      return 'Desconhecido';
+      return "Desconhecido";
     }
   }
 };
 
 const formatDate = (date: Date): string => {
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   }).format(date);
 };
 
@@ -142,11 +148,11 @@ const ComplianceSection: React.FC<{
   onAddressIssue?: (checkId: string) => void;
   showDetails?: boolean;
 }> = ({ title, checks, onAddressIssue, showDetails = false }) => {
-  const overallStatus = checks.every((check) => check.status === 'compliant')
-    ? 'compliant'
-    : (checks.some((check) => check.status === 'non_compliant')
-    ? 'non_compliant'
-    : 'warning');
+  const overallStatus = checks.every((check) => check.status === "compliant")
+    ? "compliant"
+    : checks.some((check) => check.status === "non_compliant")
+      ? "non_compliant"
+      : "warning";
 
   return (
     <div className="space-y-3">
@@ -240,12 +246,12 @@ export const ComplianceStatusWidget = React.forwardRef<
   ) => {
     const getScoreVariant = (score: number) => {
       if (score >= 90) {
-        return 'confirmed';
+        return "confirmed";
       }
       if (score >= 70) {
-        return 'medium';
+        return "medium";
       }
-      return 'urgent';
+      return "urgent";
     };
 
     const getScoreIcon = (score: number) => {
@@ -261,7 +267,7 @@ export const ComplianceStatusWidget = React.forwardRef<
     return (
       <div
         className={cn(
-          'rounded-lg border bg-card p-6 text-card-foreground shadow-sm',
+          "rounded-lg border bg-card p-6 text-card-foreground shadow-sm",
           className,
         )}
         ref={ref}
@@ -363,4 +369,4 @@ export const ComplianceStatusWidget = React.forwardRef<
   },
 );
 
-ComplianceStatusWidget.displayName = 'ComplianceStatusWidget';
+ComplianceStatusWidget.displayName = "ComplianceStatusWidget";

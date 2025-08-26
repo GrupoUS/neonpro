@@ -1,4 +1,4 @@
-import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
+import type { PatientProfile, SkinType, TreatmentRequest } from "../types";
 
 /**
  * Feature Extraction for AI Prediction Models
@@ -42,15 +42,15 @@ export class AestheticFeatureExtractor {
     features.push(
       relevantHistory.length / 5, // Normalized count
       relevantHistory.length > 0
-        ? relevantHistory.reduce((sum, t) => sum + t.satisfaction, 0)
-          / (relevantHistory.length * 10)
+        ? relevantHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
+            (relevantHistory.length * 10)
         : 0,
       relevantHistory.length > 0
         ? relevantHistory.reduce(
-          (sum, t) => sum + t.outcome.effectivenesss,
-          0,
-        )
-          / (relevantHistory.length * 10)
+            (sum, t) => sum + t.outcome.effectivenesss,
+            0,
+          ) /
+            (relevantHistory.length * 10)
         : 0,
       patient.previousTreatments.some((t) => t.complications.length > 0)
         ? 1
@@ -62,8 +62,8 @@ export class AestheticFeatureExtractor {
     features.push(
       this.encodeTreatmentType(treatment.treatmentType),
       treatment.targetAreas.length / 5, // Normalized area count
-      treatment.targetAreas.reduce((sum, area) => sum + area.severity, 0)
-        / (treatment.targetAreas.length * 10),
+      treatment.targetAreas.reduce((sum, area) => sum + area.severity, 0) /
+        (treatment.targetAreas.length * 10),
       this.encodeExpectationLevel(treatment.goals.expectations),
       this.encodeUrgency(treatment.urgency),
       treatment.goals.naturalLook ? 1 : 0,
@@ -87,13 +87,13 @@ export class AestheticFeatureExtractor {
       patient.age / 100,
       this.encodeGender(patient.gender),
       this.encodeSkinType(patient.skinType),
-      patient.medicalHistory.conditions.some((c) => c.name.includes('muscle'))
+      patient.medicalHistory.conditions.some((c) => c.name.includes("muscle"))
         ? 1
         : 0,
       patient.lifestyle.stressLevel / 10,
       patient.medicalHistory.medications.some((m) => m.affectsHealing) ? 1 : 0,
       // Previous Botox experience
-      patient.previousTreatments.filter((t) => t.type === 'botox').length / 5,
+      patient.previousTreatments.filter((t) => t.type === "botox").length / 5,
       // Muscle activity indicators
       this.estimateMuscleActivity(patient, targetAreas),
       // Skin elasticity estimate
@@ -114,15 +114,15 @@ export class AestheticFeatureExtractor {
       // Treatment complexity
       this.calculateBotoxComplexity(targetAreas),
       // Previous area treatment
-      this.hasPreviousAreaTreatment(patient, targetAreas, 'botox') ? 1 : 0,
+      this.hasPreviousAreaTreatment(patient, targetAreas, "botox") ? 1 : 0,
       // Concurrent treatments risk
-      this.evaluateConcurrentTreatmentRisk(patient, 'botox'),
+      this.evaluateConcurrentTreatmentRisk(patient, "botox"),
     );
 
     // Contextual factors (18-19)
     features.push(
       this.encodeSeasonalFactor(),
-      this.encodeCurrentTrends('botox'),
+      this.encodeCurrentTrends("botox"),
     );
 
     return features;
@@ -151,11 +151,11 @@ export class AestheticFeatureExtractor {
       patient.lifestyle.smoking ? 1 : 0,
       this.estimateHealingCapacity(patient),
       // Previous filler experience
-      patient.previousTreatments.filter((t) => t.type === 'dermal-fillers')
+      patient.previousTreatments.filter((t) => t.type === "dermal-fillers")
         .length / 5,
       this.estimateFacialAsymmetry(patient),
       this.estimateSkinLaxity(patient),
-      this.evaluateProductCompatibility(patient, 'hyaluronic-acid'),
+      this.evaluateProductCompatibility(patient, "hyaluronic-acid"),
     );
 
     // Volume and technique parameters (14-19)
@@ -199,13 +199,15 @@ export class AestheticFeatureExtractor {
       this.estimateSkinSensitivity(patient),
       this.estimateSkinThickness(patient),
       this.evaluatePhotodamage(patient),
-      patient.lifestyle.sunExposure === 'high' ? 1 : 0,
+      patient.lifestyle.sunExposure === "high" ? 1 : 0,
       patient.lifestyle.skincare.retinoidUse ? 1 : 0,
-      patient.medicalHistory.medications.some((m) => m.name.includes('photosensitizing'))
+      patient.medicalHistory.medications.some((m) =>
+        m.name.includes("photosensitizing"),
+      )
         ? 1
         : 0,
       // Previous laser experience
-      patient.previousTreatments.filter((t) => t.type.includes('laser'))
+      patient.previousTreatments.filter((t) => t.type.includes("laser"))
         .length / 5,
       this.estimateHealingResponse(patient),
       this.evaluatePigmentationRisk(patient),
@@ -244,12 +246,12 @@ export class AestheticFeatureExtractor {
 
   private encodeSkinType(skinType: SkinType): number {
     const typeMap = {
-      'fitzpatrick-1': 0.167,
-      'fitzpatrick-2': 0.333,
-      'fitzpatrick-3': 0.5,
-      'fitzpatrick-4': 0.667,
-      'fitzpatrick-5': 0.833,
-      'fitzpatrick-6': 1,
+      "fitzpatrick-1": 0.167,
+      "fitzpatrick-2": 0.333,
+      "fitzpatrick-3": 0.5,
+      "fitzpatrick-4": 0.667,
+      "fitzpatrick-5": 0.833,
+      "fitzpatrick-6": 1,
     };
     return typeMap[skinType] || 0.5;
   }
@@ -270,15 +272,15 @@ export class AestheticFeatureExtractor {
   private encodeTreatmentType(treatmentType: string): number {
     const typeMap = {
       botox: 0.1,
-      'dermal-fillers': 0.2,
-      'laser-resurfacing': 0.3,
-      'laser-hair-removal': 0.4,
-      'chemical-peel': 0.5,
+      "dermal-fillers": 0.2,
+      "laser-resurfacing": 0.3,
+      "laser-hair-removal": 0.4,
+      "chemical-peel": 0.5,
       microneedling: 0.6,
       coolsculpting: 0.7,
       radiofrequency: 0.8,
       photofacial: 0.9,
-      'thread-lift': 1,
+      "thread-lift": 1,
     };
     return typeMap[treatmentType as keyof typeof typeMap] || 0.5;
   }
@@ -299,8 +301,8 @@ export class AestheticFeatureExtractor {
       const areaComplexity = {
         forehead: 0.3,
         glabella: 0.5,
-        'crows-feet': 0.4,
-        'under-eyes': 0.7,
+        "crows-feet": 0.4,
+        "under-eyes": 0.7,
         jawline: 0.6,
         neck: 0.8,
       };
@@ -316,9 +318,9 @@ export class AestheticFeatureExtractor {
       const areaComplexity = {
         lips: 0.6,
         cheeks: 0.8,
-        'nasolabial-folds': 0.4,
-        'marionette-lines': 0.5,
-        'under-eyes': 0.9,
+        "nasolabial-folds": 0.4,
+        "marionette-lines": 0.5,
+        "under-eyes": 0.9,
         jawline: 0.7,
       };
       return (
@@ -336,19 +338,19 @@ export class AestheticFeatureExtractor {
       ipl: 0.4,
       alexandrite: 0.5,
       diode: 0.3,
-      'nd-yag': 0.7,
+      "nd-yag": 0.7,
     };
     return typeMap[laserType as keyof typeof typeMap] || 0.5;
   }
 
   private encodeTreatmentGoal(goal: string): number {
     const goalMap = {
-      'wrinkle-reduction': 0.3,
+      "wrinkle-reduction": 0.3,
       pigmentation: 0.5,
-      'hair-removal': 0.2,
-      'skin-tightening': 0.7,
-      'acne-scars': 0.8,
-      'overall-rejuvenation': 0.9,
+      "hair-removal": 0.2,
+      "skin-tightening": 0.7,
+      "acne-scars": 0.8,
+      "overall-rejuvenation": 0.9,
     };
     return goalMap[goal as keyof typeof goalMap] || 0.5;
   } // ==================== ESTIMATION METHODS ====================
@@ -371,11 +373,12 @@ export class AestheticFeatureExtractor {
 
     // Previous Botox experience may indicate high muscle activity
     const botoxHistory = patient.previousTreatments.filter(
-      (t) => t.type === 'botox',
+      (t) => t.type === "botox",
     );
     if (botoxHistory.length > 0) {
-      const avgSatisfaction = botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0)
-        / botoxHistory.length;
+      const avgSatisfaction =
+        botoxHistory.reduce((sum, t) => sum + t.satisfaction, 0) /
+        botoxHistory.length;
       if (avgSatisfaction < 7) {
         activityScore += 0.1; // Low satisfaction may indicate strong muscles
       }
@@ -391,16 +394,16 @@ export class AestheticFeatureExtractor {
     elasticity -= (patient.age - 20) / 100;
 
     // Sun exposure damages elasticity
-    if (patient.lifestyle.sunExposure === 'high') {
+    if (patient.lifestyle.sunExposure === "high") {
       elasticity -= 0.2;
-    } else if (patient.lifestyle.sunExposure === 'moderate') {
+    } else if (patient.lifestyle.sunExposure === "moderate") {
       elasticity -= 0.1;
     }
 
     // Smoking damages collagen
     if (patient.lifestyle.smoking) {
       elasticity -= 0.15;
-      if (patient.lifestyle.smokingFrequency === 'heavy') {
+      if (patient.lifestyle.smokingFrequency === "heavy") {
         elasticity -= 0.1;
       }
     }
@@ -424,7 +427,7 @@ export class AestheticFeatureExtractor {
 
     // Previous treatment complications increase risk
     const hasAsymmetryHistory = patient.previousTreatments.some((t) =>
-      t.complications.includes('asymmetry')
+      t.complications.includes("asymmetry"),
     );
     if (hasAsymmetryHistory) {
       riskScore += 0.3;
@@ -436,7 +439,7 @@ export class AestheticFeatureExtractor {
     }
 
     // Certain areas are higher risk
-    const highRiskAreas = new Set(['under-eyes', 'jawline']);
+    const highRiskAreas = new Set(["under-eyes", "jawline"]);
     const hasHighRiskAreas = areas.some((area) => highRiskAreas.has(area));
     if (hasHighRiskAreas) {
       riskScore += 0.2;
@@ -515,7 +518,7 @@ export class AestheticFeatureExtractor {
     }
 
     // Weight loss history (estimated from lifestyle)
-    if (patient.lifestyle.exerciseLevel === 'high') {
+    if (patient.lifestyle.exerciseLevel === "high") {
       deficit += 0.1;
     }
 
@@ -533,12 +536,12 @@ export class AestheticFeatureExtractor {
     thickness -= (patient.age - 25) / 200;
 
     // Gender differences
-    if (patient.gender === 'male') {
+    if (patient.gender === "male") {
       thickness += 0.1;
     }
 
     // Skin type affects thickness
-    if (patient.skinType.includes('5') || patient.skinType.includes('6')) {
+    if (patient.skinType.includes("5") || patient.skinType.includes("6")) {
       thickness += 0.1;
     }
 
@@ -555,7 +558,7 @@ export class AestheticFeatureExtractor {
     if (patient.lifestyle.smoking) {
       production -= 0.2;
     }
-    if (patient.lifestyle.sunExposure === 'high') {
+    if (patient.lifestyle.sunExposure === "high") {
       production -= 0.15;
     }
 
@@ -577,7 +580,7 @@ export class AestheticFeatureExtractor {
 
     // Previous treatment history
     const hasAsymmetryIssues = patient.previousTreatments.some(
-      (t) => t.complications.includes('asymmetry') || t.satisfaction < 6,
+      (t) => t.complications.includes("asymmetry") || t.satisfaction < 6,
     );
     if (hasAsymmetryIssues) {
       asymmetry += 0.2;
@@ -595,12 +598,12 @@ export class AestheticFeatureExtractor {
     }
 
     // Sun damage increases laxity
-    if (patient.lifestyle.sunExposure === 'high') {
+    if (patient.lifestyle.sunExposure === "high") {
       laxity += 0.15;
     }
 
     // Weight fluctuations (estimated)
-    if (patient.lifestyle.exerciseLevel === 'sedentary') {
+    if (patient.lifestyle.exerciseLevel === "sedentary") {
       laxity += 0.05;
     }
 
@@ -616,8 +619,8 @@ export class AestheticFeatureExtractor {
     // Allergy history
     const hasRelevantAllergies = patient.medicalHistory.allergies.some(
       (allergy) =>
-        allergy.toLowerCase().includes('hyaluronic')
-        || allergy.toLowerCase().includes('lidocaine'),
+        allergy.toLowerCase().includes("hyaluronic") ||
+        allergy.toLowerCase().includes("lidocaine"),
     );
     if (hasRelevantAllergies) {
       compatibility -= 0.4;
@@ -625,7 +628,7 @@ export class AestheticFeatureExtractor {
 
     // Previous filler reactions
     const fillerHistory = patient.previousTreatments.filter(
-      (t) => t.type === 'dermal-fillers',
+      (t) => t.type === "dermal-fillers",
     );
     const hasReactions = fillerHistory.some((t) => t.complications.length > 0);
     if (hasReactions) {
@@ -650,13 +653,13 @@ export class AestheticFeatureExtractor {
 
     // Certain area combinations are more complex
     const complexCombinations = [
-      ['lips', 'nasolabial-folds'],
-      ['cheeks', 'under-eyes'],
-      ['jawline', 'marionette-lines'],
+      ["lips", "nasolabial-folds"],
+      ["cheeks", "under-eyes"],
+      ["jawline", "marionette-lines"],
     ];
 
     const hasComplexCombination = complexCombinations.some((combo) =>
-      combo.every((area) => areas.includes(area))
+      combo.every((area) => areas.includes(area)),
     );
     if (hasComplexCombination) {
       complexity += 0.2;
@@ -668,16 +671,17 @@ export class AestheticFeatureExtractor {
   private estimateInjectionDifficulty(areas: string[]): number {
     const difficultyMap = {
       lips: 0.8,
-      'under-eyes': 0.9,
-      'nasolabial-folds': 0.4,
+      "under-eyes": 0.9,
+      "nasolabial-folds": 0.4,
       cheeks: 0.6,
-      'marionette-lines': 0.5,
+      "marionette-lines": 0.5,
       jawline: 0.7,
     };
 
-    const avgDifficulty = areas.reduce((sum, area) => {
-      return sum + (difficultyMap[area as keyof typeof difficultyMap] || 0.5);
-    }, 0) / areas.length;
+    const avgDifficulty =
+      areas.reduce((sum, area) => {
+        return sum + (difficultyMap[area as keyof typeof difficultyMap] || 0.5);
+      }, 0) / areas.length;
 
     return avgDifficulty;
   }
@@ -697,7 +701,7 @@ export class AestheticFeatureExtractor {
     }
 
     // Lifestyle factors
-    if (patient.lifestyle.exerciseLevel === 'high') {
+    if (patient.lifestyle.exerciseLevel === "high") {
       maintenance += 0.1;
     }
     if (patient.lifestyle.smoking) {
@@ -705,8 +709,10 @@ export class AestheticFeatureExtractor {
     }
 
     // Area-specific factors
-    const highMaintenanceAreas = new Set(['lips', 'nasolabial-folds']);
-    const hasHighMaintenanceAreas = areas.some((area) => highMaintenanceAreas.has(area));
+    const highMaintenanceAreas = new Set(["lips", "nasolabial-folds"]);
+    const hasHighMaintenanceAreas = areas.some((area) =>
+      highMaintenanceAreas.has(area),
+    );
     if (hasHighMaintenanceAreas) {
       maintenance += 0.1;
     }
@@ -727,12 +733,12 @@ export class AestheticFeatureExtractor {
 
     // Certain medications increase bleeding risk
     const riskMedications = patient.medicalHistory.medications.filter(
-      (m) => m.isBloodThinner || m.name.toLowerCase().includes('aspirin'),
+      (m) => m.isBloodThinner || m.name.toLowerCase().includes("aspirin"),
     );
     risk += riskMedications.length * 0.1;
 
     // High-risk areas
-    const highRiskAreas = new Set(['under-eyes', 'lips']);
+    const highRiskAreas = new Set(["under-eyes", "lips"]);
     const hasHighRiskAreas = areas.some((area) => highRiskAreas.has(area));
     if (hasHighRiskAreas) {
       risk += 0.15;
@@ -758,8 +764,8 @@ export class AestheticFeatureExtractor {
     if (
       patient.medicalHistory.conditions.some(
         (c) =>
-          c.name.toLowerCase().includes('thyroid')
-          || c.name.toLowerCase().includes('kidney'),
+          c.name.toLowerCase().includes("thyroid") ||
+          c.name.toLowerCase().includes("kidney"),
       )
     ) {
       proneness += 0.2;
@@ -777,12 +783,12 @@ export class AestheticFeatureExtractor {
   // Additional helper methods for laser treatments
   private estimateMelaninContent(patient: PatientProfile): number {
     const melaninMap = {
-      'fitzpatrick-1': 0.1,
-      'fitzpatrick-2': 0.2,
-      'fitzpatrick-3': 0.4,
-      'fitzpatrick-4': 0.6,
-      'fitzpatrick-5': 0.8,
-      'fitzpatrick-6': 1,
+      "fitzpatrick-1": 0.1,
+      "fitzpatrick-2": 0.2,
+      "fitzpatrick-3": 0.4,
+      "fitzpatrick-4": 0.6,
+      "fitzpatrick-5": 0.8,
+      "fitzpatrick-6": 1,
     };
     return melaninMap[patient.skinType] || 0.5;
   }
@@ -791,7 +797,7 @@ export class AestheticFeatureExtractor {
     let sensitivity = 0.5;
 
     // Skin type affects sensitivity
-    if (patient.skinType.includes('1') || patient.skinType.includes('2')) {
+    if (patient.skinType.includes("1") || patient.skinType.includes("2")) {
       sensitivity += 0.2;
     }
 
@@ -799,8 +805,8 @@ export class AestheticFeatureExtractor {
     if (
       patient.medicalHistory.conditions.some(
         (c) =>
-          c.name.toLowerCase().includes('eczema')
-          || c.name.toLowerCase().includes('dermatitis'),
+          c.name.toLowerCase().includes("eczema") ||
+          c.name.toLowerCase().includes("dermatitis"),
       )
     ) {
       sensitivity += 0.3;
@@ -826,9 +832,9 @@ export class AestheticFeatureExtractor {
   ): boolean {
     return patient.previousTreatments.some(
       (t) =>
-        t.type === treatmentType
-        && t.notes
-        && areas.some((area) => t.notes.toLowerCase().includes(area)),
+        t.type === treatmentType &&
+        t.notes &&
+        areas.some((area) => t.notes.toLowerCase().includes(area)),
     );
   }
 
@@ -881,10 +887,10 @@ export class AestheticFeatureExtractor {
 
     // Treatment goal affects energy
     const goalMap = {
-      'hair-removal': 0.4,
+      "hair-removal": 0.4,
       pigmentation: 0.6,
-      'wrinkle-reduction': 0.8,
-      'skin-tightening': 0.9,
+      "wrinkle-reduction": 0.8,
+      "skin-tightening": 0.9,
     };
     energy += (goalMap[goal as keyof typeof goalMap] || 0.5) * 0.4;
 
@@ -893,11 +899,11 @@ export class AestheticFeatureExtractor {
 
   private calculateTreatmentDepth(goal: string): number {
     const depthMap = {
-      'hair-removal': 0.3,
+      "hair-removal": 0.3,
       pigmentation: 0.4,
-      'wrinkle-reduction': 0.7,
-      'skin-tightening': 0.9,
-      'acne-scars': 0.8,
+      "wrinkle-reduction": 0.7,
+      "skin-tightening": 0.9,
+      "acne-scars": 0.8,
     };
     return depthMap[goal as keyof typeof depthMap] || 0.5;
   }
@@ -914,7 +920,7 @@ export class AestheticFeatureExtractor {
     }
 
     // Skin damage level
-    if (patient.lifestyle.sunExposure === 'high') {
+    if (patient.lifestyle.sunExposure === "high") {
       sessions += 0.2;
     }
     if (patient.lifestyle.smoking) {
@@ -922,7 +928,7 @@ export class AestheticFeatureExtractor {
     }
 
     // Goal complexity
-    const complexGoals = ['acne-scars', 'deep-wrinkles', 'skin-tightening'];
+    const complexGoals = ["acne-scars", "deep-wrinkles", "skin-tightening"];
     if (complexGoals.some((g) => goal.includes(g))) {
       sessions += 0.3;
     }
@@ -939,7 +945,7 @@ export class AestheticFeatureExtractor {
     const isSummer = month >= 5 && month <= 8;
 
     // Some laser treatments are better in winter
-    const winterPreferred = new Set(['co2', 'erbium', 'fraxel']);
+    const winterPreferred = new Set(["co2", "erbium", "fraxel"]);
     if (winterPreferred.has(laserType) && !isSummer) {
       return 0.8;
     }
@@ -964,8 +970,8 @@ export class AestheticFeatureExtractor {
     // Photosensitizing medications
     const photosensitizingMeds = patient.medicalHistory.medications.filter(
       (m) =>
-        m.name.toLowerCase().includes('tretinoin')
-        || m.name.toLowerCase().includes('doxycycline'),
+        m.name.toLowerCase().includes("tretinoin") ||
+        m.name.toLowerCase().includes("doxycycline"),
     );
     risk += photosensitizingMeds.length * 0.3;
 
@@ -975,7 +981,7 @@ export class AestheticFeatureExtractor {
     }
 
     // Recent sun exposure
-    if (patient.lifestyle.sunExposure === 'high') {
+    if (patient.lifestyle.sunExposure === "high") {
       risk += 0.2;
     }
 
@@ -994,7 +1000,7 @@ export class AestheticFeatureExtractor {
 
     // Previous complications
     const hasLaserComplications = patient.previousTreatments.some(
-      (t) => t.type.includes('laser') && t.complications.length > 0,
+      (t) => t.type.includes("laser") && t.complications.length > 0,
     );
     if (hasLaserComplications) {
       risk += 0.3;
@@ -1010,17 +1016,19 @@ export class AestheticFeatureExtractor {
     let careScore = 0.5;
 
     // Previous treatment compliance (estimated from satisfaction scores)
-    const avgSatisfaction = patient.previousTreatments.length > 0
-      ? patient.previousTreatments.reduce(
-        (sum, t) => sum + t.satisfaction,
-        0,
-      ) / patient.previousTreatments.length
-      : 7; // Default assumption
+    const avgSatisfaction =
+      patient.previousTreatments.length > 0
+        ? patient.previousTreatments.reduce(
+            (sum, t) => sum + t.satisfaction,
+            0,
+          ) / patient.previousTreatments.length
+        : 7; // Default assumption
 
     careScore += (avgSatisfaction / 10) * 0.3;
 
     // Skincare routine indicates care level
-    const routineScore = Object.values(patient.lifestyle.skincare).filter(Boolean).length / 6;
+    const routineScore =
+      Object.values(patient.lifestyle.skincare).filter(Boolean).length / 6;
     careScore += routineScore * 0.2;
 
     return Math.min(careScore, 1);
@@ -1060,16 +1068,16 @@ export class AestheticFeatureExtractor {
     // Previous pigmentation issues
     const hasPigmentationHistory = patient.previousTreatments.some(
       (t) =>
-        t.complications.includes('pigmentation')
-        || t.complications.includes('hyperpigmentation')
-        || t.complications.includes('hypopigmentation'),
+        t.complications.includes("pigmentation") ||
+        t.complications.includes("hyperpigmentation") ||
+        t.complications.includes("hypopigmentation"),
     );
     if (hasPigmentationHistory) {
       risk += 0.3;
     }
 
     // Hormonal factors (estimated)
-    if (patient.gender === 'female' && patient.age >= 20 && patient.age <= 45) {
+    if (patient.gender === "female" && patient.age >= 20 && patient.age <= 45) {
       risk += 0.1; // Melasma risk
     }
 
@@ -1087,8 +1095,8 @@ export class AestheticFeatureExtractor {
     // Previous scarring
     const hasScarHistory = patient.previousTreatments.some(
       (t) =>
-        t.complications.includes('scar')
-        || t.complications.includes('scarring'),
+        t.complications.includes("scar") ||
+        t.complications.includes("scarring"),
     );
     if (hasScarHistory) {
       risk += 0.3;
@@ -1110,7 +1118,7 @@ export class AestheticFeatureExtractor {
 
     // Previous treatment history may indicate tolerance
     const hasMinimalDowntimeTreatments = patient.previousTreatments.some((t) =>
-      ['botox', 'dermal-fillers', 'microneedling'].includes(t.type)
+      ["botox", "dermal-fillers", "microneedling"].includes(t.type),
     );
     if (hasMinimalDowntimeTreatments) {
       tolerance += 0.2;
@@ -1147,113 +1155,113 @@ export class AestheticFeatureExtractor {
   // Feature name methods for interpretability
   getTreatmentFeatureNames(): string[] {
     return [
-      'age_normalized',
-      'gender_encoded',
-      'skin_type',
-      'blood_thinners',
-      'keloid_proneness',
-      'autoimmune_diseases',
-      'smoking_status',
-      'smoking_frequency',
-      'sun_exposure',
-      'stress_level',
-      'sleep_quality',
-      'sunscreen_use',
-      'retinoid_use',
-      'relevant_treatment_history',
-      'avg_satisfaction',
-      'avg_effectiveness',
-      'complication_history',
-      'total_experience',
-      'treatment_type',
-      'target_area_count',
-      'avg_severity',
-      'expectation_level',
-      'urgency',
-      'natural_look_preference',
+      "age_normalized",
+      "gender_encoded",
+      "skin_type",
+      "blood_thinners",
+      "keloid_proneness",
+      "autoimmune_diseases",
+      "smoking_status",
+      "smoking_frequency",
+      "sun_exposure",
+      "stress_level",
+      "sleep_quality",
+      "sunscreen_use",
+      "retinoid_use",
+      "relevant_treatment_history",
+      "avg_satisfaction",
+      "avg_effectiveness",
+      "complication_history",
+      "total_experience",
+      "treatment_type",
+      "target_area_count",
+      "avg_severity",
+      "expectation_level",
+      "urgency",
+      "natural_look_preference",
     ];
   }
 
   getBotoxFeatureNames(): string[] {
     return [
-      'age_normalized',
-      'gender_encoded',
-      'skin_type',
-      'muscle_conditions',
-      'stress_level',
-      'healing_medications',
-      'botox_experience',
-      'muscle_activity',
-      'skin_elasticity',
-      'asymmetry_risk',
-      'expression_strength',
-      'recovery_capacity',
-      'area_count',
-      'desired_intensity',
-      'area_complexity',
-      'treatment_complexity',
-      'previous_area_treatment',
-      'concurrent_risk',
-      'seasonal_factor',
-      'current_trends',
+      "age_normalized",
+      "gender_encoded",
+      "skin_type",
+      "muscle_conditions",
+      "stress_level",
+      "healing_medications",
+      "botox_experience",
+      "muscle_activity",
+      "skin_elasticity",
+      "asymmetry_risk",
+      "expression_strength",
+      "recovery_capacity",
+      "area_count",
+      "desired_intensity",
+      "area_complexity",
+      "treatment_complexity",
+      "previous_area_treatment",
+      "concurrent_risk",
+      "seasonal_factor",
+      "current_trends",
     ];
   }
 
   getFillerFeatureNames(): string[] {
     return [
-      'age_normalized',
-      'gender_encoded',
-      'skin_type',
-      'volume_deficit',
-      'skin_thickness',
-      'collagen_production',
-      'allergy_count',
-      'autoimmune_status',
-      'smoking_status',
-      'healing_capacity',
-      'filler_experience',
-      'facial_asymmetry',
-      'skin_laxity',
-      'product_compatibility',
-      'total_volume',
-      'area_count',
-      'volume_complexity',
-      'area_encoding',
-      'injection_difficulty',
-      'maintenance_requirement',
-      'vascular_risk',
-      'swelling_proneness',
+      "age_normalized",
+      "gender_encoded",
+      "skin_type",
+      "volume_deficit",
+      "skin_thickness",
+      "collagen_production",
+      "allergy_count",
+      "autoimmune_status",
+      "smoking_status",
+      "healing_capacity",
+      "filler_experience",
+      "facial_asymmetry",
+      "skin_laxity",
+      "product_compatibility",
+      "total_volume",
+      "area_count",
+      "volume_complexity",
+      "area_encoding",
+      "injection_difficulty",
+      "maintenance_requirement",
+      "vascular_risk",
+      "swelling_proneness",
     ];
   }
 
   getLaserFeatureNames(): string[] {
     return [
-      'age_normalized',
-      'gender_encoded',
-      'skin_type',
-      'melanin_content',
-      'skin_sensitivity',
-      'skin_thickness',
-      'photodamage_level',
-      'sun_exposure_current',
-      'retinoid_use',
-      'photosensitizing_meds',
-      'laser_experience',
-      'healing_response',
-      'pigmentation_risk',
-      'scar_risk',
-      'downtime_tolerance',
-      'inflammatory_response',
-      'laser_type',
-      'treatment_goal',
-      'required_energy',
-      'treatment_depth',
-      'sessions_required',
-      'seasonal_appropriate',
-      'contraindication_risk',
-      'complication_risk',
-      'post_care_compliance',
-      'geographic_factor',
+      "age_normalized",
+      "gender_encoded",
+      "skin_type",
+      "melanin_content",
+      "skin_sensitivity",
+      "skin_thickness",
+      "photodamage_level",
+      "sun_exposure_current",
+      "retinoid_use",
+      "photosensitizing_meds",
+      "laser_experience",
+      "healing_response",
+      "pigmentation_risk",
+      "scar_risk",
+      "downtime_tolerance",
+      "inflammatory_response",
+      "laser_type",
+      "treatment_goal",
+      "required_energy",
+      "treatment_depth",
+      "sessions_required",
+      "seasonal_appropriate",
+      "contraindication_risk",
+      "complication_risk",
+      "post_care_compliance",
+      "geographic_factor",
     ];
   }
 }

@@ -1,30 +1,30 @@
 // AI Services Registry
-export { EnhancedAIService } from './enhanced-service-base';
-export { NoShowPredictionService } from './no-show-prediction-service';
-export { UniversalChatService } from './universal-chat-service';
+export { EnhancedAIService } from "./enhanced-service-base";
+export { NoShowPredictionService } from "./no-show-prediction-service";
+export { UniversalChatService } from "./universal-chat-service";
 
-import { NoShowPredictionService } from './no-show-prediction-service';
+import { NoShowPredictionService } from "./no-show-prediction-service";
 // Service Factory
-import { UniversalChatService } from './universal-chat-service';
+import { UniversalChatService } from "./universal-chat-service";
 
 export class AIServiceFactory {
   private static instances = new Map<string, any>();
 
   static getChatService(): UniversalChatService {
-    if (!AIServiceFactory.instances.has('chat')) {
-      AIServiceFactory.instances.set('chat', new UniversalChatService());
+    if (!AIServiceFactory.instances.has("chat")) {
+      AIServiceFactory.instances.set("chat", new UniversalChatService());
     }
-    return AIServiceFactory.instances.get('chat');
+    return AIServiceFactory.instances.get("chat");
   }
 
   static getPredictionService(): NoShowPredictionService {
-    if (!AIServiceFactory.instances.has('prediction')) {
+    if (!AIServiceFactory.instances.has("prediction")) {
       AIServiceFactory.instances.set(
-        'prediction',
+        "prediction",
         new NoShowPredictionService(),
       );
     }
-    return AIServiceFactory.instances.get('prediction');
+    return AIServiceFactory.instances.get("prediction");
   }
 
   static getAllServices() {
@@ -47,16 +47,17 @@ export class AIServiceHealthChecker {
 
     for (const [name, service] of Object.entries(services)) {
       try {
-        const isHealthy = await AIServiceHealthChecker.checkServiceHealth(service);
+        const isHealthy =
+          await AIServiceHealthChecker.checkServiceHealth(service);
         results.push({
           service: name,
-          status: isHealthy ? 'healthy' : 'unhealthy',
+          status: isHealthy ? "healthy" : "unhealthy",
           timestamp: new Date(),
         });
       } catch (error) {
         results.push({
           service: name,
-          status: 'error',
+          status: "error",
           error: error.message,
           timestamp: new Date(),
         });
@@ -69,11 +70,11 @@ export class AIServiceHealthChecker {
   private static async checkServiceHealth(service: any): Promise<boolean> {
     // Basic health check - verify service can be instantiated and has required methods
     return (
-      typeof service.execute === 'function'
-      && typeof service.executeWithMetrics === 'function'
+      typeof service.execute === "function" &&
+      typeof service.executeWithMetrics === "function"
     );
   }
 }
 
 // Export types
-export * from '../types';
+export * from "../types";

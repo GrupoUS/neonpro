@@ -7,13 +7,13 @@
 // ==================== CORE MODEL TYPES ====================
 
 export type ModelType =
-  | 'treatment-outcome'
-  | 'duration-estimation'
-  | 'success-probability'
-  | 'risk-assessment'
-  | 'botox-optimization'
-  | 'filler-volume'
-  | 'laser-settings';
+  | "treatment-outcome"
+  | "duration-estimation"
+  | "success-probability"
+  | "risk-assessment"
+  | "botox-optimization"
+  | "filler-volume"
+  | "laser-settings";
 
 export interface PredictionConfig {
   modelPath: string;
@@ -35,7 +35,7 @@ export interface ModelMetadata {
 export interface PatientProfile {
   id: string;
   age: number;
-  gender: 'male' | 'female' | 'other';
+  gender: "male" | "female" | "other";
   skinType: SkinType;
   medicalHistory: MedicalHistory;
   lifestyle: LifestyleFactors;
@@ -45,12 +45,12 @@ export interface PatientProfile {
 }
 
 export type SkinType =
-  | 'fitzpatrick-1' // Very fair, always burns
-  | 'fitzpatrick-2' // Fair, usually burns
-  | 'fitzpatrick-3' // Medium, sometimes burns
-  | 'fitzpatrick-4' // Olive, rarely burns
-  | 'fitzpatrick-5' // Brown, very rarely burns
-  | 'fitzpatrick-6'; // Dark brown/black, never burns
+  | "fitzpatrick-1" // Very fair, always burns
+  | "fitzpatrick-2" // Fair, usually burns
+  | "fitzpatrick-3" // Medium, sometimes burns
+  | "fitzpatrick-4" // Olive, rarely burns
+  | "fitzpatrick-5" // Brown, very rarely burns
+  | "fitzpatrick-6"; // Dark brown/black, never burns
 
 export interface MedicalHistory {
   allergies: string[];
@@ -72,19 +72,19 @@ export interface Medication {
 }
 export interface MedicalCondition {
   name: string;
-  severity: 'mild' | 'moderate' | 'severe';
+  severity: "mild" | "moderate" | "severe";
   treatmentRelevant: boolean;
   contraindication: boolean;
 }
 
 export interface LifestyleFactors {
   smoking: boolean;
-  smokingFrequency?: 'occasional' | 'daily' | 'heavy';
+  smokingFrequency?: "occasional" | "daily" | "heavy";
   alcohol: boolean;
-  alcoholFrequency?: 'occasional' | 'moderate' | 'heavy';
-  sunExposure: 'minimal' | 'moderate' | 'high';
+  alcoholFrequency?: "occasional" | "moderate" | "heavy";
+  sunExposure: "minimal" | "moderate" | "high";
   skincare: SkincareRoutine;
-  exerciseLevel: 'sedentary' | 'light' | 'moderate' | 'high';
+  exerciseLevel: "sedentary" | "light" | "moderate" | "high";
   stressLevel: number; // 1-10 scale
   sleepQuality: number; // 1-10 scale
 }
@@ -105,21 +105,21 @@ export interface TreatmentRequest {
   treatmentType: TreatmentType;
   targetAreas: TargetArea[];
   goals: TreatmentGoals;
-  urgency: 'low' | 'moderate' | 'high';
+  urgency: "low" | "moderate" | "high";
   budgetRange: BudgetRange;
   timeframe: TimeframePreference;
 }
 export type TreatmentType =
-  | 'botox'
-  | 'dermal-fillers'
-  | 'laser-resurfacing'
-  | 'laser-hair-removal'
-  | 'chemical-peel'
-  | 'microneedling'
-  | 'coolsculpting'
-  | 'radiofrequency'
-  | 'photofacial'
-  | 'thread-lift';
+  | "botox"
+  | "dermal-fillers"
+  | "laser-resurfacing"
+  | "laser-hair-removal"
+  | "chemical-peel"
+  | "microneedling"
+  | "coolsculpting"
+  | "radiofrequency"
+  | "photofacial"
+  | "thread-lift";
 
 export interface TargetArea {
   region: FacialRegion | BodyRegion;
@@ -129,37 +129,37 @@ export interface TargetArea {
 }
 
 export type FacialRegion =
-  | 'forehead'
-  | 'glabella'
-  | 'crows-feet'
-  | 'under-eyes'
-  | 'cheeks'
-  | 'nasolabial-folds'
-  | 'marionette-lines'
-  | 'lips'
-  | 'jawline'
-  | 'neck';
+  | "forehead"
+  | "glabella"
+  | "crows-feet"
+  | "under-eyes"
+  | "cheeks"
+  | "nasolabial-folds"
+  | "marionette-lines"
+  | "lips"
+  | "jawline"
+  | "neck";
 
 export type BodyRegion =
-  | 'abdomen'
-  | 'thighs'
-  | 'arms'
-  | 'back'
-  | 'chest'
-  | 'flanks'
-  | 'buttocks';
+  | "abdomen"
+  | "thighs"
+  | "arms"
+  | "back"
+  | "chest"
+  | "flanks"
+  | "buttocks";
 
 export type AestheticConcern =
-  | 'wrinkles'
-  | 'fine-lines'
-  | 'volume-loss'
-  | 'sagging'
-  | 'pigmentation'
-  | 'acne-scars'
-  | 'texture'
-  | 'excess-fat'
-  | 'cellulite'
-  | 'unwanted-hair';
+  | "wrinkles"
+  | "fine-lines"
+  | "volume-loss"
+  | "sagging"
+  | "pigmentation"
+  | "acne-scars"
+  | "texture"
+  | "excess-fat"
+  | "cellulite"
+  | "unwanted-hair";
 
 export interface TreatmentGoals {
   primary: string;
@@ -169,23 +169,23 @@ export interface TreatmentGoals {
   naturalLook: boolean;
 }
 
-export type ExpectationLevel = 'subtle' | 'moderate' | 'dramatic';
+export type ExpectationLevel = "subtle" | "moderate" | "dramatic";
 
 export type TimeframePreference =
-  | 'immediate'
-  | 'within-month'
-  | 'within-quarter'
-  | 'flexible';
+  | "immediate"
+  | "within-month"
+  | "within-quarter"
+  | "flexible";
 
 export interface TreatmentHistory {
   treatmentType: TreatmentType;
   date: Date;
   provider: string;
-  outcome: 'excellent' | 'good' | 'fair' | 'poor';
+  outcome: "excellent" | "good" | "fair" | "poor";
   sideEffects?: string[];
 }
 
-export type LGPDConsent = 'granted' | 'denied' | 'pending' | 'withdrawn';
+export type LGPDConsent = "granted" | "denied" | "pending" | "withdrawn";
 
 export interface BudgetRange {
   min: number;

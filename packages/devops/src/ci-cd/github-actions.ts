@@ -11,19 +11,19 @@ export interface GitHubActionConfig {
 
 export const HEALTHCARE_WORKFLOW_TEMPLATES = {
   ci: {
-    name: 'CI - Healthcare Quality Pipeline',
-    file: 'ci.yml',
-    description: 'Main CI pipeline with healthcare compliance validation',
+    name: "CI - Healthcare Quality Pipeline",
+    file: "ci.yml",
+    description: "Main CI pipeline with healthcare compliance validation",
   },
   security: {
-    name: 'Security & Healthcare Compliance Scan',
-    file: 'security.yml',
-    description: 'Advanced security scanning with LGPD/ANVISA/CFM compliance',
+    name: "Security & Healthcare Compliance Scan",
+    file: "security.yml",
+    description: "Advanced security scanning with LGPD/ANVISA/CFM compliance",
   },
   deploy: {
-    name: 'Healthcare Deployment Pipeline',
-    file: 'deploy.yml',
-    description: 'Production deployment with healthcare approval gates',
+    name: "Healthcare Deployment Pipeline",
+    file: "deploy.yml",
+    description: "Production deployment with healthcare approval gates",
   },
 };
 
@@ -34,13 +34,13 @@ export class GitHubActionsManager {
     const _workflowTemplate = HEALTHCARE_WORKFLOW_TEMPLATES[template];
 
     switch (template) {
-      case 'ci': {
+      case "ci": {
         return this.generateCIWorkflow();
       }
-      case 'security': {
+      case "security": {
         return this.generateSecurityWorkflow();
       }
-      case 'deploy': {
+      case "deploy": {
         return this.generateDeploymentWorkflow();
       }
       default: {

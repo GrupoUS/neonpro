@@ -4,19 +4,19 @@
  * Otimizado para ambiente healthcare com LGPD compliance
  */
 
-import type { Database } from '@neonpro/db';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
-import { getRealtimeManager } from '../connection-manager';
+import type { Database } from "@neonpro/db";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { getRealtimeManager } from "../connection-manager";
 
 // Explicitly use database patient type (snake_case) not entities type (camelCase)
-type PatientRow = Database['public']['Tables']['patients']['Row'];
+type PatientRow = Database["public"]["Tables"]["patients"]["Row"];
 // Remove unused imports for now until we align the types properly
 // type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 // type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
 export interface RealtimePatientPayload {
-  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+  eventType: "INSERT" | "UPDATE" | "DELETE";
   new?: PatientRow;
   old?: PatientRow;
   errors?: string[];
@@ -50,7 +50,7 @@ export function useRealtimePatients(
     enabled = true,
     onPatientChange,
     onError,
-    queryKey = ['patients', tenantId],
+    queryKey = ["patients", tenantId],
   } = options;
 
   const queryClient = useQueryClient();
@@ -58,8 +58,7 @@ export function useRealtimePatients(
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [lastUpdate, setLastUpdate] = useState<Date | null>();
   const [totalUpdates, setTotalUpdates] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
-    );
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
 
   /**
    * Update TanStack Query cache based on realtime changes
@@ -77,21 +76,23 @@ export function useRealtimePatients(
           }
 
           switch (eventType) {
-            case 'INSERT': {
+            case "INSERT": {
               if (newData && newData.clinic_id === tenantId) {
                 return [...oldCache, newData];
               }
               return oldCache;
             }
 
-            case 'UPDATE': {
+            case "UPDATE": {
               if (newData) {
-                return oldCache.map((patient) => patient.id === newData.id ? newData : patient);
+                return oldCache.map((patient) =>
+                  patient.id === newData.id ? newData : patient,
+                );
               }
               return oldCache;
             }
 
-            case 'DELETE': {
+            case "DELETE": {
               if (oldData) {
                 return oldCache.filter((patient) => patient.id !== oldData.id);
               }
@@ -107,14 +108,14 @@ export function useRealtimePatients(
 
       // Update individual patient cache
       if (newData) {
-        queryClient.setQueryData(['patient', newData.id], newData);
-      } else if (oldData && eventType === 'DELETE') {
-        queryClient.removeQueries({ queryKey: ['patient', oldData.id] });
+        queryClient.setQueryData(["patient", newData.id], newData);
+      } else if (oldData && eventType === "DELETE") {
+        queryClient.removeQueries({ queryKey: ["patient", oldData.id] });
       }
 
       // Invalidate related queries
       queryClient.invalidateQueries({
-        queryKey: ['patient-analytics', tenantId],
+        queryKey: ["patient-analytics", tenantId],
       });
     },
     [queryClient, queryKey, tenantId],
@@ -169,7 +170,7 @@ export function useRealtimePatients(
     const unsubscribe = realtimeManager.subscribe(
       `patients:clinic_id=eq.${tenantId}`,
       {
-        table: 'patients',
+        table: "patients",
         filter: `clinic_id=eq.${tenantId}`,
       },
       handlePatientChange,
@@ -235,20 +236,20 @@ export function useOptimisticPatients(tenantId: string) {
     (patientId: string, updates: Partial<PatientRow>) => {
       // Update patients list optimistically
       queryClient.setQueryData(
-        ['patients', tenantId],
+        ["patients", tenantId],
         (oldCache: PatientRow[] | undefined) => {
           if (!oldCache) {
             return oldCache;
           }
           return oldCache.map((patient) =>
-            patient.id === patientId ? { ...patient, ...updates } : patient
+            patient.id === patientId ? { ...patient, ...updates } : patient,
           );
         },
       );
 
       // Update individual patient cache
       queryClient.setQueryData(
-        ['patient', patientId],
+        ["patient", patientId],
         (oldData: PatientRow | undefined) => {
           if (!oldData) {
             return oldData;
@@ -263,8 +264,8 @@ export function useOptimisticPatients(tenantId: string) {
   const rollbackUpdate = useCallback(
     (patientId: string) => {
       // Invalidate caches to fetch fresh data
-      queryClient.invalidateQueries({ queryKey: ['patients', tenantId] });
-      queryClient.invalidateQueries({ queryKey: ['patient', patientId] });
+      queryClient.invalidateQueries({ queryKey: ["patients", tenantId] });
+      queryClient.invalidateQueries({ queryKey: ["patient", patientId] });
     },
     [queryClient, tenantId],
   );

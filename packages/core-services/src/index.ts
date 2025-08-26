@@ -1,5 +1,5 @@
 // Core services package index
-export * from './scheduling';
+export * from "./scheduling";
 
 // Re-export common types and interfaces
 export interface ServiceResponse<T = any> {

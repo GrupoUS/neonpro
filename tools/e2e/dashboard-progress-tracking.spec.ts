@@ -1,22 +1,24 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // Dashboard Progress Tracking E2E Tests
 // Tests patient progress monitoring, treatment outcomes, goal tracking, and progress analytics
 
-test.describe('Dashboard Progress Tracking Page', () => {
+test.describe("Dashboard Progress Tracking Page", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to progress tracking dashboard
-    await page.goto('/dashboard/progress-tracking');
+    await page.goto("/dashboard/progress-tracking");
 
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
   });
 
-  test.describe('Progress Overview', () => {
-    test('should display progress tracking dashboard with key metrics', async ({ page }) => {
+  test.describe("Progress Overview", () => {
+    test("should display progress tracking dashboard with key metrics", async ({
+      page,
+    }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Progress.*Tracking.*NeonPro/);
-      await expect(page.locator('h1')).toContainText('Progress Tracking');
+      await expect(page.locator("h1")).toContainText("Progress Tracking");
 
       // Verify progress metrics cards
       await expect(
@@ -38,7 +40,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
     });
 
-    test('should show treatment progress distribution', async ({ page }) => {
+    test("should show treatment progress distribution", async ({ page }) => {
       // Check progress distribution chart
       await expect(
         page.locator('[data-testid="progress-distribution-chart"]'),
@@ -46,11 +48,11 @@ test.describe('Dashboard Progress Tracking Page', () => {
 
       // Verify progress categories
       const progressCategories = [
-        'excellent-progress',
-        'good-progress',
-        'moderate-progress',
-        'minimal-progress',
-        'no-progress',
+        "excellent-progress",
+        "good-progress",
+        "moderate-progress",
+        "minimal-progress",
+        "no-progress",
       ];
 
       for (const category of progressCategories) {
@@ -63,7 +65,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should display recent progress updates', async ({ page }) => {
+    test("should display recent progress updates", async ({ page }) => {
       const recentUpdatesSection = page.locator(
         '[data-testid="recent-progress-updates"]',
       );
@@ -88,7 +90,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should show treatment outcome statistics', async ({ page }) => {
+    test("should show treatment outcome statistics", async ({ page }) => {
       // Check outcome statistics section
       await expect(
         page.locator('[data-testid="outcome-statistics"]'),
@@ -108,8 +110,8 @@ test.describe('Dashboard Progress Tracking Page', () => {
     });
   });
 
-  test.describe('Patient Progress Monitoring', () => {
-    test('should display patient progress list', async ({ page }) => {
+  test.describe("Patient Progress Monitoring", () => {
+    test("should display patient progress list", async ({ page }) => {
       // Navigate to patient progress
       await page.click('[data-testid="patient-progress-tab"]');
 
@@ -137,15 +139,15 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
     });
 
-    test('should filter patients by progress status', async ({ page }) => {
+    test("should filter patients by progress status", async ({ page }) => {
       await page.click('[data-testid="patient-progress-tab"]');
 
       // Test different progress filters
       const progressFilters = [
-        'all-progress',
-        'excellent-progress',
-        'good-progress',
-        'needs-attention',
+        "all-progress",
+        "excellent-progress",
+        "good-progress",
+        "needs-attention",
       ];
 
       for (const filter of progressFilters) {
@@ -160,11 +162,11 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should search patients by name or treatment', async ({ page }) => {
+    test("should search patients by name or treatment", async ({ page }) => {
       await page.click('[data-testid="patient-progress-tab"]');
 
       // Test patient search
-      await page.fill('[data-testid="patient-search"]', 'Ana Costa');
+      await page.fill('[data-testid="patient-search"]', "Ana Costa");
       await page.waitForTimeout(1000);
 
       // Check search results
@@ -172,15 +174,15 @@ test.describe('Dashboard Progress Tracking Page', () => {
       if ((await searchResults.count()) > 0) {
         await expect(
           searchResults.first().locator('[data-testid="patient-name"]'),
-        ).toContainText('Ana');
+        ).toContainText("Ana");
       }
 
       // Clear search
-      await page.fill('[data-testid="patient-search"]', '');
+      await page.fill('[data-testid="patient-search"]', "");
       await page.waitForTimeout(1000);
     });
 
-    test('should view detailed patient progress', async ({ page }) => {
+    test("should view detailed patient progress", async ({ page }) => {
       await page.click('[data-testid="patient-progress-tab"]');
 
       // Click on first patient row
@@ -218,7 +220,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should update patient progress', async ({ page }) => {
+    test("should update patient progress", async ({ page }) => {
       await page.click('[data-testid="patient-progress-tab"]');
 
       // Find a patient to update
@@ -231,12 +233,12 @@ test.describe('Dashboard Progress Tracking Page', () => {
           .click();
 
         // Fill progress update form
-        await page.selectOption('[data-testid="progress-rating"]', '4'); // Good progress
+        await page.selectOption('[data-testid="progress-rating"]', "4"); // Good progress
 
         // Add progress notes
         await page.fill(
           '[data-testid="progress-notes"]',
-          'Patient showing excellent improvement in skin texture. Reduced fine lines visible.',
+          "Patient showing excellent improvement in skin texture. Reduced fine lines visible.",
         );
 
         // Upload progress photos
@@ -244,22 +246,22 @@ test.describe('Dashboard Progress Tracking Page', () => {
         if (await fileInput.isVisible()) {
           // Simulate file upload (in real test, you'd use actual files)
           await fileInput.setInputFiles({
-            name: 'progress-photo.jpg',
-            mimeType: 'image/jpeg',
-            buffer: Buffer.from('fake-image-data'),
+            name: "progress-photo.jpg",
+            mimeType: "image/jpeg",
+            buffer: Buffer.from("fake-image-data"),
           });
         }
 
         // Add measurements
-        await page.fill('[data-testid="measurement-wrinkle-depth"]', '0.3');
-        await page.fill('[data-testid="measurement-skin-elasticity"]', '85');
+        await page.fill('[data-testid="measurement-wrinkle-depth"]', "0.3");
+        await page.fill('[data-testid="measurement-skin-elasticity"]', "85");
 
         // Set next appointment
         const nextWeek = new Date();
         nextWeek.setDate(nextWeek.getDate() + 7);
         await page.fill(
           '[data-testid="next-appointment"]',
-          nextWeek.toISOString().split('T')[0],
+          nextWeek.toISOString().split("T")[0],
         );
 
         // Submit progress update
@@ -271,13 +273,13 @@ test.describe('Dashboard Progress Tracking Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Progress updated successfully');
+        ).toContainText("Progress updated successfully");
       }
     });
   });
 
-  test.describe('Treatment Outcomes', () => {
-    test('should display treatment outcomes overview', async ({ page }) => {
+  test.describe("Treatment Outcomes", () => {
+    test("should display treatment outcomes overview", async ({ page }) => {
       // Navigate to outcomes
       await page.click('[data-testid="outcomes-tab"]');
 
@@ -301,16 +303,16 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
     });
 
-    test('should analyze outcomes by treatment type', async ({ page }) => {
+    test("should analyze outcomes by treatment type", async ({ page }) => {
       await page.click('[data-testid="outcomes-tab"]');
 
       // Check treatment outcome breakdown
       const treatmentTypes = [
-        'botox',
-        'dermal-fillers',
-        'laser-therapy',
-        'chemical-peels',
-        'microneedling',
+        "botox",
+        "dermal-fillers",
+        "laser-therapy",
+        "chemical-peels",
+        "microneedling",
       ];
 
       for (const type of treatmentTypes) {
@@ -330,7 +332,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should track patient satisfaction scores', async ({ page }) => {
+    test("should track patient satisfaction scores", async ({ page }) => {
       await page.click('[data-testid="outcomes-tab"]');
 
       // Navigate to satisfaction section
@@ -350,11 +352,11 @@ test.describe('Dashboard Progress Tracking Page', () => {
 
       // Check satisfaction by category
       const satisfactionCategories = [
-        'treatment-effectiveness',
-        'staff-professionalism',
-        'facility-cleanliness',
-        'appointment-scheduling',
-        'overall-experience',
+        "treatment-effectiveness",
+        "staff-professionalism",
+        "facility-cleanliness",
+        "appointment-scheduling",
+        "overall-experience",
       ];
 
       for (const category of satisfactionCategories) {
@@ -367,7 +369,9 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should monitor adverse events and complications', async ({ page }) => {
+    test("should monitor adverse events and complications", async ({
+      page,
+    }) => {
       await page.click('[data-testid="outcomes-tab"]');
 
       // Navigate to adverse events section
@@ -402,7 +406,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should generate outcome reports', async ({ page }) => {
+    test("should generate outcome reports", async ({ page }) => {
       await page.click('[data-testid="outcomes-tab"]');
 
       // Navigate to reports section
@@ -413,17 +417,17 @@ test.describe('Dashboard Progress Tracking Page', () => {
       startDate.setMonth(startDate.getMonth() - 3);
       await page.fill(
         '[data-testid="report-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="report-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Select report type
       await page.selectOption(
         '[data-testid="report-type"]',
-        'comprehensive-outcomes',
+        "comprehensive-outcomes",
       );
 
       // Select treatments to include
@@ -432,7 +436,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       await page.check('[data-testid="include-laser"]');
 
       // Generate report
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="generate-outcome-report"]');
 
       // Verify download
@@ -443,8 +447,8 @@ test.describe('Dashboard Progress Tracking Page', () => {
     });
   });
 
-  test.describe('Goal Tracking', () => {
-    test('should display patient goals overview', async ({ page }) => {
+  test.describe("Goal Tracking", () => {
+    test("should display patient goals overview", async ({ page }) => {
       // Navigate to goals
       await page.click('[data-testid="goals-tab"]');
 
@@ -466,60 +470,60 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
     });
 
-    test('should create new patient goals', async ({ page }) => {
+    test("should create new patient goals", async ({ page }) => {
       await page.click('[data-testid="goals-tab"]');
 
       // Click create goal
       await page.click('[data-testid="create-goal"]');
 
       // Fill goal form
-      await page.fill('[data-testid="patient-search"]', 'Maria Silva');
+      await page.fill('[data-testid="patient-search"]', "Maria Silva");
       await page.waitForTimeout(500);
       await page.click('[data-testid="patient-option"]');
 
       // Set goal details
       await page.selectOption(
         '[data-testid="goal-category"]',
-        'aesthetic-improvement',
+        "aesthetic-improvement",
       );
       await page.fill(
         '[data-testid="goal-description"]',
-        'Reduce forehead wrinkles by 70% within 6 months',
+        "Reduce forehead wrinkles by 70% within 6 months",
       );
 
       // Set target metrics
-      await page.fill('[data-testid="target-wrinkle-reduction"]', '70');
-      await page.fill('[data-testid="target-satisfaction-score"]', '9');
+      await page.fill('[data-testid="target-wrinkle-reduction"]', "70");
+      await page.fill('[data-testid="target-satisfaction-score"]', "9");
 
       // Set timeline
       const targetDate = new Date();
       targetDate.setMonth(targetDate.getMonth() + 6);
       await page.fill(
         '[data-testid="target-date"]',
-        targetDate.toISOString().split('T')[0],
+        targetDate.toISOString().split("T")[0],
       );
 
       // Set milestones
       await page.click('[data-testid="add-milestone"]');
       await page.fill(
         '[data-testid="milestone-description"]',
-        'Initial consultation and treatment plan',
+        "Initial consultation and treatment plan",
       );
       await page.fill(
         '[data-testid="milestone-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       await page.click('[data-testid="add-milestone"]');
       await page.fill(
         '[data-testid="milestone-description"]:nth-of-type(2)',
-        'First Botox treatment session',
+        "First Botox treatment session",
       );
       const firstTreatment = new Date();
       firstTreatment.setDate(firstTreatment.getDate() + 7);
       await page.fill(
         '[data-testid="milestone-date"]:nth-of-type(2)',
-        firstTreatment.toISOString().split('T')[0],
+        firstTreatment.toISOString().split("T")[0],
       );
 
       // Submit goal
@@ -531,10 +535,10 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Goal created successfully');
+      ).toContainText("Goal created successfully");
     });
 
-    test('should track goal progress', async ({ page }) => {
+    test("should track goal progress", async ({ page }) => {
       await page.click('[data-testid="goals-tab"]');
 
       // Find a goal to update
@@ -552,10 +556,10 @@ test.describe('Dashboard Progress Tracking Page', () => {
         await page.click('[data-testid="update-progress"]');
 
         // Fill progress update
-        await page.fill('[data-testid="progress-percentage"]', '45');
+        await page.fill('[data-testid="progress-percentage"]', "45");
         await page.fill(
           '[data-testid="progress-notes"]',
-          'Patient showing good response to treatment. Wrinkle depth reduced by approximately 40%.',
+          "Patient showing good response to treatment. Wrinkle depth reduced by approximately 40%.",
         );
 
         // Mark milestone as completed
@@ -576,11 +580,11 @@ test.describe('Dashboard Progress Tracking Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Progress updated');
+        ).toContainText("Progress updated");
       }
     });
 
-    test('should analyze goal achievement patterns', async ({ page }) => {
+    test("should analyze goal achievement patterns", async ({ page }) => {
       await page.click('[data-testid="goals-tab"]');
 
       // Navigate to goal analytics
@@ -607,7 +611,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
     });
 
-    test('should manage goal templates', async ({ page }) => {
+    test("should manage goal templates", async ({ page }) => {
       await page.click('[data-testid="goals-tab"]');
 
       // Navigate to goal templates
@@ -624,33 +628,33 @@ test.describe('Dashboard Progress Tracking Page', () => {
       // Fill template form
       await page.fill(
         '[data-testid="template-name"]',
-        'Anti-Aging Treatment Goals',
+        "Anti-Aging Treatment Goals",
       );
       await page.selectOption(
         '[data-testid="template-category"]',
-        'anti-aging',
+        "anti-aging",
       );
       await page.fill(
         '[data-testid="template-description"]',
-        'Standard goals for comprehensive anti-aging treatments',
+        "Standard goals for comprehensive anti-aging treatments",
       );
 
       // Add template milestones
       await page.click('[data-testid="add-template-milestone"]');
       await page.fill(
         '[data-testid="template-milestone-name"]',
-        'Initial Assessment',
+        "Initial Assessment",
       );
-      await page.fill('[data-testid="template-milestone-days"]', '0');
+      await page.fill('[data-testid="template-milestone-days"]', "0");
 
       await page.click('[data-testid="add-template-milestone"]');
       await page.fill(
         '[data-testid="template-milestone-name"]:nth-of-type(2)',
-        'First Treatment',
+        "First Treatment",
       );
       await page.fill(
         '[data-testid="template-milestone-days"]:nth-of-type(2)',
-        '7',
+        "7",
       );
 
       // Save template
@@ -662,12 +666,14 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Template created');
+      ).toContainText("Template created");
     });
   });
 
-  test.describe('Progress Analytics', () => {
-    test('should display comprehensive progress analytics', async ({ page }) => {
+  test.describe("Progress Analytics", () => {
+    test("should display comprehensive progress analytics", async ({
+      page,
+    }) => {
       // Navigate to analytics
       await page.click('[data-testid="analytics-tab"]');
 
@@ -691,7 +697,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
     });
 
-    test('should analyze progress trends over time', async ({ page }) => {
+    test("should analyze progress trends over time", async ({ page }) => {
       await page.click('[data-testid="analytics-tab"]');
 
       // Check progress trends chart
@@ -700,7 +706,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
 
       // Test different time periods
-      const periods = ['1month', '3months', '6months', '1year'];
+      const periods = ["1month", "3months", "6months", "1year"];
       for (const period of periods) {
         await page.click(`[data-testid="period-${period}"]`);
         await page.waitForTimeout(1000);
@@ -710,7 +716,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should compare treatment effectiveness', async ({ page }) => {
+    test("should compare treatment effectiveness", async ({ page }) => {
       await page.click('[data-testid="analytics-tab"]');
 
       // Navigate to treatment comparison
@@ -722,7 +728,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       ).toBeVisible();
 
       // Check effectiveness metrics by treatment
-      const treatments = ['botox', 'fillers', 'laser', 'peels'];
+      const treatments = ["botox", "fillers", "laser", "peels"];
       for (const treatment of treatments) {
         const treatmentCard = page.locator(
           `[data-testid="effectiveness-${treatment}"]`,
@@ -742,7 +748,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should generate progress analytics reports', async ({ page }) => {
+    test("should generate progress analytics reports", async ({ page }) => {
       await page.click('[data-testid="analytics-tab"]');
 
       // Navigate to reports section
@@ -753,11 +759,11 @@ test.describe('Dashboard Progress Tracking Page', () => {
       startDate.setMonth(startDate.getMonth() - 6);
       await page.fill(
         '[data-testid="analytics-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="analytics-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Select analytics to include
@@ -769,11 +775,11 @@ test.describe('Dashboard Progress Tracking Page', () => {
       // Select report format
       await page.selectOption(
         '[data-testid="analytics-report-format"]',
-        'comprehensive-pdf',
+        "comprehensive-pdf",
       );
 
       // Generate report
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="generate-analytics-report"]');
 
       // Verify download
@@ -784,11 +790,13 @@ test.describe('Dashboard Progress Tracking Page', () => {
     });
   });
 
-  test.describe('Performance and Accessibility', () => {
-    test('should load progress tracking dashboard within performance thresholds', async ({ page }) => {
+  test.describe("Performance and Accessibility", () => {
+    test("should load progress tracking dashboard within performance thresholds", async ({
+      page,
+    }) => {
       const startTime = Date.now();
-      await page.goto('/dashboard/progress-tracking');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/dashboard/progress-tracking");
+      await page.waitForLoadState("networkidle");
       const loadTime = Date.now() - startTime;
 
       // Should load within 3 seconds
@@ -796,24 +804,26 @@ test.describe('Dashboard Progress Tracking Page', () => {
 
       // Check for performance metrics
       const performanceEntries = await page.evaluate(() => {
-        return JSON.stringify(performance.getEntriesByType('navigation'));
+        return JSON.stringify(performance.getEntriesByType("navigation"));
       });
 
       expect(performanceEntries).toBeDefined();
     });
 
-    test('should support keyboard navigation', async ({ page }) => {
+    test("should support keyboard navigation", async ({ page }) => {
       // Test tab navigation through progress sections
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
 
       // Should be able to navigate to main sections
-      const focusedElement = page.locator(':focus');
+      const focusedElement = page.locator(":focus");
       await expect(focusedElement).toBeVisible();
     });
 
-    test('should have proper ARIA labels for progress data', async ({ page }) => {
+    test("should have proper ARIA labels for progress data", async ({
+      page,
+    }) => {
       // Check ARIA labels on progress metrics
       await expect(
         page.locator('[data-testid="active-treatments"][aria-label]'),
@@ -829,7 +839,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should be responsive on mobile devices', async ({ page }) => {
+    test("should be responsive on mobile devices", async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
@@ -848,7 +858,9 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should support screen readers for progress information', async ({ page }) => {
+    test("should support screen readers for progress information", async ({
+      page,
+    }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',
@@ -858,7 +870,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
 
       // Check for descriptive headings
-      const headings = page.locator('h1, h2, h3, h4, h5, h6');
+      const headings = page.locator("h1, h2, h3, h4, h5, h6");
       if ((await headings.count()) > 0) {
         await expect(headings.first()).toBeVisible();
       }
@@ -872,7 +884,7 @@ test.describe('Dashboard Progress Tracking Page', () => {
       }
     });
 
-    test('should handle real-time progress updates', async ({ page }) => {
+    test("should handle real-time progress updates", async ({ page }) => {
       // Check for real-time update indicators
       const updateIndicators = page.locator(
         '[data-testid="real-time-indicator"]',

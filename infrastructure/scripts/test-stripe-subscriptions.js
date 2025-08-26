@@ -11,12 +11,12 @@
  * - Fluxo completo de assinatura
  */
 
-const https = require('node:https');
-const http = require('node:http');
-const { execSync } = require('node:child_process');
+const https = require("node:https");
+const http = require("node:http");
+const { execSync } = require("node:child_process");
 
 // Configurações
-const BASE_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+const BASE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
@@ -29,22 +29,22 @@ const failedTestsList = [];
 // Função para fazer requisições HTTP
 function makeRequest(url, options = {}) {
   return new Promise((resolve, reject) => {
-    const requestModule = url.startsWith('https://') ? https : http;
+    const requestModule = url.startsWith("https://") ? https : http;
 
     const req = requestModule.request(
       url,
       {
-        method: options.method || 'GET',
+        method: options.method || "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'NeonPro-Test-Agent/1.0',
+          "Content-Type": "application/json",
+          "User-Agent": "NeonPro-Test-Agent/1.0",
           ...options.headers,
         },
       },
       (res) => {
-        let data = '';
-        res.on('data', (chunk) => (data += chunk));
-        res.on('end', () => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
           try {
             const jsonData = data ? JSON.parse(data) : {};
             resolve({
@@ -59,7 +59,7 @@ function makeRequest(url, options = {}) {
       },
     );
 
-    req.on('error', reject);
+    req.on("error", reject);
 
     if (options.body) {
       req.write(JSON.stringify(options.body));
@@ -94,10 +94,10 @@ async function testEnvironmentVariables() {
       throw new Error(`Variável ${varName} não configurada`);
     }
     if (
-      varName.includes('STRIPE')
-      && !value.startsWith('pk_')
-      && !value.startsWith('sk_')
-      && !value.startsWith('whsec_')
+      varName.includes("STRIPE") &&
+      !value.startsWith("pk_") &&
+      !value.startsWith("sk_") &&
+      !value.startsWith("whsec_")
     ) {
       throw new Error(`Variável ${varName} tem formato inválido`);
     }
@@ -126,15 +126,15 @@ async function testAPIConnectivity() {
 // 3. Teste de Endpoints Stripe
 async function testStripeEndpoints() {
   const endpoints = [
-    '/api/stripe/create-checkout-session',
-    '/api/stripe/create-billing-portal-session',
-    '/api/webhooks/stripe',
-    '/api/subscription/current',
+    "/api/stripe/create-checkout-session",
+    "/api/stripe/create-billing-portal-session",
+    "/api/webhooks/stripe",
+    "/api/subscription/current",
   ];
 
   for (const endpoint of endpoints) {
     const response = await makeRequest(`${BASE_URL}${endpoint}`, {
-      method: endpoint.includes('webhook') ? 'POST' : 'GET',
+      method: endpoint.includes("webhook") ? "POST" : "GET",
     });
 
     // Para endpoints que requerem autenticação, 401 é esperado
@@ -154,16 +154,16 @@ async function testStripeEndpoints() {
 async function testStripeConfiguration() {
   try {
     // Simular criação de customer de teste
-    const stripe = require('stripe')(STRIPE_SECRET_KEY);
+    const stripe = require("stripe")(STRIPE_SECRET_KEY);
 
     const testCustomer = await stripe.customers.create({
-      email: 'teste@neonpro.com',
-      name: 'Teste NeonPro',
-      metadata: { test: 'true' },
+      email: "teste@neonpro.com",
+      name: "Teste NeonPro",
+      metadata: { test: "true" },
     });
 
     if (!testCustomer.id) {
-      throw new Error('Falha ao criar customer de teste');
+      throw new Error("Falha ao criar customer de teste");
     }
 
     // Limpar customer de teste
@@ -175,12 +175,12 @@ async function testStripeConfiguration() {
 
 // 5. Teste de Planos de Assinatura
 async function testSubscriptionPlans() {
-  const stripe = require('stripe')(STRIPE_SECRET_KEY);
+  const stripe = require("stripe")(STRIPE_SECRET_KEY);
 
   const expectedPrices = [
-    'price_starter_monthly',
-    'price_professional_monthly',
-    'price_enterprise_monthly',
+    "price_starter_monthly",
+    "price_professional_monthly",
+    "price_enterprise_monthly",
   ];
 
   let foundPrices = 0;
@@ -197,7 +197,7 @@ async function testSubscriptionPlans() {
     }
 
     if (foundPrices === 0) {
-      throw new Error('Nenhum plano de assinatura encontrado no Stripe');
+      throw new Error("Nenhum plano de assinatura encontrado no Stripe");
     }
   } catch (error) {
     throw new Error(`Erro ao verificar planos: ${error.message}`);
@@ -211,7 +211,7 @@ async function testDatabaseSchema() {
 
   if (response.status === 500) {
     throw new Error(
-      'Possível erro de schema do banco - endpoint retornando 500',
+      "Possível erro de schema do banco - endpoint retornando 500",
     );
   }
 }
@@ -219,16 +219,16 @@ async function testDatabaseSchema() {
 // 7. Teste de Webhook Stripe (simulado)
 async function testStripeWebhook() {
   if (!STRIPE_WEBHOOK_SECRET) {
-    throw new Error('STRIPE_WEBHOOK_SECRET não configurado');
+    throw new Error("STRIPE_WEBHOOK_SECRET não configurado");
   }
 
   // Teste básico do endpoint webhook
   const response = await makeRequest(`${BASE_URL}/api/webhooks/stripe`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'stripe-signature': 'test-signature',
+      "stripe-signature": "test-signature",
     },
-    body: { type: 'test.event' },
+    body: { type: "test.event" },
   });
 
   // Esperamos 400 porque não temos assinatura válida, mas o endpoint deve estar ativo
@@ -242,10 +242,10 @@ async function testStripeWebhook() {
 // 8. Teste de Interface de Usuário
 async function testUserInterface() {
   const pages = [
-    '/pricing',
-    '/dashboard/subscription/success',
-    '/dashboard/subscription/manage',
-    '/dashboard/subscription/expired',
+    "/pricing",
+    "/dashboard/subscription/success",
+    "/dashboard/subscription/manage",
+    "/dashboard/subscription/expired",
   ];
 
   for (const page of pages) {
@@ -253,9 +253,9 @@ async function testUserInterface() {
       const response = await makeRequest(`${BASE_URL}${page}`);
 
       if (
-        response.status === 200
-        || response.status === 401
-        || response.status === 302
+        response.status === 200 ||
+        response.status === 401 ||
+        response.status === 302
       ) {
       } else if (response.status >= 500) {
         throw new Error(`Página ${page} retornando erro: ${response.status}`);
@@ -281,9 +281,9 @@ async function testPerformance() {
 async function testBasicSecurity() {
   // Teste se endpoints protegidos estão realmente protegidos
   const protectedEndpoints = [
-    '/api/stripe/create-checkout-session',
-    '/api/stripe/create-billing-portal-session',
-    '/api/subscription/current',
+    "/api/stripe/create-checkout-session",
+    "/api/stripe/create-billing-portal-session",
+    "/api/subscription/current",
   ];
 
   for (const endpoint of protectedEndpoints) {
@@ -302,16 +302,16 @@ async function testBasicSecurity() {
 async function main() {
   // Lista de testes para executar
   const tests = [
-    ['Variáveis de Ambiente', testEnvironmentVariables],
-    ['Conectividade da API', testAPIConnectivity],
-    ['Endpoints Stripe', testStripeEndpoints],
-    ['Configuração Stripe', testStripeConfiguration],
-    ['Planos de Assinatura', testSubscriptionPlans],
-    ['Schema do Banco de Dados', testDatabaseSchema],
-    ['Webhook Stripe', testStripeWebhook],
-    ['Interface de Usuário', testUserInterface],
-    ['Performance', testPerformance],
-    ['Segurança Básica', testBasicSecurity],
+    ["Variáveis de Ambiente", testEnvironmentVariables],
+    ["Conectividade da API", testAPIConnectivity],
+    ["Endpoints Stripe", testStripeEndpoints],
+    ["Configuração Stripe", testStripeConfiguration],
+    ["Planos de Assinatura", testSubscriptionPlans],
+    ["Schema do Banco de Dados", testDatabaseSchema],
+    ["Webhook Stripe", testStripeWebhook],
+    ["Interface de Usuário", testUserInterface],
+    ["Performance", testPerformance],
+    ["Segurança Básica", testBasicSecurity],
   ];
 
   // Executar todos os testes
@@ -330,13 +330,13 @@ async function main() {
   } else {
   }
 
-  if (failedTestsList.some((t) => t.name.includes('Stripe'))) {
+  if (failedTestsList.some((t) => t.name.includes("Stripe"))) {
   }
 
-  if (failedTestsList.some((t) => t.name.includes('Banco'))) {
+  if (failedTestsList.some((t) => t.name.includes("Banco"))) {
   }
 
-  if (failedTestsList.some((t) => t.name.includes('API'))) {
+  if (failedTestsList.some((t) => t.name.includes("API"))) {
   }
 
   process.exit(failedTests > 0 ? 1 : 0);

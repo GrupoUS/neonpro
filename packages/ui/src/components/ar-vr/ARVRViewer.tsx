@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 // Simplified AR/VR Viewer - placeholder implementation
 export default function ARVRViewer() {

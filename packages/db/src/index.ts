@@ -5,12 +5,18 @@
  */
 
 // Legacy Prisma client export (during transition)
-export * from '@prisma/client';
+export * from "@prisma/client";
 
 // Healthcare authentication exports
-export { getSession, getUser, requireHealthcareProfessional, requireUser, signOut } from './auth';
+export {
+  getSession,
+  getUser,
+  requireHealthcareProfessional,
+  requireUser,
+  signOut,
+} from "./auth";
 // Modern Supabase client exports
-export { createClient, createServerClient } from './client';
+export { createClient, createServerClient } from "./client";
 // TypeScript definitions exports
 export type {
   Appointment,
@@ -28,4 +34,4 @@ export type {
   Patient,
   PatientInsert,
   PatientUpdate,
-} from './types';
+} from "./types";

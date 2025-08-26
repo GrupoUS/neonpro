@@ -7,12 +7,12 @@
 
 // Constitutional AI Ethics Framework - Core configuration
 export const EthicsConfig = {
-  version: '1.0.0',
-  features: ['explainable-ai', 'bias-detection', 'medical-oversight'],
-  status: 'development',
+  version: "1.0.0",
+  features: ["explainable-ai", "bias-detection", "medical-oversight"],
+  status: "development",
 } as const;
 
-export * from './ai-ethics-validator';
+export * from "./ai-ethics-validator";
 
 /**
  * Constitutional AI Ethics Configuration
@@ -23,32 +23,36 @@ export const AI_ETHICS_CONFIG = {
     patientSafetyFirst: {
       enabled: true,
       priority: 1,
-      description: 'Patient safety takes absolute precedence over all other considerations',
-      enforcement: 'mandatory',
+      description:
+        "Patient safety takes absolute precedence over all other considerations",
+      enforcement: "mandatory",
     },
     explainableDecisions: {
       enabled: true,
       priority: 2,
-      description: 'All AI decisions must be fully explainable to medical professionals',
-      enforcement: 'mandatory',
+      description:
+        "All AI decisions must be fully explainable to medical professionals",
+      enforcement: "mandatory",
     },
     humanOversight: {
       enabled: true,
       priority: 3,
-      description: 'Human medical professional oversight required for all AI recommendations',
-      enforcement: 'mandatory',
+      description:
+        "Human medical professional oversight required for all AI recommendations",
+      enforcement: "mandatory",
     },
     medicalAccuracy: {
       enabled: true,
       priority: 4,
-      description: 'Minimum 95% accuracy required for all medical AI predictions',
-      enforcement: 'mandatory',
+      description:
+        "Minimum 95% accuracy required for all medical AI predictions",
+      enforcement: "mandatory",
     },
     privacyProtection: {
       enabled: true,
       priority: 5,
-      description: 'LGPD-compliant privacy protection in all AI processing',
-      enforcement: 'mandatory',
+      description: "LGPD-compliant privacy protection in all AI processing",
+      enforcement: "mandatory",
     },
   },
 

@@ -3,7 +3,7 @@ export const db = {
     // Mock database health check
     return {
       connected: true,
-      status: 'healthy',
+      status: "healthy",
       latency: Math.random() * 10,
       timestamp: new Date().toISOString(),
     };

@@ -1299,9 +1299,9 @@ export function ProductInventoryManagement() {
                         <Badge className={stockStatus.color}>
                           {stockStatus.status === "low"
                             ? "Baixo"
-                            : (stockStatus.status === "medium"
+                            : stockStatus.status === "medium"
                               ? "Médio"
-                              : "Bom")}
+                              : "Bom"}
                         </Badge>
                       </td>
                       <td className="p-4">

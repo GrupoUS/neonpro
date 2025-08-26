@@ -1,12 +1,12 @@
-import { ArrowLeft, Calendar, Edit, Mail, Phone } from 'lucide-react';
-import * as React from 'react';
-import type { PatientData } from '../types';
-import { cn } from '../utils/cn';
-import { formatters } from '../utils/formatters';
-import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
-import { Badge } from './Badge';
-import { Button } from './Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
+import { ArrowLeft, Calendar, Edit, Mail, Phone } from "lucide-react";
+import * as React from "react";
+import type { PatientData } from "../types";
+import { cn } from "../utils/cn";
+import { formatters } from "../utils/formatters";
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./Tabs";
 
 export interface PatientTab {
   id: string;
@@ -15,7 +15,7 @@ export interface PatientTab {
   content: React.ReactNode;
   badge?: {
     text: string;
-    variant?: 'default' | 'confirmed' | 'pending' | 'cancelled' | 'destructive';
+    variant?: "default" | "confirmed" | "pending" | "cancelled" | "destructive";
   };
 }
 
@@ -75,7 +75,7 @@ const PatientDetailLayout = React.forwardRef<
 
     return (
       <div
-        className={cn('min-h-screen bg-background', className)}
+        className={cn("min-h-screen bg-background", className)}
         ref={ref}
         {...props}
       >
@@ -108,14 +108,16 @@ const PatientDetailLayout = React.forwardRef<
                       <span>{formatters.age(patient.birthDate)} anos</span>
                       <span>•</span>
                       <Badge
-                        variant={patient.status === 'active' ? 'confirmed' : 'pending'}
+                        variant={
+                          patient.status === "active" ? "confirmed" : "pending"
+                        }
                       >
-                        {patient.status === 'active' ? 'Ativo' : 'Inativo'}
+                        {patient.status === "active" ? "Ativo" : "Inativo"}
                       </Badge>
                     </div>
                   </div>
                 </div>
-              </div>{' '}
+              </div>{" "}
               <div className="flex items-center gap-2">
                 {/* Quick Actions */}
                 <div className="flex items-center gap-1">
@@ -178,7 +180,9 @@ const PatientDetailLayout = React.forwardRef<
                       {formatters.phone(patient.phone)}
                     </div>
                   )}
-                  {patient.email && <div className="text-sm">{patient.email}</div>}
+                  {patient.email && (
+                    <div className="text-sm">{patient.email}</div>
+                  )}
                 </div>
               </div>
 
@@ -189,7 +193,7 @@ const PatientDetailLayout = React.forwardRef<
                 <div className="mt-1 text-sm">
                   {patient.lastVisit
                     ? formatters.relativeTime(patient.lastVisit)
-                    : 'Nenhuma'}
+                    : "Nenhuma"}
                 </div>
               </div>
 
@@ -198,15 +202,13 @@ const PatientDetailLayout = React.forwardRef<
                   Próxima Consulta
                 </div>
                 <div className="mt-1 text-sm">
-                  {patient.nextAppointment
-                    ? (
-                      <span className="font-medium text-primary">
-                        {formatters.shortDate(patient.nextAppointment)}
-                      </span>
-                    )
-                    : (
-                      'Nenhuma agendada'
-                    )}
+                  {patient.nextAppointment ? (
+                    <span className="font-medium text-primary">
+                      {formatters.shortDate(patient.nextAppointment)}
+                    </span>
+                  ) : (
+                    "Nenhuma agendada"
+                  )}
                 </div>
               </div>
 
@@ -219,7 +221,7 @@ const PatientDetailLayout = React.forwardRef<
                 </div>
               </div>
             </div>
-          </div>{' '}
+          </div>{" "}
           {/* Tabs Navigation */}
           <div className="px-6">
             <Tabs onValueChange={handleTabChange} value={currentTab}>
@@ -250,12 +252,12 @@ const PatientDetailLayout = React.forwardRef<
         {/* Content */}
         <div
           className={cn(
-            'flex flex-1 overflow-hidden',
-            showSidebar && 'gap-6 p-6',
+            "flex flex-1 overflow-hidden",
+            showSidebar && "gap-6 p-6",
           )}
         >
           {/* Main Content */}
-          <div className={cn('flex-1 overflow-auto', !showSidebar && 'p-6')}>
+          <div className={cn("flex-1 overflow-auto", !showSidebar && "p-6")}>
             <Tabs onValueChange={handleTabChange} value={currentTab}>
               {tabs.map((tab) => (
                 <TabsContent className="space-y-6" key={tab.id} value={tab.id}>
@@ -279,7 +281,7 @@ const PatientDetailLayout = React.forwardRef<
   },
 );
 
-PatientDetailLayout.displayName = 'PatientDetailLayout';
+PatientDetailLayout.displayName = "PatientDetailLayout";
 
 export { PatientDetailLayout };
 export type { PatientDetailLayoutProps };

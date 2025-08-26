@@ -279,7 +279,7 @@ export class NeonProDashboardService {
           value: metric.current_value,
           previousValue,
           change,
-          trend: change > 0 ? "up" : (change < 0 ? "down" : "stable"),
+          trend: change > 0 ? "up" : change < 0 ? "down" : "stable",
           format: metric.format,
           category: metric.category,
           description: metric.description,

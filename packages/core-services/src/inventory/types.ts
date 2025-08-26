@@ -1,6 +1,11 @@
-import { z } from 'zod';
-import { DateSchema, NonNegativeNumberSchema, PositiveNumberSchema, UUIDSchema } from '../types';
-import type { BaseEntity, InventoryStatus } from '../types';
+import { z } from "zod";
+import {
+  DateSchema,
+  NonNegativeNumberSchema,
+  PositiveNumberSchema,
+  UUIDSchema,
+} from "../types";
+import type { BaseEntity, InventoryStatus } from "../types";
 
 // Product and inventory interfaces for aesthetic clinic
 export interface Product extends BaseEntity {
@@ -130,7 +135,7 @@ export interface RegulatoryInfo {
 export interface TemperatureRange {
   min: number;
   max: number;
-  unit: 'celsius' | 'fahrenheit';
+  unit: "celsius" | "fahrenheit";
 }
 
 export interface HumidityRange {
@@ -153,87 +158,87 @@ export interface InventoryAlert {
 
 // Enums
 export enum ProductCategory {
-  INJECTABLES = 'injectables',
-  DERMAL_FILLERS = 'dermal_fillers',
-  SKINCARE = 'skincare',
-  LASER_CONSUMABLES = 'laser_consumables',
-  MEDICAL_DEVICES = 'medical_devices',
-  SAFETY_EQUIPMENT = 'safety_equipment',
-  CLEANING_SUPPLIES = 'cleaning_supplies',
-  OFFICE_SUPPLIES = 'office_supplies',
+  INJECTABLES = "injectables",
+  DERMAL_FILLERS = "dermal_fillers",
+  SKINCARE = "skincare",
+  LASER_CONSUMABLES = "laser_consumables",
+  MEDICAL_DEVICES = "medical_devices",
+  SAFETY_EQUIPMENT = "safety_equipment",
+  CLEANING_SUPPLIES = "cleaning_supplies",
+  OFFICE_SUPPLIES = "office_supplies",
 }
 
 export enum ProductType {
   // Injectables
-  BOTULINUM_TOXIN = 'botulinum_toxin',
-  HYALURONIC_ACID = 'hyaluronic_acid',
-  CALCIUM_HYDROXYLAPATITE = 'calcium_hydroxylapatite',
-  POLY_L_LACTIC_ACID = 'poly_l_lactic_acid',
+  BOTULINUM_TOXIN = "botulinum_toxin",
+  HYALURONIC_ACID = "hyaluronic_acid",
+  CALCIUM_HYDROXYLAPATITE = "calcium_hydroxylapatite",
+  POLY_L_LACTIC_ACID = "poly_l_lactic_acid",
 
   // Skincare
-  CLEANSER = 'cleanser',
-  MOISTURIZER = 'moisturizer',
-  SERUM = 'serum',
-  SUNSCREEN = 'sunscreen',
-  CHEMICAL_PEEL = 'chemical_peel',
+  CLEANSER = "cleanser",
+  MOISTURIZER = "moisturizer",
+  SERUM = "serum",
+  SUNSCREEN = "sunscreen",
+  CHEMICAL_PEEL = "chemical_peel",
 
   // Equipment
-  LASER_TIP = 'laser_tip',
-  CANNULA = 'cannula',
-  NEEDLE = 'needle',
-  SYRINGE = 'syringe',
+  LASER_TIP = "laser_tip",
+  CANNULA = "cannula",
+  NEEDLE = "needle",
+  SYRINGE = "syringe",
 
   // Other
-  CONSUMABLE = 'consumable',
-  EQUIPMENT = 'equipment',
-  MEDICATION = 'medication',
+  CONSUMABLE = "consumable",
+  EQUIPMENT = "equipment",
+  MEDICATION = "medication",
 }
 
 export enum UnitOfMeasure {
-  UNITS = 'units',
-  ML = 'ml',
-  MG = 'mg',
-  GRAMS = 'grams',
-  PIECES = 'pieces',
-  BOTTLES = 'bottles',
-  BOXES = 'boxes',
-  VIALS = 'vials',
+  UNITS = "units",
+  ML = "ml",
+  MG = "mg",
+  GRAMS = "grams",
+  PIECES = "pieces",
+  BOTTLES = "bottles",
+  BOXES = "boxes",
+  VIALS = "vials",
 }
 export enum MovementType {
-  RECEIVED = 'received',
-  USED = 'used',
-  EXPIRED = 'expired',
-  DAMAGED = 'damaged',
-  RETURNED = 'returned',
-  TRANSFERRED = 'transferred',
-  ADJUSTMENT = 'adjustment',
-  DISPOSED = 'disposed',
+  RECEIVED = "received",
+  USED = "used",
+  EXPIRED = "expired",
+  DAMAGED = "damaged",
+  RETURNED = "returned",
+  TRANSFERRED = "transferred",
+  ADJUSTMENT = "adjustment",
+  DISPOSED = "disposed",
 }
 
 export enum OrderStatus {
-  DRAFT = 'draft',
-  PENDING = 'pending',
-  APPROVED = 'approved',
-  SENT = 'sent',
-  PARTIALLY_RECEIVED = 'partially_received',
-  RECEIVED = 'received',
-  CANCELLED = 'cancelled',
+  DRAFT = "draft",
+  PENDING = "pending",
+  APPROVED = "approved",
+  SENT = "sent",
+  PARTIALLY_RECEIVED = "partially_received",
+  RECEIVED = "received",
+  CANCELLED = "cancelled",
 }
 
 export enum AlertType {
-  LOW_STOCK = 'low_stock',
-  OUT_OF_STOCK = 'out_of_stock',
-  EXPIRING_SOON = 'expiring_soon',
-  EXPIRED = 'expired',
-  TEMPERATURE_ALERT = 'temperature_alert',
-  HUMIDITY_ALERT = 'humidity_alert',
+  LOW_STOCK = "low_stock",
+  OUT_OF_STOCK = "out_of_stock",
+  EXPIRING_SOON = "expiring_soon",
+  EXPIRED = "expired",
+  TEMPERATURE_ALERT = "temperature_alert",
+  HUMIDITY_ALERT = "humidity_alert",
 }
 
 export enum AlertSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 // Validation schemas

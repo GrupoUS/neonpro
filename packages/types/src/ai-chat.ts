@@ -4,17 +4,17 @@
  * Portuguese Healthcare Optimization with LGPD/ANVISA/CFM Compliance
  */
 
-export type ChatRole = 'user' | 'assistant' | 'system';
-export type ChatInterface = 'external' | 'internal';
+export type ChatRole = "user" | "assistant" | "system";
+export type ChatInterface = "external" | "internal";
 export type MessageType =
-  | 'text'
-  | 'image'
-  | 'document'
-  | 'voice'
-  | 'appointment_request'
-  | 'medical_query';
-export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'error';
-export type ChatStatus = 'active' | 'waiting' | 'ended' | 'escalated';
+  | "text"
+  | "image"
+  | "document"
+  | "voice"
+  | "appointment_request"
+  | "medical_query";
+export type MessageStatus = "sending" | "sent" | "delivered" | "read" | "error";
+export type ChatStatus = "active" | "waiting" | "ended" | "escalated";
 
 export interface ChatMessage {
   id: string;
@@ -31,7 +31,7 @@ export interface ChatMessageMetadata {
   confidence?: number;
   intent?: string;
   entities?: Record<string, any>;
-  language?: 'pt-BR' | 'en';
+  language?: "pt-BR" | "en";
   medical_context?: MedicalContext;
   appointment_context?: AppointmentContext;
   patient_context?: PatientContext;
@@ -40,7 +40,7 @@ export interface ChatMessageMetadata {
 
 export interface MedicalContext {
   specialty?: string;
-  urgency_level?: 'low' | 'medium' | 'high' | 'emergency';
+  urgency_level?: "low" | "medium" | "high" | "emergency";
   medical_terms?: string[];
   symptoms?: string[];
   diagnosis_suggestions?: string[];
@@ -58,7 +58,7 @@ export interface AppointmentContext {
 
 export interface PatientContext {
   patient_id?: string;
-  age_group?: 'child' | 'adult' | 'elderly';
+  age_group?: "child" | "adult" | "elderly";
   medical_history_summary?: string;
   current_medications?: string[];
   allergies?: string[];
@@ -68,9 +68,9 @@ export interface PatientContext {
 export interface ComplianceFlags {
   lgpd_consent?: boolean;
   medical_data_involved?: boolean;
-  privacy_level?: 'public' | 'confidential' | 'restricted';
+  privacy_level?: "public" | "confidential" | "restricted";
   audit_required?: boolean;
-  encryption_level?: 'standard' | 'medical' | 'emergency';
+  encryption_level?: "standard" | "medical" | "emergency";
 }
 
 export interface ChatSession {
@@ -91,8 +91,8 @@ export interface ChatSession {
 
 export interface ChatSessionContext {
   interface_type: ChatInterface;
-  user_type: 'patient' | 'staff' | 'doctor' | 'admin';
-  language: 'pt-BR' | 'en';
+  user_type: "patient" | "staff" | "doctor" | "admin";
+  language: "pt-BR" | "en";
   medical_specialty?: string;
   clinic_context?: ClinicContext;
   patient_context?: PatientContext;
@@ -112,11 +112,11 @@ export interface ClinicContext {
 
 export interface StaffContext {
   staff_id: string;
-  role: 'nurse' | 'doctor' | 'admin' | 'receptionist';
+  role: "nurse" | "doctor" | "admin" | "receptionist";
   permissions: string[];
   specialties?: string[];
   current_shift?: boolean;
-  access_level: 'basic' | 'advanced' | 'admin';
+  access_level: "basic" | "advanced" | "admin";
 }
 
 export interface ChatAIInsights {
@@ -130,21 +130,21 @@ export interface ChatAIInsights {
 export interface IntentAnalysis {
   primary_intent: string;
   confidence: number;
-  secondary_intents: { intent: string; confidence: number; }[];
+  secondary_intents: { intent: string; confidence: number }[];
   intent_category:
-    | 'appointment'
-    | 'medical_query'
-    | 'information'
-    | 'emergency'
-    | 'administrative';
+    | "appointment"
+    | "medical_query"
+    | "information"
+    | "emergency"
+    | "administrative";
   requires_human?: boolean;
 }
 
 export interface SentimentAnalysis {
-  sentiment: 'positive' | 'neutral' | 'negative' | 'urgent';
+  sentiment: "positive" | "neutral" | "negative" | "urgent";
   confidence: number;
   emotion_indicators: string[];
-  stress_level?: 'low' | 'medium' | 'high';
+  stress_level?: "low" | "medium" | "high";
   satisfaction_score?: number;
 }
 
@@ -152,9 +152,9 @@ export interface MedicalAnalysis {
   medical_terms_detected: string[];
   symptom_analysis: {
     symptom: string;
-    severity: 'mild' | 'moderate' | 'severe';
+    severity: "mild" | "moderate" | "severe";
   }[];
-  urgency_assessment: 'routine' | 'urgent' | 'emergency';
+  urgency_assessment: "routine" | "urgent" | "emergency";
   specialty_recommendation?: string;
   triage_level?: 1 | 2 | 3 | 4 | 5;
   requires_immediate_attention?: boolean;
@@ -166,7 +166,7 @@ export interface RecommendationEngine {
     confidence: number;
     priority: number;
   }[];
-  next_actions: { action: string; priority: 'low' | 'medium' | 'high'; }[];
+  next_actions: { action: string; priority: "low" | "medium" | "high" }[];
   appointment_recommendations?: AppointmentRecommendation[];
   escalation_suggestions?: EscalationSuggestion[];
   follow_up_actions?: FollowUpAction[];
@@ -175,7 +175,7 @@ export interface RecommendationEngine {
 export interface AppointmentRecommendation {
   appointment_type: string;
   recommended_specialty: string;
-  urgency_level: 'routine' | 'urgent' | 'emergency';
+  urgency_level: "routine" | "urgent" | "emergency";
   estimated_duration: number;
   preferred_time_slots: string[];
   doctor_recommendations?: string[];
@@ -184,24 +184,24 @@ export interface AppointmentRecommendation {
 export interface EscalationSuggestion {
   reason: string;
   escalation_type:
-    | 'human_agent'
-    | 'medical_professional'
-    | 'emergency_services';
-  urgency: 'low' | 'medium' | 'high' | 'critical';
+    | "human_agent"
+    | "medical_professional"
+    | "emergency_services";
+  urgency: "low" | "medium" | "high" | "critical";
   estimated_wait_time?: number;
   escalation_context?: Record<string, any>;
 }
 
 export interface FollowUpAction {
   action_type:
-    | 'schedule_appointment'
-    | 'send_information'
-    | 'medical_follow_up'
-    | 'reminder';
+    | "schedule_appointment"
+    | "send_information"
+    | "medical_follow_up"
+    | "reminder";
   scheduled_time?: Date;
   description: string;
-  responsible_party: 'ai' | 'staff' | 'patient';
-  priority: 'low' | 'medium' | 'high';
+  responsible_party: "ai" | "staff" | "patient";
+  priority: "low" | "medium" | "high";
 }
 
 export interface PerformanceMetrics {
@@ -216,11 +216,11 @@ export interface PerformanceMetrics {
 // Chat Configuration Types
 export interface ChatConfig {
   interface_type: ChatInterface;
-  ai_model: 'gpt-4' | 'gpt-3.5-turbo' | 'claude-3' | 'custom-medical';
-  language: 'pt-BR' | 'en';
+  ai_model: "gpt-4" | "gpt-3.5-turbo" | "claude-3" | "custom-medical";
+  language: "pt-BR" | "en";
   streaming_enabled: boolean;
   max_response_time: number; // milliseconds
-  compliance_level: 'standard' | 'medical' | 'emergency';
+  compliance_level: "standard" | "medical" | "emergency";
   features: ChatFeatures;
 }
 
@@ -244,56 +244,56 @@ export interface ChatState {
   is_loading: boolean;
   is_streaming: boolean;
   error?: string;
-  connection_status: 'connected' | 'connecting' | 'disconnected' | 'error';
+  connection_status: "connected" | "connecting" | "disconnected" | "error";
   config: ChatConfig;
   insights: ChatAIInsights | null;
   performance_metrics: PerformanceMetrics | null;
 }
 
 export type ChatAction =
-  | { type: 'START_SESSION'; payload: { session: ChatSession; }; }
-  | { type: 'END_SESSION'; payload: { session_id: string; }; }
+  | { type: "START_SESSION"; payload: { session: ChatSession } }
+  | { type: "END_SESSION"; payload: { session_id: string } }
   | {
-    type: 'SEND_MESSAGE';
-    payload: { session_id: string; message: ChatMessage; };
-  }
+      type: "SEND_MESSAGE";
+      payload: { session_id: string; message: ChatMessage };
+    }
   | {
-    type: 'RECEIVE_MESSAGE';
-    payload: { session_id: string; message: ChatMessage; };
-  }
+      type: "RECEIVE_MESSAGE";
+      payload: { session_id: string; message: ChatMessage };
+    }
   | {
-    type: 'UPDATE_MESSAGE';
-    payload: {
-      session_id: string;
-      message_id: string;
-      updates: Partial<ChatMessage>;
+      type: "UPDATE_MESSAGE";
+      payload: {
+        session_id: string;
+        message_id: string;
+        updates: Partial<ChatMessage>;
+      };
+    }
+  | {
+      type: "START_STREAMING";
+      payload: { session_id: string; message_id: string };
+    }
+  | {
+      type: "STREAM_CHUNK";
+      payload: { session_id: string; message_id: string; chunk: string };
+    }
+  | {
+      type: "END_STREAMING";
+      payload: { session_id: string; message_id: string };
+    }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | {
+      type: "UPDATE_CONNECTION_STATUS";
+      payload: "connected" | "connecting" | "disconnected" | "error";
+    }
+  | { type: "UPDATE_CONFIG"; payload: Partial<ChatConfig> }
+  | { type: "UPDATE_INSIGHTS"; payload: ChatAIInsights }
+  | { type: "UPDATE_METRICS"; payload: PerformanceMetrics }
+  | {
+      type: "ESCALATE_SESSION";
+      payload: { session_id: string; escalation: EscalationSuggestion };
     };
-  }
-  | {
-    type: 'START_STREAMING';
-    payload: { session_id: string; message_id: string; };
-  }
-  | {
-    type: 'STREAM_CHUNK';
-    payload: { session_id: string; message_id: string; chunk: string; };
-  }
-  | {
-    type: 'END_STREAMING';
-    payload: { session_id: string; message_id: string; };
-  }
-  | { type: 'SET_LOADING'; payload: boolean; }
-  | { type: 'SET_ERROR'; payload: string | null; }
-  | {
-    type: 'UPDATE_CONNECTION_STATUS';
-    payload: 'connected' | 'connecting' | 'disconnected' | 'error';
-  }
-  | { type: 'UPDATE_CONFIG'; payload: Partial<ChatConfig>; }
-  | { type: 'UPDATE_INSIGHTS'; payload: ChatAIInsights; }
-  | { type: 'UPDATE_METRICS'; payload: PerformanceMetrics; }
-  | {
-    type: 'ESCALATE_SESSION';
-    payload: { session_id: string; escalation: EscalationSuggestion; };
-  };
 
 // API Types
 export interface ChatAPI {
@@ -334,8 +334,8 @@ export interface InternalChatInterface {
 
 // Portuguese Healthcare Specific Types
 export interface PortugueseHealthcareContext {
-  medical_terminology: 'portuguese' | 'brazilian' | 'international';
-  regulatory_compliance: ('LGPD' | 'ANVISA' | 'CFM' | 'SUS')[];
+  medical_terminology: "portuguese" | "brazilian" | "international";
+  regulatory_compliance: ("LGPD" | "ANVISA" | "CFM" | "SUS")[];
   cultural_considerations: {
     formal_address: boolean;
     medical_hierarchy_respect: boolean;

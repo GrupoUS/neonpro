@@ -1,9 +1,10 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface AlertConfig {
@@ -11,10 +12,10 @@ interface AlertConfig {
   clinic_id: string;
   product_id?: string;
   category_id?: string;
-  alert_type: 'low_stock' | 'expiring' | 'expired' | 'overstock';
+  alert_type: "low_stock" | "expiring" | "expired" | "overstock";
   threshold_value: number;
-  threshold_unit: 'quantity' | 'days' | 'percentage';
-  severity_level: 'low' | 'medium' | 'high' | 'critical';
+  threshold_unit: "quantity" | "days" | "percentage";
+  severity_level: "low" | "medium" | "high" | "critical";
   is_active: boolean;
   notification_channels: string[];
 }
@@ -38,26 +39,26 @@ interface GeneratedAlert {
   current_value: number;
   threshold_value: number;
   message: string;
-  status: 'active';
+  status: "active";
 }
 
 serve(async (req) => {
   // Handle CORS
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get all active alert configurations
     const { data: alertConfigs, error: configError } = await supabase
-      .from('stock_alert_configs')
-      .select('*')
-      .eq('is_active', true);
+      .from("stock_alert_configs")
+      .select("*")
+      .eq("is_active", true);
 
     if (configError) {
       throw configError;
@@ -72,12 +73,14 @@ serve(async (req) => {
     ];
 
     for (const clinicId of clinicIds) {
-      const clinicConfigs = alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
+      const clinicConfigs =
+        alertConfigs?.filter((config) => config.clinic_id === clinicId) || [];
 
       // Get current stock inventory for the clinic
       const { data: inventory, error: inventoryError } = await supabase
-        .from('stock_inventory')
-        .select(`
+        .from("stock_inventory")
+        .select(
+          `
           id,
           product_id,
           quantity_available,
@@ -89,9 +92,10 @@ serve(async (req) => {
             name,
             expiry_date
           )
-        `)
-        .eq('clinic_id', clinicId)
-        .eq('is_active', true);
+        `,
+        )
+        .eq("clinic_id", clinicId)
+        .eq("is_active", true);
 
       if (inventoryError) {
         continue;
@@ -99,16 +103,17 @@ serve(async (req) => {
 
       // Process each alert configuration
       for (const config of clinicConfigs) {
-        const relevantProducts = inventory?.filter((item) => {
-          if (config.product_id) {
-            return item.product_id === config.product_id;
-          }
-          if (config.category_id) {
-            // Would need to join with categories - for now include all
+        const relevantProducts =
+          inventory?.filter((item) => {
+            if (config.product_id) {
+              return item.product_id === config.product_id;
+            }
+            if (config.category_id) {
+              // Would need to join with categories - for now include all
+              return true;
+            }
             return true;
-          }
-          return true;
-        }) || [];
+          }) || [];
 
         // Generate alerts based on type
         for (const product of relevantProducts) {
@@ -126,14 +131,15 @@ serve(async (req) => {
       );
 
       const { data: existingAlerts } = await supabase
-        .from('stock_alerts')
-        .select('clinic_id, product_id, alert_type')
-        .eq('status', 'active')
-        .in('clinic_id', [...new Set(generatedAlerts.map((a) => a.clinic_id))]);
+        .from("stock_alerts")
+        .select("clinic_id, product_id, alert_type")
+        .eq("status", "active")
+        .in("clinic_id", [...new Set(generatedAlerts.map((a) => a.clinic_id))]);
 
       const existingKeys = new Set(
         existingAlerts?.map(
-          (alert) => `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`,
+          (alert) =>
+            `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`,
         ) || [],
       );
 
@@ -147,7 +153,7 @@ serve(async (req) => {
 
       if (newAlerts.length > 0) {
         const { error: insertError } = await supabase
-          .from('stock_alerts')
+          .from("stock_alerts")
           .insert(newAlerts);
 
         if (insertError) {
@@ -160,8 +166,8 @@ serve(async (req) => {
             (c) => c.id === alert.alert_config_id,
           );
           if (
-            config?.notification_channels
-            && config.notification_channels.length > 0
+            config?.notification_channels &&
+            config.notification_channels.length > 0
           ) {
             notificationQueue.push({
               alert,
@@ -187,7 +193,7 @@ serve(async (req) => {
         timestamp: new Date().toISOString(),
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       },
     );
@@ -195,11 +201,11 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || 'Unknown error occurred',
+        error: error.message || "Unknown error occurred",
         timestamp: new Date().toISOString(),
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
       },
     );
@@ -214,30 +220,30 @@ async function generateAlertsForProduct(
   const productData = product.products || {};
 
   switch (config.alert_type) {
-    case 'low_stock': {
+    case "low_stock": {
       if (
-        config.threshold_unit === 'quantity'
-        && product.quantity_available <= config.threshold_value
+        config.threshold_unit === "quantity" &&
+        product.quantity_available <= config.threshold_value
       ) {
         alerts.push({
           clinic_id: config.clinic_id,
           alert_config_id: config.id,
           product_id: product.product_id,
-          alert_type: 'low_stock',
+          alert_type: "low_stock",
           severity_level: config.severity_level,
           current_value: product.quantity_available,
           threshold_value: config.threshold_value,
           message: `Estoque baixo: ${
-            productData.name || 'Produto'
+            productData.name || "Produto"
           } com apenas ${product.quantity_available} unidades disponíveis (mínimo: ${config.threshold_value})`,
-          status: 'active',
+          status: "active",
         });
       }
       break;
     }
 
-    case 'expiring': {
-      if (productData.expiry_date && config.threshold_unit === 'days') {
+    case "expiring": {
+      if (productData.expiry_date && config.threshold_unit === "days") {
         const expiryDate = new Date(productData.expiry_date);
         const today = new Date();
         const daysToExpiry = Math.ceil(
@@ -249,21 +255,21 @@ async function generateAlertsForProduct(
             clinic_id: config.clinic_id,
             alert_config_id: config.id,
             product_id: product.product_id,
-            alert_type: 'expiring',
+            alert_type: "expiring",
             severity_level: config.severity_level,
             current_value: daysToExpiry,
             threshold_value: config.threshold_value,
             message: `Produto próximo ao vencimento: ${
-              productData.name || 'Produto'
+              productData.name || "Produto"
             } vence em ${daysToExpiry} dias`,
-            status: 'active',
+            status: "active",
           });
         }
       }
       break;
     }
 
-    case 'expired': {
+    case "expired": {
       if (productData.expiry_date) {
         const expiryDate = new Date(productData.expiry_date);
         const today = new Date();
@@ -277,37 +283,37 @@ async function generateAlertsForProduct(
             clinic_id: config.clinic_id,
             alert_config_id: config.id,
             product_id: product.product_id,
-            alert_type: 'expired',
-            severity_level: 'critical',
+            alert_type: "expired",
+            severity_level: "critical",
             current_value: daysExpired,
             threshold_value: 0,
             message: `Produto vencido: ${
-              productData.name || 'Produto'
+              productData.name || "Produto"
             } venceu há ${daysExpired} dias`,
-            status: 'active',
+            status: "active",
           });
         }
       }
       break;
     }
 
-    case 'overstock': {
+    case "overstock": {
       if (
-        config.threshold_unit === 'quantity'
-        && product.quantity_available >= config.threshold_value
+        config.threshold_unit === "quantity" &&
+        product.quantity_available >= config.threshold_value
       ) {
         alerts.push({
           clinic_id: config.clinic_id,
           alert_config_id: config.id,
           product_id: product.product_id,
-          alert_type: 'overstock',
+          alert_type: "overstock",
           severity_level: config.severity_level,
           current_value: product.quantity_available,
           threshold_value: config.threshold_value,
           message: `Excesso de estoque: ${
-            productData.name || 'Produto'
+            productData.name || "Produto"
           } com ${product.quantity_available} unidades (máximo recomendado: ${config.threshold_value})`,
-          status: 'active',
+          status: "active",
         });
       }
       break;
@@ -321,21 +327,22 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
   for (const clinicId of clinicIds) {
     try {
       // Calculate daily metrics
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
 
       // Get current inventory value
       const { data: inventory } = await supabase
-        .from('stock_inventory')
-        .select('quantity_available, unit_cost, min_stock_level')
-        .eq('clinic_id', clinicId)
-        .eq('is_active', true);
+        .from("stock_inventory")
+        .select("quantity_available, unit_cost, min_stock_level")
+        .eq("clinic_id", clinicId)
+        .eq("is_active", true);
 
       if (!inventory || inventory.length === 0) {
         continue;
       }
 
       const totalValue = inventory.reduce(
-        (sum: number, item: any) => sum + item.quantity_available * item.unit_cost,
+        (sum: number, item: any) =>
+          sum + item.quantity_available * item.unit_cost,
         0,
       );
 
@@ -347,7 +354,7 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
 
       // Insert or update daily metrics
       const { error: metricsError } = await supabase
-        .from('stock_performance_metrics')
+        .from("stock_performance_metrics")
         .upsert(
           {
             clinic_id: clinicId,
@@ -360,11 +367,12 @@ async function updatePerformanceMetrics(supabase: any, clinicIds: string[]) {
             waste_percentage: 0,
           },
           {
-            onConflict: 'clinic_id,metric_date',
+            onConflict: "clinic_id,metric_date",
           },
         );
 
-      if (metricsError) {}
+      if (metricsError) {
+      }
     } catch {}
   }
 }

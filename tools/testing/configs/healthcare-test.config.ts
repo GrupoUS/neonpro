@@ -4,17 +4,17 @@
  * Quality Standard: ≥9.9/10 Healthcare Override
  */
 
-import { resolve } from 'node:path';
-import { defineConfig } from 'vitest/config';
+import { resolve } from "node:path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     // Healthcare Testing Environment
-    environment: 'jsdom',
+    environment: "jsdom",
     setupFiles: [
-      './setup/healthcare-setup.ts',
-      './setup/lgpd-compliance-setup.ts',
-      './setup/mock-supabase-setup.ts',
+      "./setup/healthcare-setup.ts",
+      "./setup/lgpd-compliance-setup.ts",
+      "./setup/mock-supabase-setup.ts",
     ],
 
     // Performance Requirements for Healthcare
@@ -23,8 +23,8 @@ export default defineConfig({
 
     // Healthcare Coverage Requirements (≥95%)
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html', 'lcov', 'json'],
+      provider: "v8",
+      reporter: ["text", "html", "lcov", "json"],
       thresholds: {
         global: {
           branches: 95,
@@ -34,17 +34,17 @@ export default defineConfig({
         },
       },
       exclude: [
-        'node_modules/',
-        'dist/',
-        '**/*.test.{ts,tsx}',
-        '**/*.spec.{ts,tsx}',
-        '**/types.ts',
-        '**/test-utils.ts',
+        "node_modules/",
+        "dist/",
+        "**/*.test.{ts,tsx}",
+        "**/*.spec.{ts,tsx}",
+        "**/types.ts",
+        "**/test-utils.ts",
       ],
     },
 
     // Healthcare Data Isolation
-    pool: 'forks', // Ensure complete isolation
+    pool: "forks", // Ensure complete isolation
     poolOptions: {
       forks: {
         singleFork: false,
@@ -55,54 +55,54 @@ export default defineConfig({
 
     // Healthcare Test Patterns
     include: [
-      '**/__tests__/**/*.{test,spec}.{ts,tsx}',
-      '**/tests/**/*.{test,spec}.{ts,tsx}',
-      '**/*.{test,spec}.{ts,tsx}',
+      "**/__tests__/**/*.{test,spec}.{ts,tsx}",
+      "**/tests/**/*.{test,spec}.{ts,tsx}",
+      "**/*.{test,spec}.{ts,tsx}",
     ],
     exclude: [
-      'node_modules/',
-      'dist/',
-      'build/',
-      '.next/',
-      'coverage/',
-      '**/*.e2e.{test,spec}.{ts,tsx}',
+      "node_modules/",
+      "dist/",
+      "build/",
+      ".next/",
+      "coverage/",
+      "**/*.e2e.{test,spec}.{ts,tsx}",
     ],
 
     // Healthcare Test Globals
     globals: {
       __HEALTHCARE_MODE__: true,
       __LGPD_COMPLIANCE__: true,
-      __TEST_TENANT_ID__: 'test-tenant-healthcare',
+      __TEST_TENANT_ID__: "test-tenant-healthcare",
       __SUPABASE_TEST_MODE__: true,
     },
 
     // Healthcare Test Reporters
     reporter: [
-      'verbose',
-      'html',
-      'json',
-      ['junit', { outputFile: 'test-results/healthcare-junit.xml' }],
-      ['json', { outputFile: 'test-results/healthcare-results.json' }],
+      "verbose",
+      "html",
+      "json",
+      ["junit", { outputFile: "test-results/healthcare-junit.xml" }],
+      ["json", { outputFile: "test-results/healthcare-results.json" }],
     ],
 
     // Healthcare Test Output
     outputFile: {
-      html: 'test-results/healthcare-coverage.html',
-      json: 'test-results/healthcare-results.json',
+      html: "test-results/healthcare-coverage.html",
+      json: "test-results/healthcare-results.json",
     },
   },
 
   // Healthcare Resolve Configuration
   resolve: {
     alias: {
-      '@': resolve(__dirname, '../../apps/web'),
-      '@/lib': resolve(__dirname, '../../apps/web/lib'),
-      '@/components': resolve(__dirname, '../../apps/web/components'),
-      '@/types': resolve(__dirname, '../../packages/types/src'),
-      '@/compliance': resolve(__dirname, '../../packages/compliance/src'),
-      '@/utils': resolve(__dirname, '../../packages/utils/src'),
-      '@/ui': resolve(__dirname, '../../packages/ui/src'),
-      '@test-utils': resolve(__dirname, './utils'),
+      "@": resolve(__dirname, "../../apps/web"),
+      "@/lib": resolve(__dirname, "../../apps/web/lib"),
+      "@/components": resolve(__dirname, "../../apps/web/components"),
+      "@/types": resolve(__dirname, "../../packages/types/src"),
+      "@/compliance": resolve(__dirname, "../../packages/compliance/src"),
+      "@/utils": resolve(__dirname, "../../packages/utils/src"),
+      "@/ui": resolve(__dirname, "../../packages/ui/src"),
+      "@test-utils": resolve(__dirname, "./utils"),
     },
   },
 

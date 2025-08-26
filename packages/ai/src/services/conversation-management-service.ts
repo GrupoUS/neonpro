@@ -1,10 +1,10 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { EnhancedAIService } from './enhanced-service-base';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { EnhancedAIService } from "./enhanced-service-base";
 
 export interface ConversationManagementInput {
   userId: string;
   clinicId: string;
-  action: 'create' | 'update' | 'archive' | 'analyze' | 'summarize' | 'export';
+  action: "create" | "update" | "archive" | "analyze" | "summarize" | "export";
   sessionId?: string;
   context?: ConversationContext;
   options?: ConversationOptions;
@@ -20,7 +20,7 @@ export interface ConversationManagementOutput {
 }
 
 export interface ConversationContext {
-  interfaceType: 'external' | 'internal';
+  interfaceType: "external" | "internal";
   patientId?: string;
   emergencyContext?: boolean;
   language: string;
@@ -29,15 +29,15 @@ export interface ConversationContext {
   sessionDuration?: number;
   messageCount?: number;
   topics?: string[];
-  sentiment?: 'positive' | 'neutral' | 'negative' | 'mixed';
-  urgencyLevel?: 'low' | 'medium' | 'high' | 'critical';
+  sentiment?: "positive" | "neutral" | "negative" | "mixed";
+  urgencyLevel?: "low" | "medium" | "high" | "critical";
 }
 
 export interface ConversationOptions {
   includeAnalytics?: boolean;
   includeSummary?: boolean;
   includeRecommendations?: boolean;
-  exportFormat?: 'json' | 'pdf' | 'csv';
+  exportFormat?: "json" | "pdf" | "csv";
   anonymize?: boolean;
   includeMetadata?: boolean;
 }
@@ -53,7 +53,7 @@ export interface ConversationAnalytics {
 }
 
 export interface SentimentAnalysis {
-  overall: 'positive' | 'neutral' | 'negative' | 'mixed';
+  overall: "positive" | "neutral" | "negative" | "mixed";
   confidence: number;
   emotions: EmotionScore[];
   sentimentTimeline: SentimentTimepoint[];
@@ -61,21 +61,21 @@ export interface SentimentAnalysis {
 
 export interface EmotionScore {
   emotion:
-    | 'joy'
-    | 'sadness'
-    | 'anger'
-    | 'fear'
-    | 'surprise'
-    | 'trust'
-    | 'anticipation'
-    | 'disgust';
+    | "joy"
+    | "sadness"
+    | "anger"
+    | "fear"
+    | "surprise"
+    | "trust"
+    | "anticipation"
+    | "disgust";
   score: number;
   confidence: number;
 }
 
 export interface SentimentTimepoint {
   timestamp: Date;
-  sentiment: 'positive' | 'neutral' | 'negative';
+  sentiment: "positive" | "neutral" | "negative";
   score: number;
   messageIndex: number;
 }
@@ -84,7 +84,7 @@ export interface TopicDistribution {
   topic: string;
   frequency: number;
   relevance: number;
-  category: 'medical' | 'administrative' | 'technical' | 'general';
+  category: "medical" | "administrative" | "technical" | "general";
 }
 
 export interface EngagementMetrics {
@@ -123,8 +123,8 @@ export interface ResourceUsage {
 }
 
 export interface ConversationRecommendation {
-  type: 'improvement' | 'follow_up' | 'escalation' | 'training' | 'process';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  type: "improvement" | "follow_up" | "escalation" | "training" | "process";
+  priority: "low" | "medium" | "high" | "urgent";
   category: string;
   title: string;
   description: string;
@@ -146,7 +146,7 @@ export interface ConversationSummary {
 }
 
 export interface SafetyAssessment {
-  riskLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "none" | "low" | "medium" | "high" | "critical";
   concerns: string[];
   recommendations: string[];
   immediateActions: string[];
@@ -160,7 +160,7 @@ export interface ConversationMetadata {
   duration: number;
   messageCount: number;
   participantCount: number;
-  interfaceType: 'external' | 'internal';
+  interfaceType: "external" | "internal";
   qualityScore: number;
   complianceStatus: string;
   version: string;
@@ -172,7 +172,7 @@ export interface ConversationSession {
   clinicId: string;
   sessionType: string;
   title: string;
-  status: 'active' | 'archived' | 'deleted';
+  status: "active" | "archived" | "deleted";
   context: ConversationContext;
   metadata: Record<string, any>;
   messages: ConversationMessage[];
@@ -183,7 +183,7 @@ export interface ConversationSession {
 export interface ConversationMessage {
   id: string;
   sessionId: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   tokensUsed: number;
   modelUsed?: string;
@@ -198,10 +198,10 @@ export class ConversationManagementService extends EnhancedAIService<
   ConversationManagementInput,
   ConversationManagementOutput
 > {
-  protected serviceId = 'conversation-management';
-  protected version = '1.0.0';
+  protected serviceId = "conversation-management";
+  protected version = "1.0.0";
   protected description =
-    'Comprehensive conversation management and analytics for AI chat sessions';
+    "Comprehensive conversation management and analytics for AI chat sessions";
 
   private readonly supabase: SupabaseClient;
 
@@ -222,22 +222,22 @@ export class ConversationManagementService extends EnhancedAIService<
       let summary: ConversationSummary | undefined;
 
       switch (input.action) {
-        case 'create': {
+        case "create": {
           result = await this.createConversation(input);
           break;
         }
 
-        case 'update': {
+        case "update": {
           result = await this.updateConversation(input);
           break;
         }
 
-        case 'archive': {
+        case "archive": {
           result = await this.archiveConversation(input);
           break;
         }
 
-        case 'analyze': {
+        case "analyze": {
           result = await this.getConversation(input.sessionId!);
           if (input.options?.includeAnalytics) {
             analytics = await this.analyzeConversation(input.sessionId!);
@@ -251,7 +251,7 @@ export class ConversationManagementService extends EnhancedAIService<
           break;
         }
 
-        case 'summarize': {
+        case "summarize": {
           result = await this.getConversation(input.sessionId!);
           summary = await this.summarizeConversation(input.sessionId!);
           if (input.options?.includeAnalytics) {
@@ -260,7 +260,7 @@ export class ConversationManagementService extends EnhancedAIService<
           break;
         }
 
-        case 'export': {
+        case "export": {
           result = await this.exportConversation(input);
           break;
         }
@@ -277,11 +277,11 @@ export class ConversationManagementService extends EnhancedAIService<
         duration: this.calculateDuration(result),
         messageCount: result.messages?.length || 0,
         participantCount: this.calculateParticipantCount(result),
-        interfaceType: input.context?.interfaceType || 'external',
+        interfaceType: input.context?.interfaceType || "external",
         qualityScore: analytics?.engagementMetrics.userSatisfaction || 0,
         complianceStatus: analytics?.complianceMetrics.lgpdCompliant
-          ? 'compliant'
-          : 'review_required',
+          ? "compliant"
+          : "review_required",
         version: this.version,
       };
 
@@ -296,7 +296,7 @@ export class ConversationManagementService extends EnhancedAIService<
     } catch (error) {
       this.logger.error(
         `Conversation management failed: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`,
         {
           serviceName: this.serviceId,
@@ -310,7 +310,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
       throw new Error(
         `Conversation management failed: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`,
       );
     }
@@ -318,21 +318,21 @@ export class ConversationManagementService extends EnhancedAIService<
 
   private validateInput(input: ConversationManagementInput): void {
     if (!(input.userId && input.clinicId && input.action)) {
-      throw new Error('Missing required fields: userId, clinicId, action');
+      throw new Error("Missing required fields: userId, clinicId, action");
     }
 
     const requiresSessionId = [
-      'update',
-      'archive',
-      'analyze',
-      'summarize',
-      'export',
+      "update",
+      "archive",
+      "analyze",
+      "summarize",
+      "export",
     ];
     if (requiresSessionId.includes(input.action) && !input.sessionId) {
       throw new Error(`Action '${input.action}' requires sessionId`);
     }
 
-    if (input.action === 'create' && !input.context) {
+    if (input.action === "create" && !input.context) {
       throw new Error('Action "create" requires conversation context');
     }
   }
@@ -345,10 +345,10 @@ export class ConversationManagementService extends EnhancedAIService<
       clinic_id: input.clinicId,
       session_type: input.context?.interfaceType,
       title: this.generateSessionTitle(input.context!),
-      status: 'active',
+      status: "active",
       context: input.context,
       metadata: {
-        created_via: 'conversation-management-service',
+        created_via: "conversation-management-service",
         interface_type: input.context?.interfaceType,
         language: input.context?.language,
         timezone: input.context?.timezone,
@@ -357,7 +357,7 @@ export class ConversationManagementService extends EnhancedAIService<
     };
 
     const { data, error } = await this.supabase
-      .from('ai_chat_sessions')
+      .from("ai_chat_sessions")
       .insert(sessionData)
       .select()
       .single();
@@ -368,7 +368,7 @@ export class ConversationManagementService extends EnhancedAIService<
       );
     }
 
-    this.logger.info('Conversation session created successfully', {
+    this.logger.info("Conversation session created successfully", {
       serviceName: this.serviceId,
       sessionId: data.id,
       userId: input.userId,
@@ -388,16 +388,16 @@ export class ConversationManagementService extends EnhancedAIService<
       updates.context = input.context;
       updates.metadata = {
         ...updates.metadata,
-        updated_via: 'conversation-management-service',
+        updated_via: "conversation-management-service",
         last_update: new Date().toISOString(),
       };
     }
 
     const { data, error } = await this.supabase
-      .from('ai_chat_sessions')
+      .from("ai_chat_sessions")
       .update(updates)
-      .eq('id', input.sessionId!)
-      .eq('user_id', input.userId) // Security check
+      .eq("id", input.sessionId!)
+      .eq("user_id", input.userId) // Security check
       .select()
       .single();
 
@@ -407,7 +407,7 @@ export class ConversationManagementService extends EnhancedAIService<
       );
     }
 
-    this.logger.info('Conversation session updated successfully', {
+    this.logger.info("Conversation session updated successfully", {
       serviceName: this.serviceId,
       sessionId: input.sessionId,
       userId: input.userId,
@@ -425,19 +425,19 @@ export class ConversationManagementService extends EnhancedAIService<
     const summary = await this.summarizeConversation(input.sessionId!);
 
     const { data, error } = await this.supabase
-      .from('ai_chat_sessions')
+      .from("ai_chat_sessions")
       .update({
-        status: 'archived',
+        status: "archived",
         metadata: {
           archived_at: new Date().toISOString(),
           archived_by: input.userId,
           final_analytics: analytics,
           conversation_summary: summary,
-          archive_reason: 'manual_archive',
+          archive_reason: "manual_archive",
         },
       })
-      .eq('id', input.sessionId!)
-      .eq('user_id', input.userId) // Security check
+      .eq("id", input.sessionId!)
+      .eq("user_id", input.userId) // Security check
       .select()
       .single();
 
@@ -447,7 +447,7 @@ export class ConversationManagementService extends EnhancedAIService<
       );
     }
 
-    this.logger.info('Conversation session archived successfully', {
+    this.logger.info("Conversation session archived successfully", {
       serviceName: this.serviceId,
       sessionId: input.sessionId,
       userId: input.userId,
@@ -462,9 +462,9 @@ export class ConversationManagementService extends EnhancedAIService<
     sessionId: string,
   ): Promise<ConversationSession> {
     const { data: sessionData, error: sessionError } = await this.supabase
-      .from('ai_chat_sessions')
-      .select('*')
-      .eq('id', sessionId)
+      .from("ai_chat_sessions")
+      .select("*")
+      .eq("id", sessionId)
       .single();
 
     if (sessionError || !sessionData) {
@@ -472,10 +472,10 @@ export class ConversationManagementService extends EnhancedAIService<
     }
 
     const { data: messagesData, error: messagesError } = await this.supabase
-      .from('ai_chat_messages')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true });
+      .from("ai_chat_messages")
+      .select("*")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: true });
 
     if (messagesError) {
       throw new Error(
@@ -499,9 +499,11 @@ export class ConversationManagementService extends EnhancedAIService<
       conversation.messages,
     );
     const topicDistribution = await this.analyzeTopics(conversation.messages);
-    const engagementMetrics = await this.calculateEngagementMetrics(conversation);
+    const engagementMetrics =
+      await this.calculateEngagementMetrics(conversation);
     const complianceMetrics = await this.assessCompliance(conversation);
-    const performanceMetrics = await this.calculatePerformanceMetrics(conversation);
+    const performanceMetrics =
+      await this.calculatePerformanceMetrics(conversation);
 
     return {
       totalMessages: conversation.messages.length,
@@ -521,9 +523,9 @@ export class ConversationManagementService extends EnhancedAIService<
     const analytics = await this.analyzeConversation(sessionId);
 
     // Extract key information from messages
-    const userMessages = conversation.messages.filter((m) => m.role === 'user');
+    const userMessages = conversation.messages.filter((m) => m.role === "user");
     const _assistantMessages = conversation.messages.filter(
-      (m) => m.role === 'assistant',
+      (m) => m.role === "assistant",
     );
 
     // Generate AI-powered summary
@@ -568,21 +570,22 @@ export class ConversationManagementService extends EnhancedAIService<
     // Performance recommendations
     if (analytics.performanceMetrics.averageResponseTime > 2000) {
       recommendations.push({
-        type: 'improvement',
-        priority: 'medium',
-        category: 'performance',
-        title: 'Optimize Response Time',
-        description: 'Average response time exceeds target threshold of 2 seconds',
+        type: "improvement",
+        priority: "medium",
+        category: "performance",
+        title: "Optimize Response Time",
+        description:
+          "Average response time exceeds target threshold of 2 seconds",
         actionItems: [
-          'Review AI model optimization',
-          'Check cache configuration',
-          'Analyze query performance',
+          "Review AI model optimization",
+          "Check cache configuration",
+          "Analyze query performance",
         ],
-        expectedOutcome: 'Reduce average response time by 30%',
+        expectedOutcome: "Reduce average response time by 30%",
         implementationSteps: [
-          'Enable response caching for common queries',
-          'Optimize database queries',
-          'Consider model fine-tuning',
+          "Enable response caching for common queries",
+          "Optimize database queries",
+          "Consider model fine-tuning",
         ],
       });
     }
@@ -590,21 +593,21 @@ export class ConversationManagementService extends EnhancedAIService<
     // Engagement recommendations
     if (analytics.engagementMetrics.userSatisfaction < 0.7) {
       recommendations.push({
-        type: 'improvement',
-        priority: 'high',
-        category: 'user_experience',
-        title: 'Improve User Satisfaction',
-        description: 'User satisfaction score is below target threshold',
+        type: "improvement",
+        priority: "high",
+        category: "user_experience",
+        title: "Improve User Satisfaction",
+        description: "User satisfaction score is below target threshold",
         actionItems: [
-          'Analyze conversation patterns',
-          'Review AI response quality',
-          'Implement feedback collection',
+          "Analyze conversation patterns",
+          "Review AI response quality",
+          "Implement feedback collection",
         ],
-        expectedOutcome: 'Increase satisfaction score to >80%',
+        expectedOutcome: "Increase satisfaction score to >80%",
         implementationSteps: [
-          'Deploy sentiment analysis improvements',
-          'Add conversation quality metrics',
-          'Implement user feedback loops',
+          "Deploy sentiment analysis improvements",
+          "Add conversation quality metrics",
+          "Implement user feedback loops",
         ],
       });
     }
@@ -612,21 +615,22 @@ export class ConversationManagementService extends EnhancedAIService<
     // Compliance recommendations
     if (!analytics.complianceMetrics.lgpdCompliant) {
       recommendations.push({
-        type: 'escalation',
-        priority: 'urgent',
-        category: 'compliance',
-        title: 'Address LGPD Compliance Issues',
-        description: 'Conversation contains potential LGPD compliance violations',
+        type: "escalation",
+        priority: "urgent",
+        category: "compliance",
+        title: "Address LGPD Compliance Issues",
+        description:
+          "Conversation contains potential LGPD compliance violations",
         actionItems: [
-          'Review data handling practices',
-          'Ensure proper consent management',
-          'Implement data minimization',
+          "Review data handling practices",
+          "Ensure proper consent management",
+          "Implement data minimization",
         ],
-        expectedOutcome: 'Achieve full LGPD compliance',
+        expectedOutcome: "Achieve full LGPD compliance",
         implementationSteps: [
-          'Audit current data practices',
-          'Implement compliance automation',
-          'Update privacy policies',
+          "Audit current data practices",
+          "Implement compliance automation",
+          "Update privacy policies",
         ],
       });
     }
@@ -634,21 +638,21 @@ export class ConversationManagementService extends EnhancedAIService<
     // Safety recommendations
     if (analytics.engagementMetrics.escalationTriggered) {
       recommendations.push({
-        type: 'follow_up',
-        priority: 'high',
-        category: 'patient_safety',
-        title: 'Follow Up on Escalated Conversation',
-        description: 'Conversation was escalated due to safety concerns',
+        type: "follow_up",
+        priority: "high",
+        category: "patient_safety",
+        title: "Follow Up on Escalated Conversation",
+        description: "Conversation was escalated due to safety concerns",
         actionItems: [
-          'Contact patient within 24 hours',
-          'Review escalation triggers',
-          'Document follow-up actions',
+          "Contact patient within 24 hours",
+          "Review escalation triggers",
+          "Document follow-up actions",
         ],
-        expectedOutcome: 'Ensure patient safety and satisfaction',
+        expectedOutcome: "Ensure patient safety and satisfaction",
         implementationSteps: [
-          'Schedule follow-up call',
-          'Review with healthcare professional',
-          'Update patient record',
+          "Schedule follow-up call",
+          "Review with healthcare professional",
+          "Update patient record",
         ],
       });
     }
@@ -673,7 +677,7 @@ export class ConversationManagementService extends EnhancedAIService<
       summary,
       exportedAt: new Date().toISOString(),
       exportedBy: input.userId,
-      format: input.options?.exportFormat || 'json',
+      format: input.options?.exportFormat || "json",
     };
 
     // Apply anonymization if requested
@@ -696,18 +700,18 @@ export class ConversationManagementService extends EnhancedAIService<
     const sentimentTimeline: SentimentTimepoint[] = [];
 
     messages.forEach((message, index) => {
-      if (message.role === 'user') {
+      if (message.role === "user") {
         // Simple sentiment detection based on keywords
         const content = message.content.toLowerCase();
-        let sentiment: 'positive' | 'neutral' | 'negative' = 'neutral';
+        let sentiment: "positive" | "neutral" | "negative" = "neutral";
         let score = 0.5;
 
         if (this.containsPositiveKeywords(content)) {
-          sentiment = 'positive';
+          sentiment = "positive";
           score = 0.7;
           positiveCount++;
         } else if (this.containsNegativeKeywords(content)) {
-          sentiment = 'negative';
+          sentiment = "negative";
           score = 0.3;
           negativeCount++;
         } else {
@@ -724,21 +728,22 @@ export class ConversationManagementService extends EnhancedAIService<
     });
 
     const total = positiveCount + negativeCount + neutralCount;
-    let overall: 'positive' | 'neutral' | 'negative' | 'mixed' = 'neutral';
+    let overall: "positive" | "neutral" | "negative" | "mixed" = "neutral";
 
     if (positiveCount > negativeCount && positiveCount > neutralCount) {
-      overall = 'positive';
+      overall = "positive";
     } else if (negativeCount > positiveCount && negativeCount > neutralCount) {
-      overall = 'negative';
+      overall = "negative";
     } else if (positiveCount > 0 && negativeCount > 0) {
-      overall = 'mixed';
+      overall = "mixed";
     }
 
     return {
       overall,
-      confidence: total > 0
-        ? Math.max(positiveCount, negativeCount, neutralCount) / total
-        : 0,
+      confidence:
+        total > 0
+          ? Math.max(positiveCount, negativeCount, neutralCount) / total
+          : 0,
       emotions: this.extractEmotions(messages),
       sentimentTimeline,
     };
@@ -750,34 +755,34 @@ export class ConversationManagementService extends EnhancedAIService<
     const topicCounts = new Map<string, number>();
     const topicCategories = new Map<
       string,
-      'medical' | 'administrative' | 'technical' | 'general'
+      "medical" | "administrative" | "technical" | "general"
     >();
 
     // Medical topics
     const medicalTopics = [
-      'consulta',
-      'dor',
-      'sintoma',
-      'medicamento',
-      'tratamento',
-      'exame',
-      'diagnóstico',
+      "consulta",
+      "dor",
+      "sintoma",
+      "medicamento",
+      "tratamento",
+      "exame",
+      "diagnóstico",
     ];
     const adminTopics = [
-      'agendamento',
-      'cancelamento',
-      'horário',
-      'pagamento',
-      'plano',
-      'convênio',
+      "agendamento",
+      "cancelamento",
+      "horário",
+      "pagamento",
+      "plano",
+      "convênio",
     ];
     const techTopics = [
-      'sistema',
-      'erro',
-      'problema',
-      'aplicativo',
-      'login',
-      'senha',
+      "sistema",
+      "erro",
+      "problema",
+      "aplicativo",
+      "login",
+      "senha",
     ];
 
     messages.forEach((message) => {
@@ -788,15 +793,15 @@ export class ConversationManagementService extends EnhancedAIService<
         if (medicalTopics.some((topic) => word.includes(topic))) {
           const topic = medicalTopics.find((t) => word.includes(t))!;
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
-          topicCategories.set(topic, 'medical');
+          topicCategories.set(topic, "medical");
         } else if (adminTopics.some((topic) => word.includes(topic))) {
           const topic = adminTopics.find((t) => word.includes(t))!;
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
-          topicCategories.set(topic, 'administrative');
+          topicCategories.set(topic, "administrative");
         } else if (techTopics.some((topic) => word.includes(topic))) {
           const topic = techTopics.find((t) => word.includes(t))!;
           topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
-          topicCategories.set(topic, 'technical');
+          topicCategories.set(topic, "technical");
         }
       });
     });
@@ -811,7 +816,7 @@ export class ConversationManagementService extends EnhancedAIService<
         topic,
         frequency,
         relevance: frequency / Math.max(totalWords / 100, 1), // Normalize by message length
-        category: topicCategories.get(topic) || 'general',
+        category: topicCategories.get(topic) || "general",
       }))
       .sort((a, b) => b.relevance - a.relevance);
   }
@@ -819,18 +824,20 @@ export class ConversationManagementService extends EnhancedAIService<
   private async calculateEngagementMetrics(
     conversation: ConversationSession,
   ): Promise<EngagementMetrics> {
-    const userMessages = conversation.messages.filter((m) => m.role === 'user');
+    const userMessages = conversation.messages.filter((m) => m.role === "user");
     const assistantMessages = conversation.messages.filter(
-      (m) => m.role === 'assistant',
+      (m) => m.role === "assistant",
     );
 
-    const responseRate = userMessages.length > 0
-      ? assistantMessages.length / userMessages.length
-      : 0;
-    const averageMessageLength = userMessages.length > 0
-      ? userMessages.reduce((sum, m) => sum + m.content.length, 0)
-        / userMessages.length
-      : 0;
+    const responseRate =
+      userMessages.length > 0
+        ? assistantMessages.length / userMessages.length
+        : 0;
+    const averageMessageLength =
+      userMessages.length > 0
+        ? userMessages.reduce((sum, m) => sum + m.content.length, 0) /
+          userMessages.length
+        : 0;
 
     const conversationDepth = Math.min(conversation.messages.length / 2, 10); // Normalize to 0-10 scale
 
@@ -839,8 +846,8 @@ export class ConversationManagementService extends EnhancedAIService<
 
     const escalationTriggered = conversation.messages.some(
       (m) =>
-        m.metadata?.escalation_triggered
-        || m.complianceFlags.includes('emergency_detected'),
+        m.metadata?.escalation_triggered ||
+        m.complianceFlags.includes("emergency_detected"),
     );
 
     const goalAchievement = this.assessGoalAchievement(conversation);
@@ -861,20 +868,20 @@ export class ConversationManagementService extends EnhancedAIService<
     // Check compliance based on conversation content and metadata
     const lgpdCompliant = !conversation.messages.some(
       (m) =>
-        m.complianceFlags.includes('LGPD-001')
-        || m.complianceFlags.includes('LGPD-002'),
+        m.complianceFlags.includes("LGPD-001") ||
+        m.complianceFlags.includes("LGPD-002"),
     );
 
     const anvisaCompliant = !conversation.messages.some(
       (m) =>
-        m.complianceFlags.includes('ANVISA-001')
-        || m.complianceFlags.includes('ANVISA-002'),
+        m.complianceFlags.includes("ANVISA-001") ||
+        m.complianceFlags.includes("ANVISA-002"),
     );
 
     const cfmCompliant = !conversation.messages.some(
       (m) =>
-        m.complianceFlags.includes('CFM-001')
-        || m.complianceFlags.includes('CFM-002'),
+        m.complianceFlags.includes("CFM-001") ||
+        m.complianceFlags.includes("CFM-002"),
     );
 
     const auditTrailComplete = conversation.messages.every(
@@ -901,27 +908,30 @@ export class ConversationManagementService extends EnhancedAIService<
     conversation: ConversationSession,
   ): Promise<PerformanceMetrics> {
     const assistantMessages = conversation.messages.filter(
-      (m) => m.role === 'assistant',
+      (m) => m.role === "assistant",
     );
 
-    const averageResponseTime = assistantMessages.length > 0
-      ? assistantMessages.reduce((sum, m) => sum + m.responseTime, 0)
-        / assistantMessages.length
-      : 0;
+    const averageResponseTime =
+      assistantMessages.length > 0
+        ? assistantMessages.reduce((sum, m) => sum + m.responseTime, 0) /
+          assistantMessages.length
+        : 0;
 
     const systemResponseTime = averageResponseTime; // Simplified - same as AI response time
 
-    const aiConfidenceScore = assistantMessages.length > 0
-      ? assistantMessages.reduce((sum, m) => sum + (m.confidence || 0.5), 0)
-        / assistantMessages.length
-      : 0.5;
+    const aiConfidenceScore =
+      assistantMessages.length > 0
+        ? assistantMessages.reduce((sum, m) => sum + (m.confidence || 0.5), 0) /
+          assistantMessages.length
+        : 0.5;
 
     const errorMessages = conversation.messages.filter(
-      (m) => m.metadata?.error || m.complianceFlags.includes('error'),
+      (m) => m.metadata?.error || m.complianceFlags.includes("error"),
     );
-    const errorRate = conversation.messages.length > 0
-      ? errorMessages.length / conversation.messages.length
-      : 0;
+    const errorRate =
+      conversation.messages.length > 0
+        ? errorMessages.length / conversation.messages.length
+        : 0;
 
     const successRate = 1 - errorRate;
 
@@ -951,11 +961,12 @@ export class ConversationManagementService extends EnhancedAIService<
 
   // Additional helper methods
   private generateSessionTitle(context: ConversationContext): string {
-    const interface_type = context.interfaceType === 'external' ? 'Paciente' : 'Equipe';
-    const date = new Date().toLocaleDateString('pt-BR');
-    const time = new Date().toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
+    const interface_type =
+      context.interfaceType === "external" ? "Paciente" : "Equipe";
+    const date = new Date().toLocaleDateString("pt-BR");
+    const time = new Date().toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
 
     return `Chat ${interface_type} - ${date} ${time}`;
@@ -994,8 +1005,8 @@ export class ConversationManagementService extends EnhancedAIService<
   private calculateDuration(result: any): number {
     if (result.updatedAt && result.createdAt) {
       return (
-        new Date(result.updatedAt).getTime()
-        - new Date(result.createdAt).getTime()
+        new Date(result.updatedAt).getTime() -
+        new Date(result.createdAt).getTime()
       );
     }
     return 0;
@@ -1008,27 +1019,27 @@ export class ConversationManagementService extends EnhancedAIService<
 
   private containsPositiveKeywords(content: string): boolean {
     const positiveKeywords = [
-      'obrigado',
-      'obrigada',
-      'excelente',
-      'ótimo',
-      'bom',
-      'satisfeito',
-      'feliz',
-      'ajudou',
+      "obrigado",
+      "obrigada",
+      "excelente",
+      "ótimo",
+      "bom",
+      "satisfeito",
+      "feliz",
+      "ajudou",
     ];
     return positiveKeywords.some((keyword) => content.includes(keyword));
   }
 
   private containsNegativeKeywords(content: string): boolean {
     const negativeKeywords = [
-      'problema',
-      'erro',
-      'ruim',
-      'insatisfeito',
-      'dificuldade',
-      'não funciona',
-      'frustrado',
+      "problema",
+      "erro",
+      "ruim",
+      "insatisfeito",
+      "dificuldade",
+      "não funciona",
+      "frustrado",
     ];
     return negativeKeywords.some((keyword) => content.includes(keyword));
   }
@@ -1036,9 +1047,9 @@ export class ConversationManagementService extends EnhancedAIService<
   private extractEmotions(_messages: ConversationMessage[]): EmotionScore[] {
     // Simplified emotion detection
     return [
-      { emotion: 'trust', score: 0.6, confidence: 0.7 },
-      { emotion: 'anticipation', score: 0.4, confidence: 0.6 },
-      { emotion: 'joy', score: 0.3, confidence: 0.5 },
+      { emotion: "trust", score: 0.6, confidence: 0.7 },
+      { emotion: "anticipation", score: 0.4, confidence: 0.6 },
+      { emotion: "joy", score: 0.3, confidence: 0.5 },
     ];
   }
 
@@ -1048,7 +1059,7 @@ export class ConversationManagementService extends EnhancedAIService<
     // Simplified satisfaction calculation
     const messageCount = conversation.messages.length;
     const avgResponseTime = conversation.messages
-      .filter((m) => m.role === 'assistant')
+      .filter((m) => m.role === "assistant")
       .reduce((sum, m, _, arr) => sum + m.responseTime / arr.length, 0);
 
     let score = 0.7; // Base score
@@ -1075,9 +1086,9 @@ export class ConversationManagementService extends EnhancedAIService<
     // Simplified goal achievement assessment
     const hasResolution = conversation.messages.some(
       (m) =>
-        m.content.toLowerCase().includes('resolvido')
-        || m.content.toLowerCase().includes('agendado')
-        || m.content.toLowerCase().includes('confirmado'),
+        m.content.toLowerCase().includes("resolvido") ||
+        m.content.toLowerCase().includes("agendado") ||
+        m.content.toLowerCase().includes("confirmado"),
     );
 
     return hasResolution ? 0.8 : 0.4;
@@ -1093,17 +1104,14 @@ export class ConversationManagementService extends EnhancedAIService<
   ): Promise<string> {
     const messageCount = conversation.messages.length;
     const duration = this.calculateDuration(conversation);
-    const interface_type = conversation.context.interfaceType === 'external'
-      ? 'paciente'
-      : 'equipe';
+    const interface_type =
+      conversation.context.interfaceType === "external" ? "paciente" : "equipe";
 
     return (
-      `Conversa de ${interface_type} com ${messageCount} mensagens durante ${
-        Math.round(
-          duration / 1000 / 60,
-        )
-      } minutos. `
-      + `Contexto: ${conversation.context.emergencyContext ? 'emergencial' : 'rotineiro'}.`
+      `Conversa de ${interface_type} com ${messageCount} mensagens durante ${Math.round(
+        duration / 1000 / 60,
+      )} minutos. ` +
+      `Contexto: ${conversation.context.emergencyContext ? "emergencial" : "rotineiro"}.`
     );
   }
 
@@ -1115,17 +1123,17 @@ export class ConversationManagementService extends EnhancedAIService<
 
     userMessages.forEach((message) => {
       const content = message.content.toLowerCase();
-      if (content.includes('agendar')) {
-        goals.push('Agendamento de consulta');
+      if (content.includes("agendar")) {
+        goals.push("Agendamento de consulta");
       }
-      if (content.includes('cancelar')) {
-        goals.push('Cancelamento');
+      if (content.includes("cancelar")) {
+        goals.push("Cancelamento");
       }
-      if (content.includes('informação')) {
-        goals.push('Obter informações');
+      if (content.includes("informação")) {
+        goals.push("Obter informações");
       }
-      if (content.includes('dúvida')) {
-        goals.push('Esclarecer dúvidas');
+      if (content.includes("dúvida")) {
+        goals.push("Esclarecer dúvidas");
       }
     });
 
@@ -1139,15 +1147,15 @@ export class ConversationManagementService extends EnhancedAIService<
     const outcomes: string[] = [];
 
     if (analytics.engagementMetrics.goalAchievement > 0.6) {
-      outcomes.push('Objetivo do usuário alcançado');
+      outcomes.push("Objetivo do usuário alcançado");
     }
 
-    if (analytics.sentimentAnalysis.overall === 'positive') {
-      outcomes.push('Experiência positiva do usuário');
+    if (analytics.sentimentAnalysis.overall === "positive") {
+      outcomes.push("Experiência positiva do usuário");
     }
 
     if (analytics.engagementMetrics.escalationTriggered) {
-      outcomes.push('Escalação para atendimento humano');
+      outcomes.push("Escalação para atendimento humano");
     }
 
     return outcomes;
@@ -1160,15 +1168,15 @@ export class ConversationManagementService extends EnhancedAIService<
     const steps: string[] = [];
 
     if (analytics.engagementMetrics.escalationTriggered) {
-      steps.push('Acompanhar escalação com equipe médica');
+      steps.push("Acompanhar escalação com equipe médica");
     }
 
     if (analytics.complianceMetrics.lgpdCompliant === false) {
-      steps.push('Revisar conformidade LGPD');
+      steps.push("Revisar conformidade LGPD");
     }
 
     if (analytics.engagementMetrics.userSatisfaction < 0.7) {
-      steps.push('Implementar melhorias na experiência do usuário');
+      steps.push("Implementar melhorias na experiência do usuário");
     }
 
     return steps;
@@ -1181,11 +1189,11 @@ export class ConversationManagementService extends EnhancedAIService<
     const recommendations: string[] = [];
 
     if (analytics.performanceMetrics.averageResponseTime > 2000) {
-      recommendations.push('Otimizar tempo de resposta do sistema');
+      recommendations.push("Otimizar tempo de resposta do sistema");
     }
 
     if (analytics.performanceMetrics.aiConfidenceScore < 0.7) {
-      recommendations.push('Melhorar modelo de IA para maior precisão');
+      recommendations.push("Melhorar modelo de IA para maior precisão");
     }
 
     return recommendations;
@@ -1196,23 +1204,23 @@ export class ConversationManagementService extends EnhancedAIService<
     analytics: ConversationAnalytics,
   ): Promise<SafetyAssessment> {
     const emergencyDetected = conversation.messages.some((m) =>
-      m.complianceFlags.includes('emergency_detected')
+      m.complianceFlags.includes("emergency_detected"),
     );
 
     const riskLevel = emergencyDetected
-      ? 'high'
-      : (analytics.engagementMetrics.escalationTriggered
-      ? 'medium'
-      : 'low');
+      ? "high"
+      : analytics.engagementMetrics.escalationTriggered
+        ? "medium"
+        : "low";
 
     const concerns: string[] = [];
     const recommendations: string[] = [];
     const immediateActions: string[] = [];
 
     if (emergencyDetected) {
-      concerns.push('Situação de emergência detectada');
-      immediateActions.push('Contatar serviços de emergência');
-      recommendations.push('Seguir protocolo de emergência');
+      concerns.push("Situação de emergência detectada");
+      immediateActions.push("Contatar serviços de emergência");
+      recommendations.push("Seguir protocolo de emergência");
     }
 
     return {
@@ -1220,7 +1228,7 @@ export class ConversationManagementService extends EnhancedAIService<
       concerns,
       recommendations,
       immediateActions,
-      monitoringRequired: riskLevel !== 'low',
+      monitoringRequired: riskLevel !== "low",
     };
   }
 
@@ -1249,11 +1257,11 @@ export class ConversationManagementService extends EnhancedAIService<
   private anonymizeText(text: string): string {
     // Remove common PII patterns - implement proper anonymization in production
     return text
-      .replaceAll(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '***.***.***-**') // CPF
-      .replaceAll(/\b\d{11}\b/g, '***********') // Phone numbers
+      .replaceAll(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "***.***.***-**") // CPF
+      .replaceAll(/\b\d{11}\b/g, "***********") // Phone numbers
       .replaceAll(
         /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-        '***@***.***',
+        "***@***.***",
       ); // Email
   }
 }

@@ -88,10 +88,10 @@ clinical workflows.
 
 ```typescript
 interface AIPatientChatProps {
-  language: 'pt-BR' | 'en' | 'es';
+  language: "pt-BR" | "en" | "es";
   practiceContext: PracticeInfo;
-  availableActions: ['schedule', 'faq', 'support', 'emergency'];
-  theme: 'light' | 'dark' | 'high-contrast';
+  availableActions: ["schedule", "faq", "support", "emergency"];
+  theme: "light" | "dark" | "high-contrast";
 }
 ```
 
@@ -116,10 +116,10 @@ interface AIPatientChatProps {
 
 ```typescript
 interface AIStaffAssistantProps {
-  staffRole: 'admin' | 'doctor' | 'assistant' | 'coordinator';
+  staffRole: "admin" | "doctor" | "assistant" | "coordinator";
   permissions: StaffPermissions;
   activePatientContext?: PatientContext;
-  enabledFeatures: ['nlQuery', 'insights', 'automation', 'compliance'];
+  enabledFeatures: ["nlQuery", "insights", "automation", "compliance"];
 }
 ```
 
@@ -195,38 +195,38 @@ interface PatientInsightsProps {
 graph TD
     A[NeonPro AI Dashboard] --> EMERGENCY[🚨 Emergency Access Layer]
     A --> B[Patient-Centric Hub]
-    A --> C[Practice Management]  
+    A --> C[Practice Management]
     A --> D[AI Insights & Analytics]
     A --> AI[🤖 AI Assistant Layer]
-    
+
     EMERGENCY --> E1[Emergency Patient Lookup]
     EMERGENCY --> E2[Crisis Scheduling]
     EMERGENCY --> E3[Urgent Compliance Check]
-    
+
     B --> B1[Patient Selection/Search]
-    B1 --> B2[Patient Context Bar] 
+    B1 --> B2[Patient Context Bar]
     B2 --> B3[Medical Information]
     B2 --> B4[Scheduling & Appointments - with No-Show Risk]
     B2 --> B5[Financial & Treatment Plans]
     B2 --> B6[Compliance & Consent Status]
     B2 --> B7[AI Patient Insights & Preferences]
-    
+
     C --> C1[Daily Operations Dashboard]
     C --> C2[Resource Management]
     C --> C3[Financial Intelligence]
     C --> C4[Team Coordination]
     C --> C5[No-Show Prevention Center]
-    
+
     D --> D1[Practice Analytics]
     D --> D2[Predictive Insights - AI Enhanced]
     D --> D3[Regulatory Reporting]
     D --> D4[AI Performance Metrics]
-    
+
     AI --> AI1[Universal AI Chat - External]
     AI --> AI2[AI Staff Assistant - Internal]
     AI --> AI3[Natural Language Query Interface]
     AI --> AI4[AI Automation Settings]
-    
+
     PERSISTENT[🔒 Persistent UI Elements] --> STATUS[Compliance Status Bar]
     PERSISTENT --> SEARCH[Global Patient Search with AI]
     PERSISTENT --> ALERTS[Real-time Alerts + AI Recommendations]
@@ -263,6 +263,7 @@ graph TD
 **Breadcrumb Strategy**: Emergency Override → Current Module → Patient Context → Current Page
 
 ---
+
 ## Section 3: User Flows (Healthcare-Optimized)
 
 ### Flow 1: Emergency Patient Access (Life-Critical Priority)
@@ -272,6 +273,7 @@ graph TD
 **Success Criteria**: Critical patient data accessible within 10 seconds, complete audit trail maintained
 
 #### Flow Diagram:
+
 ```mermaid
 graph TD
     A[🚨 EMERGENCY] --> B[Immediate Search]
@@ -295,6 +297,7 @@ graph TD
 ```
 
 **Edge Cases & Error Handling**:
+
 - **Network failure**: Offline emergency cache (last 200 patients) with critical data
 - **System crash**: Paper backup protocol with QR code patient lookup
 - **Power outage**: Emergency battery backup with critical data display
@@ -307,6 +310,7 @@ graph TD
 **Success Criteria**: Payment processed in <3 minutes, 100% insurance verification accuracy
 
 #### Flow Diagram:
+
 ```mermaid
 graph TD
     A[Patient Ready for Checkout] --> B[Insurance Verification]
@@ -351,6 +355,7 @@ graph TD
 **Success Criteria**: Complete consent documentation in <5 minutes, 100% legal compliance
 
 #### Flow Diagram:
+
 ```mermaid
 graph TD
     A[Treatment Recommended] --> B[Patient Education Material]
@@ -386,10 +391,12 @@ graph TD
 ```
 
 **Critical Healthcare Flow Notes**:
+
 - **LGPD Compliance**: Every flow includes automated privacy compliance validation
 - **ANVISA Requirements**: Audit trails maintained for all clinical decisions
 - **Emergency Protocols**: Life-saving care prioritized over standard security protocols
 - **Performance Requirements**: Emergency access <10s, financial processing <3min, consent capture <5min
+
 ---
 
 ## Section 3.1: AI-Enhanced User Flows (Revolutionary Features)
@@ -407,20 +414,20 @@ graph TD
     A[Patient Opens Chat] --> B[AI Greeting in Portuguese]
     B --> C[Patient Types Question]
     C --> D{AI Confidence Check}
-    
+
     D -->|High Confidence >85%| E[AI Provides Answer]
     D -->|Low Confidence <85%| F[Transfer to Human Staff]
-    
+
     E --> G{Follow-up Needed?}
     G -->|Schedule Appointment| H[AI Scheduling Interface]
     G -->|More Information| I[AI Provides Details]
     G -->|Satisfied| J[Chat Session End]
-    
+
     H --> K[Check Availability]
     K --> L[Present Time Slots]
     L --> M[Confirm Booking]
     M --> N[Send Confirmation SMS]
-    
+
     F --> O[Staff Notification]
     O --> P[Human Takes Over Chat]
     P --> Q[Resolution & Documentation]
@@ -447,25 +454,25 @@ graph TD
     A[Staff Opens AI Assistant] --> B[Natural Language Query Input]
     B --> C[AI Processes Query in Portuguese]
     C --> D{Query Type Detection}
-    
+
     D -->|Database Query| E[Execute SQL Query]
     D -->|Analytics Request| F[Generate Insights]
     D -->|Automation Task| G[Suggest Workflow]
     D -->|Compliance Check| H[LGPD/ANVISA Status]
-    
+
     E --> I[Display Results with Context]
     F --> J[Show Visual Charts/Graphs]
     G --> K[Present Automation Options]
     H --> L[Compliance Status Report]
-    
+
     I --> M{Need Export/Action?}
     J --> M
     K --> M
     L --> M
-    
+
     M -->|Yes| N[Provide Action Buttons]
     M -->|No| O[End Session]
-    
+
     N --> P[Execute Action]
     P --> Q[Log for Audit Trail]
 ```
@@ -491,29 +498,29 @@ graph TD
     A[Calendar View Loads] --> B[AI Calculates Risk Scores]
     B --> C[Color-Code Appointments]
     C --> D{High Risk Detected >70%?}
-    
+
     D -->|Yes| E[Generate Alert]
     D -->|No| F[Normal Display]
-    
+
     E --> G[Show Risk Factors]
     G --> H[Suggest Interventions]
     H --> I{Staff Decision}
-    
+
     I -->|Approve Auto-SMS| J[Send Personalized Reminder]
     I -->|Schedule Call| K[Add to Call Queue]
     I -->|Offer Reschedule| L[Send Reschedule Options]
     I -->|Do Nothing| M[Log Decision]
-    
+
     J --> N[Track SMS Response]
     K --> O[Staff Makes Call]
     L --> P[Process Reschedule Request]
     M --> Q[Continue Monitoring]
-    
+
     N --> R[Update Risk Score]
     O --> R
     P --> R
     Q --> R
-    
+
     R --> S[Learn from Outcome]
 ```
 
@@ -539,22 +546,22 @@ graph TD
     B --> C[Identify Behavioral Patterns]
     C --> D[Generate Preference Profile]
     D --> E[Display Insights Panel]
-    
+
     E --> F[Communication Style Preferences]
     E --> G[Optimal Scheduling Times]
     E --> H[Treatment Response Patterns]
     E --> I[Engagement Preferences]
-    
+
     F --> J[Suggest Communication Approach]
     G --> K[Highlight Best Appointment Slots]
     H --> L[Recommend Treatment Plans]
     I --> M[Customize Follow-up Strategy]
-    
+
     J --> N[Staff Uses Recommendations]
     K --> N
     L --> N
     M --> N
-    
+
     N --> O[Track Interaction Outcome]
     O --> P[Update ML Model]
     P --> Q[Improve Future Predictions]
@@ -588,7 +595,7 @@ graph TD
 NeonPro Healthcare UI/UX - Figma Workspace
 ├── 00_Healthcare_Design_System
 │   ├── Medical_Color_Psychology
-│   ├── Typography_for_Clinical_Settings  
+│   ├── Typography_for_Clinical_Settings
 │   ├── Icon_Library_Medical_Universal
 │   └── Accessibility_Standards_WCAG_AA+
 ├── 01_Emergency_Critical_Path
@@ -784,8 +791,10 @@ excellence.
 ```css
 /* Brand Typography System */
 --font-brand-primary: "Montserrat", sans-serif; /* Brazilian-designed warmth */
---font-brand-secondary: "Source Sans Pro", sans-serif; /* International readability */
---font-medical-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
+--font-brand-secondary:
+  "Source Sans Pro", sans-serif; /* International readability */
+--font-medical-data:
+  "IBM Plex Mono", monospace; /* Technical precision with personality */
 
 /* Portuguese Language Optimization */
 --portuguese-text-scaling: 1.1; /* Account for longer Portuguese words */
@@ -1041,19 +1050,19 @@ Specialized | Implementation: Ready for Development Handoff_---
 ```typescript
 interface AIConversationDesign {
   messageFormatting: {
-    userMessages: 'Rounded corners, right-aligned, practice brand color';
-    aiMessages: 'Rounded corners, left-aligned, subtle background gradient';
-    systemMessages: 'Center-aligned, minimal styling, informational tone';
+    userMessages: "Rounded corners, right-aligned, practice brand color";
+    aiMessages: "Rounded corners, left-aligned, subtle background gradient";
+    systemMessages: "Center-aligned, minimal styling, informational tone";
   };
   typingIndicators: {
-    style: 'Three dots animation with practice accent color';
-    timeout: '2 seconds maximum before response';
-    fallback: 'Apologetic message if processing takes longer';
+    style: "Three dots animation with practice accent color";
+    timeout: "2 seconds maximum before response";
+    fallback: "Apologetic message if processing takes longer";
   };
   responseTypes: {
-    quickReplies: 'Suggested actions as pill-shaped buttons';
-    richContent: 'Cards for scheduling, patient info, procedures';
-    escalation: 'Prominent human handoff button when confidence <85%';
+    quickReplies: "Suggested actions as pill-shaped buttons";
+    richContent: "Cards for scheduling, patient info, procedures";
+    escalation: "Prominent human handoff button when confidence <85%";
   };
 }
 ```
@@ -1176,10 +1185,10 @@ interface AIConversationDesign {
 
 ```typescript
 interface AIOfflineStrategy {
-  chatFallback: 'Show offline message with callback request form';
-  riskScores: 'Display last cached risk assessment with timestamp';
-  recommendations: 'Hide AI suggestions, show standard workflow';
-  dataSync: 'Queue AI interactions for background sync when online';
+  chatFallback: "Show offline message with callback request form";
+  riskScores: "Display last cached risk assessment with timestamp";
+  recommendations: "Hide AI suggestions, show standard workflow";
+  dataSync: "Queue AI interactions for background sync when online";
 }
 ```
 

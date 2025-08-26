@@ -7,16 +7,16 @@
  * Validates Web Vitals collection, API endpoints, and monitoring integration
  */
 
-const { performance } = require('node:perf_hooks');
+const { performance } = require("node:perf_hooks");
 
 // Colors for console output
 const colors = {
-  green: '\x1b[32m',
-  red: '\x1b[31m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  reset: '\x1b[0m',
-  bold: '\x1b[1m',
+  green: "\x1b[32m",
+  red: "\x1b[31m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
 };
 
 function log(_message, _color = colors.reset) {}
@@ -40,62 +40,62 @@ function info(message) {
 // Sample Web Vitals data for testing
 const sampleMetrics = [
   {
-    name: 'LCP',
+    name: "LCP",
     value: 2.1,
-    rating: 'good',
+    rating: "good",
     delta: 0,
-    id: 'test-lcp-1',
-    url: '/dashboard',
+    id: "test-lcp-1",
+    url: "/dashboard",
     timestamp: Date.now(),
   },
   {
-    name: 'FID',
+    name: "FID",
     value: 95,
-    rating: 'good',
+    rating: "good",
     delta: 0,
-    id: 'test-fid-1',
-    url: '/dashboard',
+    id: "test-fid-1",
+    url: "/dashboard",
     timestamp: Date.now(),
   },
   {
-    name: 'CLS',
+    name: "CLS",
     value: 0.08,
-    rating: 'good',
+    rating: "good",
     delta: 0,
-    id: 'test-cls-1',
-    url: '/dashboard',
+    id: "test-cls-1",
+    url: "/dashboard",
     timestamp: Date.now(),
   },
   {
-    name: 'FCP',
+    name: "FCP",
     value: 1.8,
-    rating: 'good',
+    rating: "good",
     delta: 0,
-    id: 'test-fcp-1',
-    url: '/dashboard',
+    id: "test-fcp-1",
+    url: "/dashboard",
     timestamp: Date.now(),
   },
   {
-    name: 'TTFB',
+    name: "TTFB",
     value: 800,
-    rating: 'good',
+    rating: "good",
     delta: 0,
-    id: 'test-ttfb-1',
-    url: '/dashboard',
+    id: "test-ttfb-1",
+    url: "/dashboard",
     timestamp: Date.now(),
   },
 ];
 
 async function testPerformanceAPI() {
-  info('Testing Performance API Endpoint...');
+  info("Testing Performance API Endpoint...");
 
   try {
     const response = await fetch(
-      'http://localhost:3000/api/analytics/performance',
+      "http://localhost:3000/api/analytics/performance",
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(sampleMetrics),
       },
@@ -103,7 +103,7 @@ async function testPerformanceAPI() {
 
     if (response.ok) {
       const result = await response.json();
-      success('Performance API test successful');
+      success("Performance API test successful");
       info(`Response: ${JSON.stringify(result, null, 2)}`);
       return true;
     }
@@ -117,13 +117,13 @@ async function testPerformanceAPI() {
 }
 
 async function testPerformanceDashboard() {
-  info('Testing Performance Dashboard Page...');
+  info("Testing Performance Dashboard Page...");
 
   try {
-    const response = await fetch('http://localhost:3000/dashboard/performance');
+    const response = await fetch("http://localhost:3000/dashboard/performance");
 
     if (response.ok) {
-      success('Performance Dashboard accessible');
+      success("Performance Dashboard accessible");
       return true;
     }
     warning(`Performance Dashboard returned ${response.status}`);
@@ -135,7 +135,7 @@ async function testPerformanceDashboard() {
 }
 
 function testPerformanceUtils() {
-  info('Testing Performance Utilities...');
+  info("Testing Performance Utilities...");
 
   try {
     // Simulate performance measurement
@@ -161,7 +161,7 @@ function testPerformanceUtils() {
 }
 
 function simulateWebVitals() {
-  info('Simulating Web Vitals collection...');
+  info("Simulating Web Vitals collection...");
 
   const metrics = {
     LCP: Math.random() * 3 + 1, // 1-4 seconds
@@ -172,17 +172,19 @@ function simulateWebVitals() {
   };
 
   Object.entries(metrics).forEach(([name, value]) => {
-    const formattedValue = name === 'CLS'
-      ? value.toFixed(3)
-      : name === 'LCP' || name === 'FCP'
-      ? `${value.toFixed(1)}s`
-      : `${Math.round(value)}ms`;
+    const formattedValue =
+      name === "CLS"
+        ? value.toFixed(3)
+        : name === "LCP" || name === "FCP"
+          ? `${value.toFixed(1)}s`
+          : `${Math.round(value)}ms`;
 
-    const isGood = (name === 'LCP' && value <= 2.5)
-      || (name === 'FID' && value <= 100)
-      || (name === 'CLS' && value <= 0.1)
-      || (name === 'FCP' && value <= 1.8)
-      || (name === 'TTFB' && value <= 800);
+    const isGood =
+      (name === "LCP" && value <= 2.5) ||
+      (name === "FID" && value <= 100) ||
+      (name === "CLS" && value <= 0.1) ||
+      (name === "FCP" && value <= 1.8) ||
+      (name === "TTFB" && value <= 800);
 
     if (isGood) {
       success(`${name}: ${formattedValue} (Good)`);
@@ -195,15 +197,15 @@ function simulateWebVitals() {
 }
 
 async function runPerformanceTests() {
-  log(`\n${'='.repeat(60)}`, colors.bold);
-  log('🚀 NeonPro Performance Integration Test Suite', colors.bold);
-  log('='.repeat(60), colors.bold);
+  log(`\n${"=".repeat(60)}`, colors.bold);
+  log("🚀 NeonPro Performance Integration Test Suite", colors.bold);
+  log("=".repeat(60), colors.bold);
 
   const tests = [
-    { name: 'Performance Utilities', fn: testPerformanceUtils },
-    { name: 'Web Vitals Simulation', fn: simulateWebVitals },
-    { name: 'Performance API', fn: testPerformanceAPI },
-    { name: 'Performance Dashboard', fn: testPerformanceDashboard },
+    { name: "Performance Utilities", fn: testPerformanceUtils },
+    { name: "Web Vitals Simulation", fn: simulateWebVitals },
+    { name: "Performance API", fn: testPerformanceAPI },
+    { name: "Performance Dashboard", fn: testPerformanceDashboard },
   ];
 
   const results = [];
@@ -220,9 +222,9 @@ async function runPerformanceTests() {
   }
 
   // Summary
-  log(`\n${'='.repeat(60)}`, colors.bold);
-  log('📈 Test Results Summary', colors.bold);
-  log('='.repeat(60), colors.bold);
+  log(`\n${"=".repeat(60)}`, colors.bold);
+  log("📈 Test Results Summary", colors.bold);
+  log("=".repeat(60), colors.bold);
 
   const passed = results.filter((r) => r.passed).length;
   const total = results.length;
@@ -241,16 +243,16 @@ async function runPerformanceTests() {
   );
 
   if (passed === total) {
-    success('\n🎉 All performance integration tests passed!');
-    success('Performance monitoring system is ready for production!');
+    success("\n🎉 All performance integration tests passed!");
+    success("Performance monitoring system is ready for production!");
   } else {
-    warning('\n⚠️  Some tests failed. Check the output above for details.');
+    warning("\n⚠️  Some tests failed. Check the output above for details.");
     info(
-      'Note: API and Dashboard tests may fail if server is not running or database is not connected.',
+      "Note: API and Dashboard tests may fail if server is not running or database is not connected.",
     );
   }
 
-  log(`\n${'='.repeat(60)}`, colors.bold);
+  log(`\n${"=".repeat(60)}`, colors.bold);
 }
 
 // Run tests if this file is executed directly

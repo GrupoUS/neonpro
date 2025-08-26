@@ -1,24 +1,26 @@
-export function formatCurrency(value: number, currency = 'BRL'): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
+// Constants for percentage calculation
+const PERCENTAGE_DIVISOR = 100;
+
+const formatCurrency = (value: number, currency = "BRL"): string =>
+  new Intl.NumberFormat("pt-BR", {
     currency,
+    style: "currency",
   }).format(value);
-}
 
-export function formatPercentage(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'percent',
+const formatPercentage = (value: number): string =>
+  new Intl.NumberFormat("pt-BR", {
     minimumFractionDigits: 2,
-  }).format(value / 100);
-}
+    style: "percent",
+  }).format(value / PERCENTAGE_DIVISOR);
 
-export function slugify(text: string): string {
-  return text
+const slugify = (text: string): string =>
+  text
     .toLowerCase()
-    .normalize('NFD')
-    .replaceAll(/[\u0300-\u036F]/g, '')
-    .replaceAll(/[^a-z0-9 -]/g, '')
-    .replaceAll(/\s+/g, '-')
-    .replaceAll(/-+/g, '-')
+    .normalize("NFD")
+    .replaceAll(/[\u0300-\u036F]/g, "")
+    .replaceAll(/[^a-z0-9 -]/g, "")
+    .replaceAll(/\s+/g, "-")
+    .replaceAll(/-+/g, "-")
     .trim();
-}
+
+export { formatCurrency, formatPercentage, slugify };

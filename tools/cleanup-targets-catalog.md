@@ -11,7 +11,7 @@
 ```bash
 # Diretórios de Cache
 .next/cache/              # Next.js cache - pode ser regenerado
-.turbo/                   # Turborepo cache - pode ser regenerado  
+.turbo/                   # Turborepo cache - pode ser regenerado
 node_modules/.cache/      # NPM/PNPM cache local
 
 # Arquivos temporários identificados
@@ -104,7 +104,7 @@ packages/ui/vitest.config.mjs.disabled
 # ATENÇÃO: Verificar se são artefatos de build ou código fonte!
 packages/compliance/src/**/*.js
 packages/compliance/src/**/*.d.ts
-packages/types/src/**/*.js  
+packages/types/src/**/*.js
 packages/types/src/**/*.d.ts
 
 # Método de validação:

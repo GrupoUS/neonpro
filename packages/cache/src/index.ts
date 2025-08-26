@@ -1,4 +1,4 @@
-import { LRUCache } from 'lru-cache';
+import { LRUCache } from "lru-cache";
 
 // Healthcare-compliant cache configuration
 interface CacheOptions {
@@ -104,7 +104,7 @@ class HealthcareCacheManager {
       // LGPD audit logging
       cached.auditLog.push(
         `Sensitive access: ${new Date().toISOString()}`,
-        `User: ${auditUserId || 'anonymous'}`,
+        `User: ${auditUserId || "anonymous"}`,
         `Consent verified: ${cached.patientConsent}`,
       );
 
@@ -144,7 +144,9 @@ class HealthcareCacheManager {
 
   // Healthcare-specific cache invalidation
   invalidatePatientData(patientId: string): void {
-    const keys = [...this.memoryCache.keys()].filter((key) => key.includes(`patient_${patientId}`));
+    const keys = [...this.memoryCache.keys()].filter((key) =>
+      key.includes(`patient_${patientId}`),
+    );
 
     for (const key of keys) {
       this.memoryCache.delete(key);
@@ -170,7 +172,7 @@ export const healthcareCache = new HealthcareCacheManager({
 export { HealthcareCacheManager };
 
 // Export enterprise cache service
-export * from './enterprise';
+export * from "./enterprise";
 
 // Utility functions
 export const cacheKeys = {

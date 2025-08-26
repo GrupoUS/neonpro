@@ -8,7 +8,7 @@ export interface PatientData {
   email?: string;
   birthDate?: string;
   address?: string;
-  status: 'active' | 'inactive' | 'blocked';
+  status: "active" | "inactive" | "blocked";
   lastVisit?: string;
   nextAppointment?: string;
   urgentAlerts?: number;

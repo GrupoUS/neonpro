@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 export interface TimeSlot {
   id: string;
@@ -16,14 +16,14 @@ export interface TimeSlot {
 export interface UseAvailabilityManagerOptions {
   professionalId?: string;
   serviceId?: string;
-  dateRange?: { start: Date; end: Date; };
+  dateRange?: { start: Date; end: Date };
 }
 
 export interface UseAvailabilityManagerReturn {
   slots: TimeSlot[];
   isLoading: boolean;
   error: string | null;
-  createSlot: (slot: Omit<TimeSlot, 'id'>) => Promise<string | null>;
+  createSlot: (slot: Omit<TimeSlot, "id">) => Promise<string | null>;
   updateSlot: (slotId: string, updates: Partial<TimeSlot>) => Promise<boolean>;
   deleteSlot: (slotId: string) => Promise<boolean>;
   generateSlots: (pattern: any) => Promise<TimeSlot[]>;
@@ -45,12 +45,12 @@ export function useAvailabilityManager(
       // Placeholder implementation
       const mockSlots: TimeSlot[] = [
         {
-          id: '1',
-          professional_id: options.professionalId || 'prof-1',
-          service_id: options.serviceId || 'service-1',
-          date: new Date().toISOString().split('T')[0],
-          start_time: '09:00',
-          end_time: '10:00',
+          id: "1",
+          professional_id: options.professionalId || "prof-1",
+          service_id: options.serviceId || "service-1",
+          date: new Date().toISOString().split("T")[0],
+          start_time: "09:00",
+          end_time: "10:00",
           is_available: true,
           price: 100,
         },
@@ -58,7 +58,8 @@ export function useAvailabilityManager(
 
       setSlots(mockSlots);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to refresh slots';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh slots";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -66,14 +67,15 @@ export function useAvailabilityManager(
   }, [options.professionalId, options.serviceId]);
 
   const createSlot = useCallback(
-    async (slot: Omit<TimeSlot, 'id'>): Promise<string | null> => {
+    async (slot: Omit<TimeSlot, "id">): Promise<string | null> => {
       try {
         const newId = `slot-${Date.now()}`;
         const newSlot: TimeSlot = { ...slot, id: newId };
         setSlots((prev) => [...prev, newSlot]);
         return newId;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to create slot';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to create slot";
         setError(errorMessage);
         return;
       }
@@ -84,10 +86,15 @@ export function useAvailabilityManager(
   const updateSlot = useCallback(
     async (slotId: string, updates: Partial<TimeSlot>): Promise<boolean> => {
       try {
-        setSlots((prev) => prev.map((slot) => slot.id === slotId ? { ...slot, ...updates } : slot));
+        setSlots((prev) =>
+          prev.map((slot) =>
+            slot.id === slotId ? { ...slot, ...updates } : slot,
+          ),
+        );
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to update slot';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to update slot";
         setError(errorMessage);
         return false;
       }
@@ -100,7 +107,8 @@ export function useAvailabilityManager(
       setSlots((prev) => prev.filter((slot) => slot.id !== slotId));
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete slot';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete slot";
       setError(errorMessage);
       return false;
     }
@@ -113,11 +121,11 @@ export function useAvailabilityManager(
         const generatedSlots: TimeSlot[] = [
           {
             id: `generated-${Date.now()}`,
-            professional_id: options.professionalId || 'prof-1',
-            service_id: options.serviceId || 'service-1',
-            date: new Date().toISOString().split('T')[0],
-            start_time: '09:00',
-            end_time: '10:00',
+            professional_id: options.professionalId || "prof-1",
+            service_id: options.serviceId || "service-1",
+            date: new Date().toISOString().split("T")[0],
+            start_time: "09:00",
+            end_time: "10:00",
             is_available: true,
             price: 100,
           },
@@ -126,7 +134,8 @@ export function useAvailabilityManager(
         setSlots((prev) => [...prev, ...generatedSlots]);
         return generatedSlots;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to generate slots';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to generate slots";
         setError(errorMessage);
         return [];
       }

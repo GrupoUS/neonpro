@@ -1,20 +1,28 @@
-import AnalyticsDashboard from '@/components/dashboard/analytics-dashboard';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, jest, test, vi } from 'vitest';
+import AnalyticsDashboard from "@/components/dashboard/analytics-dashboard";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  jest,
+  test,
+  vi,
+} from "vitest";
 
 // Mock the recharts library
-vi.mock<typeof import('recharts')>('recharts', () => ({
-  ResponsiveContainer: ({ children }: { children: React.ReactNode; }) => (
+vi.mock<typeof import("recharts")>("recharts", () => ({
+  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="responsive-container">{children}</div>
   ),
-  LineChart: ({ children }: { children: React.ReactNode; }) => (
+  LineChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="line-chart">{children}</div>
   ),
-  BarChart: ({ children }: { children: React.ReactNode; }) => (
+  BarChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="bar-chart">{children}</div>
   ),
-  PieChart: ({ children }: { children: React.ReactNode; }) => (
+  PieChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="pie-chart">{children}</div>
   ),
   Line: () => <div data-testid="line" />,
@@ -29,34 +37,37 @@ vi.mock<typeof import('recharts')>('recharts', () => ({
 }));
 
 // Mock date-fns
-vi.mock<typeof import('date-fns')>('date-fns', () => ({
+vi.mock<typeof import("date-fns")>("date-fns", () => ({
   format: jest.fn((_date, formatStr) => {
-    if (formatStr === 'MMM yyyy') {
-      return 'Jan 2024';
+    if (formatStr === "MMM yyyy") {
+      return "Jan 2024";
     }
-    if (formatStr === 'dd/MM/yyyy') {
-      return '01/01/2024';
+    if (formatStr === "dd/MM/yyyy") {
+      return "01/01/2024";
     }
-    return '2024-01-01';
+    return "2024-01-01";
   }),
-  subMonths: jest.fn(() => new Date('2023-12-01')),
-  startOfMonth: jest.fn(() => new Date('2024-01-01')),
-  endOfMonth: jest.fn(() => new Date('2024-01-31')),
+  subMonths: jest.fn(() => new Date("2023-12-01")),
+  startOfMonth: jest.fn(() => new Date("2024-01-01")),
+  endOfMonth: jest.fn(() => new Date("2024-01-31")),
   parseISO: jest.fn((dateStr) => new Date(dateStr)),
 }));
 
 // Mock analytics service
-vi.mock<typeof import('@/lib/analytics/service')>('@/lib/analytics/service', () => ({
-  analyticsService: {
-    getDashboardMetrics: vi.fn(),
-    getSubscriptionTrends: vi.fn(),
-    getTrialMetrics: vi.fn(),
-    getRevenueAnalytics: vi.fn(),
-  },
-}));
+vi.mock<typeof import("@/lib/analytics/service")>(
+  "@/lib/analytics/service",
+  () => ({
+    analyticsService: {
+      getDashboardMetrics: vi.fn(),
+      getSubscriptionTrends: vi.fn(),
+      getTrialMetrics: vi.fn(),
+      getRevenueAnalytics: vi.fn(),
+    },
+  }),
+);
 
 // Mock UI components
-vi.mock<typeof import('@/components/ui/card')>('@/components/ui/card', () => ({
+vi.mock<typeof import("@/components/ui/card")>("@/components/ui/card", () => ({
   Card: ({
     children,
     className,
@@ -68,61 +79,67 @@ vi.mock<typeof import('@/components/ui/card')>('@/components/ui/card', () => ({
       {children}
     </div>
   ),
-  CardHeader: ({ children }: { children: React.ReactNode; }) => (
+  CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-header">{children}</div>
   ),
-  CardTitle: ({ children }: { children: React.ReactNode; }) => (
+  CardTitle: ({ children }: { children: React.ReactNode }) => (
     <h3 data-testid="card-title">{children}</h3>
   ),
-  CardContent: ({ children }: { children: React.ReactNode; }) => (
+  CardContent: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-content">{children}</div>
   ),
 }));
 
-vi.mock<typeof import('@/components/ui/button')>('@/components/ui/button', () => ({
-  Button: ({ children, onClick, variant, size }: any) => (
-    <button
-      data-size={size}
-      data-testid="button"
-      data-variant={variant}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  ),
-}));
+vi.mock<typeof import("@/components/ui/button")>(
+  "@/components/ui/button",
+  () => ({
+    Button: ({ children, onClick, variant, size }: any) => (
+      <button
+        data-size={size}
+        data-testid="button"
+        data-variant={variant}
+        onClick={onClick}
+      >
+        {children}
+      </button>
+    ),
+  }),
+);
 
-vi.mock<typeof import('@/components/ui/select')>('@/components/ui/select', () => ({
-  Select: ({ children, onValueChange }: any) => (
-    <div data-onchange={onValueChange} data-testid="select">
-      {children}
-    </div>
-  ),
-  SelectContent: ({ children }: { children: React.ReactNode; }) => (
-    <div data-testid="select-content">{children}</div>
-  ),
-  SelectItem: ({
-    children,
-    value,
-  }: {
-    children: React.ReactNode;
-    value: string;
-  }) => (
-    <div data-testid="select-item" data-value={value}>
-      {children}
-    </div>
-  ),
-  SelectTrigger: ({ children }: { children: React.ReactNode; }) => (
-    <div data-testid="select-trigger">{children}</div>
-  ),
-  SelectValue: ({ placeholder }: { placeholder: string; }) => (
-    <div data-testid="select-value">{placeholder}</div>
-  ),
-}));
+vi.mock<typeof import("@/components/ui/select")>(
+  "@/components/ui/select",
+  () => ({
+    Select: ({ children, onValueChange }: any) => (
+      <div data-onchange={onValueChange} data-testid="select">
+        {children}
+      </div>
+    ),
+    SelectContent: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="select-content">{children}</div>
+    ),
+    SelectItem: ({
+      children,
+      value,
+    }: {
+      children: React.ReactNode;
+      value: string;
+    }) => (
+      <div data-testid="select-item" data-value={value}>
+        {children}
+      </div>
+    ),
+    SelectTrigger: ({ children }: { children: React.ReactNode }) => (
+      <div data-testid="select-trigger">{children}</div>
+    ),
+    SelectValue: ({ placeholder }: { placeholder: string }) => (
+      <div data-testid="select-value">{placeholder}</div>
+    ),
+  }),
+);
 
-const { analyticsService } = require('@/lib/analytics/service');
+const { analyticsService } = require("@/lib/analytics/service");
 
-describe('analyticsDashboard Component', () => {
+describe("analyticsDashboard Component", () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -150,8 +167,8 @@ describe('analyticsDashboard Component', () => {
     );
   };
 
-  describe('rendering and layout', () => {
-    it('should render dashboard with all metric cards', async () => {
+  describe("rendering and layout", () => {
+    it("should render dashboard with all metric cards", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -180,15 +197,15 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Analytics Dashboard')).toBeInTheDocument();
-        expect(screen.getByText('150')).toBeInTheDocument(); // Total subscriptions
-        expect(screen.getByText('125')).toBeInTheDocument(); // Active subscriptions
-        expect(screen.getByText('$15,000')).toBeInTheDocument(); // MRR
-        expect(screen.getByText('$180,000')).toBeInTheDocument(); // ARR
+        expect(screen.getByText("Analytics Dashboard")).toBeInTheDocument();
+        expect(screen.getByText("150")).toBeInTheDocument(); // Total subscriptions
+        expect(screen.getByText("125")).toBeInTheDocument(); // Active subscriptions
+        expect(screen.getByText("$15,000")).toBeInTheDocument(); // MRR
+        expect(screen.getByText("$180,000")).toBeInTheDocument(); // ARR
       });
     });
 
-    it('should display loading state initially', () => {
+    it("should display loading state initially", () => {
       // Arrange
       analyticsService.getDashboardMetrics.mockImplementation(
         () => new Promise(() => {}), // Never resolves
@@ -198,14 +215,14 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       // Assert
-      expect(screen.getByText('Loading...')).toBeInTheDocument();
-      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+      expect(screen.getByText("Loading...")).toBeInTheDocument();
+      expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
     });
 
-    it('should display error state when data fetch fails', async () => {
+    it("should display error state when data fetch fails", async () => {
       // Arrange
       analyticsService.getDashboardMetrics.mockRejectedValue(
-        new Error('Failed to fetch data'),
+        new Error("Failed to fetch data"),
       );
 
       // Act
@@ -214,14 +231,14 @@ describe('analyticsDashboard Component', () => {
       // Assert
       await waitFor(() => {
         expect(
-          screen.getByText('Error loading analytics data'),
+          screen.getByText("Error loading analytics data"),
         ).toBeInTheDocument();
-        expect(screen.getByText('Failed to fetch data')).toBeInTheDocument();
-        expect(screen.getByText('Retry')).toBeInTheDocument();
+        expect(screen.getByText("Failed to fetch data")).toBeInTheDocument();
+        expect(screen.getByText("Retry")).toBeInTheDocument();
       });
     });
 
-    it('should render charts when data is available', async () => {
+    it("should render charts when data is available", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -234,9 +251,9 @@ describe('analyticsDashboard Component', () => {
         },
         chartData: {
           subscriptionTrends: [
-            { month: 'Jan', subscriptions: 100, revenue: 10_000 },
-            { month: 'Feb', subscriptions: 125, revenue: 12_500 },
-            { month: 'Mar', subscriptions: 150, revenue: 15_000 },
+            { month: "Jan", subscriptions: 100, revenue: 10_000 },
+            { month: "Feb", subscriptions: 125, revenue: 12_500 },
+            { month: "Mar", subscriptions: 150, revenue: 15_000 },
           ],
         },
       };
@@ -248,15 +265,15 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByTestId('line-chart')).toBeInTheDocument();
-        expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
-        expect(screen.getByTestId('pie-chart')).toBeInTheDocument();
+        expect(screen.getByTestId("line-chart")).toBeInTheDocument();
+        expect(screen.getByTestId("bar-chart")).toBeInTheDocument();
+        expect(screen.getByTestId("pie-chart")).toBeInTheDocument();
       });
     });
   });
 
-  describe('user interactions', () => {
-    it('should update date range when period selector changes', async () => {
+  describe("user interactions", () => {
+    it("should update date range when period selector changes", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -271,27 +288,27 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('select')).toBeInTheDocument();
+        expect(screen.getByTestId("select")).toBeInTheDocument();
       });
 
       // Act
-      const periodSelector = screen.getByTestId('select-trigger');
+      const periodSelector = screen.getByTestId("select-trigger");
       fireEvent.click(periodSelector);
 
-      const lastMonthOption = screen.getByText('Last Month');
+      const lastMonthOption = screen.getByText("Last Month");
       fireEvent.click(lastMonthOption);
 
       // Assert
       await waitFor(() => {
         expect(analyticsService.getDashboardMetrics).toHaveBeenCalledWith({
-          period: 'last_month',
+          period: "last_month",
           startDate: expect.any(Date),
           endDate: expect.any(Date),
         });
       });
     });
 
-    it('should refresh data when refresh button is clicked', async () => {
+    it("should refresh data when refresh button is clicked", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -306,14 +323,14 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(screen.getByText("Refresh")).toBeInTheDocument();
       });
 
       // Clear previous calls
       analyticsService.getDashboardMetrics.mockClear();
 
       // Act
-      const refreshButton = screen.getByText('Refresh');
+      const refreshButton = screen.getByText("Refresh");
       fireEvent.click(refreshButton);
 
       // Assert
@@ -322,10 +339,10 @@ describe('analyticsDashboard Component', () => {
       });
     });
 
-    it('should retry data fetch when retry button is clicked', async () => {
+    it("should retry data fetch when retry button is clicked", async () => {
       // Arrange
       analyticsService.getDashboardMetrics
-        .mockRejectedValueOnce(new Error('Network error'))
+        .mockRejectedValueOnce(new Error("Network error"))
         .mockResolvedValueOnce({
           subscriptionMetrics: {
             totalSubscriptions: 150,
@@ -337,21 +354,21 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Retry')).toBeInTheDocument();
+        expect(screen.getByText("Retry")).toBeInTheDocument();
       });
 
       // Act
-      const retryButton = screen.getByText('Retry');
+      const retryButton = screen.getByText("Retry");
       fireEvent.click(retryButton);
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('150')).toBeInTheDocument();
+        expect(screen.getByText("150")).toBeInTheDocument();
         expect(analyticsService.getDashboardMetrics).toHaveBeenCalledTimes(2);
       });
     });
 
-    it('should toggle chart view when view selector changes', async () => {
+    it("should toggle chart view when view selector changes", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -369,22 +386,22 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('line-chart')).toBeInTheDocument();
+        expect(screen.getByTestId("line-chart")).toBeInTheDocument();
       });
 
       // Act
-      const chartTypeButton = screen.getByText('Bar Chart');
+      const chartTypeButton = screen.getByText("Bar Chart");
       fireEvent.click(chartTypeButton);
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
+        expect(screen.getByTestId("bar-chart")).toBeInTheDocument();
       });
     });
   });
 
-  describe('data formatting and display', () => {
-    it('should format currency values correctly', async () => {
+  describe("data formatting and display", () => {
+    it("should format currency values correctly", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -405,13 +422,13 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('$15,000')).toBeInTheDocument(); // MRR
-        expect(screen.getByText('$180,000')).toBeInTheDocument(); // ARR
-        expect(screen.getByText('$2,500,000')).toBeInTheDocument(); // Total revenue
+        expect(screen.getByText("$15,000")).toBeInTheDocument(); // MRR
+        expect(screen.getByText("$180,000")).toBeInTheDocument(); // ARR
+        expect(screen.getByText("$2,500,000")).toBeInTheDocument(); // Total revenue
       });
     });
 
-    it('should format percentage values correctly', async () => {
+    it("should format percentage values correctly", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -431,13 +448,13 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('5.34%')).toBeInTheDocument(); // Churn rate
-        expect(screen.getByText('12.56%')).toBeInTheDocument(); // Growth rate
-        expect(screen.getByText('24.89%')).toBeInTheDocument(); // Conversion rate
+        expect(screen.getByText("5.34%")).toBeInTheDocument(); // Churn rate
+        expect(screen.getByText("12.56%")).toBeInTheDocument(); // Growth rate
+        expect(screen.getByText("24.89%")).toBeInTheDocument(); // Conversion rate
       });
     });
 
-    it('should display trend indicators', async () => {
+    it("should display trend indicators", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -454,18 +471,18 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByTestId('trend-up')).toBeInTheDocument();
-        expect(screen.getByTestId('trend-down')).toBeInTheDocument();
-        expect(screen.getByText('+12%')).toBeInTheDocument();
-        expect(screen.getByText('-5%')).toBeInTheDocument();
+        expect(screen.getByTestId("trend-up")).toBeInTheDocument();
+        expect(screen.getByTestId("trend-down")).toBeInTheDocument();
+        expect(screen.getByText("+12%")).toBeInTheDocument();
+        expect(screen.getByText("-5%")).toBeInTheDocument();
       });
     });
   });
 
-  describe('responsive behavior', () => {
-    it('should adapt to mobile viewport', async () => {
+  describe("responsive behavior", () => {
+    it("should adapt to mobile viewport", async () => {
       // Arrange
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
         value: 375,
@@ -486,14 +503,14 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        const dashboard = screen.getByTestId('analytics-dashboard');
-        expect(dashboard).toHaveClass('mobile-layout');
+        const dashboard = screen.getByTestId("analytics-dashboard");
+        expect(dashboard).toHaveClass("mobile-layout");
       });
     });
 
-    it('should show/hide detailed metrics based on screen size', async () => {
+    it("should show/hide detailed metrics based on screen size", async () => {
       // Arrange
-      Object.defineProperty(window, 'innerWidth', {
+      Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
         value: 768,
@@ -520,17 +537,17 @@ describe('analyticsDashboard Component', () => {
       await waitFor(() => {
         // Detailed metrics should be hidden on smaller screens
         expect(
-          screen.queryByText('Average Subscription Value'),
+          screen.queryByText("Average Subscription Value"),
         ).not.toBeInTheDocument();
         expect(
-          screen.queryByText('Customer Lifetime Value'),
+          screen.queryByText("Customer Lifetime Value"),
         ).not.toBeInTheDocument();
       });
     });
   });
 
-  describe('accessibility', () => {
-    it('should have proper ARIA labels and roles', async () => {
+  describe("accessibility", () => {
+    it("should have proper ARIA labels and roles", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -548,21 +565,21 @@ describe('analyticsDashboard Component', () => {
       // Assert
       await waitFor(() => {
         expect(
-          screen.getByRole('main', { name: 'Analytics Dashboard' }),
+          screen.getByRole("main", { name: "Analytics Dashboard" }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('region', { name: 'Subscription Metrics' }),
+          screen.getByRole("region", { name: "Subscription Metrics" }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('region', { name: 'Trial Metrics' }),
+          screen.getByRole("region", { name: "Trial Metrics" }),
         ).toBeInTheDocument();
         expect(
-          screen.getByRole('region', { name: 'Revenue Charts' }),
+          screen.getByRole("region", { name: "Revenue Charts" }),
         ).toBeInTheDocument();
       });
     });
 
-    it('should support keyboard navigation', async () => {
+    it("should support keyboard navigation", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -577,21 +594,21 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(screen.getByText("Refresh")).toBeInTheDocument();
       });
 
       // Act
-      const refreshButton = screen.getByText('Refresh');
+      const refreshButton = screen.getByText("Refresh");
       refreshButton.focus();
 
       // Simulate Tab key press
-      fireEvent.keyDown(refreshButton, { key: 'Tab', code: 'Tab' });
+      fireEvent.keyDown(refreshButton, { key: "Tab", code: "Tab" });
 
       // Assert
       expect(document.activeElement).not.toBe(refreshButton);
     });
 
-    it('should announce data updates to screen readers', async () => {
+    it("should announce data updates to screen readers", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -606,23 +623,23 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(screen.getByText("Refresh")).toBeInTheDocument();
       });
 
       // Act
-      const refreshButton = screen.getByText('Refresh');
+      const refreshButton = screen.getByText("Refresh");
       fireEvent.click(refreshButton);
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByText('Analytics data updated')).toBeInTheDocument();
-        expect(screen.getByRole('status')).toBeInTheDocument();
+        expect(screen.getByText("Analytics data updated")).toBeInTheDocument();
+        expect(screen.getByRole("status")).toBeInTheDocument();
       });
     });
   });
 
-  describe('performance optimization', () => {
-    it('should memoize expensive calculations', async () => {
+  describe("performance optimization", () => {
+    it("should memoize expensive calculations", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -641,17 +658,17 @@ describe('analyticsDashboard Component', () => {
       renderWithQueryClient(<AnalyticsDashboard />);
 
       await waitFor(() => {
-        expect(screen.getByText('150')).toBeInTheDocument();
+        expect(screen.getByText("150")).toBeInTheDocument();
       });
 
       // Act - Re-render with same data
       renderWithQueryClient(<AnalyticsDashboard />);
 
       // Assert - Should not recalculate expensive operations
-      expect(screen.getByTestId('memoized-calculations')).toBeInTheDocument();
+      expect(screen.getByTestId("memoized-calculations")).toBeInTheDocument();
     });
 
-    it('should implement virtual scrolling for large datasets', async () => {
+    it("should implement virtual scrolling for large datasets", async () => {
       // Arrange
       const mockMetrics = {
         subscriptionMetrics: {
@@ -673,9 +690,9 @@ describe('analyticsDashboard Component', () => {
 
       // Assert
       await waitFor(() => {
-        expect(screen.getByTestId('virtual-list')).toBeInTheDocument();
+        expect(screen.getByTestId("virtual-list")).toBeInTheDocument();
         // Only visible items should be rendered
-        expect(screen.getAllByTestId('subscription-item')).toHaveLength(10);
+        expect(screen.getAllByTestId("subscription-item")).toHaveLength(10);
       });
     });
   });

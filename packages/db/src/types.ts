@@ -9,7 +9,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined; }
+  | { [key: string]: Json | undefined }
   | Json[];
 
 export interface Database {
@@ -22,7 +22,7 @@ export interface Database {
           user_id: string;
           cfm_number: string;
           specialty: string;
-          role: 'doctor' | 'nurse' | 'admin' | 'receptionist';
+          role: "doctor" | "nurse" | "admin" | "receptionist";
           active: boolean;
           clinic_id: string;
           created_at: string;
@@ -33,7 +33,7 @@ export interface Database {
           user_id: string;
           cfm_number: string;
           specialty: string;
-          role: 'doctor' | 'nurse' | 'admin' | 'receptionist';
+          role: "doctor" | "nurse" | "admin" | "receptionist";
           active?: boolean;
           clinic_id: string;
           created_at?: string;
@@ -44,7 +44,7 @@ export interface Database {
           user_id?: string;
           cfm_number?: string;
           specialty?: string;
-          role?: 'doctor' | 'nurse' | 'admin' | 'receptionist';
+          role?: "doctor" | "nurse" | "admin" | "receptionist";
           active?: boolean;
           clinic_id?: string;
           created_at?: string;
@@ -61,7 +61,7 @@ export interface Database {
           phone: string;
           cpf: string; // Encrypted field
           date_of_birth: string;
-          gender: 'M' | 'F' | 'Other' | 'NotInformed';
+          gender: "M" | "F" | "Other" | "NotInformed";
           address_street: string;
           address_city: string;
           address_state: string;
@@ -86,7 +86,7 @@ export interface Database {
           phone: string;
           cpf: string;
           date_of_birth: string;
-          gender: 'M' | 'F' | 'Other' | 'NotInformed';
+          gender: "M" | "F" | "Other" | "NotInformed";
           address_street: string;
           address_city: string;
           address_state: string;
@@ -111,7 +111,7 @@ export interface Database {
           phone?: string;
           cpf?: string;
           date_of_birth?: string;
-          gender?: 'M' | 'F' | 'Other' | 'NotInformed';
+          gender?: "M" | "F" | "Other" | "NotInformed";
           address_street?: string;
           address_city?: string;
           address_state?: string;
@@ -141,15 +141,15 @@ export interface Database {
           duration_minutes: number;
           treatment_type: string;
           status:
-            | 'scheduled'
-            | 'confirmed'
-            | 'in_progress'
-            | 'completed'
-            | 'cancelled'
-            | 'no_show';
+            | "scheduled"
+            | "confirmed"
+            | "in_progress"
+            | "completed"
+            | "cancelled"
+            | "no_show";
           notes: string | null;
           price: number;
-          payment_status: 'pending' | 'paid' | 'partial' | 'cancelled';
+          payment_status: "pending" | "paid" | "partial" | "cancelled";
           created_at: string;
           updated_at: string;
           created_by: string;
@@ -164,15 +164,15 @@ export interface Database {
           duration_minutes?: number;
           treatment_type: string;
           status?:
-            | 'scheduled'
-            | 'confirmed'
-            | 'in_progress'
-            | 'completed'
-            | 'cancelled'
-            | 'no_show';
+            | "scheduled"
+            | "confirmed"
+            | "in_progress"
+            | "completed"
+            | "cancelled"
+            | "no_show";
           notes?: string | null;
           price: number;
-          payment_status?: 'pending' | 'paid' | 'partial' | 'cancelled';
+          payment_status?: "pending" | "paid" | "partial" | "cancelled";
           created_at?: string;
           updated_at?: string;
           created_by: string;
@@ -187,15 +187,15 @@ export interface Database {
           duration_minutes?: number;
           treatment_type?: string;
           status?:
-            | 'scheduled'
-            | 'confirmed'
-            | 'in_progress'
-            | 'completed'
-            | 'cancelled'
-            | 'no_show';
+            | "scheduled"
+            | "confirmed"
+            | "in_progress"
+            | "completed"
+            | "cancelled"
+            | "no_show";
           notes?: string | null;
           price?: number;
-          payment_status?: 'pending' | 'paid' | 'partial' | 'cancelled';
+          payment_status?: "pending" | "paid" | "partial" | "cancelled";
           created_at?: string;
           updated_at?: string;
           created_by?: string;
@@ -215,8 +215,8 @@ export interface Database {
           address_state: string;
           address_zip: string;
           anvisa_license: string | null;
-          subscription_plan: 'basic' | 'professional' | 'enterprise';
-          subscription_status: 'active' | 'suspended' | 'cancelled';
+          subscription_plan: "basic" | "professional" | "enterprise";
+          subscription_status: "active" | "suspended" | "cancelled";
           created_at: string;
           updated_at: string;
         };
@@ -231,8 +231,8 @@ export interface Database {
           address_state: string;
           address_zip: string;
           anvisa_license?: string | null;
-          subscription_plan?: 'basic' | 'professional' | 'enterprise';
-          subscription_status?: 'active' | 'suspended' | 'cancelled';
+          subscription_plan?: "basic" | "professional" | "enterprise";
+          subscription_status?: "active" | "suspended" | "cancelled";
           created_at?: string;
           updated_at?: string;
         };
@@ -247,8 +247,8 @@ export interface Database {
           address_state?: string;
           address_zip?: string;
           anvisa_license?: string | null;
-          subscription_plan?: 'basic' | 'professional' | 'enterprise';
-          subscription_status?: 'active' | 'suspended' | 'cancelled';
+          subscription_plan?: "basic" | "professional" | "enterprise";
+          subscription_status?: "active" | "suspended" | "cancelled";
           created_at?: string;
           updated_at?: string;
         };
@@ -303,19 +303,19 @@ export interface Database {
           title: string;
           message: string;
           type:
-            | 'info'
-            | 'warning'
-            | 'error'
-            | 'success'
-            | 'appointment'
-            | 'payment'
-            | 'system';
+            | "info"
+            | "warning"
+            | "error"
+            | "success"
+            | "appointment"
+            | "payment"
+            | "system";
           data: Json | null;
           related_entity_type:
-            | 'appointment'
-            | 'patient'
-            | 'payment'
-            | 'user'
+            | "appointment"
+            | "patient"
+            | "payment"
+            | "user"
             | null;
           related_entity_id: string | null;
           is_read: boolean;
@@ -334,19 +334,19 @@ export interface Database {
           title: string;
           message: string;
           type:
-            | 'info'
-            | 'warning'
-            | 'error'
-            | 'success'
-            | 'appointment'
-            | 'payment'
-            | 'system';
+            | "info"
+            | "warning"
+            | "error"
+            | "success"
+            | "appointment"
+            | "payment"
+            | "system";
           data?: Json | null;
           related_entity_type?:
-            | 'appointment'
-            | 'patient'
-            | 'payment'
-            | 'user'
+            | "appointment"
+            | "patient"
+            | "payment"
+            | "user"
             | null;
           related_entity_id?: string | null;
           is_read?: boolean;
@@ -365,19 +365,19 @@ export interface Database {
           title?: string;
           message?: string;
           type?:
-            | 'info'
-            | 'warning'
-            | 'error'
-            | 'success'
-            | 'appointment'
-            | 'payment'
-            | 'system';
+            | "info"
+            | "warning"
+            | "error"
+            | "success"
+            | "appointment"
+            | "payment"
+            | "system";
           data?: Json | null;
           related_entity_type?:
-            | 'appointment'
-            | 'patient'
-            | 'payment'
-            | 'user'
+            | "appointment"
+            | "patient"
+            | "payment"
+            | "user"
             | null;
           related_entity_id?: string | null;
           is_read?: boolean;
@@ -412,23 +412,28 @@ export interface Database {
 
 // Healthcare-specific type exports
 export type HealthcareProfessional =
-  Database['public']['Tables']['healthcare_professionals']['Row'];
-export type Patient = Database['public']['Tables']['patients']['Row'];
-export type Appointment = Database['public']['Tables']['appointments']['Row'];
-export type Clinic = Database['public']['Tables']['clinics']['Row'];
-export type HealthcareAuditLog = Database['public']['Tables']['healthcare_audit_logs']['Row'];
-export type Notification = Database['public']['Tables']['notifications']['Row'];
+  Database["public"]["Tables"]["healthcare_professionals"]["Row"];
+export type Patient = Database["public"]["Tables"]["patients"]["Row"];
+export type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+export type Clinic = Database["public"]["Tables"]["clinics"]["Row"];
+export type HealthcareAuditLog =
+  Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
+export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
 
 // Insert types for forms
-export type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-export type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
+export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
+export type AppointmentInsert =
+  Database["public"]["Tables"]["appointments"]["Insert"];
 export type HealthcareProfessionalInsert =
-  Database['public']['Tables']['healthcare_professionals']['Insert'];
-export type NotificationInsert = Database['public']['Tables']['notifications']['Insert'];
+  Database["public"]["Tables"]["healthcare_professionals"]["Insert"];
+export type NotificationInsert =
+  Database["public"]["Tables"]["notifications"]["Insert"];
 
 // Update types for edits
-export type PatientUpdate = Database['public']['Tables']['patients']['Update'];
-export type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
+export type PatientUpdate = Database["public"]["Tables"]["patients"]["Update"];
+export type AppointmentUpdate =
+  Database["public"]["Tables"]["appointments"]["Update"];
 export type HealthcareProfessionalUpdate =
-  Database['public']['Tables']['healthcare_professionals']['Update'];
-export type NotificationUpdate = Database['public']['Tables']['notifications']['Update'];
+  Database["public"]["Tables"]["healthcare_professionals"]["Update"];
+export type NotificationUpdate =
+  Database["public"]["Tables"]["notifications"]["Update"];

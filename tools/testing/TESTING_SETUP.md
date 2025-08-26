@@ -210,14 +210,14 @@ cd tools/testing
 
 ## 🎯 Status dos Testes
 
-| Componente           | Status          | Configuração                  | Notas            |
-| -------------------- | --------------- | ----------------------------- | ---------------- |
-| ✅ Vitest Simple     | ✅ Funcionando  | `vitest.simple.config.ts`     | Recomendado      |
-| ⚠️ Vitest Full        | ⚠️ Prisma Issues | `vitest.config.ts`            | Dependências     |
-| ✅ Playwright Simple | ✅ Funcionando  | `playwright.simple.config.ts` | Recomendado      |
-| ✅ Playwright Full   | ✅ Funcionando  | `playwright.config.ts`        | Com compliance   |
-| ✅ Global Setup      | ✅ Criado       | `setup/global-setup.ts`       | Healthcare ready |
-| ✅ Test Runner       | ✅ Funcionando  | `run-tests.js`                | Utilitário       |
+| Componente           | Status           | Configuração                  | Notas            |
+| -------------------- | ---------------- | ----------------------------- | ---------------- |
+| ✅ Vitest Simple     | ✅ Funcionando   | `vitest.simple.config.ts`     | Recomendado      |
+| ⚠️ Vitest Full       | ⚠️ Prisma Issues | `vitest.config.ts`            | Dependências     |
+| ✅ Playwright Simple | ✅ Funcionando   | `playwright.simple.config.ts` | Recomendado      |
+| ✅ Playwright Full   | ✅ Funcionando   | `playwright.config.ts`        | Com compliance   |
+| ✅ Global Setup      | ✅ Criado        | `setup/global-setup.ts`       | Healthcare ready |
+| ✅ Test Runner       | ✅ Funcionando   | `run-tests.js`                | Utilitário       |
 
 ---
 

@@ -22,7 +22,7 @@ export class CircuitBreaker {
       failureThreshold: config.failureThreshold || 5,
       successThreshold: config.successThreshold || 3,
       resetTimeout: config.resetTimeout || 60_000, // 1 minute default
-      healthcareContext: config.healthcareContext || 'general',
+      healthcareContext: config.healthcareContext || "general",
       emergencyBypass: config.emergencyBypass,
       ...config,
     };
@@ -49,11 +49,11 @@ export class CircuitBreaker {
     if (this.state === CircuitBreakerState.OPEN) {
       if (this.shouldAttemptReset()) {
         this.state = CircuitBreakerState.HALF_OPEN;
-        this.logStateChange('OPEN', 'HALF_OPEN', 'Reset timeout reached');
+        this.logStateChange("OPEN", "HALF_OPEN", "Reset timeout reached");
       } else {
         throw new CircuitBreakerOpenError(
-          `Circuit breaker is OPEN for ${this.config.healthcareContext}. `
-            + `Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
+          `Circuit breaker is OPEN for ${this.config.healthcareContext}. ` +
+            `Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
         );
       }
     }
@@ -118,7 +118,7 @@ export class CircuitBreaker {
       if (this.successCount >= this.config.successThreshold) {
         this.state = CircuitBreakerState.CLOSED;
         this.successCount = 0;
-        this.logStateChange('HALF_OPEN', 'CLOSED', 'Success threshold reached');
+        this.logStateChange("HALF_OPEN", "CLOSED", "Success threshold reached");
       }
     }
   }
@@ -139,8 +139,8 @@ export class CircuitBreaker {
       this.nextAttemptTime = new Date(Date.now() + this.config.resetTimeout);
 
       this.logStateChange(
-        this.state === CircuitBreakerState.HALF_OPEN ? 'HALF_OPEN' : 'CLOSED',
-        'OPEN',
+        this.state === CircuitBreakerState.HALF_OPEN ? "HALF_OPEN" : "CLOSED",
+        "OPEN",
         `Failure threshold reached (${this.failureCount}/${this.config.failureThreshold})`,
       );
     }
@@ -158,8 +158,8 @@ export class CircuitBreaker {
    */
   private isEmergencyContext(): boolean {
     return (
-      this.config.healthcareContext === 'emergency'
-      || this.config.healthcareContext === 'patient_data'
+      this.config.healthcareContext === "emergency" ||
+      this.config.healthcareContext === "patient_data"
     );
   }
 
@@ -189,7 +189,7 @@ export class CircuitBreaker {
     this.lastFailureTime = undefined;
     this.nextAttemptTime = undefined;
 
-    this.logStateChange('MANUAL', 'CLOSED', 'Manual reset performed');
+    this.logStateChange("MANUAL", "CLOSED", "Manual reset performed");
   }
 
   /**
@@ -243,7 +243,7 @@ export class CircuitBreaker {
   private logEmergencyBypass(error: any): void {
     const _bypassLog = {
       timestamp: new Date().toISOString(),
-      event: 'EMERGENCY_BYPASS_USED',
+      event: "EMERGENCY_BYPASS_USED",
       healthcareContext: this.config.healthcareContext,
       circuitBreakerState: this.state,
       error: error.message,
@@ -258,9 +258,9 @@ export class CircuitBreaker {
 
 // Healthcare Circuit Breaker States
 export enum CircuitBreakerState {
-  CLOSED = 'CLOSED', // Normal operation
-  OPEN = 'OPEN', // Blocking requests
-  HALF_OPEN = 'HALF_OPEN', // Testing if service recovered
+  CLOSED = "CLOSED", // Normal operation
+  OPEN = "OPEN", // Blocking requests
+  HALF_OPEN = "HALF_OPEN", // Testing if service recovered
 }
 
 // Configuration interface
@@ -288,14 +288,14 @@ export interface CircuitBreakerStatus {
 export class CircuitBreakerOpenError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CircuitBreakerOpenError';
+    this.name = "CircuitBreakerOpenError";
   }
 }
 
 export class CircuitBreakerTimeoutError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'CircuitBreakerTimeoutError';
+    this.name = "CircuitBreakerTimeoutError";
   }
 }
 

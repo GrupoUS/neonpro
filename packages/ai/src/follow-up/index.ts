@@ -17,7 +17,7 @@
 
 // Follow-up Recommendations - Core configuration
 export const FollowUpConfig = {
-  version: '1.0.0',
-  features: ['cfm-compliance', 'automated-scheduling', 'patient-safety'],
-  status: 'development',
+  version: "1.0.0",
+  features: ["cfm-compliance", "automated-scheduling", "patient-safety"],
+  status: "development",
 } as const;

@@ -6,23 +6,23 @@
  * sanitização de dados sensíveis e resposta padronizada.
  */
 
-import type { Context, ErrorHandler } from 'hono';
-import type { StatusCode } from 'hono/utils/http-status';
-import { logger } from '../lib/logger';
+import type { Context, ErrorHandler } from "hono";
+import type { StatusCode } from "hono/utils/http-status";
+import { logger } from "../lib/logger";
 
 // Error types for better categorization
 export enum ErrorType {
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
-  AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
-  NOT_FOUND_ERROR = 'NOT_FOUND_ERROR',
-  RATE_LIMIT_ERROR = 'RATE_LIMIT_ERROR',
-  DATABASE_ERROR = 'DATABASE_ERROR',
-  EXTERNAL_API_ERROR = 'EXTERNAL_API_ERROR',
-  BUSINESS_LOGIC_ERROR = 'BUSINESS_LOGIC_ERROR',
-  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
-  LGPD_COMPLIANCE_ERROR = 'LGPD_COMPLIANCE_ERROR',
-  ANVISA_COMPLIANCE_ERROR = 'ANVISA_COMPLIANCE_ERROR',
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR",
+  AUTHORIZATION_ERROR = "AUTHORIZATION_ERROR",
+  NOT_FOUND_ERROR = "NOT_FOUND_ERROR",
+  RATE_LIMIT_ERROR = "RATE_LIMIT_ERROR",
+  DATABASE_ERROR = "DATABASE_ERROR",
+  EXTERNAL_API_ERROR = "EXTERNAL_API_ERROR",
+  BUSINESS_LOGIC_ERROR = "BUSINESS_LOGIC_ERROR",
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  LGPD_COMPLIANCE_ERROR = "LGPD_COMPLIANCE_ERROR",
+  ANVISA_COMPLIANCE_ERROR = "ANVISA_COMPLIANCE_ERROR",
 }
 
 // Custom error class for structured errors
@@ -41,7 +41,7 @@ export class NeonProError extends Error {
     metadata?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'NeonProError';
+    this.name = "NeonProError";
     this.type = type;
     this.statusCode = statusCode;
     this.userMessage = userMessage || this.getDefaultUserMessage(type);
@@ -55,20 +55,21 @@ export class NeonProError extends Error {
 
   private getDefaultUserMessage(type: ErrorType): string {
     const defaultMessages: Record<ErrorType, string> = {
-      [ErrorType.VALIDATION_ERROR]: 'Dados fornecidos são inválidos',
-      [ErrorType.AUTHENTICATION_ERROR]: 'Credenciais inválidas',
-      [ErrorType.AUTHORIZATION_ERROR]: 'Acesso negado',
-      [ErrorType.NOT_FOUND_ERROR]: 'Recurso não encontrado',
-      [ErrorType.RATE_LIMIT_ERROR]: 'Muitas tentativas. Tente novamente mais tarde',
-      [ErrorType.DATABASE_ERROR]: 'Erro interno do banco de dados',
-      [ErrorType.EXTERNAL_API_ERROR]: 'Erro de serviço externo',
-      [ErrorType.BUSINESS_LOGIC_ERROR]: 'Operação não permitida',
-      [ErrorType.INTERNAL_SERVER_ERROR]: 'Erro interno do servidor',
-      [ErrorType.LGPD_COMPLIANCE_ERROR]: 'Erro de conformidade LGPD',
-      [ErrorType.ANVISA_COMPLIANCE_ERROR]: 'Erro de conformidade ANVISA',
+      [ErrorType.VALIDATION_ERROR]: "Dados fornecidos são inválidos",
+      [ErrorType.AUTHENTICATION_ERROR]: "Credenciais inválidas",
+      [ErrorType.AUTHORIZATION_ERROR]: "Acesso negado",
+      [ErrorType.NOT_FOUND_ERROR]: "Recurso não encontrado",
+      [ErrorType.RATE_LIMIT_ERROR]:
+        "Muitas tentativas. Tente novamente mais tarde",
+      [ErrorType.DATABASE_ERROR]: "Erro interno do banco de dados",
+      [ErrorType.EXTERNAL_API_ERROR]: "Erro de serviço externo",
+      [ErrorType.BUSINESS_LOGIC_ERROR]: "Operação não permitida",
+      [ErrorType.INTERNAL_SERVER_ERROR]: "Erro interno do servidor",
+      [ErrorType.LGPD_COMPLIANCE_ERROR]: "Erro de conformidade LGPD",
+      [ErrorType.ANVISA_COMPLIANCE_ERROR]: "Erro de conformidade ANVISA",
     };
 
-    return defaultMessages[type] || 'Erro interno do servidor';
+    return defaultMessages[type] || "Erro interno do servidor";
   }
 
   toJSON() {
@@ -100,21 +101,21 @@ interface ErrorResponse {
 const sanitizeError = (error: unknown): unknown => {
   // List of sensitive fields that should never be exposed
   const sensitiveFields = [
-    'password',
-    'token',
-    'secret',
-    'key',
-    'authorization',
-    'cookie',
-    'session',
-    'cpf',
-    'rg',
-    'email',
-    'phone',
+    "password",
+    "token",
+    "secret",
+    "key",
+    "authorization",
+    "cookie",
+    "session",
+    "cpf",
+    "rg",
+    "email",
+    "phone",
   ];
 
   const sanitize = (obj: unknown): unknown => {
-    if (typeof obj !== 'object' || obj === null) {
+    if (typeof obj !== "object" || obj === null) {
       return obj;
     }
 
@@ -127,11 +128,13 @@ const sanitizeError = (error: unknown): unknown => {
       const lowerKey = key.toLowerCase();
 
       // Check if key contains sensitive information
-      const isSensitive = sensitiveFields.some((field) => lowerKey.includes(field));
+      const isSensitive = sensitiveFields.some((field) =>
+        lowerKey.includes(field),
+      );
 
       if (isSensitive) {
-        sanitized[key] = '[REDACTED]';
-      } else if (typeof value === 'object' && value !== null) {
+        sanitized[key] = "[REDACTED]";
+      } else if (typeof value === "object" && value !== null) {
         sanitized[key] = sanitize(value);
       } else {
         sanitized[key] = value;
@@ -149,8 +152,8 @@ const sanitizeError = (error: unknown): unknown => {
  */
 const logError = (error: unknown, context: Context): void => {
   const errorId = `err_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  const requestId = context.req.header('X-Request-ID') || 'unknown';
-  const auditId = context.req.header('X-Audit-ID') || 'unknown';
+  const requestId = context.req.header("X-Request-ID") || "unknown";
+  const auditId = context.req.header("X-Audit-ID") || "unknown";
 
   const logData = {
     errorId,
@@ -170,15 +173,16 @@ const logError = (error: unknown, context: Context): void => {
     query: context.req.query(),
 
     // User context (if available)
-    userId: context.get('userId'),
-    userRole: context.get('userRole'),
+    userId: context.get("userId"),
+    userRole: context.get("userRole"),
 
     // Client context
-    userAgent: context.req.header('User-Agent'),
-    clientIP: context.req.header('CF-Connecting-IP')
-      || context.req.header('X-Forwarded-For')
-      || context.req.header('X-Real-IP')
-      || 'unknown',
+    userAgent: context.req.header("User-Agent"),
+    clientIP:
+      context.req.header("CF-Connecting-IP") ||
+      context.req.header("X-Forwarded-For") ||
+      context.req.header("X-Real-IP") ||
+      "unknown",
 
     // Metadata
     metadata: error.metadata,
@@ -191,7 +195,7 @@ const logError = (error: unknown, context: Context): void => {
   const sanitizedLog = sanitizeError(logData);
 
   // Log using centralized logger
-  logger.error('API Error occurred', error, {
+  logger.error("API Error occurred", error, {
     endpoint: sanitizedLog.endpoint,
     method: sanitizedLog.method,
     statusCode: sanitizedLog.statusCode,
@@ -206,10 +210,10 @@ const logError = (error: unknown, context: Context): void => {
 const formatErrorResponse = (
   error: unknown,
   context: Context,
-): { response: ErrorResponse; statusCode: StatusCode; } => {
-  const requestId = context.req.header('X-Request-ID');
-  const auditId = context.req.header('X-Audit-ID');
-  const isProduction = process.env.NODE_ENV === 'production';
+): { response: ErrorResponse; statusCode: StatusCode } => {
+  const requestId = context.req.header("X-Request-ID");
+  const auditId = context.req.header("X-Audit-ID");
+  const isProduction = process.env.NODE_ENV === "production";
 
   // Handle NeonProError instances
   if (error instanceof NeonProError) {
@@ -228,21 +232,21 @@ const formatErrorResponse = (
   }
 
   // Handle validation errors (Zod)
-  if (error.name === 'ZodError') {
+  if (error.name === "ZodError") {
     return {
       response: {
         success: false,
         error: ErrorType.VALIDATION_ERROR,
-        message: 'Dados de entrada inválidos',
+        message: "Dados de entrada inválidos",
         details: isProduction
           ? undefined
           : {
-            validationErrors: error.errors?.map((err: unknown) => ({
-              field: err.path?.join('.'),
-              message: err.message,
-              code: err.code,
-            })),
-          },
+              validationErrors: error.errors?.map((err: unknown) => ({
+                field: err.path?.join("."),
+                message: err.message,
+                code: err.code,
+              })),
+            },
         timestamp: new Date().toISOString(),
         requestId,
         auditId,
@@ -260,32 +264,32 @@ const formatErrorResponse = (
     switch (statusCode) {
       case 400: {
         errorType = ErrorType.VALIDATION_ERROR;
-        message = 'Requisição inválida';
+        message = "Requisição inválida";
         break;
       }
       case 401: {
         errorType = ErrorType.AUTHENTICATION_ERROR;
-        message = 'Autenticação obrigatória';
+        message = "Autenticação obrigatória";
         break;
       }
       case 403: {
         errorType = ErrorType.AUTHORIZATION_ERROR;
-        message = 'Acesso negado';
+        message = "Acesso negado";
         break;
       }
       case 404: {
         errorType = ErrorType.NOT_FOUND_ERROR;
-        message = 'Recurso não encontrado';
+        message = "Recurso não encontrado";
         break;
       }
       case 429: {
         errorType = ErrorType.RATE_LIMIT_ERROR;
-        message = 'Muitas requisições';
+        message = "Muitas requisições";
         break;
       }
       default: {
         errorType = ErrorType.INTERNAL_SERVER_ERROR;
-        message = 'Erro interno do servidor';
+        message = "Erro interno do servidor";
       }
     }
 
@@ -305,20 +309,20 @@ const formatErrorResponse = (
 
   // Handle database errors
   if (
-    error.name === 'PrismaClientKnownRequestError'
-    || error.name === 'PrismaClientUnknownRequestError'
+    error.name === "PrismaClientKnownRequestError" ||
+    error.name === "PrismaClientUnknownRequestError"
   ) {
     return {
       response: {
         success: false,
         error: ErrorType.DATABASE_ERROR,
-        message: 'Erro de banco de dados',
+        message: "Erro de banco de dados",
         details: isProduction
           ? undefined
           : {
-            code: error.code,
-            meta: sanitizeError(error.meta),
-          },
+              code: error.code,
+              meta: sanitizeError(error.meta),
+            },
         timestamp: new Date().toISOString(),
         requestId,
         auditId,
@@ -333,8 +337,8 @@ const formatErrorResponse = (
       success: false,
       error: ErrorType.INTERNAL_SERVER_ERROR,
       message: isProduction
-        ? 'Erro interno do servidor'
-        : error.message || 'Something went wrong',
+        ? "Erro interno do servidor"
+        : error.message || "Something went wrong",
       details: isProduction ? undefined : sanitizeError(error),
       timestamp: new Date().toISOString(),
       requestId,
@@ -355,8 +359,8 @@ export const errorHandler: ErrorHandler = (error, context) => {
   const { response, statusCode } = formatErrorResponse(error, context);
 
   // Set security headers
-  context.res.headers.set('X-Content-Type-Options', 'nosniff');
-  context.res.headers.set('X-Frame-Options', 'DENY');
+  context.res.headers.set("X-Content-Type-Options", "nosniff");
+  context.res.headers.set("X-Frame-Options", "DENY");
 
   // Return structured error response
   return context.json(response, statusCode);
@@ -375,20 +379,20 @@ export const createError = {
       details,
     ),
 
-  authentication: (message = 'Credenciais inválidas') =>
+  authentication: (message = "Credenciais inválidas") =>
     new NeonProError(ErrorType.AUTHENTICATION_ERROR, message, 401),
 
-  authorization: (message = 'Acesso negado') =>
+  authorization: (message = "Acesso negado") =>
     new NeonProError(ErrorType.AUTHORIZATION_ERROR, message, 403),
 
-  notFound: (resource = 'Recurso') =>
+  notFound: (resource = "Recurso") =>
     new NeonProError(
       ErrorType.NOT_FOUND_ERROR,
       `${resource} não encontrado`,
       404,
     ),
 
-  rateLimit: (message = 'Muitas tentativas') =>
+  rateLimit: (message = "Muitas tentativas") =>
     new NeonProError(ErrorType.RATE_LIMIT_ERROR, message, 429),
 
   database: (message: string, details?: unknown) =>
@@ -396,7 +400,7 @@ export const createError = {
       ErrorType.DATABASE_ERROR,
       message,
       500,
-      'Erro de banco de dados',
+      "Erro de banco de dados",
       details,
     ),
 
@@ -426,12 +430,12 @@ export const createError = {
       details,
     ),
 
-  internal: (message = 'Erro interno', details?: unknown) =>
+  internal: (message = "Erro interno", details?: unknown) =>
     new NeonProError(
       ErrorType.INTERNAL_SERVER_ERROR,
       message,
       500,
-      'Erro interno do servidor',
+      "Erro interno do servidor",
       details,
     ),
 };

@@ -23,51 +23,54 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { usePatientManagement } from "../../hooks/enhanced/use-patients";
 
 // Mock the API client following TanStack Query best practices
-vi.mock<typeof import('@neonpro/shared/api-client')>("@neonpro/shared/api-client", () => ({
-  apiClient: {
-    api: {
-      v1: {
-        patients: {
-          $post: vi.fn(),
-          $get: vi.fn(),
-          ":id": {
+vi.mock<typeof import("@neonpro/shared/api-client")>(
+  "@neonpro/shared/api-client",
+  () => ({
+    apiClient: {
+      api: {
+        v1: {
+          patients: {
+            $post: vi.fn(),
             $get: vi.fn(),
-            $put: vi.fn(),
-            $delete: vi.fn(),
+            ":id": {
+              $get: vi.fn(),
+              $put: vi.fn(),
+              $delete: vi.fn(),
+            },
           },
         },
       },
+      patients: {
+        create: vi.fn(),
+        update: vi.fn(),
+        delete: vi.fn(),
+        get: vi.fn(),
+        list: vi.fn(),
+      },
+      audit: {
+        log: vi.fn(),
+      },
+      auth: {
+        getUser: vi.fn(() => ({
+          id: "test-user-id",
+          lgpd_consent_date: new Date().toISOString(),
+        })),
+        getSessionId: vi.fn(() => "test-session-id"),
+      },
+      utils: {
+        getUserAgent: vi.fn(() => "test-agent"),
+        getClientIP: vi.fn(() => "127.0.0.1"),
+      },
     },
-    patients: {
-      create: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-      get: vi.fn(),
-      list: vi.fn(),
+    ApiHelpers: {
+      handleApiResponse: vi.fn(),
+      handleApiError: vi.fn(),
+      isAuthError: vi.fn((error: any) => {
+        return error?.code === "UNAUTHORIZED" || error?.status === 401;
+      }),
     },
-    audit: {
-      log: vi.fn(),
-    },
-    auth: {
-      getUser: vi.fn(() => ({
-        id: "test-user-id",
-        lgpd_consent_date: new Date().toISOString(),
-      })),
-      getSessionId: vi.fn(() => "test-session-id"),
-    },
-    utils: {
-      getUserAgent: vi.fn(() => "test-agent"),
-      getClientIP: vi.fn(() => "127.0.0.1"),
-    },
-  },
-  ApiHelpers: {
-    handleApiResponse: vi.fn(),
-    handleApiError: vi.fn(),
-    isAuthError: vi.fn((error: any) => {
-      return error?.code === "UNAUTHORIZED" || error?.status === 401;
-    }),
-  },
-}));
+  }),
+);
 
 describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
   let queryClient: QueryClient;
@@ -280,7 +283,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       });
 
       // Mock the updatePatient function to return our mock hook
-      jest.spyOn(result.current, 'updatePatient').mockImplementation().mockReturnValue(mockUpdateHook);
+      jest
+        .spyOn(result.current, "updatePatient")
+        .mockImplementation()
+        .mockReturnValue(mockUpdateHook);
 
       const updateData = {
         phone: "(11) 99999-0000",
@@ -309,7 +315,7 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 
       // Mock window.confirm for the deletion confirmation
       const originalConfirm = window.confirm;
-      jest.spyOn(window, 'confirm').mockImplementation().mockReturnValue(true);
+      jest.spyOn(window, "confirm").mockImplementation().mockReturnValue(true);
 
       const mockDeleteHook = {
         mutate: vi.fn(),
@@ -322,7 +328,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       });
 
       // Mock the deletePatient function to return our mock hook
-      jest.spyOn(result.current, 'deletePatient').mockImplementation().mockReturnValue(mockDeleteHook);
+      jest
+        .spyOn(result.current, "deletePatient")
+        .mockImplementation()
+        .mockReturnValue(mockDeleteHook);
 
       const deleteHook = result.current.deletePatient();
       deleteHook.mutate("patient-123");
@@ -398,7 +407,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       });
 
       // Mock the getPatients function to return masked data
-      jest.spyOn(result.current, 'getPatients').mockImplementation().mockReturnValue(mockGetPatients);
+      jest
+        .spyOn(result.current, "getPatients")
+        .mockImplementation()
+        .mockReturnValue(mockGetPatients);
 
       const patientsQuery = result.current.getPatients({
         maskSensitiveData: true,
@@ -523,7 +535,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       });
 
       // Mock the getPatients function to return tenant-isolated data
-      jest.spyOn(result.current, 'getPatients').mockImplementation().mockReturnValue(mockGetPatients);
+      jest
+        .spyOn(result.current, "getPatients")
+        .mockImplementation()
+        .mockReturnValue(mockGetPatients);
 
       const patientsQuery = result.current.getPatients();
       patientsQuery.refetch();
@@ -560,7 +575,10 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       });
 
       // Mock the getPatients function to return search results
-      jest.spyOn(result.current, 'getPatients').mockImplementation().mockReturnValue(mockGetPatients);
+      jest
+        .spyOn(result.current, "getPatients")
+        .mockImplementation()
+        .mockReturnValue(mockGetPatients);
 
       const patientsQuery = result.current.getPatients(searchCriteria);
 

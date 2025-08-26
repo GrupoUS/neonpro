@@ -1,6 +1,6 @@
-import type { GraphModel, LayersModel } from '@tensorflow/tfjs';
-import * as tf from '@tensorflow/tfjs';
-import type { ModelMetadata, ModelType, PredictionConfig } from '../types';
+import type { GraphModel, LayersModel } from "@tensorflow/tfjs";
+import * as tf from "@tensorflow/tfjs";
+import type { ModelMetadata, ModelType, PredictionConfig } from "../types";
 
 /**
  * Core AI Model Manager for NeonPro Aesthetic Treatment Predictions
@@ -18,54 +18,54 @@ export class AIModelManager {
 
   // Model configuration for aesthetic treatments
   private readonly MODEL_CONFIGS: Record<ModelType, PredictionConfig> = {
-    'treatment-outcome': {
-      modelPath: '/models/treatment-outcome-v2.json',
+    "treatment-outcome": {
+      modelPath: "/models/treatment-outcome-v2.json",
       inputShape: [1, 24], // Patient features: age, skin type, medical history, etc.
       outputShape: [1, 3], // Outcome probability, confidence, timeline
       accuracy: 0.87,
-      version: '2.1.0',
+      version: "2.1.0",
     },
-    'duration-estimation': {
-      modelPath: '/models/duration-estimation-v1.json',
+    "duration-estimation": {
+      modelPath: "/models/duration-estimation-v1.json",
       inputShape: [1, 18], // Treatment type, patient factors, complexity
       outputShape: [1, 2], // Session duration, recovery time
       accuracy: 0.91,
-      version: '1.3.0',
+      version: "1.3.0",
     },
-    'success-probability': {
-      modelPath: '/models/success-probability-v3.json',
+    "success-probability": {
+      modelPath: "/models/success-probability-v3.json",
       inputShape: [1, 32], // Comprehensive patient and treatment features
       outputShape: [1, 4], // Success probability, confidence, risk factors, timeline
       accuracy: 0.89,
-      version: '3.0.1',
+      version: "3.0.1",
     },
-    'risk-assessment': {
-      modelPath: '/models/risk-assessment-v2.json',
+    "risk-assessment": {
+      modelPath: "/models/risk-assessment-v2.json",
       inputShape: [1, 28], // Medical history, contraindications, patient factors
       outputShape: [1, 5], // Risk levels for different complication types
       accuracy: 0.93,
-      version: '2.2.0',
+      version: "2.2.0",
     },
-    'botox-optimization': {
-      modelPath: '/models/botox-optimization-v1.json',
+    "botox-optimization": {
+      modelPath: "/models/botox-optimization-v1.json",
       inputShape: [1, 20], // Muscle activity, patient characteristics, target areas
       outputShape: [1, 3], // Optimal units, injection pattern, expected results
       accuracy: 0.88,
-      version: '1.1.0',
+      version: "1.1.0",
     },
-    'filler-volume': {
-      modelPath: '/models/filler-volume-v1.json',
+    "filler-volume": {
+      modelPath: "/models/filler-volume-v1.json",
       inputShape: [1, 22], // Facial analysis, patient goals, skin properties
       outputShape: [1, 4], // Volume per area, injection technique, timeline, longevity
       accuracy: 0.86,
-      version: '1.0.2',
+      version: "1.0.2",
     },
-    'laser-settings': {
-      modelPath: '/models/laser-settings-v2.json',
+    "laser-settings": {
+      modelPath: "/models/laser-settings-v2.json",
       inputShape: [1, 26], // Skin type, condition, previous treatments, sensitivity
       outputShape: [1, 6], // Energy, pulse duration, spot size, passes, cooling, recovery
       accuracy: 0.92,
-      version: '2.1.1',
+      version: "2.1.1",
     },
   };
 
@@ -83,17 +83,17 @@ export class AIModelManager {
       await tf.ready();
 
       // Set backend preference for best performance
-      if (tf.env().platform.has('webgl')) {
-        await tf.setBackend('webgl');
-      } else if (tf.env().platform.has('cpu')) {
-        await tf.setBackend('cpu');
+      if (tf.env().platform.has("webgl")) {
+        await tf.setBackend("webgl");
+      } else if (tf.env().platform.has("cpu")) {
+        await tf.setBackend("cpu");
       }
 
       // Preload critical models for immediate availability
       const criticalModels: ModelType[] = [
-        'treatment-outcome',
-        'risk-assessment',
-        'success-probability',
+        "treatment-outcome",
+        "risk-assessment",
+        "success-probability",
       ];
 
       await Promise.all(
@@ -159,7 +159,7 @@ export class AIModelManager {
       // Load model with timeout protection
       const modelPromise = tf.loadLayersModel(config.modelPath);
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Model loading timeout')), 30_000)
+        setTimeout(() => reject(new Error("Model loading timeout")), 30_000),
       );
 
       const model = await Promise.race([modelPromise, timeoutPromise]);
@@ -182,7 +182,7 @@ export class AIModelManager {
     model: GraphModel | LayersModel,
     config: PredictionConfig,
   ): void {
-    if ('inputs' in model && model.inputs) {
+    if ("inputs" in model && model.inputs) {
       const inputShape = model.inputs[0].shape;
       const expectedInput = config.inputShape;
 
@@ -203,7 +203,8 @@ export class AIModelManager {
     }
 
     return actual.every(
-      (dim, index) => dim === expected[index] || dim === null || expected[index] === null,
+      (dim, index) =>
+        dim === expected[index] || dim === null || expected[index] === null,
     );
   }
 
@@ -267,7 +268,7 @@ export class AIModelManager {
    * Health check for model manager
    */
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     details: Record<string, any>;
   }> {
     const details: Record<string, any> = {
@@ -282,13 +283,13 @@ export class AIModelManager {
     const totalCount = Object.keys(this.MODEL_CONFIGS).length;
     const loadedPercentage = loadedCount / totalCount;
 
-    let status: 'healthy' | 'degraded' | 'unhealthy';
+    let status: "healthy" | "degraded" | "unhealthy";
     if (loadedPercentage >= 0.8) {
-      status = 'healthy';
+      status = "healthy";
     } else if (loadedPercentage >= 0.5) {
-      status = 'degraded';
+      status = "degraded";
     } else {
-      status = 'unhealthy';
+      status = "unhealthy";
     }
 
     return { status, details };

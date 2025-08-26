@@ -1,9 +1,9 @@
-import { AIContextCacheLayer } from './ai-context-cache';
-import { BrowserCacheLayer } from './browser-cache';
-import { DatabaseCacheLayer } from './database-cache';
-import { EdgeCacheLayer } from './edge-cache';
-import { CacheLayer } from './types';
-import type { CacheOperation, CacheStats, HealthcareDataPolicy } from './types';
+import { AIContextCacheLayer } from "./ai-context-cache";
+import { BrowserCacheLayer } from "./browser-cache";
+import { DatabaseCacheLayer } from "./database-cache";
+import { EdgeCacheLayer } from "./edge-cache";
+import { CacheLayer } from "./types";
+import type { CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
 
 export class MultiLayerCacheManager {
   private readonly browser: BrowserCacheLayer;
@@ -88,8 +88,8 @@ export class MultiLayerCacheManager {
       healthcareData?: boolean;
       policy?: HealthcareDataPolicy;
       aiContextMetadata?: {
-        contextType: 'conversation' | 'knowledge' | 'embedding' | 'reasoning';
-        importance: 'low' | 'medium' | 'high' | 'critical';
+        contextType: "conversation" | "knowledge" | "embedding" | "reasoning";
+        importance: "low" | "medium" | "high" | "critical";
         userId?: string;
         sessionId?: string;
       };
@@ -178,7 +178,7 @@ export class MultiLayerCacheManager {
     const stats: Partial<Record<CacheLayer, CacheStats>> = {};
 
     results.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
+      if (result.status === "fulfilled") {
         stats[result.value.layer] = result.value.stats;
       } else {
         const layer = Object.values(CacheLayer)[index];
@@ -199,7 +199,7 @@ export class MultiLayerCacheManager {
     healthy: boolean;
     layers: Record<
       CacheLayer,
-      { healthy: boolean; hitRate: number; target: number; }
+      { healthy: boolean; hitRate: number; target: number }
     >;
     recommendations: string[];
   }> {
@@ -209,15 +209,13 @@ export class MultiLayerCacheManager {
 
     const layerHealth: Record<
       CacheLayer,
-      { healthy: boolean; hitRate: number; target: number; }
+      { healthy: boolean; hitRate: number; target: number }
     > = {} as any;
 
-    for (
-      const [layer, stats] of Object.entries(allStats) as [
-        CacheLayer,
-        CacheStats,
-      ][]
-    ) {
+    for (const [layer, stats] of Object.entries(allStats) as [
+      CacheLayer,
+      CacheStats,
+    ][]) {
       const target = this.hitRateTargets[layer];
       const healthy = stats.hitRate >= target;
 
@@ -321,9 +319,10 @@ export class MultiLayerCacheManager {
     policy: HealthcareDataPolicy,
   ): Promise<void> {
     const key = `patient:${patientId}:${dataKey}`;
-    const layers = policy.dataClassification === 'RESTRICTED'
-      ? [CacheLayer.DATABASE]
-      : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.DATABASE];
+    const layers =
+      policy.dataClassification === "RESTRICTED"
+        ? [CacheLayer.DATABASE]
+        : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.DATABASE];
 
     await this.set(key, value, layers, {
       healthcareData: true,
@@ -337,9 +336,10 @@ export class MultiLayerCacheManager {
     policy: HealthcareDataPolicy,
   ): Promise<T | null> {
     const key = `patient:${patientId}:${dataKey}`;
-    const layers = policy.dataClassification === 'RESTRICTED'
-      ? [CacheLayer.DATABASE]
-      : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.DATABASE];
+    const layers =
+      policy.dataClassification === "RESTRICTED"
+        ? [CacheLayer.DATABASE]
+        : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.DATABASE];
 
     return await this.get<T>(key, layers, {
       healthcareData: true,

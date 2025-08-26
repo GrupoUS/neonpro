@@ -67,5 +67,11 @@
     "../../packages/*/src/**/*.ts",
     "../../packages/*/src/**/*.tsx"
   ],
-  "exclude": ["node_modules", ".next/types/**/*", "__tests__/**/*", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": [
+    "node_modules",
+    ".next/types/**/*",
+    "__tests__/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto';
-import { z } from 'zod';
+import { createHash } from "node:crypto";
+import { z } from "zod";
 
 /**
  * Comprehensive audit service for healthcare compliance
@@ -12,67 +12,68 @@ import { z } from 'zod';
  */
 export const AuditEventType = {
   // Authentication events
-  LOGIN_SUCCESS: 'auth.login.success',
-  LOGIN_FAILURE: 'auth.login.failure',
-  LOGOUT: 'auth.logout',
-  MFA_SETUP: 'auth.mfa.setup',
-  MFA_VERIFICATION: 'auth.mfa.verification',
-  PASSWORD_CHANGE: 'auth.password.change',
-  ACCOUNT_LOCKOUT: 'auth.account.lockout',
+  LOGIN_SUCCESS: "auth.login.success",
+  LOGIN_FAILURE: "auth.login.failure",
+  LOGOUT: "auth.logout",
+  MFA_SETUP: "auth.mfa.setup",
+  MFA_VERIFICATION: "auth.mfa.verification",
+  PASSWORD_CHANGE: "auth.password.change",
+  ACCOUNT_LOCKOUT: "auth.account.lockout",
 
   // Patient data access
-  PATIENT_CREATE: 'patient.create',
-  PATIENT_READ: 'patient.read',
-  PATIENT_UPDATE: 'patient.update',
-  PATIENT_DELETE: 'patient.delete',
-  PATIENT_EXPORT: 'patient.export',
+  PATIENT_CREATE: "patient.create",
+  PATIENT_READ: "patient.read",
+  PATIENT_UPDATE: "patient.update",
+  PATIENT_DELETE: "patient.delete",
+  PATIENT_EXPORT: "patient.export",
 
   // Medical records
-  MEDICAL_RECORD_CREATE: 'medical_record.create',
-  MEDICAL_RECORD_READ: 'medical_record.read',
-  MEDICAL_RECORD_UPDATE: 'medical_record.update',
-  MEDICAL_RECORD_DELETE: 'medical_record.delete',
-  MEDICAL_RECORD_SIGN: 'medical_record.sign',
+  MEDICAL_RECORD_CREATE: "medical_record.create",
+  MEDICAL_RECORD_READ: "medical_record.read",
+  MEDICAL_RECORD_UPDATE: "medical_record.update",
+  MEDICAL_RECORD_DELETE: "medical_record.delete",
+  MEDICAL_RECORD_SIGN: "medical_record.sign",
 
   // LGPD compliance
-  CONSENT_GIVEN: 'lgpd.consent.given',
-  CONSENT_WITHDRAWN: 'lgpd.consent.withdrawn',
-  DATA_EXPORT_REQUEST: 'lgpd.data.export_request',
-  DATA_DELETION_REQUEST: 'lgpd.data.deletion_request',
-  DATA_RECTIFICATION: 'lgpd.data.rectification',
-  PRIVACY_ASSESSMENT: 'lgpd.privacy.assessment',
-  BREACH_DETECTED: 'lgpd.breach.detected',
-  BREACH_NOTIFICATION: 'lgpd.breach.notification',
+  CONSENT_GIVEN: "lgpd.consent.given",
+  CONSENT_WITHDRAWN: "lgpd.consent.withdrawn",
+  DATA_EXPORT_REQUEST: "lgpd.data.export_request",
+  DATA_DELETION_REQUEST: "lgpd.data.deletion_request",
+  DATA_RECTIFICATION: "lgpd.data.rectification",
+  PRIVACY_ASSESSMENT: "lgpd.privacy.assessment",
+  BREACH_DETECTED: "lgpd.breach.detected",
+  BREACH_NOTIFICATION: "lgpd.breach.notification",
 
   // System security
-  PERMISSION_GRANTED: 'security.permission.granted',
-  PERMISSION_DENIED: 'security.permission.denied',
-  RATE_LIMIT_EXCEEDED: 'security.rate_limit.exceeded',
-  SUSPICIOUS_ACTIVITY: 'security.suspicious.activity',
-  ENCRYPTION_KEY_ROTATION: 'security.encryption.key_rotation',
+  PERMISSION_GRANTED: "security.permission.granted",
+  PERMISSION_DENIED: "security.permission.denied",
+  RATE_LIMIT_EXCEEDED: "security.rate_limit.exceeded",
+  SUSPICIOUS_ACTIVITY: "security.suspicious.activity",
+  ENCRYPTION_KEY_ROTATION: "security.encryption.key_rotation",
 
   // File operations
-  FILE_UPLOAD: 'file.upload',
-  FILE_DOWNLOAD: 'file.download',
-  FILE_DELETE: 'file.delete',
-  FILE_VIRUS_DETECTED: 'file.virus.detected',
+  FILE_UPLOAD: "file.upload",
+  FILE_DOWNLOAD: "file.download",
+  FILE_DELETE: "file.delete",
+  FILE_VIRUS_DETECTED: "file.virus.detected",
 
   // Administrative
-  USER_ROLE_CHANGE: 'admin.user.role_change',
-  SYSTEM_CONFIG_CHANGE: 'admin.system.config_change',
-  BACKUP_CREATED: 'admin.backup.created',
-  BACKUP_RESTORED: 'admin.backup.restored',
+  USER_ROLE_CHANGE: "admin.user.role_change",
+  SYSTEM_CONFIG_CHANGE: "admin.system.config_change",
+  BACKUP_CREATED: "admin.backup.created",
+  BACKUP_RESTORED: "admin.backup.restored",
 } as const;
-export type AuditEventType = (typeof AuditEventType)[keyof typeof AuditEventType];
+export type AuditEventType =
+  (typeof AuditEventType)[keyof typeof AuditEventType];
 
 /**
  * Audit event severity levels
  */
 export const AuditSeverity = {
-  INFO: 'info',
-  WARNING: 'warning',
-  ERROR: 'error',
-  CRITICAL: 'critical',
+  INFO: "info",
+  WARNING: "warning",
+  ERROR: "error",
+  CRITICAL: "critical",
 } as const;
 export type AuditSeverity = (typeof AuditSeverity)[keyof typeof AuditSeverity];
 
@@ -80,9 +81,9 @@ export type AuditSeverity = (typeof AuditSeverity)[keyof typeof AuditSeverity];
  * Audit event outcome
  */
 export const AuditOutcome = {
-  SUCCESS: 'success',
-  FAILURE: 'failure',
-  PARTIAL: 'partial',
+  SUCCESS: "success",
+  FAILURE: "failure",
+  PARTIAL: "partial",
 } as const;
 export type AuditOutcome = (typeof AuditOutcome)[keyof typeof AuditOutcome];
 
@@ -95,63 +96,57 @@ const MAX_DESCRIPTION_LENGTH = 1000;
  * Base audit event schema
  */
 export const auditEventSchema = z.object({
-  eventType: z.enum(
-    [
-      AuditEventType.LOGIN_SUCCESS,
-      AuditEventType.LOGIN_FAILURE,
-      AuditEventType.LOGOUT,
-      AuditEventType.MFA_SETUP,
-      AuditEventType.MFA_VERIFICATION,
-      AuditEventType.PASSWORD_CHANGE,
-      AuditEventType.ACCOUNT_LOCKOUT,
-      AuditEventType.PATIENT_CREATE,
-      AuditEventType.PATIENT_READ,
-      AuditEventType.PATIENT_UPDATE,
-      AuditEventType.PATIENT_DELETE,
-      AuditEventType.PATIENT_EXPORT,
-      AuditEventType.MEDICAL_RECORD_CREATE,
-      AuditEventType.MEDICAL_RECORD_READ,
-      AuditEventType.MEDICAL_RECORD_UPDATE,
-      AuditEventType.MEDICAL_RECORD_DELETE,
-      AuditEventType.MEDICAL_RECORD_SIGN,
-      AuditEventType.CONSENT_GIVEN,
-      AuditEventType.CONSENT_WITHDRAWN,
-      AuditEventType.DATA_EXPORT_REQUEST,
-      AuditEventType.DATA_DELETION_REQUEST,
-      AuditEventType.DATA_RECTIFICATION,
-      AuditEventType.PRIVACY_ASSESSMENT,
-      AuditEventType.BREACH_DETECTED,
-      AuditEventType.BREACH_NOTIFICATION,
-      AuditEventType.PERMISSION_GRANTED,
-      AuditEventType.PERMISSION_DENIED,
-      AuditEventType.RATE_LIMIT_EXCEEDED,
-      AuditEventType.SUSPICIOUS_ACTIVITY,
-      AuditEventType.ENCRYPTION_KEY_ROTATION,
-      AuditEventType.FILE_UPLOAD,
-      AuditEventType.FILE_DOWNLOAD,
-      AuditEventType.FILE_DELETE,
-      AuditEventType.FILE_VIRUS_DETECTED,
-      AuditEventType.USER_ROLE_CHANGE,
-      AuditEventType.SYSTEM_CONFIG_CHANGE,
-      AuditEventType.BACKUP_CREATED,
-      AuditEventType.BACKUP_RESTORED,
-    ] as const,
-  ),
-  severity: z.enum(
-    [
-      AuditSeverity.INFO,
-      AuditSeverity.WARNING,
-      AuditSeverity.ERROR,
-      AuditSeverity.CRITICAL,
-    ] as const,
-  ),
-  outcome: z.enum(
-    [
-      AuditOutcome.SUCCESS,
-      AuditOutcome.FAILURE,
-      AuditOutcome.PARTIAL,
-    ] as const,
-  ),
+  eventType: z.enum([
+    AuditEventType.LOGIN_SUCCESS,
+    AuditEventType.LOGIN_FAILURE,
+    AuditEventType.LOGOUT,
+    AuditEventType.MFA_SETUP,
+    AuditEventType.MFA_VERIFICATION,
+    AuditEventType.PASSWORD_CHANGE,
+    AuditEventType.ACCOUNT_LOCKOUT,
+    AuditEventType.PATIENT_CREATE,
+    AuditEventType.PATIENT_READ,
+    AuditEventType.PATIENT_UPDATE,
+    AuditEventType.PATIENT_DELETE,
+    AuditEventType.PATIENT_EXPORT,
+    AuditEventType.MEDICAL_RECORD_CREATE,
+    AuditEventType.MEDICAL_RECORD_READ,
+    AuditEventType.MEDICAL_RECORD_UPDATE,
+    AuditEventType.MEDICAL_RECORD_DELETE,
+    AuditEventType.MEDICAL_RECORD_SIGN,
+    AuditEventType.CONSENT_GIVEN,
+    AuditEventType.CONSENT_WITHDRAWN,
+    AuditEventType.DATA_EXPORT_REQUEST,
+    AuditEventType.DATA_DELETION_REQUEST,
+    AuditEventType.DATA_RECTIFICATION,
+    AuditEventType.PRIVACY_ASSESSMENT,
+    AuditEventType.BREACH_DETECTED,
+    AuditEventType.BREACH_NOTIFICATION,
+    AuditEventType.PERMISSION_GRANTED,
+    AuditEventType.PERMISSION_DENIED,
+    AuditEventType.RATE_LIMIT_EXCEEDED,
+    AuditEventType.SUSPICIOUS_ACTIVITY,
+    AuditEventType.ENCRYPTION_KEY_ROTATION,
+    AuditEventType.FILE_UPLOAD,
+    AuditEventType.FILE_DOWNLOAD,
+    AuditEventType.FILE_DELETE,
+    AuditEventType.FILE_VIRUS_DETECTED,
+    AuditEventType.USER_ROLE_CHANGE,
+    AuditEventType.SYSTEM_CONFIG_CHANGE,
+    AuditEventType.BACKUP_CREATED,
+    AuditEventType.BACKUP_RESTORED,
+  ] as const),
+  severity: z.enum([
+    AuditSeverity.INFO,
+    AuditSeverity.WARNING,
+    AuditSeverity.ERROR,
+    AuditSeverity.CRITICAL,
+  ] as const),
+  outcome: z.enum([
+    AuditOutcome.SUCCESS,
+    AuditOutcome.FAILURE,
+    AuditOutcome.PARTIAL,
+  ] as const),
   userId: z.string().uuid().optional(),
   sessionId: z.string().uuid().optional(),
   ipAddress: z.string().ip(),
@@ -161,7 +156,7 @@ export const auditEventSchema = z.object({
   description: z.string().min(1).max(MAX_DESCRIPTION_LENGTH),
   details: z.record(z.any()).optional(),
   timestamp: z.date().default(() => new Date()),
-  source: z.string().default('neonpro-api'),
+  source: z.string().default("neonpro-api"),
 });
 
 /**
@@ -244,7 +239,7 @@ export interface AuditFilters {
 /**
  * Algorithm used for audit hash calculation
  */
-const AUDIT_HASH_ALGORITHM = 'sha256';
+const AUDIT_HASH_ALGORITHM = "sha256";
 
 /**
  * Calculate hash for audit event
@@ -265,11 +260,11 @@ export function calculateAuditHash(
     resourceType: event.resourceType,
     description: event.description,
     timestamp: event.timestamp.toISOString(),
-    previousHash: previousHash || '',
+    previousHash: previousHash || "",
   };
 
   const data = JSON.stringify(canonical, Object.keys(canonical).sort());
-  return createHash(AUDIT_HASH_ALGORITHM).update(data).digest('hex');
+  return createHash(AUDIT_HASH_ALGORITHM).update(data).digest("hex");
 }
 
 /**
@@ -283,7 +278,7 @@ export function verifyAuditChain(events: AuditEvent[]): {
     return { valid: true };
   }
 
-  let previousHash = '';
+  let previousHash = "";
 
   for (let i = 0; i < events.length; i++) {
     const event = events[i];
@@ -293,7 +288,7 @@ export function verifyAuditChain(events: AuditEvent[]): {
       return { valid: false, brokenAt: i };
     }
 
-    previousHash = event.hash || '';
+    previousHash = event.hash || "";
   }
 
   return { valid: true };
@@ -305,7 +300,7 @@ export function verifyAuditChain(events: AuditEvent[]): {
 export class AuditService {
   private readonly config: AuditConfig;
   private readonly store: AuditStore;
-  private lastHash = '';
+  private lastHash = "";
 
   constructor(store: AuditStore, config: Partial<AuditConfig> = {}) {
     this.store = store;
@@ -316,24 +311,24 @@ export class AuditService {
    * Log audit event
    */
   async logEvent(
-    eventData: Omit<AuditEvent, 'id' | 'hash' | 'previousHash'>,
+    eventData: Omit<AuditEvent, "id" | "hash" | "previousHash">,
   ): Promise<string | null> {
     if (!this.config.enabled) {
-      return;
+      return null;
     }
 
     // Check minimum severity
     if (
-      this.getSeverityLevel(eventData.severity)
-        < this.getSeverityLevel(this.config.minSeverity)
+      this.getSeverityLevel(eventData.severity) <
+      this.getSeverityLevel(this.config.minSeverity)
     ) {
-      return;
+      return null;
     }
 
     // Validate event data
     const validationResult = auditEventSchema.safeParse(eventData);
     if (!validationResult.success) {
-      return;
+      return null;
     }
 
     const event: AuditEvent = validationResult.data;
@@ -349,7 +344,7 @@ export class AuditService {
       const eventId = await this.store.store(event);
       return eventId;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -368,9 +363,9 @@ export class AuditService {
       userId,
       ipAddress,
       userAgent,
-      description: 'User logged in successfully',
+      description: "User logged in successfully",
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -392,7 +387,7 @@ export class AuditService {
       description: `Login failed for ${email}: ${reason}`,
       details: { email, reason },
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -402,7 +397,7 @@ export class AuditService {
   logPatientAccess(options: {
     userId: string;
     patientId: string;
-    action: 'create' | 'read' | 'update' | 'delete';
+    action: "create" | "read" | "update" | "delete";
     ipAddress: string;
     details?: Record<string, unknown>;
   }): Promise<string | null> {
@@ -416,16 +411,17 @@ export class AuditService {
 
     return this.logEvent({
       eventType: eventTypeMap[action],
-      severity: action === 'delete' ? AuditSeverity.WARNING : AuditSeverity.INFO,
+      severity:
+        action === "delete" ? AuditSeverity.WARNING : AuditSeverity.INFO,
       outcome: AuditOutcome.SUCCESS,
       userId,
       resourceId: patientId,
-      resourceType: 'patient',
+      resourceType: "patient",
       ipAddress,
       description: `Patient ${action} operation performed`,
       details,
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -435,14 +431,15 @@ export class AuditService {
   logConsentEvent(options: {
     userId: string;
     patientId: string;
-    action: 'given' | 'withdrawn';
+    action: "given" | "withdrawn";
     purpose: string;
     ipAddress: string;
   }): Promise<string | null> {
     const { userId, patientId, action, purpose, ipAddress } = options;
-    const eventType = action === 'given'
-      ? AuditEventType.CONSENT_GIVEN
-      : AuditEventType.CONSENT_WITHDRAWN;
+    const eventType =
+      action === "given"
+        ? AuditEventType.CONSENT_GIVEN
+        : AuditEventType.CONSENT_WITHDRAWN;
 
     return this.logEvent({
       eventType,
@@ -450,12 +447,12 @@ export class AuditService {
       outcome: AuditOutcome.SUCCESS,
       userId,
       resourceId: patientId,
-      resourceType: 'consent',
+      resourceType: "consent",
       ipAddress,
       description: `LGPD consent ${action} for ${purpose}`,
       details: { purpose, action },
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -470,7 +467,8 @@ export class AuditService {
     userId?: string;
     details?: Record<string, unknown>;
   }): Promise<string | null> {
-    const { eventType, severity, description, ipAddress, userId, details } = options;
+    const { eventType, severity, description, ipAddress, userId, details } =
+      options;
     return this.logEvent({
       eventType,
       severity,
@@ -480,7 +478,7 @@ export class AuditService {
       description,
       details,
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -490,7 +488,7 @@ export class AuditService {
   logDataBreach(options: {
     description: string;
     affectedRecords: number;
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     userId?: string;
     ipAddress?: string;
     details?: Record<string, unknown>;
@@ -515,11 +513,11 @@ export class AuditService {
       severity: severityMap[severity],
       outcome: AuditOutcome.FAILURE,
       userId,
-      ipAddress: ipAddress || 'system',
+      ipAddress: ipAddress || "system",
       description,
       details: { affectedRecords, severity, ...details },
       timestamp: new Date(),
-      source: 'neonpro-api',
+      source: "neonpro-api",
     });
   }
 
@@ -552,7 +550,7 @@ export class AuditService {
   async verifyIntegrity(
     startDate?: Date,
     endDate?: Date,
-  ): Promise<{ valid: boolean; brokenAt?: number; }> {
+  ): Promise<{ valid: boolean; brokenAt?: number }> {
     const events = await this.getEvents({
       startDate,
       endDate,
@@ -581,8 +579,8 @@ export class AuditService {
  * For production, use database-backed store
  */
 export class MemoryAuditStore implements AuditStore {
-  private events: (AuditEvent & { id: string; })[] = [];
-  private readonly nextId = 1;
+  private events: (AuditEvent & { id: string })[] = [];
+  private nextId = 1;
 
   store(event: AuditEvent): Promise<string> {
     const id = (this.nextId++).toString();

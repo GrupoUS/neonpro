@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { createBrowserClient } from '@supabase/ssr';
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from '../placeholders/sonner';
-import { useUser } from '../placeholders/supabase-auth-helpers-react';
+import { createBrowserClient } from "@supabase/ssr";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "../placeholders/sonner";
+import { useUser } from "../placeholders/supabase-auth-helpers-react";
 
 // Types
 export interface LGPDMetrics {
@@ -38,13 +38,13 @@ export interface DataSubjectRequest {
   id: string;
   user_id: string;
   request_type:
-    | 'access'
-    | 'rectification'
-    | 'erasure'
-    | 'portability'
-    | 'restriction'
-    | 'objection';
-  status: 'pending' | 'in_progress' | 'completed' | 'rejected';
+    | "access"
+    | "rectification"
+    | "erasure"
+    | "portability"
+    | "restriction"
+    | "objection";
+  status: "pending" | "in_progress" | "completed" | "rejected";
   description: string | null;
   requested_at: string;
   processed_at: string | null;
@@ -59,8 +59,8 @@ export interface BreachIncident {
   id: string;
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  status: 'reported' | 'investigating' | 'contained' | 'resolved';
+  severity: "low" | "medium" | "high" | "critical";
+  status: "reported" | "investigating" | "contained" | "resolved";
   affected_users: number;
   data_types: string[];
   discovered_at: string;
@@ -90,8 +90,8 @@ export interface AuditEvent {
 
 export interface ComplianceAssessment {
   id: string;
-  assessment_type: 'manual' | 'automated';
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  assessment_type: "manual" | "automated";
+  status: "pending" | "in_progress" | "completed" | "failed";
   score: number | null;
   max_score: number;
   findings: any | null;
@@ -118,16 +118,16 @@ export function useLGPDDashboard() {
       setIsLoading(true);
       setError(undefined);
 
-      const response = await fetch('/api/lgpd/compliance');
+      const response = await fetch("/api/lgpd/compliance");
       if (!response.ok) {
-        throw new Error('Failed to fetch LGPD metrics');
+        throw new Error("Failed to fetch LGPD metrics");
       }
 
       const data = await response.json();
       setMetrics(data.metrics);
     } catch (error) {
       setError(error as Error);
-      toast.error('Erro ao carregar métricas LGPD');
+      toast.error("Erro ao carregar métricas LGPD");
     } finally {
       setIsLoading(false);
     }
@@ -168,21 +168,21 @@ export function useConsentManagement() {
         if (filters) {
           Object.entries(filters).forEach(([key, value]) => {
             if (value !== undefined) {
-              params.append(key, value?.toString() || '');
+              params.append(key, value?.toString() || "");
             }
           });
         }
 
         const response = await fetch(`/api/lgpd/consent?${params}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch consents');
+          throw new Error("Failed to fetch consents");
         }
 
         const data = await response.json();
         setConsents(data.consents);
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao carregar consentimentos');
+        toast.error("Erro ao carregar consentimentos");
       } finally {
         setIsLoading(false);
       }
@@ -199,20 +199,20 @@ export function useConsentManagement() {
       user_agent?: string;
     }) => {
       try {
-        const response = await fetch('/api/lgpd/consent', {
-          method: 'POST',
+        const response = await fetch("/api/lgpd/consent", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(consentData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update consent');
+          throw new Error("Failed to update consent");
         }
 
         const data = await response.json();
-        toast.success('Consentimento atualizado com sucesso');
+        toast.success("Consentimento atualizado com sucesso");
 
         // Refresh consents
         await fetchConsents();
@@ -220,7 +220,7 @@ export function useConsentManagement() {
         return data.consent;
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao atualizar consentimento');
+        toast.error("Erro ao atualizar consentimento");
         throw error;
       }
     },
@@ -230,25 +230,25 @@ export function useConsentManagement() {
   const withdrawConsent = useCallback(
     async (consentId: string) => {
       try {
-        const response = await fetch('/api/lgpd/consent', {
-          method: 'DELETE',
+        const response = await fetch("/api/lgpd/consent", {
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ consent_id: consentId }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to withdraw consent');
+          throw new Error("Failed to withdraw consent");
         }
 
-        toast.success('Consentimento retirado com sucesso');
+        toast.success("Consentimento retirado com sucesso");
 
         // Refresh consents
         await fetchConsents();
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao retirar consentimento');
+        toast.error("Erro ao retirar consentimento");
         throw error;
       }
     },
@@ -294,14 +294,14 @@ export function useDataSubjectRights() {
 
         const response = await fetch(`/api/lgpd/data-subject-rights?${params}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch data subject requests');
+          throw new Error("Failed to fetch data subject requests");
         }
 
         const data = await response.json();
         setRequests(data.requests);
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao carregar solicitações');
+        toast.error("Erro ao carregar solicitações");
       } finally {
         setIsLoading(false);
       }
@@ -310,22 +310,22 @@ export function useDataSubjectRights() {
   );
 
   const createRequest = useCallback(
-    async (requestData: { request_type: string; description?: string; }) => {
+    async (requestData: { request_type: string; description?: string }) => {
       try {
-        const response = await fetch('/api/lgpd/data-subject-rights', {
-          method: 'POST',
+        const response = await fetch("/api/lgpd/data-subject-rights", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(requestData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create request');
+          throw new Error("Failed to create request");
         }
 
         const data = await response.json();
-        toast.success('Solicitação criada com sucesso');
+        toast.success("Solicitação criada com sucesso");
 
         // Refresh requests
         await fetchRequests();
@@ -333,7 +333,7 @@ export function useDataSubjectRights() {
         return data.request;
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao criar solicitação');
+        toast.error("Erro ao criar solicitação");
         throw error;
       }
     },
@@ -350,20 +350,20 @@ export function useDataSubjectRights() {
       },
     ) => {
       try {
-        const response = await fetch('/api/lgpd/data-subject-rights', {
-          method: 'PUT',
+        const response = await fetch("/api/lgpd/data-subject-rights", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ request_id: requestId, ...updateData }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update request');
+          throw new Error("Failed to update request");
         }
 
         const data = await response.json();
-        toast.success('Solicitação atualizada com sucesso');
+        toast.success("Solicitação atualizada com sucesso");
 
         // Refresh requests
         await fetchRequests();
@@ -371,7 +371,7 @@ export function useDataSubjectRights() {
         return data.request;
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao atualizar solicitação');
+        toast.error("Erro ao atualizar solicitação");
         throw error;
       }
     },
@@ -416,14 +416,14 @@ export function useBreachManagement() {
 
         const response = await fetch(`/api/lgpd/breach?${params}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch breach incidents');
+          throw new Error("Failed to fetch breach incidents");
         }
 
         const data = await response.json();
         setBreaches(data.breaches);
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao carregar incidentes');
+        toast.error("Erro ao carregar incidentes");
       } finally {
         setIsLoading(false);
       }
@@ -441,20 +441,20 @@ export function useBreachManagement() {
       discovered_at: string;
     }) => {
       try {
-        const response = await fetch('/api/lgpd/breach', {
-          method: 'POST',
+        const response = await fetch("/api/lgpd/breach", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(breachData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to report breach');
+          throw new Error("Failed to report breach");
         }
 
         const data = await response.json();
-        toast.success('Incidente reportado com sucesso');
+        toast.success("Incidente reportado com sucesso");
 
         // Refresh breaches
         await fetchBreaches();
@@ -462,7 +462,7 @@ export function useBreachManagement() {
         return data.breach;
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao reportar incidente');
+        toast.error("Erro ao reportar incidente");
         throw error;
       }
     },
@@ -482,20 +482,20 @@ export function useBreachManagement() {
       },
     ) => {
       try {
-        const response = await fetch('/api/lgpd/breach', {
-          method: 'PUT',
+        const response = await fetch("/api/lgpd/breach", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ breach_id: breachId, ...updateData }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update breach');
+          throw new Error("Failed to update breach");
         }
 
         const data = await response.json();
-        toast.success('Incidente atualizado com sucesso');
+        toast.success("Incidente atualizado com sucesso");
 
         // Refresh breaches
         await fetchBreaches();
@@ -503,7 +503,7 @@ export function useBreachManagement() {
         return data.breach;
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao atualizar incidente');
+        toast.error("Erro ao atualizar incidente");
         throw error;
       }
     },
@@ -552,14 +552,14 @@ export function useAuditTrail() {
 
         const response = await fetch(`/api/lgpd/audit?${params}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch audit events');
+          throw new Error("Failed to fetch audit events");
         }
 
         const data = await response.json();
         setEvents(data.events);
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao carregar eventos de auditoria');
+        toast.error("Erro ao carregar eventos de auditoria");
       } finally {
         setIsLoading(false);
       }
@@ -568,10 +568,10 @@ export function useAuditTrail() {
   );
 
   const exportEvents = useCallback(
-    async (format: 'json' | 'csv', filters?: any) => {
+    async (format: "json" | "csv", filters?: any) => {
       try {
         const params = new URLSearchParams();
-        params.append('export', format);
+        params.append("export", format);
 
         if (filters) {
           Object.entries(filters).forEach(([key, value]) => {
@@ -583,23 +583,23 @@ export function useAuditTrail() {
 
         const response = await fetch(`/api/lgpd/audit?${params}`);
         if (!response.ok) {
-          throw new Error('Failed to export audit events');
+          throw new Error("Failed to export audit events");
         }
 
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
-        a.download = `audit-trail-${new Date().toISOString().split('T')[0]}.${format}`;
+        a.download = `audit-trail-${new Date().toISOString().split("T")[0]}.${format}`;
         document.body.append(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
-        toast.success('Exportação concluída com sucesso');
+        toast.success("Exportação concluída com sucesso");
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao exportar eventos');
+        toast.error("Erro ao exportar eventos");
         throw error;
       }
     },
@@ -643,14 +643,14 @@ export function useComplianceAssessment() {
 
         const response = await fetch(`/api/lgpd/compliance?${params}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch assessments');
+          throw new Error("Failed to fetch assessments");
         }
 
         const data = await response.json();
         setAssessments(data.assessments || []);
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao carregar avaliações');
+        toast.error("Erro ao carregar avaliações");
       } finally {
         setIsLoading(false);
       }
@@ -659,22 +659,22 @@ export function useComplianceAssessment() {
   );
 
   const createAssessment = useCallback(
-    async (assessmentData: { assessment_type: 'manual' | 'automated'; }) => {
+    async (assessmentData: { assessment_type: "manual" | "automated" }) => {
       try {
-        const response = await fetch('/api/lgpd/compliance', {
-          method: 'POST',
+        const response = await fetch("/api/lgpd/compliance", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(assessmentData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create assessment');
+          throw new Error("Failed to create assessment");
         }
 
         const data = await response.json();
-        toast.success('Avaliação criada com sucesso');
+        toast.success("Avaliação criada com sucesso");
 
         // Refresh assessments
         await fetchAssessments();
@@ -682,7 +682,7 @@ export function useComplianceAssessment() {
         return data.assessment;
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao criar avaliação');
+        toast.error("Erro ao criar avaliação");
         throw error;
       }
     },
@@ -691,19 +691,19 @@ export function useComplianceAssessment() {
 
   const runAutomatedAssessment = useCallback(async () => {
     try {
-      const response = await fetch('/api/lgpd/compliance', {
-        method: 'PUT',
+      const response = await fetch("/api/lgpd/compliance", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
-        throw new Error('Failed to run automated assessment');
+        throw new Error("Failed to run automated assessment");
       }
 
       const data = await response.json();
-      toast.success('Avaliação automatizada executada com sucesso');
+      toast.success("Avaliação automatizada executada com sucesso");
 
       // Refresh assessments
       await fetchAssessments();
@@ -711,7 +711,7 @@ export function useComplianceAssessment() {
       return data.assessment;
     } catch (error) {
       setError(error as Error);
-      toast.error('Erro ao executar avaliação automatizada');
+      toast.error("Erro ao executar avaliação automatizada");
       throw error;
     }
   }, [fetchAssessments]);
@@ -744,10 +744,10 @@ export function useConsentBanner() {
       setError(undefined);
 
       const { data, error } = await supabase
-        .from('lgpd_consent_purposes')
-        .select('*')
-        .eq('active', true)
-        .order('display_order');
+        .from("lgpd_consent_purposes")
+        .select("*")
+        .eq("active", true)
+        .order("display_order");
 
       if (error) {
         throw error;
@@ -755,7 +755,7 @@ export function useConsentBanner() {
       setPurposes(data || []);
     } catch (error) {
       setError(error as Error);
-      toast.error('Erro ao carregar finalidades de consentimento');
+      toast.error("Erro ao carregar finalidades de consentimento");
     } finally {
       setIsLoading(false);
     }
@@ -769,7 +769,7 @@ export function useConsentBanner() {
     try {
       const response = await fetch(`/api/lgpd/consent?user_id=${user.id}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch user consents');
+        throw new Error("Failed to fetch user consents");
       }
 
       const data = await response.json();
@@ -782,10 +782,10 @@ export function useConsentBanner() {
   const updateUserConsent = useCallback(
     async (purposeId: string, granted: boolean) => {
       try {
-        const response = await fetch('/api/lgpd/consent', {
-          method: 'POST',
+        const response = await fetch("/api/lgpd/consent", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             purpose_id: purposeId,
@@ -796,18 +796,18 @@ export function useConsentBanner() {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update consent');
+          throw new Error("Failed to update consent");
         }
 
         // Refresh user consents
         await fetchUserConsents();
 
         toast.success(
-          granted ? 'Consentimento concedido' : 'Consentimento retirado',
+          granted ? "Consentimento concedido" : "Consentimento retirado",
         );
       } catch (error) {
         setError(error as Error);
-        toast.error('Erro ao atualizar consentimento');
+        toast.error("Erro ao atualizar consentimento");
         throw error;
       }
     },

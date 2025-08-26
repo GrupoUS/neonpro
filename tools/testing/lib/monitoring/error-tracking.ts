@@ -2,7 +2,7 @@
 export interface ErrorEvent {
   error: Error;
   context?: Record<string, any>;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+  severity?: "low" | "medium" | "high" | "critical";
   timestamp?: Date;
 }
 
@@ -13,7 +13,8 @@ export class ErrorTrackingService {
     exception: unknown,
     context?: Record<string, any>,
   ): void {
-    const error = exception instanceof Error ? exception : new Error(String(exception));
+    const error =
+      exception instanceof Error ? exception : new Error(String(exception));
     ErrorTrackingService.captureError(error, context);
   }
 

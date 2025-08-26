@@ -6,95 +6,95 @@
  * completo de operações sensíveis e logs estruturados.
  */
 
-import type { Context, MiddlewareHandler } from 'hono';
-import { logger } from '../lib/logger';
-import { createRouteRegex, extractResourceIds } from '../lib/regex-constants';
+import type { Context, MiddlewareHandler } from "hono";
+import { logger } from "../lib/logger";
+import { createRouteRegex, extractResourceIds } from "../lib/regex-constants";
 
 // Audit log levels
 export enum AuditLevel {
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
-  CRITICAL = 'critical',
+  INFO = "info",
+  WARNING = "warning",
+  ERROR = "error",
+  CRITICAL = "critical",
 }
 
 // LGPD sensitive operations that require audit
 const LGPD_SENSITIVE_OPERATIONS = {
   // Data access operations
-  'GET /api/v1/patients': {
+  "GET /api/v1/patients": {
     level: AuditLevel.INFO,
-    category: 'data_access',
-    description: 'Patient data access',
+    category: "data_access",
+    description: "Patient data access",
   },
-  'GET /api/v1/patients/:id': {
+  "GET /api/v1/patients/:id": {
     level: AuditLevel.INFO,
-    category: 'data_access',
-    description: 'Individual patient data access',
+    category: "data_access",
+    description: "Individual patient data access",
   },
 
   // Data modification operations
-  'POST /api/v1/patients': {
+  "POST /api/v1/patients": {
     level: AuditLevel.WARNING,
-    category: 'data_creation',
-    description: 'New patient data creation',
+    category: "data_creation",
+    description: "New patient data creation",
   },
-  'PUT /api/v1/patients/:id': {
+  "PUT /api/v1/patients/:id": {
     level: AuditLevel.WARNING,
-    category: 'data_modification',
-    description: 'Patient data modification',
+    category: "data_modification",
+    description: "Patient data modification",
   },
-  'DELETE /api/v1/patients/:id': {
+  "DELETE /api/v1/patients/:id": {
     level: AuditLevel.CRITICAL,
-    category: 'data_deletion',
-    description: 'Patient data deletion',
+    category: "data_deletion",
+    description: "Patient data deletion",
   },
 
   // Authentication operations
-  'POST /api/v1/auth/login': {
+  "POST /api/v1/auth/login": {
     level: AuditLevel.INFO,
-    category: 'authentication',
-    description: 'User authentication attempt',
+    category: "authentication",
+    description: "User authentication attempt",
   },
-  'POST /api/v1/auth/logout': {
+  "POST /api/v1/auth/logout": {
     level: AuditLevel.INFO,
-    category: 'authentication',
-    description: 'User logout',
+    category: "authentication",
+    description: "User logout",
   },
-  'POST /api/v1/auth/forgot-password': {
+  "POST /api/v1/auth/forgot-password": {
     level: AuditLevel.WARNING,
-    category: 'authentication',
-    description: 'Password reset request',
+    category: "authentication",
+    description: "Password reset request",
   },
 
   // Data export operations (LGPD Article 15)
-  'GET /api/v1/compliance/export': {
+  "GET /api/v1/compliance/export": {
     level: AuditLevel.CRITICAL,
-    category: 'data_export',
-    description: 'Personal data export',
+    category: "data_export",
+    description: "Personal data export",
   },
-  'POST /api/v1/compliance/lgpd/requests': {
+  "POST /api/v1/compliance/lgpd/requests": {
     level: AuditLevel.CRITICAL,
-    category: 'lgpd_request',
-    description: 'LGPD data subject request',
+    category: "lgpd_request",
+    description: "LGPD data subject request",
   },
 
   // Consent management
-  'PUT /api/v1/compliance/lgpd/consent': {
+  "PUT /api/v1/compliance/lgpd/consent": {
     level: AuditLevel.WARNING,
-    category: 'consent',
-    description: 'Patient consent update',
+    category: "consent",
+    description: "Patient consent update",
   },
 
   // Professional access to sensitive data
-  'GET /api/v1/analytics': {
+  "GET /api/v1/analytics": {
     level: AuditLevel.INFO,
-    category: 'analytics_access',
-    description: 'Analytics dashboard access',
+    category: "analytics_access",
+    description: "Analytics dashboard access",
   },
-  'GET /api/v1/appointments': {
+  "GET /api/v1/appointments": {
     level: AuditLevel.INFO,
-    category: 'data_access',
-    description: 'Appointments data access',
+    category: "data_access",
+    description: "Appointments data access",
   },
 };
 
@@ -159,7 +159,7 @@ class AuditStore {
 
   private persistLog(log: AuditLog): void {
     // TODO: Implement database persistence
-    logger.info('Audit log entry', {
+    logger.info("Audit log entry", {
       userId: log.userId,
       action: log.action,
       resource: log.resource,
@@ -200,14 +200,14 @@ const auditStore = new AuditStore();
  */
 const extractUserContext = (c: Context) => {
   // TODO: Extract from JWT token or session
-  const authHeader = c.req.header('Authorization');
+  const authHeader = c.req.header("Authorization");
 
   // Mock user extraction - implement actual JWT parsing
-  if (authHeader?.startsWith('Bearer ')) {
+  if (authHeader?.startsWith("Bearer ")) {
     return {
-      userId: 'user_123', // Extract from JWT
-      userEmail: 'user@neonpro.com', // Extract from JWT
-      userRole: 'admin', // Extract from JWT
+      userId: "user_123", // Extract from JWT
+      userEmail: "user@neonpro.com", // Extract from JWT
+      userRole: "admin", // Extract from JWT
     };
   }
 
@@ -223,13 +223,14 @@ const extractUserContext = (c: Context) => {
  */
 const extractClientContext = (c: Context) => {
   return {
-    clientIP: c.req.header('CF-Connecting-IP')
-      || c.req.header('X-Forwarded-For')
-      || c.req.header('X-Real-IP')
-      || 'unknown',
-    userAgent: c.req.header('User-Agent') || 'unknown',
-    country: c.req.header('CF-IPCountry') || 'unknown',
-    region: c.req.header('CF-Region') || 'unknown',
+    clientIP:
+      c.req.header("CF-Connecting-IP") ||
+      c.req.header("X-Forwarded-For") ||
+      c.req.header("X-Real-IP") ||
+      "unknown",
+    userAgent: c.req.header("User-Agent") || "unknown",
+    country: c.req.header("CF-IPCountry") || "unknown",
+    region: c.req.header("CF-Region") || "unknown",
   };
 };
 
@@ -269,12 +270,13 @@ export const auditMiddleware = (): MiddlewareHandler => {
     const auditId = `audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     // Generate request ID if not exists
-    const requestId = c.req.header('X-Request-ID')
-      || `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const requestId =
+      c.req.header("X-Request-ID") ||
+      `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     // Set audit headers
-    c.res.headers.set('X-Audit-ID', auditId);
-    c.res.headers.set('X-Request-ID', requestId);
+    c.res.headers.set("X-Audit-ID", auditId);
+    c.res.headers.set("X-Request-ID", requestId);
 
     // Extract contexts
     const userContext = extractUserContext(c);
@@ -288,11 +290,9 @@ export const auditMiddleware = (): MiddlewareHandler => {
       let operationConfig = LGPD_SENSITIVE_OPERATIONS[operationKey];
       if (!operationConfig) {
         // Find by pattern matching
-        for (
-          const [pattern, config] of Object.entries(
-            LGPD_SENSITIVE_OPERATIONS,
-          )
-        ) {
+        for (const [pattern, config] of Object.entries(
+          LGPD_SENSITIVE_OPERATIONS,
+        )) {
           const regex = createRouteRegex(pattern);
           if (regex.test(operationKey)) {
             operationConfig = config;
@@ -305,16 +305,17 @@ export const auditMiddleware = (): MiddlewareHandler => {
       const resourceIdMatch = extractResourceIds(path);
       const resourceId = resourceIdMatch?.[
         resourceIdMatch.length - 1
-      ]?.replaceAll("\\/", '');
+      ]?.replaceAll("\\/", "");
 
       // Create audit log entry
       const auditLog: AuditLog = {
         auditId,
         timestamp: new Date().toISOString(),
         level: operationConfig?.level || AuditLevel.INFO,
-        category: operationConfig?.category || 'general',
+        category: operationConfig?.category || "general",
         operation: operationKey,
-        description: operationConfig?.description || `${method} operation on ${path}`,
+        description:
+          operationConfig?.description || `${method} operation on ${path}`,
 
         // User context
         ...userContext,
@@ -327,20 +328,20 @@ export const auditMiddleware = (): MiddlewareHandler => {
 
         // LGPD flags
         lgpdRelevant: true,
-        personalDataAccessed: ['data_access', 'data_modification'].includes(
-          operationConfig?.category || '',
+        personalDataAccessed: ["data_access", "data_modification"].includes(
+          operationConfig?.category || "",
         ),
-        consentRequired: ['data_export', 'marketing'].includes(
-          operationConfig?.category || '',
+        consentRequired: ["data_export", "marketing"].includes(
+          operationConfig?.category || "",
         ),
 
         // Request tracking
         requestId,
-        sessionId: c.req.header('X-Session-ID'),
+        sessionId: c.req.header("X-Session-ID"),
       };
 
       // Store the log for later completion
-      c.set('auditLog', auditLog);
+      c.set("auditLog", auditLog);
     }
 
     try {
@@ -348,7 +349,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
 
       // Complete audit log if exists
       if (shouldAuditOperation) {
-        const auditLog = c.get('auditLog') as AuditLog;
+        const auditLog = c.get("auditLog") as AuditLog;
         if (auditLog) {
           auditLog.statusCode = c.res.status;
           auditLog.responseTime = Date.now() - startTime;
@@ -369,7 +370,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
     } catch (error) {
       // Log error in audit
       if (shouldAuditOperation) {
-        const auditLog = c.get('auditLog') as AuditLog;
+        const auditLog = c.get("auditLog") as AuditLog;
         if (auditLog) {
           auditLog.level = AuditLevel.ERROR;
           auditLog.statusCode = 500;
@@ -399,16 +400,16 @@ export const lgpdAudit = {
       auditId: `lgpd_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
       level: AuditLevel.CRITICAL,
-      category: 'lgpd_request',
+      category: "lgpd_request",
       operation: `DATA_SUBJECT_REQUEST_${type.toUpperCase()}`,
       description: `LGPD data subject request: ${type}`,
 
       userId,
-      method: 'INTERNAL',
-      path: '/lgpd/data-subject-request',
+      method: "INTERNAL",
+      path: "/lgpd/data-subject-request",
       resourceId: patientId,
-      clientIP: 'internal',
-      userAgent: 'system',
+      clientIP: "internal",
+      userAgent: "system",
 
       lgpdRelevant: true,
       personalDataAccessed: true,
@@ -436,16 +437,16 @@ export const lgpdAudit = {
       auditId: `consent_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
       timestamp: new Date().toISOString(),
       level: AuditLevel.WARNING,
-      category: 'consent',
-      operation: 'CONSENT_UPDATE',
-      description: `Consent ${granted ? 'granted' : 'revoked'} for ${consentType}`,
+      category: "consent",
+      operation: "CONSENT_UPDATE",
+      description: `Consent ${granted ? "granted" : "revoked"} for ${consentType}`,
 
       userId,
-      method: 'INTERNAL',
-      path: '/lgpd/consent-update',
+      method: "INTERNAL",
+      path: "/lgpd/consent-update",
       resourceId: patientId,
-      clientIP: 'internal',
-      userAgent: 'system',
+      clientIP: "internal",
+      userAgent: "system",
 
       lgpdRelevant: true,
       personalDataAccessed: false,

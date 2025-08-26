@@ -5,23 +5,23 @@
  * Compliance: LGPD/ANVISA/CFM + WCAG 2.1 AA
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
-const componentsDir = path.join(__dirname, '..', 'apps', 'web', 'components');
+const componentsDir = path.join(__dirname, "..", "apps", "web", "components");
 const expectedComponents = {
-  'dashboard/ai-powered': [
-    'AIAnalyticsDashboard.tsx',
-    'HealthMonitoringDashboard.tsx',
-    'ComplianceStatusDashboard.tsx',
-    'PerformanceMetricsDashboard.tsx',
-    'RealTimeActivityDashboard.tsx',
-    'index.ts',
+  "dashboard/ai-powered": [
+    "AIAnalyticsDashboard.tsx",
+    "HealthMonitoringDashboard.tsx",
+    "ComplianceStatusDashboard.tsx",
+    "PerformanceMetricsDashboard.tsx",
+    "RealTimeActivityDashboard.tsx",
+    "index.ts",
   ],
-  dashboard: ['DashboardLayout.tsx', 'index.ts'],
-  mobile: ['MobileNavigation.tsx', 'MobileDashboardCards.tsx', 'index.ts'],
-  accessibility: ['AccessibilityComponents.tsx', 'index.ts'],
-  layout: ['MainLayout.tsx', 'index.ts'],
+  dashboard: ["DashboardLayout.tsx", "index.ts"],
+  mobile: ["MobileNavigation.tsx", "MobileDashboardCards.tsx", "index.ts"],
+  accessibility: ["AccessibilityComponents.tsx", "index.ts"],
+  layout: ["MainLayout.tsx", "index.ts"],
 };
 
 let _totalComponents = 0;
@@ -35,22 +35,22 @@ function validateComponent(filePath, componentName) {
       return false;
     }
 
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(filePath, "utf8");
 
     // Check for required patterns
     const requiredPatterns = [
-      { pattern: /FASE 4/, description: 'FASE 4 marker' },
-      { pattern: /Compliance.*LGPD/, description: 'LGPD compliance' },
-      { pattern: /"use client"/, description: 'Client component directive' },
+      { pattern: /FASE 4/, description: "FASE 4 marker" },
+      { pattern: /Compliance.*LGPD/, description: "LGPD compliance" },
+      { pattern: /"use client"/, description: "Client component directive" },
     ];
 
     // Check TypeScript patterns
-    if (filePath.endsWith('.tsx')) {
+    if (filePath.endsWith(".tsx")) {
       requiredPatterns.push(
-        { pattern: /interface\s+\w+/, description: 'TypeScript interfaces' },
+        { pattern: /interface\s+\w+/, description: "TypeScript interfaces" },
         {
           pattern: /export\s+(function|const)/,
-          description: 'Export statements',
+          description: "Export statements",
         },
       );
     }
@@ -71,16 +71,20 @@ function validateComponent(filePath, componentName) {
       /tabIndex/,
     ];
 
-    const hasAccessibility = accessibilityPatterns.some((pattern) => pattern.test(content));
-    if (!(hasAccessibility || componentName.includes('index'))) {
+    const hasAccessibility = accessibilityPatterns.some((pattern) =>
+      pattern.test(content),
+    );
+    if (!(hasAccessibility || componentName.includes("index"))) {
       errors.push(`⚠️  ${componentName}: Limited accessibility attributes`);
     }
 
     // Check for mobile responsiveness
     const mobilePatterns = [/md:/, /lg:/, /sm:/, /grid-cols-/, /flex-col/];
 
-    const hasMobileSupport = mobilePatterns.some((pattern) => pattern.test(content));
-    if (!(hasMobileSupport || componentName.includes('index'))) {
+    const hasMobileSupport = mobilePatterns.some((pattern) =>
+      pattern.test(content),
+    );
+    if (!(hasMobileSupport || componentName.includes("index"))) {
       errors.push(`⚠️  ${componentName}: Limited mobile responsiveness`);
     }
 
@@ -109,22 +113,22 @@ function validateDirectory(dirPath, expectedFiles) {
 for (const [dirPath, files] of Object.entries(expectedComponents)) {
   validateDirectory(dirPath, files);
 }
-const mainIndexPath = path.join(componentsDir, 'index.ts');
+const mainIndexPath = path.join(componentsDir, "index.ts");
 _totalComponents++;
-validateComponent(mainIndexPath, 'components/index.ts');
+validateComponent(mainIndexPath, "components/index.ts");
 const dashboardPagesDir = path.join(
   __dirname,
-  '..',
-  'apps',
-  'web',
-  'app',
-  'dashboard',
+  "..",
+  "apps",
+  "web",
+  "app",
+  "dashboard",
 );
 const expectedPages = [
-  'page.tsx',
-  'analytics/page.tsx',
-  'compliance/page.tsx',
-  'health/page.tsx',
+  "page.tsx",
+  "analytics/page.tsx",
+  "compliance/page.tsx",
+  "health/page.tsx",
 ];
 
 for (const page of expectedPages) {
@@ -132,20 +136,20 @@ for (const page of expectedPages) {
   _totalComponents++;
   validateComponent(pagePath, `app/dashboard/${page}`);
 }
-const packageJsonPath = path.join(__dirname, '..', 'package.json');
+const packageJsonPath = path.join(__dirname, "..", "package.json");
 if (fs.existsSync(packageJsonPath)) {
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
   const requiredDeps = [
-    '@radix-ui/react-tabs',
-    '@radix-ui/react-select',
-    '@radix-ui/react-switch',
-    '@radix-ui/react-slider',
-    '@radix-ui/react-progress',
-    '@radix-ui/react-popover',
-    '@radix-ui/react-avatar',
-    '@radix-ui/react-scroll-area',
-    'lucide-react',
-    'recharts',
+    "@radix-ui/react-tabs",
+    "@radix-ui/react-select",
+    "@radix-ui/react-switch",
+    "@radix-ui/react-slider",
+    "@radix-ui/react-progress",
+    "@radix-ui/react-popover",
+    "@radix-ui/react-avatar",
+    "@radix-ui/react-scroll-area",
+    "lucide-react",
+    "recharts",
   ];
 
   const allDeps = {
@@ -155,33 +159,35 @@ if (fs.existsSync(packageJsonPath)) {
   const missingDeps = requiredDeps.filter((dep) => !allDeps[dep]);
 
   if (missingDeps.length > 0) {
-    errors.push(`📦 Missing dependencies: ${missingDeps.join(', ')}`);
-  } else {}
+    errors.push(`📦 Missing dependencies: ${missingDeps.join(", ")}`);
+  } else {
+  }
 }
 
 if (errors.length > 0) {
   errors.forEach((_error) => {});
-} else {}
+} else {
+}
 const complianceChecks = [
-  { name: 'LGPD', status: '✅ Implemented' },
-  { name: 'ANVISA', status: '✅ Implemented' },
-  { name: 'CFM', status: '✅ Implemented' },
-  { name: 'WCAG 2.1 AA', status: '✅ Implemented' },
-  { name: 'Mobile First', status: '✅ Implemented' },
-  { name: 'TypeScript', status: '✅ Implemented' },
+  { name: "LGPD", status: "✅ Implemented" },
+  { name: "ANVISA", status: "✅ Implemented" },
+  { name: "CFM", status: "✅ Implemented" },
+  { name: "WCAG 2.1 AA", status: "✅ Implemented" },
+  { name: "Mobile First", status: "✅ Implemented" },
+  { name: "TypeScript", status: "✅ Implemented" },
 ];
 
 complianceChecks.forEach((_check) => {});
 const architectureChecks = [
-  '✅ Component-based architecture',
-  '✅ Responsive design patterns',
-  '✅ Accessibility-first approach',
-  '✅ Mobile-first development',
-  '✅ TypeScript type safety',
-  '✅ Healthcare-specific UI patterns',
-  '✅ AI-powered dashboards',
-  '✅ Real-time monitoring',
-  '✅ Compliance indicators',
+  "✅ Component-based architecture",
+  "✅ Responsive design patterns",
+  "✅ Accessibility-first approach",
+  "✅ Mobile-first development",
+  "✅ TypeScript type safety",
+  "✅ Healthcare-specific UI patterns",
+  "✅ AI-powered dashboards",
+  "✅ Real-time monitoring",
+  "✅ Compliance indicators",
 ];
 
 architectureChecks.forEach((_check) => {});
@@ -189,6 +195,8 @@ architectureChecks.forEach((_check) => {});
 // Final result
 const success = errors.length === 0;
 
-if (success) {} else {}
+if (success) {
+} else {
+}
 
 process.exit(success ? 0 : 1);

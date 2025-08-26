@@ -1,100 +1,100 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // LGPD Data Processing Legal Basis
 export const LgpdLegalBasisSchema = z.enum([
-  'consent', // Consentimento
-  'legitimate_interest', // Interesse legítimo
-  'contract_performance', // Execução de contrato
-  'legal_obligation', // Cumprimento de obrigação legal
-  'vital_interests', // Proteção da vida ou incolumidade física
-  'public_interest', // Exercício regular de direitos
-  'credit_protection', // Proteção ao crédito
+  "consent", // Consentimento
+  "legitimate_interest", // Interesse legítimo
+  "contract_performance", // Execução de contrato
+  "legal_obligation", // Cumprimento de obrigação legal
+  "vital_interests", // Proteção da vida ou incolumidade física
+  "public_interest", // Exercício regular de direitos
+  "credit_protection", // Proteção ao crédito
 ]);
 
 // LGPD Data Subject Rights
 export const DataSubjectRightSchema = z.enum([
-  'access', // Confirmação e acesso
-  'correction', // Correção
-  'anonymization', // Anonimização
-  'blocking', // Bloqueio
-  'elimination', // Eliminação
-  'portability', // Portabilidade
-  'information', // Informações sobre compartilhamento
-  'revoke_consent', // Revogação do consentimento
-  'oppose_processing', // Oposição ao tratamento
+  "access", // Confirmação e acesso
+  "correction", // Correção
+  "anonymization", // Anonimização
+  "blocking", // Bloqueio
+  "elimination", // Eliminação
+  "portability", // Portabilidade
+  "information", // Informações sobre compartilhamento
+  "revoke_consent", // Revogação do consentimento
+  "oppose_processing", // Oposição ao tratamento
 ]);
 
 // Data Category Schema
 export const DataCategorySchema = z.enum([
-  'personal_identification', // Identificação pessoal
-  'contact_information', // Informações de contato
-  'medical_records', // Registros médicos
-  'financial_data', // Dados financeiros
-  'biometric_data', // Dados biométricos
-  'genetic_data', // Dados genéticos
-  'behavioral_data', // Dados comportamentais
-  'location_data', // Dados de localização
-  'professional_data', // Dados profissionais
-  'sensitive_data', // Dados sensíveis
-  'children_data', // Dados de menores
+  "personal_identification", // Identificação pessoal
+  "contact_information", // Informações de contato
+  "medical_records", // Registros médicos
+  "financial_data", // Dados financeiros
+  "biometric_data", // Dados biométricos
+  "genetic_data", // Dados genéticos
+  "behavioral_data", // Dados comportamentais
+  "location_data", // Dados de localização
+  "professional_data", // Dados profissionais
+  "sensitive_data", // Dados sensíveis
+  "children_data", // Dados de menores
 ]);
 
 // Processing Purpose Schema
 export const ProcessingPurposeSchema = z.enum([
-  'healthcare_provision', // Prestação de cuidados de saúde
-  'appointment_management', // Gestão de consultas
-  'billing_payment', // Cobrança e pagamento
-  'marketing_communication', // Comunicação de marketing
-  'service_improvement', // Melhoria de serviços
-  'legal_compliance', // Conformidade legal
-  'quality_assurance', // Garantia de qualidade
-  'research_statistics', // Pesquisa e estatísticas
-  'fraud_prevention', // Prevenção de fraudes
-  'system_security', // Segurança do sistema
+  "healthcare_provision", // Prestação de cuidados de saúde
+  "appointment_management", // Gestão de consultas
+  "billing_payment", // Cobrança e pagamento
+  "marketing_communication", // Comunicação de marketing
+  "service_improvement", // Melhoria de serviços
+  "legal_compliance", // Conformidade legal
+  "quality_assurance", // Garantia de qualidade
+  "research_statistics", // Pesquisa e estatísticas
+  "fraud_prevention", // Prevenção de fraudes
+  "system_security", // Segurança do sistema
 ]);
 
 // Audit Action Schema
 export const AuditActionSchema = z.enum([
-  'create', // Criar
-  'read', // Ler/Visualizar
-  'update', // Atualizar
-  'delete', // Deletar
-  'export', // Exportar
-  'print', // Imprimir
-  'share', // Compartilhar
-  'backup', // Backup
-  'restore', // Restaurar
-  'login', // Login
-  'logout', // Logout
-  'access_denied', // Acesso negado
-  'password_change', // Mudança de senha
-  'permission_change', // Mudança de permissão
-  'data_export', // Exportação de dados
-  'consent_given', // Consentimento dado
-  'consent_revoked', // Consentimento revogado
-  'gdpr_request', // Solicitação LGPD
+  "create", // Criar
+  "read", // Ler/Visualizar
+  "update", // Atualizar
+  "delete", // Deletar
+  "export", // Exportar
+  "print", // Imprimir
+  "share", // Compartilhar
+  "backup", // Backup
+  "restore", // Restaurar
+  "login", // Login
+  "logout", // Logout
+  "access_denied", // Acesso negado
+  "password_change", // Mudança de senha
+  "permission_change", // Mudança de permissão
+  "data_export", // Exportação de dados
+  "consent_given", // Consentimento dado
+  "consent_revoked", // Consentimento revogado
+  "gdpr_request", // Solicitação LGPD
 ]);
 
 // Risk Level Schema
 export const RiskLevelSchema = z.enum([
-  'low', // Baixo
-  'medium', // Médio
-  'high', // Alto
-  'critical', // Crítico
+  "low", // Baixo
+  "medium", // Médio
+  "high", // Alto
+  "critical", // Crítico
 ]);
 
 // Incident Category Schema
 export const IncidentCategorySchema = z.enum([
-  'data_breach', // Vazamento de dados
-  'unauthorized_access', // Acesso não autorizado
-  'system_failure', // Falha do sistema
-  'human_error', // Erro humano
-  'malware', // Malware
-  'phishing', // Phishing
-  'insider_threat', // Ameaça interna
-  'physical_security', // Segurança física
-  'compliance_violation', // Violação de conformidade
-  'other', // Outro
+  "data_breach", // Vazamento de dados
+  "unauthorized_access", // Acesso não autorizado
+  "system_failure", // Falha do sistema
+  "human_error", // Erro humano
+  "malware", // Malware
+  "phishing", // Phishing
+  "insider_threat", // Ameaça interna
+  "physical_security", // Segurança física
+  "compliance_violation", // Violação de conformidade
+  "other", // Outro
 ]);
 
 // Data Retention Schema
@@ -104,8 +104,8 @@ export const DataRetentionSchema = z.object({
   retention_period_months: z.number().min(1).max(600), // Up to 50 years for medical records
   legal_basis: z.string().max(500),
   deletion_method: z
-    .enum(['automatic', 'manual', 'archival'])
-    .default('automatic'),
+    .enum(["automatic", "manual", "archival"])
+    .default("automatic"),
   exceptions: z.string().max(1000).optional(),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
@@ -128,8 +128,8 @@ export const ConsentRecordSchema = z.object({
   ip_address: z.string().ip(),
   user_agent: z.string().optional(),
   consent_method: z
-    .enum(['web', 'mobile', 'paper', 'verbal', 'email'])
-    .default('web'),
+    .enum(["web", "mobile", "paper", "verbal", "email"])
+    .default("web"),
   witness_name: z.string().optional(),
   is_active: z.boolean().default(true),
   marketing_consent: z.boolean().default(false),
@@ -144,12 +144,12 @@ export const DataProcessingActivitySchema = z.object({
   id: z.string().uuid().optional(),
   activity_name: z
     .string()
-    .min(3, 'Nome da atividade deve ter pelo menos 3 caracteres')
-    .max(200, 'Nome da atividade deve ter no máximo 200 caracteres'),
+    .min(3, "Nome da atividade deve ter pelo menos 3 caracteres")
+    .max(200, "Nome da atividade deve ter no máximo 200 caracteres"),
   description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
   controller_name: z.string(),
   controller_contact: z.string().email(),
   dpo_contact: z.string().email().optional(),
@@ -185,34 +185,34 @@ export const DataSubjectRequestSchema = z.object({
   user_id: z.string().uuid().optional(),
   requester_name: z
     .string()
-    .min(2, 'Nome deve ter pelo menos 2 caracteres')
-    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+    .min(2, "Nome deve ter pelo menos 2 caracteres")
+    .max(100, "Nome deve ter no máximo 100 caracteres"),
   requester_email: z.string().email(),
   requester_phone: z.string().optional(),
   request_type: DataSubjectRightSchema,
   description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
   status: z
-    .enum(['pending', 'in_progress', 'completed', 'rejected', 'cancelled'])
-    .default('pending'),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+    .enum(["pending", "in_progress", "completed", "rejected", "cancelled"])
+    .default("pending"),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
   assigned_to: z.string().uuid().optional(),
   received_date: z.string().datetime(),
   due_date: z.string().datetime(),
   completed_date: z.string().datetime().optional(),
   response: z.string().max(2000).optional(),
   response_method: z
-    .enum(['email', 'mail', 'in_person', 'secure_portal'])
+    .enum(["email", "mail", "in_person", "secure_portal"])
     .optional(),
   documents_provided: z.array(z.string()).default([]),
   verification_method: z
     .enum([
-      'id_document',
-      'email_verification',
-      'phone_verification',
-      'in_person',
+      "id_document",
+      "email_verification",
+      "phone_verification",
+      "in_person",
     ])
     .optional(),
   verification_completed: z.boolean().default(false),
@@ -239,7 +239,7 @@ export const AuditLogSchema = z.object({
   location: z.string().optional(),
   device_info: z
     .object({
-      device_type: z.enum(['desktop', 'mobile', 'tablet']).optional(),
+      device_type: z.enum(["desktop", "mobile", "tablet"]).optional(),
       operating_system: z.string().optional(),
       browser: z.string().optional(),
     })
@@ -255,7 +255,7 @@ export const AuditLogSchema = z.object({
     )
     .optional(),
   metadata: z.record(z.any()).optional(),
-  risk_level: RiskLevelSchema.default('low'),
+  risk_level: RiskLevelSchema.default("low"),
   compliance_flags: z.array(z.string()).default([]),
   retention_date: z.string().datetime(),
   is_sensitive: z.boolean().default(false),
@@ -267,17 +267,17 @@ export const SecurityIncidentSchema = z.object({
   incident_number: z.string().optional(),
   title: z
     .string()
-    .min(5, 'Título deve ter pelo menos 5 caracteres')
-    .max(200, 'Título deve ter no máximo 200 caracteres'),
+    .min(5, "Título deve ter pelo menos 5 caracteres")
+    .max(200, "Título deve ter no máximo 200 caracteres"),
   description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
   category: IncidentCategorySchema,
-  severity: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+  severity: z.enum(["low", "medium", "high", "critical"]).default("medium"),
   status: z
-    .enum(['open', 'investigating', 'contained', 'resolved', 'closed'])
-    .default('open'),
+    .enum(["open", "investigating", "contained", "resolved", "closed"])
+    .default("open"),
 
   // Incident Details
   discovered_date: z.string().datetime(),
@@ -304,7 +304,7 @@ export const SecurityIncidentSchema = z.object({
   individuals_notified: z.boolean().default(false),
   individual_notification_date: z.string().datetime().optional(),
   notification_method: z
-    .enum(['email', 'letter', 'website', 'media', 'sms'])
+    .enum(["email", "letter", "website", "media", "sms"])
     .optional(),
 
   // Investigation
@@ -328,14 +328,14 @@ export const VendorComplianceSchema = z.object({
   id: z.string().uuid().optional(),
   vendor_name: z
     .string()
-    .min(2, 'Nome do fornecedor deve ter pelo menos 2 caracteres')
-    .max(200, 'Nome do fornecedor deve ter no máximo 200 caracteres'),
+    .min(2, "Nome do fornecedor deve ter pelo menos 2 caracteres")
+    .max(200, "Nome do fornecedor deve ter no máximo 200 caracteres"),
   vendor_type: z.enum([
-    'cloud_provider',
-    'software_vendor',
-    'service_provider',
-    'consultant',
-    'other',
+    "cloud_provider",
+    "software_vendor",
+    "service_provider",
+    "consultant",
+    "other",
   ]),
   contact_person: z.string(),
   contact_email: z.string().email(),
@@ -358,7 +358,7 @@ export const VendorComplianceSchema = z.object({
   certifications: z.array(z.string()).default([]),
 
   // Risk Assessment
-  risk_level: RiskLevelSchema.default('medium'),
+  risk_level: RiskLevelSchema.default("medium"),
   risk_assessment_date: z.string().date().optional(),
   risk_mitigation_measures: z.string().max(1000).optional(),
 
@@ -378,12 +378,12 @@ export const PrivacyImpactAssessmentSchema = z.object({
   pia_number: z.string().optional(),
   project_name: z
     .string()
-    .min(3, 'Nome do projeto deve ter pelo menos 3 caracteres')
-    .max(200, 'Nome do projeto deve ter no máximo 200 caracteres'),
+    .min(3, "Nome do projeto deve ter pelo menos 3 caracteres")
+    .max(200, "Nome do projeto deve ter no máximo 200 caracteres"),
   project_description: z
     .string()
-    .min(10, 'Descrição deve ter pelo menos 10 caracteres')
-    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(2000, "Descrição deve ter no máximo 2000 caracteres"),
 
   // Assessment Details
   assessor_name: z.string(),
@@ -404,8 +404,8 @@ export const PrivacyImpactAssessmentSchema = z.object({
   privacy_risks: z.array(
     z.object({
       risk_description: z.string(),
-      likelihood: z.enum(['very_low', 'low', 'medium', 'high', 'very_high']),
-      impact: z.enum(['very_low', 'low', 'medium', 'high', 'very_high']),
+      likelihood: z.enum(["very_low", "low", "medium", "high", "very_high"]),
+      impact: z.enum(["very_low", "low", "medium", "high", "very_high"]),
       risk_level: RiskLevelSchema,
       mitigation_measures: z.string(),
     }),
@@ -414,10 +414,10 @@ export const PrivacyImpactAssessmentSchema = z.object({
   // Conclusions
   overall_risk_level: RiskLevelSchema,
   recommendation: z.enum([
-    'proceed',
-    'proceed_with_conditions',
-    'reject',
-    'needs_review',
+    "proceed",
+    "proceed_with_conditions",
+    "reject",
+    "needs_review",
   ]),
   conditions: z.string().max(1000).optional(),
 
@@ -435,11 +435,11 @@ export const TrainingRecordSchema = z.object({
   user_id: z.string().uuid(),
   user_name: z.string(),
   training_type: z.enum([
-    'lgpd_awareness',
-    'data_security',
-    'incident_response',
-    'anvisa_compliance',
-    'clinical_protocols',
+    "lgpd_awareness",
+    "data_security",
+    "incident_response",
+    "anvisa_compliance",
+    "clinical_protocols",
   ]),
   training_title: z.string(),
   provider: z.string().optional(),
@@ -467,9 +467,9 @@ export const ComplianceQuerySchema = z.object({
 
   // Sorting
   sort_by: z
-    .enum(['timestamp', 'risk_level', 'user_name', 'action'])
-    .default('timestamp'),
-  sort_order: z.enum(['asc', 'desc']).default('desc'),
+    .enum(["timestamp", "risk_level", "user_name", "action"])
+    .default("timestamp"),
+  sort_order: z.enum(["asc", "desc"]).default("desc"),
 });
 
 // Response Schemas

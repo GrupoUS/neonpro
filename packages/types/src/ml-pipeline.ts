@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import type { BaseEntity } from './common';
+import type { BaseEntity } from "./common";
 
 // Core ML Pipeline Types
 export interface ModelVersion extends BaseEntity {
@@ -14,7 +14,7 @@ export interface ModelVersion extends BaseEntity {
   precision: number;
   recall: number;
   f1_score: number;
-  status: 'training' | 'active' | 'retired' | 'archived';
+  status: "training" | "active" | "retired" | "archived";
   deployment_date?: string;
   retired_date?: string;
   clinic_id: string;
@@ -27,7 +27,7 @@ export interface ABTest extends BaseEntity {
   test_name: string;
   model_a_id: string;
   model_b_id: string;
-  status: 'running' | 'completed' | 'paused' | 'cancelled';
+  status: "running" | "completed" | "paused" | "cancelled";
   start_date: string;
   end_date?: string;
   traffic_split: number; // 0.0 to 1.0, percentage for model A
@@ -57,12 +57,12 @@ export interface ABTestResult extends BaseEntity {
 
 export interface DriftDetection extends BaseEntity {
   model_id: string;
-  drift_type: 'data' | 'prediction' | 'performance';
+  drift_type: "data" | "prediction" | "performance";
   detection_date: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   drift_score: number;
   threshold: number;
-  status: 'detected' | 'investigating' | 'resolved' | 'false_positive';
+  status: "detected" | "investigating" | "resolved" | "false_positive";
   clinic_id: string;
   affected_metrics: string[];
   details: Record<string, any>;
@@ -71,7 +71,7 @@ export interface DriftDetection extends BaseEntity {
 export interface DriftDetectionResult {
   hasDrift: boolean;
   driftScore: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   affectedFeatures: string[];
   details: Record<string, any>;
 }
@@ -140,5 +140,5 @@ export interface MLPipelineStatus {
   detected_drifts: number;
   models_needing_retrain: number;
   last_evaluation_date: string;
-  overall_health: 'healthy' | 'warning' | 'critical';
+  overall_health: "healthy" | "warning" | "critical";
 }

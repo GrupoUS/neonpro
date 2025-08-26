@@ -3,7 +3,7 @@
  * LGPD and healthcare regulation compliance audit logging
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Audit log entry structure
 export interface AuditLogEntry {
@@ -20,53 +20,53 @@ export interface AuditLogEntry {
   after_state?: Record<string, any>;
   compliance_context: {
     lgpd_basis: string;
-    data_category: 'personal' | 'sensitive' | 'health' | 'administrative';
+    data_category: "personal" | "sensitive" | "health" | "administrative";
     retention_period: number; // days
-    access_level: 'read' | 'write' | 'delete' | 'export';
+    access_level: "read" | "write" | "delete" | "export";
   };
 }
 
 // Standard healthcare actions for audit logging
 export const HEALTHCARE_ACTIONS = {
   // Patient data actions
-  PATIENT_VIEW: 'patient:view',
-  PATIENT_CREATE: 'patient:create',
-  PATIENT_UPDATE: 'patient:update',
-  PATIENT_DELETE: 'patient:delete',
-  PATIENT_EXPORT: 'patient:export',
+  PATIENT_VIEW: "patient:view",
+  PATIENT_CREATE: "patient:create",
+  PATIENT_UPDATE: "patient:update",
+  PATIENT_DELETE: "patient:delete",
+  PATIENT_EXPORT: "patient:export",
 
   // Medical record actions
-  RECORD_VIEW: 'medical_record:view',
-  RECORD_CREATE: 'medical_record:create',
-  RECORD_UPDATE: 'medical_record:update',
-  RECORD_DELETE: 'medical_record:delete',
+  RECORD_VIEW: "medical_record:view",
+  RECORD_CREATE: "medical_record:create",
+  RECORD_UPDATE: "medical_record:update",
+  RECORD_DELETE: "medical_record:delete",
 
   // Appointment actions
-  APPOINTMENT_VIEW: 'appointment:view',
-  APPOINTMENT_CREATE: 'appointment:create',
-  APPOINTMENT_UPDATE: 'appointment:update',
-  APPOINTMENT_CANCEL: 'appointment:cancel',
+  APPOINTMENT_VIEW: "appointment:view",
+  APPOINTMENT_CREATE: "appointment:create",
+  APPOINTMENT_UPDATE: "appointment:update",
+  APPOINTMENT_CANCEL: "appointment:cancel",
 
   // Authentication actions
-  LOGIN_SUCCESS: 'auth:login_success',
-  LOGIN_FAILURE: 'auth:login_failure',
-  LOGOUT: 'auth:logout',
+  LOGIN_SUCCESS: "auth:login_success",
+  LOGIN_FAILURE: "auth:login_failure",
+  LOGOUT: "auth:logout",
 
   // Data export/import
-  DATA_EXPORT: 'data:export',
-  DATA_IMPORT: 'data:import',
-  REPORT_GENERATE: 'report:generate',
+  DATA_EXPORT: "data:export",
+  DATA_IMPORT: "data:import",
+  REPORT_GENERATE: "report:generate",
 } as const;
 
 // LGPD legal basis options
 export const LGPD_BASIS = {
-  CONSENT: 'consent',
-  CONTRACT: 'contract',
-  LEGAL_OBLIGATION: 'legal_obligation',
-  VITAL_INTERESTS: 'vital_interests',
-  PUBLIC_TASK: 'public_task',
-  LEGITIMATE_INTERESTS: 'legitimate_interests',
-  HEALTHCARE_PROCEDURE: 'healthcare_procedure',
+  CONSENT: "consent",
+  CONTRACT: "contract",
+  LEGAL_OBLIGATION: "legal_obligation",
+  VITAL_INTERESTS: "vital_interests",
+  PUBLIC_TASK: "public_task",
+  LEGITIMATE_INTERESTS: "legitimate_interests",
+  HEALTHCARE_PROCEDURE: "healthcare_procedure",
 } as const;
 
 // Create standardized audit log entry
@@ -81,7 +81,7 @@ export function createAuditLog(params: {
   before_state?: Record<string, any>;
   after_state?: Record<string, any>;
   lgpd_basis?: string;
-  data_category?: 'personal' | 'sensitive' | 'health' | 'administrative';
+  data_category?: "personal" | "sensitive" | "health" | "administrative";
 }): AuditLogEntry {
   return {
     id: crypto.randomUUID(),
@@ -97,9 +97,9 @@ export function createAuditLog(params: {
     after_state: params.after_state,
     compliance_context: {
       lgpd_basis: params.lgpd_basis || LGPD_BASIS.HEALTHCARE_PROCEDURE,
-      data_category: params.data_category || 'health',
+      data_category: params.data_category || "health",
       retention_period: calculateRetentionPeriod(
-        params.data_category || 'health',
+        params.data_category || "health",
       ),
       access_level: determineAccessLevel(params.action),
     },
@@ -109,16 +109,16 @@ export function createAuditLog(params: {
 // Calculate data retention period based on Brazilian healthcare regulations
 function calculateRetentionPeriod(dataCategory: string): number {
   switch (dataCategory) {
-    case 'health': {
+    case "health": {
       return 365 * 20;
     } // 20 years for medical records (CFM Resolution)
-    case 'sensitive': {
+    case "sensitive": {
       return 365 * 5;
     } // 5 years for sensitive personal data
-    case 'personal': {
+    case "personal": {
       return 365 * 2;
     } // 2 years for general personal data
-    case 'administrative': {
+    case "administrative": {
       return 365 * 7;
     } // 7 years for administrative records
     default: {
@@ -130,17 +130,17 @@ function calculateRetentionPeriod(dataCategory: string): number {
 // Determine access level from action
 function determineAccessLevel(
   action: string,
-): 'read' | 'write' | 'delete' | 'export' {
-  if (action.includes('view') || action.includes('read')) {
-    return 'read';
+): "read" | "write" | "delete" | "export" {
+  if (action.includes("view") || action.includes("read")) {
+    return "read";
   }
-  if (action.includes('delete') || action.includes('remove')) {
-    return 'delete';
+  if (action.includes("delete") || action.includes("remove")) {
+    return "delete";
   }
-  if (action.includes('export') || action.includes('download')) {
-    return 'export';
+  if (action.includes("export") || action.includes("download")) {
+    return "export";
   }
-  return 'write';
+  return "write";
 }
 
 // Validate audit log entry
@@ -159,13 +159,13 @@ export const AuditLogSchema = z.object({
   compliance_context: z.object({
     lgpd_basis: z.string(),
     data_category: z.enum([
-      'personal',
-      'sensitive',
-      'health',
-      'administrative',
+      "personal",
+      "sensitive",
+      "health",
+      "administrative",
     ]),
     retention_period: z.number().positive(),
-    access_level: z.enum(['read', 'write', 'delete', 'export']),
+    access_level: z.enum(["read", "write", "delete", "export"]),
   }),
 });
 
@@ -174,18 +174,18 @@ export function anonymizeAuditData(
   data: Record<string, any>,
 ): Record<string, any> {
   const sensitiveFields = [
-    'cpf',
-    'rg',
-    'email',
-    'phone',
-    'address',
-    'birth_date',
+    "cpf",
+    "rg",
+    "email",
+    "phone",
+    "address",
+    "birth_date",
   ];
   const anonymized = { ...data };
 
   for (const field of sensitiveFields) {
     if (anonymized[field]) {
-      anonymized[field] = '[ANONYMIZED]';
+      anonymized[field] = "[ANONYMIZED]";
     }
   }
 
@@ -194,7 +194,7 @@ export function anonymizeAuditData(
 
 // Generate audit report for compliance verification
 export interface AuditReport {
-  period: { start: Date; end: Date; };
+  period: { start: Date; end: Date };
   total_entries: number;
   by_action: Record<string, number>;
   by_user: Record<string, number>;
@@ -232,9 +232,10 @@ export function generateAuditReport(
   }
 
   // Calculate compliance score (100% if no violations)
-  const complianceScore = violations.length === 0
-    ? 100
-    : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
+  const complianceScore =
+    violations.length === 0
+      ? 100
+      : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
 
   return {
     period: { start: startDate, end: endDate },

@@ -474,9 +474,9 @@ export function SignupForm() {
               className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold text-sm transition-all ${
                 stepNumber === step
                   ? "neonpro-gradient neonpro-glow text-primary-foreground"
-                  : (stepNumber < step
+                  : stepNumber < step
                     ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground")
+                    : "bg-muted text-muted-foreground"
               }`}
             >
               {stepNumber < step ? <Check className="h-5 w-5" /> : stepNumber}

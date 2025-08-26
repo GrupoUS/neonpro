@@ -1,9 +1,10 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface ReportConfig {
@@ -11,10 +12,10 @@ interface ReportConfig {
   clinic_id: string;
   user_id: string;
   report_name: string;
-  report_type: 'consumption' | 'valuation' | 'movement' | 'custom';
+  report_type: "consumption" | "valuation" | "movement" | "custom";
   filters: any;
   schedule_config?: {
-    frequency: 'daily' | 'weekly' | 'monthly';
+    frequency: "daily" | "weekly" | "monthly";
     dayOfWeek?: number;
     dayOfMonth?: number;
     time: string;
@@ -25,14 +26,14 @@ interface ReportConfig {
 
 serve(async (req) => {
   // Handle CORS
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Get current date/time info
@@ -43,10 +44,10 @@ serve(async (req) => {
 
     // Get all active scheduled reports
     const { data: reportConfigs, error: configError } = await supabase
-      .from('custom_stock_reports')
-      .select('*')
-      .eq('is_active', true)
-      .not('schedule_config', 'is', undefined);
+      .from("custom_stock_reports")
+      .select("*")
+      .eq("is_active", true)
+      .not("schedule_config", "is", undefined);
 
     if (configError) {
       throw configError;
@@ -66,25 +67,25 @@ serve(async (req) => {
 
       // Check if report should be generated now
       switch (schedule.frequency) {
-        case 'daily': {
+        case "daily": {
           shouldGenerate = true;
           break;
         }
 
-        case 'weekly': {
+        case "weekly": {
           if (
-            schedule.dayOfWeek !== undefined
-            && currentDay === schedule.dayOfWeek
+            schedule.dayOfWeek !== undefined &&
+            currentDay === schedule.dayOfWeek
           ) {
             shouldGenerate = true;
           }
           break;
         }
 
-        case 'monthly': {
+        case "monthly": {
           if (
-            schedule.dayOfMonth !== undefined
-            && currentDate === schedule.dayOfMonth
+            schedule.dayOfMonth !== undefined &&
+            currentDate === schedule.dayOfMonth
           ) {
             shouldGenerate = true;
           }
@@ -93,14 +94,14 @@ serve(async (req) => {
       }
 
       // Check time (simplified - just check hour)
-      const scheduleHour = Number.parseInt(schedule.time.split(':')[0], 10);
+      const scheduleHour = Number.parseInt(schedule.time.split(":")[0], 10);
       if (shouldGenerate && currentHour === scheduleHour) {
         try {
           const reportData = await generateReport(supabase, config);
 
           // Store generated report
           const { data: reportRecord, error: reportError } = await supabase
-            .from('stock_reports')
+            .from("stock_reports")
             .insert({
               clinic_id: config.clinic_id,
               report_config_id: config.id,
@@ -108,7 +109,7 @@ serve(async (req) => {
               report_type: config.report_type,
               report_data: reportData,
               generated_by: config.user_id,
-              status: 'completed',
+              status: "completed",
             })
             .select()
             .single();
@@ -156,7 +157,7 @@ serve(async (req) => {
         reports: processedReports,
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       },
     );
@@ -164,11 +165,11 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || 'Unknown error occurred',
+        error: error.message || "Unknown error occurred",
         timestamp: new Date().toISOString(),
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
       },
     );
@@ -192,7 +193,7 @@ async function generateReport(supabase: any, config: ReportConfig) {
   }
 
   switch (config.report_type) {
-    case 'consumption': {
+    case "consumption": {
       return await generateConsumptionReport(
         supabase,
         clinicId,
@@ -202,7 +203,7 @@ async function generateReport(supabase: any, config: ReportConfig) {
       );
     }
 
-    case 'valuation': {
+    case "valuation": {
       return await generateValuationReport(
         supabase,
         clinicId,
@@ -212,7 +213,7 @@ async function generateReport(supabase: any, config: ReportConfig) {
       );
     }
 
-    case 'movement': {
+    case "movement": {
       return await generateMovementReport(
         supabase,
         clinicId,
@@ -243,7 +244,7 @@ async function generateConsumptionReport(
 ) {
   // Get consumption data
   const { data: movements, error } = await supabase
-    .from('stock_movement_transactions')
+    .from("stock_movement_transactions")
     .select(
       `
       product_id,
@@ -257,10 +258,10 @@ async function generateConsumptionReport(
       )
     `,
     )
-    .eq('clinic_id', clinicId)
-    .eq('movement_type', 'out')
-    .gte('transaction_date', startDate.toISOString())
-    .lte('transaction_date', endDate.toISOString());
+    .eq("clinic_id", clinicId)
+    .eq("movement_type", "out")
+    .gte("transaction_date", startDate.toISOString())
+    .lte("transaction_date", endDate.toISOString());
 
   if (error) {
     throw error;
@@ -287,8 +288,9 @@ async function generateConsumptionReport(
     } else {
       consumptionByProduct.set(productId, {
         productId,
-        productName: movement.products?.name || 'Produto sem nome',
-        category: movement.products?.product_categories?.name || 'Sem categoria',
+        productName: movement.products?.name || "Produto sem nome",
+        category:
+          movement.products?.product_categories?.name || "Sem categoria",
         quantity,
         value,
         transactions: 1,
@@ -301,7 +303,7 @@ async function generateConsumptionReport(
     .slice(0, 20);
 
   return {
-    type: 'consumption',
+    type: "consumption",
     period: {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
@@ -326,7 +328,7 @@ async function generateValuationReport(
 ) {
   // Get current inventory
   const { data: inventory, error } = await supabase
-    .from('stock_inventory')
+    .from("stock_inventory")
     .select(
       `
       product_id,
@@ -341,22 +343,24 @@ async function generateValuationReport(
       )
     `,
     )
-    .eq('clinic_id', clinicId)
-    .eq('is_active', true);
+    .eq("clinic_id", clinicId)
+    .eq("is_active", true);
 
   if (error) {
     throw error;
   }
 
-  const totalValue = inventory?.reduce(
-    (sum: number, item: any) => sum + item.quantity_available * item.unit_cost,
-    0,
-  ) || 0;
+  const totalValue =
+    inventory?.reduce(
+      (sum: number, item: any) =>
+        sum + item.quantity_available * item.unit_cost,
+      0,
+    ) || 0;
 
   const byCategory = new Map();
 
   inventory?.forEach((item: any) => {
-    const category = item.products?.product_categories?.name || 'Sem categoria';
+    const category = item.products?.product_categories?.name || "Sem categoria";
     const value = item.quantity_available * item.unit_cost;
 
     if (byCategory.has(category)) {
@@ -375,7 +379,7 @@ async function generateValuationReport(
   });
 
   return {
-    type: 'valuation',
+    type: "valuation",
     period: {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
@@ -386,15 +390,16 @@ async function generateValuationReport(
       categories: byCategory.size,
     },
     byCategory: [...byCategory.values()],
-    topValueProducts: inventory
-      ?.map((item: any) => ({
-        productName: item.products?.name || 'Produto sem nome',
-        quantity: item.quantity_available,
-        unitCost: item.unit_cost,
-        totalValue: item.quantity_available * item.unit_cost,
-      }))
-      .sort((a: any, b: any) => b.totalValue - a.totalValue)
-      .slice(0, 20) || [],
+    topValueProducts:
+      inventory
+        ?.map((item: any) => ({
+          productName: item.products?.name || "Produto sem nome",
+          quantity: item.quantity_available,
+          unitCost: item.unit_cost,
+          totalValue: item.quantity_available * item.unit_cost,
+        }))
+        .sort((a: any, b: any) => b.totalValue - a.totalValue)
+        .slice(0, 20) || [],
     generatedAt: new Date().toISOString(),
   };
 }
@@ -408,7 +413,7 @@ async function generateMovementReport(
 ) {
   // Get all movements
   const { data: movements, error } = await supabase
-    .from('stock_movement_transactions')
+    .from("stock_movement_transactions")
     .select(
       `
       movement_type,
@@ -420,9 +425,9 @@ async function generateMovementReport(
       reference_id
     `,
     )
-    .eq('clinic_id', clinicId)
-    .gte('transaction_date', startDate.toISOString())
-    .lte('transaction_date', endDate.toISOString());
+    .eq("clinic_id", clinicId)
+    .gte("transaction_date", startDate.toISOString())
+    .lte("transaction_date", endDate.toISOString());
 
   if (error) {
     throw error;
@@ -456,7 +461,7 @@ async function generateMovementReport(
   });
 
   return {
-    type: 'movement',
+    type: "movement",
     period: {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
@@ -478,13 +483,13 @@ async function generateCustomReport(
 ) {
   // Custom report based on filters
   return {
-    type: 'custom',
+    type: "custom",
     period: {
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     },
     filters,
-    message: 'Custom report generation not yet implemented',
+    message: "Custom report generation not yet implemented",
     generatedAt: new Date().toISOString(),
   };
 }

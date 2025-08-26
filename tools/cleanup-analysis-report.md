@@ -37,7 +37,7 @@
 
 ```
 - biome.json.backup
-- playwright.config.ts.backup  
+- playwright.config.ts.backup
 - vitest.config.ts.backup
 - apps/web/tests/hooks/use-auth.test.tsx.backup
 - tools/developer/healthcare-dev-tools.ts.bak

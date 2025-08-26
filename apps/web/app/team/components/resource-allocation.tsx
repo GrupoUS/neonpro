@@ -879,9 +879,9 @@ export function ResourceAllocation({
                               className={`h-2 w-2 rounded-full ${
                                 room.sanitationStatus === "clean"
                                   ? "bg-green-500"
-                                  : (room.sanitationStatus === "cleaning"
+                                  : room.sanitationStatus === "cleaning"
                                     ? "bg-yellow-500"
-                                    : "bg-red-500")
+                                    : "bg-red-500"
                               }`}
                             />
                             <span className="text-xs capitalize">

@@ -9,9 +9,9 @@
  * - Analytics de compliance
  */
 
-import { EnhancedServiceBase } from '../base/EnhancedServiceBase';
-import type { ServiceConfig } from '../base/EnhancedServiceBase';
-import type { ServiceContext } from '../types';
+import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
+import type { ServiceConfig } from "../base/EnhancedServiceBase";
+import type { ServiceContext } from "../types";
 
 // ================================================
 // ENHANCED COMPLIANCE TYPES
@@ -196,169 +196,169 @@ interface FrameworkCompliance {
 // ================================================
 
 enum PolicyType {
-  PRIVACY = 'privacy',
-  SECURITY = 'security',
-  DATA_RETENTION = 'data_retention',
-  ACCESS_CONTROL = 'access_control',
-  AUDIT = 'audit',
-  INCIDENT_RESPONSE = 'incident_response',
-  TRAINING = 'training',
-  VENDOR_MANAGEMENT = 'vendor_management',
+  PRIVACY = "privacy",
+  SECURITY = "security",
+  DATA_RETENTION = "data_retention",
+  ACCESS_CONTROL = "access_control",
+  AUDIT = "audit",
+  INCIDENT_RESPONSE = "incident_response",
+  TRAINING = "training",
+  VENDOR_MANAGEMENT = "vendor_management",
 }
 
 enum ComplianceCategory {
-  DATA_PROTECTION = 'data_protection',
-  HEALTHCARE = 'healthcare',
-  FINANCIAL = 'financial',
-  SECURITY = 'security',
-  OPERATIONAL = 'operational',
-  ENVIRONMENTAL = 'environmental',
-  QUALITY = 'quality',
+  DATA_PROTECTION = "data_protection",
+  HEALTHCARE = "healthcare",
+  FINANCIAL = "financial",
+  SECURITY = "security",
+  OPERATIONAL = "operational",
+  ENVIRONMENTAL = "environmental",
+  QUALITY = "quality",
 }
 
 enum ComplianceFramework {
-  LGPD = 'lgpd',
-  GDPR = 'gdpr',
-  ANVISA = 'anvisa',
-  CFM = 'cfm',
-  ISO27001 = 'iso27001',
-  HIPAA = 'hipaa',
-  SOX = 'sox',
-  PCI_DSS = 'pci_dss',
-  CUSTOM = 'custom',
+  LGPD = "lgpd",
+  GDPR = "gdpr",
+  ANVISA = "anvisa",
+  CFM = "cfm",
+  ISO27001 = "iso27001",
+  HIPAA = "hipaa",
+  SOX = "sox",
+  PCI_DSS = "pci_dss",
+  CUSTOM = "custom",
 }
 
 enum RuleType {
-  PREVENTIVE = 'preventive',
-  DETECTIVE = 'detective',
-  CORRECTIVE = 'corrective',
-  COMPENSATING = 'compensating',
+  PREVENTIVE = "preventive",
+  DETECTIVE = "detective",
+  CORRECTIVE = "corrective",
+  COMPENSATING = "compensating",
 }
 
 enum ConditionOperator {
-  EQUALS = 'equals',
-  NOT_EQUALS = 'not_equals',
-  GREATER_THAN = 'greater_than',
-  LESS_THAN = 'less_than',
-  CONTAINS = 'contains',
-  REGEX = 'regex',
+  EQUALS = "equals",
+  NOT_EQUALS = "not_equals",
+  GREATER_THAN = "greater_than",
+  LESS_THAN = "less_than",
+  CONTAINS = "contains",
+  REGEX = "regex",
 }
 
 enum DataSource {
-  DATABASE = 'database',
-  LOG_FILE = 'log_file',
-  API = 'api',
-  FILE_SYSTEM = 'file_system',
-  EXTERNAL = 'external',
+  DATABASE = "database",
+  LOG_FILE = "log_file",
+  API = "api",
+  FILE_SYSTEM = "file_system",
+  EXTERNAL = "external",
 }
 
 enum LogicalOperator {
-  AND = 'and',
-  OR = 'or',
-  NOT = 'not',
+  AND = "and",
+  OR = "or",
+  NOT = "not",
 }
 
 enum ActionType {
-  BLOCK = 'block',
-  ALERT = 'alert',
-  LOG = 'log',
-  QUARANTINE = 'quarantine',
-  ENCRYPT = 'encrypt',
-  DELETE = 'delete',
-  NOTIFY = 'notify',
+  BLOCK = "block",
+  ALERT = "alert",
+  LOG = "log",
+  QUARANTINE = "quarantine",
+  ENCRYPT = "encrypt",
+  DELETE = "delete",
+  NOTIFY = "notify",
 }
 
 enum SeverityLevel {
-  CRITICAL = 'critical',
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  INFO = 'info',
+  CRITICAL = "critical",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
+  INFO = "info",
 }
 
 enum IncidentType {
-  DATA_BREACH = 'data_breach',
-  PRIVACY_VIOLATION = 'privacy_violation',
-  SECURITY_INCIDENT = 'security_incident',
-  POLICY_VIOLATION = 'policy_violation',
-  SYSTEM_FAILURE = 'system_failure',
-  HUMAN_ERROR = 'human_error',
-  EXTERNAL_THREAT = 'external_threat',
+  DATA_BREACH = "data_breach",
+  PRIVACY_VIOLATION = "privacy_violation",
+  SECURITY_INCIDENT = "security_incident",
+  POLICY_VIOLATION = "policy_violation",
+  SYSTEM_FAILURE = "system_failure",
+  HUMAN_ERROR = "human_error",
+  EXTERNAL_THREAT = "external_threat",
 }
 
 enum IncidentStatus {
-  REPORTED = 'reported',
-  INVESTIGATING = 'investigating',
-  CONTAINED = 'contained',
-  RESOLVED = 'resolved',
-  CLOSED = 'closed',
+  REPORTED = "reported",
+  INVESTIGATING = "investigating",
+  CONTAINED = "contained",
+  RESOLVED = "resolved",
+  CLOSED = "closed",
 }
 
 enum SensitivityLevel {
-  PUBLIC = 'public',
-  INTERNAL = 'internal',
-  CONFIDENTIAL = 'confidential',
-  RESTRICTED = 'restricted',
+  PUBLIC = "public",
+  INTERNAL = "internal",
+  CONFIDENTIAL = "confidential",
+  RESTRICTED = "restricted",
 }
 
 enum ImpactLevel {
-  MINIMAL = 'minimal',
-  MINOR = 'minor',
-  MODERATE = 'moderate',
-  MAJOR = 'major',
-  CATASTROPHIC = 'catastrophic',
+  MINIMAL = "minimal",
+  MINOR = "minor",
+  MODERATE = "moderate",
+  MAJOR = "major",
+  CATASTROPHIC = "catastrophic",
 }
 
 enum EffectivenessLevel {
-  INEFFECTIVE = 'ineffective',
-  PARTIALLY_EFFECTIVE = 'partially_effective',
-  EFFECTIVE = 'effective',
-  HIGHLY_EFFECTIVE = 'highly_effective',
+  INEFFECTIVE = "ineffective",
+  PARTIALLY_EFFECTIVE = "partially_effective",
+  EFFECTIVE = "effective",
+  HIGHLY_EFFECTIVE = "highly_effective",
 }
 
 enum RemediationStatus {
-  PLANNED = 'planned',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  PLANNED = "planned",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }
 
 enum PriorityLevel {
-  CRITICAL = 'critical',
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
+  CRITICAL = "critical",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
 }
 
 enum ActionStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }
 
 enum DataSubjectType {
-  PATIENT = 'patient',
-  EMPLOYEE = 'employee',
-  CUSTOMER = 'customer',
-  VENDOR = 'vendor',
-  OTHER = 'other',
+  PATIENT = "patient",
+  EMPLOYEE = "employee",
+  CUSTOMER = "customer",
+  VENDOR = "vendor",
+  OTHER = "other",
 }
 
 enum LegalBasis {
-  CONSENT = 'consent',
-  CONTRACT = 'contract',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  VITAL_INTERESTS = 'vital_interests',
-  PUBLIC_TASK = 'public_task',
-  LEGITIMATE_INTERESTS = 'legitimate_interests',
+  CONSENT = "consent",
+  CONTRACT = "contract",
+  LEGAL_OBLIGATION = "legal_obligation",
+  VITAL_INTERESTS = "vital_interests",
+  PUBLIC_TASK = "public_task",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 
 enum ConsentMethod {
-  ELECTRONIC = 'electronic',
-  WRITTEN = 'written',
-  VERBAL = 'verbal',
-  IMPLIED = 'implied',
+  ELECTRONIC = "electronic",
+  WRITTEN = "written",
+  VERBAL = "verbal",
+  IMPLIED = "implied",
 }
 
 // ================================================
@@ -372,7 +372,7 @@ interface CreatePolicyRequest {
   type: PolicyType;
   category: ComplianceCategory;
   framework: ComplianceFramework;
-  rules: Omit<ComplianceRule, 'id'>[];
+  rules: Omit<ComplianceRule, "id">[];
   effectiveDate: Date;
   expiryDate?: Date;
   metadata?: Record<string, any>;
@@ -388,7 +388,7 @@ interface ReportIncidentRequest {
   affectedSystems: string[];
   affectedData: Omit<
     DataImpactAssessment,
-    'notificationRequired' | 'regulatoryReportingRequired'
+    "notificationRequired" | "regulatoryReportingRequired"
   >;
   metadata?: Record<string, any>;
 }
@@ -421,14 +421,15 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       framework: ComplianceFramework.LGPD,
       rules: [
         {
-          name: 'Consentimento Explícito',
-          description: 'Verificar consentimento antes de processar dados pessoais',
+          name: "Consentimento Explícito",
+          description:
+            "Verificar consentimento antes de processar dados pessoais",
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.HIGH,
         },
         {
-          name: 'Direito de Portabilidade',
-          description: 'Garantir exportação de dados em formato legível',
+          name: "Direito de Portabilidade",
+          description: "Garantir exportação de dados em formato legível",
           type: RuleType.CORRECTIVE,
           severity: SeverityLevel.MEDIUM,
         },
@@ -438,14 +439,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       framework: ComplianceFramework.ANVISA,
       rules: [
         {
-          name: 'Rastreabilidade de Dispositivos',
-          description: 'Manter rastro completo de dispositivos médicos',
+          name: "Rastreabilidade de Dispositivos",
+          description: "Manter rastro completo de dispositivos médicos",
           type: RuleType.DETECTIVE,
           severity: SeverityLevel.CRITICAL,
         },
         {
-          name: 'Notificação de Eventos Adversos',
-          description: 'Reportar eventos adversos em até 72h',
+          name: "Notificação de Eventos Adversos",
+          description: "Reportar eventos adversos em até 72h",
           type: RuleType.CORRECTIVE,
           severity: SeverityLevel.HIGH,
         },
@@ -455,14 +456,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       framework: ComplianceFramework.CFM,
       rules: [
         {
-          name: 'Sigilo Médico',
-          description: 'Proteger informações médicas confidenciais',
+          name: "Sigilo Médico",
+          description: "Proteger informações médicas confidenciais",
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.CRITICAL,
         },
         {
-          name: 'Telemedicina Regulamentada',
-          description: 'Seguir diretrizes CFM para telemedicina',
+          name: "Telemedicina Regulamentada",
+          description: "Seguir diretrizes CFM para telemedicina",
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.HIGH,
         },
@@ -472,8 +473,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   constructor(config?: Partial<ServiceConfig>) {
     super({
-      serviceName: 'ComplianceServiceEnhanced',
-      version: '2.0.0',
+      serviceName: "ComplianceServiceEnhanced",
+      version: "2.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -492,11 +493,11 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   // ================================================
 
   getServiceName(): string {
-    return 'ComplianceServiceEnhanced';
+    return "ComplianceServiceEnhanced";
   }
 
   getServiceVersion(): string {
-    return '2.0.0';
+    return "2.0.0";
   }
 
   // ================================================
@@ -511,7 +512,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<CompliancePolicy> {
     return this.executeOperation(
-      'createPolicy',
+      "createPolicy",
       async () => {
         // Validate policy data
         this.validatePolicyRequest(request);
@@ -580,7 +581,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<CompliancePolicy[]> {
     return this.executeOperation(
-      'searchPolicies',
+      "searchPolicies",
       async () => {
         // Build cache key based on filters
         const cacheKey = `policies_${tenantId}_${JSON.stringify(filters)}`;
@@ -622,7 +623,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ComplianceIncident> {
     return this.executeOperation(
-      'reportIncident',
+      "reportIncident",
       async () => {
         // Validate incident data
         this.validateIncidentRequest(request);
@@ -664,8 +665,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
         // Auto-assign based on severity
         if (
-          incident.severity === SeverityLevel.CRITICAL
-          || incident.severity === SeverityLevel.HIGH
+          incident.severity === SeverityLevel.CRITICAL ||
+          incident.severity === SeverityLevel.HIGH
         ) {
           await this.autoAssignIncident(incident);
         }
@@ -698,7 +699,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ComplianceMetrics> {
     return this.executeOperation(
-      'getComplianceMetrics',
+      "getComplianceMetrics",
       async () => {
         const cacheKey = `metrics_${tenantId}_${periodStart.getTime()}_${periodEnd.getTime()}`;
 
@@ -740,7 +741,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ConsentRecord> {
     return this.executeOperation(
-      'recordConsent',
+      "recordConsent",
       async () => {
         // Validate consent request
         this.validateConsentRequest(request);
@@ -799,7 +800,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<boolean> {
     return this.executeOperation(
-      'withdrawConsent',
+      "withdrawConsent",
       async () => {
         // Update consent record
         const success = await this.updateConsentInDatabase(
@@ -843,7 +844,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<string> {
     return this.executeOperation(
-      'startComplianceMonitoring',
+      "startComplianceMonitoring",
       async () => {
         const monitorId = `monitor_${tenantId}_${Date.now()}`;
 
@@ -871,7 +872,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<boolean> {
     return this.executeOperation(
-      'stopComplianceMonitoring',
+      "stopComplianceMonitoring",
       async () => {
         const interval = this.activeMonitors.get(monitorId);
         if (interval) {
@@ -899,16 +900,16 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     tenantId: string,
     context: ServiceContext,
   ): Promise<{
-    lgpd: { compliant: boolean; issues: string[]; };
-    anvisa: { compliant: boolean; issues: string[]; };
-    cfm: { compliant: boolean; issues: string[]; };
+    lgpd: { compliant: boolean; issues: string[] };
+    anvisa: { compliant: boolean; issues: string[] };
+    cfm: { compliant: boolean; issues: string[] };
     overall: {
       score: number;
-      status: 'compliant' | 'non-compliant' | 'warning';
+      status: "compliant" | "non-compliant" | "warning";
     };
   }> {
     return this.executeOperation(
-      'checkBrazilianCompliance',
+      "checkBrazilianCompliance",
       async () => {
         // Check LGPD compliance
         const lgpdCheck = await this.checkLGPDCompliance(tenantId, context);
@@ -920,9 +921,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         const cfmCheck = await this.checkCFMCompliance(tenantId, context);
 
         // Calculate overall score
-        const _issues = lgpdCheck.issues.length
-          + anvisaCheck.issues.length
-          + cfmCheck.issues.length;
+        const _issues =
+          lgpdCheck.issues.length +
+          anvisaCheck.issues.length +
+          cfmCheck.issues.length;
         const totalChecks = 3;
         const compliantFrameworks = [
           lgpdCheck.compliant,
@@ -931,14 +933,14 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         ].filter(Boolean).length;
 
         const score = (compliantFrameworks / totalChecks) * 100;
-        let status: 'compliant' | 'non-compliant' | 'warning';
+        let status: "compliant" | "non-compliant" | "warning";
 
         if (score === 100) {
-          status = 'compliant';
+          status = "compliant";
         } else if (score >= 70) {
-          status = 'warning';
+          status = "warning";
         } else {
-          status = 'non-compliant';
+          status = "non-compliant";
         }
 
         return {
@@ -970,28 +972,28 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   private validatePolicyRequest(request: CreatePolicyRequest): void {
     if (!(request.name && request.tenantId)) {
-      throw new Error('Policy name and tenant ID are required');
+      throw new Error("Policy name and tenant ID are required");
     }
     if (!request.rules || request.rules.length === 0) {
-      throw new Error('At least one rule is required for a policy');
+      throw new Error("At least one rule is required for a policy");
     }
   }
 
   private validateIncidentRequest(request: ReportIncidentRequest): void {
     if (!(request.title && request.tenantId)) {
-      throw new Error('Incident title and tenant ID are required');
+      throw new Error("Incident title and tenant ID are required");
     }
     if (!request.affectedData) {
-      throw new Error('Affected data assessment is required');
+      throw new Error("Affected data assessment is required");
     }
   }
 
   private validateConsentRequest(request: CreateConsentRequest): void {
     if (!(request.dataSubjectId && request.purpose)) {
-      throw new Error('Data subject ID and purpose are required');
+      throw new Error("Data subject ID and purpose are required");
     }
     if (request.retentionPeriod <= 0) {
-      throw new Error('Retention period must be positive');
+      throw new Error("Retention period must be positive");
     }
   }
 
@@ -1002,19 +1004,21 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async assessDataImpact(
     affectedData: Omit<
       DataImpactAssessment,
-      'notificationRequired' | 'regulatoryReportingRequired'
+      "notificationRequired" | "regulatoryReportingRequired"
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification requirements based on Brazilian laws
-    const notificationRequired = affectedData.recordsAffected > 100
-      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
-      || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const notificationRequired =
+      affectedData.recordsAffected > 100 ||
+      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
+      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
+      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
-    const regulatoryReportingRequired = affectedData.recordsAffected > 500
-      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
-      || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const regulatoryReportingRequired =
+      affectedData.recordsAffected > 500 ||
+      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
+      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
+      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
     return {
       ...affectedData,
@@ -1032,8 +1036,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     if (severity === SeverityLevel.CRITICAL) {
       actions.push({
         id: `action_${Date.now()}_1`,
-        description: 'Contenção imediata do incidente',
-        type: 'containment',
+        description: "Contenção imediata do incidente",
+        type: "containment",
         priority: PriorityLevel.CRITICAL,
         dueDate: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours
         assignedTo: userId,
@@ -1043,7 +1047,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
     return {
       actions,
-      timeline: severity === SeverityLevel.CRITICAL ? '2 horas' : '24 horas',
+      timeline: severity === SeverityLevel.CRITICAL ? "2 horas" : "24 horas",
       responsibleParty: userId,
       approvalRequired: severity === SeverityLevel.CRITICAL,
       status: RemediationStatus.PLANNED,
@@ -1053,7 +1057,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkLGPDCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock LGPD compliance check
     return {
       compliant: true,
@@ -1064,7 +1068,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkANVISACompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock ANVISA compliance check
     return {
       compliant: true,
@@ -1075,7 +1079,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkCFMCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     // Mock CFM compliance check
     return {
       compliant: true,

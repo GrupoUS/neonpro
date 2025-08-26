@@ -76,7 +76,7 @@ export interface PerformanceThresholds {
 
 export interface AccessibilityThresholds {
   /** Minimum WCAG compliance level */
-  wcagLevel: 'A' | 'AA' | 'AAA';
+  wcagLevel: "A" | "AA" | "AAA";
   /** Minimum accessibility score */
   axeScore: number;
   /** Required accessibility audits */
@@ -108,7 +108,12 @@ export const QUALITY_GATES: QualityGates = {
     functions: 95,
     lines: 90,
     critical: {
-      packages: ['@neonpro/security', '@neonpro/compliance', '@neonpro/database', '@neonpro/audit'],
+      packages: [
+        "@neonpro/security",
+        "@neonpro/compliance",
+        "@neonpro/database",
+        "@neonpro/audit",
+      ],
       threshold: 98,
     },
   },
@@ -144,14 +149,14 @@ export const QUALITY_GATES: QualityGates = {
   },
 
   accessibility: {
-    wcagLevel: 'AA',
+    wcagLevel: "AA",
     axeScore: 95,
     audits: [
-      'keyboard-navigation',
-      'screen-reader',
-      'color-contrast',
-      'focus-management',
-      'semantic-markup',
+      "keyboard-navigation",
+      "screen-reader",
+      "color-contrast",
+      "focus-management",
+      "semantic-markup",
     ],
   },
 
@@ -188,19 +193,19 @@ export interface QualityResult {
 }
 
 export interface QualityIssue {
-  type: 'error' | 'warning' | 'info';
+  type: "error" | "warning" | "info";
   category: string;
   message: string;
   file?: string;
   line?: number;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  severity: "critical" | "high" | "medium" | "low";
   recommendation: string;
 }
 
 export enum QualityStatus {
-  PASS = 'PASS',
-  FAIL = 'FAIL',
-  WARNING = 'WARNING',
+  PASS = "PASS",
+  FAIL = "FAIL",
+  WARNING = "WARNING",
 }
 
 /**
@@ -226,7 +231,9 @@ export class HealthcareQualityValidator {
    */
   static validateProductionReadiness(report: QualityReport): boolean {
     return Object.values(report).every((result) =>
-      typeof result === 'object' && 'status' in result ? result.status !== QualityStatus.FAIL : true
+      typeof result === "object" && "status" in result
+        ? result.status !== QualityStatus.FAIL
+        : true,
     );
   }
 
@@ -243,15 +250,19 @@ export class HealthcareQualityValidator {
     }
 
     if (report.security.status === QualityStatus.FAIL) {
-      recommendations.push('Address critical security vulnerabilities before deployment');
+      recommendations.push(
+        "Address critical security vulnerabilities before deployment",
+      );
     }
 
     if (report.compliance.score < QUALITY_GATES.compliance.lgpd) {
-      recommendations.push('Ensure LGPD compliance requirements are met');
+      recommendations.push("Ensure LGPD compliance requirements are met");
     }
 
     if (report.accessibility.status === QualityStatus.FAIL) {
-      recommendations.push('Fix accessibility issues to meet WCAG 2.1 AA standards');
+      recommendations.push(
+        "Fix accessibility issues to meet WCAG 2.1 AA standards",
+      );
     }
 
     return recommendations;

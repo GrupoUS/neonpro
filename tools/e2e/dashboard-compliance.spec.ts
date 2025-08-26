@@ -1,22 +1,24 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // Dashboard Compliance E2E Tests
 // Tests compliance monitoring, ANVISA reporting, LGPD compliance, and audit trails
 
-test.describe('Dashboard Compliance Page', () => {
+test.describe("Dashboard Compliance Page", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to compliance dashboard
-    await page.goto('/dashboard/compliance');
+    await page.goto("/dashboard/compliance");
 
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
   });
 
-  test.describe('Compliance Overview', () => {
-    test('should display compliance dashboard with key metrics', async ({ page }) => {
+  test.describe("Compliance Overview", () => {
+    test("should display compliance dashboard with key metrics", async ({
+      page,
+    }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Compliance.*NeonPro/);
-      await expect(page.locator('h1')).toContainText('Compliance Dashboard');
+      await expect(page.locator("h1")).toContainText("Compliance Dashboard");
 
       // Verify compliance metrics cards
       await expect(
@@ -36,7 +38,7 @@ test.describe('Dashboard Compliance Page', () => {
       await expect(complianceScore).toContainText(/%/);
     });
 
-    test('should show compliance status indicators', async ({ page }) => {
+    test("should show compliance status indicators", async ({ page }) => {
       // ANVISA compliance status
       const anvisaStatus = page.locator(
         '[data-testid="anvisa-status-indicator"]',
@@ -60,7 +62,7 @@ test.describe('Dashboard Compliance Page', () => {
       await expect(securityStatus).toBeVisible();
     });
 
-    test('should display recent compliance alerts', async ({ page }) => {
+    test("should display recent compliance alerts", async ({ page }) => {
       const alertsSection = page.locator('[data-testid="compliance-alerts"]');
       await expect(alertsSection).toBeVisible();
 
@@ -81,8 +83,8 @@ test.describe('Dashboard Compliance Page', () => {
     });
   });
 
-  test.describe('ANVISA Compliance', () => {
-    test('should display ANVISA reporting section', async ({ page }) => {
+  test.describe("ANVISA Compliance", () => {
+    test("should display ANVISA reporting section", async ({ page }) => {
       const anvisaSection = page.locator('[data-testid="anvisa-section"]');
       await expect(anvisaSection).toBeVisible();
 
@@ -102,7 +104,7 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
     });
 
-    test('should handle adverse events reporting', async ({ page }) => {
+    test("should handle adverse events reporting", async ({ page }) => {
       // Navigate to adverse events
       await page.click('[data-testid="adverse-events-tab"]');
 
@@ -114,15 +116,15 @@ test.describe('Dashboard Compliance Page', () => {
       await page.click('[data-testid="report-adverse-event"]');
 
       // Fill adverse event form
-      await page.fill('[data-testid="patient-id-input"]', '12345678901');
-      await page.selectOption('[data-testid="event-severity"]', 'moderate');
+      await page.fill('[data-testid="patient-id-input"]', "12345678901");
+      await page.selectOption('[data-testid="event-severity"]', "moderate");
       await page.fill(
         '[data-testid="event-description"]',
-        'Test adverse event description',
+        "Test adverse event description",
       );
       await page.selectOption(
         '[data-testid="event-category"]',
-        'allergic_reaction',
+        "allergic_reaction",
       );
 
       // Submit form
@@ -134,10 +136,10 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Adverse event reported successfully');
+      ).toContainText("Adverse event reported successfully");
     });
 
-    test('should validate ANVISA equipment compliance', async ({ page }) => {
+    test("should validate ANVISA equipment compliance", async ({ page }) => {
       // Navigate to equipment compliance
       await page.click('[data-testid="equipment-compliance-tab"]');
 
@@ -165,8 +167,8 @@ test.describe('Dashboard Compliance Page', () => {
     });
   });
 
-  test.describe('LGPD Compliance', () => {
-    test('should display LGPD compliance dashboard', async ({ page }) => {
+  test.describe("LGPD Compliance", () => {
+    test("should display LGPD compliance dashboard", async ({ page }) => {
       // Navigate to LGPD section
       await page.click('[data-testid="lgpd-tab"]');
 
@@ -185,7 +187,7 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
     });
 
-    test('should handle data subject requests', async ({ page }) => {
+    test("should handle data subject requests", async ({ page }) => {
       await page.click('[data-testid="lgpd-tab"]');
 
       // Check data subject requests section
@@ -198,11 +200,11 @@ test.describe('Dashboard Compliance Page', () => {
       await page.click('[data-testid="new-data-request"]');
 
       // Fill request form
-      await page.fill('[data-testid="requester-cpf"]', '12345678901');
-      await page.selectOption('[data-testid="request-type"]', 'data_access');
+      await page.fill('[data-testid="requester-cpf"]', "12345678901");
+      await page.selectOption('[data-testid="request-type"]', "data_access");
       await page.fill(
         '[data-testid="request-description"]',
-        'Request for personal data access',
+        "Request for personal data access",
       );
 
       // Submit request
@@ -214,10 +216,10 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Data subject request created');
+      ).toContainText("Data subject request created");
     });
 
-    test('should manage consent tracking', async ({ page }) => {
+    test("should manage consent tracking", async ({ page }) => {
       await page.click('[data-testid="lgpd-tab"]');
 
       // Navigate to consent management
@@ -241,7 +243,7 @@ test.describe('Dashboard Compliance Page', () => {
       // Test consent filtering
       await page.selectOption(
         '[data-testid="consent-status-filter"]',
-        'active',
+        "active",
       );
       await page.waitForTimeout(1000); // Wait for filter to apply
 
@@ -250,13 +252,13 @@ test.describe('Dashboard Compliance Page', () => {
       if ((await filteredRows.count()) > 0) {
         await expect(
           filteredRows.first().locator('[data-testid="consent-status"]'),
-        ).toContainText('Active');
+        ).toContainText("Active");
       }
     });
   });
 
-  test.describe('Audit Trail', () => {
-    test('should display comprehensive audit trail', async ({ page }) => {
+  test.describe("Audit Trail", () => {
+    test("should display comprehensive audit trail", async ({ page }) => {
       // Navigate to audit trail
       await page.click('[data-testid="audit-trail-tab"]');
 
@@ -282,7 +284,7 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
     });
 
-    test('should filter audit trail by date range', async ({ page }) => {
+    test("should filter audit trail by date range", async ({ page }) => {
       await page.click('[data-testid="audit-trail-tab"]');
 
       // Set date range filter
@@ -291,11 +293,11 @@ test.describe('Dashboard Compliance Page', () => {
 
       await page.fill(
         '[data-testid="audit-start-date"]',
-        lastWeek.toISOString().split('T')[0],
+        lastWeek.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="audit-end-date"]',
-        today.toISOString().split('T')[0],
+        today.toISOString().split("T")[0],
       );
 
       // Apply filter
@@ -311,13 +313,13 @@ test.describe('Dashboard Compliance Page', () => {
       }
     });
 
-    test('should filter audit trail by user and action', async ({ page }) => {
+    test("should filter audit trail by user and action", async ({ page }) => {
       await page.click('[data-testid="audit-trail-tab"]');
 
       // Filter by action type
       await page.selectOption(
         '[data-testid="audit-action-filter"]',
-        'patient_access',
+        "patient_access",
       );
 
       // Filter by user (if available)
@@ -337,15 +339,15 @@ test.describe('Dashboard Compliance Page', () => {
       if ((await auditEntries.count()) > 0) {
         await expect(
           auditEntries.first().locator('[data-testid="audit-action"]'),
-        ).toContainText('patient_access');
+        ).toContainText("patient_access");
       }
     });
 
-    test('should export audit trail report', async ({ page }) => {
+    test("should export audit trail report", async ({ page }) => {
       await page.click('[data-testid="audit-trail-tab"]');
 
       // Test export functionality
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="export-audit-trail"]');
 
       // Verify download started
@@ -354,8 +356,8 @@ test.describe('Dashboard Compliance Page', () => {
     });
   });
 
-  test.describe('Professional Licenses', () => {
-    test('should display professional licenses overview', async ({ page }) => {
+  test.describe("Professional Licenses", () => {
+    test("should display professional licenses overview", async ({ page }) => {
       // Navigate to licenses section
       await page.click('[data-testid="licenses-tab"]');
 
@@ -375,7 +377,7 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
     });
 
-    test('should handle license renewal alerts', async ({ page }) => {
+    test("should handle license renewal alerts", async ({ page }) => {
       await page.click('[data-testid="licenses-tab"]');
 
       // Check for expiring licenses
@@ -397,7 +399,7 @@ test.describe('Dashboard Compliance Page', () => {
       }
     });
 
-    test('should validate CFM registration numbers', async ({ page }) => {
+    test("should validate CFM registration numbers", async ({ page }) => {
       await page.click('[data-testid="licenses-tab"]');
 
       // Test adding new license
@@ -406,10 +408,10 @@ test.describe('Dashboard Compliance Page', () => {
       // Fill license form
       await page.fill(
         '[data-testid="professional-name"]',
-        'Dr. Test Professional',
+        "Dr. Test Professional",
       );
-      await page.fill('[data-testid="cfm-number"]', '12345/SP');
-      await page.selectOption('[data-testid="license-type"]', 'dermatologist');
+      await page.fill('[data-testid="cfm-number"]', "12345/SP");
+      await page.selectOption('[data-testid="license-type"]', "dermatologist");
 
       // Test CFM validation
       await page.blur('[data-testid="cfm-number"]');
@@ -421,8 +423,8 @@ test.describe('Dashboard Compliance Page', () => {
     });
   });
 
-  test.describe('Compliance Reports', () => {
-    test('should generate compliance reports', async ({ page }) => {
+  test.describe("Compliance Reports", () => {
+    test("should generate compliance reports", async ({ page }) => {
       // Navigate to reports section
       await page.click('[data-testid="compliance-reports-tab"]');
 
@@ -441,7 +443,7 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
     });
 
-    test('should generate ANVISA compliance report', async ({ page }) => {
+    test("should generate ANVISA compliance report", async ({ page }) => {
       await page.click('[data-testid="compliance-reports-tab"]');
 
       // Select ANVISA report
@@ -452,15 +454,15 @@ test.describe('Dashboard Compliance Page', () => {
       startDate.setMonth(startDate.getMonth() - 1);
       await page.fill(
         '[data-testid="report-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="report-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Generate report
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="generate-report"]');
 
       // Verify download
@@ -470,7 +472,7 @@ test.describe('Dashboard Compliance Page', () => {
       );
     });
 
-    test('should schedule automated compliance reports', async ({ page }) => {
+    test("should schedule automated compliance reports", async ({ page }) => {
       await page.click('[data-testid="compliance-reports-tab"]');
 
       // Navigate to scheduled reports
@@ -482,16 +484,16 @@ test.describe('Dashboard Compliance Page', () => {
       // Configure schedule
       await page.fill(
         '[data-testid="report-name"]',
-        'Monthly ANVISA Compliance Report',
+        "Monthly ANVISA Compliance Report",
       );
       await page.selectOption(
         '[data-testid="report-type"]',
-        'anvisa_compliance',
+        "anvisa_compliance",
       );
-      await page.selectOption('[data-testid="report-frequency"]', 'monthly');
+      await page.selectOption('[data-testid="report-frequency"]', "monthly");
       await page.fill(
         '[data-testid="recipient-emails"]',
-        'compliance@neonpro.com',
+        "compliance@neonpro.com",
       );
 
       // Save schedule
@@ -503,15 +505,17 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Scheduled report created');
+      ).toContainText("Scheduled report created");
     });
   });
 
-  test.describe('Performance and Accessibility', () => {
-    test('should load compliance dashboard within performance thresholds', async ({ page }) => {
+  test.describe("Performance and Accessibility", () => {
+    test("should load compliance dashboard within performance thresholds", async ({
+      page,
+    }) => {
       const startTime = Date.now();
-      await page.goto('/dashboard/compliance');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/dashboard/compliance");
+      await page.waitForLoadState("networkidle");
       const loadTime = Date.now() - startTime;
 
       // Should load within 3 seconds
@@ -519,24 +523,26 @@ test.describe('Dashboard Compliance Page', () => {
 
       // Check for performance metrics
       const performanceEntries = await page.evaluate(() => {
-        return JSON.stringify(performance.getEntriesByType('navigation'));
+        return JSON.stringify(performance.getEntriesByType("navigation"));
       });
 
       expect(performanceEntries).toBeDefined();
     });
 
-    test('should support keyboard navigation', async ({ page }) => {
+    test("should support keyboard navigation", async ({ page }) => {
       // Test tab navigation through compliance sections
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
 
       // Should be able to navigate to main sections
-      const focusedElement = page.locator(':focus');
+      const focusedElement = page.locator(":focus");
       await expect(focusedElement).toBeVisible();
     });
 
-    test('should have proper ARIA labels for compliance data', async ({ page }) => {
+    test("should have proper ARIA labels for compliance data", async ({
+      page,
+    }) => {
       // Check ARIA labels on compliance metrics
       await expect(
         page.locator('[data-testid="compliance-score"][aria-label]'),
@@ -549,13 +555,13 @@ test.describe('Dashboard Compliance Page', () => {
       ).toBeVisible();
 
       // Check table accessibility
-      const tables = page.locator('table');
+      const tables = page.locator("table");
       if ((await tables.count()) > 0) {
-        await expect(tables.first()).toHaveAttribute('role', 'table');
+        await expect(tables.first()).toHaveAttribute("role", "table");
       }
     });
 
-    test('should be responsive on mobile devices', async ({ page }) => {
+    test("should be responsive on mobile devices", async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
@@ -574,7 +580,7 @@ test.describe('Dashboard Compliance Page', () => {
       }
     });
 
-    test('should support screen readers', async ({ page }) => {
+    test("should support screen readers", async ({ page }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',
@@ -584,7 +590,7 @@ test.describe('Dashboard Compliance Page', () => {
       }
 
       // Check for descriptive headings
-      const headings = page.locator('h1, h2, h3, h4, h5, h6');
+      const headings = page.locator("h1, h2, h3, h4, h5, h6");
       if ((await headings.count()) > 0) {
         await expect(headings.first()).toBeVisible();
       }

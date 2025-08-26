@@ -10,7 +10,7 @@
 // Database type will be provided by the client
 type Database = any;
 
-import type { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 
 /**
  * CFM Digital Signature Interface
@@ -23,10 +23,10 @@ export interface DigitalSignature {
   document_id: string;
   /** Document type being signed */
   document_type:
-    | 'prescription'
-    | 'medical_certificate'
-    | 'medical_report'
-    | 'procedure_authorization';
+    | "prescription"
+    | "medical_certificate"
+    | "medical_report"
+    | "procedure_authorization";
   /** CFM number of signing doctor */
   doctor_cfm_number: string;
   /** Doctor's full name */
@@ -38,16 +38,16 @@ export interface DigitalSignature {
   /** Signature timestamp (constitutional requirement) */
   timestamp: Date;
   /** Signature algorithm used */
-  signature_algorithm: 'RSA-SHA256' | 'ECDSA-SHA256' | 'CFM-ICP-Brasil';
+  signature_algorithm: "RSA-SHA256" | "ECDSA-SHA256" | "CFM-ICP-Brasil";
   /** Constitutional compliance validation */
   constitutional_compliance: boolean;
   /** CFM validation status */
   cfm_validation_status:
-    | 'valid'
-    | 'invalid'
-    | 'expired'
-    | 'revoked'
-    | 'pending';
+    | "valid"
+    | "invalid"
+    | "expired"
+    | "revoked"
+    | "pending";
   /** Associated clinic/tenant */
   tenant_id: string;
   /** Creation metadata */
@@ -65,7 +65,7 @@ export interface SignatureAudit {
   /** Signature ID being audited */
   signature_id: string;
   /** Action performed on signature */
-  action: 'created' | 'validated' | 'invalidated' | 'renewed' | 'revoked';
+  action: "created" | "validated" | "invalidated" | "renewed" | "revoked";
   /** Previous signature state */
   previous_state: Partial<DigitalSignature>;
   /** New signature state */
@@ -94,7 +94,7 @@ export interface SignatureValidationParams {
   /** Digital certificate for validation */
   digital_certificate: string;
   /** Signature algorithm to use */
-  algorithm: DigitalSignature['signature_algorithm'];
+  algorithm: DigitalSignature["signature_algorithm"];
   /** Constitutional validation requirements */
   constitutional_requirements: string[];
 }
@@ -149,10 +149,10 @@ export class DigitalSignatureService {
   async createDigitalSignature(
     params: SignatureValidationParams,
     documentId: string,
-    documentType: DigitalSignature['document_type'],
+    documentType: DigitalSignature["document_type"],
     tenantId: string,
     userId: string,
-  ): Promise<{ success: boolean; data?: DigitalSignature; error?: string; }> {
+  ): Promise<{ success: boolean; data?: DigitalSignature; error?: string }> {
     try {
       // Constitutional validation of CFM number
       const cfmValidation = await this.validateCfmNumber(params.cfm_number);
@@ -188,42 +188,42 @@ export class DigitalSignatureService {
         timestamp,
         signature_algorithm: params.algorithm,
         constitutional_compliance: true,
-        cfm_validation_status: 'valid',
+        cfm_validation_status: "valid",
         tenant_id: tenantId,
         created_at: timestamp,
         audit_trail: [
           {
             audit_id: crypto.randomUUID(),
             signature_id: signatureId,
-            action: 'created',
+            action: "created",
             previous_state: {},
             new_state: {
               document_type: documentType,
-              cfm_validation_status: 'valid',
+              cfm_validation_status: "valid",
             },
             user_id: userId,
             timestamp,
-            reason: 'Digital signature created with CFM validation',
+            reason: "Digital signature created with CFM validation",
           },
         ],
       };
 
       // Store signature with constitutional compliance
       const { data, error } = await this.supabase
-        .from('cfm_digital_signatures')
+        .from("cfm_digital_signatures")
         .insert(newSignature)
         .select()
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to create digital signature' };
+        return { success: false, error: "Failed to create digital signature" };
       }
 
       return { success: true, data: data as DigitalSignature };
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   } /**
@@ -239,13 +239,13 @@ export class DigitalSignatureService {
     try {
       // Get signature data
       const { data: signature, error: fetchError } = await this.supabase
-        .from('cfm_digital_signatures')
-        .select('*')
-        .eq('signature_id', signatureId)
+        .from("cfm_digital_signatures")
+        .select("*")
+        .eq("signature_id", signatureId)
         .single();
 
       if (fetchError || !signature) {
-        return { success: false, error: 'Digital signature not found' };
+        return { success: false, error: "Digital signature not found" };
       }
 
       // Verify CFM registration
@@ -263,19 +263,21 @@ export class DigitalSignatureService {
         cfm_validation: {
           registration_valid: cfmValidation.valid,
           license_active: cfmValidation.license_active ?? false,
-          specialization_verified: cfmValidation.specialization_verified ?? false,
+          specialization_verified:
+            cfmValidation.specialization_verified ?? false,
           constitutional_compliance: cfmValidation.valid,
         },
         certificate_validation: {
           certificate_valid: certificateValidation.valid,
           expiry_date: certificateValidation.expiry_date || new Date(),
-          issuing_authority: certificateValidation.issuing_authority || 'Unknown',
+          issuing_authority:
+            certificateValidation.issuing_authority || "Unknown",
           chain_valid: certificateValidation.valid,
         },
         error_details: cfmValidation.valid
-          ? (certificateValidation.valid
+          ? certificateValidation.valid
             ? undefined
-            : certificateValidation.error)
+            : certificateValidation.error
           : cfmValidation.error,
       };
 
@@ -283,7 +285,7 @@ export class DigitalSignatureService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional verification service error',
+        error: "Constitutional verification service error",
       };
     }
   }
@@ -305,22 +307,22 @@ export class DigitalSignatureService {
       if (!cfmRegex.test(cfmNumber)) {
         return {
           valid: false,
-          error: 'Invalid CFM number format (required: NNNNNN/UF)',
+          error: "Invalid CFM number format (required: NNNNNN/UF)",
         };
       }
 
       // Check CFM registration in database
       const { data: cfmRegistration, error } = await this.supabase
-        .from('cfm_professional_licenses')
-        .select('*')
-        .eq('cfm_number', cfmNumber)
-        .eq('license_status', 'active')
+        .from("cfm_professional_licenses")
+        .select("*")
+        .eq("cfm_number", cfmNumber)
+        .eq("license_status", "active")
         .single();
 
       if (error || !cfmRegistration) {
         return {
           valid: false,
-          error: 'CFM registration not found or inactive',
+          error: "CFM registration not found or inactive",
         };
       }
 
@@ -331,7 +333,7 @@ export class DigitalSignatureService {
       if (licenseExpiry < currentDate) {
         return {
           valid: false,
-          error: 'CFM license has expired - renewal required',
+          error: "CFM license has expired - renewal required",
         };
       }
 
@@ -344,7 +346,7 @@ export class DigitalSignatureService {
     } catch {
       return {
         valid: false,
-        error: 'Constitutional CFM validation service error',
+        error: "Constitutional CFM validation service error",
       };
     }
   } /**
@@ -361,14 +363,14 @@ export class DigitalSignatureService {
     try {
       // Basic certificate format validation
       if (!certificate || certificate.length < 100) {
-        return { valid: false, error: 'Invalid certificate format' };
+        return { valid: false, error: "Invalid certificate format" };
       }
 
       // Check if certificate is PEM format (constitutional requirement for CFM)
-      if (!certificate.includes('-----BEGIN CERTIFICATE-----')) {
+      if (!certificate.includes("-----BEGIN CERTIFICATE-----")) {
         return {
           valid: false,
-          error: 'Certificate must be in PEM format for CFM compliance',
+          error: "Certificate must be in PEM format for CFM compliance",
         };
       }
 
@@ -380,12 +382,12 @@ export class DigitalSignatureService {
       return {
         valid: true,
         expiry_date: mockExpiryDate,
-        issuing_authority: 'ICP-Brasil CFM Authority',
+        issuing_authority: "ICP-Brasil CFM Authority",
       };
     } catch {
       return {
         valid: false,
-        error: 'Constitutional certificate validation service error',
+        error: "Constitutional certificate validation service error",
       };
     }
   }
@@ -396,13 +398,13 @@ export class DigitalSignatureService {
    */
   private async generateSignature(
     params: SignatureValidationParams,
-  ): Promise<{ success: boolean; signature?: string; error?: string; }> {
+  ): Promise<{ success: boolean; signature?: string; error?: string }> {
     try {
       // Validate document hash
       if (!params.document_hash || params.document_hash.length < 32) {
         return {
           success: false,
-          error: 'Valid document hash required for constitutional compliance',
+          error: "Valid document hash required for constitutional compliance",
         };
       }
 
@@ -410,9 +412,9 @@ export class DigitalSignatureService {
       let signature: string;
 
       switch (params.algorithm) {
-        case 'RSA-SHA256':
-        case 'ECDSA-SHA256':
-        case 'CFM-ICP-Brasil': {
+        case "RSA-SHA256":
+        case "ECDSA-SHA256":
+        case "CFM-ICP-Brasil": {
           // Mock signature generation (in production, use proper cryptographic library)
           signature = this.generateMockSignature(
             params.document_hash,
@@ -423,7 +425,7 @@ export class DigitalSignatureService {
         default: {
           return {
             success: false,
-            error: 'Unsupported signature algorithm for CFM compliance',
+            error: "Unsupported signature algorithm for CFM compliance",
           };
         }
       }
@@ -432,7 +434,7 @@ export class DigitalSignatureService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional signature generation service error',
+        error: "Constitutional signature generation service error",
       };
     }
   }
@@ -449,7 +451,7 @@ export class DigitalSignatureService {
     const combinedData = `${documentHash}-${cfmNumber}-${timestamp}`;
 
     // Mock signature (in production, use proper cryptographic signing)
-    return Buffer.from(combinedData).toString('base64');
+    return Buffer.from(combinedData).toString("base64");
   }
 
   /**
@@ -459,40 +461,40 @@ export class DigitalSignatureService {
   async getDigitalSignatures(
     tenantId: string,
     filters?: {
-      document_type?: DigitalSignature['document_type'];
+      document_type?: DigitalSignature["document_type"];
       cfm_number?: string;
-      validation_status?: DigitalSignature['cfm_validation_status'];
+      validation_status?: DigitalSignature["cfm_validation_status"];
       created_after?: Date;
     },
-  ): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string; }> {
+  ): Promise<{ success: boolean; data?: DigitalSignature[]; error?: string }> {
     try {
       let query = this.supabase
-        .from('cfm_digital_signatures')
-        .select('*')
-        .eq('tenant_id', tenantId); // Constitutional tenant isolation
+        .from("cfm_digital_signatures")
+        .select("*")
+        .eq("tenant_id", tenantId); // Constitutional tenant isolation
 
       // Apply constitutional filters
       if (filters?.document_type) {
-        query = query.eq('document_type', filters.document_type);
+        query = query.eq("document_type", filters.document_type);
       }
       if (filters?.cfm_number) {
-        query = query.eq('doctor_cfm_number', filters.cfm_number);
+        query = query.eq("doctor_cfm_number", filters.cfm_number);
       }
       if (filters?.validation_status) {
-        query = query.eq('cfm_validation_status', filters.validation_status);
+        query = query.eq("cfm_validation_status", filters.validation_status);
       }
       if (filters?.created_after) {
-        query = query.gte('created_at', filters.created_after.toISOString());
+        query = query.gte("created_at", filters.created_after.toISOString());
       }
 
-      const { data, error } = await query.order('created_at', {
+      const { data, error } = await query.order("created_at", {
         ascending: false,
       });
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to retrieve digital signatures',
+          error: "Failed to retrieve digital signatures",
         };
       }
 
@@ -500,7 +502,7 @@ export class DigitalSignatureService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -513,27 +515,27 @@ export class DigitalSignatureService {
     signatureId: string,
     userId: string,
     reason: string,
-  ): Promise<{ success: boolean; error?: string; }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get current signature for audit trail
       const { data: currentSignature, error: fetchError } = await this.supabase
-        .from('cfm_digital_signatures')
-        .select('*')
-        .eq('signature_id', signatureId)
+        .from("cfm_digital_signatures")
+        .select("*")
+        .eq("signature_id", signatureId)
         .single();
 
       if (fetchError || !currentSignature) {
-        return { success: false, error: 'Digital signature not found' };
+        return { success: false, error: "Digital signature not found" };
       }
 
       const timestamp = new Date();
       const auditEntry: SignatureAudit = {
         audit_id: crypto.randomUUID(),
         signature_id: signatureId,
-        action: 'revoked',
+        action: "revoked",
         previous_state: currentSignature,
         new_state: {
-          cfm_validation_status: 'revoked',
+          cfm_validation_status: "revoked",
           signature_validity: false,
         },
         user_id: userId,
@@ -543,23 +545,23 @@ export class DigitalSignatureService {
 
       // Update signature status
       const { error: updateError } = await this.supabase
-        .from('cfm_digital_signatures')
+        .from("cfm_digital_signatures")
         .update({
           signature_validity: false,
-          cfm_validation_status: 'revoked',
+          cfm_validation_status: "revoked",
           audit_trail: [...(currentSignature.audit_trail || []), auditEntry],
         })
-        .eq('signature_id', signatureId);
+        .eq("signature_id", signatureId);
 
       if (updateError) {
-        return { success: false, error: 'Failed to revoke digital signature' };
+        return { success: false, error: "Failed to revoke digital signature" };
       }
 
       return { success: true };
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }

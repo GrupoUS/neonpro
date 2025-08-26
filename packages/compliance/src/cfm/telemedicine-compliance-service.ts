@@ -10,7 +10,7 @@
 // Database type will be provided by the client
 type Database = any;
 
-import type { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 
 /**
  * CFM Telemedicine Consultation Interface
@@ -21,11 +21,11 @@ export interface TelemedicineConsultation {
   consultation_id: string;
   /** Type of telemedicine consultation */
   consultation_type:
-    | 'teleconsultation'
-    | 'telediagnosis'
-    | 'telemonitoring'
-    | 'tele_orientation'
-    | 'second_opinion';
+    | "teleconsultation"
+    | "telediagnosis"
+    | "telemonitoring"
+    | "tele_orientation"
+    | "second_opinion";
   /** CFM number of attending doctor */
   doctor_cfm_number: string;
   /** Patient identifier (LGPD compliant) */
@@ -85,12 +85,12 @@ export interface TelemedicineAudit {
   consultation_id: string;
   /** Action performed on consultation */
   action:
-    | 'created'
-    | 'started'
-    | 'completed'
-    | 'cancelled'
-    | 'compliance_validated'
-    | 'consent_updated';
+    | "created"
+    | "started"
+    | "completed"
+    | "cancelled"
+    | "compliance_validated"
+    | "consent_updated";
   /** Previous consultation state */
   previous_state: Partial<TelemedicineConsultation>;
   /** New consultation state */
@@ -119,9 +119,9 @@ export interface TelemedicinePlatformRequirements {
   /** End-to-end encryption */
   end_to_end_encryption: boolean;
   /** Video quality minimum */
-  minimum_video_quality: 'HD' | 'Full_HD' | '4K';
+  minimum_video_quality: "HD" | "Full_HD" | "4K";
   /** Audio quality minimum */
-  minimum_audio_quality: 'Standard' | 'High' | 'Professional';
+  minimum_audio_quality: "Standard" | "High" | "Professional";
   /** Session recording capability */
   session_recording: boolean;
   /** CFM resolution compliance */
@@ -140,7 +140,7 @@ export interface TelemedicineValidationParams {
   /** Patient identifier */
   patient_id: string;
   /** Consultation type */
-  consultation_type: TelemedicineConsultation['consultation_type'];
+  consultation_type: TelemedicineConsultation["consultation_type"];
   /** Platform to be used */
   platform_name: string;
   /** Consultation date/time */
@@ -225,13 +225,15 @@ export class TelemedicineComplianceService {
       }
 
       // Validate consultation parameters
-      const consultationValidation = await this.validateConsultationParameters(params);
+      const consultationValidation =
+        await this.validateConsultationParameters(params);
       if (!consultationValidation.valid) {
         return { success: false, error: consultationValidation.error };
       }
 
       // Check CFM resolutions compliance
-      const resolutionCompliance = await this.checkCfmResolutionsCompliance(params);
+      const resolutionCompliance =
+        await this.checkCfmResolutionsCompliance(params);
 
       // Calculate constitutional compliance score
       const complianceScore = this.calculateTelemedicineComplianceScore({
@@ -250,7 +252,8 @@ export class TelemedicineComplianceService {
         },
         technical_compliance: {
           platform_approved: platformValidation.compliant,
-          security_requirements_met: platformValidation.security_compliant ?? false,
+          security_requirements_met:
+            platformValidation.security_compliant ?? false,
           quality_standards_met: platformValidation.quality_compliant ?? false,
         },
         compliance_issues: [
@@ -271,7 +274,7 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional telemedicine validation service error',
+        error: "Constitutional telemedicine validation service error",
       };
     }
   } /**
@@ -282,7 +285,7 @@ export class TelemedicineComplianceService {
   async registerTelemedicineConsultation(
     consultationData: Omit<
       TelemedicineConsultation,
-      'consultation_id' | 'created_at' | 'audit_trail'
+      "consultation_id" | "created_at" | "audit_trail"
     >,
     userId: string,
   ): Promise<{
@@ -298,11 +301,12 @@ export class TelemedicineComplianceService {
         consultation_type: consultationData.consultation_type,
         platform_name: consultationData.platform_used,
         consultation_datetime: consultationData.consultation_datetime,
-        informed_consent_document: consultationData.informed_consent.consent_document_id,
+        informed_consent_document:
+          consultationData.informed_consent.consent_document_id,
         constitutional_requirements: [
-          'cfm_resolution_compliance',
-          'informed_consent',
-          'technical_compliance',
+          "cfm_resolution_compliance",
+          "informed_consent",
+          "technical_compliance",
         ],
       });
 
@@ -311,11 +315,9 @@ export class TelemedicineComplianceService {
       ) {
         return {
           success: false,
-          error: `Telemedicine consultation does not meet CFM compliance requirements: ${
-            complianceValidation.data?.compliance_issues.join(
-              ', ',
-            )
-          }`,
+          error: `Telemedicine consultation does not meet CFM compliance requirements: ${complianceValidation.data?.compliance_issues.join(
+            ", ",
+          )}`,
         };
       }
 
@@ -330,19 +332,20 @@ export class TelemedicineComplianceService {
           {
             audit_id: crypto.randomUUID(),
             consultation_id: consultationId,
-            action: 'created',
+            action: "created",
             previous_state: {},
             new_state: consultationData,
             user_id: userId,
             timestamp,
-            reason: 'Telemedicine consultation registered with CFM compliance validation',
+            reason:
+              "Telemedicine consultation registered with CFM compliance validation",
           },
         ],
       };
 
       // Store consultation with constitutional compliance
       const { data, error } = await this.supabase
-        .from('cfm_telemedicine_consultations')
+        .from("cfm_telemedicine_consultations")
         .insert(newConsultation)
         .select()
         .single();
@@ -350,7 +353,7 @@ export class TelemedicineComplianceService {
       if (error) {
         return {
           success: false,
-          error: 'Failed to register telemedicine consultation',
+          error: "Failed to register telemedicine consultation",
         };
       }
 
@@ -358,7 +361,7 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -378,19 +381,20 @@ export class TelemedicineComplianceService {
     try {
       // Check if doctor has valid CFM license
       const { data: license, error } = await this.supabase
-        .from('cfm_professional_licenses')
-        .select('*')
-        .eq('cfm_number', cfmNumber)
-        .eq('license_status', 'active')
+        .from("cfm_professional_licenses")
+        .select("*")
+        .eq("cfm_number", cfmNumber)
+        .eq("license_status", "active")
         .single();
 
       if (error || !license) {
         return {
           eligible: false,
-          error: 'Doctor does not have valid CFM license for telemedicine practice',
-          issues: ['Invalid or inactive CFM license'],
+          error:
+            "Doctor does not have valid CFM license for telemedicine practice",
+          issues: ["Invalid or inactive CFM license"],
           recommendations: [
-            'Verify CFM license status and ensure it is active',
+            "Verify CFM license status and ensure it is active",
           ],
         };
       }
@@ -402,20 +406,21 @@ export class TelemedicineComplianceService {
       if (licenseExpiry < currentDate) {
         return {
           eligible: false,
-          error: 'CFM license has expired',
-          issues: ['Expired CFM license'],
+          error: "CFM license has expired",
+          issues: ["Expired CFM license"],
           recommendations: [
-            'Renew CFM license before conducting telemedicine consultations',
+            "Renew CFM license before conducting telemedicine consultations",
           ],
         };
       }
 
       // Check if telemedicine specialization is present (if required)
-      const _telemedicineSpecializations = license.specializations?.filter(
-        (spec: string) =>
-          spec.toLowerCase().includes('telemedicina')
-          || spec.toLowerCase().includes('medicina digital'),
-      ) || [];
+      const _telemedicineSpecializations =
+        license.specializations?.filter(
+          (spec: string) =>
+            spec.toLowerCase().includes("telemedicina") ||
+            spec.toLowerCase().includes("medicina digital"),
+        ) || [];
 
       const issues: string[] = [];
       const recommendations: string[] = [];
@@ -424,8 +429,8 @@ export class TelemedicineComplianceService {
       const ninetyDaysFromNow = new Date();
       ninetyDaysFromNow.setDate(currentDate.getDate() + 90);
       if (licenseExpiry <= ninetyDaysFromNow) {
-        issues.push('CFM license expires within 90 days');
-        recommendations.push('Schedule CFM license renewal');
+        issues.push("CFM license expires within 90 days");
+        recommendations.push("Schedule CFM license renewal");
       }
 
       return {
@@ -436,9 +441,9 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         eligible: false,
-        error: 'Constitutional CFM validation service error',
-        issues: ['Service validation error'],
-        recommendations: ['Contact technical support'],
+        error: "Constitutional CFM validation service error",
+        issues: ["Service validation error"],
+        recommendations: ["Contact technical support"],
       };
     }
   } /**
@@ -457,17 +462,17 @@ export class TelemedicineComplianceService {
     try {
       // Get platform requirements from database
       const { data: platform, error } = await this.supabase
-        .from('telemedicine_platforms')
-        .select('*')
-        .eq('platform_name', platformName)
+        .from("telemedicine_platforms")
+        .select("*")
+        .eq("platform_name", platformName)
         .single();
 
       if (error || !platform) {
         return {
           compliant: false,
-          error: 'Telemedicine platform not approved for CFM compliance',
-          issues: ['Platform not in approved list'],
-          recommendations: ['Use CFM-approved telemedicine platform'],
+          error: "Telemedicine platform not approved for CFM compliance",
+          issues: ["Platform not in approved list"],
+          recommendations: ["Use CFM-approved telemedicine platform"],
         };
       }
 
@@ -476,38 +481,41 @@ export class TelemedicineComplianceService {
 
       // Validate security requirements
       if (!platform.security_certification) {
-        issues.push('Platform lacks security certification');
-        recommendations.push('Use platform with proper security certification');
+        issues.push("Platform lacks security certification");
+        recommendations.push("Use platform with proper security certification");
       }
 
       if (!platform.lgpd_compliance) {
-        issues.push('Platform not LGPD compliant');
-        recommendations.push('Ensure platform meets LGPD requirements');
+        issues.push("Platform not LGPD compliant");
+        recommendations.push("Ensure platform meets LGPD requirements");
       }
 
       if (!platform.end_to_end_encryption) {
-        issues.push('Platform lacks end-to-end encryption');
-        recommendations.push('Use platform with end-to-end encryption');
+        issues.push("Platform lacks end-to-end encryption");
+        recommendations.push("Use platform with end-to-end encryption");
       }
 
       // Validate quality requirements
-      const qualityStandards = new Set(['HD', 'Full_HD', '4K']);
+      const qualityStandards = new Set(["HD", "Full_HD", "4K"]);
       if (!qualityStandards.has(platform.minimum_video_quality)) {
-        issues.push('Platform video quality below CFM standards');
-        recommendations.push('Use platform with HD or better video quality');
+        issues.push("Platform video quality below CFM standards");
+        recommendations.push("Use platform with HD or better video quality");
       }
 
-      const securityCompliant = platform.security_certification
-        && platform.lgpd_compliance
-        && platform.end_to_end_encryption;
+      const securityCompliant =
+        platform.security_certification &&
+        platform.lgpd_compliance &&
+        platform.end_to_end_encryption;
 
-      const qualityCompliant = qualityStandards.has(platform.minimum_video_quality)
-        && platform.minimum_audio_quality !== 'Standard';
+      const qualityCompliant =
+        qualityStandards.has(platform.minimum_video_quality) &&
+        platform.minimum_audio_quality !== "Standard";
 
-      const overallCompliant = securityCompliant
-        && qualityCompliant
-        && platform.cfm_resolution_compliance
-        && platform.constitutional_compliance;
+      const overallCompliant =
+        securityCompliant &&
+        qualityCompliant &&
+        platform.cfm_resolution_compliance &&
+        platform.constitutional_compliance;
 
       return {
         compliant: overallCompliant,
@@ -519,9 +527,9 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         compliant: false,
-        error: 'Constitutional platform validation service error',
-        issues: ['Platform validation service error'],
-        recommendations: ['Contact technical support for platform validation'],
+        error: "Constitutional platform validation service error",
+        issues: ["Platform validation service error"],
+        recommendations: ["Contact technical support for platform validation"],
       };
     }
   }
@@ -547,58 +555,58 @@ export class TelemedicineComplianceService {
       const currentDate = new Date();
 
       if (consultationDate < currentDate) {
-        issues.push('Consultation date is in the past');
-        recommendations.push('Schedule consultation for future date');
+        issues.push("Consultation date is in the past");
+        recommendations.push("Schedule consultation for future date");
       }
 
       // Validate consultation type
-      const validTypes: TelemedicineConsultation['consultation_type'][] = [
-        'teleconsultation',
-        'telediagnosis',
-        'telemonitoring',
-        'tele_orientation',
-        'second_opinion',
+      const validTypes: TelemedicineConsultation["consultation_type"][] = [
+        "teleconsultation",
+        "telediagnosis",
+        "telemonitoring",
+        "tele_orientation",
+        "second_opinion",
       ];
 
       if (!validTypes.includes(params.consultation_type)) {
-        issues.push('Invalid consultation type for CFM compliance');
-        recommendations.push('Use valid CFM-approved consultation type');
+        issues.push("Invalid consultation type for CFM compliance");
+        recommendations.push("Use valid CFM-approved consultation type");
       }
 
       // Validate informed consent document
       if (
-        !params.informed_consent_document
-        || params.informed_consent_document.length < 10
+        !params.informed_consent_document ||
+        params.informed_consent_document.length < 10
       ) {
         issues.push(
-          'Informed consent document required for constitutional compliance',
+          "Informed consent document required for constitutional compliance",
         );
         recommendations.push(
-          'Obtain and attach valid informed consent document',
+          "Obtain and attach valid informed consent document",
         );
       }
 
       // Validate patient ID
       if (!params.patient_id || params.patient_id.length < 5) {
-        issues.push('Valid patient identifier required');
-        recommendations.push('Provide valid patient identifier');
+        issues.push("Valid patient identifier required");
+        recommendations.push("Provide valid patient identifier");
       }
 
       const valid = issues.length === 0;
 
       return {
         valid,
-        error: valid ? undefined : 'Consultation parameters validation failed',
+        error: valid ? undefined : "Consultation parameters validation failed",
         issues,
         recommendations,
       };
     } catch {
       return {
         valid: false,
-        error: 'Constitutional consultation validation service error',
-        issues: ['Consultation validation service error'],
+        error: "Constitutional consultation validation service error",
+        issues: ["Consultation validation service error"],
         recommendations: [
-          'Contact technical support for consultation validation',
+          "Contact technical support for consultation validation",
         ],
       };
     }
@@ -623,11 +631,11 @@ export class TelemedicineComplianceService {
       const resolution2314 = await this.validateResolution2314(params);
       if (resolution2314.compliant) {
         complianceDetails.push(
-          'Resolution 2.314/2022: Telemedicine practice regulation - COMPLIANT',
+          "Resolution 2.314/2022: Telemedicine practice regulation - COMPLIANT",
         );
       } else {
         complianceDetails.push(
-          `Resolution 2.314/2022: ${resolution2314.issues.join(', ')}`,
+          `Resolution 2.314/2022: ${resolution2314.issues.join(", ")}`,
         );
       }
 
@@ -635,11 +643,11 @@ export class TelemedicineComplianceService {
       const resolution2315 = await this.validateResolution2315(params);
       if (resolution2315.compliant) {
         complianceDetails.push(
-          'Resolution 2.315/2022: Technical requirements - COMPLIANT',
+          "Resolution 2.315/2022: Technical requirements - COMPLIANT",
         );
       } else {
         complianceDetails.push(
-          `Resolution 2.315/2022: ${resolution2315.issues.join(', ')}`,
+          `Resolution 2.315/2022: ${resolution2315.issues.join(", ")}`,
         );
       }
 
@@ -647,17 +655,18 @@ export class TelemedicineComplianceService {
       const resolution2316 = await this.validateResolution2316(params);
       if (resolution2316.compliant) {
         complianceDetails.push(
-          'Resolution 2.316/2022: Patient privacy and data protection - COMPLIANT',
+          "Resolution 2.316/2022: Patient privacy and data protection - COMPLIANT",
         );
       } else {
         complianceDetails.push(
-          `Resolution 2.316/2022: ${resolution2316.issues.join(', ')}`,
+          `Resolution 2.316/2022: ${resolution2316.issues.join(", ")}`,
         );
       }
 
-      const allCompliant = resolution2314.compliant
-        && resolution2315.compliant
-        && resolution2316.compliant;
+      const allCompliant =
+        resolution2314.compliant &&
+        resolution2315.compliant &&
+        resolution2316.compliant;
 
       return {
         all_compliant: allCompliant,
@@ -672,7 +681,7 @@ export class TelemedicineComplianceService {
         resolution_2314: false,
         resolution_2315: false,
         resolution_2316: false,
-        compliance_details: ['CFM resolutions validation service error'],
+        compliance_details: ["CFM resolutions validation service error"],
       };
     }
   }
@@ -746,36 +755,36 @@ export class TelemedicineComplianceService {
    */
   private async validateResolution2314(
     params: TelemedicineValidationParams,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     const issues: string[] = [];
 
     // Doctor-patient relationship establishment
     if (
-      params.consultation_type === 'telediagnosis'
-      && !params.constitutional_requirements.includes('prior_relationship')
+      params.consultation_type === "telediagnosis" &&
+      !params.constitutional_requirements.includes("prior_relationship")
     ) {
       issues.push(
-        'Telediagnosis requires prior doctor-patient relationship per Resolution 2.314/2022',
+        "Telediagnosis requires prior doctor-patient relationship per Resolution 2.314/2022",
       );
     }
 
     // Informed consent requirement
     if (!params.informed_consent_document) {
-      issues.push('Informed consent required per Resolution 2.314/2022');
+      issues.push("Informed consent required per Resolution 2.314/2022");
     }
 
     // Consultation type validation
     const _validTypes = [
-      'teleconsultation',
-      'telemonitoring',
-      'tele_orientation',
-      'second_opinion',
+      "teleconsultation",
+      "telemonitoring",
+      "tele_orientation",
+      "second_opinion",
     ];
     if (
-      params.consultation_type === 'telediagnosis'
-      && !params.constitutional_requirements.includes('emergency_exception')
+      params.consultation_type === "telediagnosis" &&
+      !params.constitutional_requirements.includes("emergency_exception")
     ) {
-      issues.push('Telediagnosis restricted per Resolution 2.314/2022');
+      issues.push("Telediagnosis restricted per Resolution 2.314/2022");
     }
 
     return { compliant: issues.length === 0, issues };
@@ -787,34 +796,34 @@ export class TelemedicineComplianceService {
    */
   private async validateResolution2315(
     params: TelemedicineValidationParams,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     const issues: string[] = [];
 
     // Platform technical requirements
     const { data: platform } = await this.supabase
-      .from('telemedicine_platforms')
-      .select('*')
-      .eq('platform_name', params.platform_name)
+      .from("telemedicine_platforms")
+      .select("*")
+      .eq("platform_name", params.platform_name)
       .single();
 
     if (!platform) {
-      issues.push('Platform not validated for CFM technical requirements');
+      issues.push("Platform not validated for CFM technical requirements");
       return { compliant: false, issues };
     }
 
     // Video quality requirements
-    if (!['HD', 'Full_HD', '4K'].includes(platform.minimum_video_quality)) {
-      issues.push('Video quality below CFM Resolution 2.315/2022 requirements');
+    if (!["HD", "Full_HD", "4K"].includes(platform.minimum_video_quality)) {
+      issues.push("Video quality below CFM Resolution 2.315/2022 requirements");
     }
 
     // Audio quality requirements
-    if (platform.minimum_audio_quality === 'Standard') {
-      issues.push('Audio quality below CFM Resolution 2.315/2022 requirements');
+    if (platform.minimum_audio_quality === "Standard") {
+      issues.push("Audio quality below CFM Resolution 2.315/2022 requirements");
     }
 
     // Encryption requirements
     if (!platform.end_to_end_encryption) {
-      issues.push('End-to-end encryption required per Resolution 2.315/2022');
+      issues.push("End-to-end encryption required per Resolution 2.315/2022");
     }
 
     return { compliant: issues.length === 0, issues };
@@ -826,41 +835,41 @@ export class TelemedicineComplianceService {
    */
   private async validateResolution2316(
     params: TelemedicineValidationParams,
-  ): Promise<{ compliant: boolean; issues: string[]; }> {
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     const issues: string[] = [];
 
     // LGPD compliance requirement
     const { data: platform } = await this.supabase
-      .from('telemedicine_platforms')
-      .select('*')
-      .eq('platform_name', params.platform_name)
+      .from("telemedicine_platforms")
+      .select("*")
+      .eq("platform_name", params.platform_name)
       .single();
 
     if (!platform?.lgpd_compliance) {
-      issues.push('Platform must be LGPD compliant per Resolution 2.316/2022');
+      issues.push("Platform must be LGPD compliant per Resolution 2.316/2022");
     }
 
     // Data security requirements
     if (!platform?.security_certification) {
       issues.push(
-        'Platform security certification required per Resolution 2.316/2022',
+        "Platform security certification required per Resolution 2.316/2022",
       );
     }
 
     // Patient consent for data processing
     if (!params.informed_consent_document) {
       issues.push(
-        'Patient consent for data processing required per Resolution 2.316/2022',
+        "Patient consent for data processing required per Resolution 2.316/2022",
       );
     }
 
     // Session recording restrictions
     if (
-      platform?.session_recording
-      && !params.constitutional_requirements.includes('recording_consent')
+      platform?.session_recording &&
+      !params.constitutional_requirements.includes("recording_consent")
     ) {
       issues.push(
-        'Explicit consent required for session recording per Resolution 2.316/2022',
+        "Explicit consent required for session recording per Resolution 2.316/2022",
       );
     }
 
@@ -873,7 +882,7 @@ export class TelemedicineComplianceService {
   async getTelemedicineConsultations(
     tenantId: string,
     filters?: {
-      consultation_type?: TelemedicineConsultation['consultation_type'];
+      consultation_type?: TelemedicineConsultation["consultation_type"];
       doctor_cfm_number?: string;
       patient_id?: string;
       date_range?: {
@@ -890,43 +899,43 @@ export class TelemedicineComplianceService {
   }> {
     try {
       let query = this.supabase
-        .from('cfm_telemedicine_consultations')
-        .select('*')
-        .eq('tenant_id', tenantId); // Constitutional tenant isolation
+        .from("cfm_telemedicine_consultations")
+        .select("*")
+        .eq("tenant_id", tenantId); // Constitutional tenant isolation
 
       // Apply constitutional filters
       if (filters?.consultation_type) {
-        query = query.eq('consultation_type', filters.consultation_type);
+        query = query.eq("consultation_type", filters.consultation_type);
       }
       if (filters?.doctor_cfm_number) {
-        query = query.eq('doctor_cfm_number', filters.doctor_cfm_number);
+        query = query.eq("doctor_cfm_number", filters.doctor_cfm_number);
       }
       if (filters?.patient_id) {
-        query = query.eq('patient_id', filters.patient_id);
+        query = query.eq("patient_id", filters.patient_id);
       }
       if (filters?.constitutional_compliance !== undefined) {
         query = query.eq(
-          'constitutional_compliance',
+          "constitutional_compliance",
           filters.constitutional_compliance,
         );
       }
       if (filters?.platform_used) {
-        query = query.eq('platform_used', filters.platform_used);
+        query = query.eq("platform_used", filters.platform_used);
       }
       if (filters?.date_range) {
         query = query
-          .gte('consultation_datetime', filters.date_range.start.toISOString())
-          .lte('consultation_datetime', filters.date_range.end.toISOString());
+          .gte("consultation_datetime", filters.date_range.start.toISOString())
+          .lte("consultation_datetime", filters.date_range.end.toISOString());
       }
 
-      const { data, error } = await query.order('consultation_datetime', {
+      const { data, error } = await query.order("consultation_datetime", {
         ascending: false,
       });
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to retrieve telemedicine consultations',
+          error: "Failed to retrieve telemedicine consultations",
         };
       }
 
@@ -934,7 +943,7 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -945,17 +954,17 @@ export class TelemedicineComplianceService {
    */
   async generateTelemedicineComplianceReport(
     tenantId: string,
-  ): Promise<{ success: boolean; data?: any; error?: string; }> {
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const { data: consultations, error } = await this.supabase
-        .from('cfm_telemedicine_consultations')
-        .select('*')
-        .eq('tenant_id', tenantId);
+        .from("cfm_telemedicine_consultations")
+        .select("*")
+        .eq("tenant_id", tenantId);
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to generate telemedicine compliance report',
+          error: "Failed to generate telemedicine compliance report",
         };
       }
 
@@ -968,19 +977,19 @@ export class TelemedicineComplianceService {
         ).length,
         by_consultation_type: {
           teleconsultation: consultationStats.filter(
-            (c) => c.consultation_type === 'teleconsultation',
+            (c) => c.consultation_type === "teleconsultation",
           ).length,
           telediagnosis: consultationStats.filter(
-            (c) => c.consultation_type === 'telediagnosis',
+            (c) => c.consultation_type === "telediagnosis",
           ).length,
           telemonitoring: consultationStats.filter(
-            (c) => c.consultation_type === 'telemonitoring',
+            (c) => c.consultation_type === "telemonitoring",
           ).length,
           tele_orientation: consultationStats.filter(
-            (c) => c.consultation_type === 'tele_orientation',
+            (c) => c.consultation_type === "tele_orientation",
           ).length,
           second_opinion: consultationStats.filter(
-            (c) => c.consultation_type === 'second_opinion',
+            (c) => c.consultation_type === "second_opinion",
           ).length,
         },
         cfm_resolution_compliance: {
@@ -1005,7 +1014,7 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -1019,26 +1028,28 @@ export class TelemedicineComplianceService {
     complianceStatus: boolean,
     userId: string,
     reason: string,
-  ): Promise<{ success: boolean; error?: string; }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Get current consultation for audit trail
-      const { data: currentConsultation, error: fetchError } = await this.supabase
-        .from('cfm_telemedicine_consultations')
-        .select('*')
-        .eq('consultation_id', consultationId)
-        .single();
+      const { data: currentConsultation, error: fetchError } =
+        await this.supabase
+          .from("cfm_telemedicine_consultations")
+          .select("*")
+          .eq("consultation_id", consultationId)
+          .single();
 
       if (fetchError || !currentConsultation) {
-        return { success: false, error: 'Telemedicine consultation not found' };
+        return { success: false, error: "Telemedicine consultation not found" };
       }
 
       const timestamp = new Date();
       const auditEntry: TelemedicineAudit = {
         audit_id: crypto.randomUUID(),
         consultation_id: consultationId,
-        action: 'compliance_validated',
+        action: "compliance_validated",
         previous_state: {
-          constitutional_compliance: currentConsultation.constitutional_compliance,
+          constitutional_compliance:
+            currentConsultation.constitutional_compliance,
         },
         new_state: { constitutional_compliance: complianceStatus },
         user_id: userId,
@@ -1049,17 +1060,17 @@ export class TelemedicineComplianceService {
 
       // Update consultation compliance status
       const { error: updateError } = await this.supabase
-        .from('cfm_telemedicine_consultations')
+        .from("cfm_telemedicine_consultations")
         .update({
           constitutional_compliance: complianceStatus,
           audit_trail: [...(currentConsultation.audit_trail || []), auditEntry],
         })
-        .eq('consultation_id', consultationId);
+        .eq("consultation_id", consultationId);
 
       if (updateError) {
         return {
           success: false,
-          error: 'Failed to update consultation compliance status',
+          error: "Failed to update consultation compliance status",
         };
       }
 
@@ -1067,7 +1078,7 @@ export class TelemedicineComplianceService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }

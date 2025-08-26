@@ -470,9 +470,9 @@ export function UniversalAIChat({
                   "h-3 w-3 rounded-full",
                   connectionStatus === "connected"
                     ? "bg-green-500"
-                    : (connectionStatus === "connecting"
+                    : connectionStatus === "connecting"
                       ? "bg-yellow-500"
-                      : "bg-red-500"),
+                      : "bg-red-500",
                 )}
               />
               <CardTitle className="flex items-center gap-2">

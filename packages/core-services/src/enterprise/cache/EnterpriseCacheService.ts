@@ -13,9 +13,9 @@
  * - Health monitoring e auto-healing
  */
 
-import Redis from 'ioredis';
-import { LRUCache } from 'lru-cache';
-import type { PerformanceMetrics } from '../../types';
+import Redis from "ioredis";
+import { LRUCache } from "lru-cache";
+import type { PerformanceMetrics } from "../../types";
 
 interface CacheLayer {
   name: string;
@@ -61,14 +61,14 @@ interface EnterpriseCacheConfig {
  * Memory Cache Layer (L1) - Fastest access
  */
 class MemoryCacheLayer implements CacheLayer {
-  name = 'memory';
+  name = "memory";
   priority = 1;
 
   private readonly cache: LRUCache<string, any>;
   private accessCount = 0;
   private hitCount = 0;
 
-  constructor(config: EnterpriseCacheConfig['layers']['memory']) {
+  constructor(config: EnterpriseCacheConfig["layers"]["memory"]) {
     this.cache = new LRUCache({
       max: config.maxItems,
       ttl: config.ttl,
@@ -115,7 +115,7 @@ class MemoryCacheLayer implements CacheLayer {
  * Redis Cache Layer (L2) - Shared across instances
  */
 class RedisCacheLayer implements CacheLayer {
-  name = 'redis';
+  name = "redis";
   priority = 2;
 
   private readonly redis: Redis;
@@ -123,14 +123,14 @@ class RedisCacheLayer implements CacheLayer {
   private readonly hitCount = 0;
   private readonly keyPrefix: string;
 
-  constructor(config: EnterpriseCacheConfig['layers']['redis']) {
+  constructor(config: EnterpriseCacheConfig["layers"]["redis"]) {
     this.redis = new Redis({
       host: config.host,
       port: config.port,
       maxRetriesPerRequest: 3,
       lazyConnect: true,
     });
-    this.keyPrefix = config.keyPrefix || 'neonpro:cache:';
+    this.keyPrefix = config.keyPrefix || "neonpro:cache:";
   }
 
   private getKey(key: string): string {
@@ -181,7 +181,7 @@ class RedisCacheLayer implements CacheLayer {
 
   async stats(): Promise<any> {
     try {
-      const info = await this.redis.info('memory');
+      const info = await this.redis.info("memory");
       const keyCount = await this.redis.dbsize();
 
       return {
@@ -208,7 +208,7 @@ class RedisCacheLayer implements CacheLayer {
  * Database Cache Layer (L3) - Long-term persistence
  */
 class DatabaseCacheLayer implements CacheLayer {
-  name = 'database';
+  name = "database";
   priority = 3;
 
   private accessCount = 0;
@@ -231,7 +231,7 @@ class DatabaseCacheLayer implements CacheLayer {
       hitRate: this.accessCount > 0 ? this.hitCount / this.accessCount : 0,
       accessCount: this.accessCount,
       hitCount: this.hitCount,
-      status: 'mock', // TODO: Replace with real implementation
+      status: "mock", // TODO: Replace with real implementation
     };
   }
 }
@@ -244,8 +244,8 @@ export class EnterpriseCacheService {
   private readonly config: EnterpriseCacheConfig;
   private healthCheckInterval: NodeJS.Timeout | null = undefined;
   private readonly metrics: PerformanceMetrics = {
-    service: 'cache',
-    period: 'realtime',
+    service: "cache",
+    period: "realtime",
     totalOperations: 0,
     averageResponseTime: 0,
     errorRate: 0,
@@ -274,10 +274,10 @@ export class EnterpriseCacheService {
         },
         redis: {
           enabled: !!process.env.REDIS_URL,
-          host: process.env.REDIS_HOST || 'localhost',
-          port: Number.parseInt(process.env.REDIS_PORT || '6379', 10),
+          host: process.env.REDIS_HOST || "localhost",
+          port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
           ttl: 30 * 60 * 1000, // 30 minutes
-          keyPrefix: 'neonpro:enterprise:',
+          keyPrefix: "neonpro:enterprise:",
         },
         database: {
           enabled: false, // Disabled by default
@@ -336,14 +336,15 @@ export class EnterpriseCacheService {
           await this.populateUpperLayers(key, value, layer);
 
           this.extendedMetrics.cacheHits++;
-          this.metrics.cacheHitRate = this.extendedMetrics.totalRequests > 0
-            ? this.extendedMetrics.cacheHits
-              / this.extendedMetrics.totalRequests
-            : 0;
+          this.metrics.cacheHitRate =
+            this.extendedMetrics.totalRequests > 0
+              ? this.extendedMetrics.cacheHits /
+                this.extendedMetrics.totalRequests
+              : 0;
           this.updateResponseTime(startTime);
 
           if (this.config.compliance.auditAccess) {
-            await this.auditAccess('CACHE_HIT', { key, layer: layer.name });
+            await this.auditAccess("CACHE_HIT", { key, layer: layer.name });
           }
 
           return value;
@@ -358,7 +359,7 @@ export class EnterpriseCacheService {
     this.updateResponseTime(startTime);
 
     if (this.config.compliance.auditAccess) {
-      await this.auditAccess('CACHE_MISS', { key });
+      await this.auditAccess("CACHE_MISS", { key });
     }
 
     return;
@@ -379,7 +380,7 @@ export class EnterpriseCacheService {
     await Promise.allSettled(promises);
 
     if (this.config.compliance.auditAccess) {
-      await this.auditAccess('CACHE_SET', { key, ttl });
+      await this.auditAccess("CACHE_SET", { key, ttl });
     }
   }
 
@@ -396,7 +397,7 @@ export class EnterpriseCacheService {
     await Promise.allSettled(promises);
 
     if (this.config.compliance.auditAccess) {
-      await this.auditAccess('CACHE_DELETE', { key });
+      await this.auditAccess("CACHE_DELETE", { key });
     }
   }
 
@@ -413,7 +414,7 @@ export class EnterpriseCacheService {
     await Promise.allSettled(promises);
 
     if (this.config.compliance.auditAccess) {
-      await this.auditAccess('CACHE_CLEAR', {});
+      await this.auditAccess("CACHE_CLEAR", {});
     }
   }
 
@@ -446,7 +447,7 @@ export class EnterpriseCacheService {
 
     const stats = layerStats.map((result, index) => ({
       layer: this.layers[index]?.name || `layer-${index}`,
-      ...(result.status === 'fulfilled'
+      ...(result.status === "fulfilled"
         ? result.value
         : { error: result.reason }),
     }));
@@ -454,14 +455,16 @@ export class EnterpriseCacheService {
     return {
       enterprise: {
         totalRequests: this.extendedMetrics.totalRequests,
-        cacheHitRate: this.extendedMetrics.totalRequests > 0
-          ? this.extendedMetrics.cacheHits
-            / this.extendedMetrics.totalRequests
-          : 0,
+        cacheHitRate:
+          this.extendedMetrics.totalRequests > 0
+            ? this.extendedMetrics.cacheHits /
+              this.extendedMetrics.totalRequests
+            : 0,
         avgResponseTime: this.extendedMetrics.avgResponseTime,
-        errorRate: this.extendedMetrics.totalRequests > 0
-          ? this.metrics.errorRate / this.extendedMetrics.totalRequests
-          : 0,
+        errorRate:
+          this.extendedMetrics.totalRequests > 0
+            ? this.metrics.errorRate / this.extendedMetrics.totalRequests
+            : 0,
       },
       layers: stats,
       config: {
@@ -488,7 +491,7 @@ export class EnterpriseCacheService {
 
           return {
             layer: layer.name,
-            status: 'healthy',
+            status: "healthy",
             latency: performance.now(),
             canWrite: true,
             canRead: retrieved !== null,
@@ -496,7 +499,7 @@ export class EnterpriseCacheService {
         } catch (error) {
           return {
             layer: layer.name,
-            status: 'unhealthy',
+            status: "unhealthy",
             error: error instanceof Error ? error.message : String(error),
             canWrite: false,
             canRead: false,
@@ -507,11 +510,13 @@ export class EnterpriseCacheService {
 
     return {
       overall: health.every(
-          (h) => h.status === 'fulfilled' && h.value.status === 'healthy',
-        )
-        ? 'healthy'
-        : 'degraded',
-      layers: health.map((h) => h.status === 'fulfilled' ? h.value : h.reason),
+        (h) => h.status === "fulfilled" && h.value.status === "healthy",
+      )
+        ? "healthy"
+        : "degraded",
+      layers: health.map((h) =>
+        h.status === "fulfilled" ? h.value : h.reason,
+      ),
       timestamp: new Date().toISOString(),
     };
   }
@@ -549,10 +554,11 @@ export class EnterpriseCacheService {
    */
   private updateResponseTime(startTime: number): void {
     const duration = performance.now() - startTime;
-    this.extendedMetrics.avgResponseTime = (this.extendedMetrics.avgResponseTime
-        * (this.extendedMetrics.totalRequests - 1)
-      + duration)
-      / this.extendedMetrics.totalRequests;
+    this.extendedMetrics.avgResponseTime =
+      (this.extendedMetrics.avgResponseTime *
+        (this.extendedMetrics.totalRequests - 1) +
+        duration) /
+      this.extendedMetrics.totalRequests;
     this.metrics.averageResponseTime = this.extendedMetrics.avgResponseTime;
   }
 
@@ -568,7 +574,7 @@ export class EnterpriseCacheService {
     const _pattern = `patient_${patientId}`;
 
     if (this.config.compliance.auditAccess) {
-      await this.auditAccess('PATIENT_DATA_INVALIDATED', { patientId });
+      await this.auditAccess("PATIENT_DATA_INVALIDATED", { patientId });
     }
   }
 
@@ -581,9 +587,10 @@ export class EnterpriseCacheService {
       // Override with extended metrics for health reporting
       totalOperations: this.extendedMetrics.totalRequests,
       averageResponseTime: this.extendedMetrics.avgResponseTime,
-      cacheHitRate: this.extendedMetrics.totalRequests > 0
-        ? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
-        : 0,
+      cacheHitRate:
+        this.extendedMetrics.totalRequests > 0
+          ? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+          : 0,
     };
   }
 
@@ -596,7 +603,7 @@ export class EnterpriseCacheService {
     }
 
     if (this.config.compliance.auditAccess) {
-      await this.auditAccess('LGPD_CLEANUP', { timestamp: Date.now() });
+      await this.auditAccess("LGPD_CLEANUP", { timestamp: Date.now() });
     }
   }
 }

@@ -4,69 +4,69 @@
  * Target: ≥65% compliance (corrigido de 15%)
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('lGPD Compliance Final Validation', () => {
-  describe('data Subject Rights (Art. 18 LGPD)', () => {
-    it('should validate right to access (direito de acesso)', async () => {
+describe("lGPD Compliance Final Validation", () => {
+  describe("data Subject Rights (Art. 18 LGPD)", () => {
+    it("should validate right to access (direito de acesso)", async () => {
       const accessRights = {
         dataAccess: true,
         dataPortability: true,
-        accessRequestProcess: 'automated',
-        responseTime: '<15 days',
+        accessRequestProcess: "automated",
+        responseTime: "<15 days",
       };
 
       expect(accessRights.dataAccess).toBeTruthy();
       expect(accessRights.dataPortability).toBeTruthy();
-      expect(accessRights.accessRequestProcess).toBe('automated');
-      expect(accessRights.responseTime).toBe('<15 days');
+      expect(accessRights.accessRequestProcess).toBe("automated");
+      expect(accessRights.responseTime).toBe("<15 days");
     });
 
-    it('should validate right to rectification (direito de retificação)', async () => {
+    it("should validate right to rectification (direito de retificação)", async () => {
       const rectificationRights = {
         dataCorrection: true,
         selfService: true,
         auditTrail: true,
-        verificationProcess: 'active',
+        verificationProcess: "active",
       };
 
       expect(rectificationRights.dataCorrection).toBeTruthy();
       expect(rectificationRights.selfService).toBeTruthy();
       expect(rectificationRights.auditTrail).toBeTruthy();
-      expect(rectificationRights.verificationProcess).toBe('active');
+      expect(rectificationRights.verificationProcess).toBe("active");
     });
 
-    it('should validate right to erasure (direito ao esquecimento)', async () => {
+    it("should validate right to erasure (direito ao esquecimento)", async () => {
       const erasureRights = {
         dataErasure: true,
         anonymization: true,
         dependencyCheck: true,
-        retentionPolicy: 'compliant',
+        retentionPolicy: "compliant",
       };
 
       expect(erasureRights.dataErasure).toBeTruthy();
       expect(erasureRights.anonymization).toBeTruthy();
       expect(erasureRights.dependencyCheck).toBeTruthy();
-      expect(erasureRights.retentionPolicy).toBe('compliant');
+      expect(erasureRights.retentionPolicy).toBe("compliant");
     });
   });
 
-  describe('consent Management (Art. 7-11 LGPD)', () => {
-    it('should validate explicit consent collection', async () => {
+  describe("consent Management (Art. 7-11 LGPD)", () => {
+    it("should validate explicit consent collection", async () => {
       const consentCollection = {
         explicitConsent: true,
         granularConsent: true,
         consentRecords: true,
-        withdrawalMechanism: 'available',
+        withdrawalMechanism: "available",
       };
 
       expect(consentCollection.explicitConsent).toBeTruthy();
       expect(consentCollection.granularConsent).toBeTruthy();
       expect(consentCollection.consentRecords).toBeTruthy();
-      expect(consentCollection.withdrawalMechanism).toBe('available');
+      expect(consentCollection.withdrawalMechanism).toBe("available");
     });
 
-    it('should validate consent withdrawal process', async () => {
+    it("should validate consent withdrawal process", async () => {
       const consentWithdrawal = {
         easyWithdrawal: true,
         immediateEffect: true,
@@ -80,7 +80,7 @@ describe('lGPD Compliance Final Validation', () => {
       expect(consentWithdrawal.confirmationProvided).toBeTruthy();
     });
 
-    it('should validate special category data handling', async () => {
+    it("should validate special category data handling", async () => {
       const specialCategoryData = {
         healthDataProtection: true,
         explicitConsent: true,
@@ -95,54 +95,54 @@ describe('lGPD Compliance Final Validation', () => {
     });
   });
 
-  describe('data Processing Transparency (Art. 9 LGPD)', () => {
-    it('should validate privacy notice completeness', async () => {
+  describe("data Processing Transparency (Art. 9 LGPD)", () => {
+    it("should validate privacy notice completeness", async () => {
       const privacyNotice = {
-        processingPurpose: 'clear',
-        dataCategories: 'specified',
-        retentionPeriod: 'defined',
-        recipientCategories: 'identified',
-        dataSubjectRights: 'explained',
+        processingPurpose: "clear",
+        dataCategories: "specified",
+        retentionPeriod: "defined",
+        recipientCategories: "identified",
+        dataSubjectRights: "explained",
       };
 
-      expect(privacyNotice.processingPurpose).toBe('clear');
-      expect(privacyNotice.dataCategories).toBe('specified');
-      expect(privacyNotice.retentionPeriod).toBe('defined');
-      expect(privacyNotice.recipientCategories).toBe('identified');
-      expect(privacyNotice.dataSubjectRights).toBe('explained');
+      expect(privacyNotice.processingPurpose).toBe("clear");
+      expect(privacyNotice.dataCategories).toBe("specified");
+      expect(privacyNotice.retentionPeriod).toBe("defined");
+      expect(privacyNotice.recipientCategories).toBe("identified");
+      expect(privacyNotice.dataSubjectRights).toBe("explained");
     });
 
-    it('should validate data processing lawfulness', async () => {
+    it("should validate data processing lawfulness", async () => {
       const lawfulProcessing = {
-        legalBasis: 'identified',
+        legalBasis: "identified",
         necessityJustification: true,
         proportionalityAssessment: true,
         purposeLimitation: true,
       };
 
-      expect(lawfulProcessing.legalBasis).toBe('identified');
+      expect(lawfulProcessing.legalBasis).toBe("identified");
       expect(lawfulProcessing.necessityJustification).toBeTruthy();
       expect(lawfulProcessing.proportionalityAssessment).toBeTruthy();
       expect(lawfulProcessing.purposeLimitation).toBeTruthy();
     });
   });
 
-  describe('security and Technical Measures (Art. 46-49 LGPD)', () => {
-    it('should validate technical security measures', async () => {
+  describe("security and Technical Measures (Art. 46-49 LGPD)", () => {
+    it("should validate technical security measures", async () => {
       const technicalSecurity = {
-        dataEncryption: 'AES-256',
+        dataEncryption: "AES-256",
         accessControl: true,
         systemSecurity: true,
         securityIncidentPlan: true,
       };
 
-      expect(technicalSecurity.dataEncryption).toBe('AES-256');
+      expect(technicalSecurity.dataEncryption).toBe("AES-256");
       expect(technicalSecurity.accessControl).toBeTruthy();
       expect(technicalSecurity.systemSecurity).toBeTruthy();
       expect(technicalSecurity.securityIncidentPlan).toBeTruthy();
     });
 
-    it('should validate organizational security measures', async () => {
+    it("should validate organizational security measures", async () => {
       const organizationalSecurity = {
         staffTraining: true,
         dataProtectionPolicies: true,
@@ -157,8 +157,8 @@ describe('lGPD Compliance Final Validation', () => {
     });
   });
 
-  describe('data Controller and Processor Obligations', () => {
-    it('should validate data controller responsibilities', async () => {
+  describe("data Controller and Processor Obligations", () => {
+    it("should validate data controller responsibilities", async () => {
       const controllerObligations = {
         privacyByDesign: true,
         privacyByDefault: true,
@@ -172,7 +172,7 @@ describe('lGPD Compliance Final Validation', () => {
       expect(controllerObligations.dataProtectionOfficer).toBeTruthy();
     });
 
-    it('should validate third party processing agreements', async () => {
+    it("should validate third party processing agreements", async () => {
       const processorAgreements = {
         dataProcessingAgreements: true,
         adequateSafeguards: true,
@@ -187,8 +187,8 @@ describe('lGPD Compliance Final Validation', () => {
     });
   });
 
-  describe('healthcare Specific LGPD Requirements', () => {
-    it('should validate healthcare data processing compliance', async () => {
+  describe("healthcare Specific LGPD Requirements", () => {
+    it("should validate healthcare data processing compliance", async () => {
       const healthcareCompliance = {
         medicalDataProtection: true,
         patientConsentManagement: true,
@@ -202,7 +202,7 @@ describe('lGPD Compliance Final Validation', () => {
       expect(healthcareCompliance.emergencyAccessProtocols).toBeTruthy();
     });
 
-    it('should validate professional healthcare obligations', async () => {
+    it("should validate professional healthcare obligations", async () => {
       const professionalObligations = {
         cfmComplianceIntegration: true,
         professionalEthicsCompliance: true,
@@ -217,8 +217,8 @@ describe('lGPD Compliance Final Validation', () => {
     });
   });
 
-  describe('lGPD Compliance Score Validation', () => {
-    it('should validate overall LGPD compliance status', async () => {
+  describe("lGPD Compliance Score Validation", () => {
+    it("should validate overall LGPD compliance status", async () => {
       const complianceMetrics = {
         currentComplianceScore: 65, // Atual após correções
         targetComplianceScore: 65,
@@ -236,20 +236,20 @@ describe('lGPD Compliance Final Validation', () => {
       expect(complianceMetrics.productionReadiness).toBeTruthy();
     });
 
-    it('should validate LGPD implementation completeness', async () => {
+    it("should validate LGPD implementation completeness", async () => {
       const implementationStatus = {
-        dataSubjectRights: 'implemented',
-        consentManagement: 'implemented',
-        securityMeasures: 'implemented',
-        transparencyMeasures: 'implemented',
-        incidentResponse: 'implemented',
+        dataSubjectRights: "implemented",
+        consentManagement: "implemented",
+        securityMeasures: "implemented",
+        transparencyMeasures: "implemented",
+        incidentResponse: "implemented",
       };
 
-      expect(implementationStatus.dataSubjectRights).toBe('implemented');
-      expect(implementationStatus.consentManagement).toBe('implemented');
-      expect(implementationStatus.securityMeasures).toBe('implemented');
-      expect(implementationStatus.transparencyMeasures).toBe('implemented');
-      expect(implementationStatus.incidentResponse).toBe('implemented');
+      expect(implementationStatus.dataSubjectRights).toBe("implemented");
+      expect(implementationStatus.consentManagement).toBe("implemented");
+      expect(implementationStatus.securityMeasures).toBe("implemented");
+      expect(implementationStatus.transparencyMeasures).toBe("implemented");
+      expect(implementationStatus.incidentResponse).toBe("implemented");
     });
   });
 });

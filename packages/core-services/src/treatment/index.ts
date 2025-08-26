@@ -1,8 +1,8 @@
 // Treatment module exports
 
-export type { TreatmentRepository } from './service';
-export * from './service';
-export { TreatmentService } from './service';
+export type { TreatmentRepository } from "./service";
+export * from "./service";
+export { TreatmentService } from "./service";
 // Re-export commonly used types
 export type {
   CompleteTreatmentSessionData,
@@ -16,6 +16,6 @@ export type {
   TreatmentPlan,
   TreatmentSession,
   UpdateTreatmentPlanData,
-} from './types';
-export * from './types';
-export { AnesthesiaType, TreatmentStatus } from './types';
+} from "./types";
+export * from "./types";
+export { AnesthesiaType, TreatmentStatus } from "./types";

@@ -31,38 +31,38 @@ export class RealTimeComplianceMonitor {
         compliance_areas: params.compliance_areas,
         real_time_score: 10, // Initialize with perfect score
         alerts: [],
-        constitutional_status: 'compliant',
+        constitutional_status: "compliant",
         monitoring_config: params.config,
         tenant_id: params.tenant_id,
-        status: 'active',
+        status: "active",
         created_at: timestamp,
         updated_at: timestamp,
         audit_trail: [
           {
             audit_id: crypto.randomUUID(),
             monitor_id: monitorId,
-            action: 'created',
+            action: "created",
             previous_state: {},
             new_state: {
-              status: 'active',
+              status: "active",
               compliance_areas: params.compliance_areas,
             },
             user_id: userId,
             timestamp,
-            reason: 'Real-time compliance monitoring initiated',
+            reason: "Real-time compliance monitoring initiated",
           },
         ],
       };
       // Store monitor configuration
       const { data, error } = await this.supabase
-        .from('enterprise_compliance_monitors')
+        .from("enterprise_compliance_monitors")
         .insert(complianceMonitor)
         .select()
         .single();
       if (error) {
         return {
           success: false,
-          error: 'Failed to start compliance monitoring',
+          error: "Failed to start compliance monitoring",
         };
       }
       // Start monitoring interval
@@ -76,7 +76,7 @@ export class RealTimeComplianceMonitor {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare monitoring service error',
+        error: "Constitutional healthcare monitoring service error",
       };
     }
   }
@@ -88,12 +88,12 @@ export class RealTimeComplianceMonitor {
     try {
       // Get monitor configuration
       const { data: monitor, error: monitorError } = await this.supabase
-        .from('enterprise_compliance_monitors')
-        .select('*')
-        .eq('monitor_id', monitorId)
+        .from("enterprise_compliance_monitors")
+        .select("*")
+        .eq("monitor_id", monitorId)
         .single();
       if (monitorError || !monitor) {
-        return { success: false, error: 'Compliance monitor not found' };
+        return { success: false, error: "Compliance monitor not found" };
       }
       const complianceScores = {};
       const activeAlerts = [];
@@ -109,8 +109,8 @@ export class RealTimeComplianceMonitor {
         complianceScores[area] = areaAssessment.score;
         // Generate alerts for low scores
         if (
-          areaAssessment.score
-            < monitor.monitoring_config.score_thresholds.warning
+          areaAssessment.score <
+          monitor.monitoring_config.score_thresholds.warning
         ) {
           const alert = await this.generateComplianceAlert(
             area,
@@ -133,7 +133,8 @@ export class RealTimeComplianceMonitor {
         }
       }
       // Calculate overall constitutional score
-      const overallScore = this.calculateOverallComplianceScore(complianceScores);
+      const overallScore =
+        this.calculateOverallComplianceScore(complianceScores);
       // Determine overall status
       const status = this.determineComplianceStatus(
         overallScore,
@@ -152,7 +153,8 @@ export class RealTimeComplianceMonitor {
         trends,
         recommendations: [...new Set(recommendations)], // Remove duplicates
         constitutional_assessment: {
-          constitutional_compliant: overallScore >= 9.9 && constitutionalIssues.length === 0,
+          constitutional_compliant:
+            overallScore >= 9.9 && constitutionalIssues.length === 0,
           constitutional_issues: constitutionalIssues,
           constitutional_recommendations: constitutionalRecommendations,
         },
@@ -168,7 +170,7 @@ export class RealTimeComplianceMonitor {
     } catch {
       return {
         success: false,
-        error: 'Constitutional compliance assessment service error',
+        error: "Constitutional compliance assessment service error",
       };
     }
   } /**
@@ -182,29 +184,30 @@ export class RealTimeComplianceMonitor {
     let score = 10;
     try {
       switch (area) {
-        case 'lgpd': {
+        case "lgpd": {
           const lgpdAssessment = await this.assessLgpdCompliance(tenantId);
           score = lgpdAssessment.score;
           issues.push(...lgpdAssessment.issues);
           recommendations.push(...lgpdAssessment.recommendations);
           break;
         }
-        case 'anvisa': {
+        case "anvisa": {
           const anvisaAssessment = await this.assessAnvisaCompliance(tenantId);
           score = anvisaAssessment.score;
           issues.push(...anvisaAssessment.issues);
           recommendations.push(...anvisaAssessment.recommendations);
           break;
         }
-        case 'cfm': {
+        case "cfm": {
           const cfmAssessment = await this.assessCfmCompliance(tenantId);
           score = cfmAssessment.score;
           issues.push(...cfmAssessment.issues);
           recommendations.push(...cfmAssessment.recommendations);
           break;
         }
-        case 'constitutional_healthcare': {
-          const constitutionalAssessment = await this.assessConstitutionalCompliance(tenantId);
+        case "constitutional_healthcare": {
+          const constitutionalAssessment =
+            await this.assessConstitutionalCompliance(tenantId);
           score = constitutionalAssessment.score;
           issues.push(...constitutionalAssessment.issues);
           recommendations.push(...constitutionalAssessment.recommendations);
@@ -271,17 +274,17 @@ export class RealTimeComplianceMonitor {
     const alertId = crypto.randomUUID();
     const timestamp = new Date();
     // Determine alert severity
-    let severity = 'warning';
-    let alertType = 'threshold_breach';
+    let severity = "warning";
+    let alertType = "threshold_breach";
     if (currentScore < 9.9) {
-      severity = 'constitutional_violation';
-      alertType = 'constitutional_issue';
+      severity = "constitutional_violation";
+      alertType = "constitutional_issue";
     } else if (currentScore < 9) {
-      severity = 'critical';
-      alertType = 'violation_detected';
+      severity = "critical";
+      alertType = "violation_detected";
     } else if (currentScore < 9.5) {
-      severity = 'error';
-      alertType = 'compliance_drop';
+      severity = "error";
+      alertType = "compliance_drop";
     }
     // Generate recommendations based on area and score
     const recommendedActions = this.generateRecommendedActions(
@@ -294,12 +297,11 @@ export class RealTimeComplianceMonitor {
       alert_type: alertType,
       severity,
       title: `${area.toUpperCase()} Compliance Alert`,
-      message:
-        `${area} compliance score (${currentScore}) has fallen below threshold (${thresholdScore}). ${
-          issues.length > 0
-            ? `Issues identified: ${issues.join(', ')}`
-            : 'Immediate attention required.'
-        }`,
+      message: `${area} compliance score (${currentScore}) has fallen below threshold (${thresholdScore}). ${
+        issues.length > 0
+          ? `Issues identified: ${issues.join(", ")}`
+          : "Immediate attention required."
+      }`,
       affected_area: area,
       current_score: currentScore,
       threshold_score: thresholdScore,
@@ -341,21 +343,22 @@ export class RealTimeComplianceMonitor {
     try {
       // Get monitor configuration
       const { data: monitor, error: monitorError } = await this.supabase
-        .from('enterprise_compliance_monitors')
-        .select('*')
-        .eq('monitor_id', monitorId)
+        .from("enterprise_compliance_monitors")
+        .select("*")
+        .eq("monitor_id", monitorId)
         .single();
       if (monitorError || !monitor) {
-        return { success: false, error: 'Compliance monitor not found' };
+        return { success: false, error: "Compliance monitor not found" };
       }
       // Get latest assessment
-      const { data: latestAssessment, error: assessmentError } = await this.supabase
-        .from('compliance_monitoring_assessments')
-        .select('*')
-        .eq('monitor_id', monitorId)
-        .order('monitoring_timestamp', { ascending: false })
-        .limit(1)
-        .single();
+      const { data: latestAssessment, error: assessmentError } =
+        await this.supabase
+          .from("compliance_monitoring_assessments")
+          .select("*")
+          .eq("monitor_id", monitorId)
+          .order("monitoring_timestamp", { ascending: false })
+          .limit(1)
+          .single();
       if (assessmentError || !latestAssessment) {
         // If no assessment exists, perform one now
         return await this.performComplianceAssessment(monitorId);
@@ -367,7 +370,7 @@ export class RealTimeComplianceMonitor {
     } catch {
       return {
         success: false,
-        error: 'Constitutional monitoring status service error',
+        error: "Constitutional monitoring status service error",
       };
     }
   }
@@ -385,33 +388,33 @@ export class RealTimeComplianceMonitor {
       // Update monitor status
       const timestamp = new Date();
       const { error: updateError } = await this.supabase
-        .from('enterprise_compliance_monitors')
+        .from("enterprise_compliance_monitors")
         .update({
-          status: 'paused',
+          status: "paused",
           updated_at: timestamp.toISOString(),
           audit_trail: {
             audit_id: crypto.randomUUID(),
             monitor_id: monitorId,
-            action: 'paused',
-            previous_state: { status: 'active' },
-            new_state: { status: 'paused' },
+            action: "paused",
+            previous_state: { status: "active" },
+            new_state: { status: "paused" },
             user_id: userId,
             timestamp: timestamp.toISOString(),
             reason,
           },
         })
-        .eq('monitor_id', monitorId);
+        .eq("monitor_id", monitorId);
       if (updateError) {
         return {
           success: false,
-          error: 'Failed to stop compliance monitoring',
+          error: "Failed to stop compliance monitoring",
         };
       }
       return { success: true };
     } catch {
       return {
         success: false,
-        error: 'Constitutional monitoring termination service error',
+        error: "Constitutional monitoring termination service error",
       };
     }
   }
@@ -420,22 +423,22 @@ export class RealTimeComplianceMonitor {
     if (!params.tenant_id) {
       return {
         valid: false,
-        error: 'Tenant ID required for constitutional monitoring',
+        error: "Tenant ID required for constitutional monitoring",
       };
     }
     if (!params.compliance_areas || params.compliance_areas.length === 0) {
       return {
         valid: false,
-        error: 'At least one compliance area required for monitoring',
+        error: "At least one compliance area required for monitoring",
       };
     }
     if (
-      !params.config.score_thresholds
-      || params.config.score_thresholds.target < 9.9
+      !params.config.score_thresholds ||
+      params.config.score_thresholds.target < 9.9
     ) {
       return {
         valid: false,
-        error: 'Constitutional minimum score threshold (9.9) required',
+        error: "Constitutional minimum score threshold (9.9) required",
       };
     }
     return { valid: true };
@@ -445,7 +448,7 @@ export class RealTimeComplianceMonitor {
     return {
       score: 9.8,
       issues: [],
-      recommendations: ['Continue monitoring LGPD compliance'],
+      recommendations: ["Continue monitoring LGPD compliance"],
     };
   }
   async assessAnvisaCompliance(_tenantId) {
@@ -453,7 +456,7 @@ export class RealTimeComplianceMonitor {
     return {
       score: 9.9,
       issues: [],
-      recommendations: ['Maintain ANVISA compliance standards'],
+      recommendations: ["Maintain ANVISA compliance standards"],
     };
   }
   async assessCfmCompliance(_tenantId) {
@@ -461,7 +464,7 @@ export class RealTimeComplianceMonitor {
     return {
       score: 9.9,
       issues: [],
-      recommendations: ['Continue CFM professional standards compliance'],
+      recommendations: ["Continue CFM professional standards compliance"],
     };
   }
   async assessConstitutionalCompliance(_tenantId) {
@@ -469,7 +472,7 @@ export class RealTimeComplianceMonitor {
     return {
       score: 9.9,
       issues: [],
-      recommendations: ['Maintain constitutional healthcare standards'],
+      recommendations: ["Maintain constitutional healthcare standards"],
     };
   }
   generateRecommendedActions(area, score, issues) {
@@ -484,7 +487,7 @@ export class RealTimeComplianceMonitor {
     }
     if (issues.length > 0) {
       actions.push(
-        `Address identified issues: ${issues.slice(0, 3).join(', ')}`,
+        `Address identified issues: ${issues.slice(0, 3).join(", ")}`,
       );
     }
     actions.push(`Schedule ${area} compliance review with responsible team`);
@@ -493,41 +496,43 @@ export class RealTimeComplianceMonitor {
   }
   determineComplianceStatus(score, thresholds) {
     if (score < 9.9) {
-      return 'constitutional_violation';
+      return "constitutional_violation";
     }
     if (score < thresholds.critical) {
-      return 'critical';
+      return "critical";
     }
     if (score < thresholds.warning) {
-      return 'warning';
+      return "warning";
     }
-    return 'healthy';
+    return "healthy";
   }
   async analyzeComplianceTrends(monitorId, currentScore) {
     try {
       // Get historical scores for trend analysis
       const { data: historicalAssessments } = await this.supabase
-        .from('compliance_monitoring_assessments')
-        .select('overall_constitutional_score, monitoring_timestamp')
-        .eq('monitor_id', monitorId)
-        .order('monitoring_timestamp', { ascending: false })
+        .from("compliance_monitoring_assessments")
+        .select("overall_constitutional_score, monitoring_timestamp")
+        .eq("monitor_id", monitorId)
+        .order("monitoring_timestamp", { ascending: false })
         .limit(10);
       if (!historicalAssessments || historicalAssessments.length < 2) {
         return {
-          score_trend: 'stable',
+          score_trend: "stable",
           trend_percentage: 0,
           next_period_prediction: currentScore,
         };
       }
       // Calculate trend
-      const previousScore = historicalAssessments[1].overall_constitutional_score;
-      const trendPercentage = ((currentScore - previousScore) / previousScore) * 100;
-      let scoreTrend = 'stable';
+      const previousScore =
+        historicalAssessments[1].overall_constitutional_score;
+      const trendPercentage =
+        ((currentScore - previousScore) / previousScore) * 100;
+      let scoreTrend = "stable";
       if (trendPercentage > 1) {
-        scoreTrend = 'improving';
+        scoreTrend = "improving";
       }
       if (trendPercentage < -1) {
-        scoreTrend = 'declining';
+        scoreTrend = "declining";
       }
       // Simple prediction based on trend
       const prediction = currentScore + trendPercentage / 100;
@@ -538,7 +543,7 @@ export class RealTimeComplianceMonitor {
       };
     } catch {
       return {
-        score_trend: 'stable',
+        score_trend: "stable",
         trend_percentage: 0,
         next_period_prediction: currentScore,
       };
@@ -546,7 +551,7 @@ export class RealTimeComplianceMonitor {
   }
   async updateMonitorAssessment(monitorId, assessment) {
     try {
-      await this.supabase.from('compliance_monitoring_assessments').insert({
+      await this.supabase.from("compliance_monitoring_assessments").insert({
         monitor_id: monitorId,
         assessment_data: assessment,
         overall_constitutional_score: assessment.overall_constitutional_score,
@@ -558,7 +563,7 @@ export class RealTimeComplianceMonitor {
     try {
       for (const alert of alerts) {
         // Store alert in database
-        await this.supabase.from('compliance_alerts').insert(alert);
+        await this.supabase.from("compliance_alerts").insert(alert);
         // Send notifications if enabled
         if (config.automated_actions.notifications_enabled) {
           await this.sendAlertNotifications(alert, config.alert_recipients);

@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 // Initialize Supabase client with service role key for server-side operations

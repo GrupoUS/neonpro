@@ -1,6 +1,6 @@
-import type React from 'react';
-import { Component } from 'react';
-import type { ErrorInfo, ReactNode } from 'react';
+import type React from "react";
+import { Component } from "react";
+import type { ErrorInfo, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
@@ -65,8 +65,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 Detalhes técnicos
               </summary>
               <pre className="mt-2 overflow-auto whitespace-pre-wrap rounded-md border border-border bg-muted/50 p-4 text-foreground text-xs">
-								{this.state.error.toString()}
-								{this.state.errorInfo?.componentStack}
+                {this.state.error.toString()}
+                {this.state.errorInfo?.componentStack}
               </pre>
             </details>
           )}
@@ -122,7 +122,8 @@ export class CriticalErrorBoundary extends Component<
             </div>
 
             <p className="text-muted-foreground">
-              Um erro crítico ocorreu nesta seção. Recarregue a página para tentar novamente.
+              Um erro crítico ocorreu nesta seção. Recarregue a página para
+              tentar novamente.
             </p>
 
             <button
@@ -138,8 +139,8 @@ export class CriticalErrorBoundary extends Component<
                   Detalhes do erro
                 </summary>
                 <pre className="mt-2 overflow-auto whitespace-pre-wrap rounded-md border border-border bg-muted/50 p-4 text-foreground text-xs">
-									{this.state.error.toString()}
-									{this.state.errorInfo?.componentStack}
+                  {this.state.error.toString()}
+                  {this.state.errorInfo?.componentStack}
                 </pre>
               </details>
             )}
@@ -155,7 +156,7 @@ export class CriticalErrorBoundary extends Component<
 // HOC para facilitar o uso
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<Props, 'children'>,
+  errorBoundaryProps?: Omit<Props, "children">,
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>

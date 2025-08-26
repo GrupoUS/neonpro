@@ -12,26 +12,26 @@ export type {
   PerformanceMetrics,
   TestContext,
   TestMetrics,
-} from '../types/testing';
+} from "../types/testing";
 export {
   AccessibilityTester,
   createAccessibilityTestSuite,
   testWCAGCompliance,
   validateHealthcareAccessibility,
-} from './accessibility-testing';
+} from "./accessibility-testing";
 export {
   ComplianceTester,
   createComplianceTestSuite,
   testHealthcareCompliance,
   validateRegulatoryCompliance,
-} from './compliance-testing';
+} from "./compliance-testing";
 // E2E Testing
 export {
   createHealthcareE2ETestSuite,
   HealthcareE2ETester,
   testClinicOperations,
   validatePatientJourney,
-} from './e2e-healthcare-testing';
+} from "./e2e-healthcare-testing";
 // Test Utilities
 export {
   cleanupHealthcareTestEnvironment,
@@ -42,33 +42,33 @@ export {
   HealthcareTestUtils,
   mockHealthcareServices,
   setupHealthcareTestEnvironment,
-} from './healthcare-test-utils';
+} from "./healthcare-test-utils";
 export {
   createMedicalAccuracyTestSuite,
   MedicalAccuracyTester,
   testClinicalAccuracy,
   validateMedicalInformation,
-} from './medical-accuracy-testing';
+} from "./medical-accuracy-testing";
 // Healthcare-Specific Testing Utilities
 export {
   createPatientPrivacyTestSuite,
   PatientPrivacyTester,
   testLGPDCompliance,
   validatePatientDataProtection,
-} from './patient-privacy-testing';
+} from "./patient-privacy-testing";
 // Performance and Accessibility Testing
 export {
   createPerformanceTestSuite,
   PerformanceTester,
   testClinicWorkflowPerformance,
   validateHealthcarePerformance,
-} from './performance-testing';
+} from "./performance-testing";
 export {
   createSecurityTestSuite,
   SecurityTester,
   testSecurityCompliance,
   validateHealthcareSecurity,
-} from './security-testing';
+} from "./security-testing";
 // Main Testing Framework
 export {
   createANVISATest,
@@ -81,7 +81,7 @@ export {
   healthcareTestFramework,
   type HealthcareTestFrameworkConfig,
   healthcareTestUtils,
-} from './testing-framework';
+} from "./testing-framework";
 
 // Testing Constants
 export const HEALTHCARE_TEST_CONSTANTS = {
@@ -109,11 +109,11 @@ export const HEALTHCARE_TEST_CONSTANTS = {
     },
   },
   TEST_ENVIRONMENTS: {
-    UNIT: 'unit',
-    INTEGRATION: 'integration',
-    E2E: 'e2e',
-    PERFORMANCE: 'performance',
-    SECURITY: 'security',
+    UNIT: "unit",
+    INTEGRATION: "integration",
+    E2E: "e2e",
+    PERFORMANCE: "performance",
+    SECURITY: "security",
   } as const,
 } as const;
 
@@ -164,37 +164,37 @@ export class HealthcareTestRunner {
       // Run LGPD Tests
       if (this.config.enableLGPDTests) {
         const lgpdResults = await this.runLGPDTests();
-        results.set('lgpd', lgpdResults);
+        results.set("lgpd", lgpdResults);
       }
 
       // Run ANVISA Tests
       if (this.config.enableANVISATests) {
         const anvisaResults = await this.runANVISATests();
-        results.set('anvisa', anvisaResults);
+        results.set("anvisa", anvisaResults);
       }
 
       // Run CFM Tests
       if (this.config.enableCFMTests) {
         const cfmResults = await this.runCFMTests();
-        results.set('cfm', cfmResults);
+        results.set("cfm", cfmResults);
       }
 
       // Run Performance Tests
       if (this.config.enablePerformanceTests) {
         const performanceResults = await this.runPerformanceTests();
-        results.set('performance', performanceResults);
+        results.set("performance", performanceResults);
       }
 
       // Run Security Tests
       if (this.config.enableSecurityTests) {
         const securityResults = await this.runSecurityTests();
-        results.set('security', securityResults);
+        results.set("security", securityResults);
       }
 
       // Run E2E Tests
       if (this.config.enableE2ETests) {
         const e2eResults = await this.runE2ETests();
-        results.set('e2e', e2eResults);
+        results.set("e2e", e2eResults);
       }
 
       const duration = Date.now() - startTime;
@@ -212,7 +212,7 @@ export class HealthcareTestRunner {
       };
     } catch (error) {
       throw new Error(
-        `Healthcare test suite failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Healthcare test suite failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }
@@ -256,9 +256,9 @@ export class HealthcareTestRunner {
     results: Map<string, TestResult>,
   ): ComplianceReport {
     return {
-      lgpd: results.get('lgpd')?.passed,
-      anvisa: results.get('anvisa')?.passed,
-      cfm: results.get('cfm')?.passed,
+      lgpd: results.get("lgpd")?.passed,
+      anvisa: results.get("anvisa")?.passed,
+      cfm: results.get("cfm")?.passed,
       overall: [...results.values()].every((r) => r.passed),
     };
   }

@@ -13,18 +13,18 @@ export const withdrawConsent = async (_userId: string, _purposes: string[]) => {
 };
 
 export const getConsentStatus = async (_userId: string) => {
-  return { status: 'granted' };
+  return { status: "granted" };
 };
 
 export const createDataSubjectRequest = async (
   _userId: string,
   _type: string,
 ) => {
-  return { id: 'placeholder-request-id' };
+  return { id: "placeholder-request-id" };
 };
 
 export const downloadDataExport = async (_requestId: string) => {
-  return { url: 'placeholder-download-url' };
+  return { url: "placeholder-download-url" };
 };
 
 export const requestDataRectification = async (

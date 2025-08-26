@@ -6,7 +6,7 @@ import {
   generateRegistrationOptions,
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
-} from '@simplewebauthn/server';
+} from "@simplewebauthn/server";
 
 export interface WebAuthnConfig {
   rpName: string;
@@ -27,7 +27,7 @@ export class WebAuthnService {
       rpID: this.config.rpID,
       userID,
       userName,
-      attestationType: 'none',
+      attestationType: "none",
     });
   }
 
@@ -63,9 +63,9 @@ export class WebAuthnService {
 
 // Default instance
 export const webAuthnService = new WebAuthnService({
-  rpName: 'NeonPro Healthcare',
-  rpID: 'localhost',
-  origin: 'http://localhost:3000',
+  rpName: "NeonPro Healthcare",
+  rpID: "localhost",
+  origin: "http://localhost:3000",
 });
 
 // CommonJS compatibility

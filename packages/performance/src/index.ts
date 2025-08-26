@@ -3,10 +3,10 @@
  * Healthcare-optimized performance monitoring and optimization
  */
 
-export { default as HealthcareBundleAnalyzer } from './bundle-analysis/bundle-analyzer';
-export { default as HealthcareDatabaseMonitor } from './database/query-profiler';
-export { default as HealthcareInfrastructureOptimizer } from './infrastructure/cache-manager';
-export { default as HealthcarePerformanceOptimizationService } from './performance-optimization-service';
+export { default as HealthcareBundleAnalyzer } from "./bundle-analysis/bundle-analyzer";
+export { default as HealthcareDatabaseMonitor } from "./database/query-profiler";
+export { default as HealthcareInfrastructureOptimizer } from "./infrastructure/cache-manager";
+export { default as HealthcarePerformanceOptimizationService } from "./performance-optimization-service";
 // Types
 export type {
   BundleAnalysisResult,
@@ -22,21 +22,24 @@ export type {
   PerformanceReport,
   PerformanceThresholds,
   WebVitalsMetric,
-} from './types';
+} from "./types";
 // Core exports
-export { HEALTHCARE_THRESHOLDS, HealthcareWebVitals } from './web-vitals/core-web-vitals';
+export {
+  HEALTHCARE_THRESHOLDS,
+  HealthcareWebVitals,
+} from "./web-vitals/core-web-vitals";
 
-import HealthcareBundleAnalyzer from './bundle-analysis/bundle-analyzer';
-import HealthcareDatabaseMonitor from './database/query-profiler';
-import HealthcareInfrastructureOptimizer from './infrastructure/cache-manager';
+import HealthcareBundleAnalyzer from "./bundle-analysis/bundle-analyzer";
+import HealthcareDatabaseMonitor from "./database/query-profiler";
+import HealthcareInfrastructureOptimizer from "./infrastructure/cache-manager";
 import type {
   HealthcareVitalsMetric,
   PerformanceConfig,
   PerformanceEventHandler,
   PerformanceReport,
-} from './types';
+} from "./types";
 // Healthcare Performance Monitor - Main orchestrator
-import { HealthcareWebVitals } from './web-vitals/core-web-vitals';
+import { HealthcareWebVitals } from "./web-vitals/core-web-vitals";
 
 export class HealthcarePerformanceMonitor {
   private readonly config: PerformanceConfig;
@@ -84,7 +87,8 @@ export class HealthcarePerformanceMonitor {
       this.webVitals.startMonitoring();
     }
 
-    if (this.config.debug) {}
+    if (this.config.debug) {
+    }
   }
 
   /**
@@ -92,11 +96,11 @@ export class HealthcarePerformanceMonitor {
    */
   setHealthcareContext(context: {
     workflowType?:
-      | 'patient-registration'
-      | 'medical-form'
-      | 'procedure-scheduling'
-      | 'medical-history'
-      | 'real-time-update';
+      | "patient-registration"
+      | "medical-form"
+      | "procedure-scheduling"
+      | "medical-history"
+      | "real-time-update";
     clinicId?: string;
     userId?: string;
   }): void {
@@ -118,7 +122,7 @@ export class HealthcarePerformanceMonitor {
     query: string,
     executionTime: number,
     table: string,
-    queryType: 'select' | 'insert' | 'update' | 'delete',
+    queryType: "select" | "insert" | "update" | "delete",
     rowsAffected?: number,
   ): void {
     if (this.config.enableDatabaseMonitoring) {
@@ -148,7 +152,7 @@ export class HealthcarePerformanceMonitor {
    */
   async generateReport(): Promise<PerformanceReport> {
     const timestamp = new Date().toISOString();
-    const url = typeof window !== 'undefined' ? window.location.href : 'server';
+    const url = typeof window !== "undefined" ? window.location.href : "server";
 
     // Collect all metrics (this would be populated by real monitoring)
     const metrics: HealthcareVitalsMetric[] = [];
@@ -156,21 +160,22 @@ export class HealthcarePerformanceMonitor {
     // Calculate overall score (simplified)
     const overallScore = 85; // This would be calculated from real metrics
 
-    const rating = overallScore >= 90
-      ? 'excellent'
-      : overallScore >= 75
-      ? 'good'
-      : overallScore >= 60
-      ? 'needs-improvement'
-      : 'poor';
+    const rating =
+      overallScore >= 90
+        ? "excellent"
+        : overallScore >= 75
+          ? "good"
+          : overallScore >= 60
+            ? "needs-improvement"
+            : "poor";
 
     const recommendations = [
       {
-        type: 'critical' as const,
-        category: 'bundle' as const,
-        description: 'Implement code splitting for healthcare modules',
-        impact: 'high' as const,
-        effort: 'medium' as const,
+        type: "critical" as const,
+        category: "bundle" as const,
+        description: "Implement code splitting for healthcare modules",
+        impact: "high" as const,
+        effort: "medium" as const,
         healthcareRelevance: true,
       },
     ];
@@ -207,7 +212,8 @@ export class HealthcarePerformanceMonitor {
    */
   private setupEventHandlers(): void {
     this.webVitals.onMetric((metric) => {
-      if (this.config.debug) {}
+      if (this.config.debug) {
+      }
 
       // Send to reporting endpoint if configured
       if (this.config.reportingEndpoint) {
@@ -226,20 +232,21 @@ export class HealthcarePerformanceMonitor {
 
     try {
       await fetch(this.config.reportingEndpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'X-Healthcare-Performance': 'true',
+          "Content-Type": "application/json",
+          "X-Healthcare-Performance": "true",
         },
         body: JSON.stringify({
-          type: 'performance-metric',
+          type: "performance-metric",
           metric,
           timestamp: Date.now(),
           healthcareMode: this.config.healthcareMode,
         }),
       });
     } catch {
-      if (this.config.debug) {}
+      if (this.config.debug) {
+      }
     }
   }
 }

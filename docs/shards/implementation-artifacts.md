@@ -65,10 +65,14 @@ abstract class EnhancedService<T, U> {
 
 ```typescript
 // Universal AI Chat Service Interface
-interface UniversalAIChatService extends EnhancedService<ChatRequest, ChatResponse> {
-  processPatientQuery(query: string, context: PatientContext): Promise<AIResponse>;
+interface UniversalAIChatService
+  extends EnhancedService<ChatRequest, ChatResponse> {
+  processPatientQuery(
+    query: string,
+    context: PatientContext,
+  ): Promise<AIResponse>;
   handleAppointmentBooking(request: BookingRequest): Promise<BookingResult>;
-  provideFAQSupport(question: string, language: 'pt-BR'): Promise<FAQResponse>;
+  provideFAQSupport(question: string, language: "pt-BR"): Promise<FAQResponse>;
 }
 ```
 
@@ -85,7 +89,7 @@ interface UniversalAIChatService extends EnhancedService<ChatRequest, ChatRespon
 ```typescript
 // AI Chat Component
 interface AIChatComponentProps {
-  mode: 'patient' | 'staff';
+  mode: "patient" | "staff";
   initialContext?: ChatContext;
   onConversationEnd?: (summary: ConversationSummary) => void;
 }
@@ -311,7 +315,7 @@ CREATE TABLE feature_flags (
 ```typescript
 // AI Chat API
 POST /api/ai/chat/patient
-POST /api/ai/chat/staff  
+POST /api/ai/chat/staff
 GET  /api/ai/chat/conversations/:id
 
 // No-Show Prediction API

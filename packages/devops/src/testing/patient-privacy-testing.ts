@@ -4,8 +4,8 @@
  * Implements comprehensive patient data protection validation
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import type { ComplianceMetrics } from '../types/testing';
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import type { ComplianceMetrics } from "../types/testing";
 
 export interface PatientPrivacyTestConfig {
   enableDataEncryption: boolean;
@@ -37,12 +37,12 @@ export class PatientPrivacyTester {
     patientData: PatientData,
   ): Promise<boolean> {
     const lawfulBases = [
-      'consent',
-      'contract',
-      'legal_obligation',
-      'vital_interests',
-      'public_task',
-      'legitimate_interests',
+      "consent",
+      "contract",
+      "legal_obligation",
+      "vital_interests",
+      "public_task",
+      "legitimate_interests",
     ];
 
     return lawfulBases.includes(patientData.processingBasis);
@@ -63,7 +63,7 @@ export class PatientPrivacyTester {
     const isValid = Object.values(validationResults).every(Boolean);
     const score = isValid ? 9.9 : 0;
 
-    this.testResults.set('consent_validation', {
+    this.testResults.set("consent_validation", {
       score,
       passed: isValid,
       details: validationResults,
@@ -93,7 +93,7 @@ export class PatientPrivacyTester {
     const allRightsImplemented = Object.values(rights).every(Boolean);
     const score = allRightsImplemented ? 9.9 : 0;
 
-    this.testResults.set('data_subject_rights', {
+    this.testResults.set("data_subject_rights", {
       score,
       passed: allRightsImplemented,
       details: rights,
@@ -122,7 +122,7 @@ export class PatientPrivacyTester {
     const isSecure = Object.values(securityMeasures).every(Boolean);
     const score = isSecure ? 9.9 : 0;
 
-    this.testResults.set('data_security', {
+    this.testResults.set("data_security", {
       score,
       passed: isSecure,
       details: securityMeasures,
@@ -152,7 +152,7 @@ export class PatientPrivacyTester {
       ? 9.9
       : Math.max(0, 9.9 - unnecessaryFields.length * 2);
 
-    this.testResults.set('data_minimization', {
+    this.testResults.set("data_minimization", {
       score,
       passed: isMinimized,
       details: {
@@ -186,7 +186,7 @@ export class PatientPrivacyTester {
     const isValid = Object.values(validationChecks).some(Boolean);
     const score = isValid ? 9.9 : 0;
 
-    this.testResults.set('cross_border_transfer', {
+    this.testResults.set("cross_border_transfer", {
       score,
       passed: isValid,
       details: validationChecks,
@@ -218,7 +218,7 @@ export class PatientPrivacyTester {
     const isCompliant = !requiresPIA || (requiresPIA && hasPIA);
     const score = isCompliant ? 9.9 : 0;
 
-    this.testResults.set('privacy_impact_assessment', {
+    this.testResults.set("privacy_impact_assessment", {
       score,
       passed: isCompliant,
       details: { riskFactors, requiresPIA, hasPIA },
@@ -236,20 +236,20 @@ export class PatientPrivacyTester {
 
   // Private helper methods
   private validateSpecificConsent(consent: PatientConsent): boolean {
-    return consent.purpose.length > 0 && consent.purpose !== 'general';
+    return consent.purpose.length > 0 && consent.purpose !== "general";
   }
 
   private validateInformedConsent(consent: PatientConsent): boolean {
     return (
-      consent.informationProvided
-      && consent.processingBasis !== null
-      && consent.retentionPeriod !== null
+      consent.informationProvided &&
+      consent.processingBasis !== null &&
+      consent.retentionPeriod !== null
     );
   }
 
   private validateUnambiguousConsent(consent: PatientConsent): boolean {
     return (
-      consent.consentMethod === 'explicit' && consent.isAmbiguous === false
+      consent.consentMethod === "explicit" && consent.isAmbiguous === false
     );
   }
 
@@ -259,7 +259,7 @@ export class PatientPrivacyTester {
 
   private validateWithdrawableConsent(consent: PatientConsent): boolean {
     return (
-      consent.withdrawalMechanism !== null && consent.withdrawalMechanism !== ''
+      consent.withdrawalMechanism !== null && consent.withdrawalMechanism !== ""
     );
   }
 
@@ -301,8 +301,8 @@ export class PatientPrivacyTester {
 
   private async validateEncryption(patientData: PatientData): Promise<boolean> {
     return (
-      patientData.encryptionStatus === 'encrypted'
-      && this.config.enableDataEncryption
+      patientData.encryptionStatus === "encrypted" &&
+      this.config.enableDataEncryption
     );
   }
 
@@ -310,8 +310,8 @@ export class PatientPrivacyTester {
     patientData: PatientData,
   ): Promise<boolean> {
     return (
-      patientData.accessControls.length > 0
-      && patientData.accessControls.includes('rbac')
+      patientData.accessControls.length > 0 &&
+      patientData.accessControls.includes("rbac")
     );
   }
 
@@ -324,41 +324,41 @@ export class PatientPrivacyTester {
   private async validateSecureBackup(
     patientData: PatientData,
   ): Promise<boolean> {
-    return patientData.backupStatus === 'encrypted_backup';
+    return patientData.backupStatus === "encrypted_backup";
   }
 
   private async validateSecureTransmission(
     patientData: PatientData,
   ): Promise<boolean> {
-    return patientData.transmissionSecurity === 'tls_1_3';
+    return patientData.transmissionSecurity === "tls_1_3";
   }
 
   private getNecessaryFieldsForPurpose(purpose: string): string[] {
     const necessaryFieldsMap: Record<string, string[]> = {
       medical_treatment: [
-        'name',
-        'cpf',
-        'medicalHistory',
-        'allergies',
-        'medications',
+        "name",
+        "cpf",
+        "medicalHistory",
+        "allergies",
+        "medications",
       ],
-      appointment_scheduling: ['name', 'phone', 'email', 'preferredTime'],
-      billing: ['name', 'cpf', 'address', 'paymentMethod'],
-      marketing: ['name', 'email', 'preferences'],
+      appointment_scheduling: ["name", "phone", "email", "preferredTime"],
+      billing: ["name", "cpf", "address", "paymentMethod"],
+      marketing: ["name", "email", "preferences"],
     };
 
     return necessaryFieldsMap[purpose] || [];
   }
 
   private hasAdequacyDecision(country: string): boolean {
-    const adequateCountries = ['AR', 'UY', 'IL']; // Example adequate countries
+    const adequateCountries = ["AR", "UY", "IL"]; // Example adequate countries
     return adequateCountries.includes(country);
   }
 
   private hasAppropriateSafeguards(transfer: DataTransfer): boolean {
     return (
-      transfer.safeguards.includes('standard_contractual_clauses')
-      || transfer.safeguards.includes('binding_corporate_rules')
+      transfer.safeguards.includes("standard_contractual_clauses") ||
+      transfer.safeguards.includes("binding_corporate_rules")
     );
   }
 
@@ -372,9 +372,9 @@ export class PatientPrivacyTester {
 
   private involvesSensitiveData(processing: DataProcessing): boolean {
     return processing.dataCategories.some((category) =>
-      ['health', 'genetic', 'biometric', 'racial', 'religious'].includes(
+      ["health", "genetic", "biometric", "racial", "religious"].includes(
         category,
-      )
+      ),
     );
   }
 
@@ -383,27 +383,28 @@ export class PatientPrivacyTester {
   }
 
   private involvesSystematicMonitoring(processing: DataProcessing): boolean {
-    return processing.activities.includes('systematic_monitoring');
+    return processing.activities.includes("systematic_monitoring");
   }
 
   private involvesVulnerableSubjects(processing: DataProcessing): boolean {
     return (
-      processing.subjectCategories.includes('children')
-      || processing.subjectCategories.includes('elderly')
-      || processing.subjectCategories.includes('patients')
+      processing.subjectCategories.includes("children") ||
+      processing.subjectCategories.includes("elderly") ||
+      processing.subjectCategories.includes("patients")
     );
   }
 
   private involvesNewTechnology(processing: DataProcessing): boolean {
     return processing.technologies.some((tech) =>
-      ['ai', 'machine_learning', 'biometric_recognition'].includes(tech)
+      ["ai", "machine_learning", "biometric_recognition"].includes(tech),
     );
   }
 
   // Public methods for test creation
   generateComplianceReport(): PatientPrivacyComplianceReport {
     const results = [...this.testResults.values()];
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {
@@ -422,7 +423,7 @@ export class PatientPrivacyTester {
     for (const [testName, result] of this.testResults) {
       if (!result.passed) {
         recommendations.push(
-          `Improve ${testName.replace('_', ' ')} implementation`,
+          `Improve ${testName.replace("_", " ")} implementation`,
         );
       }
     }
@@ -447,40 +448,42 @@ export function createPatientPrivacyTestSuite(
       vi.restoreAllMocks();
     });
 
-    it('lGPD Consent Validation', async () => {
+    it("lGPD Consent Validation", async () => {
       const mockConsent: PatientConsent = {
-        purpose: 'medical_treatment',
-        consentMethod: 'explicit',
+        purpose: "medical_treatment",
+        consentMethod: "explicit",
         informationProvided: true,
-        processingBasis: 'consent',
-        retentionPeriod: '5_years',
+        processingBasis: "consent",
+        retentionPeriod: "5_years",
         isAmbiguous: false,
         isConditional: false,
         isBundled: false,
-        withdrawalMechanism: 'email_request',
+        withdrawalMechanism: "email_request",
       };
 
-      const result = await privacyTester.validateConsentRequirements(mockConsent);
+      const result =
+        await privacyTester.validateConsentRequirements(mockConsent);
       expect(result.isValid).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
 
-    it('data Subject Rights Implementation', async () => {
-      const result = await privacyTester.validateDataSubjectRights('test-patient-id');
+    it("data Subject Rights Implementation", async () => {
+      const result =
+        await privacyTester.validateDataSubjectRights("test-patient-id");
       expect(result.allImplemented).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
 
-    it('data Minimization Compliance', async () => {
+    it("data Minimization Compliance", async () => {
       const mockData: CollectedData = {
-        name: 'Test Patient',
-        cpf: '12345678901',
-        medicalHistory: 'History data',
+        name: "Test Patient",
+        cpf: "12345678901",
+        medicalHistory: "History data",
       };
 
       const result = await privacyTester.validateDataMinimization(
         mockData,
-        'medical_treatment',
+        "medical_treatment",
       );
       expect(result.isMinimized).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
@@ -501,7 +504,7 @@ export async function validatePatientDataProtection(
 
 export async function testLGPDCompliance(
   patientId: string,
-): Promise<ComplianceMetrics['lgpd']> {
+): Promise<ComplianceMetrics["lgpd"]> {
   const tester = new PatientPrivacyTester();
 
   const [consentResult, rightsResult] = await Promise.all([
@@ -519,17 +522,17 @@ export async function testLGPDCompliance(
 
 // Type Definitions
 interface PatientData {
-  encryptionStatus: 'encrypted' | 'not_encrypted';
+  encryptionStatus: "encrypted" | "not_encrypted";
   accessControls: string[];
-  auditLog: { enabled: boolean; } | null;
-  backupStatus: 'encrypted_backup' | 'unencrypted_backup' | 'no_backup';
-  transmissionSecurity: 'tls_1_3' | 'tls_1_2' | 'unencrypted';
+  auditLog: { enabled: boolean } | null;
+  backupStatus: "encrypted_backup" | "unencrypted_backup" | "no_backup";
+  transmissionSecurity: "tls_1_3" | "tls_1_2" | "unencrypted";
   processingBasis: string;
 }
 
 interface PatientConsent {
   purpose: string;
-  consentMethod: 'explicit' | 'implicit';
+  consentMethod: "explicit" | "implicit";
   informationProvided: boolean;
   processingBasis: string;
   retentionPeriod: string;

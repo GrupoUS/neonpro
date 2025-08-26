@@ -3,16 +3,16 @@
  * Automated generation and management of Architecture Decision Records for NeonPro
  */
 
-import chalk from 'chalk';
-import inquirer from 'inquirer';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import ora from 'ora';
+import chalk from "chalk";
+import inquirer from "inquirer";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import ora from "ora";
 
 export interface ADRMetadata {
   number: number;
   title: string;
-  status: 'Proposed' | 'Accepted' | 'Rejected' | 'Deprecated' | 'Superseded';
+  status: "Proposed" | "Accepted" | "Rejected" | "Deprecated" | "Superseded";
   author: string;
   date: string;
   supersededBy?: number;
@@ -54,17 +54,17 @@ export class ADRGenerator {
   private readonly templatePath: string;
   private readonly spinner: ReturnType<typeof ora>;
 
-  constructor(adrDirectory = './docs/adrs') {
+  constructor(adrDirectory = "./docs/adrs") {
     this.adrDirectory = adrDirectory;
-    this.templatePath = join(adrDirectory, 'template.md');
-    this.spinner = ora('Processing...');
+    this.templatePath = join(adrDirectory, "template.md");
+    this.spinner = ora("Processing...");
   }
 
   /**
    * Create a new ADR interactively
    */
   async createADR(): Promise<void> {
-    this.spinner.start('Creating new ADR...');
+    this.spinner.start("Creating new ADR...");
 
     try {
       // Get next ADR number
@@ -74,90 +74,90 @@ export class ADRGenerator {
       // Interactive prompts
       const answers = await inquirer.prompt<ADRAnswers>([
         {
-          type: 'input',
-          name: 'title',
-          message: 'ADR Title:',
-          validate: (input: string) => input.length > 0 || 'Title is required',
+          type: "input",
+          name: "title",
+          message: "ADR Title:",
+          validate: (input: string) => input.length > 0 || "Title is required",
         },
         {
-          type: 'list',
-          name: 'status',
-          message: 'Initial Status:',
-          choices: ['Proposed', 'Accepted'],
-          default: 'Proposed',
+          type: "list",
+          name: "status",
+          message: "Initial Status:",
+          choices: ["Proposed", "Accepted"],
+          default: "Proposed",
         },
         {
-          type: 'input',
-          name: 'author',
-          message: 'Author name:',
-          validate: (input: string) => input.length > 0 || 'Author is required',
+          type: "input",
+          name: "author",
+          message: "Author name:",
+          validate: (input: string) => input.length > 0 || "Author is required",
         },
         {
-          type: 'editor',
-          name: 'context',
-          message: 'Context (forces at play, background):',
+          type: "editor",
+          name: "context",
+          message: "Context (forces at play, background):",
         },
         {
-          type: 'editor',
-          name: 'decision',
-          message: 'Decision (what we decided to do):',
+          type: "editor",
+          name: "decision",
+          message: "Decision (what we decided to do):",
         },
         {
-          type: 'editor',
-          name: 'consequences',
-          message: 'Consequences (positive, negative, neutral):',
+          type: "editor",
+          name: "consequences",
+          message: "Consequences (positive, negative, neutral):",
         },
         {
-          type: 'editor',
-          name: 'alternatives',
-          message: 'Alternatives considered:',
+          type: "editor",
+          name: "alternatives",
+          message: "Alternatives considered:",
         },
         {
-          type: 'confirm',
-          name: 'hasImplementation',
-          message: 'Include implementation notes?',
+          type: "confirm",
+          name: "hasImplementation",
+          message: "Include implementation notes?",
           default: false,
         },
         {
-          type: 'editor',
-          name: 'implementation',
-          message: 'Implementation notes:',
+          type: "editor",
+          name: "implementation",
+          message: "Implementation notes:",
           when: (answers: ADRAnswers) => answers.hasImplementation,
         },
         {
-          type: 'confirm',
-          name: 'hasHealthcare',
-          message: 'Include healthcare compliance notes?',
+          type: "confirm",
+          name: "hasHealthcare",
+          message: "Include healthcare compliance notes?",
           default: false,
         },
         {
-          type: 'editor',
-          name: 'healthcareCompliance',
-          message: 'Healthcare compliance considerations:',
+          type: "editor",
+          name: "healthcareCompliance",
+          message: "Healthcare compliance considerations:",
           when: (answers: ADRAnswers) => answers.hasHealthcare,
         },
         {
-          type: 'confirm',
-          name: 'hasSecurity',
-          message: 'Include security implications?',
+          type: "confirm",
+          name: "hasSecurity",
+          message: "Include security implications?",
           default: false,
         },
         {
-          type: 'editor',
-          name: 'securityImplications',
-          message: 'Security implications:',
+          type: "editor",
+          name: "securityImplications",
+          message: "Security implications:",
           when: (answers: ADRAnswers) => answers.hasSecurity,
         },
         {
-          type: 'confirm',
-          name: 'hasPerformance',
-          message: 'Include performance impact?',
+          type: "confirm",
+          name: "hasPerformance",
+          message: "Include performance impact?",
           default: false,
         },
         {
-          type: 'editor',
-          name: 'performanceImpact',
-          message: 'Performance impact:',
+          type: "editor",
+          name: "performanceImpact",
+          message: "Performance impact:",
           when: (answers: ADRAnswers) => answers.hasPerformance,
         },
       ]);
@@ -166,20 +166,21 @@ export class ADRGenerator {
       const adrContent: ADRContent = {
         metadata: {
           number: nextNumber,
-          title: String(answers.title || 'Untitled'),
-          status: (answers.status || 'Proposed') as ADRMetadata['status'],
-          author: String(answers.author || 'Unknown'),
-          date: new Date().toISOString().split('T')[0]
-            || new Date().toISOString().slice(0, 10),
+          title: String(answers.title || "Untitled"),
+          status: (answers.status || "Proposed") as ADRMetadata["status"],
+          author: String(answers.author || "Unknown"),
+          date:
+            new Date().toISOString().split("T")[0] ||
+            new Date().toISOString().slice(0, 10),
         },
-        context: (answers.context || '') as string,
-        decision: (answers.decision || '') as string,
-        consequences: (answers.consequences || '') as string,
-        alternatives: (answers.alternatives || '') as string,
-        implementation: (answers.implementation || '') as string,
-        healthcareCompliance: (answers.healthcareCompliance || '') as string,
-        securityImplications: (answers.securityImplications || '') as string,
-        performanceImpact: (answers.performanceImpact || '') as string,
+        context: (answers.context || "") as string,
+        decision: (answers.decision || "") as string,
+        consequences: (answers.consequences || "") as string,
+        alternatives: (answers.alternatives || "") as string,
+        implementation: (answers.implementation || "") as string,
+        healthcareCompliance: (answers.healthcareCompliance || "") as string,
+        securityImplications: (answers.securityImplications || "") as string,
+        performanceImpact: (answers.performanceImpact || "") as string,
       };
 
       // Generate and save ADR
@@ -195,7 +196,7 @@ export class ADRGenerator {
    */
   async updateADRStatus(
     adrNumber: number,
-    newStatus: ADRMetadata['status'],
+    newStatus: ADRMetadata["status"],
     supersededBy?: number,
   ): Promise<void> {
     this.spinner.start(`Updating ADR ${adrNumber} status...`);
@@ -208,7 +209,7 @@ export class ADRGenerator {
         throw new Error(`ADR ${adrNumber} not found`);
       }
 
-      const content = readFileSync(filepath, 'utf8');
+      const content = readFileSync(filepath, "utf8");
       let updatedContent = content;
 
       // Update status
@@ -218,10 +219,10 @@ export class ADRGenerator {
       );
 
       // Add superseded information if applicable
-      if (newStatus === 'Superseded' && supersededBy) {
+      if (newStatus === "Superseded" && supersededBy) {
         updatedContent = updatedContent.replace(
           /^## Status\n\[Superseded\]/m,
-          `## Status\n[Superseded by ADR-${supersededBy.toString().padStart(3, '0')}]`,
+          `## Status\n[Superseded by ADR-${supersededBy.toString().padStart(3, "0")}]`,
         );
       }
 
@@ -246,7 +247,8 @@ export class ADRGenerator {
     adrs.forEach((adr) => {
       const _statusColor = this.getStatusColor(adr.status);
 
-      if (adr.supersededBy) {}
+      if (adr.supersededBy) {
+      }
     });
   }
 
@@ -254,44 +256,42 @@ export class ADRGenerator {
    * Generate ADR index/table of contents
    */
   generateIndex(): void {
-    this.spinner.start('Generating ADR index...');
+    this.spinner.start("Generating ADR index...");
 
     try {
       const adrs = this.getAllADRs();
-      let indexContent = '# Architecture Decision Records\n\n';
+      let indexContent = "# Architecture Decision Records\n\n";
 
       indexContent +=
-        'This directory contains all Architecture Decision Records (ADRs) for the NeonPro project.\n\n';
-      indexContent += '## What are ADRs?\n\n';
+        "This directory contains all Architecture Decision Records (ADRs) for the NeonPro project.\n\n";
+      indexContent += "## What are ADRs?\n\n";
       indexContent +=
-        'Architecture Decision Records (ADRs) are documents that capture important architectural decisions made along with their context and consequences.\n\n';
-      indexContent += '## Index\n\n';
-      indexContent += '| Number | Title | Status | Date | Author |\n';
-      indexContent += '|--------|-------|--------|------|--------|\n';
+        "Architecture Decision Records (ADRs) are documents that capture important architectural decisions made along with their context and consequences.\n\n";
+      indexContent += "## Index\n\n";
+      indexContent += "| Number | Title | Status | Date | Author |\n";
+      indexContent += "|--------|-------|--------|------|--------|\n";
 
       adrs.forEach((adr) => {
-        const link = `[ADR-${adr.number.toString().padStart(3, '0')}](${
-          this.getADRFilename(
-            adr.number,
-          )
-        })`;
+        const link = `[ADR-${adr.number.toString().padStart(3, "0")}](${this.getADRFilename(
+          adr.number,
+        )})`;
         const status = adr.supersededBy
           ? `Superseded by ADR-${adr.supersededBy}`
           : adr.status;
         indexContent += `| ${link} | ${adr.title} | ${status} | ${adr.date} | ${adr.author} |\n`;
       });
 
-      indexContent += '\n## Status Legend\n\n';
-      indexContent += '- **Proposed**: Under discussion\n';
-      indexContent += '- **Accepted**: Decision approved and implemented\n';
-      indexContent += '- **Rejected**: Decision rejected\n';
-      indexContent += '- **Deprecated**: No longer relevant\n';
-      indexContent += '- **Superseded**: Replaced by newer decision\n';
+      indexContent += "\n## Status Legend\n\n";
+      indexContent += "- **Proposed**: Under discussion\n";
+      indexContent += "- **Accepted**: Decision approved and implemented\n";
+      indexContent += "- **Rejected**: Decision rejected\n";
+      indexContent += "- **Deprecated**: No longer relevant\n";
+      indexContent += "- **Superseded**: Replaced by newer decision\n";
 
-      const indexPath = join(this.adrDirectory, 'README.md');
+      const indexPath = join(this.adrDirectory, "README.md");
       writeFileSync(indexPath, indexContent);
 
-      this.spinner.succeed('ADR index generated successfully!');
+      this.spinner.succeed("ADR index generated successfully!");
     } catch (error) {
       this.spinner.fail(`Failed to generate ADR index: ${error}`);
       throw error;
@@ -333,29 +333,31 @@ export class ADRGenerator {
     }
 
     const [, numberStr, titleSlug] = match;
-    const safeTitleSlug = titleSlug || '';
-    const number = Number.parseInt(numberStr || '0', 10);
+    const safeTitleSlug = titleSlug || "";
+    const number = Number.parseInt(numberStr || "0", 10);
 
     try {
       const filepath = join(this.adrDirectory, filename);
-      const content = readFileSync(filepath, 'utf8');
+      const content = readFileSync(filepath, "utf8");
 
       // Extract metadata from content
       const extractedTitle = this.extractTitle(content);
-      const title = extractedTitle
-        ?? (safeTitleSlug
-          ? String(safeTitleSlug).replaceAll("-", ' ')
-          : 'Untitled');
-      const status = (this.extractStatus(content) as ADRMetadata['status']) || 'Proposed';
-      const date = this.extractDate(content) ?? '1970-01-01';
-      const author = this.extractAuthor(content) ?? 'Unknown';
+      const title =
+        extractedTitle ??
+        (safeTitleSlug
+          ? String(safeTitleSlug).replaceAll("-", " ")
+          : "Untitled");
+      const status =
+        (this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
+      const date = this.extractDate(content) ?? "1970-01-01";
+      const author = this.extractAuthor(content) ?? "Unknown";
       const supersededBy = this.extractSupersededBy(content);
 
       return {
         number,
         title,
         status,
-        author: author || 'Unknown',
+        author: author || "Unknown",
         date,
         supersededBy: supersededBy || undefined,
       };
@@ -377,7 +379,7 @@ export class ADRGenerator {
    */
   private extractStatus(content: string): string {
     const match = content.match(/^## Status\n\[([^\]]+)\]/m);
-    return match?.[1]?.split(' by ')[0] ?? 'Proposed';
+    return match?.[1]?.split(" by ")[0] ?? "Proposed";
   }
 
   /**
@@ -410,7 +412,7 @@ export class ADRGenerator {
   private getADRFilename(adrNumber: number): string {
     const files = readdirSync(this.adrDirectory);
     const pattern = new RegExp(
-      `^adr-${adrNumber.toString().padStart(3, '0')}-.*\\.md$`,
+      `^adr-${adrNumber.toString().padStart(3, "0")}-.*\\.md$`,
     );
     const found = files.find((file) => pattern.test(file));
 
@@ -426,13 +428,13 @@ export class ADRGenerator {
    */
   private generateADRFile(content: ADRContent): string {
     const template = existsSync(this.templatePath)
-      ? readFileSync(this.templatePath, 'utf8')
+      ? readFileSync(this.templatePath, "utf8")
       : this.getDefaultTemplate();
 
     let adrContent = template
       .replaceAll(
         "ADR-XXX",
-        `ADR-${content.metadata.number.toString().padStart(3, '0')}`,
+        `ADR-${content.metadata.number.toString().padStart(3, "0")}`,
       )
       .replaceAll("\\[Short Title of Decision\\]", content.metadata.title)
       .replaceAll(
@@ -487,10 +489,10 @@ export class ADRGenerator {
     // Generate filename
     const titleSlug = content.metadata.title
       .toLowerCase()
-      .replaceAll(/[^a-z0-9\s]/g, '')
-      .replaceAll(/\s+/g, '-');
+      .replaceAll(/[^a-z0-9\s]/g, "")
+      .replaceAll(/\s+/g, "-");
 
-    const filename = `adr-${content.metadata.number.toString().padStart(3, '0')}-${titleSlug}.md`;
+    const filename = `adr-${content.metadata.number.toString().padStart(3, "0")}-${titleSlug}.md`;
     const filepath = join(this.adrDirectory, filename);
 
     writeFileSync(filepath, adrContent);
@@ -502,19 +504,19 @@ export class ADRGenerator {
    */
   private getStatusColor(status: string): (text: string) => string {
     switch (status) {
-      case 'Accepted': {
+      case "Accepted": {
         return chalk.green;
       }
-      case 'Proposed': {
+      case "Proposed": {
         return chalk.yellow;
       }
-      case 'Rejected': {
+      case "Rejected": {
         return chalk.red;
       }
-      case 'Deprecated': {
+      case "Deprecated": {
         return chalk.gray;
       }
-      case 'Superseded': {
+      case "Superseded": {
         return chalk.magenta;
       }
       default: {
@@ -558,23 +560,23 @@ if (require.main === module) {
   const command = process.argv[2];
 
   switch (command) {
-    case 'create': {
+    case "create": {
       generator.createADR().catch(console.error);
       break;
     }
-    case 'list': {
+    case "list": {
       generator.listADRs();
       break;
     }
-    case 'index': {
+    case "index": {
       generator.generateIndex();
       break;
     }
-    case 'update': {
+    case "update": {
       const adrNumber = process.argv[3]
         ? Number.parseInt(process.argv[3], 10)
         : 0;
-      const newStatus = process.argv[4] as ADRMetadata['status'];
+      const newStatus = process.argv[4] as ADRMetadata["status"];
       const supersededBy = process.argv[5]
         ? Number.parseInt(process.argv[5], 10)
         : undefined;

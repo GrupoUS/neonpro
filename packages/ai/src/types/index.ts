@@ -6,7 +6,7 @@ export interface AIServiceConfig {
   maxRetries: number;
   enableMetrics: boolean;
   enableCompliance: boolean;
-  complianceLevel: 'basic' | 'healthcare' | 'enterprise';
+  complianceLevel: "basic" | "healthcare" | "enterprise";
   rateLimitConfig?: RateLimitConfig;
 }
 
@@ -30,7 +30,7 @@ export interface ComplianceEvent {
   type: string;
   userId?: string;
   clinicId?: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   details?: string;
   timestamp: Date;
 }
@@ -39,7 +39,7 @@ export interface ComplianceEvent {
 export interface ChatMessage {
   id: string;
   sessionId: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   metadata?: Record<string, any>;
   createdAt: Date;
@@ -51,7 +51,7 @@ export interface ChatSession {
   clinicId?: string;
   startedAt: Date;
   lastMessageAt?: Date;
-  status: 'active' | 'completed' | 'terminated';
+  status: "active" | "completed" | "terminated";
   messageCount: number;
   messages: ChatMessage[];
   context?: HealthcareChatContext;
@@ -61,12 +61,12 @@ export interface HealthcareChatContext {
   patientId?: string;
   appointmentId?: string;
   procedureType?: string;
-  urgencyLevel?: 'low' | 'medium' | 'high' | 'emergency';
+  urgencyLevel?: "low" | "medium" | "high" | "emergency";
   specialization?: string;
-  language: 'pt-BR' | 'en';
+  language: "pt-BR" | "en";
   clinicContext?: {
     name: string;
-    type: 'medical' | 'dental' | 'aesthetic' | 'veterinary';
+    type: "medical" | "dental" | "aesthetic" | "veterinary";
     location: string;
   };
 }
@@ -86,7 +86,7 @@ export interface ComplianceMetrics {
   lgpdCompliant: boolean;
   anvisaCompliant: boolean;
   cfmCompliant: boolean;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   warnings: string[];
   auditTrail?: AuditEntry[];
 }
@@ -110,9 +110,9 @@ export interface AppointmentData {
   patientId: string;
   clinicId: string;
   cost?: number;
-  status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+  status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
   roomType?: string;
-  source?: 'web' | 'phone' | 'app' | 'referral';
+  source?: "web" | "phone" | "app" | "referral";
   paymentMethod?: string;
   notes?: string;
   createdAt: Date;
@@ -130,10 +130,10 @@ export interface PatientBehaviorData {
   avgConfirmationTime: number; // in minutes
   punctualityScore: number; // 0-100
   preferredTimeSlots: TimeSlot[];
-  communicationPreference: 'sms' | 'email' | 'phone' | 'app';
+  communicationPreference: "sms" | "email" | "phone" | "app";
   daysSinceLastEngagement: number;
   seasonalPatterns: SeasonalPattern[];
-  riskProfile: 'low' | 'medium' | 'high';
+  riskProfile: "low" | "medium" | "high";
   lastUpdated: Date;
 }
 
@@ -154,7 +154,7 @@ export interface PredictionResult {
   patientId: string;
   clinicId: string;
   riskScore: number; // 0-100
-  riskCategory: 'low' | 'medium' | 'high' | 'critical';
+  riskCategory: "low" | "medium" | "high" | "critical";
   confidence: number; // 0-1
   primaryRiskFactors: RiskFactors[];
   preventionRecommendations: PreventionRecommendations[];
@@ -165,25 +165,25 @@ export interface PredictionResult {
 
 export interface RiskFactors {
   factor: string;
-  impact: 'low' | 'medium' | 'high';
+  impact: "low" | "medium" | "high";
   description: string;
   weight: number; // contribution to overall risk
   category?:
-    | 'temporal'
-    | 'behavioral'
-    | 'demographic'
-    | 'procedural'
-    | 'contextual';
+    | "temporal"
+    | "behavioral"
+    | "demographic"
+    | "procedural"
+    | "contextual";
 }
 
 export interface PreventionRecommendations {
   type:
-    | 'automated_reminder'
-    | 'phone_confirmation'
-    | 'flexible_rescheduling'
-    | 'incentive'
-    | 'mid_point_reminder';
-  priority: 'low' | 'medium' | 'high';
+    | "automated_reminder"
+    | "phone_confirmation"
+    | "flexible_rescheduling"
+    | "incentive"
+    | "mid_point_reminder";
+  priority: "low" | "medium" | "high";
   description: string;
   estimatedImpact: number; // percentage reduction in no-show probability
   cost?: number; // implementation cost in BRL
@@ -209,7 +209,7 @@ export interface PersonalInfo {
   firstName: string;
   lastName: string;
   birthDate: Date;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  gender: "male" | "female" | "other" | "prefer_not_to_say";
   cpf?: string; // Brazilian tax ID
   rg?: string; // Brazilian ID
   nationality?: string;
@@ -244,12 +244,12 @@ export interface EmergencyContact {
 }
 
 export interface CommunicationPreferences {
-  preferredMethod: 'sms' | 'email' | 'phone' | 'app';
+  preferredMethod: "sms" | "email" | "phone" | "app";
   appointmentReminders: boolean;
   promotionalMessages: boolean;
   healthTips: boolean;
   surveyRequests: boolean;
-  preferredLanguage: 'pt-BR' | 'en';
+  preferredLanguage: "pt-BR" | "en";
   optOutFromAI: boolean;
 }
 
@@ -273,7 +273,7 @@ export interface Medication {
 export interface MedicalHistoryEntry {
   condition: string;
   diagnosedDate: Date;
-  status: 'active' | 'resolved' | 'chronic';
+  status: "active" | "resolved" | "chronic";
   notes?: string;
   treatedBy?: string;
 }
@@ -297,17 +297,17 @@ export interface AppointmentPreferences {
   preferredTimes: TimeSlot[];
   advanceBookingPreference: number; // days in advance
   reminderPreferences: {
-    sms: { enabled: boolean; hoursBeforeH; boolean; };
-    email: { enabled: boolean; hoursBeforeemphasis: number; };
-    phone: { enabled: boolean; hoursBeforeemphasis: number; };
+    sms: { enabled: boolean; hoursBeforeH; boolean };
+    email: { enabled: boolean; hoursBeforeemphasis: number };
+    phone: { enabled: boolean; hoursBeforeemphasis: number };
   };
 }
 
 export interface DoctorPreferences {
   preferredDoctors: string[]; // doctor IDs
   avoidDoctors: string[]; // doctor IDs
-  genderPreference?: 'male' | 'female' | 'no_preference';
-  languagePreference: 'pt-BR' | 'en';
+  genderPreference?: "male" | "female" | "no_preference";
+  languagePreference: "pt-BR" | "en";
 }
 
 export interface FacilityPreferences {
@@ -327,7 +327,7 @@ export interface PrivacySettings {
 }
 
 export interface ConsentRecord {
-  type: 'lgpd' | 'medical' | 'marketing' | 'research' | 'ai_analysis';
+  type: "lgpd" | "medical" | "marketing" | "research" | "ai_analysis";
   granted: boolean;
   grantedAt: Date;
   expiresAt?: Date;
@@ -452,7 +452,7 @@ export interface FeatureFlag {
 
 export interface FeatureFlagCondition {
   attribute: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'in' | 'not_in';
+  operator: "equals" | "not_equals" | "contains" | "in" | "not_in";
   value: any;
 }
 
@@ -470,7 +470,7 @@ export interface ValidationError extends AIServiceError {
 }
 
 export interface ComplianceError extends AIServiceError {
-  complianceType: 'lgpd' | 'anvisa' | 'cfm';
+  complianceType: "lgpd" | "anvisa" | "cfm";
   violation: string;
 }
 
@@ -525,13 +525,13 @@ export interface AIServiceConfiguration {
   monitoring: {
     enabled: boolean;
     metricsEndpoint?: string;
-    logLevel: 'debug' | 'info' | 'warn' | 'error';
+    logLevel: "debug" | "info" | "warn" | "error";
   };
   compliance: {
     lgpd: {
       enabled: boolean;
       dataRetentionDays: number;
-      auditLogLevel: 'basic' | 'detailed';
+      auditLogLevel: "basic" | "detailed";
     };
     anvisa: {
       enabled: boolean;
@@ -549,28 +549,28 @@ export interface AIServiceConfiguration {
 }
 
 // Utility Types
-export type ServiceStatus = 'initializing' | 'ready' | 'degraded' | 'offline';
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
-export type ComplianceLevel = 'basic' | 'healthcare' | 'enterprise';
-export type Language = 'pt-BR' | 'en';
+export type ServiceStatus = "initializing" | "ready" | "degraded" | "offline";
+export type LogLevel = "debug" | "info" | "warn" | "error";
+export type ComplianceLevel = "basic" | "healthcare" | "enterprise";
+export type Language = "pt-BR" | "en";
 export type UserRole =
-  | 'patient'
-  | 'doctor'
-  | 'nurse'
-  | 'admin'
-  | 'receptionist';
-export type ClinicType = 'medical' | 'dental' | 'aesthetic' | 'veterinary';
+  | "patient"
+  | "doctor"
+  | "nurse"
+  | "admin"
+  | "receptionist";
+export type ClinicType = "medical" | "dental" | "aesthetic" | "veterinary";
 export type AppointmentStatus =
-  | 'scheduled'
-  | 'confirmed'
-  | 'completed'
-  | 'cancelled'
-  | 'no_show'
-  | 'rescheduled';
-export type PredictionAccuracy = 'low' | 'medium' | 'high' | 'very_high';
+  | "scheduled"
+  | "confirmed"
+  | "completed"
+  | "cancelled"
+  | "no_show"
+  | "rescheduled";
+export type PredictionAccuracy = "low" | "medium" | "high" | "very_high";
 
 // Re-export everything as default
-export * from './chat-types';
-export * from './compliance-types';
-export * from './patient-types';
-export * from './prediction-types';
+export * from "./chat-types";
+export * from "./compliance-types";
+export * from "./patient-types";
+export * from "./prediction-types";

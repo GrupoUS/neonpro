@@ -3,7 +3,11 @@
  * Analyzes webpack bundles for healthcare-specific optimizations
  */
 
-import type { BundleAnalysisResult, BundleChunk, BundleRecommendation } from '../types';
+import type {
+  BundleAnalysisResult,
+  BundleChunk,
+  BundleRecommendation,
+} from "../types";
 
 interface WebpackStats {
   chunks: {
@@ -40,21 +44,21 @@ interface WebpackStats {
 export class HealthcareBundleAnalyzer {
   private readonly stats: WebpackStats | null = undefined;
   private readonly healthcareModules = new Set([
-    'medical-form',
-    'patient-data',
-    'appointment',
-    'billing',
-    'medication',
-    'diagnosis',
-    'procedure',
-    'vital-signs',
-    'lab-results',
-    'imaging',
-    'prescription',
-    'compliance',
-    'audit',
-    'security',
-    'encryption',
+    "medical-form",
+    "patient-data",
+    "appointment",
+    "billing",
+    "medication",
+    "diagnosis",
+    "procedure",
+    "vital-signs",
+    "lab-results",
+    "imaging",
+    "prescription",
+    "compliance",
+    "audit",
+    "security",
+    "encryption",
   ]);
 
   /**
@@ -74,7 +78,7 @@ export class HealthcareBundleAnalyzer {
    */
   analyzeBundles(): BundleAnalysisResult {
     if (!this.stats) {
-      throw new Error('Stats not loaded. Call loadStats() first.');
+      throw new Error("Stats not loaded. Call loadStats() first.");
     }
 
     const chunks = this.analyzeChunks();
@@ -117,8 +121,8 @@ export class HealthcareBundleAnalyzer {
   private isHealthcareCritical(chunk: any): boolean {
     return chunk.modules.some((module: any) =>
       [...this.healthcareModules].some((healthcareModule: string) =>
-        module.name.toLowerCase().includes(healthcareModule)
-      )
+        module.name.toLowerCase().includes(healthcareModule),
+      ),
     );
   }
 
@@ -135,27 +139,25 @@ export class HealthcareBundleAnalyzer {
       if (chunk.size > 500_000) {
         // 500KB
         recommendations.push({
-          type: 'code-splitting',
-          description: `Chunk "${chunk.name}" is large (${
-            Math.round(
-              chunk.size / 1024,
-            )
-          }KB). Consider splitting into smaller chunks.`,
+          type: "code-splitting",
+          description: `Chunk "${chunk.name}" is large (${Math.round(
+            chunk.size / 1024,
+          )}KB). Consider splitting into smaller chunks.`,
           potentialSavings: Math.round(chunk.size * 0.5),
-          priority: chunk.healthcareCritical ? 'high' : 'medium',
+          priority: chunk.healthcareCritical ? "high" : "medium",
         });
       }
 
       if (
-        chunk.size > 200_000
-        && chunk.isInitial
-        && !chunk.healthcareCritical
+        chunk.size > 200_000 &&
+        chunk.isInitial &&
+        !chunk.healthcareCritical
       ) {
         recommendations.push({
-          type: 'lazy-loading',
+          type: "lazy-loading",
           description: `Chunk "${chunk.name}" could be lazy-loaded to improve initial bundle size.`,
           potentialSavings: chunk.size,
-          priority: 'medium',
+          priority: "medium",
         });
       }
     });
@@ -172,17 +174,15 @@ export class HealthcareBundleAnalyzer {
     });
 
     moduleMap.forEach((chunkNames, module) => {
-      if (chunkNames.length > 1 && module.includes('node_modules')) {
-        const moduleName = module.split('/').pop() || module;
+      if (chunkNames.length > 1 && module.includes("node_modules")) {
+        const moduleName = module.split("/").pop() || module;
         recommendations.push({
-          type: 'tree-shaking',
-          description: `Module "${moduleName}" appears in multiple chunks: ${
-            chunkNames.join(
-              ', ',
-            )
-          }. Consider extracting to a shared chunk.`,
+          type: "tree-shaking",
+          description: `Module "${moduleName}" appears in multiple chunks: ${chunkNames.join(
+            ", ",
+          )}. Consider extracting to a shared chunk.`,
           potentialSavings: 50_000, // Estimated
-          priority: 'medium',
+          priority: "medium",
         });
       }
     });
@@ -217,11 +217,11 @@ export class HealthcareBundleAnalyzer {
       if (nonHealthcareSize > 300_000) {
         // 300KB
         recommendations.push({
-          type: 'lazy-loading',
+          type: "lazy-loading",
           description:
-            'Non-healthcare modules in initial bundle should be lazy-loaded to prioritize medical workflows.',
+            "Non-healthcare modules in initial bundle should be lazy-loaded to prioritize medical workflows.",
           potentialSavings: nonHealthcareSize,
-          priority: 'high',
+          priority: "high",
         });
       }
     }
@@ -230,19 +230,19 @@ export class HealthcareBundleAnalyzer {
     const hasFormComponents = chunks.some((chunk) =>
       chunk.modules.some(
         (module) =>
-          module.includes('form')
-          || module.includes('input')
-          || module.includes('medical'),
-      )
+          module.includes("form") ||
+          module.includes("input") ||
+          module.includes("medical"),
+      ),
     );
 
     if (hasFormComponents) {
       recommendations.push({
-        type: 'code-splitting',
+        type: "code-splitting",
         description:
-          'Medical form components should be in a separate preloadable chunk for faster form rendering.',
+          "Medical form components should be in a separate preloadable chunk for faster form rendering.",
         potentialSavings: 100_000, // Estimated
-        priority: 'high',
+        priority: "high",
       });
     }
   }
@@ -316,7 +316,7 @@ module.exports = {
 };
 
 // Recommendations implemented:
-${analysis.recommendations.map((rec) => `// - ${rec.description}`).join('\n')}
+${analysis.recommendations.map((rec) => `// - ${rec.description}`).join("\n")}
 `;
 
     return script;
@@ -338,42 +338,36 @@ ${analysis.recommendations.map((rec) => `// - ${rec.description}`).join('\n')}
 📊 Bundle Overview:
 - Total Size: ${formatSize(analysis.totalSize)}
 - Gzipped Size: ${formatSize(analysis.gzippedSize)}
-- Healthcare Optimized: ${analysis.healthcareOptimized ? '✅ Yes' : '❌ No'}
+- Healthcare Optimized: ${analysis.healthcareOptimized ? "✅ Yes" : "❌ No"}
 
 📦 Chunk Analysis:
-${
-      analysis.chunks
-        .map(
-          (chunk) => `
+${analysis.chunks
+  .map(
+    (chunk) => `
 - ${chunk.name}: ${formatSize(chunk.size)} (${
-            chunk.healthcareCritical ? '🏥 Healthcare Critical' : '📦 General'
-          })
-  ${chunk.isInitial ? '⚡ Initial Load' : '🔄 Async Load'}
+      chunk.healthcareCritical ? "🏥 Healthcare Critical" : "📦 General"
+    })
+  ${chunk.isInitial ? "⚡ Initial Load" : "🔄 Async Load"}
 `,
-        )
-        .join('')
-    }
+  )
+  .join("")}
 
 🎯 Optimization Recommendations:
-${
-      analysis.recommendations
-        .map(
-          (rec, index) => `
-${
-            index + 1
-          }. [${rec.priority.toUpperCase()}] ${rec.description}
+${analysis.recommendations
+  .map(
+    (rec, index) => `
+${index + 1}. [${rec.priority.toUpperCase()}] ${rec.description}
    💾 Potential Savings: ${formatSize(rec.potentialSavings)}
    🔧 Type: ${rec.type}
 `,
-        )
-        .join('')
-    }
+  )
+  .join("")}
 
 ${
-      analysis.healthcareOptimized
-        ? '✅ Bundle is well-optimized for healthcare workflows!'
-        : '⚠️  Bundle needs optimization for healthcare use cases.'
-    }
+  analysis.healthcareOptimized
+    ? "✅ Bundle is well-optimized for healthcare workflows!"
+    : "⚠️  Bundle needs optimization for healthcare use cases."
+}
 `;
 
     return report;

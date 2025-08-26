@@ -5,18 +5,21 @@
  * @compliance LGPD + ANVISA + CFM
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Default/mock values for testing and build environments
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'mock-service-key';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mock.supabase.co";
+const supabaseAnonKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "mock-anon-key";
+const supabaseServiceKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "mock-service-key";
 
 // Healthcare user interface
 export interface HealthcareUser {
   id: string;
   email: string;
-  role: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist';
+  role: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
   profile: {
     full_name: string;
     cpf?: string;
@@ -85,15 +88,15 @@ export class HealthcareAuth {
     _password: string,
   ): Promise<HealthcareUser | null> {
     // Mock authentication for build/test environments
-    if (supabaseUrl === 'https://mock.supabase.co') {
+    if (supabaseUrl === "https://mock.supabase.co") {
       return {
-        id: 'mock-user-id',
+        id: "mock-user-id",
         email,
-        role: 'doctor',
+        role: "doctor",
         profile: {
-          full_name: 'Dr. Mock User',
+          full_name: "Dr. Mock User",
         },
-        permissions: ['read:patients', 'write:appointments'],
+        permissions: ["read:patients", "write:appointments"],
         lgpd_consent: true,
         verified: true,
       };
@@ -116,7 +119,7 @@ export class HealthcareAuth {
    */
   async createSession(_user: HealthcareUser): Promise<string> {
     // Would create real session with LGPD compliance
-    return 'mock-session-token';
+    return "mock-session-token";
   }
 
   /**
@@ -133,7 +136,7 @@ export class HealthcareAuth {
    */
   async validateProfessionalCredentials(
     _license: string,
-    _type: 'CRM' | 'COREN' | 'CRO',
+    _type: "CRM" | "COREN" | "CRO",
   ): Promise<boolean> {
     // Would validate against CFM/COREN databases
     return true;
@@ -141,5 +144,7 @@ export class HealthcareAuth {
 }
 
 // Convenient exports for backward compatibility
-export const createSupabaseClient = () => HealthcareAuth.getInstance().createClient();
-export const createSupabaseAdminClient = () => HealthcareAuth.getInstance().createAdminClient();
+export const createSupabaseClient = () =>
+  HealthcareAuth.getInstance().createClient();
+export const createSupabaseAdminClient = () =>
+  HealthcareAuth.getInstance().createAdminClient();

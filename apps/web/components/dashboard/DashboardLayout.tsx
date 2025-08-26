@@ -36,8 +36,8 @@ import { ComplianceStatusDashboard } from "./ai-powered/ComplianceStatusDashboar
 import { HealthMonitoringDashboard } from "./ai-powered/HealthMonitoringDashboard";
 import { PerformanceMetricsDashboard } from "./ai-powered/PerformanceMetricsDashboard";
 import { RealTimeActivityDashboard } from "./ai-powered/RealTimeActivityDashboard";
-import { DASHBOARD_REGISTRY } from './index';
-import type { DashboardType } from './index';
+import { DASHBOARD_REGISTRY } from "./index";
+import type { DashboardType } from "./index";
 
 interface DashboardLayoutProps {
   defaultView?: "grid" | "tabs" | "single";

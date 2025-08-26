@@ -7,14 +7,14 @@
  * Executes comprehensive test suite and generates production readiness certification
  */
 
-import { execSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { logger } from '../../../apps/api/src/lib/logger';
+import { execSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { logger } from "../../../apps/api/src/lib/logger";
 
 interface TestSuiteResult {
   name: string;
-  status: 'passed' | 'failed' | 'skipped';
+  status: "passed" | "failed" | "skipped";
   duration: number;
   coverage?: number;
   details: string;
@@ -22,7 +22,7 @@ interface TestSuiteResult {
 
 interface ValidationReport {
   timestamp: string;
-  overallStatus: 'CERTIFIED' | 'FAILED' | 'PARTIAL';
+  overallStatus: "CERTIFIED" | "FAILED" | "PARTIAL";
   overallScore: number;
   testResults: TestSuiteResult[];
   productionReadiness: {
@@ -49,11 +49,11 @@ class FinalValidationRunner {
 
     try {
       logger.info(`\n🧪 Running ${name}...`);
-      logger.info('-'.repeat(60));
+      logger.info("-".repeat(60));
 
       const output = execSync(command, {
-        encoding: 'utf8',
-        stdio: 'pipe',
+        encoding: "utf8",
+        stdio: "pipe",
       });
 
       const duration = Date.now() - suiteStartTime;
@@ -63,7 +63,7 @@ class FinalValidationRunner {
 
       const result: TestSuiteResult = {
         name,
-        status: 'passed',
+        status: "passed",
         duration,
         coverage,
         details: `✅ All tests passed. Duration: ${duration}ms`,
@@ -81,7 +81,7 @@ class FinalValidationRunner {
 
       const result: TestSuiteResult = {
         name,
-        status: 'failed',
+        status: "failed",
         duration,
         details: `❌ Tests failed: ${error.message}`,
       };
@@ -100,40 +100,47 @@ class FinalValidationRunner {
   }
 
   async executeFullValidation(): Promise<ValidationReport> {
-    logger.info('🏥 NeonPro Healthcare Platform - Final Validation Suite');
-    logger.info('='.repeat(80));
+    logger.info("🏥 NeonPro Healthcare Platform - Final Validation Suite");
+    logger.info("=".repeat(80));
     logger.info(`Started at: ${new Date().toISOString()}`);
-    logger.info('='.repeat(80));
+    logger.info("=".repeat(80));
 
     // Test Suite Execution Order
     const testSuites = [
       {
-        name: 'API Integration Tests',
-        command: 'npm run test:integration -- integration/api-integration.test.ts',
+        name: "API Integration Tests",
+        command:
+          "npm run test:integration -- integration/api-integration.test.ts",
       },
       {
-        name: 'Real-time Integration Tests',
-        command: 'npm run test:integration -- integration/realtime-integration.test.ts',
+        name: "Real-time Integration Tests",
+        command:
+          "npm run test:integration -- integration/realtime-integration.test.ts",
       },
       {
-        name: 'Healthcare Workflow Tests - Patient Journey',
-        command: 'npm run test:healthcare -- healthcare-workflows/patient-journey.test.ts',
+        name: "Healthcare Workflow Tests - Patient Journey",
+        command:
+          "npm run test:healthcare -- healthcare-workflows/patient-journey.test.ts",
       },
       {
-        name: 'Healthcare Workflow Tests - Professional Journey',
-        command: 'npm run test:healthcare -- healthcare-workflows/professional-journey.test.ts',
+        name: "Healthcare Workflow Tests - Professional Journey",
+        command:
+          "npm run test:healthcare -- healthcare-workflows/professional-journey.test.ts",
       },
       {
-        name: 'Performance Validation Tests',
-        command: 'npm run test:performance -- performance/performance-validation.test.ts',
+        name: "Performance Validation Tests",
+        command:
+          "npm run test:performance -- performance/performance-validation.test.ts",
       },
       {
-        name: 'Production Deployment Tests',
-        command: 'npm run test:deployment -- production-deployment/deployment-validation.test.ts',
+        name: "Production Deployment Tests",
+        command:
+          "npm run test:deployment -- production-deployment/deployment-validation.test.ts",
       },
       {
-        name: 'Final Production Certification',
-        command: 'npm run test:certification -- final-production-certification.test.ts',
+        name: "Final Production Certification",
+        command:
+          "npm run test:certification -- final-production-certification.test.ts",
       },
     ];
 
@@ -149,10 +156,10 @@ class FinalValidationRunner {
   private generateFinalReport(): ValidationReport {
     const totalDuration = Date.now() - this.startTime;
     const passedTests = this.results.filter(
-      (r) => r.status === 'passed',
+      (r) => r.status === "passed",
     ).length;
     const failedTests = this.results.filter(
-      (r) => r.status === 'failed',
+      (r) => r.status === "failed",
     ).length;
 
     // Calculate metrics based on test results
@@ -194,7 +201,7 @@ class FinalValidationRunner {
 
   private calculateOverallScore(): number {
     const passedTests = this.results.filter(
-      (r) => r.status === 'passed',
+      (r) => r.status === "passed",
     ).length;
     const totalTests = this.results.length;
 
@@ -214,20 +221,20 @@ class FinalValidationRunner {
   private determineOverallStatus(
     passed: number,
     failed: number,
-  ): 'CERTIFIED' | 'FAILED' | 'PARTIAL' {
+  ): "CERTIFIED" | "FAILED" | "PARTIAL" {
     if (failed === 0 && passed > 0) {
-      return 'CERTIFIED';
+      return "CERTIFIED";
     }
     if (failed > 0 && passed > failed) {
-      return 'PARTIAL';
+      return "PARTIAL";
     }
-    return 'FAILED';
+    return "FAILED";
   }
 
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const failedTests = this.results.filter((r) => r.status === 'failed');
+    const failedTests = this.results.filter((r) => r.status === "failed");
 
     if (failedTests.length > 0) {
       recommendations.push(
@@ -240,12 +247,12 @@ class FinalValidationRunner {
     );
 
     if (lowCoverageTests.length > 0) {
-      recommendations.push('Increase test coverage for suites below 95%');
+      recommendations.push("Increase test coverage for suites below 95%");
     }
 
     if (recommendations.length === 0) {
       recommendations.push(
-        'System is ready for production deployment with no critical issues identified',
+        "System is ready for production deployment with no critical issues identified",
       );
     }
 
@@ -253,37 +260,38 @@ class FinalValidationRunner {
   }
 
   private generateCertification(score: number, status: string): string {
-    if (status === 'CERTIFIED' && score >= 9.5) {
-      return '🏆 CERTIFIED FOR PRODUCTION DEPLOYMENT - Enterprise Healthcare Grade Quality Assured';
+    if (status === "CERTIFIED" && score >= 9.5) {
+      return "🏆 CERTIFIED FOR PRODUCTION DEPLOYMENT - Enterprise Healthcare Grade Quality Assured";
     }
-    if (status === 'CERTIFIED' && score >= 9) {
-      return '✅ CERTIFIED FOR PRODUCTION DEPLOYMENT - High Quality Standards Met';
+    if (status === "CERTIFIED" && score >= 9) {
+      return "✅ CERTIFIED FOR PRODUCTION DEPLOYMENT - High Quality Standards Met";
     }
-    if (status === 'PARTIAL') {
-      return '⚠️ PARTIAL CERTIFICATION - Address recommendations before full production deployment';
+    if (status === "PARTIAL") {
+      return "⚠️ PARTIAL CERTIFICATION - Address recommendations before full production deployment";
     }
-    return '❌ NOT CERTIFIED - Critical issues must be resolved before production deployment';
+    return "❌ NOT CERTIFIED - Critical issues must be resolved before production deployment";
   }
 
   private outputReport(report: ValidationReport, duration: number): void {
-    logger.info(`\n${'='.repeat(80)}`);
-    logger.info('📊 NEONPRO HEALTHCARE PLATFORM - FINAL VALIDATION REPORT');
-    logger.info('='.repeat(80));
+    logger.info(`\n${"=".repeat(80)}`);
+    logger.info("📊 NEONPRO HEALTHCARE PLATFORM - FINAL VALIDATION REPORT");
+    logger.info("=".repeat(80));
 
     logger.info(`\n🕒 Validation completed in ${duration}ms`);
     logger.info(`📅 Timestamp: ${report.timestamp}`);
     logger.info(`🎯 Overall Status: ${report.overallStatus}`);
     logger.info(`⭐ Overall Score: ${report.overallScore}/10`);
 
-    logger.info('\n📋 TEST SUITE RESULTS:');
-    logger.info('-'.repeat(50));
+    logger.info("\n📋 TEST SUITE RESULTS:");
+    logger.info("-".repeat(50));
 
     report.testResults.forEach((result, index) => {
-      const status = result.status === 'passed'
-        ? '✅'
-        : (result.status === 'failed'
-        ? '❌'
-        : '⚠️');
+      const status =
+        result.status === "passed"
+          ? "✅"
+          : result.status === "failed"
+            ? "❌"
+            : "⚠️";
       logger.info(
         `${index + 1}. ${status} ${result.name} (${result.duration}ms)`,
       );
@@ -292,8 +300,8 @@ class FinalValidationRunner {
       }
     });
 
-    logger.info('\n🏥 PRODUCTION READINESS METRICS:');
-    logger.info('-'.repeat(50));
+    logger.info("\n🏥 PRODUCTION READINESS METRICS:");
+    logger.info("-".repeat(50));
     logger.info(`Code Quality: ${report.productionReadiness.codeQuality}/10`);
     logger.info(`Test Coverage: ${report.productionReadiness.testCoverage}%`);
     logger.info(
@@ -303,47 +311,47 @@ class FinalValidationRunner {
     logger.info(`Compliance Score: ${report.productionReadiness.compliance}%`);
 
     if (report.recommendations.length > 0) {
-      logger.info('\n💡 RECOMMENDATIONS:');
-      logger.info('-'.repeat(50));
+      logger.info("\n💡 RECOMMENDATIONS:");
+      logger.info("-".repeat(50));
       report.recommendations.forEach((rec, index) => {
         logger.info(`${index + 1}. ${rec}`);
       });
     }
 
-    logger.info('\n🏅 FINAL CERTIFICATION:');
-    logger.info('-'.repeat(50));
+    logger.info("\n🏅 FINAL CERTIFICATION:");
+    logger.info("-".repeat(50));
     logger.info(report.certification);
 
-    logger.info(`\n${'='.repeat(80)}`);
+    logger.info(`\n${"=".repeat(80)}`);
 
-    if (report.overallStatus === 'CERTIFIED') {
+    if (report.overallStatus === "CERTIFIED") {
       logger.info(
-        '🎉 NEONPRO HEALTHCARE PLATFORM IS READY FOR PRODUCTION DEPLOYMENT!',
+        "🎉 NEONPRO HEALTHCARE PLATFORM IS READY FOR PRODUCTION DEPLOYMENT!",
       );
       logger.info(
-        '🏥 System meets all enterprise healthcare quality standards.',
+        "🏥 System meets all enterprise healthcare quality standards.",
       );
       logger.info(
-        '🛡️ Security, compliance, and performance requirements satisfied.',
+        "🛡️ Security, compliance, and performance requirements satisfied.",
       );
       logger.info(
-        '✨ Ready to serve healthcare professionals and patients globally.',
+        "✨ Ready to serve healthcare professionals and patients globally.",
       );
     } else {
       logger.info(
-        '⚠️ Please address the recommendations above before production deployment.',
+        "⚠️ Please address the recommendations above before production deployment.",
       );
     }
 
-    logger.info('='.repeat(80));
+    logger.info("=".repeat(80));
   }
 
   private saveReport(report: ValidationReport): void {
     const reportPath = join(
       process.cwd(),
-      'NEONPRO_PRODUCTION_READINESS_CERTIFICATION.json',
+      "NEONPRO_PRODUCTION_READINESS_CERTIFICATION.json",
     );
-    const summaryPath = join(process.cwd(), 'NEONPRO_FINAL_TESTING_SUMMARY.md');
+    const summaryPath = join(process.cwd(), "NEONPRO_FINAL_TESTING_SUMMARY.md");
 
     // Save detailed JSON report
     writeFileSync(reportPath, JSON.stringify(report, undefined, 2));
@@ -357,7 +365,7 @@ class FinalValidationRunner {
 
   private generateMarkdownSummary(report: ValidationReport): string {
     const passed = report.testResults.filter(
-      (r) => r.status === 'passed',
+      (r) => r.status === "passed",
     ).length;
     const total = report.testResults.length;
 
@@ -384,25 +392,24 @@ ${report.certification}
 
 ## 🧪 Test Suite Results
 
-${
-      report.testResults
-        .map((result, index) => {
-          const status = result.status === 'passed'
-            ? '✅'
-            : (result.status === 'failed'
-            ? '❌'
-            : '⚠️');
-          return `### ${index + 1}. ${result.name}
+${report.testResults
+  .map((result, index) => {
+    const status =
+      result.status === "passed"
+        ? "✅"
+        : result.status === "failed"
+          ? "❌"
+          : "⚠️";
+    return `### ${index + 1}. ${result.name}
 ${status} **${result.status.toUpperCase()}** (${result.duration}ms)
-${result.coverage ? `**Coverage**: ${result.coverage}%` : ''}
+${result.coverage ? `**Coverage**: ${result.coverage}%` : ""}
 ${result.details}`;
-        })
-        .join('\n\n')
-    }
+  })
+  .join("\n\n")}
 
 ## 💡 Recommendations
 
-${report.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
+${report.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join("\n")}
 
 ## 🏥 Healthcare Compliance Summary
 
@@ -416,8 +423,8 @@ ${report.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
 ## 🚀 Deployment Readiness
 
 ${
-      report.overallStatus === 'CERTIFIED'
-        ? `✅ **CERTIFIED FOR PRODUCTION DEPLOYMENT**
+  report.overallStatus === "CERTIFIED"
+    ? `✅ **CERTIFIED FOR PRODUCTION DEPLOYMENT**
 
 The NeonPro Healthcare Platform has successfully passed all validation tests and meets enterprise-grade quality standards for healthcare applications.
 
@@ -431,10 +438,10 @@ The NeonPro Healthcare Platform has successfully passed all validation tests and
 - Comprehensive audit trail implementation
 
 The system is ready for production deployment serving healthcare professionals and patients.`
-        : `⚠️ **CERTIFICATION PENDING**
+    : `⚠️ **CERTIFICATION PENDING**
 
 Please address the recommendations above before proceeding with production deployment.`
-    }
+}
 
 ---
 *Generated by NeonPro Healthcare Platform Final Validation Suite*
@@ -449,13 +456,13 @@ async function main() {
   try {
     const report = await runner.executeFullValidation();
 
-    if (report.overallStatus === 'CERTIFIED') {
+    if (report.overallStatus === "CERTIFIED") {
       process.exit(0);
     } else {
       process.exit(1);
     }
   } catch (error) {
-    logger.error('❌ Fatal error during validation:', error);
+    logger.error("❌ Fatal error during validation:", error);
     process.exit(1);
   }
 }

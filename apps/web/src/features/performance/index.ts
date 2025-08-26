@@ -47,7 +47,8 @@ export function usePerformanceMonitoring() {
       const _loadTime = performance.now() - startTime;
 
       // Healthcare compliance: only track with consent
-      if (window.localStorage.getItem("performance-consent") === "true") {}
+      if (window.localStorage.getItem("performance-consent") === "true") {
+      }
     };
   }, []);
 }

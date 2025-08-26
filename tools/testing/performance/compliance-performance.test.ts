@@ -11,8 +11,8 @@
  * - Compliance overhead analysis
  */
 
-import { performance } from 'node:perf_hooks';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { performance } from "node:perf_hooks";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // Performance thresholds for healthcare systems (in milliseconds)
 const PERFORMANCE_THRESHOLDS = {
@@ -64,8 +64,8 @@ class PerformanceMonitor {
 
   getAverageResponseTime(): number {
     return (
-      this.metrics.reduce((sum, m) => sum + m.responseTime, 0)
-      / this.metrics.length
+      this.metrics.reduce((sum, m) => sum + m.responseTime, 0) /
+      this.metrics.length
     );
   }
 
@@ -94,7 +94,7 @@ class PerformanceMonitor {
   }
 }
 
-describe('⚡ Performance Testing under Compliance Constraints', () => {
+describe("⚡ Performance Testing under Compliance Constraints", () => {
   let performanceMonitor: PerformanceMonitor;
   const _testDataSets = {
     smallDataset: 100,
@@ -110,8 +110,8 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
     performanceMonitor.reset();
   });
 
-  describe('🏥 Healthcare API Load Testing', () => {
-    it('should handle patient data requests under load', async () => {
+  describe("🏥 Healthcare API Load Testing", () => {
+    it("should handle patient data requests under load", async () => {
       const iterations = 1000;
       const concurrentRequests = 50;
 
@@ -124,13 +124,13 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
           for (let i = 0; i < concurrentRequests; i++) {
             performanceMonitor.start();
 
-            const requestPromise = fetch('/api/v1/patients', {
+            const requestPromise = fetch("/api/v1/patients", {
               headers: {
-                Authorization: 'Bearer mock-access-token',
-                'Content-Type': 'application/json',
+                Authorization: "Bearer mock-access-token",
+                "Content-Type": "application/json",
               },
             }).then(async (response) => {
-              const metrics = performanceMonitor.recordMetrics('patient_list');
+              const metrics = performanceMonitor.recordMetrics("patient_list");
               return { response, metrics };
             });
 
@@ -166,7 +166,7 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       expect(successRate).toBeGreaterThan(0.99); // 99% success rate
     });
 
-    it('should handle appointment booking under stress', async () => {
+    it("should handle appointment booking under stress", async () => {
       const stressIterations = 5000;
       const stressResults = [];
 
@@ -175,22 +175,22 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
 
         const appointmentRequest = {
           patientId: `pat_${i}`,
-          professionalId: 'prof_123',
-          serviceId: 'service_456',
+          professionalId: "prof_123",
+          serviceId: "service_456",
           datetime: new Date(Date.now() + i * 60_000).toISOString(),
           duration: 30,
         };
 
-        const response = await fetch('/api/v1/appointments', {
-          method: 'POST',
+        const response = await fetch("/api/v1/appointments", {
+          method: "POST",
           headers: {
-            Authorization: 'Bearer mock-access-token',
-            'Content-Type': 'application/json',
+            Authorization: "Bearer mock-access-token",
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(appointmentRequest),
         });
 
-        const metrics = performanceMonitor.recordMetrics('appointment_booking');
+        const metrics = performanceMonitor.recordMetrics("appointment_booking");
         stressResults.push({ response, metrics });
       }
 
@@ -206,10 +206,10 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       );
     });
   });
-  describe('⚖️ LGPD Compliance Overhead Analysis', () => {
-    it('should measure LGPD middleware performance impact', async () => {
+  describe("⚖️ LGPD Compliance Overhead Analysis", () => {
+    it("should measure LGPD middleware performance impact", async () => {
       const baselineRequests = 1000;
-      const testEndpoint = '/api/v1/patients';
+      const testEndpoint = "/api/v1/patients";
 
       // Baseline test without LGPD middleware (simulated)
       const baselineResults = [];
@@ -219,7 +219,7 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
         // Simulate direct API call without middleware
         await simulateDirectAPICall(testEndpoint);
 
-        const metrics = performanceMonitor.recordMetrics('baseline');
+        const metrics = performanceMonitor.recordMetrics("baseline");
         baselineResults.push(metrics);
       }
 
@@ -233,12 +233,12 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
 
         const _response = await fetch(testEndpoint, {
           headers: {
-            Authorization: 'Bearer mock-access-token',
-            'Content-Type': 'application/json',
+            Authorization: "Bearer mock-access-token",
+            "Content-Type": "application/json",
           },
         });
 
-        const metrics = performanceMonitor.recordMetrics('lgpd_compliant');
+        const metrics = performanceMonitor.recordMetrics("lgpd_compliant");
         lgpdResults.push(metrics);
       }
 
@@ -251,13 +251,13 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       expect(overheadPercentage).toBeLessThan(25); // Less than 25% overhead
     });
 
-    it('should validate audit trail performance impact', async () => {
+    it("should validate audit trail performance impact", async () => {
       const auditOperations = [
-        'patient_creation',
-        'patient_access',
-        'patient_modification',
-        'consent_update',
-        'data_export',
+        "patient_creation",
+        "patient_access",
+        "patient_modification",
+        "consent_update",
+        "data_export",
       ];
 
       for (const operation of auditOperations) {
@@ -280,12 +280,12 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       }
     });
 
-    it('should test consent validation performance', async () => {
+    it("should test consent validation performance", async () => {
       const consentTypes = [
-        'DATA_PROCESSING',
-        'MARKETING',
-        'ANALYTICS',
-        'RESEARCH',
+        "DATA_PROCESSING",
+        "MARKETING",
+        "ANALYTICS",
+        "RESEARCH",
       ];
       const patientIds = Array.from({ length: 1000 }, (_, i) => `pat_${i}`);
 
@@ -301,28 +301,30 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
             consentType,
           );
 
-          const metrics = performanceMonitor.recordMetrics('consent_validation');
+          const metrics =
+            performanceMonitor.recordMetrics("consent_validation");
           consentValidationResults.push({ hasConsent, metrics });
         }
       }
 
-      const avgConsentValidationTime = performanceMonitor.getAverageResponseTime();
+      const avgConsentValidationTime =
+        performanceMonitor.getAverageResponseTime();
       expect(avgConsentValidationTime).toBeLessThan(5); // Should be very fast
     });
   });
 
-  describe('💾 Database Performance with Audit Trails', () => {
-    it('should measure database query performance with audit logging', async () => {
+  describe("💾 Database Performance with Audit Trails", () => {
+    it("should measure database query performance with audit logging", async () => {
       const queryTypes = [
-        { name: 'SELECT_PATIENTS', complexity: 'simple' },
-        { name: 'SELECT_PATIENTS_WITH_AUDIT', complexity: 'moderate' },
-        { name: 'COMPLEX_PATIENT_ANALYTICS', complexity: 'complex' },
-        { name: 'AUDIT_TRAIL_QUERY', complexity: 'moderate' },
-        { name: 'LGPD_COMPLIANCE_REPORT', complexity: 'complex' },
+        { name: "SELECT_PATIENTS", complexity: "simple" },
+        { name: "SELECT_PATIENTS_WITH_AUDIT", complexity: "moderate" },
+        { name: "COMPLEX_PATIENT_ANALYTICS", complexity: "complex" },
+        { name: "AUDIT_TRAIL_QUERY", complexity: "moderate" },
+        { name: "LGPD_COMPLIANCE_REPORT", complexity: "complex" },
       ];
 
       for (const queryType of queryTypes) {
-        const queryIterations = queryType.complexity === 'complex' ? 100 : 500;
+        const queryIterations = queryType.complexity === "complex" ? 100 : 500;
         const queryResults = [];
 
         for (let i = 0; i < queryIterations; i++) {
@@ -339,9 +341,10 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
         }
 
         const avgQueryTime = performanceMonitor.getAverageResponseTime();
-        const threshold = queryType.complexity === 'complex'
-          ? PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX * 3
-          : PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX;
+        const threshold =
+          queryType.complexity === "complex"
+            ? PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX * 3
+            : PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX;
 
         expect(avgQueryTime).toBeLessThan(threshold);
 
@@ -349,7 +352,7 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       }
     });
 
-    it('should test database connection pool performance under load', async () => {
+    it("should test database connection pool performance under load", async () => {
       const connectionPoolTests = [
         { connections: 10, operations: 1000 },
         { connections: 50, operations: 5000 },
@@ -369,7 +372,7 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
             await simulateDatabaseOperation(connection, `operation_${i}`);
             await simulateDBConnectionRelease(connection);
 
-            return performanceMonitor.recordMetrics('db_connection_operation');
+            return performanceMonitor.recordMetrics("db_connection_operation");
           },
         );
 
@@ -384,8 +387,8 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       }
     });
   });
-  describe('🧠 Memory Leak Detection in Compliance Operations', () => {
-    it('should detect memory leaks in LGPD operations', async () => {
+  describe("🧠 Memory Leak Detection in Compliance Operations", () => {
+    it("should detect memory leaks in LGPD operations", async () => {
       const initialMemory = process.memoryUsage().heapUsed;
       const operationBatches = 10;
       const operationsPerBatch = 100;
@@ -395,14 +398,14 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
         // Perform batch of LGPD compliance operations
         for (let i = 0; i < operationsPerBatch; i++) {
           await simulateLGPDOperation(
-            'consent_validation',
+            "consent_validation",
             `pat_${batch}_${i}`,
           );
           await simulateLGPDOperation(
-            'audit_logging',
+            "audit_logging",
             `operation_${batch}_${i}`,
           );
-          await simulateLGPDOperation('data_minimization', {
+          await simulateLGPDOperation("data_minimization", {
             patientData: `data_${i}`,
           });
         }
@@ -419,17 +422,19 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
 
       // Analyze memory growth pattern
       const finalMemoryIncrease = memoryMeasurements.at(-1);
-      const expectedMaxIncrease = ((operationBatches * operationsPerBatch) / 1000)
-        * PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD;
+      const expectedMaxIncrease =
+        ((operationBatches * operationsPerBatch) / 1000) *
+        PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD;
 
       expect(finalMemoryIncrease).toBeLessThan(expectedMaxIncrease);
 
       // Check for consistent memory growth (potential leak)
-      const growthRate = (finalMemoryIncrease - memoryMeasurements[0]) / operationBatches;
+      const growthRate =
+        (finalMemoryIncrease - memoryMeasurements[0]) / operationBatches;
       expect(growthRate).toBeLessThan(5); // Less than 5MB growth per batch
     });
 
-    it('should validate audit log memory usage', async () => {
+    it("should validate audit log memory usage", async () => {
       const auditLogCount = 10_000;
       const initialMemory = process.memoryUsage().heapUsed;
 
@@ -451,13 +456,13 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
     });
   });
 
-  describe('⚡ Real-time Performance Requirements', () => {
-    it('should meet healthcare emergency response times', async () => {
+  describe("⚡ Real-time Performance Requirements", () => {
+    it("should meet healthcare emergency response times", async () => {
       const emergencyScenarios = [
-        { type: 'PATIENT_LOOKUP', maxResponseTime: 200 },
-        { type: 'EMERGENCY_ACCESS', maxResponseTime: 500 },
-        { type: 'CRITICAL_ALERT', maxResponseTime: 100 },
-        { type: 'MEDICATION_CHECK', maxResponseTime: 300 },
+        { type: "PATIENT_LOOKUP", maxResponseTime: 200 },
+        { type: "EMERGENCY_ACCESS", maxResponseTime: 500 },
+        { type: "CRITICAL_ALERT", maxResponseTime: 100 },
+        { type: "MEDICATION_CHECK", maxResponseTime: 300 },
       ];
 
       for (const scenario of emergencyScenarios) {
@@ -469,15 +474,16 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
 
           await simulateEmergencyScenario(scenario.type, {
             patientId: `emergency_pat_${i}`,
-            urgency: 'CRITICAL',
+            urgency: "CRITICAL",
           });
 
           const responseTime = performance.now() - startTime;
           responseTimes.push(responseTime);
         }
 
-        const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0)
-          / responseTimes.length;
+        const avgResponseTime =
+          responseTimes.reduce((sum, time) => sum + time, 0) /
+          responseTimes.length;
         const maxResponseTime = Math.max(...responseTimes);
 
         expect(avgResponseTime).toBeLessThan(scenario.maxResponseTime);
@@ -485,12 +491,12 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       }
     });
 
-    it('should handle concurrent healthcare operations', async () => {
+    it("should handle concurrent healthcare operations", async () => {
       const concurrentOperations = [
-        { type: 'PATIENT_REGISTRATION', count: 50 },
-        { type: 'APPOINTMENT_BOOKING', count: 100 },
-        { type: 'PRESCRIPTION_CREATION', count: 75 },
-        { type: 'MEDICAL_RECORD_ACCESS', count: 200 },
+        { type: "PATIENT_REGISTRATION", count: 50 },
+        { type: "APPOINTMENT_BOOKING", count: 100 },
+        { type: "PRESCRIPTION_CREATION", count: 75 },
+        { type: "MEDICAL_RECORD_ACCESS", count: 200 },
       ];
 
       const operationPromises = [];
@@ -529,8 +535,9 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
 
       Object.entries(operationStats).forEach(
         ([_type, stats]: [string, any]) => {
-          const _avgTime = stats.times.reduce((sum: number, time: number) => sum + time, 0)
-            / stats.times.length;
+          const _avgTime =
+            stats.times.reduce((sum: number, time: number) => sum + time, 0) /
+            stats.times.length;
           const p95Time = stats.times.sort((a: number, b: number) => a - b)[
             Math.floor(stats.times.length * 0.95)
           ];
@@ -543,8 +550,8 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
     });
   });
 
-  describe('📊 Performance Benchmarking & Reporting', () => {
-    it('should generate comprehensive performance report', async () => {
+  describe("📊 Performance Benchmarking & Reporting", () => {
+    it("should generate comprehensive performance report", async () => {
       const benchmarkOperations = 1000;
       const performanceReport = {
         apiEndpoints: {},
@@ -556,11 +563,11 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
 
       // Benchmark all critical operations
       const criticalEndpoints = [
-        '/api/v1/patients',
-        '/api/v1/appointments',
-        '/api/v1/professionals',
-        '/api/v1/compliance/export',
-        '/api/v1/analytics',
+        "/api/v1/patients",
+        "/api/v1/appointments",
+        "/api/v1/professionals",
+        "/api/v1/compliance/export",
+        "/api/v1/analytics",
       ];
 
       for (const endpoint of criticalEndpoints) {
@@ -570,7 +577,7 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
           performanceMonitor.start();
 
           await simulateAPIRequest(endpoint, {
-            method: 'GET',
+            method: "GET",
             authenticated: true,
             lgpdCompliant: true,
           });
@@ -591,17 +598,18 @@ describe('⚡ Performance Testing under Compliance Constraints', () => {
       }
 
       // Validate overall system performance
-      const overallAvgResponse = Object.values(performanceReport.apiEndpoints).reduce(
-        (sum: number, endpoint: any) => sum + endpoint.averageResponseTime,
-        0,
-      ) / criticalEndpoints.length;
+      const overallAvgResponse =
+        Object.values(performanceReport.apiEndpoints).reduce(
+          (sum: number, endpoint: any) => sum + endpoint.averageResponseTime,
+          0,
+        ) / criticalEndpoints.length;
 
       expect(overallAvgResponse).toBeLessThan(
         PERFORMANCE_THRESHOLDS.API_RESPONSE_P95,
       );
 
       // Save report to file for analysis
-      const _reportPath = 'performance-benchmark-report.json';
+      const _reportPath = "performance-benchmark-report.json";
       // await writeFile(reportPath, JSON.stringify(performanceReport, null, 2));
 
       expect(performanceReport).toBeTruthy();
@@ -633,12 +641,14 @@ async function simulateDatabaseQuery(
   queryType: string,
   _params: any,
 ): Promise<any> {
-  const complexity = queryType.includes('COMPLEX')
+  const complexity = queryType.includes("COMPLEX")
     ? 30
-    : (queryType.includes('AUDIT')
-    ? 15
-    : 10);
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * complexity + 5));
+    : queryType.includes("AUDIT")
+      ? 15
+      : 10;
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.random() * complexity + 5),
+  );
   return { success: true, rows: Math.floor(Math.random() * 100) };
 }
 
@@ -673,8 +683,11 @@ async function simulateEmergencyScenario(
   type: string,
   _params: any,
 ): Promise<void> {
-  const baseTime = type === 'CRITICAL_ALERT' ? 50 : (type === 'PATIENT_LOOKUP' ? 100 : 200);
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 50 + baseTime));
+  const baseTime =
+    type === "CRITICAL_ALERT" ? 50 : type === "PATIENT_LOOKUP" ? 100 : 200;
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.random() * 50 + baseTime),
+  );
 }
 
 async function simulateHealthcareOperation(
@@ -689,7 +702,9 @@ async function simulateHealthcareOperation(
   };
 
   const baseTime = operationTimes[type] || 100;
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 50 + baseTime));
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.random() * 50 + baseTime),
+  );
 }
 
 async function simulateAPIRequest(
@@ -697,5 +712,7 @@ async function simulateAPIRequest(
   options: any,
 ): Promise<void> {
   const baseTime = options.lgpdCompliant ? 20 : 15;
-  await new Promise((resolve) => setTimeout(resolve, Math.random() * 30 + baseTime));
+  await new Promise((resolve) =>
+    setTimeout(resolve, Math.random() * 30 + baseTime),
+  );
 }

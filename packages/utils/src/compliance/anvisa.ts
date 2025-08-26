@@ -3,17 +3,17 @@
  * Handles product registration, procedure classification, and adverse event reporting
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 export interface ANVISAProduct {
   id: string;
   name: string;
   registration_number: string;
-  category: 'medical_device' | 'cosmetic' | 'medicine' | 'procedure';
+  category: "medical_device" | "cosmetic" | "medicine" | "procedure";
   manufacturer: string;
   expiry_date: Date;
   batch_number?: string;
-  regulatory_status: 'approved' | 'pending' | 'suspended' | 'recalled';
+  regulatory_status: "approved" | "pending" | "suspended" | "recalled";
   created_at: Date;
   updated_at: Date;
 }
@@ -21,7 +21,7 @@ export interface ANVISAProduct {
 export interface ANVISAProcedure {
   id: string;
   name: string;
-  classification: 'low_risk' | 'medium_risk' | 'high_risk' | 'surgical';
+  classification: "low_risk" | "medium_risk" | "high_risk" | "surgical";
   required_qualifications: string[];
   anvisa_code: string;
   description: string;
@@ -38,7 +38,7 @@ export interface AdverseEvent {
   patient_id: string;
   procedure_id?: string;
   product_id?: string;
-  event_type: 'mild' | 'moderate' | 'severe' | 'life_threatening';
+  event_type: "mild" | "moderate" | "severe" | "life_threatening";
   description: string;
   onset_date: Date;
   resolution_date?: Date;
@@ -46,7 +46,7 @@ export interface AdverseEvent {
   reporter_name: string;
   reporter_qualification: string;
   actions_taken: string;
-  outcome: 'resolved' | 'ongoing' | 'permanent_damage' | 'death';
+  outcome: "resolved" | "ongoing" | "permanent_damage" | "death";
   anvisa_reported: boolean;
   anvisa_report_number?: string;
   created_at: Date;
@@ -64,11 +64,11 @@ export class ANVISACompliance {
 
   // Product Registration Management
   async registerProduct(
-    product: Omit<ANVISAProduct, 'id' | 'created_at' | 'updated_at'>,
+    product: Omit<ANVISAProduct, "id" | "created_at" | "updated_at">,
   ): Promise<ANVISAProduct | null> {
     try {
       const { data, error } = await this.supabase
-        .from('anvisa_products')
+        .from("anvisa_products")
         .insert(product)
         .select()
         .single();
@@ -79,7 +79,7 @@ export class ANVISACompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'product_registration',
+        "product_registration",
         product.name,
         data.id,
       );
@@ -93,9 +93,9 @@ export class ANVISACompliance {
   async validateProductCompliance(productId: string): Promise<boolean> {
     try {
       const { data: product, error } = await this.supabase
-        .from('anvisa_products')
-        .select('*')
-        .eq('id', productId)
+        .from("anvisa_products")
+        .select("*")
+        .eq("id", productId)
         .single();
 
       if (error || !product) {
@@ -103,10 +103,10 @@ export class ANVISACompliance {
       }
 
       // Check if product is approved and not expired
-      const isApproved = product.regulatory_status === 'approved';
+      const isApproved = product.regulatory_status === "approved";
       const notExpired = new Date(product.expiry_date) > new Date();
-      const hasValidRegistration = product.registration_number
-        && product.registration_number.length > 0;
+      const hasValidRegistration =
+        product.registration_number && product.registration_number.length > 0;
 
       return isApproved && notExpired && hasValidRegistration;
     } catch {
@@ -120,11 +120,11 @@ export class ANVISACompliance {
       futureDate.setDate(futureDate.getDate() + days);
 
       const { data, error } = await this.supabase
-        .from('anvisa_products')
-        .select('*')
-        .lte('expiry_date', futureDate.toISOString())
-        .gte('expiry_date', new Date().toISOString())
-        .eq('regulatory_status', 'approved');
+        .from("anvisa_products")
+        .select("*")
+        .lte("expiry_date", futureDate.toISOString())
+        .gte("expiry_date", new Date().toISOString())
+        .eq("regulatory_status", "approved");
 
       return data || [];
     } catch {
@@ -134,11 +134,11 @@ export class ANVISACompliance {
 
   // Procedure Classification Management
   async classifyProcedure(
-    procedure: Omit<ANVISAProcedure, 'id' | 'created_at' | 'updated_at'>,
+    procedure: Omit<ANVISAProcedure, "id" | "created_at" | "updated_at">,
   ): Promise<ANVISAProcedure | null> {
     try {
       const { data, error } = await this.supabase
-        .from('anvisa_procedures')
+        .from("anvisa_procedures")
         .insert(procedure)
         .select()
         .single();
@@ -149,7 +149,7 @@ export class ANVISACompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'procedure_classification',
+        "procedure_classification",
         procedure.name,
         data.id,
       );
@@ -166,9 +166,9 @@ export class ANVISACompliance {
   ): Promise<boolean> {
     try {
       const { data: procedure, error } = await this.supabase
-        .from('anvisa_procedures')
-        .select('required_qualifications')
-        .eq('id', procedureId)
+        .from("anvisa_procedures")
+        .select("required_qualifications")
+        .eq("id", procedureId)
         .single();
 
       if (error || !procedure) {
@@ -177,7 +177,7 @@ export class ANVISACompliance {
 
       // Check if professional has all required qualifications
       return procedure.required_qualifications.every((req: string) =>
-        professionalQualifications.includes(req)
+        professionalQualifications.includes(req),
       );
     } catch {
       return false;
@@ -186,11 +186,11 @@ export class ANVISACompliance {
 
   // Adverse Event Reporting
   async reportAdverseEvent(
-    event: Omit<AdverseEvent, 'id' | 'created_at'>,
+    event: Omit<AdverseEvent, "id" | "created_at">,
   ): Promise<AdverseEvent | null> {
     try {
       const { data, error } = await this.supabase
-        .from('adverse_events')
+        .from("adverse_events")
         .insert(event)
         .select()
         .single();
@@ -211,7 +211,7 @@ export class ANVISACompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'adverse_event_report',
+        "adverse_event_report",
         `Event: ${event.description}`,
         data.id,
       );
@@ -223,16 +223,16 @@ export class ANVISACompliance {
   }
 
   private requiresANVISAReporting(
-    eventType: AdverseEvent['event_type'],
-    outcome: AdverseEvent['outcome'],
+    eventType: AdverseEvent["event_type"],
+    outcome: AdverseEvent["outcome"],
   ): boolean {
     // Severe or life-threatening events always require reporting
-    if (eventType === 'severe' || eventType === 'life_threatening') {
+    if (eventType === "severe" || eventType === "life_threatening") {
       return true;
     }
 
     // Permanent damage or death always requires reporting
-    if (outcome === 'permanent_damage' || outcome === 'death') {
+    if (outcome === "permanent_damage" || outcome === "death") {
       return true;
     }
 
@@ -243,12 +243,12 @@ export class ANVISACompliance {
     // In a real implementation, this would integrate with ANVISA's reporting system
     // For now, we'll create a task for manual reporting
     try {
-      await this.supabase.from('compliance_tasks').insert({
-        type: 'anvisa_adverse_event_report',
+      await this.supabase.from("compliance_tasks").insert({
+        type: "anvisa_adverse_event_report",
         reference_id: eventId,
         due_date: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-        status: 'pending',
-        description: 'Submit adverse event report to ANVISA within 72 hours',
+        status: "pending",
+        description: "Submit adverse event report to ANVISA within 72 hours",
       });
     } catch {}
   }
@@ -256,7 +256,7 @@ export class ANVISACompliance {
   async getPendingANVISAReports(): Promise<any[]> {
     try {
       const { data, error } = await this.supabase
-        .from('compliance_tasks')
+        .from("compliance_tasks")
         .select(
           `
           *,
@@ -269,8 +269,8 @@ export class ANVISACompliance {
           )
         `,
         )
-        .eq('type', 'anvisa_adverse_event_report')
-        .eq('status', 'pending');
+        .eq("type", "anvisa_adverse_event_report")
+        .eq("status", "pending");
 
       return data || [];
     } catch {
@@ -283,22 +283,22 @@ export class ANVISACompliance {
     try {
       const [products, procedures, events] = await Promise.all([
         this.supabase
-          .from('anvisa_products')
-          .select('*')
-          .gte('created_at', startDate.toISOString())
-          .lte('created_at', endDate.toISOString()),
+          .from("anvisa_products")
+          .select("*")
+          .gte("created_at", startDate.toISOString())
+          .lte("created_at", endDate.toISOString()),
 
         this.supabase
-          .from('anvisa_procedures')
-          .select('*')
-          .gte('created_at', startDate.toISOString())
-          .lte('created_at', endDate.toISOString()),
+          .from("anvisa_procedures")
+          .select("*")
+          .gte("created_at", startDate.toISOString())
+          .lte("created_at", endDate.toISOString()),
 
         this.supabase
-          .from('adverse_events')
-          .select('*')
-          .gte('created_at', startDate.toISOString())
-          .lte('created_at', endDate.toISOString()),
+          .from("adverse_events")
+          .select("*")
+          .gte("created_at", startDate.toISOString())
+          .lte("created_at", endDate.toISOString()),
       ]);
 
       const expiringSoon = await this.getExpiringSoonProducts();
@@ -311,43 +311,53 @@ export class ANVISACompliance {
         },
         products: {
           total: products.data?.length || 0,
-          approved: products.data?.filter(
-            (p: any) => p.regulatory_status === 'approved',
-          ).length || 0,
+          approved:
+            products.data?.filter(
+              (p: any) => p.regulatory_status === "approved",
+            ).length || 0,
           expiring_soon: expiringSoon.length,
-          suspended: products.data?.filter(
-            (p: any) => p.regulatory_status === 'suspended',
-          ).length || 0,
+          suspended:
+            products.data?.filter(
+              (p: any) => p.regulatory_status === "suspended",
+            ).length || 0,
         },
         procedures: {
           total: procedures.data?.length || 0,
           by_risk: {
-            low_risk: procedures.data?.filter(
-              (p: any) => p.classification === 'low_risk',
-            ).length || 0,
-            medium_risk: procedures.data?.filter(
-              (p: any) => p.classification === 'medium_risk',
-            ).length || 0,
-            high_risk: procedures.data?.filter(
-              (p: any) => p.classification === 'high_risk',
-            ).length || 0,
-            surgical: procedures.data?.filter(
-              (p: any) => p.classification === 'surgical',
-            ).length || 0,
+            low_risk:
+              procedures.data?.filter(
+                (p: any) => p.classification === "low_risk",
+              ).length || 0,
+            medium_risk:
+              procedures.data?.filter(
+                (p: any) => p.classification === "medium_risk",
+              ).length || 0,
+            high_risk:
+              procedures.data?.filter(
+                (p: any) => p.classification === "high_risk",
+              ).length || 0,
+            surgical:
+              procedures.data?.filter(
+                (p: any) => p.classification === "surgical",
+              ).length || 0,
           },
         },
         adverse_events: {
           total: events.data?.length || 0,
           by_severity: {
-            mild: events.data?.filter((e: any) => e.event_type === 'mild').length
-              || 0,
-            moderate: events.data?.filter((e: any) => e.event_type === 'moderate')
-              .length || 0,
-            severe: events.data?.filter((e: any) => e.event_type === 'severe')
-              .length || 0,
-            life_threatening: events.data?.filter(
-              (e: any) => e.event_type === 'life_threatening',
-            ).length || 0,
+            mild:
+              events.data?.filter((e: any) => e.event_type === "mild").length ||
+              0,
+            moderate:
+              events.data?.filter((e: any) => e.event_type === "moderate")
+                .length || 0,
+            severe:
+              events.data?.filter((e: any) => e.event_type === "severe")
+                .length || 0,
+            life_threatening:
+              events.data?.filter(
+                (e: any) => e.event_type === "life_threatening",
+              ).length || 0,
           },
           pending_anvisa_reports: pendingReports.length,
         },
@@ -372,13 +382,13 @@ export class ANVISACompliance {
     let score = 100;
 
     // Deduct points for compliance issues
-    const expiredProducts = products?.filter((p) => new Date(p.expiry_date) < new Date()).length
-      || 0;
-    const suspendedProducts = products?.filter((p) => p.regulatory_status === 'suspended').length
-      || 0;
+    const expiredProducts =
+      products?.filter((p) => new Date(p.expiry_date) < new Date()).length || 0;
+    const suspendedProducts =
+      products?.filter((p) => p.regulatory_status === "suspended").length || 0;
     const overduePendingReports =
-      pendingReports?.filter((r) => new Date(r.due_date) < new Date()).length
-      || 0;
+      pendingReports?.filter((r) => new Date(r.due_date) < new Date()).length ||
+      0;
 
     score -= expiredProducts * 5;
     score -= suspendedProducts * 10;
@@ -393,11 +403,11 @@ export class ANVISACompliance {
     referenceId: string,
   ): Promise<void> {
     try {
-      await this.supabase.from('compliance_logs').insert({
+      await this.supabase.from("compliance_logs").insert({
         action,
         description,
         reference_id: referenceId,
-        module: 'anvisa',
+        module: "anvisa",
         timestamp: new Date().toISOString(),
       });
     } catch {}
@@ -418,9 +428,9 @@ export class ANVISACompliance {
   ): Promise<ANVISAProduct | null> {
     try {
       const { data, error } = await this.supabase
-        .from('anvisa_products')
-        .select('*')
-        .eq('registration_number', registrationNumber)
+        .from("anvisa_products")
+        .select("*")
+        .eq("registration_number", registrationNumber)
         .single();
 
       return error ? undefined : data;

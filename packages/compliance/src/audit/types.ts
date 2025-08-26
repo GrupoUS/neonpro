@@ -5,9 +5,9 @@
  * Quality Standard: ≥9.9/10
  */
 
-import { z } from 'zod';
-import { HealthcareRegulation } from '../types';
-import type { ComplianceScore } from '../types';
+import { z } from "zod";
+import { HealthcareRegulation } from "../types";
+import type { ComplianceScore } from "../types";
 
 // =============================================================================
 // AUDIT LOG TYPES
@@ -18,43 +18,43 @@ import type { ComplianceScore } from '../types';
  */
 export enum AuditEventType {
   // Patient Data Events
-  PATIENT_DATA_ACCESS = 'PATIENT_DATA_ACCESS',
-  PATIENT_DATA_MODIFICATION = 'PATIENT_DATA_MODIFICATION',
-  PATIENT_DATA_DELETION = 'PATIENT_DATA_DELETION',
-  PATIENT_DATA_EXPORT = 'PATIENT_DATA_EXPORT',
+  PATIENT_DATA_ACCESS = "PATIENT_DATA_ACCESS",
+  PATIENT_DATA_MODIFICATION = "PATIENT_DATA_MODIFICATION",
+  PATIENT_DATA_DELETION = "PATIENT_DATA_DELETION",
+  PATIENT_DATA_EXPORT = "PATIENT_DATA_EXPORT",
 
   // Authentication Events
-  USER_LOGIN = 'USER_LOGIN',
-  USER_LOGOUT = 'USER_LOGOUT',
-  FAILED_LOGIN_ATTEMPT = 'FAILED_LOGIN_ATTEMPT',
-  PASSWORD_CHANGE = 'PASSWORD_CHANGE',
+  USER_LOGIN = "USER_LOGIN",
+  USER_LOGOUT = "USER_LOGOUT",
+  FAILED_LOGIN_ATTEMPT = "FAILED_LOGIN_ATTEMPT",
+  PASSWORD_CHANGE = "PASSWORD_CHANGE",
 
   // System Events
-  SYSTEM_CONFIGURATION_CHANGE = 'SYSTEM_CONFIGURATION_CHANGE',
-  BACKUP_CREATED = 'BACKUP_CREATED',
-  BACKUP_RESTORED = 'BACKUP_RESTORED',
+  SYSTEM_CONFIGURATION_CHANGE = "SYSTEM_CONFIGURATION_CHANGE",
+  BACKUP_CREATED = "BACKUP_CREATED",
+  BACKUP_RESTORED = "BACKUP_RESTORED",
 
   // Compliance Events
-  CONSENT_GRANTED = 'CONSENT_GRANTED',
-  CONSENT_REVOKED = 'CONSENT_REVOKED',
-  DATA_BREACH_DETECTED = 'DATA_BREACH_DETECTED',
-  COMPLIANCE_VIOLATION = 'COMPLIANCE_VIOLATION',
+  CONSENT_GRANTED = "CONSENT_GRANTED",
+  CONSENT_REVOKED = "CONSENT_REVOKED",
+  DATA_BREACH_DETECTED = "DATA_BREACH_DETECTED",
+  COMPLIANCE_VIOLATION = "COMPLIANCE_VIOLATION",
 
   // Medical Events
-  PRESCRIPTION_CREATED = 'PRESCRIPTION_CREATED',
-  MEDICAL_RECORD_ACCESSED = 'MEDICAL_RECORD_ACCESSED',
-  TREATMENT_SCHEDULED = 'TREATMENT_SCHEDULED',
-  TELEMEDICINE_SESSION = 'TELEMEDICINE_SESSION',
+  PRESCRIPTION_CREATED = "PRESCRIPTION_CREATED",
+  MEDICAL_RECORD_ACCESSED = "MEDICAL_RECORD_ACCESSED",
+  TREATMENT_SCHEDULED = "TREATMENT_SCHEDULED",
+  TELEMEDICINE_SESSION = "TELEMEDICINE_SESSION",
 }
 
 /**
  * Audit Severity Levels
  */
 export enum AuditSeverity {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL',
+  LOW = "LOW",
+  MEDIUM = "MEDIUM",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
 }
 
 /**
@@ -152,7 +152,7 @@ export interface ComplianceAuditReport {
   recommendations: string[];
   actionItems: ComplianceActionItem[];
   nextAuditDue: Date;
-  status: 'DRAFT' | 'FINAL' | 'APPROVED';
+  status: "DRAFT" | "FINAL" | "APPROVED";
   metadata: Record<string, any>;
 }
 
@@ -168,7 +168,7 @@ export interface ComplianceAuditFinding {
   regulation: HealthcareRegulation;
   complianceScore: ComplianceScore;
   remediation?: string;
-  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'ACCEPTED_RISK';
+  status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "ACCEPTED_RISK";
 }
 
 /**
@@ -178,10 +178,10 @@ export interface ComplianceActionItem {
   id: string;
   title: string;
   description: string;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   assignedTo?: string;
   dueDate: Date;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "OVERDUE";
   regulation: HealthcareRegulation;
   relatedFindingId?: string;
 }

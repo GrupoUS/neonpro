@@ -475,19 +475,19 @@ PRE_GENERATION_CHECKLIST:
     - [ ] All stakeholders identified with needs mapped
     - [ ] Complete context and constraints documented
     - [ ] Success criteria clearly defined and measurable
-    
+
   research_readiness:
     - [ ] Domain expertise requirements identified
     - [ ] Research sources validated for credibility
     - [ ] Best practices research scope defined
     - [ ] Pattern analysis methodology established
-    
+
   thinking_preparation:
     - [ ] Multi-perspective analysis framework prepared
     - [ ] Chain of Thought structure planned
     - [ ] Validation checkpoints defined
     - [ ] Quality gates established
-    
+
   elaboration_planning:
     - [ ] Prompt structure and format determined
     - [ ] Context integration strategy planned
@@ -504,19 +504,19 @@ POST_GENERATION_VALIDATION:
     - [ ] Logical information hierarchy throughout
     - [ ] Consistent formatting and structure
     - [ ] LLM-optimized format and flow
-    
+
   content_quality:
     - [ ] All requirements comprehensively addressed
     - [ ] Complete context and constraints provided
     - [ ] Clear, actionable instructions throughout
     - [ ] Comprehensive success criteria defined
-    
+
   usability_validation:
     - [ ] Instructions immediately actionable by target agents
     - [ ] Maximum relevant context provided efficiently
     - [ ] Edge cases and error scenarios addressed
     - [ ] Quality standards clearly defined and measurable
-    
+
   effectiveness_assessment:
     - [ ] Overall quality score ≥9.5/10 achieved
     - [ ] All validation gates successfully passed
@@ -532,7 +532,7 @@ POST_GENERATION_VALIDATION:
 
 ```yaml
 MASTER_WORKFLOW_TIMELINE:
-  
+
   phase_1_analyze: "25-30% of total effort - Foundation building"
     deliverables:
       - Complete requirement specification
@@ -540,7 +540,7 @@ MASTER_WORKFLOW_TIMELINE:
       - Full context and constraint documentation
       - Clear, measurable success criteria
     quality_gate: "Analysis completeness ≥9.5/10"
-    
+
   phase_2_pesquisar: "30-35% of total effort - Knowledge foundation"
     deliverables:
       - Comprehensive domain knowledge base
@@ -548,7 +548,7 @@ MASTER_WORKFLOW_TIMELINE:
       - Constraint and limitation analysis
       - Research validation documentation
     quality_gate: "Research depth ≥9.5/10"
-    
+
   phase_3_think: "15-20% of total effort - Cognitive processing"
     deliverables:
       - Prompt architecture design
@@ -556,7 +556,7 @@ MASTER_WORKFLOW_TIMELINE:
       - Chain of thought documentation
       - Quality criteria framework
     quality_gate: "Logical consistency ≥9.5/10"
-    
+
   phase_4_elaborate: "20-25% of total effort - Prompt creation"
     deliverables:
       - Complete, optimized prompt

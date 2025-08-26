@@ -1,7 +1,7 @@
 /**
  * Placeholder communication realtime hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useCommunicationRealtime = () => {
   const [messages, setMessages] = useState<unknown[]>([]);

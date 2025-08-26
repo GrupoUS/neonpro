@@ -9,9 +9,9 @@
  * - Compliance com LGPD para analytics de dados médicos
  */
 
-import { EnhancedServiceBase } from '../base/EnhancedServiceBase';
-import type { ServiceConfig } from '../base/EnhancedServiceBase';
-import type { ServiceContext } from '../types';
+import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
+import type { ServiceConfig } from "../base/EnhancedServiceBase";
+import type { ServiceContext } from "../types";
 
 // ================================================
 // ANALYTICS TYPES AND INTERFACES
@@ -151,7 +151,7 @@ interface Widget {
   description: string;
   dataSource: string;
   configuration: Record<string, any>;
-  position: { x: number; y: number; width: number; height: number; };
+  position: { x: number; y: number; width: number; height: number };
   refreshRate: number;
   isVisible: boolean;
 }
@@ -180,7 +180,7 @@ interface Report {
 }
 
 interface ReportSchedule {
-  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  frequency: "daily" | "weekly" | "monthly" | "quarterly";
   time: string;
   daysOfWeek?: number[];
   dayOfMonth?: number;
@@ -204,7 +204,7 @@ interface Insight {
 interface Trend {
   metric: string;
   period: string;
-  direction: 'up' | 'down' | 'stable';
+  direction: "up" | "down" | "stable";
   change: number;
   significance: number;
   data: TrendDataPoint[];
@@ -221,54 +221,54 @@ interface TrendDataPoint {
 // ================================================
 
 enum DashboardType {
-  EXECUTIVE = 'executive',
-  OPERATIONAL = 'operational',
-  CLINICAL = 'clinical',
-  FINANCIAL = 'financial',
-  PATIENT = 'patient',
-  CUSTOM = 'custom',
+  EXECUTIVE = "executive",
+  OPERATIONAL = "operational",
+  CLINICAL = "clinical",
+  FINANCIAL = "financial",
+  PATIENT = "patient",
+  CUSTOM = "custom",
 }
 
 enum WidgetType {
-  METRIC = 'metric',
-  CHART = 'chart',
-  TABLE = 'table',
-  MAP = 'map',
-  GAUGE = 'gauge',
-  PROGRESS = 'progress',
-  TEXT = 'text',
-  IMAGE = 'image',
+  METRIC = "metric",
+  CHART = "chart",
+  TABLE = "table",
+  MAP = "map",
+  GAUGE = "gauge",
+  PROGRESS = "progress",
+  TEXT = "text",
+  IMAGE = "image",
 }
 
 enum ReportType {
-  PERFORMANCE = 'performance',
-  FINANCIAL = 'financial',
-  CLINICAL = 'clinical',
-  COMPLIANCE = 'compliance',
-  PATIENT_SATISFACTION = 'patient_satisfaction',
-  OPERATIONAL = 'operational',
+  PERFORMANCE = "performance",
+  FINANCIAL = "financial",
+  CLINICAL = "clinical",
+  COMPLIANCE = "compliance",
+  PATIENT_SATISFACTION = "patient_satisfaction",
+  OPERATIONAL = "operational",
 }
 
 enum ReportFormat {
-  PDF = 'pdf',
-  EXCEL = 'excel',
-  CSV = 'csv',
-  JSON = 'json',
+  PDF = "pdf",
+  EXCEL = "excel",
+  CSV = "csv",
+  JSON = "json",
 }
 
 enum InsightType {
-  TREND = 'trend',
-  ANOMALY = 'anomaly',
-  PREDICTION = 'prediction',
-  RECOMMENDATION = 'recommendation',
-  ALERT = 'alert',
+  TREND = "trend",
+  ANOMALY = "anomaly",
+  PREDICTION = "prediction",
+  RECOMMENDATION = "recommendation",
+  ALERT = "alert",
 }
 
 enum InsightImportance {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 // ================================================
@@ -290,7 +290,7 @@ interface GetMetricsRequest {
   tenantId: string;
   startDate: Date;
   endDate: Date;
-  granularity?: 'hour' | 'day' | 'week' | 'month';
+  granularity?: "hour" | "day" | "week" | "month";
   filters?: Record<string, any>;
   metrics?: string[];
 }
@@ -299,7 +299,7 @@ interface CreateDashboardRequest {
   name: string;
   description: string;
   type: DashboardType;
-  widgets: Omit<Widget, 'id'>[];
+  widgets: Omit<Widget, "id">[];
   filters?: DashboardFilter[];
   refreshRate?: number;
   isPublic?: boolean;
@@ -327,8 +327,8 @@ export class AnalyticsService extends EnhancedServiceBase {
 
   constructor(config?: Partial<ServiceConfig>) {
     super({
-      serviceName: 'AnalyticsService',
-      version: '1.0.0',
+      serviceName: "AnalyticsService",
+      version: "1.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -348,11 +348,11 @@ export class AnalyticsService extends EnhancedServiceBase {
   // ================================================
 
   getServiceName(): string {
-    return 'AnalyticsService';
+    return "AnalyticsService";
   }
 
   getServiceVersion(): string {
-    return '1.0.0';
+    return "1.0.0";
   }
 
   // ================================================
@@ -367,7 +367,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<string> {
     return this.executeOperation(
-      'trackEvent',
+      "trackEvent",
       async () => {
         // Create event object
         const eventId = `event_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
@@ -382,14 +382,14 @@ export class AnalyticsService extends EnhancedServiceBase {
           patientId: request.patientId,
           timestamp: Date.now(),
           metadata: {
-            source: 'analytics-service',
+            source: "analytics-service",
             version: this.getServiceVersion(),
             ...request.metadata,
           },
         };
 
         // Add to buffer for batch processing
-        const bufferKey = `${context.tenantId || 'default'}_${event.category}`;
+        const bufferKey = `${context.tenantId || "default"}_${event.category}`;
         if (!this.eventBuffer.has(bufferKey)) {
           this.eventBuffer.set(bufferKey, []);
         }
@@ -419,7 +419,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<string[]> {
     return this.executeOperation(
-      'trackEventsBatch',
+      "trackEventsBatch",
       async () => {
         const eventIds: string[] = [];
 
@@ -452,10 +452,9 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<HealthcareMetrics> {
     return this.executeOperation(
-      'getHealthcareMetrics',
+      "getHealthcareMetrics",
       async () => {
-        const cacheKey =
-          `healthcare_metrics_${request.tenantId}_${request.startDate.getTime()}_${request.endDate.getTime()}`;
+        const cacheKey = `healthcare_metrics_${request.tenantId}_${request.startDate.getTime()}_${request.endDate.getTime()}`;
 
         // Try cache first
         const cached = await this.cache.get<HealthcareMetrics>(cacheKey);
@@ -486,7 +485,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<PatientAnalytics> {
     return this.executeOperation(
-      'getPatientAnalytics',
+      "getPatientAnalytics",
       async () => {
         const cacheKey = `patient_analytics_${patientId}`;
 
@@ -530,9 +529,9 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Trend[]> {
     return this.executeOperation(
-      'getTrends',
+      "getTrends",
       async () => {
-        const cacheKey = `trends_${tenantId}_${metrics.join('_')}_${period}`;
+        const cacheKey = `trends_${tenantId}_${metrics.join("_")}_${period}`;
 
         const cached = await this.cache.get<Trend[]>(cacheKey);
         if (cached) {
@@ -570,7 +569,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Dashboard> {
     return this.executeOperation(
-      'createDashboard',
+      "createDashboard",
       async () => {
         const dashboardId = `dashboard_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
@@ -612,11 +611,11 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Record<string, any>> {
     return this.executeOperation(
-      'getDashboardData',
+      "getDashboardData",
       async () => {
         const dashboard = this.dashboards.get(dashboardId);
         if (!dashboard) {
-          throw new Error('Dashboard not found');
+          throw new Error("Dashboard not found");
         }
 
         const cacheKey = `dashboard_data_${dashboardId}`;
@@ -661,7 +660,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Report> {
     return this.executeOperation(
-      'createReport',
+      "createReport",
       async () => {
         const reportId = `report_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
@@ -716,11 +715,11 @@ export class AnalyticsService extends EnhancedServiceBase {
     expiresAt: Date;
   }> {
     return this.executeOperation(
-      'generateReport',
+      "generateReport",
       async () => {
         const report = this.reports.get(reportId);
         if (!report) {
-          throw new Error('Report not found');
+          throw new Error("Report not found");
         }
 
         // Generate report data
@@ -763,7 +762,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<Insight[]> {
     return this.executeOperation(
-      'generateInsights',
+      "generateInsights",
       async () => {
         const cacheKey = `insights_${tenantId}`;
         const cached = await this.cache.get<Insight[]>(cacheKey);
@@ -802,13 +801,13 @@ export class AnalyticsService extends EnhancedServiceBase {
       value: number;
       expected: number;
       deviation: number;
-      severity: 'low' | 'medium' | 'high';
+      severity: "low" | "medium" | "high";
     }[];
     analysis: string;
     recommendations: string[];
   }> {
     return this.executeOperation(
-      'detectAnomalies',
+      "detectAnomalies",
       async () => {
         // Get historical data for the metric
         const historicalData = await this.getHistoricalMetricData(
@@ -847,29 +846,29 @@ export class AnalyticsService extends EnhancedServiceBase {
   private initializeDefaultDashboards(): void {
     // Executive Dashboard
     const executiveDashboard: Dashboard = {
-      id: 'executive_default',
-      name: 'Executive Dashboard',
-      description: 'Overview executivo de métricas-chave',
+      id: "executive_default",
+      name: "Executive Dashboard",
+      description: "Overview executivo de métricas-chave",
       type: DashboardType.EXECUTIVE,
       widgets: [
         {
-          id: 'revenue_metric',
+          id: "revenue_metric",
           type: WidgetType.METRIC,
-          title: 'Receita Mensal',
-          description: 'Receita total do mês atual',
-          dataSource: 'revenue',
-          configuration: { format: 'currency' },
+          title: "Receita Mensal",
+          description: "Receita total do mês atual",
+          dataSource: "revenue",
+          configuration: { format: "currency" },
           position: { x: 0, y: 0, width: 3, height: 2 },
           refreshRate: 300_000,
           isVisible: true,
         },
         {
-          id: 'patient_growth',
+          id: "patient_growth",
           type: WidgetType.CHART,
-          title: 'Crescimento de Pacientes',
-          description: 'Novos pacientes por mês',
-          dataSource: 'patients',
-          configuration: { chartType: 'line', period: '6months' },
+          title: "Crescimento de Pacientes",
+          description: "Novos pacientes por mês",
+          dataSource: "patients",
+          configuration: { chartType: "line", period: "6months" },
           position: { x: 3, y: 0, width: 6, height: 4 },
           refreshRate: 300_000,
           isVisible: true,
@@ -878,12 +877,12 @@ export class AnalyticsService extends EnhancedServiceBase {
       filters: [],
       refreshRate: 300_000,
       isPublic: true,
-      createdBy: 'system',
+      createdBy: "system",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    this.dashboards.set('executive_default', executiveDashboard);
+    this.dashboards.set("executive_default", executiveDashboard);
   }
 
   private startInsightGeneration(): void {
@@ -945,21 +944,21 @@ export class AnalyticsService extends EnhancedServiceBase {
       patientId,
       demographics: {
         age: 35,
-        gender: 'female',
-        location: 'São Paulo, SP',
-        insuranceType: 'premium',
+        gender: "female",
+        location: "São Paulo, SP",
+        insuranceType: "premium",
       },
       behavior: {
         appointmentFrequency: 2.5,
-        preferredTimeSlots: ['morning', 'afternoon'],
-        communicationPreferences: ['whatsapp', 'email'],
-        paymentMethods: ['credit_card'],
+        preferredTimeSlots: ["morning", "afternoon"],
+        communicationPreferences: ["whatsapp", "email"],
+        paymentMethods: ["credit_card"],
         noShowProbability: 0.15,
       },
       health: {
         riskScore: 3.2,
-        chronicConditions: ['hypertension'],
-        allergies: ['penicillin'],
+        chronicConditions: ["hypertension"],
+        allergies: ["penicillin"],
         vitalTrends: {
           bloodPressure: [120, 125, 118, 122],
           weight: [68, 68.5, 67.8, 68.2],
@@ -994,7 +993,7 @@ export class AnalyticsService extends EnhancedServiceBase {
       trends.push({
         metric,
         period,
-        direction: 'up',
+        direction: "up",
         change: 12.5,
         significance: 0.85,
         data: [
@@ -1014,20 +1013,20 @@ export class AnalyticsService extends EnhancedServiceBase {
     // Generate data based on widget type and data source
     switch (widget.type) {
       case WidgetType.METRIC: {
-        return { value: 12_500, change: 8.5, trend: 'up' };
+        return { value: 12_500, change: 8.5, trend: "up" };
       }
       case WidgetType.CHART: {
         return {
-          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+          labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
           datasets: [{ data: [100, 120, 110, 130, 125] }],
         };
       }
       case WidgetType.TABLE: {
         return {
-          headers: ['Nome', 'Valor', 'Status'],
+          headers: ["Nome", "Valor", "Status"],
           rows: [
-            ['Receita', 'R$ 12.500', 'Positivo'],
-            ['Pacientes', '150', 'Crescendo'],
+            ["Receita", "R$ 12.500", "Positivo"],
+            ["Pacientes", "150", "Crescendo"],
           ],
         };
       }
@@ -1046,31 +1045,32 @@ export class AnalyticsService extends EnhancedServiceBase {
       {
         id: `insight_${Date.now()}_1`,
         type: InsightType.TREND,
-        title: 'Aumento nas consultas de manhã',
+        title: "Aumento nas consultas de manhã",
         description:
-          'Houve um aumento de 15% nas consultas agendadas para o período da manhã nos últimos 30 dias.',
-        data: { increase: 15, period: '30days' },
+          "Houve um aumento de 15% nas consultas agendadas para o período da manhã nos últimos 30 dias.",
+        data: { increase: 15, period: "30days" },
         confidence: 0.87,
         importance: InsightImportance.MEDIUM,
         actionable: true,
         recommendations: [
-          'Considere aumentar a disponibilidade de horários de manhã',
-          'Avalie a possibilidade de abrir mais cedo em dias de maior demanda',
+          "Considere aumentar a disponibilidade de horários de manhã",
+          "Avalie a possibilidade de abrir mais cedo em dias de maior demanda",
         ],
         createdAt: new Date(),
       },
       {
         id: `insight_${Date.now()}_2`,
         type: InsightType.ANOMALY,
-        title: 'Taxa de cancelamento acima do normal',
-        description: 'A taxa de cancelamento desta semana está 25% acima da média histórica.',
+        title: "Taxa de cancelamento acima do normal",
+        description:
+          "A taxa de cancelamento desta semana está 25% acima da média histórica.",
         data: { currentRate: 12.5, normalRate: 10, increase: 25 },
         confidence: 0.92,
         importance: InsightImportance.HIGH,
         actionable: true,
         recommendations: [
-          'Implemente lembretes automáticos 24h antes da consulta',
-          'Analise os motivos dos cancelamentos através de pesquisa',
+          "Implemente lembretes automáticos 24h antes da consulta",
+          "Analise os motivos dos cancelamentos através de pesquisa",
         ],
         createdAt: new Date(),
       },
@@ -1089,7 +1089,8 @@ export class AnalyticsService extends EnhancedServiceBase {
   private detectStatisticalAnomalies(data: number[]): any[] {
     // Simple anomaly detection using z-score
     const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
-    const variance = data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
+    const variance =
+      data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
     const stdDev = Math.sqrt(variance);
 
     const anomalies: any[] = [];
@@ -1103,7 +1104,7 @@ export class AnalyticsService extends EnhancedServiceBase {
           value,
           expected: mean,
           deviation: zScore,
-          severity: zScore > 3 ? 'high' : (zScore > 2.5 ? 'medium' : 'low'),
+          severity: zScore > 3 ? "high" : zScore > 2.5 ? "medium" : "low",
         });
       }
     });
@@ -1116,9 +1117,9 @@ export class AnalyticsService extends EnhancedServiceBase {
       return `Nenhuma anomalia detectada na métrica ${metric}.`;
     }
 
-    const highSeverity = anomalies.filter((a) => a.severity === 'high').length;
+    const highSeverity = anomalies.filter((a) => a.severity === "high").length;
     const mediumSeverity = anomalies.filter(
-      (a) => a.severity === 'medium',
+      (a) => a.severity === "medium",
     ).length;
 
     return `Detectadas ${anomalies.length} anomalias na métrica ${metric}. ${highSeverity} de alta severidade, ${mediumSeverity} de média severidade.`;
@@ -1129,18 +1130,18 @@ export class AnalyticsService extends EnhancedServiceBase {
     _metric: string,
   ): string[] {
     if (anomalies.length === 0) {
-      return ['Continuar monitoramento normal da métrica.'];
+      return ["Continuar monitoramento normal da métrica."];
     }
 
     const recommendations = [
-      'Investigar as causas das anomalias detectadas',
-      'Verificar se há eventos específicos que possam explicar os valores anômalos',
-      'Considerar ajustar os limites de alerta se as anomalias forem esperadas',
+      "Investigar as causas das anomalias detectadas",
+      "Verificar se há eventos específicos que possam explicar os valores anômalos",
+      "Considerar ajustar os limites de alerta se as anomalias forem esperadas",
     ];
 
-    if (anomalies.some((a) => a.severity === 'high')) {
+    if (anomalies.some((a) => a.severity === "high")) {
       recommendations.unshift(
-        'Atenção imediata necessária devido a anomalias de alta severidade',
+        "Atenção imediata necessária devido a anomalias de alta severidade",
       );
     }
 
@@ -1162,19 +1163,19 @@ export class AnalyticsService extends EnhancedServiceBase {
     const nextRun = new Date(now);
 
     switch (schedule.frequency) {
-      case 'daily': {
+      case "daily": {
         nextRun.setDate(now.getDate() + 1);
         break;
       }
-      case 'weekly': {
+      case "weekly": {
         nextRun.setDate(now.getDate() + 7);
         break;
       }
-      case 'monthly': {
+      case "monthly": {
         nextRun.setMonth(now.getMonth() + 1);
         break;
       }
-      case 'quarterly': {
+      case "quarterly": {
         nextRun.setMonth(now.getMonth() + 3);
         break;
       }
@@ -1190,10 +1191,10 @@ export class AnalyticsService extends EnhancedServiceBase {
     // Generate report data based on type
     switch (report.type) {
       case ReportType.PERFORMANCE: {
-        return { metrics: 'performance data' };
+        return { metrics: "performance data" };
       }
       case ReportType.FINANCIAL: {
-        return { revenue: 'financial data' };
+        return { revenue: "financial data" };
       }
       default: {
         return {};

@@ -27,22 +27,22 @@ export class AuthTokenManager {
   private accessToken: string | null = undefined;
   private refreshToken: string | null = undefined;
   private expiresAt: number | null = undefined;
-  private tokenType = 'Bearer';
+  private tokenType = "Bearer";
   private isRefreshing = false;
   private refreshPromise: Promise<boolean> | null = undefined;
   private readonly refreshCallbacks: ((success: boolean) => void)[] = [];
 
   // Storage keys
   private static readonly STORAGE_KEYS = {
-    ACCESS_TOKEN: 'neonpro_access_token',
-    REFRESH_TOKEN: 'neonpro_refresh_token',
-    EXPIRES_AT: 'neonpro_token_expires_at',
-    TOKEN_TYPE: 'neonpro_token_type',
+    ACCESS_TOKEN: "neonpro_access_token",
+    REFRESH_TOKEN: "neonpro_refresh_token",
+    EXPIRES_AT: "neonpro_token_expires_at",
+    TOKEN_TYPE: "neonpro_token_type",
   } as const;
 
   constructor() {
     // Load tokens from storage on initialization
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       this.loadFromStorage();
     }
   } /**
@@ -78,7 +78,7 @@ export class AuthTokenManager {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresAt = Number.parseInt(expiresAt, 10);
-        this.tokenType = tokenType || 'Bearer';
+        this.tokenType = tokenType || "Bearer";
 
         // Validate loaded tokens
         if (Number.isNaN(this.expiresAt) || this.expiresAt < Date.now()) {
@@ -93,7 +93,7 @@ export class AuthTokenManager {
    */
 
   private saveToStorage(): void {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -126,7 +126,7 @@ export class AuthTokenManager {
    * Clear tokens from localStorage
    */
   private clearStorage(): void {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return;
     }
 
@@ -142,7 +142,7 @@ export class AuthTokenManager {
   setTokens(tokens: AuthTokens): void {
     this.accessToken = tokens.accessToken;
     this.refreshToken = tokens.refreshToken;
-    this.tokenType = tokens.tokenType || 'Bearer';
+    this.tokenType = tokens.tokenType || "Bearer";
     // Calculate expiration timestamp (with safety margin of 30 seconds)
     this.expiresAt = Date.now() + (tokens.expiresIn - 30) * 1000;
 
@@ -263,10 +263,10 @@ export class AuthTokenManager {
    */
   private async performTokenRefresh(): Promise<boolean> {
     try {
-      const response = await fetch('/api/v1/auth/refresh', {
-        method: 'POST',
+      const response = await fetch("/api/v1/auth/refresh", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           refreshToken: this.refreshToken,
@@ -299,7 +299,7 @@ export class AuthTokenManager {
       return false;
     } catch (error) {
       // Only clear tokens on network errors if the error suggests auth failure
-      if (error instanceof TypeError && error.message.includes('fetch')) {
+      if (error instanceof TypeError && error.message.includes("fetch")) {
         // Network error - don't clear tokens, might be temporary
         return false;
       }
@@ -316,7 +316,7 @@ export class AuthTokenManager {
     this.accessToken = undefined;
     this.refreshToken = undefined;
     this.expiresAt = undefined;
-    this.tokenType = 'Bearer';
+    this.tokenType = "Bearer";
     this.clearStorage();
   }
 

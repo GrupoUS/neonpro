@@ -5,27 +5,27 @@
  * Quality Standard: ≥9.9/10
  */
 
-import { z } from 'zod';
-import type { ComplianceScore, ConsentRecord } from './types';
+import { z } from "zod";
+import type { ComplianceScore, ConsentRecord } from "./types";
 import {
   ComplianceStatus,
   HealthcareConsentType,
   LGPDDataSubjectRights,
   PatientDataClassification,
-} from './types';
+} from "./types";
 
 /**
  * LGPD Legal Basis (Art. 7º)
  */
 export enum LGPDLegalBasis {
-  CONSENT = 'CONSENT', // Consentimento
-  CONTRACT = 'CONTRACT', // Execução de contrato
-  LEGAL_OBLIGATION = 'LEGAL_OBLIGATION', // Cumprimento de obrigação legal
-  VITAL_INTERESTS = 'VITAL_INTERESTS', // Proteção da vida
-  PUBLIC_INTEREST = 'PUBLIC_INTEREST', // Interesse público
-  LEGITIMATE_INTERESTS = 'LEGITIMATE_INTERESTS', // Interesse legítimo
-  HEALTH_PROTECTION = 'HEALTH_PROTECTION', // Proteção da saúde (Art. 11º)
-  HEALTH_RESEARCH = 'HEALTH_RESEARCH', // Pesquisa em saúde
+  CONSENT = "CONSENT", // Consentimento
+  CONTRACT = "CONTRACT", // Execução de contrato
+  LEGAL_OBLIGATION = "LEGAL_OBLIGATION", // Cumprimento de obrigação legal
+  VITAL_INTERESTS = "VITAL_INTERESTS", // Proteção da vida
+  PUBLIC_INTEREST = "PUBLIC_INTEREST", // Interesse público
+  LEGITIMATE_INTERESTS = "LEGITIMATE_INTERESTS", // Interesse legítimo
+  HEALTH_PROTECTION = "HEALTH_PROTECTION", // Proteção da saúde (Art. 11º)
+  HEALTH_RESEARCH = "HEALTH_RESEARCH", // Pesquisa em saúde
 }
 
 /**
@@ -40,7 +40,7 @@ export interface LGPDConsentRequest {
   retentionPeriod: number; // months
   thirdPartySharing: boolean;
   automatedDecisionMaking: boolean;
-  locale: 'pt-BR' | 'en-US';
+  locale: "pt-BR" | "en-US";
 }
 
 /**
@@ -50,7 +50,7 @@ export interface LGPDDataSubjectRequest {
   id: string;
   patientId: string;
   requestType: LGPDDataSubjectRights;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'REJECTED';
+  status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "REJECTED";
   requestedAt: Date;
   completedAt?: Date;
   reason?: string;
@@ -64,7 +64,7 @@ export interface LGPDDataSubjectRequest {
 export interface LGPDBreachNotification {
   id: string;
   incidentId: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   affectedDataSubjects: number;
   dataCategories: PatientDataClassification[];
   breachType: string;
@@ -73,7 +73,7 @@ export interface LGPDBreachNotification {
   anpdNotified: boolean;
   anpdNotificationDate?: Date;
   mitigationActions: string[];
-  status: 'OPEN' | 'INVESTIGATING' | 'MITIGATED' | 'CLOSED';
+  status: "OPEN" | "INVESTIGATING" | "MITIGATED" | "CLOSED";
 }
 
 /**
@@ -96,35 +96,36 @@ export class LGPDComplianceService {
 
     // Validate purpose specification (Art. 8º § 4º)
     if (!request.purpose || request.purpose.length < 20) {
-      violations.push('Purpose must be specific and detailed (min 20 chars)');
+      violations.push("Purpose must be specific and detailed (min 20 chars)");
       score -= 2;
     }
 
     // Validate data minimization (Art. 6º I)
     if (request.dataCategories.length === 0) {
-      violations.push('Data categories must be specified');
+      violations.push("Data categories must be specified");
       score -= 1;
     }
 
     // Validate retention period (Art. 15º)
     if (request.retentionPeriod > 120) {
-      violations.push('Retention period exceeds maximum allowed (120 months)');
+      violations.push("Retention period exceeds maximum allowed (120 months)");
       score -= 1;
     }
 
     // Validate legal basis for health data (Art. 11º)
     if (
-      request.consentType === HealthcareConsentType.TREATMENT
-      && ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(
+      request.consentType === HealthcareConsentType.TREATMENT &&
+      ![LGPDLegalBasis.HEALTH_PROTECTION, LGPDLegalBasis.CONSENT].includes(
         request.legalBasis,
       )
     ) {
-      violations.push('Invalid legal basis for health data processing');
+      violations.push("Invalid legal basis for health data processing");
       score -= 3;
     }
 
     return {
-      valid: violations.length === 0 && score >= this.constitutionalQualityStandard,
+      valid:
+        violations.length === 0 && score >= this.constitutionalQualityStandard,
       score: Math.max(0, score) as ComplianceScore,
       violations,
     };
@@ -134,12 +135,12 @@ export class LGPDComplianceService {
    * Process Data Subject Rights Request
    */
   async processDataSubjectRequest(
-    request: Omit<LGPDDataSubjectRequest, 'id' | 'requestedAt' | 'status'>,
+    request: Omit<LGPDDataSubjectRequest, "id" | "requestedAt" | "status">,
   ): Promise<LGPDDataSubjectRequest> {
     const dataSubjectRequest: LGPDDataSubjectRequest = {
       id: crypto.randomUUID(),
       ...request,
-      status: 'PENDING',
+      status: "PENDING",
       requestedAt: new Date(),
     };
 
@@ -158,8 +159,8 @@ export class LGPDComplianceService {
         return this.processPortabilityRequest(dataSubjectRequest);
       }
       default: {
-        dataSubjectRequest.status = 'REJECTED';
-        dataSubjectRequest.reason = 'Unsupported request type';
+        dataSubjectRequest.status = "REJECTED";
+        dataSubjectRequest.reason = "Unsupported request type";
         return dataSubjectRequest;
       }
     }
@@ -169,17 +170,18 @@ export class LGPDComplianceService {
    * Report Data Breach (Art. 48)
    */
   async reportDataBreach(
-    breach: Omit<LGPDBreachNotification, 'id' | 'reportedAt' | 'status'>,
+    breach: Omit<LGPDBreachNotification, "id" | "reportedAt" | "status">,
   ): Promise<LGPDBreachNotification> {
     const notification: LGPDBreachNotification = {
       id: crypto.randomUUID(),
       ...breach,
       reportedAt: new Date(),
-      status: 'OPEN',
+      status: "OPEN",
     };
 
     // Check if ANPD notification is required
-    const requiresANPDNotification = this.requiresANPDNotification(notification);
+    const requiresANPDNotification =
+      this.requiresANPDNotification(notification);
 
     if (requiresANPDNotification) {
       // Schedule ANPD notification within 72 hours
@@ -202,8 +204,8 @@ export class LGPDComplianceService {
 
     const now = new Date();
     const expired = now > expiresAt;
-    const renewalRequired = expired
-      || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
+    const renewalRequired =
+      expired || expiresAt.getTime() - now.getTime() < 30 * 24 * 60 * 60 * 1000; // 30 days
 
     return {
       expired,
@@ -249,7 +251,7 @@ export class LGPDComplianceService {
   private async processAccessRequest(
     request: LGPDDataSubjectRequest,
   ): Promise<LGPDDataSubjectRequest> {
-    request.status = 'IN_PROGRESS';
+    request.status = "IN_PROGRESS";
     // Implementation would gather patient data
     return request;
   }
@@ -257,7 +259,7 @@ export class LGPDComplianceService {
   private async processRectificationRequest(
     request: LGPDDataSubjectRequest,
   ): Promise<LGPDDataSubjectRequest> {
-    request.status = 'IN_PROGRESS';
+    request.status = "IN_PROGRESS";
     // Implementation would update patient data
     return request;
   }
@@ -265,7 +267,7 @@ export class LGPDComplianceService {
   private async processErasureRequest(
     request: LGPDDataSubjectRequest,
   ): Promise<LGPDDataSubjectRequest> {
-    request.status = 'IN_PROGRESS';
+    request.status = "IN_PROGRESS";
     // Implementation would delete patient data
     return request;
   }
@@ -273,7 +275,7 @@ export class LGPDComplianceService {
   private async processPortabilityRequest(
     request: LGPDDataSubjectRequest,
   ): Promise<LGPDDataSubjectRequest> {
-    request.status = 'IN_PROGRESS';
+    request.status = "IN_PROGRESS";
     // Implementation would export patient data
     return request;
   }
@@ -281,13 +283,13 @@ export class LGPDComplianceService {
   private requiresANPDNotification(breach: LGPDBreachNotification): boolean {
     // High risk criteria (Art. 48 § 1º)
     return (
-      breach.severity === 'HIGH'
-      || breach.severity === 'CRITICAL'
-      || breach.affectedDataSubjects > 100
-      || breach.dataCategories.includes(
+      breach.severity === "HIGH" ||
+      breach.severity === "CRITICAL" ||
+      breach.affectedDataSubjects > 100 ||
+      breach.dataCategories.includes(
         PatientDataClassification.SENSITIVE_PERSONAL,
-      )
-      || breach.dataCategories.includes(PatientDataClassification.HEALTH_DATA)
+      ) ||
+      breach.dataCategories.includes(PatientDataClassification.HEALTH_DATA)
     );
   }
 }
@@ -302,7 +304,7 @@ export const LGPDConsentRequestSchema = z.object({
   retentionPeriod: z.number().min(1).max(120),
   thirdPartySharing: z.boolean(),
   automatedDecisionMaking: z.boolean(),
-  locale: z.enum(['pt-BR', 'en-US']),
+  locale: z.enum(["pt-BR", "en-US"]),
 });
 
 export const LGPDDataSubjectRequestSchema = z.object({
@@ -313,7 +315,7 @@ export const LGPDDataSubjectRequestSchema = z.object({
 
 export const LGPDBreachNotificationSchema = z.object({
   incidentId: z.string().uuid(),
-  severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+  severity: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
   affectedDataSubjects: z.number().min(0),
   dataCategories: z.array(z.nativeEnum(PatientDataClassification)),
   breachType: z.string().min(1),

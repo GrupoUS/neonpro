@@ -23,18 +23,18 @@ export const HTTP_STATUS = {
  * Common response templates
  */
 export const RESPONSE_MESSAGES = {
-  AUTH_REQUIRED: 'Authentication required',
-  DATABASE_ERROR: 'Database middleware failed',
-  HEALTH_CHECK_FAILED: 'Health check failed',
-  NOT_IMPLEMENTED: 'Feature not implemented',
-  INVALID_DATA: 'Invalid data provided',
+  AUTH_REQUIRED: "Authentication required",
+  DATABASE_ERROR: "Database middleware failed",
+  HEALTH_CHECK_FAILED: "Health check failed",
+  NOT_IMPLEMENTED: "Feature not implemented",
+  INVALID_DATA: "Invalid data provided",
 } as const;
 
 /**
  * Request ID and correlation constants
  */
 export const REQUEST_ID = {
-  HEADER_NAME: 'X-Request-ID',
+  HEADER_NAME: "X-Request-ID",
   MAX_LENGTH: 100,
   TRACE_ID_LENGTH: 12,
   SPAN_ID_LENGTH: 8,

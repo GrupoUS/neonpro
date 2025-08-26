@@ -3,8 +3,8 @@
  * Handles medical professional licensing, digital signatures, and telemedicine compliance
  */
 
-import { createClient } from '@supabase/supabase-js';
-import crypto from 'node:crypto';
+import { createClient } from "@supabase/supabase-js";
+import crypto from "node:crypto";
 
 export interface MedicalProfessional {
   id: string;
@@ -12,7 +12,7 @@ export interface MedicalProfessional {
   crm_state: string;
   full_name: string;
   specializations: string[];
-  license_status: 'active' | 'suspended' | 'revoked' | 'expired';
+  license_status: "active" | "suspended" | "revoked" | "expired";
   license_expiry: Date;
   digital_signature_cert?: string;
   telemedicine_certified: boolean;
@@ -29,10 +29,10 @@ export interface DigitalSignature {
   certificate_thumbprint: string;
   timestamp: Date;
   document_type:
-    | 'prescription'
-    | 'medical_certificate'
-    | 'treatment_plan'
-    | 'consultation_report';
+    | "prescription"
+    | "medical_certificate"
+    | "treatment_plan"
+    | "consultation_report";
   document_reference: string;
   is_valid: boolean;
   validation_timestamp?: Date;
@@ -42,7 +42,7 @@ export interface TelemedicineSession {
   id: string;
   professional_id: string;
   patient_id: string;
-  session_type: 'consultation' | 'follow_up' | 'second_opinion' | 'emergency';
+  session_type: "consultation" | "follow_up" | "second_opinion" | "emergency";
   start_time: Date;
   end_time?: Date;
   platform_used: string;
@@ -62,7 +62,7 @@ export interface ContinuingEducation {
   completion_date: Date;
   certificate_number: string;
   cfm_recognized: boolean;
-  category: 'ethics' | 'clinical' | 'research' | 'technology' | 'management';
+  category: "ethics" | "clinical" | "research" | "technology" | "management";
 }
 
 export class CFMCompliance {
@@ -77,16 +77,16 @@ export class CFMCompliance {
 
   // Medical Professional Management
   async registerProfessional(
-    professional: Omit<MedicalProfessional, 'id' | 'created_at' | 'updated_at'>,
+    professional: Omit<MedicalProfessional, "id" | "created_at" | "updated_at">,
   ): Promise<MedicalProfessional | null> {
     try {
       // Validate CFM license format
       if (!this.validateCFMLicense(professional.cfm_license)) {
-        throw new Error('Invalid CFM license format');
+        throw new Error("Invalid CFM license format");
       }
 
       const { data, error } = await this.supabase
-        .from('medical_professionals')
+        .from("medical_professionals")
         .insert(professional)
         .select()
         .single();
@@ -97,7 +97,7 @@ export class CFMCompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'professional_registration',
+        "professional_registration",
         `CFM: ${professional.cfm_license}`,
         data.id,
       );
@@ -111,9 +111,9 @@ export class CFMCompliance {
   async validateProfessionalLicense(cfmLicense: string): Promise<boolean> {
     try {
       const { data: professional, error } = await this.supabase
-        .from('medical_professionals')
-        .select('*')
-        .eq('cfm_license', cfmLicense)
+        .from("medical_professionals")
+        .select("*")
+        .eq("cfm_license", cfmLicense)
         .single();
 
       if (error || !professional) {
@@ -121,7 +121,7 @@ export class CFMCompliance {
       }
 
       // Check license status and expiry
-      const isActive = professional.license_status === 'active';
+      const isActive = professional.license_status === "active";
       const notExpired = new Date(professional.license_expiry) > new Date();
       const hasValidFormat = this.validateCFMLicense(cfmLicense);
 
@@ -143,11 +143,11 @@ export class CFMCompliance {
       futureDate.setDate(futureDate.getDate() + days);
 
       const { data, error } = await this.supabase
-        .from('medical_professionals')
-        .select('*')
-        .lte('license_expiry', futureDate.toISOString())
-        .gte('license_expiry', new Date().toISOString())
-        .eq('license_status', 'active');
+        .from("medical_professionals")
+        .select("*")
+        .lte("license_expiry", futureDate.toISOString())
+        .gte("license_expiry", new Date().toISOString())
+        .eq("license_status", "active");
 
       return data || [];
     } catch {
@@ -159,29 +159,29 @@ export class CFMCompliance {
   async createDigitalSignature(
     professionalId: string,
     documentHash: string,
-    documentType: DigitalSignature['document_type'],
+    documentType: DigitalSignature["document_type"],
     documentReference: string,
   ): Promise<DigitalSignature | null> {
     try {
       // Validate professional can sign documents
       const professional = await this.supabase
-        .from('medical_professionals')
-        .select('*')
-        .eq('id', professionalId)
+        .from("medical_professionals")
+        .select("*")
+        .eq("id", professionalId)
         .single();
 
       if (!professional.data?.digital_signature_cert) {
-        throw new Error('Professional not certified for digital signatures');
+        throw new Error("Professional not certified for digital signatures");
       }
 
       // Generate signature hash (simplified - real implementation would use proper PKI)
       const signatureData = `${documentHash}:${professionalId}:${new Date().toISOString()}`;
       const signatureHash = crypto
-        .createHash('sha256')
+        .createHash("sha256")
         .update(signatureData)
-        .digest('hex');
+        .digest("hex");
 
-      const signature: Omit<DigitalSignature, 'id'> = {
+      const signature: Omit<DigitalSignature, "id"> = {
         professional_id: professionalId,
         document_hash: documentHash,
         signature_hash: signatureHash,
@@ -193,7 +193,7 @@ export class CFMCompliance {
       };
 
       const { data, error } = await this.supabase
-        .from('digital_signatures')
+        .from("digital_signatures")
         .insert(signature)
         .select()
         .single();
@@ -204,7 +204,7 @@ export class CFMCompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'digital_signature_created',
+        "digital_signature_created",
         `Document: ${documentReference}`,
         data.id,
       );
@@ -218,9 +218,9 @@ export class CFMCompliance {
   async validateDigitalSignature(signatureId: string): Promise<boolean> {
     try {
       const { data: signature, error } = await this.supabase
-        .from('digital_signatures')
-        .select('*')
-        .eq('id', signatureId)
+        .from("digital_signatures")
+        .select("*")
+        .eq("id", signatureId)
         .single();
 
       if (error || !signature) {
@@ -228,24 +228,24 @@ export class CFMCompliance {
       }
 
       // Validate signature integrity (simplified validation)
-      const expectedSignatureData =
-        `${signature.document_hash}:${signature.professional_id}:${signature.timestamp}`;
+      const expectedSignatureData = `${signature.document_hash}:${signature.professional_id}:${signature.timestamp}`;
       const expectedHash = crypto
-        .createHash('sha256')
+        .createHash("sha256")
         .update(expectedSignatureData)
-        .digest('hex');
+        .digest("hex");
 
-      const isValid = signature.signature_hash === expectedHash && signature.is_valid;
+      const isValid =
+        signature.signature_hash === expectedHash && signature.is_valid;
 
       if (isValid !== signature.is_valid) {
         // Update validation status
         await this.supabase
-          .from('digital_signatures')
+          .from("digital_signatures")
           .update({
             is_valid: isValid,
             validation_timestamp: new Date(),
           })
-          .eq('id', signatureId);
+          .eq("id", signatureId);
       }
 
       return isValid;
@@ -256,22 +256,22 @@ export class CFMCompliance {
 
   // Telemedicine Compliance
   async startTelemedicineSession(
-    session: Omit<TelemedicineSession, 'id' | 'created_at'>,
+    session: Omit<TelemedicineSession, "id" | "created_at">,
   ): Promise<TelemedicineSession | null> {
     try {
       // Validate professional is certified for telemedicine
       const { data: professional, error: profError } = await this.supabase
-        .from('medical_professionals')
-        .select('telemedicine_certified, license_status')
-        .eq('id', session.professional_id)
+        .from("medical_professionals")
+        .select("telemedicine_certified, license_status")
+        .eq("id", session.professional_id)
         .single();
 
       if (
-        profError
-        || !professional.telemedicine_certified
-        || professional.license_status !== 'active'
+        profError ||
+        !professional.telemedicine_certified ||
+        professional.license_status !== "active"
       ) {
-        throw new Error('Professional not certified for telemedicine');
+        throw new Error("Professional not certified for telemedicine");
       }
 
       // Validate CFM compliance requirements
@@ -283,7 +283,7 @@ export class CFMCompliance {
       };
 
       const { data, error } = await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .insert(sessionData)
         .select()
         .single();
@@ -294,7 +294,7 @@ export class CFMCompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'telemedicine_session_started',
+        "telemedicine_session_started",
         `Session type: ${session.session_type}`,
         data.id,
       );
@@ -315,12 +315,13 @@ export class CFMCompliance {
         hasInformedConsent: session.recording_consent !== undefined,
         // Platform must be secure and compliant
         usesCertifiedPlatform: this.isCertifiedTelemedicinePlatform(
-          session.platform_used || '',
+          session.platform_used || "",
         ),
         // Professional must have appropriate qualifications
         professionalQualified: true, // Already validated above
         // Session must be properly documented
-        hasProperDocumentation: session.consultation_notes && session.consultation_notes.length > 0,
+        hasProperDocumentation:
+          session.consultation_notes && session.consultation_notes.length > 0,
       };
 
       return Object.values(requirements).every((req) => req === true);
@@ -332,10 +333,10 @@ export class CFMCompliance {
   private isCertifiedTelemedicinePlatform(platform: string): boolean {
     // List of CFM-approved telemedicine platforms
     const approvedPlatforms = [
-      'telemedicina-cfm',
-      'medcloud',
-      'conexa-saude',
-      'teleconsulta-brasil',
+      "telemedicina-cfm",
+      "medcloud",
+      "conexa-saude",
+      "teleconsulta-brasil",
     ];
 
     return approvedPlatforms.includes(platform.toLowerCase());
@@ -347,12 +348,12 @@ export class CFMCompliance {
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .update({
           end_time: new Date(),
           consultation_notes: consultationNotes,
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
       if (error) {
         throw error;
@@ -360,8 +361,8 @@ export class CFMCompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'telemedicine_session_ended',
-        'Session completed',
+        "telemedicine_session_ended",
+        "Session completed",
         sessionId,
       );
 
@@ -373,11 +374,11 @@ export class CFMCompliance {
 
   // Continuing Education Management
   async recordContinuingEducation(
-    education: Omit<ContinuingEducation, 'id'>,
+    education: Omit<ContinuingEducation, "id">,
   ): Promise<ContinuingEducation | null> {
     try {
       const { data, error } = await this.supabase
-        .from('continuing_education')
+        .from("continuing_education")
         .insert(education)
         .select()
         .single();
@@ -394,7 +395,7 @@ export class CFMCompliance {
 
       // Log compliance action
       await this.logComplianceAction(
-        'continuing_education_recorded',
+        "continuing_education_recorded",
         `Course: ${education.course_name}`,
         data.id,
       );
@@ -411,21 +412,22 @@ export class CFMCompliance {
   ): Promise<void> {
     try {
       const { data: professional, error: fetchError } = await this.supabase
-        .from('medical_professionals')
-        .select('continuing_education_hours')
-        .eq('id', professionalId)
+        .from("medical_professionals")
+        .select("continuing_education_hours")
+        .eq("id", professionalId)
         .single();
 
       if (fetchError) {
         throw fetchError;
       }
 
-      const updatedHours = professional.continuing_education_hours + additionalHours;
+      const updatedHours =
+        professional.continuing_education_hours + additionalHours;
 
       const { error: updateError } = await this.supabase
-        .from('medical_professionals')
+        .from("medical_professionals")
         .update({ continuing_education_hours: updatedHours })
-        .eq('id', professionalId);
+        .eq("id", professionalId);
 
       if (updateError) {
         throw updateError;
@@ -438,9 +440,9 @@ export class CFMCompliance {
   ): Promise<boolean> {
     try {
       const { data: professional, error } = await this.supabase
-        .from('medical_professionals')
-        .select('continuing_education_hours, created_at')
-        .eq('id', professionalId)
+        .from("medical_professionals")
+        .select("continuing_education_hours, created_at")
+        .eq("id", professionalId)
         .single();
 
       if (error || !professional) {
@@ -450,8 +452,8 @@ export class CFMCompliance {
       // CFM requires minimum continuing education hours per period
       const minimumHoursPerYear = 100;
       const yearsActive = Math.ceil(
-        (Date.now() - new Date(professional.created_at).getTime())
-          / (1000 * 60 * 60 * 24 * 365),
+        (Date.now() - new Date(professional.created_at).getTime()) /
+          (1000 * 60 * 60 * 24 * 365),
       );
       const requiredHours = minimumHoursPerYear * yearsActive;
 
@@ -467,31 +469,32 @@ export class CFMCompliance {
     endDate: Date,
   ): Promise<any> {
     try {
-      const [professionals, signatures, sessions, education] = await Promise.all([
-        this.supabase
-          .from('medical_professionals')
-          .select('*')
-          .gte('created_at', startDate.toISOString())
-          .lte('created_at', endDate.toISOString()),
+      const [professionals, signatures, sessions, education] =
+        await Promise.all([
+          this.supabase
+            .from("medical_professionals")
+            .select("*")
+            .gte("created_at", startDate.toISOString())
+            .lte("created_at", endDate.toISOString()),
 
-        this.supabase
-          .from('digital_signatures')
-          .select('*')
-          .gte('timestamp', startDate.toISOString())
-          .lte('timestamp', endDate.toISOString()),
+          this.supabase
+            .from("digital_signatures")
+            .select("*")
+            .gte("timestamp", startDate.toISOString())
+            .lte("timestamp", endDate.toISOString()),
 
-        this.supabase
-          .from('telemedicine_sessions')
-          .select('*')
-          .gte('created_at', startDate.toISOString())
-          .lte('created_at', endDate.toISOString()),
+          this.supabase
+            .from("telemedicine_sessions")
+            .select("*")
+            .gte("created_at", startDate.toISOString())
+            .lte("created_at", endDate.toISOString()),
 
-        this.supabase
-          .from('continuing_education')
-          .select('*')
-          .gte('completion_date', startDate.toISOString())
-          .lte('completion_date', endDate.toISOString()),
-      ]);
+          this.supabase
+            .from("continuing_education")
+            .select("*")
+            .gte("completion_date", startDate.toISOString())
+            .lte("completion_date", endDate.toISOString()),
+        ]);
 
       const expiringLicenses = await this.getExpiringLicenses();
 
@@ -502,59 +505,71 @@ export class CFMCompliance {
         },
         professionals: {
           total: professionals.data?.length || 0,
-          active: professionals.data?.filter(
-            (p: any) => p.license_status === 'active',
-          ).length || 0,
-          telemedicine_certified: professionals.data?.filter((p: any) => p.telemedicine_certified)
-            .length || 0,
-          digital_signature_enabled: professionals.data?.filter((p: any) =>
-            p.digital_signature_cert
-          )
-            .length || 0,
+          active:
+            professionals.data?.filter(
+              (p: any) => p.license_status === "active",
+            ).length || 0,
+          telemedicine_certified:
+            professionals.data?.filter((p: any) => p.telemedicine_certified)
+              .length || 0,
+          digital_signature_enabled:
+            professionals.data?.filter((p: any) => p.digital_signature_cert)
+              .length || 0,
           licenses_expiring: expiringLicenses.length,
         },
         digital_signatures: {
           total: signatures.data?.length || 0,
           valid: signatures.data?.filter((s: any) => s.is_valid).length || 0,
           by_document_type: {
-            prescription: signatures.data?.filter(
-              (s: any) => s.document_type === 'prescription',
-            ).length || 0,
-            medical_certificate: signatures.data?.filter(
-              (s: any) => s.document_type === 'medical_certificate',
-            ).length || 0,
-            treatment_plan: signatures.data?.filter(
-              (s: any) => s.document_type === 'treatment_plan',
-            ).length || 0,
-            consultation_report: signatures.data?.filter(
-              (s: any) => s.document_type === 'consultation_report',
-            ).length || 0,
+            prescription:
+              signatures.data?.filter(
+                (s: any) => s.document_type === "prescription",
+              ).length || 0,
+            medical_certificate:
+              signatures.data?.filter(
+                (s: any) => s.document_type === "medical_certificate",
+              ).length || 0,
+            treatment_plan:
+              signatures.data?.filter(
+                (s: any) => s.document_type === "treatment_plan",
+              ).length || 0,
+            consultation_report:
+              signatures.data?.filter(
+                (s: any) => s.document_type === "consultation_report",
+              ).length || 0,
           },
         },
         telemedicine: {
           total_sessions: sessions.data?.length || 0,
-          compliant_sessions: sessions.data?.filter((s: any) => s.cfm_compliance_validated)
-            .length || 0,
+          compliant_sessions:
+            sessions.data?.filter((s: any) => s.cfm_compliance_validated)
+              .length || 0,
           by_session_type: {
-            consultation: sessions.data?.filter(
-              (s: any) => s.session_type === 'consultation',
-            ).length || 0,
-            follow_up: sessions.data?.filter((s: any) => s.session_type === 'follow_up')
-              .length || 0,
-            second_opinion: sessions.data?.filter(
-              (s: any) => s.session_type === 'second_opinion',
-            ).length || 0,
-            emergency: sessions.data?.filter((s: any) => s.session_type === 'emergency')
-              .length || 0,
+            consultation:
+              sessions.data?.filter(
+                (s: any) => s.session_type === "consultation",
+              ).length || 0,
+            follow_up:
+              sessions.data?.filter((s: any) => s.session_type === "follow_up")
+                .length || 0,
+            second_opinion:
+              sessions.data?.filter(
+                (s: any) => s.session_type === "second_opinion",
+              ).length || 0,
+            emergency:
+              sessions.data?.filter((s: any) => s.session_type === "emergency")
+                .length || 0,
           },
         },
         continuing_education: {
           total_courses: education.data?.length || 0,
-          total_hours: education.data?.reduce(
-            (sum: number, course: any) => sum + course.hours,
-            0,
-          ) || 0,
-          cfm_recognized: education.data?.filter((e: any) => e.cfm_recognized).length || 0,
+          total_hours:
+            education.data?.reduce(
+              (sum: number, course: any) => sum + course.hours,
+              0,
+            ) || 0,
+          cfm_recognized:
+            education.data?.filter((e: any) => e.cfm_recognized).length || 0,
         },
         compliance_score: this.calculateCFMComplianceScore(
           professionals.data,
@@ -577,10 +592,12 @@ export class CFMCompliance {
     let score = 100;
 
     // Deduct points for compliance issues
-    const inactiveProfessionals = professionals?.filter((p) => p.license_status !== 'active').length
-      || 0;
-    const invalidSignatures = signatures?.filter((s) => !s.is_valid).length || 0;
-    const nonCompliantSessions = sessions?.filter((s) => !s.cfm_compliance_validated).length || 0;
+    const inactiveProfessionals =
+      professionals?.filter((p) => p.license_status !== "active").length || 0;
+    const invalidSignatures =
+      signatures?.filter((s) => !s.is_valid).length || 0;
+    const nonCompliantSessions =
+      sessions?.filter((s) => !s.cfm_compliance_validated).length || 0;
 
     score -= inactiveProfessionals * 10;
     score -= invalidSignatures * 5;
@@ -596,11 +613,11 @@ export class CFMCompliance {
     referenceId: string,
   ): Promise<void> {
     try {
-      await this.supabase.from('compliance_logs').insert({
+      await this.supabase.from("compliance_logs").insert({
         action,
         description,
         reference_id: referenceId,
-        module: 'cfm',
+        module: "cfm",
         timestamp: new Date().toISOString(),
       });
     } catch {}

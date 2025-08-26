@@ -8,28 +8,28 @@
  * with the correct configurations and environments.
  */
 
-const { spawn } = require('node:child_process');
-const _path = require('node:path');
+const { spawn } = require("node:child_process");
+const _path = require("node:path");
 
 // Test configurations
 const CONFIGS = {
   vitest: {
-    simple: 'vitest.simple.config.ts',
-    full: 'vitest.config.ts',
+    simple: "vitest.simple.config.ts",
+    full: "vitest.config.ts",
   },
   playwright: {
-    simple: 'playwright.simple.config.ts',
-    full: 'playwright.config.ts',
+    simple: "playwright.simple.config.ts",
+    full: "playwright.config.ts",
   },
 };
 
 // Environment setup
 const HEALTHCARE_ENV = {
-  NODE_ENV: 'test',
-  HEALTHCARE_MODE: 'true',
-  LGPD_COMPLIANCE: 'true',
-  ANVISA_VALIDATION: 'true',
-  CFM_STANDARDS: 'true',
+  NODE_ENV: "test",
+  HEALTHCARE_MODE: "true",
+  LGPD_COMPLIANCE: "true",
+  ANVISA_VALIDATION: "true",
+  CFM_STANDARDS: "true",
 };
 
 /**
@@ -38,13 +38,13 @@ const HEALTHCARE_ENV = {
 function runCommand(command, args = [], options = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
-      stdio: 'inherit',
+      stdio: "inherit",
       shell: true,
       env: { ...process.env, ...HEALTHCARE_ENV, ...options.env },
       cwd: options.cwd || process.cwd(),
     });
 
-    child.on('close', (code) => {
+    child.on("close", (code) => {
       if (code === 0) {
         resolve(code);
       } else {
@@ -52,7 +52,7 @@ function runCommand(command, args = [], options = {}) {
       }
     });
 
-    child.on('error', (error) => {
+    child.on("error", (error) => {
       reject(error);
     });
   });
@@ -61,16 +61,16 @@ function runCommand(command, args = [], options = {}) {
 /**
  * Run Vitest tests
  */
-async function runVitest(config = 'simple') {
+async function runVitest(config = "simple") {
   const configFile = CONFIGS.vitest[config];
 
   try {
-    await runCommand('npx', [
-      'vitest',
-      'run',
-      '--config',
+    await runCommand("npx", [
+      "vitest",
+      "run",
+      "--config",
       configFile,
-      '--reporter=verbose',
+      "--reporter=verbose",
     ]);
   } catch {
     process.exit(1);
@@ -80,16 +80,16 @@ async function runVitest(config = 'simple') {
 /**
  * Run Playwright tests
  */
-async function runPlaywright(config = 'simple') {
+async function runPlaywright(config = "simple") {
   const configFile = CONFIGS.playwright[config];
 
   try {
-    await runCommand('npx', [
-      'playwright',
-      'test',
-      '--config',
+    await runCommand("npx", [
+      "playwright",
+      "test",
+      "--config",
       configFile,
-      '--reporter=line',
+      "--reporter=line",
     ]);
   } catch {
     process.exit(1);
@@ -102,20 +102,20 @@ async function runPlaywright(config = 'simple') {
 async function main() {
   const args = process.argv.slice(2);
   const command = args[0];
-  const config = args[1] || 'simple';
+  const config = args[1] || "simple";
 
   switch (command) {
-    case 'vitest': {
+    case "vitest": {
       await runVitest(config);
       break;
     }
 
-    case 'playwright': {
+    case "playwright": {
       await runPlaywright(config);
       break;
     }
 
-    case 'all': {
+    case "all": {
       await runVitest(config);
       await runPlaywright(config);
       break;

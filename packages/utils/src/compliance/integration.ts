@@ -2,12 +2,12 @@
  * Healthcare Compliance Integration Service
  * Simplified integration for LGPD, ANVISA, CFM compliance
  *
- * @compliance LGPD + ANVISA + CFM
+ * @see LGPD + ANVISA + CFM compliance requirements
  */
 
-import { HealthcareRBAC } from '../auth/rbac';
-import { LGPDConsentManager } from './consent-manager';
-import { LGPDDataSubjectRights } from './data-subject-rights';
+import { HealthcareRBAC } from "../auth/rbac";
+import { LGPDConsentManager } from "./consent-manager";
+import { LGPDDataSubjectRights } from "./data-subject-rights";
 
 export class ComplianceIntegration {
   private static instance: ComplianceIntegration;
@@ -57,7 +57,7 @@ export class ComplianceIntegration {
   /**
    * Healthcare data anonymization
    */
-  async anonymizeHealthcareData(data: any): Promise<any> {
+  async anonymizeHealthcareData(data: unknown): Promise<unknown> {
     // Simplified anonymization
     return { ...data, anonymized: true };
   }

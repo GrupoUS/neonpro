@@ -1,5 +1,5 @@
-import { afterAll, beforeAll } from 'vitest';
-import { setupSupabaseMock } from './supabase-mock';
+import { afterAll, beforeAll } from "vitest";
+import { setupSupabaseMock } from "./supabase-mock";
 
 // Healthcare API Testing Setup for NeonPro
 // LGPD, ANVISA, and CFM compliance testing setup

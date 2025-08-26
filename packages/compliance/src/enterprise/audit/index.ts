@@ -5,14 +5,14 @@
  */
 
 // Import types for local use
-import type { createClient } from '@supabase/supabase-js';
-import type { AuditTrailConfiguration } from './audit-trail-generator';
+import type { createClient } from "@supabase/supabase-js";
+import type { AuditTrailConfiguration } from "./audit-trail-generator";
 // Import service classes
-import { AuditTrailGeneratorService } from './audit-trail-generator';
-import type { ScoringMethodologyConfig } from './compliance-scoring';
-import { ComplianceScoringService } from './compliance-scoring';
-import type { MonitoringConfiguration } from './real-time-monitor';
-import { RealTimeComplianceMonitor } from './real-time-monitor';
+import { AuditTrailGeneratorService } from "./audit-trail-generator";
+import type { ScoringMethodologyConfig } from "./compliance-scoring";
+import { ComplianceScoringService } from "./compliance-scoring";
+import type { MonitoringConfiguration } from "./real-time-monitor";
+import { RealTimeComplianceMonitor } from "./real-time-monitor";
 
 // Audit Trail Generator Service
 export {
@@ -22,7 +22,7 @@ export {
   type AuditTrailGenerationParams,
   AuditTrailGeneratorService,
   type AuditTrailReport,
-} from './audit-trail-generator';
+} from "./audit-trail-generator";
 // Compliance Scoring Service
 export {
   type ComplianceScoreAssessment,
@@ -32,7 +32,7 @@ export {
   ComplianceScoringService,
   type RiskFactor,
   type ScoringMethodologyConfig,
-} from './compliance-scoring';
+} from "./compliance-scoring";
 // Real-Time Compliance Monitor Service
 export {
   type ComplianceAlert,
@@ -42,7 +42,7 @@ export {
   type MonitoringConfiguration,
   type MonitoringParams,
   RealTimeComplianceMonitor,
-} from './real-time-monitor';
+} from "./real-time-monitor";
 
 /**
  * Service Factory Functions
@@ -94,7 +94,7 @@ export function validateEnterpriseAuditCompliance(
   // Validate client is properly initialized (basic check)
   try {
     // Simple validation that the client is functional
-    return typeof supabaseClient.from === 'function';
+    return typeof supabaseClient.from === "function";
   } catch {
     return false;
   }
@@ -124,7 +124,7 @@ export function validateComplianceScoring(
 export const ENTERPRISE_AUDIT_CONFIGS = {
   auditTrail: {
     config_id: crypto.randomUUID(),
-    tenant_id: 'default',
+    tenant_id: "default",
     retention_period_days: 2555, // 7 years in days
     events_to_audit: {
       data_access_events: true,
@@ -134,7 +134,7 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
       constitutional_events: true,
       patient_interaction_events: true,
     },
-    audit_detail_level: 'constitutional_full' as const,
+    audit_detail_level: "constitutional_full" as const,
     real_time_monitoring: true,
     automated_alerts: {
       suspicious_activity_alerts: true,
@@ -148,7 +148,7 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
     },
     encryption_settings: {
       encryption_enabled: true,
-      encryption_algorithm: 'AES-256-GCM',
+      encryption_algorithm: "AES-256-GCM",
       key_rotation_enabled: true,
       key_rotation_interval_days: 90,
     },
@@ -156,7 +156,7 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
       compression_enabled: true,
       archival_enabled: true,
       backup_enabled: true,
-      backup_frequency: 'daily',
+      backup_frequency: "daily",
     },
     data_integrity: {
       cryptographic_hashing: true,
@@ -184,7 +184,7 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
       constitutional_response_enabled: true,
     },
     alert_recipients: {
-      email_addresses: ['compliance@neonpro.com'],
+      email_addresses: ["compliance@neonpro.com"],
       sms_numbers: [],
       webhook_urls: [],
     },
@@ -196,13 +196,13 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
     },
   } as MonitoringConfiguration,
   complianceScoring: {
-    methodology_id: 'enterprise-healthcare-v1',
-    version: '1.0.0',
+    methodology_id: "enterprise-healthcare-v1",
+    version: "1.0.0",
     constitutional_standards_basis: [
-      'LGPD Article 7',
-      'ANVISA RDC 302/2005',
-      'CFM Resolution 1821/2007',
-      'Constitutional Article 196',
+      "LGPD Article 7",
+      "ANVISA RDC 302/2005",
+      "CFM Resolution 1821/2007",
+      "Constitutional Article 196",
     ],
     area_weights: {
       lgpd: 0.3,
@@ -219,10 +219,10 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
     },
     risk_assessment_config: {
       risk_factors_to_evaluate: [
-        'data_breach_risk',
-        'patient_safety_risk',
-        'regulatory_compliance_risk',
-        'operational_risk',
+        "data_breach_risk",
+        "patient_safety_risk",
+        "regulatory_compliance_risk",
+        "operational_risk",
       ],
       risk_scoring_matrix: {
         low: { impact: 1, probability: 1 },
@@ -247,49 +247,50 @@ export const ENTERPRISE_AUDIT_CONFIGS = {
  * Enterprise Audit Module Summary
  */
 export const ENTERPRISE_AUDIT_MODULE = {
-  name: 'Enterprise Audit',
-  version: '1.0.0',
+  name: "Enterprise Audit",
+  version: "1.0.0",
   compliance_standards: [
-    'LGPD (Lei Geral de Proteção de Dados)',
-    'ANVISA (Agência Nacional de Vigilância Sanitária)',
-    'CFM (Conselho Federal de Medicina)',
-    'Constitutional Healthcare Rights',
+    "LGPD (Lei Geral de Proteção de Dados)",
+    "ANVISA (Agência Nacional de Vigilância Sanitária)",
+    "CFM (Conselho Federal de Medicina)",
+    "Constitutional Healthcare Rights",
   ],
   quality_score: 9.9,
   services: {
     auditTrail: {
-      name: 'Audit Trail Generator',
-      description: 'Comprehensive audit trail generation with cryptographic integrity',
+      name: "Audit Trail Generator",
+      description:
+        "Comprehensive audit trail generation with cryptographic integrity",
       constitutional_features: [
-        'Immutable audit logs with cryptographic signatures',
-        'Constitutional compliance tracking',
-        'Long-term retention with LGPD compliance',
+        "Immutable audit logs with cryptographic signatures",
+        "Constitutional compliance tracking",
+        "Long-term retention with LGPD compliance",
       ],
     },
     realTimeMonitor: {
-      name: 'Real-Time Compliance Monitor',
-      description: 'Continuous compliance monitoring with real-time alerts',
+      name: "Real-Time Compliance Monitor",
+      description: "Continuous compliance monitoring with real-time alerts",
       constitutional_features: [
-        'Real-time constitutional compliance monitoring',
-        'Automated alert system for compliance violations',
-        'Healthcare-specific monitoring protocols',
+        "Real-time constitutional compliance monitoring",
+        "Automated alert system for compliance violations",
+        "Healthcare-specific monitoring protocols",
       ],
     },
     complianceScoring: {
-      name: 'Compliance Scoring Service',
-      description: 'Automated compliance scoring with ≥9.9/10 standards',
+      name: "Compliance Scoring Service",
+      description: "Automated compliance scoring with ≥9.9/10 standards",
       constitutional_features: [
-        'Multi-dimensional compliance scoring',
-        'Constitutional healthcare standards validation',
-        'Continuous improvement recommendations',
+        "Multi-dimensional compliance scoring",
+        "Constitutional healthcare standards validation",
+        "Continuous improvement recommendations",
       ],
     },
   },
   total_services: 3,
   constitutional_guarantees: [
-    'Immutable audit trails for transparency and accountability',
-    'Real-time compliance monitoring with ≥9.9/10 standards',
-    'Constitutional healthcare compliance validation',
-    'Automated scoring with continuous improvement',
+    "Immutable audit trails for transparency and accountability",
+    "Real-time compliance monitoring with ≥9.9/10 standards",
+    "Constitutional healthcare compliance validation",
+    "Automated scoring with continuous improvement",
   ],
 } as const;

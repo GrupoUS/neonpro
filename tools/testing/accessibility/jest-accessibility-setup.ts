@@ -1,6 +1,6 @@
 // tools/testing/accessibility/jest-accessibility-setup.ts
-import 'jest-axe/extend-expect';
-import { toBeAccessibleForHealthcare } from './axe-core-setup';
+import "jest-axe/extend-expect";
+import { toBeAccessibleForHealthcare } from "./axe-core-setup";
 
 /**
  * NEONPRO HEALTHCARE - JEST ACCESSIBILITY SETUP
@@ -37,7 +37,7 @@ expect.extend({
       pass: contrastResults.compliant,
       message: () =>
         contrastResults.compliant
-          ? 'Expected element to fail healthcare contrast requirements'
+          ? "Expected element to fail healthcare contrast requirements"
           : `Expected element to meet healthcare contrast ratio of 7.0:1, but found ${contrastResults.ratio}:1`,
     };
   },
@@ -52,8 +52,8 @@ expect.extend({
       pass: keyboardTests.allPassed,
       message: () =>
         keyboardTests.allPassed
-          ? 'Expected element to fail keyboard navigation tests'
-          : `Keyboard navigation failed: ${keyboardTests.failures.join(', ')}`,
+          ? "Expected element to fail keyboard navigation tests"
+          : `Keyboard navigation failed: ${keyboardTests.failures.join(", ")}`,
     };
   },
 
@@ -67,8 +67,8 @@ expect.extend({
       pass: screenReaderTests.allPassed,
       message: () =>
         screenReaderTests.allPassed
-          ? 'Expected element to fail screen reader tests'
-          : `Screen reader accessibility failed: ${screenReaderTests.failures.join(', ')}`,
+          ? "Expected element to fail screen reader tests"
+          : `Screen reader accessibility failed: ${screenReaderTests.failures.join(", ")}`,
     };
   },
 
@@ -82,8 +82,8 @@ expect.extend({
       pass: lgpdTests.compliant,
       message: () =>
         lgpdTests.compliant
-          ? 'Expected element to fail LGPD accessibility tests'
-          : `LGPD accessibility failed: ${lgpdTests.issues.join(', ')}`,
+          ? "Expected element to fail LGPD accessibility tests"
+          : `LGPD accessibility failed: ${lgpdTests.issues.join(", ")}`,
     };
   },
 
@@ -97,8 +97,8 @@ expect.extend({
       pass: emergencyTests.compliant,
       message: () =>
         emergencyTests.compliant
-          ? 'Expected element to fail emergency accessibility tests'
-          : `Emergency accessibility failed: ${emergencyTests.issues.join(', ')}`,
+          ? "Expected element to fail emergency accessibility tests"
+          : `Emergency accessibility failed: ${emergencyTests.issues.join(", ")}`,
     };
   },
 });
@@ -142,20 +142,20 @@ export class HealthcareTestUtils {
     // Test 1: Element should be focusable if interactive
     const isInteractive = HealthcareTestUtils.isInteractiveElement(element);
     if (isInteractive && !HealthcareTestUtils.isFocusable(element)) {
-      failures.push('Interactive element is not focusable');
+      failures.push("Interactive element is not focusable");
     }
 
     // Test 2: Focus should be visible
     if (
-      HealthcareTestUtils.isFocusable(element)
-      && !HealthcareTestUtils.hasFocusIndicator(element)
+      HealthcareTestUtils.isFocusable(element) &&
+      !HealthcareTestUtils.hasFocusIndicator(element)
     ) {
-      failures.push('Focusable element lacks visible focus indicator');
+      failures.push("Focusable element lacks visible focus indicator");
     }
 
     // Test 3: Keyboard event handlers should be present
     if (isInteractive && !HealthcareTestUtils.hasKeyboardHandlers(element)) {
-      failures.push('Interactive element lacks keyboard event handlers');
+      failures.push("Interactive element lacks keyboard event handlers");
     }
 
     // Test 4: Tab order should be logical
@@ -178,15 +178,15 @@ export class HealthcareTestUtils {
 
     // Test 1: Accessible name
     if (
-      HealthcareTestUtils.isInteractiveElement(element)
-      && !HealthcareTestUtils.hasAccessibleName(element)
+      HealthcareTestUtils.isInteractiveElement(element) &&
+      !HealthcareTestUtils.hasAccessibleName(element)
     ) {
-      failures.push('Interactive element lacks accessible name');
+      failures.push("Interactive element lacks accessible name");
     }
 
     // Test 2: Proper roles
     if (!HealthcareTestUtils.hasProperRole(element)) {
-      failures.push('Element has incorrect or missing role');
+      failures.push("Element has incorrect or missing role");
     }
 
     // Test 3: ARIA attributes
@@ -214,25 +214,26 @@ export class HealthcareTestUtils {
     const issues: string[] = [];
 
     // Check if element handles sensitive data
-    const isSensitive = element.hasAttribute('data-sensitive')
-      || element.hasAttribute('data-lgpd');
+    const isSensitive =
+      element.hasAttribute("data-sensitive") ||
+      element.hasAttribute("data-lgpd");
 
     if (isSensitive) {
       // Test 1: Privacy indicators should be accessible
       if (!HealthcareTestUtils.hasAccessiblePrivacyIndicator(element)) {
         issues.push(
-          'Sensitive data element lacks accessible privacy indicator',
+          "Sensitive data element lacks accessible privacy indicator",
         );
       }
 
       // Test 2: Consent mechanisms should be accessible
       if (!HealthcareTestUtils.hasAccessibleConsentMechanism(element)) {
-        issues.push('Element lacks accessible consent mechanism');
+        issues.push("Element lacks accessible consent mechanism");
       }
 
       // Test 3: Data protection announcements
       if (!HealthcareTestUtils.hasDataProtectionAnnouncement(element)) {
-        issues.push('Element lacks data protection announcement');
+        issues.push("Element lacks data protection announcement");
       }
     }
 
@@ -248,9 +249,10 @@ export class HealthcareTestUtils {
   static async runEmergencyTests(element: HTMLElement) {
     const issues: string[] = [];
 
-    const isEmergency = element.hasAttribute('data-emergency')
-      || (element.hasAttribute('data-priority')
-        && element.getAttribute('data-priority') === 'critical');
+    const isEmergency =
+      element.hasAttribute("data-emergency") ||
+      (element.hasAttribute("data-priority") &&
+        element.getAttribute("data-priority") === "critical");
 
     if (isEmergency) {
       // Test 1: Enhanced contrast ratio
@@ -263,19 +265,19 @@ export class HealthcareTestUtils {
 
       // Test 2: Multi-modal alerts
       if (!HealthcareTestUtils.hasMultiModalAlert(element)) {
-        issues.push('Emergency element lacks multi-modal alert support');
+        issues.push("Emergency element lacks multi-modal alert support");
       }
 
       // Test 3: Priority announcements
       if (!HealthcareTestUtils.hasPriorityAnnouncement(element)) {
         issues.push(
-          'Emergency element lacks priority screen reader announcement',
+          "Emergency element lacks priority screen reader announcement",
         );
       }
 
       // Test 4: Keyboard shortcuts
       if (!HealthcareTestUtils.hasEmergencyKeyboardShortcuts(element)) {
-        issues.push('Emergency element lacks keyboard shortcuts');
+        issues.push("Emergency element lacks keyboard shortcuts");
       }
     }
 
@@ -299,40 +301,40 @@ export class HealthcareTestUtils {
   }
 
   private static isInteractiveElement(element: HTMLElement): boolean {
-    const interactiveTags = ['button', 'a', 'input', 'select', 'textarea'];
-    const interactiveRoles = ['button', 'link', 'textbox', 'combobox'];
+    const interactiveTags = ["button", "a", "input", "select", "textarea"];
+    const interactiveRoles = ["button", "link", "textbox", "combobox"];
 
     return (
-      interactiveTags.includes(element.tagName.toLowerCase())
-      || interactiveRoles.includes(element.getAttribute('role') || '')
-      || element.hasAttribute('onclick')
-      || element.hasAttribute('onkeydown')
-      || element.hasAttribute('tabindex')
+      interactiveTags.includes(element.tagName.toLowerCase()) ||
+      interactiveRoles.includes(element.getAttribute("role") || "") ||
+      element.hasAttribute("onclick") ||
+      element.hasAttribute("onkeydown") ||
+      element.hasAttribute("tabindex")
     );
   }
 
   private static isFocusable(element: HTMLElement): boolean {
     return (
-      element.tabIndex >= 0
-      && !element.hasAttribute('disabled')
-      && element.offsetParent !== null
+      element.tabIndex >= 0 &&
+      !element.hasAttribute("disabled") &&
+      element.offsetParent !== null
     );
   }
 
   private static hasFocusIndicator(element: HTMLElement): boolean {
-    const styles = window.getComputedStyle(element, ':focus-visible');
+    const styles = window.getComputedStyle(element, ":focus-visible");
     return (
-      styles.outline !== 'none'
-      || styles.boxShadow !== 'none'
-      || styles.borderColor !== 'transparent'
+      styles.outline !== "none" ||
+      styles.boxShadow !== "none" ||
+      styles.borderColor !== "transparent"
     );
   }
 
   private static hasKeyboardHandlers(element: HTMLElement): boolean {
     return (
-      element.hasAttribute('onkeydown')
-      || element.hasAttribute('onkeyup')
-      || element.hasAttribute('onkeypress')
+      element.hasAttribute("onkeydown") ||
+      element.hasAttribute("onkeyup") ||
+      element.hasAttribute("onkeypress")
     );
   }
 
@@ -343,28 +345,28 @@ export class HealthcareTestUtils {
 
   private static hasAccessibleName(element: HTMLElement): boolean {
     return Boolean(
-      element.getAttribute('aria-label')
-        || element.getAttribute('aria-labelledby')
-        || element.querySelector('label')
-        || element.textContent?.trim(),
+      element.getAttribute("aria-label") ||
+        element.getAttribute("aria-labelledby") ||
+        element.querySelector("label") ||
+        element.textContent?.trim(),
     );
   }
 
   private static hasProperRole(element: HTMLElement): boolean {
-    const role = element.getAttribute('role');
+    const role = element.getAttribute("role");
     const tagName = element.tagName.toLowerCase();
 
     // Basic role validation
-    return role !== null || ['div', 'span'].includes(tagName) === false;
+    return role !== null || ["div", "span"].includes(tagName) === false;
   }
 
   private static checkARIAAttributes(element: HTMLElement): string[] {
     const issues: string[] = [];
 
     // Check for required ARIA attributes based on role
-    const role = element.getAttribute('role');
-    if (role === 'button' && !HealthcareTestUtils.hasAccessibleName(element)) {
-      issues.push('Button role requires accessible name');
+    const role = element.getAttribute("role");
+    if (role === "button" && !HealthcareTestUtils.hasAccessibleName(element)) {
+      issues.push("Button role requires accessible name");
     }
 
     return issues;
@@ -377,43 +379,43 @@ export class HealthcareTestUtils {
 
   private static hasAccessiblePrivacyIndicator(element: HTMLElement): boolean {
     return Boolean(
-      element.querySelector('[aria-label*="privacidade"]')
-        || element.querySelector('[aria-label*="LGPD"]')
-        || element.getAttribute('aria-describedby'),
+      element.querySelector('[aria-label*="privacidade"]') ||
+        element.querySelector('[aria-label*="LGPD"]') ||
+        element.getAttribute("aria-describedby"),
     );
   }
 
   private static hasAccessibleConsentMechanism(element: HTMLElement): boolean {
     return Boolean(
-      element.querySelector('[role="dialog"]')
-        || element.querySelector('input[type="checkbox"][aria-describedby]'),
+      element.querySelector('[role="dialog"]') ||
+        element.querySelector('input[type="checkbox"][aria-describedby]'),
     );
   }
 
   private static hasDataProtectionAnnouncement(element: HTMLElement): boolean {
     return Boolean(
-      element.querySelector('[aria-live]')
-        || element.querySelector('[role="status"]'),
+      element.querySelector("[aria-live]") ||
+        element.querySelector('[role="status"]'),
     );
   }
 
   private static hasMultiModalAlert(element: HTMLElement): boolean {
     return Boolean(
-      element.hasAttribute('aria-live') && element.hasAttribute('role'),
+      element.hasAttribute("aria-live") && element.hasAttribute("role"),
     );
   }
 
   private static hasPriorityAnnouncement(element: HTMLElement): boolean {
     return (
-      element.getAttribute('aria-live') === 'assertive'
-      || element.getAttribute('role') === 'alert'
+      element.getAttribute("aria-live") === "assertive" ||
+      element.getAttribute("role") === "alert"
     );
   }
 
   private static hasEmergencyKeyboardShortcuts(element: HTMLElement): boolean {
     return (
-      element.hasAttribute('data-keyboard-shortcut')
-      || element.hasAttribute('accesskey')
+      element.hasAttribute("data-keyboard-shortcut") ||
+      element.hasAttribute("accesskey")
     );
   }
 }
@@ -427,10 +429,14 @@ export const createHealthcareA11yTestSuite = (componentName: string) => {
       const results = {
         component: componentName,
         wcagCompliance: await expect(container).toHaveNoViolations(),
-        healthcareCompliance: await expect(container).toBeAccessibleForHealthcare(),
-        contrastCompliance: expect(container).toHaveHealthcareCompliantContrast(),
-        keyboardNavigation: await expect(container).toSupportKeyboardNavigation(),
-        screenReaderSupport: await expect(container).toBeScreenReaderAccessible(),
+        healthcareCompliance:
+          await expect(container).toBeAccessibleForHealthcare(),
+        contrastCompliance:
+          expect(container).toHaveHealthcareCompliantContrast(),
+        keyboardNavigation:
+          await expect(container).toSupportKeyboardNavigation(),
+        screenReaderSupport:
+          await expect(container).toBeScreenReaderAccessible(),
       };
 
       return results;

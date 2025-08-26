@@ -1,7 +1,8 @@
-import React from 'react';
+import React from "react";
 
 // Placeholder import for @neonpro/utils
-const cn = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' ');
+const cn = (...classes: (string | undefined)[]) =>
+  classes.filter(Boolean).join(" ");
 
 // Toast context and provider
 interface ToastContextType {
@@ -26,7 +27,7 @@ export function useToast() {
 interface ToastProps {
   title?: string;
   description?: string;
-  variant?: 'default' | 'destructive';
+  variant?: "default" | "destructive";
   duration?: number;
   action?: React.ReactElement;
 }
@@ -36,16 +37,16 @@ export type { ToastProps };
 export function Toast({
   title,
   description,
-  variant = 'default',
+  variant = "default",
   ...props
 }: ToastProps) {
   return (
     <div
       className={cn(
-        'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
-        variant === 'destructive'
-          ? 'border-destructive bg-destructive/10'
-          : 'border-border bg-card',
+        "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all",
+        variant === "destructive"
+          ? "border-destructive bg-destructive/10"
+          : "border-border bg-card",
       )}
       {...props}
     >
@@ -53,10 +54,10 @@ export function Toast({
         {title && (
           <div
             className={cn(
-              'font-semibold text-sm',
-              variant === 'destructive'
-                ? 'text-destructive'
-                : 'text-foreground',
+              "font-semibold text-sm",
+              variant === "destructive"
+                ? "text-destructive"
+                : "text-foreground",
             )}
           >
             {title}
@@ -65,10 +66,10 @@ export function Toast({
         {description && (
           <div
             className={cn(
-              'text-sm opacity-90',
-              variant === 'destructive'
-                ? 'text-destructive'
-                : 'text-muted-foreground',
+              "text-sm opacity-90",
+              variant === "destructive"
+                ? "text-destructive"
+                : "text-muted-foreground",
             )}
           >
             {description}
@@ -79,10 +80,12 @@ export function Toast({
   );
 }
 
-export function ToastProvider({ children }: { children: React.ReactNode; }) {
+export function ToastProvider({ children }: { children: React.ReactNode }) {
   const toast = React.useCallback((_props: ToastProps) => {}, []);
 
-  return <ToastContext.Provider value={{ toast }}>{children}</ToastContext.Provider>;
+  return (
+    <ToastContext.Provider value={{ toast }}>{children}</ToastContext.Provider>
+  );
 }
 
 // Additional exports to avoid conflicts
@@ -90,33 +93,33 @@ export interface ToastActionElement extends React.ReactElement {}
 
 export const ToastAction = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentPropsWithoutRef<'button'>
+  React.ComponentPropsWithoutRef<"button">
 >(({ className, ...props }, ref) => (
   <button
     className={cn(
-      'inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 font-medium text-sm ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
       className,
     )}
     ref={ref}
     {...props}
   />
 ));
-ToastAction.displayName = 'ToastAction';
+ToastAction.displayName = "ToastAction";
 
 export const ToastClose = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentPropsWithoutRef<'button'>
+  React.ComponentPropsWithoutRef<"button">
 >(({ className, ...props }, ref) => (
   <button
     className={cn(
-      'absolute top-2 right-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100',
+      "absolute top-2 right-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100",
       className,
     )}
     ref={ref}
     {...props}
   />
 ));
-ToastClose.displayName = 'ToastClose';
+ToastClose.displayName = "ToastClose";
 
 export function ToastTitle({
   className,
@@ -127,7 +130,7 @@ export function ToastTitle({
   children?: React.ReactNode;
 }) {
   return (
-    <div className={cn('font-semibold text-sm', className)} {...props}>
+    <div className={cn("font-semibold text-sm", className)} {...props}>
       {children}
     </div>
   );
@@ -142,7 +145,7 @@ export function ToastDescription({
   children?: React.ReactNode;
 }) {
   return (
-    <div className={cn('text-sm opacity-90', className)} {...props}>
+    <div className={cn("text-sm opacity-90", className)} {...props}>
       {children}
     </div>
   );

@@ -31,7 +31,7 @@ export class HealthChecker {
   private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
 
   constructor(
-    private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string; },
+    private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string },
   ) {}
 
   /**
@@ -59,7 +59,7 @@ export class HealthChecker {
       const healthResult: HealthCheckResult = {
         healthy: false,
         responseTime: Date.now() - startTime,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date(),
       };
 
@@ -250,7 +250,7 @@ export class HealthChecker {
     const overallHealth = urls.every((url) => this.isEnvironmentHealthy(url));
 
     return {
-      environment: 'mixed',
+      environment: "mixed",
       checks: allChecks,
       overallHealth,
       lastCheck,

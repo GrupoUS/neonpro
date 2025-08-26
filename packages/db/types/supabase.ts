@@ -3,7 +3,7 @@ export type Json =
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined; }
+  | { [key: string]: Json | undefined }
   | Json[];
 
 export interface Database {
@@ -440,32 +440,32 @@ export interface Database {
 }
 
 // Helper Types
-export type Tables<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type Inserts<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert'];
-export type Updates<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update'];
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
+export type Inserts<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Insert"];
+export type Updates<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Update"];
 
 // Common Healthcare Types
-export type Patient = Tables<'patients'>;
-export type Professional = Tables<'professionals'>;
-export type Appointment = Tables<'appointments'>;
-export type Tenant = Tables<'tenants'>;
-export type UserTenant = Tables<'user_tenants'>;
-export type SubscriptionPlan = Tables<'subscription_plans'>;
-export type Subscription = Tables<'subscriptions'>;
-export type LgpdConsent = Tables<'lgpd_patient_consents'>;
-export type AuditLog = Tables<'audit_logs'>;
+export type Patient = Tables<"patients">;
+export type Professional = Tables<"professionals">;
+export type Appointment = Tables<"appointments">;
+export type Tenant = Tables<"tenants">;
+export type UserTenant = Tables<"user_tenants">;
+export type SubscriptionPlan = Tables<"subscription_plans">;
+export type Subscription = Tables<"subscriptions">;
+export type LgpdConsent = Tables<"lgpd_patient_consents">;
+export type AuditLog = Tables<"audit_logs">;
 
 // Insert Types
-export type PatientInsert = Inserts<'patients'>;
-export type ProfessionalInsert = Inserts<'professionals'>;
-export type AppointmentInsert = Inserts<'appointments'>;
-export type TenantInsert = Inserts<'tenants'>;
+export type PatientInsert = Inserts<"patients">;
+export type ProfessionalInsert = Inserts<"professionals">;
+export type AppointmentInsert = Inserts<"appointments">;
+export type TenantInsert = Inserts<"tenants">;
 
 // Update Types
-export type PatientUpdate = Updates<'patients'>;
-export type ProfessionalUpdate = Updates<'professionals'>;
-export type AppointmentUpdate = Updates<'appointments'>;
-export type TenantUpdate = Updates<'tenants'>;
+export type PatientUpdate = Updates<"patients">;
+export type ProfessionalUpdate = Updates<"professionals">;
+export type AppointmentUpdate = Updates<"appointments">;
+export type TenantUpdate = Updates<"tenants">;

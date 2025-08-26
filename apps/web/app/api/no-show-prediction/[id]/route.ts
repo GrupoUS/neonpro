@@ -4,8 +4,8 @@
 import { noShowPredictionEngine } from "@/app/lib/services/no-show-prediction";
 import { UpdatePredictionInputSchema } from "@/app/lib/validations/no-show-prediction";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 interface RouteParams {
   params: Promise<{

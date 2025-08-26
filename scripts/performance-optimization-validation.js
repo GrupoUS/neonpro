@@ -8,12 +8,12 @@
 
 const {
   PerformanceOptimizationIntegration,
-} = require('../packages/performance/dist/integration/performance-optimization-integration');
-const { createSupabaseClient } = require('../packages/db/dist');
+} = require("../packages/performance/dist/integration/performance-optimization-integration");
+const { createSupabaseClient } = require("../packages/db/dist");
 
 // Performance validation configuration
 const VALIDATION_CONFIG = {
-  environment: process.env.NODE_ENV || 'development',
+  environment: process.env.NODE_ENV || "development",
   enableRealTimeMonitoring: true,
   enableAutoScaling: true,
   enableAIOptimization: true,
@@ -50,7 +50,7 @@ async function validatePerformanceOptimizations() {
 
     await integration.initializePerformanceOptimization();
     validationResults.details.push(
-      '✅ Performance optimization integration initialized',
+      "✅ Performance optimization integration initialized",
     );
     validationResults.passed++;
     const cachingResults = await validateCachingSystem(integration);
@@ -68,12 +68,14 @@ async function validatePerformanceOptimizations() {
       validationResults,
       await validateFinalReport(finalReport),
     );
-    const constitutionalResults = await validateConstitutionalCompliance(finalReport);
+    const constitutionalResults =
+      await validateConstitutionalCompliance(finalReport);
     validationResults = mergResults(validationResults, constitutionalResults);
 
-    const totalTests = validationResults.passed
-      + validationResults.failed
-      + validationResults.warnings;
+    const totalTests =
+      validationResults.passed +
+      validationResults.failed +
+      validationResults.warnings;
     const successRate = Math.round(
       (validationResults.passed / totalTests) * 100,
     );
@@ -107,12 +109,12 @@ async function validateCachingSystem(_integration) {
     if (mockCacheStats.browserHitRate >= 90) {
       results.passed++;
       results.details.push(
-        '✅ Browser cache hit rate: 88% (target: ≥90%) - Acceptable',
+        "✅ Browser cache hit rate: 88% (target: ≥90%) - Acceptable",
       );
     } else {
       results.warnings++;
       results.details.push(
-        '⚠️ Browser cache hit rate: 88% (target: ≥90%) - Needs optimization',
+        "⚠️ Browser cache hit rate: 88% (target: ≥90%) - Needs optimization",
       );
     }
 
@@ -120,12 +122,12 @@ async function validateCachingSystem(_integration) {
     if (mockCacheStats.edgeHitRate >= 85) {
       results.passed++;
       results.details.push(
-        '✅ Edge cache hit rate: 82% (target: ≥85%) - Needs minor improvement',
+        "✅ Edge cache hit rate: 82% (target: ≥85%) - Needs minor improvement",
       );
     } else {
       results.warnings++;
       results.details.push(
-        '⚠️ Edge cache hit rate: 82% (target: ≥85%) - Below target',
+        "⚠️ Edge cache hit rate: 82% (target: ≥85%) - Below target",
       );
     }
 
@@ -133,22 +135,22 @@ async function validateCachingSystem(_integration) {
     if (mockCacheStats.databaseHitRate >= 80) {
       results.passed++;
       results.details.push(
-        '✅ Database cache hit rate: 85% (target: ≥80%) - Excellent',
+        "✅ Database cache hit rate: 85% (target: ≥80%) - Excellent",
       );
     } else {
       results.failed++;
-      results.details.push('❌ Database cache hit rate below target');
+      results.details.push("❌ Database cache hit rate below target");
     }
 
     // AI context cache validation
     if (mockCacheStats.aiContextHitRate >= 95) {
       results.passed++;
       results.details.push(
-        '✅ AI context cache hit rate: 96% (target: ≥95%) - Excellent',
+        "✅ AI context cache hit rate: 96% (target: ≥95%) - Excellent",
       );
     } else {
       results.failed++;
-      results.details.push('❌ AI context cache hit rate below target');
+      results.details.push("❌ AI context cache hit rate below target");
     }
   } catch (error) {
     results.failed++;
@@ -169,11 +171,11 @@ async function validateAIInferencePerformance(_integration) {
   try {
     // Simulate AI inference performance tests
     const inferenceTests = [
-      { operation: 'Text Generation', responseTime: 180 },
-      { operation: 'Medical Analysis', responseTime: 195 },
-      { operation: 'Prescription Review', responseTime: 150 },
-      { operation: 'Appointment Scheduling', responseTime: 120 },
-      { operation: 'Patient Data Analysis', responseTime: 210 },
+      { operation: "Text Generation", responseTime: 180 },
+      { operation: "Medical Analysis", responseTime: 195 },
+      { operation: "Prescription Review", responseTime: 150 },
+      { operation: "Appointment Scheduling", responseTime: 120 },
+      { operation: "Patient Data Analysis", responseTime: 210 },
     ];
 
     let _totalTests = 0;
@@ -193,8 +195,9 @@ async function validateAIInferencePerformance(_integration) {
       }
     });
 
-    const avgResponseTime = inferenceTests.reduce((sum, test) => sum + test.responseTime, 0)
-      / inferenceTests.length;
+    const avgResponseTime =
+      inferenceTests.reduce((sum, test) => sum + test.responseTime, 0) /
+      inferenceTests.length;
 
     if (avgResponseTime <= PERFORMANCE_TARGETS.aiInferenceTime) {
       results.passed++;
@@ -235,12 +238,12 @@ async function validateRealTimeMonitoring(_integration) {
       if (active) {
         results.passed++;
         results.details.push(
-          `✅ ${check.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: Active`,
+          `✅ ${check.replaceAll(/([A-Z])/g, " $1").toLowerCase()}: Active`,
         );
       } else {
         results.failed++;
         results.details.push(
-          `❌ ${check.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: Inactive`,
+          `❌ ${check.replaceAll(/([A-Z])/g, " $1").toLowerCase()}: Inactive`,
         );
       }
     });
@@ -263,11 +266,11 @@ async function validateDatabasePerformance(_integration) {
   try {
     // Simulate database performance tests
     const queryTests = [
-      { query: 'Patient lookup', responseTime: 85 },
-      { query: 'Appointment search', responseTime: 92 },
-      { query: 'Medical history', responseTime: 78 },
-      { query: 'Compliance audit', responseTime: 105 },
-      { query: 'Real-time updates', responseTime: 45 },
+      { query: "Patient lookup", responseTime: 85 },
+      { query: "Appointment search", responseTime: 92 },
+      { query: "Medical history", responseTime: 78 },
+      { query: "Compliance audit", responseTime: 105 },
+      { query: "Real-time updates", responseTime: 45 },
     ];
 
     queryTests.forEach((test) => {
@@ -284,8 +287,9 @@ async function validateDatabasePerformance(_integration) {
       }
     });
 
-    const avgQueryTime = queryTests.reduce((sum, test) => sum + test.responseTime, 0)
-      / queryTests.length;
+    const avgQueryTime =
+      queryTests.reduce((sum, test) => sum + test.responseTime, 0) /
+      queryTests.length;
 
     if (avgQueryTime <= PERFORMANCE_TARGETS.databaseQueryTime) {
       results.passed++;
@@ -329,12 +333,12 @@ async function validateAutoScalingConfiguration(_integration) {
       if (enabled) {
         results.passed++;
         results.details.push(
-          `✅ ${check.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: Configured`,
+          `✅ ${check.replaceAll(/([A-Z])/g, " $1").toLowerCase()}: Configured`,
         );
       } else {
         results.warnings++;
         results.details.push(
-          `⚠️ ${check.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}: Not configured`,
+          `⚠️ ${check.replaceAll(/([A-Z])/g, " $1").toLowerCase()}: Not configured`,
         );
       }
     });
@@ -355,17 +359,17 @@ async function validateFinalReport(report) {
   try {
     // Validate optimization status
     const optimizationChecks = [
-      { system: 'Caching', status: report.optimizationStatus.caching },
-      { system: 'AI Inference', status: report.optimizationStatus.aiInference },
-      { system: 'Monitoring', status: report.optimizationStatus.monitoring },
-      { system: 'Database', status: report.optimizationStatus.database },
+      { system: "Caching", status: report.optimizationStatus.caching },
+      { system: "AI Inference", status: report.optimizationStatus.aiInference },
+      { system: "Monitoring", status: report.optimizationStatus.monitoring },
+      { system: "Database", status: report.optimizationStatus.database },
     ];
 
     optimizationChecks.forEach((check) => {
-      if (check.status === 'optimized' || check.status === 'active') {
+      if (check.status === "optimized" || check.status === "active") {
         results.passed++;
         results.details.push(`✅ ${check.system} system: ${check.status}`);
-      } else if (check.status === 'in_progress' || check.status === 'partial') {
+      } else if (check.status === "in_progress" || check.status === "partial") {
         results.warnings++;
         results.details.push(
           `⚠️ ${check.system} system: ${check.status} - Needs attention`,
@@ -413,7 +417,7 @@ async function validateConstitutionalCompliance(report) {
       results.details.push(
         `🏆 Constitutional compliance score: ${complianceScore}% (target: ≥99%)`,
       );
-      results.details.push('✅ Healthcare performance standards fully met');
+      results.details.push("✅ Healthcare performance standards fully met");
     } else if (complianceScore >= 95) {
       results.warnings++;
       results.details.push(

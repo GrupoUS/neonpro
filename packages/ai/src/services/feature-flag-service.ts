@@ -1,10 +1,10 @@
 // Feature Flag Service for AI Services
 // Dynamic feature control, A/B testing, and gradual rollout management
 
-import { createClient } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { EnhancedAIService } from './enhanced-service-base';
-import type { AIServiceInput, AIServiceOutput } from './enhanced-service-base';
+import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { EnhancedAIService } from "./enhanced-service-base";
+import type { AIServiceInput, AIServiceOutput } from "./enhanced-service-base";
 
 // Feature Flag Types
 export interface FeatureFlag {
@@ -39,12 +39,12 @@ export interface FeatureFlagMetadata {
   category: string;
   owner: string;
   environment: string;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  rollout_strategy?: 'immediate' | 'gradual' | 'scheduled' | 'manual';
+  priority: "low" | "medium" | "high" | "critical";
+  rollout_strategy?: "immediate" | "gradual" | "scheduled" | "manual";
   rollout_percentage?: number;
   target_date?: string;
   dependencies?: string[];
-  risk_level?: 'low' | 'medium' | 'high';
+  risk_level?: "low" | "medium" | "high";
 }
 
 export interface FeatureFlagContext {
@@ -58,7 +58,7 @@ export interface FeatureFlagContext {
 }
 
 export interface FeatureFlagInput extends AIServiceInput {
-  action: 'check' | 'list' | 'create' | 'update' | 'delete' | 'bulk_check';
+  action: "check" | "list" | "create" | "update" | "delete" | "bulk_check";
   flag_name?: string;
   flag_names?: string[];
   context?: FeatureFlagContext;
@@ -99,10 +99,10 @@ export class FeatureFlagService extends EnhancedAIService<
   private readonly flagCache: Map<string, FeatureFlag> = new Map();
   private readonly cacheExpiry: Map<string, number> = new Map();
   private readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-  private readonly DEFAULT_ENVIRONMENT = process.env.NODE_ENV || 'development';
+  private readonly DEFAULT_ENVIRONMENT = process.env.NODE_ENV || "development";
 
   constructor() {
-    super('feature_flag_service');
+    super("feature_flag_service");
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -120,22 +120,22 @@ export class FeatureFlagService extends EnhancedAIService<
 
     try {
       switch (input.action) {
-        case 'check': {
+        case "check": {
           return await this.checkFeatureFlag(input);
         }
-        case 'list': {
+        case "list": {
           return await this.listFeatureFlags(input);
         }
-        case 'create': {
+        case "create": {
           return await this.createFeatureFlag(input);
         }
-        case 'update': {
+        case "update": {
           return await this.updateFeatureFlag(input);
         }
-        case 'delete': {
+        case "delete": {
           return await this.deleteFeatureFlag(input);
         }
-        case 'bulk_check': {
+        case "bulk_check": {
           return await this.bulkCheckFeatureFlags(input);
         }
         default: {
@@ -144,7 +144,7 @@ export class FeatureFlagService extends EnhancedAIService<
       }
     } finally {
       const duration = performance.now() - startTime;
-      await this.recordMetric('feature_flag_operation', {
+      await this.recordMetric("feature_flag_operation", {
         action: input.action,
         duration_ms: duration,
         cache_size: this.flagCache.size,
@@ -156,7 +156,7 @@ export class FeatureFlagService extends EnhancedAIService<
     input: FeatureFlagInput,
   ): Promise<FeatureFlagOutput> {
     if (!input.flag_name) {
-      throw new Error('flag_name is required for check action');
+      throw new Error("flag_name is required for check action");
     }
 
     const evaluationStart = performance.now();
@@ -166,7 +166,7 @@ export class FeatureFlagService extends EnhancedAIService<
       return {
         success: true,
         flag_enabled: false,
-        reason: 'Flag not found',
+        reason: "Flag not found",
         evaluation_metadata: {
           evaluated_at: new Date().toISOString(),
           evaluation_time_ms: performance.now() - evaluationStart,
@@ -202,7 +202,7 @@ export class FeatureFlagService extends EnhancedAIService<
     input: FeatureFlagInput,
   ): Promise<FeatureFlagOutput> {
     if (!input.flag_names || input.flag_names.length === 0) {
-      throw new Error('flag_names is required for bulk_check action');
+      throw new Error("flag_names is required for bulk_check action");
     }
 
     const context = input.context || {};
@@ -231,32 +231,32 @@ export class FeatureFlagService extends EnhancedAIService<
     input: FeatureFlagInput,
   ): Promise<FeatureFlagOutput> {
     let query = this.supabase
-      .from('ai_feature_flags')
-      .select('*')
-      .order('created_at', {
+      .from("ai_feature_flags")
+      .select("*")
+      .order("created_at", {
         ascending: false,
       });
 
     // Apply filters
     if (input.filters) {
       if (input.filters.enabled !== undefined) {
-        query = query.eq('enabled', input.filters.enabled);
+        query = query.eq("enabled", input.filters.enabled);
       }
 
       if (input.filters.category) {
-        query = query.contains('metadata', {
+        query = query.contains("metadata", {
           category: input.filters.category,
         });
       }
 
       if (input.filters.environment) {
-        query = query.contains('metadata', {
+        query = query.contains("metadata", {
           environment: input.filters.environment,
         });
       }
 
       if (input.filters.owner) {
-        query = query.contains('metadata', { owner: input.filters.owner });
+        query = query.contains("metadata", { owner: input.filters.owner });
       }
     }
 
@@ -276,25 +276,26 @@ export class FeatureFlagService extends EnhancedAIService<
     input: FeatureFlagInput,
   ): Promise<FeatureFlagOutput> {
     if (!input.flag_data) {
-      throw new Error('flag_data is required for create action');
+      throw new Error("flag_data is required for create action");
     }
 
     const flagData = {
       ...input.flag_data,
-      id: input.flag_data.id
-        || `ff_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      id:
+        input.flag_data.id ||
+        `ff_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       metadata: {
         environment: this.DEFAULT_ENVIRONMENT,
-        priority: 'medium' as const,
-        risk_level: 'low' as const,
+        priority: "medium" as const,
+        risk_level: "low" as const,
         ...input.flag_data.metadata,
       },
     };
 
     const { data, error } = await this.supabase
-      .from('ai_feature_flags')
+      .from("ai_feature_flags")
       .insert(flagData)
       .select()
       .single();
@@ -308,8 +309,8 @@ export class FeatureFlagService extends EnhancedAIService<
     this.cacheExpiry.set(data.name, Date.now() + this.CACHE_TTL_MS);
 
     await this.auditLog({
-      action: 'feature_flag_created',
-      resource_type: 'feature_flag',
+      action: "feature_flag_created",
+      resource_type: "feature_flag",
       resource_id: data.id,
       details: {
         flag_name: data.name,
@@ -328,7 +329,7 @@ export class FeatureFlagService extends EnhancedAIService<
     input: FeatureFlagInput,
   ): Promise<FeatureFlagOutput> {
     if (!(input.flag_name && input.flag_data)) {
-      throw new Error('flag_name and flag_data are required for update action');
+      throw new Error("flag_name and flag_data are required for update action");
     }
 
     const updateData = {
@@ -337,9 +338,9 @@ export class FeatureFlagService extends EnhancedAIService<
     };
 
     const { data, error } = await this.supabase
-      .from('ai_feature_flags')
+      .from("ai_feature_flags")
       .update(updateData)
-      .eq('name', input.flag_name)
+      .eq("name", input.flag_name)
       .select()
       .single();
 
@@ -352,8 +353,8 @@ export class FeatureFlagService extends EnhancedAIService<
     this.cacheExpiry.set(data.name, Date.now() + this.CACHE_TTL_MS);
 
     await this.auditLog({
-      action: 'feature_flag_updated',
-      resource_type: 'feature_flag',
+      action: "feature_flag_updated",
+      resource_type: "feature_flag",
       resource_id: data.id,
       details: {
         flag_name: data.name,
@@ -372,13 +373,13 @@ export class FeatureFlagService extends EnhancedAIService<
     input: FeatureFlagInput,
   ): Promise<FeatureFlagOutput> {
     if (!input.flag_name) {
-      throw new Error('flag_name is required for delete action');
+      throw new Error("flag_name is required for delete action");
     }
 
     const { error } = await this.supabase
-      .from('ai_feature_flags')
+      .from("ai_feature_flags")
       .delete()
-      .eq('name', input.flag_name);
+      .eq("name", input.flag_name);
 
     if (error) {
       throw new Error(`Failed to delete feature flag: ${error.message}`);
@@ -389,8 +390,8 @@ export class FeatureFlagService extends EnhancedAIService<
     this.cacheExpiry.delete(input.flag_name);
 
     await this.auditLog({
-      action: 'feature_flag_deleted',
-      resource_type: 'feature_flag',
+      action: "feature_flag_deleted",
+      resource_type: "feature_flag",
       details: {
         flag_name: input.flag_name,
       },
@@ -412,9 +413,9 @@ export class FeatureFlagService extends EnhancedAIService<
 
     // Fetch from database
     const { data, error } = await this.supabase
-      .from('ai_feature_flags')
-      .select('*')
-      .eq('name', flagName)
+      .from("ai_feature_flags")
+      .select("*")
+      .eq("name", flagName)
       .single();
 
     if (error || !data) {
@@ -446,15 +447,15 @@ export class FeatureFlagService extends EnhancedAIService<
     if (!flag.enabled) {
       return {
         enabled: false,
-        reason: 'Flag is globally disabled',
-        conditionsChecked: ['global_enabled'],
+        reason: "Flag is globally disabled",
+        conditionsChecked: ["global_enabled"],
         matchingConditions: [],
       };
     }
 
     // Check environment conditions
     if (flag.conditions.environment && flag.conditions.environment.length > 0) {
-      conditionsChecked.push('environment');
+      conditionsChecked.push("environment");
       const currentEnv = context.environment || this.DEFAULT_ENVIRONMENT;
 
       if (!flag.conditions.environment.includes(currentEnv)) {
@@ -465,80 +466,80 @@ export class FeatureFlagService extends EnhancedAIService<
           matchingConditions,
         };
       }
-      matchingConditions.push('environment');
+      matchingConditions.push("environment");
     }
 
     // Check user role conditions
     if (flag.conditions.user_roles && flag.conditions.user_roles.length > 0) {
-      conditionsChecked.push('user_roles');
+      conditionsChecked.push("user_roles");
 
       if (!context.user_roles || context.user_roles.length === 0) {
         return {
           enabled: false,
-          reason: 'User roles required but not provided',
+          reason: "User roles required but not provided",
           conditionsChecked,
           matchingConditions,
         };
       }
 
       const hasRequiredRole = flag.conditions.user_roles.some((role) =>
-        context.user_roles?.includes(role)
+        context.user_roles?.includes(role),
       );
 
       if (!hasRequiredRole) {
         return {
           enabled: false,
-          reason: 'User does not have required role',
+          reason: "User does not have required role",
           conditionsChecked,
           matchingConditions,
         };
       }
-      matchingConditions.push('user_roles');
+      matchingConditions.push("user_roles");
     }
 
     // Check user ID whitelist
     if (flag.conditions.user_ids && flag.conditions.user_ids.length > 0) {
-      conditionsChecked.push('user_ids');
+      conditionsChecked.push("user_ids");
 
       if (
         !(context.user_id && flag.conditions.user_ids.includes(context.user_id))
       ) {
         return {
           enabled: false,
-          reason: 'User ID not in whitelist',
+          reason: "User ID not in whitelist",
           conditionsChecked,
           matchingConditions,
         };
       }
-      matchingConditions.push('user_ids');
+      matchingConditions.push("user_ids");
     }
 
     // Check clinic ID conditions
     if (flag.conditions.clinic_ids && flag.conditions.clinic_ids.length > 0) {
-      conditionsChecked.push('clinic_ids');
+      conditionsChecked.push("clinic_ids");
 
       if (
         !(
-          context.clinic_id
-          && flag.conditions.clinic_ids.includes(context.clinic_id)
+          context.clinic_id &&
+          flag.conditions.clinic_ids.includes(context.clinic_id)
         )
       ) {
         return {
           enabled: false,
-          reason: 'Clinic ID not in allowed list',
+          reason: "Clinic ID not in allowed list",
           conditionsChecked,
           matchingConditions,
         };
       }
-      matchingConditions.push('clinic_ids');
+      matchingConditions.push("clinic_ids");
     }
 
     // Check time restrictions
     if (
-      flag.conditions.time_restrictions
-      && flag.conditions.time_restrictions.length > 0
+      flag.conditions.time_restrictions &&
+      flag.conditions.time_restrictions.length > 0
     ) {
-      conditionsChecked.push('time_restrictions');
+      conditionsChecked.push("time_restrictions");
 
       const now = new Date();
       const isTimeAllowed = flag.conditions.time_restrictions.some(
@@ -550,8 +551,8 @@ export class FeatureFlagService extends EnhancedAIService<
           if (now >= startTime && now <= endTime) {
             // If days of week are specified, check current day
             if (
-              restriction.days_of_week
-              && restriction.days_of_week.length > 0
+              restriction.days_of_week &&
+              restriction.days_of_week.length > 0
             ) {
               return restriction.days_of_week.includes(now.getDay());
             }
@@ -564,20 +565,20 @@ export class FeatureFlagService extends EnhancedAIService<
       if (!isTimeAllowed) {
         return {
           enabled: false,
-          reason: 'Current time is outside allowed time restrictions',
+          reason: "Current time is outside allowed time restrictions",
           conditionsChecked,
           matchingConditions,
         };
       }
-      matchingConditions.push('time_restrictions');
+      matchingConditions.push("time_restrictions");
     }
 
     // Check percentage rollout
     if (
-      flag.conditions.percentage_rollout !== undefined
-      && flag.conditions.percentage_rollout < 100
+      flag.conditions.percentage_rollout !== undefined &&
+      flag.conditions.percentage_rollout < 100
     ) {
-      conditionsChecked.push('percentage_rollout');
+      conditionsChecked.push("percentage_rollout");
 
       // Use user ID for consistent bucketing, fallback to random
       const bucketKey = context.user_id || Math.random().toString();
@@ -592,13 +593,13 @@ export class FeatureFlagService extends EnhancedAIService<
           rolloutBucket: bucket,
         };
       }
-      matchingConditions.push('percentage_rollout');
+      matchingConditions.push("percentage_rollout");
     }
 
     // All conditions passed
     return {
       enabled: true,
-      reason: 'All conditions satisfied',
+      reason: "All conditions satisfied",
       conditionsChecked,
       matchingConditions,
       cacheHit: this.flagCache.has(flag.name),
@@ -631,9 +632,9 @@ export class FeatureFlagService extends EnhancedAIService<
 
   private async refreshCache(): Promise<void> {
     const { data, error } = await this.supabase
-      .from('ai_feature_flags')
-      .select('*')
-      .eq('enabled', true);
+      .from("ai_feature_flags")
+      .select("*")
+      .eq("enabled", true);
 
     if (error) {
       return;
@@ -651,7 +652,7 @@ export class FeatureFlagService extends EnhancedAIService<
       });
     }
 
-    await this.recordMetric('cache_refresh', {
+    await this.recordMetric("cache_refresh", {
       flags_cached: this.flagCache.size,
       timestamp: new Date().toISOString(),
     });
@@ -663,7 +664,7 @@ export class FeatureFlagService extends EnhancedAIService<
     context?: FeatureFlagContext,
   ): Promise<boolean> {
     const result = await this.execute({
-      action: 'check',
+      action: "check",
       flag_name: flagName,
       context,
     });
@@ -676,7 +677,7 @@ export class FeatureFlagService extends EnhancedAIService<
     context?: FeatureFlagContext,
   ): Promise<string[]> {
     const result = await this.execute({
-      action: 'bulk_check',
+      action: "bulk_check",
       flag_names: flagNames,
       context,
     });

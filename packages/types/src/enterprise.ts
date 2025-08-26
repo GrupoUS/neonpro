@@ -27,7 +27,7 @@ export interface EnterpriseCacheConfig {
   replication: boolean;
 }
 
-export type CacheLayerType = 'memory' | 'redis' | 'database';
+export type CacheLayerType = "memory" | "redis" | "database";
 
 export interface CacheMetrics {
   hits: number;
@@ -39,7 +39,7 @@ export interface CacheMetrics {
 }
 
 export interface CacheOperation {
-  operation: 'get' | 'set' | 'delete' | 'clear';
+  operation: "get" | "set" | "delete" | "clear";
   key: string;
   layer: CacheLayerType;
   duration: number;
@@ -61,7 +61,7 @@ export interface EnterpriseAnalyticsConfig {
   };
 }
 
-export type AnalyticsExportFormat = 'json' | 'csv' | 'pdf' | 'excel';
+export type AnalyticsExportFormat = "json" | "csv" | "pdf" | "excel";
 
 export interface AnalyticsEvent {
   id: string;
@@ -76,18 +76,18 @@ export interface AnalyticsEvent {
 export interface AnalyticsContext {
   feature: string;
   userRole: string;
-  deviceType: 'mobile' | 'desktop' | 'tablet';
+  deviceType: "mobile" | "desktop" | "tablet";
   location?: string;
   healthcareProvider?: string;
 }
 
 export interface AnalyticsInsight {
   id: string;
-  type: 'trend' | 'anomaly' | 'recommendation' | 'alert';
+  type: "trend" | "anomaly" | "recommendation" | "alert";
   title: string;
   description: string;
   confidence: number; // 0-1
-  impact: 'low' | 'medium' | 'high' | 'critical';
+  impact: "low" | "medium" | "high" | "critical";
   actionRequired: boolean;
   relatedMetrics: string[];
   timestamp: Date;
@@ -97,7 +97,7 @@ export interface AnalyticsMetric {
   name: string;
   value: number;
   unit: string;
-  trend: 'up' | 'down' | 'stable';
+  trend: "up" | "down" | "stable";
   change: number; // percentage
   period: string;
   healthcareRelevant: boolean;
@@ -123,7 +123,7 @@ export interface EnterpriseSecurityConfig {
   };
   threatDetection: {
     enabled: boolean;
-    sensitivity: 'low' | 'medium' | 'high';
+    sensitivity: "low" | "medium" | "high";
     realTimeBlocking: boolean;
   };
   sessionManagement: {
@@ -133,12 +133,12 @@ export interface EnterpriseSecurityConfig {
   };
 }
 
-export type MfaMethod = 'totp' | 'sms' | 'email' | 'hardware_key' | 'biometric';
+export type MfaMethod = "totp" | "sms" | "email" | "hardware_key" | "biometric";
 
 export interface SecurityEvent {
   id: string;
   type: SecurityEventType;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   userId?: string;
   ip: string;
   userAgent: string;
@@ -149,16 +149,16 @@ export interface SecurityEvent {
 }
 
 export type SecurityEventType =
-  | 'login_success'
-  | 'login_failure'
-  | 'mfa_success'
-  | 'mfa_failure'
-  | 'unauthorized_access'
-  | 'suspicious_activity'
-  | 'data_breach_attempt'
-  | 'privilege_escalation'
-  | 'session_hijacking'
-  | 'brute_force_attack';
+  | "login_success"
+  | "login_failure"
+  | "mfa_success"
+  | "mfa_failure"
+  | "unauthorized_access"
+  | "suspicious_activity"
+  | "data_breach_attempt"
+  | "privilege_escalation"
+  | "session_hijacking"
+  | "brute_force_attack";
 
 export interface ThreatDetectionResult {
   threatDetected: boolean;
@@ -194,7 +194,7 @@ export interface EnterpriseAuditConfig {
   };
 }
 
-export type AuditExportFormat = 'json' | 'csv' | 'xml' | 'pdf';
+export type AuditExportFormat = "json" | "csv" | "xml" | "pdf";
 
 export interface AuditEvent {
   id: string;
@@ -202,12 +202,12 @@ export interface AuditEvent {
   userId?: string;
   action: string;
   resource: string;
-  outcome: 'success' | 'failure' | 'error';
+  outcome: "success" | "failure" | "error";
   details: Record<string, any>;
   ip: string;
   userAgent: string;
   sessionId?: string;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   complianceRelevant: boolean;
   hash: string; // For immutability
 }
@@ -218,15 +218,15 @@ export interface AuditQuery {
   userId?: string;
   action?: string;
   resource?: string;
-  outcome?: 'success' | 'failure' | 'error';
-  riskLevel?: 'low' | 'medium' | 'high' | 'critical';
+  outcome?: "success" | "failure" | "error";
+  riskLevel?: "low" | "medium" | "high" | "critical";
   limit?: number;
   offset?: number;
 }
 
 export interface AuditReport {
   id: string;
-  type: 'compliance' | 'security' | 'performance' | 'user_activity';
+  type: "compliance" | "security" | "performance" | "user_activity";
   period: {
     start: Date;
     end: Date;
@@ -248,7 +248,7 @@ export interface AuditReport {
 }
 
 export interface ComplianceStatus {
-  status: 'compliant' | 'non_compliant' | 'partial';
+  status: "compliant" | "non_compliant" | "partial";
   score: number; // 0-100
   issues: ComplianceIssue[];
   lastAudit: Date;
@@ -256,10 +256,10 @@ export interface ComplianceStatus {
 
 export interface ComplianceIssue {
   id: string;
-  type: 'violation' | 'warning' | 'recommendation';
+  type: "violation" | "warning" | "recommendation";
   description: string;
   regulation: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   remediation: string[];
   deadline?: Date;
 }
@@ -289,7 +289,7 @@ export interface HealthcareEnterpriseConfig {
 export interface PatientDataAccess {
   patientId: string;
   userId: string;
-  accessType: 'read' | 'write' | 'delete' | 'export';
+  accessType: "read" | "write" | "delete" | "export";
   purpose: string;
   consentGiven: boolean;
   emergencyAccess: boolean;
@@ -301,12 +301,12 @@ export interface PatientDataAccess {
 export interface ClinicalMetric {
   id: string;
   name: string;
-  category: 'safety' | 'quality' | 'efficiency' | 'compliance';
+  category: "safety" | "quality" | "efficiency" | "compliance";
   value: number;
   unit: string;
   benchmark: number;
   target: number;
-  trend: 'improving' | 'declining' | 'stable';
+  trend: "improving" | "declining" | "stable";
   period: string;
   healthcareProvider: string;
 }
@@ -314,11 +314,11 @@ export interface ClinicalMetric {
 export interface HealthcareAlert {
   id: string;
   type:
-    | 'patient_safety'
-    | 'data_breach'
-    | 'system_error'
-    | 'compliance_violation';
-  severity: 'low' | 'medium' | 'high' | 'critical';
+    | "patient_safety"
+    | "data_breach"
+    | "system_error"
+    | "compliance_violation";
+  severity: "low" | "medium" | "high" | "critical";
   title: string;
   description: string;
   patientId?: string;
@@ -343,7 +343,7 @@ export interface EnterpriseIntegration {
   serviceName: string;
   endpoint: string;
   authentication: {
-    type: 'api_key' | 'oauth2' | 'jwt' | 'certificate';
+    type: "api_key" | "oauth2" | "jwt" | "certificate";
     credentials: Record<string, string>;
   };
   rateLimit: {
@@ -369,13 +369,13 @@ export interface IntegrationMetrics {
   errorRate: number; // percentage
   throughput: number; // requests per second
   lastCheck: Date;
-  status: 'healthy' | 'degraded' | 'down';
+  status: "healthy" | "degraded" | "down";
 }
 
 // Enterprise Service Health Types
 export interface EnterpriseHealthCheck {
   serviceName: string;
-  status: 'healthy' | 'degraded' | 'unhealthy' | 'critical';
+  status: "healthy" | "degraded" | "unhealthy" | "critical";
   checks: HealthCheckResult[];
   lastCheck: Date;
   uptime: number; // percentage
@@ -385,7 +385,7 @@ export interface EnterpriseHealthCheck {
 
 export interface HealthCheckResult {
   name: string;
-  status: 'pass' | 'fail' | 'warn';
+  status: "pass" | "fail" | "warn";
   message?: string;
   duration: number; // ms
   timestamp: Date;
@@ -393,8 +393,8 @@ export interface HealthCheckResult {
 
 export interface DependencyHealth {
   name: string;
-  type: 'database' | 'cache' | 'api' | 'queue' | 'storage';
-  status: 'available' | 'unavailable' | 'degraded';
+  type: "database" | "cache" | "api" | "queue" | "storage";
+  status: "available" | "unavailable" | "degraded";
   responseTime?: number;
   lastCheck: Date;
   critical: boolean;
@@ -415,7 +415,7 @@ export interface EnterpriseDashboard {
 
 export interface DashboardWidget {
   id: string;
-  type: 'metric' | 'chart' | 'table' | 'alert' | 'health';
+  type: "metric" | "chart" | "table" | "alert" | "health";
   title: string;
   config: Record<string, any>;
   position: {
@@ -438,16 +438,16 @@ export interface DashboardLayout {
 export interface DashboardPermission {
   userId: string;
   role: string;
-  permissions: ('view' | 'edit' | 'share' | 'delete')[];
+  permissions: ("view" | "edit" | "share" | "delete")[];
 }
 
 // Enterprise Reporting Types
 export interface EnterpriseReport {
   id: string;
   name: string;
-  type: 'compliance' | 'performance' | 'security' | 'healthcare' | 'custom';
+  type: "compliance" | "performance" | "security" | "healthcare" | "custom";
   schedule: ReportSchedule;
-  format: 'pdf' | 'excel' | 'csv' | 'json';
+  format: "pdf" | "excel" | "csv" | "json";
   recipients: ReportRecipient[];
   filters: ReportFilter[];
   template: string;
@@ -457,12 +457,12 @@ export interface EnterpriseReport {
 
 export interface ReportSchedule {
   frequency:
-    | 'daily'
-    | 'weekly'
-    | 'monthly'
-    | 'quarterly'
-    | 'annually'
-    | 'on_demand';
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "quarterly"
+    | "annually"
+    | "on_demand";
   time?: string; // HH:MM
   dayOfWeek?: number; // 0-6
   dayOfMonth?: number; // 1-31
@@ -478,7 +478,7 @@ export interface ReportRecipient {
 
 export interface ReportFilter {
   field: string;
-  operator: 'equals' | 'contains' | 'greater_than' | 'less_than' | 'between';
+  operator: "equals" | "contains" | "greater_than" | "less_than" | "between";
   value: any;
 }
 
@@ -488,7 +488,7 @@ export interface EnterpriseConfiguration {
     organizationName: string;
     timezone: string;
     locale: string;
-    environment: 'development' | 'staging' | 'production';
+    environment: "development" | "staging" | "production";
   };
   security: EnterpriseSecurityConfig;
   cache: EnterpriseCacheConfig;
@@ -506,28 +506,28 @@ export interface EnterpriseConfiguration {
 
 // Export utility types
 export type EnterpriseServiceType =
-  | 'cache'
-  | 'analytics'
-  | 'security'
-  | 'audit'
-  | 'health';
+  | "cache"
+  | "analytics"
+  | "security"
+  | "audit"
+  | "health";
 export type ComplianceFramework =
-  | 'lgpd'
-  | 'anvisa'
-  | 'hipaa'
-  | 'iso27001'
-  | 'cfm';
+  | "lgpd"
+  | "anvisa"
+  | "hipaa"
+  | "iso27001"
+  | "cfm";
 export type HealthcareRole =
-  | 'doctor'
-  | 'nurse'
-  | 'admin'
-  | 'patient'
-  | 'receptionist'
-  | 'manager'
-  | 'auditor';
+  | "doctor"
+  | "nurse"
+  | "admin"
+  | "patient"
+  | "receptionist"
+  | "manager"
+  | "auditor";
 export type DataSensitivityLevel =
-  | 'public'
-  | 'internal'
-  | 'confidential'
-  | 'restricted'
-  | 'patient_data';
+  | "public"
+  | "internal"
+  | "confidential"
+  | "restricted"
+  | "patient_data";

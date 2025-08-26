@@ -1,5 +1,5 @@
-import { differenceInYears } from 'date-fns';
-import { PatientStatus } from '../types';
+import { differenceInYears } from "date-fns";
+import { PatientStatus } from "../types";
 import type {
   AestheticHistory,
   ConsentForm,
@@ -8,7 +8,7 @@ import type {
   Patient,
   SkinAssessment,
   UpdatePatientData,
-} from './types';
+} from "./types";
 
 export interface PatientRepository {
   // Patient CRUD operations
@@ -44,7 +44,7 @@ export interface PatientRepository {
 
 export interface PatientFilters {
   status?: PatientStatus;
-  ageRange?: { min: number; max: number; };
+  ageRange?: { min: number; max: number };
   gender?: string;
   tags?: string[];
   city?: string;
@@ -56,9 +56,9 @@ export interface PatientStats {
   activePatients: number;
   newPatientsThisMonth: number;
   averageAge: number;
-  genderDistribution: { male: number; female: number; other: number; };
-  topReferralSources: { source: string; count: number; }[];
-  patientsByStatus: { status: PatientStatus; count: number; }[];
+  genderDistribution: { male: number; female: number; other: number };
+  topReferralSources: { source: string; count: number }[];
+  patientsByStatus: { status: PatientStatus; count: number }[];
 }
 
 export class PatientService {
@@ -69,14 +69,14 @@ export class PatientService {
     // Check if patient already exists
     const existingPatient = await this.repository.getPatientByEmail(data.email);
     if (existingPatient) {
-      throw new Error('Patient with this email already exists');
+      throw new Error("Patient with this email already exists");
     }
 
     // Validate age (must be 18+ for aesthetic treatments)
     const age = differenceInYears(new Date(), data.dateOfBirth);
     if (age < 18) {
       throw new Error(
-        'Patient must be 18 years or older for aesthetic treatments',
+        "Patient must be 18 years or older for aesthetic treatments",
       );
     }
 
@@ -87,14 +87,14 @@ export class PatientService {
   async updatePatient(id: string, data: UpdatePatientData): Promise<Patient> {
     const existingPatient = await this.repository.getPatient(id);
     if (!existingPatient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     // If email is being updated, check for duplicates
     if (data.email && data.email !== existingPatient.email) {
       const emailExists = await this.repository.getPatientByEmail(data.email);
       if (emailExists && emailExists.id !== id) {
-        throw new Error('Another patient with this email already exists');
+        throw new Error("Another patient with this email already exists");
       }
     }
 
@@ -117,7 +117,7 @@ export class PatientService {
     await this.repository.updatePatient(id, {
       id,
       status: PatientStatus.INACTIVE,
-      notes: reason ? `Deactivated: ${reason}` : 'Patient deactivated',
+      notes: reason ? `Deactivated: ${reason}` : "Patient deactivated",
     });
   }
 
@@ -136,7 +136,7 @@ export class PatientService {
   ): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     await this.repository.updateMedicalHistory(patientId, history);
@@ -148,7 +148,7 @@ export class PatientService {
   ): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     await this.repository.updateAestheticHistory(patientId, history);
@@ -160,7 +160,7 @@ export class PatientService {
   ): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     await this.repository.updateSkinAssessment(patientId, assessment);
@@ -168,7 +168,7 @@ export class PatientService {
   async addConsentForm(patientId: string, form: ConsentForm): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     await this.repository.addConsentForm(patientId, form);
@@ -185,9 +185,9 @@ export class PatientService {
     const consentForms = await this.repository.getConsentForms(patientId);
     return consentForms.some(
       (form) =>
-        form.treatmentType === treatmentType
-        && form.isActive
-        && form.signedDate,
+        form.treatmentType === treatmentType &&
+        form.isActive &&
+        form.signedDate,
     );
   }
 
@@ -224,7 +224,7 @@ export class PatientService {
   async addPatientTag(patientId: string, tag: string): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     if (!patient.tags.includes(tag)) {
@@ -239,7 +239,7 @@ export class PatientService {
   async removePatientTag(patientId: string, tag: string): Promise<void> {
     const patient = await this.repository.getPatient(patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     const updatedTags = patient.tags.filter((t) => t !== tag);

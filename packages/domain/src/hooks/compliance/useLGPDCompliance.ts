@@ -1,7 +1,7 @@
 /**
  * Placeholder LGPD compliance hook
  */
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useLGPDCompliance = () => {
   const [compliance, setCompliance] = useState<unknown>();
@@ -14,7 +14,7 @@ export const useLGPDCompliance = () => {
       setIsLoading(true);
       setTimeout(() => {
         setCompliance({
-          status: 'compliant',
+          status: "compliant",
           score: 95,
           lastCheck: new Date().toISOString(),
         });
@@ -22,7 +22,7 @@ export const useLGPDCompliance = () => {
       }, 1000);
     },
     generateReport: async () => {
-      return { url: 'placeholder-report-url' };
+      return { url: "placeholder-report-url" };
     },
   };
 };

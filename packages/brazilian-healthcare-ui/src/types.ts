@@ -7,7 +7,7 @@ export interface PatientInfo {
   phone: string;
   email?: string;
   birthDate: string;
-  gender: 'M' | 'F' | 'O';
+  gender: "M" | "F" | "O";
   address: Address;
   emergencyContact: EmergencyContact;
   lgpdConsent: LGPDConsent;
@@ -21,7 +21,7 @@ export interface Address {
   city: string;
   state: string;
   cep: string;
-  region: 'Norte' | 'Nordeste' | 'Centro-Oeste' | 'Sudeste' | 'Sul';
+  region: "Norte" | "Nordeste" | "Centro-Oeste" | "Sudeste" | "Sul";
 }
 
 export interface EmergencyContact {
@@ -55,7 +55,7 @@ export interface MedicalRecord {
   patientId: string;
   professionalId: string;
   date: string;
-  type: 'consultation' | 'procedure' | 'emergency' | 'followup';
+  type: "consultation" | "procedure" | "emergency" | "followup";
   description: string;
   diagnosis?: string;
   treatment?: string;
@@ -75,16 +75,16 @@ export interface Medication {
 export interface MedicalAttachment {
   id: string;
   filename: string;
-  type: 'image' | 'document' | 'exam';
+  type: "image" | "document" | "exam";
   url: string;
   uploadDate: string;
-  lgpdClassification: 'public' | 'internal' | 'confidential' | 'restricted';
+  lgpdClassification: "public" | "internal" | "confidential" | "restricted";
 }
 
 // UI/UX specific types
 export interface EmergencyAlert {
   id: string;
-  type: 'critical' | 'high' | 'medium';
+  type: "critical" | "high" | "medium";
   message: string;
   patientId?: string;
   roomNumber?: string;
@@ -94,18 +94,18 @@ export interface EmergencyAlert {
 }
 
 export interface ConnectivityLevel {
-  type: '2G' | '3G' | '4G' | '5G' | 'wifi';
-  strength: 'weak' | 'medium' | 'strong';
+  type: "2G" | "3G" | "4G" | "5G" | "wifi";
+  strength: "weak" | "medium" | "strong";
   latency: number; // ms
 }
 
 export interface RegionalSettings {
-  region: 'Norte' | 'Nordeste' | 'Centro-Oeste' | 'Sudeste' | 'Sul';
+  region: "Norte" | "Nordeste" | "Centro-Oeste" | "Sudeste" | "Sul";
   connectivity: ConnectivityLevel;
-  language: 'pt-BR';
+  language: "pt-BR";
   timezone: string;
-  currency: 'BRL';
-  dateFormat: 'DD/MM/YYYY';
+  currency: "BRL";
+  dateFormat: "DD/MM/YYYY";
 }
 
 // Accessibility types
@@ -115,13 +115,13 @@ export interface AccessibilityOptions {
   screenReader: boolean;
   voiceNavigation: boolean;
   colorBlindSupport: boolean;
-  language: 'pt-BR';
+  language: "pt-BR";
 }
 
 // LGPD Compliance types
 export interface LGPDCompliance {
   consentRequired: boolean;
-  dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
+  dataClassification: "public" | "internal" | "confidential" | "restricted";
   retentionPeriod: number; // days
   auditRequired: boolean;
   anonymizationRequired: boolean;
@@ -135,6 +135,6 @@ export interface AuditEvent {
   timestamp: string;
   ipAddress: string;
   userAgent: string;
-  outcome: 'success' | 'failure';
+  outcome: "success" | "failure";
   details?: Record<string, any>;
 }

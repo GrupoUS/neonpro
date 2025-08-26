@@ -6,17 +6,17 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require('node:path');
-const fs = require('node:fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
-  green: '\u001B[32m',
-  red: '\u001B[31m',
-  yellow: '\u001B[33m',
-  blue: '\u001B[34m',
-  reset: '\u001B[0m',
-  bold: '\u001B[1m',
+  green: "\u001B[32m",
+  red: "\u001B[31m",
+  yellow: "\u001B[33m",
+  blue: "\u001B[34m",
+  reset: "\u001B[0m",
+  bold: "\u001B[1m",
 };
 
 function log(_message, _color = colors.reset) {}
@@ -38,12 +38,12 @@ function logError(message) {
 }
 
 async function validateProjectStructure() {
-  logHeader('CFM Project Structure Validation');
+  logHeader("CFM Project Structure Validation");
 
   const requiredFiles = [
-    'packages/compliance/src/cfm',
-    'packages/utils/src/compliance/cfm.ts',
-    'apps/web/lib/healthcare/cfm-professional-standards.ts',
+    "packages/compliance/src/cfm",
+    "packages/utils/src/compliance/cfm.ts",
+    "apps/web/lib/healthcare/cfm-professional-standards.ts",
   ];
 
   let allValid = true;
@@ -62,25 +62,25 @@ async function validateProjectStructure() {
 }
 
 async function validateCFMModules() {
-  logHeader('CFM Compliance Modules Validation');
+  logHeader("CFM Compliance Modules Validation");
 
   try {
     // Check if we can load the CFM compliance modules
-    const cfmPath = path.resolve(process.cwd(), 'packages/compliance/src/cfm');
+    const cfmPath = path.resolve(process.cwd(), "packages/compliance/src/cfm");
 
     if (!fs.existsSync(cfmPath)) {
-      logError('CFM compliance modules not found');
+      logError("CFM compliance modules not found");
       return false;
     }
 
     const files = fs.readdirSync(cfmPath);
     const expectedModules = [
-      'index.ts',
-      'digital-signature-service.ts',
-      'telemedicine-compliance-service.ts',
-      'professional-licensing-service.ts',
-      'medical-records-service.ts',
-      'medical-ethics-service.ts',
+      "index.ts",
+      "digital-signature-service.ts",
+      "telemedicine-compliance-service.ts",
+      "professional-licensing-service.ts",
+      "medical-records-service.ts",
+      "medical-ethics-service.ts",
     ];
 
     const allModulesPresent = true;
@@ -101,16 +101,16 @@ async function validateCFMModules() {
 }
 
 async function validateProfessionalLicensing() {
-  logHeader('Professional Licensing Validation');
+  logHeader("Professional Licensing Validation");
 
   try {
     // Simulate CFM license validation patterns
     const testLicenses = [
-      'CRM/SP 123456',
-      'CRM/RJ 78901',
-      'CRM/MG 234567',
-      'INVALID123',
-      'CRM/XX 999999',
+      "CRM/SP 123456",
+      "CRM/RJ 78901",
+      "CRM/MG 234567",
+      "INVALID123",
+      "CRM/XX 999999",
     ];
 
     const cfmPattern = /^CRM\/[A-Z]{2}\s?\d{4,6}$/;
@@ -130,10 +130,10 @@ async function validateProfessionalLicensing() {
     });
 
     if (validCount >= 3) {
-      logSuccess('CFM license validation pattern working correctly');
+      logSuccess("CFM license validation pattern working correctly");
       return true;
     }
-    logError('CFM license validation pattern not working');
+    logError("CFM license validation pattern not working");
     return false;
   } catch (error) {
     logError(`Error validating professional licensing: ${error.message}`);
@@ -142,21 +142,21 @@ async function validateProfessionalLicensing() {
 }
 
 async function validateDigitalSignature() {
-  logHeader('Digital Signature Validation');
+  logHeader("Digital Signature Validation");
 
   try {
     // Check if crypto module is available (required for digital signatures)
-    const crypto = require('node:crypto');
+    const crypto = require("node:crypto");
 
     // Test hash generation (simplified version of what CFM module does)
-    const testData = 'test-document-hash:professional-id:timestamp';
-    const hash = crypto.createHash('sha256').update(testData).digest('hex');
+    const testData = "test-document-hash:professional-id:timestamp";
+    const hash = crypto.createHash("sha256").update(testData).digest("hex");
 
     if (hash && hash.length === 64) {
-      logSuccess('Digital signature hash generation working');
+      logSuccess("Digital signature hash generation working");
       return true;
     }
-    logError('Digital signature hash generation failed');
+    logError("Digital signature hash generation failed");
     return false;
   } catch (error) {
     logError(`Error validating digital signature: ${error.message}`);
@@ -165,17 +165,17 @@ async function validateDigitalSignature() {
 }
 
 async function validateTelemedicineCompliance() {
-  logHeader('Telemedicine Compliance Validation');
+  logHeader("Telemedicine Compliance Validation");
 
   try {
     // Test telemedicine platform validation
     const approvedPlatforms = new Set([
-      'telemedicina-cfm',
-      'medcloud',
-      'conexa-saude',
-      'teleconsulta-brasil',
+      "telemedicina-cfm",
+      "medcloud",
+      "conexa-saude",
+      "teleconsulta-brasil",
     ]);
-    const testPlatforms = ['telemedicina-cfm', 'zoom', 'teams', 'medcloud'];
+    const testPlatforms = ["telemedicina-cfm", "zoom", "teams", "medcloud"];
 
     let approvedCount = 0;
 
@@ -190,10 +190,10 @@ async function validateTelemedicineCompliance() {
     });
 
     if (approvedCount >= 2) {
-      logSuccess('Telemedicine platform validation working correctly');
+      logSuccess("Telemedicine platform validation working correctly");
       return true;
     }
-    logError('Telemedicine platform validation not working');
+    logError("Telemedicine platform validation not working");
     return false;
   } catch (error) {
     logError(`Error validating telemedicine compliance: ${error.message}`);
@@ -202,7 +202,7 @@ async function validateTelemedicineCompliance() {
 }
 
 async function validateContinuingEducation() {
-  logHeader('Continuing Education Validation');
+  logHeader("Continuing Education Validation");
 
   try {
     // Test continuing education calculation
@@ -232,10 +232,10 @@ async function validateContinuingEducation() {
     });
 
     if (validScenarios === testScenarios.length) {
-      logSuccess('Continuing education validation working correctly');
+      logSuccess("Continuing education validation working correctly");
       return true;
     }
-    logError('Continuing education validation logic issues');
+    logError("Continuing education validation logic issues");
     return false;
   } catch (error) {
     logError(`Error validating continuing education: ${error.message}`);
@@ -244,11 +244,11 @@ async function validateContinuingEducation() {
 }
 
 async function validateEnvironmentVariables() {
-  logHeader('Environment Variables Validation');
+  logHeader("Environment Variables Validation");
 
   const requiredEnvVars = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
   ];
 
   const allValid = true;
@@ -266,47 +266,48 @@ async function validateEnvironmentVariables() {
 }
 
 async function validateCFMConfiguration() {
-  logHeader('CFM Configuration Validation');
+  logHeader("CFM Configuration Validation");
 
   try {
     // Check package.json for CFM-related dependencies - look in apps/web first
     const webPackageJsonPath = path.resolve(
       process.cwd(),
-      'apps/web/package.json',
+      "apps/web/package.json",
     );
-    const rootPackageJsonPath = path.resolve(process.cwd(), 'package.json');
+    const rootPackageJsonPath = path.resolve(process.cwd(), "package.json");
 
     let packageJsonPath = webPackageJsonPath;
 
     if (!fs.existsSync(webPackageJsonPath)) {
       if (!fs.existsSync(rootPackageJsonPath)) {
-        logError('package.json not found in apps/web or root');
+        logError("package.json not found in apps/web or root");
         return false;
       }
       packageJsonPath = rootPackageJsonPath;
     }
 
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     // Check for required dependencies
-    const hasSupabase = packageJson.dependencies?.['@supabase/supabase-js']
-      || packageJson.devDependencies?.['@supabase/supabase-js'];
+    const hasSupabase =
+      packageJson.dependencies?.["@supabase/supabase-js"] ||
+      packageJson.devDependencies?.["@supabase/supabase-js"];
 
     const hasCrypto = true; // crypto is a Node.js built-in module
 
     if (hasSupabase) {
       logSuccess(
         `Supabase client dependency found in ${
-          packageJsonPath.includes('apps/web') ? 'apps/web' : 'root'
+          packageJsonPath.includes("apps/web") ? "apps/web" : "root"
         }`,
       );
     } else {
-      logError('Supabase client dependency missing');
+      logError("Supabase client dependency missing");
       return false;
     }
 
     if (hasCrypto) {
-      logSuccess('Crypto module available for digital signatures');
+      logSuccess("Crypto module available for digital signatures");
     }
 
     return true;
@@ -317,17 +318,17 @@ async function validateCFMConfiguration() {
 }
 
 async function runCFMValidation() {
-  logHeader('CFM Compliance Validation Suite');
+  logHeader("CFM Compliance Validation Suite");
 
   const validations = [
-    { name: 'Project Structure', fn: validateProjectStructure },
-    { name: 'CFM Modules', fn: validateCFMModules },
-    { name: 'Professional Licensing', fn: validateProfessionalLicensing },
-    { name: 'Digital Signature', fn: validateDigitalSignature },
-    { name: 'Telemedicine Compliance', fn: validateTelemedicineCompliance },
-    { name: 'Continuing Education', fn: validateContinuingEducation },
-    { name: 'Environment Variables', fn: validateEnvironmentVariables },
-    { name: 'CFM Configuration', fn: validateCFMConfiguration },
+    { name: "Project Structure", fn: validateProjectStructure },
+    { name: "CFM Modules", fn: validateCFMModules },
+    { name: "Professional Licensing", fn: validateProfessionalLicensing },
+    { name: "Digital Signature", fn: validateDigitalSignature },
+    { name: "Telemedicine Compliance", fn: validateTelemedicineCompliance },
+    { name: "Continuing Education", fn: validateContinuingEducation },
+    { name: "Environment Variables", fn: validateEnvironmentVariables },
+    { name: "CFM Configuration", fn: validateCFMConfiguration },
   ];
 
   let allPassed = true;
@@ -357,14 +358,14 @@ async function runCFMValidation() {
   }
 
   // Summary
-  logHeader('CFM Validation Summary');
+  logHeader("CFM Validation Summary");
 
   results.forEach((result) => {
     if (result.passed) {
       logSuccess(`${result.name}: PASSED`);
     } else {
       logError(
-        `${result.name}: FAILED${result.error ? ` (${result.error})` : ''}`,
+        `${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
       );
     }
   });

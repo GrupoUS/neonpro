@@ -5,8 +5,8 @@
  * Quality Standard: ≥9.9/10
  */
 
-import { z } from 'zod';
-import type { AuditEvent } from '../audit/types';
+import { z } from "zod";
+import type { AuditEvent } from "../audit/types";
 
 // =============================================================================
 // CONSTITUTIONAL HEALTHCARE BASE TYPES
@@ -21,7 +21,7 @@ export const ComplianceScoreSchema = z
   .min(0)
   .max(10)
   .refine((score) => score >= 9.9, {
-    message: 'Healthcare compliance must meet ≥9.9/10 constitutional standard',
+    message: "Healthcare compliance must meet ≥9.9/10 constitutional standard",
   });
 
 export type ComplianceScore = z.infer<typeof ComplianceScoreSchema>;
@@ -30,33 +30,33 @@ export type ComplianceScore = z.infer<typeof ComplianceScoreSchema>;
  * Brazilian Healthcare Regulatory Framework
  */
 export enum HealthcareRegulation {
-  LGPD = 'LGPD', // Lei Geral de Proteção de Dados
-  ANVISA = 'ANVISA', // Agência Nacional de Vigilância Sanitária
-  CFM = 'CFM', // Conselho Federal de Medicina
-  CONSTITUTIONAL = 'CONSTITUTIONAL', // Constitutional Healthcare Principles
+  LGPD = "LGPD", // Lei Geral de Proteção de Dados
+  ANVISA = "ANVISA", // Agência Nacional de Vigilância Sanitária
+  CFM = "CFM", // Conselho Federal de Medicina
+  CONSTITUTIONAL = "CONSTITUTIONAL", // Constitutional Healthcare Principles
 }
 
 /**
  * Compliance Status with Constitutional Validation
  */
 export enum ComplianceStatus {
-  COMPLIANT = 'COMPLIANT',
-  NON_COMPLIANT = 'NON_COMPLIANT',
-  UNDER_REVIEW = 'UNDER_REVIEW',
-  PENDING_VALIDATION = 'PENDING_VALIDATION',
-  CONSTITUTIONAL_VIOLATION = 'CONSTITUTIONAL_VIOLATION',
+  COMPLIANT = "COMPLIANT",
+  NON_COMPLIANT = "NON_COMPLIANT",
+  UNDER_REVIEW = "UNDER_REVIEW",
+  PENDING_VALIDATION = "PENDING_VALIDATION",
+  CONSTITUTIONAL_VIOLATION = "CONSTITUTIONAL_VIOLATION",
 }
 
 /**
  * Patient Data Classification for LGPD Compliance
  */
 export enum PatientDataClassification {
-  PERSONAL = 'PERSONAL', // Dados pessoais (Art. 5º, I LGPD)
-  SENSITIVE = 'SENSITIVE', // Dados pessoais sensíveis (Art. 5º, II LGPD)
-  HEALTH = 'HEALTH', // Dados de saúde (constitutional protection)
-  GENETIC = 'GENETIC', // Dados genéticos (extra protection)
-  BIOMETRIC = 'BIOMETRIC', // Dados biométricos (identification)
-  CHILD = 'CHILD', // Dados de criança/adolescente (Art. 14 LGPD)
+  PERSONAL = "PERSONAL", // Dados pessoais (Art. 5º, I LGPD)
+  SENSITIVE = "SENSITIVE", // Dados pessoais sensíveis (Art. 5º, II LGPD)
+  HEALTH = "HEALTH", // Dados de saúde (constitutional protection)
+  GENETIC = "GENETIC", // Dados genéticos (extra protection)
+  BIOMETRIC = "BIOMETRIC", // Dados biométricos (identification)
+  CHILD = "CHILD", // Dados de criança/adolescente (Art. 14 LGPD)
 }
 
 // =============================================================================
@@ -67,16 +67,16 @@ export enum PatientDataClassification {
  * LGPD Legal Basis (Base Legal) - Art. 7º and 11º LGPD
  */
 export enum LGPDLegalBasis {
-  CONSENT = 'CONSENT', // Consentimento (Art. 7º, I)
-  LEGAL_OBLIGATION = 'LEGAL_OBLIGATION', // Cumprimento de obrigação legal (Art. 7º, II)
-  PUBLIC_ADMINISTRATION = 'PUBLIC_ADMINISTRATION', // Execução de políticas públicas (Art. 7º, III)
-  RESEARCH = 'RESEARCH', // Realização de estudos (Art. 7º, IV)
-  CONTRACT_EXECUTION = 'CONTRACT_EXECUTION', // Execução de contrato (Art. 7º, V)
-  JUDICIAL_PROCESS = 'JUDICIAL_PROCESS', // Processo judicial (Art. 7º, VI)
-  LEGITIMATE_INTEREST = 'LEGITIMATE_INTEREST', // Interesse legítimo (Art. 7º, IX)
-  VITAL_INTEREST = 'VITAL_INTEREST', // Proteção da vida (Art. 7º, VII)
-  HEALTH_PROTECTION = 'HEALTH_PROTECTION', // Tutela da saúde (Art. 11º, II)
-  HEALTH_PROCEDURES = 'HEALTH_PROCEDURES', // Procedimentos de saúde (Art. 11º, I)
+  CONSENT = "CONSENT", // Consentimento (Art. 7º, I)
+  LEGAL_OBLIGATION = "LEGAL_OBLIGATION", // Cumprimento de obrigação legal (Art. 7º, II)
+  PUBLIC_ADMINISTRATION = "PUBLIC_ADMINISTRATION", // Execução de políticas públicas (Art. 7º, III)
+  RESEARCH = "RESEARCH", // Realização de estudos (Art. 7º, IV)
+  CONTRACT_EXECUTION = "CONTRACT_EXECUTION", // Execução de contrato (Art. 7º, V)
+  JUDICIAL_PROCESS = "JUDICIAL_PROCESS", // Processo judicial (Art. 7º, VI)
+  LEGITIMATE_INTEREST = "LEGITIMATE_INTEREST", // Interesse legítimo (Art. 7º, IX)
+  VITAL_INTEREST = "VITAL_INTEREST", // Proteção da vida (Art. 7º, VII)
+  HEALTH_PROTECTION = "HEALTH_PROTECTION", // Tutela da saúde (Art. 11º, II)
+  HEALTH_PROCEDURES = "HEALTH_PROCEDURES", // Procedimentos de saúde (Art. 11º, I)
 }
 
 /**
@@ -123,22 +123,22 @@ export type Consent = z.infer<typeof ConsentSchema>; // ========================
  * ANVISA Medical Device Categories
  */
 export enum ANVISADeviceCategory {
-  CLASS_I = 'CLASS_I', // Classe I - Baixo risco
-  CLASS_II = 'CLASS_II', // Classe II - Médio risco
-  CLASS_III = 'CLASS_III', // Classe III - Alto risco
-  CLASS_IV = 'CLASS_IV', // Classe IV - Máximo risco
+  CLASS_I = "CLASS_I", // Classe I - Baixo risco
+  CLASS_II = "CLASS_II", // Classe II - Médio risco
+  CLASS_III = "CLASS_III", // Classe III - Alto risco
+  CLASS_IV = "CLASS_IV", // Classe IV - Máximo risco
 }
 
 /**
  * ANVISA Adverse Event Types
  */
 export enum AdverseEventType {
-  MILD = 'MILD', // Evento adverso leve
-  MODERATE = 'MODERATE', // Evento adverso moderado
-  SEVERE = 'SEVERE', // Evento adverso grave
-  LIFE_THREATENING = 'LIFE_THREATENING', // Ameaça à vida
-  DEATH = 'DEATH', // Óbito
-  HOSPITALIZATION = 'HOSPITALIZATION', // Hospitalização
+  MILD = "MILD", // Evento adverso leve
+  MODERATE = "MODERATE", // Evento adverso moderado
+  SEVERE = "SEVERE", // Evento adverso grave
+  LIFE_THREATENING = "LIFE_THREATENING", // Ameaça à vida
+  DEATH = "DEATH", // Óbito
+  HOSPITALIZATION = "HOSPITALIZATION", // Hospitalização
 }
 
 /**
@@ -153,7 +153,7 @@ export const RegulatoryEventSchema = z.object({
   eventType: z.nativeEnum(AdverseEventType),
   deviceCategory: z.nativeEnum(ANVISADeviceCategory).optional(),
   description: z.string().min(50).max(2000),
-  severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+  severity: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
   reportedAt: z.date(),
   reportedBy: z.string().uuid(),
   anvisaNotified: z.boolean().default(false),
@@ -177,22 +177,22 @@ export type RegulatoryEvent = z.infer<typeof RegulatoryEventSchema>;
  * CFM Professional Categories
  */
 export enum CFMProfessionalCategory {
-  PHYSICIAN = 'PHYSICIAN', // Médico
-  SPECIALIST = 'SPECIALIST', // Especialista
-  RESIDENT = 'RESIDENT', // Residente
-  MEDICAL_STUDENT = 'MEDICAL_STUDENT', // Estudante de medicina
-  FOREIGN_PHYSICIAN = 'FOREIGN_PHYSICIAN', // Médico estrangeiro
+  PHYSICIAN = "PHYSICIAN", // Médico
+  SPECIALIST = "SPECIALIST", // Especialista
+  RESIDENT = "RESIDENT", // Residente
+  MEDICAL_STUDENT = "MEDICAL_STUDENT", // Estudante de medicina
+  FOREIGN_PHYSICIAN = "FOREIGN_PHYSICIAN", // Médico estrangeiro
 }
 
 /**
  * CFM License Status
  */
 export enum CFMLicenseStatus {
-  ACTIVE = 'ACTIVE', // Ativo
-  SUSPENDED = 'SUSPENDED', // Suspenso
-  REVOKED = 'REVOKED', // Cassado
-  EXPIRED = 'EXPIRED', // Expirado
-  UNDER_INVESTIGATION = 'UNDER_INVESTIGATION', // Em investigação
+  ACTIVE = "ACTIVE", // Ativo
+  SUSPENDED = "SUSPENDED", // Suspenso
+  REVOKED = "REVOKED", // Cassado
+  EXPIRED = "EXPIRED", // Expirado
+  UNDER_INVESTIGATION = "UNDER_INVESTIGATION", // Em investigação
 }
 
 /**
@@ -202,8 +202,8 @@ export const ProfessionalValidationSchema = z.object({
   id: z.string().uuid(),
   professionalId: z.string().uuid(),
   tenantId: z.string().uuid(),
-  crmNumber: z.string().regex(/^\d{4,6}$/, 'CRM must be 4-6 digits'),
-  crmState: z.string().length(2, 'State code must be 2 characters'),
+  crmNumber: z.string().regex(/^\d{4,6}$/, "CRM must be 4-6 digits"),
+  crmState: z.string().length(2, "State code must be 2 characters"),
   category: z.nativeEnum(CFMProfessionalCategory),
   licenseStatus: z.nativeEnum(CFMLicenseStatus),
   validatedAt: z.date(),
@@ -234,14 +234,14 @@ export type ProfessionalValidation = z.infer<
  * Healthcare Analytics Metric Types
  */
 export enum HealthcareAnalyticsMetric {
-  COMPLIANCE_SCORE = 'COMPLIANCE_SCORE',
-  PATIENT_SATISFACTION = 'PATIENT_SATISFACTION',
-  TREATMENT_EFFICACY = 'TREATMENT_EFFICACY',
-  REGULATORY_ADHERENCE = 'REGULATORY_ADHERENCE',
-  PROFESSIONAL_PERFORMANCE = 'PROFESSIONAL_PERFORMANCE',
-  SYSTEM_USAGE = 'SYSTEM_USAGE',
-  SECURITY_INCIDENTS = 'SECURITY_INCIDENTS',
-  CONSENT_MANAGEMENT = 'CONSENT_MANAGEMENT',
+  COMPLIANCE_SCORE = "COMPLIANCE_SCORE",
+  PATIENT_SATISFACTION = "PATIENT_SATISFACTION",
+  TREATMENT_EFFICACY = "TREATMENT_EFFICACY",
+  REGULATORY_ADHERENCE = "REGULATORY_ADHERENCE",
+  PROFESSIONAL_PERFORMANCE = "PROFESSIONAL_PERFORMANCE",
+  SYSTEM_USAGE = "SYSTEM_USAGE",
+  SECURITY_INCIDENTS = "SECURITY_INCIDENTS",
+  CONSENT_MANAGEMENT = "CONSENT_MANAGEMENT",
 }
 
 /**
@@ -258,7 +258,7 @@ export const HealthcareAnalyticsSchema = z.object({
     end: z.date(),
   }),
   anonymized: z.boolean().default(true),
-  aggregationLevel: z.enum(['INDIVIDUAL', 'GROUP', 'CLINIC', 'TENANT']),
+  aggregationLevel: z.enum(["INDIVIDUAL", "GROUP", "CLINIC", "TENANT"]),
   privacyScore: ComplianceScoreSchema,
   constitutionalCompliance: z.object({
     dataMinimization: z.boolean(),
@@ -303,7 +303,7 @@ export const DPIAAssessmentSchema = z.object({
   description: z.string().min(50).max(2000),
   dataTypes: z.array(z.nativeEnum(PatientDataClassification)),
   legalBasis: z.array(z.nativeEnum(LGPDLegalBasis)),
-  riskLevel: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
+  riskLevel: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
   mitigationMeasures: z.array(z.string()),
   assessedBy: z.string().uuid(),
   assessedAt: z.date(),

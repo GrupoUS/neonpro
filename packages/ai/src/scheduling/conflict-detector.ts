@@ -13,10 +13,11 @@ import type {
   StaffAvailability,
   TimeSlot,
   TreatmentDuration,
-} from './types';
+} from "./types";
 
 export class ConflictDetector {
-  private readonly resolutionSuccessRate: Map<ResolutionType, number> = new Map();
+  private readonly resolutionSuccessRate: Map<ResolutionType, number> =
+    new Map();
 
   constructor() {
     this.initializeResolutionSuccessRates();
@@ -109,7 +110,7 @@ export class ConflictDetector {
         criticalLevel,
       };
     } catch {
-      throw new Error('Failed to detect scheduling conflicts');
+      throw new Error("Failed to detect scheduling conflicts");
     }
   }
 
@@ -131,10 +132,10 @@ export class ConflictDetector {
 
         // Check for time overlap
         return (
-          start < apptEnd
-          && end > apptStart
-          && (appointment.staffId === slot.staffId
-            || appointment.roomId === slot.roomId)
+          start < apptEnd &&
+          end > apptStart &&
+          (appointment.staffId === slot.staffId ||
+            appointment.roomId === slot.roomId)
         );
       },
     );
@@ -142,10 +143,9 @@ export class ConflictDetector {
     if (overlappingAppointments.length > 0) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'double_booking',
-        severity: 'critical',
-        description:
-          `Double booking detected: ${overlappingAppointments.length} overlapping appointment(s)`,
+        type: "double_booking",
+        severity: "critical",
+        description: `Double booking detected: ${overlappingAppointments.length} overlapping appointment(s)`,
         affectedAppointments: overlappingAppointments.map((a) => a.id),
         affectedResources: [slot.staffId, slot.roomId],
         detectedAt: new Date(),
@@ -175,8 +175,8 @@ export class ConflictDetector {
     if (!staffAvailability) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'staff_conflict',
-        severity: 'high',
+        type: "staff_conflict",
+        severity: "high",
         description: `Staff member ${slot.staffId} not available at requested time`,
         affectedAppointments: [],
         affectedResources: [slot.staffId],
@@ -194,8 +194,8 @@ export class ConflictDetector {
     if (!hasRequiredSkills) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'staff_conflict',
-        severity: 'medium',
+        type: "staff_conflict",
+        severity: "medium",
         description: `Staff member ${slot.staffId} lacks required skills for treatment`,
         affectedAppointments: [],
         affectedResources: [slot.staffId],
@@ -213,8 +213,8 @@ export class ConflictDetector {
     if (staffWorkload.concurrent >= staffAvailability.maxConcurrentPatients) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'staff_conflict',
-        severity: 'medium',
+        type: "staff_conflict",
+        severity: "medium",
         description: `Staff member ${slot.staffId} exceeds maximum concurrent patient limit`,
         affectedAppointments: [],
         affectedResources: [slot.staffId],
@@ -248,8 +248,8 @@ export class ConflictDetector {
     if (!roomDetails) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'room_conflict',
-        severity: 'high',
+        type: "room_conflict",
+        severity: "high",
         description: `Room ${slot.roomId} not found or not available`,
         affectedAppointments: [],
         affectedResources: [slot.roomId],
@@ -266,10 +266,9 @@ export class ConflictDetector {
     if (!isSuitable) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'room_conflict',
-        severity: 'medium',
-        description:
-          `Room ${slot.roomId} not suitable for treatment type ${treatmentDuration.treatmentType}`,
+        type: "room_conflict",
+        severity: "medium",
+        description: `Room ${slot.roomId} not suitable for treatment type ${treatmentDuration.treatmentType}`,
         affectedAppointments: [],
         affectedResources: [slot.roomId],
         detectedAt: new Date(),
@@ -281,8 +280,8 @@ export class ConflictDetector {
     if (roomDetails.capacity < 1) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'room_conflict',
-        severity: 'medium',
+        type: "room_conflict",
+        severity: "medium",
         description: `Room ${slot.roomId} capacity insufficient`,
         affectedAppointments: [],
         affectedResources: [slot.roomId],
@@ -325,8 +324,8 @@ export class ConflictDetector {
       if (!equipmentAvailability.available) {
         conflicts.push({
           id: this.generateConflictId(),
-          type: 'equipment_conflict',
-          severity: equipmentAvailability.critical ? 'high' : 'medium',
+          type: "equipment_conflict",
+          severity: equipmentAvailability.critical ? "high" : "medium",
           description: `Equipment ${equipment} not available: ${equipmentAvailability.reason}`,
           affectedAppointments: equipmentAvailability.conflictingAppointments,
           affectedResources: [equipment],
@@ -354,9 +353,9 @@ export class ConflictDetector {
     if (!isWithinBusinessHours) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'business_hours',
-        severity: 'high',
-        description: 'Appointment time is outside business hours',
+        type: "business_hours",
+        severity: "high",
+        description: "Appointment time is outside business hours",
         affectedAppointments: [],
         affectedResources: [],
         detectedAt: new Date(),
@@ -369,9 +368,9 @@ export class ConflictDetector {
     if (!meetsAdvanceTime) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'business_hours',
-        severity: 'medium',
-        description: 'Appointment does not meet minimum advance booking time',
+        type: "business_hours",
+        severity: "medium",
+        description: "Appointment does not meet minimum advance booking time",
         affectedAppointments: [],
         affectedResources: [],
         detectedAt: new Date(),
@@ -403,15 +402,15 @@ export class ConflictDetector {
     // Check for existing patient appointments on the same day
     const sameDay = existingAppointments.filter(
       (appointment) =>
-        appointment.patientId === patientId
-        && this.isSameDay(new Date(appointment.scheduledStart), slot.slot.start),
+        appointment.patientId === patientId &&
+        this.isSameDay(new Date(appointment.scheduledStart), slot.slot.start),
     );
 
     if (sameDay.length > 0) {
       conflicts.push({
         id: this.generateConflictId(),
-        type: 'patient_availability',
-        severity: 'medium',
+        type: "patient_availability",
+        severity: "medium",
         description: `Patient already has ${sameDay.length} appointment(s) on the same day`,
         affectedAppointments: sameDay.map((a) => a.id),
         affectedResources: [],
@@ -454,8 +453,8 @@ export class ConflictDetector {
     // Check for required waiting periods between treatments
     const recentAppointments = existingAppointments.filter(
       (appointment) =>
-        appointment.patientId === patientId
-        && this.isWithinDays(
+        appointment.patientId === patientId &&
+        this.isWithinDays(
           new Date(appointment.scheduledStart),
           slot.slot.start,
           30,
@@ -465,8 +464,8 @@ export class ConflictDetector {
     for (const rule of sequenceRules) {
       const violatingAppointments = recentAppointments.filter(
         (appointment) =>
-          rule.conflictingTreatments.includes(appointment.treatmentType)
-          && this.isWithinDays(
+          rule.conflictingTreatments.includes(appointment.treatmentType) &&
+          this.isWithinDays(
             new Date(appointment.scheduledStart),
             slot.slot.start,
             rule.minimumDaysBetween,
@@ -476,10 +475,9 @@ export class ConflictDetector {
       if (violatingAppointments.length > 0) {
         conflicts.push({
           id: this.generateConflictId(),
-          type: 'treatment_sequence',
-          severity: rule.severity as 'low' | 'medium' | 'high' | 'critical',
-          description:
-            `Treatment sequence violation: minimum ${rule.minimumDaysBetween} days required between treatments`,
+          type: "treatment_sequence",
+          severity: rule.severity as "low" | "medium" | "high" | "critical",
+          description: `Treatment sequence violation: minimum ${rule.minimumDaysBetween} days required between treatments`,
           affectedAppointments: violatingAppointments.map((a) => a.id),
           affectedResources: [],
           detectedAt: new Date(),
@@ -525,8 +523,8 @@ export class ConflictDetector {
     let confidence = 0;
 
     switch (conflict.type) {
-      case 'double_booking': {
-        resolutionType = 'reschedule';
+      case "double_booking": {
+        resolutionType = "reschedule";
         const alternativeSlot = await this.findAlternativeSlot(
           originalSlot,
           30,
@@ -543,8 +541,8 @@ export class ConflictDetector {
         break;
       }
 
-      case 'staff_conflict': {
-        resolutionType = 'reassign_staff';
+      case "staff_conflict": {
+        resolutionType = "reassign_staff";
         const alternativeStaff = await this.findAlternativeStaff(originalSlot);
         if (alternativeStaff) {
           newScheduling = { staffId: alternativeStaff };
@@ -553,8 +551,8 @@ export class ConflictDetector {
         break;
       }
 
-      case 'room_conflict': {
-        resolutionType = 'reassign_room';
+      case "room_conflict": {
+        resolutionType = "reassign_room";
         const alternativeRoom = await this.findAlternativeRoom(originalSlot);
         if (alternativeRoom) {
           newScheduling = { roomId: alternativeRoom };
@@ -563,8 +561,8 @@ export class ConflictDetector {
         break;
       }
 
-      case 'equipment_conflict': {
-        resolutionType = 'reschedule';
+      case "equipment_conflict": {
+        resolutionType = "reschedule";
         const equipmentSlot = await this.findSlotWithEquipment(originalSlot);
         if (equipmentSlot) {
           newScheduling = {
@@ -576,9 +574,10 @@ export class ConflictDetector {
         break;
       }
 
-      case 'business_hours': {
-        resolutionType = 'reschedule';
-        const businessHoursSlot = await this.findBusinessHoursSlot(originalSlot);
+      case "business_hours": {
+        resolutionType = "reschedule";
+        const businessHoursSlot =
+          await this.findBusinessHoursSlot(originalSlot);
         if (businessHoursSlot) {
           newScheduling = {
             scheduledStart: businessHoursSlot.slot.start,
@@ -590,7 +589,7 @@ export class ConflictDetector {
       }
 
       default: {
-        return ;
+        return;
       }
     }
 
@@ -631,11 +630,11 @@ export class ConflictDetector {
   }
 
   private initializeResolutionSuccessRates(): void {
-    this.resolutionSuccessRate.set('reschedule', 0.9);
-    this.resolutionSuccessRate.set('reassign_staff', 0.85);
-    this.resolutionSuccessRate.set('reassign_room', 0.8);
-    this.resolutionSuccessRate.set('adjust_duration', 0.75);
-    this.resolutionSuccessRate.set('emergency_slot', 0.7);
+    this.resolutionSuccessRate.set("reschedule", 0.9);
+    this.resolutionSuccessRate.set("reassign_staff", 0.85);
+    this.resolutionSuccessRate.set("reassign_room", 0.8);
+    this.resolutionSuccessRate.set("adjust_duration", 0.75);
+    this.resolutionSuccessRate.set("emergency_slot", 0.7);
   }
 
   // Placeholder methods for external service integration
@@ -658,7 +657,7 @@ export class ConflictDetector {
     _staffId: string,
     _date: Date,
     _appointments: AIAppointment[],
-  ): { concurrent: number; } {
+  ): { concurrent: number } {
     return { concurrent: 0 };
   }
 
@@ -694,7 +693,7 @@ export class ConflictDetector {
     return {
       available: true,
       critical: false,
-      reason: '',
+      reason: "",
       conflictingAppointments: [],
     };
   }
@@ -708,8 +707,8 @@ export class ConflictDetector {
     const now = new Date();
     const minAdvanceHours = 2;
     return (
-      appointmentTime.getTime() - now.getTime()
-        >= minAdvanceHours * 60 * 60 * 1000
+      appointmentTime.getTime() - now.getTime() >=
+      minAdvanceHours * 60 * 60 * 1000
     );
   }
 

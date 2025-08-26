@@ -11,13 +11,13 @@
  * - Verification tests
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { config } from 'dotenv';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { createClient } from "@supabase/supabase-js";
+import { config } from "dotenv";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Load environment variables
-config({ path: '.env.local' });
+config({ path: ".env.local" });
 
 interface SetupResult {
   success: boolean;
@@ -33,7 +33,7 @@ class RBACSetup {
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!(supabaseUrl && supabaseServiceKey)) {
-      throw new Error('Missing Supabase environment variables');
+      throw new Error("Missing Supabase environment variables");
     }
 
     this.supabase = createClient(supabaseUrl, supabaseServiceKey, {
@@ -49,26 +49,27 @@ class RBACSetup {
    */
   private async executeMigration(filename: string): Promise<SetupResult> {
     try {
-      const migrationPath = join(__dirname, 'migrations', filename);
-      const sql = readFileSync(migrationPath, 'utf8');
+      const migrationPath = join(__dirname, "migrations", filename);
+      const sql = readFileSync(migrationPath, "utf8");
 
       // Split SQL into individual statements
       const statements = sql
-        .split(';')
+        .split(";")
         .map((stmt) => stmt.trim())
-        .filter((stmt) => stmt.length > 0 && !stmt.startsWith('--'));
+        .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
 
       for (let i = 0; i < statements.length; i++) {
         const statement = statements[i];
         if (statement.trim()) {
           try {
-            const { error } = await this.supabase.rpc('exec_sql', {
+            const { error } = await this.supabase.rpc("exec_sql", {
               sql_query: statement,
             });
 
             if (error) {
               // Continue with other statements unless it's a critical error
-              if (error.message.includes('already exists')) {}
+              if (error.message.includes("already exists")) {
+              }
             }
           } catch {
             // Continue with other statements for non-critical errors
@@ -96,22 +97,23 @@ class RBACSetup {
     try {
       // Check if RLS is enabled on key tables
       const { data: rlsStatus, error } = await this.supabase
-        .from('pg_tables')
-        .select('tablename, rowsecurity')
-        .eq('schemaname', 'public')
-        .in('tablename', ['users', 'patients', 'appointments', 'billing']);
+        .from("pg_tables")
+        .select("tablename, rowsecurity")
+        .eq("schemaname", "public")
+        .in("tablename", ["users", "patients", "appointments", "billing"]);
 
       if (error) {
         throw error;
       }
 
-      const tablesWithRLS = rlsStatus?.filter((table) => table.rowsecurity) || [];
+      const tablesWithRLS =
+        rlsStatus?.filter((table) => table.rowsecurity) || [];
 
       // Check if policies exist
       const { data: policies, error: policiesError } = await this.supabase
-        .from('pg_policies')
-        .select('tablename, policyname')
-        .eq('schemaname', 'public');
+        .from("pg_policies")
+        .select("tablename, policyname")
+        .eq("schemaname", "public");
 
       if (policiesError) {
         throw policiesError;
@@ -121,7 +123,7 @@ class RBACSetup {
 
       return {
         success: true,
-        message: 'RLS policies verified successfully',
+        message: "RLS policies verified successfully",
         details: {
           tablesWithRLS: tablesWithRLS.length,
           totalPolicies: policyCount,
@@ -130,7 +132,7 @@ class RBACSetup {
     } catch (error) {
       return {
         success: false,
-        message: 'RLS verification failed',
+        message: "RLS verification failed",
         details: error,
       };
     }
@@ -162,22 +164,22 @@ class RBACSetup {
         CREATE INDEX IF NOT EXISTS idx_audit_resource ON permission_audit_log(resource_type, resource_id);
       `;
 
-      const { error } = await this.supabase.rpc('exec_sql', {
+      const { error } = await this.supabase.rpc("exec_sql", {
         sql_query: createAuditTableSQL,
       });
 
-      if (error && !error.message.includes('already exists')) {
+      if (error && !error.message.includes("already exists")) {
         throw error;
       }
 
       return {
         success: true,
-        message: 'Audit log table configured successfully',
+        message: "Audit log table configured successfully",
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Audit log setup failed',
+        message: "Audit log setup failed",
         details: error,
       };
     }
@@ -189,25 +191,28 @@ class RBACSetup {
   private async testRBACPermissions(): Promise<SetupResult> {
     try {
       // Test basic role functions
-      const { data: _roleTest, error: roleError } = await this.supabase.rpc('has_role', {
-        required_role: 'owner',
-      });
-
-      if (roleError) {}
-
-      // Test minimum role functions
-      const { data: _minRoleTest, error: minRoleError } = await this.supabase.rpc(
-        'has_minimum_role',
+      const { data: _roleTest, error: roleError } = await this.supabase.rpc(
+        "has_role",
         {
-          required_role: 'staff',
+          required_role: "owner",
         },
       );
 
-      if (minRoleError) {}
+      if (roleError) {
+      }
+
+      // Test minimum role functions
+      const { data: _minRoleTest, error: minRoleError } =
+        await this.supabase.rpc("has_minimum_role", {
+          required_role: "staff",
+        });
+
+      if (minRoleError) {
+      }
 
       return {
         success: true,
-        message: 'RBAC permission tests completed',
+        message: "RBAC permission tests completed",
         details: {
           roleFunctionWorking: !roleError,
           minRoleFunctionWorking: !minRoleError,
@@ -216,7 +221,7 @@ class RBACSetup {
     } catch (error) {
       return {
         success: false,
-        message: 'RBAC permission tests failed',
+        message: "RBAC permission tests failed",
         details: error,
       };
     }
@@ -227,7 +232,9 @@ class RBACSetup {
    */
   async setup(): Promise<void> {
     const results: SetupResult[] = [];
-    const migrationResult = await this.executeMigration('001_setup_rbac_policies.sql');
+    const migrationResult = await this.executeMigration(
+      "001_setup_rbac_policies.sql",
+    );
     results.push(migrationResult);
 
     if (!migrationResult.success) {
@@ -244,11 +251,14 @@ class RBACSetup {
     const totalSteps = results.length;
 
     results.forEach((result, _index) => {
-      const _status = result.success ? '✅' : '❌';
-      if (result.details) {}
+      const _status = result.success ? "✅" : "❌";
+      if (result.details) {
+      }
     });
 
-    if (successCount === totalSteps) {} else {}
+    if (successCount === totalSteps) {
+    } else {
+    }
   }
 }
 

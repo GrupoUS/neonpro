@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 export interface AppointmentRecurrence {
-  type: 'daily' | 'weekly' | 'monthly';
+  type: "daily" | "weekly" | "monthly";
   interval: number;
   daysOfWeek?: number[];
   endDate?: Date;
@@ -29,14 +29,14 @@ export interface AppointmentInstance {
   date: string;
   start_time: string;
   end_time: string;
-  status: 'scheduled' | 'confirmed' | 'cancelled' | 'completed';
+  status: "scheduled" | "confirmed" | "cancelled" | "completed";
   is_exception: boolean;
 }
 
 export interface UseRecurringAppointmentsOptions {
   professionalId?: string;
   patientId?: string;
-  dateRange?: { start: Date; end: Date; };
+  dateRange?: { start: Date; end: Date };
 }
 
 export interface UseRecurringAppointmentsReturn {
@@ -45,7 +45,7 @@ export interface UseRecurringAppointmentsReturn {
   isLoading: boolean;
   error: string | null;
   createRecurring: (
-    appointment: Omit<RecurringAppointment, 'id' | 'created_at' | 'is_active'>,
+    appointment: Omit<RecurringAppointment, "id" | "created_at" | "is_active">,
   ) => Promise<string | null>;
   updateRecurring: (
     id: string,
@@ -59,7 +59,7 @@ export interface UseRecurringAppointmentsReturn {
   ) => Promise<string | null>;
   generateInstances: (
     recurringId: string,
-    dateRange: { start: Date; end: Date; },
+    dateRange: { start: Date; end: Date },
   ) => Promise<AppointmentInstance[]>;
   refreshData: () => Promise<void>;
 }
@@ -82,17 +82,17 @@ export function useRecurringAppointments(
       // Placeholder implementation
       const mockRecurring: RecurringAppointment[] = [
         {
-          id: '1',
-          title: 'Weekly Consultation',
-          professional_id: options.professionalId || 'prof-1',
-          service_id: 'service-1',
-          patient_id: options.patientId || 'patient-1',
+          id: "1",
+          title: "Weekly Consultation",
+          professional_id: options.professionalId || "prof-1",
+          service_id: "service-1",
+          patient_id: options.patientId || "patient-1",
           recurrence: {
-            type: 'weekly',
+            type: "weekly",
             interval: 1,
             daysOfWeek: [1], // Monday
           },
-          start_time: '09:00',
+          start_time: "09:00",
           duration: 60,
           created_at: new Date().toISOString(),
           is_active: true,
@@ -101,12 +101,12 @@ export function useRecurringAppointments(
 
       const mockInstances: AppointmentInstance[] = [
         {
-          id: 'inst-1',
-          recurring_appointment_id: '1',
-          date: new Date().toISOString().split('T')[0],
-          start_time: '09:00',
-          end_time: '10:00',
-          status: 'scheduled',
+          id: "inst-1",
+          recurring_appointment_id: "1",
+          date: new Date().toISOString().split("T")[0],
+          start_time: "09:00",
+          end_time: "10:00",
+          status: "scheduled",
           is_exception: false,
         },
       ];
@@ -114,7 +114,8 @@ export function useRecurringAppointments(
       setRecurringAppointments(mockRecurring);
       setInstances(mockInstances);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to refresh data';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh data";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -125,7 +126,7 @@ export function useRecurringAppointments(
     async (
       appointment: Omit<
         RecurringAppointment,
-        'id' | 'created_at' | 'is_active'
+        "id" | "created_at" | "is_active"
       >,
     ): Promise<string | null> => {
       try {
@@ -140,9 +141,10 @@ export function useRecurringAppointments(
         setRecurringAppointments((prev) => [...prev, newAppointment]);
         return newId;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to create recurring appointment';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to create recurring appointment";
         setError(errorMessage);
         return;
       }
@@ -160,15 +162,16 @@ export function useRecurringAppointments(
           prev.map((appointment) =>
             appointment.id === id
               ? { ...appointment, ...updates }
-              : appointment
-          )
+              : appointment,
+          ),
         );
 
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to update recurring appointment';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to update recurring appointment";
         setError(errorMessage);
         return false;
       }
@@ -182,15 +185,16 @@ export function useRecurringAppointments(
         prev.map((appointment) =>
           appointment.id === id
             ? { ...appointment, is_active: false }
-            : appointment
-        )
+            : appointment,
+        ),
       );
 
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : 'Failed to cancel recurring appointment';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to cancel recurring appointment";
       setError(errorMessage);
       return false;
     }
@@ -208,9 +212,9 @@ export function useRecurringAppointments(
           id: newId,
           recurring_appointment_id: recurringId,
           date,
-          start_time: '09:00',
-          end_time: '10:00',
-          status: 'scheduled',
+          start_time: "09:00",
+          end_time: "10:00",
+          status: "scheduled",
           is_exception: true,
           ...changes,
         };
@@ -218,7 +222,8 @@ export function useRecurringAppointments(
         setInstances((prev) => [...prev, exception]);
         return newId;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to create exception';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to create exception";
         setError(errorMessage);
         return;
       }
@@ -229,7 +234,7 @@ export function useRecurringAppointments(
   const generateInstances = useCallback(
     async (
       recurringId: string,
-      dateRange: { start: Date; end: Date; },
+      dateRange: { start: Date; end: Date },
     ): Promise<AppointmentInstance[]> => {
       try {
         // Placeholder implementation
@@ -237,19 +242,20 @@ export function useRecurringAppointments(
           {
             id: `generated-${Date.now()}`,
             recurring_appointment_id: recurringId,
-            date: dateRange.start.toISOString().split('T')[0],
-            start_time: '09:00',
-            end_time: '10:00',
-            status: 'scheduled',
+            date: dateRange.start.toISOString().split("T")[0],
+            start_time: "09:00",
+            end_time: "10:00",
+            status: "scheduled",
             is_exception: false,
           },
         ];
 
         return mockInstances;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to generate instances';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to generate instances";
         setError(errorMessage);
         return [];
       }

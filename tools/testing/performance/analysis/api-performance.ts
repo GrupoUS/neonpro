@@ -4,7 +4,7 @@
  * Tests Hono.dev backend API performance, load testing, and healthcare endpoints
  */
 
-import { performance } from 'node:perf_hooks';
+import { performance } from "node:perf_hooks";
 
 export interface ApiPerformanceMetrics {
   responseTime: {
@@ -58,7 +58,7 @@ export class ApiPerformanceTester {
    */
   async testEndpoint(
     endpoint: string,
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
+    method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
     payload?: any,
     iterations = 100,
   ): Promise<EndpointMetrics> {
@@ -73,7 +73,7 @@ export class ApiPerformanceTester {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
           method,
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             ...(this.authToken && {
               Authorization: `Bearer ${this.authToken}`,
             }),
@@ -100,7 +100,8 @@ export class ApiPerformanceTester {
     return {
       endpoint,
       method,
-      averageResponseTime: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+      averageResponseTime:
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
       maxResponseTime: Math.max(...responseTimes),
       minResponseTime: Math.min(...responseTimes),
       errorRate: errorCount / iterations,
@@ -112,22 +113,22 @@ export class ApiPerformanceTester {
 
   async testHealthcareEndpoints(): Promise<HealthcareApiMetrics> {
     const results: HealthcareApiMetrics = {
-      patientEndpoints: await this.testEndpoint('/api/patients', 'GET'),
-      appointmentEndpoints: await this.testEndpoint('/api/appointments', 'GET'),
+      patientEndpoints: await this.testEndpoint("/api/patients", "GET"),
+      appointmentEndpoints: await this.testEndpoint("/api/appointments", "GET"),
       medicalRecordEndpoints: await this.testEndpoint(
-        '/api/medical-records',
-        'GET',
+        "/api/medical-records",
+        "GET",
       ),
       authenticationEndpoints: await this.testEndpoint(
-        '/api/auth/validate',
-        'POST',
+        "/api/auth/validate",
+        "POST",
         {
           token: this.authToken,
         },
       ),
       emergencyEndpoints: await this.testEndpoint(
-        '/api/emergency/patient-data',
-        'GET',
+        "/api/emergency/patient-data",
+        "GET",
       ),
     };
 
@@ -167,7 +168,8 @@ export class ApiPerformanceTester {
 
     return {
       responseTime: {
-        average: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+        average:
+          responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
         p50: this.percentile(responseTimes, 0.5),
         p95: this.percentile(responseTimes, 0.95),
         p99: this.percentile(responseTimes, 0.99),
@@ -182,7 +184,7 @@ export class ApiPerformanceTester {
     startDelay: number,
     endTime: number,
     responseTimes: number[],
-  ): Promise<{ requests: number; errors: number; }> {
+  ): Promise<{ requests: number; errors: number }> {
     await new Promise((resolve) => setTimeout(resolve, startDelay));
 
     let requests = 0;
@@ -207,7 +209,9 @@ export class ApiPerformanceTester {
       }
 
       // Brief pause between requests (simulating user behavior)
-      await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 400));
+      await new Promise((resolve) =>
+        setTimeout(resolve, 100 + Math.random() * 400),
+      );
     }
 
     return { requests, errors };
@@ -242,19 +246,19 @@ export class ApiPerformanceTester {
 
     if (metrics.responseTime.p95 > 100) {
       recommendations.push(
-        'P95 response time exceeds 100ms. Consider API optimization.',
+        "P95 response time exceeds 100ms. Consider API optimization.",
       );
     }
 
     if (metrics.errorRate > 0.01) {
       recommendations.push(
-        'Error rate exceeds 1%. Investigate error handling.',
+        "Error rate exceeds 1%. Investigate error handling.",
       );
     }
 
     if (healthcareMetrics.emergencyEndpoints.averageResponseTime > 500) {
       recommendations.push(
-        'Emergency endpoints are slow. Critical for patient safety.',
+        "Emergency endpoints are slow. Critical for patient safety.",
       );
     }
 

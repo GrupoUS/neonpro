@@ -6,16 +6,16 @@
  * Supabase Healthcare Database Testing
  */
 
-const { createJestConfig } = require('../../jest.shared');
+const { createJestConfig } = require("../../jest.shared");
 
 /** @type {import('jest').Config} */
 const config = createJestConfig({
-  packageName: 'neonpro-db',
-  displayName: 'NeonPro Database',
+  packageName: "neonpro-db",
+  displayName: "NeonPro Database",
   rootDir: __dirname,
 
   // Additional setup files for database testing
-  additionalSetupFiles: ['<rootDir>/jest.setup.js'],
+  additionalSetupFiles: ["<rootDir>/jest.setup.js"],
 
   // Database coverage thresholds
   coverageThreshold: {
@@ -26,28 +26,28 @@ const config = createJestConfig({
       statements: 95,
     },
     // RLS policies (100% coverage)
-    '**/rls/**/*.{ts,tsx}': {
+    "**/rls/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
       statements: 100,
     },
     // Multi-tenant isolation (100% coverage)
-    '**/tenant/**/*.{ts,tsx}': {
+    "**/tenant/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
       statements: 100,
     },
     // Patient data operations (100% coverage)
-    '**/patient/**/*.{ts,tsx}': {
+    "**/patient/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
       statements: 100,
     },
     // Audit logging (100% coverage)
-    '**/audit/**/*.{ts,tsx}': {
+    "**/audit/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
@@ -57,39 +57,39 @@ const config = createJestConfig({
 
   // Module name mapping for database package
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@/schemas/(.*)$': '<rootDir>/src/schemas/$1',
-    '^@/queries/(.*)$': '<rootDir>/src/queries/$1',
-    '^@/mutations/(.*)$': '<rootDir>/src/mutations/$1',
-    '^@/rls/(.*)$': '<rootDir>/src/rls/$1',
-    '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
-    '^@/types/(.*)$': '<rootDir>/src/types/$1',
-    '^@/migrations/(.*)$': '<rootDir>/src/migrations/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@/schemas/(.*)$": "<rootDir>/src/schemas/$1",
+    "^@/queries/(.*)$": "<rootDir>/src/queries/$1",
+    "^@/mutations/(.*)$": "<rootDir>/src/mutations/$1",
+    "^@/rls/(.*)$": "<rootDir>/src/rls/$1",
+    "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^@/types/(.*)$": "<rootDir>/src/types/$1",
+    "^@/migrations/(.*)$": "<rootDir>/src/migrations/$1",
     // Test utilities
-    '^@test/(.*)$': '<rootDir>/../../test-utils/$1',
+    "^@test/(.*)$": "<rootDir>/../../test-utils/$1",
     // Database test utilities
-    '^@test/db/(.*)$': '<rootDir>/../../test-utils/database/$1',
+    "^@test/db/(.*)$": "<rootDir>/../../test-utils/database/$1",
   },
 
   // Database-specific test patterns
   testMatch: [
-    '<rootDir>/**/__tests__/**/*.(ts|tsx)',
-    '<rootDir>/**/*.(test|spec).(ts|tsx)',
-    '<rootDir>/src/queries/**/*.test.(ts|tsx)',
-    '<rootDir>/src/mutations/**/*.test.(ts|tsx)',
-    '<rootDir>/src/rls/**/*.test.(ts|tsx)',
-    '<rootDir>/src/migrations/**/*.test.(ts|tsx)',
+    "<rootDir>/**/__tests__/**/*.(ts|tsx)",
+    "<rootDir>/**/*.(test|spec).(ts|tsx)",
+    "<rootDir>/src/queries/**/*.test.(ts|tsx)",
+    "<rootDir>/src/mutations/**/*.test.(ts|tsx)",
+    "<rootDir>/src/rls/**/*.test.(ts|tsx)",
+    "<rootDir>/src/migrations/**/*.test.(ts|tsx)",
   ],
 
   // Coverage collection for database components
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.config.{js,ts}',
-    '!src/index.ts', // Export file
-    '!src/types/**/*', // Type definitions
-    '!src/schemas/**/*.sql', // SQL schema files
-    '!src/migrations/**/*.sql', // SQL migration files
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.config.{js,ts}",
+    "!src/index.ts", // Export file
+    "!src/types/**/*", // Type definitions
+    "!src/schemas/**/*.sql", // SQL schema files
+    "!src/migrations/**/*.sql", // SQL migration files
   ],
 
   // Database testing globals
@@ -109,22 +109,22 @@ const config = createJestConfig({
 
   // Reporters for database testing
   reporters: [
-    'default',
+    "default",
     [
-      'jest-junit',
+      "jest-junit",
       {
-        outputDirectory: 'coverage',
-        outputName: 'database-junit.xml',
-        suiteNameTemplate: '{title} - Database Tests',
+        outputDirectory: "coverage",
+        outputName: "database-junit.xml",
+        suiteNameTemplate: "{title} - Database Tests",
       },
     ],
   ],
 
   // Cache directory for database tests
-  cacheDirectory: '<rootDir>/../../node_modules/.cache/jest-db',
+  cacheDirectory: "<rootDir>/../../node_modules/.cache/jest-db",
 
   // Node environment for database operations
-  testEnvironment: 'node',
+  testEnvironment: "node",
 
   // Verbose output for database testing
   verbose: true,
@@ -150,8 +150,8 @@ const config = createJestConfig({
   forceExit: true,
 
   // Setup and teardown for database tests
-  globalSetup: '<rootDir>/jest.global-setup.js',
-  globalTeardown: '<rootDir>/jest.global-teardown.js',
+  globalSetup: "<rootDir>/jest.global-setup.js",
+  globalTeardown: "<rootDir>/jest.global-teardown.js",
 
   // Transform ignore patterns for database dependencies
   transformIgnorePatterns: [

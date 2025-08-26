@@ -10,13 +10,13 @@ import {
   startOfMonth,
   startOfWeek,
   subMonths,
-} from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Calendar, ChevronLeft, ChevronRight, Clock, Plus } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Calendar, ChevronLeft, ChevronRight, Clock, Plus } from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 // Types
 interface AppointmentData {
@@ -29,13 +29,13 @@ interface AppointmentData {
   startTime: Date;
   endTime: Date;
   status:
-    | 'scheduled'
-    | 'confirmed'
-    | 'in-progress'
-    | 'completed'
-    | 'cancelled'
-    | 'no-show';
-  type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
+    | "scheduled"
+    | "confirmed"
+    | "in-progress"
+    | "completed"
+    | "cancelled"
+    | "no-show";
+  type: "consultation" | "procedure" | "follow-up" | "emergency";
   location?: string;
   notes?: string;
 }
@@ -47,9 +47,9 @@ interface CalendarTimeSlot {
 }
 
 interface CalendarView {
-  month: 'month';
-  week: 'week';
-  day: 'day';
+  month: "month";
+  week: "week";
+  day: "day";
 }
 
 interface AppointmentCalendarProps {
@@ -61,10 +61,10 @@ interface AppointmentCalendarProps {
   onTimeSlotSelect?: (date: Date, time: string) => void;
   onViewChange?: (view: keyof CalendarView) => void;
   onAppointmentAction?: (
-    action: 'view' | 'edit' | 'cancel' | 'complete',
+    action: "view" | "edit" | "cancel" | "complete",
     appointment: AppointmentData,
   ) => void;
-  workingHours?: { start: string; end: string; };
+  workingHours?: { start: string; end: string };
   slotDuration?: number; // minutes
   showWeekends?: boolean;
   loading?: boolean;
@@ -79,13 +79,13 @@ export const AppointmentCalendar = React.forwardRef<
     {
       appointments = [],
       selectedDate = new Date(),
-      view = 'month',
+      view = "month",
       onDateSelect,
       onAppointmentSelect,
       onTimeSlotSelect,
       onViewChange,
       onAppointmentAction,
-      workingHours = { start: '08:00', end: '18:00' },
+      workingHours = { start: "08:00", end: "18:00" },
       slotDuration = 30,
       showWeekends = false,
       loading = false,
@@ -108,58 +108,58 @@ export const AppointmentCalendar = React.forwardRef<
 
     const _getInitials = (name: string) => {
       return name
-        .split(' ')
+        .split(" ")
         .map((word) => word.charAt(0))
-        .join('')
+        .join("")
         .toUpperCase()
         .slice(0, 2);
     };
 
     const getStatusVariant = (status: string) => {
       switch (status) {
-        case 'confirmed': {
-          return 'confirmed';
+        case "confirmed": {
+          return "confirmed";
         }
-        case 'scheduled': {
-          return 'default';
+        case "scheduled": {
+          return "default";
         }
-        case 'in-progress': {
-          return 'pending';
+        case "in-progress": {
+          return "pending";
         }
-        case 'completed': {
-          return 'confirmed';
+        case "completed": {
+          return "confirmed";
         }
-        case 'cancelled': {
-          return 'cancelled';
+        case "cancelled": {
+          return "cancelled";
         }
-        case 'no-show': {
-          return 'cancelled';
+        case "no-show": {
+          return "cancelled";
         }
         default: {
-          return 'default';
+          return "default";
         }
       }
     };
 
     const getStatusLabel = (status: string) => {
       switch (status) {
-        case 'scheduled': {
-          return 'Agendado';
+        case "scheduled": {
+          return "Agendado";
         }
-        case 'confirmed': {
-          return 'Confirmado';
+        case "confirmed": {
+          return "Confirmado";
         }
-        case 'in-progress': {
-          return 'Em andamento';
+        case "in-progress": {
+          return "Em andamento";
         }
-        case 'completed': {
-          return 'Concluído';
+        case "completed": {
+          return "Concluído";
         }
-        case 'cancelled': {
-          return 'Cancelado';
+        case "cancelled": {
+          return "Cancelado";
         }
-        case 'no-show': {
-          return 'Faltou';
+        case "no-show": {
+          return "Faltou";
         }
         default: {
           return status;
@@ -168,20 +168,20 @@ export const AppointmentCalendar = React.forwardRef<
     };
     const getTypeIcon = (type: string) => {
       switch (type) {
-        case 'consultation': {
-          return '👩‍⚕️';
+        case "consultation": {
+          return "👩‍⚕️";
         }
-        case 'procedure': {
-          return '🔧';
+        case "procedure": {
+          return "🔧";
         }
-        case 'follow-up': {
-          return '🔄';
+        case "follow-up": {
+          return "🔄";
         }
-        case 'emergency': {
-          return '🚨';
+        case "emergency": {
+          return "🚨";
         }
         default: {
-          return '📅';
+          return "📅";
         }
       }
     };
@@ -190,9 +190,9 @@ export const AppointmentCalendar = React.forwardRef<
     const generateTimeSlots = (): CalendarTimeSlot[] => {
       const slots: CalendarTimeSlot[] = [];
       const [startHour, startMinute] = workingHours.start
-        .split(':')
+        .split(":")
         .map(Number);
-      const [endHour, endMinute] = workingHours.end.split(':').map(Number);
+      const [endHour, endMinute] = workingHours.end.split(":").map(Number);
 
       const startTime = startHour * 60 + startMinute;
       const endTime = endHour * 60 + endMinute;
@@ -200,16 +200,14 @@ export const AppointmentCalendar = React.forwardRef<
       for (let time = startTime; time < endTime; time += slotDuration) {
         const hours = Math.floor(time / 60);
         const minutes = time % 60;
-        const timeString = `${hours.toString().padStart(2, '0')}:${
-          minutes
-            .toString()
-            .padStart(2, '0')
-        }`;
+        const timeString = `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}`;
 
         const dayAppointments = appointments.filter(
           (apt) =>
-            isSameDay(apt.startTime, currentDate)
-            && format(apt.startTime, 'HH:mm') === timeString,
+            isSameDay(apt.startTime, currentDate) &&
+            format(apt.startTime, "HH:mm") === timeString,
         );
 
         slots.push({
@@ -223,10 +221,11 @@ export const AppointmentCalendar = React.forwardRef<
     };
 
     // Navigation functions
-    const navigateMonth = (direction: 'prev' | 'next') => {
-      const newDate = direction === 'prev'
-        ? subMonths(currentDate, 1)
-        : addMonths(currentDate, 1);
+    const navigateMonth = (direction: "prev" | "next") => {
+      const newDate =
+        direction === "prev"
+          ? subMonths(currentDate, 1)
+          : addMonths(currentDate, 1);
       setCurrentDate(newDate);
       onDateSelect?.(newDate);
     };
@@ -269,7 +268,7 @@ export const AppointmentCalendar = React.forwardRef<
       return (
         <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg bg-muted">
           {/* Days of week header */}
-          {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(
+          {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(
             (day, index) => {
               if (!showWeekends && (index === 0 || index === 6)) {
                 return;
@@ -291,7 +290,9 @@ export const AppointmentCalendar = React.forwardRef<
               return;
             }
 
-            const dayAppointments = appointments.filter((apt) => isSameDay(apt.startTime, day));
+            const dayAppointments = appointments.filter((apt) =>
+              isSameDay(apt.startTime, day),
+            );
             const isCurrentMonth = isSameMonth(day, currentDate);
             const isSelected = isSameDay(day, selectedDate);
             const isToday = isSameDay(day, new Date());
@@ -299,30 +300,30 @@ export const AppointmentCalendar = React.forwardRef<
             return (
               <div
                 className={cn(
-                  'min-h-[80px] cursor-pointer bg-background p-2 transition-colors hover:bg-muted/50',
-                  !isCurrentMonth && 'bg-muted/30 text-muted-foreground',
-                  isSelected && 'ring-2 ring-primary',
-                  isToday && 'bg-primary/5',
+                  "min-h-[80px] cursor-pointer bg-background p-2 transition-colors hover:bg-muted/50",
+                  !isCurrentMonth && "bg-muted/30 text-muted-foreground",
+                  isSelected && "ring-2 ring-primary",
+                  isToday && "bg-primary/5",
                 )}
                 key={day.toString()}
                 onClick={() => handleDateClick(day)}
               >
                 <div className="mb-1 font-medium text-sm">
-                  {format(day, 'd')}
+                  {format(day, "d")}
                 </div>
                 <div className="space-y-1">
                   {dayAppointments.slice(0, 2).map((appointment, _index) => (
                     <div
                       className={cn(
-                        'cursor-pointer truncate rounded p-1 text-xs',
-                        getStatusVariant(appointment.status) === 'confirmed'
-                          && 'bg-green-100 text-green-800',
-                        getStatusVariant(appointment.status) === 'pending'
-                          && 'bg-yellow-100 text-yellow-800',
-                        getStatusVariant(appointment.status) === 'cancelled'
-                          && 'bg-red-100 text-red-800',
-                        getStatusVariant(appointment.status) === 'default'
-                          && 'bg-blue-100 text-blue-800',
+                        "cursor-pointer truncate rounded p-1 text-xs",
+                        getStatusVariant(appointment.status) === "confirmed" &&
+                          "bg-green-100 text-green-800",
+                        getStatusVariant(appointment.status) === "pending" &&
+                          "bg-yellow-100 text-yellow-800",
+                        getStatusVariant(appointment.status) === "cancelled" &&
+                          "bg-red-100 text-red-800",
+                        getStatusVariant(appointment.status) === "default" &&
+                          "bg-blue-100 text-blue-800",
                       )}
                       key={appointment.id}
                       onClick={(e) => {
@@ -330,7 +331,8 @@ export const AppointmentCalendar = React.forwardRef<
                         onAppointmentSelect?.(appointment);
                       }}
                     >
-                      {format(appointment.startTime, 'HH:mm')} {appointment.patientName}
+                      {format(appointment.startTime, "HH:mm")}{" "}
+                      {appointment.patientName}
                     </div>
                   ))}
                   {dayAppointments.length > 2 && (
@@ -363,9 +365,9 @@ export const AppointmentCalendar = React.forwardRef<
             {timeSlots.map((slot) => (
               <div
                 className={cn(
-                  'flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors',
-                  slot.available && 'border-dashed hover:bg-muted/50',
-                  !slot.available && 'bg-muted/30',
+                  "flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors",
+                  slot.available && "border-dashed hover:bg-muted/50",
+                  !slot.available && "bg-muted/30",
                 )}
                 key={slot.time}
                 onClick={() => handleTimeSlotClick(slot)}
@@ -374,42 +376,40 @@ export const AppointmentCalendar = React.forwardRef<
                   {slot.time}
                 </div>
 
-                {slot.available
-                  ? (
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                      <Plus className="h-4 w-4" />
-                      Disponível
-                    </div>
-                  )
-                  : (
-                    <div className="flex-1 space-y-1">
-                      {slot.appointments.map((appointment) => (
-                        <div
-                          className="flex items-center gap-3 rounded border bg-background p-2"
-                          key={appointment.id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAppointmentSelect?.(appointment);
-                          }}
-                        >
-                          <div className="text-lg">
-                            {getTypeIcon(appointment.type)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium">
-                              {appointment.patientName}
-                            </div>
-                            <div className="text-muted-foreground text-sm">
-                              {appointment.title}
-                            </div>
-                          </div>
-                          <Badge variant={getStatusVariant(appointment.status)}>
-                            {getStatusLabel(appointment.status)}
-                          </Badge>
+                {slot.available ? (
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                    <Plus className="h-4 w-4" />
+                    Disponível
+                  </div>
+                ) : (
+                  <div className="flex-1 space-y-1">
+                    {slot.appointments.map((appointment) => (
+                      <div
+                        className="flex items-center gap-3 rounded border bg-background p-2"
+                        key={appointment.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onAppointmentSelect?.(appointment);
+                        }}
+                      >
+                        <div className="text-lg">
+                          {getTypeIcon(appointment.type)}
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <div className="flex-1">
+                          <div className="font-medium">
+                            {appointment.patientName}
+                          </div>
+                          <div className="text-muted-foreground text-sm">
+                            {appointment.title}
+                          </div>
+                        </div>
+                        <Badge variant={getStatusVariant(appointment.status)}>
+                          {getStatusLabel(appointment.status)}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -417,7 +417,7 @@ export const AppointmentCalendar = React.forwardRef<
       );
     };
     return (
-      <div className={cn('space-y-4', className)} ref={ref}>
+      <div className={cn("space-y-4", className)} ref={ref}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -426,7 +426,7 @@ export const AppointmentCalendar = React.forwardRef<
             </h2>
             <div className="flex items-center">
               <Button
-                onClick={() => navigateMonth('prev')}
+                onClick={() => navigateMonth("prev")}
                 size="sm"
                 variant="outline"
               >
@@ -441,7 +441,7 @@ export const AppointmentCalendar = React.forwardRef<
                 Hoje
               </Button>
               <Button
-                onClick={() => navigateMonth('next')}
+                onClick={() => navigateMonth("next")}
                 size="sm"
                 variant="outline"
               >
@@ -454,17 +454,17 @@ export const AppointmentCalendar = React.forwardRef<
             {/* View toggles */}
             <div className="flex items-center rounded-lg border p-1">
               <Button
-                onClick={() => handleViewChange('month')}
+                onClick={() => handleViewChange("month")}
                 size="sm"
-                variant={currentView === 'month' ? 'default' : 'ghost'}
+                variant={currentView === "month" ? "default" : "ghost"}
               >
                 <Calendar className="h-4 w-4" />
                 Mês
               </Button>
               <Button
-                onClick={() => handleViewChange('day')}
+                onClick={() => handleViewChange("day")}
                 size="sm"
-                variant={currentView === 'day' ? 'default' : 'ghost'}
+                variant={currentView === "day" ? "default" : "ghost"}
               >
                 <Clock className="h-4 w-4" />
                 Dia
@@ -474,30 +474,33 @@ export const AppointmentCalendar = React.forwardRef<
         </div>
 
         {/* Calendar content */}
-        {loading
-          ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 animate-pulse" />
-                <span className="text-muted-foreground text-sm">
-                  Carregando agenda...
-                </span>
-              </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 animate-pulse" />
+              <span className="text-muted-foreground text-sm">
+                Carregando agenda...
+              </span>
             </div>
-          )
-          : (
-            <div>
-              {currentView === 'month' && renderMonthView()}
-              {currentView === 'day' && renderDayView()}
-            </div>
-          )}
+          </div>
+        ) : (
+          <div>
+            {currentView === "month" && renderMonthView()}
+            {currentView === "day" && renderDayView()}
+          </div>
+        )}
 
         {/* Summary */}
         <div className="flex items-center justify-between text-muted-foreground text-sm">
           <div className="flex items-center gap-4">
             <span>{appointments.length} agendamentos total</span>
             <span>
-              {appointments.filter((apt) => isSameDay(apt.startTime, currentDate)).length} hoje
+              {
+                appointments.filter((apt) =>
+                  isSameDay(apt.startTime, currentDate),
+                ).length
+              }{" "}
+              hoje
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -519,6 +522,11 @@ export const AppointmentCalendar = React.forwardRef<
     );
   },
 );
-AppointmentCalendar.displayName = 'AppointmentCalendar';
+AppointmentCalendar.displayName = "AppointmentCalendar";
 
-export type { AppointmentCalendarProps, AppointmentData, CalendarTimeSlot, CalendarView };
+export type {
+  AppointmentCalendarProps,
+  AppointmentData,
+  CalendarTimeSlot,
+  CalendarView,
+};

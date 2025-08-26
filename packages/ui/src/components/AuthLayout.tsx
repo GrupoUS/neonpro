@@ -1,6 +1,6 @@
-import { Heart } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
+import { Heart } from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface AuthLayoutProps {
   logoUrl?: string;
   backgroundImage?: string;
   className?: string;
-  formWidth?: 'sm' | 'md' | 'lg';
+  formWidth?: "sm" | "md" | "lg";
   showLogo?: boolean;
   showBackground?: boolean;
 }
@@ -23,7 +23,7 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
       logoUrl,
       backgroundImage,
       className,
-      formWidth = 'md',
+      formWidth = "md",
       showLogo = true,
       showBackground = true,
       ...props
@@ -31,22 +31,24 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
     ref,
   ) => {
     const formWidthClasses = {
-      sm: 'max-w-sm',
-      md: 'max-w-md',
-      lg: 'max-w-lg',
+      sm: "max-w-sm",
+      md: "max-w-md",
+      lg: "max-w-lg",
     };
 
     return (
       <div
         className={cn(
-          'flex min-h-screen items-center justify-center',
-          showBackground && 'bg-gradient-to-br from-blue-50 to-indigo-100',
+          "flex min-h-screen items-center justify-center",
+          showBackground && "bg-gradient-to-br from-blue-50 to-indigo-100",
           className,
         )}
         ref={ref}
-        style={backgroundImage
-          ? { backgroundImage: `url(${backgroundImage})` }
-          : undefined}
+        style={
+          backgroundImage
+            ? { backgroundImage: `url(${backgroundImage})` }
+            : undefined
+        }
         {...props}
       >
         {/* Background Overlay */}
@@ -55,26 +57,24 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
         {/* Auth Card */}
         <div
           className={cn(
-            'relative z-10 mx-4 w-full space-y-6 rounded-lg border bg-card p-8 shadow-lg',
+            "relative z-10 mx-4 w-full space-y-6 rounded-lg border bg-card p-8 shadow-lg",
             formWidthClasses[formWidth],
           )}
         >
           {/* Logo */}
           {showLogo && (
             <div className="text-center">
-              {logoUrl
-                ? (
-                  <img
-                    alt="Logo"
-                    className="mx-auto mb-4 h-12 w-auto"
-                    src={logoUrl}
-                  />
-                )
-                : (
-                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-                    <Heart className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                )}
+              {logoUrl ? (
+                <img
+                  alt="Logo"
+                  className="mx-auto mb-4 h-12 w-auto"
+                  src={logoUrl}
+                />
+              ) : (
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
+                  <Heart className="h-6 w-6 text-primary-foreground" />
+                </div>
+              )}
 
               {title && (
                 <h1 className="font-semibold text-2xl tracking-tight">
@@ -82,7 +82,9 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
                 </h1>
               )}
 
-              {subtitle && <p className="mt-2 text-muted-foreground">{subtitle}</p>}
+              {subtitle && (
+                <p className="mt-2 text-muted-foreground">{subtitle}</p>
+              )}
             </div>
           )}
 
@@ -110,7 +112,7 @@ const AuthLayout = React.forwardRef<HTMLDivElement, AuthLayoutProps>(
   },
 );
 
-AuthLayout.displayName = 'AuthLayout';
+AuthLayout.displayName = "AuthLayout";
 
 export { AuthLayout };
 export type { AuthLayoutProps };

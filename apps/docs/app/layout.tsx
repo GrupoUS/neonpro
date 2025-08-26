@@ -1,19 +1,19 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'NeonPro Documentation',
-  description: 'Comprehensive documentation for NeonPro Healthcare Platform',
+  title: "NeonPro Documentation",
+  description: "Comprehensive documentation for NeonPro Healthcare Platform",
   keywords: [
-    'healthcare',
-    'documentation',
-    'API',
-    'components',
-    'HIPAA',
-    'ANVISA',
+    "healthcare",
+    "documentation",
+    "API",
+    "components",
+    "HIPAA",
+    "ANVISA",
   ],
 };
 

@@ -47,22 +47,34 @@ const mockPatientsHook = {
   refetch: vi.fn(),
 };
 
-vi.mock<typeof import('@supabase/supabase-js')>("@supabase/supabase-js", () => ({
-  createClient: () => mockSupabaseClient,
-}));
+vi.mock<typeof import("@supabase/supabase-js")>(
+  "@supabase/supabase-js",
+  () => ({
+    createClient: () => mockSupabaseClient,
+  }),
+);
 
-vi.mock<typeof import('../../utils/cpf-validator')>("../../utils/cpf-validator", () => ({
-  default: mockCpfValidator,
-  CpfValidator: mockCpfValidator,
-}));
+vi.mock<typeof import("../../utils/cpf-validator")>(
+  "../../utils/cpf-validator",
+  () => ({
+    default: mockCpfValidator,
+    CpfValidator: mockCpfValidator,
+  }),
+);
 
-vi.mock<typeof import('../../hooks/enhanced/use-patients')>("../../hooks/enhanced/use-patients", () => ({
-  usePatients: () => mockPatientsHook,
-}));
+vi.mock<typeof import("../../hooks/enhanced/use-patients")>(
+  "../../hooks/enhanced/use-patients",
+  () => ({
+    usePatients: () => mockPatientsHook,
+  }),
+);
 
-vi.mock<typeof import('../../lib/utils/cpf-validator')>("../../lib/utils/cpf-validator", () => ({
-  CpfValidator: mockCpfValidator,
-}));
+vi.mock<typeof import("../../lib/utils/cpf-validator")>(
+  "../../lib/utils/cpf-validator",
+  () => ({
+    CpfValidator: mockCpfValidator,
+  }),
+);
 
 // Test wrapper component
 const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -508,10 +520,13 @@ describe("patient CRUD Integration Tests", () => {
       };
 
       // Mock data export service
-      jest.spyOn(mockPatientsHook, 'exportPatientData').mockImplementation().mockResolvedValue({
-        data: exportedData,
-        error: undefined,
-      });
+      jest
+        .spyOn(mockPatientsHook, "exportPatientData")
+        .mockImplementation()
+        .mockResolvedValue({
+          data: exportedData,
+          error: undefined,
+        });
 
       const result = await mockPatientsHook.exportPatientData("patient-123");
 

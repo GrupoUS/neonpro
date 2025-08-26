@@ -10,12 +10,16 @@
  * - Error boundaries
  */
 
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import { createTranslator, defaultLocale, getDictionary } from '../lib/i18n/i18n';
-import type { Dictionary, Locale } from '../lib/i18n/i18n';
+import { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import {
+  createTranslator,
+  defaultLocale,
+  getDictionary,
+} from "../lib/i18n/i18n";
+import type { Dictionary, Locale } from "../lib/i18n/i18n";
 
 interface TranslationContextType {
   locale: Locale;
@@ -81,14 +85,14 @@ export function TranslationProvider({
   const handleSetLocale = (newLocale: Locale) => {
     setLocale(newLocale);
     try {
-      localStorage.setItem('neonpro-locale', newLocale);
+      localStorage.setItem("neonpro-locale", newLocale);
     } catch {}
   };
 
   // Load saved locale preference on mount
   useEffect(() => {
     try {
-      const savedLocale = localStorage.getItem('neonpro-locale') as Locale;
+      const savedLocale = localStorage.getItem("neonpro-locale") as Locale;
       if (savedLocale && savedLocale !== initialLocale) {
         setLocale(savedLocale);
       }
@@ -119,7 +123,7 @@ export function useTranslation() {
   const context = useContext(TranslationContext);
 
   if (context === undefined) {
-    throw new Error('useTranslation must be used within a TranslationProvider');
+    throw new Error("useTranslation must be used within a TranslationProvider");
   }
 
   return context;
@@ -177,7 +181,7 @@ export function Translation({
  */
 export function withTranslation<P extends object>(
   Component: React.ComponentType<
-    P & { t: (key: string, params?: Record<string, string | number>) => string; }
+    P & { t: (key: string, params?: Record<string, string | number>) => string }
   >,
 ) {
   return function TranslatedComponent(props: P) {
@@ -211,47 +215,47 @@ export function useTranslationNamespace(namespace: string) {
  * Healthcare-specific translation hooks
  */
 export function usePatientTranslations() {
-  return useTranslationNamespace('patients');
+  return useTranslationNamespace("patients");
 }
 
 export function useAppointmentTranslations() {
-  return useTranslationNamespace('appointments');
+  return useTranslationNamespace("appointments");
 }
 
 export function useServiceTranslations() {
-  return useTranslationNamespace('services');
+  return useTranslationNamespace("services");
 }
 
 export function useProfessionalTranslations() {
-  return useTranslationNamespace('professionals');
+  return useTranslationNamespace("professionals");
 }
 
 export function useSchedulingTranslations() {
-  return useTranslationNamespace('scheduling');
+  return useTranslationNamespace("scheduling");
 }
 
 export function useFinancialTranslations() {
-  return useTranslationNamespace('financial');
+  return useTranslationNamespace("financial");
 }
 
 export function useNotificationTranslations() {
-  return useTranslationNamespace('notifications');
+  return useTranslationNamespace("notifications");
 }
 
 export function useErrorTranslations() {
-  return useTranslationNamespace('errors');
+  return useTranslationNamespace("errors");
 }
 
 export function useSuccessTranslations() {
-  return useTranslationNamespace('success');
+  return useTranslationNamespace("success");
 }
 
 export function useLGPDTranslations() {
-  return useTranslationNamespace('lgpd');
+  return useTranslationNamespace("lgpd");
 }
 
 export function useAccessibilityTranslations() {
-  return useTranslationNamespace('accessibility');
+  return useTranslationNamespace("accessibility");
 }
 
 /**
@@ -262,17 +266,19 @@ export function useFormTranslations() {
   const { t } = useTranslation();
 
   return {
-    required: (field: string) => t('errors.requiredField', { field }),
-    invalid: (field: string) => t('errors.invalidFormat', { field }),
-    email: () => t('errors.invalidEmail'),
-    phone: () => t('errors.invalidPhone'),
-    cpf: () => t('errors.invalidCpf'),
-    date: () => t('errors.invalidDate'),
-    dateInPast: () => t('errors.dateInPast'),
-    dateInFuture: () => t('errors.dateInFuture'),
-    minLength: (field: string, min: number) => t('errors.minLength', { field, min }),
-    maxLength: (field: string, max: number) => t('errors.maxLength', { field, max }),
-    confirmation: (field: string) => t('errors.confirmation', { field }),
+    required: (field: string) => t("errors.requiredField", { field }),
+    invalid: (field: string) => t("errors.invalidFormat", { field }),
+    email: () => t("errors.invalidEmail"),
+    phone: () => t("errors.invalidPhone"),
+    cpf: () => t("errors.invalidCpf"),
+    date: () => t("errors.invalidDate"),
+    dateInPast: () => t("errors.dateInPast"),
+    dateInFuture: () => t("errors.dateInFuture"),
+    minLength: (field: string, min: number) =>
+      t("errors.minLength", { field, min }),
+    maxLength: (field: string, max: number) =>
+      t("errors.maxLength", { field, max }),
+    confirmation: (field: string) => t("errors.confirmation", { field }),
   };
 }
 
@@ -284,18 +290,21 @@ export function useA11yTranslations() {
   const { t } = useTranslation();
 
   return {
-    skipToContent: () => t('accessibility.skipToContent'),
-    skipToNavigation: () => t('accessibility.skipToNavigation'),
-    loading: (item?: string) => item ? `${t('common.loading')} ${item}` : t('common.loading'),
-    saving: (item?: string) => item ? `${t('common.saving')} ${item}` : t('common.saving'),
+    skipToContent: () => t("accessibility.skipToContent"),
+    skipToNavigation: () => t("accessibility.skipToNavigation"),
+    loading: (item?: string) =>
+      item ? `${t("common.loading")} ${item}` : t("common.loading"),
+    saving: (item?: string) =>
+      item ? `${t("common.saving")} ${item}` : t("common.saving"),
     buttonPressed: (button: string, pressed: boolean) =>
       pressed ? `${button} pressionado` : `${button} não pressionado`,
     expandedState: (item: string, expanded: boolean) =>
       expanded ? `${item} expandido` : `${item} recolhido`,
-    menuItemOf: (current: number, total: number) => `Item ${current} de ${total}`,
+    menuItemOf: (current: number, total: number) =>
+      `Item ${current} de ${total}`,
     pageOf: (current: number, total: number) => `Página ${current} de ${total}`,
-    required: () => t('common.required'),
-    optional: () => t('common.optional'),
+    required: () => t("common.required"),
+    optional: () => t("common.optional"),
     error: (field: string) => `Erro em ${field}`,
     success: (action: string) => `${action} realizado com sucesso`,
   };
@@ -310,31 +319,31 @@ export function useDateTimeTranslations() {
   return {
     formatDate: (date: Date) => {
       return new Intl.DateTimeFormat(locale, {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
       }).format(date);
     },
 
     formatTime: (date: Date) => {
       return new Intl.DateTimeFormat(locale, {
-        hour: '2-digit',
-        minute: '2-digit',
+        hour: "2-digit",
+        minute: "2-digit",
       }).format(date);
     },
 
     formatDateTime: (date: Date) => {
       return new Intl.DateTimeFormat(locale, {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       }).format(date);
     },
 
     formatRelativeTime: (date: Date) => {
-      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
       const now = new Date();
       const diffInMs = date.getTime() - now.getTime();
       const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24));
@@ -343,29 +352,29 @@ export function useDateTimeTranslations() {
         const diffInHours = Math.round(diffInMs / (1000 * 60 * 60));
         if (Math.abs(diffInHours) < 1) {
           const diffInMinutes = Math.round(diffInMs / (1000 * 60));
-          return rtf.format(diffInMinutes, 'minute');
+          return rtf.format(diffInMinutes, "minute");
         }
-        return rtf.format(diffInHours, 'hour');
+        return rtf.format(diffInHours, "hour");
       }
 
-      return rtf.format(diffInDays, 'day');
+      return rtf.format(diffInDays, "day");
     },
 
     dayNames: {
-      monday: t('scheduling.monday'),
-      tuesday: t('scheduling.tuesday'),
-      wednesday: t('scheduling.wednesday'),
-      thursday: t('scheduling.thursday'),
-      friday: t('scheduling.friday'),
-      saturday: t('scheduling.saturday'),
-      sunday: t('scheduling.sunday'),
+      monday: t("scheduling.monday"),
+      tuesday: t("scheduling.tuesday"),
+      wednesday: t("scheduling.wednesday"),
+      thursday: t("scheduling.thursday"),
+      friday: t("scheduling.friday"),
+      saturday: t("scheduling.saturday"),
+      sunday: t("scheduling.sunday"),
     },
 
     periods: {
-      morning: t('scheduling.morning'),
-      afternoon: t('scheduling.afternoon'),
-      evening: t('scheduling.evening'),
-      night: t('scheduling.night'),
+      morning: t("scheduling.morning"),
+      afternoon: t("scheduling.afternoon"),
+      evening: t("scheduling.evening"),
+      night: t("scheduling.night"),
     },
   };
 }
@@ -377,9 +386,9 @@ export function useNumberTranslations() {
   const { locale } = useTranslation();
 
   return {
-    formatCurrency: (amount: number, currency = 'BRL') => {
+    formatCurrency: (amount: number, currency = "BRL") => {
       return new Intl.NumberFormat(locale, {
-        style: 'currency',
+        style: "currency",
         currency,
       }).format(amount);
     },
@@ -390,7 +399,7 @@ export function useNumberTranslations() {
 
     formatPercent: (num: number, decimals = 0) => {
       return new Intl.NumberFormat(locale, {
-        style: 'percent',
+        style: "percent",
         minimumFractionDigits: decimals,
         maximumFractionDigits: decimals,
       }).format(num / 100);

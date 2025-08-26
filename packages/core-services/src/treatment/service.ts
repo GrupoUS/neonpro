@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns';
+import { addDays } from "date-fns";
 import type {
   CompleteTreatmentSessionData,
   CreateTreatmentPlanData,
@@ -6,8 +6,8 @@ import type {
   TreatmentPlan,
   TreatmentSession,
   UpdateTreatmentPlanData,
-} from './types';
-import { TreatmentStatus } from './types';
+} from "./types";
+import { TreatmentStatus } from "./types";
 
 export interface TreatmentRepository {
   // Treatment plan operations
@@ -49,7 +49,7 @@ export class TreatmentService {
       const treatmentPlan = await this.repository.createTreatmentPlan(data);
       return treatmentPlan;
     } catch {
-      throw new Error('Failed to create treatment plan');
+      throw new Error("Failed to create treatment plan");
     }
   }
   async updateTreatmentPlan(
@@ -60,7 +60,7 @@ export class TreatmentService {
       const treatmentPlan = await this.repository.updateTreatmentPlan(id, data);
       return treatmentPlan;
     } catch {
-      throw new Error('Failed to update treatment plan');
+      throw new Error("Failed to update treatment plan");
     }
   }
 
@@ -83,7 +83,7 @@ export class TreatmentService {
     await this.repository.updateTreatmentPlan(id, {
       id,
       isActive: false,
-      notes: reason ? `Deactivated: ${reason}` : 'Treatment plan deactivated',
+      notes: reason ? `Deactivated: ${reason}` : "Treatment plan deactivated",
     });
   }
 
@@ -97,23 +97,23 @@ export class TreatmentService {
         data.treatmentPlanId,
       );
       if (!treatmentPlan) {
-        throw new Error('Treatment plan not found');
+        throw new Error("Treatment plan not found");
       }
 
       if (!treatmentPlan.isActive) {
-        throw new Error('Cannot create session for inactive treatment plan');
+        throw new Error("Cannot create session for inactive treatment plan");
       }
 
       if (treatmentPlan.completedSessions >= treatmentPlan.totalSessions) {
         throw new Error(
-          'All sessions for this treatment plan have been completed',
+          "All sessions for this treatment plan have been completed",
         );
       }
 
       const session = await this.repository.createTreatmentSession(data);
       return session;
     } catch {
-      throw new Error('Failed to create treatment session');
+      throw new Error("Failed to create treatment session");
     }
   }
   async completeTreatmentSession(
@@ -136,7 +136,7 @@ export class TreatmentService {
         session.treatmentPlanId,
       );
       if (!treatmentPlan) {
-        throw new Error('Treatment plan not found');
+        throw new Error("Treatment plan not found");
       }
 
       const updatedPlan = await this.repository.updateTreatmentPlan(
@@ -166,7 +166,7 @@ export class TreatmentService {
         nextSessionDate,
       };
     } catch {
-      throw new Error('Failed to complete treatment session');
+      throw new Error("Failed to complete treatment session");
     }
   }
 
@@ -188,18 +188,21 @@ export class TreatmentService {
   }> {
     const plan = await this.repository.getTreatmentPlan(treatmentPlanId);
     if (!plan) {
-      throw new Error('Treatment plan not found');
+      throw new Error("Treatment plan not found");
     }
 
-    const sessions = await this.repository.getTreatmentSessionsByPlan(treatmentPlanId);
+    const sessions =
+      await this.repository.getTreatmentSessionsByPlan(treatmentPlanId);
     const completedSessions = sessions.filter((s) => s.isCompleted);
-    const progressPercentage = (completedSessions.length / plan.totalSessions) * 100;
+    const progressPercentage =
+      (completedSessions.length / plan.totalSessions) * 100;
 
     let status: TreatmentStatus;
     if (!plan.isActive) {
-      status = plan.completedSessions === plan.totalSessions
-        ? TreatmentStatus.COMPLETED
-        : TreatmentStatus.CANCELLED;
+      status =
+        plan.completedSessions === plan.totalSessions
+          ? TreatmentStatus.COMPLETED
+          : TreatmentStatus.CANCELLED;
     } else if (plan.completedSessions === 0) {
       status = TreatmentStatus.PLANNED;
     } else if (plan.completedSessions < plan.totalSessions) {
@@ -210,8 +213,8 @@ export class TreatmentService {
 
     let nextSessionDate: Date | undefined;
     if (
-      status === TreatmentStatus.IN_PROGRESS
-      && completedSessions.length > 0
+      status === TreatmentStatus.IN_PROGRESS &&
+      completedSessions.length > 0
     ) {
       const lastSession = completedSessions.at(-1);
       nextSessionDate = addDays(lastSession.date, plan.sessionInterval);
@@ -236,11 +239,11 @@ export class TreatmentService {
     completedPlans: number;
     totalSessions: number;
     completedSessions: number;
-    popularTreatments: { treatmentType: string; count: number; }[];
+    popularTreatments: { treatmentType: string; count: number }[];
   }> {
     const plans = providerId
       ? await this.repository.getTreatmentPlansByProvider(providerId)
-      : await this.repository.getTreatmentPlansByPatient(''); // This would need to be adjusted
+      : await this.repository.getTreatmentPlansByPatient(""); // This would need to be adjusted
 
     // Filter by date range if provided
     let filteredPlans = plans;

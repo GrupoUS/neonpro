@@ -7,7 +7,7 @@
  * @since 2025-01-17
  */
 
-import type { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 
 /**
  * Audit Trail Entry Interface
@@ -24,19 +24,19 @@ export interface AuditTrailEntry {
   event_timestamp: Date;
   /** Type of event being audited */
   event_type:
-    | 'data_access'
-    | 'data_modification'
-    | 'system_access'
-    | 'compliance_action'
-    | 'constitutional_event';
+    | "data_access"
+    | "data_modification"
+    | "system_access"
+    | "compliance_action"
+    | "constitutional_event";
   /** Event category classification */
   event_category:
-    | 'authentication'
-    | 'authorization'
-    | 'data_processing'
-    | 'compliance_validation'
-    | 'patient_interaction'
-    | 'administrative';
+    | "authentication"
+    | "authorization"
+    | "data_processing"
+    | "compliance_validation"
+    | "patient_interaction"
+    | "administrative";
   /** User who performed the action */
   user_id: string;
   /** User role at time of action */
@@ -71,7 +71,7 @@ export interface AuditTrailEntry {
     /** Constitutional requirement triggered */
     constitutional_requirement: string;
     /** Privacy impact assessment */
-    privacy_impact: 'none' | 'low' | 'medium' | 'high';
+    privacy_impact: "none" | "low" | "medium" | "high";
   };
   /** Associated clinic/tenant */
   tenant_id: string;
@@ -107,10 +107,10 @@ export interface AuditTrailConfiguration {
   };
   /** Audit detail level */
   audit_detail_level:
-    | 'minimal'
-    | 'standard'
-    | 'comprehensive'
-    | 'constitutional_full';
+    | "minimal"
+    | "standard"
+    | "comprehensive"
+    | "constitutional_full";
   /** Real-time monitoring */
   real_time_monitoring: boolean;
   /** Automated alerts configuration */
@@ -164,9 +164,9 @@ export interface AuditTrailGenerationParams {
     /** User IDs to include */
     user_ids?: string[];
     /** Event types to include */
-    event_types?: AuditTrailEntry['event_type'][];
+    event_types?: AuditTrailEntry["event_type"][];
     /** Event categories to include */
-    event_categories?: AuditTrailEntry['event_category'][];
+    event_categories?: AuditTrailEntry["event_category"][];
     /** Resource types to include */
     resource_types?: string[];
     /** Only constitutional events */
@@ -175,7 +175,7 @@ export interface AuditTrailGenerationParams {
     patient_data_events_only?: boolean;
   };
   /** Output format requirements */
-  output_format: 'json' | 'csv' | 'pdf' | 'xml' | 'blockchain_proof';
+  output_format: "json" | "csv" | "pdf" | "xml" | "blockchain_proof";
   /** Constitutional compliance requirements */
   constitutional_requirements: string[];
   /** Include integrity verification */
@@ -311,7 +311,7 @@ export class AuditTrailGeneratorService {
   async generateAuditTrail(
     params: AuditTrailGenerationParams,
     generatorUserId: string,
-  ): Promise<{ success: boolean; data?: AuditTrailReport; error?: string; }> {
+  ): Promise<{ success: boolean; data?: AuditTrailReport; error?: string }> {
     try {
       // Validate generation parameters
       const validationResult = await this.validateGenerationParams(params);
@@ -321,11 +321,11 @@ export class AuditTrailGeneratorService {
 
       // Build query for audit entries
       let query = this.supabase
-        .from('audit_trail_entries')
-        .select('*')
-        .eq('tenant_id', params.tenant_id)
-        .gte('event_timestamp', params.time_range.start_date.toISOString())
-        .lte('event_timestamp', params.time_range.end_date.toISOString());
+        .from("audit_trail_entries")
+        .select("*")
+        .eq("tenant_id", params.tenant_id)
+        .gte("event_timestamp", params.time_range.start_date.toISOString())
+        .lte("event_timestamp", params.time_range.end_date.toISOString());
 
       // Apply filters
       if (params.filters) {
@@ -334,7 +334,7 @@ export class AuditTrailGeneratorService {
 
       // Execute query
       const { data: auditEntries, error: queryError } = await query.order(
-        'event_timestamp',
+        "event_timestamp",
         {
           ascending: true,
         },
@@ -343,7 +343,7 @@ export class AuditTrailGeneratorService {
       if (queryError) {
         return {
           success: false,
-          error: 'Failed to retrieve audit trail entries',
+          error: "Failed to retrieve audit trail entries",
         };
       }
 
@@ -351,16 +351,15 @@ export class AuditTrailGeneratorService {
       const processedEntries = await this.processAuditEntries(
         auditEntries || [],
       );
-      const integrityVerification = await this.verifyEntriesIntegrity(processedEntries);
+      const integrityVerification =
+        await this.verifyEntriesIntegrity(processedEntries);
 
       // Generate report metadata
       const metadata = this.generateReportMetadata(processedEntries);
 
       // Perform constitutional compliance assessment
-      const constitutionalAssessment = await this.assessConstitutionalCompliance(
-        processedEntries,
-        params,
-      );
+      const constitutionalAssessment =
+        await this.assessConstitutionalCompliance(processedEntries, params);
 
       // Create audit trail report
       const reportId = crypto.randomUUID();
@@ -384,20 +383,20 @@ export class AuditTrailGeneratorService {
 
       // Generate audit entry for report generation
       await this.generateAuditEntry({
-        event_type: 'system_access',
-        event_category: 'administrative',
-        action_performed: 'audit_trail_report_generated',
+        event_type: "system_access",
+        event_category: "administrative",
+        action_performed: "audit_trail_report_generated",
         user_id: generatorUserId,
         resource_affected: {
-          resource_type: 'audit_trail_report',
+          resource_type: "audit_trail_report",
           resource_id: reportId,
           resource_description: `Audit trail report for ${params.tenant_id}`,
         },
         constitutional_context: {
           lgpd_relevant: true,
           patient_data_involved: true,
-          constitutional_requirement: 'Audit trail transparency',
-          privacy_impact: 'low',
+          constitutional_requirement: "Audit trail transparency",
+          privacy_impact: "low",
         },
         tenant_id: params.tenant_id,
       });
@@ -406,7 +405,7 @@ export class AuditTrailGeneratorService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional audit trail generation service error',
+        error: "Constitutional audit trail generation service error",
       };
     }
   }
@@ -416,17 +415,17 @@ export class AuditTrailGeneratorService {
    * Constitutional audit entry creation with integrity protection
    */
   async generateAuditEntry(eventData: {
-    event_type: AuditTrailEntry['event_type'];
-    event_category: AuditTrailEntry['event_category'];
+    event_type: AuditTrailEntry["event_type"];
+    event_category: AuditTrailEntry["event_category"];
     action_performed: string;
     user_id: string;
-    resource_affected: AuditTrailEntry['resource_affected'];
-    constitutional_context: AuditTrailEntry['constitutional_context'];
+    resource_affected: AuditTrailEntry["resource_affected"];
+    constitutional_context: AuditTrailEntry["constitutional_context"];
     tenant_id: string;
     previous_state?: Record<string, any>;
     new_state?: Record<string, any>;
     event_context?: AuditEventContext;
-  }): Promise<{ success: boolean; data?: AuditTrailEntry; error?: string; }> {
+  }): Promise<{ success: boolean; data?: AuditTrailEntry; error?: string }> {
     try {
       const timestamp = new Date();
       const auditEntryId = crypto.randomUUID();
@@ -457,7 +456,7 @@ export class AuditTrailGeneratorService {
         session_id: this.getSessionId(),
         constitutional_context: eventData.constitutional_context,
         tenant_id: eventData.tenant_id,
-        integrity_hash: '',
+        integrity_hash: "",
       };
 
       // Calculate integrity hash
@@ -465,13 +464,13 @@ export class AuditTrailGeneratorService {
 
       // Store audit entry
       const { data, error } = await this.supabase
-        .from('audit_trail_entries')
+        .from("audit_trail_entries")
         .insert([auditEntry as unknown as Record<string, unknown>])
         .select()
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to create audit trail entry' };
+        return { success: false, error: "Failed to create audit trail entry" };
       }
 
       // Check for automated alerts
@@ -481,7 +480,7 @@ export class AuditTrailGeneratorService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional audit entry generation service error',
+        error: "Constitutional audit entry generation service error",
       };
     }
   } /**
@@ -491,7 +490,7 @@ export class AuditTrailGeneratorService {
 
   async configureAuditTrail(
     tenantId: string,
-    configuration: Omit<AuditTrailConfiguration, 'config_id' | 'tenant_id'>,
+    configuration: Omit<AuditTrailConfiguration, "config_id" | "tenant_id">,
     userId: string,
   ): Promise<{
     success: boolean;
@@ -500,7 +499,8 @@ export class AuditTrailGeneratorService {
   }> {
     try {
       // Validate configuration
-      const validationResult = await this.validateAuditConfiguration(configuration);
+      const validationResult =
+        await this.validateAuditConfiguration(configuration);
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
       }
@@ -516,31 +516,31 @@ export class AuditTrailGeneratorService {
 
       // Store configuration
       const { data, error } = await this.supabase
-        .from('audit_trail_configurations')
+        .from("audit_trail_configurations")
         .upsert([auditConfig as unknown as Record<string, unknown>])
         .select()
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to configure audit trail' };
+        return { success: false, error: "Failed to configure audit trail" };
       }
 
       // Generate audit entry for configuration change
       await this.generateAuditEntry({
-        event_type: 'system_access',
-        event_category: 'administrative',
-        action_performed: 'audit_trail_configuration_updated',
+        event_type: "system_access",
+        event_category: "administrative",
+        action_performed: "audit_trail_configuration_updated",
         user_id: userId,
         resource_affected: {
-          resource_type: 'audit_configuration',
+          resource_type: "audit_configuration",
           resource_id: configId,
-          resource_description: 'Audit trail configuration',
+          resource_description: "Audit trail configuration",
         },
         constitutional_context: {
           lgpd_relevant: true,
           patient_data_involved: false,
-          constitutional_requirement: 'Audit trail configuration',
-          privacy_impact: 'low',
+          constitutional_requirement: "Audit trail configuration",
+          privacy_impact: "low",
         },
         tenant_id: tenantId,
         new_state: auditConfig,
@@ -553,7 +553,7 @@ export class AuditTrailGeneratorService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional audit trail configuration service error',
+        error: "Constitutional audit trail configuration service error",
       };
     }
   }
@@ -562,40 +562,40 @@ export class AuditTrailGeneratorService {
 
   private applyFilters(
     query: any,
-    filters: AuditTrailGenerationParams['filters'],
+    filters: AuditTrailGenerationParams["filters"],
   ): any {
     if (!filters) {
       return query;
     }
 
     if (filters.user_ids && filters.user_ids.length > 0) {
-      query = query.in('user_id', filters.user_ids);
+      query = query.in("user_id", filters.user_ids);
     }
 
     if (filters.event_types && filters.event_types.length > 0) {
-      query = query.in('event_type', filters.event_types);
+      query = query.in("event_type", filters.event_types);
     }
 
     if (filters.event_categories && filters.event_categories.length > 0) {
-      query = query.in('event_category', filters.event_categories);
+      query = query.in("event_category", filters.event_categories);
     }
 
     if (filters.resource_types && filters.resource_types.length > 0) {
       query = query.in(
-        'resource_affected->resource_type',
+        "resource_affected->resource_type",
         filters.resource_types,
       );
     }
 
     if (filters.constitutional_events_only) {
       query = query.eq(
-        'constitutional_context->constitutional_requirement',
+        "constitutional_context->constitutional_requirement",
         true,
       );
     }
 
     if (filters.patient_data_events_only) {
-      query = query.eq('constitutional_context->patient_data_involved', true);
+      query = query.eq("constitutional_context->patient_data_involved", true);
     }
 
     return query;
@@ -612,7 +612,7 @@ export class AuditTrailGeneratorService {
 
   private async verifyEntriesIntegrity(
     entries: AuditTrailEntry[],
-  ): Promise<AuditTrailReport['integrity_verification']> {
+  ): Promise<AuditTrailReport["integrity_verification"]> {
     const failedEntries: string[] = [];
 
     for (const entry of entries) {
@@ -632,7 +632,7 @@ export class AuditTrailGeneratorService {
 
   private generateReportMetadata(
     entries: AuditTrailEntry[],
-  ): AuditTrailReport['metadata'] {
+  ): AuditTrailReport["metadata"] {
     const entriesByType: Record<string, number> = {};
     const entriesByUser: Record<string, number> = {};
     let constitutionalEventsCount = 0;
@@ -640,7 +640,8 @@ export class AuditTrailGeneratorService {
 
     entries.forEach((entry) => {
       // Count by type
-      entriesByType[entry.event_type] = (entriesByType[entry.event_type] || 0) + 1;
+      entriesByType[entry.event_type] =
+        (entriesByType[entry.event_type] || 0) + 1;
 
       // Count by user
       entriesByUser[entry.user_id] = (entriesByUser[entry.user_id] || 0) + 1;
@@ -668,27 +669,29 @@ export class AuditTrailGeneratorService {
   private async assessConstitutionalCompliance(
     entries: AuditTrailEntry[],
     _params: AuditTrailGenerationParams,
-  ): Promise<AuditTrailReport['constitutional_assessment']> {
+  ): Promise<AuditTrailReport["constitutional_assessment"]> {
     const issues: string[] = [];
     const recommendations: string[] = [];
 
     // Check audit trail completeness
     const expectedEventTypes = [
-      'data_access',
-      'data_modification',
-      'system_access',
+      "data_access",
+      "data_modification",
+      "system_access",
     ];
-    const presentEventTypes = new Set([...new Set(entries.map((e) => e.event_type))]);
+    const presentEventTypes = new Set([
+      ...new Set(entries.map((e) => e.event_type)),
+    ]);
     const missingEventTypes = expectedEventTypes.filter(
       (type) => !presentEventTypes.has(type as any),
     );
 
     if (missingEventTypes.length > 0) {
       issues.push(
-        `Missing event types in audit trail: ${missingEventTypes.join(', ')}`,
+        `Missing event types in audit trail: ${missingEventTypes.join(", ")}`,
       );
       recommendations.push(
-        'Configure audit trail to capture all required event types',
+        "Configure audit trail to capture all required event types",
       );
     }
 
@@ -697,9 +700,9 @@ export class AuditTrailGeneratorService {
       (e) => e.constitutional_context.constitutional_requirement,
     );
     if (constitutionalEvents.length === 0 && entries.length > 0) {
-      issues.push('No constitutional events found in audit trail');
+      issues.push("No constitutional events found in audit trail");
       recommendations.push(
-        'Ensure constitutional events are properly captured and marked',
+        "Ensure constitutional events are properly captured and marked",
       );
     }
 
@@ -712,9 +715,9 @@ export class AuditTrailGeneratorService {
     );
 
     if (patientDataEvents.length > 0 && lgpdEvents.length === 0) {
-      issues.push('Patient data events not marked as LGPD relevant');
+      issues.push("Patient data events not marked as LGPD relevant");
       recommendations.push(
-        'Review LGPD compliance marking for patient data events',
+        "Review LGPD compliance marking for patient data events",
       );
     }
 
@@ -728,7 +731,7 @@ export class AuditTrailGeneratorService {
   }
 
   private async calculateIntegrityHash(
-    entry: Omit<AuditTrailEntry, 'integrity_hash'>,
+    entry: Omit<AuditTrailEntry, "integrity_hash">,
   ): Promise<string> {
     try {
       // Create hash input string
@@ -752,17 +755,17 @@ export class AuditTrailGeneratorService {
 
       return `hash_${Math.abs(hash).toString(16)}`;
     } catch {
-      return 'hash_error';
+      return "hash_error";
     }
   }
 
   private async getNextSequenceNumber(tenantId: string): Promise<number> {
     try {
       const { data, error } = await this.supabase
-        .from('audit_trail_entries')
-        .select('sequence_number')
-        .eq('tenant_id', tenantId)
-        .order('sequence_number', { ascending: false })
+        .from("audit_trail_entries")
+        .select("sequence_number")
+        .eq("tenant_id", tenantId)
+        .order("sequence_number", { ascending: false })
         .limit(1);
 
       if (error || !data || data.length === 0) {
@@ -778,25 +781,25 @@ export class AuditTrailGeneratorService {
   private async getUserRole(userId: string): Promise<string> {
     try {
       const { data, error } = await this.supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
         .single();
 
-      return (data?.role as string) || 'unknown';
+      return (data?.role as string) || "unknown";
     } catch {
-      return 'unknown';
+      return "unknown";
     }
   }
 
   private getClientIpAddress(): string {
     // Mock implementation (in production, get from request context)
-    return '127.0.0.1';
+    return "127.0.0.1";
   }
 
   private getClientUserAgent(): string {
     // Mock implementation (in production, get from request context)
-    return 'NeonPro Healthcare System';
+    return "NeonPro Healthcare System";
   }
 
   private getSessionId(): string {
@@ -807,10 +810,10 @@ export class AuditTrailGeneratorService {
   private async checkForAutomatedAlerts(entry: AuditTrailEntry): Promise<void> {
     try {
       // Check for suspicious activity patterns
-      if (entry.constitutional_context.privacy_impact === 'high') {
+      if (entry.constitutional_context.privacy_impact === "high") {
         await this.triggerAlert({
-          alert_type: 'high_privacy_impact_event',
-          severity: 'warning',
+          alert_type: "high_privacy_impact_event",
+          severity: "warning",
           message: `High privacy impact event detected: ${entry.action_performed}`,
           entry_id: entry.audit_entry_id,
         });
@@ -818,8 +821,8 @@ export class AuditTrailGeneratorService {
 
       // Check for unauthorized access patterns
       if (
-        entry.event_type === 'data_access'
-        && entry.constitutional_context.patient_data_involved
+        entry.event_type === "data_access" &&
+        entry.constitutional_context.patient_data_involved
       ) {
         await this.checkUnauthorizedAccessPattern(entry);
       }
@@ -842,42 +845,44 @@ export class AuditTrailGeneratorService {
 
   private async validateGenerationParams(
     params: AuditTrailGenerationParams,
-  ): Promise<{ valid: boolean; error?: string; }> {
+  ): Promise<{ valid: boolean; error?: string }> {
     if (!params.tenant_id) {
       return {
         valid: false,
-        error: 'Tenant ID required for constitutional audit trail generation',
+        error: "Tenant ID required for constitutional audit trail generation",
       };
     }
 
     if (!(params.time_range.start_date && params.time_range.end_date)) {
       return {
         valid: false,
-        error: 'Valid time range required for audit trail generation',
+        error: "Valid time range required for audit trail generation",
       };
     }
 
     if (params.time_range.start_date >= params.time_range.end_date) {
-      return { valid: false, error: 'Start date must be before end date' };
+      return { valid: false, error: "Start date must be before end date" };
     }
 
     return { valid: true };
   }
 
   private async validateAuditConfiguration(
-    config: Omit<AuditTrailConfiguration, 'config_id' | 'tenant_id'>,
-  ): Promise<{ valid: boolean; error?: string; }> {
+    config: Omit<AuditTrailConfiguration, "config_id" | "tenant_id">,
+  ): Promise<{ valid: boolean; error?: string }> {
     if ((config.retention_period_days as number) < 30) {
       return {
         valid: false,
-        error: 'Minimum retention period is 30 days for constitutional compliance',
+        error:
+          "Minimum retention period is 30 days for constitutional compliance",
       };
     }
 
     if (!(config.constitutional_compliance as any).constitutional_monitoring) {
       return {
         valid: false,
-        error: 'Constitutional monitoring must be enabled for healthcare compliance',
+        error:
+          "Constitutional monitoring must be enabled for healthcare compliance",
       };
     }
 
@@ -886,7 +891,7 @@ export class AuditTrailGeneratorService {
 
   private async storeAuditTrailReport(report: AuditTrailReport): Promise<void> {
     try {
-      await this.supabase.from('audit_trail_reports').insert({
+      await this.supabase.from("audit_trail_reports").insert({
         report_id: report.report_id,
         tenant_id: report.tenant_id,
         report_data: report,

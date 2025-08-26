@@ -3,7 +3,7 @@
  * Story 05.01: Testing Infrastructure Consolidation
  */
 
-import { beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test } from "vitest";
 
 export class PerformanceTester {
   async validateHealthcarePerformance(): Promise<PerformanceResult> {
@@ -21,15 +21,16 @@ export class PerformanceTester {
 
   async testClinicWorkflowPerformance(): Promise<WorkflowPerformanceResult> {
     const workflows = [
-      'patient_check_in',
-      'appointment_scheduling',
-      'medical_records',
+      "patient_check_in",
+      "appointment_scheduling",
+      "medical_records",
     ];
     const results = await Promise.all(
       workflows.map((workflow) => this.measureWorkflowPerformance(workflow)),
     );
 
-    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore =
+      results.reduce((sum, r) => sum + r.score, 0) / results.length;
 
     return {
       workflows: Object.fromEntries(workflows.map((w, i) => [w, results[i]])),
@@ -84,7 +85,8 @@ export class PerformanceTester {
     await this.simulateWorkflow(workflow);
     const duration = Date.now() - startTime;
 
-    const score = duration < 2000 ? 9.9 : Math.max(0, 9.9 - (duration - 2000) / 100);
+    const score =
+      duration < 2000 ? 9.9 : Math.max(0, 9.9 - (duration - 2000) / 100);
 
     return {
       duration,
@@ -110,7 +112,7 @@ export function createPerformanceTestSuite(
       performanceTester = new PerformanceTester();
     });
 
-    it('healthcare Performance Validation', async () => {
+    it("healthcare Performance Validation", async () => {
       const result = await performanceTester.validateHealthcarePerformance();
       expect(result.passed).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);

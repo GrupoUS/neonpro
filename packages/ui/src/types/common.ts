@@ -34,5 +34,5 @@ export interface FilterOption {
 
 export interface SortConfig {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }

@@ -2,76 +2,77 @@
 // Healthcare Inventory Reporting for NeonPro
 // LGPD & ANVISA Compliant Reporting System
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface ReportConfig {
   type:
-    | 'stock_levels'
-    | 'expiry_tracking'
-    | 'usage_analytics'
-    | 'anvisa_compliance'
-    | 'cost_analysis';
-  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+    | "stock_levels"
+    | "expiry_tracking"
+    | "usage_analytics"
+    | "anvisa_compliance"
+    | "cost_analysis";
+  period: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
   filters?: {
     categories?: string[];
     medical_devices_only?: boolean;
     low_stock_only?: boolean;
     expired_items?: boolean;
   };
-  format: 'json' | 'csv' | 'pdf';
+  format: "json" | "csv" | "pdf";
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
     // Authentication and tenant validation
-    const authHeader = req.headers.get('Authorization');
+    const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      throw new Error('No authorization header');
+      throw new Error("No authorization header");
     }
 
     const {
       data: { user },
       error: authError,
-    } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''));
+    } = await supabaseClient.auth.getUser(authHeader.replace("Bearer ", ""));
 
     if (authError || !user) {
-      throw new Error('Invalid authorization');
+      throw new Error("Invalid authorization");
     }
 
-    const tenantId = req.headers.get('x-tenant-id');
+    const tenantId = req.headers.get("x-tenant-id");
     if (!tenantId) {
-      throw new Error('Tenant ID required for healthcare compliance');
+      throw new Error("Tenant ID required for healthcare compliance");
     }
 
     // Verify tenant access
     const { data: userTenant, error: tenantError } = await supabaseClient
-      .from('user_tenants')
-      .select('role, is_active')
-      .eq('user_id', user.id)
-      .eq('tenant_id', tenantId)
-      .eq('is_active', true)
+      .from("user_tenants")
+      .select("role, is_active")
+      .eq("user_id", user.id)
+      .eq("tenant_id", tenantId)
+      .eq("is_active", true)
       .single();
 
     if (tenantError || !userTenant) {
-      throw new Error('Access denied to tenant');
+      throw new Error("Access denied to tenant");
     }
 
-    if (req.method === 'POST') {
+    if (req.method === "POST") {
       const body = await req.json();
       const config: ReportConfig = body;
 
@@ -80,10 +81,11 @@ serve(async (req) => {
 
       // Generate different types of reports
       switch (config.type) {
-        case 'stock_levels': {
+        case "stock_levels": {
           const { data: stockLevels, error: stockError } = await supabaseClient
-            .from('inventory_items')
-            .select(`
+            .from("inventory_items")
+            .select(
+              `
               id,
               name,
               category,
@@ -96,16 +98,17 @@ serve(async (req) => {
               anvisa_registration,
               supplier_id,
               suppliers(name)
-            `)
-            .eq('tenant_id', tenantId)
-            .eq('is_active', true);
+            `,
+            )
+            .eq("tenant_id", tenantId)
+            .eq("is_active", true);
 
           if (stockError) {
             throw stockError;
           }
 
           reportData = {
-            type: 'Stock Levels Report',
+            type: "Stock Levels Report",
             generated_at: now.toISOString(),
             tenant_id: tenantId,
             summary: {
@@ -135,10 +138,11 @@ serve(async (req) => {
           break;
         }
 
-        case 'expiry_tracking': {
+        case "expiry_tracking": {
           const { data: expiryItems, error: expiryError } = await supabaseClient
-            .from('inventory_items')
-            .select(`
+            .from("inventory_items")
+            .select(
+              `
               id,
               name,
               category,
@@ -147,11 +151,12 @@ serve(async (req) => {
               batch_number,
               is_medical_device,
               anvisa_registration
-            `)
-            .eq('tenant_id', tenantId)
-            .eq('is_active', true)
-            .not('expiry_date', 'is', undefined)
-            .order('expiry_date', { ascending: true });
+            `,
+            )
+            .eq("tenant_id", tenantId)
+            .eq("is_active", true)
+            .not("expiry_date", "is", undefined)
+            .order("expiry_date", { ascending: true });
 
           if (expiryError) {
             throw expiryError;
@@ -165,7 +170,7 @@ serve(async (req) => {
           );
 
           reportData = {
-            type: 'Expiry Tracking Report',
+            type: "Expiry Tracking Report",
             generated_at: now.toISOString(),
             tenant_id: tenantId,
             summary: {
@@ -187,14 +192,15 @@ serve(async (req) => {
             items: expiryItems.map((item) => ({
               ...item,
               days_to_expiry: Math.ceil(
-                (new Date(item.expiry_date).getTime() - now.getTime())
-                  / (1000 * 60 * 60 * 24),
+                (new Date(item.expiry_date).getTime() - now.getTime()) /
+                  (1000 * 60 * 60 * 24),
               ),
-              status: new Date(item.expiry_date) < now
-                ? 'expired'
-                : (new Date(item.expiry_date) <= thirtyDaysFromNow
-                ? 'expiring_soon'
-                : 'ok'),
+              status:
+                new Date(item.expiry_date) < now
+                  ? "expired"
+                  : new Date(item.expiry_date) <= thirtyDaysFromNow
+                    ? "expiring_soon"
+                    : "ok",
             })),
             healthcare_compliance: {
               anvisa_compliance: true,
@@ -204,10 +210,11 @@ serve(async (req) => {
           break;
         }
 
-        case 'anvisa_compliance': {
+        case "anvisa_compliance": {
           const { data: anvisaItems, error: anvisaError } = await supabaseClient
-            .from('inventory_items')
-            .select(`
+            .from("inventory_items")
+            .select(
+              `
               id,
               name,
               category,
@@ -218,17 +225,18 @@ serve(async (req) => {
               serial_number,
               is_medical_device,
               current_stock
-            `)
-            .eq('tenant_id', tenantId)
-            .eq('is_medical_device', true)
-            .eq('is_active', true);
+            `,
+            )
+            .eq("tenant_id", tenantId)
+            .eq("is_medical_device", true)
+            .eq("is_active", true);
 
           if (anvisaError) {
             throw anvisaError;
           }
 
           reportData = {
-            type: 'ANVISA Compliance Report',
+            type: "ANVISA Compliance Report",
             generated_at: now.toISOString(),
             tenant_id: tenantId,
             summary: {
@@ -239,16 +247,15 @@ serve(async (req) => {
               missing_registration: anvisaItems.filter(
                 (item) => !item.anvisa_registration,
               ).length,
-              compliance_rate: anvisaItems.length > 0
-                ? `${
-                  (
-                    (anvisaItems.filter((item) => item.anvisa_registration)
-                      .length
-                      / anvisaItems.length)
-                    * 100
-                  ).toFixed(2)
-                }%`
-                : '100%',
+              compliance_rate:
+                anvisaItems.length > 0
+                  ? `${(
+                      (anvisaItems.filter((item) => item.anvisa_registration)
+                        .length /
+                        anvisaItems.length) *
+                      100
+                    ).toFixed(2)}%`
+                  : "100%",
             },
             items: anvisaItems,
             compliance_issues: anvisaItems.filter(
@@ -272,7 +279,7 @@ serve(async (req) => {
 
       // Store report execution record
       const { data: reportRecord, error: reportError } = await supabaseClient
-        .from('stock_reports')
+        .from("stock_reports")
         .insert({
           tenant_id: tenantId,
           report_type: config.type,
@@ -280,7 +287,7 @@ serve(async (req) => {
           filters: config.filters || {},
           format: config.format,
           generated_by: user.id,
-          status: 'completed',
+          status: "completed",
           data_summary: {
             total_records: Array.isArray(reportData.items)
               ? reportData.items.length
@@ -296,11 +303,11 @@ serve(async (req) => {
       }
 
       // Audit log for healthcare compliance
-      await supabaseClient.from('audit_logs').insert({
+      await supabaseClient.from("audit_logs").insert({
         tenant_id: tenantId,
         user_id: user.id,
-        action: 'stock_report_generated',
-        resource_type: 'stock_reports',
+        action: "stock_report_generated",
+        resource_type: "stock_reports",
         resource_id: reportRecord.id,
         new_values: {
           report_type: config.type,
@@ -308,8 +315,8 @@ serve(async (req) => {
             ? reportData.items.length
             : 0,
         },
-        ip_address: req.headers.get('x-forwarded-for'),
-        user_agent: req.headers.get('user-agent'),
+        ip_address: req.headers.get("x-forwarded-for"),
+        user_agent: req.headers.get("user-agent"),
         timestamp: new Date().toISOString(),
       });
 
@@ -320,20 +327,20 @@ serve(async (req) => {
           data: reportData,
           healthcare_compliance: {
             lgpd_compliant: true,
-            anvisa_tracked: config.type === 'anvisa_compliance',
+            anvisa_tracked: config.type === "anvisa_compliance",
             audit_logged: true,
             patient_data_protected: true,
           },
         }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
         },
       );
     }
 
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 405,
     });
   } catch (error) {
@@ -346,7 +353,7 @@ serve(async (req) => {
         },
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       },
     );

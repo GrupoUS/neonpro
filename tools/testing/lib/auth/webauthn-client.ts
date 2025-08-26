@@ -6,7 +6,7 @@
 export interface WebAuthnCredential {
   id: string;
   rawId: ArrayBuffer;
-  type: 'public-key';
+  type: "public-key";
   response: {
     clientDataJSON: ArrayBuffer;
     attestationObject?: ArrayBuffer;
@@ -28,19 +28,19 @@ export interface WebAuthnRegistrationOptions {
     displayName: string;
   };
   pubKeyCredParams: {
-    type: 'public-key';
+    type: "public-key";
     alg: number;
   }[];
   authenticatorSelection?: {
-    authenticatorAttachment?: 'platform' | 'cross-platform';
-    userVerification?: 'required' | 'preferred' | 'discouraged';
+    authenticatorAttachment?: "platform" | "cross-platform";
+    userVerification?: "required" | "preferred" | "discouraged";
     requireResidentKey?: boolean;
   };
   timeout?: number;
   excludeCredentials?: {
     id: string;
-    type: 'public-key';
-    transports?: Array<'usb' | 'nfc' | 'ble' | 'internal'>;
+    type: "public-key";
+    transports?: Array<"usb" | "nfc" | "ble" | "internal">;
   }[];
 }
 
@@ -50,10 +50,10 @@ export interface WebAuthnAuthenticationOptions {
   rpId?: string;
   allowCredentials?: {
     id: string;
-    type: 'public-key';
-    transports?: Array<'usb' | 'nfc' | 'ble' | 'internal'>;
+    type: "public-key";
+    transports?: Array<"usb" | "nfc" | "ble" | "internal">;
   }[];
-  userVerification?: 'required' | 'preferred' | 'discouraged';
+  userVerification?: "required" | "preferred" | "discouraged";
 }
 
 export class WebAuthnClient {
@@ -62,9 +62,10 @@ export class WebAuthnClient {
 
   constructor() {
     // Mock browser support detection
-    this.isSupported = typeof window !== 'undefined'
-      && 'credentials' in navigator
-      && 'create' in navigator.credentials;
+    this.isSupported =
+      typeof window !== "undefined" &&
+      "credentials" in navigator &&
+      "create" in navigator.credentials;
   }
 
   static getInstance(): WebAuthnClient {
@@ -82,14 +83,14 @@ export class WebAuthnClient {
     _options: WebAuthnRegistrationOptions,
   ): Promise<WebAuthnCredential> {
     if (!this.isSupported) {
-      throw new Error('WebAuthn is not supported in this environment');
+      throw new Error("WebAuthn is not supported in this environment");
     }
 
     // Mock successful registration
     return {
-      id: 'mock-credential-id',
+      id: "mock-credential-id",
       rawId: new ArrayBuffer(32),
-      type: 'public-key',
+      type: "public-key",
       response: {
         clientDataJSON: new ArrayBuffer(128),
         attestationObject: new ArrayBuffer(256),
@@ -101,14 +102,14 @@ export class WebAuthnClient {
     _options: WebAuthnAuthenticationOptions,
   ): Promise<WebAuthnCredential> {
     if (!this.isSupported) {
-      throw new Error('WebAuthn is not supported in this environment');
+      throw new Error("WebAuthn is not supported in this environment");
     }
 
     // Mock successful authentication
     return {
-      id: 'mock-credential-id',
+      id: "mock-credential-id",
       rawId: new ArrayBuffer(32),
-      type: 'public-key',
+      type: "public-key",
       response: {
         clientDataJSON: new ArrayBuffer(128),
         authenticatorData: new ArrayBuffer(256),
@@ -122,9 +123,9 @@ export class WebAuthnClient {
     // Mock stored credentials
     return [
       {
-        id: 'stored-credential-1',
+        id: "stored-credential-1",
         rawId: new ArrayBuffer(32),
-        type: 'public-key',
+        type: "public-key",
         response: {
           clientDataJSON: new ArrayBuffer(128),
         },
@@ -141,7 +142,7 @@ export class WebAuthnClient {
     return {
       supportsUserVerification: true,
       supportsResidentKeys: true,
-      supportedTransports: ['usb', 'nfc', 'ble', 'internal'],
+      supportedTransports: ["usb", "nfc", "ble", "internal"],
       maxCredentials: 10,
     };
   }

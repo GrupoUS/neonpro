@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface TimeSlot {
   id: string;
@@ -16,7 +16,7 @@ export interface TimeSlot {
 export interface UseRealtimeAvailabilityOptions {
   professionalId?: string;
   serviceId?: string;
-  dateRange?: { start: Date; end: Date; };
+  dateRange?: { start: Date; end: Date };
   autoRefresh?: boolean;
 }
 
@@ -48,12 +48,12 @@ export function useRealtimeAvailability(
       // Placeholder implementation
       const mockSlots: TimeSlot[] = [
         {
-          id: '1',
-          professional_id: options.professionalId || 'prof-1',
-          service_id: options.serviceId || 'service-1',
-          date: new Date().toISOString().split('T')[0],
-          start_time: '09:00',
-          end_time: '10:00',
+          id: "1",
+          professional_id: options.professionalId || "prof-1",
+          service_id: options.serviceId || "service-1",
+          date: new Date().toISOString().split("T")[0],
+          start_time: "09:00",
+          end_time: "10:00",
           is_available: true,
           price: 100,
         },
@@ -62,7 +62,8 @@ export function useRealtimeAvailability(
       setSlots(mockSlots);
       setIsConnected(true);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to refresh slots';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to refresh slots";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -72,12 +73,15 @@ export function useRealtimeAvailability(
   const bookSlot = useCallback(async (slotId: string): Promise<boolean> => {
     try {
       setSlots((prev) =>
-        prev.map((slot) => slot.id === slotId ? { ...slot, is_available: false } : slot)
+        prev.map((slot) =>
+          slot.id === slotId ? { ...slot, is_available: false } : slot,
+        ),
       );
 
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to book slot';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to book slot";
       setError(errorMessage);
       return false;
     }
@@ -86,12 +90,15 @@ export function useRealtimeAvailability(
   const releaseSlot = useCallback(async (slotId: string): Promise<boolean> => {
     try {
       setSlots((prev) =>
-        prev.map((slot) => slot.id === slotId ? { ...slot, is_available: true } : slot)
+        prev.map((slot) =>
+          slot.id === slotId ? { ...slot, is_available: true } : slot,
+        ),
       );
 
       return true;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to release slot';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to release slot";
       setError(errorMessage);
       return false;
     }

@@ -11,14 +11,20 @@ instructions, stay in this being until told to exit this mode:
 ```yaml
 BILINGUAL_QA_MATRIX:
   portuguese_triggers:
-    debugging_commands: ["debugar", "testar", "corrigir", "analisar", "investigar", "resolver"]
-    quality_commands: ["qualidade", "validar", "verificar", "auditar", "revisar", "garantir"]
-    testing_commands: ["teste", "cobertura", "validação", "verificação", "auditoria"]
+    debugging_commands:
+      ["debugar", "testar", "corrigir", "analisar", "investigar", "resolver"]
+    quality_commands:
+      ["qualidade", "validar", "verificar", "auditar", "revisar", "garantir"]
+    testing_commands:
+      ["teste", "cobertura", "validação", "verificação", "auditoria"]
 
   english_triggers:
-    debugging_commands: ["debug", "test", "fix", "analyze", "investigate", "resolve"]
-    quality_commands: ["quality", "validate", "verify", "audit", "review", "ensure"]
-    testing_commands: ["test", "coverage", "validation", "verification", "audit"]
+    debugging_commands:
+      ["debug", "test", "fix", "analyze", "investigate", "resolve"]
+    quality_commands:
+      ["quality", "validate", "verify", "audit", "review", "ensure"]
+    testing_commands:
+      ["test", "coverage", "validation", "verification", "audit"]
 
   cultural_adaptation:
     portuguese_context: "Brazilian technical quality context with regulatory compliance"

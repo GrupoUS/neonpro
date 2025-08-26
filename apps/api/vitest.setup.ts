@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Mock console for cleaner test output
 global.console = {
@@ -11,17 +11,17 @@ global.console = {
 // Mock environment variables
 process.env = {
   ...process.env,
-  NODE_ENV: 'test',
-  SUPABASE_URL: 'http://localhost:54321',
-  SUPABASE_ANON_KEY: 'test-key',
-  DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-  JWT_SECRET: 'test-secret',
+  NODE_ENV: "test",
+  SUPABASE_URL: "http://localhost:54321",
+  SUPABASE_ANON_KEY: "test-key",
+  DATABASE_URL: "postgresql://test:test@localhost:5432/test",
+  JWT_SECRET: "test-secret",
 };
 
 // Mock crypto
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(global, "crypto", {
   value: {
-    randomUUID: () => 'test-uuid',
+    randomUUID: () => "test-uuid",
     getRandomValues: (arr: Uint8Array) => arr,
   },
 });
@@ -29,17 +29,17 @@ Object.defineProperty(global, 'crypto', {
 // Create a fetch mock that proxies to the Hono app for API routes
 const mockFetch = vi.fn(
   async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = typeof input === 'string' ? input : input.toString();
+    const url = typeof input === "string" ? input : input.toString();
 
     // If it's an API route, proxy to the Hono app
-    if (url.startsWith('/api/') || url.includes('api/')) {
-      const { default: app } = await import('./src/index');
+    if (url.startsWith("/api/") || url.includes("api/")) {
+      const { default: app } = await import("./src/index");
 
       // Create a proper Request object
       const request = new Request(
-        url.startsWith('http') ? url : `http://localhost:8000${url}`,
+        url.startsWith("http") ? url : `http://localhost:8000${url}`,
         {
-          method: init?.method || 'GET',
+          method: init?.method || "GET",
           headers: init?.headers || {},
           body: init?.body,
         },
@@ -53,9 +53,9 @@ const mockFetch = vi.fn(
       ok: true,
       status: 200,
       json: () => Promise.resolve({}),
-      text: () => Promise.resolve(''),
+      text: () => Promise.resolve(""),
       headers: new Headers({
-        'content-type': 'application/json',
+        "content-type": "application/json",
       }),
     } as Response);
   },
@@ -67,6 +67,6 @@ mockFetch.mockResolvedValue = vi.fn();
 mockFetch.mockRejectedValue = vi.fn();
 
 // Mock fetch for API testing
-Object.defineProperty(global, 'fetch', {
+Object.defineProperty(global, "fetch", {
   value: mockFetch,
 });

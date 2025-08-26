@@ -9,7 +9,7 @@ export interface DeploymentMetrics {
   version: string;
   startTime: Date;
   endTime?: Date;
-  status: 'pending' | 'in-progress' | 'completed' | 'failed' | 'rolled-back';
+  status: "pending" | "in-progress" | "completed" | "failed" | "rolled-back";
   healthScore: number;
   responseTime: number;
   errorRate: number;
@@ -19,12 +19,12 @@ export interface DeploymentMetrics {
 export interface DeploymentEvent {
   timestamp: Date;
   type:
-    | 'start'
-    | 'progress'
-    | 'health-check'
-    | 'error'
-    | 'complete'
-    | 'rollback';
+    | "start"
+    | "progress"
+    | "health-check"
+    | "error"
+    | "complete"
+    | "rollback";
   message: string;
   data?: any;
 }
@@ -51,13 +51,13 @@ export class DeploymentMonitor {
    */
   startMonitoring(
     deploymentId: string,
-    metrics: Omit<DeploymentMetrics, 'startTime' | 'status'>,
+    metrics: Omit<DeploymentMetrics, "startTime" | "status">,
   ): void {
     const deployment: DeploymentMetrics = {
       ...metrics,
       deploymentId,
       startTime: new Date(),
-      status: 'in-progress',
+      status: "in-progress",
       healthScore: 100,
       responseTime: 0,
       errorRate: 0,
@@ -69,7 +69,7 @@ export class DeploymentMonitor {
 
     this.logEvent(deploymentId, {
       timestamp: new Date(),
-      type: 'start',
+      type: "start",
       message: `Deployment ${deploymentId} started for ${metrics.environment}`,
       data: { version: metrics.version },
     });
@@ -99,7 +99,7 @@ export class DeploymentMonitor {
 
     this.logEvent(deploymentId, {
       timestamp: new Date(),
-      type: 'progress',
+      type: "progress",
       message: `Metrics updated for deployment ${deploymentId}`,
       data: updates,
     });
@@ -117,14 +117,14 @@ export class DeploymentMonitor {
       throw new Error(`Deployment ${deploymentId} not found`);
     }
 
-    deployment.status = success ? 'completed' : 'failed';
+    deployment.status = success ? "completed" : "failed";
     deployment.endTime = new Date();
     this.deployments.set(deploymentId, deployment);
 
     this.logEvent(deploymentId, {
       timestamp: new Date(),
-      type: 'complete',
-      message: `Deployment ${deploymentId} ${success ? 'completed successfully' : 'failed'}`,
+      type: "complete",
+      message: `Deployment ${deploymentId} ${success ? "completed successfully" : "failed"}`,
       data: {
         success,
         duration: deployment.endTime.getTime() - deployment.startTime.getTime(),
@@ -144,13 +144,13 @@ export class DeploymentMonitor {
       throw new Error(`Deployment ${deploymentId} not found`);
     }
 
-    deployment.status = 'rolled-back';
+    deployment.status = "rolled-back";
     deployment.endTime = new Date();
     this.deployments.set(deploymentId, deployment);
 
     this.logEvent(deploymentId, {
       timestamp: new Date(),
-      type: 'rollback',
+      type: "rollback",
       message: `Deployment ${deploymentId} rolled back: ${reason}`,
       data: { reason },
     });
@@ -177,7 +177,7 @@ export class DeploymentMonitor {
    */
   getActiveDeployments(): DeploymentMetrics[] {
     return [...this.deployments.values()].filter(
-      (d) => d.status === 'in-progress' || d.status === 'pending',
+      (d) => d.status === "in-progress" || d.status === "pending",
     );
   }
 
@@ -196,7 +196,7 @@ export class DeploymentMonitor {
 
   private performHealthCheck(deploymentId: string): void {
     const deployment = this.deployments.get(deploymentId);
-    if (!deployment || deployment.status !== 'in-progress') {
+    if (!deployment || deployment.status !== "in-progress") {
       return;
     }
 
@@ -218,7 +218,7 @@ export class DeploymentMonitor {
 
     this.logEvent(deploymentId, {
       timestamp: new Date(),
-      type: 'health-check',
+      type: "health-check",
       message: `Health check completed for deployment ${deploymentId}`,
       data: { healthScore, responseTime, errorRate, throughput },
     });
@@ -233,38 +233,32 @@ export class DeploymentMonitor {
 
     if (deployment.errorRate > alertThresholds.errorRate) {
       alerts.push(
-        `Error rate (${
-          deployment.errorRate.toFixed(
-            2,
-          )
-        }%) exceeds threshold (${alertThresholds.errorRate}%)`,
+        `Error rate (${deployment.errorRate.toFixed(
+          2,
+        )}%) exceeds threshold (${alertThresholds.errorRate}%)`,
       );
     }
 
     if (deployment.responseTime > alertThresholds.responseTime) {
       alerts.push(
-        `Response time (${
-          deployment.responseTime.toFixed(
-            2,
-          )
-        }ms) exceeds threshold (${alertThresholds.responseTime}ms)`,
+        `Response time (${deployment.responseTime.toFixed(
+          2,
+        )}ms) exceeds threshold (${alertThresholds.responseTime}ms)`,
       );
     }
 
     if (deployment.healthScore < alertThresholds.healthScore) {
       alerts.push(
-        `Health score (${
-          deployment.healthScore.toFixed(
-            2,
-          )
-        }) below threshold (${alertThresholds.healthScore})`,
+        `Health score (${deployment.healthScore.toFixed(
+          2,
+        )}) below threshold (${alertThresholds.healthScore})`,
       );
     }
 
     if (alerts.length > 0) {
       this.logEvent(deploymentId, {
         timestamp: new Date(),
-        type: 'error',
+        type: "error",
         message: `Alert thresholds exceeded for deployment ${deploymentId}`,
         data: { alerts },
       });

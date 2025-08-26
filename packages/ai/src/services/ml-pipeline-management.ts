@@ -9,7 +9,7 @@
  * - CFM: Professional ML model management and quality assurance
  */
 
-import type { LoggerService, MetricsService } from '@neonpro/core-services';
+import type { LoggerService, MetricsService } from "@neonpro/core-services";
 import type {
   ABTest,
   ABTestResult,
@@ -19,9 +19,13 @@ import type {
   DriftDetectionResult,
   MLPipelineStatus,
   ModelVersion,
-} from '@neonpro/types';
-import type { AIServiceConfig, AIServiceMetrics, CacheService } from './enhanced-service-base';
-import { EnhancedAIService } from './enhanced-service-base';
+} from "@neonpro/types";
+import type {
+  AIServiceConfig,
+  AIServiceMetrics,
+  CacheService,
+} from "./enhanced-service-base";
+import { EnhancedAIService } from "./enhanced-service-base";
 
 // Supabase MCP Integration
 declare global {
@@ -37,7 +41,7 @@ declare global {
 }
 
 export class MLPipelineManagementService extends EnhancedAIService<any, any> {
-  private readonly SUPABASE_PROJECT_ID = 'ownkoxryswokcdanrdgj';
+  private readonly SUPABASE_PROJECT_ID = "ownkoxryswokcdanrdgj";
 
   constructor(
     cache: CacheService,
@@ -58,13 +62,13 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
   // Implementation required by EnhancedAIService
   protected async executeCore(_input: any): Promise<any> {
-    throw new Error('Use specific methods instead of executeCore');
+    throw new Error("Use specific methods instead of executeCore");
   }
 
   // Helper methods for metrics recording
   private async recordSuccessMetrics(metrics: AIServiceMetrics): Promise<void> {
     try {
-      await this.metrics.record('ml_operation_success', {
+      await this.metrics.record("ml_operation_success", {
         value: metrics.duration,
         tags: {
           service: metrics.serviceName,
@@ -79,7 +83,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
   private async recordErrorMetrics(metrics: AIServiceMetrics): Promise<void> {
     try {
-      await this.metrics.record('ml_operation_error', {
+      await this.metrics.record("ml_operation_error", {
         value: metrics.duration,
         tags: {
           service: metrics.serviceName,
@@ -115,7 +119,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
           '${modelId}', '${request.model_name}', '${request.version}',
           ${request.accuracy}, ${request.precision}, ${request.recall}, ${request.f1_score},
           'training', '${request.clinic_id}', '${JSON.stringify(request.model_config)}',
-          '${JSON.stringify(request.validation_metrics)}', '${request.notes || ''}',
+          '${JSON.stringify(request.validation_metrics)}', '${request.notes || ""}',
           NOW(), NOW()
         ) RETURNING *;
       `;
@@ -128,7 +132,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
       // Record metrics
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId: request.clinic_id,
@@ -138,10 +142,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }
@@ -182,7 +186,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId,
@@ -192,10 +196,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }
@@ -219,9 +223,9 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         ) VALUES (
           '${testId}', '${request.test_name}', '${request.model_a_id}',
           '${request.model_b_id}', 'running', NOW(), 
-          ${request.end_date ? `'${request.end_date}'` : 'NULL'},
+          ${request.end_date ? `'${request.end_date}'` : "NULL"},
           ${request.traffic_split}, '${request.clinic_id}',
-          '${request.description || ''}', '${JSON.stringify(request.success_criteria)}',
+          '${request.description || ""}', '${JSON.stringify(request.success_criteria)}',
           NOW(), NOW()
         ) RETURNING *;
       `;
@@ -233,7 +237,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId: request.clinic_id,
@@ -243,10 +247,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }
@@ -292,7 +296,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId,
@@ -303,10 +307,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }
@@ -328,13 +332,13 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
       const threshold = 0.2;
       const hasDrift = driftScore > threshold;
 
-      let severity: 'low' | 'medium' | 'high' | 'critical' = 'low';
+      let severity: "low" | "medium" | "high" | "critical" = "low";
       if (driftScore > 0.25) {
-        severity = 'critical';
+        severity = "critical";
       } else if (driftScore > 0.2) {
-        severity = 'high';
+        severity = "high";
       } else if (driftScore > 0.15) {
-        severity = 'medium';
+        severity = "medium";
       }
 
       // Record drift detection in database
@@ -362,9 +366,9 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         hasDrift,
         driftScore,
         severity,
-        affectedFeatures: hasDrift ? ['feature_1', 'feature_2'] : [],
+        affectedFeatures: hasDrift ? ["feature_1", "feature_2"] : [],
         details: {
-          algorithm: 'statistical_test',
+          algorithm: "statistical_test",
           threshold,
           detectionDate: new Date().toISOString(),
         },
@@ -372,7 +376,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId: request.clinic_id,
@@ -382,10 +386,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }
@@ -409,12 +413,9 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
     try {
       // Get counts from different tables
-      const activeModelsQuery =
-        `SELECT COUNT(*) as count FROM ai_models WHERE clinic_id = '${clinicId}' AND status = 'active'`;
-      const runningTestsQuery =
-        `SELECT COUNT(*) as count FROM ab_tests WHERE clinic_id = '${clinicId}' AND status = 'running'`;
-      const driftDetectionsQuery =
-        `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
+      const activeModelsQuery = `SELECT COUNT(*) as count FROM ai_models WHERE clinic_id = '${clinicId}' AND status = 'active'`;
+      const runningTestsQuery = `SELECT COUNT(*) as count FROM ab_tests WHERE clinic_id = '${clinicId}' AND status = 'running'`;
+      const driftDetectionsQuery = `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
 
       const [activeModels, runningTests, driftDetections] = await Promise.all([
         mcp__supabase_mcp__execute_sql(
@@ -437,7 +438,8 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         detected_drifts: driftDetections.data[0].count,
         models_needing_retrain: 0, // Would be calculated based on performance metrics
         last_evaluation_date: new Date().toISOString(),
-        overall_health: driftDetections.data[0].count > 0 ? 'warning' : 'healthy',
+        overall_health:
+          driftDetections.data[0].count > 0 ? "warning" : "healthy",
       };
 
       if (this.config.enableCaching) {
@@ -446,7 +448,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId,
@@ -457,10 +459,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }
@@ -502,7 +504,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
       await this.recordSuccessMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: true,
         clinicId,
@@ -513,10 +515,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
     } catch (error) {
       await this.recordErrorMetrics({
         operationId,
-        serviceName: 'ml-pipeline-management',
+        serviceName: "ml-pipeline-management",
         duration: Date.now() - startTime,
         success: false,
-        errorType: error instanceof Error ? error.name : 'UnknownError',
+        errorType: error instanceof Error ? error.name : "UnknownError",
       });
       throw error;
     }

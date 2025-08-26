@@ -135,7 +135,7 @@ export class InternalHealthcareCacheManager {
     // LGPD audit logging
     item.auditLog.push(
       `Sensitive access: ${new Date().toISOString()}`,
-      `User: ${auditUserId || 'anonymous'}`,
+      `User: ${auditUserId || "anonymous"}`,
       `Consent verified: ${item.patientConsent}`,
     );
 
@@ -146,8 +146,8 @@ export class InternalHealthcareCacheManager {
    * Invalidate pattern-based cache
    */
   invalidate(pattern: string): void {
-    if (pattern.includes('patient_')) {
-      const patientId = pattern.replace('patient_', '');
+    if (pattern.includes("patient_")) {
+      const patientId = pattern.replace("patient_", "");
       this.invalidatePatientData(patientId);
     }
   }

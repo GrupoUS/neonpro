@@ -3,13 +3,14 @@
  * Constitutional healthcare database client for NeonPro
  */
 
-import type { Database } from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
+import type { Database } from "@neonpro/types";
+import { createClient } from "@supabase/supabase-js";
 
 // Supabase configuration
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ownkoxryswokcdanrdgj.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
-  || process.env.SUPABASE_ANON_KEY || '';
+const SUPABASE_URL =
+  process.env.SUPABASE_URL || "https://ownkoxryswokcdanrdgj.supabase.co";
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || "";
 
 /**
  * Create Supabase client with service role key
@@ -18,7 +19,7 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 export function createSupabaseClient() {
   if (!(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY)) {
     throw new Error(
-      'Supabase URL and Service Role Key are required for constitutional healthcare compliance',
+      "Supabase URL and Service Role Key are required for constitutional healthcare compliance",
     );
   }
 
@@ -28,7 +29,7 @@ export function createSupabaseClient() {
       persistSession: false,
     },
     db: {
-      schema: 'public',
+      schema: "public",
     },
   });
 }

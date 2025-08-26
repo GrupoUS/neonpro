@@ -197,8 +197,7 @@ const ElementPalette = ({
 export default function CustomReportBuilder() {
   const [activeTab, setActiveTab] = useState("builder");
   const [elements, setElements] = useState<ReportElement[]>([]);
-  const [selectedElement, setSelectedElement] = useState<string | null>(
-    );
+  const [selectedElement, setSelectedElement] = useState<string | null>();
   const [reportName, setReportName] = useState("Novo Relatório");
   const [reportDescription, setReportDescription] = useState("");
 

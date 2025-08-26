@@ -1,71 +1,75 @@
-import * as ProgressPrimitive from '@radix-ui/react-progress';
-import { cva } from 'class-variance-authority';
-import type { VariantProps } from 'class-variance-authority';
-import { Activity, AlertCircle, CheckCircle, Clock, Heart } from 'lucide-react';
-import * as React from 'react';
+import * as ProgressPrimitive from "@radix-ui/react-progress";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
+import { Activity, AlertCircle, CheckCircle, Clock, Heart } from "lucide-react";
+import * as React from "react";
 
-import { cn } from '../../lib/utils';
+import { cn } from "../../lib/utils";
 
 const progressVariants = cva(
-  'relative h-2 w-full overflow-hidden rounded-full bg-gradient-to-r from-muted/80 via-muted/60 to-muted/80 shadow-healthcare-sm backdrop-blur-sm transition-all duration-500',
+  "relative h-2 w-full overflow-hidden rounded-full bg-gradient-to-r from-muted/80 via-muted/60 to-muted/80 shadow-healthcare-sm backdrop-blur-sm transition-all duration-500",
   {
     variants: {
       variant: {
-        default: 'from-muted/80 via-muted/60 to-muted/80',
-        medical: 'from-primary/20 via-primary/15 to-primary/20 backdrop-blur-sm',
-        treatment: 'from-secondary/20 via-secondary/15 to-secondary/20 backdrop-blur-sm',
+        default: "from-muted/80 via-muted/60 to-muted/80",
+        medical:
+          "from-primary/20 via-primary/15 to-primary/20 backdrop-blur-sm",
+        treatment:
+          "from-secondary/20 via-secondary/15 to-secondary/20 backdrop-blur-sm",
         critical:
-          'from-destructive/20 via-destructive/15 to-destructive/20 shadow-healthcare-md backdrop-blur-sm',
-        warning: 'from-warning/20 via-warning/15 to-warning/20 backdrop-blur-sm',
-        success: 'from-success/20 via-success/15 to-success/20 backdrop-blur-sm',
+          "from-destructive/20 via-destructive/15 to-destructive/20 shadow-healthcare-md backdrop-blur-sm",
+        warning:
+          "from-warning/20 via-warning/15 to-warning/20 backdrop-blur-sm",
+        success:
+          "from-success/20 via-success/15 to-success/20 backdrop-blur-sm",
       },
       size: {
-        default: 'h-2',
-        sm: 'h-1',
-        lg: 'h-3',
-        xl: 'h-4',
+        default: "h-2",
+        sm: "h-1",
+        lg: "h-3",
+        xl: "h-4",
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: "default",
+      size: "default",
     },
   },
 );
 
 const progressBarVariants = cva(
-  'h-full w-full flex-1 rounded-full shadow-sm transition-all duration-700 ease-out',
+  "h-full w-full flex-1 rounded-full shadow-sm transition-all duration-700 ease-out",
   {
     variants: {
       variant: {
-        default: 'bg-gradient-primary shadow-primary/20',
-        medical: 'bg-gradient-to-r from-primary via-primary/90 to-primary shadow-primary/30',
+        default: "bg-gradient-primary shadow-primary/20",
+        medical:
+          "bg-gradient-to-r from-primary via-primary/90 to-primary shadow-primary/30",
         treatment:
-          'bg-gradient-to-r from-secondary via-secondary/90 to-secondary shadow-secondary/30',
+          "bg-gradient-to-r from-secondary via-secondary/90 to-secondary shadow-secondary/30",
         critical:
-          'bg-gradient-to-r from-destructive via-destructive/90 to-destructive shadow-destructive/40',
-        warning: 'bg-gradient-to-r from-warning via-warning/90 to-warning shadow-warning/30',
-        success: 'bg-gradient-to-r from-success via-success/90 to-success shadow-success/30',
+          "bg-gradient-to-r from-destructive via-destructive/90 to-destructive shadow-destructive/40",
+        warning:
+          "bg-gradient-to-r from-warning via-warning/90 to-warning shadow-warning/30",
+        success:
+          "bg-gradient-to-r from-success via-success/90 to-success shadow-success/30",
       },
       animated: {
-        true:
-          'relative animate-pulse-healthcare bg-gradient-to-r before:absolute before:inset-0 before:animate-slide-in-right before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent',
-        false: '',
+        true: "relative animate-pulse-healthcare bg-gradient-to-r before:absolute before:inset-0 before:animate-slide-in-right before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent",
+        false: "",
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: "default",
       animated: false,
     },
   },
 );
 
 interface ProgressProps
-  extends
-    React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
+  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
     VariantProps<typeof progressVariants>,
-    VariantProps<typeof progressBarVariants>
-{
+    VariantProps<typeof progressBarVariants> {
   showValue?: boolean;
   showLabel?: boolean;
   label?: string;
@@ -107,7 +111,7 @@ const Progress = React.forwardRef<
             )}
             {(showLabel || label) && (
               <span className="font-medium text-foreground">
-                {label || 'Progresso'}
+                {label || "Progresso"}
               </span>
             )}
           </div>
@@ -127,7 +131,7 @@ const Progress = React.forwardRef<
         <ProgressPrimitive.Indicator
           className={cn(
             progressBarVariants({ variant, animated: animated || pulse }),
-            pulse && 'animate-pulse',
+            pulse && "animate-pulse",
           )}
           style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
         />
@@ -137,13 +141,14 @@ const Progress = React.forwardRef<
 );
 Progress.displayName = ProgressPrimitive.Root.displayName; // Healthcare-specific progress components
 
-interface TreatmentProgressProps extends Omit<ProgressProps, 'variant' | 'label'> {
+interface TreatmentProgressProps
+  extends Omit<ProgressProps, "variant" | "label"> {
   treatmentName: string;
-  phase: 'initial' | 'active' | 'maintenance' | 'completed';
+  phase: "initial" | "active" | "maintenance" | "completed";
   completedSessions: number;
   totalSessions: number;
   nextSession?: Date;
-  patientResponse?: 'excellent' | 'good' | 'fair' | 'poor';
+  patientResponse?: "excellent" | "good" | "fair" | "poor";
 }
 
 const TreatmentProgress = React.forwardRef<
@@ -157,7 +162,7 @@ const TreatmentProgress = React.forwardRef<
       completedSessions,
       totalSessions,
       nextSession,
-      patientResponse = 'good',
+      patientResponse = "good",
       ...props
     },
     ref,
@@ -166,56 +171,56 @@ const TreatmentProgress = React.forwardRef<
 
     const getPhaseColor = () => {
       switch (phase) {
-        case 'initial': {
-          return 'medical';
+        case "initial": {
+          return "medical";
         }
-        case 'active': {
-          return 'treatment';
+        case "active": {
+          return "treatment";
         }
-        case 'maintenance': {
-          return 'warning';
+        case "maintenance": {
+          return "warning";
         }
-        case 'completed': {
-          return 'success';
+        case "completed": {
+          return "success";
         }
         default: {
-          return 'default';
+          return "default";
         }
       }
     };
 
     const getPhaseLabel = () => {
       switch (phase) {
-        case 'initial': {
-          return 'Fase Inicial';
+        case "initial": {
+          return "Fase Inicial";
         }
-        case 'active': {
-          return 'Tratamento Ativo';
+        case "active": {
+          return "Tratamento Ativo";
         }
-        case 'maintenance': {
-          return 'Manutenção';
+        case "maintenance": {
+          return "Manutenção";
         }
-        case 'completed': {
-          return 'Concluído';
+        case "completed": {
+          return "Concluído";
         }
         default: {
-          return 'Tratamento';
+          return "Tratamento";
         }
       }
     };
 
     const getResponseIcon = () => {
       switch (patientResponse) {
-        case 'excellent': {
+        case "excellent": {
           return <CheckCircle className="h-4 w-4 text-green-600" />;
         }
-        case 'good': {
+        case "good": {
           return <CheckCircle className="h-4 w-4 text-blue-600" />;
         }
-        case 'fair': {
+        case "fair": {
           return <Clock className="h-4 w-4 text-orange-600" />;
         }
-        case 'poor': {
+        case "poor": {
           return <AlertCircle className="h-4 w-4 text-red-600" />;
         }
         default: {
@@ -237,7 +242,7 @@ const TreatmentProgress = React.forwardRef<
         </div>
 
         <Progress
-          pulse={phase === 'active'}
+          pulse={phase === "active"}
           ref={ref}
           showValue
           value={progress}
@@ -253,19 +258,19 @@ const TreatmentProgress = React.forwardRef<
             <div className="flex items-center gap-1">
               {getResponseIcon()}
               <span className="text-xs capitalize">
-                {patientResponse === 'excellent'
-                  ? 'Excelente'
-                  : patientResponse === 'good'
-                  ? 'Boa'
-                  : patientResponse === 'fair'
-                  ? 'Regular'
-                  : 'Baixa'}
+                {patientResponse === "excellent"
+                  ? "Excelente"
+                  : patientResponse === "good"
+                    ? "Boa"
+                    : patientResponse === "fair"
+                      ? "Regular"
+                      : "Baixa"}
               </span>
             </div>
           </div>
           {nextSession && (
             <span className="text-xs">
-              Próxima: {nextSession.toLocaleDateString('pt-BR')}
+              Próxima: {nextSession.toLocaleDateString("pt-BR")}
             </span>
           )}
         </div>
@@ -273,14 +278,15 @@ const TreatmentProgress = React.forwardRef<
     );
   },
 );
-TreatmentProgress.displayName = 'TreatmentProgress';
+TreatmentProgress.displayName = "TreatmentProgress";
 
-interface LGPDComplianceProgressProps extends Omit<ProgressProps, 'variant' | 'label'> {
+interface LGPDComplianceProgressProps
+  extends Omit<ProgressProps, "variant" | "label"> {
   overallScore: number;
   categories: {
     name: string;
     score: number;
-    status: 'compliant' | 'warning' | 'violation';
+    status: "compliant" | "warning" | "violation";
   }[];
   lastAudit?: Date;
   nextAudit?: Date;
@@ -292,27 +298,27 @@ const LGPDComplianceProgress = React.forwardRef<
 >(({ overallScore, categories, lastAudit, nextAudit, ...props }, ref) => {
   const getComplianceVariant = () => {
     if (overallScore >= 90) {
-      return 'success';
+      return "success";
     }
     if (overallScore >= 70) {
-      return 'warning';
+      return "warning";
     }
-    return 'critical';
+    return "critical";
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'compliant': {
-        return 'text-green-600';
+      case "compliant": {
+        return "text-green-600";
       }
-      case 'warning': {
-        return 'text-orange-600';
+      case "warning": {
+        return "text-orange-600";
       }
-      case 'violation': {
-        return 'text-red-600';
+      case "violation": {
+        return "text-red-600";
       }
       default: {
-        return 'text-gray-600';
+        return "text-gray-600";
       }
     }
   };
@@ -337,10 +343,10 @@ const LGPDComplianceProgress = React.forwardRef<
           </div>
           <div className="text-muted-foreground text-xs">
             {overallScore >= 90
-              ? 'Excelente'
-              : (overallScore >= 70
-              ? 'Bom'
-              : 'Precisa atenção')}
+              ? "Excelente"
+              : overallScore >= 70
+                ? "Bom"
+                : "Precisa atenção"}
           </div>
         </div>
       </div>
@@ -363,16 +369,16 @@ const LGPDComplianceProgress = React.forwardRef<
             <span className="text-muted-foreground">{category.name}</span>
             <div className="flex items-center gap-2">
               <span
-                className={cn('font-medium', getStatusColor(category.status))}
+                className={cn("font-medium", getStatusColor(category.status))}
               >
                 {category.score}%
               </span>
               <div
                 className={cn(
-                  'h-2 w-2 rounded-full',
-                  category.status === 'compliant' && 'bg-green-500',
-                  category.status === 'warning' && 'bg-orange-500',
-                  category.status === 'violation' && 'bg-red-500',
+                  "h-2 w-2 rounded-full",
+                  category.status === "compliant" && "bg-green-500",
+                  category.status === "warning" && "bg-orange-500",
+                  category.status === "violation" && "bg-red-500",
                 )}
               />
             </div>
@@ -384,12 +390,12 @@ const LGPDComplianceProgress = React.forwardRef<
         <div className="flex justify-between border-t pt-2 text-muted-foreground text-xs">
           {lastAudit && (
             <span>
-              Última auditoria: {lastAudit.toLocaleDateString('pt-BR')}
+              Última auditoria: {lastAudit.toLocaleDateString("pt-BR")}
             </span>
           )}
           {nextAudit && (
             <span>
-              Próxima auditoria: {nextAudit.toLocaleDateString('pt-BR')}
+              Próxima auditoria: {nextAudit.toLocaleDateString("pt-BR")}
             </span>
           )}
         </div>
@@ -397,11 +403,12 @@ const LGPDComplianceProgress = React.forwardRef<
     </div>
   );
 });
-LGPDComplianceProgress.displayName = 'LGPDComplianceProgress';
-interface PatientRecoveryProgressProps extends Omit<ProgressProps, 'variant' | 'label'> {
+LGPDComplianceProgress.displayName = "LGPDComplianceProgress";
+interface PatientRecoveryProgressProps
+  extends Omit<ProgressProps, "variant" | "label"> {
   patientName: string;
   condition: string;
-  recoveryStage: 'critical' | 'stable' | 'improving' | 'recovered';
+  recoveryStage: "critical" | "stable" | "improving" | "recovered";
   vitalSigns: {
     temperature: number;
     bloodPressure: string;
@@ -429,56 +436,56 @@ const PatientRecoveryProgress = React.forwardRef<
   ) => {
     const getStageVariant = () => {
       switch (recoveryStage) {
-        case 'critical': {
-          return 'critical';
+        case "critical": {
+          return "critical";
         }
-        case 'stable': {
-          return 'warning';
+        case "stable": {
+          return "warning";
         }
-        case 'improving': {
-          return 'medical';
+        case "improving": {
+          return "medical";
         }
-        case 'recovered': {
-          return 'success';
+        case "recovered": {
+          return "success";
         }
         default: {
-          return 'default';
+          return "default";
         }
       }
     };
 
     const getStageLabel = () => {
       switch (recoveryStage) {
-        case 'critical': {
-          return 'Estado Crítico';
+        case "critical": {
+          return "Estado Crítico";
         }
-        case 'stable': {
-          return 'Estável';
+        case "stable": {
+          return "Estável";
         }
-        case 'improving': {
-          return 'Melhorando';
+        case "improving": {
+          return "Melhorando";
         }
-        case 'recovered': {
-          return 'Recuperado';
+        case "recovered": {
+          return "Recuperado";
         }
         default: {
-          return 'Não definido';
+          return "Não definido";
         }
       }
     };
 
     const getStageIcon = () => {
       switch (recoveryStage) {
-        case 'critical': {
+        case "critical": {
           return <AlertCircle className="h-4 w-4 text-red-600" />;
         }
-        case 'stable': {
+        case "stable": {
           return <Clock className="h-4 w-4 text-orange-600" />;
         }
-        case 'improving': {
+        case "improving": {
           return <Activity className="h-4 w-4 text-blue-600" />;
         }
-        case 'recovered': {
+        case "recovered": {
           return <CheckCircle className="h-4 w-4 text-green-600" />;
         }
         default: {
@@ -511,8 +518,8 @@ const PatientRecoveryProgress = React.forwardRef<
         </div>
 
         <Progress
-          animated={recoveryStage === 'improving'}
-          pulse={recoveryStage === 'critical'}
+          animated={recoveryStage === "improving"}
+          pulse={recoveryStage === "critical"}
           ref={ref}
           showValue={false}
           value={recoveryPercentage}
@@ -543,14 +550,14 @@ const PatientRecoveryProgress = React.forwardRef<
 
         {estimatedDischarge && (
           <div className="border-t pt-2 text-center text-muted-foreground text-xs">
-            Alta prevista: {estimatedDischarge.toLocaleDateString('pt-BR')}
+            Alta prevista: {estimatedDischarge.toLocaleDateString("pt-BR")}
           </div>
         )}
       </div>
     );
   },
 );
-PatientRecoveryProgress.displayName = 'PatientRecoveryProgress';
+PatientRecoveryProgress.displayName = "PatientRecoveryProgress";
 
 export {
   LGPDComplianceProgress,

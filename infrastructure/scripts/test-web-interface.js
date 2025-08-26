@@ -1,20 +1,20 @@
 // Script para testar a interface web do Accounts Payable
 // Usage: node scripts/test-web-interface.js
 
-const _https = require('node:https');
-const http = require('node:http');
+const _https = require("node:https");
+const http = require("node:http");
 
-const baseUrl = 'http://127.0.0.1:8080';
+const baseUrl = "http://127.0.0.1:8080";
 
 // Lista de rotas para testar
 const routesToTest = [
-  '/dashboard',
-  '/dashboard/accounts-payable',
-  '/dashboard/accounts-payable/vendors',
-  '/dashboard/accounts-payable/reports',
-  '/dashboard/accounts-payable/approvals',
-  '/dashboard/accounts-payable/notifications',
-  '/dashboard/accounts-payable/analytics',
+  "/dashboard",
+  "/dashboard/accounts-payable",
+  "/dashboard/accounts-payable/vendors",
+  "/dashboard/accounts-payable/reports",
+  "/dashboard/accounts-payable/approvals",
+  "/dashboard/accounts-payable/notifications",
+  "/dashboard/accounts-payable/analytics",
 ];
 
 async function testRoute(path) {
@@ -33,14 +33,14 @@ async function testRoute(path) {
           path,
           status: statusCode,
           success: true,
-          note: 'Redirect (Auth required)',
+          note: "Redirect (Auth required)",
         });
       } else if (statusCode === 404) {
         resolve({
           path,
           status: statusCode,
           success: false,
-          error: 'Route not found',
+          error: "Route not found",
         });
       } else {
         resolve({
@@ -52,14 +52,14 @@ async function testRoute(path) {
       }
     });
 
-    req.on('error', (error) => {
+    req.on("error", (error) => {
       resolve({ path, status: 0, success: false, error: error.message });
     });
 
     // Timeout após 5 segundos
     req.setTimeout(5000, () => {
       req.destroy();
-      resolve({ path, status: 0, success: false, error: 'Timeout' });
+      resolve({ path, status: 0, success: false, error: "Timeout" });
     });
   });
 }
@@ -79,7 +79,7 @@ async function runWebInterfaceTests() {
 
   if (successful.length > 0) {
     successful.forEach((result) => {
-      const _note = result.note ? ` (${result.note})` : '';
+      const _note = result.note ? ` (${result.note})` : "";
     });
   }
 

@@ -21,7 +21,8 @@ export const LOCALHOST_PATTERN = /^https?:\/\/localhost:\d+$/;
 export const LOCALHOST_IP_PATTERN = /^https?:\/\/127\.0\.0\.1:\d+$/;
 
 // Security patterns
-export const SENSITIVE_HEADERS_PATTERN = /^(authorization|cookie|x-api-key|x-auth-token)$/i;
+export const SENSITIVE_HEADERS_PATTERN =
+  /^(authorization|cookie|x-api-key|x-auth-token)$/i;
 export const SQL_INJECTION_PATTERN =
   /('|(\\%27)|(\\x27)|(\\')|(\\')|(;)|(%3B)|(\\%3B)|(\\x3B)|(\\\u003B)|(\\;))/i;
 
@@ -44,7 +45,7 @@ export const LOG_LEVEL_PATTERN = /^(debug|info|warn|error)$/i;
  * @returns Compiled regex for route matching
  */
 export function createRouteRegex(pattern: string): RegExp {
-  const escapedPattern = pattern.replace(ROUTE_PARAM_PATTERN, '[^/]+');
+  const escapedPattern = pattern.replace(ROUTE_PARAM_PATTERN, "[^/]+");
   return new RegExp(`^${escapedPattern}$`);
 }
 
@@ -73,5 +74,5 @@ export function isValidUUID(uuid: string): boolean {
  */
 export function extractResourceIds(path: string): string[] {
   const matches = path.match(RESOURCE_ID_PATTERN);
-  return matches ? matches.map((match) => match.replaceAll(/[/]/g, '')) : [];
+  return matches ? matches.map((match) => match.replaceAll(/[/]/g, "")) : [];
 }

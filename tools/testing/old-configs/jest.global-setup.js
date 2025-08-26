@@ -3,5 +3,5 @@
 
 module.exports = async () => {
   // Force UTC timezone for all date operations
-  process.env.TZ = 'UTC';
+  process.env.TZ = "UTC";
 };

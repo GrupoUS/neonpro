@@ -12,62 +12,69 @@
  * - Regulatory reporting capabilities
  */
 
-import { Hono } from 'hono';
-import { testClient } from 'hono/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { Hono } from "hono";
+import { testClient } from "hono/testing";
+import { beforeEach, describe, expect, it } from "vitest";
 
-describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
+describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
   let app: Hono;
   let _client: any;
 
   const mockProfessional = {
-    id: 'prof_123',
-    crmNumber: 'CRM/SP 123456',
-    crmState: 'SP',
-    specialization: 'Cardiologia',
-    status: 'active',
-    cpf: '12345678901',
+    id: "prof_123",
+    crmNumber: "CRM/SP 123456",
+    crmState: "SP",
+    specialization: "Cardiologia",
+    status: "active",
+    cpf: "12345678901",
   };
 
   const mockPatient = {
-    id: 'pat_123',
-    name: 'João Silva',
-    cpf: '98765432100',
-    susCard: '123456789012345',
-    medicalRecordNumber: 'MR202400001',
+    id: "pat_123",
+    name: "João Silva",
+    cpf: "98765432100",
+    susCard: "123456789012345",
+    medicalRecordNumber: "MR202400001",
   };
 
   beforeEach(() => {
     app = new Hono();
 
     // Professional management endpoints
-    app.post('/api/v1/professionals', (c) => c.json({ success: true, id: mockProfessional.id }));
+    app.post("/api/v1/professionals", (c) =>
+      c.json({ success: true, id: mockProfessional.id }),
+    );
 
-    app.get(
-      '/api/v1/professionals/:id/credentials',
-      (c) => c.json({ success: true, credentials: mockProfessional }),
+    app.get("/api/v1/professionals/:id/credentials", (c) =>
+      c.json({ success: true, credentials: mockProfessional }),
     );
 
     // Medical records endpoints
-    app.post('/api/v1/medical-records', (c) => c.json({ success: true, recordId: 'mr_123' }));
+    app.post("/api/v1/medical-records", (c) =>
+      c.json({ success: true, recordId: "mr_123" }),
+    );
 
-    app.get('/api/v1/medical-records/:id', (c) => c.json({ success: true, record: {} }));
+    app.get("/api/v1/medical-records/:id", (c) =>
+      c.json({ success: true, record: {} }),
+    );
 
     // Emergency access endpoint
-    app.post('/api/v1/emergency/access', (c) => c.json({ success: true, accessGranted: true }));
+    app.post("/api/v1/emergency/access", (c) =>
+      c.json({ success: true, accessGranted: true }),
+    );
 
     _client = testClient(app);
   });
 
-  describe('🩺 ANVISA Compliance', () => {
-    describe('medical Device Integration', () => {
-      it('should validate medical device certifications', async () => {
+  describe("🩺 ANVISA Compliance", () => {
+    describe("medical Device Integration", () => {
+      it("should validate medical device certifications", async () => {
         const medicalDevice = {
-          deviceId: 'DEV_001',
-          anvisaRegistration: 'REG12345678',
-          deviceType: 'Eletrocardiografo',
-          manufacturer: 'MedTech Brasil',
-          certificationExpiry: '2025-12-31',
+          deviceId: "DEV_001",
+          anvisaRegistration: "REG12345678",
+          deviceType: "Eletrocardiografo",
+          manufacturer: "MedTech Brasil",
+          certificationExpiry: "2025-12-31",
         };
 
         // Mock device validation
@@ -82,24 +89,24 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         expect(expiryDate).toBeAfter(new Date());
       });
 
-      it('should reject non-certified medical devices', async () => {
+      it("should reject non-certified medical devices", async () => {
         const invalidDevice = {
-          deviceId: 'DEV_002',
-          anvisaRegistration: '', // Missing registration
-          deviceType: 'Unknown Device',
+          deviceId: "DEV_002",
+          anvisaRegistration: "", // Missing registration
+          deviceType: "Unknown Device",
         };
 
         const isValidDevice = validateAnvisaDevice(invalidDevice);
         expect(isValidDevice).toBeFalsy();
       });
 
-      it('should track medical device usage for audit', async () => {
+      it("should track medical device usage for audit", async () => {
         const deviceUsage = {
-          deviceId: 'DEV_001',
+          deviceId: "DEV_001",
           patientId: mockPatient.id,
           professionalId: mockProfessional.id,
           timestamp: new Date().toISOString(),
-          procedure: 'ECG',
+          procedure: "ECG",
         };
 
         // Should create audit trail for device usage
@@ -108,68 +115,71 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
       });
     });
 
-    describe('pharmaceutical Integration', () => {
-      it('should validate medication prescriptions against ANVISA database', async () => {
+    describe("pharmaceutical Integration", () => {
+      it("should validate medication prescriptions against ANVISA database", async () => {
         const prescription = {
-          medicationName: 'Losartana',
-          anvisaCode: 'ANV123456',
-          dosage: '50mg',
+          medicationName: "Losartana",
+          anvisaCode: "ANV123456",
+          dosage: "50mg",
           quantity: 30,
           professionalCRM: mockProfessional.crmNumber,
         };
 
-        const isValidPrescription = await validatePrescriptionAgainstANVISA(prescription);
+        const isValidPrescription =
+          await validatePrescriptionAgainstANVISA(prescription);
         expect(isValidPrescription).toBeTruthy();
       });
 
-      it('should prevent prescription of non-approved medications', async () => {
+      it("should prevent prescription of non-approved medications", async () => {
         const invalidPrescription = {
-          medicationName: 'UnknownDrug',
-          anvisaCode: '', // Missing ANVISA code
-          dosage: '100mg',
+          medicationName: "UnknownDrug",
+          anvisaCode: "", // Missing ANVISA code
+          dosage: "100mg",
         };
 
-        const isValidPrescription = await validatePrescriptionAgainstANVISA(invalidPrescription);
+        const isValidPrescription =
+          await validatePrescriptionAgainstANVISA(invalidPrescription);
         expect(isValidPrescription).toBeFalsy();
       });
     });
 
-    describe('sanitary Surveillance Reporting', () => {
-      it('should generate ANVISA surveillance reports', async () => {
+    describe("sanitary Surveillance Reporting", () => {
+      it("should generate ANVISA surveillance reports", async () => {
         const surveillanceData = {
-          reportType: 'ADVERSE_EVENT',
+          reportType: "ADVERSE_EVENT",
           patientId: mockPatient.id,
-          deviceId: 'DEV_001',
-          adverseEvent: 'Equipment malfunction during procedure',
-          severity: 'MODERATE',
+          deviceId: "DEV_001",
+          adverseEvent: "Equipment malfunction during procedure",
+          severity: "MODERATE",
           timestamp: new Date().toISOString(),
         };
 
         const report = generateANVISASurveillanceReport(surveillanceData);
 
-        expect(report).toHaveProperty('reportId');
-        expect(report).toHaveProperty('anvisaSubmissionId');
-        expect(report.reportType).toBe('ADVERSE_EVENT');
-        expect(report.status).toBe('SUBMITTED');
+        expect(report).toHaveProperty("reportId");
+        expect(report).toHaveProperty("anvisaSubmissionId");
+        expect(report.reportType).toBe("ADVERSE_EVENT");
+        expect(report.status).toBe("SUBMITTED");
       });
 
-      it('should automatically submit critical adverse events to ANVISA', async () => {
+      it("should automatically submit critical adverse events to ANVISA", async () => {
         const criticalEvent = {
-          reportType: 'ADVERSE_EVENT',
-          severity: 'CRITICAL',
+          reportType: "ADVERSE_EVENT",
+          severity: "CRITICAL",
           patientId: mockPatient.id,
-          description: 'Equipment failure causing patient harm',
+          description: "Equipment failure causing patient harm",
         };
 
-        const autoSubmission = await autoSubmitCriticalEventToANVISA(criticalEvent);
+        const autoSubmission =
+          await autoSubmitCriticalEventToANVISA(criticalEvent);
         expect(autoSubmission.submitted).toBeTruthy();
         expect(autoSubmission.submissionTime).toBeTruthy();
       });
     });
   });
-  describe('⚕️ CFM (Conselho Federal de Medicina) Compliance', () => {
-    describe('professional Credential Validation', () => {
-      it('should validate CRM (Conselho Regional de Medicina) registration', async () => {
+  describe("⚕️ CFM (Conselho Federal de Medicina) Compliance", () => {
+    describe("professional Credential Validation", () => {
+      it("should validate CRM (Conselho Regional de Medicina) registration", async () => {
         const response = await fetch(
           `/api/v1/professionals/${mockProfessional.id}/credentials`,
         );
@@ -188,17 +198,17 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         );
       });
 
-      it('should reject inactive or suspended CRM registrations', async () => {
+      it("should reject inactive or suspended CRM registrations", async () => {
         const suspendedProfessional = {
           ...mockProfessional,
-          crmNumber: 'CRM/SP 999999', // Suspended CRM
+          crmNumber: "CRM/SP 999999", // Suspended CRM
         };
 
         const crmStatus = await validateCRMWithCFM(
           suspendedProfessional.crmNumber,
         );
         expect(crmStatus.isActive).toBeFalsy();
-        expect(crmStatus.status).toBe('SUSPENDED');
+        expect(crmStatus.status).toBe("SUSPENDED");
 
         // Should prevent system access
         const accessAttempt = await validateProfessionalAccess(
@@ -207,13 +217,13 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         expect(accessAttempt.allowed).toBeFalsy();
       });
 
-      it('should validate medical specialization scope', async () => {
+      it("should validate medical specialization scope", async () => {
         const prescription = {
           professionalId: mockProfessional.id,
           crmNumber: mockProfessional.crmNumber,
-          specialization: 'Cardiologia',
-          prescriptionType: 'CARDIAC_MEDICATION',
-          medicationClass: 'ACE_INHIBITOR',
+          specialization: "Cardiologia",
+          prescriptionType: "CARDIAC_MEDICATION",
+          medicationClass: "ACE_INHIBITOR",
         };
 
         const isWithinScope = validateSpecializationScope(prescription);
@@ -222,8 +232,8 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         // Test out-of-scope prescription
         const outOfScopePrescription = {
           ...prescription,
-          prescriptionType: 'PSYCHIATRIC_MEDICATION',
-          medicationClass: 'ANTIPSYCHOTIC',
+          prescriptionType: "PSYCHIATRIC_MEDICATION",
+          medicationClass: "ANTIPSYCHOTIC",
         };
 
         const isOutOfScope = validateSpecializationScope(
@@ -233,13 +243,13 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
       });
     });
 
-    describe('medical Ethics & Professional Standards', () => {
-      it('should enforce informed consent requirements', async () => {
+    describe("medical Ethics & Professional Standards", () => {
+      it("should enforce informed consent requirements", async () => {
         const procedure = {
           patientId: mockPatient.id,
           professionalId: mockProfessional.id,
-          procedureType: 'CARDIAC_CATHETERIZATION',
-          riskLevel: 'HIGH',
+          procedureType: "CARDIAC_CATHETERIZATION",
+          riskLevel: "HIGH",
           informedConsentRequired: true,
         };
 
@@ -249,27 +259,28 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         expect(consentValidation.alternativesDiscussed).toBeTruthy();
       });
 
-      it('should validate patient-physician confidentiality', async () => {
+      it("should validate patient-physician confidentiality", async () => {
         // Test that medical records can only be accessed by authorized personnel
         const unauthorizedAccess = {
-          requesterId: 'unauthorized_user_123',
+          requesterId: "unauthorized_user_123",
           patientId: mockPatient.id,
-          recordType: 'MEDICAL_HISTORY',
+          recordType: "MEDICAL_HISTORY",
         };
 
-        const accessAttempt = await attemptMedicalRecordAccess(unauthorizedAccess);
+        const accessAttempt =
+          await attemptMedicalRecordAccess(unauthorizedAccess);
         expect(accessAttempt.allowed).toBeFalsy();
-        expect(accessAttempt.violation).toBe('CONFIDENTIALITY_BREACH');
+        expect(accessAttempt.violation).toBe("CONFIDENTIALITY_BREACH");
 
         // Should create audit log for attempted unauthorized access
         expect(accessAttempt.auditLogged).toBeTruthy();
       });
 
-      it('should maintain medical record integrity', async () => {
+      it("should maintain medical record integrity", async () => {
         const medicalRecord = {
           patientId: mockPatient.id,
-          recordType: 'CONSULTATION',
-          content: 'Patient reports chest pain...',
+          recordType: "CONSULTATION",
+          content: "Patient reports chest pain...",
           professionalId: mockProfessional.id,
           timestamp: new Date().toISOString(),
         };
@@ -280,9 +291,9 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
 
         // Verify record cannot be modified without audit trail
         const modificationAttempt = {
-          recordId: 'mr_123',
+          recordId: "mr_123",
           originalHash: recordHash,
-          newContent: 'Modified content',
+          newContent: "Modified content",
           modifiedBy: mockProfessional.id,
         };
 
@@ -291,21 +302,21 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         expect(modification.originalRecordPreserved).toBeTruthy();
       });
     });
-    describe('emergency Access Protocols', () => {
-      it('should allow emergency access to patient data', async () => {
+    describe("emergency Access Protocols", () => {
+      it("should allow emergency access to patient data", async () => {
         const emergencyRequest = {
           professionalId: mockProfessional.id,
           patientId: mockPatient.id,
-          emergencyType: 'CARDIAC_ARREST',
+          emergencyType: "CARDIAC_ARREST",
           justification:
-            'Patient in critical condition requires immediate access to medical history',
-          location: 'Emergency Room',
+            "Patient in critical condition requires immediate access to medical history",
+          location: "Emergency Room",
           timestamp: new Date().toISOString(),
         };
 
-        const response = await fetch('/api/v1/emergency/access', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/v1/emergency/access", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(emergencyRequest),
         });
 
@@ -318,16 +329,17 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         const auditLog = await getEmergencyAccessAuditLog(
           data.emergencyAccessId,
         );
-        expect(auditLog).toHaveProperty('emergencyType');
-        expect(auditLog).toHaveProperty('justification');
-        expect(auditLog).toHaveProperty('professionalCRM');
+        expect(auditLog).toHaveProperty("emergencyType");
+        expect(auditLog).toHaveProperty("justification");
+        expect(auditLog).toHaveProperty("professionalCRM");
       });
 
-      it('should require post-emergency justification review', async () => {
-        const emergencyAccessId = 'emergency_123';
+      it("should require post-emergency justification review", async () => {
+        const emergencyAccessId = "emergency_123";
 
         // Emergency access should be flagged for review
-        const reviewRequired = await checkEmergencyAccessReview(emergencyAccessId);
+        const reviewRequired =
+          await checkEmergencyAccessReview(emergencyAccessId);
         expect(reviewRequired.requiresReview).toBeTruthy();
         expect(reviewRequired.reviewDeadline).toBeTruthy();
 
@@ -335,9 +347,9 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
         expect(reviewRequired.complianceNotified).toBeTruthy();
       });
 
-      it('should limit emergency access duration', async () => {
+      it("should limit emergency access duration", async () => {
         const emergencyAccess = {
-          accessId: 'emergency_123',
+          accessId: "emergency_123",
           grantedAt: new Date().toISOString(),
           maxDurationHours: 24,
         };
@@ -351,61 +363,62 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
           grantedAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), // 25 hours ago
         };
 
-        const isExpiredAccessValid = validateEmergencyAccessDuration(expiredAccess);
+        const isExpiredAccessValid =
+          validateEmergencyAccessDuration(expiredAccess);
         expect(isExpiredAccessValid).toBeFalsy();
       });
     });
 
-    describe('regulatory Reporting & Documentation', () => {
-      it('should generate CFM compliance reports', async () => {
+    describe("regulatory Reporting & Documentation", () => {
+      it("should generate CFM compliance reports", async () => {
         const reportPeriod = {
-          startDate: '2024-01-01',
-          endDate: '2024-01-31',
-          clinicId: 'clinic_123',
+          startDate: "2024-01-01",
+          endDate: "2024-01-31",
+          clinicId: "clinic_123",
         };
 
         const cfmReport = await generateCFMComplianceReport(reportPeriod);
 
-        expect(cfmReport).toHaveProperty('reportId');
-        expect(cfmReport).toHaveProperty('professionalActivities');
-        expect(cfmReport).toHaveProperty('ethicsComplianceScore');
-        expect(cfmReport).toHaveProperty('medicalRecordIntegrity');
+        expect(cfmReport).toHaveProperty("reportId");
+        expect(cfmReport).toHaveProperty("professionalActivities");
+        expect(cfmReport).toHaveProperty("ethicsComplianceScore");
+        expect(cfmReport).toHaveProperty("medicalRecordIntegrity");
 
         // Verify required CFM report sections
-        expect(cfmReport.sections).toContain('PROFESSIONAL_CREDENTIALS');
-        expect(cfmReport.sections).toContain('PATIENT_CONFIDENTIALITY');
-        expect(cfmReport.sections).toContain('INFORMED_CONSENT');
-        expect(cfmReport.sections).toContain('EMERGENCY_ACCESS_LOGS');
+        expect(cfmReport.sections).toContain("PROFESSIONAL_CREDENTIALS");
+        expect(cfmReport.sections).toContain("PATIENT_CONFIDENTIALITY");
+        expect(cfmReport.sections).toContain("INFORMED_CONSENT");
+        expect(cfmReport.sections).toContain("EMERGENCY_ACCESS_LOGS");
       });
 
-      it('should track medical error reporting', async () => {
+      it("should track medical error reporting", async () => {
         const medicalError = {
-          incidentId: 'INC_001',
+          incidentId: "INC_001",
           patientId: mockPatient.id,
           professionalId: mockProfessional.id,
-          errorType: 'MEDICATION_ERROR',
-          severity: 'MINOR',
-          description: 'Incorrect dosage administered',
-          correctiveActions: 'Patient monitored, no adverse effects',
+          errorType: "MEDICATION_ERROR",
+          severity: "MINOR",
+          description: "Incorrect dosage administered",
+          correctiveActions: "Patient monitored, no adverse effects",
           reportedToCFM: true,
         };
 
         const errorReport = await reportMedicalError(medicalError);
         expect(errorReport.cfmNotificationId).toBeTruthy();
-        expect(errorReport.status).toBe('REPORTED');
+        expect(errorReport.status).toBe("REPORTED");
         expect(errorReport.followUpRequired).toBeTruthy();
       });
 
-      it('should maintain continuing education compliance', async () => {
+      it("should maintain continuing education compliance", async () => {
         const educationRecord = {
           professionalId: mockProfessional.id,
           crmNumber: mockProfessional.crmNumber,
           educationHours: 40, // CFM requires minimum hours per year
           certificationYear: 2024,
           coursesCompleted: [
-            'Medical Ethics Update',
-            'Patient Safety Protocols',
-            'Digital Health Privacy',
+            "Medical Ethics Update",
+            "Patient Safety Protocols",
+            "Digital Health Privacy",
           ],
         };
 
@@ -417,13 +430,13 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
     });
   });
 
-  describe('🗂️ Medical Record Security & Integrity', () => {
-    it('should implement tamper-proof medical records', async () => {
+  describe("🗂️ Medical Record Security & Integrity", () => {
+    it("should implement tamper-proof medical records", async () => {
       const medicalRecord = {
-        id: 'mr_123',
+        id: "mr_123",
         patientId: mockPatient.id,
-        content: 'Initial examination findings...',
-        digitalSignature: 'prof_signature_hash',
+        content: "Initial examination findings...",
+        digitalSignature: "prof_signature_hash",
         timestamp: new Date().toISOString(),
       };
 
@@ -433,11 +446,11 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
       expect(recordIntegrity.timestampValid).toBeTruthy();
     });
 
-    it('should maintain medical record retention periods', async () => {
+    it("should maintain medical record retention periods", async () => {
       const retentionPolicy = {
-        recordType: 'CONSULTATION',
+        recordType: "CONSULTATION",
         minRetentionYears: 10, // CFM requirement
-        patientAge: 'ADULT',
+        patientAge: "ADULT",
       };
 
       const retention = calculateMedicalRecordRetention(retentionPolicy);
@@ -445,14 +458,15 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
       expect(retention.destructionDate).toBeTruthy();
     });
 
-    it('should prevent unauthorized medical record modifications', async () => {
+    it("should prevent unauthorized medical record modifications", async () => {
       const modificationAttempt = {
-        recordId: 'mr_123',
-        requesterId: 'unauthorized_user',
-        modificationType: 'CONTENT_CHANGE',
+        recordId: "mr_123",
+        requesterId: "unauthorized_user",
+        modificationType: "CONTENT_CHANGE",
       };
 
-      const modificationResult = await attemptRecordModification(modificationAttempt);
+      const modificationResult =
+        await attemptRecordModification(modificationAttempt);
       expect(modificationResult.allowed).toBeFalsy();
       expect(modificationResult.securityViolation).toBeTruthy();
       expect(modificationResult.auditLogged).toBeTruthy();
@@ -462,7 +476,7 @@ describe('🏥 Brazilian Healthcare Compliance Assessment', () => {
 
 // Mock implementation functions for testing
 function validateAnvisaDevice(device: any): boolean {
-  return device.anvisaRegistration?.startsWith('REG');
+  return device.anvisaRegistration?.startsWith("REG");
 }
 
 function logMedicalDeviceUsage(_usage: any): boolean {
@@ -472,7 +486,7 @@ function logMedicalDeviceUsage(_usage: any): boolean {
 async function validatePrescriptionAgainstANVISA(
   prescription: any,
 ): Promise<boolean> {
-  return prescription.anvisaCode && prescription.anvisaCode !== '';
+  return prescription.anvisaCode && prescription.anvisaCode !== "";
 }
 
 function generateANVISASurveillanceReport(data: any) {
@@ -480,28 +494,28 @@ function generateANVISASurveillanceReport(data: any) {
     reportId: `ANVISA_REP_${Date.now()}`,
     anvisaSubmissionId: `SUB_${Date.now()}`,
     reportType: data.reportType,
-    status: 'SUBMITTED',
+    status: "SUBMITTED",
   };
 }
 
 async function autoSubmitCriticalEventToANVISA(event: any) {
   return {
-    submitted: event.severity === 'CRITICAL',
+    submitted: event.severity === "CRITICAL",
     submissionTime: new Date().toISOString(),
   };
 }
 
 async function validateCRMWithCFM(crmNumber: string) {
   const mockCRMDatabase = {
-    'CRM/SP 123456': {
+    "CRM/SP 123456": {
       isActive: true,
-      specializations: ['Cardiologia'],
-      status: 'ACTIVE',
+      specializations: ["Cardiologia"],
+      status: "ACTIVE",
     },
-    'CRM/SP 999999': {
+    "CRM/SP 999999": {
       isActive: false,
       specializations: [],
-      status: 'SUSPENDED',
+      status: "SUSPENDED",
     },
   };
 
@@ -509,7 +523,7 @@ async function validateCRMWithCFM(crmNumber: string) {
     mockCRMDatabase[crmNumber] || {
       isActive: false,
       specializations: [],
-      status: 'NOT_FOUND',
+      status: "NOT_FOUND",
     }
   );
 }
@@ -521,8 +535,8 @@ async function validateProfessionalAccess(professional: any) {
 
 function validateSpecializationScope(prescription: any): boolean {
   const specializationScopes = {
-    Cardiologia: ['CARDIAC_MEDICATION'],
-    Psiquiatria: ['PSYCHIATRIC_MEDICATION'],
+    Cardiologia: ["CARDIAC_MEDICATION"],
+    Psiquiatria: ["PSYCHIATRIC_MEDICATION"],
   };
 
   const allowedTypes = specializationScopes[prescription.specialization] || [];
@@ -538,12 +552,12 @@ const validateInformedConsent = (_procedure: any) => ({
 
 const attemptMedicalRecordAccess = async (_request: any) => ({
   allowed: false,
-  violation: 'CONFIDENTIALITY_BREACH',
+  violation: "CONFIDENTIALITY_BREACH",
   auditLogged: true,
 });
 
 const generateRecordIntegrityHash = (_record: any) =>
-  'a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890';
+  "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890";
 
 const modifyMedicalRecord = async (_modification: any) => ({
   auditTrail: true,
@@ -551,9 +565,9 @@ const modifyMedicalRecord = async (_modification: any) => ({
 });
 
 const getEmergencyAccessAuditLog = async (_accessId: string) => ({
-  emergencyType: 'CARDIAC_ARREST',
-  justification: 'Critical patient condition',
-  professionalCRM: 'CRM/SP 123456',
+  emergencyType: "CARDIAC_ARREST",
+  justification: "Critical patient condition",
+  professionalCRM: "CRM/SP 123456",
 });
 
 const checkEmergencyAccessReview = async (_accessId: string) => ({

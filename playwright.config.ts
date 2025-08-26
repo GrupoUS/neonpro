@@ -6,58 +6,58 @@
  * ARCHITECTURE: Constitutional Turborepo structure
  */
 
-import { defineConfig, devices } from '@playwright/test';
-import { cpus } from 'node:os';
+import { defineConfig, devices } from "@playwright/test";
+import { cpus } from "node:os";
 
 export default defineConfig({
   // Constitutional test directory structure - UPDATED TO NEW STRUCTURE
-  testDir: './tools/e2e',
+  testDir: "./tools/e2e",
 
   // Optimized test patterns - E2E ONLY
-  testMatch: ['**/*.spec.ts'],
+  testMatch: ["**/*.spec.ts"],
 
   // EXCLUDE PATTERNS - SYNCHRONIZED WITH BIOME.JSON
   testIgnore: [
     // === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
-    '**/node_modules/**',
-    '**/dist/**',
-    '**/build/**',
-    '**/.next/**',
-    '**/.turbo/**',
-    '**/coverage/**',
-    '**/playwright-report/**',
-    '**/test-results/**',
-    '**/logs/**',
-    '**/temp-*',
-    '**/*.log',
-    '**/*.cache',
-    '**/*cache/**',
-    '**/.git/**',
-    '**/.vscode/**',
-    '**/supabase/migrations/**',
-    '**/archon/original_archon/**',
-    '**/serena/**',
-    '**/temp-broken-files/**',
-    '**/.tmp.*/**',
-    '**/pnpm-lock.yaml',
-    '**/package-lock.json*',
-    '**/*.tsbuildinfo',
-    '**/tsconfig.tsbuildinfo',
-    '**/.env*',
-    '**/scripts/*.ps1',
-    '**/scripts/*.sh',
-    '**/validate-*.mjs',
-    '**/test-*.ts',
-    '**/rpc-*.ts',
-    '**/backend-*.txt',
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/logs/**",
+    "**/temp-*",
+    "**/*.log",
+    "**/*.cache",
+    "**/*cache/**",
+    "**/.git/**",
+    "**/.vscode/**",
+    "**/supabase/migrations/**",
+    "**/archon/original_archon/**",
+    "**/serena/**",
+    "**/temp-broken-files/**",
+    "**/.tmp.*/**",
+    "**/pnpm-lock.yaml",
+    "**/package-lock.json*",
+    "**/*.tsbuildinfo",
+    "**/tsconfig.tsbuildinfo",
+    "**/.env*",
+    "**/scripts/*.ps1",
+    "**/scripts/*.sh",
+    "**/validate-*.mjs",
+    "**/test-*.ts",
+    "**/rpc-*.ts",
+    "**/backend-*.txt",
     // === PLAYWRIGHT SPECIFIC EXCLUDES ===
     // EXCLUDE UNIT TESTS TO AVOID CONFLICTS
-    '**/*.test.ts',
-    '**/*.test.tsx',
-    '**/packages/**/*.test.{ts,tsx}',
-    '**/src/**/*.test.{ts,tsx}',
-    '**/vitest/**',
-    '**/__tests__/**',
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/packages/**/*.test.{ts,tsx}",
+    "**/src/**/*.test.{ts,tsx}",
+    "**/vitest/**",
+    "**/__tests__/**",
   ],
 
   // 🚀 PERFORMANCE OPTIMIZATIONS
@@ -77,29 +77,29 @@ export default defineConfig({
   // Optimized reporting - CONSOLIDATED TO TOOLS STRUCTURE
   reporter: [
     [
-      'html',
+      "html",
       {
-        outputFolder: 'tools/reports/e2e/html',
-        open: 'never',
-        attachmentsBaseURL: '../',
+        outputFolder: "tools/reports/e2e/html",
+        open: "never",
+        attachmentsBaseURL: "../",
       },
     ],
     [
-      'junit',
+      "junit",
       {
-        outputFile: 'tools/reports/e2e/junit-results.xml',
+        outputFile: "tools/reports/e2e/junit-results.xml",
         includeProjectInTestName: true,
       },
     ],
     // Performance metrics reporter
     [
-      'json',
+      "json",
       {
-        outputFile: 'tools/reports/e2e/performance-metrics.json',
+        outputFile: "tools/reports/e2e/performance-metrics.json",
       },
     ],
     // CI-friendly reporter
-    process.env.CI ? ['github'] : ['list'],
+    process.env.CI ? ["github"] : ["list"],
   ],
 
   // Enhanced expect configurations for reliability
@@ -107,7 +107,7 @@ export default defineConfig({
     timeout: 10_000, // 10 seconds for assertions
     toHaveScreenshot: {
       threshold: 0.2,
-      animations: 'disabled', // Faster screenshot comparison
+      animations: "disabled", // Faster screenshot comparison
     },
     toMatchSnapshot: {
       threshold: 0.2,
@@ -115,16 +115,16 @@ export default defineConfig({
   },
 
   // Organized output structure - CONSOLIDATED TO TOOLS STRUCTURE
-  outputDir: 'tools/reports/test-results/e2e',
+  outputDir: "tools/reports/test-results/e2e",
 
   // Global setup for performance optimization
-  globalSetup: './tools/e2e/global-setup.ts',
-  globalTeardown: './tools/e2e/global-teardown.ts',
+  globalSetup: "./tools/e2e/global-setup.ts",
+  globalTeardown: "./tools/e2e/global-teardown.ts",
 
   // Enhanced use block for test isolation
   use: {
     // Base URL for all tests - CRITICAL FOR E2E FUNCTIONALITY
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
 
     // Optimized for maximum performance
     actionTimeout: 15_000, // 15 seconds max for actions
@@ -132,13 +132,13 @@ export default defineConfig({
 
     // Performance optimizations
     headless: true,
-    screenshot: process.env.CI ? 'only-on-failure' : 'off', // Screenshots only on failure in CI
-    video: process.env.CI ? 'retain-on-failure' : 'off', // Videos only on failure in CI
-    trace: process.env.CI ? 'retain-on-failure' : 'on-first-retry', // Selective tracing
+    screenshot: process.env.CI ? "only-on-failure" : "off", // Screenshots only on failure in CI
+    video: process.env.CI ? "retain-on-failure" : "off", // Videos only on failure in CI
+    trace: process.env.CI ? "retain-on-failure" : "on-first-retry", // Selective tracing
 
     // Modern browser features
-    locale: 'pt-BR',
-    timezoneId: 'America/Sao_Paulo',
+    locale: "pt-BR",
+    timezoneId: "America/Sao_Paulo",
 
     // Security & Privacy (Healthcare compliance)
     acceptDownloads: false,
@@ -147,35 +147,35 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium-desktop',
+      name: "chromium-desktop",
       use: {
-        ...devices['Desktop Chrome'],
+        ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
       },
     },
 
     {
-      name: 'mobile-android',
+      name: "mobile-android",
       use: {
-        ...devices['Pixel 5'],
+        ...devices["Pixel 5"],
       },
-      testDir: './tools/e2e/mobile',
+      testDir: "./tools/e2e/mobile",
     },
 
     {
-      name: 'webkit-desktop',
+      name: "webkit-desktop",
       use: {
-        ...devices['Desktop Safari'],
+        ...devices["Desktop Safari"],
       },
-      testIgnore: ['**/heavy-performance/**'], // Skip heavy tests on WebKit
+      testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on WebKit
     },
 
     {
-      name: 'firefox-desktop',
+      name: "firefox-desktop",
       use: {
-        ...devices['Desktop Firefox'],
+        ...devices["Desktop Firefox"],
       },
-      testIgnore: ['**/heavy-performance/**'], // Skip heavy tests on Firefox
+      testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on Firefox
     },
   ],
   // Development server configuration - DISABLED temporarily

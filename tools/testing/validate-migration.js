@@ -5,17 +5,17 @@
  * and the new testing structure is properly configured
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
-const { execSync } = require('node:child_process');
+const fs = require("node:fs");
+const path = require("node:path");
+const { execSync } = require("node:child_process");
 
 const _colors = {
-  green: '\u001B[32m',
-  red: '\u001B[31m',
-  yellow: '\u001B[33m',
-  blue: '\u001B[34m',
-  reset: '\u001B[0m',
-  bold: '\u001B[1m',
+  green: "\u001B[32m",
+  red: "\u001B[31m",
+  yellow: "\u001B[33m",
+  blue: "\u001B[34m",
+  reset: "\u001B[0m",
+  bold: "\u001B[1m",
 };
 
 const log = {
@@ -40,7 +40,7 @@ class MigrationValidator {
   constructor() {
     this.errors = [];
     this.warnings = [];
-    this.projectRoot = path.resolve(__dirname, '../..');
+    this.projectRoot = path.resolve(__dirname, "../..");
     this.testingRoot = path.resolve(__dirname);
   }
 
@@ -67,79 +67,79 @@ class MigrationValidator {
   }
 
   validateTestStructure() {
-    log.header('Validating Test Directory Structure');
+    log.header("Validating Test Directory Structure");
 
     const expectedDirs = [
-      'tools/testing/tests',
-      'tools/testing/tests/accessibility',
-      'tools/testing/tests/auth',
-      'tools/testing/tests/integration',
-      'tools/testing/tests/performance',
-      'tools/testing/tests/security',
-      'tools/testing/tests/unit',
-      'tools/testing/__tests__',
+      "tools/testing/tests",
+      "tools/testing/tests/accessibility",
+      "tools/testing/tests/auth",
+      "tools/testing/tests/integration",
+      "tools/testing/tests/performance",
+      "tools/testing/tests/security",
+      "tools/testing/tests/unit",
+      "tools/testing/__tests__",
     ];
 
     expectedDirs.forEach((dir) => {
-      this.validateDirectoryExists(dir, 'Test directory');
+      this.validateDirectoryExists(dir, "Test directory");
     });
   }
 
   validateMigratedFiles() {
-    log.header('Validating Migrated Test Files');
+    log.header("Validating Migrated Test Files");
 
     const expectedFiles = [
-      'tools/testing/tests/accessibility/accessibility-demo.spec.ts',
-      'tools/testing/tests/accessibility/healthcare-accessibility.spec.ts',
-      'tools/testing/tests/auth/task-002-final-integration.test.ts',
-      'tools/testing/tests/auth/webauthn-verification.test.ts',
-      'tools/testing/tests/integration/financial-integration.test.ts',
-      'tools/testing/tests/performance/load-testing.test.ts',
-      'tools/testing/tests/security/security-audit.test.ts',
-      'tools/testing/tests/unit/monitoring.test.ts',
-      'tools/testing/tests/simple-monitoring.test.ts',
+      "tools/testing/tests/accessibility/accessibility-demo.spec.ts",
+      "tools/testing/tests/accessibility/healthcare-accessibility.spec.ts",
+      "tools/testing/tests/auth/task-002-final-integration.test.ts",
+      "tools/testing/tests/auth/webauthn-verification.test.ts",
+      "tools/testing/tests/integration/financial-integration.test.ts",
+      "tools/testing/tests/performance/load-testing.test.ts",
+      "tools/testing/tests/security/security-audit.test.ts",
+      "tools/testing/tests/unit/monitoring.test.ts",
+      "tools/testing/tests/simple-monitoring.test.ts",
     ];
 
     expectedFiles.forEach((file) => {
-      this.validateFileExists(file, 'Migrated test file');
+      this.validateFileExists(file, "Migrated test file");
     });
   }
 
   validateConfigurationFiles() {
-    log.header('Validating Configuration Files');
+    log.header("Validating Configuration Files");
 
     const configFiles = [
-      'tools/testing/jest.config.ts',
-      'tools/testing/__tests__/setup.ts',
-      'tools/testing/README.md',
-      'tools/testing/migration-summary.md',
-      '.env.test',
-      'package.json',
+      "tools/testing/jest.config.ts",
+      "tools/testing/__tests__/setup.ts",
+      "tools/testing/README.md",
+      "tools/testing/migration-summary.md",
+      ".env.test",
+      "package.json",
     ];
 
     configFiles.forEach((file) => {
-      this.validateFileExists(file, 'Configuration file');
+      this.validateFileExists(file, "Configuration file");
     });
   }
 
   validatePackageJsonScripts() {
-    log.header('Validating Package.json Test Scripts');
+    log.header("Validating Package.json Test Scripts");
 
     try {
-      const packageJsonPath = path.resolve(this.projectRoot, 'package.json');
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const packageJsonPath = path.resolve(this.projectRoot, "package.json");
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
       const expectedScripts = [
-        'test',
-        'test:unit',
-        'test:integration',
-        'test:performance',
-        'test:security',
-        'test:auth',
-        'test:accessibility',
-        'test:watch',
-        'test:coverage',
-        'test:verbose',
+        "test",
+        "test:unit",
+        "test:integration",
+        "test:performance",
+        "test:security",
+        "test:auth",
+        "test:accessibility",
+        "test:watch",
+        "test:coverage",
+        "test:verbose",
       ];
 
       expectedScripts.forEach((script) => {
@@ -157,20 +157,20 @@ class MigrationValidator {
   }
 
   validateJestConfiguration() {
-    log.header('Validating Jest Configuration');
+    log.header("Validating Jest Configuration");
 
     try {
-      const jestConfigPath = path.resolve(this.testingRoot, 'jest.config.ts');
-      const jestConfig = fs.readFileSync(jestConfigPath, 'utf8');
+      const jestConfigPath = path.resolve(this.testingRoot, "jest.config.ts");
+      const jestConfig = fs.readFileSync(jestConfigPath, "utf8");
 
       const requiredConfigs = [
-        'testEnvironment',
-        'roots',
-        'testMatch',
-        'collectCoverageFrom',
-        'setupFilesAfterEnv',
-        'moduleNameMapping',
-        'projects',
+        "testEnvironment",
+        "roots",
+        "testMatch",
+        "collectCoverageFrom",
+        "setupFilesAfterEnv",
+        "moduleNameMapping",
+        "projects",
       ];
 
       requiredConfigs.forEach((config) => {
@@ -188,28 +188,28 @@ class MigrationValidator {
   }
 
   checkOldTestDirectory() {
-    log.header('Checking Old Test Directory');
+    log.header("Checking Old Test Directory");
 
-    const oldTestDir = path.resolve(this.projectRoot, 'tests');
+    const oldTestDir = path.resolve(this.projectRoot, "tests");
     if (fs.existsSync(oldTestDir)) {
-      this.warnings.push('Old test directory still exists: tests/');
-      log.warning('Old test directory still exists: tests/');
-      log.info('Consider removing after validation: rm -rf tests/');
+      this.warnings.push("Old test directory still exists: tests/");
+      log.warning("Old test directory still exists: tests/");
+      log.info("Consider removing after validation: rm -rf tests/");
     } else {
-      log.success('Old test directory has been removed');
+      log.success("Old test directory has been removed");
     }
   }
 
   testJestExecution() {
-    log.header('Testing Jest Execution');
+    log.header("Testing Jest Execution");
 
     try {
       // Test if Jest can load the configuration
-      execSync('npx jest --config=tools/testing/jest.config.ts --listTests', {
+      execSync("npx jest --config=tools/testing/jest.config.ts --listTests", {
         cwd: this.projectRoot,
-        stdio: 'pipe',
+        stdio: "pipe",
       });
-      log.success('Jest configuration loads successfully');
+      log.success("Jest configuration loads successfully");
     } catch (error) {
       this.errors.push(`Jest configuration error: ${error.message}`);
       log.error(`Jest configuration error: ${error.message}`);
@@ -217,7 +217,7 @@ class MigrationValidator {
   }
 
   generateReport() {
-    log.header('Migration Validation Report');
+    log.header("Migration Validation Report");
 
     if (this.warnings.length > 0) {
       this.warnings.forEach((_warning) => {});
@@ -227,10 +227,13 @@ class MigrationValidator {
       this.errors.forEach((_error) => {});
     }
     if (this.errors.length === 0) {
-      if (this.warnings.length === 0) {}
-    } else {}
+      if (this.warnings.length === 0) {
+      }
+    } else {
+    }
 
-    if (fs.existsSync(path.resolve(this.projectRoot, 'tests'))) {}
+    if (fs.existsSync(path.resolve(this.projectRoot, "tests"))) {
+    }
 
     return this.errors.length === 0;
   }

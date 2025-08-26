@@ -1,36 +1,36 @@
 // Enhanced No-Show Prediction API Endpoints - Real-time <200ms Response
 // High-performance API for healthcare no-show prediction with ensemble ML
 
-import { zValidator } from '@hono/zod-validator';
+import { zValidator } from "@hono/zod-validator";
 // Import enhanced prediction service
-import { enhancedNoShowPredictionService } from '@neonpro/ai/services/enhanced-no-show-prediction-service';
-import { Hono } from 'hono';
-import { cache } from 'hono/cache';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { timing } from 'hono/timing';
-import { z } from 'zod';
+import { enhancedNoShowPredictionService } from "@neonpro/ai/services/enhanced-no-show-prediction-service";
+import { Hono } from "hono";
+import { cache } from "hono/cache";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import { timing } from "hono/timing";
+import { z } from "zod";
 
 // Validation schemas for real-time API
 const PatientProfileSchema = z.object({
   patient_id: z.string().min(1),
   age: z.number().min(0).max(120),
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.enum(["male", "female", "other"]),
   location_distance_km: z.number().min(0).max(1000),
-  insurance_type: z.enum(['private', 'public', 'self_pay', 'mixed']),
+  insurance_type: z.enum(["private", "public", "self_pay", "mixed"]),
   employment_status: z.enum([
-    'employed',
-    'unemployed',
-    'retired',
-    'student',
-    'unknown',
+    "employed",
+    "unemployed",
+    "retired",
+    "student",
+    "unknown",
   ]),
   chronic_conditions: z.array(z.string()).default([]),
   medication_adherence_score: z.number().min(0).max(100),
   communication_preferences: z
-    .array(z.enum(['email', 'sms', 'phone', 'app']))
-    .default(['sms']),
-  language_preference: z.string().default('pt-BR'),
+    .array(z.enum(["email", "sms", "phone", "app"]))
+    .default(["sms"]),
+  language_preference: z.string().default("pt-BR"),
 });
 
 const AppointmentContextSchema = z.object({
@@ -39,32 +39,32 @@ const AppointmentContextSchema = z.object({
   doctor_id: z.string().min(1),
   clinic_id: z.string().min(1),
   appointment_type: z.enum([
-    'consultation',
-    'follow_up',
-    'exam',
-    'procedure',
-    'emergency',
+    "consultation",
+    "follow_up",
+    "exam",
+    "procedure",
+    "emergency",
   ]),
   specialty: z.string().min(1),
   scheduled_datetime: z.string().datetime(),
   duration_minutes: z.number().min(15).max(480),
   is_first_appointment: z.boolean(),
-  urgency_level: z.enum(['low', 'medium', 'high', 'urgent']),
+  urgency_level: z.enum(["low", "medium", "high", "urgent"]),
   cost_estimate: z.number().min(0),
   requires_preparation: z.boolean(),
-  preparation_complexity: z.enum(['none', 'simple', 'moderate', 'complex']),
+  preparation_complexity: z.enum(["none", "simple", "moderate", "complex"]),
 });
 
 const ExternalFactorsSchema = z
   .object({
     weather_conditions: z
-      .enum(['sunny', 'rainy', 'snowy', 'stormy', 'cloudy'])
+      .enum(["sunny", "rainy", "snowy", "stormy", "cloudy"])
       .optional(),
     traffic_conditions: z
-      .enum(['light', 'moderate', 'heavy', 'severe'])
+      .enum(["light", "moderate", "heavy", "severe"])
       .optional(),
     public_transport_status: z
-      .enum(['normal', 'delayed', 'disrupted', 'strike'])
+      .enum(["normal", "delayed", "disrupted", "strike"])
       .optional(),
     local_events: z.array(z.string()).optional(),
     holiday_proximity_days: z.number().min(0).max(14).optional(),
@@ -97,7 +97,7 @@ const _PredictionResponseSchema = z.object({
   prediction_id: z.string(),
   appointment_id: z.string(),
   no_show_probability: z.number().min(0).max(1),
-  risk_category: z.enum(['low', 'medium', 'high', 'very_high']),
+  risk_category: z.enum(["low", "medium", "high", "very_high"]),
   confidence_score: z.number().min(0).max(1),
   processing_time_ms: z.number(),
   model_version: z.string(),
@@ -115,14 +115,14 @@ const _PredictionResponseSchema = z.object({
     z.object({
       factor_name: z.string(),
       impact_score: z.number(),
-      impact_direction: z.enum(['increases_risk', 'decreases_risk']),
+      impact_direction: z.enum(["increases_risk", "decreases_risk"]),
       confidence: z.number(),
     }),
   ),
   recommendations: z.array(
     z.object({
       action_type: z.string(),
-      priority: z.enum(['low', 'medium', 'high', 'urgent']),
+      priority: z.enum(["low", "medium", "high", "urgent"]),
       description: z.string(),
       estimated_impact: z.number(),
       success_probability: z.number(),
@@ -152,10 +152,10 @@ export const enhancedPredictionRoutes = new Hono()
   .use(logger())
   .use(
     cors({
-      origin: ['http://localhost:3000', 'https://neonpro.vercel.app'],
-      allowHeaders: ['Content-Type', 'Authorization'],
-      allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-      exposeHeaders: ['X-Response-Time', 'X-Cache-Status'],
+      origin: ["http://localhost:3000", "https://neonpro.vercel.app"],
+      allowHeaders: ["Content-Type", "Authorization"],
+      allowMethods: ["GET", "POST", "PUT", "DELETE"],
+      exposeHeaders: ["X-Response-Time", "X-Cache-Status"],
     }),
   );
 
@@ -172,9 +172,9 @@ const CACHE_CONFIG = {
  * POST /api/ai/enhanced-predictions/predict
  */
 enhancedPredictionRoutes.post(
-  '/predict',
+  "/predict",
   zValidator(
-    'json',
+    "json",
     z.object({
       patient_profile: PatientProfileSchema,
       appointment_context: AppointmentContextSchema,
@@ -184,7 +184,7 @@ enhancedPredictionRoutes.post(
           include_explanations: z.boolean().default(true),
           include_interventions: z.boolean().default(true),
           cache_key: z.string().optional(),
-          priority: z.enum(['standard', 'high']).default('standard'),
+          priority: z.enum(["standard", "high"]).default("standard"),
         })
         .optional(),
     }),
@@ -199,23 +199,25 @@ enhancedPredictionRoutes.post(
         appointment_context,
         external_factors,
         options = {},
-      } = c.req.valid('json');
+      } = c.req.valid("json");
 
       // Check cache first for performance
-      const _cacheKey = options.cache_key
-        || `prediction_${appointment_context.appointment_id}_${appointment_context.scheduled_datetime}`;
+      const _cacheKey =
+        options.cache_key ||
+        `prediction_${appointment_context.appointment_id}_${appointment_context.scheduled_datetime}`;
 
       // Fast-track for high priority requests
-      if (options.priority === 'high') {
-        c.header('X-Priority', 'high');
+      if (options.priority === "high") {
+        c.header("X-Priority", "high");
       }
 
       // Get enhanced prediction
-      const predictionResult = await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
-        patient_profile,
-        appointment_context,
-        external_factors,
-      );
+      const predictionResult =
+        await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
+          patient_profile,
+          appointment_context,
+          external_factors,
+        );
 
       // Calculate ROI impact
       const avgNoShowCost = 150;
@@ -235,7 +237,8 @@ enhancedPredictionRoutes.post(
       const processingTime = performance.now() - startTime;
 
       // Performance warning if over target
-      if (processingTime > 200) {}
+      if (processingTime > 200) {
+      }
 
       const response = {
         success: true,
@@ -247,38 +250,42 @@ enhancedPredictionRoutes.post(
         ),
         confidence_score: predictionResult.prediction.confidence_score,
         processing_time_ms: Math.round(processingTime),
-        model_version: 'ensemble_v2.1.0',
+        model_version: "ensemble_v2.1.0",
         ensemble_details: {
           models_used: predictionResult.prediction.model_predictions.map(
             (p) => p.modelName,
           ),
           ensemble_method: predictionResult.prediction.ensemble_method,
           calibrated: true,
-          prediction_intervals: predictionResult.prediction.prediction_intervals,
+          prediction_intervals:
+            predictionResult.prediction.prediction_intervals,
         },
-        contributing_factors: predictionResult.prediction.feature_importance_aggregated
-          .slice(0, 8)
-          .map((fi) => ({
-            factor_name: fi.feature_name,
-            impact_score: fi.importance_score,
-            impact_direction: fi.importance_score > 0
-              ? ('increases_risk' as const)
-              : ('decreases_risk' as const),
-            confidence: fi.stability_score,
-          })),
+        contributing_factors:
+          predictionResult.prediction.feature_importance_aggregated
+            .slice(0, 8)
+            .map((fi) => ({
+              factor_name: fi.feature_name,
+              impact_score: fi.importance_score,
+              impact_direction:
+                fi.importance_score > 0
+                  ? ("increases_risk" as const)
+                  : ("decreases_risk" as const),
+              confidence: fi.stability_score,
+            })),
         recommendations: predictionResult.recommended_interventions
           .slice(0, 5)
           .map((ri) => ({
-            action_type: ri.name.toLowerCase().includes('reminder')
-              ? 'reminder'
-              : 'intervention',
-            priority: ri.estimated_effectiveness > 0.7
-              ? ('high' as const)
-              : ('medium' as const),
+            action_type: ri.name.toLowerCase().includes("reminder")
+              ? "reminder"
+              : "intervention",
+            priority:
+              ri.estimated_effectiveness > 0.7
+                ? ("high" as const)
+                : ("medium" as const),
             description: ri.description,
             estimated_impact: ri.estimated_effectiveness,
             success_probability: ri.success_metrics.conversion_rate,
-            timing_recommendation: `${ri.timing_hours_before.join('h, ')}h before appointment`,
+            timing_recommendation: `${ri.timing_hours_before.join("h, ")}h before appointment`,
           })),
         intervention_strategies: predictionResult.recommended_interventions.map(
           (ri) => ({
@@ -293,23 +300,23 @@ enhancedPredictionRoutes.post(
       };
 
       // Set performance headers
-      c.header('X-Response-Time', `${processingTime.toFixed(2)}ms`);
-      c.header('X-Model-Version', 'ensemble_v2.1.0');
-      c.header('X-Cache-Status', 'MISS');
+      c.header("X-Response-Time", `${processingTime.toFixed(2)}ms`);
+      c.header("X-Model-Version", "ensemble_v2.1.0");
+      c.header("X-Cache-Status", "MISS");
 
       return c.json(response);
     } catch {
       const processingTime = performance.now() - startTime;
 
-      c.header('X-Response-Time', `${processingTime.toFixed(2)}ms`);
-      c.header('X-Error', 'prediction_failed');
+      c.header("X-Response-Time", `${processingTime.toFixed(2)}ms`);
+      c.header("X-Error", "prediction_failed");
 
       return c.json(
         {
           success: false,
           prediction_id: requestId,
-          error: 'Prediction service temporarily unavailable',
-          error_code: 'SERVICE_ERROR',
+          error: "Prediction service temporarily unavailable",
+          error_code: "SERVICE_ERROR",
           processing_time_ms: Math.round(processingTime),
           retry_after_seconds: 30,
         },
@@ -324,9 +331,9 @@ enhancedPredictionRoutes.post(
  * POST /api/ai/enhanced-predictions/bulk-predict
  */
 enhancedPredictionRoutes.post(
-  '/bulk-predict',
+  "/bulk-predict",
   zValidator(
-    'json',
+    "json",
     z.object({
       predictions: z
         .array(
@@ -341,7 +348,7 @@ enhancedPredictionRoutes.post(
         .max(50), // Limit for performance
       options: z
         .object({
-          priority: z.enum(['standard', 'high']).default('standard'),
+          priority: z.enum(["standard", "high"]).default("standard"),
           return_details: z.boolean().default(false),
           async_processing: z.boolean().default(false),
         })
@@ -353,14 +360,14 @@ enhancedPredictionRoutes.post(
     const batchId = `batch_${Date.now()}_${Math.random().toString(36).slice(7)}`;
 
     try {
-      const { predictions, options = {} } = c.req.valid('json');
+      const { predictions, options = {} } = c.req.valid("json");
 
       // Parallel processing for performance
       const predictionPromises = predictions.map(
         async (predRequest, _index) => {
           try {
-            const predictionResult = await enhancedNoShowPredictionService
-              .getEnhancedPredictionWithROI(
+            const predictionResult =
+              await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
                 predRequest.patient_profile,
                 predRequest.appointment_context,
                 predRequest.external_factors,
@@ -369,25 +376,28 @@ enhancedPredictionRoutes.post(
             return {
               appointment_id: predRequest.appointment_id,
               success: true,
-              no_show_probability: predictionResult.prediction.calibrated_probability,
+              no_show_probability:
+                predictionResult.prediction.calibrated_probability,
               risk_category: calculateRiskCategory(
                 predictionResult.prediction.calibrated_probability,
               ),
               confidence_score: predictionResult.prediction.confidence_score,
-              top_risk_factors: predictionResult.prediction.feature_importance_aggregated
-                .slice(0, 3)
-                .map((fi) => fi.feature_name),
-              recommended_action: predictionResult.recommended_interventions[0]?.name
-                || 'standard_reminder',
+              top_risk_factors:
+                predictionResult.prediction.feature_importance_aggregated
+                  .slice(0, 3)
+                  .map((fi) => fi.feature_name),
+              recommended_action:
+                predictionResult.recommended_interventions[0]?.name ||
+                "standard_reminder",
               estimated_roi: predictionResult.roi_impact.net_savings,
             };
           } catch {
             return {
               appointment_id: predRequest.appointment_id,
               success: false,
-              error: 'Individual prediction failed',
+              error: "Individual prediction failed",
               no_show_probability: 0.5, // Default fallback
-              risk_category: 'medium' as const,
+              risk_category: "medium" as const,
               confidence_score: 0,
             };
           }
@@ -399,10 +409,11 @@ enhancedPredictionRoutes.post(
 
       // Calculate batch statistics
       const successCount = results.filter((r) => r.success).length;
-      const avgProbability = results
-        .filter((r) => r.success)
-        .reduce((sum, r) => sum + r.no_show_probability, 0)
-        / Math.max(1, successCount);
+      const avgProbability =
+        results
+          .filter((r) => r.success)
+          .reduce((sum, r) => sum + r.no_show_probability, 0) /
+        Math.max(1, successCount);
 
       const totalEstimatedROI = results
         .filter((r) => r.success && r.estimated_roi)
@@ -421,7 +432,8 @@ enhancedPredictionRoutes.post(
         batch_statistics: {
           avg_no_show_probability: Math.round(avgProbability * 1000) / 1000,
           high_risk_count: results.filter(
-            (r) => r.risk_category === 'high' || r.risk_category === 'very_high',
+            (r) =>
+              r.risk_category === "high" || r.risk_category === "very_high",
           ).length,
           total_estimated_roi: Math.round(totalEstimatedROI * 100) / 100,
           recommendations_generated: results.filter((r) => r.recommended_action)
@@ -431,13 +443,13 @@ enhancedPredictionRoutes.post(
       };
 
       // Performance headers
-      c.header('X-Batch-Processing-Time', `${processingTime.toFixed(2)}ms`);
+      c.header("X-Batch-Processing-Time", `${processingTime.toFixed(2)}ms`);
       c.header(
-        'X-Avg-Per-Prediction',
+        "X-Avg-Per-Prediction",
         `${(processingTime / predictions.length).toFixed(2)}ms`,
       );
       c.header(
-        'X-Success-Rate',
+        "X-Success-Rate",
         `${((successCount / predictions.length) * 100).toFixed(1)}%`,
       );
 
@@ -449,8 +461,8 @@ enhancedPredictionRoutes.post(
         {
           success: false,
           batch_id: batchId,
-          error: 'Bulk prediction service temporarily unavailable',
-          error_code: 'BATCH_SERVICE_ERROR',
+          error: "Bulk prediction service temporarily unavailable",
+          error_code: "BATCH_SERVICE_ERROR",
           processing_time_ms: Math.round(processingTime),
           retry_after_seconds: 60,
         },
@@ -465,14 +477,15 @@ enhancedPredictionRoutes.post(
  * GET /api/ai/enhanced-predictions/metrics
  */
 enhancedPredictionRoutes.get(
-  '/metrics',
+  "/metrics",
   cache({
-    cacheName: 'enhanced-prediction-metrics',
+    cacheName: "enhanced-prediction-metrics",
     cacheControl: `max-age=${CACHE_CONFIG.metrics}`,
   }),
   async (c) => {
     try {
-      const metrics = await enhancedNoShowPredictionService.getAdvancedPredictionMetrics();
+      const metrics =
+        await enhancedNoShowPredictionService.getAdvancedPredictionMetrics();
 
       return c.json({
         success: true,
@@ -485,14 +498,16 @@ enhancedPredictionRoutes.get(
           accuracy_achieved: metrics.model_performance.ensemble_accuracy,
           accuracy_met: metrics.model_performance.ensemble_accuracy >= 0.95,
           response_time_target: 200,
-          response_time_achieved: metrics.system_performance.avg_prediction_time_ms,
-          response_time_met: metrics.system_performance.avg_prediction_time_ms <= 200,
+          response_time_achieved:
+            metrics.system_performance.avg_prediction_time_ms,
+          response_time_met:
+            metrics.system_performance.avg_prediction_time_ms <= 200,
           roi_target_annual: 150_000,
           roi_projected_annual: metrics.roi_summary.yearly_projection,
           roi_target_met: metrics.roi_summary.yearly_projection >= 150_000,
         },
         health_status: {
-          overall: 'healthy',
+          overall: "healthy",
           models_operational: true,
           api_responsive: true,
           cache_functioning: true,
@@ -503,10 +518,10 @@ enhancedPredictionRoutes.get(
       return c.json(
         {
           success: false,
-          error: 'Metrics service temporarily unavailable',
-          error_code: 'METRICS_ERROR',
+          error: "Metrics service temporarily unavailable",
+          error_code: "METRICS_ERROR",
           health_status: {
-            overall: 'degraded',
+            overall: "degraded",
             models_operational: false,
             api_responsive: true,
             cache_functioning: false,
@@ -524,9 +539,9 @@ enhancedPredictionRoutes.get(
  * GET /api/ai/enhanced-predictions/health
  */
 enhancedPredictionRoutes.get(
-  '/health',
+  "/health",
   cache({
-    cacheName: 'enhanced-prediction-health',
+    cacheName: "enhanced-prediction-health",
     cacheControl: `max-age=${CACHE_CONFIG.health}`,
   }),
   async (c) => {
@@ -548,49 +563,52 @@ enhancedPredictionRoutes.get(
       const healthCheckTime = performance.now() - startTime;
 
       const allHealthy = healthChecks.every(
-        (check) => check.status === 'fulfilled',
+        (check) => check.status === "fulfilled",
       );
 
       const response = {
         success: true,
-        status: allHealthy ? 'healthy' : 'degraded',
+        status: allHealthy ? "healthy" : "degraded",
         timestamp: new Date().toISOString(),
         health_check_time_ms: Math.round(healthCheckTime),
         services: {
           ensemble_models: {
-            status: healthChecks[0].status === 'fulfilled'
-              ? 'operational'
-              : 'degraded',
+            status:
+              healthChecks[0].status === "fulfilled"
+                ? "operational"
+                : "degraded",
             last_checked: new Date().toISOString(),
           },
           cache_service: {
-            status: healthChecks[1].status === 'fulfilled'
-              ? 'operational'
-              : 'degraded',
+            status:
+              healthChecks[1].status === "fulfilled"
+                ? "operational"
+                : "degraded",
             hit_rate: 0.87,
           },
           database: {
-            status: healthChecks[2].status === 'fulfilled'
-              ? 'connected'
-              : 'disconnected',
+            status:
+              healthChecks[2].status === "fulfilled"
+                ? "connected"
+                : "disconnected",
             response_time_ms: 45,
           },
         },
         performance_targets: {
           prediction_response_time: {
-            target: '200ms',
-            current: '145ms',
-            status: 'met',
+            target: "200ms",
+            current: "145ms",
+            status: "met",
           },
-          model_accuracy: { target: '95%', current: '95.2%', status: 'met' },
+          model_accuracy: { target: "95%", current: "95.2%", status: "met" },
           roi_projection: {
-            target: '$150k/year',
-            current: '$150k/year',
-            status: 'met',
+            target: "$150k/year",
+            current: "$150k/year",
+            status: "met",
           },
-          uptime: { target: '99.9%', current: '99.95%', status: 'met' },
+          uptime: { target: "99.9%", current: "99.95%", status: "met" },
         },
-        version: 'ensemble_v2.1.0',
+        version: "ensemble_v2.1.0",
       };
 
       return c.json(response);
@@ -600,12 +618,12 @@ enhancedPredictionRoutes.get(
       return c.json(
         {
           success: false,
-          status: 'unhealthy',
+          status: "unhealthy",
           timestamp: new Date().toISOString(),
           health_check_time_ms: Math.round(healthCheckTime),
-          error: 'Health check failed',
-          error_code: 'HEALTH_CHECK_ERROR',
-          version: 'ensemble_v2.1.0',
+          error: "Health check failed",
+          error_code: "HEALTH_CHECK_ERROR",
+          version: "ensemble_v2.1.0",
         },
         503,
       );
@@ -616,17 +634,17 @@ enhancedPredictionRoutes.get(
 // Utility functions
 function calculateRiskCategory(
   probability: number,
-): 'low' | 'medium' | 'high' | 'very_high' {
+): "low" | "medium" | "high" | "very_high" {
   if (probability < 0.15) {
-    return 'low';
+    return "low";
   }
   if (probability < 0.35) {
-    return 'medium';
+    return "medium";
   }
   if (probability < 0.65) {
-    return 'high';
+    return "high";
   }
-  return 'very_high';
+  return "very_high";
 }
 
 export default enhancedPredictionRoutes;

@@ -2,8 +2,8 @@ import { createClient } from "@/app/utils/supabase/server";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { convertToCoreMessages, streamText } from "ai";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Configuração dos modelos
 const MODELS = {

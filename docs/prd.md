@@ -318,7 +318,7 @@ CREATE TABLE intervention_strategies (
 // AR Integration Component
 interface ARSimulatorProps {
   patientId: string;
-  treatmentType: 'botox' | 'filler' | 'laser' | 'surgical';
+  treatmentType: "botox" | "filler" | "laser" | "surgical";
   beforeImage: File;
 }
 

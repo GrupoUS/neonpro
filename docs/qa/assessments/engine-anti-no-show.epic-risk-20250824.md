@@ -77,7 +77,7 @@
 
 ```
 9: Change touches critical healthcare code paths with complex dependencies
-6: Change affects shared healthcare utilities or common workflows  
+6: Change affects shared healthcare utilities or common workflows
 3: Change affects isolated features with some healthcare integration
 1: Change is completely isolated from existing healthcare functionality
 ```
@@ -109,7 +109,7 @@
 
 ```
 Patient_Data_Systems (3.0): Patient registration, records, medical history
-Appointment_Management (2.5): Scheduling, calendar, availability systems  
+Appointment_Management (2.5): Scheduling, calendar, availability systems
 Compliance_Reporting (2.5): LGPD/ANVISA/CFM regulatory features
 Real_Time_Features (2.0): Live dashboards, notifications, critical updates
 AI_Integration_Points (2.0): New AI features touching existing healthcare systems

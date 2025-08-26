@@ -28,7 +28,7 @@
 const updatePatient = async (id: string, data: PatientData) => {
   const encrypted = await encrypt(data);
   await db.patient.update({ where: { id }, data: encrypted });
-  await auditLog('UPDATE_PATIENT', id);
+  await auditLog("UPDATE_PATIENT", id);
 };
 
 // YAGNI: Implementar apenas o necessário
@@ -39,7 +39,10 @@ interface PatientData {
 }
 
 // CoT: Raciocínio explícito em decisões críticas
-const validateHealthcareAccess = async (professionalId: string, patientId: string) => {
+const validateHealthcareAccess = async (
+  professionalId: string,
+  patientId: string,
+) => {
   // 1. Verificar autenticação profissional
   const professional = await validateProfessional(professionalId);
   // 2. Validar licença ativa (CRM/COREN)
@@ -83,8 +86,8 @@ export class HealthcareCompliance {
       data: {
         operation: operation.type,
         professional_crm: operation.professionalCrm,
-        device_class: 'IIA',
-        compliance_level: 'ANVISA_RDC_301_2019',
+        device_class: "IIA",
+        compliance_level: "ANVISA_RDC_301_2019",
       },
     });
   }
@@ -100,7 +103,7 @@ export class HealthcareCompliance {
   // ✅ HIPAA: US Healthcare Interoperability
   static async generateHL7FHIR(patientData: PatientData) {
     return {
-      resourceType: 'Patient',
+      resourceType: "Patient",
       identifier: [{ value: await hashCPF(patientData.cpf) }],
       // FHIR R4 compliant structure
     };
@@ -114,7 +117,7 @@ export const healthcareAuthMiddleware = async (req: Request) => {
   const professional = await validateJWT(professionalToken);
   const mfaValid = await validateMFA(professional.id, mfaToken);
 
-  if (!mfaValid) throw new AuthError('MFA required for healthcare access');
+  if (!mfaValid) throw new AuthError("MFA required for healthcare access");
 
   return { professional, authenticated: true, mfaVerified: true };
 };
@@ -125,7 +128,7 @@ export const healthcareAuthMiddleware = async (req: Request) => {
 ```typescript
 // AES-256-GCM para PHI (Protected Health Information)
 export class HealthcareEncryption {
-  private static readonly algorithm = 'aes-256-gcm';
+  private static readonly algorithm = "aes-256-gcm";
 
   static async encryptPHI(data: any): Promise<EncryptedData> {
     const key = await this.getDerivedKey();
@@ -135,21 +138,24 @@ export class HealthcareEncryption {
     // console.log('Encrypting:', data) // NUNCA!
 
     const encrypted = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv },
+      { name: "AES-GCM", iv },
       key,
       new TextEncoder().encode(JSON.stringify(data)),
     );
 
-    return { encrypted: Array.from(new Uint8Array(encrypted)), iv: Array.from(iv) };
+    return {
+      encrypted: Array.from(new Uint8Array(encrypted)),
+      iv: Array.from(iv),
+    };
   }
 
   // ✅ Auditoria sem exposição de PHI
   static async auditEncryption(operation: string, dataSize: number) {
-    await AuditLogger.log('ENCRYPTION_OPERATION', {
+    await AuditLogger.log("ENCRYPTION_OPERATION", {
       operation,
       dataSize, // Tamanho, não conteúdo
       algorithm: this.algorithm,
-      compliance: ['LGPD', 'HIPAA', 'ANVISA'],
+      compliance: ["LGPD", "HIPAA", "ANVISA"],
     });
   }
 }
@@ -158,7 +164,7 @@ export class HealthcareEncryption {
 export const healthcareRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 min
   max: 100, // requests per window
-  message: 'Too many healthcare requests',
+  message: "Too many healthcare requests",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -253,24 +259,27 @@ export function PatientForm({ patientId }: { patientId: string; }) {
 ```typescript
 // Type-safe healthcare API
 const healthcareApi = new Hono()
-  .use('*', healthcareAuthMiddleware)
-  .use('*', healthcareRateLimit)
-  .get('/patients/:id', async (c) => {
-    const patientId = c.req.param('id');
-    const professional = c.get('professional');
+  .use("*", healthcareAuthMiddleware)
+  .use("*", healthcareRateLimit)
+  .get("/patients/:id", async (c) => {
+    const patientId = c.req.param("id");
+    const professional = c.get("professional");
 
     // Validação de acesso
     const hasAccess = await validatePatientAccess(professional.id, patientId);
-    if (!hasAccess) return c.json({ error: 'Access denied' }, 403);
+    if (!hasAccess) return c.json({ error: "Access denied" }, 403);
 
     // Dados com minimização aplicada
-    const patient = await getPatientWithMinimization(patientId, professional.role);
+    const patient = await getPatientWithMinimization(
+      patientId,
+      professional.role,
+    );
 
     return c.json({ patient, accessLevel: professional.role });
   });
 
 // Client-side com type safety
-const client = hc<typeof healthcareApi>('/api/healthcare');
+const client = hc<typeof healthcareApi>("/api/healthcare");
 const patientData = await client.patients[patientId].$get();
 ```
 
@@ -309,9 +318,9 @@ export const OptimizedQueries = {
 };
 
 // Code Splitting por módulo médico
-const AppointmentsModule = lazy(() => import('./modules/appointments'));
-const MedicalRecordsModule = lazy(() => import('./modules/medical-records'));
-const PrescriptionsModule = lazy(() => import('./modules/prescriptions'));
+const AppointmentsModule = lazy(() => import("./modules/appointments"));
+const MedicalRecordsModule = lazy(() => import("./modules/medical-records"));
+const PrescriptionsModule = lazy(() => import("./modules/prescriptions"));
 ```
 
 ### **WCAG 2.1 AA Healthcare Compliance**
@@ -322,8 +331,8 @@ export function EmergencyButton({ onEmergency }: { onEmergency: () => void; }) {
   return (
     <button
       onClick={onEmergency}
-      className="bg-red-600 text-white p-4 text-lg font-bold 
-                 focus:ring-4 focus:ring-red-300 
+      className="bg-red-600 text-white p-4 text-lg font-bold
+                 focus:ring-4 focus:ring-red-300
                  aria-label='Emergency Alert Button'"
       aria-describedby="emergency-help"
       // ✅ Contraste mínimo 4.5:1 para emergências
@@ -386,7 +395,7 @@ CREATE OR REPLACE FUNCTION audit_healthcare_access()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO audit_logs (
-    table_name, operation, user_id, 
+    table_name, operation, user_id,
     patient_id, timestamp, compliance_flags
   ) VALUES (
     TG_TABLE_NAME, TG_OP, auth.uid(),
@@ -414,7 +423,10 @@ export const secureHealthcareAPI = [
 // Validação de esquemas com sanitização
 export const PatientSchema = z.object({
   name: z.string().min(2).max(100).transform(sanitizeName),
-  cpf: z.string().regex(/^\d{11}$/).transform(hashCPF),
+  cpf: z
+    .string()
+    .regex(/^\d{11}$/)
+    .transform(hashCPF),
   birthDate: z.coerce.date().max(new Date()),
   // ❌ Anti-pattern: Campos sensíveis sem validação
   medicalHistory: z.string().max(5000).optional(),
@@ -422,9 +434,9 @@ export const PatientSchema = z.object({
 
 // Rate limiting específico por operação
 export const operationLimits = {
-  'patient_read': { windowMs: 60000, max: 100 },
-  'patient_write': { windowMs: 60000, max: 20 },
-  'emergency_access': { windowMs: 60000, max: 5 },
+  patient_read: { windowMs: 60000, max: 100 },
+  patient_write: { windowMs: 60000, max: 20 },
+  emergency_access: { windowMs: 60000, max: 5 },
 };
 ```
 
@@ -440,9 +452,9 @@ export class HealthcareTestUtils {
   static createTestPatient(): TestPatient {
     return {
       id: crypto.randomUUID(),
-      cpf: '00000000000', // CPF sintético
-      name: 'Test Patient',
-      birthDate: '1990-01-01',
+      cpf: "00000000000", // CPF sintético
+      name: "Test Patient",
+      birthDate: "1990-01-01",
       // ✅ Sempre dados sintéticos para testes
     };
   }
@@ -450,9 +462,9 @@ export class HealthcareTestUtils {
   static async mockHealthcareSession() {
     return {
       professional: {
-        id: 'test-professional-id',
-        crm: '123456-SP',
-        role: 'doctor',
+        id: "test-professional-id",
+        crm: "123456-SP",
+        role: "doctor",
         mfaVerified: true,
       },
     };
@@ -460,36 +472,36 @@ export class HealthcareTestUtils {
 }
 
 // Testes de compliance obrigatórios
-describe('LGPD Compliance', () => {
-  test('should require consent for patient data access', async () => {
+describe("LGPD Compliance", () => {
+  test("should require consent for patient data access", async () => {
     const patient = HealthcareTestUtils.createTestPatient();
 
     // ❌ Sem consentimento deve falhar
     await expect(
-      PatientService.getData(patient.id, 'test-professional'),
-    ).rejects.toThrow('LGPD consent required');
+      PatientService.getData(patient.id, "test-professional"),
+    ).rejects.toThrow("LGPD consent required");
 
     // ✅ Com consentimento deve funcionar
-    await LGPDService.grantConsent(patient.id, 'DATA_ACCESS');
-    const data = await PatientService.getData(patient.id, 'test-professional');
+    await LGPDService.grantConsent(patient.id, "DATA_ACCESS");
+    const data = await PatientService.getData(patient.id, "test-professional");
     expect(data).toBeDefined();
   });
 });
 
 // E2E para workflows críticos
-test('Emergency patient access workflow', async ({ page }) => {
-  await page.goto('/emergency-access');
+test("Emergency patient access workflow", async ({ page }) => {
+  await page.goto("/emergency-access");
 
   // Verificar MFA para emergência
-  await page.fill('[data-testid=emergency-code]', 'EMERGENCY123');
-  await page.click('[data-testid=emergency-access]');
+  await page.fill("[data-testid=emergency-code]", "EMERGENCY123");
+  await page.click("[data-testid=emergency-access]");
 
   // Validar acesso aos dados críticos
-  await expect(page.locator('[data-testid=patient-vitals]')).toBeVisible();
+  await expect(page.locator("[data-testid=patient-vitals]")).toBeVisible();
 
   // Verificar auditoria de acesso de emergência
   const auditLogs = await db.auditLog.findMany({
-    where: { action: 'EMERGENCY_ACCESS' },
+    where: { action: "EMERGENCY_ACCESS" },
   });
   expect(auditLogs).toHaveLength(1);
 });
@@ -517,18 +529,19 @@ export class HealthcareAI {
     const sanitized = await PHIDetector.sanitize(query);
 
     const aiResponse = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: "gpt-4",
       messages: [
         {
-          role: 'system',
-          content: 'You are a healthcare AI assistant. Never store or log patient data.',
+          role: "system",
+          content:
+            "You are a healthcare AI assistant. Never store or log patient data.",
         },
-        { role: 'user', content: sanitized },
+        { role: "user", content: sanitized },
       ],
     });
 
     // ✅ Auditoria sem PHI
-    await AuditLogger.logAIInteraction('HEALTHCARE_AI_QUERY', professionalId, {
+    await AuditLogger.logAIInteraction("HEALTHCARE_AI_QUERY", professionalId, {
       query_length: sanitized.length,
       response_length: aiResponse.choices[0].message.content?.length,
       phi_detected: false,
@@ -540,11 +553,11 @@ export class HealthcareAI {
   // Análise de sintomas com privacy
   static async analyzeSymptoms(symptoms: string[]) {
     // Usar apenas sintomas codificados (ICD-10)
-    const codedSymptoms = symptoms.map(s => ICD10.encode(s));
+    const codedSymptoms = symptoms.map((s) => ICD10.encode(s));
 
     return await this.processPatientQuery(
-      `Analyze these coded symptoms: ${codedSymptoms.join(', ')}`,
-      'system',
+      `Analyze these coded symptoms: ${codedSymptoms.join(", ")}`,
+      "system",
     );
   }
 }
@@ -598,7 +611,7 @@ const criticalOperation = async (data: CriticalData) => {
 const getMinimizedData = (data: PatientData, role: Role) => {
   const permissions = ROLE_PERMISSIONS[role];
   return Object.keys(data)
-    .filter(key => permissions.includes(key))
+    .filter((key) => permissions.includes(key))
     .reduce((obj, key) => ({ ...obj, [key]: data[key] }), {});
 };
 ```

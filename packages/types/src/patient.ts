@@ -1,4 +1,4 @@
-import type { BaseEntity } from './common';
+import type { BaseEntity } from "./common";
 
 export interface Patient extends BaseEntity {
   name: string;

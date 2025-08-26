@@ -118,8 +118,7 @@ export default function PacientesPage() {
   const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(
-    );
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [_isLoading, _setIsLoading] = useState(false);
 
@@ -262,9 +261,9 @@ export default function PacientesPage() {
                         <p className="text-muted-foreground text-sm">
                           {patient.gender === "M"
                             ? "Masculino"
-                            : (patient.gender === "F"
+                            : patient.gender === "F"
                               ? "Feminino"
-                              : "Outro")}
+                              : "Outro"}
                         </p>
                       </div>
                     </div>

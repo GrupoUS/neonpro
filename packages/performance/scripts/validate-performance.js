@@ -5,8 +5,8 @@
  * Validates all performance optimizations and targets
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
 async function validatePerformance() {
   const results = {
@@ -23,20 +23,20 @@ async function validatePerformance() {
 
 async function validateWebVitals() {
   const webVitalsResults = {
-    fcpTarget: '< 1.5s',
-    lcpTarget: '< 2.5s',
-    clsTarget: '< 0.1',
-    fidTarget: '< 100ms',
-    ttfbTarget: '< 500ms',
+    fcpTarget: "< 1.5s",
+    lcpTarget: "< 2.5s",
+    clsTarget: "< 0.1",
+    fidTarget: "< 100ms",
+    ttfbTarget: "< 500ms",
   };
 
   // Check if Web Vitals monitoring is implemented
   const webVitalsPath = path.join(
     process.cwd(),
-    'packages',
-    'performance',
-    'src',
-    'web-vitals',
+    "packages",
+    "performance",
+    "src",
+    "web-vitals",
   );
   const webVitalsExists = fs.existsSync(webVitalsPath);
 
@@ -45,7 +45,7 @@ async function validateWebVitals() {
     monitoringActive: webVitalsExists,
     healthcareThresholds: webVitalsExists,
     targets: webVitalsResults,
-    status: webVitalsExists ? 'PASS' : 'FAIL',
+    status: webVitalsExists ? "PASS" : "FAIL",
   };
 }
 
@@ -59,18 +59,19 @@ async function validateBundleOptimization() {
   };
 
   // Check for Next.js config optimizations
-  const nextConfigPath = path.join(process.cwd(), 'next.config.ts');
+  const nextConfigPath = path.join(process.cwd(), "next.config.ts");
   if (fs.existsSync(nextConfigPath)) {
-    const nextConfig = fs.readFileSync(nextConfigPath, 'utf8');
-    bundleChecks.codeSplitting = nextConfig.includes('splitChunks')
-      || nextConfig.includes('chunks:');
-    bundleChecks.dynamicImports = nextConfig.includes('dynamic') || nextConfig.includes('import(');
+    const nextConfig = fs.readFileSync(nextConfigPath, "utf8");
+    bundleChecks.codeSplitting =
+      nextConfig.includes("splitChunks") || nextConfig.includes("chunks:");
+    bundleChecks.dynamicImports =
+      nextConfig.includes("dynamic") || nextConfig.includes("import(");
   }
 
   // Check for webpack optimization
   const webpackOptPath = path.join(
     process.cwd(),
-    'webpack.healthcare-optimization.js',
+    "webpack.healthcare-optimization.js",
   );
   if (fs.existsSync(webpackOptPath)) {
     bundleChecks.healthcareModulesSeparated = true;
@@ -79,10 +80,10 @@ async function validateBundleOptimization() {
   // Check bundle analyzer implementation
   const bundleAnalyzerPath = path.join(
     process.cwd(),
-    'packages',
-    'performance',
-    'src',
-    'bundle-analysis',
+    "packages",
+    "performance",
+    "src",
+    "bundle-analysis",
   );
   bundleChecks.treeShaking = fs.existsSync(bundleAnalyzerPath);
   bundleChecks.bundleBudgets = fs.existsSync(bundleAnalyzerPath);
@@ -93,7 +94,7 @@ async function validateBundleOptimization() {
   return {
     checks: bundleChecks,
     score: Math.round((passedChecks / totalChecks) * 100),
-    status: passedChecks >= totalChecks * 0.8 ? 'PASS' : 'NEEDS_IMPROVEMENT',
+    status: passedChecks >= totalChecks * 0.8 ? "PASS" : "NEEDS_IMPROVEMENT",
   };
 }
 
@@ -109,24 +110,24 @@ async function validateDatabasePerformance() {
   // Check for database monitoring implementation
   const dbMonitorPath = path.join(
     process.cwd(),
-    'packages',
-    'performance',
-    'src',
-    'database',
+    "packages",
+    "performance",
+    "src",
+    "database",
   );
   dbChecks.queryProfiling = fs.existsSync(dbMonitorPath);
 
   // Check for Supabase optimizations
-  const supabaseConfigPath = path.join(process.cwd(), 'supabase');
+  const supabaseConfigPath = path.join(process.cwd(), "supabase");
   if (fs.existsSync(supabaseConfigPath)) {
-    const migrationsPath = path.join(supabaseConfigPath, 'migrations');
+    const migrationsPath = path.join(supabaseConfigPath, "migrations");
     if (fs.existsSync(migrationsPath)) {
       const migrations = fs.readdirSync(migrationsPath);
       dbChecks.indexOptimization = migrations.some(
-        (file) => file.includes('index') || file.includes('optimization'),
+        (file) => file.includes("index") || file.includes("optimization"),
       );
       dbChecks.healthcareIndexes = migrations.some(
-        (file) => file.includes('healthcare') || file.includes('patient'),
+        (file) => file.includes("healthcare") || file.includes("patient"),
       );
     }
   }
@@ -134,11 +135,11 @@ async function validateDatabasePerformance() {
   // Check for RLS policies (from security package)
   const rlsPoliciesPath = path.join(
     process.cwd(),
-    'packages',
-    'security',
-    'src',
-    'database',
-    'rls-policies.ts',
+    "packages",
+    "security",
+    "src",
+    "database",
+    "rls-policies.ts",
   );
   if (fs.existsSync(rlsPoliciesPath)) {
     dbChecks.connectionPooling = true; // RLS indicates proper DB setup
@@ -150,7 +151,7 @@ async function validateDatabasePerformance() {
   return {
     checks: dbChecks,
     score: Math.round((passedChecks / totalChecks) * 100),
-    status: passedChecks >= totalChecks * 0.7 ? 'PASS' : 'NEEDS_IMPROVEMENT',
+    status: passedChecks >= totalChecks * 0.7 ? "PASS" : "NEEDS_IMPROVEMENT",
   };
 }
 
@@ -166,26 +167,27 @@ async function validateInfrastructureSetup() {
   // Check for infrastructure optimization implementation
   const infraPath = path.join(
     process.cwd(),
-    'packages',
-    'performance',
-    'src',
-    'infrastructure',
+    "packages",
+    "performance",
+    "src",
+    "infrastructure",
   );
   infraChecks.cacheStrategies = fs.existsSync(infraPath);
   infraChecks.healthcareCompliantCaching = fs.existsSync(infraPath);
 
   // Check for Next.js config with headers and caching
-  const nextConfigPath = path.join(process.cwd(), 'next.config.ts');
+  const nextConfigPath = path.join(process.cwd(), "next.config.ts");
   if (fs.existsSync(nextConfigPath)) {
-    const nextConfig = fs.readFileSync(nextConfigPath, 'utf8');
-    infraChecks.cdnConfiguration = nextConfig.includes('headers')
-      || nextConfig.includes('Cache-Control');
-    infraChecks.edgeCaching = nextConfig.includes('edge') || nextConfig.includes('revalidate');
+    const nextConfig = fs.readFileSync(nextConfigPath, "utf8");
+    infraChecks.cdnConfiguration =
+      nextConfig.includes("headers") || nextConfig.includes("Cache-Control");
+    infraChecks.edgeCaching =
+      nextConfig.includes("edge") || nextConfig.includes("revalidate");
   }
 
   // Check for service worker
-  const swPath = path.join(process.cwd(), 'public', 'sw.js');
-  const swTsPath = path.join(process.cwd(), 'public', 'service-worker.js');
+  const swPath = path.join(process.cwd(), "public", "sw.js");
+  const swTsPath = path.join(process.cwd(), "public", "service-worker.js");
   infraChecks.serviceWorker = fs.existsSync(swPath) || fs.existsSync(swTsPath);
 
   const passedChecks = Object.values(infraChecks).filter(Boolean).length;
@@ -194,7 +196,7 @@ async function validateInfrastructureSetup() {
   return {
     checks: infraChecks,
     score: Math.round((passedChecks / totalChecks) * 100),
-    status: passedChecks >= totalChecks * 0.8 ? 'PASS' : 'NEEDS_IMPROVEMENT',
+    status: passedChecks >= totalChecks * 0.8 ? "PASS" : "NEEDS_IMPROVEMENT",
   };
 }
 
@@ -208,23 +210,23 @@ async function validateMobilePerformance() {
   };
 
   // Check for PWA manifest
-  const manifestPath = path.join(process.cwd(), 'public', 'manifest.json');
+  const manifestPath = path.join(process.cwd(), "public", "manifest.json");
   mobileChecks.pwaCapabilities = fs.existsSync(manifestPath);
 
   // Check for service worker (offline support)
-  const swPath = path.join(process.cwd(), 'public', 'sw.js');
+  const swPath = path.join(process.cwd(), "public", "sw.js");
   mobileChecks.offlineSupport = fs.existsSync(swPath);
 
   // Check for responsive design (Tailwind CSS indicates responsive design)
-  const tailwindConfigPath = path.join(process.cwd(), 'tailwind.config.ts');
+  const tailwindConfigPath = path.join(process.cwd(), "tailwind.config.ts");
   mobileChecks.responsiveDesign = fs.existsSync(tailwindConfigPath);
 
   // Check for Next.js image optimization
-  const nextConfigPath = path.join(process.cwd(), 'next.config.ts');
+  const nextConfigPath = path.join(process.cwd(), "next.config.ts");
   if (fs.existsSync(nextConfigPath)) {
-    const nextConfig = fs.readFileSync(nextConfigPath, 'utf8');
-    mobileChecks.mobileFirstLoading = nextConfig.includes('images')
-      || nextConfig.includes('optimization');
+    const nextConfig = fs.readFileSync(nextConfigPath, "utf8");
+    mobileChecks.mobileFirstLoading =
+      nextConfig.includes("images") || nextConfig.includes("optimization");
   }
 
   // Touch optimization usually comes with proper mobile framework usage
@@ -236,7 +238,7 @@ async function validateMobilePerformance() {
   return {
     checks: mobileChecks,
     score: Math.round((passedChecks / totalChecks) * 100),
-    status: passedChecks >= totalChecks * 0.7 ? 'PASS' : 'NEEDS_IMPROVEMENT',
+    status: passedChecks >= totalChecks * 0.7 ? "PASS" : "NEEDS_IMPROVEMENT",
   };
 }
 
@@ -250,45 +252,46 @@ async function validateHealthcareCompliance() {
   };
 
   // Check for performance monitoring
-  const perfMonitorPath = path.join(process.cwd(), 'packages', 'performance');
+  const perfMonitorPath = path.join(process.cwd(), "packages", "performance");
   complianceChecks.performanceMonitoring = fs.existsSync(perfMonitorPath);
 
   // Check for security and encryption
-  const securityPath = path.join(process.cwd(), 'packages', 'security');
+  const securityPath = path.join(process.cwd(), "packages", "security");
   complianceChecks.medicalDataEncryption = fs.existsSync(securityPath);
 
   // Check for healthcare-specific cache policies
   const infraPath = path.join(
     process.cwd(),
-    'packages',
-    'performance',
-    'src',
-    'infrastructure',
-    'cache-manager.ts',
+    "packages",
+    "performance",
+    "src",
+    "infrastructure",
+    "cache-manager.ts",
   );
   if (fs.existsSync(infraPath)) {
-    const cacheManager = fs.readFileSync(infraPath, 'utf8');
-    complianceChecks.dataPrivacyInCache = cacheManager.includes('healthcareSensitive')
-      || cacheManager.includes('patient-data');
+    const cacheManager = fs.readFileSync(infraPath, "utf8");
+    complianceChecks.dataPrivacyInCache =
+      cacheManager.includes("healthcareSensitive") ||
+      cacheManager.includes("patient-data");
   }
 
   // Check for accessibility (Biome config)
-  const biomeConfigPath = path.join(process.cwd(), 'biome.jsonc');
+  const biomeConfigPath = path.join(process.cwd(), "biome.jsonc");
   complianceChecks.accessibilityOptimization = fs.existsSync(biomeConfigPath);
 
   // Clinical workflow optimization (healthcare-specific thresholds)
   const webVitalsPath = path.join(
     process.cwd(),
-    'packages',
-    'performance',
-    'src',
-    'web-vitals',
-    'core-web-vitals.ts',
+    "packages",
+    "performance",
+    "src",
+    "web-vitals",
+    "core-web-vitals.ts",
   );
   if (fs.existsSync(webVitalsPath)) {
-    const webVitals = fs.readFileSync(webVitalsPath, 'utf8');
-    complianceChecks.clinicalWorkflowOptimization = webVitals.includes('healthcare')
-      || webVitals.includes('patient');
+    const webVitals = fs.readFileSync(webVitalsPath, "utf8");
+    complianceChecks.clinicalWorkflowOptimization =
+      webVitals.includes("healthcare") || webVitals.includes("patient");
   }
 
   const passedChecks = Object.values(complianceChecks).filter(Boolean).length;
@@ -297,7 +300,7 @@ async function validateHealthcareCompliance() {
   return {
     checks: complianceChecks,
     score: Math.round((passedChecks / totalChecks) * 100),
-    status: passedChecks >= totalChecks * 0.9 ? 'PASS' : 'NEEDS_IMPROVEMENT',
+    status: passedChecks >= totalChecks * 0.9 ? "PASS" : "NEEDS_IMPROVEMENT",
   };
 }
 
@@ -308,7 +311,7 @@ function generateValidationReport(results) {
   );
 
   const passedCategories = Object.values(results).filter(
-    (r) => r.status === 'PASS',
+    (r) => r.status === "PASS",
   ).length;
   const totalCategories = Object.keys(results).length;
 
@@ -358,10 +361,10 @@ Healthcare-Specific Targets:
 
 🏥 HEALTHCARE COMPLIANCE STATUS:
 ${
-    results.healthcareCompliance.status === 'PASS'
-      ? '✅ All healthcare performance requirements met!'
-      : '⚠️ Some healthcare requirements need attention.'
-  }
+  results.healthcareCompliance.status === "PASS"
+    ? "✅ All healthcare performance requirements met!"
+    : "⚠️ Some healthcare requirements need attention."
+}
 
 📈 OPTIMIZATION SUMMARY:
 - Performance monitoring: Active and healthcare-optimized
@@ -372,26 +375,26 @@ ${
 - Compliance: LGPD and healthcare privacy compliant
 
 ${
-    averageScore >= 90
-      ? '🏆 EXCELLENT: Performance optimization complete and healthcare-ready!'
-      : (averageScore >= 75
-      ? '✅ GOOD: Performance targets met with minor improvements available.'
-      : '⚠️ NEEDS IMPROVEMENT: Some performance targets require attention.')
-  }
+  averageScore >= 90
+    ? "🏆 EXCELLENT: Performance optimization complete and healthcare-ready!"
+    : averageScore >= 75
+      ? "✅ GOOD: Performance targets met with minor improvements available."
+      : "⚠️ NEEDS IMPROVEMENT: Some performance targets require attention."
+}
 
 ---
 Next Steps:
 ${
-    averageScore < 90
-      ? '1. Address failed validations above\n2. Re-run validation until all targets are met\n3. Deploy performance monitoring to production'
-      : '1. Deploy to production with performance monitoring\n2. Set up real-time alerting\n3. Begin continuous performance optimization'
-  }
+  averageScore < 90
+    ? "1. Address failed validations above\n2. Re-run validation until all targets are met\n3. Deploy performance monitoring to production"
+    : "1. Deploy to production with performance monitoring\n2. Set up real-time alerting\n3. Begin continuous performance optimization"
+}
 `;
 
   // Save validation report
   const reportPath = path.join(
     process.cwd(),
-    'healthcare-performance-validation.md',
+    "healthcare-performance-validation.md",
   );
   fs.writeFileSync(reportPath, report);
 
@@ -403,9 +406,9 @@ function formatChecks(checks) {
   return Object.entries(checks)
     .map(
       ([key, value]) =>
-        `   ${value ? '✅' : '❌'} ${key.replaceAll(/([A-Z])/g, ' $1').toLowerCase()}`,
+        `   ${value ? "✅" : "❌"} ${key.replaceAll(/([A-Z])/g, " $1").toLowerCase()}`,
     )
-    .join('\n');
+    .join("\n");
 }
 
 // Run if called directly

@@ -66,13 +66,13 @@ management:
 // LGPD-compliant session creation
 const session = await client.universalChat.createSession({
   user_id: patientId,
-  language: 'pt-BR',
+  language: "pt-BR",
   consent: {
     data_processing_consent: true, // Required by LGPD Art. 7
     ai_interaction_consent: true, // Required for AI processing
     anonymized_analytics_consent: false, // Optional - patient declined
     consent_timestamp: new Date().toISOString(),
-    consent_version: '2.0',
+    consent_version: "2.0",
     ip_address: request.clientIP, // For audit purposes
   },
 });
@@ -85,8 +85,8 @@ The API automatically implements data minimization principles:
 ```typescript
 // Example: Only collect necessary health information
 const context = {
-  specialty: 'cardiology', // Necessary for AI context
-  urgency_level: 'medium', // Necessary for triage
+  specialty: "cardiology", // Necessary for AI context
+  urgency_level: "medium", // Necessary for triage
   // patient_ssn: '123.456.789-00'  // ❌ NOT collected - unnecessary
   // patient_address: '...'          // ❌ NOT collected - unnecessary for AI chat
 };
@@ -101,14 +101,16 @@ Data can only be used for the specific purpose consented to:
 ```typescript
 // Validate processing purpose before each operation
 const validation = await client.compliance.validateLGPD({
-  service_name: 'universal-chat',
+  service_name: "universal-chat",
   operation_data: {
-    data_types: ['health_symptoms', 'conversation_history'],
-    processing_purpose: 'healthcare_consultation_assistance', // Must match consent
-    data_subjects: [{
-      subject_id: patientId,
-      subject_type: 'patient',
-    }],
+    data_types: ["health_symptoms", "conversation_history"],
+    processing_purpose: "healthcare_consultation_assistance", // Must match consent
+    data_subjects: [
+      {
+        subject_id: patientId,
+        subject_type: "patient",
+      },
+    ],
   },
   validation_context: {
     user_consent_verified: true,
@@ -132,10 +134,10 @@ The API supports all LGPD data subject rights:
 // Example: Patient data access request
 const patientData = await client.dataSubjectRights.accessRequest({
   patient_id: patientId,
-  request_type: 'access',
+  request_type: "access",
   identity_verification: {
-    document_type: 'cpf',
-    document_number: 'xxx.xxx.xxx-xx',
+    document_type: "cpf",
+    document_number: "xxx.xxx.xxx-xx",
     verified: true,
   },
 });
@@ -149,15 +151,16 @@ For international data transfers, the API ensures:
 
 ```typescript
 // Validate international transfer compliance
-const transferValidation = await client.compliance.validateInternationalTransfer({
-  destination_country: 'usa',
-  legal_basis: 'adequacy_decision', // Or 'contractual_clauses', 'consent'
-  data_types: ['anonymized_chat_logs'],
-  purpose: 'ai_model_improvement',
-});
+const transferValidation =
+  await client.compliance.validateInternationalTransfer({
+    destination_country: "usa",
+    legal_basis: "adequacy_decision", // Or 'contractual_clauses', 'consent'
+    data_types: ["anonymized_chat_logs"],
+    purpose: "ai_model_improvement",
+  });
 
 if (!transferValidation.compliant) {
-  throw new Error('International transfer not permitted under LGPD');
+  throw new Error("International transfer not permitted under LGPD");
 }
 ```
 
@@ -180,15 +183,15 @@ All AI models undergo ANVISA-compliant validation:
 ```typescript
 // Check AI model compliance before use
 const modelValidation = await client.compliance.validateANVISA({
-  ai_service_type: 'diagnostic_support',
+  ai_service_type: "diagnostic_support",
   medical_data_processing: {
     symptoms_analysis: true,
     treatment_recommendations: false, // ✅ Compliant - no treatment advice
     diagnostic_conclusions: false, // ✅ Compliant - no diagnosis
     professional_oversight_required: true, // ✅ Required by ANVISA
   },
-  risk_classification: 'class_i',
-  validation_studies: ['clinical_validation_2024_001'],
+  risk_classification: "class_i",
+  validation_studies: ["clinical_validation_2024_001"],
 });
 ```
 
@@ -199,7 +202,7 @@ All AI responses include mandatory medical disclaimers:
 ```typescript
 const response = await client.universalChat.sendMessage({
   session_id: sessionId,
-  message: 'Estou com dor no peito',
+  message: "Estou com dor no peito",
   compliance_requirements: {
     medical_disclaimer: true, // ✅ Required by ANVISA
     professional_recommendation: true, // ✅ Recommend professional consultation
@@ -227,10 +230,10 @@ The API includes automated adverse event detection:
 
 ```typescript
 // Monitor for potential adverse events
-client.on('adverseEvent', async (event) => {
+client.on("adverseEvent", async (event) => {
   // Automatically report to ANVISA if required
   await client.compliance.reportAdverseEvent({
-    event_type: 'ai_response_inappropriate',
+    event_type: "ai_response_inappropriate",
     severity: event.severity,
     patient_impact: event.impact,
     system_response: event.systemResponse,
@@ -250,17 +253,17 @@ The API complies with CFM telemedicine regulations:
 ```typescript
 // CFM-compliant patient verification
 const verification = await client.compliance.validateCFM({
-  interaction_type: 'ai_assisted_consultation',
+  interaction_type: "ai_assisted_consultation",
   patient_identification: {
     verified: true,
-    verification_method: 'digital_certificate', // Or 'document_photo', 'video_call'
+    verification_method: "digital_certificate", // Or 'document_photo', 'video_call'
     cpf_verified: true,
     medical_record_linked: true,
   },
   healthcare_professional: {
-    crm_number: 'CRM/SP 123456',
-    specialty: 'cardiology',
-    supervision_level: 'direct', // Required for AI assistance
+    crm_number: "CRM/SP 123456",
+    specialty: "cardiology",
+    supervision_level: "direct", // Required for AI assistance
   },
 });
 ```
@@ -272,8 +275,8 @@ const verification = await client.compliance.validateCFM({
 const medicalContext = await client.medicalRecords.getContext({
   patient_id: patientId,
   healthcare_professional_id: doctorId,
-  access_purpose: 'ai_consultation_context',
-  access_level: 'read_only', // AI cannot modify records
+  access_purpose: "ai_consultation_context",
+  access_level: "read_only", // AI cannot modify records
   audit_log: true, // Required for CFM compliance
 });
 ```
@@ -289,9 +292,9 @@ const aiResponse = await client.universalChat.sendMessage({
   message: patientMessage,
   professional_oversight: {
     healthcare_professional_id: doctorId,
-    supervision_type: 'real_time', // Real-time review required
+    supervision_type: "real_time", // Real-time review required
     approval_required: false, // For informational responses only
-    medical_responsibility: 'professional', // Doctor remains responsible
+    medical_responsibility: "professional", // Doctor remains responsible
   },
 });
 ```
@@ -304,12 +307,12 @@ CFM compliance prohibits AI from certain medical activities:
 // CFM compliance validation
 const complianceCheck = await client.compliance.validateMedicalActivities({
   proposed_actions: [
-    'provide_health_information', // ✅ Allowed
-    'symptom_assessment', // ✅ Allowed with supervision
-    'emergency_triage', // ✅ Allowed with escalation
-    'medical_diagnosis', // ❌ Not allowed for AI
-    'prescription_medication', // ❌ Not allowed for AI
-    'treatment_plans', // ❌ Not allowed for AI
+    "provide_health_information", // ✅ Allowed
+    "symptom_assessment", // ✅ Allowed with supervision
+    "emergency_triage", // ✅ Allowed with escalation
+    "medical_diagnosis", // ❌ Not allowed for AI
+    "prescription_medication", // ❌ Not allowed for AI
+    "treatment_plans", // ❌ Not allowed for AI
   ],
 });
 
@@ -350,12 +353,12 @@ Automatic maintenance of processing activity records:
 // Access processing records for compliance audits
 const processingRecords = await client.compliance.getProcessingRecords({
   time_period: {
-    start_date: '2024-01-01',
-    end_date: '2024-01-31',
+    start_date: "2024-01-01",
+    end_date: "2024-01-31",
   },
-  data_categories: ['health_data', 'personal_identification'],
-  processing_purposes: ['healthcare_consultation'],
-  format: 'lgpd_compliant_report',
+  data_categories: ["health_data", "personal_identification"],
+  processing_purposes: ["healthcare_consultation"],
+  format: "lgpd_compliant_report",
 });
 ```
 
@@ -366,24 +369,24 @@ Regular compliance reports for regulatory authorities:
 ```typescript
 // Generate LGPD compliance report
 const lgpdReport = await client.compliance.generateLGPDReport({
-  period: 'monthly',
+  period: "monthly",
   include_sections: [
-    'consent_management',
-    'data_subject_rights',
-    'data_breaches',
-    'international_transfers',
-    'processing_activities',
+    "consent_management",
+    "data_subject_rights",
+    "data_breaches",
+    "international_transfers",
+    "processing_activities",
   ],
 });
 
 // Generate ANVISA compliance report
 const anvisaReport = await client.compliance.generateANVISAReport({
-  period: 'quarterly',
+  period: "quarterly",
   include_sections: [
-    'ai_model_performance',
-    'adverse_events',
-    'clinical_validation',
-    'post_market_surveillance',
+    "ai_model_performance",
+    "adverse_events",
+    "clinical_validation",
+    "post_market_surveillance",
   ],
 });
 ```
@@ -417,10 +420,10 @@ const anvisaReport = await client.compliance.generateANVISAReport({
 const client = new NeonProHealthcareAI({
   apiKey: process.env.NEONPRO_API_KEY,
   security: {
-    tls_version: 'TLSv1.3',
+    tls_version: "TLSv1.3",
     certificate_pinning: true,
     request_signing: true,
-    encryption_level: 'maximum',
+    encryption_level: "maximum",
     audit_all_requests: true,
   },
 });
@@ -432,17 +435,17 @@ Automated data breach detection and response:
 
 ```typescript
 // Breach detection triggers
-client.on('dataBreachSuspected', async (incident) => {
+client.on("dataBreachSuspected", async (incident) => {
   // Automatic breach response protocol
   await client.security.initiateBreachResponse({
     incident_id: incident.id,
     severity: incident.severity,
     affected_data_subjects: incident.affectedUsers,
     containment_actions: [
-      'isolate_affected_systems',
-      'revoke_access_tokens',
-      'notify_affected_users',
-      'report_to_anpd', // LGPD requirement within 72 hours
+      "isolate_affected_systems",
+      "revoke_access_tokens",
+      "notify_affected_users",
+      "report_to_anpd", // LGPD requirement within 72 hours
     ],
   });
 });
@@ -458,20 +461,20 @@ The AI automatically detects potential medical emergencies:
 // Emergency detection in AI responses
 const response = await client.universalChat.sendMessage({
   session_id: sessionId,
-  message: 'Estou com muita dor no peito e dificuldade para respirar',
+  message: "Estou com muita dor no peito e dificuldade para respirar",
   emergency_detection: {
     enabled: true,
-    escalation_threshold: 'medium',
-    emergency_contacts: ['emergency_service', 'attending_physician'],
+    escalation_threshold: "medium",
+    emergency_contacts: ["emergency_service", "attending_physician"],
     automatic_escalation: true,
   },
 });
 
 // If emergency detected:
 if (response.data.analysis.emergency_escalation) {
-  console.log('MEDICAL EMERGENCY DETECTED');
-  console.log('Emergency Level:', response.data.analysis.emergency_level);
-  console.log('Recommended Actions:', response.data.analysis.emergency_actions);
+  console.log("MEDICAL EMERGENCY DETECTED");
+  console.log("Emergency Level:", response.data.analysis.emergency_level);
+  console.log("Recommended Actions:", response.data.analysis.emergency_actions);
 
   // Automatic escalation occurs immediately
 }
@@ -489,7 +492,10 @@ if (response.data.analysis.emergency_escalation) {
 
 ```typescript
 // Emergency response workflow
-async function handleEmergencyEscalation(sessionId: string, emergencyData: any) {
+async function handleEmergencyEscalation(
+  sessionId: string,
+  emergencyData: any,
+) {
   // Step 1: Immediate escalation
   await client.emergency.escalate({
     session_id: sessionId,
@@ -501,7 +507,7 @@ async function handleEmergencyEscalation(sessionId: string, emergencyData: any) 
 
   // Step 2: Notify healthcare professionals
   await client.notifications.notifyHealthcareProfessionals({
-    urgency: 'emergency',
+    urgency: "emergency",
     patient_id: emergencyData.patient_id,
     clinical_summary: emergencyData.clinical_summary,
     recommended_actions: emergencyData.emergency_actions,
@@ -512,7 +518,7 @@ async function handleEmergencyEscalation(sessionId: string, emergencyData: any) 
     session_id: sessionId,
     response_time_ms: emergencyData.response_time,
     actions_taken: emergencyData.actions_taken,
-    outcome: 'escalated_successfully',
+    outcome: "escalated_successfully",
   });
 }
 ```

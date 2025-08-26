@@ -1,11 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-import { Hono } from 'hono';
+import { createClient } from "@supabase/supabase-js";
+import { Hono } from "hono";
 
 const health = new Hono();
 
 interface HealthCheckResult {
   service: string;
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   response_time_ms: number;
   details: any;
@@ -13,7 +13,7 @@ interface HealthCheckResult {
 }
 
 interface SystemHealth {
-  overall_status: 'healthy' | 'degraded' | 'unhealthy';
+  overall_status: "healthy" | "degraded" | "unhealthy";
   services: HealthCheckResult[];
   system_info: {
     uptime_ms: number;
@@ -42,42 +42,42 @@ class HealthCheckService {
 
       // Test basic database connectivity
       const { data, error } = await supabase
-        .from('patients')
-        .select('count')
+        .from("patients")
+        .select("count")
         .limit(1);
 
       const responseTime = Date.now() - startTime;
 
       if (error) {
         return {
-          service: 'database',
-          status: 'unhealthy',
+          service: "database",
+          status: "unhealthy",
           timestamp: new Date().toISOString(),
           response_time_ms: responseTime,
           details: { error: error.message },
-          version: '1.0.0',
+          version: "1.0.0",
         };
       }
 
       return {
-        service: 'database',
-        status: responseTime < 1000 ? 'healthy' : 'degraded',
+        service: "database",
+        status: responseTime < 1000 ? "healthy" : "degraded",
         timestamp: new Date().toISOString(),
         response_time_ms: responseTime,
         details: {
-          connection: 'ok',
-          query_test: 'passed',
+          connection: "ok",
+          query_test: "passed",
         },
-        version: '1.0.0',
+        version: "1.0.0",
       };
     } catch (error) {
       return {
-        service: 'database',
-        status: 'unhealthy',
+        service: "database",
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
         details: { error: error.message },
-        version: '1.0.0',
+        version: "1.0.0",
       };
     }
   }
@@ -96,24 +96,24 @@ class HealthCheckService {
       const responseTime = Date.now() - startTime;
 
       return {
-        service: 'supabase',
-        status: responseTime < 1000 && !error ? 'healthy' : 'degraded',
+        service: "supabase",
+        status: responseTime < 1000 && !error ? "healthy" : "degraded",
         timestamp: new Date().toISOString(),
         response_time_ms: responseTime,
         details: {
-          auth_api: error ? 'error' : 'ok',
+          auth_api: error ? "error" : "ok",
           error: error?.message,
         },
-        version: '1.0.0',
+        version: "1.0.0",
       };
     } catch (error) {
       return {
-        service: 'supabase',
-        status: 'unhealthy',
+        service: "supabase",
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
         details: { error: error.message },
-        version: '1.0.0',
+        version: "1.0.0",
       };
     }
   }
@@ -127,24 +127,24 @@ class HealthCheckService {
       const responseTime = Date.now() - startTime;
 
       return {
-        service: 'redis',
-        status: 'healthy',
+        service: "redis",
+        status: "healthy",
         timestamp: new Date().toISOString(),
         response_time_ms: responseTime,
         details: {
-          connection: 'ok',
-          cache_test: 'passed',
+          connection: "ok",
+          cache_test: "passed",
         },
-        version: '1.0.0',
+        version: "1.0.0",
       };
     } catch (error) {
       return {
-        service: 'redis',
-        status: 'unhealthy',
+        service: "redis",
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
         response_time_ms: Date.now() - startTime,
         details: { error: error.message },
-        version: '1.0.0',
+        version: "1.0.0",
       };
     }
   }
@@ -154,14 +154,14 @@ class HealthCheckService {
       uptime_ms: Date.now() - HealthCheckService.startTime,
       memory_usage: process.memoryUsage(),
       node_version: process.version,
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env.NODE_ENV || "development",
     };
   }
 
   static determineOverallStatus(
     services: HealthCheckResult[],
     dependencies: any,
-  ): 'healthy' | 'degraded' | 'unhealthy' {
+  ): "healthy" | "degraded" | "unhealthy" {
     const allChecks = [
       ...services,
       dependencies.database,
@@ -170,24 +170,24 @@ class HealthCheckService {
     ];
 
     const unhealthyCount = allChecks.filter(
-      (check) => check.status === 'unhealthy',
+      (check) => check.status === "unhealthy",
     ).length;
     const degradedCount = allChecks.filter(
-      (check) => check.status === 'degraded',
+      (check) => check.status === "degraded",
     ).length;
 
     if (unhealthyCount > 0) {
-      return 'unhealthy';
+      return "unhealthy";
     }
     if (degradedCount > 0) {
-      return 'degraded';
+      return "degraded";
     }
-    return 'healthy';
+    return "healthy";
   }
 }
 
 // Main health check endpoint - overall system health
-health.get('/health', async (c) => {
+health.get("/health", async (c) => {
   try {
     const [dbHealth, supabaseHealth, redisHealth] = await Promise.all([
       HealthCheckService.checkDatabaseHealth(),
@@ -213,15 +213,16 @@ health.get('/health', async (c) => {
     };
 
     // Set appropriate HTTP status code
-    const statusCode = systemHealth.overall_status === 'healthy'
-      ? 200
-      : (systemHealth.overall_status === 'degraded'
-      ? 200
-      : 503);
+    const statusCode =
+      systemHealth.overall_status === "healthy"
+        ? 200
+        : systemHealth.overall_status === "degraded"
+          ? 200
+          : 503;
 
     return c.json(
       {
-        healthy: systemHealth.overall_status === 'healthy',
+        healthy: systemHealth.overall_status === "healthy",
         status: systemHealth.overall_status,
         timestamp: new Date().toISOString(),
         ...systemHealth,
@@ -232,7 +233,7 @@ health.get('/health', async (c) => {
     return c.json(
       {
         healthy: false,
-        status: 'unhealthy',
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
         error: error.message,
       },
@@ -242,17 +243,18 @@ health.get('/health', async (c) => {
 });
 
 // Database-specific health check
-health.get('/health/database', async (c) => {
+health.get("/health/database", async (c) => {
   const dbHealth = await HealthCheckService.checkDatabaseHealth();
-  const statusCode = dbHealth.status === 'healthy'
-    ? 200
-    : (dbHealth.status === 'degraded'
-    ? 200
-    : 503);
+  const statusCode =
+    dbHealth.status === "healthy"
+      ? 200
+      : dbHealth.status === "degraded"
+        ? 200
+        : 503;
 
   return c.json(
     {
-      healthy: dbHealth.status === 'healthy',
+      healthy: dbHealth.status === "healthy",
       ...dbHealth,
     },
     statusCode,
@@ -260,17 +262,18 @@ health.get('/health/database', async (c) => {
 });
 
 // Supabase-specific health check
-health.get('/health/supabase', async (c) => {
+health.get("/health/supabase", async (c) => {
   const supabaseHealth = await HealthCheckService.checkSupabaseHealth();
-  const statusCode = supabaseHealth.status === 'healthy'
-    ? 200
-    : (supabaseHealth.status === 'degraded'
-    ? 200
-    : 503);
+  const statusCode =
+    supabaseHealth.status === "healthy"
+      ? 200
+      : supabaseHealth.status === "degraded"
+        ? 200
+        : 503;
 
   return c.json(
     {
-      healthy: supabaseHealth.status === 'healthy',
+      healthy: supabaseHealth.status === "healthy",
       ...supabaseHealth,
     },
     statusCode,
@@ -278,7 +281,7 @@ health.get('/health/supabase', async (c) => {
 });
 
 // Detailed health check for all AI services
-health.get('/health/ai-services', async (c) => {
+health.get("/health/ai-services", async (c) => {
   try {
     // Check each AI service health
     const aiServiceChecks = await Promise.allSettled([
@@ -288,59 +291,68 @@ health.get('/health/ai-services', async (c) => {
       fetch(`${process.env.API_BASE_URL}/api/ai/feature-flags/health`).then(
         (r) => r.json(),
       ),
-      fetch(`${process.env.API_BASE_URL}/api/ai/cache/health`).then((r) => r.json()),
-      fetch(`${process.env.API_BASE_URL}/api/ai/monitoring/health`).then((r) => r.json()),
+      fetch(`${process.env.API_BASE_URL}/api/ai/cache/health`).then((r) =>
+        r.json(),
+      ),
+      fetch(`${process.env.API_BASE_URL}/api/ai/monitoring/health`).then((r) =>
+        r.json(),
+      ),
       fetch(
         `${process.env.API_BASE_URL}/api/ai/no-show-prediction/health`,
       ).then((r) => r.json()),
       fetch(
         `${process.env.API_BASE_URL}/api/ai/appointment-optimization/health`,
       ).then((r) => r.json()),
-      fetch(`${process.env.API_BASE_URL}/api/ai/compliance/health`).then((r) => r.json()),
+      fetch(`${process.env.API_BASE_URL}/api/ai/compliance/health`).then((r) =>
+        r.json(),
+      ),
     ]);
 
     const serviceNames = [
-      'universal-chat',
-      'feature-flags',
-      'cache-management',
-      'monitoring',
-      'no-show-prediction',
-      'appointment-optimization',
-      'compliance-automation',
+      "universal-chat",
+      "feature-flags",
+      "cache-management",
+      "monitoring",
+      "no-show-prediction",
+      "appointment-optimization",
+      "compliance-automation",
     ];
 
     const serviceResults = aiServiceChecks.map((result, index) => ({
       service: serviceNames[index],
-      status: result.status === 'fulfilled' && result.value.healthy
-        ? 'healthy'
-        : 'unhealthy',
-      details: result.status === 'fulfilled'
-        ? result.value
-        : { error: result.reason?.message },
+      status:
+        result.status === "fulfilled" && result.value.healthy
+          ? "healthy"
+          : "unhealthy",
+      details:
+        result.status === "fulfilled"
+          ? result.value
+          : { error: result.reason?.message },
     }));
 
     const unhealthyServices = serviceResults.filter(
-      (s) => s.status === 'unhealthy',
+      (s) => s.status === "unhealthy",
     ).length;
-    const overallStatus = unhealthyServices === 0
-      ? 'healthy'
-      : (unhealthyServices < serviceResults.length / 2
-      ? 'degraded'
-      : 'unhealthy');
+    const overallStatus =
+      unhealthyServices === 0
+        ? "healthy"
+        : unhealthyServices < serviceResults.length / 2
+          ? "degraded"
+          : "unhealthy";
 
     return c.json(
       {
-        healthy: overallStatus === 'healthy',
+        healthy: overallStatus === "healthy",
         overall_status: overallStatus,
         services: serviceResults,
         summary: {
           total_services: serviceResults.length,
-          healthy_services: serviceResults.filter((s) => s.status === 'healthy')
+          healthy_services: serviceResults.filter((s) => s.status === "healthy")
             .length,
           unhealthy_services: unhealthyServices,
         },
       },
-      overallStatus === 'healthy' ? 200 : 503,
+      overallStatus === "healthy" ? 200 : 503,
     );
   } catch (error) {
     return c.json(

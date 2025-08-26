@@ -59,7 +59,7 @@ apps/web/
 ├── contexts/auth-context.tsx (221 linhas) ✅
 ├── app/
 │   ├── layout.tsx (32 linhas) ✅
-│   ├── login/login-form.tsx (199 linhas) ✅  
+│   ├── login/login-form.tsx (199 linhas) ✅
 │   ├── utils/supabase/
 │   │   ├── client.ts (8 linhas) ✅
 │   │   └── server.ts (36 linhas) ✅

@@ -52,7 +52,11 @@ conformidade com regulamentações como LGPD e GDPR.
 ### Instalação Básica
 
 ```typescript
-import { AdvancedAuthSystem, initializeAuthSystem, setupSecureAuth } from '@/lib/auth';
+import {
+  AdvancedAuthSystem,
+  initializeAuthSystem,
+  setupSecureAuth,
+} from "@/lib/auth";
 
 // Configuração rápida com segurança alta
 const authSystem = await setupSecureAuth();
@@ -61,10 +65,10 @@ const authSystem = await setupSecureAuth();
 const customAuthSystem = await initializeAuthSystem({
   sessionTimeout: 30 * 60 * 1000, // 30 minutos
   maxConcurrentSessions: 5,
-  securityLevel: 'high',
+  securityLevel: "high",
   enableSuspiciousDetection: true,
   enableSecurityMonitoring: true,
-  complianceFrameworks: ['LGPD', 'GDPR'],
+  complianceFrameworks: ["LGPD", "GDPR"],
 });
 ```
 
@@ -84,7 +88,7 @@ const secureAuth = await setupSecureAuth();
 const maxSecurityAuth = await setupMaximumSecurityAuth();
 
 // Empresarial com conformidade
-const enterpriseAuth = await setupEnterpriseAuth(['LGPD', 'GDPR', 'SOX']);
+const enterpriseAuth = await setupEnterpriseAuth(["LGPD", "GDPR", "SOX"]);
 ```
 
 ## 📚 Componentes Detalhados
@@ -96,15 +100,15 @@ const enterpriseAuth = await setupEnterpriseAuth(['LGPD', 'GDPR', 'SOX']);
 Gerencia timeouts adaptativos baseados no comportamento do usuário.
 
 ```typescript
-import { IntelligentTimeoutManager } from '@/lib/auth';
+import { IntelligentTimeoutManager } from "@/lib/auth";
 
 const timeoutManager = new IntelligentTimeoutManager();
 await timeoutManager.initialize();
 
 // Inicializar sessão com timeout inteligente
 await timeoutManager.initializeSession(sessionId, {
-  userId: 'user123',
-  role: 'admin',
+  userId: "user123",
+  role: "admin",
   timeout: 30 * 60 * 1000, // 30 minutos base
 });
 
@@ -126,7 +130,7 @@ await timeoutManager.updateActivity(sessionId);
 Controla múltiplas sessões simultâneas por usuário.
 
 ```typescript
-import { ConcurrentSessionManager } from '@/lib/auth';
+import { ConcurrentSessionManager } from "@/lib/auth";
 
 const concurrentManager = new ConcurrentSessionManager();
 
@@ -135,7 +139,7 @@ const canCreate = await concurrentManager.canCreateSession(userId, deviceInfo);
 if (canCreate.allowed) {
   await concurrentManager.registerSession(session);
 } else {
-  console.log('Sessão negada:', canCreate.reason);
+  console.log("Sessão negada:", canCreate.reason);
 }
 ```
 
@@ -153,7 +157,7 @@ if (canCreate.allowed) {
 Detecta atividades suspeitas através de análise comportamental.
 
 ```typescript
-import { SuspiciousActivityDetector } from '@/lib/auth';
+import { SuspiciousActivityDetector } from "@/lib/auth";
 
 const detector = new SuspiciousActivityDetector();
 
@@ -162,7 +166,7 @@ await detector.startMonitoring(sessionId, userId);
 
 // Registrar atividade
 await detector.recordActivity(sessionId, {
-  type: 'mouse_movement',
+  type: "mouse_movement",
   data: { x: 100, y: 200, speed: 5 },
   timestamp: Date.now(),
 });
@@ -183,17 +187,17 @@ await detector.recordActivity(sessionId, {
 Monitoramento de segurança em tempo real com resposta automatizada.
 
 ```typescript
-import { SecurityMonitor } from '@/lib/auth';
+import { SecurityMonitor } from "@/lib/auth";
 
 const securityMonitor = new SecurityMonitor();
 
 // Processar anomalia detectada
 await securityMonitor.processAnomaly({
   sessionId,
-  type: 'suspicious_login',
-  severity: 'high',
+  type: "suspicious_login",
+  severity: "high",
   confidence: 0.9,
-  details: { reason: 'Login de localização incomum' },
+  details: { reason: "Login de localização incomum" },
 });
 ```
 
@@ -212,20 +216,20 @@ await securityMonitor.processAnomaly({
 Sincronização de sessões entre dispositivos via WebSocket.
 
 ```typescript
-import { SessionSyncManager } from '@/lib/auth';
+import { SessionSyncManager } from "@/lib/auth";
 
 const syncManager = new SessionSyncManager();
 
 // Inicializar com WebSocket
 await syncManager.initialize({
-  websocketUrl: 'ws://localhost:8080/sync',
+  websocketUrl: "ws://localhost:8080/sync",
 });
 
 // Sincronizar evento
 await syncManager.syncEvent({
-  type: 'preference_updated',
-  data: { theme: 'dark' },
-  deviceId: 'device123',
+  type: "preference_updated",
+  data: { theme: "dark" },
+  deviceId: "device123",
 });
 ```
 
@@ -243,13 +247,13 @@ await syncManager.syncEvent({
 Cria snapshots automáticos do estado da sessão.
 
 ```typescript
-import { SessionPreservationManager } from '@/lib/auth';
+import { SessionPreservationManager } from "@/lib/auth";
 
 const preservationManager = new SessionPreservationManager();
 
 // Criar snapshot
 const snapshot = await preservationManager.createSnapshot(sessionId, {
-  reason: 'before_critical_operation',
+  reason: "before_critical_operation",
   preserveFormData: true,
   preserveNavigationState: true,
 });
@@ -272,16 +276,16 @@ await preservationManager.restoreSnapshot(sessionId, snapshot.id);
 Sistema de resposta a emergências e incidentes críticos.
 
 ```typescript
-import { EmergencyShutdownManager } from '@/lib/auth';
+import { EmergencyShutdownManager } from "@/lib/auth";
 
 const emergencyManager = new EmergencyShutdownManager();
 
 // Disparar emergência
 await emergencyManager.triggerEmergency({
-  type: 'security_breach',
-  severity: 'critical',
-  reason: 'Múltiplas tentativas de acesso não autorizado',
-  actions: ['terminate_sessions', 'block_ips', 'notify_admins'],
+  type: "security_breach",
+  severity: "critical",
+  reason: "Múltiplas tentativas de acesso não autorizado",
+  actions: ["terminate_sessions", "block_ips", "notify_admins"],
 });
 ```
 
@@ -300,25 +304,25 @@ await emergencyManager.triggerEmergency({
 Sistema completo de auditoria para conformidade.
 
 ```typescript
-import { AuditTrailManager } from '@/lib/auth';
+import { AuditTrailManager } from "@/lib/auth";
 
 const auditManager = new AuditTrailManager();
 
 // Registrar evento de auditoria
 await auditManager.logEvent({
-  type: 'user_login',
-  category: 'authentication',
-  severity: 'info',
-  action: 'login_successful',
-  actor: { type: 'user', id: userId },
-  target: { type: 'system', id: 'auth_system' },
+  type: "user_login",
+  category: "authentication",
+  severity: "info",
+  action: "login_successful",
+  actor: { type: "user", id: userId },
+  target: { type: "system", id: "auth_system" },
 });
 
 // Gerar relatório de conformidade
 const report = await auditManager.generateComplianceReport({
-  framework: 'LGPD',
-  startDate: new Date('2024-01-01'),
-  endDate: new Date('2024-12-31'),
+  framework: "LGPD",
+  startDate: new Date("2024-01-01"),
+  endDate: new Date("2024-12-31"),
 });
 ```
 
@@ -337,23 +341,23 @@ const report = await auditManager.generateComplianceReport({
 Gerenciamento automático de limpeza e retenção de dados.
 
 ```typescript
-import { DataCleanupManager } from '@/lib/auth';
+import { DataCleanupManager } from "@/lib/auth";
 
 const cleanupManager = new DataCleanupManager();
 
 // Agendar limpeza personalizada
 await cleanupManager.scheduleTask({
-  name: 'cleanup_old_sessions',
-  description: 'Remove sessões antigas',
-  schedule: { type: 'interval', interval: 24 * 60 * 60 * 1000 }, // Diário
+  name: "cleanup_old_sessions",
+  description: "Remove sessões antigas",
+  schedule: { type: "interval", interval: 24 * 60 * 60 * 1000 }, // Diário
   target: {
-    type: 'database',
-    table: 'sessions',
+    type: "database",
+    table: "sessions",
     conditions: [
-      { field: 'lastActivity', operator: '<', value: '30 days ago' },
+      { field: "lastActivity", operator: "<", value: "30 days ago" },
     ],
   },
-  actions: [{ type: 'delete' }],
+  actions: [{ type: "delete" }],
 });
 ```
 
@@ -376,14 +380,14 @@ const advancedConfig = {
   maxConcurrentSessions: 5,
 
   // Segurança
-  securityLevel: 'high',
+  securityLevel: "high",
   anomalyThreshold: 0.7,
-  threatResponseLevel: 'active',
+  threatResponseLevel: "active",
 
   // Conformidade
-  complianceFrameworks: ['LGPD', 'GDPR'],
+  complianceFrameworks: ["LGPD", "GDPR"],
   dataRetentionPeriod: 365 * 24 * 60 * 60 * 1000,
-  auditLevel: 'detailed',
+  auditLevel: "detailed",
 
   // Performance
   batchSize: 100,
@@ -391,9 +395,9 @@ const advancedConfig = {
   monitoringInterval: 5 * 60 * 1000,
 
   // Integração
-  websocketUrl: 'ws://localhost:8080/sync',
-  encryptionKey: 'your-encryption-key',
-  notificationEndpoints: ['https://api.slack.com/webhook'],
+  websocketUrl: "ws://localhost:8080/sync",
+  encryptionKey: "your-encryption-key",
+  notificationEndpoints: ["https://api.slack.com/webhook"],
 };
 
 const authSystem = await initializeAuthSystem(advancedConfig);
@@ -415,25 +419,25 @@ const authSystem = await initializeAuthSystem(advancedConfig);
 ```typescript
 // Obter status completo
 const status = authSystem.getSystemStatus();
-console.log('Saúde geral:', status.health.overall);
-console.log('Score de saúde:', status.health.score);
-console.log('Componentes:', status.components);
+console.log("Saúde geral:", status.health.overall);
+console.log("Score de saúde:", status.health.score);
+console.log("Componentes:", status.components);
 
 // Métricas em tempo real
 const metrics = authSystem.getMetrics();
-console.log('Sessões ativas:', metrics.activeSessions);
-console.log('Ameaças detectadas:', metrics.securityThreats);
+console.log("Sessões ativas:", metrics.activeSessions);
+console.log("Ameaças detectadas:", metrics.securityThreats);
 ```
 
 ### Health Check
 
 ```typescript
-import { performHealthCheck } from '@/lib/auth';
+import { performHealthCheck } from "@/lib/auth";
 
 const health = await performHealthCheck();
 if (!health.healthy) {
-  console.warn('Sistema com problemas:', health.issues);
-  console.log('Recomendações:', health.recommendations);
+  console.warn("Sistema com problemas:", health.issues);
+  console.log("Recomendações:", health.recommendations);
 }
 ```
 
@@ -467,48 +471,48 @@ if (!health.healthy) {
 ### Exemplo Básico
 
 ```typescript
-import { setupSecureAuth } from '@/lib/auth';
+import { setupSecureAuth } from "@/lib/auth";
 
 // Inicializar sistema
 const authSystem = await setupSecureAuth();
 
 // Criar sessão
-const session = await authSystem.createSession('user123', {
-  deviceId: 'device456',
-  userAgent: 'Mozilla/5.0...',
-  ipAddress: '192.168.1.100',
+const session = await authSystem.createSession("user123", {
+  deviceId: "device456",
+  userAgent: "Mozilla/5.0...",
+  ipAddress: "192.168.1.100",
 });
 
 // Validar sessão
 const validSession = await authSystem.validateSession(session.id);
 if (validSession) {
-  console.log('Sessão válida:', validSession.userId);
+  console.log("Sessão válida:", validSession.userId);
 }
 
 // Terminar sessão
-await authSystem.terminateSession(session.id, 'user_logout');
+await authSystem.terminateSession(session.id, "user_logout");
 ```
 
 ### Exemplo com Monitoramento
 
 ```typescript
 // Configurar listeners
-authSystem.on('session_created', (event) => {
-  console.log('Nova sessão:', event.session.id);
+authSystem.on("session_created", (event) => {
+  console.log("Nova sessão:", event.session.id);
 });
 
-authSystem.on('suspicious_activity', (event) => {
-  console.warn('Atividade suspeita:', event.details);
+authSystem.on("suspicious_activity", (event) => {
+  console.warn("Atividade suspeita:", event.details);
 });
 
-authSystem.on('security_threat', (event) => {
-  console.error('Ameaça detectada:', event.threat);
+authSystem.on("security_threat", (event) => {
+  console.error("Ameaça detectada:", event.threat);
 });
 
 // Reportar atividade suspeita
 await authSystem.reportSuspiciousActivity(sessionId, {
-  type: 'unusual_location',
-  details: { newLocation: 'São Paulo', previousLocation: 'Rio de Janeiro' },
+  type: "unusual_location",
+  details: { newLocation: "São Paulo", previousLocation: "Rio de Janeiro" },
 });
 ```
 
@@ -517,13 +521,13 @@ await authSystem.reportSuspiciousActivity(sessionId, {
 ```typescript
 // Disparar shutdown de emergência
 await authSystem.triggerEmergencyShutdown(
-  'Múltiplas tentativas de invasão detectadas',
-  'system',
+  "Múltiplas tentativas de invasão detectadas",
+  "system",
 );
 
 // Verificar status após emergência
 const status = authSystem.getSystemStatus();
-console.log('Alertas ativos:', status.alerts.length);
+console.log("Alertas ativos:", status.alerts.length);
 ```
 
 ## 🔧 Troubleshooting
@@ -554,12 +558,12 @@ console.log('Alertas ativos:', status.alerts.length);
 
 ```typescript
 // Habilitar logs detalhados
-process.env.AUTH_DEBUG = 'true';
+process.env.AUTH_DEBUG = "true";
 
 // Verificar saúde dos componentes
 const status = authSystem.getSystemStatus();
 status.components.forEach((component) => {
-  if (component.status !== 'healthy') {
+  if (component.status !== "healthy") {
     console.log(`Problema em ${component.name}:`, component.details);
   }
 });
@@ -580,12 +584,12 @@ status.components.forEach((component) => {
 ```typescript
 const metrics = authSystem.getMetrics();
 console.log(
-  'Tempo médio de resposta:',
+  "Tempo médio de resposta:",
   metrics.performance.averageResponseTime,
 );
-console.log('Uso de memória:', metrics.performance.memoryUsage, 'MB');
-console.log('Taxa de erro:', metrics.performance.errorRate);
-console.log('Throughput:', metrics.performance.throughput, 'ops/sec');
+console.log("Uso de memória:", metrics.performance.memoryUsage, "MB");
+console.log("Taxa de erro:", metrics.performance.errorRate);
+console.log("Throughput:", metrics.performance.throughput, "ops/sec");
 ```
 
 ## 🤝 Contribuição

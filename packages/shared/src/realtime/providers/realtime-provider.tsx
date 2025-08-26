@@ -4,11 +4,20 @@
  * Gerencia conexão global e estado para toda aplicação
  */
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import { getRealtimeConfig } from '../config';
-import { getRealtimeManager } from '../connection-manager';
-import type { ConnectionStatus, SupabaseRealtimeManager } from '../connection-manager';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import type { ReactNode } from "react";
+import { getRealtimeConfig } from "../config";
+import { getRealtimeManager } from "../connection-manager";
+import type {
+  ConnectionStatus,
+  SupabaseRealtimeManager,
+} from "../connection-manager";
 
 interface RealtimeContextValue {
   manager: SupabaseRealtimeManager | null;
@@ -36,8 +45,7 @@ export function RealtimeProvider({
   enableHealthcareMode = true,
   customConfig,
 }: RealtimeProviderProps) {
-  const [manager, setManager] = useState<SupabaseRealtimeManager | null>(
-    );
+  const [manager, setManager] = useState<SupabaseRealtimeManager | null>();
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     isConnected: false,
     connectionId: undefined,
@@ -55,7 +63,7 @@ export function RealtimeProvider({
     const config = getRealtimeConfig();
     const healthcareConfig = {
       ...config.connection,
-      enableLogging: process.env.NODE_ENV === 'development',
+      enableLogging: process.env.NODE_ENV === "development",
       ...customConfig,
     };
 
@@ -72,7 +80,8 @@ export function RealtimeProvider({
         setIsReady(status.isConnected && status.healthScore >= healthThreshold);
 
         // Log connection events for healthcare audit
-        if (enableHealthcareMode) {}
+        if (enableHealthcareMode) {
+        }
       });
 
       return () => {
@@ -116,12 +125,12 @@ export function RealtimeProvider({
       if (status.healthScore < 50 && status.isConnected) {
         // Dispatch custom event for UI to handle
         window.dispatchEvent(
-          new CustomEvent('neonpro-connection-critical', {
+          new CustomEvent("neonpro-connection-critical", {
             detail: {
               tenantId,
               status,
               message:
-                'Conexão real-time com problemas críticos. Algumas funcionalidades podem estar limitadas.',
+                "Conexão real-time com problemas críticos. Algumas funcionalidades podem estar limitadas.",
             },
           }),
         );
@@ -130,11 +139,12 @@ export function RealtimeProvider({
       // Alert for excessive retries
       if (status.totalRetries > 5) {
         window.dispatchEvent(
-          new CustomEvent('neonpro-connection-unstable', {
+          new CustomEvent("neonpro-connection-unstable", {
             detail: {
               tenantId,
               status,
-              message: 'Conexão instável detectada. Verificar conectividade de rede.',
+              message:
+                "Conexão instável detectada. Verificar conectividade de rede.",
             },
           }),
         );
@@ -167,7 +177,7 @@ export function useRealtimeContext(): RealtimeContextValue {
 
   if (!context) {
     throw new Error(
-      'useRealtimeContext deve ser usado dentro de um RealtimeProvider',
+      "useRealtimeContext deve ser usado dentro de um RealtimeProvider",
     );
   }
 
@@ -204,21 +214,21 @@ export function useRealtimeStatus() {
  */
 function getStatusText(status: ConnectionStatus): string {
   if (!status.isConnected) {
-    return 'Desconectado';
+    return "Desconectado";
   }
   if (status.healthScore >= 90) {
-    return 'Excelente';
+    return "Excelente";
   }
   if (status.healthScore >= 80) {
-    return 'Bom';
+    return "Bom";
   }
   if (status.healthScore >= 60) {
-    return 'Regular';
+    return "Regular";
   }
   if (status.healthScore >= 40) {
-    return 'Ruim';
+    return "Ruim";
   }
-  return 'Crítico';
+  return "Crítico";
 }
 
 /**
@@ -226,13 +236,13 @@ function getStatusText(status: ConnectionStatus): string {
  */
 function getStatusColor(healthScore: number): string {
   if (healthScore >= 80) {
-    return '#10b981'; // Green
+    return "#10b981"; // Green
   }
   if (healthScore >= 60) {
-    return '#f59e0b'; // Yellow
+    return "#f59e0b"; // Yellow
   }
   if (healthScore >= 40) {
-    return '#ef4444'; // Red
+    return "#ef4444"; // Red
   }
-  return '#991b1b'; // Dark red
+  return "#991b1b"; // Dark red
 }

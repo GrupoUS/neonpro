@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from '../placeholders/sonner';
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "../placeholders/sonner";
 
 export type ConsentType =
-  | 'data_collection'
-  | 'data_processing'
-  | 'data_sharing'
-  | 'marketing'
-  | 'analytics'
-  | 'cookies'
-  | 'medical_data'
-  | 'sensitive_data';
+  | "data_collection"
+  | "data_processing"
+  | "data_sharing"
+  | "marketing"
+  | "analytics"
+  | "cookies"
+  | "medical_data"
+  | "sensitive_data";
 
 export interface ConsentRecord {
   id: string;
@@ -66,11 +66,11 @@ export interface UseLGPDConsentReturn {
   ) => Promise<ConsentRecord[]>;
   getDataAccessLogs: (
     patientId: string,
-    dateRange?: { start: Date; end: Date; },
+    dateRange?: { start: Date; end: Date },
   ) => Promise<DataAccessLog[]>;
   exportConsentData: (
     patientId: string,
-    format?: 'json' | 'csv',
+    format?: "json" | "csv",
   ) => Promise<string | null>;
   refreshConsents: () => Promise<void>;
 }
@@ -115,12 +115,12 @@ export function useLGPDConsent(
       // Placeholder implementation
       const mockConsents: ConsentRecord[] = [
         {
-          id: '1',
+          id: "1",
           patient_id: options.patientId,
-          consent_type: 'data_collection',
+          consent_type: "data_collection",
           granted: true,
-          purpose: 'Medical treatment',
-          legal_basis: 'Legitimate interest',
+          purpose: "Medical treatment",
+          legal_basis: "Legitimate interest",
           granted_at: new Date().toISOString(),
           version: 1,
         },
@@ -132,7 +132,8 @@ export function useLGPDConsent(
         options.onConsentChange(mockConsents);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro desconhecido";
       setError(errorMessage);
       toast.error(`Erro ao carregar consentimentos: ${errorMessage}`);
     } finally {
@@ -151,7 +152,7 @@ export function useLGPDConsent(
       setError(undefined);
 
       try {
-        logDataAccess('grant_consent', 'patient_consents', patientId, purpose);
+        logDataAccess("grant_consent", "patient_consents", patientId, purpose);
 
         const newConsents: ConsentRecord[] = consentTypes.map((type) => ({
           id: `consent-${Date.now()}-${type}`,
@@ -166,10 +167,11 @@ export function useLGPDConsent(
 
         setConsents((prev) => [...prev, ...newConsents]);
 
-        toast.success('Consentimento registrado com sucesso');
+        toast.success("Consentimento registrado com sucesso");
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro desconhecido";
         setError(errorMessage);
         toast.error(`Erro ao registrar consentimento: ${errorMessage}`);
         return false;
@@ -187,33 +189,34 @@ export function useLGPDConsent(
 
       try {
         logDataAccess(
-          'revoke_consent',
-          'patient_consents',
+          "revoke_consent",
+          "patient_consents",
           patientId,
-          'Consent revocation',
+          "Consent revocation",
         );
 
         setConsents((prev) =>
           prev.map((consent) =>
-            consentTypes.includes(consent.consent_type)
-              && consent.patient_id === patientId
+            consentTypes.includes(consent.consent_type) &&
+            consent.patient_id === patientId
               ? {
-                ...consent,
-                granted: false,
-                revoked_at: new Date().toISOString(),
-              }
-              : consent
-          )
+                  ...consent,
+                  granted: false,
+                  revoked_at: new Date().toISOString(),
+                }
+              : consent,
+          ),
         );
 
-        logDataModification('revoke_consent', 'patient_consents', patientId, {
+        logDataModification("revoke_consent", "patient_consents", patientId, {
           consentTypes,
         });
 
-        toast.success('Consentimento revogado com sucesso');
+        toast.success("Consentimento revogado com sucesso");
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro desconhecido";
         setError(errorMessage);
         toast.error(`Erro ao revogar consentimento: ${errorMessage}`);
         return false;
@@ -250,10 +253,10 @@ export function useLGPDConsent(
     ): Promise<ConsentRecord[]> => {
       try {
         logDataAccess(
-          'get_consent_history',
-          'patient_consents',
+          "get_consent_history",
+          "patient_consents",
           patientId,
-          'History review',
+          "History review",
         );
 
         // Placeholder implementation
@@ -269,7 +272,8 @@ export function useLGPDConsent(
 
         return filteredConsents;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro desconhecido";
         setError(errorMessage);
         return [];
       }
@@ -280,32 +284,33 @@ export function useLGPDConsent(
   const getDataAccessLogs = useCallback(
     async (
       patientId: string,
-      _dateRange?: { start: Date; end: Date; },
+      _dateRange?: { start: Date; end: Date },
     ): Promise<DataAccessLog[]> => {
       try {
         logDataAccess(
-          'get_access_logs',
-          'data_access_logs',
+          "get_access_logs",
+          "data_access_logs",
           patientId,
-          'Audit review',
+          "Audit review",
         );
 
         // Placeholder implementation
         const mockLogs: DataAccessLog[] = [
           {
-            id: '1',
+            id: "1",
             patient_id: patientId,
-            user_id: 'user-1',
-            action: 'read',
-            resource: 'patient_data',
-            purpose: 'Medical consultation',
+            user_id: "user-1",
+            action: "read",
+            resource: "patient_data",
+            purpose: "Medical consultation",
             timestamp: new Date().toISOString(),
           },
         ];
 
         return mockLogs;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro desconhecido";
         setError(errorMessage);
         return [];
       }
@@ -316,48 +321,49 @@ export function useLGPDConsent(
   const exportConsentData = useCallback(
     async (
       patientId: string,
-      format: 'json' | 'csv' = 'json',
+      format: "json" | "csv" = "json",
     ): Promise<string | null> => {
       try {
         logDataAccess(
-          'export_consent_data',
-          'patient_consents',
+          "export_consent_data",
+          "patient_consents",
           patientId,
-          'Data export',
+          "Data export",
         );
 
         const patientConsents = consents.filter(
           (c) => c.patient_id === patientId,
         );
 
-        if (format === 'json') {
+        if (format === "json") {
           return JSON.stringify(patientConsents, undefined, 2);
         }
         // CSV format
         const headers = [
-          'ID',
-          'Tipo',
-          'Concedido',
-          'Propósito',
-          'Base Legal',
-          'Data de Concessão',
+          "ID",
+          "Tipo",
+          "Concedido",
+          "Propósito",
+          "Base Legal",
+          "Data de Concessão",
         ];
         const csvRows = [
-          headers.join(','),
+          headers.join(","),
           ...patientConsents.map((c) =>
             [
               c.id,
               c.consent_type,
-              c.granted ? 'Sim' : 'Não',
+              c.granted ? "Sim" : "Não",
               c.purpose,
               c.legal_basis,
-              c.granted_at || '',
-            ].join(',')
+              c.granted_at || "",
+            ].join(","),
           ),
         ];
-        return csvRows.join('\n');
+        return csvRows.join("\n");
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        const errorMessage =
+          error instanceof Error ? error.message : "Erro desconhecido";
         setError(errorMessage);
         return;
       }

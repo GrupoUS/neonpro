@@ -16,8 +16,8 @@
  * - Forensic investigation tools
  */
 
-import crypto from 'node:crypto';
-import type { AuditEvent } from '../../types';
+import crypto from "node:crypto";
+import type { AuditEvent } from "../../types";
 
 interface AuditRecord extends AuditEvent {
   hash: string;
@@ -52,7 +52,7 @@ interface AuditQuery {
 
 interface ComplianceReport {
   id: string;
-  type: 'lgpd' | 'anvisa' | 'cfm' | 'iso27001';
+  type: "lgpd" | "anvisa" | "cfm" | "iso27001";
   period: {
     start: Date;
     end: Date;
@@ -64,7 +64,7 @@ interface ComplianceReport {
     violations: number;
   };
   findings: {
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     description: string;
     recommendation: string;
     affectedRecords: number;
@@ -85,7 +85,7 @@ export class EnterpriseAuditService {
   private auditChain: AuditRecord[] = [];
   private retentionPolicies: RetentionPolicy[] = [];
   private readonly encryptionKey: Buffer;
-  private readonly lastHash = '0'.repeat(64); // Genesis hash
+  private readonly lastHash = "0".repeat(64); // Genesis hash
   private cleanupInterval: NodeJS.Timeout | null = undefined;
 
   constructor() {
@@ -104,9 +104,9 @@ export class EnterpriseAuditService {
 
       const auditRecord: AuditRecord = {
         ...event,
-        hash: '',
+        hash: "",
         previousHash: this.lastHash,
-        signature: '',
+        signature: "",
         encrypted: policy.encryptionRequired,
         retention: {
           category,
@@ -141,7 +141,8 @@ export class EnterpriseAuditService {
       await this.checkComplianceViolations(auditRecord);
     } catch (error) {
       // Critical: Audit logging failure
-      const _errorMessage = error instanceof Error ? error.message : String(error);
+      const _errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       // Fallback logging mechanism
       await this.emergencyLog(
@@ -208,7 +209,8 @@ export class EnterpriseAuditService {
 
     // Sort by timestamp (newest first)
     filteredRecords.sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 
     const total = filteredRecords.length;
@@ -242,7 +244,7 @@ export class EnterpriseAuditService {
    * Generate compliance report
    */
   async generateComplianceReport(
-    type: ComplianceReport['type'],
+    type: ComplianceReport["type"],
     startDate: Date,
     endDate: Date,
     generatedBy: string,
@@ -254,16 +256,16 @@ export class EnterpriseAuditService {
 
     const records = relevantRecords.records.filter((record) => {
       switch (type) {
-        case 'lgpd': {
+        case "lgpd": {
           return record.compliance.lgpd;
         }
-        case 'anvisa': {
+        case "anvisa": {
           return record.compliance.anvisa;
         }
-        case 'cfm': {
+        case "cfm": {
           return record.compliance.cfm;
         }
-        case 'iso27001': {
+        case "iso27001": {
           return record.compliance.iso27001;
         }
         default: {
@@ -282,11 +284,11 @@ export class EnterpriseAuditService {
       summary: {
         totalEvents: records.length,
         criticalEvents: records.filter(
-          (r) => this.getEventSeverity(r) === 'critical',
+          (r) => this.getEventSeverity(r) === "critical",
         ).length,
         complianceScore,
         violations: findings.filter(
-          (f) => f.severity === 'high' || f.severity === 'critical',
+          (f) => f.severity === "high" || f.severity === "critical",
         ).length,
       },
       findings,
@@ -297,8 +299,8 @@ export class EnterpriseAuditService {
     // Log report generation
     await this.logEvent({
       id: `audit_report_${report.id}`,
-      service: 'audit-service',
-      eventType: 'COMPLIANCE_REPORT_GENERATED',
+      service: "audit-service",
+      eventType: "COMPLIANCE_REPORT_GENERATED",
       timestamp: new Date().toISOString(),
       details: {
         reportId: report.id,
@@ -308,7 +310,7 @@ export class EnterpriseAuditService {
         complianceScore: report.summary.complianceScore,
         generatedBy,
       },
-      version: '1.0.0',
+      version: "1.0.0",
     });
 
     return report;
@@ -324,7 +326,7 @@ export class EnterpriseAuditService {
   }> {
     const brokenLinks: number[] = [];
     let lastVerifiedIndex = -1;
-    let expectedHash = '0'.repeat(64);
+    let expectedHash = "0".repeat(64);
 
     for (let i = 0; i < this.auditChain.length; i++) {
       const record = this.auditChain[i];
@@ -353,16 +355,16 @@ export class EnterpriseAuditService {
     if (!valid) {
       await this.logEvent({
         id: `integrity_check_${Date.now()}`,
-        service: 'audit-service',
-        eventType: 'CHAIN_INTEGRITY_VIOLATION',
+        service: "audit-service",
+        eventType: "CHAIN_INTEGRITY_VIOLATION",
         timestamp: new Date().toISOString(),
         details: {
           brokenLinks,
           lastVerifiedIndex,
           totalRecords: this.auditChain.length,
-          severity: 'critical',
+          severity: "critical",
         },
-        version: '1.0.0',
+        version: "1.0.0",
       });
     }
 
@@ -378,15 +380,15 @@ export class EnterpriseAuditService {
    */
   async exportAuditData(
     query: AuditQuery,
-    format: 'json' | 'csv' | 'xml' = 'json',
+    format: "json" | "csv" | "xml" = "json",
   ): Promise<string> {
     const result = await this.queryAuditRecords(query);
 
     switch (format) {
-      case 'csv': {
+      case "csv": {
         return this.convertToCSV(result.records);
       }
-      case 'xml': {
+      case "xml": {
         return this.convertToXML(result.records);
       }
       default: {
@@ -412,14 +414,14 @@ export class EnterpriseAuditService {
   async performForensicAnalysis(
     targetUserId?: string,
     targetPatientId?: string,
-    timeWindow?: { start: Date; end: Date; },
+    timeWindow?: { start: Date; end: Date },
   ): Promise<{
     timeline: AuditRecord[];
     patterns: {
       type: string;
       description: string;
       frequency: number;
-      riskLevel: 'low' | 'medium' | 'high' | 'critical';
+      riskLevel: "low" | "medium" | "high" | "critical";
     }[];
     recommendations: string[];
   }> {
@@ -433,7 +435,8 @@ export class EnterpriseAuditService {
 
     const result = await this.queryAuditRecords(query);
     const timeline = result.records.sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
 
     // Pattern analysis
@@ -453,7 +456,7 @@ export class EnterpriseAuditService {
   private initializeEncryptionKey(): Buffer {
     const key = process.env.NEONPRO_AUDIT_KEY;
     if (key) {
-      return Buffer.from(key, 'hex');
+      return Buffer.from(key, "hex");
     }
 
     const randomKey = crypto.randomBytes(32);
@@ -463,35 +466,35 @@ export class EnterpriseAuditService {
   private loadDefaultRetentionPolicies(): void {
     this.retentionPolicies = [
       {
-        category: 'patient_data',
+        category: "patient_data",
         retention: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
         canDelete: false,
         encryptionRequired: true,
-        complianceRequired: ['lgpd', 'anvisa', 'cfm'],
+        complianceRequired: ["lgpd", "anvisa", "cfm"],
       },
       {
-        category: 'financial',
+        category: "financial",
         retention: 5 * 365 * 24 * 60 * 60 * 1000, // 5 years
         canDelete: false,
         encryptionRequired: true,
-        complianceRequired: ['lgpd'],
+        complianceRequired: ["lgpd"],
       },
       {
-        category: 'system_security',
+        category: "system_security",
         retention: 2 * 365 * 24 * 60 * 60 * 1000, // 2 years
         canDelete: false,
         encryptionRequired: false,
-        complianceRequired: ['iso27001'],
+        complianceRequired: ["iso27001"],
       },
       {
-        category: 'user_activity',
+        category: "user_activity",
         retention: 1 * 365 * 24 * 60 * 60 * 1000, // 1 year
         canDelete: true,
         encryptionRequired: false,
-        complianceRequired: ['lgpd'],
+        complianceRequired: ["lgpd"],
       },
       {
-        category: 'general',
+        category: "general",
         retention: 90 * 24 * 60 * 60 * 1000, // 90 days
         canDelete: true,
         encryptionRequired: false,
@@ -503,31 +506,31 @@ export class EnterpriseAuditService {
   private categorizeEvent(event: AuditEvent): string {
     const eventType = event.eventType.toLowerCase();
 
-    if (eventType.includes('patient') || eventType.includes('medical')) {
-      return 'patient_data';
+    if (eventType.includes("patient") || eventType.includes("medical")) {
+      return "patient_data";
     }
-    if (eventType.includes('billing') || eventType.includes('payment')) {
-      return 'financial';
+    if (eventType.includes("billing") || eventType.includes("payment")) {
+      return "financial";
     }
-    if (eventType.includes('security') || eventType.includes('auth')) {
-      return 'system_security';
+    if (eventType.includes("security") || eventType.includes("auth")) {
+      return "system_security";
     }
-    if (eventType.includes('user') || eventType.includes('login')) {
-      return 'user_activity';
+    if (eventType.includes("user") || eventType.includes("login")) {
+      return "user_activity";
     }
 
-    return 'general';
+    return "general";
   }
 
   private getRetentionPolicy(category: string): RetentionPolicy {
     return (
-      this.retentionPolicies.find((p) => p.category === category)
-      || this.retentionPolicies.find((p) => p.category === 'general')!
+      this.retentionPolicies.find((p) => p.category === category) ||
+      this.retentionPolicies.find((p) => p.category === "general")!
     );
   }
 
   private generateHash(
-    record: Omit<AuditRecord, 'hash' | 'signature'>,
+    record: Omit<AuditRecord, "hash" | "signature">,
   ): string {
     const data = JSON.stringify({
       id: record.id,
@@ -538,32 +541,32 @@ export class EnterpriseAuditService {
       previousHash: record.previousHash,
     });
 
-    return crypto.createHash('sha256').update(data).digest('hex');
+    return crypto.createHash("sha256").update(data).digest("hex");
   }
 
   private generateSignature(record: AuditRecord): string {
     const data = `${record.hash}:${record.timestamp}:${record.service}`;
     return crypto
-      .createHmac('sha256', this.encryptionKey)
+      .createHmac("sha256", this.encryptionKey)
       .update(data)
-      .digest('hex');
+      .digest("hex");
   }
 
   private async encryptAuditData(data: any): Promise<any> {
-    if (typeof data !== 'object' || data === null) {
+    if (typeof data !== "object" || data === null) {
       return data;
     }
 
     const encrypted: any = {};
     for (const [key, value] of Object.entries(data)) {
       if (this.isSensitiveField(key)) {
-        const cipher = crypto.createCipher('aes-256-gcm', this.encryptionKey);
+        const cipher = crypto.createCipher("aes-256-gcm", this.encryptionKey);
         let encryptedValue = cipher.update(
           JSON.stringify(value),
-          'utf8',
-          'hex',
+          "utf8",
+          "hex",
         );
-        encryptedValue += cipher.final('hex');
+        encryptedValue += cipher.final("hex");
         encrypted[key] = `encrypted:${encryptedValue}`;
       } else {
         encrypted[key] = value;
@@ -574,24 +577,24 @@ export class EnterpriseAuditService {
   }
 
   private async decryptAuditData(data: any): Promise<any> {
-    if (typeof data !== 'object' || data === null) {
+    if (typeof data !== "object" || data === null) {
       return data;
     }
 
     const decrypted: any = {};
     for (const [key, value] of Object.entries(data)) {
-      if (typeof value === 'string' && value.startsWith('encrypted:')) {
+      if (typeof value === "string" && value.startsWith("encrypted:")) {
         try {
-          const encryptedData = value.replace('encrypted:', '');
+          const encryptedData = value.replace("encrypted:", "");
           const decipher = crypto.createDecipher(
-            'aes-256-gcm',
+            "aes-256-gcm",
             this.encryptionKey,
           );
-          let decryptedValue = decipher.update(encryptedData, 'hex', 'utf8');
-          decryptedValue += decipher.final('utf8');
+          let decryptedValue = decipher.update(encryptedData, "hex", "utf8");
+          decryptedValue += decipher.final("utf8");
           decrypted[key] = JSON.parse(decryptedValue);
         } catch {
-          decrypted[key] = '[DECRYPTION_FAILED]';
+          decrypted[key] = "[DECRYPTION_FAILED]";
         }
       } else {
         decrypted[key] = value;
@@ -603,49 +606,49 @@ export class EnterpriseAuditService {
 
   private isSensitiveField(field: string): boolean {
     const sensitiveFields = [
-      'patientId',
-      'ssn',
-      'cpf',
-      'email',
-      'phone',
-      'address',
-      'medicalData',
-      'financialData',
-      'password',
-      'token',
+      "patientId",
+      "ssn",
+      "cpf",
+      "email",
+      "phone",
+      "address",
+      "medicalData",
+      "financialData",
+      "password",
+      "token",
     ];
     return sensitiveFields.includes(field);
   }
 
   private isLGPDRelevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes('patient')
-      || event.eventType.toLowerCase().includes('personal')
-      || event.details?.patientId !== undefined
+      event.eventType.toLowerCase().includes("patient") ||
+      event.eventType.toLowerCase().includes("personal") ||
+      event.details?.patientId !== undefined
     );
   }
 
   private isANVISARelevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes('medical')
-      || event.eventType.toLowerCase().includes('treatment')
-      || event.eventType.toLowerCase().includes('prescription')
+      event.eventType.toLowerCase().includes("medical") ||
+      event.eventType.toLowerCase().includes("treatment") ||
+      event.eventType.toLowerCase().includes("prescription")
     );
   }
 
   private isCFMRelevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes('doctor')
-      || event.eventType.toLowerCase().includes('medical')
-      || event.details?.doctorId !== undefined
+      event.eventType.toLowerCase().includes("doctor") ||
+      event.eventType.toLowerCase().includes("medical") ||
+      event.details?.doctorId !== undefined
     );
   }
 
   private isISO27001Relevant(event: AuditEvent): boolean {
     return (
-      event.eventType.toLowerCase().includes('security')
-      || event.eventType.toLowerCase().includes('access')
-      || event.eventType.toLowerCase().includes('auth')
+      event.eventType.toLowerCase().includes("security") ||
+      event.eventType.toLowerCase().includes("access") ||
+      event.eventType.toLowerCase().includes("auth")
     );
   }
 
@@ -655,41 +658,41 @@ export class EnterpriseAuditService {
 
     // Check for data access without proper authorization
     if (
-      record.eventType.includes('PATIENT_DATA_ACCESS')
-      && !record.details?.authorized
+      record.eventType.includes("PATIENT_DATA_ACCESS") &&
+      !record.details?.authorized
     ) {
-      violations.push('Unauthorized patient data access');
+      violations.push("Unauthorized patient data access");
     }
 
     // Check for excessive failed login attempts
-    if (record.eventType.includes('LOGIN_FAILED')) {
+    if (record.eventType.includes("LOGIN_FAILED")) {
       const recentFailures = this.auditChain
         .filter(
           (r) =>
-            r.eventType.includes('LOGIN_FAILED')
-            && r.details?.userId === record.details?.userId,
+            r.eventType.includes("LOGIN_FAILED") &&
+            r.details?.userId === record.details?.userId,
         )
         .filter(
           (r) => Date.now() - new Date(r.timestamp).getTime() < 60 * 60 * 1000,
         );
 
       if (recentFailures.length > 5) {
-        violations.push('Excessive failed login attempts');
+        violations.push("Excessive failed login attempts");
       }
     }
 
     if (violations.length > 0) {
       await this.logEvent({
         id: `compliance_violation_${Date.now()}`,
-        service: 'audit-service',
-        eventType: 'COMPLIANCE_VIOLATION',
+        service: "audit-service",
+        eventType: "COMPLIANCE_VIOLATION",
         timestamp: new Date().toISOString(),
         details: {
           originalEventId: record.id,
           violations,
-          severity: 'high',
+          severity: "high",
         },
-        version: '1.0.0',
+        version: "1.0.0",
       });
     }
   }
@@ -720,38 +723,44 @@ export class EnterpriseAuditService {
     });
 
     const removedCount = initialCount - this.auditChain.length;
-    if (removedCount > 0) {}
+    if (removedCount > 0) {
+    }
   }
 
   private analyzeComplianceFindings(
     records: AuditRecord[],
-    type: ComplianceReport['type'],
-  ): ComplianceReport['findings'][0][] {
-    const findings: ComplianceReport['findings'][0][] = [];
+    type: ComplianceReport["type"],
+  ): ComplianceReport["findings"][0][] {
+    const findings: ComplianceReport["findings"][0][] = [];
 
     // Analyze patterns for compliance violations
     const violations = records.filter(
-      (r) => r.eventType.includes('VIOLATION') || r.eventType.includes('FAILED'),
+      (r) =>
+        r.eventType.includes("VIOLATION") || r.eventType.includes("FAILED"),
     );
 
     if (violations.length > 0) {
       findings.push({
-        severity: 'high',
+        severity: "high",
         description: `${violations.length} compliance violations detected`,
-        recommendation: 'Review security policies and implement additional controls',
+        recommendation:
+          "Review security policies and implement additional controls",
         affectedRecords: violations.length,
       });
     }
 
     // Type-specific analysis
     switch (type) {
-      case 'lgpd': {
-        const dataAccess = records.filter((r) => r.eventType.includes('PATIENT_DATA_ACCESS'));
+      case "lgpd": {
+        const dataAccess = records.filter((r) =>
+          r.eventType.includes("PATIENT_DATA_ACCESS"),
+        );
         if (dataAccess.length > 1000) {
           findings.push({
-            severity: 'medium',
-            description: 'High volume of patient data access',
-            recommendation: 'Implement additional access controls and monitoring',
+            severity: "medium",
+            description: "High volume of patient data access",
+            recommendation:
+              "Implement additional access controls and monitoring",
             affectedRecords: dataAccess.length,
           });
         }
@@ -764,69 +773,72 @@ export class EnterpriseAuditService {
 
   private calculateComplianceScore(
     records: AuditRecord[],
-    findings: ComplianceReport['findings'][0][],
+    findings: ComplianceReport["findings"][0][],
   ): number {
     if (records.length === 0) {
       return 100;
     }
 
     const criticalIssues = findings.filter(
-      (f) => f.severity === 'critical',
+      (f) => f.severity === "critical",
     ).length;
-    const highIssues = findings.filter((f) => f.severity === 'high').length;
-    const mediumIssues = findings.filter((f) => f.severity === 'medium').length;
+    const highIssues = findings.filter((f) => f.severity === "high").length;
+    const mediumIssues = findings.filter((f) => f.severity === "medium").length;
 
-    const score = 100 - criticalIssues * 30 - highIssues * 15 - mediumIssues * 5;
+    const score =
+      100 - criticalIssues * 30 - highIssues * 15 - mediumIssues * 5;
     return Math.max(0, Math.min(100, score));
   }
 
   private getEventSeverity(record: AuditRecord): string {
     if (
-      record.eventType.includes('CRITICAL')
-      || record.eventType.includes('BREACH')
+      record.eventType.includes("CRITICAL") ||
+      record.eventType.includes("BREACH")
     ) {
-      return 'critical';
+      return "critical";
     }
     if (
-      record.eventType.includes('VIOLATION')
-      || record.eventType.includes('FAILED')
+      record.eventType.includes("VIOLATION") ||
+      record.eventType.includes("FAILED")
     ) {
-      return 'high';
+      return "high";
     }
     if (
-      record.eventType.includes('WARNING')
-      || record.eventType.includes('SUSPICIOUS')
+      record.eventType.includes("WARNING") ||
+      record.eventType.includes("SUSPICIOUS")
     ) {
-      return 'medium';
+      return "medium";
     }
-    return 'low';
+    return "low";
   }
 
   private generateReportId(): string {
-    return `rpt_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+    return `rpt_${Date.now()}_${crypto.randomBytes(4).toString("hex")}`;
   }
 
   private analyzePatterns(records: AuditRecord[]): {
     type: string;
     description: string;
     frequency: number;
-    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    riskLevel: "low" | "medium" | "high" | "critical";
   }[] {
     // Pattern analysis implementation
     const patterns = [];
 
     // Analyze access patterns
-    const accessPatterns = records.filter((r) => r.eventType.includes('ACCESS'));
+    const accessPatterns = records.filter((r) =>
+      r.eventType.includes("ACCESS"),
+    );
     if (accessPatterns.length > 0) {
       patterns.push({
-        type: 'data_access',
+        type: "data_access",
         description: `${accessPatterns.length} data access events`,
         frequency: accessPatterns.length,
-        riskLevel: (accessPatterns.length > 100 ? 'high' : 'medium') as
-          | 'low'
-          | 'medium'
-          | 'high'
-          | 'critical',
+        riskLevel: (accessPatterns.length > 100 ? "high" : "medium") as
+          | "low"
+          | "medium"
+          | "high"
+          | "critical",
       });
     }
 
@@ -837,7 +849,7 @@ export class EnterpriseAuditService {
     const recommendations = [];
 
     patterns.forEach((pattern) => {
-      if (pattern.riskLevel === 'high' || pattern.riskLevel === 'critical') {
+      if (pattern.riskLevel === "high" || pattern.riskLevel === "critical") {
         recommendations.push(
           `Investigate ${pattern.type} patterns showing high frequency`,
         );
@@ -845,7 +857,7 @@ export class EnterpriseAuditService {
     });
 
     if (recommendations.length === 0) {
-      recommendations.push('No significant security concerns identified');
+      recommendations.push("No significant security concerns identified");
     }
 
     return recommendations;
@@ -853,14 +865,14 @@ export class EnterpriseAuditService {
 
   private convertToCSV(records: AuditRecord[]): string {
     const headers = [
-      'id',
-      'service',
-      'eventType',
-      'timestamp',
-      'userId',
-      'details',
+      "id",
+      "service",
+      "eventType",
+      "timestamp",
+      "userId",
+      "details",
     ];
-    const rows = [headers.join(',')];
+    const rows = [headers.join(",")];
 
     records.forEach((record) => {
       const row = [
@@ -868,29 +880,29 @@ export class EnterpriseAuditService {
         record.service,
         record.eventType,
         record.timestamp,
-        record.details?.userId || '',
-        JSON.stringify(record.details).replaceAll("\"", '""'),
+        record.details?.userId || "",
+        JSON.stringify(record.details).replaceAll('"', '""'),
       ];
-      rows.push(row.join(','));
+      rows.push(row.join(","));
     });
 
-    return rows.join('\n');
+    return rows.join("\n");
   }
 
   private convertToXML(records: AuditRecord[]): string {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<auditRecords>\n';
 
     records.forEach((record) => {
-      xml += '  <record>\n';
+      xml += "  <record>\n";
       xml += `    <id>${record.id}</id>\n`;
       xml += `    <service>${record.service}</service>\n`;
       xml += `    <eventType>${record.eventType}</eventType>\n`;
       xml += `    <timestamp>${record.timestamp}</timestamp>\n`;
       xml += `    <details><![CDATA[${JSON.stringify(record.details)}]]></details>\n`;
-      xml += '  </record>\n';
+      xml += "  </record>\n";
     });
 
-    xml += '</auditRecords>';
+    xml += "</auditRecords>";
     return xml;
   }
 

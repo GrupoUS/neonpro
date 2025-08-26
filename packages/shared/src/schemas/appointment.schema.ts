@@ -1,81 +1,81 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Appointment Status Schema
 export const AppointmentStatusSchema = z.enum([
-  'scheduled', // Agendado
-  'confirmed', // Confirmado
-  'in_progress', // Em andamento
-  'completed', // Concluído
-  'cancelled', // Cancelado
-  'no_show', // Falta
-  'rescheduled', // Reagendado
+  "scheduled", // Agendado
+  "confirmed", // Confirmado
+  "in_progress", // Em andamento
+  "completed", // Concluído
+  "cancelled", // Cancelado
+  "no_show", // Falta
+  "rescheduled", // Reagendado
 ]);
 
 // Appointment Type Schema
 export const AppointmentTypeSchema = z.enum([
-  'consultation', // Consulta
-  'follow_up', // Retorno
-  'procedure', // Procedimento
-  'evaluation', // Avaliação
-  'emergency', // Emergência
-  'online_consultation', // Teleconsulta
+  "consultation", // Consulta
+  "follow_up", // Retorno
+  "procedure", // Procedimento
+  "evaluation", // Avaliação
+  "emergency", // Emergência
+  "online_consultation", // Teleconsulta
 ]);
 
 // Appointment Priority Schema
 export const AppointmentPrioritySchema = z.enum([
-  'low', // Baixa
-  'normal', // Normal
-  'high', // Alta
-  'urgent', // Urgente
+  "low", // Baixa
+  "normal", // Normal
+  "high", // Alta
+  "urgent", // Urgente
 ]);
 
 // Time Slot Schema
 export const TimeSlotSchema = z.object({
-  start_time: z.string().regex(/^\d{2}:\d{2}$/, 'Formato deve ser HH:MM'),
-  end_time: z.string().regex(/^\d{2}:\d{2}$/, 'Formato deve ser HH:MM'),
+  start_time: z.string().regex(/^\d{2}:\d{2}$/, "Formato deve ser HH:MM"),
+  end_time: z.string().regex(/^\d{2}:\d{2}$/, "Formato deve ser HH:MM"),
   is_available: z.boolean().default(true),
   professional_id: z.string().uuid().optional(),
-  date: z.string().date('Data deve estar em formato válido'),
+  date: z.string().date("Data deve estar em formato válido"),
 });
 
 // Payment Status Schema
 export const PaymentStatusSchema = z.enum([
-  'pending', // Pendente
-  'paid', // Pago
-  'partial', // Parcial
-  'overdue', // Em atraso
-  'cancelled', // Cancelado
-  'refunded', // Reembolsado
+  "pending", // Pendente
+  "paid", // Pago
+  "partial", // Parcial
+  "overdue", // Em atraso
+  "cancelled", // Cancelado
+  "refunded", // Reembolsado
 ]);
 
 // Payment Method Schema
 export const PaymentMethodSchema = z.enum([
-  'cash', // Dinheiro
-  'credit_card', // Cartão de crédito
-  'debit_card', // Cartão de débito
-  'pix', // PIX
-  'bank_transfer', // Transferência bancária
-  'insurance', // Plano de saúde
-  'installments', // Parcelado
+  "cash", // Dinheiro
+  "credit_card", // Cartão de crédito
+  "debit_card", // Cartão de débito
+  "pix", // PIX
+  "bank_transfer", // Transferência bancária
+  "insurance", // Plano de saúde
+  "installments", // Parcelado
 ]);
 
 // Cancellation Reason Schema
 export const CancellationReasonSchema = z.enum([
-  'patient_request', // Solicitação do paciente
-  'professional_unavailable', // Profissional indisponível
-  'clinic_closure', // Fechamento da clínica
-  'emergency', // Emergência
-  'weather', // Clima
-  'equipment_failure', // Falha no equipamento
-  'other', // Outro
+  "patient_request", // Solicitação do paciente
+  "professional_unavailable", // Profissional indisponível
+  "clinic_closure", // Fechamento da clínica
+  "emergency", // Emergência
+  "weather", // Clima
+  "equipment_failure", // Falha no equipamento
+  "other", // Outro
 ]);
 
 // Reminder Schema
 export const AppointmentReminderSchema = z.object({
   id: z.string().uuid().optional(),
-  type: z.enum(['email', 'sms', 'whatsapp', 'push']),
+  type: z.enum(["email", "sms", "whatsapp", "push"]),
   sent_at: z.string().datetime().optional(),
-  status: z.enum(['pending', 'sent', 'failed', 'cancelled']).default('pending'),
+  status: z.enum(["pending", "sent", "failed", "cancelled"]).default("pending"),
   scheduled_for: z.string().datetime(),
   message_template: z.string().optional(),
   created_at: z.string().datetime(),
@@ -87,11 +87,11 @@ export const AppointmentNoteSchema = z.object({
   id: z.string().uuid().optional(),
   content: z
     .string()
-    .min(1, 'Nota não pode estar vazia')
-    .max(2000, 'Nota deve ter no máximo 2000 caracteres'),
+    .min(1, "Nota não pode estar vazia")
+    .max(2000, "Nota deve ter no máximo 2000 caracteres"),
   type: z
-    .enum(['clinical', 'administrative', 'billing', 'follow_up'])
-    .default('clinical'),
+    .enum(["clinical", "administrative", "billing", "follow_up"])
+    .default("clinical"),
   is_private: z.boolean().default(false),
   author_id: z.string().uuid(),
   author_name: z.string(),
@@ -122,26 +122,26 @@ export const PrescriptionSchema = z.object({
   id: z.string().uuid().optional(),
   medication_name: z
     .string()
-    .min(2, 'Nome do medicamento deve ter pelo menos 2 caracteres')
-    .max(200, 'Nome do medicamento deve ter no máximo 200 caracteres'),
+    .min(2, "Nome do medicamento deve ter pelo menos 2 caracteres")
+    .max(200, "Nome do medicamento deve ter no máximo 200 caracteres"),
   dosage: z
     .string()
-    .min(1, 'Dosagem é obrigatória')
-    .max(100, 'Dosagem deve ter no máximo 100 caracteres'),
+    .min(1, "Dosagem é obrigatória")
+    .max(100, "Dosagem deve ter no máximo 100 caracteres"),
   frequency: z
     .string()
-    .min(1, 'Frequência é obrigatória')
-    .max(100, 'Frequência deve ter no máximo 100 caracteres'),
+    .min(1, "Frequência é obrigatória")
+    .max(100, "Frequência deve ter no máximo 100 caracteres"),
   duration: z
     .string()
-    .min(1, 'Duração é obrigatória')
-    .max(100, 'Duração deve ter no máximo 100 caracteres'),
+    .min(1, "Duração é obrigatória")
+    .max(100, "Duração deve ter no máximo 100 caracteres"),
   instructions: z.string().max(500).optional(),
   is_controlled: z.boolean().default(false),
   generic_allowed: z.boolean().default(true),
   prescribed_by: z.string().uuid(),
   prescribed_at: z.string().datetime(),
-  status: z.enum(['active', 'completed', 'cancelled']).default('active'),
+  status: z.enum(["active", "completed", "cancelled"]).default("active"),
 });
 
 // Service Performed Schema
@@ -159,8 +159,8 @@ export const ServicePerformedSchema = z.object({
   notes: z.string().max(1000).optional(),
   complications: z.string().max(1000).optional(),
   outcome: z
-    .enum(['successful', 'partial', 'complications', 'cancelled'])
-    .default('successful'),
+    .enum(["successful", "partial", "complications", "cancelled"])
+    .default("successful"),
 });
 
 // File Attachment Schema
@@ -168,13 +168,13 @@ export const FileAttachmentSchema = z.object({
   id: z.string().uuid().optional(),
   filename: z
     .string()
-    .min(1, 'Nome do arquivo é obrigatório')
-    .max(255, 'Nome do arquivo deve ter no máximo 255 caracteres'),
+    .min(1, "Nome do arquivo é obrigatório")
+    .max(255, "Nome do arquivo deve ter no máximo 255 caracteres"),
   original_name: z.string(),
   file_path: z.string(),
   file_size: z.number().min(0),
   mime_type: z.string(),
-  file_type: z.enum(['image', 'document', 'video', 'audio', 'other']),
+  file_type: z.enum(["image", "document", "video", "audio", "other"]),
   description: z.string().max(500).optional(),
   is_public: z.boolean().default(false),
   uploaded_by: z.string().uuid(),
@@ -196,7 +196,7 @@ export const AppointmentBaseSchema = z.object({
   scheduled_date: z.string().date(),
   scheduled_time: z
     .string()
-    .regex(/^\d{2}:\d{2}$/, 'Horário deve estar no formato HH:MM'),
+    .regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
   duration_minutes: z.number().min(15).max(480).default(60),
   end_time: z
     .string()
@@ -206,7 +206,7 @@ export const AppointmentBaseSchema = z.object({
   // Status and Type
   status: AppointmentStatusSchema,
   type: AppointmentTypeSchema,
-  priority: AppointmentPrioritySchema.default('normal'),
+  priority: AppointmentPrioritySchema.default("normal"),
 
   // Patient Information
   patient_name: z.string(),
@@ -242,7 +242,7 @@ export const AppointmentBaseSchema = z.object({
   // Billing Information
   estimated_cost: z.number().min(0).optional(),
   final_cost: z.number().min(0).optional(),
-  payment_status: PaymentStatusSchema.default('pending'),
+  payment_status: PaymentStatusSchema.default("pending"),
   payment_method: PaymentMethodSchema.optional(),
   insurance_covered: z.boolean().default(false),
   insurance_amount: z.number().min(0).optional(),
@@ -296,15 +296,15 @@ export const AppointmentQuerySchema = z.object({
   // Sorting
   sort_by: z
     .enum([
-      'scheduled_date',
-      'created_at',
-      'patient_name',
-      'professional_name',
-      'status',
-      'priority',
+      "scheduled_date",
+      "created_at",
+      "patient_name",
+      "professional_name",
+      "status",
+      "priority",
     ])
-    .default('scheduled_date'),
-  sort_order: z.enum(['asc', 'desc']).default('asc'),
+    .default("scheduled_date"),
+  sort_order: z.enum(["asc", "desc"]).default("asc"),
 
   // Special filters
   today_only: z.coerce.boolean().optional(),
@@ -322,11 +322,11 @@ export const CreateAppointmentSchema = z.object({
   scheduled_date: z.string().date(),
   scheduled_time: z
     .string()
-    .regex(/^\d{2}:\d{2}$/, 'Horário deve estar no formato HH:MM'),
+    .regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM"),
   duration_minutes: z.number().min(15).max(480).default(60),
 
-  type: AppointmentTypeSchema.default('consultation'),
-  priority: AppointmentPrioritySchema.default('normal'),
+  type: AppointmentTypeSchema.default("consultation"),
+  priority: AppointmentPrioritySchema.default("normal"),
 
   chief_complaint: z.string().max(1000).optional(),
   special_instructions: z.string().max(1000).optional(),
@@ -337,8 +337,8 @@ export const CreateAppointmentSchema = z.object({
   // Reminder preferences
   send_reminders: z.boolean().default(true),
   reminder_methods: z
-    .array(z.enum(['email', 'sms', 'whatsapp']))
-    .default(['email']),
+    .array(z.enum(["email", "sms", "whatsapp"]))
+    .default(["email"]),
 
   notes: z.string().max(2000).optional(),
 });
@@ -348,7 +348,7 @@ export const UpdateAppointmentSchema = z.object({
   scheduled_date: z.string().date().optional(),
   scheduled_time: z
     .string()
-    .regex(/^\d{2}:\d{2}$/, 'Horário deve estar no formato HH:MM')
+    .regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:MM")
     .optional(),
   duration_minutes: z.number().min(15).max(480).optional(),
 

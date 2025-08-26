@@ -15,7 +15,7 @@
  * - Análise preditiva básica
  */
 
-import type { PerformanceMetrics } from '../../types';
+import type { PerformanceMetrics } from "../../types";
 
 interface AnalyticsEvent {
   id: string;
@@ -96,8 +96,8 @@ export class EnterpriseAnalyticsService {
   constructor() {
     this.metrics = {
       // Base PerformanceMetrics properties
-      service: 'analytics',
-      period: 'realtime',
+      service: "analytics",
+      period: "realtime",
       totalOperations: 0,
       averageResponseTime: 0,
       errorRate: 0,
@@ -162,7 +162,7 @@ export class EnterpriseAnalyticsService {
   ): Promise<void> {
     const event: AnalyticsEvent = {
       id: this.generateEventId(),
-      type: 'custom',
+      type: "custom",
       category: this.extractCategory(eventName),
       action: eventName,
       properties,
@@ -170,8 +170,8 @@ export class EnterpriseAnalyticsService {
       sessionId: this.getCurrentSessionId(),
       timestamp: Date.now(),
       metadata: {
-        source: 'enterprise-analytics',
-        version: '1.0.0',
+        source: "enterprise-analytics",
+        version: "1.0.0",
         userAgent: properties.userAgent,
         ...(properties.ip && { ip: this.hashIP(properties.ip) }),
       },
@@ -213,8 +213,9 @@ export class EnterpriseAnalyticsService {
     serviceMetric.calls++;
 
     // Update average duration
-    serviceMetric.avgDuration = (serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration)
-      / serviceMetric.calls;
+    serviceMetric.avgDuration =
+      (serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration) /
+      serviceMetric.calls;
 
     if (!success) {
       serviceMetric.errorCount++;
@@ -222,12 +223,13 @@ export class EnterpriseAnalyticsService {
     }
 
     // Update overall average
-    this.metrics.avgResponseTime = (this.metrics.avgResponseTime * (this.metrics.totalRequests - 1)
-      + duration)
-      / this.metrics.totalRequests;
+    this.metrics.avgResponseTime =
+      (this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) +
+        duration) /
+      this.metrics.totalRequests;
 
     // Track performance event
-    await this.track('performance.operation', {
+    await this.track("performance.operation", {
       operation,
       duration,
       success,
@@ -239,7 +241,7 @@ export class EnterpriseAnalyticsService {
    * Record error event
    */
   async recordError(error: Error, context: Record<string, any>): Promise<void> {
-    const operation = context.operation || 'unknown';
+    const operation = context.operation || "unknown";
 
     if (this.metrics.serviceMetrics[operation]) {
       this.metrics.serviceMetrics[operation].errorCount++;
@@ -248,7 +250,7 @@ export class EnterpriseAnalyticsService {
 
     this.metrics.errorRate = this.calculateErrorRate();
 
-    await this.track('error.occurred', {
+    await this.track("error.occurred", {
       message: error.message,
       stack: error.stack,
       operation,
@@ -266,55 +268,56 @@ export class EnterpriseAnalyticsService {
     value = 1,
   ): Promise<void> {
     switch (category) {
-      case 'appointment': {
-        if (action === 'scheduled') {
+      case "appointment": {
+        if (action === "scheduled") {
           this.healthcareMetrics.appointments.scheduled += value;
         }
-        if (action === 'completed') {
+        if (action === "completed") {
           this.healthcareMetrics.appointments.completed += value;
         }
-        if (action === 'cancelled') {
+        if (action === "cancelled") {
           this.healthcareMetrics.appointments.cancelled += value;
         }
-        if (action === 'no_show') {
+        if (action === "no_show") {
           this.healthcareMetrics.appointments.noShows += value;
         }
         break;
       }
 
-      case 'patient': {
-        if (action === 'new') {
+      case "patient": {
+        if (action === "new") {
           this.healthcareMetrics.patients.new += value;
         }
-        if (action === 'returning') {
+        if (action === "returning") {
           this.healthcareMetrics.patients.returning += value;
         }
-        this.healthcareMetrics.patients.total = this.healthcareMetrics.patients.new
-          + this.healthcareMetrics.patients.returning;
+        this.healthcareMetrics.patients.total =
+          this.healthcareMetrics.patients.new +
+          this.healthcareMetrics.patients.returning;
         break;
       }
 
-      case 'treatment': {
-        if (action === 'started') {
+      case "treatment": {
+        if (action === "started") {
           this.healthcareMetrics.treatments.started += value;
         }
-        if (action === 'completed') {
+        if (action === "completed") {
           this.healthcareMetrics.treatments.completed += value;
         }
-        if (action === 'revenue') {
+        if (action === "revenue") {
           this.healthcareMetrics.treatments.revenue += value;
         }
         break;
       }
 
-      case 'compliance': {
-        if (action === 'lgpd') {
+      case "compliance": {
+        if (action === "lgpd") {
           this.healthcareMetrics.compliance.lgpdEvents += value;
         }
-        if (action === 'anvisa') {
+        if (action === "anvisa") {
           this.healthcareMetrics.compliance.anvisaEvents += value;
         }
-        if (action === 'cfm') {
+        if (action === "cfm") {
           this.healthcareMetrics.compliance.cfmEvents += value;
         }
         break;
@@ -355,7 +358,7 @@ export class EnterpriseAnalyticsService {
     this.metrics.systemMetrics.cpuUsage = cpu;
     this.metrics.systemMetrics.diskUsage = disk;
 
-    await this.track('system.metrics', {
+    await this.track("system.metrics", {
       memory,
       cpu,
       disk,
@@ -366,7 +369,7 @@ export class EnterpriseAnalyticsService {
   /**
    * Get comprehensive metrics
    */
-  async getMetrics(period = '1h'): Promise<any> {
+  async getMetrics(period = "1h"): Promise<any> {
     const periodMs = this.parsePeriod(period);
     const since = Date.now() - periodMs;
 
@@ -395,49 +398,52 @@ export class EnterpriseAnalyticsService {
     // Performance insights
     if (this.metrics.avgResponseTime > 1000) {
       insights.push({
-        type: 'performance',
-        severity: 'warning',
-        message: 'Average response time is above 1 second',
+        type: "performance",
+        severity: "warning",
+        message: "Average response time is above 1 second",
         value: this.metrics.avgResponseTime,
-        recommendation: 'Consider optimizing slow operations or scaling resources',
+        recommendation:
+          "Consider optimizing slow operations or scaling resources",
       });
     }
 
     // Cache insights
     if (this.metrics.cacheMetrics.hitRate < 0.8) {
       insights.push({
-        type: 'cache',
-        severity: 'info',
-        message: 'Cache hit rate is below 80%',
+        type: "cache",
+        severity: "info",
+        message: "Cache hit rate is below 80%",
         value: this.metrics.cacheMetrics.hitRate,
-        recommendation: 'Review cache strategies and TTL configurations',
+        recommendation: "Review cache strategies and TTL configurations",
       });
     }
 
     // Healthcare insights
-    const noShowRate = this.healthcareMetrics.appointments.scheduled > 0
-      ? this.healthcareMetrics.appointments.noShows
-        / this.healthcareMetrics.appointments.scheduled
-      : 0;
+    const noShowRate =
+      this.healthcareMetrics.appointments.scheduled > 0
+        ? this.healthcareMetrics.appointments.noShows /
+          this.healthcareMetrics.appointments.scheduled
+        : 0;
 
     if (noShowRate > 0.15) {
       insights.push({
-        type: 'healthcare',
-        severity: 'warning',
-        message: 'No-show rate is above 15%',
+        type: "healthcare",
+        severity: "warning",
+        message: "No-show rate is above 15%",
         value: noShowRate,
-        recommendation: 'Implement reminder systems or appointment confirmation',
+        recommendation:
+          "Implement reminder systems or appointment confirmation",
       });
     }
 
     // Error rate insights
     if (this.metrics.errorRate > 0.05) {
       insights.push({
-        type: 'reliability',
-        severity: 'error',
-        message: 'Error rate is above 5%',
+        type: "reliability",
+        severity: "error",
+        message: "Error rate is above 5%",
         value: this.metrics.errorRate,
-        recommendation: 'Investigate and fix recurring errors',
+        recommendation: "Investigate and fix recurring errors",
       });
     }
 
@@ -447,11 +453,11 @@ export class EnterpriseAnalyticsService {
   /**
    * Export analytics data
    */
-  async exportData(format = 'json', period = '24h'): Promise<string> {
+  async exportData(format = "json", period = "24h"): Promise<string> {
     const data = await this.getMetrics(period);
 
     switch (format) {
-      case 'csv': {
+      case "csv": {
         return this.convertToCSV(data);
       }
       default: {
@@ -466,25 +472,25 @@ export class EnterpriseAnalyticsService {
   private async processEvent(event: AnalyticsEvent): Promise<void> {
     // Real-time processing
     if (
-      event.category === 'error'
-      && event.properties.severity === 'critical'
+      event.category === "error" &&
+      event.properties.severity === "critical"
     ) {
       await this.sendAlert(event);
     }
 
     // Compliance monitoring
-    if (event.category === 'compliance') {
-      await this.recordHealthcareEvent('compliance', event.action);
+    if (event.category === "compliance") {
+      await this.recordHealthcareEvent("compliance", event.action);
     }
 
     // Performance monitoring
-    if (event.category === 'performance' && event.properties.duration > 5000) {
+    if (event.category === "performance" && event.properties.duration > 5000) {
       await this.sendAlert({
         ...event,
-        type: 'performance_alert',
+        type: "performance_alert",
         properties: {
           ...event.properties,
-          alert: 'Slow operation detected',
+          alert: "Slow operation detected",
         },
       });
     }
@@ -495,7 +501,8 @@ export class EnterpriseAnalyticsService {
    */
   private async sendAlert(event: AnalyticsEvent): Promise<void> {
     // For critical events, we could implement immediate notifications
-    if (event.properties?.severity === 'high') {}
+    if (event.properties?.severity === "high") {
+    }
   }
 
   /**
@@ -533,7 +540,7 @@ export class EnterpriseAnalyticsService {
   }
 
   private extractCategory(eventName: string): string {
-    return eventName.split('.')[0] || 'general';
+    return eventName.split(".")[0] || "general";
   }
 
   private hashIP(ip?: string): string | undefined {
@@ -541,7 +548,7 @@ export class EnterpriseAnalyticsService {
       return;
     }
     // Simple hash for privacy (use crypto.createHash in production)
-    return Buffer.from(ip).toString('base64').slice(0, 8);
+    return Buffer.from(ip).toString("base64").slice(0, 8);
   }
 
   private calculateErrorRate(): number {
@@ -556,19 +563,19 @@ export class EnterpriseAnalyticsService {
   }
 
   private categorizeError(error: Error): string {
-    if (error.message.includes('timeout')) {
-      return 'timeout';
+    if (error.message.includes("timeout")) {
+      return "timeout";
     }
-    if (error.message.includes('network')) {
-      return 'network';
+    if (error.message.includes("network")) {
+      return "network";
     }
-    if (error.message.includes('database')) {
-      return 'database';
+    if (error.message.includes("database")) {
+      return "database";
     }
-    if (error.message.includes('auth')) {
-      return 'authentication';
+    if (error.message.includes("auth")) {
+      return "authentication";
     }
-    return 'general';
+    return "general";
   }
 
   private parsePeriod(period: string): number {
@@ -576,16 +583,16 @@ export class EnterpriseAnalyticsService {
     const value = Number.parseInt(period.slice(0, -1), 10);
 
     switch (unit) {
-      case 's': {
+      case "s": {
         return value * 1000;
       }
-      case 'm': {
+      case "m": {
         return value * 60 * 1000;
       }
-      case 'h': {
+      case "h": {
         return value * 60 * 60 * 1000;
       }
-      case 'd': {
+      case "d": {
         return value * 24 * 60 * 60 * 1000;
       }
       default: {
@@ -620,17 +627,17 @@ export class EnterpriseAnalyticsService {
 
   private convertToCSV(data: any): string {
     // Simple CSV conversion - can be enhanced
-    const headers = ['timestamp', 'metric', 'value'];
-    const rows = [headers.join(',')];
+    const headers = ["timestamp", "metric", "value"];
+    const rows = [headers.join(",")];
 
     // Add performance data
     Object.entries(data.performance).forEach(([key, value]) => {
-      if (typeof value === 'number') {
-        rows.push([data.timestamp, key, value].join(','));
+      if (typeof value === "number") {
+        rows.push([data.timestamp, key, value].join(","));
       }
     });
 
-    return rows.join('\n');
+    return rows.join("\n");
   }
 
   /**

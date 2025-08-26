@@ -345,9 +345,9 @@ export default function LGPDComplianceDashboard() {
                   <Badge variant={getBadgeVariant(record.status)}>
                     {record.status === "active"
                       ? "Ativo"
-                      : (record.status === "deleted"
+                      : record.status === "deleted"
                         ? "Excluído"
-                        : "Anonimizado")}
+                        : "Anonimizado"}
                   </Badge>
                 </div>
               </CardHeader>
@@ -405,9 +405,9 @@ export default function LGPDComplianceDashboard() {
                   <Badge variant={getBadgeVariant(consent.status)}>
                     {consent.status === "granted"
                       ? "Concedido"
-                      : (consent.status === "withdrawn"
+                      : consent.status === "withdrawn"
                         ? "Retirado"
-                        : "Pendente")}
+                        : "Pendente"}
                   </Badge>
                 </div>
               </CardHeader>

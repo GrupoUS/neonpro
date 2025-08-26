@@ -4,9 +4,9 @@
  * Comprehensive performance testing suite for subscription middleware
  */
 
-const { performanceMonitor } = require('../../lib/performance/monitor');
-const { loadTester } = require('../../lib/performance/load-tester');
-const { stressTester } = require('../../lib/performance/stress-tester');
+const { performanceMonitor } = require("../../lib/performance/monitor");
+const { loadTester } = require("../../lib/performance/load-tester");
+const { stressTester } = require("../../lib/performance/stress-tester");
 
 // Test configuration
 const TEST_CONFIG = {
@@ -14,42 +14,42 @@ const TEST_CONFIG = {
     concurrent: 100,
     duration: 30,
     rampUpTime: 5,
-    operation: 'subscription_check',
+    operation: "subscription_check",
   },
   subscription_update: {
     concurrent: 50,
     duration: 20,
     rampUpTime: 3,
-    operation: 'subscription_update',
+    operation: "subscription_update",
   },
   real_time_sync: {
     concurrent: 200,
     duration: 60,
     rampUpTime: 10,
-    operation: 'real_time_sync',
+    operation: "real_time_sync",
   },
 };
 
 // Stress test scenarios
 const STRESS_SCENARIOS = [
   {
-    name: 'Peak Load Simulation',
-    description: 'Simulate peak usage during business hours',
+    name: "Peak Load Simulation",
+    description: "Simulate peak usage during business hours",
     config: {
       concurrent: 500,
       duration: 120,
       rampUpTime: 20,
-      operation: 'peak_load',
+      operation: "peak_load",
     },
     chaosActions: [
       {
-        type: 'network_delay',
+        type: "network_delay",
         delay: 30_000,
         duration: 15_000,
         intensity: 5,
       },
       {
-        type: 'memory_pressure',
+        type: "memory_pressure",
         delay: 60_000,
         duration: 20_000,
         intensity: 7,

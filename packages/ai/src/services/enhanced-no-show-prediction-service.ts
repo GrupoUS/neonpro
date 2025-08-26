@@ -1,8 +1,8 @@
 // Enhanced No-Show Prediction Service - Ensemble ML for >95% Accuracy
 // Advanced machine learning service targeting $150,000 annual ROI and 25% no-show reduction
 
-import type { LoggerService, MetricsService } from '@neonpro/core-services';
-import type { AIServiceConfig, CacheService } from './enhanced-service-base';
+import type { LoggerService, MetricsService } from "@neonpro/core-services";
+import type { AIServiceConfig, CacheService } from "./enhanced-service-base";
 import type {
   AppointmentContext,
   ExternalFactors,
@@ -10,8 +10,8 @@ import type {
   PatientProfile,
   PredictionInput,
   PredictionOutput,
-} from './no-show-prediction-service';
-import { NoShowPredictionService } from './no-show-prediction-service';
+} from "./no-show-prediction-service";
+import { NoShowPredictionService } from "./no-show-prediction-service";
 
 // Enhanced ML Types for Ensemble Methods
 export interface EnsembleModelConfig {
@@ -35,21 +35,21 @@ export interface EnsembleModelConfig {
       enabled: boolean;
       weight: number;
       layers: number[];
-      activation: 'relu' | 'tanh' | 'sigmoid';
+      activation: "relu" | "tanh" | "sigmoid";
       dropout: number;
       learningRate: number;
     };
     logisticRegression: {
       enabled: boolean;
       weight: number;
-      regularization: 'l1' | 'l2' | 'elasticnet';
+      regularization: "l1" | "l2" | "elasticnet";
       alpha: number;
     };
   };
-  ensembleMethod: 'weighted_average' | 'stacking' | 'voting';
+  ensembleMethod: "weighted_average" | "stacking" | "voting";
   calibration: {
     enabled: boolean;
-    method: 'platt' | 'isotonic';
+    method: "platt" | "isotonic";
   };
   crossValidation: {
     folds: number;
@@ -159,7 +159,7 @@ export interface InterventionStrategy {
   trigger_threshold: number;
   channels: string[];
   timing_hours_before: number[];
-  personalization_level: 'basic' | 'moderate' | 'advanced';
+  personalization_level: "basic" | "moderate" | "advanced";
   estimated_effectiveness: number;
   cost_per_intervention: number;
   target_patient_segments: string[];
@@ -178,12 +178,13 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     cache: CacheService,
     logger: LoggerService,
     metrics: MetricsService,
-    config?: AIServiceConfig & { ensembleConfig?: EnsembleModelConfig; },
+    config?: AIServiceConfig & { ensembleConfig?: EnsembleModelConfig },
   ) {
     super(cache, logger, metrics, config);
 
     // Initialize ensemble configuration for >95% accuracy
-    this.ensembleConfig = config?.ensembleConfig || this.getDefaultEnsembleConfig();
+    this.ensembleConfig =
+      config?.ensembleConfig || this.getDefaultEnsembleConfig();
 
     // Initialize enhanced models
     this.initializeEnhancedModels();
@@ -211,21 +212,21 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
           enabled: true,
           weight: 0.22,
           layers: [320, 160, 80, 40],
-          activation: 'relu',
+          activation: "relu",
           dropout: 0.25,
           learningRate: 0.0008,
         },
         logisticRegression: {
           enabled: true,
           weight: 0.03,
-          regularization: 'l2',
+          regularization: "l2",
           alpha: 0.005,
         },
       },
-      ensembleMethod: 'stacking',
+      ensembleMethod: "stacking",
       calibration: {
         enabled: true,
-        method: 'platt',
+        method: "platt",
       },
       crossValidation: {
         folds: 10,
@@ -255,22 +256,22 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
     try {
       switch (input.action) {
-        case 'predict': {
+        case "predict": {
           return await this.enhancedPredictNoShow(input);
         }
-        case 'bulk_predict': {
+        case "bulk_predict": {
           return await this.enhancedBulkPredictNoShow(input);
         }
-        case 'train_ensemble': {
+        case "train_ensemble": {
           return await this.trainEnsembleModels(input);
         }
-        case 'get_roi_metrics': {
+        case "get_roi_metrics": {
           return await this.getROIMetrics(input);
         }
-        case 'optimize_interventions': {
+        case "optimize_interventions": {
           return await this.optimizeInterventionStrategies(input);
         }
-        case 'calibrate_models': {
+        case "calibrate_models": {
           return await this.calibrateEnsembleModels(input);
         }
         default: {
@@ -280,7 +281,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       }
     } finally {
       const duration = performance.now() - startTime;
-      await this.recordMetric('enhanced_no_show_prediction_operation', {
+      await this.recordMetric("enhanced_no_show_prediction_operation", {
         action: input.action,
         duration_ms: duration,
         ensemble_method: this.ensembleConfig.ensembleMethod,
@@ -292,7 +293,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     input: PredictionInput,
   ): Promise<PredictionOutput> {
     if (!(input.patient_profile && input.appointment_context)) {
-      throw new Error('patient_profile and appointment_context are required');
+      throw new Error("patient_profile and appointment_context are required");
     }
 
     // Extract advanced features
@@ -380,36 +381,47 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
     // Holiday and seasonal features
     advancedFeatures.is_holiday_week = (await this.isHolidayWeek(
-        appointmentDate,
-      ))
+      appointmentDate,
+    ))
       ? 1
       : 0;
-    advancedFeatures.season_summer = dayOfYear >= 355 || dayOfYear <= 80 ? 1 : 0; // Brazilian summer
-    advancedFeatures.season_winter = dayOfYear >= 172 && dayOfYear <= 266 ? 1 : 0; // Brazilian winter
+    advancedFeatures.season_summer =
+      dayOfYear >= 355 || dayOfYear <= 80 ? 1 : 0; // Brazilian summer
+    advancedFeatures.season_winter =
+      dayOfYear >= 172 && dayOfYear <= 266 ? 1 : 0; // Brazilian winter
 
     // Advanced patient behavioral features
     const patientHistory = await this.getAdvancedPatientHistory(
       patientProfile.patient_id,
     );
-    advancedFeatures.avg_no_show_rate_3months = patientHistory.avg_no_show_rate_3months;
-    advancedFeatures.avg_no_show_rate_12months = patientHistory.avg_no_show_rate_12months;
+    advancedFeatures.avg_no_show_rate_3months =
+      patientHistory.avg_no_show_rate_3months;
+    advancedFeatures.avg_no_show_rate_12months =
+      patientHistory.avg_no_show_rate_12months;
     advancedFeatures.no_show_streak = patientHistory.current_no_show_streak;
-    advancedFeatures.successful_appointment_streak = patientHistory.successful_streak;
-    advancedFeatures.late_cancellation_rate = patientHistory.late_cancellation_rate;
+    advancedFeatures.successful_appointment_streak =
+      patientHistory.successful_streak;
+    advancedFeatures.late_cancellation_rate =
+      patientHistory.late_cancellation_rate;
     advancedFeatures.reschedule_frequency = patientHistory.reschedule_frequency;
 
     // Healthcare-specific scoring
-    advancedFeatures.appointment_urgency_score = this.calculateUrgencyScore(appointmentContext);
-    advancedFeatures.treatment_complexity_score = this.calculateComplexityScore(appointmentContext);
+    advancedFeatures.appointment_urgency_score =
+      this.calculateUrgencyScore(appointmentContext);
+    advancedFeatures.treatment_complexity_score =
+      this.calculateComplexityScore(appointmentContext);
     advancedFeatures.patient_loyalty_score = patientHistory.loyalty_score;
-    advancedFeatures.communication_responsiveness = patientHistory.communication_score;
-    advancedFeatures.insurance_coverage_score = this.calculateInsuranceScore(patientProfile);
+    advancedFeatures.communication_responsiveness =
+      patientHistory.communication_score;
+    advancedFeatures.insurance_coverage_score =
+      this.calculateInsuranceScore(patientProfile);
 
     // Contextual clinic and doctor features
     const clinicMetrics = await this.getClinicMetrics(
       appointmentContext.clinic_id,
     );
-    advancedFeatures.clinic_capacity_utilization = clinicMetrics.capacity_utilization;
+    advancedFeatures.clinic_capacity_utilization =
+      clinicMetrics.capacity_utilization;
     advancedFeatures.parking_availability = clinicMetrics.parking_score;
 
     const doctorMetrics = await this.getDoctorMetrics(
@@ -431,31 +443,40 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const socioeconomicData = await this.getSocioeconomicData(
       patientProfile.patient_id,
     );
-    advancedFeatures.local_economic_index = socioeconomicData.local_economic_index;
-    advancedFeatures.patient_socioeconomic_score = socioeconomicData.socioeconomic_score;
-    advancedFeatures.education_level_encoded = socioeconomicData.education_level;
-    advancedFeatures.employment_stability_score = socioeconomicData.employment_stability;
+    advancedFeatures.local_economic_index =
+      socioeconomicData.local_economic_index;
+    advancedFeatures.patient_socioeconomic_score =
+      socioeconomicData.socioeconomic_score;
+    advancedFeatures.education_level_encoded =
+      socioeconomicData.education_level;
+    advancedFeatures.employment_stability_score =
+      socioeconomicData.employment_stability;
 
     // Feature interactions for better model performance
-    advancedFeatures.patient_age_x_distance = patientProfile.age
-      * patientProfile.location_distance_km;
-    advancedFeatures.cost_x_urgency = appointmentContext.cost_estimate
-      * advancedFeatures.appointment_urgency_score;
-    advancedFeatures.preparation_x_complexity = (appointmentContext.requires_preparation ? 1 : 0)
-      * advancedFeatures.treatment_complexity_score;
+    advancedFeatures.patient_age_x_distance =
+      patientProfile.age * patientProfile.location_distance_km;
+    advancedFeatures.cost_x_urgency =
+      appointmentContext.cost_estimate *
+      advancedFeatures.appointment_urgency_score;
+    advancedFeatures.preparation_x_complexity =
+      (appointmentContext.requires_preparation ? 1 : 0) *
+      advancedFeatures.treatment_complexity_score;
 
     // Enhanced external factors
     if (externalFactors) {
-      advancedFeatures.weather_severity_score = this.calculateWeatherSeverity(externalFactors);
-      advancedFeatures.traffic_congestion_index = this.calculateTrafficIndex(externalFactors);
-      advancedFeatures.public_transport_reliability = this.calculateTransportReliability(
-        externalFactors,
-      );
-      advancedFeatures.local_events_impact = this.calculateEventsImpact(externalFactors);
+      advancedFeatures.weather_severity_score =
+        this.calculateWeatherSeverity(externalFactors);
+      advancedFeatures.traffic_congestion_index =
+        this.calculateTrafficIndex(externalFactors);
+      advancedFeatures.public_transport_reliability =
+        this.calculateTransportReliability(externalFactors);
+      advancedFeatures.local_events_impact =
+        this.calculateEventsImpact(externalFactors);
 
       // Weather-distance interaction
-      advancedFeatures.weather_x_distance = advancedFeatures.weather_severity_score
-        * patientProfile.location_distance_km;
+      advancedFeatures.weather_x_distance =
+        advancedFeatures.weather_severity_score *
+        patientProfile.location_distance_km;
     }
 
     return advancedFeatures;
@@ -516,7 +537,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       confidence_score: this.calculateEnsembleConfidence(modelPredictions),
       model_predictions: modelPredictions,
       ensemble_method: this.ensembleConfig.ensembleMethod,
-      feature_importance_aggregated: await this.aggregateFeatureImportance(modelPredictions),
+      feature_importance_aggregated:
+        await this.aggregateFeatureImportance(modelPredictions),
       prediction_explanation: explanation,
       calibrated_probability: calibratedProbability,
       prediction_intervals: predictionIntervals,
@@ -554,7 +576,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const processingTime = performance.now() - startTime;
 
     return {
-      modelName: 'RandomForest',
+      modelName: "RandomForest",
       prediction,
       confidence: this.calculateModelConfidence(prediction, featuresUsed),
       weight: config.weight,
@@ -579,9 +601,10 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     for (let iteration = 0; iteration < 50; iteration++) {
       let residual = 0;
       for (const [featureName, value] of Object.entries(features)) {
-        const weight = featureWeights.get(`${featureName}_iter_${iteration % 10}`)
-          || featureWeights.get(featureName)
-          || 0;
+        const weight =
+          featureWeights.get(`${featureName}_iter_${iteration % 10}`) ||
+          featureWeights.get(featureName) ||
+          0;
         if (weight !== 0) {
           residual += value * weight * config.learningRate;
           featuresUsed++;
@@ -600,7 +623,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const processingTime = performance.now() - startTime;
 
     return {
-      modelName: 'XGBoost',
+      modelName: "XGBoost",
       prediction,
       confidence: this.calculateModelConfidence(prediction, featuresUsed / 50),
       weight: config.weight,
@@ -636,8 +659,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
         // Apply activation function and dropout
         let neuronOutput = this.applyActivation(activation, config.activation);
         if (
-          Math.random() < config.dropout
-          && layerIndex < config.layers.length - 1
+          Math.random() < config.dropout &&
+          layerIndex < config.layers.length - 1
         ) {
           neuronOutput = 0; // Dropout
         }
@@ -661,7 +684,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const processingTime = performance.now() - startTime;
 
     return {
-      modelName: 'NeuralNetwork',
+      modelName: "NeuralNetwork",
       prediction,
       confidence: this.calculateNeuralNetworkConfidence(
         prediction,
@@ -682,7 +705,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const config = this.ensembleConfig.models.logisticRegression;
 
     const featureWeights = await this.getLogisticRegressionWeights();
-    let linearCombination = featureWeights.get('intercept') || 0;
+    let linearCombination = featureWeights.get("intercept") || 0;
     let featuresUsed = 0;
 
     for (const [featureName, value] of Object.entries(features)) {
@@ -694,7 +717,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     }
 
     // Apply L2 regularization effect
-    if (config.regularization === 'l2') {
+    if (config.regularization === "l2") {
       linearCombination *= 1 - config.alpha * 0.1;
     }
 
@@ -704,7 +727,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const processingTime = performance.now() - startTime;
 
     return {
-      modelName: 'LogisticRegression',
+      modelName: "LogisticRegression",
       prediction,
       confidence: this.calculateModelConfidence(prediction, featuresUsed),
       weight: config.weight,
@@ -715,13 +738,13 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
   private combineModelPredictions(modelPredictions: ModelPrediction[]): number {
     switch (this.ensembleConfig.ensembleMethod) {
-      case 'weighted_average': {
+      case "weighted_average": {
         return this.weightedAveragePrediction(modelPredictions);
       }
-      case 'stacking': {
+      case "stacking": {
         return this.stackingPrediction(modelPredictions);
       }
-      case 'voting': {
+      case "voting": {
         return this.votingPrediction(modelPredictions);
       }
       default: {
@@ -750,7 +773,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     // In production, query actual patient history from Supabase
     return {
       avg_no_show_rate_3months: 0.15 + (this.simpleHash(patientId) % 30) * 0.01,
-      avg_no_show_rate_12months: 0.18 + (this.simpleHash(patientId) % 25) * 0.01,
+      avg_no_show_rate_12months:
+        0.18 + (this.simpleHash(patientId) % 25) * 0.01,
       current_no_show_streak: Math.max(0, (this.simpleHash(patientId) % 5) - 2),
       successful_streak: Math.max(0, this.simpleHash(patientId) % 8),
       late_cancellation_rate: 0.08 + (this.simpleHash(patientId) % 15) * 0.01,
@@ -846,45 +870,45 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
   private async getRandomForestWeights(): Promise<Map<string, number>> {
     // Simulated Random Forest feature weights optimized for healthcare
     return new Map([
-      ['avg_no_show_rate_12months', 0.85],
-      ['patient_historical_no_show_rate', 0.82],
-      ['no_show_streak', 0.78],
-      ['patient_loyalty_score', -0.65],
-      ['appointment_booking_lead_time', 0.45],
-      ['patient_distance_km', 0.42],
-      ['appointment_urgency_score', -0.38],
-      ['communication_responsiveness', -0.35],
-      ['cost_x_urgency', 0.33],
-      ['treatment_complexity_score', 0.31],
-      ['days_until_weekend', 0.28],
-      ['weather_severity_score', 0.25],
-      ['traffic_congestion_index', 0.23],
-      ['patient_socioeconomic_score', -0.22],
-      ['insurance_coverage_score', -0.2],
-      ['clinic_capacity_utilization', 0.18],
-      ['doctor_popularity_score', -0.15],
-      ['season_summer', 0.12],
-      ['is_holiday_week', 0.1],
+      ["avg_no_show_rate_12months", 0.85],
+      ["patient_historical_no_show_rate", 0.82],
+      ["no_show_streak", 0.78],
+      ["patient_loyalty_score", -0.65],
+      ["appointment_booking_lead_time", 0.45],
+      ["patient_distance_km", 0.42],
+      ["appointment_urgency_score", -0.38],
+      ["communication_responsiveness", -0.35],
+      ["cost_x_urgency", 0.33],
+      ["treatment_complexity_score", 0.31],
+      ["days_until_weekend", 0.28],
+      ["weather_severity_score", 0.25],
+      ["traffic_congestion_index", 0.23],
+      ["patient_socioeconomic_score", -0.22],
+      ["insurance_coverage_score", -0.2],
+      ["clinic_capacity_utilization", 0.18],
+      ["doctor_popularity_score", -0.15],
+      ["season_summer", 0.12],
+      ["is_holiday_week", 0.1],
     ]);
   }
 
   private async getXGBoostWeights(): Promise<Map<string, number>> {
     // XGBoost weights with iterative learning patterns
     const baseWeights = new Map([
-      ['avg_no_show_rate_3months', 0.92],
-      ['successful_appointment_streak', -0.88],
-      ['late_cancellation_rate', 0.75],
-      ['patient_age_x_distance', 0.58],
-      ['preparation_x_complexity', 0.52],
-      ['employment_stability_score', -0.48],
-      ['reschedule_frequency', 0.45],
-      ['local_economic_index', -0.42],
-      ['public_transport_reliability', -0.38],
-      ['patient_travel_time', 0.35],
-      ['education_level_encoded', -0.32],
-      ['weather_x_distance', 0.28],
-      ['parking_availability', -0.25],
-      ['local_events_impact', 0.22],
+      ["avg_no_show_rate_3months", 0.92],
+      ["successful_appointment_streak", -0.88],
+      ["late_cancellation_rate", 0.75],
+      ["patient_age_x_distance", 0.58],
+      ["preparation_x_complexity", 0.52],
+      ["employment_stability_score", -0.48],
+      ["reschedule_frequency", 0.45],
+      ["local_economic_index", -0.42],
+      ["public_transport_reliability", -0.38],
+      ["patient_travel_time", 0.35],
+      ["education_level_encoded", -0.32],
+      ["weather_x_distance", 0.28],
+      ["parking_availability", -0.25],
+      ["local_events_impact", 0.22],
     ]);
 
     // Add iterative weights for different boosting rounds
@@ -905,23 +929,23 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
   private async getLogisticRegressionWeights(): Promise<Map<string, number>> {
     // Logistic regression with healthcare-specific coefficients
     return new Map([
-      ['intercept', -1.2],
-      ['patient_historical_no_show_rate', 2.8],
-      ['avg_no_show_rate_12months', 2.5],
-      ['no_show_streak', 1.8],
-      ['appointment_booking_lead_time', 0.15],
-      ['patient_distance_km', 0.08],
-      ['cost_estimate', 0.0005],
-      ['patient_age', -0.02],
-      ['is_first_appointment', 0.6],
-      ['requires_preparation', 0.4],
-      ['appointment_urgency_score', -0.8],
-      ['patient_loyalty_score', -1.2],
-      ['communication_responsiveness', -0.9],
-      ['insurance_coverage_score', -0.7],
-      ['treatment_complexity_score', 0.5],
-      ['weather_severity_score', 0.3],
-      ['traffic_congestion_index', 0.25],
+      ["intercept", -1.2],
+      ["patient_historical_no_show_rate", 2.8],
+      ["avg_no_show_rate_12months", 2.5],
+      ["no_show_streak", 1.8],
+      ["appointment_booking_lead_time", 0.15],
+      ["patient_distance_km", 0.08],
+      ["cost_estimate", 0.0005],
+      ["patient_age", -0.02],
+      ["is_first_appointment", 0.6],
+      ["requires_preparation", 0.4],
+      ["appointment_urgency_score", -0.8],
+      ["patient_loyalty_score", -1.2],
+      ["communication_responsiveness", -0.9],
+      ["insurance_coverage_score", -0.7],
+      ["treatment_complexity_score", 0.5],
+      ["weather_severity_score", 0.3],
+      ["traffic_congestion_index", 0.25],
     ]);
   }
 
@@ -942,13 +966,13 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
   private applyActivation(value: number, activation: string): number {
     switch (activation) {
-      case 'relu': {
+      case "relu": {
         return Math.max(0, value);
       }
-      case 'tanh': {
+      case "tanh": {
         return Math.tanh(value);
       }
-      case 'sigmoid': {
+      case "sigmoid": {
         return 1 / (1 + Math.exp(-value));
       }
       default: {
@@ -997,17 +1021,20 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     }
 
     // Calculate agreement between models
-    const avgPrediction = modelPredictions.reduce((sum, p) => sum + p.prediction, 0)
-      / modelPredictions.length;
-    const variance = modelPredictions.reduce(
-      (sum, p) => sum + (p.prediction - avgPrediction) ** 2,
-      0,
-    ) / modelPredictions.length;
+    const avgPrediction =
+      modelPredictions.reduce((sum, p) => sum + p.prediction, 0) /
+      modelPredictions.length;
+    const variance =
+      modelPredictions.reduce(
+        (sum, p) => sum + (p.prediction - avgPrediction) ** 2,
+        0,
+      ) / modelPredictions.length;
 
     // Higher confidence when models agree (low variance) and individual confidences are high
     const agreement = Math.max(0, 1 - variance * 10); // Penalize high variance
-    const avgModelConfidence = modelPredictions.reduce((sum, p) => sum + p.confidence, 0)
-      / modelPredictions.length;
+    const avgModelConfidence =
+      modelPredictions.reduce((sum, p) => sum + p.confidence, 0) /
+      modelPredictions.length;
 
     return Math.min(0.98, avgModelConfidence * 0.7 + agreement * 0.3);
   }
@@ -1017,7 +1044,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     _features: AdvancedFeatures,
   ): Promise<number> {
     // Platt scaling calibration
-    if (this.ensembleConfig.calibration.method === 'platt') {
+    if (this.ensembleConfig.calibration.method === "platt") {
       // Simulated Platt scaling parameters (would be learned from validation data)
       const A = -0.5;
       const B = 0.1;
@@ -1032,7 +1059,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
   private calculatePredictionIntervals(
     modelPredictions: ModelPrediction[],
     finalPrediction: number,
-  ): { lower_bound: number; upper_bound: number; confidence_level: number; } {
+  ): { lower_bound: number; upper_bound: number; confidence_level: number } {
     if (modelPredictions.length === 0) {
       return {
         lower_bound: finalPrediction - 0.1,
@@ -1043,9 +1070,11 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
     // Calculate standard deviation of model predictions
     const predictions = modelPredictions.map((p) => p.prediction);
-    const mean = predictions.reduce((sum, p) => sum + p, 0) / predictions.length;
-    const variance = predictions.reduce((sum, p) => sum + (p - mean) ** 2, 0)
-      / predictions.length;
+    const mean =
+      predictions.reduce((sum, p) => sum + p, 0) / predictions.length;
+    const variance =
+      predictions.reduce((sum, p) => sum + (p - mean) ** 2, 0) /
+      predictions.length;
     const stdDev = Math.sqrt(variance);
 
     // 95% confidence interval
@@ -1069,23 +1098,19 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const riskLevel = this.calculateRiskCategory(prediction);
     const topFactors = this.getTopRiskFactors(features);
 
-    let explanation = `Patient has ${riskLevel} risk (${
-      (
-        prediction * 100
-      ).toFixed(1)
-    }% probability) of no-show. `;
+    let explanation = `Patient has ${riskLevel} risk (${(
+      prediction * 100
+    ).toFixed(1)}% probability) of no-show. `;
 
-    explanation += `Primary risk factors: ${topFactors.slice(0, 3).join(', ')}. `;
+    explanation += `Primary risk factors: ${topFactors.slice(0, 3).join(", ")}. `;
 
     const modelAgreement = this.calculateModelAgreement(modelPredictions);
     if (modelAgreement > 0.8) {
       explanation += `High model consensus (${(modelAgreement * 100).toFixed(0)}% agreement).`;
     } else {
-      explanation += `Moderate model consensus (${
-        (
-          modelAgreement * 100
-        ).toFixed(0)
-      }% agreement) - prediction has higher uncertainty.`;
+      explanation += `Moderate model consensus (${(
+        modelAgreement * 100
+      ).toFixed(0)}% agreement) - prediction has higher uncertainty.`;
     }
 
     return explanation;
@@ -1097,7 +1122,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     }
 
     const predictions = modelPredictions.map((p) => p.prediction);
-    const mean = predictions.reduce((sum, p) => sum + p, 0) / predictions.length;
+    const mean =
+      predictions.reduce((sum, p) => sum + p, 0) / predictions.length;
     const maxDeviation = Math.max(
       ...predictions.map((p) => Math.abs(p - mean)),
     );
@@ -1108,25 +1134,25 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
   private getTopRiskFactors(features: AdvancedFeatures): string[] {
     const factorImportance = [
       {
-        factor: 'Historical no-show pattern',
+        factor: "Historical no-show pattern",
         value: features.avg_no_show_rate_12months,
       },
-      { factor: 'Recent appointment behavior', value: features.no_show_streak },
+      { factor: "Recent appointment behavior", value: features.no_show_streak },
       {
-        factor: 'Distance to clinic',
+        factor: "Distance to clinic",
         value: features.patient_distance_km / 50,
       },
       {
-        factor: 'Appointment preparation required',
+        factor: "Appointment preparation required",
         value: features.preparation_x_complexity,
       },
       {
-        factor: 'Economic factors',
+        factor: "Economic factors",
         value: 1 - features.patient_socioeconomic_score,
       },
-      { factor: 'Weather conditions', value: features.weather_severity_score },
+      { factor: "Weather conditions", value: features.weather_severity_score },
       {
-        factor: 'Communication responsiveness',
+        factor: "Communication responsiveness",
         value: 1 - features.communication_responsiveness,
       },
     ];
@@ -1139,17 +1165,17 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
   private calculateRiskCategory(
     probability: number,
-  ): 'low' | 'medium' | 'high' | 'very_high' {
+  ): "low" | "medium" | "high" | "very_high" {
     if (probability < 0.15) {
-      return 'low';
+      return "low";
     }
     if (probability < 0.35) {
-      return 'medium';
+      return "medium";
     }
     if (probability < 0.65) {
-      return 'high';
+      return "high";
     }
-    return 'very_high';
+    return "very_high";
   }
 
   private convertFeatureImportanceToFactors(
@@ -1160,7 +1186,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       factor_name: fi.feature_name,
       category: fi.category,
       importance_weight: fi.importance_score,
-      impact_direction: fi.importance_score > 0 ? 'increases_risk' : 'decreases_risk',
+      impact_direction:
+        fi.importance_score > 0 ? "increases_risk" : "decreases_risk",
       description: `${fi.description} (stability: ${(fi.stability_score * 100).toFixed(0)}%)`,
       confidence: Math.min(0.95, 0.7 + fi.stability_score * 0.25),
     }));
@@ -1178,28 +1205,24 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     // High-risk patient interventions
     if (probability > 0.4) {
       recommendations.push({
-        action_type: 'reminder',
-        priority: probability > 0.7 ? 'urgent' : 'high',
-        description: `Multi-channel reminder campaign: ${
-          this.getOptimalReminderChannels(
-            features,
-            patientProfile,
-          ).join(' + ')
-        }`,
+        action_type: "reminder",
+        priority: probability > 0.7 ? "urgent" : "high",
+        description: `Multi-channel reminder campaign: ${this.getOptimalReminderChannels(
+          features,
+          patientProfile,
+        ).join(" + ")}`,
         estimated_impact: this.calculateInterventionImpact(
           probability,
-          'reminder',
+          "reminder",
         ),
-        implementation_cost: 'low',
+        implementation_cost: "low",
         timing_recommendation: this.getOptimalReminderTiming(features),
         success_probability: Math.min(0.85, 0.6 + (1 - probability) * 0.25),
-        ai_reasoning: `Based on ensemble prediction of ${
-          (
-            probability * 100
-          ).toFixed(
-            1,
-          )
-        }% no-show risk with ${(prediction.confidence_score * 100).toFixed(0)}% confidence`,
+        ai_reasoning: `Based on ensemble prediction of ${(
+          probability * 100
+        ).toFixed(
+          1,
+        )}% no-show risk with ${(prediction.confidence_score * 100).toFixed(0)}% confidence`,
       });
     }
 
@@ -1207,72 +1230,69 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const topFactors = this.getTopRiskFactors(features);
 
     if (
-      topFactors.includes('Distance to clinic')
-      && features.patient_distance_km > 20
+      topFactors.includes("Distance to clinic") &&
+      features.patient_distance_km > 20
     ) {
       recommendations.push({
-        action_type: 'scheduling',
-        priority: 'medium',
-        description: 'Offer telemedicine pre-consultation or transportation assistance',
+        action_type: "scheduling",
+        priority: "medium",
+        description:
+          "Offer telemedicine pre-consultation or transportation assistance",
         estimated_impact: 0.22,
-        implementation_cost: 'medium',
-        timing_recommendation: 'At time of scheduling',
+        implementation_cost: "medium",
+        timing_recommendation: "At time of scheduling",
         success_probability: 0.68,
-        ai_reasoning: `Patient travels ${
-          features.patient_distance_km.toFixed(
-            1,
-          )
-        }km - distance identified as primary risk factor`,
+        ai_reasoning: `Patient travels ${features.patient_distance_km.toFixed(
+          1,
+        )}km - distance identified as primary risk factor`,
       });
     }
 
     if (features.weather_severity_score > 0.6) {
       recommendations.push({
-        action_type: 'support',
-        priority: 'medium',
-        description: 'Weather-aware communication with rescheduling options',
+        action_type: "support",
+        priority: "medium",
+        description: "Weather-aware communication with rescheduling options",
         estimated_impact: 0.18,
-        implementation_cost: 'low',
-        timing_recommendation: '24 hours before if bad weather predicted',
+        implementation_cost: "low",
+        timing_recommendation: "24 hours before if bad weather predicted",
         success_probability: 0.72,
-        ai_reasoning: `High weather impact score: ${
-          (
-            features.weather_severity_score * 100
-          ).toFixed(0)
-        }%`,
+        ai_reasoning: `High weather impact score: ${(
+          features.weather_severity_score * 100
+        ).toFixed(0)}%`,
       });
     }
 
     // Economic-based interventions
     if (
-      features.patient_socioeconomic_score < 0.4
-      && appointmentContext.cost_estimate > 200
+      features.patient_socioeconomic_score < 0.4 &&
+      appointmentContext.cost_estimate > 200
     ) {
       recommendations.push({
-        action_type: 'incentive',
-        priority: 'high',
-        description: 'Financial assistance information and flexible payment options',
+        action_type: "incentive",
+        priority: "high",
+        description:
+          "Financial assistance information and flexible payment options",
         estimated_impact: 0.25,
-        implementation_cost: 'medium',
-        timing_recommendation: 'At time of scheduling and 48h before',
+        implementation_cost: "medium",
+        timing_recommendation: "At time of scheduling and 48h before",
         success_probability: 0.65,
-        ai_reasoning: `Economic factors indicate financial barriers (score: ${
-          (
-            features.patient_socioeconomic_score * 100
-          ).toFixed(0)
-        }%)`,
+        ai_reasoning: `Economic factors indicate financial barriers (score: ${(
+          features.patient_socioeconomic_score * 100
+        ).toFixed(0)}%)`,
       });
     }
 
     // Behavioral pattern interventions
     if (features.no_show_streak > 2) {
       recommendations.push({
-        action_type: 'escalation',
-        priority: 'urgent',
-        description: 'Personal outreach by clinic staff with appointment importance discussion',
+        action_type: "escalation",
+        priority: "urgent",
+        description:
+          "Personal outreach by clinic staff with appointment importance discussion",
         estimated_impact: 0.35,
-        implementation_cost: 'high',
-        timing_recommendation: '48-72 hours before appointment',
+        implementation_cost: "high",
+        timing_recommendation: "48-72 hours before appointment",
         success_probability: 0.58,
         ai_reasoning: `Current no-show streak: ${features.no_show_streak} appointments`,
       });
@@ -1291,36 +1311,36 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 
     // Personalize channels based on patient profile and communication responsiveness
     if (features.communication_responsiveness > 0.7) {
-      channels.push('SMS');
+      channels.push("SMS");
     }
 
-    if (patientProfile.communication_preferences.includes('email')) {
-      channels.push('Email');
+    if (patientProfile.communication_preferences.includes("email")) {
+      channels.push("Email");
     }
 
     if (
-      features.no_show_streak > 1
-      || features.avg_no_show_rate_3months > 0.3
+      features.no_show_streak > 1 ||
+      features.avg_no_show_rate_3months > 0.3
     ) {
-      channels.push('Phone call');
+      channels.push("Phone call");
     }
 
-    if (patientProfile.communication_preferences.includes('app')) {
-      channels.push('App notification');
+    if (patientProfile.communication_preferences.includes("app")) {
+      channels.push("App notification");
     }
 
-    return channels.length > 0 ? channels : ['SMS', 'Email'];
+    return channels.length > 0 ? channels : ["SMS", "Email"];
   }
 
   private getOptimalReminderTiming(features: AdvancedFeatures): string {
     // Personalize timing based on patient behavior patterns
     if (features.no_show_streak > 2) {
-      return '72h, 24h, and 4h before appointment';
+      return "72h, 24h, and 4h before appointment";
     }
     if (features.avg_no_show_rate_3months > 0.2) {
-      return '48h and 12h before appointment';
+      return "48h and 12h before appointment";
     }
-    return '24h before appointment';
+    return "24h before appointment";
   }
 
   private calculateInterventionImpact(
@@ -1358,11 +1378,11 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
         prediction_timestamp: new Date().toISOString(),
         model_versions: prediction.model_predictions
           .map((p) => p.modelName)
-          .join(','),
+          .join(","),
       };
 
       // In production, would use Supabase MCP to store this data
-      await this.recordMetric('prediction_recorded_for_roi', predictionData);
+      await this.recordMetric("prediction_recorded_for_roi", predictionData);
     } catch {}
   }
 
@@ -1372,7 +1392,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     const avgCostPerNoShow = 150; // Average cost of a no-show
     const avgInterventionCost = 8; // Average cost of intervention
 
-    const expectedNoShowCost = prediction.calibrated_probability * avgCostPerNoShow;
+    const expectedNoShowCost =
+      prediction.calibrated_probability * avgCostPerNoShow;
     const interventionExpectedSavings = expectedNoShowCost * 0.7; // 70% intervention effectiveness
     const netSavings = Math.max(
       0,
@@ -1390,7 +1411,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       intervention_costs: avgInterventionCost,
       gross_savings: interventionExpectedSavings,
       net_savings: netSavings,
-      roi_percentage: netSavings > 0 ? (netSavings / avgInterventionCost) * 100 : 0,
+      roi_percentage:
+        netSavings > 0 ? (netSavings / avgInterventionCost) * 100 : 0,
       accuracy_percentage: prediction.confidence_score * 100,
       precision: -1, // To be calculated with actual outcomes
       recall: -1, // To be calculated with actual outcomes
@@ -1410,16 +1432,17 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     // High-impact strategies for high-risk patients
     if (probability > 0.5) {
       strategies.push({
-        strategy_id: 'multi_channel_reminder',
-        name: 'Multi-Channel Reminder Campaign',
-        description: 'Coordinated SMS, email, and phone reminders with personalized messaging',
+        strategy_id: "multi_channel_reminder",
+        name: "Multi-Channel Reminder Campaign",
+        description:
+          "Coordinated SMS, email, and phone reminders with personalized messaging",
         trigger_threshold: 0.5,
-        channels: ['sms', 'email', 'phone'],
+        channels: ["sms", "email", "phone"],
         timing_hours_before: [72, 24, 4],
-        personalization_level: 'advanced',
+        personalization_level: "advanced",
         estimated_effectiveness: 0.72,
         cost_per_intervention: 12,
-        target_patient_segments: ['high_risk', 'repeat_no_show'],
+        target_patient_segments: ["high_risk", "repeat_no_show"],
         success_metrics: {
           response_rate: 0.85,
           conversion_rate: 0.72,
@@ -1431,16 +1454,17 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     // Medium-risk interventions
     if (probability > 0.3 && probability <= 0.5) {
       strategies.push({
-        strategy_id: 'smart_reminder',
-        name: 'AI-Optimized Smart Reminders',
-        description: 'Personalized timing and channel selection based on patient behavior',
+        strategy_id: "smart_reminder",
+        name: "AI-Optimized Smart Reminders",
+        description:
+          "Personalized timing and channel selection based on patient behavior",
         trigger_threshold: 0.3,
-        channels: ['sms', 'email'],
+        channels: ["sms", "email"],
         timing_hours_before: [48, 12],
-        personalization_level: 'moderate',
+        personalization_level: "moderate",
         estimated_effectiveness: 0.68,
         cost_per_intervention: 5,
-        target_patient_segments: ['medium_risk', 'first_time'],
+        target_patient_segments: ["medium_risk", "first_time"],
         success_metrics: {
           response_rate: 0.78,
           conversion_rate: 0.68,
@@ -1520,17 +1544,17 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     // Would aggregate feature importance across models
     return [
       {
-        feature_name: 'Patient Historical No-Show Rate',
+        feature_name: "Patient Historical No-Show Rate",
         importance_score: 0.85,
-        category: 'historical',
+        category: "historical",
         description: "Patient's historical no-show behavior pattern",
         stability_score: 0.92,
       },
       {
-        feature_name: 'Recent Appointment Patterns',
+        feature_name: "Recent Appointment Patterns",
         importance_score: 0.78,
-        category: 'behavioral',
-        description: 'Recent appointment attendance and cancellation patterns',
+        category: "behavioral",
+        description: "Recent appointment attendance and cancellation patterns",
         stability_score: 0.88,
       },
     ];
@@ -1577,13 +1601,13 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
   ): number {
     let baseTime = distanceKm * 2; // 2 minutes per km base
 
-    if (externalFactors?.traffic_conditions === 'heavy') {
+    if (externalFactors?.traffic_conditions === "heavy") {
       baseTime *= 1.5;
     }
-    if (externalFactors?.traffic_conditions === 'severe') {
+    if (externalFactors?.traffic_conditions === "severe") {
       baseTime *= 2;
     }
-    if (externalFactors?.weather_conditions === 'rainy') {
+    if (externalFactors?.weather_conditions === "rainy") {
       baseTime *= 1.2;
     }
 
@@ -1604,7 +1628,8 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
     ];
 
     return holidays.some(
-      (holiday) => Math.abs(date.getTime() - holiday.getTime()) < 7 * 24 * 60 * 60 * 1000,
+      (holiday) =>
+        Math.abs(date.getTime() - holiday.getTime()) < 7 * 24 * 60 * 60 * 1000,
     );
   }
 
@@ -1639,7 +1664,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       snowy: 0.8,
       stormy: 1,
     };
-    return severityMap[factors.weather_conditions || 'sunny'] || 0.1;
+    return severityMap[factors.weather_conditions || "sunny"] || 0.1;
   }
 
   private calculateTrafficIndex(factors: ExternalFactors): number {
@@ -1649,7 +1674,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       heavy: 0.7,
       severe: 1,
     };
-    return trafficMap[factors.traffic_conditions || 'light'] || 0.2;
+    return trafficMap[factors.traffic_conditions || "light"] || 0.2;
   }
 
   private calculateTransportReliability(factors: ExternalFactors): number {
@@ -1659,7 +1684,7 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
       disrupted: 0.3,
       strike: 0.1,
     };
-    return reliabilityMap[factors.public_transport_status || 'normal'] || 0.9;
+    return reliabilityMap[factors.public_transport_status || "normal"] || 0.9;
   }
 
   private calculateEventsImpact(factors: ExternalFactors): number {
@@ -1669,8 +1694,9 @@ export class EnhancedNoShowPredictionService extends NoShowPredictionService {
 }
 
 // Export the enhanced service
-export const enhancedNoShowPredictionService = new EnhancedNoShowPredictionService(
-  {} as CacheService,
-  {} as LoggerService,
-  {} as MetricsService,
-);
+export const enhancedNoShowPredictionService =
+  new EnhancedNoShowPredictionService(
+    {} as CacheService,
+    {} as LoggerService,
+    {} as MetricsService,
+  );

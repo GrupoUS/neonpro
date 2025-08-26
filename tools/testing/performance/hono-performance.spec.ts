@@ -11,7 +11,7 @@
  * - Load testing scenarios
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // Performance thresholds (healthcare-grade requirements)
 const PERFORMANCE_THRESHOLDS = {
@@ -23,16 +23,16 @@ const PERFORMANCE_THRESHOLDS = {
   THROUGHPUT_MIN: 100, // Requests per second minimum
 };
 
-test.describe('⚡ Performance Testing Suite', () => {
-  test('🏃‍♂️ API Response Time Benchmarks', async ({ page }) => {
+test.describe("⚡ Performance Testing Suite", () => {
+  test("🏃‍♂️ API Response Time Benchmarks", async ({ page }) => {
     test.setTimeout(60_000);
 
     const endpoints = [
-      { path: '/api/v1/health', name: 'Health Check', threshold: 50 },
-      { path: '/api/v1/auth/login', name: 'Authentication', threshold: 150 },
-      { path: '/api/v1/patients', name: 'Patient List', threshold: 200 },
-      { path: '/api/v1/appointments', name: 'Appointments', threshold: 200 },
-      { path: '/api/v1/clinics', name: 'Clinic Data', threshold: 150 },
+      { path: "/api/v1/health", name: "Health Check", threshold: 50 },
+      { path: "/api/v1/auth/login", name: "Authentication", threshold: 150 },
+      { path: "/api/v1/patients", name: "Patient List", threshold: 200 },
+      { path: "/api/v1/appointments", name: "Appointments", threshold: 200 },
+      { path: "/api/v1/clinics", name: "Clinic Data", threshold: 150 },
     ];
 
     for (const endpoint of endpoints) {
@@ -54,7 +54,8 @@ test.describe('⚡ Performance Testing Suite', () => {
         }
 
         // Calculate statistics
-        const avgResponseTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
+        const avgResponseTime =
+          measurements.reduce((a, b) => a + b, 0) / measurements.length;
         const maxResponseTime = Math.max(...measurements);
         const _minResponseTime = Math.min(...measurements);
 
@@ -71,17 +72,19 @@ test.describe('⚡ Performance Testing Suite', () => {
     }
   });
 
-  test('🔥 Concurrent Request Handling', async ({ page }) => {
+  test("🔥 Concurrent Request Handling", async ({ page }) => {
     test.setTimeout(120_000);
 
-    await test.step('Test concurrent API requests', async () => {
+    await test.step("Test concurrent API requests", async () => {
       const concurrentRequests = 20;
-      const endpoint = '/api/v1/health';
+      const endpoint = "/api/v1/health";
 
       const startTime = Date.now();
 
       // Create concurrent requests
-      const requests = Array.from({ length: concurrentRequests }, () => page.request.get(endpoint));
+      const requests = Array.from({ length: concurrentRequests }, () =>
+        page.request.get(endpoint),
+      );
 
       const responses = await Promise.all(requests);
 
@@ -96,22 +99,24 @@ test.describe('⚡ Performance Testing Suite', () => {
       const throughput = responses.length / (totalTime / 1000); // requests per second
 
       // Assert performance requirements
-      expect(successRate, 'Success rate should be above 95%').toBeGreaterThan(
+      expect(successRate, "Success rate should be above 95%").toBeGreaterThan(
         0.95,
       );
       expect(
         throughput,
-        'Throughput should meet minimum requirements',
+        "Throughput should meet minimum requirements",
       ).toBeGreaterThan(10);
     });
 
-    await test.step('Test database query performance under load', async () => {
+    await test.step("Test database query performance under load", async () => {
       const concurrentQueries = 15;
-      const endpoint = '/api/v1/patients'; // Endpoint that queries database
+      const endpoint = "/api/v1/patients"; // Endpoint that queries database
 
       const startTime = Date.now();
 
-      const requests = Array.from({ length: concurrentQueries }, () => page.request.get(endpoint));
+      const requests = Array.from({ length: concurrentQueries }, () =>
+        page.request.get(endpoint),
+      );
 
       const responses = await Promise.all(requests);
 
@@ -124,29 +129,29 @@ test.describe('⚡ Performance Testing Suite', () => {
       // Database queries should remain fast under load
       expect(
         avgResponseTime,
-        'Database queries should remain fast under load',
+        "Database queries should remain fast under load",
       ).toBeLessThan(PERFORMANCE_THRESHOLDS.DATABASE_QUERY_TIME * 2);
       expect(
         successfulResponses.length,
-        'All database queries should succeed',
+        "All database queries should succeed",
       ).toBe(concurrentQueries);
     });
   });
 
-  test('📊 Load Testing Scenarios', async ({ page }) => {
+  test("📊 Load Testing Scenarios", async ({ page }) => {
     test.setTimeout(180_000); // 3 minutes for comprehensive load testing
 
-    await test.step('Simulate realistic user load', async () => {
+    await test.step("Simulate realistic user load", async () => {
       // Simulate realistic healthcare clinic usage patterns
       const userScenarios = [
-        { action: 'view_patients', endpoint: '/api/v1/patients', weight: 40 },
+        { action: "view_patients", endpoint: "/api/v1/patients", weight: 40 },
         {
-          action: 'view_appointments',
-          endpoint: '/api/v1/appointments',
+          action: "view_appointments",
+          endpoint: "/api/v1/appointments",
           weight: 30,
         },
-        { action: 'health_check', endpoint: '/api/v1/health', weight: 20 },
-        { action: 'view_clinics', endpoint: '/api/v1/clinics', weight: 10 },
+        { action: "health_check", endpoint: "/api/v1/health", weight: 20 },
+        { action: "view_clinics", endpoint: "/api/v1/clinics", weight: 10 },
       ];
 
       const totalRequests = 100;
@@ -175,7 +180,9 @@ test.describe('⚡ Performance Testing Suite', () => {
 
         // Add small random delay to simulate realistic user behavior
         if (i % 10 === 0) {
-          await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.random() * 100),
+          );
         }
       }
 
@@ -190,9 +197,10 @@ test.describe('⚡ Performance Testing Suite', () => {
         const successCount = scenarioResults.filter(
           (r) => r.status < 400,
         ).length;
-        const successRate = scenarioResults.length > 0
-          ? successCount / scenarioResults.length
-          : 0;
+        const successRate =
+          scenarioResults.length > 0
+            ? successCount / scenarioResults.length
+            : 0;
 
         return {
           ...scenario,
@@ -203,7 +211,8 @@ test.describe('⚡ Performance Testing Suite', () => {
       });
 
       const totalTime = endTime - startTime;
-      const overallSuccessRate = results.filter((r) => r.status < 400).length / results.length;
+      const overallSuccessRate =
+        results.filter((r) => r.status < 400).length / results.length;
       const throughput = results.length / (totalTime / 1000);
 
       scenarioStats.forEach((_stat) => {});
@@ -211,11 +220,11 @@ test.describe('⚡ Performance Testing Suite', () => {
       // Assert load testing requirements
       expect(
         overallSuccessRate,
-        'Overall success rate should be high under load',
+        "Overall success rate should be high under load",
       ).toBeGreaterThan(0.95);
       expect(
         throughput,
-        'System should maintain reasonable throughput under load',
+        "System should maintain reasonable throughput under load",
       ).toBeGreaterThan(5);
 
       // Each scenario should maintain good performance
@@ -228,11 +237,11 @@ test.describe('⚡ Performance Testing Suite', () => {
     });
   });
 
-  test('⏱️ Response Time Distribution Analysis', async ({ page }) => {
+  test("⏱️ Response Time Distribution Analysis", async ({ page }) => {
     test.setTimeout(90_000);
 
-    await test.step('Analyze response time distribution', async () => {
-      const endpoint = '/api/v1/health';
+    await test.step("Analyze response time distribution", async () => {
+      const endpoint = "/api/v1/health";
       const sampleSize = 50;
       const measurements: number[] = [];
 
@@ -258,41 +267,43 @@ test.describe('⚡ Performance Testing Suite', () => {
       const _median = measurements[Math.floor(measurements.length / 2)];
       const p95 = measurements[Math.floor(measurements.length * 0.95)];
       const p99 = measurements[Math.floor(measurements.length * 0.99)];
-      const average = measurements.reduce((a, b) => a + b, 0) / measurements.length;
+      const average =
+        measurements.reduce((a, b) => a + b, 0) / measurements.length;
 
       // Calculate standard deviation
-      const variance = measurements.reduce((acc, val) => acc + (val - average) ** 2, 0)
-        / measurements.length;
+      const variance =
+        measurements.reduce((acc, val) => acc + (val - average) ** 2, 0) /
+        measurements.length;
       const stdDev = Math.sqrt(variance);
 
       // Performance assertions
       expect(
         average,
-        'Average response time should be acceptable',
+        "Average response time should be acceptable",
       ).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME);
       expect(
         p95,
-        '95th percentile should be within reasonable bounds',
+        "95th percentile should be within reasonable bounds",
       ).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME * 2);
-      expect(p99, '99th percentile should not be excessive').toBeLessThan(
+      expect(p99, "99th percentile should not be excessive").toBeLessThan(
         PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME * 3,
       );
       expect(
         stdDev,
-        'Response times should be consistent (low standard deviation)',
+        "Response times should be consistent (low standard deviation)",
       ).toBeLessThan(average * 0.5);
     });
   });
 
-  test('🔍 Memory and Resource Usage Analysis', async ({ page }) => {
+  test("🔍 Memory and Resource Usage Analysis", async ({ page }) => {
     test.setTimeout(60_000);
 
-    await test.step('Monitor resource usage during API calls', async () => {
-      const endpoint = '/api/v1/patients';
+    await test.step("Monitor resource usage during API calls", async () => {
+      const endpoint = "/api/v1/patients";
       const iterations = 30;
 
       // Baseline measurement
-      await page.goto('/'); // Load the application
+      await page.goto("/"); // Load the application
 
       const performanceMetrics = [];
 
@@ -311,8 +322,8 @@ test.describe('⚡ Performance Testing Suite', () => {
             jsMemoryLimit: (performance as any).memory?.jsHeapSizeLimit || 0,
 
             // Timing metrics
-            navigationTiming: performance.getEntriesByType('navigation')[0],
-            resourceTiming: performance.getEntriesByType('resource').length,
+            navigationTiming: performance.getEntriesByType("navigation")[0],
+            resourceTiming: performance.getEntriesByType("resource").length,
           };
         });
 
@@ -328,8 +339,9 @@ test.describe('⚡ Performance Testing Suite', () => {
       }
 
       // Analyze metrics
-      const avgResponseTime = performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0)
-        / performanceMetrics.length;
+      const avgResponseTime =
+        performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0) /
+        performanceMetrics.length;
       const successfulRequests = performanceMetrics.filter(
         (m) => m.responseStatus < 400,
       ).length;
@@ -340,8 +352,9 @@ test.describe('⚡ Performance Testing Suite', () => {
         (m) => m.usedJSMemory > 0,
       );
       if (memoryMetrics.length > 0) {
-        const avgMemoryUsage = memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0)
-          / memoryMetrics.length;
+        const avgMemoryUsage =
+          memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0) /
+          memoryMetrics.length;
         const _maxMemoryUsage = Math.max(
           ...memoryMetrics.map((m) => m.usedJSMemory),
         );
@@ -349,44 +362,44 @@ test.describe('⚡ Performance Testing Suite', () => {
         // Memory usage assertions
         expect(
           avgMemoryUsage / 1024 / 1024,
-          'Average memory usage should be reasonable',
+          "Average memory usage should be reasonable",
         ).toBeLessThan(PERFORMANCE_THRESHOLDS.MEMORY_LIMIT);
       }
 
       // Performance assertions
       expect(
         avgResponseTime,
-        'Average response time should be acceptable',
+        "Average response time should be acceptable",
       ).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_TIME);
-      expect(successRate, 'Success rate should be high').toBeGreaterThan(0.95);
+      expect(successRate, "Success rate should be high").toBeGreaterThan(0.95);
     });
   });
 
-  test('🏥 Healthcare-Specific Performance Tests', async ({ page }) => {
+  test("🏥 Healthcare-Specific Performance Tests", async ({ page }) => {
     test.setTimeout(90_000);
 
-    await test.step('Test patient data query performance', async () => {
+    await test.step("Test patient data query performance", async () => {
       // Test scenarios specific to healthcare workflows
       const healthcareEndpoints = [
         {
-          path: '/api/v1/patients',
-          name: 'Patient List',
-          expectedRecords: 'multiple',
+          path: "/api/v1/patients",
+          name: "Patient List",
+          expectedRecords: "multiple",
         },
         {
-          path: '/api/v1/patients/1',
-          name: 'Patient Detail',
-          expectedRecords: 'single',
+          path: "/api/v1/patients/1",
+          name: "Patient Detail",
+          expectedRecords: "single",
         },
         {
-          path: '/api/v1/appointments',
-          name: 'Appointment List',
-          expectedRecords: 'multiple',
+          path: "/api/v1/appointments",
+          name: "Appointment List",
+          expectedRecords: "multiple",
         },
         {
-          path: '/api/v1/appointments/today',
+          path: "/api/v1/appointments/today",
           name: "Today's Appointments",
-          expectedRecords: 'filtered',
+          expectedRecords: "filtered",
         },
       ];
 
@@ -408,7 +421,8 @@ test.describe('⚡ Performance Testing Suite', () => {
           ).toBeTruthy();
         }
 
-        const avgTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
+        const avgTime =
+          measurements.reduce((a, b) => a + b, 0) / measurements.length;
 
         // Healthcare data queries should be fast for good user experience
         expect(
@@ -418,22 +432,22 @@ test.describe('⚡ Performance Testing Suite', () => {
       }
     });
 
-    await test.step('Test appointment booking performance simulation', async () => {
+    await test.step("Test appointment booking performance simulation", async () => {
       const workflowSteps = [
         {
-          step: 'Get available slots',
-          endpoint: '/api/v1/appointments/available',
+          step: "Get available slots",
+          endpoint: "/api/v1/appointments/available",
         },
-        { step: 'Validate patient', endpoint: '/api/v1/patients/1' },
+        { step: "Validate patient", endpoint: "/api/v1/patients/1" },
         {
-          step: 'Create appointment',
-          endpoint: '/api/v1/appointments',
-          method: 'POST',
+          step: "Create appointment",
+          endpoint: "/api/v1/appointments",
+          method: "POST",
         },
         {
-          step: 'Confirm booking',
-          endpoint: '/api/v1/appointments/1/confirm',
-          method: 'PATCH',
+          step: "Confirm booking",
+          endpoint: "/api/v1/appointments/1/confirm",
+          method: "PATCH",
         },
       ];
 
@@ -446,11 +460,11 @@ test.describe('⚡ Performance Testing Suite', () => {
           const stepStart = performance.now();
 
           let _response;
-          if (step.method === 'POST') {
+          if (step.method === "POST") {
             _response = await page.request.post(step.endpoint, {
-              data: { patient_id: 1, date: '2025-08-21', time: '14:00' },
+              data: { patient_id: 1, date: "2025-08-21", time: "14:00" },
             });
-          } else if (step.method === 'PATCH') {
+          } else if (step.method === "PATCH") {
             _response = await page.request.patch(step.endpoint);
           } else {
             _response = await page.request.get(step.endpoint);
@@ -466,12 +480,13 @@ test.describe('⚡ Performance Testing Suite', () => {
         workflowTimes.push(workflowTime);
       }
 
-      const avgWorkflowTime = workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
+      const avgWorkflowTime =
+        workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
 
       // Complete appointment booking should complete quickly for good UX
       expect(
         avgWorkflowTime,
-        'Appointment booking workflow should be fast',
+        "Appointment booking workflow should be fast",
       ).toBeLessThan(2000);
     });
   });

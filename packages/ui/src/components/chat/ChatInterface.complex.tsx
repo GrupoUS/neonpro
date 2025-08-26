@@ -5,24 +5,24 @@
  * WCAG 2.1 AA+ compliance, LGPD/ANVISA compliant
  */
 
-'use client';
+"use client";
 
-import { cn } from '../../lib/utils';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { Input } from '../ui/input';
+import { cn } from "../../lib/utils";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Input } from "../ui/input";
 
 // Basic types for the chat interface
 interface ChatMessage {
   id: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   timestamp: Date;
 }
 
 interface ChatInterfaceConfig {
-  interface_type: 'external' | 'internal';
+  interface_type: "external" | "internal";
   placeholder?: string;
 }
 
@@ -42,15 +42,15 @@ import {
   User,
   Volume2,
   XCircle,
-} from 'lucide-react';
-import type React from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Healthcare-specific AI features
 interface HealthcareSuggestion {
   id: string;
   text: string;
-  type: 'appointment' | 'symptom' | 'treatment' | 'general';
+  type: "appointment" | "symptom" | "treatment" | "general";
   confidence: number;
   medicalTerm?: string;
   translation?: string;
@@ -74,7 +74,7 @@ interface FileUploadState {
 }
 
 interface ChatInterfaceProps {
-  interface_type?: 'external' | 'internal';
+  interface_type?: "external" | "internal";
   className?: string;
   placeholder?: string;
   maxHeight?: string;
@@ -96,10 +96,10 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({
-  interface_type = 'external',
+  interface_type = "external",
   className,
   placeholder,
-  maxHeight = '600px',
+  maxHeight = "600px",
   showHeader = true,
   showTypingIndicator = true,
   autoFocus = true,
@@ -110,7 +110,7 @@ export function ChatInterface({
   enableHealthcareNLP = true,
   enablePredictiveText = true,
   maxFileSize = 10, // 10MB default
-  allowedFileTypes = ['image/*', '.pdf', '.doc', '.docx'],
+  allowedFileTypes = ["image/*", ".pdf", ".doc", ".docx"],
   // Accessibility enhancements
   ariaLabelledBy,
   ariaDescribedBy,
@@ -128,7 +128,7 @@ export function ChatInterface({
   } = useChat();
 
   // Core state
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -151,26 +151,26 @@ export function ChatInterface({
 
   // Accessibility state
   const [announcements, setAnnouncements] = useState<string[]>([]);
-  const [_focusedElementId, _setFocusedElementId] = useState<string>('');
+  const [_focusedElementId, _setFocusedElementId] = useState<string>("");
 
   // Healthcare terminology dictionary for Portuguese NLP
   const healthcareTerms = useMemo(
     () => ({
       // Appointment terms
-      agendar: { english: 'schedule', context: 'appointment' },
-      consulta: { english: 'consultation', context: 'appointment' },
-      retorno: { english: 'follow-up', context: 'appointment' },
-      emergência: { english: 'emergency', context: 'urgent' },
+      agendar: { english: "schedule", context: "appointment" },
+      consulta: { english: "consultation", context: "appointment" },
+      retorno: { english: "follow-up", context: "appointment" },
+      emergência: { english: "emergency", context: "urgent" },
       // Symptoms
-      dor: { english: 'pain', context: 'symptom' },
-      febre: { english: 'fever', context: 'symptom' },
-      náusea: { english: 'nausea', context: 'symptom' },
-      tontura: { english: 'dizziness', context: 'symptom' },
+      dor: { english: "pain", context: "symptom" },
+      febre: { english: "fever", context: "symptom" },
+      náusea: { english: "nausea", context: "symptom" },
+      tontura: { english: "dizziness", context: "symptom" },
       // Treatments
-      medicação: { english: 'medication', context: 'treatment' },
-      exame: { english: 'exam', context: 'treatment' },
-      cirurgia: { english: 'surgery', context: 'treatment' },
-      fisioterapia: { english: 'physiotherapy', context: 'treatment' },
+      medicação: { english: "medication", context: "treatment" },
+      exame: { english: "exam", context: "treatment" },
+      cirurgia: { english: "surgery", context: "treatment" },
+      fisioterapia: { english: "physiotherapy", context: "treatment" },
     }),
     [],
   );
@@ -191,13 +191,13 @@ export function ChatInterface({
           suggestions.push({
             id: `${term}-${Date.now()}`,
             text: `Gostaria de ${
-              term === 'agendar'
-                ? 'agendar uma consulta'
-                : term === 'dor'
-                ? 'relatar sintomas de dor'
-                : term === 'exame'
-                ? 'solicitar informações sobre exames'
-                : `obter informações sobre ${term}`
+              term === "agendar"
+                ? "agendar uma consulta"
+                : term === "dor"
+                  ? "relatar sintomas de dor"
+                  : term === "exame"
+                    ? "solicitar informações sobre exames"
+                    : `obter informações sobre ${term}`
             }?`,
             type: data.context as any,
             confidence: lowerInput === term ? 0.9 : 0.7,
@@ -208,20 +208,20 @@ export function ChatInterface({
       });
 
       // Common healthcare phrases
-      if (lowerInput.includes('quando') || lowerInput.includes('horário')) {
+      if (lowerInput.includes("quando") || lowerInput.includes("horário")) {
         suggestions.push({
-          id: 'schedule-1',
-          text: 'Verificar horários disponíveis para consulta',
-          type: 'appointment',
+          id: "schedule-1",
+          text: "Verificar horários disponíveis para consulta",
+          type: "appointment",
           confidence: 0.8,
         });
       }
 
-      if (lowerInput.includes('resultado') || lowerInput.includes('exame')) {
+      if (lowerInput.includes("resultado") || lowerInput.includes("exame")) {
         suggestions.push({
-          id: 'results-1',
-          text: 'Consultar resultados de exames',
-          type: 'treatment',
+          id: "results-1",
+          text: "Consultar resultados de exames",
+          type: "treatment",
           confidence: 0.8,
         });
       }
@@ -233,7 +233,7 @@ export function ChatInterface({
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   // Auto-focus input with accessibility announcement
@@ -243,7 +243,7 @@ export function ChatInterface({
       if (screenReaderAnnouncements) {
         announceToScreenReader(
           `Interface de chat ${
-            interface_type === 'external' ? 'do paciente' : 'da equipe médica'
+            interface_type === "external" ? "do paciente" : "da equipe médica"
           } carregada. Digite sua mensagem.`,
         );
       }
@@ -287,7 +287,7 @@ export function ChatInterface({
     }
 
     const messageText = inputValue.trim();
-    setInputValue('');
+    setInputValue("");
     setShowSuggestions(false);
 
     // Announce message being sent
@@ -301,9 +301,9 @@ export function ChatInterface({
       }
 
       // Announce successful send
-      announceToScreenReader('Mensagem enviada com sucesso');
+      announceToScreenReader("Mensagem enviada com sucesso");
     } catch {
-      announceToScreenReader('Erro ao enviar mensagem. Tente novamente.');
+      announceToScreenReader("Erro ao enviar mensagem. Tente novamente.");
     }
   };
 
@@ -312,9 +312,11 @@ export function ChatInterface({
     // Handle smart suggestion navigation
     if (showSuggestions && smartSuggestions.length > 0) {
       switch (e.key) {
-        case 'ArrowDown': {
+        case "ArrowDown": {
           e.preventDefault();
-          setSelectedSuggestionIndex((prev) => prev < smartSuggestions.length - 1 ? prev + 1 : 0);
+          setSelectedSuggestionIndex((prev) =>
+            prev < smartSuggestions.length - 1 ? prev + 1 : 0,
+          );
           announceToScreenReader(
             `Sugestão ${selectedSuggestionIndex + 1}: ${
               smartSuggestions[selectedSuggestionIndex]?.text
@@ -322,9 +324,11 @@ export function ChatInterface({
           );
           return;
         }
-        case 'ArrowUp': {
+        case "ArrowUp": {
           e.preventDefault();
-          setSelectedSuggestionIndex((prev) => prev > 0 ? prev - 1 : smartSuggestions.length - 1);
+          setSelectedSuggestionIndex((prev) =>
+            prev > 0 ? prev - 1 : smartSuggestions.length - 1,
+          );
           announceToScreenReader(
             `Sugestão ${selectedSuggestionIndex + 1}: ${
               smartSuggestions[selectedSuggestionIndex]?.text
@@ -332,7 +336,7 @@ export function ChatInterface({
           );
           return;
         }
-        case 'Tab': {
+        case "Tab": {
           e.preventDefault();
           if (selectedSuggestionIndex >= 0) {
             const suggestion = smartSuggestions[selectedSuggestionIndex];
@@ -343,18 +347,18 @@ export function ChatInterface({
           }
           return;
         }
-        case 'Escape': {
+        case "Escape": {
           e.preventDefault();
           setShowSuggestions(false);
           setSelectedSuggestionIndex(-1);
-          announceToScreenReader('Sugestões fechadas');
+          announceToScreenReader("Sugestões fechadas");
           return;
         }
       }
     }
 
     // Standard message sending
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (selectedSuggestionIndex >= 0 && showSuggestions) {
         const suggestion = smartSuggestions[selectedSuggestionIndex];
@@ -380,7 +384,7 @@ export function ChatInterface({
         isRecording: false,
         isProcessing: true,
       }));
-      announceToScreenReader('Finalizando gravação');
+      announceToScreenReader("Finalizando gravação");
     } else {
       // Start recording
       try {
@@ -389,7 +393,7 @@ export function ChatInterface({
           isRecording: true,
           error: undefined,
         }));
-        announceToScreenReader('Iniciando gravação de voz');
+        announceToScreenReader("Iniciando gravação de voz");
 
         // Request microphone permission and start recording
         const _stream = await navigator.mediaDevices.getUserMedia({
@@ -406,11 +410,11 @@ export function ChatInterface({
             isRecording: false,
             isProcessing: true,
           }));
-          announceToScreenReader('Processando áudio...');
+          announceToScreenReader("Processando áudio...");
 
           // Simulate transcription
           setTimeout(() => {
-            const mockTranscript = 'Transcrição simulada da mensagem de voz';
+            const mockTranscript = "Transcrição simulada da mensagem de voz";
             setVoiceRecording((prev) => ({
               ...prev,
               isProcessing: false,
@@ -424,10 +428,10 @@ export function ChatInterface({
         setVoiceRecording((prev) => ({
           ...prev,
           isRecording: false,
-          error: 'Erro ao acessar microfone',
+          error: "Erro ao acessar microfone",
         }));
         announceToScreenReader(
-          'Erro ao iniciar gravação. Verifique as permissões do microfone.',
+          "Erro ao iniciar gravação. Verifique as permissões do microfone.",
         );
       }
     }
@@ -474,47 +478,47 @@ export function ChatInterface({
       }, 200);
 
       // Reset file input
-      event.target.value = '';
+      event.target.value = "";
     },
     [maxFileSize, announceToScreenReader],
   );
 
   const getStatusColor = () => {
     switch (state.connection_status) {
-      case 'connected': {
-        return 'text-green-500';
+      case "connected": {
+        return "text-green-500";
       }
-      case 'connecting': {
-        return 'text-yellow-500';
+      case "connecting": {
+        return "text-yellow-500";
       }
-      case 'disconnected': {
-        return 'text-gray-500';
+      case "disconnected": {
+        return "text-gray-500";
       }
-      case 'error': {
-        return 'text-red-500';
+      case "error": {
+        return "text-red-500";
       }
       default: {
-        return 'text-gray-500';
+        return "text-gray-500";
       }
     }
   };
 
   const getStatusText = () => {
     switch (state.connection_status) {
-      case 'connected': {
-        return 'Conectado';
+      case "connected": {
+        return "Conectado";
       }
-      case 'connecting': {
-        return 'Conectando...';
+      case "connecting": {
+        return "Conectando...";
       }
-      case 'disconnected': {
-        return 'Desconectado';
+      case "disconnected": {
+        return "Desconectado";
       }
-      case 'error': {
-        return 'Erro de conexão';
+      case "error": {
+        return "Erro de conexão";
       }
       default: {
-        return 'Status desconhecido';
+        return "Status desconhecido";
       }
     }
   };
@@ -522,7 +526,7 @@ export function ChatInterface({
   const messages = getCurrentSession()?.messages || [];
 
   return (
-    <Card className={cn('flex flex-col', className)} style={{ maxHeight }}>
+    <Card className={cn("flex flex-col", className)} style={{ maxHeight }}>
       {/* Header */}
       {showHeader && (
         <div className="flex items-center justify-between border-b p-4">
@@ -530,11 +534,11 @@ export function ChatInterface({
             <Bot className="h-6 w-6 text-primary" />
             <div>
               <h3 className="font-semibold">
-                {interface_type === 'external'
-                  ? 'Assistente Virtual NeonPro'
-                  : 'Assistente Interno'}
+                {interface_type === "external"
+                  ? "Assistente Virtual NeonPro"
+                  : "Assistente Interno"}
               </h3>
-              <p className={cn('text-sm', getStatusColor())}>
+              <p className={cn("text-sm", getStatusColor())}>
                 {getStatusText()}
               </p>
             </div>
@@ -542,9 +546,9 @@ export function ChatInterface({
 
           <div className="flex items-center gap-2">
             <Badge
-              variant={interface_type === 'external' ? 'default' : 'secondary'}
+              variant={interface_type === "external" ? "default" : "secondary"}
             >
-              {interface_type === 'external' ? 'Paciente' : 'Equipe'}
+              {interface_type === "external" ? "Paciente" : "Equipe"}
             </Badge>
 
             {state.is_streaming && (
@@ -577,31 +581,29 @@ export function ChatInterface({
 
       {/* Messages */}
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        {messages.length === 0
-          ? (
-            <div className="py-8 text-center text-muted-foreground">
-              <Bot className="mx-auto mb-4 h-12 w-12 opacity-50" />
-              <p className="mb-2 font-medium text-lg">
-                {interface_type === 'external'
-                  ? 'Olá! Como posso ajudá-lo hoje?'
-                  : 'Sistema pronto. Como posso auxiliar?'}
-              </p>
-              <p className="text-sm">
-                {interface_type === 'external'
-                  ? 'Posso ajudar com agendamentos, informações sobre a clínica e orientações gerais.'
-                  : 'Consulte dados, gere relatórios ou faça perguntas sobre operações.'}
-              </p>
-            </div>
-          )
-          : (
-            messages.map((message: ChatMessage) => (
-              <MessageBubble
-                interface_type={interface_type}
-                key={message.id}
-                message={message}
-              />
-            ))
-          )}
+        {messages.length === 0 ? (
+          <div className="py-8 text-center text-muted-foreground">
+            <Bot className="mx-auto mb-4 h-12 w-12 opacity-50" />
+            <p className="mb-2 font-medium text-lg">
+              {interface_type === "external"
+                ? "Olá! Como posso ajudá-lo hoje?"
+                : "Sistema pronto. Como posso auxiliar?"}
+            </p>
+            <p className="text-sm">
+              {interface_type === "external"
+                ? "Posso ajudar com agendamentos, informações sobre a clínica e orientações gerais."
+                : "Consulte dados, gere relatórios ou faça perguntas sobre operações."}
+            </p>
+          </div>
+        ) : (
+          messages.map((message: ChatMessage) => (
+            <MessageBubble
+              interface_type={interface_type}
+              key={message.id}
+              message={message}
+            />
+          ))
+        )}
 
         {state.is_loading && showTypingIndicator && <TypingIndicator />}
 
@@ -631,16 +633,14 @@ export function ChatInterface({
             <div className="space-y-1">
               {smartSuggestions.map((suggestion, index) => (
                 <button
-                  aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${
-                    Math.round(
-                      suggestion.confidence * 100,
-                    )
-                  }%`}
+                  aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${Math.round(
+                    suggestion.confidence * 100,
+                  )}%`}
                   className={cn(
-                    'w-full rounded-md p-2 text-left text-sm transition-colors',
-                    'hover:bg-muted focus:bg-muted focus:outline-none',
-                    selectedSuggestionIndex === index
-                      && 'border border-primary/20 bg-primary/10',
+                    "w-full rounded-md p-2 text-left text-sm transition-colors",
+                    "hover:bg-muted focus:bg-muted focus:outline-none",
+                    selectedSuggestionIndex === index &&
+                      "border border-primary/20 bg-primary/10",
                   )}
                   key={suggestion.id}
                   onClick={() => {
@@ -664,12 +664,12 @@ export function ChatInterface({
                       )}
                       <Badge
                         className={cn(
-                          'text-xs',
+                          "text-xs",
                           suggestion.confidence > 0.8
-                            ? 'bg-green-100 text-green-700'
-                            : (suggestion.confidence > 0.6
-                            ? 'bg-yellow-100 text-yellow-700'
-                            : 'bg-gray-100 text-gray-700'),
+                            ? "bg-green-100 text-green-700"
+                            : suggestion.confidence > 0.6
+                              ? "bg-yellow-100 text-yellow-700"
+                              : "bg-gray-100 text-gray-700",
                         )}
                         variant="secondary"
                       >
@@ -686,31 +686,39 @@ export function ChatInterface({
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Input
-              aria-describedby={showSuggestions ? 'smart-suggestions' : undefined}
+              aria-describedby={
+                showSuggestions ? "smart-suggestions" : undefined
+              }
               aria-label={`Campo de mensagem do chat ${
-                interface_type === 'external'
-                  ? 'do paciente'
-                  : 'da equipe médica'
+                interface_type === "external"
+                  ? "do paciente"
+                  : "da equipe médica"
               }`}
               autoComplete="off"
               className={cn(
-                'pr-32',
-                voiceRecording.isRecording && 'border-red-300 bg-red-50',
-                fileUpload.isUploading && 'border-blue-300 bg-blue-50',
+                "pr-32",
+                voiceRecording.isRecording && "border-red-300 bg-red-50",
+                fileUpload.isUploading && "border-blue-300 bg-blue-50",
               )}
-              disabled={state.is_loading
-                || !isConnected()
-                || voiceRecording.isProcessing}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+              disabled={
+                state.is_loading ||
+                !isConnected() ||
+                voiceRecording.isProcessing
+              }
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setInputValue(e.target.value)
+              }
               onKeyDown={handleKeyPress}
-              placeholder={voiceRecording.isProcessing
-                ? 'Processando áudio...'
-                : (fileUpload.isUploading
-                ? `Enviando ${fileUpload.fileName}...`
-                : placeholder
-                  || (interface_type === 'external'
-                    ? 'Digite sua mensagem ou use os comandos de voz...'
-                    : 'Faça uma pergunta, solicite um relatório ou envie documentos...'))}
+              placeholder={
+                voiceRecording.isProcessing
+                  ? "Processando áudio..."
+                  : fileUpload.isUploading
+                    ? `Enviando ${fileUpload.fileName}...`
+                    : placeholder ||
+                      (interface_type === "external"
+                        ? "Digite sua mensagem ou use os comandos de voz..."
+                        : "Faça uma pergunta, solicite um relatório ou envie documentos...")
+              }
               ref={inputRef}
               value={inputValue}
             />
@@ -721,9 +729,9 @@ export function ChatInterface({
                 <Button
                   aria-label="Enviar arquivo médico (PDF, imagens, documentos)"
                   className={cn(
-                    'h-8 w-8',
-                    fileUpload.isUploading
-                      && 'animate-pulse bg-blue-50 text-blue-500',
+                    "h-8 w-8",
+                    fileUpload.isUploading &&
+                      "animate-pulse bg-blue-50 text-blue-500",
                   )}
                   disabled={state.is_loading || fileUpload.isUploading}
                   onClick={handleFileUpload}
@@ -731,26 +739,30 @@ export function ChatInterface({
                   type="button"
                   variant="ghost"
                 >
-                  {fileUpload.isUploading
-                    ? <FileUp className="h-4 w-4 animate-bounce" />
-                    : <Paperclip className="h-4 w-4" />}
+                  {fileUpload.isUploading ? (
+                    <FileUp className="h-4 w-4 animate-bounce" />
+                  ) : (
+                    <Paperclip className="h-4 w-4" />
+                  )}
                 </Button>
               )}
 
               {/* FASE 3: Enhanced Voice Recording */}
               {enableVoiceInput && (
                 <Button
-                  aria-label={voiceRecording.isRecording
-                    ? 'Parar gravação de voz'
-                    : (voiceRecording.isProcessing
-                    ? 'Processando áudio...'
-                    : 'Iniciar gravação de voz para ditado médico')}
-                  className={cn(
-                    'h-8 w-8 transition-all duration-200',
+                  aria-label={
                     voiceRecording.isRecording
-                      && 'scale-110 animate-pulse bg-red-50 text-red-500',
-                    voiceRecording.isProcessing
-                      && 'animate-spin bg-blue-50 text-blue-500',
+                      ? "Parar gravação de voz"
+                      : voiceRecording.isProcessing
+                        ? "Processando áudio..."
+                        : "Iniciar gravação de voz para ditado médico"
+                  }
+                  className={cn(
+                    "h-8 w-8 transition-all duration-200",
+                    voiceRecording.isRecording &&
+                      "scale-110 animate-pulse bg-red-50 text-red-500",
+                    voiceRecording.isProcessing &&
+                      "animate-spin bg-blue-50 text-blue-500",
                   )}
                   disabled={state.is_loading || voiceRecording.isProcessing}
                   onClick={toggleRecording}
@@ -758,18 +770,20 @@ export function ChatInterface({
                   type="button"
                   variant="ghost"
                 >
-                  {voiceRecording.isProcessing
-                    ? <Volume2 className="h-4 w-4" />
-                    : (voiceRecording.isRecording
-                    ? <MicOff className="h-4 w-4" />
-                    : <Mic className="h-4 w-4" />)}
+                  {voiceRecording.isProcessing ? (
+                    <Volume2 className="h-4 w-4" />
+                  ) : voiceRecording.isRecording ? (
+                    <MicOff className="h-4 w-4" />
+                  ) : (
+                    <Mic className="h-4 w-4" />
+                  )}
                 </Button>
               )}
             </div>
 
             {/* Hidden file input */}
             <input
-              accept={allowedFileTypes.join(',')}
+              accept={allowedFileTypes.join(",")}
               aria-label="Selecionar arquivo para upload"
               className="hidden"
               onChange={handleFileSelect}
@@ -790,9 +804,9 @@ export function ChatInterface({
         <div className="mt-2 flex items-center justify-between text-muted-foreground text-xs">
           <div className="flex items-center gap-3">
             <span>
-              {interface_type === 'external'
-                ? 'Suporte 24/7 • Atendimento seguro LGPD'
-                : 'Dados em tempo real • Acesso seguro'}
+              {interface_type === "external"
+                ? "Suporte 24/7 • Atendimento seguro LGPD"
+                : "Dados em tempo real • Acesso seguro"}
             </span>
 
             {/* FASE 3: Voice recording status */}
@@ -852,23 +866,23 @@ interface MessageBubbleProps {
 }
 
 function MessageBubble({ message, interface_type }: MessageBubbleProps) {
-  const isUser = message.role === 'user';
-  const isSystem = message.role === 'system';
+  const isUser = message.role === "user";
+  const isSystem = message.role === "system";
 
   const getStatusIcon = () => {
     switch (message.status) {
-      case 'sending': {
+      case "sending": {
         return <Clock className="h-3 w-3 text-gray-400" />;
       }
-      case 'sent':
-      case 'delivered': {
+      case "sent":
+      case "delivered": {
         return <CheckCircle className="h-3 w-3 text-green-500" />;
       }
-      case 'error': {
+      case "error": {
         return <XCircle className="h-3 w-3 text-red-500" />;
       }
       default: {
-        return ;
+        return;
       }
     }
   };
@@ -886,16 +900,16 @@ function MessageBubble({ message, interface_type }: MessageBubbleProps) {
   return (
     <div
       className={cn(
-        'flex max-w-[80%] gap-3',
-        isUser ? 'ml-auto flex-row-reverse' : 'mr-auto',
+        "flex max-w-[80%] gap-3",
+        isUser ? "ml-auto flex-row-reverse" : "mr-auto",
       )}
     >
       <div
         className={cn(
-          'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full',
+          "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
           isUser
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-muted text-muted-foreground',
+            ? "bg-primary text-primary-foreground"
+            : "bg-muted text-muted-foreground",
         )}
       >
         {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -903,10 +917,10 @@ function MessageBubble({ message, interface_type }: MessageBubbleProps) {
 
       <div
         className={cn(
-          'max-w-full rounded-lg px-4 py-2',
+          "max-w-full rounded-lg px-4 py-2",
           isUser
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-muted text-muted-foreground',
+            ? "bg-primary text-primary-foreground"
+            : "bg-muted text-muted-foreground",
         )}
       >
         <div className="whitespace-pre-wrap break-words">
@@ -918,14 +932,14 @@ function MessageBubble({ message, interface_type }: MessageBubbleProps) {
 
         <div
           className={cn(
-            'mt-2 flex items-center justify-between text-xs opacity-70',
-            isUser ? 'flex-row-reverse' : '',
+            "mt-2 flex items-center justify-between text-xs opacity-70",
+            isUser ? "flex-row-reverse" : "",
           )}
         >
           <span>
-            {new Date(message.timestamp).toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
+            {new Date(message.timestamp).toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           </span>
 
@@ -953,7 +967,7 @@ function TypingIndicator() {
                 key={i}
                 style={{
                   animationDelay: `${i * 0.2}s`,
-                  animationDuration: '1s',
+                  animationDuration: "1s",
                 }}
               />
             ))}

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { cn } from '../utils/cn';
+import * as React from "react";
+import { cn } from "../utils/cn";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,9 +7,9 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from './Breadcrumb';
-import type { SidebarItem, UserProfile } from './DashboardSidebar';
-import { DashboardSidebar } from './DashboardSidebar';
+} from "./Breadcrumb";
+import type { SidebarItem, UserProfile } from "./DashboardSidebar";
+import { DashboardSidebar } from "./DashboardSidebar";
 
 export interface BreadcrumbData {
   title: string;
@@ -21,7 +21,7 @@ interface DashboardLayoutProps {
   items: SidebarItem[];
   activeMenuItem?: string;
   onItemSelect?: (item: SidebarItem) => void;
-  onUserMenuSelect?: (action: 'profile' | 'settings' | 'logout') => void;
+  onUserMenuSelect?: (action: "profile" | "settings" | "logout") => void;
   breadcrumbs?: BreadcrumbData[];
   title?: string;
   description?: string;
@@ -56,7 +56,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
   ) => {
     return (
       <div
-        className={cn('flex min-h-screen bg-background', className)}
+        className={cn("flex min-h-screen bg-background", className)}
         ref={ref}
         {...props}
       >
@@ -85,13 +85,13 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
                         <React.Fragment key={item.href || item.title || index}>
                           {index > 0 && <BreadcrumbSeparator />}
                           <BreadcrumbItem>
-                            {item.href
-                              ? (
-                                <BreadcrumbLink href={item.href}>
-                                  {item.title}
-                                </BreadcrumbLink>
-                              )
-                              : <BreadcrumbPage>{item.title}</BreadcrumbPage>}
+                            {item.href ? (
+                              <BreadcrumbLink href={item.href}>
+                                {item.title}
+                              </BreadcrumbLink>
+                            ) : (
+                              <BreadcrumbPage>{item.title}</BreadcrumbPage>
+                            )}
                           </BreadcrumbItem>
                         </React.Fragment>
                       ))}
@@ -107,11 +107,15 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
                 )}
 
                 {/* Page Description */}
-                {description && <p className="text-muted-foreground">{description}</p>}
+                {description && (
+                  <p className="text-muted-foreground">{description}</p>
+                )}
               </div>
 
               {/* Header Actions */}
-              {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
+              {headerActions && (
+                <div className="flex items-center gap-3">{headerActions}</div>
+              )}
             </div>
           </header>
 
@@ -123,7 +127,7 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
   },
 );
 
-DashboardLayout.displayName = 'DashboardLayout';
+DashboardLayout.displayName = "DashboardLayout";
 
 export { DashboardLayout };
 export type { DashboardLayoutProps };

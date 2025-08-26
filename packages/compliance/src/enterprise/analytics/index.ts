@@ -5,12 +5,27 @@
  */
 
 // Import types and functions for internal use
-import { createComplianceDashboardService, validateComplianceDashboard } from './compliance-dashboard';
-import type { ComplianceDashboardConfig } from './compliance-dashboard';
-import { createHealthcareIntelligenceService, validateHealthcareIntelligence } from './healthcare-intelligence';
-import type { HealthcareIntelligenceConfig, HealthcareIntelligenceQuery } from './healthcare-intelligence';
-import { createPrivacyPreservingAnalyticsService, validatePrivacyPreservingAnalytics } from './privacy-preserving-analytics';
-import type { PrivacyPreservingAnalyticsConfig, PrivacyPreservingQuery } from './privacy-preserving-analytics';
+import {
+  createComplianceDashboardService,
+  validateComplianceDashboard,
+} from "./compliance-dashboard";
+import type { ComplianceDashboardConfig } from "./compliance-dashboard";
+import {
+  createHealthcareIntelligenceService,
+  validateHealthcareIntelligence,
+} from "./healthcare-intelligence";
+import type {
+  HealthcareIntelligenceConfig,
+  HealthcareIntelligenceQuery,
+} from "./healthcare-intelligence";
+import {
+  createPrivacyPreservingAnalyticsService,
+  validatePrivacyPreservingAnalytics,
+} from "./privacy-preserving-analytics";
+import type {
+  PrivacyPreservingAnalyticsConfig,
+  PrivacyPreservingQuery,
+} from "./privacy-preserving-analytics";
 
 // Re-export all types and services
 export {
@@ -22,7 +37,7 @@ export {
   ComplianceDashboardService,
   createComplianceDashboardService,
   validateComplianceDashboard,
-} from './compliance-dashboard';
+} from "./compliance-dashboard";
 export {
   createHealthcareIntelligenceService,
   type HealthcareIntelligenceAudit,
@@ -31,7 +46,7 @@ export {
   type HealthcareIntelligenceResults,
   HealthcareIntelligenceService,
   validateHealthcareIntelligence,
-} from './healthcare-intelligence';
+} from "./healthcare-intelligence";
 export {
   createPrivacyPreservingAnalyticsService,
   type PrivacyPreservingAnalyticsAudit,
@@ -40,7 +55,7 @@ export {
   PrivacyPreservingAnalyticsService,
   type PrivacyPreservingQuery,
   validatePrivacyPreservingAnalytics,
-} from './privacy-preserving-analytics';
+} from "./privacy-preserving-analytics";
 
 /**
  * Enterprise Analytics Service Factory
@@ -92,7 +107,8 @@ export async function validateEnterpriseAnalyticsCompliance(
   }
 
   // Validate compliance dashboard
-  const dashboardValidation = await validateComplianceDashboard(dashboardConfig);
+  const dashboardValidation =
+    await validateComplianceDashboard(dashboardConfig);
   if (!dashboardValidation.valid) {
     violations.push(
       ...dashboardValidation.violations.map(
@@ -233,52 +249,55 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
  * Constitutional healthcare analytics with comprehensive privacy protection
  */
 export const ENTERPRISE_ANALYTICS_MODULE = {
-  name: 'Enterprise Analytics',
-  version: '1.0.0',
+  name: "Enterprise Analytics",
+  version: "1.0.0",
   compliance_standards: [
-    'LGPD',
-    'Constitutional Privacy',
-    'AI Ethics',
-    'CFM Medical Ethics',
+    "LGPD",
+    "Constitutional Privacy",
+    "AI Ethics",
+    "CFM Medical Ethics",
   ],
   quality_score: 9.9,
   services: [
     {
-      name: 'Privacy-Preserving Analytics',
-      description: 'Patient privacy-preserving analytics with constitutional compliance',
+      name: "Privacy-Preserving Analytics",
+      description:
+        "Patient privacy-preserving analytics with constitutional compliance",
       compliance_features: [
-        'Differential Privacy',
-        'K-Anonymity',
-        'L-Diversity',
-        'LGPD Compliance',
+        "Differential Privacy",
+        "K-Anonymity",
+        "L-Diversity",
+        "LGPD Compliance",
       ],
     },
     {
-      name: 'Compliance Dashboard',
-      description: 'Real-time compliance monitoring dashboard for regulatory oversight',
+      name: "Compliance Dashboard",
+      description:
+        "Real-time compliance monitoring dashboard for regulatory oversight",
       compliance_features: [
-        'Real-time Monitoring',
-        'Alert Management',
-        'Regulatory Reporting',
-        'Executive Dashboards',
+        "Real-time Monitoring",
+        "Alert Management",
+        "Regulatory Reporting",
+        "Executive Dashboards",
       ],
     },
     {
-      name: 'Healthcare Intelligence',
-      description: 'AI-driven healthcare insights with constitutional medical ethics',
+      name: "Healthcare Intelligence",
+      description:
+        "AI-driven healthcare insights with constitutional medical ethics",
       compliance_features: [
-        'Explainable AI',
-        'Bias Detection',
-        'Human Oversight',
-        'CFM Ethics Validation',
+        "Explainable AI",
+        "Bias Detection",
+        "Human Oversight",
+        "CFM Ethics Validation",
       ],
     },
   ],
   constitutional_guarantees: [
-    'Patient privacy protection through advanced anonymization',
-    'AI ethics compliance with human oversight validation',
-    'Comprehensive audit trails for regulatory compliance',
-    'Real-time compliance monitoring with constitutional standards',
-    'Explainable AI with clinical decision transparency',
+    "Patient privacy protection through advanced anonymization",
+    "AI ethics compliance with human oversight validation",
+    "Comprehensive audit trails for regulatory compliance",
+    "Real-time compliance monitoring with constitutional standards",
+    "Explainable AI with clinical decision transparency",
   ],
 } as const;

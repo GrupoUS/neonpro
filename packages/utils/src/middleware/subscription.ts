@@ -5,39 +5,42 @@
 
 export interface SubscriptionStatus {
   id: string;
-  status: 'active' | 'expired' | 'cancelled' | 'pending';
+  status: "active" | "expired" | "cancelled" | "pending";
   features: string[];
   expiresAt?: Date;
-  planType: 'basic' | 'premium' | 'enterprise';
+  planType: "basic" | "premium" | "enterprise";
 }
 
-export const validateSubscriptionStatus = (
+// Constants for caching
+const DEFAULT_TTL = 300_000;
+
+const validateSubscriptionStatus = (
   subscription: SubscriptionStatus | null,
 ): boolean => {
   if (!subscription) {
     return false;
   }
-  if (subscription.status === 'active') {
+  if (subscription.status === "active") {
     return true;
   }
   if (
-    subscription.status === 'expired'
-    || subscription.status === 'cancelled'
+    subscription.status === "expired" ||
+    subscription.status === "cancelled"
   ) {
     return false;
   }
   return false;
 };
 
-export const routeProtection = {
-  isPublicRoute: (route: string): boolean => {
-    const publicRoutes = ['/login', '/signup', '/public', '/'];
-    return publicRoutes.some((pub) => route.startsWith(pub));
+const routeProtection = {
+  isPremiumRoute: (route: string): boolean => {
+    const premiumRoutes = ["/premium", "/analytics", "/reports"];
+    return premiumRoutes.some((premium) => route.startsWith(premium));
   },
 
-  isPremiumRoute: (route: string): boolean => {
-    const premiumRoutes = ['/premium', '/analytics', '/reports'];
-    return premiumRoutes.some((premium) => route.startsWith(premium));
+  isPublicRoute: (route: string): boolean => {
+    const publicRoutes = ["/login", "/signup", "/public", "/"];
+    return publicRoutes.some((pub) => route.startsWith(pub));
   },
 
   shouldRedirectToUpgrade: (
@@ -48,8 +51,8 @@ export const routeProtection = {
       return false;
     }
     if (
-      routeProtection.isPremiumRoute(route)
-      && (!subscription || subscription.status !== 'active')
+      routeProtection.isPremiumRoute(route) &&
+      (!subscription || subscription.status !== "active")
     ) {
       return true;
     }
@@ -57,8 +60,12 @@ export const routeProtection = {
   },
 };
 
-export const subscriptionCaching = {
-  cache: new Map<string, { data: SubscriptionStatus; expires: number; }>(),
+const subscriptionCaching = {
+  cache: new Map<string, { data: SubscriptionStatus; expires: number }>(),
+
+  clear: (): void => {
+    subscriptionCaching.cache.clear();
+  },
 
   get: (userId: string): SubscriptionStatus | null => {
     const cached = subscriptionCaching.cache.get(userId);
@@ -68,28 +75,29 @@ export const subscriptionCaching = {
     return;
   },
 
-  set: (userId: string, data: SubscriptionStatus, ttl = 300_000): void => {
+  invalidate: (userId: string): void => {
+    subscriptionCaching.cache.delete(userId);
+  },
+
+  set: (userId: string, data: SubscriptionStatus, ttl = DEFAULT_TTL): void => {
     subscriptionCaching.cache.set(userId, {
       data,
       expires: Date.now() + ttl,
     });
   },
-
-  invalidate: (userId: string): void => {
-    subscriptionCaching.cache.delete(userId);
-  },
-
-  clear: (): void => {
-    subscriptionCaching.cache.clear();
-  },
 };
 
-export const errorHandling = {
-  handleNetworkError: (_error: Error): SubscriptionStatus | null => {
-    return;
-  },
+const errorHandling = {
+  handleInvalidResponse: (_response: unknown): SubscriptionStatus | null => 
+    null,
 
-  handleInvalidResponse: (_response: any): SubscriptionStatus | null => {
-    return;
-  },
+  handleNetworkError: (_error: Error): SubscriptionStatus | null => 
+    null,
+};
+
+export {
+  errorHandling,
+  routeProtection,
+  subscriptionCaching,
+  validateSubscriptionStatus,
 };

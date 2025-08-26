@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats } from './types';
+import type { CacheOperation, CacheStats } from "./types";
 
 export class EdgeCacheLayer implements CacheOperation {
   private stats: CacheStats = {
@@ -13,7 +13,7 @@ export class EdgeCacheLayer implements CacheOperation {
 
   constructor(
     private readonly config = {
-      redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+      redisUrl: process.env.REDIS_URL || "redis://localhost:6379",
       defaultTTL: 10 * 60, // 10 minutes in seconds
       maxTTL: 60 * 60, // 1 hour in seconds
       compressionThreshold: 1024, // 1KB
@@ -103,15 +103,16 @@ export class EdgeCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate = this.stats.totalRequests > 0
-      ? (this.stats.hits / this.stats.totalRequests) * 100
-      : 0;
+    this.stats.hitRate =
+      this.stats.totalRequests > 0
+        ? (this.stats.hits / this.stats.totalRequests) * 100
+        : 0;
     return { ...this.stats };
   }
 
   async invalidateByTags(tags: string[]): Promise<void> {
     try {
-      const keys = await this.redis.keys('neonpro:*');
+      const keys = await this.redis.keys("neonpro:*");
       for (const key of keys) {
         const cached = await this.redis.get(key);
         if (cached) {
@@ -134,13 +135,13 @@ export class EdgeCacheLayer implements CacheOperation {
 
   private encrypt(value: any): string {
     // Mock encryption - will be replaced with actual encryption
-    return Buffer.from(JSON.stringify(value)).toString('base64');
+    return Buffer.from(JSON.stringify(value)).toString("base64");
   }
 
   private decrypt(encryptedValue: string): any {
     // Mock decryption - will be replaced with actual decryption
     try {
-      const decrypted = Buffer.from(encryptedValue, 'base64').toString();
+      const decrypted = Buffer.from(encryptedValue, "base64").toString();
       return JSON.parse(decrypted);
     } catch {
       return encryptedValue;
@@ -155,8 +156,9 @@ export class EdgeCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
-      / this.responseTimeBuffer.length;
+    this.stats.averageResponseTime =
+      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+      this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

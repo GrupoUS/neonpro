@@ -3,9 +3,9 @@
  * Helper functions for authentication and security
  */
 
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import type { PasswordPolicy, TokenPayload } from './types';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import type { PasswordPolicy, TokenPayload } from "./types";
 
 /**
  * JWT Token utilities
@@ -14,7 +14,10 @@ import type { PasswordPolicy, TokenPayload } from './types';
 /**
  * Verify JWT token and extract payload
  */
-export function verifyToken(token: string, secret: string): TokenPayload | null {
+export function verifyToken(
+  token: string,
+  secret: string,
+): TokenPayload | null {
   try {
     return jwt.verify(token, secret) as TokenPayload;
   } catch {
@@ -28,7 +31,9 @@ export function verifyToken(token: string, secret: string): TokenPayload | null 
 export function isTokenExpired(token: string): boolean {
   try {
     const decoded = jwt.decode(token) as TokenPayload;
-    if (!decoded || !decoded.exp) {return true;}
+    if (!decoded || !decoded.exp) {
+      return true;
+    }
 
     return Date.now() >= decoded.exp * 1000;
   } catch {
@@ -42,7 +47,9 @@ export function isTokenExpired(token: string): boolean {
 export function getTokenExpiration(token: string): Date | null {
   try {
     const decoded = jwt.decode(token) as TokenPayload;
-    if (!decoded || !decoded.exp) {return null;}
+    if (!decoded || !decoded.exp) {
+      return null;
+    }
 
     return new Date(decoded.exp * 1000);
   } catch {
@@ -77,7 +84,10 @@ export async function hashPassword(password: string): Promise<string> {
 /**
  * Verify password against hash
  */
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+export async function verifyPassword(
+  password: string,
+  hash: string,
+): Promise<boolean> {
   return await bcrypt.compare(password, hash);
 }
 
@@ -94,23 +104,25 @@ export function validatePassword(
   const errors: string[] = [];
 
   if (password.length < policy.minLength) {
-    errors.push(`Password must be at least ${policy.minLength} characters long`);
+    errors.push(
+      `Password must be at least ${policy.minLength} characters long`,
+    );
   }
 
   if (policy.requireUppercase && !/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push("Password must contain at least one uppercase letter");
   }
 
   if (policy.requireLowercase && !/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push("Password must contain at least one lowercase letter");
   }
 
   if (policy.requireNumbers && !/\d/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push("Password must contain at least one number");
   }
 
   if (policy.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('Password must contain at least one special character');
+    errors.push("Password must contain at least one special character");
   }
 
   return {
@@ -123,13 +135,13 @@ export function validatePassword(
  * Generate secure random password
  */
 export function generateSecurePassword(length: number = 16): string {
-  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-  const numbers = '0123456789';
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
   const special = '!@#$%^&*(),.?":{}|<>';
 
   const allChars = uppercase + lowercase + numbers + special;
-  let password = '';
+  let password = "";
 
   // Ensure at least one character from each category
   password += uppercase[Math.floor(Math.random() * uppercase.length)];
@@ -143,7 +155,7 @@ export function generateSecurePassword(length: number = 16): string {
   }
 
   // Shuffle the password
-  return [...password].sort(() => Math.random() - 0.5).join('');
+  return [...password].sort(() => Math.random() - 0.5).join("");
 }
 
 /**
@@ -154,8 +166,9 @@ export function generateSecurePassword(length: number = 16): string {
  * Generate secure random string
  */
 export function generateSecureRandom(length: number = 32): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
 
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -169,12 +182,12 @@ export function generateSecureRandom(length: number = 32): string {
  */
 export function sanitizeInput(input: string): string {
   return input
-    .replaceAll("&", '&amp;')
-    .replaceAll("<", '&lt;')
-    .replaceAll(">", '&gt;')
-    .replaceAll("\"", '&quot;')
-    .replaceAll("'", '&#x27;')
-    .replaceAll("\\/", '&#x2F;');
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#x27;")
+    .replaceAll("\\/", "&#x2F;");
 }
 
 /**
@@ -189,7 +202,7 @@ export function isValidEmail(email: string): boolean {
  * Validate CPF (Brazilian document)
  */
 export function isValidCPF(cpf: string): boolean {
-  cpf = cpf.replaceAll(/[^\d]/g, '');
+  cpf = cpf.replaceAll(/[^\d]/g, "");
 
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
     return false;
@@ -201,8 +214,12 @@ export function isValidCPF(cpf: string): boolean {
   }
 
   let checkDigit = 11 - (sum % 11);
-  if (checkDigit === 10 || checkDigit === 11) {checkDigit = 0;}
-  if (checkDigit !== Number.parseInt(cpf.charAt(9), 10)) {return false;}
+  if (checkDigit === 10 || checkDigit === 11) {
+    checkDigit = 0;
+  }
+  if (checkDigit !== Number.parseInt(cpf.charAt(9), 10)) {
+    return false;
+  }
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
@@ -210,7 +227,9 @@ export function isValidCPF(cpf: string): boolean {
   }
 
   checkDigit = 11 - (sum % 11);
-  if (checkDigit === 10 || checkDigit === 11) {checkDigit = 0;}
+  if (checkDigit === 10 || checkDigit === 11) {
+    checkDigit = 0;
+  }
 
   return checkDigit === Number.parseInt(cpf.charAt(10), 10);
 }
@@ -219,9 +238,11 @@ export function isValidCPF(cpf: string): boolean {
  * Validate CNS (Brazilian health card)
  */
 export function isValidCNS(cns: string): boolean {
-  cns = cns.replaceAll(/[^\d]/g, '');
+  cns = cns.replaceAll(/[^\d]/g, "");
 
-  if (cns.length !== 15) {return false;}
+  if (cns.length !== 15) {
+    return false;
+  }
 
   let sum = 0;
   for (let i = 0; i < 15; i++) {
@@ -243,18 +264,28 @@ export function calculateRiskScore(factors: {
 }): number {
   let score = 1; // Base score
 
-  if (factors.newDevice) {score += 3;}
-  if (factors.unusualLocation) {score += 4;}
-  if (factors.failedAttempts) {score += factors.failedAttempts * 2;}
+  if (factors.newDevice) {
+    score += 3;
+  }
+  if (factors.unusualLocation) {
+    score += 4;
+  }
+  if (factors.failedAttempts) {
+    score += factors.failedAttempts * 2;
+  }
 
   // Higher risk during off-hours
   if (factors.timeOfDay !== undefined) {
-    if (factors.timeOfDay < 6 || factors.timeOfDay > 22) {score += 2;}
+    if (factors.timeOfDay < 6 || factors.timeOfDay > 22) {
+      score += 2;
+    }
   }
 
   // Higher risk on weekends for healthcare systems
   if (factors.dayOfWeek !== undefined) {
-    if (factors.dayOfWeek === 0 || factors.dayOfWeek === 6) {score += 1;}
+    if (factors.dayOfWeek === 0 || factors.dayOfWeek === 6) {
+      score += 1;
+    }
   }
 
   return Math.min(score, 10); // Cap at 10
@@ -281,7 +312,10 @@ export function isSessionExpired(expiresAt: Date): boolean {
 /**
  * Calculate session timeout
  */
-export function calculateSessionTimeout(lastActivity: Date, timeoutMinutes: number): Date {
+export function calculateSessionTimeout(
+  lastActivity: Date,
+  timeoutMinutes: number,
+): Date {
   return new Date(lastActivity.getTime() + timeoutMinutes * 60 * 1000);
 }
 
@@ -311,21 +345,23 @@ export function createAuditEntry(
     userId,
     timestamp: new Date(),
     details: details || {},
-    ip: '', // Will be filled by server
-    userAgent: navigator?.userAgent || '',
+    ip: "", // Will be filled by server
+    userAgent: navigator?.userAgent || "",
   };
 }
 
 /**
  * Sanitize sensitive data for audit logs
  */
-export function sanitizeForAudit(data: Record<string, unknown>): Record<string, unknown> {
+export function sanitizeForAudit(
+  data: Record<string, unknown>,
+): Record<string, unknown> {
   const sanitized = { ...data };
-  const sensitiveFields = ['password', 'token', 'secret', 'mfa_secret', 'cpf'];
+  const sensitiveFields = ["password", "token", "secret", "mfa_secret", "cpf"];
 
   for (const field of sensitiveFields) {
     if (sanitized[field]) {
-      sanitized[field] = '[REDACTED]';
+      sanitized[field] = "[REDACTED]";
     }
   }
 
@@ -339,19 +375,22 @@ export function sanitizeForAudit(data: Record<string, unknown>): Record<string, 
 /**
  * Validate healthcare provider license
  */
-export function validateProviderLicense(license: string, specialty: string): boolean {
+export function validateProviderLicense(
+  license: string,
+  specialty: string,
+): boolean {
   // Implement specific validation logic based on specialty
   // This is a simplified example
-  const cleanLicense = license.replaceAll(/[^\d]/g, '');
+  const cleanLicense = license.replaceAll(/[^\d]/g, "");
 
   switch (specialty.toLowerCase()) {
-    case 'medicine': {
+    case "medicine": {
       return /^\d{4,8}$/.test(cleanLicense);
     } // CRM format
-    case 'nursing': {
+    case "nursing": {
       return /^\d{6,8}$/.test(cleanLicense);
     } // COREN format
-    case 'psychology': {
+    case "psychology": {
       return /^\d{5,7}$/.test(cleanLicense);
     } // CRP format
     default: {
@@ -369,20 +408,22 @@ export function canAccessPatientData(
   emergencyAccess: boolean = false,
 ): boolean {
   // Emergency access overrides consent requirements
-  if (emergencyAccess) {return true;}
+  if (emergencyAccess) {
+    return true;
+  }
 
   // Admin and doctors need consent for non-emergency access
-  if (['admin', 'doctor'].includes(userRole)) {
+  if (["admin", "doctor"].includes(userRole)) {
     return patientConsent;
   }
 
   // Nurses can access with consent for assigned patients
-  if (userRole === 'nurse') {
+  if (userRole === "nurse") {
     return patientConsent;
   }
 
   // Patients can always access their own data
-  if (userRole === 'patient') {
+  if (userRole === "patient") {
     return true;
   }
 

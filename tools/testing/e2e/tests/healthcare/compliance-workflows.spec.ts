@@ -1,12 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('🏥 Healthcare Compliance Workflows', () => {
+test.describe("🏥 Healthcare Compliance Workflows", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
   });
 
-  test('LGPD Compliance: Data consent management', async ({ page }) => {
+  test("LGPD Compliance: Data consent management", async ({ page }) => {
     await page.click('[data-testid="patient-registration"]');
 
     const consentModal = page.locator('[data-testid="lgpd-consent-modal"]');
@@ -34,21 +34,23 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
     await expect(page.locator('[data-testid="patient-form"]')).toBeVisible();
 
     const auditLog = page.locator('[data-testid="audit-log"]');
-    await expect(auditLog).toContainText('LGPD consent recorded');
+    await expect(auditLog).toContainText("LGPD consent recorded");
   });
 
-  test('ANVISA Compliance: Professional registration validation', async ({ page }) => {
-    await page.goto('/professionals/register');
+  test("ANVISA Compliance: Professional registration validation", async ({
+    page,
+  }) => {
+    await page.goto("/professionals/register");
 
-    await page.fill('[data-testid="professional-name"]', 'Dr. Ana Silva');
+    await page.fill('[data-testid="professional-name"]', "Dr. Ana Silva");
     await page.fill(
       '[data-testid="professional-email"]',
-      'ana.silva@clinic.com',
+      "ana.silva@clinic.com",
     );
-    await page.fill('[data-testid="professional-crm"]', '12345');
+    await page.fill('[data-testid="professional-crm"]', "12345");
     await page.selectOption(
       '[data-testid="professional-specialty"]',
-      'dermatology',
+      "dermatology",
     );
 
     await page.click('[data-testid="validate-crm"]');
@@ -63,7 +65,7 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
       timeout: 10_000,
     });
     await expect(page.locator('[data-testid="crm-status"]')).toContainText(
-      'Valid',
+      "Valid",
     );
 
     await page.click('[data-testid="submit-professional"]');
@@ -76,19 +78,19 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
     ).toBeVisible();
   });
 
-  test('CFM Compliance: Medical procedure documentation', async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', 'medico@clinic.com');
-    await page.fill('[data-testid="password"]', 'SecurePass123');
+  test("CFM Compliance: Medical procedure documentation", async ({ page }) => {
+    await page.goto("/login");
+    await page.fill('[data-testid="email"]', "medico@clinic.com");
+    await page.fill('[data-testid="password"]', "SecurePass123");
     await page.click('[data-testid="login-button"]');
 
-    await page.goto('/procedures/new');
+    await page.goto("/procedures/new");
 
-    await page.fill('[data-testid="patient-id"]', 'PAT001');
-    await page.selectOption('[data-testid="procedure-type"]', 'aesthetic');
+    await page.fill('[data-testid="patient-id"]', "PAT001");
+    await page.selectOption('[data-testid="procedure-type"]', "aesthetic");
     await page.fill(
       '[data-testid="procedure-description"]',
-      'Aplicação de botox',
+      "Aplicação de botox",
     );
 
     await expect(
@@ -102,11 +104,11 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
     await page.check('[data-testid="informed-consent"]');
     await page.fill(
       '[data-testid="medical-indication"]',
-      'Rugas de expressão na testa',
+      "Rugas de expressão na testa",
     );
     await page.fill(
       '[data-testid="risk-assessment"]',
-      'Baixo risco, paciente sem contraindicações',
+      "Baixo risco, paciente sem contraindicações",
     );
 
     await page.click('[data-testid="submit-procedure"]');
@@ -116,24 +118,24 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
     ).toBeVisible();
     await expect(
       page.locator('[data-testid="procedure-registered"]'),
-    ).toContainText('CFM guidelines met');
+    ).toContainText("CFM guidelines met");
   });
 
-  test('Data Security: Patient data access controls', async ({ page }) => {
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', 'receptionist@clinic.com');
-    await page.fill('[data-testid="password"]', 'UserPass123');
+  test("Data Security: Patient data access controls", async ({ page }) => {
+    await page.goto("/login");
+    await page.fill('[data-testid="email"]', "receptionist@clinic.com");
+    await page.fill('[data-testid="password"]', "UserPass123");
     await page.click('[data-testid="login-button"]');
 
-    await page.goto('/patients');
+    await page.goto("/patients");
 
     const patientRow = page.locator('[data-testid="patient-row"]').first();
     await expect(
       patientRow.locator('[data-testid="patient-cpf"]'),
-    ).toContainText('***.**.***.***');
+    ).toContainText("***.**.***.***");
     await expect(
       patientRow.locator('[data-testid="patient-phone"]'),
-    ).toContainText('(11) ****-****');
+    ).toContainText("(11) ****-****");
 
     await patientRow.click();
     await expect(
@@ -141,19 +143,19 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
     ).toBeVisible();
     await expect(
       page.locator('[data-testid="medical-records-restricted"]'),
-    ).toContainText('Access restricted');
+    ).toContainText("Access restricted");
 
     await expect(page.locator('[data-testid="access-audit"]')).toContainText(
-      'Data access logged',
+      "Data access logged",
     );
   });
 
-  test('Emergency Access: Override procedures', async ({ page }) => {
-    await page.goto('/emergency');
+  test("Emergency Access: Override procedures", async ({ page }) => {
+    await page.goto("/emergency");
 
     await expect(page.locator('[data-testid="emergency-mode"]')).toBeVisible();
 
-    await page.fill('[data-testid="emergency-patient-search"]', 'João Silva');
+    await page.fill('[data-testid="emergency-patient-search"]', "João Silva");
     await page.click('[data-testid="emergency-search-button"]');
 
     await expect(
@@ -178,7 +180,7 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
 
     await page.fill(
       '[data-testid="emergency-justification"]',
-      'Paciente inconsciente, necessário verificar alergias',
+      "Paciente inconsciente, necessário verificar alergias",
     );
     await page.click('[data-testid="confirm-emergency-access"]');
 
@@ -187,38 +189,40 @@ test.describe('🏥 Healthcare Compliance Workflows', () => {
     ).toBeVisible();
   });
 
-  test('Appointment Workflow: Complete healthcare journey', async ({ page }) => {
-    await page.goto('/schedule');
-    await page.selectOption('[data-testid="doctor-select"]', 'dr-ana-silva');
-    await page.selectOption('[data-testid="procedure-select"]', 'consultation');
+  test("Appointment Workflow: Complete healthcare journey", async ({
+    page,
+  }) => {
+    await page.goto("/schedule");
+    await page.selectOption('[data-testid="doctor-select"]', "dr-ana-silva");
+    await page.selectOption('[data-testid="procedure-select"]', "consultation");
     await page.click('[data-testid="date-picker"] >> text=25');
     await page.click('[data-testid="time-slot-14-00"]');
 
-    await page.fill('[data-testid="patient-name"]', 'Maria Santos');
-    await page.fill('[data-testid="patient-phone"]', '(11) 99999-9999');
-    await page.fill('[data-testid="patient-email"]', 'maria@email.com');
+    await page.fill('[data-testid="patient-name"]', "Maria Santos");
+    await page.fill('[data-testid="patient-phone"]', "(11) 99999-9999");
+    await page.fill('[data-testid="patient-email"]', "maria@email.com");
 
     await page.click('[data-testid="confirm-appointment"]');
     await expect(
       page.locator('[data-testid="appointment-confirmed"]'),
     ).toBeVisible();
 
-    await page.goto('/checkin');
-    await page.fill('[data-testid="checkin-phone"]', '(11) 99999-9999');
+    await page.goto("/checkin");
+    await page.fill('[data-testid="checkin-phone"]', "(11) 99999-9999");
     await page.click('[data-testid="checkin-button"]');
 
     await expect(
       page.locator('[data-testid="pre-consultation-form"]'),
     ).toBeVisible();
-    await page.fill('[data-testid="chief-complaint"]', 'Consulta de rotina');
+    await page.fill('[data-testid="chief-complaint"]', "Consulta de rotina");
     await page.click('[data-testid="submit-pre-consultation"]');
 
-    await page.goto('/consultation/current');
+    await page.goto("/consultation/current");
     await page.fill(
       '[data-testid="medical-notes"]',
-      'Paciente em bom estado geral',
+      "Paciente em bom estado geral",
     );
-    await page.fill('[data-testid="prescription"]', 'Protetor solar FPS 60');
+    await page.fill('[data-testid="prescription"]', "Protetor solar FPS 60");
     await page.click('[data-testid="complete-consultation"]');
 
     await expect(

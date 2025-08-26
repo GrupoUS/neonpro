@@ -4,7 +4,7 @@
  * Compliance: LGPD/ANVISA/CFM, WCAG 2.1 AA
  */
 
-'use client';
+"use client";
 
 import {
   Activity,
@@ -15,28 +15,34 @@ import {
   Target,
   TrendingDown,
   TrendingUp,
-} from 'lucide-react';
-import { useEffect, useId, useState } from 'react';
-import { Badge } from '../Badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../Card';
-import { Progress } from '../Progress';
+} from "lucide-react";
+import { useEffect, useId, useState } from "react";
+import { Badge } from "../Badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../Card";
+import { Progress } from "../Progress";
 
 // Types for prediction data
 export interface PredictionResult {
   id: string;
-  type: 'diagnosis' | 'risk_assessment' | 'treatment_outcome' | 'health_trend';
+  type: "diagnosis" | "risk_assessment" | "treatment_outcome" | "health_trend";
   title: string;
   confidence: number; // 0-100
   prediction: string;
   details: string[];
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   timeframe: string;
   recommendations: string[];
   dataPoints: {
     label: string;
     value: number;
     unit?: string;
-    trend?: 'up' | 'down' | 'stable';
+    trend?: "up" | "down" | "stable";
   }[];
   lastUpdated: Date;
   source: string;
@@ -74,36 +80,36 @@ function PredictionCard({
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': {
-        return 'destructive';
+      case "critical": {
+        return "destructive";
       }
-      case 'high': {
-        return 'secondary';
+      case "high": {
+        return "secondary";
       }
-      case 'medium': {
-        return 'default';
+      case "medium": {
+        return "default";
       }
-      case 'low': {
-        return 'outline';
+      case "low": {
+        return "outline";
       }
       default: {
-        return 'outline';
+        return "outline";
       }
     }
   };
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
-      case 'critical': {
+      case "critical": {
         return <AlertTriangle className="h-4 w-4" />;
       }
-      case 'high': {
+      case "high": {
         return <TrendingUp className="h-4 w-4" />;
       }
-      case 'medium': {
+      case "medium": {
         return <Activity className="h-4 w-4" />;
       }
-      case 'low': {
+      case "low": {
         return <CheckCircle className="h-4 w-4" />;
       }
       default: {
@@ -114,16 +120,16 @@ function PredictionCard({
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'diagnosis': {
+      case "diagnosis": {
         return <Brain className="h-5 w-5" />;
       }
-      case 'risk_assessment': {
+      case "risk_assessment": {
         return <AlertTriangle className="h-5 w-5" />;
       }
-      case 'treatment_outcome': {
+      case "treatment_outcome": {
         return <Target className="h-5 w-5" />;
       }
-      case 'health_trend': {
+      case "health_trend": {
         return <TrendingUp className="h-5 w-5" />;
       }
       default: {
@@ -137,11 +143,11 @@ function PredictionCard({
       aria-describedby={`${cardId}-details`}
       aria-labelledby={titleId}
       className={`cursor-pointer transition-all hover:shadow-md ${
-        onClick ? 'hover:scale-[1.02]' : ''
+        onClick ? "hover:scale-[1.02]" : ""
       }`}
       onClick={() => onClick?.(prediction)}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick?.(prediction);
         }
@@ -149,7 +155,7 @@ function PredictionCard({
       role="button"
       tabIndex={0}
     >
-      <CardHeader className={compact ? 'pb-2' : ''}>
+      <CardHeader className={compact ? "pb-2" : ""}>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             {getTypeIcon(prediction.type)}
@@ -167,7 +173,8 @@ function PredictionCard({
         </div>
         {!compact && (
           <CardDescription>
-            Previsão gerada por IA • {prediction.timeframe} • {prediction.source}
+            Previsão gerada por IA • {prediction.timeframe} •{" "}
+            {prediction.source}
           </CardDescription>
         )}
       </CardHeader>
@@ -178,8 +185,8 @@ function PredictionCard({
           <p className="mb-2 font-medium text-foreground">
             {prediction.prediction}
           </p>
-          {!compact
-            && prediction.details.map((detail, index) => (
+          {!compact &&
+            prediction.details.map((detail, index) => (
               <p className="mb-1 text-muted-foreground text-sm" key={index}>
                 • {detail}
               </p>
@@ -207,8 +214,12 @@ function PredictionCard({
             {prediction.dataPoints.slice(0, 4).map((dataPoint, index) => (
               <div className="rounded bg-muted/50 p-2 text-center" key={index}>
                 <div className="flex items-center justify-center gap-1 font-medium text-sm">
-                  {dataPoint.trend === 'up' && <TrendingUp className="h-3 w-3 text-green-500" />}
-                  {dataPoint.trend === 'down' && <TrendingDown className="h-3 w-3 text-red-500" />}
+                  {dataPoint.trend === "up" && (
+                    <TrendingUp className="h-3 w-3 text-green-500" />
+                  )}
+                  {dataPoint.trend === "down" && (
+                    <TrendingDown className="h-3 w-3 text-red-500" />
+                  )}
                   {dataPoint.value}
                   {dataPoint.unit && (
                     <span className="text-muted-foreground">
@@ -225,27 +236,27 @@ function PredictionCard({
         )}
 
         {/* Recommendations */}
-        {showRecommendations
-          && !compact
-          && prediction.recommendations.length > 0 && (
-          <div className="border-t pt-3">
-            <h4 className="mb-2 flex items-center gap-2 font-medium text-sm">
-              <Target className="h-4 w-4" />
-              Recomendações
-            </h4>
-            <ul className="space-y-1">
-              {prediction.recommendations.slice(0, 3).map((rec, index) => (
-                <li
-                  className="flex items-start gap-2 text-muted-foreground text-sm"
-                  key={index}
-                >
-                  <CheckCircle className="mt-1 h-3 w-3 flex-shrink-0 text-green-500" />
-                  {rec}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {showRecommendations &&
+          !compact &&
+          prediction.recommendations.length > 0 && (
+            <div className="border-t pt-3">
+              <h4 className="mb-2 flex items-center gap-2 font-medium text-sm">
+                <Target className="h-4 w-4" />
+                Recomendações
+              </h4>
+              <ul className="space-y-1">
+                {prediction.recommendations.slice(0, 3).map((rec, index) => (
+                  <li
+                    className="flex items-start gap-2 text-muted-foreground text-sm"
+                    key={index}
+                  >
+                    <CheckCircle className="mt-1 h-3 w-3 flex-shrink-0 text-green-500" />
+                    {rec}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
         {/* Metadata */}
         <div className="flex items-center justify-between border-t pt-2 text-muted-foreground text-xs">
@@ -275,17 +286,17 @@ export function PredictionDisplay({
   className,
 }: PredictionDisplayProps) {
   const [filteredPredictions, setFilteredPredictions] = useState(predictions);
-  const [selectedType, setSelectedType] = useState<string>('all');
-  const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedSeverity, setSelectedSeverity] = useState<string>("all");
 
   useEffect(() => {
     let filtered = predictions;
 
-    if (selectedType !== 'all') {
+    if (selectedType !== "all") {
       filtered = filtered.filter((p) => p.type === selectedType);
     }
 
-    if (selectedSeverity !== 'all') {
+    if (selectedSeverity !== "all") {
       filtered = filtered.filter((p) => p.severity === selectedSeverity);
     }
 
@@ -344,7 +355,7 @@ export function PredictionDisplay({
               {predictionTypes.map((type) => (
                 <option key={type} value={type}>
                   {type
-                    .replace('_', ' ')
+                    .replace("_", " ")
                     .replaceAll(/\b\w/g, (l) => l.toUpperCase())}
                 </option>
               ))}
@@ -373,33 +384,31 @@ export function PredictionDisplay({
       )}
 
       {/* Predictions list */}
-      {filteredPredictions.length === 0
-        ? (
-          <Card>
-            <CardContent className="py-8 text-center">
-              <Brain className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-              <p className="text-muted-foreground">
-                {predictions.length === 0
-                  ? 'Nenhuma previsão disponível no momento.'
-                  : 'Nenhuma previsão corresponde aos filtros selecionados.'}
-              </p>
-            </CardContent>
-          </Card>
-        )
-        : (
-          <div className={compactView ? 'grid gap-3' : 'space-y-4'}>
-            {filteredPredictions.map((prediction) => (
-              <PredictionCard
-                compact={compactView}
-                key={prediction.id}
-                onClick={onPredictionClick}
-                prediction={prediction}
-                showConfidence={showConfidence}
-                showRecommendations={showRecommendations}
-              />
-            ))}
-          </div>
-        )}
+      {filteredPredictions.length === 0 ? (
+        <Card>
+          <CardContent className="py-8 text-center">
+            <Brain className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+            <p className="text-muted-foreground">
+              {predictions.length === 0
+                ? "Nenhuma previsão disponível no momento."
+                : "Nenhuma previsão corresponde aos filtros selecionados."}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className={compactView ? "grid gap-3" : "space-y-4"}>
+          {filteredPredictions.map((prediction) => (
+            <PredictionCard
+              compact={compactView}
+              key={prediction.id}
+              onClick={onPredictionClick}
+              prediction={prediction}
+              showConfidence={showConfidence}
+              showRecommendations={showRecommendations}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

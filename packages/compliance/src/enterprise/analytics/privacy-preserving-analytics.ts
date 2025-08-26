@@ -4,7 +4,7 @@
  * Compliance: LGPD + Constitutional Privacy + ≥9.9/10 Standards
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Constitutional Privacy Protection Schemas
 const PrivacyPreservingAnalyticsConfigSchema = z.object({
@@ -21,10 +21,10 @@ const PrivacyPreservingAnalyticsConfigSchema = z.object({
 const PrivacyPreservingQuerySchema = z.object({
   query_id: z.string().uuid(),
   query_type: z.enum([
-    'aggregation',
-    'correlation',
-    'distribution',
-    'trend_analysis',
+    "aggregation",
+    "correlation",
+    "distribution",
+    "trend_analysis",
   ]),
   target_columns: z.array(z.string()).min(1),
   filters: z.record(z.any()).optional(),
@@ -34,7 +34,7 @@ const PrivacyPreservingQuerySchema = z.object({
       end_date: z.string().datetime(),
     })
     .optional(),
-  privacy_level: z.enum(['high', 'medium', 'standard']),
+  privacy_level: z.enum(["high", "medium", "standard"]),
   constitutional_approval: z.boolean().default(true),
 });
 
@@ -110,14 +110,14 @@ export class PrivacyPreservingAnalyticsService {
     // Check privacy budget
     if (this.privacyBudgetUsed >= this.config.max_privacy_budget) {
       throw new Error(
-        'Privacy budget exhausted - constitutional privacy protection',
+        "Privacy budget exhausted - constitutional privacy protection",
       );
     }
 
     // Constitutional validation
     if (!validatedQuery.constitutional_approval) {
       throw new Error(
-        'Constitutional approval required for patient data analytics',
+        "Constitutional approval required for patient data analytics",
       );
     }
 
@@ -126,7 +126,7 @@ export class PrivacyPreservingAnalyticsService {
     let privacyMetrics: any;
 
     switch (validatedQuery.privacy_level) {
-      case 'high': {
+      case "high": {
         processedData = await this.applyHighPrivacyProtection(
           rawData,
           validatedQuery,
@@ -137,7 +137,7 @@ export class PrivacyPreservingAnalyticsService {
         );
         break;
       }
-      case 'medium': {
+      case "medium": {
         processedData = await this.applyMediumPrivacyProtection(
           rawData,
           validatedQuery,
@@ -180,7 +180,7 @@ export class PrivacyPreservingAnalyticsService {
       constitutional_validation: true,
       lgpd_compliance_score: 9.9,
       created_at: new Date().toISOString(),
-      created_by: 'privacy-preserving-analytics-service',
+      created_by: "privacy-preserving-analytics-service",
     };
 
     this.auditTrail.push(auditEntry);
@@ -297,7 +297,7 @@ export class PrivacyPreservingAnalyticsService {
     for (const row of data) {
       const key = columns
         .map((col) => this.generalize(row[col], col))
-        .join('|');
+        .join("|");
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -335,7 +335,7 @@ export class PrivacyPreservingAnalyticsService {
     const groups = new Map<string, any[]>();
 
     for (const row of data) {
-      const key = sensitiveColumns.map((col) => row[col]).join('|');
+      const key = sensitiveColumns.map((col) => row[col]).join("|");
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -347,7 +347,7 @@ export class PrivacyPreservingAnalyticsService {
     for (const [_key, group] of [...groups]) {
       // Check if group has at least l distinct values for sensitive attributes
       const distinctValues = new Set(
-        group.map((row) => sensitiveColumns.map((col) => row[col]).join('|')),
+        group.map((row) => sensitiveColumns.map((col) => row[col]).join("|")),
       );
 
       if (distinctValues.size >= l) {
@@ -369,7 +369,7 @@ export class PrivacyPreservingAnalyticsService {
       const noisyRow = { ...row };
       // Add Laplace noise to numeric columns
       for (const [key, value] of Object.entries(row)) {
-        if (typeof value === 'number') {
+        if (typeof value === "number") {
           const sensitivity = 1; // Assuming unit sensitivity
           const noise = this.generateLaplaceNoise(sensitivity / epsilon);
           noisyRow[key] = value + noise;
@@ -392,20 +392,20 @@ export class PrivacyPreservingAnalyticsService {
    * Generalize values for k-anonymity
    */
   private generalize(value: any, column: string): any {
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       // Generalize numeric values to ranges
-      if (column.includes('age')) {
+      if (column.includes("age")) {
         return `${Math.floor(value / 10) * 10}-${Math.floor(value / 10) * 10 + 9}`;
       }
       return Math.round(value / 10) * 10;
     }
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       // Generalize string values
-      if (column.includes('zip') || column.includes('cep')) {
+      if (column.includes("zip") || column.includes("cep")) {
         return `${value.slice(0, 3)}XX`;
       }
-      if (column.includes('email')) {
-        const [local, domain] = value.split('@');
+      if (column.includes("email")) {
+        const [local, domain] = value.split("@");
         return `${local.slice(0, 2)}****@${domain}`;
       }
       return `${value.slice(0, 2)}***`;
@@ -466,16 +466,16 @@ export class PrivacyPreservingAnalyticsService {
     query: PrivacyPreservingQuery,
   ): Promise<any> {
     switch (query.query_type) {
-      case 'aggregation': {
+      case "aggregation": {
         return this.calculateAggregations(data, query.target_columns);
       }
-      case 'correlation': {
+      case "correlation": {
         return this.calculateCorrelations(data, query.target_columns);
       }
-      case 'distribution': {
+      case "distribution": {
         return this.calculateDistributions(data, query.target_columns);
       }
-      case 'trend_analysis': {
+      case "trend_analysis": {
         return this.calculateTrends(data, query.target_columns);
       }
       default: {
@@ -502,7 +502,7 @@ export class PrivacyPreservingAnalyticsService {
 
       // Calculate basic aggregations
       const count = values.length;
-      const numericValues = values.filter((val) => typeof val === 'number');
+      const numericValues = values.filter((val) => typeof val === "number");
 
       if (numericValues.length > 0) {
         const sum = numericValues.reduce((acc, val) => acc + val, 0);
@@ -533,7 +533,7 @@ export class PrivacyPreservingAnalyticsService {
     // Only calculate for numeric columns
     const numericColumns = columns.filter((col) => {
       const values = data.map((row) => row[col]);
-      return values.some((val) => typeof val === 'number');
+      return values.some((val) => typeof val === "number");
     });
 
     for (let i = 0; i < numericColumns.length; i++) {
@@ -552,8 +552,8 @@ export class PrivacyPreservingAnalyticsService {
             col1Values,
             col2Values,
           );
-          correlations[numericColumns[i]][numericColumns[j]] = Math.round(correlation * 1000)
-            / 1000;
+          correlations[numericColumns[i]][numericColumns[j]] =
+            Math.round(correlation * 1000) / 1000;
         } else {
           correlations[numericColumns[i]][numericColumns[j]] = 0;
         }
@@ -600,7 +600,8 @@ export class PrivacyPreservingAnalyticsService {
 
       // Count frequency of each value
       for (const value of values) {
-        const key = typeof value === 'number' ? Math.floor(value / 10) * 10 : value;
+        const key =
+          typeof value === "number" ? Math.floor(value / 10) * 10 : value;
         valueFrequency.set(key, (valueFrequency.get(key) || 0) + 1);
       }
 
@@ -625,9 +626,9 @@ export class PrivacyPreservingAnalyticsService {
     const trends: Record<string, any> = {};
 
     // Group data by time periods (assuming created_at or date column exists)
-    const timeColumn = 'created_at';
+    const timeColumn = "created_at";
     if (!data.some((row) => row[timeColumn])) {
-      return { error: 'No time column found for trend analysis' };
+      return { error: "No time column found for trend analysis" };
     }
 
     for (const column of columns) {
@@ -648,11 +649,12 @@ export class PrivacyPreservingAnalyticsService {
       // Calculate trend data
       const trendData = [...timeGroups.entries()]
         .map(([period, values]) => {
-          const numericValues = values.filter((val) => typeof val === 'number');
-          const average = numericValues.length > 0
-            ? numericValues.reduce((sum, val) => sum + val, 0)
-              / numericValues.length
-            : 0;
+          const numericValues = values.filter((val) => typeof val === "number");
+          const average =
+            numericValues.length > 0
+              ? numericValues.reduce((sum, val) => sum + val, 0) /
+                numericValues.length
+              : 0;
 
           return {
             period,
@@ -673,14 +675,14 @@ export class PrivacyPreservingAnalyticsService {
    */
   private getPrivacyTechnique(privacyLevel: string): string {
     switch (privacyLevel) {
-      case 'high': {
-        return 'k-anonymity + l-diversity + differential privacy';
+      case "high": {
+        return "k-anonymity + l-diversity + differential privacy";
       }
-      case 'medium': {
-        return 'k-anonymity + differential privacy';
+      case "medium": {
+        return "k-anonymity + differential privacy";
       }
       default: {
-        return 'k-anonymity';
+        return "k-anonymity";
       }
     }
   }
@@ -688,7 +690,7 @@ export class PrivacyPreservingAnalyticsService {
   /**
    * Get current privacy budget usage
    */
-  getPrivacyBudgetUsage(): { used: number; total: number; remaining: number; } {
+  getPrivacyBudgetUsage(): { used: number; total: number; remaining: number } {
     return {
       used: this.privacyBudgetUsed,
       total: this.config.max_privacy_budget,
@@ -724,19 +726,19 @@ export class PrivacyPreservingAnalyticsService {
 
     // Check privacy budget usage
     if (this.privacyBudgetUsed > this.config.max_privacy_budget * 0.9) {
-      issues.push('Privacy budget usage approaching limit');
+      issues.push("Privacy budget usage approaching limit");
       score -= 0.1;
     }
 
     // Check audit trail completeness
     if (!this.config.audit_trail_enabled) {
-      issues.push('Audit trail not enabled');
+      issues.push("Audit trail not enabled");
       score -= 0.2;
     }
 
     // Check LGPD compliance mode
     if (!this.config.lgpd_compliance_mode) {
-      issues.push('LGPD compliance mode not enabled');
+      issues.push("LGPD compliance mode not enabled");
       score -= 0.2;
     }
 
@@ -763,32 +765,32 @@ export function createPrivacyPreservingAnalyticsService(
 export async function validatePrivacyPreservingAnalytics(
   query: PrivacyPreservingQuery,
   config: PrivacyPreservingAnalyticsConfig,
-): Promise<{ valid: boolean; violations: string[]; }> {
+): Promise<{ valid: boolean; violations: string[] }> {
   const violations: string[] = [];
 
   // Validate privacy level requirements
   if (
-    query.privacy_level === 'high'
-    && config.differential_privacy_epsilon > 1
+    query.privacy_level === "high" &&
+    config.differential_privacy_epsilon > 1
   ) {
-    violations.push('High privacy level requires epsilon ≤ 1.0');
+    violations.push("High privacy level requires epsilon ≤ 1.0");
   }
 
   // Validate k-anonymity requirements
-  if (config.k_anonymity_k < 5 && query.privacy_level === 'high') {
-    violations.push('High privacy level requires k ≥ 5');
+  if (config.k_anonymity_k < 5 && query.privacy_level === "high") {
+    violations.push("High privacy level requires k ≥ 5");
   }
 
   // Validate constitutional approval
   if (!query.constitutional_approval) {
     violations.push(
-      'Constitutional approval required for patient data analytics',
+      "Constitutional approval required for patient data analytics",
     );
   }
 
   // Validate LGPD compliance
   if (!config.lgpd_compliance_mode) {
-    violations.push('LGPD compliance mode must be enabled');
+    violations.push("LGPD compliance mode must be enabled");
   }
 
   return {

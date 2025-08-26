@@ -6,14 +6,19 @@
  * automatic retry, authentication management, and LGPD compliance.
  */
 
-import { hc } from 'hono/client';
-import type { z } from 'zod';
+import { hc } from "hono/client";
+import type { z } from "zod";
 // Import backend app types
 // import type { AppType } from '../../apps/api/src/index';
 // Import validation schemas
-import { LoginRequestSchema, LoginResponseSchema, RefreshTokenRequestSchema, RefreshTokenResponseSchema } from './schemas';
-import type { AuditActionSchema, UserBaseSchema } from './schemas';
-import type { RpcClient } from './types';
+import {
+  LoginRequestSchema,
+  LoginResponseSchema,
+  RefreshTokenRequestSchema,
+  RefreshTokenResponseSchema,
+} from "./schemas";
+import type { AuditActionSchema, UserBaseSchema } from "./schemas";
+import type { RpcClient } from "./types";
 
 // Enhanced API Client configuration
 export interface ApiClientConfig {
@@ -94,15 +99,15 @@ export interface ApiResponse<T = unknown> {
 
 // Default configuration
 const DEFAULT_CONFIG: Required<
-  Omit<ApiClientConfig, 'onRequest' | 'onResponse' | 'onError' | 'onAuditLog'>
+  Omit<ApiClientConfig, "onRequest" | "onResponse" | "onError" | "onAuditLog">
 > = {
-  baseUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
   timeout: 30_000, // 30 seconds
   retries: 3,
   headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    'X-Client-Version': process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "X-Client-Version": process.env.NEXT_PUBLIC_APP_VERSION || "1.0.0",
   },
   enableAuditLogging: true,
   enableRequestValidation: true,
@@ -139,16 +144,16 @@ class AuthTokenManager {
     }
 
     // Store in localStorage if available (browser)
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('neonpro_access_token', accessToken);
-      localStorage.setItem('neonpro_refresh_token', refreshToken);
-      localStorage.setItem('neonpro_session_id', this.sessionId);
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("neonpro_access_token", accessToken);
+      localStorage.setItem("neonpro_refresh_token", refreshToken);
+      localStorage.setItem("neonpro_session_id", this.sessionId);
       if (user) {
-        localStorage.setItem('neonpro_user', JSON.stringify(user));
+        localStorage.setItem("neonpro_user", JSON.stringify(user));
       }
       if (this.tokenExpiry) {
         localStorage.setItem(
-          'neonpro_token_expiry',
+          "neonpro_token_expiry",
           this.tokenExpiry.toISOString(),
         );
       }
@@ -161,9 +166,9 @@ class AuthTokenManager {
     }
 
     // Try to restore from localStorage (browser)
-    if (typeof localStorage !== 'undefined') {
-      this.accessToken = localStorage.getItem('neonpro_access_token');
-      const expiryStr = localStorage.getItem('neonpro_token_expiry');
+    if (typeof localStorage !== "undefined") {
+      this.accessToken = localStorage.getItem("neonpro_access_token");
+      const expiryStr = localStorage.getItem("neonpro_token_expiry");
       if (expiryStr) {
         this.tokenExpiry = new Date(expiryStr);
       }
@@ -182,8 +187,8 @@ class AuthTokenManager {
     }
 
     // Try to get from localStorage (browser)
-    if (typeof localStorage !== 'undefined') {
-      this.refreshToken = localStorage.getItem('neonpro_refresh_token');
+    if (typeof localStorage !== "undefined") {
+      this.refreshToken = localStorage.getItem("neonpro_refresh_token");
     }
 
     return this.refreshToken;
@@ -195,8 +200,8 @@ class AuthTokenManager {
     }
 
     // Try to get from localStorage (browser)
-    if (typeof localStorage !== 'undefined') {
-      this.sessionId = localStorage.getItem('neonpro_session_id');
+    if (typeof localStorage !== "undefined") {
+      this.sessionId = localStorage.getItem("neonpro_session_id");
     }
 
     return this.sessionId;
@@ -208,8 +213,8 @@ class AuthTokenManager {
     }
 
     // Try to restore from localStorage (browser)
-    if (typeof localStorage !== 'undefined') {
-      const userStr = localStorage.getItem('neonpro_user');
+    if (typeof localStorage !== "undefined") {
+      const userStr = localStorage.getItem("neonpro_user");
       if (userStr) {
         try {
           this.user = JSON.parse(userStr);
@@ -246,12 +251,12 @@ class AuthTokenManager {
     this.refreshPromise = undefined;
 
     // Clear from localStorage (browser)
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('neonpro_access_token');
-      localStorage.removeItem('neonpro_refresh_token');
-      localStorage.removeItem('neonpro_session_id');
-      localStorage.removeItem('neonpro_user');
-      localStorage.removeItem('neonpro_token_expiry');
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("neonpro_access_token");
+      localStorage.removeItem("neonpro_refresh_token");
+      localStorage.removeItem("neonpro_session_id");
+      localStorage.removeItem("neonpro_user");
+      localStorage.removeItem("neonpro_token_expiry");
     }
   }
 
@@ -263,7 +268,7 @@ class AuthTokenManager {
 
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
     this.refreshPromise = (async () => {
@@ -295,7 +300,7 @@ class AuthTokenManager {
           return validatedResponse.data.access_token;
         }
 
-        throw new Error('Invalid refresh response');
+        throw new Error("Invalid refresh response");
       } catch (error) {
         this.clearTokens();
         throw error;
@@ -360,10 +365,10 @@ class AuditLogger {
 
       // Send to external audit system if configured
       // This could be sent to your backend audit endpoint
-      if (typeof window !== 'undefined' && window.navigator.sendBeacon) {
+      if (typeof window !== "undefined" && window.navigator.sendBeacon) {
         // Use sendBeacon for reliable audit logging
         const auditData = JSON.stringify(validatedEntry);
-        window.navigator.sendBeacon('/api/v1/audit-log', auditData);
+        window.navigator.sendBeacon("/api/v1/audit-log", auditData);
       }
     } catch {}
   }
@@ -384,12 +389,12 @@ const auditLogger = new AuditLogger();
 export const ApiUtils = {
   // Get client IP (best effort)
   getClientIP: (): string => {
-    if (typeof window === 'undefined') {
-      return 'unknown';
+    if (typeof window === "undefined") {
+      return "unknown";
     }
 
     // In production, this would typically come from headers set by your proxy/CDN
-    return 'client-ip'; // Placeholder
+    return "client-ip"; // Placeholder
   },
 
   // Generate request ID
@@ -400,7 +405,7 @@ export const ApiUtils = {
   // Check if running in browser
   isBrowser: (): boolean => {
     return (
-      typeof window !== 'undefined' && typeof window.navigator !== 'undefined'
+      typeof window !== "undefined" && typeof window.navigator !== "undefined"
     );
   },
 
@@ -409,16 +414,16 @@ export const ApiUtils = {
     if (ApiUtils.isBrowser()) {
       return window.navigator.userAgent;
     }
-    return 'NeonPro-Client/1.0.0';
+    return "NeonPro-Client/1.0.0";
   },
 
   // Format bytes
   formatBytes: (bytes: number): string => {
     if (bytes === 0) {
-      return '0 Bytes';
+      return "0 Bytes";
     }
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   },
@@ -427,12 +432,12 @@ export const ApiUtils = {
   isNetworkError: (error: Error): boolean => {
     // Network errors that should be retried
     return (
-      error.name === 'TypeError'
-      || error.name === 'NetworkError'
-      || error.message.includes('fetch')
-      || error.message.includes('network')
-      || error.message.includes('timeout')
-      || error.message.includes('connection')
+      error.name === "TypeError" ||
+      error.name === "NetworkError" ||
+      error.message.includes("fetch") ||
+      error.message.includes("network") ||
+      error.message.includes("timeout") ||
+      error.message.includes("connection")
     );
   },
 };
@@ -458,8 +463,8 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       // Build headers
       const authHeaders: Record<string, string> = {
         ...finalConfig.headers,
-        'X-Request-ID': requestId,
-        'X-Timestamp': new Date().toISOString(),
+        "X-Request-ID": requestId,
+        "X-Timestamp": new Date().toISOString(),
       };
 
       if (token) {
@@ -468,14 +473,14 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
       const sessionId = tokenManager.getSessionId();
       if (sessionId) {
-        authHeaders['X-Session-ID'] = sessionId;
+        authHeaders["X-Session-ID"] = sessionId;
       }
 
       // Add user context
       const user = tokenManager.getUser();
       if (user) {
-        authHeaders['X-User-ID'] = user.id;
-        authHeaders['X-User-Role'] = user.role;
+        authHeaders["X-User-ID"] = user.id;
+        authHeaders["X-User-Role"] = user.role;
       }
 
       // Merge headers with init
@@ -490,19 +495,19 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
       let response: Response;
       let lastError: Error | null;
-      const url = typeof input === 'string' ? input : input.toString();
+      const url = typeof input === "string" ? input : input.toString();
 
       // Extract resource info for audit logging
-      const urlParts = url.split('/');
-      const resourceType = urlParts.at(-2) || 'unknown';
-      const action = (init?.method?.toLowerCase() as any) || 'read';
+      const urlParts = url.split("/");
+      const resourceType = urlParts.at(-2) || "unknown";
+      const action = (init?.method?.toLowerCase() as any) || "read";
 
       // Retry logic
       for (let attempt = 0; attempt <= finalConfig.retries; attempt++) {
         try {
           const requestContext: RequestContext = {
             url,
-            method: init?.method || 'GET',
+            method: init?.method || "GET",
             headers: (init?.headers as Record<string, string>) || {},
             body: init?.body,
             init: init || {},
@@ -550,18 +555,18 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             const user = tokenManager.getUser();
             auditLogger.log({
               timestamp: new Date().toISOString(),
-              userId: user?.id || '',
-              sessionId: tokenManager.getSessionId() || '',
+              userId: user?.id || "",
+              sessionId: tokenManager.getSessionId() || "",
               action: action as z.infer<typeof AuditActionSchema>,
               resource_type: resourceType,
               ip_address: ApiUtils.getClientIP(),
               user_agent: ApiUtils.getUserAgent(),
               success: response.ok,
-              error_message: response.ok ? '' : `HTTP ${response.status}`,
+              error_message: response.ok ? "" : `HTTP ${response.status}`,
               request_duration: duration,
               request_size: init?.body ? JSON.stringify(init.body).length : 0,
               response_size: Number.parseInt(
-                response.headers.get('content-length') || '0',
+                response.headers.get("content-length") || "0",
                 10,
               ),
             });
@@ -577,8 +582,8 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             const user = tokenManager.getUser();
             auditLogger.log({
               timestamp: new Date().toISOString(),
-              userId: user?.id || '',
-              sessionId: tokenManager.getSessionId() || '',
+              userId: user?.id || "",
+              sessionId: tokenManager.getSessionId() || "",
               action: action as z.infer<typeof AuditActionSchema>,
               resource_type: resourceType,
               ip_address: ApiUtils.getClientIP(),
@@ -593,7 +598,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
           const errorContext: ErrorContext = {
             request: {
               url,
-              method: init?.method || 'GET',
+              method: init?.method || "GET",
               headers: (init?.headers as Record<string, string>) || {},
               body: init?.body,
               init: init || {},
@@ -601,8 +606,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             },
             error: lastError,
             attempt,
-            isRetryable: attempt < finalConfig.retries
-              && !lastError.message.includes('AbortError'),
+            isRetryable:
+              attempt < finalConfig.retries &&
+              !lastError.message.includes("AbortError"),
           };
 
           if (config.onError) {
@@ -626,7 +632,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       }
 
       // If we get here, all retries failed
-      throw lastError || new Error('All retry attempts failed');
+      throw lastError || new Error("All retry attempts failed");
     },
   });
 
@@ -711,13 +717,13 @@ export const ApiHelpers = {
         return {
           success: false,
           error: {
-            code: data.error?.code || 'API_ERROR',
+            code: data.error?.code || "API_ERROR",
             details: data.error?.details,
             validation_errors: data.error?.validation_errors,
           },
-          message: data.message || 'Unknown error occurred',
+          message: data.message || "Unknown error occurred",
           meta: {
-            request_id: response.headers.get('X-Request-ID') || 'unknown',
+            request_id: response.headers.get("X-Request-ID") || "unknown",
             timestamp: new Date().toISOString(),
             duration: 0, // Would need to be calculated from calling context
           },
@@ -733,12 +739,12 @@ export const ApiHelpers = {
           return {
             success: false,
             error: {
-              code: 'VALIDATION_ERROR',
+              code: "VALIDATION_ERROR",
               details: { validation_error: String(error) },
             },
-            message: 'Response validation failed',
+            message: "Response validation failed",
             meta: {
-              request_id: response.headers.get('X-Request-ID') || 'unknown',
+              request_id: response.headers.get("X-Request-ID") || "unknown",
               timestamp: new Date().toISOString(),
               duration: 0,
             },
@@ -751,24 +757,24 @@ export const ApiHelpers = {
       return {
         success: true,
         data: validatedData,
-        message: data.message || 'Success',
+        message: data.message || "Success",
         meta: {
-          request_id: response.headers.get('X-Request-ID') || 'unknown',
+          request_id: response.headers.get("X-Request-ID") || "unknown",
           timestamp: new Date().toISOString(),
           duration: 0, // Would need to be calculated from calling context
-          cached: response.headers.get('X-Cache') === 'HIT',
+          cached: response.headers.get("X-Cache") === "HIT",
         },
       };
     } catch (error) {
       return {
         success: false,
         error: {
-          code: 'PARSE_ERROR',
+          code: "PARSE_ERROR",
           details: { parse_error: String(error) },
         },
-        message: 'Failed to parse response',
+        message: "Failed to parse response",
         meta: {
-          request_id: response.headers.get('X-Request-ID') || 'unknown',
+          request_id: response.headers.get("X-Request-ID") || "unknown",
           timestamp: new Date().toISOString(),
           duration: 0,
         },
@@ -782,9 +788,9 @@ export const ApiHelpers = {
     params?: Record<string, unknown>,
     userId?: string,
   ): string[] => {
-    const key = ['api', endpoint];
+    const key = ["api", endpoint];
     if (userId) {
-      key.push('user', userId);
+      key.push("user", userId);
     }
     if (params && Object.keys(params).length > 0) {
       key.push(JSON.stringify(params));
@@ -794,7 +800,7 @@ export const ApiHelpers = {
 
   // Format error message for display with validation details
   formatError: (error: unknown): string => {
-    if (typeof error === 'string') {
+    if (typeof error === "string") {
       return error;
     }
 
@@ -802,32 +808,32 @@ export const ApiHelpers = {
       return error.message;
     }
 
-    if (typeof error === 'object' && error && 'message' in error) {
+    if (typeof error === "object" && error && "message" in error) {
       return String((error as any).message);
     }
 
-    if (typeof error === 'object' && error && 'error' in error) {
+    if (typeof error === "object" && error && "error" in error) {
       const apiError = error as any;
       if (apiError.error?.validation_errors?.length > 0) {
         return apiError.error.validation_errors
           .map((ve: any) => `${ve.field}: ${ve.message}`)
-          .join(', ');
+          .join(", ");
       }
-      return apiError.message || 'API error occurred';
+      return apiError.message || "API error occurred";
     }
 
-    return 'An unexpected error occurred';
+    return "An unexpected error occurred";
   },
 
   // Check if error is network/connectivity issue
   isNetworkError: (error: unknown): boolean => {
     if (error instanceof Error) {
       return (
-        error.message.includes('fetch')
-        || error.message.includes('network')
-        || error.message.includes('timeout')
-        || error.name === 'AbortError'
-        || error.name === 'NetworkError'
+        error.message.includes("fetch") ||
+        error.message.includes("network") ||
+        error.message.includes("timeout") ||
+        error.name === "AbortError" ||
+        error.name === "NetworkError"
       );
     }
     return false;
@@ -835,14 +841,14 @@ export const ApiHelpers = {
 
   // Check if error is authentication issue
   isAuthError: (error: unknown): boolean => {
-    if (typeof error === 'object' && error && 'error' in error) {
+    if (typeof error === "object" && error && "error" in error) {
       const errorCode = (error as any).error?.code;
       return [
-        'UNAUTHORIZED',
-        'FORBIDDEN',
-        'TOKEN_EXPIRED',
-        'INVALID_CREDENTIALS',
-        'SESSION_EXPIRED',
+        "UNAUTHORIZED",
+        "FORBIDDEN",
+        "TOKEN_EXPIRED",
+        "INVALID_CREDENTIALS",
+        "SESSION_EXPIRED",
       ].includes(errorCode);
     }
     return false;
@@ -850,11 +856,11 @@ export const ApiHelpers = {
 
   // Check if error is validation issue
   isValidationError: (error: unknown): boolean => {
-    if (typeof error === 'object' && error && 'error' in error) {
+    if (typeof error === "object" && error && "error" in error) {
       const apiError = error as any;
       return (
-        apiError.error?.code === 'VALIDATION_ERROR'
-        || apiError.error?.validation_errors?.length > 0
+        apiError.error?.code === "VALIDATION_ERROR" ||
+        apiError.error?.validation_errors?.length > 0
       );
     }
     return false;
@@ -862,9 +868,9 @@ export const ApiHelpers = {
 
   // Check if error is rate limit issue
   isRateLimitError: (error: unknown): boolean => {
-    if (typeof error === 'object' && error && 'error' in error) {
+    if (typeof error === "object" && error && "error" in error) {
       const errorCode = (error as any).error?.code;
-      return errorCode === 'RATE_LIMIT_EXCEEDED';
+      return errorCode === "RATE_LIMIT_EXCEEDED";
     }
     return false;
   },

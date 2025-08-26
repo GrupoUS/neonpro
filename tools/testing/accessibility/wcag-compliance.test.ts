@@ -13,10 +13,10 @@
  * - Emergency access procedures
  */
 
-import { chromium } from '@playwright/test';
-import type { Browser, Page } from '@playwright/test';
-import { getViolations, injectAxe } from 'axe-playwright';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { chromium } from "@playwright/test";
+import type { Browser, Page } from "@playwright/test";
+import { getViolations, injectAxe } from "axe-playwright";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // WCAG 2.1 AA+ Color Contrast Requirements
 const _COLOR_CONTRAST_STANDARDS = {
@@ -40,7 +40,7 @@ interface AccessibilityTestResult {
   passes: number;
   incomplete: number;
   timestamp: string;
-  wcagLevel: 'A' | 'AA' | 'AAA';
+  wcagLevel: "A" | "AA" | "AAA";
 }
 
 class AccessibilityTester {
@@ -51,7 +51,7 @@ class AccessibilityTester {
   async setup(): Promise<void> {
     this.browser = await chromium.launch({
       headless: true,
-      args: ['--disable-web-security', '--allow-running-insecure-content'],
+      args: ["--disable-web-security", "--allow-running-insecure-content"],
     });
     this.page = await this.browser.newPage();
 
@@ -59,7 +59,7 @@ class AccessibilityTester {
     await this.page.setViewportSize({ width: 1920, height: 1080 });
     await this.page.addInitScript(() => {
       // Disable animations for consistent testing
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = `
         *, *::before, *::after {
           animation-duration: 0.01ms !important;
@@ -82,32 +82,32 @@ class AccessibilityTester {
 
   async testPageAccessibility(
     url: string,
-    wcagLevel: 'A' | 'AA' | 'AAA' = 'AA',
+    wcagLevel: "A" | "AA" | "AAA" = "AA",
   ): Promise<AccessibilityTestResult> {
     if (!this.page) {
-      throw new Error('AccessibilityTester not initialized');
+      throw new Error("AccessibilityTester not initialized");
     }
 
     await this.page.goto(url);
     await injectAxe(this.page);
 
     const violations = await getViolations(this.page, {
-      tags: [`wcag2${wcagLevel.toLowerCase()}`, 'best-practice'],
+      tags: [`wcag2${wcagLevel.toLowerCase()}`, "best-practice"],
       rules: {
         // Enable healthcare-specific rules
-        'color-contrast': { enabled: true },
-        'keyboard-navigation': { enabled: true },
-        'aria-labels': { enabled: true },
-        'form-labels': { enabled: true },
-        'focus-management': { enabled: true },
+        "color-contrast": { enabled: true },
+        "keyboard-navigation": { enabled: true },
+        "aria-labels": { enabled: true },
+        "form-labels": { enabled: true },
+        "focus-management": { enabled: true },
       },
     });
 
     const result: AccessibilityTestResult = {
       url,
       violations,
-      passes: violations.filter((v) => v.impact === 'minor').length,
-      incomplete: violations.filter((v) => v.impact === 'moderate').length,
+      passes: violations.filter((v) => v.impact === "minor").length,
+      incomplete: violations.filter((v) => v.impact === "moderate").length,
       timestamp: new Date().toISOString(),
       wcagLevel,
     };
@@ -132,9 +132,9 @@ class AccessibilityTester {
     let successfulTabStops = 0;
 
     for (let i = 0; i < interactiveElements; i++) {
-      await this.page.keyboard.press('Tab');
+      await this.page.keyboard.press("Tab");
 
-      const focusedElement = await this.page.locator(':focus').first();
+      const focusedElement = await this.page.locator(":focus").first();
       if (await focusedElement.isVisible()) {
         successfulTabStops++;
       }
@@ -164,7 +164,7 @@ class AccessibilityTester {
   }
 }
 
-describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
+describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
   let accessibilityTester: AccessibilityTester;
 
   beforeAll(async () => {
@@ -176,38 +176,38 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
     await accessibilityTester.cleanup();
   });
 
-  describe('🏥 Healthcare Form Accessibility', () => {
-    it('should ensure patient registration form is fully accessible', async () => {
+  describe("🏥 Healthcare Form Accessibility", () => {
+    it("should ensure patient registration form is fully accessible", async () => {
       const result = await accessibilityTester.testPageAccessibility(
-        '/register/patient',
-        'AA',
+        "/register/patient",
+        "AA",
       );
 
       // No critical accessibility violations
       const criticalViolations = result.violations.filter(
-        (v) => v.impact === 'critical' || v.impact === 'serious',
+        (v) => v.impact === "critical" || v.impact === "serious",
       );
       expect(criticalViolations).toHaveLength(0);
 
       // All form fields should have proper labels
       const labelViolations = result.violations.filter(
-        (v) => v.id === 'label' || v.id === 'form-field-multiple-labels',
+        (v) => v.id === "label" || v.id === "form-field-multiple-labels",
       );
       expect(labelViolations).toHaveLength(0);
     });
 
-    it('should validate medical history form accessibility', async () => {
+    it("should validate medical history form accessibility", async () => {
       const result = await accessibilityTester.testPageAccessibility(
-        '/forms/medical-history',
-        'AA',
+        "/forms/medical-history",
+        "AA",
       );
 
       // Check for healthcare-specific accessibility requirements
       const healthcareViolations = result.violations.filter(
         (v) =>
-          v.description?.includes('medical')
-          || v.description?.includes('health')
-          || v.tags?.includes('healthcare'),
+          v.description?.includes("medical") ||
+          v.description?.includes("health") ||
+          v.tags?.includes("healthcare"),
       );
 
       expect(healthcareViolations).toHaveLength(0);
@@ -215,76 +215,75 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       // Verify complex medical forms have adequate error handling
       const errorHandlingViolations = result.violations.filter(
         (v) =>
-          v.id === 'aria-valid'
-          || v.id === 'aria-describedby'
-          || v.id === 'aria-errormessage',
+          v.id === "aria-valid" ||
+          v.id === "aria-describedby" ||
+          v.id === "aria-errormessage",
       );
 
       expect(errorHandlingViolations).toHaveLength(0);
     });
 
-    it('should ensure appointment booking form meets accessibility standards', async () => {
+    it("should ensure appointment booking form meets accessibility standards", async () => {
       const result = await accessibilityTester.testPageAccessibility(
-        '/appointments/book',
-        'AA',
+        "/appointments/book",
+        "AA",
       );
 
       // Date/time pickers must be accessible
       const datePickerViolations = result.violations.filter((v) =>
         v.nodes?.some(
-          (node) => node.html?.includes('date') || node.html?.includes('time'),
-        )
+          (node) => node.html?.includes("date") || node.html?.includes("time"),
+        ),
       );
 
       expect(datePickerViolations).toHaveLength(0);
 
       // Verify keyboard navigation works for appointment booking
-      const keyboardAccessible = await accessibilityTester.testKeyboardNavigation(
-        '/appointments/book',
-      );
+      const keyboardAccessible =
+        await accessibilityTester.testKeyboardNavigation("/appointments/book");
       expect(keyboardAccessible).toBeTruthy();
     });
   });
-  describe('🎨 Color Contrast & Visual Accessibility', () => {
-    it('should meet WCAG AA color contrast standards', async () => {
+  describe("🎨 Color Contrast & Visual Accessibility", () => {
+    it("should meet WCAG AA color contrast standards", async () => {
       const testPages = [
-        '/dashboard',
-        '/patients',
-        '/appointments',
-        '/professionals',
-        '/forms/patient-registration',
+        "/dashboard",
+        "/patients",
+        "/appointments",
+        "/professionals",
+        "/forms/patient-registration",
       ];
 
       for (const page of testPages) {
         const result = await accessibilityTester.testPageAccessibility(
           page,
-          'AA',
+          "AA",
         );
 
         // Check for color contrast violations
         const contrastViolations = result.violations.filter(
-          (v) => v.id === 'color-contrast',
+          (v) => v.id === "color-contrast",
         );
         expect(contrastViolations).toHaveLength(0);
       }
     });
 
-    it('should provide adequate visual indicators for healthcare alerts', async () => {
+    it("should provide adequate visual indicators for healthcare alerts", async () => {
       // Test emergency alerts and critical healthcare notifications
-      const alertTypes = ['emergency', 'critical', 'warning', 'info'];
+      const alertTypes = ["emergency", "critical", "warning", "info"];
 
       for (const alertType of alertTypes) {
         const mockAlert = {
           type: alertType,
-          message: 'Test healthcare alert message',
-          priority: alertType === 'emergency' ? 'HIGH' : 'MEDIUM',
+          message: "Test healthcare alert message",
+          priority: alertType === "emergency" ? "HIGH" : "MEDIUM",
         };
 
         // Simulate alert display
         const alertAccessibility = await testHealthcareAlert(mockAlert);
 
         // Emergency alerts should have high contrast and multiple indicators
-        if (alertType === 'emergency') {
+        if (alertType === "emergency") {
           expect(alertAccessibility.hasHighContrast).toBeTruthy();
           expect(alertAccessibility.hasAudioIndicator).toBeTruthy();
           expect(alertAccessibility.hasVisualIndicator).toBeTruthy();
@@ -295,14 +294,14 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       }
     });
 
-    it('should support users with color blindness', async () => {
-      const colorBlindnessTypes = ['deuteranopia', 'protanopia', 'tritanopia'];
+    it("should support users with color blindness", async () => {
+      const colorBlindnessTypes = ["deuteranopia", "protanopia", "tritanopia"];
 
       for (const type of colorBlindnessTypes) {
         // Simulate color blindness filter
         const colorBlindnessTest = await simulateColorBlindness(
           type,
-          '/dashboard',
+          "/dashboard",
         );
 
         expect(colorBlindnessTest.informationConveyedWithoutColor).toBeTruthy();
@@ -312,17 +311,18 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
     });
   });
 
-  describe('⌨️ Keyboard Navigation & Focus Management', () => {
-    it('should provide full keyboard accessibility for patient management', async () => {
+  describe("⌨️ Keyboard Navigation & Focus Management", () => {
+    it("should provide full keyboard accessibility for patient management", async () => {
       const keyboardNavigationPages = [
-        '/patients/search',
-        '/patients/new',
-        '/patients/edit/123',
-        '/medical-records/123',
+        "/patients/search",
+        "/patients/new",
+        "/patients/edit/123",
+        "/medical-records/123",
       ];
 
       for (const page of keyboardNavigationPages) {
-        const keyboardAccessible = await accessibilityTester.testKeyboardNavigation(page);
+        const keyboardAccessible =
+          await accessibilityTester.testKeyboardNavigation(page);
         expect(keyboardAccessible).toBeTruthy();
 
         // Test specific keyboard interactions
@@ -335,7 +335,7 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       }
     });
 
-    it('should handle emergency access via keyboard only', async () => {
+    it("should handle emergency access via keyboard only", async () => {
       const emergencyAccessTest = await testEmergencyKeyboardAccess();
 
       // Emergency features must be accessible within 3 seconds via keyboard
@@ -346,12 +346,12 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       expect(emergencyAccessTest.noMouseRequired).toBeTruthy();
     });
 
-    it('should manage focus properly in modal dialogs', async () => {
+    it("should manage focus properly in modal dialogs", async () => {
       const modalTests = [
-        'patient-details-modal',
-        'appointment-booking-modal',
-        'prescription-modal',
-        'emergency-alert-modal',
+        "patient-details-modal",
+        "appointment-booking-modal",
+        "prescription-modal",
+        "emergency-alert-modal",
       ];
 
       for (const modalType of modalTests) {
@@ -365,44 +365,45 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
     });
   });
 
-  describe('🔊 Screen Reader & Assistive Technology Support', () => {
-    it('should provide comprehensive ARIA labels for medical interfaces', async () => {
+  describe("🔊 Screen Reader & Assistive Technology Support", () => {
+    it("should provide comprehensive ARIA labels for medical interfaces", async () => {
       const medicalInterfaces = [
-        '/dashboard/analytics',
-        '/patients/vital-signs',
-        '/appointments/calendar',
-        '/prescriptions/manage',
+        "/dashboard/analytics",
+        "/patients/vital-signs",
+        "/appointments/calendar",
+        "/prescriptions/manage",
       ];
 
       for (const interface_ of medicalInterfaces) {
         const result = await accessibilityTester.testPageAccessibility(
           interface_,
-          'AA',
+          "AA",
         );
 
         // Check for ARIA-related violations
         const ariaViolations = result.violations.filter(
           (v) =>
-            v.id.includes('aria')
-            || v.id.includes('label')
-            || v.id.includes('role'),
+            v.id.includes("aria") ||
+            v.id.includes("label") ||
+            v.id.includes("role"),
         );
 
         expect(ariaViolations).toHaveLength(0);
 
         // Verify medical data has proper semantic markup
-        const medicalDataAccessibility = await testMedicalDataAccessibility(interface_);
+        const medicalDataAccessibility =
+          await testMedicalDataAccessibility(interface_);
         expect(medicalDataAccessibility.hasProperSemantics).toBeTruthy();
         expect(medicalDataAccessibility.hasContextualLabels).toBeTruthy();
       }
     });
 
-    it('should announce critical medical information properly', async () => {
+    it("should announce critical medical information properly", async () => {
       const criticalInformationTypes = [
-        { type: 'vital-signs-alert', urgency: 'high' },
-        { type: 'medication-reminder', urgency: 'medium' },
-        { type: 'appointment-confirmation', urgency: 'low' },
-        { type: 'emergency-alert', urgency: 'critical' },
+        { type: "vital-signs-alert", urgency: "high" },
+        { type: "medication-reminder", urgency: "medium" },
+        { type: "appointment-confirmation", urgency: "low" },
+        { type: "emergency-alert", urgency: "critical" },
       ];
 
       for (const info of criticalInformationTypes) {
@@ -412,7 +413,7 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
         expect(announcementTest.hasProperPoliteness).toBeTruthy();
 
         // Critical and high urgency should use assertive
-        if (info.urgency === 'critical' || info.urgency === 'high') {
+        if (info.urgency === "critical" || info.urgency === "high") {
           expect(announcementTest.isAssertive).toBeTruthy();
         }
 
@@ -420,35 +421,36 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       }
     });
 
-    it('should provide alternative text for medical images and charts', async () => {
+    it("should provide alternative text for medical images and charts", async () => {
       const medicalImageTypes = [
-        'x-ray-image',
-        'chart-analytics',
-        'vital-signs-graph',
-        'prescription-image',
+        "x-ray-image",
+        "chart-analytics",
+        "vital-signs-graph",
+        "prescription-image",
       ];
 
       for (const imageType of medicalImageTypes) {
-        const imageAccessibility = await testMedicalImageAccessibility(imageType);
+        const imageAccessibility =
+          await testMedicalImageAccessibility(imageType);
 
         expect(imageAccessibility.hasAltText).toBeTruthy();
         expect(imageAccessibility.altTextDescriptive).toBeTruthy();
         expect(imageAccessibility.medicalContextIncluded).toBeTruthy();
 
         // Complex medical images should have long descriptions
-        if (imageType.includes('chart') || imageType.includes('graph')) {
+        if (imageType.includes("chart") || imageType.includes("graph")) {
           expect(imageAccessibility.hasLongDescription).toBeTruthy();
         }
       }
     });
   });
-  describe('⏱️ Timing & Session Management for Healthcare', () => {
-    it('should provide adequate time limits for medical forms', async () => {
+  describe("⏱️ Timing & Session Management for Healthcare", () => {
+    it("should provide adequate time limits for medical forms", async () => {
       const medicalForms = [
-        { form: 'patient-intake', expectedTime: 600_000 }, // 10 minutes
-        { form: 'medical-history', expectedTime: 900_000 }, // 15 minutes
-        { form: 'prescription-form', expectedTime: 300_000 }, // 5 minutes
-        { form: 'emergency-form', expectedTime: 120_000 }, // 2 minutes
+        { form: "patient-intake", expectedTime: 600_000 }, // 10 minutes
+        { form: "medical-history", expectedTime: 900_000 }, // 15 minutes
+        { form: "prescription-form", expectedTime: 300_000 }, // 5 minutes
+        { form: "emergency-form", expectedTime: 120_000 }, // 2 minutes
       ];
 
       for (const formTest of medicalForms) {
@@ -463,7 +465,7 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       }
     });
 
-    it('should handle session timeouts gracefully for accessibility users', async () => {
+    it("should handle session timeouts gracefully for accessibility users", async () => {
       const sessionTimeoutTest = await testSessionTimeoutAccessibility();
 
       expect(sessionTimeoutTest.hasWarningBefore).toBeTruthy();
@@ -474,12 +476,12 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
     });
   });
 
-  describe('📱 Responsive Design & Multiple Input Methods', () => {
-    it('should maintain accessibility across device sizes', async () => {
+  describe("📱 Responsive Design & Multiple Input Methods", () => {
+    it("should maintain accessibility across device sizes", async () => {
       const viewportSizes = [
-        { width: 320, height: 568, name: 'mobile' },
-        { width: 768, height: 1024, name: 'tablet' },
-        { width: 1920, height: 1080, name: 'desktop' },
+        { width: 320, height: 568, name: "mobile" },
+        { width: 768, height: 1024, name: "tablet" },
+        { width: 1920, height: 1080, name: "desktop" },
       ];
 
       for (const viewport of viewportSizes) {
@@ -492,7 +494,7 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       }
     });
 
-    it('should support voice navigation for hands-free operation', async () => {
+    it("should support voice navigation for hands-free operation", async () => {
       const voiceNavigationTest = await testVoiceNavigationSupport();
 
       expect(voiceNavigationTest.hasVoiceCommands).toBeTruthy();
@@ -502,8 +504,8 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
     });
   });
 
-  describe('📋 Comprehensive WCAG Compliance Report', () => {
-    it('should generate overall accessibility compliance score', async () => {
+  describe("📋 Comprehensive WCAG Compliance Report", () => {
+    it("should generate overall accessibility compliance score", async () => {
       const complianceScore = accessibilityTester.getComplianceScore();
 
       // Healthcare platforms should achieve 95%+ WCAG AA compliance
@@ -519,12 +521,12 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
       ).toBeGreaterThanOrEqual(90);
     });
 
-    it('should validate accessibility for users with disabilities', async () => {
+    it("should validate accessibility for users with disabilities", async () => {
       const disabilityTypes = [
-        'visual-impairment',
-        'hearing-impairment',
-        'motor-impairment',
-        'cognitive-impairment',
+        "visual-impairment",
+        "hearing-impairment",
+        "motor-impairment",
+        "cognitive-impairment",
       ];
 
       const disabilitySupport = {};
@@ -551,8 +553,8 @@ describe('♿ WCAG 2.1 AA+ Accessibility Compliance', () => {
 
 async function testHealthcareAlert(alert: any) {
   return {
-    hasHighContrast: alert.type === 'emergency',
-    hasAudioIndicator: alert.type === 'emergency' || alert.type === 'critical',
+    hasHighContrast: alert.type === "emergency",
+    hasAudioIndicator: alert.type === "emergency" || alert.type === "critical",
     hasVisualIndicator: true,
     hasAriaLive: true,
     meetsWCAG: true,
@@ -604,7 +606,7 @@ async function testScreenReaderAnnouncement(info: any) {
   return {
     hasAriaLive: true,
     hasProperPoliteness: true,
-    isAssertive: info.urgency === 'critical' || info.urgency === 'high',
+    isAssertive: info.urgency === "critical" || info.urgency === "high",
     contentDescriptive: true,
   };
 }
@@ -614,16 +616,17 @@ async function testMedicalImageAccessibility(imageType: string) {
     hasAltText: true,
     altTextDescriptive: true,
     medicalContextIncluded: true,
-    hasLongDescription: imageType.includes('chart') || imageType.includes('graph'),
+    hasLongDescription:
+      imageType.includes("chart") || imageType.includes("graph"),
   };
 }
 
 async function testFormTimingAccessibility(formType: string) {
   const timeLimits = {
-    'patient-intake': 600_000,
-    'medical-history': 900_000,
-    'prescription-form': 300_000,
-    'emergency-form': 120_000,
+    "patient-intake": 600_000,
+    "medical-history": 900_000,
+    "prescription-form": 300_000,
+    "emergency-form": 120_000,
   };
 
   return {
@@ -670,22 +673,22 @@ async function generateAccessibilityComplianceReport() {
     totalPagesTested: 15,
     averageScore: 96.5,
     recommendations: [
-      'Improve color contrast on secondary buttons',
-      'Add more descriptive alt text for complex charts',
-      'Enhance voice navigation vocabulary for medical terms',
+      "Improve color contrast on secondary buttons",
+      "Add more descriptive alt text for complex charts",
+      "Enhance voice navigation vocabulary for medical terms",
     ],
   };
 }
 
 async function testDisabilitySupport(disabilityType: string) {
   const supportMethods = {
-    'visual-impairment': ['screen-reader', 'high-contrast', 'voice-navigation'],
-    'hearing-impairment': ['visual-alerts', 'text-captions', 'sign-language'],
-    'motor-impairment': ['voice-control', 'eye-tracking', 'switch-navigation'],
-    'cognitive-impairment': [
-      'simplified-ui',
-      'clear-language',
-      'progress-indicators',
+    "visual-impairment": ["screen-reader", "high-contrast", "voice-navigation"],
+    "hearing-impairment": ["visual-alerts", "text-captions", "sign-language"],
+    "motor-impairment": ["voice-control", "eye-tracking", "switch-navigation"],
+    "cognitive-impairment": [
+      "simplified-ui",
+      "clear-language",
+      "progress-indicators",
     ],
   };
 

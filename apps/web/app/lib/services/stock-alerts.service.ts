@@ -1,6 +1,17 @@
 import { createClient } from "@/lib/supabase/client";
-import { validateAcknowledgeAlert, validateCreateStockAlertConfig, validateResolveAlert } from '@/lib/types/stock-alerts';
-import type { AcknowledgeAlert, AlertsQuery, CreateStockAlertConfig, ResolveAlert, StockAlert, StockAlertConfig } from '@/lib/types/stock-alerts';
+import {
+  validateAcknowledgeAlert,
+  validateCreateStockAlertConfig,
+  validateResolveAlert,
+} from "@/lib/types/stock-alerts";
+import type {
+  AcknowledgeAlert,
+  AlertsQuery,
+  CreateStockAlertConfig,
+  ResolveAlert,
+  StockAlert,
+  StockAlertConfig,
+} from "@/lib/types/stock-alerts";
 
 /**
  * Stock Alerts Service - Core business logic for managing stock alerts

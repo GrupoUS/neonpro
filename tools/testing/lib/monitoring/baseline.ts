@@ -4,25 +4,25 @@ export interface BaselineMetric {
   value: number;
   baseline: number;
   threshold: number;
-  status: 'healthy' | 'warning' | 'critical';
+  status: "healthy" | "warning" | "critical";
 }
 
 export class BaselineMonitoringService {
   static checkSystemHealth(): BaselineMetric[] {
     return [
       {
-        name: 'response_time',
+        name: "response_time",
         value: 45,
         baseline: 50,
         threshold: 100,
-        status: 'healthy',
+        status: "healthy",
       },
       {
-        name: 'error_rate',
+        name: "error_rate",
         value: 0.1,
         baseline: 0.5,
         threshold: 1,
-        status: 'healthy',
+        status: "healthy",
       },
     ];
   }

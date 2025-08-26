@@ -9,8 +9,7 @@ export function RegulatoryDocumentsList() {
   const [filter, setFilter] = useState("");
   const [sortBy, setSortBy] = useState("expiration_date");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [documentToDelete, setDocumentToDelete] = useState<string | null>(
-    );
+  const [documentToDelete, setDocumentToDelete] = useState<string | null>();
 
   // Show loading skeleton
   if (loading) {

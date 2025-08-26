@@ -4,13 +4,13 @@
  * Orchestrates all performance tests and generates comprehensive reports
  */
 
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { ApiPerformanceTester } from './analysis/api-performance';
-import { BundleOptimizer } from './analysis/bundle-optimizer';
-import { DatabasePerformanceTester } from './analysis/database-performance';
-import { FrontendPerformanceTester } from './analysis/frontend-performance';
-import { PerformanceAuditor } from './analysis/performance-audit';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { ApiPerformanceTester } from "./analysis/api-performance";
+import { BundleOptimizer } from "./analysis/bundle-optimizer";
+import { DatabasePerformanceTester } from "./analysis/database-performance";
+import { FrontendPerformanceTester } from "./analysis/frontend-performance";
+import { PerformanceAuditor } from "./analysis/performance-audit";
 
 export interface PerformanceTestConfig {
   baseUrl: string;
@@ -104,7 +104,7 @@ export class PerformanceTestRunner {
 
       // Check performance targets
       if (result.performance >= 90) {
-        this.addPassedTest('Lighthouse Performance Score ≥90');
+        this.addPassedTest("Lighthouse Performance Score ≥90");
       } else {
         this.addFailedTest(
           `Lighthouse Performance Score: ${result.performance}/100 (target: ≥90)`,
@@ -125,7 +125,7 @@ export class PerformanceTestRunner {
 
     // Check database performance targets
     if (connectionTime < 100) {
-      this.addPassedTest('Database Connection Time <100ms');
+      this.addPassedTest("Database Connection Time <100ms");
     } else {
       this.addFailedTest(
         `Database Connection Time: ${connectionTime}ms (target: <100ms)`,
@@ -133,7 +133,7 @@ export class PerformanceTestRunner {
     }
 
     if (healthcareMetrics.emergencyDataAccessTime < 10_000) {
-      this.addPassedTest('Emergency Data Access <10s');
+      this.addPassedTest("Emergency Data Access <10s");
     } else {
       this.addFailedTest(
         `Emergency Data Access: ${healthcareMetrics.emergencyDataAccessTime}ms (target: <10s)`,
@@ -159,7 +159,7 @@ export class PerformanceTestRunner {
 
     // Check API performance targets
     if (loadTestResults.responseTime.p95 < 100) {
-      this.addPassedTest('API P95 Response Time <100ms');
+      this.addPassedTest("API P95 Response Time <100ms");
     } else {
       this.addFailedTest(
         `API P95 Response Time: ${loadTestResults.responseTime.p95}ms (target: <100ms)`,
@@ -182,13 +182,13 @@ export class PerformanceTestRunner {
 
       // Check Core Web Vitals targets
       if (webVitals.lcp < 2500) {
-        this.addPassedTest('LCP <2.5s');
+        this.addPassedTest("LCP <2.5s");
       } else {
         this.addFailedTest(`LCP: ${webVitals.lcp}ms (target: <2.5s)`);
       }
 
       if (webVitals.cls < 0.1) {
-        this.addPassedTest('CLS <0.1');
+        this.addPassedTest("CLS <0.1");
       } else {
         this.addFailedTest(`CLS: ${webVitals.cls} (target: <0.1)`);
       }
@@ -209,7 +209,7 @@ export class PerformanceTestRunner {
     // Check bundle size targets
     if (analysis.gzippedSize < 500 * 1024) {
       // 500KB
-      this.addPassedTest('Bundle Size <500KB (gzipped)');
+      this.addPassedTest("Bundle Size <500KB (gzipped)");
     } else {
       this.addFailedTest(
         `Bundle Size: ${Math.round(analysis.gzippedSize / 1024)}KB (target: <500KB)`,
@@ -231,7 +231,7 @@ export class PerformanceTestRunner {
 
       // Check healthcare-specific targets
       if (healthcareMetrics.emergencyAccessTime < 10_000) {
-        this.addPassedTest('Emergency Access <10s');
+        this.addPassedTest("Emergency Access <10s");
       } else {
         this.addFailedTest(
           `Emergency Access: ${healthcareMetrics.emergencyAccessTime}ms (target: <10s)`,
@@ -239,7 +239,7 @@ export class PerformanceTestRunner {
       }
 
       if (healthcareMetrics.patientDataLoadTime < 2000) {
-        this.addPassedTest('Patient Data Loading <2s');
+        this.addPassedTest("Patient Data Loading <2s");
       } else {
         this.addFailedTest(
           `Patient Data Loading: ${healthcareMetrics.patientDataLoadTime}ms (target: <2s)`,
@@ -267,7 +267,8 @@ export class PerformanceTestRunner {
   ): PerformanceSummary {
     const totalTargets = this.passedTests.length + this.failedTests.length;
     const passedTargets = this.passedTests.length;
-    const overallScore = totalTargets > 0 ? Math.round((passedTargets / totalTargets) * 100) : 0;
+    const overallScore =
+      totalTargets > 0 ? Math.round((passedTargets / totalTargets) * 100) : 0;
 
     let criticalIssues = 0;
     let warnings = 0;
@@ -311,32 +312,32 @@ export class PerformanceTestRunner {
     // Performance recommendations
     if (report.lighthouse?.performance < 90) {
       recommendations.push(
-        'Improve Lighthouse performance score through image optimization and code splitting',
+        "Improve Lighthouse performance score through image optimization and code splitting",
       );
     }
 
     if (report.bundle?.gzippedSize > 500 * 1024) {
       recommendations.push(
-        'Reduce bundle size through tree shaking and lazy loading',
+        "Reduce bundle size through tree shaking and lazy loading",
       );
     }
 
     if (report.api?.loadTestResults?.responseTime?.p95 > 100) {
       recommendations.push(
-        'Optimize API endpoints to achieve <100ms P95 response time',
+        "Optimize API endpoints to achieve <100ms P95 response time",
       );
     }
 
     if (report.database?.healthcareMetrics?.emergencyDataAccessTime > 5000) {
       recommendations.push(
-        'Critical: Optimize emergency data access queries for patient safety',
+        "Critical: Optimize emergency data access queries for patient safety",
       );
     }
 
     // Healthcare-specific recommendations
     if (report.healthcare?.patientDataLoadTime > 2000) {
       recommendations.push(
-        'Optimize patient data loading with caching and query optimization',
+        "Optimize patient data loading with caching and query optimization",
       );
     }
 
@@ -347,16 +348,16 @@ export class PerformanceTestRunner {
     report: ComprehensivePerformanceReport,
   ): Promise<void> {
     // Save JSON report
-    const jsonPath = path.join(this.outputDir, 'performance-report.json');
+    const jsonPath = path.join(this.outputDir, "performance-report.json");
     await fs.writeFile(jsonPath, JSON.stringify(report, undefined, 2));
 
     // Save human-readable report
-    const markdownPath = path.join(this.outputDir, 'performance-report.md');
+    const markdownPath = path.join(this.outputDir, "performance-report.md");
     const markdown = this.generateMarkdownReport(report);
     await fs.writeFile(markdownPath, markdown);
 
     // Save CSV summary for tracking
-    const csvPath = path.join(this.outputDir, 'performance-metrics.csv');
+    const csvPath = path.join(this.outputDir, "performance-metrics.csv");
     const csv = this.generateCsvReport(report);
     await fs.writeFile(csvPath, csv);
   }
@@ -366,29 +367,29 @@ export class PerformanceTestRunner {
   ): string {
     const { summary, passedTests, failedTests, recommendations } = report;
 
-    let markdown = '# NeonPro Healthcare Performance Report\n\n';
+    let markdown = "# NeonPro Healthcare Performance Report\n\n";
     markdown += `**Generated:** ${report.timestamp}\n`;
     markdown += `**Overall Score:** ${summary.overallScore}/100\n\n`;
 
-    markdown += '## Summary\n';
+    markdown += "## Summary\n";
     markdown += `- ✅ Passed Tests: ${summary.passedTargets}/${summary.totalTargets}\n`;
     markdown += `- 🚨 Critical Issues: ${summary.criticalIssues}\n`;
     markdown += `- ⚠️ Warnings: ${summary.warnings}\n\n`;
 
     if (passedTests.length > 0) {
-      markdown += '## ✅ Passed Tests\n';
+      markdown += "## ✅ Passed Tests\n";
       passedTests.forEach((test) => (markdown += `- ${test}\n`));
-      markdown += '\n';
+      markdown += "\n";
     }
 
     if (failedTests.length > 0) {
-      markdown += '## ❌ Failed Tests\n';
+      markdown += "## ❌ Failed Tests\n";
       failedTests.forEach((test) => (markdown += `- ${test}\n`));
-      markdown += '\n';
+      markdown += "\n";
     }
 
     if (recommendations.length > 0) {
-      markdown += '## 📋 Recommendations\n';
+      markdown += "## 📋 Recommendations\n";
       recommendations.forEach((rec) => (markdown += `- ${rec}\n`));
     }
 
@@ -397,23 +398,23 @@ export class PerformanceTestRunner {
 
   private generateCsvReport(report: ComprehensivePerformanceReport): string {
     const csv = [
-      'Metric,Value,Target,Status',
+      "Metric,Value,Target,Status",
       `Lighthouse Performance,${report.lighthouse?.performance || 0},90,${
-        report.lighthouse?.performance >= 90 ? 'PASS' : 'FAIL'
+        report.lighthouse?.performance >= 90 ? "PASS" : "FAIL"
       }`,
       `Bundle Size (KB),${Math.round((report.bundle?.gzippedSize || 0) / 1024)},500,${
-        (report.bundle?.gzippedSize || 0) < 500 * 1024 ? 'PASS' : 'FAIL'
+        (report.bundle?.gzippedSize || 0) < 500 * 1024 ? "PASS" : "FAIL"
       }`,
       `API P95 (ms),${report.api?.loadTestResults?.responseTime?.p95 || 0},100,${
         (report.api?.loadTestResults?.responseTime?.p95 || 0) < 100
-          ? 'PASS'
-          : 'FAIL'
+          ? "PASS"
+          : "FAIL"
       }`,
       `Emergency Access (ms),${report.healthcare?.emergencyAccessTime || 0},10000,${
-        (report.healthcare?.emergencyAccessTime || 0) < 10_000 ? 'PASS' : 'FAIL'
+        (report.healthcare?.emergencyAccessTime || 0) < 10_000 ? "PASS" : "FAIL"
       }`,
     ];
 
-    return csv.join('\n');
+    return csv.join("\n");
   }
 }

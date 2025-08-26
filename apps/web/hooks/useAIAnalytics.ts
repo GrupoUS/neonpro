@@ -95,9 +95,9 @@ export function useAIAnalytics(config: AIAnalyticsConfig = {}) {
           query_count: actionType === "query_submitted" ? 1 : 0,
           success_rate:
             metadata.success !== undefined
-              ? (metadata.success
+              ? metadata.success
                 ? 100
-                : 0)
+                : 0
               : undefined,
           response_time_ms: metadata.responseTime,
           accuracy_score: metadata.predictionAccuracy,

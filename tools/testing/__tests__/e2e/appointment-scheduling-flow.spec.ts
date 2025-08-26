@@ -1,16 +1,16 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('Complete Appointment Scheduling Flow', () => {
+test.describe("Complete Appointment Scheduling Flow", () => {
   test.beforeEach(async ({ page }) => {
     // Login as healthcare professional
-    await page.goto('/login');
-    await page.fill('input[type="email"]', 'doctor@neonpro.com');
-    await page.fill('input[type="password"]', 'doctorpassword');
+    await page.goto("/login");
+    await page.fill('input[type="email"]', "doctor@neonpro.com");
+    await page.fill('input[type="password"]', "doctorpassword");
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL(/\/dashboard/);
   });
 
-  test('should display appointment calendar correctly', async ({ page }) => {
+  test("should display appointment calendar correctly", async ({ page }) => {
     // Navigate to appointments
     await page.click('[data-testid="nav-appointments"]');
     await expect(page).toHaveURL(/\/appointments/);
@@ -21,22 +21,22 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Should display current month/year
     const currentDate = new Date();
-    const monthYear = currentDate.toLocaleDateString('pt-BR', {
-      month: 'long',
-      year: 'numeric',
+    const monthYear = currentDate.toLocaleDateString("pt-BR", {
+      month: "long",
+      year: "numeric",
     });
     await expect(
       page.locator('[data-testid="calendar-month-year"]'),
     ).toContainText(monthYear);
 
     // Should show week days
-    await expect(page.locator('text=Segunda')).toBeVisible();
-    await expect(page.locator('text=Terça')).toBeVisible();
-    await expect(page.locator('text=Quarta')).toBeVisible();
+    await expect(page.locator("text=Segunda")).toBeVisible();
+    await expect(page.locator("text=Terça")).toBeVisible();
+    await expect(page.locator("text=Quarta")).toBeVisible();
   });
 
-  test('should create new appointment successfully', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should create new appointment successfully", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Click to create new appointment
     await page.click('[data-testid="new-appointment-btn"]');
@@ -48,13 +48,13 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Select patient
     await page.click('[data-testid="patient-select"]');
-    await page.fill('[data-testid="patient-search-input"]', 'João Silva');
+    await page.fill('[data-testid="patient-search-input"]', "João Silva");
     await page.click('[data-testid="patient-option-joao-silva"]');
 
     // Select date and time
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('pt-BR');
+    const tomorrowStr = tomorrow.toLocaleDateString("pt-BR");
 
     await page.fill('[data-testid="appointment-date"]', tomorrowStr);
     await page.click('[data-testid="appointment-time"]');
@@ -67,7 +67,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     // Add notes
     await page.fill(
       '[data-testid="appointment-notes"]',
-      'Consulta de rotina - verificar pressão arterial',
+      "Consulta de rotina - verificar pressão arterial",
     );
 
     // Set duration
@@ -79,7 +79,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Should show success message
     await expect(
-      page.locator('text=Consulta agendada com sucesso'),
+      page.locator("text=Consulta agendada com sucesso"),
     ).toBeVisible();
 
     // Should close modal
@@ -91,24 +91,24 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     await expect(
       page.locator(`[data-testid="appointment-${tomorrowStr}"]`),
     ).toBeVisible();
-    await expect(page.locator('text=João Silva')).toBeVisible();
+    await expect(page.locator("text=João Silva")).toBeVisible();
   });
 
-  test('should handle appointment conflicts', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should handle appointment conflicts", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Try to create appointment at same time as existing one
     await page.click('[data-testid="new-appointment-btn"]');
 
     // Select patient
     await page.click('[data-testid="patient-select"]');
-    await page.fill('[data-testid="patient-search-input"]', 'Maria Santos');
+    await page.fill('[data-testid="patient-search-input"]', "Maria Santos");
     await page.click('[data-testid="patient-option-maria-santos"]');
 
     // Select same date/time as existing appointment
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('pt-BR');
+    const tomorrowStr = tomorrow.toLocaleDateString("pt-BR");
 
     await page.fill('[data-testid="appointment-date"]', tomorrowStr);
     await page.click('[data-testid="appointment-time"]');
@@ -122,7 +122,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
       page.locator('[data-testid="conflict-warning"]'),
     ).toBeVisible();
     await expect(
-      page.locator('text=Conflito de horário detectado'),
+      page.locator("text=Conflito de horário detectado"),
     ).toBeVisible();
 
     // Should suggest alternative times
@@ -136,17 +136,17 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Should succeed
     await expect(
-      page.locator('text=Consulta agendada com sucesso'),
+      page.locator("text=Consulta agendada com sucesso"),
     ).toBeVisible();
   });
 
-  test('should edit existing appointment', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should edit existing appointment", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Click on existing appointment
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('pt-BR');
+    const tomorrowStr = tomorrow.toLocaleDateString("pt-BR");
 
     await page.click(`[data-testid="appointment-${tomorrowStr}"]`);
 
@@ -170,7 +170,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     // Update notes
     await page.fill(
       '[data-testid="appointment-notes"]',
-      'Consulta de rotina - verificar pressão arterial e peso',
+      "Consulta de rotina - verificar pressão arterial e peso",
     );
 
     // Save changes
@@ -178,20 +178,20 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Should show success message
     await expect(
-      page.locator('text=Consulta atualizada com sucesso'),
+      page.locator("text=Consulta atualizada com sucesso"),
     ).toBeVisible();
 
     // Should see updated time in calendar
-    await expect(page.locator('text=10:00')).toBeVisible();
+    await expect(page.locator("text=10:00")).toBeVisible();
   });
 
-  test('should cancel appointment with proper workflow', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should cancel appointment with proper workflow", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Click on appointment
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('pt-BR');
+    const tomorrowStr = tomorrow.toLocaleDateString("pt-BR");
 
     await page.click(`[data-testid="appointment-${tomorrowStr}"]`);
 
@@ -210,7 +210,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     // Add cancellation notes
     await page.fill(
       '[data-testid="cancellation-notes"]',
-      'Paciente solicitou reagendamento',
+      "Paciente solicitou reagendamento",
     );
 
     // Option to notify patient
@@ -221,7 +221,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Should show success message
     await expect(
-      page.locator('text=Consulta cancelada com sucesso'),
+      page.locator("text=Consulta cancelada com sucesso"),
     ).toBeVisible();
 
     // Should remove appointment from calendar (or mark as cancelled)
@@ -230,20 +230,20 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     ).toHaveClass(/cancelled/);
   });
 
-  test('should handle recurring appointments', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should handle recurring appointments", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Create new appointment
     await page.click('[data-testid="new-appointment-btn"]');
 
     // Fill basic appointment details
     await page.click('[data-testid="patient-select"]');
-    await page.fill('[data-testid="patient-search-input"]', 'João Silva');
+    await page.fill('[data-testid="patient-search-input"]', "João Silva");
     await page.click('[data-testid="patient-option-joao-silva"]');
 
     const nextWeek = new Date();
     nextWeek.setDate(nextWeek.getDate() + 7);
-    const nextWeekStr = nextWeek.toLocaleDateString('pt-BR');
+    const nextWeekStr = nextWeek.toLocaleDateString("pt-BR");
 
     await page.fill('[data-testid="appointment-date"]', nextWeekStr);
     await page.click('[data-testid="appointment-time"]');
@@ -257,27 +257,27 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     await page.click('[data-testid="pattern-weekly"]');
 
     // Set number of occurrences
-    await page.fill('[data-testid="occurrences-count"]', '4');
+    await page.fill('[data-testid="occurrences-count"]', "4");
 
     // Save recurring appointment series
     await page.click('[data-testid="save-appointment-btn"]');
 
     // Should show confirmation for series
     await expect(
-      page.locator('text=Série de consultas criada com sucesso'),
+      page.locator("text=Série de consultas criada com sucesso"),
     ).toBeVisible();
 
     // Should see multiple appointments in calendar
     await expect(page.locator('[data-testid^="appointment-"]')).toHaveCount(4);
   });
 
-  test('should manage appointment reminders', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should manage appointment reminders", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Click on existing appointment
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toLocaleDateString('pt-BR');
+    const tomorrowStr = tomorrow.toLocaleDateString("pt-BR");
 
     await page.click(`[data-testid="appointment-${tomorrowStr}"]`);
 
@@ -306,20 +306,20 @@ test.describe('Complete Appointment Scheduling Flow', () => {
 
     // Should show success message
     await expect(
-      page.locator('text=Lembretes configurados com sucesso'),
+      page.locator("text=Lembretes configurados com sucesso"),
     ).toBeVisible();
 
     // Should display active reminders
     await expect(
       page.locator('[data-testid="active-reminders-list"]'),
-    ).toContainText('SMS - 24h antes');
+    ).toContainText("SMS - 24h antes");
     await expect(
       page.locator('[data-testid="active-reminders-list"]'),
-    ).toContainText('Email - 2h antes');
+    ).toContainText("Email - 2h antes");
   });
 
-  test('should handle appointment check-in process', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should handle appointment check-in process", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Should see today's appointments
     await expect(
@@ -338,7 +338,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     // Should update appointment status
     await expect(
       page.locator('[data-testid="appointment-status"]'),
-    ).toContainText('Paciente Presente');
+    ).toContainText("Paciente Presente");
 
     // Should show check-in time
     await expect(page.locator('[data-testid="checkin-time"]')).toBeVisible();
@@ -352,8 +352,8 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     ).toBeEnabled();
   });
 
-  test('should handle no-show appointments', async ({ page }) => {
-    await page.goto('/appointments');
+  test("should handle no-show appointments", async ({ page }) => {
+    await page.goto("/appointments");
 
     // Click on overdue appointment
     await page.click('[data-testid="appointment-overdue"]');
@@ -374,7 +374,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     // Add no-show reason
     await page.fill(
       '[data-testid="no-show-reason"]',
-      'Paciente não compareceu e não justificou ausência',
+      "Paciente não compareceu e não justificou ausência",
     );
 
     // Option to charge no-show fee
@@ -386,7 +386,7 @@ test.describe('Complete Appointment Scheduling Flow', () => {
     // Should update appointment status
     await expect(
       page.locator('[data-testid="appointment-status"]'),
-    ).toContainText('Não Compareceu');
+    ).toContainText("Não Compareceu");
 
     // Should show no-show fee in billing
     await expect(

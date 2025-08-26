@@ -510,9 +510,9 @@ class LGPDComplianceManager {
     const consentStatus =
       consentCoverage === 1
         ? "compliant"
-        : (consentCoverage > 0.5
+        : consentCoverage > 0.5
           ? "partial"
-          : "non_compliant");
+          : "non_compliant";
 
     if (consentStatus !== "compliant") {
       overallScore -= 20;

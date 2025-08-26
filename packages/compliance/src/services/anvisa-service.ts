@@ -9,21 +9,21 @@
  * @quality ≥9.8/10 Healthcare Grade
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ANVISA Medical Device Classifications (RDC 185/2001)
 export enum AnvisaDeviceClass {
-  CLASS_I = 'CLASS_I', // Low risk
-  CLASS_II = 'CLASS_II', // Medium risk
-  CLASS_III = 'CLASS_III', // High risk
-  CLASS_IV = 'CLASS_IV', // Maximum risk
+  CLASS_I = "CLASS_I", // Low risk
+  CLASS_II = "CLASS_II", // Medium risk
+  CLASS_III = "CLASS_III", // High risk
+  CLASS_IV = "CLASS_IV", // Maximum risk
 }
 
 // ANVISA Software Classification (IEC 62304)
 export enum AnvisaSoftwareClass {
-  CLASS_A = 'A', // Non-injury or damage to health
-  CLASS_B = 'B', // Non-life-threatening injury
-  CLASS_C = 'C', // Death or serious injury
+  CLASS_A = "A", // Non-injury or damage to health
+  CLASS_B = "B", // Non-life-threatening injury
+  CLASS_C = "C", // Death or serious injury
 }
 
 // Product Registration Schemas
@@ -31,7 +31,7 @@ const AnvisaProductSchema = z.object({
   id: z.string().uuid(),
   productName: z.string().min(2).max(200),
   manufacturer: z.string().min(2).max(200),
-  registrationNumber: z.string().regex(/^\d{13}$/, 'Must be 13 digits'),
+  registrationNumber: z.string().regex(/^\d{13}$/, "Must be 13 digits"),
   deviceClass: z.nativeEnum(AnvisaDeviceClass),
   softwareClass: z.nativeEnum(AnvisaSoftwareClass).optional(),
   description: z.string().min(10).max(2000),
@@ -53,14 +53,14 @@ const AnvisaProductSchema = z.object({
 const AnvisaProcedureSchema = z.object({
   id: z.string().uuid(),
   procedureType: z.enum([
-    'botox_injection',
-    'dermal_filler',
-    'chemical_peel',
-    'laser_treatment',
-    'microneedling',
-    'cryolipolysis',
-    'radiofrequency',
-    'ultrasound_therapy',
+    "botox_injection",
+    "dermal_filler",
+    "chemical_peel",
+    "laser_treatment",
+    "microneedling",
+    "cryolipolysis",
+    "radiofrequency",
+    "ultrasound_therapy",
   ]),
   productIds: z.array(z.string().uuid()),
   patientId: z.string().uuid(),
@@ -82,15 +82,15 @@ const AnvisaAdverseEventSchema = z.object({
   patientId: z.string().uuid(),
   professionalId: z.string().uuid(),
   eventType: z.enum([
-    'allergic_reaction',
-    'infection',
-    'asymmetry',
-    'necrosis',
-    'granuloma',
-    'migration',
-    'other',
+    "allergic_reaction",
+    "infection",
+    "asymmetry",
+    "necrosis",
+    "granuloma",
+    "migration",
+    "other",
   ]),
-  severity: z.enum(['mild', 'moderate', 'severe', 'life_threatening']),
+  severity: z.enum(["mild", "moderate", "severe", "life_threatening"]),
   description: z.string().min(10).max(2000),
   onset: z.date(),
   resolution: z.date().optional(),
@@ -128,7 +128,7 @@ export class AnvisaService {
       ) {
         return {
           success: false,
-          error: 'Invalid ANVISA registration number format',
+          error: "Invalid ANVISA registration number format",
         };
       }
 
@@ -136,13 +136,13 @@ export class AnvisaService {
       if (validatedProduct.expiryDate <= new Date()) {
         return {
           success: false,
-          error: 'Product registration has expired',
+          error: "Product registration has expired",
         };
       }
 
       // Store in database with audit trail
       await this.auditLog({
-        action: 'PRODUCT_REGISTERED',
+        action: "PRODUCT_REGISTERED",
         productId: validatedProduct.id,
         registrationNumber: validatedProduct.registrationNumber,
         timestamp: new Date(),
@@ -152,9 +152,10 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Product registration failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Product registration failed",
       };
     }
   }
@@ -188,13 +189,13 @@ export class AnvisaService {
       if (!professionalValid) {
         return {
           success: false,
-          error: 'Professional credentials not valid for this procedure type',
+          error: "Professional credentials not valid for this procedure type",
         };
       }
 
       // Store with audit trail
       await this.auditLog({
-        action: 'PROCEDURE_RECORDED',
+        action: "PROCEDURE_RECORDED",
         procedureId: validatedProcedure.id,
         patientId: validatedProcedure.patientId,
         professionalId: validatedProcedure.professionalId,
@@ -205,7 +206,8 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Procedure recording failed',
+        error:
+          error instanceof Error ? error.message : "Procedure recording failed",
       };
     }
   }
@@ -234,7 +236,7 @@ export class AnvisaService {
       if (!anvisaSubmission.success) {
         return {
           success: false,
-          error: 'Failed to submit to ANVISA system',
+          error: "Failed to submit to ANVISA system",
         };
       }
 
@@ -247,7 +249,7 @@ export class AnvisaService {
 
       // Store with audit trail
       await this.auditLog({
-        action: 'ADVERSE_EVENT_REPORTED',
+        action: "ADVERSE_EVENT_REPORTED",
         eventId: validatedEvent.id,
         anvisaReportNumber,
         severity: validatedEvent.severity,
@@ -262,9 +264,10 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Adverse event reporting failed',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Adverse event reporting failed",
       };
     }
   }
@@ -316,7 +319,7 @@ export class AnvisaService {
 
       // Audit the report generation
       await this.auditLog({
-        action: 'COMPLIANCE_REPORT_GENERATED',
+        action: "COMPLIANCE_REPORT_GENERATED",
         dateRange,
         complianceScore,
         timestamp: new Date(),
@@ -326,7 +329,8 @@ export class AnvisaService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Report generation failed',
+        error:
+          error instanceof Error ? error.message : "Report generation failed",
       };
     }
   }
@@ -356,16 +360,16 @@ export class AnvisaService {
   private generateAnvisaReportNumber(): string {
     // Generate ANVISA-compliant report number
     const year = new Date().getFullYear();
-    const month = String(new Date().getMonth() + 1).padStart(2, '0');
+    const month = String(new Date().getMonth() + 1).padStart(2, "0");
     const sequence = String(Math.floor(Math.random() * 999_999)).padStart(
       6,
-      '0',
+      "0",
     );
     return `AE${year}${month}${sequence}`;
   }
 
   private async submitToAnvisa(
-    _event: AnvisaAdverseEvent & { anvisaReportNumber: string; },
+    _event: AnvisaAdverseEvent & { anvisaReportNumber: string },
   ): Promise<{
     success: boolean;
     error?: string;
@@ -417,7 +421,7 @@ export class AnvisaService {
 
     // Deduct points for severe adverse events
     const severeEvents = data.adverseEvents.filter(
-      (e) => e.severity === 'severe' || e.severity === 'life_threatening',
+      (e) => e.severity === "severe" || e.severity === "life_threatening",
     );
     score -= severeEvents.length * 20;
 
@@ -432,17 +436,17 @@ export class AnvisaService {
     const recommendations: string[] = [];
 
     if (data.complianceScore < 90) {
-      recommendations.push('Improve adverse event reporting procedures');
+      recommendations.push("Improve adverse event reporting procedures");
     }
 
     if (data.adverseEvents.length > 0) {
       recommendations.push(
-        'Review procedure protocols to minimize adverse events',
+        "Review procedure protocols to minimize adverse events",
       );
     }
 
-    recommendations.push('Maintain regular compliance training for all staff');
-    recommendations.push('Ensure all products have valid ANVISA registration');
+    recommendations.push("Maintain regular compliance training for all staff");
+    recommendations.push("Ensure all products have valid ANVISA registration");
 
     return recommendations;
   }
@@ -487,20 +491,20 @@ export const anvisaUtils = {
   getDeviceClassRequirements: (deviceClass: AnvisaDeviceClass): string[] => {
     switch (deviceClass) {
       case AnvisaDeviceClass.CLASS_I: {
-        return ['General controls', 'Registration'];
+        return ["General controls", "Registration"];
       }
       case AnvisaDeviceClass.CLASS_II: {
-        return ['General controls', 'Registration', 'Performance standards'];
+        return ["General controls", "Registration", "Performance standards"];
       }
       case AnvisaDeviceClass.CLASS_III: {
-        return ['General controls', 'Registration', 'Premarket approval'];
+        return ["General controls", "Registration", "Premarket approval"];
       }
       case AnvisaDeviceClass.CLASS_IV: {
         return [
-          'General controls',
-          'Registration',
-          'Premarket approval',
-          'Clinical trials',
+          "General controls",
+          "Registration",
+          "Premarket approval",
+          "Clinical trials",
         ];
       }
       default: {
@@ -514,10 +518,10 @@ export const anvisaUtils = {
    */
   requiresSpecialAuthorization: (procedureType: string): boolean => {
     const specialProcedures = [
-      'botox_injection',
-      'dermal_filler',
-      'cryolipolysis',
-      'laser_treatment',
+      "botox_injection",
+      "dermal_filler",
+      "cryolipolysis",
+      "laser_treatment",
     ];
     return specialProcedures.includes(procedureType);
   },

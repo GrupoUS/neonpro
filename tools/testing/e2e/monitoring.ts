@@ -4,8 +4,8 @@
  * Real-time metrics collection and analysis for NeonPro E2E tests
  */
 
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 export interface E2EMetrics {
   timestamp: string;
@@ -45,12 +45,12 @@ export class E2EMonitor {
   constructor() {
     this.metricsPath = join(
       process.cwd(),
-      'tools',
-      'testing',
-      'e2e',
-      'reports',
+      "tools",
+      "testing",
+      "e2e",
+      "reports",
     );
-    this.dashboardPath = join(this.metricsPath, 'dashboard');
+    this.dashboardPath = join(this.metricsPath, "dashboard");
 
     // Ensure directories exist
     if (!existsSync(this.metricsPath)) {
@@ -67,20 +67,20 @@ export class E2EMonitor {
   async collectMetrics(testInfo: any): Promise<E2EMetrics> {
     const metrics: E2EMetrics = {
       timestamp: new Date().toISOString(),
-      testSuite: testInfo.title || 'unknown',
-      browser: process.env.BROWSER || 'chromium',
+      testSuite: testInfo.title || "unknown",
+      browser: process.env.BROWSER || "chromium",
       duration: testInfo.duration || 0,
       testsTotal: 1,
-      testsPassed: testInfo.status === 'passed' ? 1 : 0,
-      testsFailed: testInfo.status === 'failed' ? 1 : 0,
-      testsSkipped: testInfo.status === 'skipped' ? 1 : 0,
+      testsPassed: testInfo.status === "passed" ? 1 : 0,
+      testsFailed: testInfo.status === "failed" ? 1 : 0,
+      testsSkipped: testInfo.status === "skipped" ? 1 : 0,
       retries: testInfo.retry || 0,
-      workers: Number.parseInt(process.env.PLAYWRIGHT_WORKERS || '1', 10),
+      workers: Number.parseInt(process.env.PLAYWRIGHT_WORKERS || "1", 10),
       memoryUsage: process.memoryUsage(),
       cpuUsage: process.cpuUsage().user / 1_000_000, // Convert to seconds
       networkRequests: 0, // To be collected from network interceptor
-      errorRate: testInfo.status === 'failed' ? 1 : 0,
-      environment: process.env.NODE_ENV || 'test',
+      errorRate: testInfo.status === "failed" ? 1 : 0,
+      environment: process.env.NODE_ENV || "test",
     };
 
     // Save individual test metrics
@@ -132,14 +132,17 @@ export class E2EMonitor {
         totalTests: metrics.reduce((acc, m) => acc + m.testsTotal, 0),
         totalPassed: metrics.reduce((acc, m) => acc + m.testsPassed, 0),
         totalFailed: metrics.reduce((acc, m) => acc + m.testsFailed, 0),
-        averageDuration: metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length,
-        successRate: metrics.length > 0
-          ? (metrics.reduce((acc, m) => acc + m.testsPassed, 0)
-            / metrics.reduce((acc, m) => acc + m.testsTotal, 0))
-            * 100
-          : 0,
-        avgMemoryUsage: metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0)
-          / metrics.length,
+        averageDuration:
+          metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length,
+        successRate:
+          metrics.length > 0
+            ? (metrics.reduce((acc, m) => acc + m.testsPassed, 0) /
+                metrics.reduce((acc, m) => acc + m.testsTotal, 0)) *
+              100
+            : 0,
+        avgMemoryUsage:
+          metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0) /
+          metrics.length,
       },
       performance: {
         fastest: Math.min(...metrics.map((m) => m.duration)),
@@ -161,7 +164,7 @@ export class E2EMonitor {
 
     const dashboardFile = join(
       this.dashboardPath,
-      'performance-dashboard.json',
+      "performance-dashboard.json",
     );
     writeFileSync(dashboardFile, JSON.stringify(dashboard, undefined, 2));
 
@@ -206,11 +209,11 @@ export class E2EMonitor {
     // Calculate averages
     Object.keys(browsers).forEach((browser) => {
       const tests = browsers[browser].tests;
-      browsers[browser].avgDuration = tests.reduce((acc: number, t: E2EMetrics) =>
-        acc + t.duration, 0)
-        / tests.length;
-      browsers[browser].successRate = (browsers[browser].testsPassed / browsers[browser].testsTotal)
-        * 100;
+      browsers[browser].avgDuration =
+        tests.reduce((acc: number, t: E2EMetrics) => acc + t.duration, 0) /
+        tests.length;
+      browsers[browser].successRate =
+        (browsers[browser].testsPassed / browsers[browser].testsTotal) * 100;
     });
 
     return browsers;
@@ -221,7 +224,8 @@ export class E2EMonitor {
    */
   private calculateTrends(metrics: E2EMetrics[]): any {
     const sortedByTime = [...metrics].sort(
-      (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
     );
 
     return {
@@ -240,7 +244,7 @@ export class E2EMonitor {
    */
   private calculateTrend(values: number[]): string {
     if (values.length < 2) {
-      return 'stable';
+      return "stable";
     }
 
     const first = values.slice(0, Math.floor(values.length / 2));
@@ -252,12 +256,12 @@ export class E2EMonitor {
     const change = ((secondAvg - firstAvg) / firstAvg) * 100;
 
     if (change > 5) {
-      return 'increasing';
+      return "increasing";
     }
     if (change < -5) {
-      return 'decreasing';
+      return "decreasing";
     }
-    return 'stable';
+    return "stable";
   }
 
   /**
@@ -270,34 +274,37 @@ export class E2EMonitor {
     const alerts: string[] = [];
 
     // Performance alerts
-    const avgDuration = metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length;
+    const avgDuration =
+      metrics.reduce((acc, m) => acc + m.duration, 0) / metrics.length;
     if (avgDuration > 30_000) {
       // 30 seconds
-      alerts.push('🚨 HIGH: Average test duration exceeds 30 seconds');
+      alerts.push("🚨 HIGH: Average test duration exceeds 30 seconds");
     }
 
     // Success rate alerts
-    const successRate = metrics.reduce((acc, m) => acc + m.testsPassed, 0)
-      / metrics.reduce((acc, m) => acc + m.testsTotal, 0);
+    const successRate =
+      metrics.reduce((acc, m) => acc + m.testsPassed, 0) /
+      metrics.reduce((acc, m) => acc + m.testsTotal, 0);
     if (successRate < 0.95) {
       // Below 95%
-      alerts.push('🚨 CRITICAL: Test success rate below 95%');
+      alerts.push("🚨 CRITICAL: Test success rate below 95%");
     }
 
     // Memory alerts
-    const avgMemory = metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0)
-      / metrics.length;
+    const avgMemory =
+      metrics.reduce((acc, m) => acc + m.memoryUsage.heapUsed, 0) /
+      metrics.length;
     if (avgMemory > 500 * 1024 * 1024) {
       // 500MB
-      alerts.push('⚠️ WARNING: High memory usage detected');
+      alerts.push("⚠️ WARNING: High memory usage detected");
     }
 
     // Compliance alerts
     if (!compliance.lgpdValidation) {
-      alerts.push('🚨 CRITICAL: LGPD compliance validation failed');
+      alerts.push("🚨 CRITICAL: LGPD compliance validation failed");
     }
     if (!compliance.anvisaCompliance) {
-      alerts.push('🚨 CRITICAL: ANVISA compliance validation failed');
+      alerts.push("🚨 CRITICAL: ANVISA compliance validation failed");
     }
 
     return alerts;
@@ -344,18 +351,18 @@ export class E2EMonitor {
         </div>
 
         ${
-      data.alerts.length > 0
-        ? `
+          data.alerts.length > 0
+            ? `
         <div class="alerts">
             <h3>🚨 Alerts</h3>
-            ${data.alerts.map((alert) => `<div class="alert-item">${alert}</div>`).join('')}
+            ${data.alerts.map((alert) => `<div class="alert-item">${alert}</div>`).join("")}
         </div>
         `
-        : ''
-    }
+            : ""
+        }
 
         <div class="metrics-grid">
-            <div class="metric-card ${data.summary.successRate >= 95 ? 'success' : 'danger'}">
+            <div class="metric-card ${data.summary.successRate >= 95 ? "success" : "danger"}">
                 <div class="metric-label">Success Rate</div>
                 <div class="metric-value">${data.summary.successRate.toFixed(1)}%</div>
             </div>
@@ -366,12 +373,12 @@ export class E2EMonitor {
             </div>
             
             <div class="metric-card ${
-      data.summary.averageDuration < 10_000
-        ? 'success'
-        : (data.summary.averageDuration < 30_000
-        ? 'warning'
-        : 'danger')
-    }">
+              data.summary.averageDuration < 10_000
+                ? "success"
+                : data.summary.averageDuration < 30_000
+                  ? "warning"
+                  : "danger"
+            }">
                 <div class="metric-label">Avg Duration</div>
                 <div class="metric-value">${(data.summary.averageDuration / 1000).toFixed(1)}s</div>
             </div>
@@ -385,41 +392,37 @@ export class E2EMonitor {
         <div class="compliance-section">
             <h3>🏥 Healthcare Compliance Status</h3>
             <div class="metrics-grid">
-                <div class="metric-card ${data.compliance.lgpdValidation ? 'success' : 'danger'}">
+                <div class="metric-card ${data.compliance.lgpdValidation ? "success" : "danger"}">
                     <div class="metric-label">LGPD Compliance</div>
-                    <div class="metric-value">${data.compliance.lgpdValidation ? '✅' : '❌'}</div>
+                    <div class="metric-value">${data.compliance.lgpdValidation ? "✅" : "❌"}</div>
                 </div>
-                <div class="metric-card ${data.compliance.anvisaCompliance ? 'success' : 'danger'}">
+                <div class="metric-card ${data.compliance.anvisaCompliance ? "success" : "danger"}">
                     <div class="metric-label">ANVISA Compliance</div>
                     <div class="metric-value">${
-      data.compliance.anvisaCompliance ? '✅' : '❌'
-    }</div>
+                      data.compliance.anvisaCompliance ? "✅" : "❌"
+                    }</div>
                 </div>
-                <div class="metric-card ${data.compliance.cfmCompliance ? 'success' : 'danger'}">
+                <div class="metric-card ${data.compliance.cfmCompliance ? "success" : "danger"}">
                     <div class="metric-label">CFM Compliance</div>
-                    <div class="metric-value">${data.compliance.cfmCompliance ? '✅' : '❌'}</div>
+                    <div class="metric-value">${data.compliance.cfmCompliance ? "✅" : "❌"}</div>
                 </div>
             </div>
         </div>
 
         <div class="browsers-section">
             <h3>🌐 Browser Performance</h3>
-            ${
-      Object.entries(data.browsers)
-        .map(
-          ([browser, stats]: [string, any]) => `
+            ${Object.entries(data.browsers)
+              .map(
+                ([browser, stats]: [string, any]) => `
                 <div class="browser-row">
                     <strong>${browser}</strong>
-                    <span>Tests: ${stats.testsTotal} | Success: ${
-            stats.successRate.toFixed(
-              1,
-            )
-          }% | Avg: ${(stats.avgDuration / 1000).toFixed(1)}s</span>
+                    <span>Tests: ${stats.testsTotal} | Success: ${stats.successRate.toFixed(
+                      1,
+                    )}% | Avg: ${(stats.avgDuration / 1000).toFixed(1)}s</span>
                 </div>
             `,
-        )
-        .join('')
-    }
+              )
+              .join("")}
         </div>
 
         <div class="timestamp">
@@ -429,7 +432,7 @@ export class E2EMonitor {
 </body>
 </html>`;
 
-    const htmlFile = join(this.dashboardPath, 'index.html');
+    const htmlFile = join(this.dashboardPath, "index.html");
     writeFileSync(htmlFile, html);
   }
 }

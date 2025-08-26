@@ -5,17 +5,17 @@
  * Creates missing LGPD files and healthcare tables to fix validation issues
  */
 
-const path = require('node:path');
-const fs = require('node:fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Colors for console output
 const colors = {
-  green: '\u001B[32m',
-  red: '\u001B[31m',
-  yellow: '\u001B[33m',
-  blue: '\u001B[34m',
-  reset: '\u001B[0m',
-  bold: '\u001B[1m',
+  green: "\u001B[32m",
+  red: "\u001B[31m",
+  yellow: "\u001B[33m",
+  blue: "\u001B[34m",
+  reset: "\u001B[0m",
+  bold: "\u001B[1m",
 };
 
 function log(_message, _color = colors.reset) {}
@@ -44,11 +44,11 @@ function ensureDirectoryExists(dirPath) {
 }
 
 function createLGPDConsentManagement() {
-  logHeader('Creating LGPD Consent Management');
+  logHeader("Creating LGPD Consent Management");
 
   const filePath = path.resolve(
     process.cwd(),
-    'apps/web/lib/healthcare/lgpd-consent-management.ts',
+    "apps/web/lib/healthcare/lgpd-consent-management.ts",
   );
   ensureDirectoryExists(path.dirname(filePath));
 
@@ -331,9 +331,9 @@ export const lgpdConsentManager = new LGPDConsentManager()
 }
 
 function createPrivacyPolicy() {
-  logHeader('Creating Privacy Policy');
+  logHeader("Creating Privacy Policy");
 
-  const filePath = path.resolve(process.cwd(), 'docs/privacy-policy.md');
+  const filePath = path.resolve(process.cwd(), "docs/privacy-policy.md");
   ensureDirectoryExists(path.dirname(filePath));
 
   const content = `# Política de Privacidade - NeonPro
@@ -537,11 +537,11 @@ Telefone: (11) 77777-7777
 }
 
 function createHealthcareTablesMigration() {
-  logHeader('Creating Healthcare Tables Migration');
+  logHeader("Creating Healthcare Tables Migration");
 
   const filePath = path.resolve(
     process.cwd(),
-    'supabase/migrations/20250126000001_lgpd_healthcare_tables.sql',
+    "supabase/migrations/20250126000001_lgpd_healthcare_tables.sql",
   );
   ensureDirectoryExists(path.dirname(filePath));
 
@@ -813,10 +813,10 @@ INSERT INTO compliance_checks (check_type, framework, status, description, detai
 }
 
 function createSupabaseConfig() {
-  logHeader('Creating Supabase Configuration Files');
+  logHeader("Creating Supabase Configuration Files");
 
   // Create .env.example
-  const envExamplePath = path.resolve(process.cwd(), '.env.example');
+  const envExamplePath = path.resolve(process.cwd(), ".env.example");
   const envContent = `# Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url_here
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
@@ -848,11 +848,10 @@ VERCEL_ENV=development
   logSuccess(`Created environment example: ${envExamplePath}`);
 
   // Create supabase/config.toml if directory exists
-  const supabaseDir = path.resolve(process.cwd(), 'supabase');
+  const supabaseDir = path.resolve(process.cwd(), "supabase");
   if (fs.existsSync(supabaseDir)) {
-    const configPath = path.join(supabaseDir, 'config.toml');
-    const configContent =
-      `# A string used to distinguish different Supabase projects on the same host. Defaults to the
+    const configPath = path.join(supabaseDir, "config.toml");
+    const configContent = `# A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running \`supabase init\`.
 project_id = "neonpro"
 
@@ -1008,7 +1007,7 @@ verify_jwt = false
 }
 
 async function runFixes() {
-  logHeader('NeonPro LGPD & Healthcare Tables Fix');
+  logHeader("NeonPro LGPD & Healthcare Tables Fix");
 
   try {
     // Create missing LGPD files
@@ -1022,20 +1021,20 @@ async function runFixes() {
     createSupabaseConfig();
 
     // Summary
-    logHeader('Fix Summary');
-    logSuccess('Created LGPD consent management file');
-    logSuccess('Created privacy policy document');
-    logSuccess('Created healthcare tables migration');
-    logSuccess('Created Supabase configuration files');
+    logHeader("Fix Summary");
+    logSuccess("Created LGPD consent management file");
+    logSuccess("Created privacy policy document");
+    logSuccess("Created healthcare tables migration");
+    logSuccess("Created Supabase configuration files");
 
     log(
       `\n${colors.bold}${colors.green}🎉 All fixes completed successfully!${colors.reset}`,
     );
     log(`\n${colors.bold}${colors.blue}Next Steps:${colors.reset}`);
-    log('1. Run the new migration: supabase db push');
-    log('2. Configure environment variables with actual values');
-    log('3. Re-run compliance validations');
-    log('4. Test LGPD consent management functionality');
+    log("1. Run the new migration: supabase db push");
+    log("2. Configure environment variables with actual values");
+    log("3. Re-run compliance validations");
+    log("4. Test LGPD consent management functionality");
   } catch (error) {
     logError(`Unexpected error: ${error.message}`);
     process.exit(1);

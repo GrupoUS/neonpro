@@ -1,22 +1,24 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // Dashboard Treatments E2E Tests
 // Tests aesthetic treatment plans, session management, outcomes tracking, and patient progress
 
-test.describe('Dashboard Treatments Page', () => {
+test.describe("Dashboard Treatments Page", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to treatments dashboard
-    await page.goto('/dashboard/treatments');
+    await page.goto("/dashboard/treatments");
 
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
   });
 
-  test.describe('Treatments Overview', () => {
-    test('should display treatments dashboard with key metrics', async ({ page }) => {
+  test.describe("Treatments Overview", () => {
+    test("should display treatments dashboard with key metrics", async ({
+      page,
+    }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Treatments.*NeonPro/);
-      await expect(page.locator('h1')).toContainText('Treatments Dashboard');
+      await expect(page.locator("h1")).toContainText("Treatments Dashboard");
 
       // Verify treatment metrics cards
       await expect(
@@ -38,7 +40,7 @@ test.describe('Dashboard Treatments Page', () => {
       await expect(successRate).toContainText(/%/);
     });
 
-    test('should show treatment type distribution', async ({ page }) => {
+    test("should show treatment type distribution", async ({ page }) => {
       // Check treatment types overview
       await expect(
         page.locator('[data-testid="treatment-types-chart"]'),
@@ -46,11 +48,11 @@ test.describe('Dashboard Treatments Page', () => {
 
       // Verify common aesthetic treatments
       const treatmentTypes = [
-        'botox',
-        'dermal-fillers',
-        'laser-therapy',
-        'chemical-peels',
-        'microneedling',
+        "botox",
+        "dermal-fillers",
+        "laser-therapy",
+        "chemical-peels",
+        "microneedling",
       ];
 
       for (const type of treatmentTypes) {
@@ -63,7 +65,7 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should display recent treatment activities', async ({ page }) => {
+    test("should display recent treatment activities", async ({ page }) => {
       const activitiesSection = page.locator(
         '[data-testid="recent-activities"]',
       );
@@ -86,8 +88,8 @@ test.describe('Dashboard Treatments Page', () => {
     });
   });
 
-  test.describe('Treatment Plans Management', () => {
-    test('should display treatment plans list', async ({ page }) => {
+  test.describe("Treatment Plans Management", () => {
+    test("should display treatment plans list", async ({ page }) => {
       // Navigate to treatment plans
       await page.click('[data-testid="treatment-plans-tab"]');
 
@@ -111,35 +113,35 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
     });
 
-    test('should create new treatment plan', async ({ page }) => {
+    test("should create new treatment plan", async ({ page }) => {
       await page.click('[data-testid="treatment-plans-tab"]');
 
       // Click create new treatment plan
       await page.click('[data-testid="create-treatment-plan"]');
 
       // Fill treatment plan form
-      await page.fill('[data-testid="patient-search"]', 'João Silva');
+      await page.fill('[data-testid="patient-search"]', "João Silva");
       await page.waitForTimeout(500);
       await page.click('[data-testid="patient-option"]');
 
       // Select treatment type
-      await page.selectOption('[data-testid="treatment-type"]', 'botox');
+      await page.selectOption('[data-testid="treatment-type"]', "botox");
 
       // Fill treatment details
-      await page.fill('[data-testid="treatment-area"]', 'Forehead lines');
-      await page.fill('[data-testid="planned-sessions"]', '3');
-      await page.fill('[data-testid="session-interval"]', '4');
-      await page.selectOption('[data-testid="interval-unit"]', 'weeks');
+      await page.fill('[data-testid="treatment-area"]', "Forehead lines");
+      await page.fill('[data-testid="planned-sessions"]', "3");
+      await page.fill('[data-testid="session-interval"]', "4");
+      await page.selectOption('[data-testid="interval-unit"]', "weeks");
 
       // Add treatment goals
       await page.fill(
         '[data-testid="treatment-goals"]',
-        'Reduce forehead wrinkles and improve skin texture',
+        "Reduce forehead wrinkles and improve skin texture",
       );
 
       // Set pricing
-      await page.fill('[data-testid="session-price"]', '800.00');
-      await page.fill('[data-testid="total-price"]', '2400.00');
+      await page.fill('[data-testid="session-price"]', "800.00");
+      await page.fill('[data-testid="total-price"]', "2400.00");
 
       // Submit form
       await page.click('[data-testid="submit-treatment-plan"]');
@@ -150,14 +152,14 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Treatment plan created successfully');
+      ).toContainText("Treatment plan created successfully");
     });
 
-    test('should filter treatment plans by status', async ({ page }) => {
+    test("should filter treatment plans by status", async ({ page }) => {
       await page.click('[data-testid="treatment-plans-tab"]');
 
       // Test status filters
-      const statuses = ['active', 'completed', 'paused', 'cancelled'];
+      const statuses = ["active", "completed", "paused", "cancelled"];
 
       for (const status of statuses) {
         await page.selectOption('[data-testid="status-filter"]', status);
@@ -174,11 +176,11 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should search treatment plans by patient name', async ({ page }) => {
+    test("should search treatment plans by patient name", async ({ page }) => {
       await page.click('[data-testid="treatment-plans-tab"]');
 
       // Search for specific patient
-      await page.fill('[data-testid="patient-search-filter"]', 'Silva');
+      await page.fill('[data-testid="patient-search-filter"]', "Silva");
       await page.waitForTimeout(1000);
 
       // Verify search results
@@ -187,13 +189,13 @@ test.describe('Dashboard Treatments Page', () => {
         const patientName = planRows
           .first()
           .locator('[data-testid="patient-name"]');
-        await expect(patientName).toContainText('Silva', { ignoreCase: true });
+        await expect(patientName).toContainText("Silva", { ignoreCase: true });
       }
     });
   });
 
-  test.describe('Session Management', () => {
-    test('should display scheduled sessions', async ({ page }) => {
+  test.describe("Session Management", () => {
+    test("should display scheduled sessions", async ({ page }) => {
       // Navigate to sessions
       await page.click('[data-testid="sessions-tab"]');
 
@@ -206,7 +208,7 @@ test.describe('Dashboard Treatments Page', () => {
       await expect(page.locator('[data-testid="list-view"]')).toBeVisible();
     });
 
-    test('should schedule new treatment session', async ({ page }) => {
+    test("should schedule new treatment session", async ({ page }) => {
       await page.click('[data-testid="sessions-tab"]');
 
       // Click schedule new session
@@ -222,17 +224,17 @@ test.describe('Dashboard Treatments Page', () => {
       tomorrow.setDate(tomorrow.getDate() + 1);
       await page.fill(
         '[data-testid="session-date"]',
-        tomorrow.toISOString().split('T')[0],
+        tomorrow.toISOString().split("T")[0],
       );
-      await page.fill('[data-testid="session-time"]', '14:00');
+      await page.fill('[data-testid="session-time"]', "14:00");
 
       // Set session duration
-      await page.fill('[data-testid="session-duration"]', '60');
+      await page.fill('[data-testid="session-duration"]', "60");
 
       // Add session notes
       await page.fill(
         '[data-testid="session-notes"]',
-        'Second session - follow-up treatment',
+        "Second session - follow-up treatment",
       );
 
       // Submit scheduling
@@ -244,10 +246,10 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Session scheduled successfully');
+      ).toContainText("Session scheduled successfully");
     });
 
-    test('should complete treatment session', async ({ page }) => {
+    test("should complete treatment session", async ({ page }) => {
       await page.click('[data-testid="sessions-tab"]');
 
       // Find a scheduled session to complete
@@ -262,11 +264,11 @@ test.describe('Dashboard Treatments Page', () => {
         // Fill completion form
         await page.selectOption(
           '[data-testid="session-outcome"]',
-          'successful',
+          "successful",
         );
         await page.fill(
           '[data-testid="treatment-notes"]',
-          'Session completed successfully. Patient responded well to treatment.',
+          "Session completed successfully. Patient responded well to treatment.",
         );
 
         // Add before/after photos (simulate file upload)
@@ -274,17 +276,17 @@ test.describe('Dashboard Treatments Page', () => {
         if (await beforePhotoInput.isVisible()) {
           // Simulate file selection
           await beforePhotoInput.setInputFiles({
-            name: 'before.jpg',
-            mimeType: 'image/jpeg',
-            buffer: Buffer.from('fake-image-data'),
+            name: "before.jpg",
+            mimeType: "image/jpeg",
+            buffer: Buffer.from("fake-image-data"),
           });
         }
 
         // Record any adverse reactions
-        await page.selectOption('[data-testid="adverse-reactions"]', 'none');
+        await page.selectOption('[data-testid="adverse-reactions"]', "none");
 
         // Set next session recommendation
-        await page.fill('[data-testid="next-session-weeks"]', '4');
+        await page.fill('[data-testid="next-session-weeks"]', "4");
 
         // Submit completion
         await page.click('[data-testid="submit-completion"]');
@@ -295,11 +297,11 @@ test.describe('Dashboard Treatments Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Session completed');
+        ).toContainText("Session completed");
       }
     });
 
-    test('should reschedule treatment session', async ({ page }) => {
+    test("should reschedule treatment session", async ({ page }) => {
       await page.click('[data-testid="sessions-tab"]');
 
       // Find a scheduled session to reschedule
@@ -316,14 +318,14 @@ test.describe('Dashboard Treatments Page', () => {
         newDate.setDate(newDate.getDate() + 3);
         await page.fill(
           '[data-testid="new-session-date"]',
-          newDate.toISOString().split('T')[0],
+          newDate.toISOString().split("T")[0],
         );
-        await page.fill('[data-testid="new-session-time"]', '15:30');
+        await page.fill('[data-testid="new-session-time"]', "15:30");
 
         // Add reschedule reason
         await page.fill(
           '[data-testid="reschedule-reason"]',
-          'Patient requested different time',
+          "Patient requested different time",
         );
 
         // Submit reschedule
@@ -335,13 +337,13 @@ test.describe('Dashboard Treatments Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Session rescheduled');
+        ).toContainText("Session rescheduled");
       }
     });
   });
 
-  test.describe('Treatment Outcomes and Progress', () => {
-    test('should display treatment progress tracking', async ({ page }) => {
+  test.describe("Treatment Outcomes and Progress", () => {
+    test("should display treatment progress tracking", async ({ page }) => {
       // Navigate to progress tracking
       await page.click('[data-testid="progress-tab"]');
 
@@ -361,11 +363,11 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
     });
 
-    test('should track treatment effectiveness', async ({ page }) => {
+    test("should track treatment effectiveness", async ({ page }) => {
       await page.click('[data-testid="progress-tab"]');
 
       // Check effectiveness metrics by treatment type
-      const treatmentTypes = ['botox', 'dermal-fillers', 'laser-therapy'];
+      const treatmentTypes = ["botox", "dermal-fillers", "laser-therapy"];
 
       for (const type of treatmentTypes) {
         const effectivenessCard = page.locator(
@@ -383,7 +385,7 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should display before/after photo comparisons', async ({ page }) => {
+    test("should display before/after photo comparisons", async ({ page }) => {
       await page.click('[data-testid="progress-tab"]');
 
       // Navigate to photo comparisons
@@ -409,7 +411,7 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should track adverse events and complications', async ({ page }) => {
+    test("should track adverse events and complications", async ({ page }) => {
       await page.click('[data-testid="progress-tab"]');
 
       // Navigate to adverse events
@@ -431,7 +433,7 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
     });
 
-    test('should generate treatment outcome reports', async ({ page }) => {
+    test("should generate treatment outcome reports", async ({ page }) => {
       await page.click('[data-testid="progress-tab"]');
 
       // Navigate to reports section
@@ -442,11 +444,11 @@ test.describe('Dashboard Treatments Page', () => {
       startDate.setMonth(startDate.getMonth() - 3);
       await page.fill(
         '[data-testid="report-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="report-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Select treatment types
@@ -454,7 +456,7 @@ test.describe('Dashboard Treatments Page', () => {
       await page.check('[data-testid="include-fillers"]');
 
       // Generate report
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="generate-outcome-report"]');
 
       // Verify download
@@ -465,8 +467,8 @@ test.describe('Dashboard Treatments Page', () => {
     });
   });
 
-  test.describe('Treatment Protocols and Guidelines', () => {
-    test('should display treatment protocols', async ({ page }) => {
+  test.describe("Treatment Protocols and Guidelines", () => {
+    test("should display treatment protocols", async ({ page }) => {
       // Navigate to protocols
       await page.click('[data-testid="protocols-tab"]');
 
@@ -486,14 +488,14 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
     });
 
-    test('should manage treatment contraindications', async ({ page }) => {
+    test("should manage treatment contraindications", async ({ page }) => {
       await page.click('[data-testid="protocols-tab"]');
 
       // Navigate to contraindications
       await page.click('[data-testid="contraindications-tab"]');
 
       // Check contraindications by treatment type
-      const treatmentTypes = ['botox', 'dermal-fillers', 'laser-therapy'];
+      const treatmentTypes = ["botox", "dermal-fillers", "laser-therapy"];
 
       for (const type of treatmentTypes) {
         const contraindicationsSection = page.locator(
@@ -515,7 +517,7 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should validate treatment eligibility', async ({ page }) => {
+    test("should validate treatment eligibility", async ({ page }) => {
       await page.click('[data-testid="protocols-tab"]');
 
       // Test eligibility checker
@@ -524,7 +526,7 @@ test.describe('Dashboard Treatments Page', () => {
       // Select patient
       await page.fill(
         '[data-testid="patient-search-eligibility"]',
-        'Maria Santos',
+        "Maria Santos",
       );
       await page.waitForTimeout(500);
       await page.click('[data-testid="patient-option"]');
@@ -532,7 +534,7 @@ test.describe('Dashboard Treatments Page', () => {
       // Select treatment type
       await page.selectOption(
         '[data-testid="treatment-type-eligibility"]',
-        'botox',
+        "botox",
       );
 
       // Run eligibility check
@@ -548,8 +550,8 @@ test.describe('Dashboard Treatments Page', () => {
     });
   });
 
-  test.describe('Financial Management', () => {
-    test('should display treatment revenue analytics', async ({ page }) => {
+  test.describe("Financial Management", () => {
+    test("should display treatment revenue analytics", async ({ page }) => {
       // Navigate to financial section
       await page.click('[data-testid="financial-tab"]');
 
@@ -568,7 +570,7 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
     });
 
-    test('should manage treatment pricing', async ({ page }) => {
+    test("should manage treatment pricing", async ({ page }) => {
       await page.click('[data-testid="financial-tab"]');
 
       // Navigate to pricing management
@@ -584,10 +586,10 @@ test.describe('Dashboard Treatments Page', () => {
         await firstPriceRow.locator('[data-testid="edit-price"]').click();
 
         // Update price
-        await page.fill('[data-testid="new-price"]', '950.00');
+        await page.fill('[data-testid="new-price"]', "950.00");
         await page.fill(
           '[data-testid="price-change-reason"]',
-          'Market adjustment',
+          "Market adjustment",
         );
 
         // Save changes
@@ -600,7 +602,7 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should track payment status for treatments', async ({ page }) => {
+    test("should track payment status for treatments", async ({ page }) => {
       await page.click('[data-testid="financial-tab"]');
 
       // Navigate to payment tracking
@@ -624,11 +626,13 @@ test.describe('Dashboard Treatments Page', () => {
     });
   });
 
-  test.describe('Performance and Accessibility', () => {
-    test('should load treatments dashboard within performance thresholds', async ({ page }) => {
+  test.describe("Performance and Accessibility", () => {
+    test("should load treatments dashboard within performance thresholds", async ({
+      page,
+    }) => {
       const startTime = Date.now();
-      await page.goto('/dashboard/treatments');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/dashboard/treatments");
+      await page.waitForLoadState("networkidle");
       const loadTime = Date.now() - startTime;
 
       // Should load within 3 seconds
@@ -636,24 +640,26 @@ test.describe('Dashboard Treatments Page', () => {
 
       // Check for performance metrics
       const performanceEntries = await page.evaluate(() => {
-        return JSON.stringify(performance.getEntriesByType('navigation'));
+        return JSON.stringify(performance.getEntriesByType("navigation"));
       });
 
       expect(performanceEntries).toBeDefined();
     });
 
-    test('should support keyboard navigation', async ({ page }) => {
+    test("should support keyboard navigation", async ({ page }) => {
       // Test tab navigation through treatment sections
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
 
       // Should be able to navigate to main sections
-      const focusedElement = page.locator(':focus');
+      const focusedElement = page.locator(":focus");
       await expect(focusedElement).toBeVisible();
     });
 
-    test('should have proper ARIA labels for treatment data', async ({ page }) => {
+    test("should have proper ARIA labels for treatment data", async ({
+      page,
+    }) => {
       // Check ARIA labels on treatment metrics
       await expect(
         page.locator('[data-testid="active-treatments"][aria-label]'),
@@ -663,13 +669,13 @@ test.describe('Dashboard Treatments Page', () => {
       ).toBeVisible();
 
       // Check table accessibility
-      const tables = page.locator('table');
+      const tables = page.locator("table");
       if ((await tables.count()) > 0) {
-        await expect(tables.first()).toHaveAttribute('role', 'table');
+        await expect(tables.first()).toHaveAttribute("role", "table");
       }
     });
 
-    test('should be responsive on mobile devices', async ({ page }) => {
+    test("should be responsive on mobile devices", async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
@@ -688,7 +694,9 @@ test.describe('Dashboard Treatments Page', () => {
       }
     });
 
-    test('should support screen readers for treatment information', async ({ page }) => {
+    test("should support screen readers for treatment information", async ({
+      page,
+    }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',
@@ -698,7 +706,7 @@ test.describe('Dashboard Treatments Page', () => {
       }
 
       // Check for descriptive headings
-      const headings = page.locator('h1, h2, h3, h4, h5, h6');
+      const headings = page.locator("h1, h2, h3, h4, h5, h6");
       if ((await headings.count()) > 0) {
         await expect(headings.first()).toBeVisible();
       }

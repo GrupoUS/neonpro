@@ -12,7 +12,7 @@ const mockSupabaseClient = {
     insert: jest.fn().mockReturnValue({
       select: jest.fn().mockReturnValue({
         then: jest.fn().mockResolvedValue({
-          data: [{ id: '1', name: 'Test Form' }],
+          data: [{ id: "1", name: "Test Form" }],
           error: undefined,
         }),
       }),
@@ -21,7 +21,7 @@ const mockSupabaseClient = {
       eq: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           then: jest.fn().mockResolvedValue({
-            data: [{ id: '1', status: 'revoked' }],
+            data: [{ id: "1", status: "revoked" }],
             error: undefined,
           }),
         }),
@@ -31,7 +31,7 @@ const mockSupabaseClient = {
 };
 
 // Mock do cliente Supabase
-jest.mock('@/app/utils/supabase/client', () => ({
+jest.mock("@/app/utils/supabase/client", () => ({
   createClient: jest.fn(() => mockSupabaseClient),
 }));
 

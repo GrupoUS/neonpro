@@ -67,9 +67,12 @@ Object.defineProperty(global, "fetch", {
   configurable: true,
 });
 
-vi.mock<typeof import('../../lib/api/hono-client')>("../../lib/api/hono-client", () => ({
-  honoClient: mockHonoClient,
-})); // Test wrapper component
+vi.mock<typeof import("../../lib/api/hono-client")>(
+  "../../lib/api/hono-client",
+  () => ({
+    honoClient: mockHonoClient,
+  }),
+); // Test wrapper component
 const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient({
     defaultOptions: {

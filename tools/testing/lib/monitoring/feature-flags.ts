@@ -7,10 +7,10 @@ export interface FeatureFlag {
 
 export class FeatureFlagsService {
   private static flags: Map<string, boolean> = new Map([
-    ['webauthn_enabled', true],
-    ['advanced_monitoring', true],
-    ['ml_risk_assessment', true],
-    ['real_time_notifications', true],
+    ["webauthn_enabled", true],
+    ["advanced_monitoring", true],
+    ["ml_risk_assessment", true],
+    ["real_time_notifications", true],
   ]);
 
   static isEnabled(flagName: string): boolean {

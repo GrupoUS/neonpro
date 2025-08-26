@@ -7,7 +7,7 @@ export interface TestContext {
   testId: string;
   testName: string;
   startTime: Date;
-  environment: 'test' | 'staging' | 'production';
+  environment: "test" | "staging" | "production";
   healthcareCompliance: {
     lgpd: boolean;
     anvisa: boolean;

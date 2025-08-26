@@ -24,11 +24,11 @@ Centralized test mocking for NeonPro healthcare system with compliance-aware moc
 
 ```typescript
 // Import healthcare mocks
-import { mockAnvisaResponse } from './mocks/compliance/anvisa';
-import { mockPatientData } from './mocks/healthcare/patients';
+import { mockAnvisaResponse } from "./mocks/compliance/anvisa";
+import { mockPatientData } from "./mocks/healthcare/patients";
 
 // Use in tests
-describe('Patient Service', () => {
+describe("Patient Service", () => {
   beforeEach(() => {
     mockPatientData.setup();
   });

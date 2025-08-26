@@ -3,8 +3,8 @@
 import { automatedBeforeAfterAnalysisService } from "@/app/lib/services/automated-before-after-analysis";
 import { validationSchemas } from "@/app/lib/validations/automated-before-after-analysis";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // GET /api/automated-analysis - Get analysis sessions with filters
 export async function GET(request: NextRequest) {

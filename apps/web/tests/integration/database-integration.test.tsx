@@ -59,13 +59,16 @@ const mockSupabaseClient = {
   rpc: vi.fn(), // For stored procedures
 };
 
-vi.mock<typeof import('@prisma/client')>("@prisma/client", () => ({
+vi.mock<typeof import("@prisma/client")>("@prisma/client", () => ({
   PrismaClient: () => mockPrismaClient,
 }));
 
-vi.mock<typeof import('@supabase/supabase-js')>("@supabase/supabase-js", () => ({
-  createClient: () => mockSupabaseClient,
-}));
+vi.mock<typeof import("@supabase/supabase-js")>(
+  "@supabase/supabase-js",
+  () => ({
+    createClient: () => mockSupabaseClient,
+  }),
+);
 
 // Test data
 const mockPatientData = {
@@ -569,8 +572,12 @@ describe("database Integration Tests", () => {
 
       expect(clinic1Results).toHaveLength(2);
       expect(clinic2Results).toHaveLength(1);
-      expect(clinic1Results.every((p) => p.clinic_id === "clinic-1")).toBeTruthy();
-      expect(clinic2Results.every((p) => p.clinic_id === "clinic-2")).toBeTruthy();
+      expect(
+        clinic1Results.every((p) => p.clinic_id === "clinic-1"),
+      ).toBeTruthy();
+      expect(
+        clinic2Results.every((p) => p.clinic_id === "clinic-2"),
+      ).toBeTruthy();
     });
 
     it("should prevent cross-tenant data access", async () => {

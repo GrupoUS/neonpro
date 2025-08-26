@@ -8,8 +8,8 @@
 import { driftDetector } from "@/lib/ai/drift-detection";
 import { createServerClient } from "@neonpro/db";
 import { cookies } from "next/headers";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -161,9 +161,9 @@ export async function GET(request: NextRequest) {
               status:
                 (latestDrift.drift_score || 0) > 0.1
                   ? "HIGH_DRIFT"
-                  : ((latestDrift.drift_score || 0) > 0.05
+                  : (latestDrift.drift_score || 0) > 0.05
                     ? "MEDIUM_DRIFT"
-                    : "STABLE"),
+                    : "STABLE",
               lastChecked: latestDrift.created_at,
               thresholdBreached: latestDrift.threshold_breached,
               alertSent: latestDrift.alert_sent,

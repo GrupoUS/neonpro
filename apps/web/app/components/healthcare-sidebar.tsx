@@ -158,12 +158,12 @@ export function HealthcareSidebar() {
                       asChild
                       className={`group transition-all duration-200 ${
                         isEmergency
-                          ? (isActive
+                          ? isActive
                             ? "bg-destructive text-destructive-foreground shadow-md"
-                            : "border border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground")
-                          : (isActive
+                            : "border border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                          : isActive
                             ? "bg-primary text-primary-foreground shadow-md"
-                            : "text-foreground hover:bg-muted hover:text-foreground")
+                            : "text-foreground hover:bg-muted hover:text-foreground"
                       }`}
                       isActive={isActive}
                       tooltip={item.description}
@@ -175,12 +175,12 @@ export function HealthcareSidebar() {
                         <Icon
                           className={`h-4 w-4 ${
                             isEmergency
-                              ? (isActive
+                              ? isActive
                                 ? "text-destructive-foreground"
-                                : "text-destructive")
-                              : (isActive
+                                : "text-destructive"
+                              : isActive
                                 ? "text-primary-foreground"
-                                : "text-muted-foreground")
+                                : "text-muted-foreground"
                           }`}
                         />
                         <span className="font-medium">{item.title}</span>

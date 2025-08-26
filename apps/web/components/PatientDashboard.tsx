@@ -432,9 +432,9 @@ export default function PatientDashboard() {
                     <Badge variant="outline">
                       {healthMetrics.weight.trend === "stable"
                         ? "Estável"
-                        : (healthMetrics.weight.trend === "up"
+                        : healthMetrics.weight.trend === "up"
                           ? "Subindo"
-                          : "Descendo")}
+                          : "Descendo"}
                     </Badge>
                   </div>
                 </div>

@@ -90,7 +90,8 @@ export class AuthService {
             last_name: userData.lastName,
           });
 
-        if (profileError) {}
+        if (profileError) {
+        }
       }
 
       return { user: data.user as AuthUser };

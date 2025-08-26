@@ -61,7 +61,7 @@ cp .env.example .env
 ### Basic Usage
 
 ```typescript
-import { BackupSystem } from './lib/backup';
+import { BackupSystem } from "./lib/backup";
 
 // Initialize the backup system
 const backupSystem = new BackupSystem();
@@ -69,24 +69,24 @@ await backupSystem.initialize();
 
 // Create a backup configuration
 const config = await backupSystem.manager.createConfig({
-  name: 'Daily Database Backup',
-  type: 'FULL',
-  source_type: 'DATABASE',
+  name: "Daily Database Backup",
+  type: "FULL",
+  source_type: "DATABASE",
   source_config: {
     connection_string: process.env.DATABASE_URL,
   },
-  storage_provider: 'LOCAL',
+  storage_provider: "LOCAL",
   storage_config: {
-    path: './backups',
+    path: "./backups",
   },
-  schedule_frequency: 'DAILY',
-  schedule_time: '02:00',
+  schedule_frequency: "DAILY",
+  schedule_time: "02:00",
   enabled: true,
 });
 
 // Run a manual backup
 const backup = await backupSystem.manager.runManualBackup(config.id);
-console.log('Backup started:', backup.id);
+console.log("Backup started:", backup.id);
 ```
 
 ## 📚 API Reference
@@ -189,7 +189,7 @@ function MyBackupPage() {
 
 ```typescript
 // pages/api/backup/[...slug].ts
-import { BackupSystem } from '@/lib/backup';
+import { BackupSystem } from "@/lib/backup";
 
 const backupSystem = new BackupSystem();
 
@@ -198,23 +198,23 @@ export default async function handler(req, res) {
   const [action, id] = slug;
 
   switch (action) {
-    case 'create':
+    case "create":
       const config = await backupSystem.manager.createConfig(req.body);
       res.json(config);
       break;
 
-    case 'run':
+    case "run":
       const backup = await backupSystem.manager.runManualBackup(id);
       res.json(backup);
       break;
 
-    case 'status':
+    case "status":
       const status = await backupSystem.manager.getBackupStatus(id);
       res.json(status);
       break;
 
     default:
-      res.status(404).json({ error: 'Not found' });
+      res.status(404).json({ error: "Not found" });
   }
 }
 ```
@@ -223,27 +223,27 @@ export default async function handler(req, res) {
 
 ```typescript
 // Webhook for backup completion notifications
-import { BackupSystem } from '@/lib/backup';
+import { BackupSystem } from "@/lib/backup";
 
 const backupSystem = new BackupSystem();
 
 // Listen for backup events
-backupSystem.on('backup:completed', async (backup) => {
+backupSystem.on("backup:completed", async (backup) => {
   // Send notification
-  await fetch('https://hooks.slack.com/your-webhook', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  await fetch("https://hooks.slack.com/your-webhook", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text: `Backup ${backup.id} completed successfully!`,
     }),
   });
 });
 
-backupSystem.on('backup:failed', async (backup, error) => {
+backupSystem.on("backup:failed", async (backup, error) => {
   // Send alert
-  await fetch('https://hooks.slack.com/your-webhook', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  await fetch("https://hooks.slack.com/your-webhook", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text: `🚨 Backup ${backup.id} failed: ${error.message}`,
     }),
@@ -270,9 +270,9 @@ npm test -- --coverage
 
 ```typescript
 // tests/integration/backup-flow.test.ts
-import { BackupSystem } from '../src';
+import { BackupSystem } from "../src";
 
-describe('Backup Flow Integration', () => {
+describe("Backup Flow Integration", () => {
   let backupSystem: BackupSystem;
 
   beforeAll(async () => {
@@ -280,23 +280,23 @@ describe('Backup Flow Integration', () => {
     await backupSystem.initialize();
   });
 
-  test('should create and run backup', async () => {
+  test("should create and run backup", async () => {
     const config = await backupSystem.manager.createConfig({
-      name: 'Test Backup',
-      type: 'FULL',
-      source_type: 'FILES',
-      source_config: { paths: ['./test-data'] },
-      storage_provider: 'LOCAL',
+      name: "Test Backup",
+      type: "FULL",
+      source_type: "FILES",
+      source_config: { paths: ["./test-data"] },
+      storage_provider: "LOCAL",
     });
 
     const backup = await backupSystem.manager.runManualBackup(config.id);
-    expect(backup.status).toBe('RUNNING');
+    expect(backup.status).toBe("RUNNING");
 
     // Wait for completion
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
     const completed = await backupSystem.manager.getBackupStatus(backup.id);
-    expect(completed.status).toBe('COMPLETED');
+    expect(completed.status).toBe("COMPLETED");
   });
 });
 ```
@@ -310,12 +310,12 @@ export class MockStorageProvider {
 
   async upload(key: string, data: Buffer): Promise<UploadResult> {
     this.storage.set(key, data);
-    return { key, size: data.length, etag: 'mock-etag' };
+    return { key, size: data.length, etag: "mock-etag" };
   }
 
   async download(key: string): Promise<Buffer> {
     const data = this.storage.get(key);
-    if (!data) throw new Error('File not found');
+    if (!data) throw new Error("File not found");
     return data;
   }
 
@@ -432,9 +432,9 @@ chmod -R 755 /path/to/backup/source
 
 ```typescript
 // Test storage connection
-const result = await backupSystem.storage.testConnection('aws-s3');
+const result = await backupSystem.storage.testConnection("aws-s3");
 if (!result.success) {
-  console.error('Connection failed:', result.error);
+  console.error("Connection failed:", result.error);
 }
 ```
 
@@ -465,8 +465,8 @@ LOG_LEVEL=debug npm start
 ```typescript
 // Check system health
 const health = await backupSystem.getSystemHealth();
-console.log('System status:', health.overall);
-console.log('Components:', health.components);
+console.log("System status:", health.overall);
+console.log("Components:", health.components);
 ```
 
 ## 🤝 Contributing

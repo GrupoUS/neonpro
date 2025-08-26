@@ -5,12 +5,16 @@
  * Tests authentication, data integrity, LGPD compliance, and error handling
  */
 
-import { describe, expect, it, vi } from 'vitest';
-import { mockAppointment, mockPatient, mockUser } from '../setup/final-test-setup';
+import { describe, expect, it, vi } from "vitest";
+import {
+  mockAppointment,
+  mockPatient,
+  mockUser,
+} from "../setup/final-test-setup";
 
-describe('aPI Integration Tests - Final Validation', () => {
-  describe('authentication API', () => {
-    it('should authenticate healthcare professional successfully', async () => {
+describe("aPI Integration Tests - Final Validation", () => {
+  describe("authentication API", () => {
+    it("should authenticate healthcare professional successfully", async () => {
       const mockAuthResponse = {
         status: 200,
         json: () =>
@@ -18,21 +22,24 @@ describe('aPI Integration Tests - Final Validation', () => {
             success: true,
             user: mockUser,
             session: {
-              access_token: 'test-token',
+              access_token: "test-token",
               expires_at: Date.now() + 3_600_000,
             },
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockAuthResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockAuthResponse);
 
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: 'dr.silva@neonpro.health',
-          password: 'securePassword123',
-          crm_number: '12345-SP',
+          email: "dr.silva@neonpro.health",
+          password: "securePassword123",
+          crm_number: "12345-SP",
         }),
       });
 
@@ -41,27 +48,30 @@ describe('aPI Integration Tests - Final Validation', () => {
       expect(response.status).toBe(200);
       expect(data.success).toBeTruthy();
       expect(data.user).toBeDefined();
-      expect(data.user.role).toBe('healthcare_professional');
+      expect(data.user.role).toBe("healthcare_professional");
     });
 
-    it('should reject invalid credentials', async () => {
+    it("should reject invalid credentials", async () => {
       const mockErrorResponse = {
         status: 401,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'Invalid credentials',
+            error: "Invalid credentials",
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockErrorResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockErrorResponse);
 
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: 'invalid@email.com',
-          password: 'wrongpassword',
+          email: "invalid@email.com",
+          password: "wrongpassword",
         }),
       });
 
@@ -72,24 +82,27 @@ describe('aPI Integration Tests - Final Validation', () => {
       expect(data.error).toBeDefined();
     });
 
-    it('should validate CRM number for healthcare professionals', async () => {
+    it("should validate CRM number for healthcare professionals", async () => {
       const mockValidationResponse = {
         status: 400,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'CRM number is required for healthcare professionals',
+            error: "CRM number is required for healthcare professionals",
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockValidationResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockValidationResponse);
 
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: 'dr.silva@neonpro.health',
-          password: 'securePassword123',
+          email: "dr.silva@neonpro.health",
+          password: "securePassword123",
           // Missing CRM number
         }),
       });
@@ -98,12 +111,12 @@ describe('aPI Integration Tests - Final Validation', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBeFalsy();
-      expect(data.error).toContain('CRM number');
+      expect(data.error).toContain("CRM number");
     });
   });
 
-  describe('patient Management API', () => {
-    it('should create patient with LGPD consent', async () => {
+  describe("patient Management API", () => {
+    it("should create patient with LGPD consent", async () => {
       const mockPatientResponse = {
         status: 201,
         json: () =>
@@ -111,25 +124,28 @@ describe('aPI Integration Tests - Final Validation', () => {
             success: true,
             data: {
               ...mockPatient,
-              id: 'new-patient-id',
+              id: "new-patient-id",
             },
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockPatientResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockPatientResponse);
 
-      const response = await fetch('/api/patients', {
-        method: 'POST',
+      const response = await fetch("/api/patients", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({
           ...mockPatient,
           lgpd_consent: {
             given_at: new Date().toISOString(),
-            consent_version: '1.0',
-            purposes: ['treatment', 'analytics'],
+            consent_version: "1.0",
+            purposes: ["treatment", "analytics"],
           },
         }),
       });
@@ -139,30 +155,33 @@ describe('aPI Integration Tests - Final Validation', () => {
       expect(response.status).toBe(201);
       expect(data.success).toBeTruthy();
       expect(data.data.lgpd_consent).toBeDefined();
-      expect(data.data.lgpd_consent.purposes).toContain('treatment');
+      expect(data.data.lgpd_consent.purposes).toContain("treatment");
     });
 
-    it('should validate CPF format for Brazilian patients', async () => {
+    it("should validate CPF format for Brazilian patients", async () => {
       const mockValidationError = {
         status: 400,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'Invalid CPF format',
+            error: "Invalid CPF format",
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockValidationError);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockValidationError);
 
-      const response = await fetch('/api/patients', {
-        method: 'POST',
+      const response = await fetch("/api/patients", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({
           ...mockPatient,
-          cpf: 'invalid-cpf-format',
+          cpf: "invalid-cpf-format",
         }),
       });
 
@@ -170,10 +189,10 @@ describe('aPI Integration Tests - Final Validation', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBeFalsy();
-      expect(data.error).toContain('CPF');
+      expect(data.error).toContain("CPF");
     });
 
-    it('should enforce data minimization principles', async () => {
+    it("should enforce data minimization principles", async () => {
       const mockPatientList = {
         status: 200,
         json: () =>
@@ -190,24 +209,27 @@ describe('aPI Integration Tests - Final Validation', () => {
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockPatientList);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockPatientList);
 
-      const response = await fetch('/api/patients', {
-        method: 'GET',
-        headers: { Authorization: 'Bearer test-token' },
+      const response = await fetch("/api/patients", {
+        method: "GET",
+        headers: { Authorization: "Bearer test-token" },
       });
 
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBeTruthy();
-      expect(data.data[0]).not.toHaveProperty('medical_history');
-      expect(data.data[0]).not.toHaveProperty('cpf');
+      expect(data.data[0]).not.toHaveProperty("medical_history");
+      expect(data.data[0]).not.toHaveProperty("cpf");
     });
   });
 
-  describe('appointment Management API', () => {
-    it('should create appointment with professional validation', async () => {
+  describe("appointment Management API", () => {
+    it("should create appointment with professional validation", async () => {
       const mockAppointmentResponse = {
         status: 201,
         json: () =>
@@ -215,18 +237,21 @@ describe('aPI Integration Tests - Final Validation', () => {
             success: true,
             data: {
               ...mockAppointment,
-              id: 'new-appointment-id',
+              id: "new-appointment-id",
             },
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockAppointmentResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockAppointmentResponse);
 
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
+      const response = await fetch("/api/appointments", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify(mockAppointment),
       });
@@ -239,23 +264,26 @@ describe('aPI Integration Tests - Final Validation', () => {
       expect(data.data.patient_id).toBeDefined();
     });
 
-    it('should prevent double booking', async () => {
+    it("should prevent double booking", async () => {
       const mockConflictResponse = {
         status: 409,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'Time slot already booked',
+            error: "Time slot already booked",
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockConflictResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockConflictResponse);
 
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
+      const response = await fetch("/api/appointments", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({
           ...mockAppointment,
@@ -267,12 +295,12 @@ describe('aPI Integration Tests - Final Validation', () => {
 
       expect(response.status).toBe(409);
       expect(data.success).toBeFalsy();
-      expect(data.error).toContain('already booked');
+      expect(data.error).toContain("already booked");
     });
   });
 
-  describe('analytics API', () => {
-    it('should provide anonymized analytics data', async () => {
+  describe("analytics API", () => {
+    it("should provide anonymized analytics data", async () => {
       const mockAnalyticsResponse = {
         status: 200,
         json: () =>
@@ -290,25 +318,28 @@ describe('aPI Integration Tests - Final Validation', () => {
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockAnalyticsResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockAnalyticsResponse);
 
-      const response = await fetch('/api/analytics', {
-        method: 'GET',
-        headers: { Authorization: 'Bearer test-token' },
+      const response = await fetch("/api/analytics", {
+        method: "GET",
+        headers: { Authorization: "Bearer test-token" },
       });
 
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBeTruthy();
-      expect(data.data.patient_count).toBeTypeOf('number');
-      expect(data.data).not.toHaveProperty('patient_names');
-      expect(data.data).not.toHaveProperty('personal_data');
+      expect(data.data.patient_count).toBeTypeOf("number");
+      expect(data.data).not.toHaveProperty("patient_names");
+      expect(data.data).not.toHaveProperty("personal_data");
     });
   });
 
-  describe('compliance API', () => {
-    it('should generate LGPD compliance report', async () => {
+  describe("compliance API", () => {
+    it("should generate LGPD compliance report", async () => {
       const mockComplianceResponse = {
         status: 200,
         json: () =>
@@ -324,17 +355,20 @@ describe('aPI Integration Tests - Final Validation', () => {
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockComplianceResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockComplianceResponse);
 
-      const response = await fetch('/api/compliance/report', {
-        method: 'POST',
+      const response = await fetch("/api/compliance/report", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({
-          report_type: 'lgpd_compliance',
-          period: 'monthly',
+          report_type: "lgpd_compliance",
+          period: "monthly",
         }),
       });
 
@@ -347,23 +381,26 @@ describe('aPI Integration Tests - Final Validation', () => {
     });
   });
 
-  describe('error Handling', () => {
-    it('should handle database connection errors gracefully', async () => {
+  describe("error Handling", () => {
+    it("should handle database connection errors gracefully", async () => {
       const mockDbError = {
         status: 500,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'Database connection failed',
-            code: 'DB_CONNECTION_ERROR',
+            error: "Database connection failed",
+            code: "DB_CONNECTION_ERROR",
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockDbError);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockDbError);
 
-      const response = await fetch('/api/patients', {
-        method: 'GET',
-        headers: { Authorization: 'Bearer test-token' },
+      const response = await fetch("/api/patients", {
+        method: "GET",
+        headers: { Authorization: "Bearer test-token" },
       });
 
       const data = await response.json();
@@ -373,31 +410,34 @@ describe('aPI Integration Tests - Final Validation', () => {
       expect(data.code).toBeDefined();
     });
 
-    it('should validate request payload structure', async () => {
+    it("should validate request payload structure", async () => {
       const mockValidationError = {
         status: 400,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'Invalid request payload',
+            error: "Invalid request payload",
             validation_errors: [
-              { field: 'email', message: 'Invalid email format' },
-              { field: 'name', message: 'Name is required' },
+              { field: "email", message: "Invalid email format" },
+              { field: "name", message: "Name is required" },
             ],
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockValidationError);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockValidationError);
 
-      const response = await fetch('/api/patients', {
-        method: 'POST',
+      const response = await fetch("/api/patients", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({
           // Invalid payload
-          email: 'invalid-email',
+          email: "invalid-email",
           // missing required fields
         }),
       });
@@ -411,24 +451,27 @@ describe('aPI Integration Tests - Final Validation', () => {
     });
   });
 
-  describe('rate Limiting', () => {
-    it('should enforce rate limits for API endpoints', async () => {
+  describe("rate Limiting", () => {
+    it("should enforce rate limits for API endpoints", async () => {
       const mockRateLimitResponse = {
         status: 429,
         json: () =>
           Promise.resolve({
             success: false,
-            error: 'Rate limit exceeded',
+            error: "Rate limit exceeded",
             retry_after: 60,
           }),
       };
 
       // Simulate multiple rapid requests
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockRateLimitResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockRateLimitResponse);
 
-      const response = await fetch('/api/patients', {
-        method: 'GET',
-        headers: { Authorization: 'Bearer test-token' },
+      const response = await fetch("/api/patients", {
+        method: "GET",
+        headers: { Authorization: "Bearer test-token" },
       });
 
       const data = await response.json();
@@ -439,8 +482,8 @@ describe('aPI Integration Tests - Final Validation', () => {
     });
   });
 
-  describe('audit Trail', () => {
-    it('should log all data access operations', async () => {
+  describe("audit Trail", () => {
+    it("should log all data access operations", async () => {
       const mockAuditResponse = {
         status: 200,
         json: () =>
@@ -448,26 +491,29 @@ describe('aPI Integration Tests - Final Validation', () => {
             success: true,
             data: mockPatient,
             audit: {
-              action: 'READ',
-              user_id: 'test-user-id',
+              action: "READ",
+              user_id: "test-user-id",
               timestamp: new Date().toISOString(),
-              ip_address: '127.0.0.1',
+              ip_address: "127.0.0.1",
             },
           }),
       };
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue(mockAuditResponse);
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue(mockAuditResponse);
 
       const response = await fetch(`/api/patients/${mockPatient.id}`, {
-        method: 'GET',
-        headers: { Authorization: 'Bearer test-token' },
+        method: "GET",
+        headers: { Authorization: "Bearer test-token" },
       });
 
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.audit).toBeDefined();
-      expect(data.audit.action).toBe('read');
+      expect(data.audit.action).toBe("read");
       expect(data.audit.user_id).toBeDefined();
       expect(data.audit.timestamp).toBeDefined();
     });

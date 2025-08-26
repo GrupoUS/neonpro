@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Constants for byte conversions
 const BYTES_PER_KB = 1024;
@@ -116,12 +116,13 @@ const MAX_AUDIT_DESCRIPTION_LENGTH = 1000;
 // File and Upload Limits
 const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_NAME_LENGTH = 255;
-const ALLOWED_FILE_EXTENSIONS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+const ALLOWED_FILE_EXTENSIONS = ["pdf", "doc", "docx", "jpg", "jpeg", "png"];
 
 // Password and Security Limits
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 128;
-const PASSWORD_COMPLEXITY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+const PASSWORD_COMPLEXITY_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
 
 // Pagination and Query Limits
 const MAX_PAGE_SIZE = 100;
@@ -139,7 +140,7 @@ const MAX_SUBJECT_LENGTH = 200;
 // Basic validation schemas
 export const emailSchema = z
   .string()
-  .email('Invalid email format')
+  .email("Invalid email format")
   .max(
     MAX_EMAIL_LENGTH,
     `Email must not exceed ${MAX_EMAIL_LENGTH} characters`,
@@ -152,7 +153,7 @@ export const phoneSchema = z
     `Phone must be at least ${MIN_PHONE_LENGTH} characters`,
   )
   .max(MAX_PHONE_LENGTH, `Phone must not exceed ${MAX_PHONE_LENGTH} characters`)
-  .regex(/^\+?[\d\s\-().]+$/, 'Invalid phone number format');
+  .regex(/^\+?[\d\s\-().]+$/, "Invalid phone number format");
 
 export const nameSchema = z
   .string()
@@ -160,7 +161,7 @@ export const nameSchema = z
   .max(MAX_NAME_LENGTH, `Name must not exceed ${MAX_NAME_LENGTH} characters`)
   .regex(
     /^[a-zA-ZÀ-ÿ\u00F1\u00D1\s\-.']+$/,
-    'Name contains invalid characters',
+    "Name contains invalid characters",
   );
 
 // Address validation schema
@@ -224,7 +225,7 @@ export const passwordSchema = z
   )
   .regex(
     PASSWORD_COMPLEXITY_REGEX,
-    'Password must contain at least one lowercase letter, uppercase letter, number, and special character',
+    "Password must contain at least one lowercase letter, uppercase letter, number, and special character",
   );
 
 // Patient registration schema
@@ -233,7 +234,7 @@ export const patientRegistrationSchema = z.object({
   lastName: nameSchema,
   email: emailSchema,
   phone: phoneSchema,
-  dateOfBirth: z.string().datetime('Invalid date format'),
+  dateOfBirth: z.string().datetime("Invalid date format"),
   address: addressSchema,
   emergencyContact: z.object({
     name: nameSchema,
@@ -286,12 +287,12 @@ export const patientRegistrationSchema = z.object({
     .optional(),
   lgpdConsent: z
     .boolean()
-    .refine((val) => val === true, 'LGPD consent is required'),
-  consentTimestamp: z.string().datetime('Invalid consent timestamp format'),
+    .refine((val) => val === true, "LGPD consent is required"),
+  consentTimestamp: z.string().datetime("Invalid consent timestamp format"),
 }); // Appointment scheduling schema
 export const appointmentSchema = z.object({
-  patientId: z.string().uuid('Invalid patient ID format'),
-  providerId: z.string().uuid('Invalid provider ID format'),
+  patientId: z.string().uuid("Invalid patient ID format"),
+  providerId: z.string().uuid("Invalid provider ID format"),
   appointmentType: z
     .string()
     .min(
@@ -302,7 +303,7 @@ export const appointmentSchema = z.object({
       MAX_APPOINTMENT_TYPE_LENGTH,
       `Appointment type must not exceed ${MAX_APPOINTMENT_TYPE_LENGTH} characters`,
     ),
-  scheduledDateTime: z.string().datetime('Invalid appointment date format'),
+  scheduledDateTime: z.string().datetime("Invalid appointment date format"),
   duration: z
     .number()
     .min(
@@ -348,10 +349,10 @@ export const appointmentSchema = z.object({
 
 // Medical record schema
 export const medicalRecordSchema = z.object({
-  patientId: z.string().uuid('Invalid patient ID format'),
-  providerId: z.string().uuid('Invalid provider ID format'),
-  appointmentId: z.string().uuid('Invalid appointment ID format').optional(),
-  visitDate: z.string().datetime('Invalid visit date format'),
+  patientId: z.string().uuid("Invalid patient ID format"),
+  providerId: z.string().uuid("Invalid provider ID format"),
+  appointmentId: z.string().uuid("Invalid appointment ID format").optional(),
+  visitDate: z.string().datetime("Invalid visit date format"),
   chiefComplaint: z
     .string()
     .max(
@@ -417,7 +418,7 @@ export const medicalRecordSchema = z.object({
     )
     .optional(),
   followUpRequired: z.boolean().default(false),
-  followUpDate: z.string().datetime('Invalid follow-up date format').optional(),
+  followUpDate: z.string().datetime("Invalid follow-up date format").optional(),
   notes: z
     .string()
     .max(
@@ -479,8 +480,8 @@ export const userProfileUpdateSchema = z.object({
   email: emailSchema.optional(),
   phone: phoneSchema.optional(),
   address: addressSchema.optional(),
-  dateOfBirth: z.string().datetime('Invalid date format').optional(),
-  preferredLanguage: z.enum(['en', 'pt', 'es']).optional(),
+  dateOfBirth: z.string().datetime("Invalid date format").optional(),
+  preferredLanguage: z.enum(["en", "pt", "es"]).optional(),
   timezone: z
     .string()
     .max(
@@ -558,51 +559,51 @@ export const providerRegistrationSchema = z.object({
     .object({
       monday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
       tuesday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
       wednesday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
       thursday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
       friday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
       saturday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
       sunday: z
         .object({
-          start: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
-          end: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format'),
+          start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
+          end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format"),
         })
         .optional(),
     })
     .optional(),
   profileImage: z
     .string()
-    .url('Invalid profile image URL')
+    .url("Invalid profile image URL")
     .max(
       MAX_PROFILE_IMAGE_URL_LENGTH,
       `Profile image URL must not exceed ${MAX_PROFILE_IMAGE_URL_LENGTH} characters`,
@@ -618,7 +619,7 @@ export const providerRegistrationSchema = z.object({
 export const fileUploadSchema = z.object({
   fileName: z
     .string()
-    .min(1, 'File name is required')
+    .min(1, "File name is required")
     .max(
       MAX_FILE_NAME_LENGTH,
       `File name must not exceed ${MAX_FILE_NAME_LENGTH} characters`,
@@ -632,18 +633,19 @@ export const fileUploadSchema = z.object({
   fileType: z
     .string()
     .refine(
-      (type) => ALLOWED_FILE_EXTENSIONS.some((ext) => type.toLowerCase().includes(ext)),
-      `File type must be one of: ${ALLOWED_FILE_EXTENSIONS.join(', ')}`,
+      (type) =>
+        ALLOWED_FILE_EXTENSIONS.some((ext) => type.toLowerCase().includes(ext)),
+      `File type must be one of: ${ALLOWED_FILE_EXTENSIONS.join(", ")}`,
     ),
-  patientId: z.string().uuid('Invalid patient ID format').optional(),
-  appointmentId: z.string().uuid('Invalid appointment ID format').optional(),
+  patientId: z.string().uuid("Invalid patient ID format").optional(),
+  appointmentId: z.string().uuid("Invalid appointment ID format").optional(),
   category: z.enum([
-    'medical_record',
-    'lab_result',
-    'imaging',
-    'insurance',
-    'identification',
-    'other',
+    "medical_record",
+    "lab_result",
+    "imaging",
+    "insurance",
+    "identification",
+    "other",
   ]),
   description: z
     .string()
@@ -654,26 +656,26 @@ export const fileUploadSchema = z.object({
     .optional(),
 }); // Message/communication schema
 export const messageSchema = z.object({
-  recipientId: z.string().uuid('Invalid recipient ID format'),
+  recipientId: z.string().uuid("Invalid recipient ID format"),
   subject: z
     .string()
-    .min(1, 'Subject is required')
+    .min(1, "Subject is required")
     .max(
       MAX_SUBJECT_LENGTH,
       `Subject must not exceed ${MAX_SUBJECT_LENGTH} characters`,
     ),
   content: z
     .string()
-    .min(1, 'Message content is required')
+    .min(1, "Message content is required")
     .max(
       MAX_MESSAGE_LENGTH,
       `Message must not exceed ${MAX_MESSAGE_LENGTH} characters`,
     ),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
   messageType: z
-    .enum(['general', 'appointment', 'medical', 'billing', 'system'])
-    .default('general'),
-  attachments: z.array(z.string().uuid('Invalid attachment ID')).optional(),
+    .enum(["general", "appointment", "medical", "billing", "system"])
+    .default("general"),
+  attachments: z.array(z.string().uuid("Invalid attachment ID")).optional(),
   isEncrypted: z.boolean().default(true),
 });
 
@@ -694,11 +696,11 @@ export const searchSchema = z.object({
       `Sort field must not exceed ${MAX_LANGUAGE_LENGTH} characters`,
     )
     .optional(),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
-  page: z.number().min(1, 'Page must be at least 1').default(1),
+  sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  page: z.number().min(1, "Page must be at least 1").default(1),
   pageSize: z
     .number()
-    .min(1, 'Page size must be at least 1')
+    .min(1, "Page size must be at least 1")
     .max(MAX_PAGE_SIZE, `Page size must not exceed ${MAX_PAGE_SIZE}`)
     .default(DEFAULT_PAGE_SIZE),
   includeInactive: z.boolean().default(false),
@@ -726,10 +728,10 @@ export const auditLogSchema = z.object({
       MAX_RESOURCE_TYPE_LENGTH,
       `Resource type must not exceed ${MAX_RESOURCE_TYPE_LENGTH} characters`,
     ),
-  resourceId: z.string().uuid('Invalid resource ID format').optional(),
-  userId: z.string().uuid('Invalid user ID format'),
-  tenantId: z.string().uuid('Invalid tenant ID format'),
-  ipAddress: z.string().ip('Invalid IP address format').optional(),
+  resourceId: z.string().uuid("Invalid resource ID format").optional(),
+  userId: z.string().uuid("Invalid user ID format"),
+  tenantId: z.string().uuid("Invalid tenant ID format"),
+  ipAddress: z.string().ip("Invalid IP address format").optional(),
   userAgent: z
     .string()
     .max(
@@ -745,8 +747,8 @@ export const auditLogSchema = z.object({
     )
     .optional(),
   metadata: z.record(z.any()).optional(),
-  severity: z.enum(['info', 'warning', 'error', 'critical']).default('info'),
-  timestamp: z.string().datetime('Invalid timestamp format'),
+  severity: z.enum(["info", "warning", "error", "critical"]).default("info"),
+  timestamp: z.string().datetime("Invalid timestamp format"),
 });
 
 // Data retention policy schema
@@ -783,8 +785,8 @@ export const dataRetentionPolicySchema = z.object({
     .optional(),
 }); // Billing and payment schema
 export const billingSchema = z.object({
-  patientId: z.string().uuid('Invalid patient ID format'),
-  appointmentId: z.string().uuid('Invalid appointment ID format').optional(),
+  patientId: z.string().uuid("Invalid patient ID format"),
+  appointmentId: z.string().uuid("Invalid appointment ID format").optional(),
   amount: z
     .number()
     .min(MIN_AMOUNT, `Amount must be at least ${MIN_AMOUNT}`)
@@ -795,10 +797,10 @@ export const billingSchema = z.object({
       CURRENCY_CODE_LENGTH,
       `Currency must be ${CURRENCY_CODE_LENGTH} characters`,
     )
-    .default('USD'),
+    .default("USD"),
   description: z
     .string()
-    .min(1, 'Description is required')
+    .min(1, "Description is required")
     .max(
       MAX_NOTES_LENGTH,
       `Description must not exceed ${MAX_NOTES_LENGTH} characters`,
@@ -810,12 +812,12 @@ export const billingSchema = z.object({
       `Invoice number must not exceed ${MAX_INVOICE_NUMBER_LENGTH} characters`,
     )
     .optional(),
-  dueDate: z.string().datetime('Invalid due date format').optional(),
+  dueDate: z.string().datetime("Invalid due date format").optional(),
   status: z
-    .enum(['pending', 'paid', 'overdue', 'cancelled'])
-    .default('pending'),
+    .enum(["pending", "paid", "overdue", "cancelled"])
+    .default("pending"),
   paymentMethod: z
-    .enum(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'insurance'])
+    .enum(["cash", "credit_card", "debit_card", "bank_transfer", "insurance"])
     .optional(),
   insuranceClaim: z
     .object({
@@ -873,8 +875,8 @@ export const notificationPreferencesSchema = z.object({
       .array(z.number().min(MIN_REMINDER_HOURS).max(MAX_REMINDER_HOURS))
       .default([24, 2]),
     digestFrequency: z
-      .enum(['immediate', 'daily', 'weekly', 'never'])
-      .default('daily'),
+      .enum(["immediate", "daily", "weekly", "never"])
+      .default("daily"),
   }),
 });
 
@@ -882,8 +884,8 @@ export const notificationPreferencesSchema = z.object({
 // VALIDATION MIDDLEWARE FUNCTIONS
 // ========================================
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export interface ValidationResult<T> {
   success: boolean;
@@ -907,21 +909,21 @@ export function validateInput<T>(
       return {
         success: false,
         error: error.errors
-          .map((e) => `${e.path.join('.')}: ${e.message}`)
-          .join(', '),
+          .map((e) => `${e.path.join(".")}: ${e.message}`)
+          .join(", "),
         errors: error,
       };
     }
     return {
       success: false,
-      error: 'Validation failed',
+      error: "Validation failed",
     };
   }
 }
 export async function validateRequestBody<T>(
   request: NextRequest,
   schema: z.ZodSchema<T>,
-): Promise<{ data?: T; error?: NextResponse; }> {
+): Promise<{ data?: T; error?: NextResponse }> {
   try {
     const body = await request.json();
     const validation = validateInput(schema, body);
@@ -931,7 +933,7 @@ export async function validateRequestBody<T>(
         error: NextResponse.json(
           {
             success: false,
-            error: 'Validation failed',
+            error: "Validation failed",
             details: validation.error,
           },
           { status: 400 },
@@ -945,7 +947,7 @@ export async function validateRequestBody<T>(
       error: NextResponse.json(
         {
           success: false,
-          error: 'Invalid JSON format',
+          error: "Invalid JSON format",
         },
         { status: 400 },
       ),
@@ -964,8 +966,8 @@ export function validateQueryParams<T>(
     if (/^\d+$/.test(value)) {
       params[key] = Number.parseInt(value, 10);
     } // Try to parse booleans
-    else if (value === 'true' || value === 'false') {
-      params[key] = value === 'true';
+    else if (value === "true" || value === "false") {
+      params[key] = value === "true";
     } // Keep as string
     else {
       params[key] = value;
@@ -979,13 +981,14 @@ export function validateQueryParams<T>(
 export const sanitizeInput = (input: string): string => {
   return input
     .trim()
-    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
-    .replaceAll("javascript:", '') // Remove javascript: protocol
-    .replaceAll(/on\w+\s*=/gi, ''); // Remove event handlers
+    .replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // Remove script tags
+    .replaceAll("javascript:", "") // Remove javascript: protocol
+    .replaceAll(/on\w+\s*=/gi, ""); // Remove event handlers
 };
 
 export const validateUUID = (uuid: string): boolean => {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 };
 
@@ -1008,7 +1011,7 @@ export const rateLimitSchema = z.object({
 export const healthCheckSchema = z.object({
   timestamp: z.string().datetime(),
   version: z.string().min(MIN_VERSION_LENGTH).max(MAX_VERSION_LENGTH),
-  environment: z.enum(['development', 'staging', 'production']),
+  environment: z.enum(["development", "staging", "production"]),
   database: z.object({
     connected: z.boolean(),
     responseTime: z.number().min(MIN_RESPONSE_TIME),
@@ -1023,7 +1026,7 @@ export const healthCheckSchema = z.object({
     .array(
       z.object({
         name: z.string().max(MAX_SERVICE_NAME_LENGTH),
-        status: z.enum(['healthy', 'degraded', 'unhealthy']),
+        status: z.enum(["healthy", "degraded", "unhealthy"]),
         responseTime: z.number().min(MIN_RESPONSE_TIME),
       }),
     )

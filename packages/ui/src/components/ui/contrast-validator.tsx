@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { cn } from '../../lib/utils';
+import * as React from "react";
+import { cn } from "../../lib/utils";
 
 /**
  * NEONPRO HEALTHCARE - CONTRAST VALIDATOR COMPONENT
@@ -38,12 +38,12 @@ interface ContrastValidatorProps {
   /**
    * Text size category
    */
-  textSize?: 'normal' | 'large';
+  textSize?: "normal" | "large";
 
   /**
    * Healthcare context for specialized requirements
    */
-  medicalContext?: 'emergency' | 'patient-data' | 'form' | 'general';
+  medicalContext?: "emergency" | "patient-data" | "form" | "general";
 
   /**
    * Whether to show visual indicator
@@ -53,7 +53,7 @@ interface ContrastValidatorProps {
   /**
    * Position of the indicator
    */
-  indicatorPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  indicatorPosition?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
   /**
    * Callback when contrast validation changes
@@ -74,14 +74,14 @@ interface ContrastValidatorProps {
 /**
  * Convert hex color to RGB values
  */
-const hexToRgb = (hex: string): { r: number; g: number; b: number; } | null => {
+const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
-      r: Number.parseInt(result[1], 16),
-      g: Number.parseInt(result[2], 16),
-      b: Number.parseInt(result[3], 16),
-    }
+        r: Number.parseInt(result[1], 16),
+        g: Number.parseInt(result[2], 16),
+        b: Number.parseInt(result[3], 16),
+      }
     : undefined;
 };
 
@@ -90,9 +90,9 @@ const hexToRgb = (hex: string): { r: number; g: number; b: number; } | null => {
  */
 const parseColor = (
   color: string,
-): { r: number; g: number; b: number; } | null => {
+): { r: number; g: number; b: number } | null => {
   // Handle hex colors
-  if (color.startsWith('#')) {
+  if (color.startsWith("#")) {
     return hexToRgb(color);
   }
 
@@ -200,8 +200,8 @@ const calculateContrastRatio = (color1: string, color2: string): number => {
  * Get minimum ratio based on context and text size
  */
 const getMinimumRatio = (
-  textSize: 'normal' | 'large',
-  medicalContext: 'emergency' | 'patient-data' | 'form' | 'general',
+  textSize: "normal" | "large",
+  medicalContext: "emergency" | "patient-data" | "form" | "general",
   customMinimum?: number,
 ): number => {
   if (customMinimum) {
@@ -210,17 +210,17 @@ const getMinimumRatio = (
 
   // Healthcare enhanced requirements
   switch (medicalContext) {
-    case 'emergency': {
+    case "emergency": {
       return 7;
     } // Critical visibility
-    case 'patient-data': {
+    case "patient-data": {
       return 7;
     } // Sensitive data clarity
-    case 'form': {
-      return textSize === 'large' ? 4.5 : 7;
+    case "form": {
+      return textSize === "large" ? 4.5 : 7;
     } // Form clarity
     default: {
-      return textSize === 'large' ? 4.5 : 7;
+      return textSize === "large" ? 4.5 : 7;
     } // Healthcare standard
   }
 };
@@ -234,10 +234,10 @@ const ContrastValidator = React.forwardRef<
       backgroundColor,
       foregroundColor,
       minimumRatio,
-      textSize = 'normal',
-      medicalContext = 'general',
+      textSize = "normal",
+      medicalContext = "general",
       showIndicator = true,
-      indicatorPosition = 'top-right',
+      indicatorPosition = "top-right",
       onValidationChange,
       children,
       className,
@@ -266,39 +266,40 @@ const ContrastValidator = React.forwardRef<
 
     const getIndicatorColor = () => {
       if (contrastRatio >= 7) {
-        return 'bg-green-500'; // Excellent
+        return "bg-green-500"; // Excellent
       }
       if (contrastRatio >= 4.5) {
-        return 'bg-yellow-500'; // Good (AA)
+        return "bg-yellow-500"; // Good (AA)
       }
       if (contrastRatio >= 3) {
-        return 'bg-orange-500'; // Poor (AA Large)
+        return "bg-orange-500"; // Poor (AA Large)
       }
-      return 'bg-red-500'; // Failed
+      return "bg-red-500"; // Failed
     };
 
     const getIndicatorText = () => {
       if (contrastRatio >= 7) {
-        return 'AAA';
+        return "AAA";
       }
       if (contrastRatio >= 4.5) {
-        return 'AA';
+        return "AA";
       }
       if (contrastRatio >= 3) {
-        return 'AA Large';
+        return "AA Large";
       }
-      return 'Failed';
+      return "Failed";
     };
 
     const getAccessibilityStatus = () => {
-      const status = isValid ? 'Compliant' : 'Non-compliant';
-      const level = contrastRatio >= 7 ? 'AAA' : (contrastRatio >= 4.5 ? 'AA' : 'Failed');
+      const status = isValid ? "Compliant" : "Non-compliant";
+      const level =
+        contrastRatio >= 7 ? "AAA" : contrastRatio >= 4.5 ? "AA" : "Failed";
       return `${status} - ${level} (${contrastRatio.toFixed(2)}:1)`;
     };
 
     return (
       <div
-        className={cn('relative contrast-validator', className)}
+        className={cn("relative contrast-validator", className)}
         data-contrast-ratio={contrastRatio.toFixed(2)}
         data-is-valid={isValid}
         data-medical-context={medicalContext}
@@ -311,13 +312,13 @@ const ContrastValidator = React.forwardRef<
           <div
             aria-label={`Contrast ratio: ${getAccessibilityStatus()}`}
             className={cn(
-              'absolute z-10 flex items-center gap-1 rounded-md px-2 py-1 font-medium text-white text-xs shadow-lg',
+              "absolute z-10 flex items-center gap-1 rounded-md px-2 py-1 font-medium text-white text-xs shadow-lg",
               getIndicatorColor(),
               {
-                'top-2 left-2': indicatorPosition === 'top-left',
-                'top-2 right-2': indicatorPosition === 'top-right',
-                'bottom-2 left-2': indicatorPosition === 'bottom-left',
-                'right-2 bottom-2': indicatorPosition === 'bottom-right',
+                "top-2 left-2": indicatorPosition === "top-left",
+                "top-2 right-2": indicatorPosition === "top-right",
+                "bottom-2 left-2": indicatorPosition === "bottom-left",
+                "right-2 bottom-2": indicatorPosition === "bottom-right",
               },
             )}
             role="status"
@@ -343,23 +344,19 @@ const ContrastValidator = React.forwardRef<
         {/* Screen reader announcement */}
         <div aria-live="polite" className="sr-only" role="status">
           {isValid
-            ? `Contrast ratio ${
-              contrastRatio.toFixed(
+            ? `Contrast ratio ${contrastRatio.toFixed(
                 2,
-              )
-            }:1 meets ${medicalContext} accessibility requirements`
-            : `Contrast ratio ${
-              contrastRatio.toFixed(
+              )}:1 meets ${medicalContext} accessibility requirements`
+            : `Contrast ratio ${contrastRatio.toFixed(
                 2,
-              )
-            }:1 does not meet ${medicalContext} accessibility requirements. Minimum required: ${requiredRatio}:1`}
+              )}:1 does not meet ${medicalContext} accessibility requirements. Minimum required: ${requiredRatio}:1`}
         </div>
       </div>
     );
   },
 );
 
-ContrastValidator.displayName = 'ContrastValidator';
+ContrastValidator.displayName = "ContrastValidator";
 
 /**
  * Hook for programmatic contrast validation
@@ -367,13 +364,13 @@ ContrastValidator.displayName = 'ContrastValidator';
 export const useContrastValidation = (
   backgroundColor: string,
   foregroundColor: string,
-  medicalContext: 'emergency' | 'patient-data' | 'form' | 'general' = 'general',
-  textSize: 'normal' | 'large' = 'normal',
+  medicalContext: "emergency" | "patient-data" | "form" | "general" = "general",
+  textSize: "normal" | "large" = "normal",
 ) => {
   const [validation, setValidation] = React.useState({
     ratio: 0,
     isValid: false,
-    level: 'Failed' as 'AAA' | 'AA' | 'AA Large' | 'Failed',
+    level: "Failed" as "AAA" | "AA" | "AA Large" | "Failed",
     requiredRatio: 0,
   });
 
@@ -382,13 +379,13 @@ export const useContrastValidation = (
     const requiredRatio = getMinimumRatio(textSize, medicalContext);
     const isValid = ratio >= requiredRatio;
 
-    let level: 'AAA' | 'AA' | 'AA Large' | 'Failed' = 'Failed';
+    let level: "AAA" | "AA" | "AA Large" | "Failed" = "Failed";
     if (ratio >= 7) {
-      level = 'AAA';
+      level = "AAA";
     } else if (ratio >= 4.5) {
-      level = 'AA';
+      level = "AA";
     } else if (ratio >= 3) {
-      level = 'AA Large';
+      level = "AA Large";
     }
 
     setValidation({ ratio, isValid, level, requiredRatio });
@@ -401,7 +398,7 @@ export const useContrastValidation = (
  * Batch contrast validation for multiple color combinations
  */
 export const validateColorPalette = (
-  palette: { bg: string; fg: string; context?: string; }[],
+  palette: { bg: string; fg: string; context?: string }[],
 ): {
   bg: string;
   fg: string;
@@ -409,9 +406,9 @@ export const validateColorPalette = (
   ratio: number;
   isValid: boolean;
 }[] => {
-  return palette.map(({ bg, fg, context = 'general' }) => {
+  return palette.map(({ bg, fg, context = "general" }) => {
     const ratio = calculateContrastRatio(bg, fg);
-    const requiredRatio = getMinimumRatio('normal', context as any);
+    const requiredRatio = getMinimumRatio("normal", context as any);
     const isValid = ratio >= requiredRatio;
 
     return { bg, fg, context, ratio, isValid };
@@ -429,7 +426,7 @@ interface ContrastWrapperProps extends ContrastValidatorProps {
 const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
   (
     {
-      element: Element = 'div',
+      element: Element = "div",
       style,
       backgroundColor,
       foregroundColor,
@@ -458,7 +455,7 @@ const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
   },
 );
 
-ContrastWrapper.displayName = 'ContrastWrapper';
+ContrastWrapper.displayName = "ContrastWrapper";
 
 export {
   calculateContrastRatio,

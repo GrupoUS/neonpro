@@ -1,4 +1,4 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient } from "@supabase/ssr";
 // import type { Database } // PLACEHOLDER: from '@/types/database'; // PLACEHOLDER - NEEDS FIXING
 
 // Cliente Supabase para uso no pacote domain

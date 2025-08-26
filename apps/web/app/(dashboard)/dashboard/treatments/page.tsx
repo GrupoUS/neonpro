@@ -404,9 +404,9 @@ export default function TreatmentsPage() {
                         variant={
                           session.status === "completed"
                             ? "default"
-                            : (session.status === "cancelled"
+                            : session.status === "cancelled"
                               ? "destructive"
-                              : "outline")
+                              : "outline"
                         }
                       >
                         {session.status === "scheduled" && "Agendada"}
@@ -544,7 +544,7 @@ export default function TreatmentsPage() {
                   </CardContent>
                 </Card>
               ))
-            ) : (treatmentPlans.length > 0 ? (
+            ) : treatmentPlans.length > 0 ? (
               treatmentPlans.map((treatment) => (
                 <AestheticTreatmentPlan
                   key={treatment.id}
@@ -564,7 +564,7 @@ export default function TreatmentsPage() {
                   variant="summary"
                 />
               </div>
-            ))}
+            )}
           </div>
         </TabsContent>
 

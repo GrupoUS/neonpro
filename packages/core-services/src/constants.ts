@@ -15,13 +15,13 @@ export const APPOINTMENT_DURATIONS = {
 
 // Business hours
 export const BUSINESS_HOURS = {
-  MONDAY: { start: '09:00', end: '18:00' },
-  TUESDAY: { start: '09:00', end: '18:00' },
-  WEDNESDAY: { start: '09:00', end: '18:00' },
-  THURSDAY: { start: '09:00', end: '18:00' },
-  FRIDAY: { start: '09:00', end: '18:00' },
-  SATURDAY: { start: '09:00', end: '16:00' },
-  SUNDAY: { start: '10:00', end: '14:00' },
+  MONDAY: { start: "09:00", end: "18:00" },
+  TUESDAY: { start: "09:00", end: "18:00" },
+  WEDNESDAY: { start: "09:00", end: "18:00" },
+  THURSDAY: { start: "09:00", end: "18:00" },
+  FRIDAY: { start: "09:00", end: "18:00" },
+  SATURDAY: { start: "09:00", end: "16:00" },
+  SUNDAY: { start: "10:00", end: "14:00" },
 } as const;
 
 // Reminder timing (in hours before appointment)
@@ -48,14 +48,14 @@ export const BILLING_CONSTANTS = {
 // Treatment areas for aesthetic procedures
 export const TREATMENT_AREAS = {
   FACE: [
-    'forehead',
-    'glabella',
-    'crow_feet',
-    'cheeks',
-    'lips',
-    'chin',
-    'jawline',
+    "forehead",
+    "glabella",
+    "crow_feet",
+    "cheeks",
+    "lips",
+    "chin",
+    "jawline",
   ],
-  BODY: ['arms', 'legs', 'bikini', 'underarms', 'back', 'chest', 'abdomen'],
-  SKIN: ['acne_scars', 'pigmentation', 'wrinkles', 'sun_damage', 'texture'],
+  BODY: ["arms", "legs", "bikini", "underarms", "back", "chest", "abdomen"],
+  SKIN: ["acne_scars", "pigmentation", "wrinkles", "sun_damage", "texture"],
 } as const;

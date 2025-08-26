@@ -10,14 +10,14 @@
  * - ML predictions < 1s
  */
 
-const { performance } = require('node:perf_hooks');
-const fs = require('node:fs');
-const _path = require('node:path');
+const { performance } = require("node:perf_hooks");
+const fs = require("node:fs");
+const _path = require("node:path");
 
 // Configuration
 const config = {
-  baseUrl: 'http://localhost:3000',
-  apiUrl: 'http://localhost:3001',
+  baseUrl: "http://localhost:3000",
+  apiUrl: "http://localhost:3001",
   targets: {
     dashboard: 2000, // 2s
     api: 500, // 500ms
@@ -37,8 +37,8 @@ function logResult(test, duration, target, status) {
 
   results.push({ test, duration, target, passed, status });
 
-  const _icon = passed ? '✅' : '❌';
-  const _color = passed ? '\u001B[32m' : '\u001B[31m';
+  const _icon = passed ? "✅" : "❌";
+  const _color = passed ? "\u001B[32m" : "\u001B[31m";
 }
 
 function logInfo(_message) {}
@@ -52,9 +52,9 @@ async function sleep(ms) {
 async function measureDashboardLoad() {
   // Simulate dashboard load time by checking component files
   const dashboardComponents = [
-    'apps/web/app/components/no-show/anti-no-show-dashboard.tsx',
-    'apps/web/app/lib/services/no-show-prediction.ts',
-    'apps/web/app/api/ai/no-show-prediction/stats/route.ts',
+    "apps/web/app/components/no-show/anti-no-show-dashboard.tsx",
+    "apps/web/app/lib/services/no-show-prediction.ts",
+    "apps/web/app/api/ai/no-show-prediction/stats/route.ts",
   ];
 
   const start = performance.now();
@@ -78,7 +78,7 @@ async function measureDashboardLoad() {
   const _actualDuration = Math.round(end - start);
 
   logResult(
-    'Dashboard Load',
+    "Dashboard Load",
     duration,
     config.targets.dashboard,
     `${componentsExist}/${dashboardComponents.length} components found`,
@@ -89,13 +89,13 @@ async function measureDashboardLoad() {
 
 async function measureApiEndpoints() {
   const endpoints = [
-    { name: 'ML Models List', path: '/api/ai/ml-pipeline/models' },
+    { name: "ML Models List", path: "/api/ai/ml-pipeline/models" },
     {
-      name: 'No-Show Predictions',
-      path: '/api/ai/no-show-prediction/predictions',
+      name: "No-Show Predictions",
+      path: "/api/ai/no-show-prediction/predictions",
     },
-    { name: 'Dashboard Stats', path: '/api/ai/no-show-prediction/stats' },
-    { name: 'A/B Test Creation', path: '/api/ai/ml-pipeline/ab-test' },
+    { name: "Dashboard Stats", path: "/api/ai/no-show-prediction/stats" },
+    { name: "A/B Test Creation", path: "/api/ai/ml-pipeline/ab-test" },
   ];
 
   let allPassed = true;
@@ -105,7 +105,7 @@ async function measureApiEndpoints() {
 
     // Simulate API response time
     const routeFile = `apps/web/app${endpoint.path}/route.ts`;
-    const apiFile = 'apps/api/src/routes/ai/ml-pipeline-endpoints.ts';
+    const apiFile = "apps/api/src/routes/ai/ml-pipeline-endpoints.ts";
 
     let responseTime = 200; // Base response time
 
@@ -128,8 +128,8 @@ async function measureApiEndpoints() {
       duration,
       config.targets.api,
       fs.existsSync(routeFile) || fs.existsSync(apiFile)
-        ? 'implemented'
-        : 'missing',
+        ? "implemented"
+        : "missing",
     );
   }
 
@@ -138,8 +138,8 @@ async function measureApiEndpoints() {
 
 async function measureMLPredictions() {
   const mlServices = [
-    'packages/ai/src/services/ml-pipeline-management.ts',
-    'apps/web/app/lib/services/no-show-prediction.ts',
+    "packages/ai/src/services/ml-pipeline-management.ts",
+    "apps/web/app/lib/services/no-show-prediction.ts",
   ];
 
   const _start = performance.now();
@@ -161,7 +161,7 @@ async function measureMLPredictions() {
   const duration = Math.round(baseTime + modelComplexity + computeTime);
 
   logResult(
-    'ML Predictions',
+    "ML Predictions",
     duration,
     config.targets.ml,
     `${servicesExist}/${mlServices.length} ML services found`,
@@ -171,18 +171,18 @@ async function measureMLPredictions() {
 }
 
 async function checkDependencies() {
-  const packageJsonPath = 'package.json';
+  const packageJsonPath = "package.json";
   if (!fs.existsSync(packageJsonPath)) {
-    logError('package.json not found');
+    logError("package.json not found");
     return false;
   }
 
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
   const perfDependencies = [
-    'react',
-    'next',
-    '@tanstack/react-query',
-    'recharts',
+    "react",
+    "next",
+    "@tanstack/react-query",
+    "recharts",
   ];
 
   let allFound = true;
@@ -205,7 +205,8 @@ async function generateReport() {
   const total = results.length;
   const percentage = Math.round((passed / total) * 100);
 
-  if (overallPass) {} else {
+  if (overallPass) {
+  } else {
     results.filter((r) => !r.passed).forEach((_r) => {});
   }
 
@@ -223,7 +224,7 @@ async function generateReport() {
   };
 
   fs.writeFileSync(
-    'performance-report.json',
+    "performance-report.json",
     JSON.stringify(report, undefined, 2),
   );
 
@@ -235,7 +236,7 @@ async function runPerformanceTests() {
     // Check dependencies first
     const depsOk = await checkDependencies();
     if (!depsOk) {
-      logError('Dependency check failed');
+      logError("Dependency check failed");
       return false;
     }
 

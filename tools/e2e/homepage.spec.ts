@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 /**
  * Homepage E2E Tests for NeonPro Healthcare
@@ -10,26 +10,28 @@ import { expect, test } from '@playwright/test';
  * - Marketing content and pricing navigation
  */
 
-test.describe('Homepage - Landing Page', () => {
+test.describe("Homepage - Landing Page", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to homepage
-    await page.goto('/');
+    await page.goto("/");
 
     // Wait for page to be fully loaded
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
   });
 
-  test('should load homepage within performance thresholds', async ({ page }) => {
+  test("should load homepage within performance thresholds", async ({
+    page,
+  }) => {
     const startTime = Date.now();
 
     // Wait for main content to be visible
-    await expect(page.locator('h1')).toContainText('NeonPro Healthcare');
+    await expect(page.locator("h1")).toContainText("NeonPro Healthcare");
 
     const loadTime = Date.now() - startTime;
     expect(loadTime).toBeLessThan(3000); // 3 second threshold
   });
 
-  test('should display main navigation and branding', async ({ page }) => {
+  test("should display main navigation and branding", async ({ page }) => {
     // Check logo and branding
     await expect(
       page
@@ -43,13 +45,13 @@ test.describe('Homepage - Landing Page', () => {
     ).toBeVisible();
 
     // Verify hero content
-    await expect(page.locator('text=Revolução Digital')).toBeVisible();
+    await expect(page.locator("text=Revolução Digital")).toBeVisible();
     await expect(
-      page.locator('text=Clínicas Estéticas Brasileiras'),
+      page.locator("text=Clínicas Estéticas Brasileiras"),
     ).toBeVisible();
   });
 
-  test('should navigate to login page', async ({ page }) => {
+  test("should navigate to login page", async ({ page }) => {
     // Click login button
     await page.click('button:has-text("Acessar Sistema")');
 
@@ -57,46 +59,49 @@ test.describe('Homepage - Landing Page', () => {
     await expect(page).toHaveURL(/.*\/login/);
   });
 
-  test('should display dashboard metrics for authenticated users', async ({ page }) => {
+  test("should display dashboard metrics for authenticated users", async ({
+    page,
+  }) => {
     // This test assumes user might be logged in
     const metricsSection = page.locator('[data-testid="dashboard-metrics"]');
 
     if (await metricsSection.isVisible()) {
       // Check key metrics are displayed
-      await expect(page.locator('text=Pacientes')).toBeVisible();
-      await expect(page.locator('text=Receita')).toBeVisible();
-      await expect(page.locator('text=Consultas')).toBeVisible();
+      await expect(page.locator("text=Pacientes")).toBeVisible();
+      await expect(page.locator("text=Receita")).toBeVisible();
+      await expect(page.locator("text=Consultas")).toBeVisible();
     }
   });
 
-  test('should be accessible with keyboard navigation', async ({ page }) => {
+  test("should be accessible with keyboard navigation", async ({ page }) => {
     // Test keyboard navigation
-    await page.keyboard.press('Tab');
+    await page.keyboard.press("Tab");
 
     // Should focus on main CTA button
-    const focusedElement = await page.locator(':focus');
-    await expect(focusedElement).toContainText('Acessar Sistema');
+    const focusedElement = await page.locator(":focus");
+    await expect(focusedElement).toContainText("Acessar Sistema");
 
     // Test Enter key activation
-    await page.keyboard.press('Enter');
+    await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/.*\/login/);
   });
 
-  test('should display healthcare compliance badges', async ({ page }) => {
+  test("should display healthcare compliance badges", async ({ page }) => {
     // Look for LGPD compliance indicators
     const lgpdIndicator = page
-      .locator('text=LGPD')
+      .locator("text=LGPD")
       .or(page.locator('[data-testid="lgpd-badge"]'));
     const anvisaIndicator = page
-      .locator('text=ANVISA')
+      .locator("text=ANVISA")
       .or(page.locator('[data-testid="anvisa-badge"]'));
 
     // At least one compliance indicator should be visible
-    const hasCompliance = (await lgpdIndicator.isVisible()) || (await anvisaIndicator.isVisible());
+    const hasCompliance =
+      (await lgpdIndicator.isVisible()) || (await anvisaIndicator.isVisible());
     expect(hasCompliance).toBeTruthy();
   });
 
-  test('should handle responsive design', async ({ page }) => {
+  test("should handle responsive design", async ({ page }) => {
     // Test mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
 
@@ -115,7 +120,9 @@ test.describe('Homepage - Landing Page', () => {
     ).toBeVisible();
   });
 
-  test('should display recent patients and appointments for authenticated users', async ({ page }) => {
+  test("should display recent patients and appointments for authenticated users", async ({
+    page,
+  }) => {
     // Check if user is authenticated by looking for dashboard content
     const recentPatientsSection = page.locator(
       '[data-testid="recent-patients"]',
@@ -135,23 +142,23 @@ test.describe('Homepage - Landing Page', () => {
     }
   });
 
-  test('should have proper meta tags for SEO', async ({ page }) => {
+  test("should have proper meta tags for SEO", async ({ page }) => {
     // Check essential meta tags
     const title = await page.title();
-    expect(title).toContain('NeonPro');
+    expect(title).toContain("NeonPro");
 
     // Check viewport meta tag
     const viewportMeta = page.locator('meta[name="viewport"]');
-    await expect(viewportMeta).toHaveAttribute('content', /width=device-width/);
+    await expect(viewportMeta).toHaveAttribute("content", /width=device-width/);
   });
 });
 
-test.describe('Homepage - Performance Monitoring', () => {
-  test('should track Core Web Vitals', async ({ page }) => {
-    await page.goto('/');
+test.describe("Homepage - Performance Monitoring", () => {
+  test("should track Core Web Vitals", async ({ page }) => {
+    await page.goto("/");
 
     // Wait for page to be fully loaded
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
 
     // Check for performance monitoring script
     const performanceScript = page.locator('script:has-text("webVitals")');

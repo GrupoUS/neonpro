@@ -7,11 +7,36 @@
  */
 
 // Import our enhanced API client
-import { apiClient, ApiHelpers } from '@neonpro/shared/api-client';
-import type { ApiResponse } from '@neonpro/shared/api-client';
+import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
+import type { ApiResponse } from "@neonpro/shared/api-client";
 // Import validation schemas and types
-import { AppointmentQuerySchema, AppointmentResponseSchema, AppointmentsListResponseSchema, AppointmentStatsSchema, AvailabilitySlotSchema, BulkUpdateAppointmentsSchema, CheckInAppointmentSchema, CompleteAppointmentSchema, CreateAppointmentSchema, DailyScheduleSchema, UpdateAppointmentSchema, WeeklyScheduleResponseSchema } from '@neonpro/shared/schemas';
-import type { AppointmentBase, AppointmentPriority, AppointmentQuery, AppointmentResponse, AppointmentStatus, BulkUpdateAppointments, CheckInAppointment, CompleteAppointment, CreateAppointment, PaymentStatus, UpdateAppointment } from '@neonpro/shared/schemas';
+import {
+  AppointmentQuerySchema,
+  AppointmentResponseSchema,
+  AppointmentsListResponseSchema,
+  AppointmentStatsSchema,
+  AvailabilitySlotSchema,
+  BulkUpdateAppointmentsSchema,
+  CheckInAppointmentSchema,
+  CompleteAppointmentSchema,
+  CreateAppointmentSchema,
+  DailyScheduleSchema,
+  UpdateAppointmentSchema,
+  WeeklyScheduleResponseSchema,
+} from "@neonpro/shared/schemas";
+import type {
+  AppointmentBase,
+  AppointmentPriority,
+  AppointmentQuery,
+  AppointmentResponse,
+  AppointmentStatus,
+  BulkUpdateAppointments,
+  CheckInAppointment,
+  CompleteAppointment,
+  CreateAppointment,
+  PaymentStatus,
+  UpdateAppointment,
+} from "@neonpro/shared/schemas";
 import { useCallback, useMemo } from "react";
 // Import our enhanced query utilities
 import {

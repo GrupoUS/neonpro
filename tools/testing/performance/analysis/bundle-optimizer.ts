@@ -27,8 +27,8 @@ export type ModuleAnalysis = {
 };
 
 export type OptimizationRecommendation = {
-  type: 'code-splitting' | 'tree-shaking' | 'compression' | 'lazy-loading';
-  severity: 'high' | 'medium' | 'low';
+  type: "code-splitting" | "tree-shaking" | "compression" | "lazy-loading";
+  severity: "high" | "medium" | "low";
   description: string;
   estimatedSavings: number;
 };
@@ -43,9 +43,9 @@ export type TreeShakingOpportunity = {
  * Analyzes JavaScript bundles and provides optimization recommendations
  */
 
-import gzip from 'gzip-size';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import gzip from "gzip-size";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 export type BundleAnalysis = {
   totalSize: number;
@@ -70,8 +70,8 @@ export type ModuleAnalysis = {
 };
 
 export type OptimizationRecommendation = {
-  type: 'code-splitting' | 'tree-shaking' | 'compression' | 'lazy-loading';
-  severity: 'high' | 'medium' | 'low';
+  type: "code-splitting" | "tree-shaking" | "compression" | "lazy-loading";
+  severity: "high" | "medium" | "low";
   description: string;
   estimatedSavings: number;
 };
@@ -86,7 +86,7 @@ export class BundleOptimizer {
   private readonly buildDir: string;
   private readonly outputDir: string;
 
-  constructor(buildDir: string, outputDir = 'performance-reports') {
+  constructor(buildDir: string, outputDir = "performance-reports") {
     this.buildDir = buildDir;
     this.outputDir = outputDir;
   } /**
@@ -94,12 +94,12 @@ export class BundleOptimizer {
    */
 
   async analyzeBundles(): Promise<BundleAnalysis> {
-    const buildPath = path.join(this.buildDir, '.next');
-    const staticPath = path.join(buildPath, 'static', 'chunks');
+    const buildPath = path.join(this.buildDir, ".next");
+    const staticPath = path.join(buildPath, "static", "chunks");
 
     try {
       const files = await fs.readdir(staticPath);
-      const jsFiles = files.filter((file) => file.endsWith('.js'));
+      const jsFiles = files.filter((file) => file.endsWith(".js"));
 
       let totalSize = 0;
       let totalGzippedSize = 0;
@@ -107,8 +107,8 @@ export class BundleOptimizer {
 
       for (const file of jsFiles) {
         const filePath = path.join(staticPath, file);
-        const content = await fs.readFile(filePath, 'utf8');
-        const size = Buffer.byteLength(content, 'utf8');
+        const content = await fs.readFile(filePath, "utf8");
+        const size = Buffer.byteLength(content, "utf8");
         const gzippedSize = await gzip(content);
 
         totalSize += size;
@@ -123,7 +123,8 @@ export class BundleOptimizer {
       }
 
       const recommendations = this.generateRecommendations(chunks, totalSize);
-      const treeShakingOpportunities = this.findTreeShakingOpportunities(chunks);
+      const treeShakingOpportunities =
+        this.findTreeShakingOpportunities(chunks);
 
       return {
         totalSize,
@@ -169,7 +170,7 @@ export class BundleOptimizer {
 
   private estimateModuleSize(moduleName: string, content: string): number {
     // Estimate based on occurrences - simplified approach
-    const occurrences = (content.match(new RegExp(moduleName, 'g')) || [])
+    const occurrences = (content.match(new RegExp(moduleName, "g")) || [])
       .length;
     return occurrences * 100; // Rough estimation
   }
@@ -177,7 +178,7 @@ export class BundleOptimizer {
     // Check if module exports are actually used
     const moduleUsageRegex = new RegExp(
       `${moduleName}\\.[a-zA-Z_$][a-zA-Z0-9_$]*`,
-      'g',
+      "g",
     );
     return moduleUsageRegex.test(content);
   }
@@ -192,9 +193,10 @@ export class BundleOptimizer {
     if (totalSize > 500 * 1024) {
       // 500KB
       recommendations.push({
-        type: 'code-splitting',
-        severity: 'high',
-        description: 'Bundle size exceeds 500KB. Consider implementing route-based code splitting.',
+        type: "code-splitting",
+        severity: "high",
+        description:
+          "Bundle size exceeds 500KB. Consider implementing route-based code splitting.",
         estimatedSavings: totalSize * 0.3,
       });
     }
@@ -204,13 +206,11 @@ export class BundleOptimizer {
       if (chunk.size > 200 * 1024) {
         // 200KB
         recommendations.push({
-          type: 'code-splitting',
-          severity: 'medium',
-          description: `Chunk ${chunk.name} is large (${
-            Math.round(
-              chunk.size / 1024,
-            )
-          }KB). Consider splitting.`,
+          type: "code-splitting",
+          severity: "medium",
+          description: `Chunk ${chunk.name} is large (${Math.round(
+            chunk.size / 1024,
+          )}KB). Consider splitting.`,
           estimatedSavings: chunk.size * 0.4,
         });
       }
@@ -228,7 +228,7 @@ export class BundleOptimizer {
         if (module.imported && !module.used) {
           opportunities.push({
             module: module.name,
-            unusedExports: ['default'], // Simplified - would need AST analysis for real detection
+            unusedExports: ["default"], // Simplified - would need AST analysis for real detection
             estimatedSavings: module.size,
           });
         }
@@ -244,7 +244,7 @@ export class BundleOptimizer {
    * Generate bundle optimization report
    */
   async generateReport(analysis: BundleAnalysis): Promise<void> {
-    const reportPath = path.join(this.outputDir, 'bundle-analysis-report.json');
+    const reportPath = path.join(this.outputDir, "bundle-analysis-report.json");
 
     await fs.mkdir(this.outputDir, { recursive: true });
     await fs.writeFile(reportPath, JSON.stringify(analysis, null, 2));
@@ -253,7 +253,7 @@ export class BundleOptimizer {
     const readableReport = this.generateReadableReport(analysis);
     const readableReportPath = path.join(
       this.outputDir,
-      'bundle-analysis-report.md',
+      "bundle-analysis-report.md",
     );
     await fs.writeFile(readableReportPath, readableReport);
   }
@@ -267,13 +267,13 @@ export class BundleOptimizer {
       treeShakingOpportunities,
     } = analysis;
 
-    let report = '# Bundle Analysis Report\n\n';
-    report += '## Summary\n';
+    let report = "# Bundle Analysis Report\n\n";
+    report += "## Summary\n";
     report += `- **Total Size**: ${Math.round(totalSize / 1024)}KB\n`;
     report += `- **Gzipped Size**: ${Math.round(gzippedSize / 1024)}KB\n`;
     report += `- **Compression Ratio**: ${Math.round((1 - gzippedSize / totalSize) * 100)}%\n\n`;
 
-    report += '## Chunks Analysis\n';
+    report += "## Chunks Analysis\n";
     for (const chunk of chunks.sort((a, b) => b.size - a.size)) {
       report += `### ${chunk.name}\n`;
       report += `- Size: ${Math.round(chunk.size / 1024)}KB\n`;
@@ -282,7 +282,7 @@ export class BundleOptimizer {
     }
 
     if (recommendations.length > 0) {
-      report += '## Optimization Recommendations\n';
+      report += "## Optimization Recommendations\n";
       for (const rec of recommendations) {
         report += `### ${rec.type} (${rec.severity})\n`;
         report += `${rec.description}\n`;
@@ -291,13 +291,11 @@ export class BundleOptimizer {
     }
 
     if (treeShakingOpportunities.length > 0) {
-      report += '## Tree Shaking Opportunities\n';
+      report += "## Tree Shaking Opportunities\n";
       for (const opp of treeShakingOpportunities.slice(0, 10)) {
-        report += `- **${opp.module}**: ${
-          Math.round(
-            opp.estimatedSavings / 1024,
-          )
-        }KB potential savings\n`;
+        report += `- **${opp.module}**: ${Math.round(
+          opp.estimatedSavings / 1024,
+        )}KB potential savings\n`;
       }
     }
 

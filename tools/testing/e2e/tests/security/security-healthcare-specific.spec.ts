@@ -8,24 +8,26 @@
  * - LGPD healthcare data protection
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('🏥 Healthcare Security Compliance', () => {
+test.describe("🏥 Healthcare Security Compliance", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
+    await page.goto("/login");
     // Login with test credentials
-    await page.fill('[data-testid="email"]', 'test@neonpro.com');
-    await page.fill('[data-testid="password"]', 'testpassword');
+    await page.fill('[data-testid="email"]', "test@neonpro.com");
+    await page.fill('[data-testid="password"]', "testpassword");
     await page.click('[data-testid="login-button"]');
-    await page.waitForURL('/dashboard');
+    await page.waitForURL("/dashboard");
   });
 
-  test('should enforce LGPD data protection in patient views', async ({ page }) => {
-    await page.goto('/patients');
+  test("should enforce LGPD data protection in patient views", async ({
+    page,
+  }) => {
+    await page.goto("/patients");
 
     // Test that sensitive data is properly masked
     await expect(page.locator('[data-testid="patient-cpf"]')).toContainText(
-      '***.**.*',
+      "***.**.*",
     );
 
     // Test consent verification
@@ -36,8 +38,10 @@ test.describe('🏥 Healthcare Security Compliance', () => {
     await expect(page.locator('[data-testid="consent-date"]')).toBeVisible();
   });
 
-  test('should validate ANVISA device security requirements', async ({ page }) => {
-    await page.goto('/devices');
+  test("should validate ANVISA device security requirements", async ({
+    page,
+  }) => {
+    await page.goto("/devices");
 
     // Test device registration validation
     await expect(
@@ -56,8 +60,8 @@ test.describe('🏥 Healthcare Security Compliance', () => {
     ).toBeVisible();
   });
 
-  test('should enforce CFM professional authentication', async ({ page }) => {
-    await page.goto('/professional-area');
+  test("should enforce CFM professional authentication", async ({ page }) => {
+    await page.goto("/professional-area");
 
     // Test CFM license verification
     await expect(
@@ -71,28 +75,30 @@ test.describe('🏥 Healthcare Security Compliance', () => {
     ).toBeVisible();
   });
 
-  test('should maintain audit trail for all healthcare actions', async ({ page }) => {
-    await page.goto('/patients/1');
+  test("should maintain audit trail for all healthcare actions", async ({
+    page,
+  }) => {
+    await page.goto("/patients/1");
 
     // Perform an action that should be audited
     await page.click('[data-testid="view-medical-record"]');
 
     // Check if audit log entry was created
-    await page.goto('/audit-logs');
+    await page.goto("/audit-logs");
     await expect(
       page.locator('[data-testid="audit-entry"]').first(),
     ).toBeVisible();
     await expect(
       page.locator('[data-testid="audit-action"]').first(),
-    ).toContainText('view_medical_record');
+    ).toContainText("view_medical_record");
   });
 
-  test('should protect against unauthorized data access', async ({ page }) => {
+  test("should protect against unauthorized data access", async ({ page }) => {
     // Test direct URL access to restricted areas
-    await page.goto('/admin/system-config');
+    await page.goto("/admin/system-config");
 
     // Should redirect to unauthorized page or stay on current page
-    await expect(page.url()).not.toContain('/admin/system-config');
+    await expect(page.url()).not.toContain("/admin/system-config");
     await expect(
       page.locator('[data-testid="unauthorized-message"]'),
     ).toBeVisible();

@@ -27,7 +27,7 @@ export interface SchedulingConstraints {
 export interface TreatmentType {
   id: string;
   name: string;
-  category: 'botox' | 'fillers' | 'laser' | 'skincare' | 'consultation';
+  category: "botox" | "fillers" | "laser" | "skincare" | "consultation";
   duration: number; // base duration in minutes
   bufferTime: number; // cleanup/prep time in minutes
   requiredEquipment: string[];
@@ -77,7 +77,7 @@ export interface PatientPreferences {
 }
 
 export interface ReminderPreference {
-  method: 'email' | 'sms' | 'push' | 'call';
+  method: "email" | "sms" | "push" | "call";
   timing: number; // hours before appointment
 }
 
@@ -97,7 +97,7 @@ export interface AppointmentHistory {
 }
 
 export interface RiskFactor {
-  type: 'no_show' | 'late_arrival' | 'cancellation';
+  type: "no_show" | "late_arrival" | "cancellation";
   weight: number; // 0-1
   description: string;
 }
@@ -108,7 +108,7 @@ export interface SchedulingRequest {
   preferredDate?: Date;
   preferredTimeRanges?: TimeRange[];
   staffPreference?: string[];
-  urgency: 'low' | 'medium' | 'high' | 'emergency';
+  urgency: "low" | "medium" | "high" | "emergency";
   flexibilityWindow: number; // days the patient is flexible
 }
 
@@ -124,11 +124,11 @@ export interface SchedulingResult {
 
 export interface Conflict {
   type:
-    | 'staff_unavailable'
-    | 'room_occupied'
-    | 'equipment_conflict'
-    | 'patient_conflict';
-  severity: 'low' | 'medium' | 'high';
+    | "staff_unavailable"
+    | "room_occupied"
+    | "equipment_conflict"
+    | "patient_conflict";
+  severity: "low" | "medium" | "high";
   description: string;
   affectedResource: string;
   suggestedResolution?: string;
@@ -136,15 +136,15 @@ export interface Conflict {
 
 export interface OptimizationRecommendation {
   type:
-    | 'time_adjustment'
-    | 'staff_change'
-    | 'room_change'
-    | 'treatment_grouping';
+    | "time_adjustment"
+    | "staff_change"
+    | "room_change"
+    | "treatment_grouping";
   impact:
-    | 'efficiency'
-    | 'patient_satisfaction'
-    | 'revenue'
-    | 'resource_utilization';
+    | "efficiency"
+    | "patient_satisfaction"
+    | "revenue"
+    | "resource_utilization";
   description: string;
   expectedImprovement: number; // percentage improvement
 }
@@ -212,11 +212,11 @@ export interface RiskAssessment {
 // Real-time optimization types
 export interface DynamicSchedulingEvent {
   type:
-    | 'cancellation'
-    | 'no_show'
-    | 'walk_in'
-    | 'emergency'
-    | 'staff_unavailable';
+    | "cancellation"
+    | "no_show"
+    | "walk_in"
+    | "emergency"
+    | "staff_unavailable";
   timestamp: Date;
   affectedAppointments: string[];
   availableActions: SchedulingAction[];
@@ -224,11 +224,11 @@ export interface DynamicSchedulingEvent {
 
 export interface SchedulingAction {
   type:
-    | 'reschedule'
-    | 'reassign_staff'
-    | 'change_room'
-    | 'adjust_duration'
-    | 'add_buffer';
+    | "reschedule"
+    | "reassign_staff"
+    | "change_room"
+    | "adjust_duration"
+    | "add_buffer";
   description: string;
   impact: ActionImpact;
   executionTime: number; // seconds to execute

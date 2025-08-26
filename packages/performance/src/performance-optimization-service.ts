@@ -4,10 +4,10 @@
  * Implements multi-layer caching, AI optimization, real-time monitoring, and database tuning
  */
 
-import { CacheLayer, MultiLayerCacheManager } from '@neonpro/caching-layer';
+import { CacheLayer, MultiLayerCacheManager } from "@neonpro/caching-layer";
 // import { HealthcareInfrastructureOptimizer } from './infrastructure/cache-manager';
-import { HealthcareDatabaseMonitor } from './database/query-profiler';
-import { HealthcareWebVitals } from './web-vitals/core-web-vitals';
+import { HealthcareDatabaseMonitor } from "./database/query-profiler";
+import { HealthcareWebVitals } from "./web-vitals/core-web-vitals";
 
 export interface PerformanceTargets {
   cacheHitRate: number; // Target: 85%
@@ -56,7 +56,7 @@ export class HealthcarePerformanceOptimizationService {
         healthcareOptimized: true,
       },
       edgeConfig: {
-        region: 'sa-east-1', // Brazil region for data residency
+        region: "sa-east-1", // Brazil region for data residency
         healthcareCompliant: true,
       },
       databaseConfig: {
@@ -234,49 +234,55 @@ export class HealthcarePerformanceOptimizationService {
     const currentMetrics = await this.collectPerformanceMetrics();
 
     const targetsAchieved = {
-      cacheHitRate: currentMetrics.cacheHitRate >= this.performanceTargets.cacheHitRate,
-      aiInferenceTime: currentMetrics.aiInferenceTime
-        <= this.performanceTargets.aiInferenceTime,
-      dashboardLoadTime: currentMetrics.dashboardLoadTime
-        <= this.performanceTargets.dashboardLoadTime,
-      websocketConnectionTime: currentMetrics.websocketConnectionTime
-        <= this.performanceTargets.websocketConnectionTime,
-      databaseQueryTime: currentMetrics.databaseQueryTime
-        <= this.performanceTargets.databaseQueryTime,
-      pageSpeedScore: currentMetrics.pageSpeedScore >= this.performanceTargets.pageSpeedScore,
+      cacheHitRate:
+        currentMetrics.cacheHitRate >= this.performanceTargets.cacheHitRate,
+      aiInferenceTime:
+        currentMetrics.aiInferenceTime <=
+        this.performanceTargets.aiInferenceTime,
+      dashboardLoadTime:
+        currentMetrics.dashboardLoadTime <=
+        this.performanceTargets.dashboardLoadTime,
+      websocketConnectionTime:
+        currentMetrics.websocketConnectionTime <=
+        this.performanceTargets.websocketConnectionTime,
+      databaseQueryTime:
+        currentMetrics.databaseQueryTime <=
+        this.performanceTargets.databaseQueryTime,
+      pageSpeedScore:
+        currentMetrics.pageSpeedScore >= this.performanceTargets.pageSpeedScore,
     };
 
     const recommendations: string[] = [];
 
     if (!targetsAchieved.cacheHitRate) {
-      recommendations.push('🔧 Optimize cache strategies to improve hit rate');
+      recommendations.push("🔧 Optimize cache strategies to improve hit rate");
     }
 
     if (!targetsAchieved.aiInferenceTime) {
       recommendations.push(
-        '🤖 Implement AI model optimization and edge deployment',
+        "🤖 Implement AI model optimization and edge deployment",
       );
     }
 
     if (!targetsAchieved.dashboardLoadTime) {
-      recommendations.push('📊 Optimize dashboard rendering and data loading');
+      recommendations.push("📊 Optimize dashboard rendering and data loading");
     }
 
     if (!targetsAchieved.websocketConnectionTime) {
       recommendations.push(
-        '🔌 Optimize WebSocket connection and real-time features',
+        "🔌 Optimize WebSocket connection and real-time features",
       );
     }
 
     if (!targetsAchieved.databaseQueryTime) {
       recommendations.push(
-        '🗄️ Optimize database queries and implement better indexing',
+        "🗄️ Optimize database queries and implement better indexing",
       );
     }
 
     if (!targetsAchieved.pageSpeedScore) {
       recommendations.push(
-        '⚡ Improve overall page performance with code splitting and optimization',
+        "⚡ Improve overall page performance with code splitting and optimization",
       );
     }
 
@@ -293,10 +299,10 @@ export class HealthcarePerformanceOptimizationService {
         details: [
           `✅ Achieved ${achievedCount}/${totalTargets} performance targets`,
           `📊 Overall compliance score: ${complianceScore}%`,
-          `🏥 Healthcare-optimized caching: ${targetsAchieved.cacheHitRate ? '✅' : '❌'}`,
-          `🤖 AI inference optimization: ${targetsAchieved.aiInferenceTime ? '✅' : '❌'}`,
-          `📱 Real-time performance: ${targetsAchieved.websocketConnectionTime ? '✅' : '❌'}`,
-          `🗄️ Database performance: ${targetsAchieved.databaseQueryTime ? '✅' : '❌'}`,
+          `🏥 Healthcare-optimized caching: ${targetsAchieved.cacheHitRate ? "✅" : "❌"}`,
+          `🤖 AI inference optimization: ${targetsAchieved.aiInferenceTime ? "✅" : "❌"}`,
+          `📱 Real-time performance: ${targetsAchieved.websocketConnectionTime ? "✅" : "❌"}`,
+          `🗄️ Database performance: ${targetsAchieved.databaseQueryTime ? "✅" : "❌"}`,
         ],
       },
     };
@@ -426,15 +432,15 @@ export class HealthcarePerformanceOptimizationService {
 
     // Trigger scaling based on performance metrics
     if (
-      currentMetrics.databaseQueryTime
-        > this.performanceTargets.databaseQueryTime * 1.5
+      currentMetrics.databaseQueryTime >
+      this.performanceTargets.databaseQueryTime * 1.5
     ) {
       // Implementation for database scaling
     }
 
     if (
-      currentMetrics.aiInferenceTime
-        > this.performanceTargets.aiInferenceTime * 1.5
+      currentMetrics.aiInferenceTime >
+      this.performanceTargets.aiInferenceTime * 1.5
     ) {
       // Implementation for AI inference scaling
     }

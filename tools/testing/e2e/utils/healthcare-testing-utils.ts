@@ -1,5 +1,5 @@
-import { expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 // Healthcare E2E Testing Utilities for NeonPro
 // LGPD, ANVISA, and CFM compliance testing helpers
@@ -18,7 +18,7 @@ export class HealthcareTestUtils {
     await expect(consentElement).toBeVisible();
 
     const consentStatus = await consentElement.textContent();
-    expect(consentStatus).toContain('Granted');
+    expect(consentStatus).toContain("Granted");
 
     // Validate consent date
     const consentDate = this.page.locator('[data-testid="consent-date"]');
@@ -65,7 +65,7 @@ export class HealthcareTestUtils {
   }
 
   async testAdverseEventReporting() {
-    await this.page.goto('/compliance/adverse-events');
+    await this.page.goto("/compliance/adverse-events");
 
     // Test adverse event form
     await this.page.click('[data-testid="new-adverse-event"]');
@@ -76,10 +76,10 @@ export class HealthcareTestUtils {
     // Fill required fields
     await this.page.fill(
       '[data-testid="event-description"]',
-      'Test adverse event',
+      "Test adverse event",
     );
-    await this.page.select('[data-testid="severity-level"]', 'moderate');
-    await this.page.fill('[data-testid="device-involved"]', 'Device-001');
+    await this.page.select('[data-testid="severity-level"]', "moderate");
+    await this.page.fill('[data-testid="device-involved"]', "Device-001");
 
     // Submit and validate
     await this.page.click('[data-testid="submit-event"]');
@@ -102,7 +102,7 @@ export class HealthcareTestUtils {
   }
 
   async testDigitalSignature() {
-    await this.page.goto('/prescriptions/new');
+    await this.page.goto("/prescriptions/new");
 
     // Test digital signature component
     await expect(
@@ -117,15 +117,15 @@ export class HealthcareTestUtils {
   }
 
   async testElectronicPrescription() {
-    await this.page.goto('/prescriptions');
+    await this.page.goto("/prescriptions");
 
     // Create new prescription
     await this.page.click('[data-testid="new-prescription"]');
 
     // Fill prescription details
-    await this.page.fill('[data-testid="patient-cpf"]', '123.456.789-00');
-    await this.page.fill('[data-testid="medication"]', 'Test Medication');
-    await this.page.fill('[data-testid="dosage"]', '1 tablet daily');
+    await this.page.fill('[data-testid="patient-cpf"]', "123.456.789-00");
+    await this.page.fill('[data-testid="medication"]', "Test Medication");
+    await this.page.fill('[data-testid="dosage"]', "1 tablet daily");
 
     // Test CFM validation
     await this.page.click('[data-testid="cfm-validate"]');
@@ -136,7 +136,7 @@ export class HealthcareTestUtils {
 
   // Audit Trail Utilities
   async validateAuditTrail(action: string, userId: string) {
-    await this.page.goto('/audit-logs');
+    await this.page.goto("/audit-logs");
 
     // Filter by action and user
     await this.page.fill('[data-testid="action-filter"]', action);
@@ -161,39 +161,39 @@ export class HealthcareTestUtils {
 
   // General Healthcare Testing Utilities
   async loginAsHealthcareProfessional(email: string, password: string) {
-    await this.page.goto('/login');
+    await this.page.goto("/login");
     await this.page.fill('[data-testid="email"]', email);
     await this.page.fill('[data-testid="password"]', password);
     await this.page.click('[data-testid="login-button"]');
 
     // Wait for dashboard and validate professional status
-    await this.page.waitForURL('/dashboard');
+    await this.page.waitForURL("/dashboard");
     await expect(
       this.page.locator('[data-testid="professional-status"]'),
     ).toBeVisible();
   }
 
   async validateHealthcareData(
-    dataType: 'patient' | 'device' | 'professional',
+    dataType: "patient" | "device" | "professional",
     id: string,
   ) {
     switch (dataType) {
-      case 'patient': {
+      case "patient": {
         await this.validateLGPDConsent(id);
         break;
       }
-      case 'device': {
+      case "device": {
         await this.validateDeviceRegistration(id);
         break;
       }
-      case 'professional': {
+      case "professional": {
         await this.validateProfessionalLicense(id);
         break;
       }
     }
   }
 
-  async generateComplianceReport(reportType: 'lgpd' | 'anvisa' | 'cfm') {
+  async generateComplianceReport(reportType: "lgpd" | "anvisa" | "cfm") {
     await this.page.goto(`/compliance/reports/${reportType}`);
 
     // Generate report

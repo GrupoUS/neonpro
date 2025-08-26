@@ -9,16 +9,16 @@
  * - Compliance LGPD/CFM para dados médicos
  */
 
-import { EnhancedServiceBase } from '../base/EnhancedServiceBase';
-import type { ServiceConfig } from '../base/EnhancedServiceBase';
-import type { ServiceContext } from '../types';
+import { EnhancedServiceBase } from "../base/EnhancedServiceBase";
+import type { ServiceConfig } from "../base/EnhancedServiceBase";
+import type { ServiceContext } from "../types";
 
 // ================================================
 // TYPES AND INTERFACES
 // ================================================
 
 interface AIModelConfig {
-  provider: 'openai' | 'anthropic' | 'local';
+  provider: "openai" | "anthropic" | "local";
   model: string;
   temperature: number;
   maxTokens: number;
@@ -27,7 +27,7 @@ interface AIModelConfig {
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: number;
   metadata?: Record<string, any>;
@@ -58,21 +58,21 @@ interface ChatResponse {
 
 interface HealthcareContext {
   patientAge?: number;
-  patientGender?: 'male' | 'female' | 'other';
+  patientGender?: "male" | "female" | "other";
   medicalHistory?: string[];
   currentSymptoms?: string[];
   allergies?: string[];
   medications?: string[];
-  urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
+  urgencyLevel: "low" | "medium" | "high" | "critical";
   specialization?: string;
 }
 
 interface PredictionRequest {
   type:
-    | 'appointment_noshow'
-    | 'treatment_outcome'
-    | 'patient_risk'
-    | 'demand_forecast';
+    | "appointment_noshow"
+    | "treatment_outcome"
+    | "patient_risk"
+    | "demand_forecast";
   data: Record<string, any>;
   modelVersion?: string;
   confidenceThreshold?: number;
@@ -96,7 +96,7 @@ interface PredictionResponse {
 interface ProcessingJob {
   id: string;
   type: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
   input: any;
   output?: any;
   progress: number;
@@ -135,8 +135,8 @@ export class AIService extends EnhancedServiceBase {
 
   constructor(config?: Partial<ServiceConfig>) {
     super({
-      serviceName: 'AIService',
-      version: '1.0.0',
+      serviceName: "AIService",
+      version: "1.0.0",
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -155,11 +155,11 @@ export class AIService extends EnhancedServiceBase {
   // ================================================
 
   getServiceName(): string {
-    return 'AIService';
+    return "AIService";
   }
 
   getServiceVersion(): string {
-    return '1.0.0';
+    return "1.0.0";
   }
 
   // ================================================
@@ -174,17 +174,17 @@ export class AIService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ChatResponse> {
     return this.executeOperation(
-      'processChat',
+      "processChat",
       async () => {
         // Validate request
         if (!request.messages || request.messages.length === 0) {
-          throw new Error('Messages are required for chat processing');
+          throw new Error("Messages are required for chat processing");
         }
 
         // Add healthcare context to system message
         const systemMessage: ChatMessage = {
           id: `system_${Date.now()}`,
-          role: 'system',
+          role: "system",
           content: this.buildSystemPrompt(request.context),
           timestamp: Date.now(),
         };
@@ -193,7 +193,7 @@ export class AIService extends EnhancedServiceBase {
         const messages = [systemMessage, ...request.messages];
 
         // Get model configuration
-        const modelConfig = this.getModelConfig(request.model || 'default');
+        const modelConfig = this.getModelConfig(request.model || "default");
 
         // Process with AI provider
         const startTime = performance.now();
@@ -203,7 +203,7 @@ export class AIService extends EnhancedServiceBase {
         // Build response message
         const responseMessage: ChatMessage = {
           id: `ai_${Date.now()}`,
-          role: 'assistant',
+          role: "assistant",
           content: response.content,
           timestamp: Date.now(),
           metadata: {
@@ -255,7 +255,7 @@ export class AIService extends EnhancedServiceBase {
     onChunk: (chunk: string) => void,
   ): Promise<ChatResponse> {
     return this.executeOperation(
-      'processChatStream',
+      "processChatStream",
       async () => {
         // Streaming implementation would go here
         // For now, fall back to regular chat
@@ -286,7 +286,7 @@ export class AIService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<PredictionResponse> {
     return this.executeOperation(
-      'makePrediction',
+      "makePrediction",
       async () => {
         // Validate prediction type
         if (!this.isSupportedPredictionType(request.type)) {
@@ -343,18 +343,18 @@ export class AIService extends EnhancedServiceBase {
     patientData: Record<string, any>,
     context: ServiceContext,
   ): Promise<{
-    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    riskLevel: "low" | "medium" | "high" | "critical";
     factors: string[];
     recommendations: string[];
     confidence: number;
   }> {
     return this.executeOperation(
-      'analyzePatientRisk',
+      "analyzePatientRisk",
       async () => {
         // Use AI to analyze patient risk factors
         const riskAnalysis = await this.makePrediction(
           {
-            type: 'patient_risk',
+            type: "patient_risk",
             data: patientData,
             confidenceThreshold: 0.8,
           },
@@ -388,13 +388,13 @@ export class AIService extends EnhancedServiceBase {
     patientContext: HealthcareContext,
     context: ServiceContext,
   ): Promise<{
-    urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
+    urgencyLevel: "low" | "medium" | "high" | "critical";
     suggestedSpecialists: string[];
     recommendations: string[];
     warnings: string[];
   }> {
     return this.executeOperation(
-      'analyzeSymptoms',
+      "analyzeSymptoms",
       async () => {
         const analysisPrompt = this.buildSymptomsAnalysisPrompt(
           symptoms,
@@ -406,7 +406,7 @@ export class AIService extends EnhancedServiceBase {
             messages: [
               {
                 id: `symptoms_${Date.now()}`,
-                role: 'user',
+                role: "user",
                 content: analysisPrompt,
                 timestamp: Date.now(),
               },
@@ -431,7 +431,7 @@ export class AIService extends EnhancedServiceBase {
    * Geração de relatórios médicos
    */
   async generateMedicalReport(
-    reportType: 'consultation' | 'treatment' | 'discharge',
+    reportType: "consultation" | "treatment" | "discharge",
     data: Record<string, any>,
     context: ServiceContext,
   ): Promise<{
@@ -441,7 +441,7 @@ export class AIService extends EnhancedServiceBase {
     followUp: string[];
   }> {
     return this.executeOperation(
-      'generateMedicalReport',
+      "generateMedicalReport",
       async () => {
         const reportPrompt = this.buildReportGenerationPrompt(reportType, data);
 
@@ -450,7 +450,7 @@ export class AIService extends EnhancedServiceBase {
             messages: [
               {
                 id: `report_${Date.now()}`,
-                role: 'user',
+                role: "user",
                 content: reportPrompt,
                 timestamp: Date.now(),
               },
@@ -482,14 +482,14 @@ export class AIService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<string> {
     return this.executeOperation(
-      'submitProcessingJob',
+      "submitProcessingJob",
       async () => {
         const jobId = `job_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
         const job: ProcessingJob = {
           id: jobId,
           type,
-          status: 'pending',
+          status: "pending",
           input,
           progress: 0,
           createdAt: new Date(),
@@ -501,7 +501,7 @@ export class AIService extends EnhancedServiceBase {
         this.processJobAsync(jobId, context).catch((error) => {
           const failedJob = this.processingJobs.get(jobId);
           if (failedJob) {
-            failedJob.status = 'failed';
+            failedJob.status = "failed";
             failedJob.error = error.message;
             this.processingJobs.set(jobId, failedJob);
           }
@@ -524,7 +524,7 @@ export class AIService extends EnhancedServiceBase {
     context: ServiceContext,
   ): Promise<ProcessingJob | null> {
     return this.executeOperation(
-      'getJobStatus',
+      "getJobStatus",
       async () => {
         return this.processingJobs.get(jobId) || undefined;
       },
@@ -541,27 +541,27 @@ export class AIService extends EnhancedServiceBase {
 
   private initializeModels(): void {
     // Default OpenAI configuration
-    this.modelConfigs.set('default', {
-      provider: 'openai',
-      model: 'gpt-4',
+    this.modelConfigs.set("default", {
+      provider: "openai",
+      model: "gpt-4",
       temperature: 0.3,
       maxTokens: 2048,
       timeout: 30_000,
     });
 
     // Healthcare-optimized configuration
-    this.modelConfigs.set('healthcare', {
-      provider: 'openai',
-      model: 'gpt-4',
+    this.modelConfigs.set("healthcare", {
+      provider: "openai",
+      model: "gpt-4",
       temperature: 0.1, // Lower temperature for medical accuracy
       maxTokens: 1024,
       timeout: 30_000,
     });
 
     // Fast responses configuration
-    this.modelConfigs.set('fast', {
-      provider: 'openai',
-      model: 'gpt-3.5-turbo',
+    this.modelConfigs.set("fast", {
+      provider: "openai",
+      model: "gpt-3.5-turbo",
       temperature: 0.5,
       maxTokens: 512,
       timeout: 15_000,
@@ -570,7 +570,7 @@ export class AIService extends EnhancedServiceBase {
 
   private getModelConfig(modelName: string): AIModelConfig {
     return (
-      this.modelConfigs.get(modelName) || this.modelConfigs.get('default')!
+      this.modelConfigs.get(modelName) || this.modelConfigs.get("default")!
     );
   }
 
@@ -578,7 +578,7 @@ export class AIService extends EnhancedServiceBase {
     let prompt = this.systemPrompts.healthcareAssistant;
 
     if (healthcareContext) {
-      prompt += '\n\nContexto do paciente:';
+      prompt += "\n\nContexto do paciente:";
       if (healthcareContext.urgencyLevel) {
         prompt += `\n- Nível de urgência: ${healthcareContext.urgencyLevel}`;
       }
@@ -599,14 +599,14 @@ export class AIService extends EnhancedServiceBase {
   ): string {
     return `Analise os seguintes sintomas e forneça uma triagem médica:
 
-Sintomas relatados: ${symptoms.join(', ')}
+Sintomas relatados: ${symptoms.join(", ")}
 
 Contexto do paciente:
-- Idade: ${context.patientAge || 'não informada'}
-- Gênero: ${context.patientGender || 'não informado'}
-- Histórico médico: ${context.medicalHistory?.join(', ') || 'não informado'}
-- Medicações atuais: ${context.medications?.join(', ') || 'nenhuma'}
-- Alergias: ${context.allergies?.join(', ') || 'nenhuma'}
+- Idade: ${context.patientAge || "não informada"}
+- Gênero: ${context.patientGender || "não informado"}
+- Histórico médico: ${context.medicalHistory?.join(", ") || "não informado"}
+- Medicações atuais: ${context.medications?.join(", ") || "nenhuma"}
+- Alergias: ${context.allergies?.join(", ") || "nenhuma"}
 
 Por favor, forneça:
 1. Nível de urgência (low/medium/high/critical)
@@ -641,7 +641,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     // Mock implementation - replace with actual AI provider calls
     return {
       content:
-        'Esta é uma resposta simulada do sistema de IA médica. Em produção, esta seria uma resposta real do modelo de linguagem configurado.',
+        "Esta é uma resposta simulada do sistema de IA médica. Em produção, esta seria uma resposta real do modelo de linguagem configurado.",
       usage: {
         promptTokens: 150,
         completionTokens: 50,
@@ -652,22 +652,22 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 
   private generateChatCacheKey(request: ChatRequest): string {
     const lastMessage = request.messages.at(-1);
-    return `chat_${Buffer.from(lastMessage.content).toString('base64').slice(0, 32)}`;
+    return `chat_${Buffer.from(lastMessage.content).toString("base64").slice(0, 32)}`;
   }
 
   private generatePredictionCacheKey(request: PredictionRequest): string {
     const dataHash = Buffer.from(JSON.stringify(request.data))
-      .toString('base64')
+      .toString("base64")
       .slice(0, 32);
     return `pred_${request.type}_${dataHash}`;
   }
 
   private isSupportedPredictionType(type: string): boolean {
     return [
-      'appointment_noshow',
-      'treatment_outcome',
-      'patient_risk',
-      'demand_forecast',
+      "appointment_noshow",
+      "treatment_outcome",
+      "patient_risk",
+      "demand_forecast",
     ].includes(type);
   }
 
@@ -677,10 +677,10 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   ): Promise<any> {
     // Preprocessing logic based on prediction type
     switch (predictionType) {
-      case 'appointment_noshow': {
+      case "appointment_noshow": {
         return this.preprocessNoShowData(data);
       }
-      case 'patient_risk': {
+      case "patient_risk": {
         return this.preprocessRiskData(data);
       }
       default: {
@@ -693,11 +693,11 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     // Extract relevant features for no-show prediction
     return {
       daysSinceScheduled: data.daysSinceScheduled || 0,
-      appointmentType: data.appointmentType || 'consultation',
+      appointmentType: data.appointmentType || "consultation",
       patientAge: data.patientAge || 0,
       previousNoShows: data.previousNoShows || 0,
-      timeOfDay: data.timeOfDay || 'morning',
-      weekday: data.weekday || 'monday',
+      timeOfDay: data.timeOfDay || "morning",
+      weekday: data.weekday || "monday",
     };
   }
 
@@ -719,37 +719,38 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   ): Promise<any> {
     // Mock prediction execution - replace with actual ML models
     switch (type) {
-      case 'appointment_noshow': {
+      case "appointment_noshow": {
         return {
           prediction: { willNoShow: false, probability: 0.23 },
           confidence: 0.89,
-          modelVersion: 'noshow_v1.2.0',
-          explanation: 'Baixo risco de falta baseado no histórico do paciente',
+          modelVersion: "noshow_v1.2.0",
+          explanation: "Baixo risco de falta baseado no histórico do paciente",
           recommendations: [
-            'Enviar lembrete 24h antes',
-            'Confirmar presença por WhatsApp',
+            "Enviar lembrete 24h antes",
+            "Confirmar presença por WhatsApp",
           ],
           featuresUsed: [
-            'previousNoShows',
-            'daysSinceScheduled',
-            'appointmentType',
+            "previousNoShows",
+            "daysSinceScheduled",
+            "appointmentType",
           ],
           modelAccuracy: 0.92,
         };
       }
 
-      case 'patient_risk': {
+      case "patient_risk": {
         return {
           prediction: {
-            riskLevel: 'medium',
-            factors: ['idade avançada', 'histórico de hipertensão'],
+            riskLevel: "medium",
+            factors: ["idade avançada", "histórico de hipertensão"],
             riskScore: 6.2,
           },
           confidence: 0.84,
-          modelVersion: 'risk_v2.1.0',
-          explanation: 'Risco moderado devido a fatores de idade e histórico médico',
-          recommendations: ['Monitoramento regular', 'Exames preventivos'],
-          featuresUsed: ['age', 'chronicConditions', 'vitalSigns'],
+          modelVersion: "risk_v2.1.0",
+          explanation:
+            "Risco moderado devido a fatores de idade e histórico médico",
+          recommendations: ["Monitoramento regular", "Exames preventivos"],
+          featuresUsed: ["age", "chronicConditions", "vitalSigns"],
           modelAccuracy: 0.88,
         };
       }
@@ -767,9 +768,9 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
       return JSON.parse(content);
     } catch {
       return {
-        urgencyLevel: 'medium',
-        suggestedSpecialists: ['Clínico Geral'],
-        recommendations: ['Consulta médica recomendada'],
+        urgencyLevel: "medium",
+        suggestedSpecialists: ["Clínico Geral"],
+        recommendations: ["Consulta médica recomendada"],
         warnings: [],
       };
     }
@@ -782,7 +783,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     } catch {
       return {
         report: content,
-        summary: 'Relatório médico gerado',
+        summary: "Relatório médico gerado",
         recommendations: [],
         followUp: [],
       };
@@ -798,7 +799,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
       return;
     }
 
-    job.status = 'processing';
+    job.status = "processing";
     job.progress = 10;
     this.processingJobs.set(jobId, job);
 
@@ -811,10 +812,10 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     // Complete processing
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    job.status = 'completed';
+    job.status = "completed";
     job.progress = 100;
     job.completedAt = new Date();
-    job.output = { result: 'Processing completed successfully' };
+    job.output = { result: "Processing completed successfully" };
     this.processingJobs.set(jobId, job);
   }
 
@@ -832,9 +833,10 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   protected async initialize(): Promise<void> {
     // Validate environment variables
     if (
-      !process.env.OPENAI_API_KEY
-      && this.modelConfigs.get('default')?.provider === 'openai'
-    ) {}
+      !process.env.OPENAI_API_KEY &&
+      this.modelConfigs.get("default")?.provider === "openai"
+    ) {
+    }
 
     // Initialize model configurations from environment if available
     if (process.env.AI_MODEL_CONFIG) {

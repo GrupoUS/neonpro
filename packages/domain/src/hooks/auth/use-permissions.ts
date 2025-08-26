@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 export interface Permission {
   id: string;
@@ -10,11 +10,11 @@ export interface Permission {
 }
 
 export type HealthcareRole =
-  | 'admin'
-  | 'doctor'
-  | 'nurse'
-  | 'receptionist'
-  | 'patient';
+  | "admin"
+  | "doctor"
+  | "nurse"
+  | "receptionist"
+  | "patient";
 
 export interface UserPermissions {
   userId: string;
@@ -53,7 +53,7 @@ export interface UsePermissionsReturn {
   isHealthcareProfessional: boolean;
   grantPermission: (
     userId: string,
-    permission: Omit<Permission, 'id'>,
+    permission: Omit<Permission, "id">,
   ) => Promise<boolean>;
   revokePermission: (userId: string, permissionId: string) => Promise<boolean>;
   assignRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
@@ -76,7 +76,7 @@ export function usePermissions(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
-  const user = { id: options.userId || 'user-1' };
+  const user = { id: options.userId || "user-1" };
 
   const refreshPermissions = useCallback(async (): Promise<void> => {
     try {
@@ -86,25 +86,26 @@ export function usePermissions(
       // Placeholder implementation
       const mockPermissions: Permission[] = [
         {
-          id: '1',
-          resource: 'appointments',
-          action: 'read',
+          id: "1",
+          resource: "appointments",
+          action: "read",
         },
         {
-          id: '2',
-          resource: 'patients',
-          action: 'read',
+          id: "2",
+          resource: "patients",
+          action: "read",
         },
       ];
 
-      const mockRoles: HealthcareRole[] = ['doctor'];
+      const mockRoles: HealthcareRole[] = ["doctor"];
 
       setPermissions(mockPermissions);
       setRoles(mockRoles);
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : 'Failed to refresh permissions';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to refresh permissions";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -151,11 +152,11 @@ export function usePermissions(
         if (!user?.id) {
           return {
             hasPermission: false,
-            reason: 'User not authenticated',
+            reason: "User not authenticated",
           };
         }
 
-        logDataAccess('permission_check', resource);
+        logDataAccess("permission_check", resource);
 
         const permission = permissions.find(
           (p) => p.resource === resource && p.action === action,
@@ -172,7 +173,8 @@ export function usePermissions(
           hasPermission: true,
         };
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Permission check failed';
+        const errorMessage =
+          error instanceof Error ? error.message : "Permission check failed";
         setError(errorMessage);
         return {
           hasPermission: false,
@@ -236,7 +238,7 @@ export function usePermissions(
   const grantPermission = useCallback(
     async (
       _userId: string,
-      permission: Omit<Permission, 'id'>,
+      permission: Omit<Permission, "id">,
     ): Promise<boolean> => {
       try {
         if (!user?.id) {
@@ -253,7 +255,8 @@ export function usePermissions(
         toast.success();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to grant permission';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to grant permission";
         setError(errorMessage);
         toast.error();
         return false;
@@ -276,9 +279,10 @@ export function usePermissions(
         toast.success();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to revoke permission';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to revoke permission";
         setError(errorMessage);
         toast.error();
         return false;
@@ -297,7 +301,8 @@ export function usePermissions(
         clearCache();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to assign role';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to assign role";
         setError(errorMessage);
         return false;
       }
@@ -320,7 +325,8 @@ export function usePermissions(
 
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to remove role';
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to remove role";
         setError(errorMessage);
         return false;
       }
@@ -329,8 +335,8 @@ export function usePermissions(
   );
 
   // Computed properties
-  const isAdmin = hasRole('admin');
-  const isHealthcareProfessional = hasAnyRole(['doctor', 'nurse']);
+  const isAdmin = hasRole("admin");
+  const isHealthcareProfessional = hasAnyRole(["doctor", "nurse"]);
 
   // Initialize permissions
   useEffect(() => {

@@ -6,9 +6,13 @@
  * Quality Standard: ≥9.9/10
  */
 
-import { z } from 'zod';
-import type { ComplianceScore, ConstitutionalResponse, DPIAAssessment } from '../types';
-import { LGPDLegalBasis, PatientDataClassification } from '../types';
+import { z } from "zod";
+import type {
+  ComplianceScore,
+  ConstitutionalResponse,
+  DPIAAssessment,
+} from "../types";
+import { LGPDLegalBasis, PatientDataClassification } from "../types";
 
 /**
  * DPIA Risk Assessment Criteria
@@ -16,23 +20,23 @@ import { LGPDLegalBasis, PatientDataClassification } from '../types';
 const _DPIA_RISK_CRITERIA = {
   // High-risk processing that requires DPIA (Art. 38 LGPD)
   HIGH_RISK_TRIGGERS: [
-    'SYSTEMATIC_MONITORING',
-    'LARGE_SCALE_PROCESSING',
-    'SENSITIVE_DATA',
-    'VULNERABLE_SUBJECTS',
-    'INNOVATIVE_TECHNOLOGY',
-    'AUTOMATED_DECISION_MAKING',
-    'HEALTH_DATA_PROCESSING',
+    "SYSTEMATIC_MONITORING",
+    "LARGE_SCALE_PROCESSING",
+    "SENSITIVE_DATA",
+    "VULNERABLE_SUBJECTS",
+    "INNOVATIVE_TECHNOLOGY",
+    "AUTOMATED_DECISION_MAKING",
+    "HEALTH_DATA_PROCESSING",
   ],
 
   // Healthcare-specific risk factors
   HEALTHCARE_RISK_FACTORS: [
-    'GENETIC_DATA',
-    'MENTAL_HEALTH_DATA',
-    'CHILD_PATIENT_DATA',
-    'AI_DIAGNOSIS',
-    'CROSS_BORDER_TRANSFER',
-    'THIRD_PARTY_SHARING',
+    "GENETIC_DATA",
+    "MENTAL_HEALTH_DATA",
+    "CHILD_PATIENT_DATA",
+    "AI_DIAGNOSIS",
+    "CROSS_BORDER_TRANSFER",
+    "THIRD_PARTY_SHARING",
   ],
 } as const;
 
@@ -90,11 +94,11 @@ export class DPIAService {
       if (!dpiaRequired.required) {
         return {
           success: false,
-          error: 'DPIA not required for this processing activity',
+          error: "DPIA not required for this processing activity",
           complianceScore: dpiaRequired.riskScore,
           regulatoryValidation: { lgpd: true, anvisa: true, cfm: true },
           auditTrail: await this.createAuditEvent(
-            'DPIA_NOT_REQUIRED',
+            "DPIA_NOT_REQUIRED",
             validatedInput,
           ),
           timestamp: new Date(),
@@ -105,7 +109,8 @@ export class DPIAService {
       const riskAssessment = await this.conductRiskAssessment(validatedInput);
 
       // Step 4: Generate mitigation measures
-      const mitigationMeasures = await this.generateMitigationMeasures(riskAssessment);
+      const mitigationMeasures =
+        await this.generateMitigationMeasures(riskAssessment);
 
       // Step 5: Calculate constitutional compliance score
       const complianceScore = this.calculateConstitutionalScore(
@@ -135,7 +140,7 @@ export class DPIAService {
 
       // Step 8: Generate audit trail
       const auditTrail = await this.createAuditEvent(
-        'DPIA_COMPLETED',
+        "DPIA_COMPLETED",
         validatedInput,
       );
 
@@ -152,11 +157,11 @@ export class DPIAService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('DPIA_ERROR', input);
+      const auditTrail = await this.createAuditEvent("DPIA_ERROR", input);
 
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown DPIA error',
+        error: error instanceof Error ? error.message : "Unknown DPIA error",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -177,47 +182,47 @@ export class DPIAService {
 
     // Check for high-risk processing (Art. 38 LGPD)
     if (
-      input.dataTypes.includes('SENSITIVE' as PatientDataClassification)
-      || input.dataTypes.includes('HEALTH' as PatientDataClassification)
+      input.dataTypes.includes("SENSITIVE" as PatientDataClassification) ||
+      input.dataTypes.includes("HEALTH" as PatientDataClassification)
     ) {
-      risks.push('Processing sensitive health data');
+      risks.push("Processing sensitive health data");
       riskScore += 3;
     }
 
     if (
-      input.dataTypes.includes('GENETIC' as PatientDataClassification)
-      || input.dataTypes.includes('BIOMETRIC' as PatientDataClassification)
+      input.dataTypes.includes("GENETIC" as PatientDataClassification) ||
+      input.dataTypes.includes("BIOMETRIC" as PatientDataClassification)
     ) {
-      risks.push('Processing genetic or biometric data');
+      risks.push("Processing genetic or biometric data");
       riskScore += 4;
     }
 
     if (
-      input.dataSubjects.minors
-      || input.dataTypes.includes('CHILD' as PatientDataClassification)
+      input.dataSubjects.minors ||
+      input.dataTypes.includes("CHILD" as PatientDataClassification)
     ) {
-      risks.push('Processing data of children (Art. 14 LGPD)');
+      risks.push("Processing data of children (Art. 14 LGPD)");
       riskScore += 3;
     }
 
     if (input.dataSubjects.vulnerableGroups) {
-      risks.push('Processing data of vulnerable groups');
+      risks.push("Processing data of vulnerable groups");
       riskScore += 2;
     }
 
     if (
       input.technologyUsed.some(
         (tech) =>
-          tech.toLowerCase().includes('ai')
-          || tech.toLowerCase().includes('ml'),
+          tech.toLowerCase().includes("ai") ||
+          tech.toLowerCase().includes("ml"),
       )
     ) {
-      risks.push('Use of AI/ML automated decision-making');
+      risks.push("Use of AI/ML automated decision-making");
       riskScore += 3;
     }
 
     if (input.dataProcessing.sharing || input.dataProcessing.transfer) {
-      risks.push('Data sharing or international transfer');
+      risks.push("Data sharing or international transfer");
       riskScore += 2;
     }
 
@@ -234,7 +239,7 @@ export class DPIAService {
    * Conduct comprehensive risk assessment
    */
   private async conductRiskAssessment(input: DPIAInput): Promise<{
-    overallRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    overallRisk: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     privacyRisks: string[];
     securityRisks: string[];
     complianceRisks: string[];
@@ -248,8 +253,8 @@ export class DPIAService {
     let totalRiskScore = 0;
 
     // Privacy Risk Assessment
-    if (input.dataTypes.includes('SENSITIVE' as PatientDataClassification)) {
-      privacyRisks.push('Unauthorized access to sensitive health data');
+    if (input.dataTypes.includes("SENSITIVE" as PatientDataClassification)) {
+      privacyRisks.push("Unauthorized access to sensitive health data");
       totalRiskScore += 3;
     }
 
@@ -262,57 +267,57 @@ export class DPIAService {
 
     // Security Risk Assessment
     if (input.dataProcessing.transfer) {
-      securityRisks.push('Data breach during transfer');
+      securityRisks.push("Data breach during transfer");
       totalRiskScore += 2;
     }
 
     if (
-      input.technologyUsed.some((tech) => tech.toLowerCase().includes('cloud'))
+      input.technologyUsed.some((tech) => tech.toLowerCase().includes("cloud"))
     ) {
-      securityRisks.push('Cloud security vulnerabilities');
+      securityRisks.push("Cloud security vulnerabilities");
       totalRiskScore += 1;
     }
 
     // Compliance Risk Assessment
     if (
-      !input.legalBasis.includes('HEALTH_PROTECTION' as LGPDLegalBasis)
-      && input.dataTypes.includes('HEALTH' as PatientDataClassification)
+      !input.legalBasis.includes("HEALTH_PROTECTION" as LGPDLegalBasis) &&
+      input.dataTypes.includes("HEALTH" as PatientDataClassification)
     ) {
       complianceRisks.push(
-        'Inappropriate legal basis for health data processing',
+        "Inappropriate legal basis for health data processing",
       );
       totalRiskScore += 3;
     }
 
     if (input.retentionPeriod > 60) {
       // > 5 years
-      complianceRisks.push('Excessive data retention period');
+      complianceRisks.push("Excessive data retention period");
       totalRiskScore += 1;
     }
 
     // Healthcare-Specific Risk Assessment
     if (
-      input.technologyUsed.some((tech) => tech.toLowerCase().includes('ai'))
+      input.technologyUsed.some((tech) => tech.toLowerCase().includes("ai"))
     ) {
-      healthcareRisks.push('AI bias in medical decisions');
+      healthcareRisks.push("AI bias in medical decisions");
       totalRiskScore += 2;
     }
 
-    if (input.dataTypes.includes('GENETIC' as PatientDataClassification)) {
-      healthcareRisks.push('Genetic discrimination risks');
+    if (input.dataTypes.includes("GENETIC" as PatientDataClassification)) {
+      healthcareRisks.push("Genetic discrimination risks");
       totalRiskScore += 3;
     }
 
     // Determine overall risk level
-    let overallRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    let overallRisk: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     if (totalRiskScore <= 3) {
-      overallRisk = 'LOW';
+      overallRisk = "LOW";
     } else if (totalRiskScore <= 6) {
-      overallRisk = 'MEDIUM';
+      overallRisk = "MEDIUM";
     } else if (totalRiskScore <= 10) {
-      overallRisk = 'HIGH';
+      overallRisk = "HIGH";
     } else {
-      overallRisk = 'CRITICAL';
+      overallRisk = "CRITICAL";
     }
 
     return {
@@ -328,45 +333,45 @@ export class DPIAService {
 
   private async generateMitigationMeasures(
     riskAssessment: any,
-  ): Promise<{ measures: string[]; effectivenessScore: ComplianceScore; }> {
+  ): Promise<{ measures: string[]; effectivenessScore: ComplianceScore }> {
     const measures: string[] = [];
     let effectivenessScore = 0;
 
     // Privacy mitigation measures
     if (riskAssessment.privacyRisks.length > 0) {
       measures.push(
-        'Implement data minimization principles (Art. 6º, III LGPD)',
+        "Implement data minimization principles (Art. 6º, III LGPD)",
       );
-      measures.push('Apply pseudonymization for sensitive data processing');
-      measures.push('Establish granular consent management system');
+      measures.push("Apply pseudonymization for sensitive data processing");
+      measures.push("Establish granular consent management system");
       effectivenessScore += 2;
     }
 
     // Security mitigation measures
     if (riskAssessment.securityRisks.length > 0) {
       measures.push(
-        'Implement AES-256 encryption for data at rest and in transit',
+        "Implement AES-256 encryption for data at rest and in transit",
       );
-      measures.push('Deploy multi-factor authentication for healthcare staff');
-      measures.push('Establish secure API gateways with rate limiting');
-      measures.push('Implement comprehensive audit logging');
+      measures.push("Deploy multi-factor authentication for healthcare staff");
+      measures.push("Establish secure API gateways with rate limiting");
+      measures.push("Implement comprehensive audit logging");
       effectivenessScore += 3;
     }
 
     // Compliance mitigation measures
     if (riskAssessment.complianceRisks.length > 0) {
-      measures.push('Establish automated compliance monitoring system');
-      measures.push('Implement regular LGPD compliance audits');
-      measures.push('Create data subject rights automation (Art. 18 LGPD)');
+      measures.push("Establish automated compliance monitoring system");
+      measures.push("Implement regular LGPD compliance audits");
+      measures.push("Create data subject rights automation (Art. 18 LGPD)");
       effectivenessScore += 2;
     }
 
     // Healthcare-specific mitigation measures
     if (riskAssessment.healthcareRisks.length > 0) {
-      measures.push('Implement explainable AI for medical decisions');
-      measures.push('Establish medical ethics review board');
-      measures.push('Create patient transparency dashboard');
-      measures.push('Implement constitutional healthcare validation');
+      measures.push("Implement explainable AI for medical decisions");
+      measures.push("Establish medical ethics review board");
+      measures.push("Create patient transparency dashboard");
+      measures.push("Implement constitutional healthcare validation");
       effectivenessScore += 3;
     }
 
@@ -388,11 +393,11 @@ export class DPIAService {
     let score = 10; // Start with perfect score
 
     // Deduct points for high risks
-    if (riskAssessment.overallRisk === 'CRITICAL') {
+    if (riskAssessment.overallRisk === "CRITICAL") {
       score -= 3;
-    } else if (riskAssessment.overallRisk === 'HIGH') {
+    } else if (riskAssessment.overallRisk === "HIGH") {
       score -= 2;
-    } else if (riskAssessment.overallRisk === 'MEDIUM') {
+    } else if (riskAssessment.overallRisk === "MEDIUM") {
       score -= 1;
     }
 
@@ -404,7 +409,9 @@ export class DPIAService {
       score += 0.5;
     }
     if (
-      mitigationMeasures.measures.some((m: string) => m.includes('constitutional'))
+      mitigationMeasures.measures.some((m: string) =>
+        m.includes("constitutional"),
+      )
     ) {
       score += 0.5;
     }
@@ -425,7 +432,7 @@ export class DPIAService {
   private async createAuditEvent(action: string, input: any): Promise<any> {
     return {
       id: crypto.randomUUID(),
-      eventType: 'COMPLIANCE_DPIA',
+      eventType: "COMPLIANCE_DPIA",
       action,
       timestamp: new Date(),
       metadata: { processName: input.processName },
@@ -441,7 +448,7 @@ export class DPIAService {
   ): Promise<ConstitutionalResponse<DPIAAssessment | null>> {
     try {
       // Implementation would query Supabase database
-      const auditTrail = await this.createAuditEvent('DPIA_RETRIEVED', {
+      const auditTrail = await this.createAuditEvent("DPIA_RETRIEVED", {
         assessmentId,
       });
 
@@ -454,15 +461,16 @@ export class DPIAService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('DPIA_RETRIEVAL_ERROR', {
+      const auditTrail = await this.createAuditEvent("DPIA_RETRIEVAL_ERROR", {
         assessmentId,
       });
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Failed to retrieve DPIA assessment',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve DPIA assessment",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -481,7 +489,7 @@ export class DPIAService {
     comments?: string,
   ): Promise<ConstitutionalResponse<DPIAAssessment>> {
     try {
-      const auditTrail = await this.createAuditEvent('DPIA_REVIEWED', {
+      const auditTrail = await this.createAuditEvent("DPIA_REVIEWED", {
         assessmentId,
         reviewerId,
         approved,
@@ -497,15 +505,16 @@ export class DPIAService {
         timestamp: new Date(),
       };
     } catch (error) {
-      const auditTrail = await this.createAuditEvent('DPIA_REVIEW_ERROR', {
+      const auditTrail = await this.createAuditEvent("DPIA_REVIEW_ERROR", {
         assessmentId,
       });
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Failed to review DPIA assessment',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to review DPIA assessment",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,

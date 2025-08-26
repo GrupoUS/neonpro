@@ -610,8 +610,7 @@ function FinancialSummary({ summary }: any) {
 export function PaymentBilling() {
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedPayment, setSelectedPayment] = useState<any>();
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<any>();
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handlePayNow = (payment: any) => {

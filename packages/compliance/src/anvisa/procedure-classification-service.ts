@@ -12,17 +12,17 @@
  * - Constitutional requirement: All procedures must have proper classification
  */
 
-import { z } from 'zod';
-import type { ComplianceScore, ConstitutionalResponse } from '../types';
+import { z } from "zod";
+import type { ComplianceScore, ConstitutionalResponse } from "../types";
 
 /**
  * Procedure Risk Classification
  */
 export enum ProcedureRiskLevel {
-  LOW = 'LOW', // Baixo risco - minimamente invasivo
-  MEDIUM = 'MEDIUM', // Médio risco - moderadamente invasivo
-  HIGH = 'HIGH', // Alto risco - altamente invasivo
-  CRITICAL = 'CRITICAL', // Risco crítico - constitutional oversight required
+  LOW = "LOW", // Baixo risco - minimamente invasivo
+  MEDIUM = "MEDIUM", // Médio risco - moderadamente invasivo
+  HIGH = "HIGH", // Alto risco - altamente invasivo
+  CRITICAL = "CRITICAL", // Risco crítico - constitutional oversight required
 }
 
 /**
@@ -36,28 +36,28 @@ export const ProcedureClassificationSchema = z.object({
   anvisaCategory: z.string().min(2).max(100),
   riskLevel: z.nativeEnum(ProcedureRiskLevel),
   invasivenessLevel: z.enum([
-    'NON_INVASIVE',
-    'MINIMALLY_INVASIVE',
-    'MODERATELY_INVASIVE',
-    'HIGHLY_INVASIVE',
+    "NON_INVASIVE",
+    "MINIMALLY_INVASIVE",
+    "MODERATELY_INVASIVE",
+    "HIGHLY_INVASIVE",
   ]),
   anesthesiaRequired: z.enum([
-    'NONE',
-    'TOPICAL',
-    'LOCAL',
-    'REGIONAL',
-    'GENERAL',
+    "NONE",
+    "TOPICAL",
+    "LOCAL",
+    "REGIONAL",
+    "GENERAL",
   ]),
   specialistRequired: z.boolean().default(false),
   requiredCertifications: z.array(z.string()),
   contraindications: z.array(z.string()),
   requirementsForExecution: z.object({
     minimumProfessionalLevel: z.enum([
-      'TECHNICIAN',
-      'NURSE',
-      'GENERAL_PHYSICIAN',
-      'SPECIALIST',
-      'SURGEON',
+      "TECHNICIAN",
+      "NURSE",
+      "GENERAL_PHYSICIAN",
+      "SPECIALIST",
+      "SURGEON",
     ]),
     requiredTraining: z.array(z.string()),
     supervisionRequired: z.boolean().default(false),
@@ -110,11 +110,11 @@ export interface ProcedureFilters {
   anvisaCategory?: string;
   riskLevel?: ProcedureRiskLevel;
   invasivenessLevel?:
-    | 'NON_INVASIVE'
-    | 'MINIMALLY_INVASIVE'
-    | 'MODERATELY_INVASIVE'
-    | 'HIGHLY_INVASIVE';
-  anesthesiaRequired?: 'NONE' | 'TOPICAL' | 'LOCAL' | 'REGIONAL' | 'GENERAL';
+    | "NON_INVASIVE"
+    | "MINIMALLY_INVASIVE"
+    | "MODERATELY_INVASIVE"
+    | "HIGHLY_INVASIVE";
+  anesthesiaRequired?: "NONE" | "TOPICAL" | "LOCAL" | "REGIONAL" | "GENERAL";
   specialistRequired?: boolean;
   classificationDateFrom?: Date;
   classificationDateTo?: Date;
@@ -145,8 +145,8 @@ export interface ClassificationValidationResult {
     ethicalStandardsMet: boolean;
   };
   recommendations: {
-    category: 'SAFETY' | 'ETHICS' | 'REGULATORY' | 'QUALITY';
-    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    category: "SAFETY" | "ETHICS" | "REGULATORY" | "QUALITY";
+    priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     description: string;
     actionRequired: string;
   }[];
@@ -170,25 +170,23 @@ export class ProcedureClassificationService {
   ): Promise<ConstitutionalResponse<ProcedureClassification>> {
     try {
       // Step 1: Validate procedure classification data
-      const validatedClassification = ProcedureClassificationSchema.parse(classification);
+      const validatedClassification =
+        ProcedureClassificationSchema.parse(classification);
 
       // Step 2: Constitutional healthcare validation
-      const constitutionalValidation = await this.validateConstitutionalRequirements(
-        validatedClassification,
-      );
+      const constitutionalValidation =
+        await this.validateConstitutionalRequirements(validatedClassification);
 
       if (!constitutionalValidation.valid) {
         return {
           success: false,
-          error: `Constitutional procedure validation failed: ${
-            constitutionalValidation.violations.join(
-              ', ',
-            )
-          }`,
+          error: `Constitutional procedure validation failed: ${constitutionalValidation.violations.join(
+            ", ",
+          )}`,
           complianceScore: constitutionalValidation.score,
           regulatoryValidation: { lgpd: true, anvisa: false, cfm: false },
           auditTrail: await this.createAuditEvent(
-            'PROCEDURE_CONSTITUTIONAL_VIOLATION',
+            "PROCEDURE_CONSTITUTIONAL_VIOLATION",
             validatedClassification,
           ),
           timestamp: new Date(),
@@ -203,11 +201,11 @@ export class ProcedureClassificationService {
       if (!anvisaValidation.compliant) {
         return {
           success: false,
-          error: `ANVISA RDC 67/2007 compliance failed: ${anvisaValidation.issues.join(', ')}`,
+          error: `ANVISA RDC 67/2007 compliance failed: ${anvisaValidation.issues.join(", ")}`,
           complianceScore: anvisaValidation.score,
           regulatoryValidation: { lgpd: true, anvisa: false, cfm: true },
           auditTrail: await this.createAuditEvent(
-            'PROCEDURE_ANVISA_VIOLATION',
+            "PROCEDURE_ANVISA_VIOLATION",
             validatedClassification,
           ),
           timestamp: new Date(),
@@ -215,9 +213,8 @@ export class ProcedureClassificationService {
       }
 
       // Step 4: Professional qualification validation
-      const professionalValidation = await this.validateProfessionalRequirements(
-        validatedClassification,
-      );
+      const professionalValidation =
+        await this.validateProfessionalRequirements(validatedClassification);
 
       // Step 5: Patient safety assessment
       const safetyAssessment = await this.assessPatientSafety(
@@ -235,18 +232,21 @@ export class ProcedureClassificationService {
       // Step 7: Store procedure classification
       const classifiedProcedure = await this.storeProcedureClassification({
         ...validatedClassification,
-        classificationId: validatedClassification.classificationId || crypto.randomUUID(),
+        classificationId:
+          validatedClassification.classificationId || crypto.randomUUID(),
         constitutionalValidation: {
           patientSafetyValidated: true,
           medicalEthicsCompliant: true,
-          qualityStandardsMet: complianceScore >= this.constitutionalQualityStandard,
+          qualityStandardsMet:
+            complianceScore >= this.constitutionalQualityStandard,
           regulatoryComplianceScore: complianceScore,
           lastValidationDate: new Date(),
-          validatedBy: validatedClassification.constitutionalValidation.validatedBy,
+          validatedBy:
+            validatedClassification.constitutionalValidation.validatedBy,
         },
         nextReviewDate: new Date(
-          Date.now()
-            + this.classificationReviewMonths * 30 * 24 * 60 * 60 * 1000,
+          Date.now() +
+            this.classificationReviewMonths * 30 * 24 * 60 * 60 * 1000,
         ),
       });
 
@@ -255,7 +255,7 @@ export class ProcedureClassificationService {
 
       // Step 9: Generate audit trail
       const auditTrail = await this.createAuditEvent(
-        'PROCEDURE_CLASSIFIED',
+        "PROCEDURE_CLASSIFIED",
         classifiedProcedure,
       );
 
@@ -275,15 +275,16 @@ export class ProcedureClassificationService {
       };
     } catch (error) {
       const auditTrail = await this.createAuditEvent(
-        'PROCEDURE_CLASSIFICATION_ERROR',
+        "PROCEDURE_CLASSIFICATION_ERROR",
         classification,
       );
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Unknown procedure classification error',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown procedure classification error",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -307,15 +308,16 @@ export class ProcedureClassificationService {
       );
 
       if (!classification) {
-        throw new Error('Procedure classification not found');
+        throw new Error("Procedure classification not found");
       }
 
       // Step 2: Perform comprehensive validation
-      const validationResult = await this.performClassificationValidation(classification);
+      const validationResult =
+        await this.performClassificationValidation(classification);
 
       // Step 3: Generate audit trail
       const auditTrail = await this.createAuditEvent(
-        'CLASSIFICATION_VALIDATED',
+        "CLASSIFICATION_VALIDATED",
         {
           classificationId,
           validationResult,
@@ -336,7 +338,7 @@ export class ProcedureClassificationService {
       };
     } catch (error) {
       const auditTrail = await this.createAuditEvent(
-        'CLASSIFICATION_VALIDATION_ERROR',
+        "CLASSIFICATION_VALIDATION_ERROR",
         {
           classificationId,
         },
@@ -344,9 +346,10 @@ export class ProcedureClassificationService {
 
       return {
         success: false,
-        error: error instanceof Error
-          ? error.message
-          : 'Failed to validate classification',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to validate classification",
         complianceScore: 0,
         regulatoryValidation: { lgpd: false, anvisa: false, cfm: false },
         auditTrail,
@@ -374,11 +377,11 @@ export class ProcedureClassificationService {
 
     // Patient safety validation
     if (
-      classification.riskLevel === 'CRITICAL'
-      && !classification.requirementsForExecution.supervisionRequired
+      classification.riskLevel === "CRITICAL" &&
+      !classification.requirementsForExecution.supervisionRequired
     ) {
       violations.push(
-        'Critical risk procedures require supervision (constitutional patient safety)',
+        "Critical risk procedures require supervision (constitutional patient safety)",
       );
       score -= 2;
     }
@@ -386,42 +389,42 @@ export class ProcedureClassificationService {
     // Medical ethics validation
     if (!classification.patientEligibility.informedConsentRequired) {
       violations.push(
-        'Informed consent required for all procedures (constitutional medical ethics)',
+        "Informed consent required for all procedures (constitutional medical ethics)",
       );
       score -= 1.5;
     }
 
     // Age protection validation
     if (
-      classification.patientEligibility.minimumAge < 18
-      && !classification.patientEligibility.parentalConsentAge
+      classification.patientEligibility.minimumAge < 18 &&
+      !classification.patientEligibility.parentalConsentAge
     ) {
       violations.push(
-        'Parental consent age must be specified for minor procedures',
+        "Parental consent age must be specified for minor procedures",
       );
       score -= 1;
     }
 
     // High-risk procedure validation
     if (
-      (classification.riskLevel === 'HIGH'
-        || classification.riskLevel === 'CRITICAL')
-      && !classification.requirementsForExecution.preOperativeAssessment
+      (classification.riskLevel === "HIGH" ||
+        classification.riskLevel === "CRITICAL") &&
+      !classification.requirementsForExecution.preOperativeAssessment
     ) {
       violations.push(
-        'Pre-operative assessment required for high-risk procedures',
+        "Pre-operative assessment required for high-risk procedures",
       );
       score -= 1.5;
     }
 
     // Professional qualification validation
     if (
-      classification.riskLevel === 'HIGH'
-      && classification.requirementsForExecution.minimumProfessionalLevel
-        === 'TECHNICIAN'
+      classification.riskLevel === "HIGH" &&
+      classification.requirementsForExecution.minimumProfessionalLevel ===
+        "TECHNICIAN"
     ) {
       violations.push(
-        'High-risk procedures require physician-level professionals',
+        "High-risk procedures require physician-level professionals",
       );
       score -= 2;
     }
@@ -450,42 +453,42 @@ export class ProcedureClassificationService {
 
     // Risk level appropriate to invasiveness
     if (
-      classification.invasivenessLevel === 'HIGHLY_INVASIVE'
-      && classification.riskLevel === 'LOW'
+      classification.invasivenessLevel === "HIGHLY_INVASIVE" &&
+      classification.riskLevel === "LOW"
     ) {
       issues.push(
-        'Highly invasive procedures cannot be classified as low risk',
+        "Highly invasive procedures cannot be classified as low risk",
       );
       score -= 2;
     }
 
     // Anesthesia requirements validation
     if (
-      classification.anesthesiaRequired === 'GENERAL'
-      && classification.riskLevel === 'LOW'
+      classification.anesthesiaRequired === "GENERAL" &&
+      classification.riskLevel === "LOW"
     ) {
       issues.push(
-        'General anesthesia procedures require higher risk classification',
+        "General anesthesia procedures require higher risk classification",
       );
       score -= 1.5;
     }
 
     // Specialist requirement validation
     if (
-      classification.riskLevel === 'HIGH'
-      && !classification.specialistRequired
+      classification.riskLevel === "HIGH" &&
+      !classification.specialistRequired
     ) {
-      issues.push('High-risk procedures require specialist oversight');
+      issues.push("High-risk procedures require specialist oversight");
       score -= 2;
     }
 
     // Facility requirements for high-risk procedures
     if (
-      classification.riskLevel === 'HIGH'
-      && classification.requirementsForExecution.facilityRequirements.length === 0
+      classification.riskLevel === "HIGH" &&
+      classification.requirementsForExecution.facilityRequirements.length === 0
     ) {
       issues.push(
-        'High-risk procedures require specific facility requirements',
+        "High-risk procedures require specific facility requirements",
       );
       score -= 1;
     }
@@ -502,19 +505,20 @@ export class ProcedureClassificationService {
   // Additional helper methods (implementation stubs)
   private async validateProfessionalRequirements(
     _classification: ProcedureClassification,
-  ): Promise<{ valid: boolean; score: ComplianceScore; }> {
+  ): Promise<{ valid: boolean; score: ComplianceScore }> {
     return { valid: true, score: 9.5 };
   }
 
   private async assessPatientSafety(
     _classification: ProcedureClassification,
-  ): Promise<{ safe: boolean; score: ComplianceScore; }> {
+  ): Promise<{ safe: boolean; score: ComplianceScore }> {
     return { safe: true, score: 9.8 };
   }
 
   private calculateComplianceScore(...validations: any[]): ComplianceScore {
     const scores = validations.map((v) => v.score || 9);
-    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const average =
+      scores.reduce((sum, score) => sum + score, 0) / scores.length;
     return Math.min(10, Math.max(0, average)) as ComplianceScore;
   }
 
@@ -569,7 +573,7 @@ export class ProcedureClassificationService {
   private async createAuditEvent(action: string, data: any): Promise<any> {
     return {
       id: crypto.randomUUID(),
-      eventType: 'PROCEDURE_CLASSIFICATION',
+      eventType: "PROCEDURE_CLASSIFICATION",
       action,
       timestamp: new Date(),
       metadata: data,

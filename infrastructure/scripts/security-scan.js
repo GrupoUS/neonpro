@@ -4,8 +4,8 @@
  * Detecta API keys expostas antes de commits
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Patterns de API keys sensíveis
 const SENSITIVE_PATTERNS = [
@@ -30,32 +30,32 @@ const SENSITIVE_PATTERNS = [
 
 // Arquivos a ignorar
 const IGNORE_FILES = [
-  '.env.local',
-  '.env',
-  '.env.example',
-  'node_modules',
-  '.git',
-  'package-lock.json',
-  'pnpm-lock.yaml',
+  ".env.local",
+  ".env",
+  ".env.example",
+  "node_modules",
+  ".git",
+  "package-lock.json",
+  "pnpm-lock.yaml",
 ];
 
 // Extensões de arquivo para verificar
 const CHECK_EXTENSIONS = [
-  '.js',
-  '.ts',
-  '.tsx',
-  '.jsx',
-  '.ps1',
-  '.sh',
-  '.md',
-  '.json',
-  '.yml',
-  '.yaml',
+  ".js",
+  ".ts",
+  ".tsx",
+  ".jsx",
+  ".ps1",
+  ".sh",
+  ".md",
+  ".json",
+  ".yml",
+  ".yaml",
 ];
 
 function scanFile(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = fs.readFileSync(filePath, "utf8");
     const violations = [];
 
     SENSITIVE_PATTERNS.forEach((pattern, _index) => {
@@ -64,11 +64,11 @@ function scanFile(filePath) {
         matches.forEach((match) => {
           // Ignorar placeholders óbvios
           if (
-            match.includes('your_')
-            || match.includes('INSERT_')
-            || match.includes('REPLACE_')
-            || match.includes('example')
-            || match.length < 8
+            match.includes("your_") ||
+            match.includes("INSERT_") ||
+            match.includes("REPLACE_") ||
+            match.includes("example") ||
+            match.length < 8
           ) {
             return;
           }

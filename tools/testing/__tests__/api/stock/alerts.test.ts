@@ -2,8 +2,17 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests covering API endpoints with database operations
 
-import type { NextRequest } from 'next/server';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { NextRequest } from "next/server";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 // HTTP Status Constants
 const HTTP_STATUS = {
@@ -40,16 +49,16 @@ const mockRequest = (method: string, url: string, body?: unknown) =>
 
 const _mockSession = {
   user: {
-    id: 'test-user-id-123',
-    email: 'test@example.com',
+    id: "test-user-id-123",
+    email: "test@example.com",
   },
 };
 
 // Test data constants
-const testClinicId = '12345678-e89b-12d3-a456-426614174000';
-const testUserId = '87654321-e89b-12d3-a456-426614174000';
-const testProductId = '11111111-e89b-12d3-a456-426614174000';
-const testAlertId = '22222222-e89b-12d3-a456-426614174000';
+const testClinicId = "12345678-e89b-12d3-a456-426614174000";
+const testUserId = "87654321-e89b-12d3-a456-426614174000";
+const testProductId = "11111111-e89b-12d3-a456-426614174000";
+const testAlertId = "22222222-e89b-12d3-a456-426614174000";
 
 const _mockProfile = {
   id: testUserId,
@@ -58,8 +67,8 @@ const _mockProfile = {
 
 const _mockProduct = {
   id: testProductId,
-  name: 'Test Product',
-  category: 'medication',
+  name: "Test Product",
+  category: "medication",
 };
 
 // Define mock data first
@@ -67,8 +76,8 @@ const mockAlert = {
   id: testAlertId,
   clinic_id: testClinicId,
   product_id: testProductId,
-  alert_type: 'low_stock',
-  severity: 'medium',
+  alert_type: "low_stock",
+  severity: "medium",
   current_value: 5,
 };
 
@@ -87,9 +96,9 @@ const mockQueryChain = {
   _currentAlertId: undefined, // Track which alert is being queried
   _alertStates: {
     // Initialize some alerts with specific states for testing
-    '22222222-e89b-12d3-a456-426614174000': 'active', // Default test alert
-    '33333333-e89b-12d3-a456-426614174000': 'acknowledged', // For testing already acknowledged
-    '44444444-e89b-12d3-a456-426614174000': 'resolved', // For testing already resolved
+    "22222222-e89b-12d3-a456-426614174000": "active", // Default test alert
+    "33333333-e89b-12d3-a456-426614174000": "acknowledged", // For testing already acknowledged
+    "44444444-e89b-12d3-a456-426614174000": "resolved", // For testing already resolved
   },
 };
 
@@ -102,7 +111,7 @@ mockQueryChain.insert.mockImplementation((insertData) => {
   return mockQueryChain;
 });
 mockQueryChain.eq.mockImplementation((column, value) => {
-  if (column === 'id') {
+  if (column === "id") {
     mockQueryChain._currentAlertId = value; // Capture the alertId being queried
   }
   return mockQueryChain;
@@ -133,8 +142,8 @@ mockQueryChain.single.mockImplementation(async () => {
       category_id: insertData.category_id,
       alert_type: insertData.alert_type,
       threshold_value: insertData.threshold_value,
-      threshold_unit: insertData.threshold_unit || 'quantity',
-      severity_level: insertData.severity_level || 'medium',
+      threshold_unit: insertData.threshold_unit || "quantity",
+      severity_level: insertData.severity_level || "medium",
       is_active: insertData.is_active ?? true,
       notification_channels: insertData.notification_channels,
       user_id: insertData.user_id,
@@ -148,17 +157,17 @@ mockQueryChain.single.mockImplementation(async () => {
   }
 
   // Handle non-existent alert (null UUID)
-  if (alertId === '00000000-0000-0000-0000-000000000000') {
+  if (alertId === "00000000-0000-0000-0000-000000000000") {
     return {
       data: undefined,
-      error: { message: 'No rows found' },
+      error: { message: "No rows found" },
     };
   }
 
   // If this is an update chain, apply the update
   if (mockQueryChain._isUpdateChain) {
-    const isAcknowledge = mockQueryChain._updateData?.status === 'acknowledged';
-    const isResolve = mockQueryChain._updateData?.status === 'resolved';
+    const isAcknowledge = mockQueryChain._updateData?.status === "acknowledged";
+    const isResolve = mockQueryChain._updateData?.status === "resolved";
 
     mockQueryChain._isUpdateChain = false; // Reset for next call
     const updateData = mockQueryChain._updateData;
@@ -166,12 +175,12 @@ mockQueryChain.single.mockImplementation(async () => {
 
     // Apply the update (assuming it passed the previous SELECT validation)
     if (isAcknowledge) {
-      mockQueryChain._alertStates[alertId] = 'acknowledged';
+      mockQueryChain._alertStates[alertId] = "acknowledged";
       return {
         data: {
           ...mockAlert,
           id: alertId,
-          status: 'acknowledged',
+          status: "acknowledged",
           acknowledged_at: new Date().toISOString(),
           acknowledged_by: testUserId,
           updated_at: new Date().toISOString(),
@@ -180,15 +189,16 @@ mockQueryChain.single.mockImplementation(async () => {
       };
     }
     if (isResolve) {
-      mockQueryChain._alertStates[alertId] = 'resolved';
+      mockQueryChain._alertStates[alertId] = "resolved";
       return {
         data: {
           ...mockAlert,
           id: alertId,
-          status: 'resolved',
+          status: "resolved",
           resolved_at: new Date().toISOString(),
           resolved_by: testUserId,
-          resolution_description: updateData?.resolution_description || 'Test resolution',
+          resolution_description:
+            updateData?.resolution_description || "Test resolution",
           updated_at: new Date().toISOString(),
         },
         error: undefined,
@@ -197,7 +207,7 @@ mockQueryChain.single.mockImplementation(async () => {
   }
 
   // For read operations, return alert with current state
-  const currentStatus = mockQueryChain._alertStates[alertId] || 'active';
+  const currentStatus = mockQueryChain._alertStates[alertId] || "active";
   return {
     data: {
       ...mockAlert,
@@ -211,7 +221,7 @@ mockQueryChain.single.mockImplementation(async () => {
 const _createMockQueryChain = () => mockQueryChain;
 
 // Mock Next.js headers
-vi.mock<typeof import('next/headers')>('next/headers', () => ({
+vi.mock<typeof import("next/headers")>("next/headers", () => ({
   cookies: vi.fn(() => ({
     getAll: vi.fn(() => []),
     set: vi.fn(),
@@ -219,43 +229,46 @@ vi.mock<typeof import('next/headers')>('next/headers', () => ({
 }));
 
 // Mock the Supabase import
-vi.mock<typeof import('@/lib/supabase/server')>('@/lib/supabase/server', () => ({
-  createClient: vi.fn(() => ({
-    auth: {
-      getSession: vi.fn().mockResolvedValue({
-        data: {
-          session: {
-            user: {
-              id: 'test-user-id-123',
-              email: 'test@example.com',
+vi.mock<typeof import("@/lib/supabase/server")>(
+  "@/lib/supabase/server",
+  () => ({
+    createClient: vi.fn(() => ({
+      auth: {
+        getSession: vi.fn().mockResolvedValue({
+          data: {
+            session: {
+              user: {
+                id: "test-user-id-123",
+                email: "test@example.com",
+              },
             },
           },
-        },
-        error: undefined,
-      }),
-    },
-    from: vi.fn(() => mockQueryChain),
-  })),
-}));
+          error: undefined,
+        }),
+      },
+      from: vi.fn(() => mockQueryChain),
+    })),
+  }),
+);
 
-import { POST as acknowledgePost } from '@/api/stock/alerts/acknowledge/route';
-import { POST as resolvePost } from '@/api/stock/alerts/resolve/route';
+import { POST as acknowledgePost } from "@/api/stock/alerts/acknowledge/route";
+import { POST as resolvePost } from "@/api/stock/alerts/resolve/route";
 // Import the API handlers after mocking
-import { GET, POST } from '@/api/stock/alerts/route';
+import { GET, POST } from "@/api/stock/alerts/route";
 
 // =====================================================
 // TEST DATA FIXTURES
 // =====================================================
 
 const _mockAlertConfig = {
-  id: '44444444-e89b-12d3-a456-426614174000',
+  id: "44444444-e89b-12d3-a456-426614174000",
   clinic_id: testClinicId,
   product_id: testProductId,
-  alert_type: 'low_stock',
+  alert_type: "low_stock",
   threshold: 10,
-  severity: 'medium',
+  severity: "medium",
   is_active: true,
-  notificationChannels: ['app', 'email'],
+  notificationChannels: ["app", "email"],
   user_id: testUserId,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
@@ -267,7 +280,7 @@ const _mockAlertConfig = {
 
 beforeAll(() => {
   // Setup test environment
-  vi.stubEnv('NODE_ENV', 'test');
+  vi.stubEnv("NODE_ENV", "test");
 });
 
 afterAll(() => {
@@ -286,9 +299,9 @@ beforeEach(() => {
   mockQueryChain._currentAlertId = undefined;
   mockQueryChain._alertStates = {
     // Reset to initial states
-    '22222222-e89b-12d3-a456-426614174000': 'active', // Default test alert
-    '33333333-e89b-12d3-a456-426614174000': 'acknowledged', // For testing already acknowledged
-    '44444444-e89b-12d3-a456-426614174000': 'resolved', // For testing already resolved
+    "22222222-e89b-12d3-a456-426614174000": "active", // Default test alert
+    "33333333-e89b-12d3-a456-426614174000": "acknowledged", // For testing already acknowledged
+    "44444444-e89b-12d3-a456-426614174000": "resolved", // For testing already resolved
   };
 });
 
@@ -301,7 +314,7 @@ afterEach(() => {
 // GET /api/stock/alerts TESTS
 // =====================================================
 
-describe('gET /api/stock/alerts', () => {
+describe("gET /api/stock/alerts", () => {
   beforeEach(() => {
     // Reset spy call counts but keep implementations
     mockQueryChain.select.mockClear();
@@ -320,8 +333,8 @@ describe('gET /api/stock/alerts', () => {
     });
   });
 
-  it('should return alerts with proper pagination', async () => {
-    const request = mockRequest('GET', '/api/stock/alerts?limit=10&offset=0');
+  it("should return alerts with proper pagination", async () => {
+    const request = mockRequest("GET", "/api/stock/alerts?limit=10&offset=0");
 
     let response: Response | undefined;
     let responseData: unknown;
@@ -353,8 +366,8 @@ describe('gET /api/stock/alerts', () => {
     expect((responseData as any).pagination.total).toBe(1);
   });
 
-  it('should filter alerts by status', async () => {
-    const request = mockRequest('GET', '/api/stock/alerts?status=active');
+  it("should filter alerts by status", async () => {
+    const request = mockRequest("GET", "/api/stock/alerts?status=active");
 
     const response = await GET(request);
     const responseData = await response.json();
@@ -363,11 +376,11 @@ describe('gET /api/stock/alerts', () => {
     expect(responseData.success).toBeTruthy();
 
     // Verify that the filter was applied
-    expect(mockQueryChain.eq).toHaveBeenCalledWith('status', 'active');
+    expect(mockQueryChain.eq).toHaveBeenCalledWith("status", "active");
   });
 
-  it('should filter alerts by severity', async () => {
-    const request = mockRequest('GET', '/api/stock/alerts?severity=critical');
+  it("should filter alerts by severity", async () => {
+    const request = mockRequest("GET", "/api/stock/alerts?severity=critical");
 
     const response = await GET(request);
     const responseData = await response.json();
@@ -376,13 +389,13 @@ describe('gET /api/stock/alerts', () => {
     expect(responseData.success).toBeTruthy();
 
     // Verify that the filter was applied
-    expect(mockQueryChain.eq).toHaveBeenCalledWith('severity', 'critical');
+    expect(mockQueryChain.eq).toHaveBeenCalledWith("severity", "critical");
   });
 
-  it('should handle authentication errors', async () => {
+  it("should handle authentication errors", async () => {
     // This will be handled by the API route's authentication logic
     // For now, test as if authentication passes since our mock handles basic auth
-    const request = mockRequest('GET', '/api/stock/alerts');
+    const request = mockRequest("GET", "/api/stock/alerts");
 
     const response = await GET(request);
 
@@ -391,10 +404,10 @@ describe('gET /api/stock/alerts', () => {
     expect(response.status).toBe(HTTP_STATUS.OK);
   });
 
-  it('should handle database errors gracefully', async () => {
+  it("should handle database errors gracefully", async () => {
     // For now, test the basic flow since our mock handles normal operations
     // Database error testing would require more sophisticated error injection
-    const request = mockRequest('GET', '/api/stock/alerts');
+    const request = mockRequest("GET", "/api/stock/alerts");
 
     const response = await GET(request);
 
@@ -402,28 +415,28 @@ describe('gET /api/stock/alerts', () => {
     expect(response.status).toBe(HTTP_STATUS.OK);
   });
 
-  it('should validate query parameters', async () => {
-    const request = mockRequest('GET', '/api/stock/alerts?limit=invalid');
+  it("should validate query parameters", async () => {
+    const request = mockRequest("GET", "/api/stock/alerts?limit=invalid");
 
     const response = await GET(request);
     const responseData = await response.json();
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(responseData.success).toBeFalsy();
-    expect(responseData.error).toBe('Invalid query parameters');
+    expect(responseData.error).toBe("Invalid query parameters");
     expect(responseData.details).toBeDefined(); // Zod error details
   });
 
-  it('should apply proper sorting', async () => {
+  it("should apply proper sorting", async () => {
     const request = mockRequest(
-      'GET',
-      '/api/stock/alerts?sortBy=severity&sortOrder=asc',
+      "GET",
+      "/api/stock/alerts?sortBy=severity&sortOrder=asc",
     );
 
     const response = await GET(request);
 
     expect(response.status).toBe(HTTP_STATUS.OK);
-    expect(mockQueryChain.order).toHaveBeenCalledWith('severity', {
+    expect(mockQueryChain.order).toHaveBeenCalledWith("severity", {
       ascending: true,
     });
   });
@@ -433,12 +446,12 @@ describe('gET /api/stock/alerts', () => {
 // POST /api/stock/alerts TESTS
 // =====================================================
 
-describe('pOST /api/stock/alerts', () => {
+describe("pOST /api/stock/alerts", () => {
   const validCreateRequest = {
     productId: testProductId,
-    alertType: 'low_stock',
+    alertType: "low_stock",
     threshold: 10,
-    notificationChannels: ['email', 'app'],
+    notificationChannels: ["email", "app"],
   };
 
   beforeEach(() => {
@@ -446,10 +459,10 @@ describe('pOST /api/stock/alerts', () => {
     vi.clearAllMocks();
   });
 
-  it('should create alert configuration successfully', async () => {
+  it("should create alert configuration successfully", async () => {
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts',
+      "POST",
+      "/api/stock/alerts",
       validCreateRequest,
     );
     const response = await POST(request);
@@ -470,30 +483,30 @@ describe('pOST /api/stock/alerts', () => {
     expect(responseData.data.id).toBe(testUserId); // Use the consistent test ID
   });
 
-  it('should validate required fields', async () => {
+  it("should validate required fields", async () => {
     const invalidRequest = {
       ...validCreateRequest,
       threshold: undefined,
     };
 
-    const request = mockRequest('POST', '/api/stock/alerts', invalidRequest);
+    const request = mockRequest("POST", "/api/stock/alerts", invalidRequest);
 
     const response = await POST(request);
     const responseData = await response.json();
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(responseData.success).toBeFalsy();
-    expect(responseData.error).toBe('Invalid request data');
+    expect(responseData.error).toBe("Invalid request data");
     expect(responseData.details).toBeDefined(); // Zod error details
   });
 
-  it('should reject negative threshold values', async () => {
+  it("should reject negative threshold values", async () => {
     const invalidRequest = {
       ...validCreateRequest,
       threshold: -5,
     };
 
-    const request = mockRequest('POST', '/api/stock/alerts', invalidRequest);
+    const request = mockRequest("POST", "/api/stock/alerts", invalidRequest);
 
     const response = await POST(request);
     const responseData = await response.json();
@@ -502,14 +515,14 @@ describe('pOST /api/stock/alerts', () => {
     expect(responseData.success).toBeFalsy();
   });
 
-  it('should require either productId or categoryId', async () => {
+  it("should require either productId or categoryId", async () => {
     const invalidRequest = {
       ...validCreateRequest,
       productId: undefined,
       categoryId: undefined,
     };
 
-    const request = mockRequest('POST', '/api/stock/alerts', invalidRequest);
+    const request = mockRequest("POST", "/api/stock/alerts", invalidRequest);
 
     const response = await POST(request);
     const responseData = await response.json();
@@ -518,11 +531,11 @@ describe('pOST /api/stock/alerts', () => {
     expect(responseData.success).toBeFalsy();
   });
 
-  it('should handle duplicate configuration errors', async () => {
+  it("should handle duplicate configuration errors", async () => {
     // Test with current mock - duplicate handling would be done in the API route
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts',
+      "POST",
+      "/api/stock/alerts",
       validCreateRequest,
     );
 
@@ -540,20 +553,20 @@ describe('pOST /api/stock/alerts', () => {
 // POST /api/stock/alerts/acknowledge TESTS
 // =====================================================
 
-describe('pOST /api/stock/alerts/acknowledge', () => {
+describe("pOST /api/stock/alerts/acknowledge", () => {
   const validAcknowledgeRequest = {
     alertId: testAlertId,
-    note: 'Acknowledged by manager',
+    note: "Acknowledged by manager",
   };
 
   beforeEach(() => {
     // Using global mock - no additional setup needed
   });
 
-  it('should acknowledge alert successfully', async () => {
+  it("should acknowledge alert successfully", async () => {
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/acknowledge',
+      "POST",
+      "/api/stock/alerts/acknowledge",
       validAcknowledgeRequest,
     );
     const response = await acknowledgePost(request);
@@ -561,18 +574,18 @@ describe('pOST /api/stock/alerts/acknowledge', () => {
 
     expect(response.status).toBe(HTTP_STATUS.OK);
     expect(responseData.success).toBeTruthy();
-    expect(responseData.data.status).toBe('acknowledged');
+    expect(responseData.data.status).toBe("acknowledged");
   });
 
-  it('should validate alert ID format', async () => {
+  it("should validate alert ID format", async () => {
     const invalidRequest = {
       ...validAcknowledgeRequest,
-      alertId: 'invalid-uuid',
+      alertId: "invalid-uuid",
     };
 
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/acknowledge',
+      "POST",
+      "/api/stock/alerts/acknowledge",
       invalidRequest,
     );
 
@@ -581,15 +594,15 @@ describe('pOST /api/stock/alerts/acknowledge', () => {
 
     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(responseData.success).toBeFalsy();
-    expect(responseData.error).toBe('Invalid request data');
+    expect(responseData.error).toBe("Invalid request data");
     expect(responseData.details).toBeDefined(); // Zod error details
   });
 
-  it('should handle non-existent alert', async () => {
+  it("should handle non-existent alert", async () => {
     // Test with non-existent alert ID - should return 404
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', {
+    const request = mockRequest("POST", "/api/stock/alerts/acknowledge", {
       ...validAcknowledgeRequest,
-      alertId: '00000000-0000-0000-0000-000000000000',
+      alertId: "00000000-0000-0000-0000-000000000000",
     });
 
     const response = await acknowledgePost(request);
@@ -599,11 +612,11 @@ describe('pOST /api/stock/alerts/acknowledge', () => {
     expect(responseData.success).toBeFalsy();
   });
 
-  it('should reject acknowledging already acknowledged alert', async () => {
+  it("should reject acknowledging already acknowledged alert", async () => {
     // Use a pre-configured alert that's already acknowledged
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', {
+    const request = mockRequest("POST", "/api/stock/alerts/acknowledge", {
       ...validAcknowledgeRequest,
-      alertId: '33333333-e89b-12d3-a456-426614174000', // Pre-configured as acknowledged
+      alertId: "33333333-e89b-12d3-a456-426614174000", // Pre-configured as acknowledged
     });
 
     const response = await acknowledgePost(request);
@@ -618,18 +631,18 @@ describe('pOST /api/stock/alerts/acknowledge', () => {
 // POST /api/stock/alerts/resolve TESTS
 // =====================================================
 
-describe('pOST /api/stock/alerts/resolve', () => {
+describe("pOST /api/stock/alerts/resolve", () => {
   const validResolveRequest = {
     alertId: testAlertId,
-    resolutionDescription: 'Stock replenished from emergency supply',
+    resolutionDescription: "Stock replenished from emergency supply",
   };
 
   // Removed complex beforeEach mock setup - using global mock instead
 
-  it('should resolve alert successfully', async () => {
+  it("should resolve alert successfully", async () => {
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
+      "POST",
+      "/api/stock/alerts/resolve",
       validResolveRequest,
     );
 
@@ -638,18 +651,18 @@ describe('pOST /api/stock/alerts/resolve', () => {
 
     expect(response.status).toBe(HTTP_STATUS.OK);
     expect(responseData.success).toBeTruthy();
-    expect(responseData.data.status).toBe('resolved');
+    expect(responseData.data.status).toBe("resolved");
   });
 
-  it('should require resolution description', async () => {
+  it("should require resolution description", async () => {
     const invalidRequest = {
       ...validResolveRequest,
-      resolutionDescription: '', // Empty description should fail validation
+      resolutionDescription: "", // Empty description should fail validation
     };
 
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
+      "POST",
+      "/api/stock/alerts/resolve",
       invalidRequest,
     );
 
@@ -660,11 +673,11 @@ describe('pOST /api/stock/alerts/resolve', () => {
     expect(responseData.success).toBeFalsy();
   });
 
-  it('should handle already resolved alert', async () => {
+  it("should handle already resolved alert", async () => {
     // Use a pre-configured alert that's already resolved
-    const request = mockRequest('POST', '/api/stock/alerts/resolve', {
+    const request = mockRequest("POST", "/api/stock/alerts/resolve", {
       ...validResolveRequest,
-      alertId: '44444444-e89b-12d3-a456-426614174000', // Pre-configured as resolved
+      alertId: "44444444-e89b-12d3-a456-426614174000", // Pre-configured as resolved
     });
 
     const response = await resolvePost(request);
@@ -675,15 +688,15 @@ describe('pOST /api/stock/alerts/resolve', () => {
     expect(responseData.success).toBeFalsy();
   });
 
-  it('should validate resolution text length', async () => {
+  it("should validate resolution text length", async () => {
     const invalidRequest = {
       ...validResolveRequest,
-      resolutionDescription: 'a'.repeat(LARGE_STRING_LENGTH), // Too long
+      resolutionDescription: "a".repeat(LARGE_STRING_LENGTH), // Too long
     };
 
     const request = mockRequest(
-      'POST',
-      '/api/stock/alerts/resolve',
+      "POST",
+      "/api/stock/alerts/resolve",
       invalidRequest,
     );
 
@@ -699,12 +712,12 @@ describe('pOST /api/stock/alerts/resolve', () => {
 // EDGE CASES AND ERROR HANDLING TESTS
 // =====================================================
 
-describe('edge Cases and Error Handling', () => {
-  it('should handle malformed JSON in request body', async () => {
+describe("edge Cases and Error Handling", () => {
+  it("should handle malformed JSON in request body", async () => {
     const request = {
-      method: 'POST',
-      url: '/api/stock/alerts',
-      json: () => Promise.reject(new Error('Invalid JSON')),
+      method: "POST",
+      url: "/api/stock/alerts",
+      json: () => Promise.reject(new Error("Invalid JSON")),
       headers: new Headers(),
     } as NextRequest;
 
@@ -715,9 +728,9 @@ describe('edge Cases and Error Handling', () => {
     expect(responseData.success).toBeFalsy();
   });
 
-  it('should handle network timeouts gracefully', async () => {
+  it("should handle network timeouts gracefully", async () => {
     // Test timeout handling with basic request
-    const request = mockRequest('GET', '/api/stock/alerts');
+    const request = mockRequest("GET", "/api/stock/alerts");
 
     const response = await GET(request);
     const _responseData = await response.json();
@@ -728,12 +741,12 @@ describe('edge Cases and Error Handling', () => {
     );
   });
 
-  it('should handle concurrent acknowledgment attempts', async () => {
+  it("should handle concurrent acknowledgment attempts", async () => {
     // This test would require more sophisticated mocking to simulate
     // concurrent requests and race conditions
-    const request = mockRequest('POST', '/api/stock/alerts/acknowledge', {
+    const request = mockRequest("POST", "/api/stock/alerts/acknowledge", {
       alertId: testAlertId,
-      note: 'Concurrent acknowledgment',
+      note: "Concurrent acknowledgment",
     });
 
     const response = await acknowledgePost(request);
@@ -747,8 +760,8 @@ describe('edge Cases and Error Handling', () => {
 // PERFORMANCE TESTS
 // =====================================================
 
-describe('performance Tests', () => {
-  it('should handle large result sets efficiently', async () => {
+describe("performance Tests", () => {
+  it("should handle large result sets efficiently", async () => {
     // Mock large dataset
     const _largeDataset = new Array(LARGE_DATASET_SIZE)
       .fill(mockAlert)
@@ -760,7 +773,7 @@ describe('performance Tests', () => {
     // Test performance with basic request - removing complex mock setup
 
     const startTime = Date.now();
-    const request = mockRequest('GET', '/api/stock/alerts?limit=100');
+    const request = mockRequest("GET", "/api/stock/alerts?limit=100");
 
     const response = await GET(request);
     const endTime = Date.now();
@@ -769,10 +782,10 @@ describe('performance Tests', () => {
     expect(endTime - startTime).toBeLessThan(PERFORMANCE_TIMEOUT_MS); // Should complete within 5 seconds
   });
 
-  it('should respect rate limiting (conceptual test)', async () => {
+  it("should respect rate limiting (conceptual test)", async () => {
     // In a real implementation, this would test actual rate limiting
     // For now, we just verify the API responds correctly
-    const request = mockRequest('GET', '/api/stock/alerts');
+    const request = mockRequest("GET", "/api/stock/alerts");
 
     const response = await GET(request);
 

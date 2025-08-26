@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import type { User } from '@supabase/supabase-js';
-import type React from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import type { User } from "@supabase/supabase-js";
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type SubscriptionData = {
   id: string;
@@ -30,17 +30,17 @@ export function useSubscription() {
   useEffect(() => {
     async function fetchSubscription() {
       try {
-        const response = await fetch('/api/subscription/current');
+        const response = await fetch("/api/subscription/current");
         if (response.ok) {
           const data = await response.json();
           setSubscription(data);
         } else if (response.status === 401) {
-          setError('Não autorizado');
+          setError("Não autorizado");
         } else {
-          setError('Erro ao carregar assinatura');
+          setError("Erro ao carregar assinatura");
         }
       } catch (_error) {
-        setError('Erro de conexão');
+        setError("Erro de conexão");
       } finally {
         setLoading(false);
       }
@@ -78,7 +78,7 @@ export function useSubscription() {
     const now = new Date();
     const periodEnd = new Date(subscription.current_period_end);
 
-    return subscription.status === 'active' && periodEnd > now;
+    return subscription.status === "active" && periodEnd > now;
   };
 
   const daysUntilRenewal = (): number => {
@@ -145,17 +145,17 @@ export function SubscriptionProvider({
       setLoading(true);
       setError(null);
 
-      const response = await fetch('/api/subscription/current');
+      const response = await fetch("/api/subscription/current");
       if (response.ok) {
         const data = await response.json();
         setSubscription(data);
       } else if (response.status === 401) {
-        setError('Não autorizado');
+        setError("Não autorizado");
       } else {
-        setError('Erro ao carregar assinatura');
+        setError("Erro ao carregar assinatura");
       }
     } catch (_error) {
-      setError('Erro de conexão');
+      setError("Erro de conexão");
     } finally {
       setLoading(false);
     }
@@ -183,7 +183,7 @@ export function useSubscriptionContext() {
   const context = useContext(SubscriptionContext);
   if (context === undefined) {
     throw new Error(
-      'useSubscriptionContext must be used within a SubscriptionProvider',
+      "useSubscriptionContext must be used within a SubscriptionProvider",
     );
   }
   return context;

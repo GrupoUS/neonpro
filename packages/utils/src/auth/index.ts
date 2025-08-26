@@ -1,9 +1,9 @@
 /**
- * @fileoverview Healthcare Authentication Utilities
+ * @file Healthcare Authentication Utilities
  * RBAC and Supabase authentication helpers for NeonPro Healthcare
  *
- * @compliance LGPD + ANVISA + CFM
+ * @see LGPD + ANVISA + CFM compliance requirements
  */
 
-export * from './rbac';
-export * from './supabase';
+export * from "./rbac";
+export * from "./supabase";

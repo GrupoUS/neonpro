@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats } from './types';
+import type { CacheOperation, CacheStats } from "./types";
 
 export class DatabaseCacheLayer implements CacheOperation {
   private readonly cache = new Map<string, any>();
@@ -57,7 +57,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 
     // Healthcare audit trail
     if (this.config.auditTrail && entry.healthcareData) {
-      this.logHealthcareAccess(key, 'CACHE_HIT');
+      this.logHealthcareAccess(key, "CACHE_HIT");
     }
 
     this.stats.hits++;
@@ -99,7 +99,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 
     // Healthcare audit trail
     if (this.config.auditTrail && entry.healthcareData) {
-      this.logHealthcareAccess(key, 'CACHE_SET', options?.auditContext);
+      this.logHealthcareAccess(key, "CACHE_SET", options?.auditContext);
     }
   }
   async delete(key: string): Promise<void> {
@@ -108,7 +108,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 
     // Healthcare audit trail
     if (this.config.auditTrail && entry?.healthcareData) {
-      this.logHealthcareAccess(key, 'CACHE_DELETE');
+      this.logHealthcareAccess(key, "CACHE_DELETE");
     }
   }
 
@@ -119,9 +119,10 @@ export class DatabaseCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate = this.stats.totalRequests > 0
-      ? (this.stats.hits / this.stats.totalRequests) * 100
-      : 0;
+    this.stats.hitRate =
+      this.stats.totalRequests > 0
+        ? (this.stats.hits / this.stats.totalRequests) * 100
+        : 0;
     return { ...this.stats };
   }
 
@@ -155,7 +156,7 @@ export class DatabaseCacheLayer implements CacheOperation {
     }
   }
   private evictLRU(): void {
-    let oldestKey = '';
+    let oldestKey = "";
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
@@ -184,8 +185,9 @@ export class DatabaseCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
-      / this.responseTimeBuffer.length;
+    this.stats.averageResponseTime =
+      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+      this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

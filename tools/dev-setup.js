@@ -4,18 +4,18 @@
  * Sets up development environment with healthcare compliance validation
  */
 
-import { execSync } from 'node:child_process';
-import { existsSync, writeFileSync } from 'node:fs';
+import { execSync } from "node:child_process";
+import { existsSync, writeFileSync } from "node:fs";
 
 const _HEALTHCARE_REQUIREMENTS = {
-  node: '>=20.0.0',
-  pnpm: '>=8.0.0',
+  node: ">=20.0.0",
+  pnpm: ">=8.0.0",
   qualityThreshold: 9.9,
 };
 
 function executeCommand(command, _description) {
   try {
-    execSync(command, { stdio: 'inherit' });
+    execSync(command, { stdio: "inherit" });
   } catch {
     process.exit(1);
   }
@@ -27,8 +27,8 @@ function validateEnvironment() {
 
   // Check pnpm
   try {
-    const _pnpmVersion = execSync('pnpm --version', {
-      encoding: 'utf8',
+    const _pnpmVersion = execSync("pnpm --version", {
+      encoding: "utf8",
     }).trim();
   } catch {
     process.exit(1);
@@ -68,26 +68,27 @@ E2E_BASE_URL=http://localhost:3000
 PLAYWRIGHT_BROWSERS_PATH=.playwright
 `;
 
-  if (existsSync('.env.local')) {} else {
-    writeFileSync('.env.local', envTemplate);
+  if (existsSync(".env.local")) {
+  } else {
+    writeFileSync(".env.local", envTemplate);
   }
 }
 
 function installDependencies() {
-  executeCommand('pnpm install --frozen-lockfile', 'Installing dependencies');
+  executeCommand("pnpm install --frozen-lockfile", "Installing dependencies");
 }
 
 function setupPlaywright() {
-  executeCommand('npx playwright install', 'Setting up Playwright browsers');
+  executeCommand("npx playwright install", "Setting up Playwright browsers");
 }
 
 function validateHealthcareSetup() {
-  executeCommand('pnpm validate:healthcare', 'Healthcare validation');
-  executeCommand('pnpm test:compliance', 'Compliance testing');
+  executeCommand("pnpm validate:healthcare", "Healthcare validation");
+  executeCommand("pnpm test:compliance", "Compliance testing");
 }
 
 function setupGitHooks() {
-  executeCommand('npx husky install', 'Setting up Git hooks');
+  executeCommand("npx husky install", "Setting up Git hooks");
 }
 
 function displayNextSteps() {}

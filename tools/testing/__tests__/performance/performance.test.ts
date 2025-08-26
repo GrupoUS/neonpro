@@ -8,14 +8,14 @@
  * @created 2025-07-22
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createMockSubscription } from '../../utils/test-utils';
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createMockSubscription } from "../../utils/test-utils";
 
 // ============================================================================
 // Performance Testing Suite
 // ============================================================================
 
-describe('subscription System Performance', () => {
+describe("subscription System Performance", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -24,13 +24,14 @@ describe('subscription System Performance', () => {
   // Response Time Tests
   // ============================================================================
 
-  describe('response Time Performance', () => {
-    it('should validate subscription within 100ms threshold', async () => {
+  describe("response Time Performance", () => {
+    it("should validate subscription within 100ms threshold", async () => {
       const startTime = performance.now();
 
       // Simulate subscription validation
-      const subscription = createMockSubscription({ status: 'active' });
-      const isValid = subscription.status === 'active' && subscription.endDate > new Date();
+      const subscription = createMockSubscription({ status: "active" });
+      const isValid =
+        subscription.status === "active" && subscription.endDate > new Date();
 
       const endTime = performance.now();
       const responseTime = endTime - startTime;
@@ -39,7 +40,7 @@ describe('subscription System Performance', () => {
       expect(responseTime).toBeLessThan(100); // 100ms threshold
     });
 
-    it('should handle concurrent subscription checks efficiently', async () => {
+    it("should handle concurrent subscription checks efficiently", async () => {
       const startTime = performance.now();
 
       // Simulate 100 concurrent subscription checks
@@ -47,7 +48,7 @@ describe('subscription System Performance', () => {
         return Promise.resolve(
           createMockSubscription({
             id: `test-sub-${index}`,
-            status: 'active',
+            status: "active",
           }),
         );
       });
@@ -65,8 +66,8 @@ describe('subscription System Performance', () => {
   // Memory Usage Tests
   // ============================================================================
 
-  describe('memory Usage Optimization', () => {
-    it('should not cause memory leaks with repeated operations', () => {
+  describe("memory Usage Optimization", () => {
+    it("should not cause memory leaks with repeated operations", () => {
       const initialMemory = process.memoryUsage().heapUsed;
 
       // Simulate 1000 subscription operations
@@ -88,20 +89,19 @@ describe('subscription System Performance', () => {
       expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024);
     });
 
-    it('should efficiently handle large subscription datasets', () => {
-      const largeDataset = Array.from(
-        { length: 10_000 },
-        (_, index) => createMockSubscription({ id: `large-dataset-${index}` }),
+    it("should efficiently handle large subscription datasets", () => {
+      const largeDataset = Array.from({ length: 10_000 }, (_, index) =>
+        createMockSubscription({ id: `large-dataset-${index}` }),
       );
 
       const startTime = performance.now();
 
       // Simulate filtering operations
       const activeSubscriptions = largeDataset.filter(
-        (sub) => sub.status === 'active',
+        (sub) => sub.status === "active",
       );
       const _premiumSubscriptions = activeSubscriptions.filter(
-        (sub) => sub.tier === 'premium',
+        (sub) => sub.tier === "premium",
       );
 
       const endTime = performance.now();
@@ -116,8 +116,8 @@ describe('subscription System Performance', () => {
   // Cache Performance Tests
   // ============================================================================
 
-  describe('caching Performance', () => {
-    it('should provide significant performance improvement with caching', () => {
+  describe("caching Performance", () => {
+    it("should provide significant performance improvement with caching", () => {
       // Simulate cache miss (first call)
       const startTimeNoCacache = performance.now();
       const subscription1 = createMockSubscription();
@@ -139,14 +139,14 @@ describe('subscription System Performance', () => {
   // Load Testing
   // ============================================================================
 
-  describe('load Testing', () => {
-    it('should handle high-frequency subscription checks', async () => {
+  describe("load Testing", () => {
+    it("should handle high-frequency subscription checks", async () => {
       const numberOfRequests = 1000;
       const startTime = Date.now();
 
       const promises = Array.from({ length: numberOfRequests }, async () => {
         const subscription = createMockSubscription();
-        return subscription.status === 'active';
+        return subscription.status === "active";
       });
 
       const results = await Promise.all(promises);
@@ -158,7 +158,7 @@ describe('subscription System Performance', () => {
       expect(totalTime).toBeLessThan(2000); // Should complete within 2 seconds
     });
 
-    it('should maintain performance under sustained load', async () => {
+    it("should maintain performance under sustained load", async () => {
       const iterations = 5;
       const requestsPerIteration = 200;
       const performanceResults: number[] = [];
@@ -166,9 +166,8 @@ describe('subscription System Performance', () => {
       for (let i = 0; i < iterations; i++) {
         const startTime = performance.now();
 
-        const promises = Array.from(
-          { length: requestsPerIteration },
-          () => Promise.resolve(createMockSubscription()),
+        const promises = Array.from({ length: requestsPerIteration }, () =>
+          Promise.resolve(createMockSubscription()),
         );
 
         await Promise.all(promises);
@@ -178,9 +177,11 @@ describe('subscription System Performance', () => {
       }
 
       // Performance should remain consistent (standard deviation < 50% of mean)
-      const mean = performanceResults.reduce((a, b) => a + b) / performanceResults.length;
-      const variance = performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0)
-        / performanceResults.length;
+      const mean =
+        performanceResults.reduce((a, b) => a + b) / performanceResults.length;
+      const variance =
+        performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) /
+        performanceResults.length;
       const standardDeviation = Math.sqrt(variance);
 
       expect(standardDeviation).toBeLessThan(mean * 0.5);

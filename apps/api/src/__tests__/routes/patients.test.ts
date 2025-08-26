@@ -10,8 +10,8 @@
  * - Emergency patient handling
  */
 
-import type { Context } from 'hono';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Context } from "hono";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock services and utilities
 const mockPatientService = {
@@ -49,22 +49,22 @@ const mockLGPDService = {
   logDataAccess: vi.fn(),
 };
 
-describe('patient Management API - NeonPro Healthcare', () => {
+describe("patient Management API - NeonPro Healthcare", () => {
   // Mock patient data
   const mockPatient = {
-    id: 'patient-123',
-    tenantId: 'clinic-abc',
-    name: 'Maria da Silva Santos',
-    cpf: '12345678900',
-    rg: '123456789',
-    cns: '123456789012345',
-    dateOfBirth: '1985-03-15',
-    gender: 'FEMALE',
-    email: 'maria@email.com',
-    phone: '11999999999',
-    bloodType: 'A+',
-    allergies: ['Penicilina'],
-    chronicConditions: ['Diabetes'],
+    id: "patient-123",
+    tenantId: "clinic-abc",
+    name: "Maria da Silva Santos",
+    cpf: "12345678900",
+    rg: "123456789",
+    cns: "123456789012345",
+    dateOfBirth: "1985-03-15",
+    gender: "FEMALE",
+    email: "maria@email.com",
+    phone: "11999999999",
+    bloodType: "A+",
+    allergies: ["Penicilina"],
+    chronicConditions: ["Diabetes"],
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -77,18 +77,18 @@ describe('patient Management API - NeonPro Healthcare', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-  describe('pOST /patients - Create Patient', () => {
-    it('should create patient with valid Brazilian healthcare data', async () => {
+  describe("pOST /patients - Create Patient", () => {
+    it("should create patient with valid Brazilian healthcare data", async () => {
       const newPatientData = {
-        name: 'João da Silva',
-        cpf: '98765432100',
-        rg: '987654321',
-        cns: '987654321098765',
-        dateOfBirth: '1990-05-20',
-        gender: 'MALE',
-        email: 'joao@email.com',
-        phone: '11988888888',
-        tenantId: 'clinic-abc',
+        name: "João da Silva",
+        cpf: "98765432100",
+        rg: "987654321",
+        cns: "987654321098765",
+        dateOfBirth: "1990-05-20",
+        gender: "MALE",
+        email: "joao@email.com",
+        phone: "11988888888",
+        tenantId: "clinic-abc",
         lgpdConsent: {
           dataProcessing: true,
           marketingCommunications: false,
@@ -103,7 +103,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
       mockPrisma.patient.create.mockResolvedValue({
         ...mockPatient,
         ...newPatientData,
-        id: 'new-patient-123',
+        id: "new-patient-123",
       });
 
       const mockContext = {
@@ -113,24 +113,24 @@ describe('patient Management API - NeonPro Healthcare', () => {
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: 'doctor-123', tenantId: 'clinic-abc' }),
+          .mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const createPatientHandler = async (c: Context) => {
         const patientData = await c.req.json();
-        const { userId, tenantId } = c.get('user');
+        const { userId, tenantId } = c.get("user");
 
         // Validate CPF
         if (!mockPatientService.validateCPF(patientData.cpf)) {
-          return c.json({ error: 'CPF inválido' }, 400);
+          return c.json({ error: "CPF inválido" }, 400);
         }
 
         // Validate CNS if provided
         if (
-          patientData.cns
-          && !mockPatientService.validateCNS(patientData.cns)
+          patientData.cns &&
+          !mockPatientService.validateCNS(patientData.cns)
         ) {
-          return c.json({ error: 'CNS inválido' }, 400);
+          return c.json({ error: "CNS inválido" }, 400);
         }
 
         // Validate LGPD consent
@@ -138,7 +138,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
           patientData.lgpdConsent,
         );
         if (!consentValidation.isValid) {
-          return c.json({ error: 'Consentimento LGPD obrigatório' }, 400);
+          return c.json({ error: "Consentimento LGPD obrigatório" }, 400);
         }
 
         // Create patient with tenant isolation
@@ -149,7 +149,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
         // Create audit log
         await mockPrisma.auditLog.create({
           data: {
-            action: 'PATIENT_CREATED',
+            action: "PATIENT_CREATED",
             userId,
             tenantId,
             resourceId: patient.id,
@@ -161,31 +161,31 @@ describe('patient Management API - NeonPro Healthcare', () => {
         return c.json({
           success: true,
           data: { patient },
-          message: 'Paciente criado com sucesso',
+          message: "Paciente criado com sucesso",
         });
       };
 
       await createPatientHandler(mockContext);
 
       expect(mockPatientService.validateCPF).toHaveBeenCalledWith(
-        '98765432100',
+        "98765432100",
       );
       expect(mockPatientService.validateCNS).toHaveBeenCalledWith(
-        '987654321098765',
+        "987654321098765",
       );
       expect(mockLGPDService.validateConsent).toHaveBeenCalled();
       expect(mockPrisma.patient.create).toHaveBeenCalledWith({
-        data: { ...newPatientData, tenantId: 'clinic-abc' },
+        data: { ...newPatientData, tenantId: "clinic-abc" },
       });
       expect(mockPrisma.auditLog.create).toHaveBeenCalled();
     });
 
-    it('should reject patient creation with invalid CPF', async () => {
+    it("should reject patient creation with invalid CPF", async () => {
       const invalidPatientData = {
-        name: 'Test Patient',
-        cpf: '12345678999', // Invalid CPF
-        email: 'test@email.com',
-        tenantId: 'clinic-abc',
+        name: "Test Patient",
+        cpf: "12345678999", // Invalid CPF
+        email: "test@email.com",
+        tenantId: "clinic-abc",
       };
 
       mockPatientService.validateCPF.mockReturnValue(false);
@@ -197,7 +197,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: 'doctor-123', tenantId: 'clinic-abc' }),
+          .mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const createPatientHandler = async (c: Context) => {
@@ -206,10 +206,10 @@ describe('patient Management API - NeonPro Healthcare', () => {
         if (!mockPatientService.validateCPF(patientData.cpf)) {
           await mockPrisma.auditLog.create({
             data: {
-              action: 'PATIENT_CREATION_FAILED',
-              userId: c.get('user').userId,
-              tenantId: c.get('user').tenantId,
-              metadata: { reason: 'INVALID_CPF', cpf: patientData.cpf },
+              action: "PATIENT_CREATION_FAILED",
+              userId: c.get("user").userId,
+              tenantId: c.get("user").tenantId,
+              metadata: { reason: "INVALID_CPF", cpf: patientData.cpf },
               timestamp: new Date(),
             },
           });
@@ -217,7 +217,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
           return c.json(
             {
               success: false,
-              error: 'CPF inválido',
+              error: "CPF inválido",
             },
             400,
           );
@@ -229,24 +229,24 @@ describe('patient Management API - NeonPro Healthcare', () => {
       await createPatientHandler(mockContext);
 
       expect(mockPatientService.validateCPF).toHaveBeenCalledWith(
-        '12345678999',
+        "12345678999",
       );
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
-          action: 'PATIENT_CREATION_FAILED',
-          userId: 'doctor-123',
-          tenantId: 'clinic-abc',
-          metadata: { reason: 'INVALID_CPF', cpf: '12345678999' },
+          action: "PATIENT_CREATION_FAILED",
+          userId: "doctor-123",
+          tenantId: "clinic-abc",
+          metadata: { reason: "INVALID_CPF", cpf: "12345678999" },
           timestamp: expect.any(Date),
         },
       });
     });
 
-    it('should require LGPD consent for patient creation', async () => {
+    it("should require LGPD consent for patient creation", async () => {
       const patientWithoutConsent = {
-        name: 'Patient Test',
-        cpf: '12345678900',
-        email: 'test@email.com',
+        name: "Patient Test",
+        cpf: "12345678900",
+        email: "test@email.com",
         lgpdConsent: {
           dataProcessing: false, // Required consent missing
           marketingCommunications: false,
@@ -257,7 +257,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
       mockPatientService.validateCPF.mockReturnValue(true);
       mockLGPDService.validateConsent.mockResolvedValue({
         isValid: false,
-        reason: 'DATA_PROCESSING_CONSENT_REQUIRED',
+        reason: "DATA_PROCESSING_CONSENT_REQUIRED",
       });
 
       const mockContext = {
@@ -277,8 +277,9 @@ describe('patient Management API - NeonPro Healthcare', () => {
           return c.json(
             {
               success: false,
-              error: 'Consentimento para processamento de dados é obrigatório (LGPD)',
-              code: 'LGPD_CONSENT_REQUIRED',
+              error:
+                "Consentimento para processamento de dados é obrigatório (LGPD)",
+              code: "LGPD_CONSENT_REQUIRED",
             },
             400,
           );
@@ -294,14 +295,14 @@ describe('patient Management API - NeonPro Healthcare', () => {
       );
     });
   });
-  describe('gET /patients/:id - Get Patient', () => {
-    it('should retrieve patient with data masking based on user role', async () => {
+  describe("gET /patients/:id - Get Patient", () => {
+    it("should retrieve patient with data masking based on user role", async () => {
       const fullPatientData = { ...mockPatient };
       const maskedPatientData = {
         ...mockPatient,
-        cpf: '***.***.***-00',
-        rg: '**.***.***-*',
-        phone: '(**) ****-9999',
+        cpf: "***.***.***-00",
+        rg: "**.***.***-*",
+        phone: "(**) ****-9999",
       };
 
       mockPrisma.patient.findUnique.mockResolvedValue(fullPatientData);
@@ -309,19 +310,19 @@ describe('patient Management API - NeonPro Healthcare', () => {
 
       const mockContext = {
         req: {
-          param: vi.fn().mockReturnValue('patient-123'),
+          param: vi.fn().mockReturnValue("patient-123"),
         },
         json: vi.fn(),
         get: vi.fn().mockReturnValue({
-          userId: 'nurse-123',
-          role: 'NURSE',
-          tenantId: 'clinic-abc',
+          userId: "nurse-123",
+          role: "NURSE",
+          tenantId: "clinic-abc",
         }),
       } as unknown as Context;
 
       const getPatientHandler = async (c: Context) => {
-        const patientId = c.req.param('id');
-        const { userId, role, tenantId } = c.get('user');
+        const patientId = c.req.param("id");
+        const { userId, role, tenantId } = c.get("user");
 
         // Find patient with tenant isolation
         const patient = await mockPrisma.patient.findUnique({
@@ -333,18 +334,19 @@ describe('patient Management API - NeonPro Healthcare', () => {
         });
 
         if (!patient) {
-          return c.json({ error: 'Paciente não encontrado' }, 404);
+          return c.json({ error: "Paciente não encontrado" }, 404);
         }
 
         // Apply data masking based on user role
-        const responseData = role === 'NURSE'
-          ? mockLGPDService.maskSensitiveData(patient, role)
-          : patient;
+        const responseData =
+          role === "NURSE"
+            ? mockLGPDService.maskSensitiveData(patient, role)
+            : patient;
 
         // Log data access
         await mockLGPDService.logDataAccess({
           userId,
-          action: 'PATIENT_VIEWED',
+          action: "PATIENT_VIEWED",
           patientId: patient.id,
           tenantId,
           dataAccessed: Object.keys(responseData),
@@ -360,35 +362,35 @@ describe('patient Management API - NeonPro Healthcare', () => {
 
       expect(mockPrisma.patient.findUnique).toHaveBeenCalledWith({
         where: {
-          id: 'patient-123',
-          tenantId: 'clinic-abc',
+          id: "patient-123",
+          tenantId: "clinic-abc",
           isActive: true,
         },
       });
       expect(mockLGPDService.maskSensitiveData).toHaveBeenCalledWith(
         fullPatientData,
-        'NURSE',
+        "NURSE",
       );
       expect(mockLGPDService.logDataAccess).toHaveBeenCalled();
     });
 
-    it('should enforce tenant isolation for patient access', async () => {
+    it("should enforce tenant isolation for patient access", async () => {
       mockPrisma.patient.findUnique.mockResolvedValue(); // Patient not found in user's tenant
 
       const mockContext = {
         req: {
-          param: vi.fn().mockReturnValue('patient-456'),
+          param: vi.fn().mockReturnValue("patient-456"),
         },
         json: vi.fn(),
         get: vi.fn().mockReturnValue({
-          userId: 'doctor-123',
-          tenantId: 'clinic-abc',
+          userId: "doctor-123",
+          tenantId: "clinic-abc",
         }),
       } as unknown as Context;
 
       const getPatientHandler = async (c: Context) => {
-        const patientId = c.req.param('id');
-        const { tenantId } = c.get('user');
+        const patientId = c.req.param("id");
+        const { tenantId } = c.get("user");
 
         const patient = await mockPrisma.patient.findUnique({
           where: {
@@ -402,7 +404,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
           return c.json(
             {
               success: false,
-              error: 'Paciente não encontrado',
+              error: "Paciente não encontrado",
             },
             404,
           );
@@ -415,20 +417,20 @@ describe('patient Management API - NeonPro Healthcare', () => {
 
       expect(mockPrisma.patient.findUnique).toHaveBeenCalledWith({
         where: {
-          id: 'patient-456',
-          tenantId: 'clinic-abc',
+          id: "patient-456",
+          tenantId: "clinic-abc",
           isActive: true,
         },
       });
     });
   });
 
-  describe('pUT /patients/:id - Update Patient', () => {
-    it('should update patient with audit trail', async () => {
+  describe("pUT /patients/:id - Update Patient", () => {
+    it("should update patient with audit trail", async () => {
       const updateData = {
-        phone: '11977777777',
-        email: 'newemail@example.com',
-        allergies: ['Penicilina', 'Dipirona'],
+        phone: "11977777777",
+        email: "newemail@example.com",
+        allergies: ["Penicilina", "Dipirona"],
       };
 
       const updatedPatient = { ...mockPatient, ...updateData };
@@ -436,19 +438,19 @@ describe('patient Management API - NeonPro Healthcare', () => {
 
       const mockContext = {
         req: {
-          param: vi.fn().mockReturnValue('patient-123'),
+          param: vi.fn().mockReturnValue("patient-123"),
           json: vi.fn().mockResolvedValue(updateData),
         },
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: 'doctor-123', tenantId: 'clinic-abc' }),
+          .mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const updatePatientHandler = async (c: Context) => {
-        const patientId = c.req.param('id');
+        const patientId = c.req.param("id");
         const updateData = await c.req.json();
-        const { userId, tenantId } = c.get('user');
+        const { userId, tenantId } = c.get("user");
 
         // Update with tenant isolation
         const patient = await mockPrisma.patient.update({
@@ -462,7 +464,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
         // Create detailed audit log
         await mockPrisma.auditLog.create({
           data: {
-            action: 'PATIENT_UPDATED',
+            action: "PATIENT_UPDATED",
             userId,
             tenantId,
             resourceId: patientId,
@@ -477,24 +479,24 @@ describe('patient Management API - NeonPro Healthcare', () => {
         return c.json({
           success: true,
           data: { patient },
-          message: 'Paciente atualizado com sucesso',
+          message: "Paciente atualizado com sucesso",
         });
       };
 
       await updatePatientHandler(mockContext);
 
       expect(mockPrisma.patient.update).toHaveBeenCalledWith({
-        where: { id: 'patient-123', tenantId: 'clinic-abc' },
+        where: { id: "patient-123", tenantId: "clinic-abc" },
         data: updateData,
       });
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
-          action: 'PATIENT_UPDATED',
-          userId: 'doctor-123',
-          tenantId: 'clinic-abc',
-          resourceId: 'patient-123',
+          action: "PATIENT_UPDATED",
+          userId: "doctor-123",
+          tenantId: "clinic-abc",
+          resourceId: "patient-123",
           metadata: {
-            updatedFields: ['phone', 'email', 'allergies'],
+            updatedFields: ["phone", "email", "allergies"],
             changes: updateData,
           },
           timestamp: expect.any(Date),
@@ -503,8 +505,8 @@ describe('patient Management API - NeonPro Healthcare', () => {
     });
   });
 
-  describe('dELETE /patients/:id - Delete Patient (LGPD Right to Erasure)', () => {
-    it('should soft delete patient with LGPD compliance', async () => {
+  describe("dELETE /patients/:id - Delete Patient (LGPD Right to Erasure)", () => {
+    it("should soft delete patient with LGPD compliance", async () => {
       mockPrisma.patient.update.mockResolvedValue({
         ...mockPatient,
         isActive: false,
@@ -513,17 +515,17 @@ describe('patient Management API - NeonPro Healthcare', () => {
 
       const mockContext = {
         req: {
-          param: vi.fn().mockReturnValue('patient-123'),
+          param: vi.fn().mockReturnValue("patient-123"),
         },
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: 'admin-123', tenantId: 'clinic-abc' }),
+          .mockReturnValue({ userId: "admin-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const deletePatientHandler = async (c: Context) => {
-        const patientId = c.req.param('id');
-        const { userId, tenantId } = c.get('user');
+        const patientId = c.req.param("id");
+        const { userId, tenantId } = c.get("user");
 
         // Soft delete (LGPD compliance - retain audit trail)
         const _patient = await mockPrisma.patient.update({
@@ -532,7 +534,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
             isActive: false,
             deletedAt: new Date(),
             // Anonymize sensitive data
-            name: 'ANONYMOUS',
+            name: "ANONYMOUS",
             cpf: undefined,
             rg: undefined,
             email: undefined,
@@ -543,12 +545,12 @@ describe('patient Management API - NeonPro Healthcare', () => {
         // Create LGPD erasure audit log
         await mockPrisma.auditLog.create({
           data: {
-            action: 'PATIENT_DELETED_LGPD',
+            action: "PATIENT_DELETED_LGPD",
             userId,
             tenantId,
             resourceId: patientId,
             metadata: {
-              reason: 'RIGHT_TO_ERASURE',
+              reason: "RIGHT_TO_ERASURE",
               dataAnonymized: true,
               auditTrailRetained: true,
             },
@@ -558,7 +560,7 @@ describe('patient Management API - NeonPro Healthcare', () => {
 
         return c.json({
           success: true,
-          message: 'Paciente removido conforme LGPD',
+          message: "Paciente removido conforme LGPD",
           data: {
             lgpdCompliance: {
               dataErased: true,
@@ -572,11 +574,11 @@ describe('patient Management API - NeonPro Healthcare', () => {
       await deletePatientHandler(mockContext);
 
       expect(mockPrisma.patient.update).toHaveBeenCalledWith({
-        where: { id: 'patient-123', tenantId: 'clinic-abc' },
+        where: { id: "patient-123", tenantId: "clinic-abc" },
         data: {
           isActive: false,
           deletedAt: expect.any(Date),
-          name: 'ANONYMOUS',
+          name: "ANONYMOUS",
           cpf: undefined,
           rg: undefined,
           email: undefined,

@@ -1,7 +1,7 @@
 import { PredictiveAnalyticsService } from "@/app/lib/services/predictive-analytics";
 import { updateForecastingModelSchema } from "@/app/lib/validations/predictive-analytics";
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const service = new PredictiveAnalyticsService();
 

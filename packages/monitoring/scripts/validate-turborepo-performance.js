@@ -5,9 +5,9 @@
  * Validates build time improvements and healthcare compliance maintenance
  */
 
-const { execSync } = require('node:child_process');
-const fs = require('node:fs');
-const path = require('node:path');
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const PERFORMANCE_TARGETS = {
   BUILD_TIME_REDUCTION: 0.6, // 60% reduction target
@@ -17,10 +17,10 @@ const PERFORMANCE_TARGETS = {
 };
 
 const HEALTHCARE_COMPLIANCE_REQUIREMENTS = [
-  'compliance:lgpd',
-  'compliance:anvisa',
-  'compliance:cfm',
-  'security:audit',
+  "compliance:lgpd",
+  "compliance:anvisa",
+  "compliance:cfm",
+  "security:audit",
 ];
 
 async function validatePerformance() {
@@ -35,26 +35,28 @@ async function validatePerformance() {
   try {
     const buildStart = Date.now();
 
-    execSync('pnpm run build', { stdio: 'inherit' });
+    execSync("pnpm run build", { stdio: "inherit" });
 
     const buildTime = Date.now() - buildStart;
     const baselineBuildTime = 120_000; // 2 minutes baseline
     const improvement = (baselineBuildTime - buildTime) / baselineBuildTime;
 
-    results.buildTimeImprovement = improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
+    results.buildTimeImprovement =
+      improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
 
     // Run build twice to test cache
-    execSync('pnpm run build', { stdio: 'pipe' });
+    execSync("pnpm run build", { stdio: "pipe" });
     const cacheStart = Date.now();
-    execSync('pnpm run build', { stdio: 'pipe' });
+    execSync("pnpm run build", { stdio: "pipe" });
     const cacheTime = Date.now() - cacheStart;
 
     const cacheImprovement = (buildTime - cacheTime) / buildTime;
-    results.cacheOptimization = cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
+    results.cacheOptimization =
+      cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
 
     for (const task of HEALTHCARE_COMPLIANCE_REQUIREMENTS) {
       try {
-        execSync(`pnpm run ${task}`, { stdio: 'pipe' });
+        execSync(`pnpm run ${task}`, { stdio: "pipe" });
       } catch {
         results.complianceMaintained = false;
         break;
@@ -67,7 +69,7 @@ async function validatePerformance() {
 
     try {
       const aiStart = Date.now();
-      execSync('pnpm run ai:build-models', { stdio: 'pipe' });
+      execSync("pnpm run ai:build-models", { stdio: "pipe" });
       const aiTime = Date.now() - aiStart;
 
       // AI builds should be under 30 seconds with optimization
@@ -85,7 +87,9 @@ async function validatePerformance() {
       cacheImprovement,
     });
 
-    if (results.overall) {} else {}
+    if (results.overall) {
+    } else {
+    }
   } catch {
     process.exit(1);
   }
@@ -94,7 +98,7 @@ async function validatePerformance() {
 function generatePerformanceReport(results, metrics) {
   const report = {
     timestamp: new Date().toISOString(),
-    neonproVersion: '1.0.0',
+    neonproVersion: "1.0.0",
     turborepoOptimization: {
       buildTimeImprovement: `${(metrics.improvement * 100).toFixed(1)}%`,
       cacheImprovement: `${(metrics.cacheImprovement * 100).toFixed(1)}%`,
@@ -111,7 +115,7 @@ function generatePerformanceReport(results, metrics) {
   };
 
   fs.writeFileSync(
-    path.join(process.cwd(), 'performance-report.json'),
+    path.join(process.cwd(), "performance-report.json"),
     JSON.stringify(report, undefined, 2),
   );
 }
@@ -120,21 +124,25 @@ function generateRecommendations(results) {
   const recommendations = [];
 
   if (!results.buildTimeImprovement) {
-    recommendations.push('Consider additional input optimization and dependency analysis');
+    recommendations.push(
+      "Consider additional input optimization and dependency analysis",
+    );
   }
 
   if (!results.cacheOptimization) {
-    recommendations.push('Review cache configuration and remote caching setup');
+    recommendations.push("Review cache configuration and remote caching setup");
   }
 
   if (!results.complianceMaintained) {
     recommendations.push(
-      'CRITICAL: Healthcare compliance validation failed - immediate review required',
+      "CRITICAL: Healthcare compliance validation failed - immediate review required",
     );
   }
 
   if (!results.aiOptimization) {
-    recommendations.push('Optimize AI model build process and caching strategy');
+    recommendations.push(
+      "Optimize AI model build process and caching strategy",
+    );
   }
 
   return recommendations;

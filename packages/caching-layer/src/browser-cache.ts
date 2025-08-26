@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats, HealthcareDataPolicy } from './types';
+import type { CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
 
 export class BrowserCacheLayer implements CacheOperation {
   private readonly cache = new Map<string, any>();
@@ -75,8 +75,9 @@ export class BrowserCacheLayer implements CacheOperation {
       value,
       timestamp: Date.now(),
       ttl: effectiveTTL,
-      sensitive: policy?.dataClassification === 'RESTRICTED'
-        || policy?.dataClassification === 'CONFIDENTIAL',
+      sensitive:
+        policy?.dataClassification === "RESTRICTED" ||
+        policy?.dataClassification === "CONFIDENTIAL",
       lgpdConsent: policy?.requiresConsent ? this.checkLGPDConsent(key) : true,
       lastAccessed: Date.now(),
     };
@@ -94,9 +95,10 @@ export class BrowserCacheLayer implements CacheOperation {
   }
 
   async getStats(): Promise<CacheStats> {
-    this.stats.hitRate = this.stats.totalRequests > 0
-      ? (this.stats.hits / this.stats.totalRequests) * 100
-      : 0;
+    this.stats.hitRate =
+      this.stats.totalRequests > 0
+        ? (this.stats.hits / this.stats.totalRequests) * 100
+        : 0;
     return { ...this.stats };
   }
 
@@ -109,7 +111,7 @@ export class BrowserCacheLayer implements CacheOperation {
   }
 
   private evictLRU(): void {
-    let oldestKey = '';
+    let oldestKey = "";
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
@@ -126,8 +128,8 @@ export class BrowserCacheLayer implements CacheOperation {
 
   private checkLGPDConsent(key: string): boolean {
     // Integration with consent management system
-    const consentKey = `lgpd_consent_${key.split(':')[0]}`;
-    return localStorage.getItem(consentKey) === 'granted';
+    const consentKey = `lgpd_consent_${key.split(":")[0]}`;
+    return localStorage.getItem(consentKey) === "granted";
   }
 
   private updateStats(startTime: number): void {
@@ -138,8 +140,9 @@ export class BrowserCacheLayer implements CacheOperation {
       this.responseTimeBuffer.shift();
     }
 
-    this.stats.averageResponseTime = this.responseTimeBuffer.reduce((a, b) => a + b, 0)
-      / this.responseTimeBuffer.length;
+    this.stats.averageResponseTime =
+      this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+      this.responseTimeBuffer.length;
   }
 
   private resetStats(): void {

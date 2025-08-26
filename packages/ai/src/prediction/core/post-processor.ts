@@ -8,7 +8,7 @@ import type {
   TreatmentOutcomePrediction,
   TreatmentRequest,
   VolumeRecommendation,
-} from '../types';
+} from "../types";
 
 /**
  * Post-Processing Engine for AI Prediction Results
@@ -22,7 +22,7 @@ export class AestheticPostProcessor {
     rawOutput: Float32Array,
     patient: PatientProfile,
     treatment: TreatmentRequest,
-  ): TreatmentOutcomePrediction['outputs'] {
+  ): TreatmentOutcomePrediction["outputs"] {
     // Raw outputs: [outcome_score, confidence, timeline_weeks]
     const outcomeScore = Math.max(0, Math.min(1, rawOutput[0]));
     const confidence = Math.max(0, Math.min(1, rawOutput[1]));
@@ -57,7 +57,7 @@ export class AestheticPostProcessor {
   postProcessBotoxOptimization(
     rawOutput: Float32Array,
     targetAreas: string[],
-  ): BotoxOptimization['outputs'] {
+  ): BotoxOptimization["outputs"] {
     // Raw outputs: [total_units, confidence, duration_factor]
     const totalUnits = Math.max(10, Math.min(200, rawOutput[0] * 100));
     const confidence = Math.max(0, Math.min(1, rawOutput[1]));
@@ -91,7 +91,7 @@ export class AestheticPostProcessor {
   postProcessFillerVolume(
     rawOutput: Float32Array,
     targetAreas: string[],
-  ): FillerVolumePrediction['outputs'] {
+  ): FillerVolumePrediction["outputs"] {
     // Raw outputs: [volume_per_area_1, volume_per_area_2, ..., confidence, longevity_factor]
     const areaCount = targetAreas.length;
     const volumeData = rawOutput.slice(0, areaCount);
@@ -132,7 +132,7 @@ export class AestheticPostProcessor {
    */
   postProcessLaserSettings(
     rawOutput: Float32Array,
-  ): LaserSettingsPrediction['outputs'] {
+  ): LaserSettingsPrediction["outputs"] {
     // Raw outputs: [energy, pulse_width, spot_size, passes, cooling_time, downtime]
     const energyLevel = Math.max(5, Math.min(100, rawOutput[0] * 50)); // J/cm²
     const pulseWidth = Math.max(0.1, Math.min(50, rawOutput[1] * 25)); // milliseconds
@@ -169,9 +169,9 @@ export class AestheticPostProcessor {
     // Base durability in months for different treatments
     const baseDurability: Record<string, number> = {
       botox: 4,
-      'dermal-fillers': 15,
-      'laser-resurfacing': 36,
-      'chemical-peel': 6,
+      "dermal-fillers": 15,
+      "laser-resurfacing": 36,
+      "chemical-peel": 6,
       microneedling: 8,
       coolsculpting: 60, // Permanent fat reduction
       radiofrequency: 12,
@@ -192,10 +192,10 @@ export class AestheticPostProcessor {
     if (patient.lifestyle.smoking) {
       durability *= 0.7;
     }
-    if (patient.lifestyle.sunExposure === 'high') {
+    if (patient.lifestyle.sunExposure === "high") {
       durability *= 0.8;
     }
-    if (patient.lifestyle.exerciseLevel === 'high') {
+    if (patient.lifestyle.exerciseLevel === "high") {
       durability *= 0.9;
     }
 
@@ -233,14 +233,14 @@ export class AestheticPostProcessor {
   ): InjectionPoint[] {
     const areaDistribution: Record<
       string,
-      { percentage: number; technique: string; }
+      { percentage: number; technique: string }
     > = {
-      forehead: { percentage: 0.25, technique: 'horizontal_lines' },
-      glabella: { percentage: 0.3, technique: 'central_spread' },
-      'crows-feet': { percentage: 0.2, technique: 'fan_pattern' },
-      'under-eyes': { percentage: 0.15, technique: 'micro_injections' },
-      jawline: { percentage: 0.35, technique: 'masseter_reduction' },
-      neck: { percentage: 0.4, technique: 'platysmal_bands' },
+      forehead: { percentage: 0.25, technique: "horizontal_lines" },
+      glabella: { percentage: 0.3, technique: "central_spread" },
+      "crows-feet": { percentage: 0.2, technique: "fan_pattern" },
+      "under-eyes": { percentage: 0.15, technique: "micro_injections" },
+      jawline: { percentage: 0.35, technique: "masseter_reduction" },
+      neck: { percentage: 0.4, technique: "platysmal_bands" },
     };
 
     const injectionPoints: InjectionPoint[] = [];
@@ -265,27 +265,27 @@ export class AestheticPostProcessor {
 
   private determineInjectionDepth(
     area: string,
-  ): 'superficial' | 'mid' | 'deep' {
-    const depthMap: Record<string, 'superficial' | 'mid' | 'deep'> = {
-      forehead: 'mid',
-      glabella: 'mid',
-      'crows-feet': 'superficial',
-      'under-eyes': 'superficial',
-      jawline: 'deep',
-      neck: 'superficial',
+  ): "superficial" | "mid" | "deep" {
+    const depthMap: Record<string, "superficial" | "mid" | "deep"> = {
+      forehead: "mid",
+      glabella: "mid",
+      "crows-feet": "superficial",
+      "under-eyes": "superficial",
+      jawline: "deep",
+      neck: "superficial",
     };
 
-    return depthMap[area] || 'mid';
+    return depthMap[area] || "mid";
   }
 
-  private generateInjectionCoordinates(area: string): { x: number; y: number; } {
+  private generateInjectionCoordinates(area: string): { x: number; y: number } {
     // This would ideally use facial mapping data
     // For now, return relative coordinates
-    const coordinateMap: Record<string, { x: number; y: number; }> = {
+    const coordinateMap: Record<string, { x: number; y: number }> = {
       forehead: { x: 0.5, y: 0.2 },
       glabella: { x: 0.5, y: 0.3 },
-      'crows-feet': { x: 0.7, y: 0.4 },
-      'under-eyes': { x: 0.6, y: 0.45 },
+      "crows-feet": { x: 0.7, y: 0.4 },
+      "under-eyes": { x: 0.6, y: 0.45 },
       jawline: { x: 0.8, y: 0.7 },
       neck: { x: 0.5, y: 0.9 },
     };
@@ -309,7 +309,7 @@ export class AestheticPostProcessor {
     }
 
     // Certain areas respond faster
-    const fastAreas = new Set(['forehead', 'glabella']);
+    const fastAreas = new Set(["forehead", "glabella"]);
     const hasFastAreas = targetAreas.some((area) => fastAreas.has(area));
     if (hasFastAreas) {
       onsetDays -= 1;
@@ -323,12 +323,12 @@ export class AestheticPostProcessor {
     volume: number,
   ): VolumeRecommendation {
     const productRecommendations: Record<string, string> = {
-      lips: 'Thin consistency HA',
-      cheeks: 'Thick consistency HA',
-      'nasolabial-folds': 'Medium consistency HA',
-      'marionette-lines': 'Medium consistency HA',
-      'under-eyes': 'Very thin consistency HA',
-      jawline: 'Thick consistency HA',
+      lips: "Thin consistency HA",
+      cheeks: "Thick consistency HA",
+      "nasolabial-folds": "Medium consistency HA",
+      "marionette-lines": "Medium consistency HA",
+      "under-eyes": "Very thin consistency HA",
+      jawline: "Thick consistency HA",
     };
 
     const layerDistribution = this.calculateLayerDistribution(area, volume);
@@ -336,7 +336,7 @@ export class AestheticPostProcessor {
     return {
       area: area as any,
       volume: Math.round(volume * 10) / 10, // Round to 0.1ml
-      product: productRecommendations[area] || 'Medium consistency HA',
+      product: productRecommendations[area] || "Medium consistency HA",
       layers: layerDistribution,
     };
   }
@@ -346,38 +346,38 @@ export class AestheticPostProcessor {
     const layerStrategies: Record<string, any[]> = {
       lips: [
         {
-          depth: 'subcutaneous',
+          depth: "subcutaneous",
           volume: totalVolume * 0.7,
-          technique: 'linear_threading',
+          technique: "linear_threading",
         },
         {
-          depth: 'supraperiosteal',
+          depth: "supraperiosteal",
           volume: totalVolume * 0.3,
-          technique: 'micro_bolus',
+          technique: "micro_bolus",
         },
       ],
       cheeks: [
         {
-          depth: 'supraperiosteal',
+          depth: "supraperiosteal",
           volume: totalVolume * 0.6,
-          technique: 'bolus_injection',
+          technique: "bolus_injection",
         },
         {
-          depth: 'subcutaneous',
+          depth: "subcutaneous",
           volume: totalVolume * 0.4,
-          technique: 'fanning',
+          technique: "fanning",
         },
       ],
-      'nasolabial-folds': [
+      "nasolabial-folds": [
         {
-          depth: 'subcutaneous',
+          depth: "subcutaneous",
           volume: totalVolume * 0.8,
-          technique: 'linear_threading',
+          technique: "linear_threading",
         },
         {
-          depth: 'supraperiosteal',
+          depth: "supraperiosteal",
           volume: totalVolume * 0.2,
-          technique: 'micro_bolus',
+          technique: "micro_bolus",
         },
       ],
     };
@@ -385,9 +385,9 @@ export class AestheticPostProcessor {
     return (
       layerStrategies[area] || [
         {
-          depth: 'subcutaneous',
+          depth: "subcutaneous",
           volume: totalVolume,
-          technique: 'linear_threading',
+          technique: "linear_threading",
         },
       ]
     );
@@ -400,27 +400,27 @@ export class AestheticPostProcessor {
     const totalVolume = volumes.reduce((sum, v) => sum + v.volume, 0);
 
     // Determine technique based on volume and complexity
-    let method: 'linear' | 'fanning' | 'cross-hatching' | 'bolus' = 'linear';
-    let needleSize = '30G';
+    let method: "linear" | "fanning" | "cross-hatching" | "bolus" = "linear";
+    let needleSize = "30G";
     let cannulaRecommended = false;
-    let anesthesia: 'topical' | 'nerve-block' | 'none' = 'topical';
+    let anesthesia: "topical" | "nerve-block" | "none" = "topical";
 
     if (totalVolume > 2) {
-      method = 'cross-hatching';
+      method = "cross-hatching";
       cannulaRecommended = true;
     } else if (areas.length > 2) {
-      method = 'fanning';
+      method = "fanning";
     }
 
     // Specific area considerations
-    if (areas.includes('lips')) {
-      needleSize = '32G';
-      anesthesia = 'nerve-block';
+    if (areas.includes("lips")) {
+      needleSize = "32G";
+      anesthesia = "nerve-block";
     }
 
-    if (areas.includes('under-eyes')) {
+    if (areas.includes("under-eyes")) {
       cannulaRecommended = true;
-      needleSize = '27G';
+      needleSize = "27G";
     }
 
     return {
@@ -460,13 +460,13 @@ export class AestheticPostProcessor {
     // This would ideally use model's actual feature importance
     // For now, provide general importance based on clinical knowledge
     const importance: FeatureImportance[] = [
-      { feature: 'age', importance: 0.25, impact: 'negative' },
-      { feature: 'skin_type', importance: 0.2, impact: 'neutral' },
-      { feature: 'treatment_history', importance: 0.15, impact: 'positive' },
-      { feature: 'lifestyle_factors', importance: 0.15, impact: 'negative' },
-      { feature: 'medical_history', importance: 0.1, impact: 'negative' },
-      { feature: 'treatment_complexity', importance: 0.1, impact: 'negative' },
-      { feature: 'expectations', importance: 0.05, impact: 'neutral' },
+      { feature: "age", importance: 0.25, impact: "negative" },
+      { feature: "skin_type", importance: 0.2, impact: "neutral" },
+      { feature: "treatment_history", importance: 0.15, impact: "positive" },
+      { feature: "lifestyle_factors", importance: 0.15, impact: "negative" },
+      { feature: "medical_history", importance: 0.1, impact: "negative" },
+      { feature: "treatment_complexity", importance: 0.1, impact: "negative" },
+      { feature: "expectations", importance: 0.05, impact: "neutral" },
     ];
 
     return importance;
@@ -484,39 +484,39 @@ export class AestheticPostProcessor {
     // General recommendations based on confidence
     if (result.confidence < 0.7) {
       recommendations.push(
-        'Recommend consultation with senior practitioner due to complexity',
+        "Recommend consultation with senior practitioner due to complexity",
       );
     }
 
     // Age-based recommendations
     if (patient.age < 25) {
       recommendations.push(
-        'Consider conservative approach for younger patient',
+        "Consider conservative approach for younger patient",
       );
     } else if (patient.age > 65) {
-      recommendations.push('Extended recovery time may be needed');
+      recommendations.push("Extended recovery time may be needed");
     }
 
     // Lifestyle recommendations
     if (patient.lifestyle.smoking) {
       recommendations.push(
-        'Strongly recommend smoking cessation before treatment',
+        "Strongly recommend smoking cessation before treatment",
       );
     }
 
-    if (patient.lifestyle.sunExposure === 'high') {
-      recommendations.push('Implement strict sun protection protocol');
+    if (patient.lifestyle.sunExposure === "high") {
+      recommendations.push("Implement strict sun protection protocol");
     }
 
     // Medical history considerations
     if (patient.medicalHistory.bloodThinnersUse) {
       recommendations.push(
-        'Coordinate with prescribing physician regarding anticoagulation',
+        "Coordinate with prescribing physician regarding anticoagulation",
       );
     }
 
     if (patient.medicalHistory.keloidProneness) {
-      recommendations.push('Use conservative approach due to keloid risk');
+      recommendations.push("Use conservative approach due to keloid risk");
     }
 
     return recommendations;
@@ -526,25 +526,25 @@ export class AestheticPostProcessor {
    * Generate specific recommendations for Botox treatments
    */
   generateBotoxRecommendations(
-    result: BotoxOptimization['outputs'],
+    result: BotoxOptimization["outputs"],
     patient: PatientProfile,
   ): string[] {
     const recommendations: string[] = [];
 
     if (result.optimalUnits > 50) {
       recommendations.push(
-        'High unit requirement - consider staged treatment approach',
+        "High unit requirement - consider staged treatment approach",
       );
     }
 
     if (result.expectedDuration < 3) {
       recommendations.push(
-        'Shorter duration expected - discuss maintenance schedule',
+        "Shorter duration expected - discuss maintenance schedule",
       );
     }
 
     if (patient.age < 30) {
-      recommendations.push('Conservative dosing recommended for prevention');
+      recommendations.push("Conservative dosing recommended for prevention");
     }
 
     return recommendations;
@@ -554,7 +554,7 @@ export class AestheticPostProcessor {
    * Generate specific recommendations for filler treatments
    */
   generateFillerRecommendations(
-    result: FillerVolumePrediction['outputs'],
+    result: FillerVolumePrediction["outputs"],
     patient: PatientProfile,
   ): string[] {
     const recommendations: string[] = [];
@@ -566,17 +566,17 @@ export class AestheticPostProcessor {
 
     if (totalVolume > 3) {
       recommendations.push(
-        'Large volume requirement - consider multiple sessions',
+        "Large volume requirement - consider multiple sessions",
       );
     }
 
     if (result.touchUpNeeded) {
-      recommendations.push('Touch-up session likely needed in 2-3 weeks');
+      recommendations.push("Touch-up session likely needed in 2-3 weeks");
     }
 
     if (patient.medicalHistory.bloodThinnersUse) {
       recommendations.push(
-        'Increased bruising risk - consider arnica supplementation',
+        "Increased bruising risk - consider arnica supplementation",
       );
     }
 
@@ -587,27 +587,27 @@ export class AestheticPostProcessor {
    * Generate specific recommendations for laser treatments
    */
   generateLaserRecommendations(
-    result: LaserSettingsPrediction['outputs'],
+    result: LaserSettingsPrediction["outputs"],
     patient: PatientProfile,
   ): string[] {
     const recommendations: string[] = [];
 
     if (result.expectedDowntime > 7) {
-      recommendations.push('Significant downtime expected - plan accordingly');
+      recommendations.push("Significant downtime expected - plan accordingly");
     }
 
     if (result.energyLevel > 30) {
       recommendations.push(
-        'High energy treatment - ensure patient comfort measures',
+        "High energy treatment - ensure patient comfort measures",
       );
     }
 
     if (
-      patient.skinType.includes('4')
-      || patient.skinType.includes('5')
-      || patient.skinType.includes('6')
+      patient.skinType.includes("4") ||
+      patient.skinType.includes("5") ||
+      patient.skinType.includes("6")
     ) {
-      recommendations.push('Monitor closely for pigmentation changes');
+      recommendations.push("Monitor closely for pigmentation changes");
     }
 
     return recommendations;

@@ -341,7 +341,7 @@ function ChatWindow({ conversation }: any) {
         return <CheckCircle className="h-3 w-3 text-primary" />;
       }
       default: {
-        return ;
+        return;
       }
     }
   };

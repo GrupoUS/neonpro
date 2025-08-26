@@ -431,8 +431,7 @@ export function CommunicationHub({
   >("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(
-    );
+  const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>();
   const [isComposeDialogOpen, setIsComposeDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState({
     subject: "",

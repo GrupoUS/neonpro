@@ -15,8 +15,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
     useMFA();
 
   const [step, setStep] = useState<"method" | "setup" | "verify">("method");
-  const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>(
-    );
+  const [selectedMethod, setSelectedMethod] = useState<MfaMethod | null>();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");

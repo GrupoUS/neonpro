@@ -104,8 +104,7 @@ export function useTreatments(): TreatmentsHook {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] =
     useState<AestheticTreatmentCategory | null>();
-  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | null>(
-    );
+  const [statusFilter, setStatusFilter] = useState<TreatmentStatus | null>();
   const [patientFilter, setPatientFilter] = useState<string | null>();
 
   const supabase = createClient();

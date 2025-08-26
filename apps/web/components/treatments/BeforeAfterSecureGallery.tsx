@@ -141,8 +141,7 @@ export function BeforeAfterSecureGallery({
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [photoFilter, setPhotoFilter] = useState<PhotoFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedPhoto, setSelectedPhoto] = useState<TreatmentPhoto | null>(
-    );
+  const [selectedPhoto, setSelectedPhoto] = useState<TreatmentPhoto | null>();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [uploadData, setUploadData] = useState<PhotoUploadData>({
     file: undefined,

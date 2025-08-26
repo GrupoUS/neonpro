@@ -9,7 +9,7 @@
  * - Emergency access <10s
  */
 
-import { performance } from 'node:perf_hooks';
+import { performance } from "node:perf_hooks";
 
 interface PerformanceTargets {
   lighthouseScore: number;
@@ -25,7 +25,7 @@ interface PerformanceResults {
   apiResponse: number;
   emergencyAccess: number;
   bundle: number;
-  overall: 'PASS' | 'FAIL';
+  overall: "PASS" | "FAIL";
 }
 
 class PerformanceValidator {
@@ -61,10 +61,10 @@ class PerformanceValidator {
 
   async validateApiResponseTime(): Promise<number> {
     const apiEndpoints = [
-      '/api/patients',
-      '/api/auth/session',
-      '/api/healthcare/appointments',
-      '/api/analytics/dashboard',
+      "/api/patients",
+      "/api/auth/session",
+      "/api/healthcare/appointments",
+      "/api/analytics/dashboard",
     ];
 
     let totalResponseTime = 0;
@@ -118,36 +118,36 @@ class PerformanceValidator {
       apiResponse: await this.validateApiResponseTime(),
       emergencyAccess: await this.validateEmergencyAccessTime(),
       bundle: await this.validateBundleSize(),
-      overall: 'PASS',
+      overall: "PASS",
     };
 
     const validations = [
       {
-        name: 'Lighthouse Score',
+        name: "Lighthouse Score",
         result: results.lighthouse,
         target: `>${this.targets.lighthouseScore}`,
         passed: results.lighthouse > this.targets.lighthouseScore,
       },
       {
-        name: 'Page Load Time',
+        name: "Page Load Time",
         result: `${results.pageLoad}ms`,
         target: `<${this.targets.pageLoadTime}ms`,
         passed: results.pageLoad < this.targets.pageLoadTime,
       },
       {
-        name: 'API Response Time',
+        name: "API Response Time",
         result: `${results.apiResponse}ms`,
         target: `<${this.targets.apiResponseTime}ms`,
         passed: results.apiResponse < this.targets.apiResponseTime,
       },
       {
-        name: 'Emergency Access Time',
+        name: "Emergency Access Time",
         result: `${results.emergencyAccess}ms`,
         target: `<${this.targets.emergencyAccessTime}ms`,
         passed: results.emergencyAccess < this.targets.emergencyAccessTime,
       },
       {
-        name: 'Bundle Size',
+        name: "Bundle Size",
         result: `${results.bundle}KB`,
         target: `<${this.targets.bundleSize}KB`,
         passed: results.bundle < this.targets.bundleSize,
@@ -157,16 +157,18 @@ class PerformanceValidator {
     let allPassed = true;
 
     validations.forEach((validation) => {
-      const _status = validation.passed ? '✅ PASS' : '❌ FAIL';
+      const _status = validation.passed ? "✅ PASS" : "❌ FAIL";
 
       if (!validation.passed) {
         allPassed = false;
       }
     });
 
-    results.overall = allPassed ? 'PASS' : 'FAIL';
+    results.overall = allPassed ? "PASS" : "FAIL";
 
-    if (results.overall === 'PASS') {} else {}
+    if (results.overall === "PASS") {
+    } else {
+    }
 
     return results;
   }
@@ -178,7 +180,7 @@ async function main() {
   const results = await validator.runCompleteValidation();
 
   // Exit code baseado nos resultados
-  process.exit(results.overall === 'PASS' ? 0 : 1);
+  process.exit(results.overall === "PASS" ? 0 : 1);
 }
 
 // Executar se chamado diretamente
@@ -188,4 +190,8 @@ if (require.main === module) {
   });
 }
 
-export { type PerformanceResults, type PerformanceTargets, PerformanceValidator };
+export {
+  type PerformanceResults,
+  type PerformanceTargets,
+  PerformanceValidator,
+};

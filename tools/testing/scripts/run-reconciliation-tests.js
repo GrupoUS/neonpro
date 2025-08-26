@@ -1,86 +1,88 @@
-const { execSync } = require('node:child_process');
-const path = require('node:path');
+const { execSync } = require("node:child_process");
+const path = require("node:path");
 
 const RECONCILIATION_TESTS = [
   {
-    name: 'API Integration Tests',
-    file: 'tests/integration/bank-reconciliation-api.test.ts',
-    description: 'Core reconciliation service functionality validation',
-    priority: 'CRITICAL',
+    name: "API Integration Tests",
+    file: "tests/integration/bank-reconciliation-api.test.ts",
+    description: "Core reconciliation service functionality validation",
+    priority: "CRITICAL",
     timeout: 30_000,
   },
   {
-    name: 'Security Audit Tests',
-    file: 'tests/security/security-audit.test.ts',
-    description: 'LGPD compliance and security vulnerability validation',
-    priority: 'CRITICAL',
+    name: "Security Audit Tests",
+    file: "tests/security/security-audit.test.ts",
+    description: "LGPD compliance and security vulnerability validation",
+    priority: "CRITICAL",
     timeout: 45_000,
   },
   {
-    name: 'Performance Load Tests',
-    file: 'tests/performance/load-testing.test.ts',
-    description: 'System performance and concurrent user validation',
-    priority: 'HIGH',
+    name: "Performance Load Tests",
+    file: "tests/performance/load-testing.test.ts",
+    description: "System performance and concurrent user validation",
+    priority: "HIGH",
     timeout: 60_000,
   },
 ];
 
 const E2E_TESTS = [
   {
-    name: 'Bank Reconciliation E2E',
-    file: 'playwright/tests/bank-reconciliation.spec.ts',
-    description: 'Complete user journey validation',
-    priority: 'CRITICAL',
+    name: "Bank Reconciliation E2E",
+    file: "playwright/tests/bank-reconciliation.spec.ts",
+    description: "Complete user journey validation",
+    priority: "CRITICAL",
     timeout: 90_000,
   },
 ];
 
-function runTest(test, testType = 'UNIT') {
+function runTest(test, testType = "UNIT") {
   try {
     const startTime = Date.now();
 
-    if (testType === 'E2E') {
+    if (testType === "E2E") {
       // Run Playwright E2E tests
       const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;
       const _output = execSync(command, {
         cwd: process.cwd(),
-        encoding: 'utf8',
+        encoding: "utf8",
         timeout: test.timeout + 30_000,
       });
     } else {
       // Run Jest tests with isolated configuration
-      const command =
-        `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
+      const command = `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
       const _output = execSync(command, {
-        cwd: path.join(process.cwd(), 'apps/web'),
-        encoding: 'utf8',
+        cwd: path.join(process.cwd(), "apps/web"),
+        encoding: "utf8",
         timeout: test.timeout + 30_000,
       });
     }
 
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
-    return { status: 'PASSED', duration, test: test.name };
+    return { status: "PASSED", duration, test: test.name };
   } catch (error) {
     const errorMessage = error.message || error.toString();
 
-    return { status: 'FAILED', error: errorMessage, test: test.name };
+    return { status: "FAILED", error: errorMessage, test: test.name };
   }
 }
 
 function generateReport(results) {
-  const passed = results.filter((r) => r.status === 'PASSED').length;
-  const failed = results.filter((r) => r.status === 'FAILED').length;
+  const passed = results.filter((r) => r.status === "PASSED").length;
+  const failed = results.filter((r) => r.status === "FAILED").length;
   const total = results.length;
 
-  if (passed >= 3) {} else {}
+  if (passed >= 3) {
+  } else {
+  }
   results.forEach((result) => {
-    const _status = result.status === 'PASSED' ? '✅' : '❌';
+    const _status = result.status === "PASSED" ? "✅" : "❌";
     const _duration = result.duration
       ? ` (${result.duration.toFixed(2)}s)`
-      : '';
+      : "";
 
-    if (result.status === 'FAILED' && result.error) {}
+    if (result.status === "FAILED" && result.error) {
+    }
   });
 
   // Save results to file
@@ -93,11 +95,11 @@ function generateReport(results) {
       successRate: ((passed / total) * 100).toFixed(1),
     },
     results,
-    qualityStandard: passed >= 3 ? 'ACHIEVED' : 'NEEDS_IMPROVEMENT',
+    qualityStandard: passed >= 3 ? "ACHIEVED" : "NEEDS_IMPROVEMENT",
   };
 
-  const fs = require('node:fs');
-  const reportPath = 'reconciliation-test-results.json';
+  const fs = require("node:fs");
+  const reportPath = "reconciliation-test-results.json";
   fs.writeFileSync(reportPath, JSON.stringify(reportData, undefined, 2));
 
   return reportData;
@@ -107,11 +109,11 @@ function generateReport(results) {
 async function main() {
   const results = [];
   for (const test of RECONCILIATION_TESTS) {
-    const result = runTest(test, 'UNIT');
+    const result = runTest(test, "UNIT");
     results.push(result);
   }
   for (const test of E2E_TESTS) {
-    const result = runTest(test, 'E2E');
+    const result = runTest(test, "E2E");
     results.push(result);
   }
 
@@ -119,7 +121,7 @@ async function main() {
   const _report = generateReport(results);
 
   // Exit with appropriate code
-  const hasFailures = results.some((r) => r.status === 'FAILED');
+  const hasFailures = results.some((r) => r.status === "FAILED");
   process.exit(hasFailures ? 1 : 0);
 }
 

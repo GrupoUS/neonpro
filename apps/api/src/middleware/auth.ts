@@ -6,55 +6,55 @@
  * verificação de roles e permissions para o sistema.
  */
 
-import type { Context, MiddlewareHandler } from 'hono';
-import { createError } from './error-handler';
+import type { Context, MiddlewareHandler } from "hono";
+import { createError } from "./error-handler";
 
 // User roles in the system
 export enum UserRole {
-  ADMIN = 'admin', // System administrator
-  CLINIC_OWNER = 'clinic_owner', // Clinic owner/manager
-  PROFESSIONAL = 'professional', // Healthcare professional
-  STAFF = 'staff', // Administrative staff
-  PATIENT = 'patient', // Patient (limited access)
+  ADMIN = "admin", // System administrator
+  CLINIC_OWNER = "clinic_owner", // Clinic owner/manager
+  PROFESSIONAL = "professional", // Healthcare professional
+  STAFF = "staff", // Administrative staff
+  PATIENT = "patient", // Patient (limited access)
 }
 
 // Permissions system
 export enum Permission {
   // Patient data permissions
-  READ_PATIENTS = 'read:patients',
-  WRITE_PATIENTS = 'write:patients',
-  DELETE_PATIENTS = 'delete:patients',
-  EXPORT_PATIENTS = 'export:patients',
+  READ_PATIENTS = "read:patients",
+  WRITE_PATIENTS = "write:patients",
+  DELETE_PATIENTS = "delete:patients",
+  EXPORT_PATIENTS = "export:patients",
 
   // Appointment permissions
-  READ_APPOINTMENTS = 'read:appointments',
-  WRITE_APPOINTMENTS = 'write:appointments',
-  DELETE_APPOINTMENTS = 'delete:appointments',
-  RESCHEDULE_APPOINTMENTS = 'reschedule:appointments',
+  READ_APPOINTMENTS = "read:appointments",
+  WRITE_APPOINTMENTS = "write:appointments",
+  DELETE_APPOINTMENTS = "delete:appointments",
+  RESCHEDULE_APPOINTMENTS = "reschedule:appointments",
 
   // Professional permissions
-  READ_PROFESSIONALS = 'read:professionals',
-  WRITE_PROFESSIONALS = 'write:professionals',
-  DELETE_PROFESSIONALS = 'delete:professionals',
+  READ_PROFESSIONALS = "read:professionals",
+  WRITE_PROFESSIONALS = "write:professionals",
+  DELETE_PROFESSIONALS = "delete:professionals",
 
   // Service permissions
-  READ_SERVICES = 'read:services',
-  WRITE_SERVICES = 'write:services',
-  DELETE_SERVICES = 'delete:services',
+  READ_SERVICES = "read:services",
+  WRITE_SERVICES = "write:services",
+  DELETE_SERVICES = "delete:services",
 
   // Analytics permissions
-  READ_ANALYTICS = 'read:analytics',
-  EXPORT_ANALYTICS = 'export:analytics',
+  READ_ANALYTICS = "read:analytics",
+  EXPORT_ANALYTICS = "export:analytics",
 
   // Compliance permissions
-  READ_COMPLIANCE = 'read:compliance',
-  MANAGE_COMPLIANCE = 'manage:compliance',
-  EXPORT_COMPLIANCE = 'export:compliance',
+  READ_COMPLIANCE = "read:compliance",
+  MANAGE_COMPLIANCE = "manage:compliance",
+  EXPORT_COMPLIANCE = "export:compliance",
 
   // System permissions
-  MANAGE_USERS = 'manage:users',
-  MANAGE_CLINICS = 'manage:clinics',
-  SYSTEM_CONFIG = 'system:config',
+  MANAGE_USERS = "manage:users",
+  MANAGE_CLINICS = "manage:clinics",
+  SYSTEM_CONFIG = "system:config",
 }
 
 // Role-based permissions mapping
@@ -132,35 +132,35 @@ export interface UserContext {
 class UserStore {
   private readonly users = new Map<string, UserContext>([
     [
-      'user_123',
+      "user_123",
       {
-        id: 'user_123',
-        email: 'admin@neonpro.com',
+        id: "user_123",
+        email: "admin@neonpro.com",
         role: UserRole.ADMIN,
         permissions: ROLE_PERMISSIONS[UserRole.ADMIN],
         isActive: true,
       },
     ],
     [
-      'user_456',
+      "user_456",
       {
-        id: 'user_456',
-        email: 'doctor@neonpro.com',
+        id: "user_456",
+        email: "doctor@neonpro.com",
         role: UserRole.PROFESSIONAL,
         permissions: ROLE_PERMISSIONS[UserRole.PROFESSIONAL],
-        clinicId: 'clinic_123',
-        professionalId: 'prof_123',
+        clinicId: "clinic_123",
+        professionalId: "prof_123",
         isActive: true,
       },
     ],
     [
-      'user_789',
+      "user_789",
       {
-        id: 'user_789',
-        email: 'staff@neonpro.com',
+        id: "user_789",
+        email: "staff@neonpro.com",
         role: UserRole.STAFF,
         permissions: ROLE_PERMISSIONS[UserRole.STAFF],
-        clinicId: 'clinic_123',
+        clinicId: "clinic_123",
         isActive: true,
       },
     ],
@@ -196,33 +196,33 @@ const userStore = new UserStore();
  */
 const verifyToken = async (token: string): Promise<JWTPayload> => {
   // Mock JWT verification - in production use proper JWT verification
-  if (token === 'mock-access-token') {
+  if (token === "mock-access-token") {
     return {
-      sub: 'user_123',
-      email: 'admin@neonpro.com',
+      sub: "user_123",
+      email: "admin@neonpro.com",
       role: UserRole.ADMIN,
       permissions: ROLE_PERMISSIONS[UserRole.ADMIN],
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour
-      jti: 'jwt_123',
+      jti: "jwt_123",
     };
   }
 
-  if (token === 'mock-professional-token') {
+  if (token === "mock-professional-token") {
     return {
-      sub: 'user_456',
-      email: 'doctor@neonpro.com',
+      sub: "user_456",
+      email: "doctor@neonpro.com",
       role: UserRole.PROFESSIONAL,
       permissions: ROLE_PERMISSIONS[UserRole.PROFESSIONAL],
-      clinicId: 'clinic_123',
-      professionalId: 'prof_123',
+      clinicId: "clinic_123",
+      professionalId: "prof_123",
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 3600,
-      jti: 'jwt_456',
+      jti: "jwt_456",
     };
   }
 
-  throw new Error('Invalid token');
+  throw new Error("Invalid token");
 };
 
 /**
@@ -238,10 +238,10 @@ const isTokenBlacklisted = async (_jti: string): Promise<boolean> => {
  */
 export const authMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
-    const authHeader = c.req.header('Authorization');
+    const authHeader = c.req.header("Authorization");
 
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw createError.authentication('Token de acesso obrigatório');
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw createError.authentication("Token de acesso obrigatório");
     }
 
     const token = authHeader.slice(7);
@@ -252,47 +252,47 @@ export const authMiddleware = (): MiddlewareHandler => {
 
       // Check if token is blacklisted
       if (await isTokenBlacklisted(payload.jti)) {
-        throw createError.authentication('Token revogado');
+        throw createError.authentication("Token revogado");
       }
 
       // Check token expiration
       if (payload.exp < Date.now() / 1000) {
-        throw createError.authentication('Token expirado');
+        throw createError.authentication("Token expirado");
       }
 
       // Get user context
       const user = userStore.getUser(payload.sub);
       if (!user) {
-        throw createError.authentication('Usuário não encontrado');
+        throw createError.authentication("Usuário não encontrado");
       }
 
       // Check if user is active
       if (!user.isActive) {
-        throw createError.authorization('Usuário inativo');
+        throw createError.authorization("Usuário inativo");
       }
 
       // Update last login
       userStore.updateLastLogin(user.id);
 
       // Set user context in request
-      c.set('user', user);
-      c.set('userId', user.id);
-      c.set('userRole', user.role);
-      c.set('userPermissions', user.permissions);
-      c.set('clinicId', user.clinicId);
-      c.set('professionalId', user.professionalId);
+      c.set("user", user);
+      c.set("userId", user.id);
+      c.set("userRole", user.role);
+      c.set("userPermissions", user.permissions);
+      c.set("clinicId", user.clinicId);
+      c.set("professionalId", user.professionalId);
 
       // Set authentication headers
-      c.res.headers.set('X-User-ID', user.id);
-      c.res.headers.set('X-User-Role', user.role);
+      c.res.headers.set("X-User-ID", user.id);
+      c.res.headers.set("X-User-Role", user.role);
 
       await next();
     } catch (error) {
       if (
-        error.message.includes('Invalid token')
-        || error.message.includes('jwt')
+        error.message.includes("Invalid token") ||
+        error.message.includes("jwt")
       ) {
-        throw createError.authentication('Token inválido');
+        throw createError.authentication("Token inválido");
       }
       throw error;
     }
@@ -304,15 +304,15 @@ export const authMiddleware = (): MiddlewareHandler => {
  */
 export const requireRole = (...allowedRoles: UserRole[]): MiddlewareHandler => {
   return async (c, next) => {
-    const userRole = c.get('userRole') as UserRole;
+    const userRole = c.get("userRole") as UserRole;
 
     if (!userRole) {
-      throw createError.authentication('Autenticação obrigatória');
+      throw createError.authentication("Autenticação obrigatória");
     }
 
     if (!allowedRoles.includes(userRole)) {
       throw createError.authorization(
-        `Acesso negado. Roles permitidas: ${allowedRoles.join(', ')}`,
+        `Acesso negado. Roles permitidas: ${allowedRoles.join(", ")}`,
       );
     }
 
@@ -327,14 +327,14 @@ export const requirePermission = (
   ...requiredPermissions: Permission[]
 ): MiddlewareHandler => {
   return async (c, next) => {
-    const userPermissions = c.get('userPermissions') as Permission[];
+    const userPermissions = c.get("userPermissions") as Permission[];
 
     if (!userPermissions) {
-      throw createError.authentication('Autenticação obrigatória');
+      throw createError.authentication("Autenticação obrigatória");
     }
 
     const hasAllPermissions = requiredPermissions.every((permission) =>
-      userPermissions.includes(permission)
+      userPermissions.includes(permission),
     );
 
     if (!hasAllPermissions) {
@@ -342,7 +342,7 @@ export const requirePermission = (
         (permission) => !userPermissions.includes(permission),
       );
 
-      throw createError.authorization('Permissões insuficientes', {
+      throw createError.authorization("Permissões insuficientes", {
         required: requiredPermissions,
         missing: missingPermissions,
       });
@@ -357,9 +357,9 @@ export const requirePermission = (
  */
 export const optionalAuth = (): MiddlewareHandler => {
   return async (c, next) => {
-    const authHeader = c.req.header('Authorization');
+    const authHeader = c.req.header("Authorization");
 
-    if (authHeader?.startsWith('Bearer ')) {
+    if (authHeader?.startsWith("Bearer ")) {
       try {
         const token = authHeader.slice(7);
         const payload = await verifyToken(token);
@@ -367,10 +367,10 @@ export const optionalAuth = (): MiddlewareHandler => {
         if (payload.exp >= Date.now() / 1000) {
           const user = userStore.getUser(payload.sub);
           if (user?.isActive) {
-            c.set('user', user);
-            c.set('userId', user.id);
-            c.set('userRole', user.role);
-            c.set('userPermissions', user.permissions);
+            c.set("user", user);
+            c.set("userId", user.id);
+            c.set("userRole", user.role);
+            c.set("userPermissions", user.permissions);
           }
         }
       } catch {
@@ -387,8 +387,8 @@ export const optionalAuth = (): MiddlewareHandler => {
  */
 export const requireClinicAccess = (): MiddlewareHandler => {
   return async (c, next) => {
-    const userRole = c.get('userRole') as UserRole;
-    const userClinicId = c.get('clinicId') as string;
+    const userRole = c.get("userRole") as UserRole;
+    const userClinicId = c.get("clinicId") as string;
 
     // Admins can access any clinic
     if (userRole === UserRole.ADMIN) {
@@ -398,17 +398,18 @@ export const requireClinicAccess = (): MiddlewareHandler => {
 
     // Check if user has clinic association
     if (!userClinicId) {
-      throw createError.authorization('Usuário não associado a uma clínica');
+      throw createError.authorization("Usuário não associado a uma clínica");
     }
 
     // Extract clinic ID from request (URL parameter, query, or body)
-    const requestClinicId = c.req.param('clinicId')
-      || c.req.query('clinicId')
-      || (await c.req.json().catch(() => ({})))?.clinicId;
+    const requestClinicId =
+      c.req.param("clinicId") ||
+      c.req.query("clinicId") ||
+      (await c.req.json().catch(() => ({})))?.clinicId;
 
     // If clinic ID is specified in request, verify access
     if (requestClinicId && requestClinicId !== userClinicId) {
-      throw createError.authorization('Acesso negado à clínica especificada');
+      throw createError.authorization("Acesso negado à clínica especificada");
     }
 
     await next();
@@ -420,7 +421,7 @@ export const requireClinicAccess = (): MiddlewareHandler => {
  */
 export const roleBasedRateLimit = (): MiddlewareHandler => {
   return async (c, next) => {
-    const userRole = c.get('userRole') as UserRole;
+    const userRole = c.get("userRole") as UserRole;
 
     // Set different rate limits based on role
     const rateLimits = {
@@ -432,7 +433,7 @@ export const roleBasedRateLimit = (): MiddlewareHandler => {
     };
 
     const limit = rateLimits[userRole] || 50;
-    c.res.headers.set('X-Role-Rate-Limit', limit.toString());
+    c.res.headers.set("X-Role-Rate-Limit", limit.toString());
 
     await next();
   };
@@ -444,36 +445,36 @@ export const roleBasedRateLimit = (): MiddlewareHandler => {
 export const authUtils = {
   // Check if user has specific role
   hasRole: (c: Context, role: UserRole): boolean => {
-    return c.get('userRole') === role;
+    return c.get("userRole") === role;
   },
 
   // Check if user has any of the specified roles
   hasAnyRole: (c: Context, roles: UserRole[]): boolean => {
-    const userRole = c.get('userRole');
+    const userRole = c.get("userRole");
     return roles.includes(userRole);
   },
 
   // Check if user has specific permission
   hasPermission: (c: Context, permission: Permission): boolean => {
-    const permissions = c.get('userPermissions') as Permission[];
+    const permissions = c.get("userPermissions") as Permission[];
     return permissions?.includes(permission);
   },
 
   // Check if user has all specified permissions
   hasAllPermissions: (c: Context, permissions: Permission[]): boolean => {
-    const userPermissions = c.get('userPermissions') as Permission[];
+    const userPermissions = c.get("userPermissions") as Permission[];
     return permissions.every((p) => userPermissions?.includes(p));
   },
 
   // Get user context from request
   getUser: (c: Context): UserContext | undefined => {
-    return c.get('user');
+    return c.get("user");
   },
 
   // Check if user can access specific clinic
   canAccessClinic: (c: Context, clinicId: string): boolean => {
-    const userRole = c.get('userRole') as UserRole;
-    const userClinicId = c.get('clinicId') as string;
+    const userRole = c.get("userRole") as UserRole;
+    const userClinicId = c.get("clinicId") as string;
 
     // Admins can access any clinic
     if (userRole === UserRole.ADMIN) {

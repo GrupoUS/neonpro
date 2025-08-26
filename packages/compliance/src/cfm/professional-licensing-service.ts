@@ -10,7 +10,7 @@
 // Database type will be provided by the client
 type Database = any;
 
-import type { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 
 /**
  * CFM Professional License Interface
@@ -27,11 +27,11 @@ export interface ProfessionalLicense {
   doctor_cpf: string;
   /** Current license status */
   license_status:
-    | 'active'
-    | 'suspended'
-    | 'cancelled'
-    | 'inactive'
-    | 'under_review';
+    | "active"
+    | "suspended"
+    | "cancelled"
+    | "inactive"
+    | "under_review";
   /** Medical specializations */
   specializations: string[];
   /** License issue date */
@@ -66,12 +66,12 @@ export interface LicenseAudit {
   license_id: string;
   /** Action performed on license */
   action:
-    | 'created'
-    | 'updated'
-    | 'verified'
-    | 'suspended'
-    | 'reactivated'
-    | 'renewed';
+    | "created"
+    | "updated"
+    | "verified"
+    | "suspended"
+    | "reactivated"
+    | "renewed";
   /** Previous license state */
   previous_state: Partial<ProfessionalLicense>;
   /** New license state */
@@ -100,7 +100,7 @@ export interface LicenseVerificationParams {
   /** State/UF for regional validation */
   license_state?: string;
   /** Verification depth level */
-  verification_level: 'basic' | 'comprehensive' | 'constitutional_full';
+  verification_level: "basic" | "comprehensive" | "constitutional_full";
 }
 
 /**
@@ -117,7 +117,7 @@ export interface LicenseVerificationResponse {
     /** Doctor name confirmed */
     doctor_name: string;
     /** License status */
-    status: ProfessionalLicense['license_status'];
+    status: ProfessionalLicense["license_status"];
     /** Valid specializations */
     specializations: string[];
     /** License expiry date */
@@ -200,7 +200,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional CFM verification service error',
+        error: "Constitutional CFM verification service error",
       };
     }
   } /**
@@ -211,10 +211,10 @@ export class ProfessionalLicensingService {
   async registerProfessionalLicense(
     licenseData: Omit<
       ProfessionalLicense,
-      'license_id' | 'created_at' | 'updated_at' | 'audit_trail'
+      "license_id" | "created_at" | "updated_at" | "audit_trail"
     >,
     userId: string,
-  ): Promise<{ success: boolean; data?: ProfessionalLicense; error?: string; }> {
+  ): Promise<{ success: boolean; data?: ProfessionalLicense; error?: string }> {
     try {
       // Constitutional validation
       const validationResult = await this.validateLicenseData(licenseData);
@@ -229,7 +229,7 @@ export class ProfessionalLicensingService {
       if (existingLicense.exists) {
         return {
           success: false,
-          error: 'CFM number already registered in system',
+          error: "CFM number already registered in system",
         };
       }
 
@@ -245,19 +245,19 @@ export class ProfessionalLicensingService {
           {
             audit_id: crypto.randomUUID(),
             license_id: licenseId,
-            action: 'created',
+            action: "created",
             previous_state: {},
             new_state: licenseData,
             user_id: userId,
             timestamp,
-            reason: 'Initial professional license registration',
+            reason: "Initial professional license registration",
           },
         ],
       };
 
       // Store license with constitutional compliance
       const { data, error } = await this.supabase
-        .from('cfm_professional_licenses')
+        .from("cfm_professional_licenses")
         .insert(newLicense)
         .select()
         .single();
@@ -265,7 +265,7 @@ export class ProfessionalLicensingService {
       if (error) {
         return {
           success: false,
-          error: 'Failed to register professional license',
+          error: "Failed to register professional license",
         };
       }
 
@@ -276,7 +276,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -288,7 +288,7 @@ export class ProfessionalLicensingService {
   async getProfessionalLicenses(
     tenantId: string,
     filters?: {
-      license_status?: ProfessionalLicense['license_status'];
+      license_status?: ProfessionalLicense["license_status"];
       specialization?: string;
       expiring_within_days?: number;
       license_state?: string;
@@ -300,36 +300,36 @@ export class ProfessionalLicensingService {
   }> {
     try {
       let query = this.supabase
-        .from('cfm_professional_licenses')
-        .select('*')
-        .eq('tenant_id', tenantId); // Constitutional tenant isolation
+        .from("cfm_professional_licenses")
+        .select("*")
+        .eq("tenant_id", tenantId); // Constitutional tenant isolation
 
       // Apply constitutional filters
       if (filters?.license_status) {
-        query = query.eq('license_status', filters.license_status);
+        query = query.eq("license_status", filters.license_status);
       }
       if (filters?.license_state) {
-        query = query.eq('license_state', filters.license_state);
+        query = query.eq("license_state", filters.license_state);
       }
       if (filters?.specialization) {
-        query = query.contains('specializations', [filters.specialization]);
+        query = query.contains("specializations", [filters.specialization]);
       }
       if (filters?.expiring_within_days) {
         const thresholdDate = new Date();
         thresholdDate.setDate(
           thresholdDate.getDate() + filters.expiring_within_days,
         );
-        query = query.lte('license_expiry', thresholdDate.toISOString());
+        query = query.lte("license_expiry", thresholdDate.toISOString());
       }
 
-      const { data, error } = await query.order('created_at', {
+      const { data, error } = await query.order("created_at", {
         ascending: false,
       });
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to retrieve professional licenses',
+          error: "Failed to retrieve professional licenses",
         };
       }
 
@@ -337,7 +337,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   } /**
@@ -356,49 +356,50 @@ export class ProfessionalLicensingService {
       if (!(cfmNumber && cfmRegex.test(cfmNumber))) {
         return {
           valid: false,
-          error: 'Invalid CFM number format. Required format: NNNNNN/UF (e.g., 123456/SP)',
+          error:
+            "Invalid CFM number format. Required format: NNNNNN/UF (e.g., 123456/SP)",
         };
       }
 
       // Extract state code for validation
-      const stateCode = cfmNumber.split('/')[1];
+      const stateCode = cfmNumber.split("/")[1];
       const validStates = [
-        'AC',
-        'AL',
-        'AP',
-        'AM',
-        'BA',
-        'CE',
-        'DF',
-        'ES',
-        'GO',
-        'MA',
-        'MT',
-        'MS',
-        'MG',
-        'PA',
-        'PB',
-        'PR',
-        'PE',
-        'PI',
-        'RJ',
-        'RN',
-        'RS',
-        'RO',
-        'RR',
-        'SC',
-        'SP',
-        'SE',
-        'TO',
+        "AC",
+        "AL",
+        "AP",
+        "AM",
+        "BA",
+        "CE",
+        "DF",
+        "ES",
+        "GO",
+        "MA",
+        "MT",
+        "MS",
+        "MG",
+        "PA",
+        "PB",
+        "PR",
+        "PE",
+        "PI",
+        "RJ",
+        "RN",
+        "RS",
+        "RO",
+        "RR",
+        "SC",
+        "SP",
+        "SE",
+        "TO",
       ];
 
       if (!validStates.includes(stateCode)) {
-        return { valid: false, error: 'Invalid state code in CFM number' };
+        return { valid: false, error: "Invalid state code in CFM number" };
       }
 
       return { valid: true };
     } catch {
-      return { valid: false, error: 'CFM number validation service error' };
+      return { valid: false, error: "CFM number validation service error" };
     }
   }
 
@@ -408,12 +409,12 @@ export class ProfessionalLicensingService {
    */
   private async getLocalLicense(
     cfmNumber: string,
-  ): Promise<{ exists: boolean; license?: ProfessionalLicense; }> {
+  ): Promise<{ exists: boolean; license?: ProfessionalLicense }> {
     try {
       const { data, error } = await this.supabase
-        .from('cfm_professional_licenses')
-        .select('*')
-        .eq('cfm_number', cfmNumber)
+        .from("cfm_professional_licenses")
+        .select("*")
+        .eq("cfm_number", cfmNumber)
         .single();
 
       if (error || !data) {
@@ -434,7 +435,7 @@ export class ProfessionalLicensingService {
     success: boolean;
     error?: string;
     doctor_name?: string;
-    license_status?: ProfessionalLicense['license_status'];
+    license_status?: ProfessionalLicense["license_status"];
     specializations?: string[];
     expiry_date?: Date;
     constitutional_compliance?: boolean;
@@ -446,9 +447,9 @@ export class ProfessionalLicensingService {
       // Simulate CFM database response
       const mockResponse = {
         success: true,
-        doctor_name: params.doctor_name || 'Dr. João Silva',
-        license_status: 'active' as ProfessionalLicense['license_status'],
-        specializations: ['Dermatologia', 'Medicina Estética'],
+        doctor_name: params.doctor_name || "Dr. João Silva",
+        license_status: "active" as ProfessionalLicense["license_status"],
+        specializations: ["Dermatologia", "Medicina Estética"],
         expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
         constitutional_compliance: true,
         warnings: [] as string[],
@@ -456,11 +457,11 @@ export class ProfessionalLicensingService {
 
       // Add warning if license expires within 90 days
       if (
-        mockResponse.expiry_date.getTime() - Date.now()
-          < 90 * 24 * 60 * 60 * 1000
+        mockResponse.expiry_date.getTime() - Date.now() <
+        90 * 24 * 60 * 60 * 1000
       ) {
         mockResponse.warnings.push(
-          'License expires within 90 days - renewal recommended',
+          "License expires within 90 days - renewal recommended",
         );
       }
 
@@ -468,7 +469,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         success: false,
-        error: 'CFM database verification service error',
+        error: "CFM database verification service error",
       };
     }
   }
@@ -479,7 +480,7 @@ export class ProfessionalLicensingService {
    */
   private async updateLocalLicense(
     cfmNumber: string,
-    verificationData: LicenseVerificationResponse['license_details'],
+    verificationData: LicenseVerificationResponse["license_details"],
   ): Promise<void> {
     if (!verificationData) {
       return; // Skip update if no verification data
@@ -489,7 +490,7 @@ export class ProfessionalLicensingService {
       const timestamp = new Date();
 
       await this.supabase
-        .from('cfm_professional_licenses')
+        .from("cfm_professional_licenses")
         .update({
           license_status: verificationData.status,
           specializations: verificationData.specializations,
@@ -497,7 +498,7 @@ export class ProfessionalLicensingService {
           constitutional_compliance: verificationData.constitutional_compliance,
           updated_at: timestamp.toISOString(),
         })
-        .eq('cfm_number', cfmNumber);
+        .eq("cfm_number", cfmNumber);
     } catch {}
   }
 
@@ -506,11 +507,11 @@ export class ProfessionalLicensingService {
    * Constitutional license creation with validation
    */
   private async createLocalLicense(
-    verificationData: LicenseVerificationResponse['license_details'],
+    verificationData: LicenseVerificationResponse["license_details"],
     params: LicenseVerificationParams,
   ): Promise<void> {
     if (!verificationData) {
-      throw new Error('Verification data is required for license creation');
+      throw new Error("Verification data is required for license creation");
     }
 
     try {
@@ -521,11 +522,12 @@ export class ProfessionalLicensingService {
         license_id: licenseId,
         cfm_number: verificationData.cfm_number,
         doctor_name: verificationData.doctor_name,
-        doctor_cpf: params.doctor_cpf || '',
+        doctor_cpf: params.doctor_cpf || "",
         license_status: verificationData.status,
         specializations: verificationData.specializations,
         license_expiry: verificationData.expiry_date,
-        license_state: params.license_state || verificationData.cfm_number.split('/')[1],
+        license_state:
+          params.license_state || verificationData.cfm_number.split("/")[1],
         constitutional_compliance: verificationData.constitutional_compliance,
         created_at: timestamp,
         updated_at: timestamp,
@@ -533,20 +535,20 @@ export class ProfessionalLicensingService {
           {
             audit_id: crypto.randomUUID(),
             license_id: licenseId,
-            action: 'created',
+            action: "created",
             previous_state: {},
             new_state: {
               cfm_number: verificationData.cfm_number,
               license_status: verificationData.status,
             },
-            user_id: 'system',
+            user_id: "system",
             timestamp,
-            reason: 'License created from CFM verification',
+            reason: "License created from CFM verification",
           },
         ],
       };
 
-      await this.supabase.from('cfm_professional_licenses').insert(newLicense);
+      await this.supabase.from("cfm_professional_licenses").insert(newLicense);
     } catch {}
   } /**
    * Constitutional validation of license data
@@ -556,9 +558,9 @@ export class ProfessionalLicensingService {
   private async validateLicenseData(
     licenseData: Omit<
       ProfessionalLicense,
-      'license_id' | 'created_at' | 'updated_at' | 'audit_trail'
+      "license_id" | "created_at" | "updated_at" | "audit_trail"
     >,
-  ): Promise<{ valid: boolean; error?: string; }> {
+  ): Promise<{ valid: boolean; error?: string }> {
     try {
       // CFM number format validation
       const cfmValidation = this.validateCfmNumberFormat(
@@ -572,18 +574,19 @@ export class ProfessionalLicensingService {
       if (!licenseData.doctor_name || licenseData.doctor_name.length < 5) {
         return {
           valid: false,
-          error: 'Doctor name must be at least 5 characters for constitutional compliance',
+          error:
+            "Doctor name must be at least 5 characters for constitutional compliance",
         };
       }
 
       // CPF validation (basic format check)
       if (
-        licenseData.doctor_cpf
-        && !/^\d{11}$/.test(licenseData.doctor_cpf.replaceAll(/\D/g, ''))
+        licenseData.doctor_cpf &&
+        !/^\d{11}$/.test(licenseData.doctor_cpf.replaceAll(/\D/g, ""))
       ) {
         return {
           valid: false,
-          error: 'Invalid CPF format for constitutional identification',
+          error: "Invalid CPF format for constitutional identification",
         };
       }
 
@@ -591,7 +594,7 @@ export class ProfessionalLicensingService {
       if (!licenseData.license_expiry) {
         return {
           valid: false,
-          error: 'License expiry date required for constitutional monitoring',
+          error: "License expiry date required for constitutional monitoring",
         };
       }
 
@@ -601,31 +604,33 @@ export class ProfessionalLicensingService {
       if (expiryDate < currentDate) {
         return {
           valid: false,
-          error: 'License has expired - renewal required for constitutional compliance',
+          error:
+            "License has expired - renewal required for constitutional compliance",
         };
       }
 
       // Medical school validation
       if (
-        !licenseData.medical_school
-        || licenseData.medical_school.length < 5
+        !licenseData.medical_school ||
+        licenseData.medical_school.length < 5
       ) {
         return {
           valid: false,
-          error: 'Medical school information required for constitutional validation',
+          error:
+            "Medical school information required for constitutional validation",
         };
       }
 
       // Graduation year validation
       const currentYear = new Date().getFullYear();
       if (
-        !licenseData.graduation_year
-        || licenseData.graduation_year < 1950
-        || licenseData.graduation_year > currentYear
+        !licenseData.graduation_year ||
+        licenseData.graduation_year < 1950 ||
+        licenseData.graduation_year > currentYear
       ) {
         return {
           valid: false,
-          error: 'Valid graduation year required for constitutional compliance',
+          error: "Valid graduation year required for constitutional compliance",
         };
       }
 
@@ -633,7 +638,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         valid: false,
-        error: 'Constitutional license validation service error',
+        error: "Constitutional license validation service error",
       };
     }
   }
@@ -646,9 +651,9 @@ export class ProfessionalLicensingService {
     try {
       // Get license details for monitoring setup
       const { data: license } = await this.supabase
-        .from('cfm_professional_licenses')
-        .select('license_expiry, tenant_id, cfm_number')
-        .eq('license_id', licenseId)
+        .from("cfm_professional_licenses")
+        .select("license_expiry, tenant_id, cfm_number")
+        .eq("license_id", licenseId)
         .single();
 
       if (!license) {
@@ -670,21 +675,20 @@ export class ProfessionalLicensingService {
       // Schedule alerts for future dates
       for (const alertDate of alertDates) {
         if (alertDate > currentDate) {
-          await this.supabase.from('compliance_alerts').insert({
+          await this.supabase.from("compliance_alerts").insert({
             alert_id: crypto.randomUUID(),
-            alert_type: 'cfm_license_expiry',
+            alert_type: "cfm_license_expiry",
             resource_id: licenseId,
             tenant_id: license.tenant_id,
             scheduled_date: alertDate.toISOString(),
-            alert_status: 'scheduled',
-            priority: alertDate.getTime() === expiryDate.getTime()
-              ? 'critical'
-              : 'warning',
-            message: `CFM license ${license.cfm_number} expires on ${
-              expiryDate.toLocaleDateString(
-                'pt-BR',
-              )
-            }`,
+            alert_status: "scheduled",
+            priority:
+              alertDate.getTime() === expiryDate.getTime()
+                ? "critical"
+                : "warning",
+            message: `CFM license ${license.cfm_number} expires on ${expiryDate.toLocaleDateString(
+              "pt-BR",
+            )}`,
             constitutional_compliance: true,
           });
         }
@@ -709,17 +713,17 @@ export class ProfessionalLicensingService {
       thresholdDate.setDate(thresholdDate.getDate() + daysThreshold);
 
       const { data, error } = await this.supabase
-        .from('cfm_professional_licenses')
-        .select('*')
-        .eq('tenant_id', tenantId)
-        .eq('license_status', 'active')
-        .lte('license_expiry', thresholdDate.toISOString())
-        .order('license_expiry', { ascending: true });
+        .from("cfm_professional_licenses")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .eq("license_status", "active")
+        .lte("license_expiry", thresholdDate.toISOString())
+        .order("license_expiry", { ascending: true });
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to retrieve expiring licenses',
+          error: "Failed to retrieve expiring licenses",
         };
       }
 
@@ -727,7 +731,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -738,29 +742,31 @@ export class ProfessionalLicensingService {
    */
   async generateComplianceReport(
     tenantId: string,
-  ): Promise<{ success: boolean; data?: any; error?: string; }> {
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const { data: licenses, error } = await this.supabase
-        .from('cfm_professional_licenses')
-        .select('*')
-        .eq('tenant_id', tenantId);
+        .from("cfm_professional_licenses")
+        .select("*")
+        .eq("tenant_id", tenantId);
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to generate CFM compliance report',
+          error: "Failed to generate CFM compliance report",
         };
       }
 
       const report = {
         total_licenses: licenses?.length || 0,
-        active_licenses: licenses?.filter((l) => l.license_status === 'active').length || 0,
-        expiring_soon: licenses?.filter((l) => {
-          const expiry = new Date(l.license_expiry);
-          const ninetyDaysFromNow = new Date();
-          ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
-          return expiry <= ninetyDaysFromNow;
-        }).length || 0,
+        active_licenses:
+          licenses?.filter((l) => l.license_status === "active").length || 0,
+        expiring_soon:
+          licenses?.filter((l) => {
+            const expiry = new Date(l.license_expiry);
+            const ninetyDaysFromNow = new Date();
+            ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
+            return expiry <= ninetyDaysFromNow;
+          }).length || 0,
         specializations_covered: [
           ...new Set(licenses?.flatMap((l) => l.specializations) || []),
         ],
@@ -772,7 +778,7 @@ export class ProfessionalLicensingService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }

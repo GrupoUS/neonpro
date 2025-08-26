@@ -3,10 +3,10 @@
  * Integrado com AuthTokenManager e Supabase
  */
 
-import { createMiddleware } from 'hono/factory';
-import { HTTPException } from 'hono/http-exception';
-import jwt from 'jsonwebtoken';
-import type { AuthContext } from '../types/hono.types';
+import { createMiddleware } from "hono/factory";
+import { HTTPException } from "hono/http-exception";
+import jwt from "jsonwebtoken";
+import type { AuthContext } from "../types/hono.types";
 
 export interface AuthUser {
   id: string;
@@ -32,8 +32,8 @@ function extractTokenFromHeader(authHeader: string | undefined): string | null {
     return;
   }
 
-  const parts = authHeader.split(' ');
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
     return;
   }
 
@@ -46,12 +46,12 @@ function extractTokenFromHeader(authHeader: string | undefined): string | null {
 async function validateJWTToken(token: string): Promise<AuthUser | null> {
   try {
     if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET not configured');
+      throw new Error("JWT_SECRET not configured");
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
 
-    if (!decoded || typeof decoded !== 'object') {
+    if (!decoded || typeof decoded !== "object") {
       return;
     }
 
@@ -77,12 +77,12 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
  * Rejeita requests sem token válido
  */
 export const requireAuth = createMiddleware(async (c, next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header("authorization");
   const token = extractTokenFromHeader(authHeader);
 
   if (!token) {
     throw new HTTPException(401, {
-      message: 'Token de autenticação obrigatório',
+      message: "Token de autenticação obrigatório",
     });
   }
 
@@ -90,12 +90,12 @@ export const requireAuth = createMiddleware(async (c, next) => {
 
   if (!user) {
     throw new HTTPException(401, {
-      message: 'Token de autenticação inválido',
+      message: "Token de autenticação inválido",
     });
   }
 
   // Adicionar dados de auth ao contexto
-  c.set('auth', { user, token });
+  c.set("auth", { user, token });
 
   await next();
 });
@@ -105,14 +105,14 @@ export const requireAuth = createMiddleware(async (c, next) => {
  * Permite requests sem token, mas adiciona dados se disponível
  */
 export const optionalAuth = createMiddleware(async (c, next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header("authorization");
   const token = extractTokenFromHeader(authHeader);
 
   if (token) {
     const user = await validateJWTToken(token);
 
     if (user) {
-      c.set('auth', { user, token });
+      c.set("auth", { user, token });
     }
   }
 
@@ -124,11 +124,11 @@ export const optionalAuth = createMiddleware(async (c, next) => {
  */
 export const requireRole = (requiredRole: string) => {
   return createMiddleware(async (c, next) => {
-    const authContext = c.get('auth');
+    const authContext = c.get("auth");
 
     if (!authContext) {
       throw new HTTPException(401, {
-        message: 'Autenticação obrigatória',
+        message: "Autenticação obrigatória",
       });
     }
 
@@ -147,51 +147,46 @@ export const requireRole = (requiredRole: string) => {
  */
 export const requirePermissions = (permissions: string[]) => {
   return createMiddleware(async (c, next) => {
-    const authContext = c.get('auth');
+    const authContext = c.get("auth");
 
     if (!authContext) {
       throw new HTTPException(401, {
-        message: 'Autenticação obrigatória',
+        message: "Autenticação obrigatória",
       });
     }
 
     const user = authContext.user;
 
     // Admin tem todas as permissões
-    if (user.role === 'admin') {
+    if (user.role === "admin") {
       await next();
       return;
     }
 
     // TODO: Implementar sistema de permissões mais sofisticado
     // Por enquanto, apenas verifica roles básicas
-    const _hasPermissions = permissions.every((permission) => {
+    const hasPermissions = permissions.every((permission) => {
       switch (permission) {
-        case 'read: {patients':
-          return ['healthcare_professional', 'nurse', 'doctor'].includes(
-            user.role || '',
+        case "read:patients":
+          return ["healthcare_professional", "nurse", "doctor"].includes(
+            user.role || "",
           );
-        }
-        case 'write: {patients':
-          return ['healthcare_professional', 'doctor'].includes(
-            user.role || '',
+        case "write:patients":
+          return ["healthcare_professional", "doctor"].includes(
+            user.role || "",
           );
-        }
-        case 'read: {analytics':
-          return ['admin', 'manager'].includes(user.role || '');
-        }
-        case 'write: {system':
-          return user.role === 'admin';
-        }
-        default: {
+        case "read:analytics":
+          return ["admin", "manager"].includes(user.role || "");
+        case "write:system":
+          return user.role === "admin";
+        default:
           return false;
-        }
       }
     });
 
     if (!hasPermissions) {
       throw new HTTPException(403, {
-        message: 'Permissões insuficientes',
+        message: "Permissões insuficientes",
       });
     }
 
@@ -204,26 +199,27 @@ export const requirePermissions = (permissions: string[]) => {
  * Garante que usuário só acessa dados do seu tenant
  */
 export const requireTenant = createMiddleware(async (c, next) => {
-  const authContext = c.get('auth');
+  const authContext = c.get("auth");
 
   if (!authContext) {
     throw new HTTPException(401, {
-      message: 'Autenticação obrigatória',
+      message: "Autenticação obrigatória",
     });
   }
 
   const user = authContext.user;
-  const requestedTenantId = c.req.header('x-tenant-id') || c.req.param('tenantId');
+  const requestedTenantId =
+    c.req.header("x-tenant-id") || c.req.param("tenantId");
 
   if (!user.tenantId) {
     throw new HTTPException(403, {
-      message: 'Usuário não associado a nenhum tenant',
+      message: "Usuário não associado a nenhum tenant",
     });
   }
 
   if (requestedTenantId && user.tenantId !== requestedTenantId) {
     throw new HTTPException(403, {
-      message: 'Acesso negado ao tenant solicitado',
+      message: "Acesso negado ao tenant solicitado",
     });
   }
 
@@ -235,7 +231,7 @@ export const requireTenant = createMiddleware(async (c, next) => {
  */
 export function getAuthContext(c: any): AuthContext | null {
   try {
-    return c.get('auth') || undefined;
+    return c.get("auth") || undefined;
   } catch {
     return;
   }
@@ -257,7 +253,7 @@ export const protectedRoute = [requireAuth, requireTenant];
 /**
  * Middleware para rotas administrativas
  */
-export const adminRoute = [requireAuth, requireRole('admin')];
+export const adminRoute = [requireAuth, requireRole("admin")];
 
 /**
  * Middleware para profissionais de saúde
@@ -265,5 +261,5 @@ export const adminRoute = [requireAuth, requireRole('admin')];
 export const healthcareRoute = [
   requireAuth,
   requireTenant,
-  requirePermissions(['read:patients']),
+  requirePermissions(["read:patients"]),
 ];

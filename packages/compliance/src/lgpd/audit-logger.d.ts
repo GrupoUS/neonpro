@@ -3,31 +3,31 @@
  * Constitutional compliance audit logging with privacy protection
  * Compliance: LGPD + Constitutional Privacy + ≥9.9/10 Standards
  */
-import type { Database } from '@neonpro/types';
-import { z } from 'zod';
+import type { Database } from "@neonpro/types";
+import { z } from "zod";
 export declare const LGPDAuditLogEntrySchema: z.ZodObject<
   {
     log_id: z.ZodString;
     timestamp: z.ZodString;
     event_type: z.ZodEnum<
       [
-        'data_access',
-        'data_modification',
-        'data_deletion',
-        'consent_given',
-        'consent_withdrawn',
-        'data_export',
-        'data_transfer',
-        'breach_detected',
-        'privacy_violation',
-        'constitutional_violation',
+        "data_access",
+        "data_modification",
+        "data_deletion",
+        "consent_given",
+        "consent_withdrawn",
+        "data_export",
+        "data_transfer",
+        "breach_detected",
+        "privacy_violation",
+        "constitutional_violation",
       ]
     >;
     user_id: z.ZodOptional<z.ZodString>;
     data_subject_id: z.ZodOptional<z.ZodString>;
     legal_basis: z.ZodString;
     purpose: z.ZodString;
-    data_categories: z.ZodArray<z.ZodString, 'many'>;
+    data_categories: z.ZodArray<z.ZodString, "many">;
     processing_details: z.ZodObject<
       {
         operation: z.ZodString;
@@ -35,7 +35,7 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
         retention_period: z.ZodOptional<z.ZodString>;
         automated_decision: z.ZodDefault<z.ZodBoolean>;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         operation: string;
@@ -56,7 +56,7 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
         fundamental_rights_impact: z.ZodOptional<z.ZodString>;
         constitutional_basis: z.ZodOptional<z.ZodString>;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         privacy_rights_affected: boolean;
@@ -74,9 +74,9 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
         lgpd_compliant: z.ZodBoolean;
         constitutional_compliant: z.ZodBoolean;
         validation_score: z.ZodNumber;
-        violations_detected: z.ZodArray<z.ZodString, 'many'>;
+        violations_detected: z.ZodArray<z.ZodString, "many">;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         lgpd_compliant: boolean;
@@ -98,7 +98,7 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
         integrity_hash: z.ZodString;
         quality_score: z.ZodNumber;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         logged_by: string;
@@ -114,7 +114,7 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
       }
     >;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     audit_trail: {
@@ -126,16 +126,16 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
     timestamp: string;
     log_id: string;
     event_type:
-      | 'constitutional_violation'
-      | 'data_access'
-      | 'data_modification'
-      | 'data_deletion'
-      | 'consent_given'
-      | 'consent_withdrawn'
-      | 'data_export'
-      | 'data_transfer'
-      | 'breach_detected'
-      | 'privacy_violation';
+      | "constitutional_violation"
+      | "data_access"
+      | "data_modification"
+      | "data_deletion"
+      | "consent_given"
+      | "consent_withdrawn"
+      | "data_export"
+      | "data_transfer"
+      | "breach_detected"
+      | "privacy_violation";
     legal_basis: string;
     purpose: string;
     data_categories: string[];
@@ -169,16 +169,16 @@ export declare const LGPDAuditLogEntrySchema: z.ZodObject<
     timestamp: string;
     log_id: string;
     event_type:
-      | 'constitutional_violation'
-      | 'data_access'
-      | 'data_modification'
-      | 'data_deletion'
-      | 'consent_given'
-      | 'consent_withdrawn'
-      | 'data_export'
-      | 'data_transfer'
-      | 'breach_detected'
-      | 'privacy_violation';
+      | "constitutional_violation"
+      | "data_access"
+      | "data_modification"
+      | "data_deletion"
+      | "consent_given"
+      | "consent_withdrawn"
+      | "data_export"
+      | "data_transfer"
+      | "breach_detected"
+      | "privacy_violation";
     legal_basis: string;
     purpose: string;
     data_categories: string[];
@@ -212,7 +212,7 @@ export declare const LGPDAuditConfigSchema: z.ZodObject<
     integrity_verification: z.ZodDefault<z.ZodBoolean>;
     automated_alerts: z.ZodDefault<z.ZodBoolean>;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     constitutional_validation: boolean;
@@ -245,7 +245,7 @@ export declare class LGPDAuditLogger {
    * Log data processing activity
    */
   logDataProcessing(activity: {
-    event_type: LGPDAuditLogEntry['event_type'];
+    event_type: LGPDAuditLogEntry["event_type"];
     user_id?: string;
     data_subject_id?: string;
     legal_basis: string;
@@ -260,7 +260,7 @@ export declare class LGPDAuditLogger {
    * Log consent activity
    */
   logConsentActivity(activity: {
-    event_type: 'consent_given' | 'consent_withdrawn';
+    event_type: "consent_given" | "consent_withdrawn";
     data_subject_id: string;
     purpose: string;
     legal_basis: string;
@@ -277,7 +277,7 @@ export declare class LGPDAuditLogger {
   logDataBreach(breach: {
     data_subject_id?: string;
     affected_data_categories: string[];
-    breach_severity: 'low' | 'medium' | 'high' | 'critical';
+    breach_severity: "low" | "medium" | "high" | "critical";
     breach_description: string;
     containment_measures: string[];
     notification_required: boolean;
@@ -308,7 +308,7 @@ export declare class LGPDAuditLogger {
   queryAuditLogs(_filters: {
     start_date?: string;
     end_date?: string;
-    event_type?: LGPDAuditLogEntry['event_type'];
+    event_type?: LGPDAuditLogEntry["event_type"];
     data_subject_id?: string;
     user_id?: string;
   }): Promise<LGPDAuditLogEntry[]>;

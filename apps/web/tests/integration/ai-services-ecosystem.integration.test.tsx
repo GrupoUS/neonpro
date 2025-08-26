@@ -599,7 +599,9 @@ class AIServicesEcosystemTester {
       expect(complianceResponse.status).toBe(200);
       const complianceData = await complianceResponse.json();
       expect(complianceData.success).toBeTruthy();
-      expect(complianceData.data?.compliance_status?.lgpd_compliant).toBeTruthy();
+      expect(
+        complianceData.data?.compliance_status?.lgpd_compliant,
+      ).toBeTruthy();
       expect(complianceData.data?.audit_trail).toBeDefined();
     }
 
@@ -700,7 +702,9 @@ class AIServicesEcosystemTester {
     );
 
     // Even if monitoring fails, it should not break the service
-    expect([200, 202, 500].includes(monitoringFailureResponse.status)).toBeTruthy();
+    expect(
+      [200, 202, 500].includes(monitoringFailureResponse.status),
+    ).toBeTruthy();
 
     AIServicesEcosystemTester.context.serviceMetrics.set(
       "resilience_testing_completed",

@@ -127,7 +127,8 @@ FRONTEND_FRAMEWORK:
   choice: "Next.js 15 + React 19"
   reasoning: "Server Components + streaming + healthcare performance"
   alternatives_considered: ["Remix", "SvelteKit", "Angular"]
-  decision_factors: ["AI streaming support", "Healthcare compliance", "Performance"]
+  decision_factors:
+    ["AI streaming support", "Healthcare compliance", "Performance"]
 
 BACKEND_FRAMEWORK:
   choice: "Hono.dev 4.x"

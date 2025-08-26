@@ -4,13 +4,21 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-'use client';
+"use client";
 
-import { Activity, CheckCircle2, Clock, Shield, TrendingUp, Users, XCircle } from 'lucide-react';
-import type { SecurityMetrics } from '../../../lib/utils';
-import { Badge } from '../../ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Progress } from '../../ui/progress';
+import {
+  Activity,
+  CheckCircle2,
+  Clock,
+  Shield,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type { SecurityMetrics } from "../../../lib/utils";
+import { Badge } from "../../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { Progress } from "../../ui/progress";
 
 interface SecurityMetricsOverviewProps {
   metrics: SecurityMetrics;
@@ -21,48 +29,48 @@ export function SecurityMetricsOverview({
 }: SecurityMetricsOverviewProps) {
   const getThreatLevelColor = (level: string) => {
     switch (level) {
-      case 'low': {
-        return 'text-green-600';
+      case "low": {
+        return "text-green-600";
       }
-      case 'medium': {
-        return 'text-yellow-600';
+      case "medium": {
+        return "text-yellow-600";
       }
-      case 'high': {
-        return 'text-orange-600';
+      case "high": {
+        return "text-orange-600";
       }
-      case 'critical': {
-        return 'text-red-600';
+      case "critical": {
+        return "text-red-600";
       }
       default: {
-        return 'text-gray-600';
+        return "text-gray-600";
       }
     }
   };
 
   const getComplianceColor = (score: number) => {
     if (score >= 95) {
-      return 'text-green-600';
+      return "text-green-600";
     }
     if (score >= 85) {
-      return 'text-yellow-600';
+      return "text-yellow-600";
     }
     if (score >= 70) {
-      return 'text-orange-600';
+      return "text-orange-600";
     }
-    return 'text-red-600';
+    return "text-red-600";
   };
 
   const _getComplianceVariant = (score: number) => {
     if (score >= 95) {
-      return 'default';
+      return "default";
     }
     if (score >= 85) {
-      return 'secondary';
+      return "secondary";
     }
     if (score >= 70) {
-      return 'outline';
+      return "outline";
     }
-    return 'destructive';
+    return "destructive";
   };
 
   return (
@@ -82,7 +90,9 @@ export function SecurityMetricsOverview({
           <div className="mt-2 flex items-center space-x-2">
             <Badge
               className="text-xs"
-              variant={metrics.threat_level === 'low' ? 'default' : 'destructive'}
+              variant={
+                metrics.threat_level === "low" ? "default" : "destructive"
+              }
             >
               {metrics.unresolved_alerts} unresolved alerts
             </Badge>
@@ -102,7 +112,9 @@ export function SecurityMetricsOverview({
             <span className="text-gray-600 text-xs">High risk:</span>
             <Badge
               className="text-xs"
-              variant={metrics.high_risk_sessions > 0 ? 'destructive' : 'secondary'}
+              variant={
+                metrics.high_risk_sessions > 0 ? "destructive" : "secondary"
+              }
             >
               {metrics.high_risk_sessions}
             </Badge>
@@ -124,7 +136,9 @@ export function SecurityMetricsOverview({
             <span className="text-gray-600 text-xs">Failed logins:</span>
             <Badge
               className="text-xs"
-              variant={metrics.failed_attempts_24h > 10 ? 'destructive' : 'secondary'}
+              variant={
+                metrics.failed_attempts_24h > 10 ? "destructive" : "secondary"
+              }
             >
               {metrics.failed_attempts_24h}
             </Badge>
@@ -138,9 +152,11 @@ export function SecurityMetricsOverview({
           <CardTitle className="font-medium text-sm">
             Compliance Score
           </CardTitle>
-          {metrics.compliance_score >= 95
-            ? <CheckCircle2 className="h-4 w-4 text-green-600" />
-            : <XCircle className="h-4 w-4 text-red-600" />}
+          {metrics.compliance_score >= 95 ? (
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          ) : (
+            <XCircle className="h-4 w-4 text-red-600" />
+          )}
         </CardHeader>
         <CardContent>
           <div
@@ -178,8 +194,8 @@ export function SecurityMetricsOverview({
               <div
                 className={`h-2 w-2 rounded-full ${
                   metrics.avg_response_time_minutes <= 30
-                    ? 'bg-green-500'
-                    : 'bg-red-500'
+                    ? "bg-green-500"
+                    : "bg-red-500"
                 }`}
               />
               <span>Current: {metrics.avg_response_time_minutes}m</span>
@@ -198,7 +214,7 @@ export function SecurityMetricsOverview({
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="font-semibold text-green-600 text-lg">
-                {metrics.compliance_score >= 95 ? '✓' : '⚠'}
+                {metrics.compliance_score >= 95 ? "✓" : "⚠"}
               </div>
               <div className="text-gray-600 text-xs">Compliance</div>
             </div>
@@ -212,12 +228,12 @@ export function SecurityMetricsOverview({
               <div
                 className={`font-semibold text-lg ${
                   metrics.unresolved_alerts === 0
-                    ? 'text-green-600'
-                    : 'text-red-600'
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {metrics.unresolved_alerts === 0
-                  ? '✓'
+                  ? "✓"
                   : metrics.unresolved_alerts}
               </div>
               <div className="text-gray-600 text-xs">Alerts</div>

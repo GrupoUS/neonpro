@@ -1,6 +1,12 @@
-import { z } from 'zod';
-import { DateSchema, EmailSchema, PatientStatus, PhoneSchema, UUIDSchema } from '../types';
-import type { BaseEntity } from '../types';
+import { z } from "zod";
+import {
+  DateSchema,
+  EmailSchema,
+  PatientStatus,
+  PhoneSchema,
+  UUIDSchema,
+} from "../types";
+import type { BaseEntity } from "../types";
 
 // Patient interfaces for aesthetic clinic
 export interface Patient extends BaseEntity {
@@ -71,7 +77,7 @@ export interface PreviousTreatment {
   treatmentType: string;
   date: Date;
   provider: string;
-  result: 'excellent' | 'good' | 'fair' | 'poor';
+  result: "excellent" | "good" | "fair" | "poor";
   complications?: string;
   notes?: string;
 }
@@ -128,82 +134,82 @@ export interface ConsentForm {
 
 // Enums
 export enum Gender {
-  MALE = 'male',
-  FEMALE = 'female',
-  OTHER = 'other',
-  PREFER_NOT_TO_SAY = 'prefer_not_to_say',
+  MALE = "male",
+  FEMALE = "female",
+  OTHER = "other",
+  PREFER_NOT_TO_SAY = "prefer_not_to_say",
 }
 
 export enum PregnancyStatus {
-  NOT_PREGNANT = 'not_pregnant',
-  PREGNANT = 'pregnant',
-  TRYING_TO_CONCEIVE = 'trying_to_conceive',
-  NOT_APPLICABLE = 'not_applicable',
+  NOT_PREGNANT = "not_pregnant",
+  PREGNANT = "pregnant",
+  TRYING_TO_CONCEIVE = "trying_to_conceive",
+  NOT_APPLICABLE = "not_applicable",
 }
 
 export enum AllergySeverity {
-  MILD = 'mild',
-  MODERATE = 'moderate',
-  SEVERE = 'severe',
-  ANAPHYLACTIC = 'anaphylactic',
+  MILD = "mild",
+  MODERATE = "moderate",
+  SEVERE = "severe",
+  ANAPHYLACTIC = "anaphylactic",
 }
 export enum SkinType {
-  TYPE_I = 'type_i', // Very fair, always burns, never tans
-  TYPE_II = 'type_ii', // Fair, usually burns, tans minimally
-  TYPE_III = 'type_iii', // Medium, sometimes burns, tans gradually
-  TYPE_IV = 'type_iv', // Olive, rarely burns, tans easily
-  TYPE_V = 'type_v', // Brown, very rarely burns, tans very easily
-  TYPE_VI = 'type_vi', // Dark brown/black, never burns, tans very easily
+  TYPE_I = "type_i", // Very fair, always burns, never tans
+  TYPE_II = "type_ii", // Fair, usually burns, tans minimally
+  TYPE_III = "type_iii", // Medium, sometimes burns, tans gradually
+  TYPE_IV = "type_iv", // Olive, rarely burns, tans easily
+  TYPE_V = "type_v", // Brown, very rarely burns, tans very easily
+  TYPE_VI = "type_vi", // Dark brown/black, never burns, tans very easily
 }
 
 export enum SkinCondition {
-  NORMAL = 'normal',
-  DRY = 'dry',
-  OILY = 'oily',
-  COMBINATION = 'combination',
-  SENSITIVE = 'sensitive',
-  ACNE_PRONE = 'acne_prone',
-  MATURE = 'mature',
-  ROSACEA = 'rosacea',
-  HYPERPIGMENTATION = 'hyperpigmentation',
-  MELASMA = 'melasma',
+  NORMAL = "normal",
+  DRY = "dry",
+  OILY = "oily",
+  COMBINATION = "combination",
+  SENSITIVE = "sensitive",
+  ACNE_PRONE = "acne_prone",
+  MATURE = "mature",
+  ROSACEA = "rosacea",
+  HYPERPIGMENTATION = "hyperpigmentation",
+  MELASMA = "melasma",
 }
 
 export enum HydrationLevel {
-  VERY_DRY = 'very_dry',
-  DRY = 'dry',
-  NORMAL = 'normal',
-  WELL_HYDRATED = 'well_hydrated',
+  VERY_DRY = "very_dry",
+  DRY = "dry",
+  NORMAL = "normal",
+  WELL_HYDRATED = "well_hydrated",
 }
 
 export enum ElasticityLevel {
-  POOR = 'poor',
-  FAIR = 'fair',
-  GOOD = 'good',
-  EXCELLENT = 'excellent',
+  POOR = "poor",
+  FAIR = "fair",
+  GOOD = "good",
+  EXCELLENT = "excellent",
 }
 
 export enum SensitivityLevel {
-  LOW = 'low',
-  MODERATE = 'moderate',
-  HIGH = 'high',
-  VERY_HIGH = 'very_high',
+  LOW = "low",
+  MODERATE = "moderate",
+  HIGH = "high",
+  VERY_HIGH = "very_high",
 }
 
 export enum AcneGrade {
-  GRADE_0 = 'grade_0', // Clear skin
-  GRADE_1 = 'grade_1', // Mild
-  GRADE_2 = 'grade_2', // Moderate
-  GRADE_3 = 'grade_3', // Moderately severe
-  GRADE_4 = 'grade_4', // Severe
+  GRADE_0 = "grade_0", // Clear skin
+  GRADE_1 = "grade_1", // Mild
+  GRADE_2 = "grade_2", // Moderate
+  GRADE_3 = "grade_3", // Moderately severe
+  GRADE_4 = "grade_4", // Severe
 }
 
 export enum WrinkleGrade {
-  GRADE_0 = 'grade_0', // No wrinkles
-  GRADE_1 = 'grade_1', // Fine wrinkles
-  GRADE_2 = 'grade_2', // Moderate wrinkles
-  GRADE_3 = 'grade_3', // Deep wrinkles
-  GRADE_4 = 'grade_4', // Very deep wrinkles
+  GRADE_0 = "grade_0", // No wrinkles
+  GRADE_1 = "grade_1", // Fine wrinkles
+  GRADE_2 = "grade_2", // Moderate wrinkles
+  GRADE_3 = "grade_3", // Deep wrinkles
+  GRADE_4 = "grade_4", // Very deep wrinkles
 } // Validation schemas
 export const AddressSchema = z.object({
   street: z.string().min(1),
@@ -248,12 +254,12 @@ export const CreatePatientSchema = z.object({
   allergies: z.array(AllergySchema).default([]),
   medications: z.array(MedicationSchema).default([]),
   referralSource: z.string().optional(),
-  notes: z.string().default(''),
+  notes: z.string().default(""),
   photoConsent: z.boolean(),
   marketingConsent: z.boolean(),
   lgpdConsent: z
     .boolean()
-    .refine((val) => val === true, 'LGPD consent is required'),
+    .refine((val) => val === true, "LGPD consent is required"),
   tags: z.array(z.string()).default([]),
 });
 

@@ -5,14 +5,14 @@
  * for healthcare applications.
  */
 
-import type { Metric } from 'web-vitals';
+import type { Metric } from "web-vitals";
 import type {
   AlertData,
   CustomMetric,
   ErrorEvent,
   MonitoringConfig,
   PerformanceReport,
-} from '../types';
+} from "../types";
 
 /**
  * Metrics storage interface
@@ -47,7 +47,7 @@ export interface MetricsFilter {
 export interface ReportPeriod {
   start: Date;
   end: Date;
-  granularity: 'hour' | 'day' | 'week' | 'month';
+  granularity: "hour" | "day" | "week" | "month";
 }
 
 /**
@@ -84,11 +84,15 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     let filtered = this.metrics;
 
     if (filters.startDate) {
-      filtered = filtered.filter((m) => (m.timestamp || 0) >= (filters.startDate?.getTime() || 0));
+      filtered = filtered.filter(
+        (m) => (m.timestamp || 0) >= (filters.startDate?.getTime() || 0),
+      );
     }
 
     if (filters.endDate) {
-      filtered = filtered.filter((m) => (m.timestamp || 0) <= (filters.endDate?.getTime() || 0));
+      filtered = filtered.filter(
+        (m) => (m.timestamp || 0) <= (filters.endDate?.getTime() || 0),
+      );
     }
 
     if (filters.metricNames?.length) {
@@ -100,7 +104,9 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     }
 
     if (filters.sessionId) {
-      filtered = filtered.filter((m) => m.context?.sessionId === filters.sessionId);
+      filtered = filtered.filter(
+        (m) => m.context?.sessionId === filters.sessionId,
+      );
     }
 
     if (filters.feature) {
@@ -108,7 +114,9 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     }
 
     if (filters.environment) {
-      filtered = filtered.filter((m) => m.context?.environment === filters.environment);
+      filtered = filtered.filter(
+        (m) => m.context?.environment === filters.environment,
+      );
     }
 
     const offset = filters.offset || 0;
@@ -124,11 +132,13 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     });
 
     const vitals = this.vitals.filter(
-      (v) => v.timestamp >= period.start.getTime() && v.timestamp <= period.end.getTime(),
+      (v) =>
+        v.timestamp >= period.start.getTime() &&
+        v.timestamp <= period.end.getTime(),
     );
 
-    const errors = this.errors.filter((e) =>
-      e.timestamp >= period.start && e.timestamp <= period.end
+    const errors = this.errors.filter(
+      (e) => e.timestamp >= period.start && e.timestamp <= period.end,
     );
 
     return this.generateReport(metrics, vitals, errors, period);
@@ -139,7 +149,9 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
     const cutoffTimestamp = cutoffDate.getTime();
 
-    this.metrics = this.metrics.filter((m) => (m.timestamp || 0) > cutoffTimestamp);
+    this.metrics = this.metrics.filter(
+      (m) => (m.timestamp || 0) > cutoffTimestamp,
+    );
     this.vitals = this.vitals.filter((v) => v.timestamp > cutoffTimestamp);
     this.errors = this.errors.filter((e) => e.timestamp > cutoffDate);
   }
@@ -151,9 +163,11 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     period: ReportPeriod,
   ): PerformanceReport {
     // Calculate summary stats
-    const totalSessions = new Set(metrics.map((m) => m.context?.sessionId).filter(Boolean)).size;
+    const totalSessions = new Set(
+      metrics.map((m) => m.context?.sessionId).filter(Boolean),
+    ).size;
     const averageLoadTime = this.calculateAverage(
-      vitals.filter((v) => v.name === 'LCP').map((v) => v.value),
+      vitals.filter((v) => v.name === "LCP").map((v) => v.value),
     );
     const errorRate = (errors.length / Math.max(totalSessions, 1)) * 100;
 
@@ -168,7 +182,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
         samples: number;
       }
     > = {};
-    ['CLS', 'FCP', 'FID', 'INP', 'LCP', 'TTFB'].forEach((name) => {
+    ["CLS", "FCP", "FID", "INP", "LCP", "TTFB"].forEach((name) => {
       const values = vitals.filter((v) => v.name === name).map((v) => v.value);
       if (values.length > 0) {
         webVitalsData[name] = {
@@ -202,7 +216,7 @@ export class InMemoryMetricsStorage implements MetricsStorage {
           median: this.calculatePercentile(values, 50),
           p95: this.calculatePercentile(values, 95),
           samples: values.length,
-          trend: 'stable', // Would need historical data for actual trend analysis
+          trend: "stable", // Would need historical data for actual trend analysis
         };
       }
     });
@@ -243,7 +257,8 @@ export class InMemoryMetricsStorage implements MetricsStorage {
   private getTopIssues(errors: ErrorEvent[]): string[] {
     const errorCounts: Record<string, number> = {};
     errors.forEach((error) => {
-      errorCounts[error.fingerprint] = (errorCounts[error.fingerprint] || 0) + 1;
+      errorCounts[error.fingerprint] =
+        (errorCounts[error.fingerprint] || 0) + 1;
     });
 
     return Object.entries(errorCounts)
@@ -265,8 +280,8 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     // High error rate alert
     if (errors.length > 10) {
       alerts.push({
-        type: 'error_rate',
-        severity: 'high',
+        type: "error_rate",
+        severity: "high",
         message: `High error rate detected: ${errors.length} errors in reporting period`,
         timestamp: new Date(),
         resolved: false,
@@ -274,13 +289,15 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     }
 
     // Poor LCP performance alert
-    const lcpValues = vitals.filter((v) => v.name === 'LCP').map((v) => v.value);
+    const lcpValues = vitals
+      .filter((v) => v.name === "LCP")
+      .map((v) => v.value);
     if (lcpValues.length > 0) {
       const p95LCP = this.calculatePercentile(lcpValues, 95);
       if (p95LCP > 4000) {
         alerts.push({
-          type: 'performance',
-          severity: 'medium',
+          type: "performance",
+          severity: "medium",
           message: `Poor LCP performance: p95 ${p95LCP}ms (threshold: 4000ms)`,
           timestamp: new Date(),
           resolved: false,
@@ -291,16 +308,19 @@ export class InMemoryMetricsStorage implements MetricsStorage {
     // Slow healthcare operations alert
     const slowOperations = metrics.filter(
       (m) =>
-        m.rating === 'poor'
-        && ['patient_search_time', 'form_submission_time', 'database_query_time'].includes(m.name),
+        m.rating === "poor" &&
+        [
+          "patient_search_time",
+          "form_submission_time",
+          "database_query_time",
+        ].includes(m.name),
     );
 
     if (slowOperations.length > 5) {
       alerts.push({
-        type: 'performance',
-        severity: 'medium',
-        message:
-          `Multiple slow healthcare operations detected: ${slowOperations.length} operations`,
+        type: "performance",
+        severity: "medium",
+        message: `Multiple slow healthcare operations detected: ${slowOperations.length} operations`,
         timestamp: new Date(),
         resolved: false,
       });
@@ -331,12 +351,12 @@ export class PerformanceMonitoringServer {
       await this.storage.storeMetric(metric);
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     } catch {
-      return new Response(JSON.stringify({ error: 'Invalid metric data' }), {
+      return new Response(JSON.stringify({ error: "Invalid metric data" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
   }
@@ -350,12 +370,12 @@ export class PerformanceMonitoringServer {
       await this.storage.storeVital(vital);
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     } catch {
-      return new Response(JSON.stringify({ error: 'Invalid vital data' }), {
+      return new Response(JSON.stringify({ error: "Invalid vital data" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
   }
@@ -369,12 +389,12 @@ export class PerformanceMonitoringServer {
       await this.storage.storeError(error);
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     } catch {
-      return new Response(JSON.stringify({ error: 'Invalid error data' }), {
+      return new Response(JSON.stringify({ error: "Invalid error data" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
   }
@@ -390,13 +410,16 @@ export class PerformanceMonitoringServer {
 
       return new Response(JSON.stringify(report), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     } catch {
-      return new Response(JSON.stringify({ error: 'Failed to generate report' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ error: "Failed to generate report" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
   }
 
@@ -411,13 +434,16 @@ export class PerformanceMonitoringServer {
 
       return new Response(JSON.stringify({ metrics }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     } catch {
-      return new Response(JSON.stringify({ error: 'Failed to query metrics' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({ error: "Failed to query metrics" }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
     }
   }
 
@@ -429,16 +455,20 @@ export class PerformanceMonitoringServer {
   }
 
   private parsePeriod(params: URLSearchParams): ReportPeriod {
-    const startParam = params.get('start');
-    const endParam = params.get('end');
-    const granularityParam = params.get('granularity');
+    const startParam = params.get("start");
+    const endParam = params.get("end");
+    const granularityParam = params.get("granularity");
 
-    const start = startParam ? new Date(startParam) : new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const start = startParam
+      ? new Date(startParam)
+      : new Date(Date.now() - 24 * 60 * 60 * 1000);
     const end = endParam ? new Date(endParam) : new Date();
     const granularity =
-      granularityParam === 'day' || granularityParam === 'week' || granularityParam === 'month'
+      granularityParam === "day" ||
+      granularityParam === "week" ||
+      granularityParam === "month"
         ? granularityParam
-        : ('hour' as const);
+        : ("hour" as const);
 
     return { start, end, granularity };
   }
@@ -446,49 +476,49 @@ export class PerformanceMonitoringServer {
   private parseFilters(params: URLSearchParams): MetricsFilter {
     const filters: MetricsFilter = {};
 
-    const startParam = params.get('start');
+    const startParam = params.get("start");
     if (startParam) {
       filters.startDate = new Date(startParam);
     }
 
-    const endParam = params.get('end');
+    const endParam = params.get("end");
     if (endParam) {
       filters.endDate = new Date(endParam);
     }
 
-    const metricsParam = params.get('metrics');
+    const metricsParam = params.get("metrics");
     if (metricsParam) {
-      filters.metricNames = metricsParam.split(',');
+      filters.metricNames = metricsParam.split(",");
     }
 
-    const userIdParam = params.get('userId');
+    const userIdParam = params.get("userId");
     if (userIdParam) {
       filters.userId = userIdParam;
     }
 
-    const sessionIdParam = params.get('sessionId');
+    const sessionIdParam = params.get("sessionId");
     if (sessionIdParam) {
       filters.sessionId = sessionIdParam;
     }
 
-    const featureParam = params.get('feature');
+    const featureParam = params.get("feature");
     if (featureParam) {
       filters.feature = featureParam;
     }
 
-    const environmentParam = params.get('environment');
+    const environmentParam = params.get("environment");
     if (environmentParam) {
       filters.environment = environmentParam;
     }
 
-    const limitParam = params.get('limit');
+    const limitParam = params.get("limit");
     if (limitParam) {
       const limit = Number.parseInt(limitParam, 10);
       if (!Number.isNaN(limit)) {
         filters.limit = limit;
       }
     }
-    const offsetParam = params.get('offset');
+    const offsetParam = params.get("offset");
     if (offsetParam) {
       const offset = Number.parseInt(offsetParam, 10);
       if (!Number.isNaN(offset)) {
@@ -503,7 +533,10 @@ export class PerformanceMonitoringServer {
 /**
  * Next.js API route helpers
  */
-export function createMonitoringAPI(storage: MetricsStorage, config: MonitoringConfig) {
+export function createMonitoringAPI(
+  storage: MetricsStorage,
+  config: MonitoringConfig,
+) {
   const server = new PerformanceMonitoringServer(storage, config);
 
   return {

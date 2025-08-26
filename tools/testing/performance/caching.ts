@@ -5,8 +5,8 @@
  * Includes multi-level caching, CDN optimization, and cache invalidation
  */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // Cache configuration constants
 export const CACHE_CONFIG = {
@@ -48,7 +48,7 @@ export class CacheKeyGenerator {
   ): string {
     const filterHash = filters
       ? CacheKeyGenerator.hashObject(filters)
-      : 'no-filters';
+      : "no-filters";
     return `analytics:${userId}:${dateRange}:${filterHash}`;
   }
 
@@ -63,7 +63,7 @@ export class CacheKeyGenerator {
   static apiResponse(endpoint: string, params?: Record<string, any>): string {
     const paramHash = params
       ? CacheKeyGenerator.hashObject(params)
-      : 'no-params';
+      : "no-params";
     return `api:${endpoint}:${paramHash}`;
   }
 
@@ -83,7 +83,7 @@ export class CacheKeyGenerator {
 export class CacheManager {
   private readonly memoryCache = new Map<
     string,
-    { data: any; expires: number; tags: string[]; }
+    { data: any; expires: number; tags: string[] }
   >();
   private readonly DEFAULT_TTL = 300_000; // 5 minutes
 
@@ -157,10 +157,11 @@ export class CacheManager {
 export const cacheManager = new CacheManager();
 
 // Setup automatic cleanup every 5 minutes
-if (typeof window === 'undefined') {
+if (typeof window === "undefined") {
   setInterval(() => {
     const cleaned = cacheManager.cleanup();
-    if (cleaned > 0) {}
+    if (cleaned > 0) {
+    }
   }, 300_000); // 5 minutes
 }
 
@@ -169,39 +170,39 @@ export class CacheHeaders {
   static staticAsset(): Headers {
     const headers = new Headers();
     headers.set(
-      'Cache-Control',
+      "Cache-Control",
       `public, max-age=${CACHE_CONFIG.STATIC_ASSETS.maxAge}, immutable`,
     );
-    headers.set('ETag', `"${Date.now()}"`);
+    headers.set("ETag", `"${Date.now()}"`);
     return headers;
   }
 
   static apiResponse(config = CACHE_CONFIG.API_RESPONSES): Headers {
     const headers = new Headers();
     headers.set(
-      'Cache-Control',
+      "Cache-Control",
       `public, max-age=${config.maxAge}, stale-while-revalidate=${config.swr}`,
     );
-    headers.set('ETag', `"${Date.now()}"`);
-    headers.set('Vary', 'Accept, Authorization');
+    headers.set("ETag", `"${Date.now()}"`);
+    headers.set("Vary", "Accept, Authorization");
     return headers;
   }
 
   static dynamicContent(): Headers {
     const headers = new Headers();
     headers.set(
-      'Cache-Control',
+      "Cache-Control",
       `public, max-age=${CACHE_CONFIG.DYNAMIC_CONTENT.maxAge}, stale-while-revalidate=${CACHE_CONFIG.DYNAMIC_CONTENT.swr}`,
     );
-    headers.set('ETag', `"${Date.now()}"`);
+    headers.set("ETag", `"${Date.now()}"`);
     return headers;
   }
 
   static noCache(): Headers {
     const headers = new Headers();
-    headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-    headers.set('Pragma', 'no-cache');
-    headers.set('Expires', '0');
+    headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.set("Pragma", "no-cache");
+    headers.set("Expires", "0");
     return headers;
   }
 
@@ -209,14 +210,15 @@ export class CacheHeaders {
     const headers = new Headers();
 
     // Check if user is authenticated
-    const isAuthenticated = request.headers.get('authorization') || request.cookies.get('session');
+    const isAuthenticated =
+      request.headers.get("authorization") || request.cookies.get("session");
 
     if (isAuthenticated) {
       // Private cache for authenticated users
-      headers.set('Cache-Control', 'private, max-age=300');
+      headers.set("Cache-Control", "private, max-age=300");
     } else {
       // Public cache for anonymous users
-      headers.set('Cache-Control', 'public, max-age=3600');
+      headers.set("Cache-Control", "public, max-age=3600");
     }
 
     return headers;
@@ -237,13 +239,13 @@ export class CacheInvalidation {
 
   // Invalidate analytics caches
   static async invalidateAnalytics(userId?: string): Promise<void> {
-    const tags = userId ? [`analytics:${userId}`] : ['analytics'];
+    const tags = userId ? [`analytics:${userId}`] : ["analytics"];
     const _invalidated = cacheManager.invalidateByTags(tags);
   }
 
   // Invalidate subscription caches
   static async invalidateSubscriptions(): Promise<void> {
-    const _invalidated = cacheManager.invalidateByTags(['subscription']);
+    const _invalidated = cacheManager.invalidateByTags(["subscription"]);
   }
 
   // Time-based invalidation
@@ -263,22 +265,22 @@ export class CDNOptimization {
       width?: number;
       height?: number;
       quality?: number;
-      format?: 'webp' | 'avif' | 'auto';
+      format?: "webp" | "avif" | "auto";
     } = {},
   ): string {
-    const { width, height, quality = 75, format = 'auto' } = options;
+    const { width, height, quality = 75, format = "auto" } = options;
 
     // Use Next.js Image Optimization API
     const params = new URLSearchParams();
     if (width) {
-      params.set('w', width.toString());
+      params.set("w", width.toString());
     }
     if (height) {
-      params.set('h', height.toString());
+      params.set("h", height.toString());
     }
-    params.set('q', quality.toString());
-    if (format !== 'auto') {
-      params.set('f', format);
+    params.set("q", quality.toString());
+    if (format !== "auto") {
+      params.set("f", format);
     }
 
     return `/_next/image?url=${encodeURIComponent(src)}&${params.toString()}`;
@@ -288,7 +290,7 @@ export class CDNOptimization {
   static generatePreloadLinks(
     resources: {
       href: string;
-      as: 'script' | 'style' | 'font' | 'image';
+      as: "script" | "style" | "font" | "image";
       type?: string;
       crossorigin?: boolean;
     }[],
@@ -301,19 +303,19 @@ export class CDNOptimization {
           link += ` type="${resource.type}"`;
         }
         if (resource.crossorigin) {
-          link += ' crossorigin';
+          link += " crossorigin";
         }
 
         return `${link}>`;
       })
-      .join('\n');
+      .join("\n");
   }
 
   // Generate resource hints
   static generateResourceHints(domains: string[]): string {
     return domains
       .map((domain) => `<link rel="dns-prefetch" href="//${domain}">`)
-      .join('\n');
+      .join("\n");
   }
 }
 
@@ -339,16 +341,16 @@ export function withCache(
     const cacheKey = keyGenerator
       ? keyGenerator(req)
       : CacheKeyGenerator.apiResponse(
-        req.url,
-        Object.fromEntries(req.nextUrl.searchParams),
-      );
+          req.url,
+          Object.fromEntries(req.nextUrl.searchParams),
+        );
 
     // Try to get from cache
     const cached = cacheManager.get(cacheKey);
     if (cached) {
       return new NextResponse(JSON.stringify(cached), {
         status: 200,
-        headers: CacheHeaders.apiResponse().set('X-Cache', 'HIT'),
+        headers: CacheHeaders.apiResponse().set("X-Cache", "HIT"),
       });
     }
 
@@ -381,7 +383,8 @@ export class CachePerformanceMonitor {
 
   static getStats() {
     const total = CachePerformanceMonitor.hits + CachePerformanceMonitor.misses;
-    const hitRate = total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
+    const hitRate =
+      total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
     const uptime = Date.now() - CachePerformanceMonitor.startTime;
 
     return {

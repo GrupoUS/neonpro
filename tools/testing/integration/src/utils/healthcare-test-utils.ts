@@ -5,12 +5,12 @@
  * compliance scenarios, and multi-user interactions.
  */
 
-import { faker } from '@faker-js/faker';
-import { expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { faker } from "@faker-js/faker";
+import { expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 // Set locale for Brazilian healthcare context
-faker.setLocale('pt_BR');
+faker.setLocale("pt_BR");
 
 export interface TestPatient {
   id?: string;
@@ -32,9 +32,9 @@ export interface TestProfessional {
   id?: string;
   name: string;
   email: string;
-  type: 'doctor' | 'nurse' | 'physiotherapist' | 'psychologist';
+  type: "doctor" | "nurse" | "physiotherapist" | "psychologist";
   registration: string;
-  registrationBody: 'CRM' | 'COREN' | 'CREFITO' | 'CRP';
+  registrationBody: "CRM" | "COREN" | "CREFITO" | "CRP";
   specialties?: string[];
 }
 
@@ -44,7 +44,7 @@ export interface TestAppointment {
   professionalId: string;
   datetime: string;
   type: string;
-  status?: 'scheduled' | 'completed' | 'cancelled';
+  status?: "scheduled" | "completed" | "cancelled";
   notes?: string;
 }
 
@@ -67,19 +67,19 @@ export class HealthcareTestUtils {
       email: faker.internet.email(),
       phone: this.generateBrazilianPhone(),
       birthDate: faker.date
-        .birthdate({ min: 18, max: 80, mode: 'age' })
+        .birthdate({ min: 18, max: 80, mode: "age" })
         .toISOString()
-        .split('T')[0],
+        .split("T")[0],
       allergies: [],
       chronicConditions: [],
       emergencyContact: {
         name: faker.name.fullName(),
         phone: this.generateBrazilianPhone(),
         relationship: faker.helpers.arrayElement([
-          'Cônjuge',
-          'Filho(a)',
-          'Pai/Mãe',
-          'Irmão(ã)',
+          "Cônjuge",
+          "Filho(a)",
+          "Pai/Mãe",
+          "Irmão(ã)",
         ]),
       },
       ...overrides,
@@ -92,7 +92,7 @@ export class HealthcareTestUtils {
    * Registers a patient through the UI
    */
   async registerPatient(patient: TestPatient): Promise<void> {
-    await this.page.goto('/patient/register');
+    await this.page.goto("/patient/register");
 
     // Fill basic information
     await this.page.fill('[data-testid="patient-name"]', patient.name);
@@ -137,7 +137,7 @@ export class HealthcareTestUtils {
    * Creates an emergency patient with high priority
    */
   async createEmergencyPatient(data: {
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     chiefComplaint: string;
     vitalSigns: {
       bloodPressure: string;
@@ -145,10 +145,10 @@ export class HealthcareTestUtils {
       temperature: number;
       oxygenSaturation?: number;
     };
-  }): Promise<TestPatient & { emergencyData: typeof data; }> {
+  }): Promise<TestPatient & { emergencyData: typeof data }> {
     const patient = await this.createTestPatient();
 
-    await this.page.goto('/emergency/registration');
+    await this.page.goto("/emergency/registration");
 
     // Fill emergency-specific data
     await this.page.fill('[data-testid="patient-name"]', patient.name);
@@ -195,8 +195,8 @@ export class HealthcareTestUtils {
    * Creates a test healthcare professional
    */
   async createTestProfessional(
-    type: TestProfessional['type'],
-    registrationBody: TestProfessional['registrationBody'],
+    type: TestProfessional["type"],
+    registrationBody: TestProfessional["registrationBody"],
   ): Promise<TestProfessional> {
     const professional: TestProfessional = {
       name: faker.name.fullName(),
@@ -214,11 +214,11 @@ export class HealthcareTestUtils {
    * Logs in as a healthcare professional
    */
   async loginAsProfessional(
-    professional: Partial<TestProfessional> | { crm: string; password: string; },
+    professional: Partial<TestProfessional> | { crm: string; password: string },
   ): Promise<void> {
-    await this.page.goto('/auth/professional-login');
+    await this.page.goto("/auth/professional-login");
 
-    if ('crm' in professional) {
+    if ("crm" in professional) {
       await this.page.fill(
         '[data-testid="professional-registration"]',
         professional.crm,
@@ -234,7 +234,7 @@ export class HealthcareTestUtils {
       );
       await this.page.fill(
         '[data-testid="professional-password"]',
-        'SecurePass123!',
+        "SecurePass123!",
       );
     }
 
@@ -254,9 +254,9 @@ export class HealthcareTestUtils {
    * Creates an appointment through the UI
    */
   async createAppointment(
-    appointment: Omit<TestAppointment, 'id'>,
+    appointment: Omit<TestAppointment, "id">,
   ): Promise<string> {
-    await this.page.goto('/appointments/create');
+    await this.page.goto("/appointments/create");
 
     // Search and select patient
     await this.page.fill(
@@ -298,7 +298,7 @@ export class HealthcareTestUtils {
     // Extract appointment ID from success message or URL
     const appointmentId = await this.page.getAttribute(
       '[data-testid="appointment-id"]',
-      'data-appointment-id',
+      "data-appointment-id",
     );
 
     return appointmentId || `apt_${Date.now()}`;
@@ -331,7 +331,7 @@ export class HealthcareTestUtils {
     await this.page.click('[data-testid="digital-signature-btn"]');
     await this.page.fill(
       '[data-testid="signature-password"]',
-      'SecurePass123!',
+      "SecurePass123!",
     );
     await this.page.click('[data-testid="confirm-signature"]');
 
@@ -389,7 +389,7 @@ export class HealthcareTestUtils {
     await this.page.click('[data-testid="digital-signature-btn"]');
     await this.page.fill(
       '[data-testid="signature-password"]',
-      'SecurePass123!',
+      "SecurePass123!",
     );
     await this.page.click('[data-testid="confirm-signature"]');
 
@@ -410,10 +410,10 @@ export class HealthcareTestUtils {
   async exerciseLGPDRights(
     patientId: string,
     right:
-      | 'data_access'
-      | 'data_portability'
-      | 'data_deletion'
-      | 'data_correction',
+      | "data_access"
+      | "data_portability"
+      | "data_deletion"
+      | "data_correction",
   ): Promise<void> {
     await this.page.goto(`/patients/${patientId}/lgpd-rights`);
 
@@ -421,10 +421,12 @@ export class HealthcareTestUtils {
 
     // Fill justification
     const justifications = {
-      data_access: 'Solicito acesso aos meus dados pessoais conforme Art. 9º da LGPD',
-      data_portability: 'Solicito portabilidade dos dados conforme Art. 18º da LGPD',
-      data_deletion: 'Solicito exclusão dos dados conforme Art. 18º da LGPD',
-      data_correction: 'Solicito correção de dados conforme Art. 18º da LGPD',
+      data_access:
+        "Solicito acesso aos meus dados pessoais conforme Art. 9º da LGPD",
+      data_portability:
+        "Solicito portabilidade dos dados conforme Art. 18º da LGPD",
+      data_deletion: "Solicito exclusão dos dados conforme Art. 18º da LGPD",
+      data_correction: "Solicito correção de dados conforme Art. 18º da LGPD",
     };
 
     await this.page.fill(
@@ -435,7 +437,7 @@ export class HealthcareTestUtils {
     // Digital identity verification
     await this.page.fill(
       '[data-testid="identity-verification"]',
-      '12345678900',
+      "12345678900",
     ); // CPF
 
     await this.page.click('[data-testid="submit-lgpd-request"]');
@@ -467,7 +469,7 @@ export class HealthcareTestUtils {
       `[data-testid="notification-${notification.type}"]`,
     );
     await expect(notificationElement).toContainText(
-      notification.data.name || '',
+      notification.data.name || "",
     );
   }
 
@@ -521,9 +523,9 @@ export class HealthcareTestUtils {
     const timeline = [];
 
     for (const item of timelineItems) {
-      const type = (await item.getAttribute('data-type')) || '';
-      const professional = (await item.getAttribute('data-professional')) || '';
-      const timestamp = (await item.getAttribute('data-timestamp')) || '';
+      const type = (await item.getAttribute("data-type")) || "";
+      const professional = (await item.getAttribute("data-professional")) || "";
+      const timestamp = (await item.getAttribute("data-timestamp")) || "";
 
       timeline.push({
         type,
@@ -560,20 +562,20 @@ export class HealthcareTestUtils {
     }
     cpf.push(checkDigit2);
 
-    return cpf.join('').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    return cpf.join("").replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   }
 
   private generateBrazilianPhone(): string {
     const ddd = faker.helpers.arrayElement([
-      '11',
-      '21',
-      '31',
-      '41',
-      '51',
-      '61',
-      '71',
-      '81',
-      '85',
+      "11",
+      "21",
+      "31",
+      "41",
+      "51",
+      "61",
+      "71",
+      "81",
+      "85",
     ]);
     const number = `9${faker.string.numeric(8)}`;
     return `(${ddd}) ${number.slice(0, 5)}-${number.slice(5)}`;
@@ -581,21 +583,21 @@ export class HealthcareTestUtils {
 
   private generateProfessionalRegistration(_body: string): string {
     const number = faker.string.numeric(6);
-    const state = 'SP'; // Default to São Paulo
+    const state = "SP"; // Default to São Paulo
     return `${number}-${state}`;
   }
 
-  private getSpecialtiesForType(type: TestProfessional['type']): string[] {
+  private getSpecialtiesForType(type: TestProfessional["type"]): string[] {
     const specialties = {
-      doctor: ['Cardiologia', 'Neurologia', 'Pediatria', 'Ginecologia'],
-      nurse: ['UTI', 'Emergência', 'Pediatria', 'Cirúrgica'],
+      doctor: ["Cardiologia", "Neurologia", "Pediatria", "Ginecologia"],
+      nurse: ["UTI", "Emergência", "Pediatria", "Cirúrgica"],
       physiotherapist: [
-        'Ortopédica',
-        'Neurológica',
-        'Respiratória',
-        'Desportiva',
+        "Ortopédica",
+        "Neurológica",
+        "Respiratória",
+        "Desportiva",
       ],
-      psychologist: ['Clínica', 'Hospitalar', 'Organizacional', 'Educacional'],
+      psychologist: ["Clínica", "Hospitalar", "Organizacional", "Educacional"],
     };
 
     return faker.helpers.arrayElements(specialties[type], { min: 1, max: 2 });
@@ -603,19 +605,19 @@ export class HealthcareTestUtils {
 
   private async executeScenario(scenario: string): Promise<void> {
     switch (scenario) {
-      case 'patient_registration': {
+      case "patient_registration": {
         const patient = await this.createTestPatient();
         await this.registerPatient(patient);
         break;
       }
-      case 'appointment_booking': {
+      case "appointment_booking": {
         // Simulate appointment booking
-        await this.page.goto('/appointments/create');
+        await this.page.goto("/appointments/create");
         break;
       }
-      case 'medical_records_access': {
+      case "medical_records_access": {
         // Simulate medical records access
-        await this.page.goto('/patients/search');
+        await this.page.goto("/patients/search");
         break;
       }
     }

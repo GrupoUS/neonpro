@@ -269,9 +269,9 @@ export default function PatientsPage() {
                       <div className="text-gray-900 text-sm">
                         {patient.gender === "M"
                           ? "Masculino"
-                          : (patient.gender === "F"
+                          : patient.gender === "F"
                             ? "Feminino"
-                            : "Outro")}
+                            : "Outro"}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">

@@ -314,16 +314,16 @@ export function HealthMonitoringDashboard() {
                 aria-label={`Status: ${
                   metrics.apiResponseTime < 200
                     ? "Excelente"
-                    : (metrics.apiResponseTime < 300
+                    : metrics.apiResponseTime < 300
                       ? "Bom"
-                      : "Atenção")
+                      : "Atenção"
                 }`}
               >
                 {metrics.apiResponseTime < 200
                   ? "Excelente"
-                  : (metrics.apiResponseTime < 300
+                  : metrics.apiResponseTime < 300
                     ? "Bom"
-                    : "Atenção")}
+                    : "Atenção"}
               </div>
             </div>
           </CardContent>

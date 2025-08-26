@@ -1,9 +1,16 @@
-'use client';
+"use client";
 
-import { createClient } from '@supabase/supabase-js';
-import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
-import { pt } from 'date-fns/locale';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createClient } from "@supabase/supabase-js";
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
+import { pt } from "date-fns/locale";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Placeholder toast function
 const useToast = () => ({
@@ -21,12 +28,12 @@ export interface Appointment {
   service_id: string;
   time_slot_id: string;
   status:
-    | 'pending'
-    | 'confirmed'
-    | 'cancelled'
-    | 'completed'
-    | 'no_show'
-    | 'rescheduled';
+    | "pending"
+    | "confirmed"
+    | "cancelled"
+    | "completed"
+    | "no_show"
+    | "rescheduled";
   notes?: string;
   created_at: string;
   updated_at: string;
@@ -58,8 +65,8 @@ export interface Appointment {
 }
 
 export interface AppointmentFilters {
-  dateRange?: 'today' | 'week' | 'month' | 'custom';
-  status?: Appointment['status'][];
+  dateRange?: "today" | "week" | "month" | "custom";
+  status?: Appointment["status"][];
   professionalId?: string;
   serviceId?: string;
   patientId?: string;
@@ -85,13 +92,13 @@ export function useAppointmentsManager() {
   const [isConnected, setIsConnected] = useState(false);
 
   const [filters, setFilters] = useState<AppointmentFilters>({
-    dateRange: 'week',
+    dateRange: "week",
   });
 
   // Placeholder Supabase client
   const _supabase = createClient(
-    'https://placeholder.supabase.co',
-    'placeholder-key',
+    "https://placeholder.supabase.co",
+    "placeholder-key",
   );
   const { toast } = useToast();
 
@@ -100,19 +107,19 @@ export function useAppointmentsManager() {
     const now = new Date();
 
     switch (filters.dateRange) {
-      case 'today': {
+      case "today": {
         return { start: startOfDay(now), end: endOfDay(now) };
       }
-      case 'week': {
+      case "week": {
         return {
           start: startOfWeek(now, { locale: pt }),
           end: endOfWeek(now, { locale: pt }),
         };
       }
-      case 'month': {
+      case "month": {
         return { start: startOfMonth(now), end: endOfMonth(now) };
       }
-      case 'custom': {
+      case "custom": {
         return {
           start: filters.startDate || startOfDay(now),
           end: filters.endDate || endOfDay(now),
@@ -138,12 +145,13 @@ export function useAppointmentsManager() {
       setAppointments(mockAppointments);
       setIsConnected(true);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch appointments';
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch appointments";
       setError(errorMessage);
       toast({
-        title: 'Erro',
-        description: 'Falha ao carregar compromissos',
-        variant: 'destructive',
+        title: "Erro",
+        description: "Falha ao carregar compromissos",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -157,21 +165,22 @@ export function useAppointmentsManager() {
         setIsLoading(true);
 
         toast({
-          title: 'Sucesso',
-          description: 'Compromisso criado com sucesso',
+          title: "Sucesso",
+          description: "Compromisso criado com sucesso",
         });
 
         await fetchAppointments();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to create appointment';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to create appointment";
         setError(errorMessage);
         toast({
-          title: 'Erro',
-          description: 'Falha ao criar compromisso',
-          variant: 'destructive',
+          title: "Erro",
+          description: "Falha ao criar compromisso",
+          variant: "destructive",
         });
         return false;
       } finally {
@@ -191,21 +200,22 @@ export function useAppointmentsManager() {
         setIsLoading(true);
 
         toast({
-          title: 'Sucesso',
-          description: 'Compromisso atualizado com sucesso',
+          title: "Sucesso",
+          description: "Compromisso atualizado com sucesso",
         });
 
         await fetchAppointments();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to update appointment';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to update appointment";
         setError(errorMessage);
         toast({
-          title: 'Erro',
-          description: 'Falha ao atualizar compromisso',
-          variant: 'destructive',
+          title: "Erro",
+          description: "Falha ao atualizar compromisso",
+          variant: "destructive",
         });
         return false;
       } finally {
@@ -222,21 +232,22 @@ export function useAppointmentsManager() {
         setIsLoading(true);
 
         toast({
-          title: 'Sucesso',
-          description: 'Compromisso removido com sucesso',
+          title: "Sucesso",
+          description: "Compromisso removido com sucesso",
         });
 
         await fetchAppointments();
         return true;
       } catch (error) {
-        const errorMessage = error instanceof Error
-          ? error.message
-          : 'Failed to delete appointment';
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to delete appointment";
         setError(errorMessage);
         toast({
-          title: 'Erro',
-          description: 'Falha ao remover compromisso',
-          variant: 'destructive',
+          title: "Erro",
+          description: "Falha ao remover compromisso",
+          variant: "destructive",
         });
         return false;
       } finally {
@@ -261,14 +272,14 @@ export function useAppointmentsManager() {
 
     return {
       total: appointments.length,
-      confirmed: appointments.filter((apt) => apt.status === 'confirmed')
+      confirmed: appointments.filter((apt) => apt.status === "confirmed")
         .length,
-      pending: appointments.filter((apt) => apt.status === 'pending').length,
-      cancelled: appointments.filter((apt) => apt.status === 'cancelled')
+      pending: appointments.filter((apt) => apt.status === "pending").length,
+      cancelled: appointments.filter((apt) => apt.status === "cancelled")
         .length,
-      completed: appointments.filter((apt) => apt.status === 'completed')
+      completed: appointments.filter((apt) => apt.status === "completed")
         .length,
-      noShow: appointments.filter((apt) => apt.status === 'no_show').length,
+      noShow: appointments.filter((apt) => apt.status === "no_show").length,
       todayTotal: todayAppointments.length,
       weekTotal: weekAppointments.length,
     };

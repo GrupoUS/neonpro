@@ -9,18 +9,18 @@ import {
   Wifi,
   WifiOff,
   Zap,
-} from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
 
-export type FeatureLevel = 'core' | 'enhanced' | 'premium' | 'experimental';
+export type FeatureLevel = "core" | "enhanced" | "premium" | "experimental";
 
 export type CapabilityStatus =
-  | 'available'
-  | 'degraded'
-  | 'unavailable'
-  | 'fallback';
+  | "available"
+  | "degraded"
+  | "unavailable"
+  | "fallback";
 
 export interface FeatureCapability {
   id: string;
@@ -65,7 +65,7 @@ export interface ProgressiveEnhancementProps {
    */
   networkStatus?: {
     online: boolean;
-    effectiveType: '2g' | '3g' | '4g' | '5g' | 'unknown';
+    effectiveType: "2g" | "3g" | "4g" | "5g" | "unknown";
     downlink?: number;
     rtt?: number;
   };
@@ -101,67 +101,67 @@ export interface ProgressiveEnhancementProps {
 
 const featureLevelInfo = {
   core: {
-    label: 'Essencial',
-    description: 'Funcionalidades básicas sempre disponíveis',
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
+    label: "Essencial",
+    description: "Funcionalidades básicas sempre disponíveis",
+    color: "text-green-600",
+    bgColor: "bg-green-100",
     priority: 1,
   },
   enhanced: {
-    label: 'Melhorado',
-    description: 'Melhorias de experiência do usuário',
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
+    label: "Melhorado",
+    description: "Melhorias de experiência do usuário",
+    color: "text-blue-600",
+    bgColor: "bg-blue-100",
     priority: 2,
   },
   premium: {
-    label: 'Premium',
-    description: 'Recursos avançados para dispositivos capazes',
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100',
+    label: "Premium",
+    description: "Recursos avançados para dispositivos capazes",
+    color: "text-purple-600",
+    bgColor: "bg-purple-100",
     priority: 3,
   },
   experimental: {
-    label: 'Experimental',
-    description: 'Recursos em teste, podem falhar',
-    color: 'text-orange-600',
-    bgColor: 'bg-orange-100',
+    label: "Experimental",
+    description: "Recursos em teste, podem falhar",
+    color: "text-orange-600",
+    bgColor: "bg-orange-100",
     priority: 4,
   },
 };
 
 const capabilityStatusInfo = {
   available: {
-    label: 'Disponível',
+    label: "Disponível",
     icon: CheckCircle,
-    color: 'text-green-600',
-    variant: 'confirmed' as const,
+    color: "text-green-600",
+    variant: "confirmed" as const,
   },
   degraded: {
-    label: 'Degradado',
+    label: "Degradado",
     icon: AlertCircle,
-    color: 'text-yellow-600',
-    variant: 'medium' as const,
+    color: "text-yellow-600",
+    variant: "medium" as const,
   },
   unavailable: {
-    label: 'Indisponível',
+    label: "Indisponível",
     icon: AlertCircle,
-    color: 'text-red-600',
-    variant: 'urgent' as const,
+    color: "text-red-600",
+    variant: "urgent" as const,
   },
   fallback: {
-    label: 'Alternativo',
+    label: "Alternativo",
     icon: Info,
-    color: 'text-blue-600',
-    variant: 'processing' as const,
+    color: "text-blue-600",
+    variant: "processing" as const,
   },
 };
 
 const getDeviceOptimizationLevel = (
-  deviceCapabilities?: ProgressiveEnhancementProps['deviceCapabilities'],
+  deviceCapabilities?: ProgressiveEnhancementProps["deviceCapabilities"],
 ) => {
   if (!deviceCapabilities) {
-    return 'unknown';
+    return "unknown";
   }
 
   const score = [
@@ -174,15 +174,15 @@ const getDeviceOptimizationLevel = (
   ].filter(Boolean).length;
 
   if (score >= 5) {
-    return 'optimal';
+    return "optimal";
   }
   if (score >= 3) {
-    return 'good';
+    return "good";
   }
   if (score >= 2) {
-    return 'limited';
+    return "limited";
   }
-  return 'minimal';
+  return "minimal";
 };
 
 const getHealthcareEssentialFeatures = (
@@ -190,10 +190,10 @@ const getHealthcareEssentialFeatures = (
 ): FeatureCapability[] => {
   return features.filter(
     (f) =>
-      f.isEssential
-      || f.healthcareRelevant
-      || f.level === 'core'
-      || f.lgpdImportant,
+      f.isEssential ||
+      f.healthcareRelevant ||
+      f.level === "core" ||
+      f.lgpdImportant,
   );
 };
 
@@ -214,25 +214,25 @@ const FeatureStatusCard: React.FC<{
   return (
     <div
       className={cn(
-        'rounded-lg border p-3 transition-all',
-        feature.status === 'available' && 'border-green-200 bg-green-50',
-        feature.status === 'degraded' && 'border-yellow-200 bg-yellow-50',
-        feature.status === 'unavailable' && 'border-red-200 bg-red-50',
-        feature.status === 'fallback' && 'border-blue-200 bg-blue-50',
+        "rounded-lg border p-3 transition-all",
+        feature.status === "available" && "border-green-200 bg-green-50",
+        feature.status === "degraded" && "border-yellow-200 bg-yellow-50",
+        feature.status === "unavailable" && "border-red-200 bg-red-50",
+        feature.status === "fallback" && "border-blue-200 bg-blue-50",
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-1 items-start gap-3">
           <div
             className={cn(
-              'flex h-8 w-8 items-center justify-center rounded-full',
-              statusInfo.color === 'text-green-600' && 'bg-green-100',
-              statusInfo.color === 'text-yellow-600' && 'bg-yellow-100',
-              statusInfo.color === 'text-red-600' && 'bg-red-100',
-              statusInfo.color === 'text-blue-600' && 'bg-blue-100',
+              "flex h-8 w-8 items-center justify-center rounded-full",
+              statusInfo.color === "text-green-600" && "bg-green-100",
+              statusInfo.color === "text-yellow-600" && "bg-yellow-100",
+              statusInfo.color === "text-red-600" && "bg-red-100",
+              statusInfo.color === "text-blue-600" && "bg-blue-100",
             )}
           >
-            <StatusIcon className={cn('h-4 w-4', statusInfo.color)} />
+            <StatusIcon className={cn("h-4 w-4", statusInfo.color)} />
           </div>
 
           <div className="min-w-0 flex-1">
@@ -271,7 +271,7 @@ const FeatureStatusCard: React.FC<{
               </p>
             )}
 
-            {feature.status === 'fallback' && feature.fallbackMessage && (
+            {feature.status === "fallback" && feature.fallbackMessage && (
               <p className="mt-2 text-blue-700 text-xs">
                 💡 {feature.fallbackMessage}
               </p>
@@ -280,7 +280,7 @@ const FeatureStatusCard: React.FC<{
         </div>
       </div>
 
-      {feature.status === 'fallback' && feature.fallbackComponent && (
+      {feature.status === "fallback" && feature.fallbackComponent && (
         <div className="mt-3 rounded border border-blue-200 bg-blue-100 p-2">
           {feature.fallbackComponent}
         </div>
@@ -290,46 +290,46 @@ const FeatureStatusCard: React.FC<{
 };
 
 const DeviceOptimizationSummary: React.FC<{
-  deviceCapabilities?: ProgressiveEnhancementProps['deviceCapabilities'];
-  networkStatus?: ProgressiveEnhancementProps['networkStatus'];
+  deviceCapabilities?: ProgressiveEnhancementProps["deviceCapabilities"];
+  networkStatus?: ProgressiveEnhancementProps["networkStatus"];
   onOptimizePerformance?: () => void;
 }> = ({ deviceCapabilities, networkStatus, onOptimizePerformance }) => {
   const optimizationLevel = getDeviceOptimizationLevel(deviceCapabilities);
 
   const optimizationInfo = {
     optimal: {
-      label: 'Ótimo',
-      description: 'Dispositivo com capacidade total',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      label: "Ótimo",
+      description: "Dispositivo com capacidade total",
+      color: "text-green-600",
+      bgColor: "bg-green-50",
       icon: CheckCircle,
     },
     good: {
-      label: 'Bom',
-      description: 'Boa experiência disponível',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      label: "Bom",
+      description: "Boa experiência disponível",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50",
       icon: Info,
     },
     limited: {
-      label: 'Limitado',
-      description: 'Algumas limitações detectadas',
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50',
+      label: "Limitado",
+      description: "Algumas limitações detectadas",
+      color: "text-yellow-600",
+      bgColor: "bg-yellow-50",
       icon: AlertCircle,
     },
     minimal: {
-      label: 'Mínimo',
-      description: 'Modo essencial recomendado',
-      color: 'text-red-600',
-      bgColor: 'bg-red-50',
+      label: "Mínimo",
+      description: "Modo essencial recomendado",
+      color: "text-red-600",
+      bgColor: "bg-red-50",
       icon: AlertCircle,
     },
     unknown: {
-      label: 'Desconhecido',
-      description: 'Capacidades não detectadas',
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
+      label: "Desconhecido",
+      description: "Capacidades não detectadas",
+      color: "text-gray-600",
+      bgColor: "bg-gray-50",
       icon: Info,
     },
   };
@@ -338,9 +338,9 @@ const DeviceOptimizationSummary: React.FC<{
   const Icon = info.icon;
 
   return (
-    <div className={cn('rounded-lg border p-4', info.bgColor)}>
+    <div className={cn("rounded-lg border p-4", info.bgColor)}>
       <div className="flex items-start gap-3">
-        <Icon className={cn('mt-0.5 h-5 w-5', info.color)} />
+        <Icon className={cn("mt-0.5 h-5 w-5", info.color)} />
         <div className="flex-1">
           <h4 className="font-medium text-sm">
             Otimização do Dispositivo: {info.label}
@@ -355,15 +355,17 @@ const DeviceOptimizationSummary: React.FC<{
                 <div className="flex items-center gap-2">
                   <Smartphone className="h-3 w-3" />
                   <span>
-                    {deviceCapabilities.isMobile ? 'Mobile' : 'Desktop'}
+                    {deviceCapabilities.isMobile ? "Mobile" : "Desktop"}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {deviceCapabilities.hasGoodConnection
-                    ? <Wifi className="h-3 w-3 text-green-600" />
-                    : <WifiOff className="h-3 w-3 text-red-600" />}
+                  {deviceCapabilities.hasGoodConnection ? (
+                    <Wifi className="h-3 w-3 text-green-600" />
+                  ) : (
+                    <WifiOff className="h-3 w-3 text-red-600" />
+                  )}
                   <span>
-                    {networkStatus?.effectiveType || 'unknown'} network
+                    {networkStatus?.effectiveType || "unknown"} network
                   </span>
                 </div>
                 {deviceCapabilities.batteryLevel !== undefined && (
@@ -375,17 +377,16 @@ const DeviceOptimizationSummary: React.FC<{
                 <div className="flex items-center gap-2">
                   <Layers className="h-3 w-3" />
                   <span>
-                    {deviceCapabilities.isLowEnd ? 'Low-end' : 'High-end'}
+                    {deviceCapabilities.isLowEnd ? "Low-end" : "High-end"}
                   </span>
                 </div>
               </div>
             </div>
           )}
 
-          {onOptimizePerformance
-            && (optimizationLevel === 'limited'
-              || optimizationLevel === 'minimal')
-            && (
+          {onOptimizePerformance &&
+            (optimizationLevel === "limited" ||
+              optimizationLevel === "minimal") && (
               <button
                 className="mt-3 text-blue-600 text-sm underline hover:text-blue-800"
                 onClick={onOptimizePerformance}
@@ -421,26 +422,27 @@ export const ProgressiveEnhancement = React.forwardRef<
     ref,
   ) => {
     const essentialFeatures = getHealthcareEssentialFeatures(features);
-    const availableFeatures = features.filter((f) => f.status === 'available');
+    const availableFeatures = features.filter((f) => f.status === "available");
     const degradedFeatures = features.filter(
-      (f) => f.status === 'degraded' || f.status === 'fallback',
+      (f) => f.status === "degraded" || f.status === "fallback",
     );
     const unavailableFeatures = features.filter(
-      (f) => f.status === 'unavailable',
+      (f) => f.status === "unavailable",
     );
 
     const healthcareCompatibilityScore = Math.round(
-      (essentialFeatures.filter((f) => f.status === 'available').length
-        / Math.max(essentialFeatures.length, 1))
-        * 100,
+      (essentialFeatures.filter((f) => f.status === "available").length /
+        Math.max(essentialFeatures.length, 1)) *
+        100,
     );
 
-    const shouldShowOptimization = showHealthcareOptimization
-      && (unavailableFeatures.length > 0 || degradedFeatures.length > 2);
+    const shouldShowOptimization =
+      showHealthcareOptimization &&
+      (unavailableFeatures.length > 0 || degradedFeatures.length > 2);
 
     return (
       <div
-        className={cn('space-y-4', className)}
+        className={cn("space-y-4", className)}
         ref={ref}
         {...props}
         aria-labelledby="progressive-enhancement-title"
@@ -459,18 +461,21 @@ export const ProgressiveEnhancement = React.forwardRef<
               </h3>
               <Badge
                 size="sm"
-                variant={healthcareCompatibilityScore >= 90
-                  ? 'confirmed'
-                  : (healthcareCompatibilityScore >= 70
-                  ? 'medium'
-                  : 'urgent')}
+                variant={
+                  healthcareCompatibilityScore >= 90
+                    ? "confirmed"
+                    : healthcareCompatibilityScore >= 70
+                      ? "medium"
+                      : "urgent"
+                }
               >
                 {healthcareCompatibilityScore}% compatível
               </Badge>
             </div>
 
             <p className="mb-4 text-muted-foreground text-sm">
-              Funcionalidades essenciais para cuidados médicos seguros e conformidade LGPD.
+              Funcionalidades essenciais para cuidados médicos seguros e
+              conformidade LGPD.
             </p>
 
             {emergencyMode && (
@@ -482,8 +487,9 @@ export const ProgressiveEnhancement = React.forwardRef<
                       Modo de Emergência Ativo
                     </h4>
                     <p className="mt-1 text-orange-700 text-sm">
-                      Apenas funcionalidades críticas para atendimento médico estão disponíveis.
-                      Dados de pacientes e protocolos de emergência permanecem acessíveis.
+                      Apenas funcionalidades críticas para atendimento médico
+                      estão disponíveis. Dados de pacientes e protocolos de
+                      emergência permanecem acessíveis.
                     </p>
                   </div>
                 </div>
@@ -523,33 +529,33 @@ export const ProgressiveEnhancement = React.forwardRef<
         )}
 
         {/* Emergency Mode Option */}
-        {!emergencyMode
-          && onEnableEmergencyMode
-          && unavailableFeatures.length > 3 && (
-          <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <Zap className="mt-0.5 h-5 w-5 text-orange-600" />
-                <div>
-                  <h4 className="font-medium text-orange-900 text-sm">
-                    Modo de Emergência Disponível
-                  </h4>
-                  <p className="mt-1 text-orange-700 text-sm">
-                    Ative o modo de emergência para garantir que funcionalidades críticas de
-                    healthcare estejam sempre disponíveis, mesmo com limitações de dispositivo ou
-                    rede.
-                  </p>
+        {!emergencyMode &&
+          onEnableEmergencyMode &&
+          unavailableFeatures.length > 3 && (
+            <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <Zap className="mt-0.5 h-5 w-5 text-orange-600" />
+                  <div>
+                    <h4 className="font-medium text-orange-900 text-sm">
+                      Modo de Emergência Disponível
+                    </h4>
+                    <p className="mt-1 text-orange-700 text-sm">
+                      Ative o modo de emergência para garantir que
+                      funcionalidades críticas de healthcare estejam sempre
+                      disponíveis, mesmo com limitações de dispositivo ou rede.
+                    </p>
+                  </div>
                 </div>
+                <button
+                  className="whitespace-nowrap rounded bg-orange-600 px-3 py-1 text-sm text-white hover:bg-orange-700"
+                  onClick={onEnableEmergencyMode}
+                >
+                  Ativar Modo Emergência
+                </button>
               </div>
-              <button
-                className="whitespace-nowrap rounded bg-orange-600 px-3 py-1 text-sm text-white hover:bg-orange-700"
-                onClick={onEnableEmergencyMode}
-              >
-                Ativar Modo Emergência
-              </button>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Feature Status List */}
         {showDetails && (
@@ -566,8 +572,8 @@ export const ProgressiveEnhancement = React.forwardRef<
                     return a.healthcareRelevant ? -1 : 1;
                   }
                   return (
-                    featureLevelInfo[a.level].priority
-                    - featureLevelInfo[b.level].priority
+                    featureLevelInfo[a.level].priority -
+                    featureLevelInfo[b.level].priority
                   );
                 })
                 .map((feature) => (
@@ -593,8 +599,9 @@ export const ProgressiveEnhancement = React.forwardRef<
                   Funcionalidade Limitada
                 </h4>
                 <p className="text-red-700 text-sm">
-                  Limitações detectadas podem afetar funcionalidades críticas de healthcare.
-                  Considere usar um dispositivo com melhor conectividade.
+                  Limitações detectadas podem afetar funcionalidades críticas de
+                  healthcare. Considere usar um dispositivo com melhor
+                  conectividade.
                 </p>
                 {onOptimizePerformance && (
                   <button
@@ -611,8 +618,8 @@ export const ProgressiveEnhancement = React.forwardRef<
           {/* Enhanced functionality for good devices */}
           <div
             className={cn(
-              'transition-opacity duration-300',
-              healthcareCompatibilityScore < 50 && 'opacity-50',
+              "transition-opacity duration-300",
+              healthcareCompatibilityScore < 50 && "opacity-50",
             )}
           >
             {children}
@@ -629,9 +636,10 @@ export const ProgressiveEnhancement = React.forwardRef<
                   Garantias Constitucionais Healthcare
                 </h4>
                 <p className="mt-1 text-blue-700 text-sm">
-                  Funcionalidades essenciais de atendimento médico e proteção de dados LGPD são
-                  mantidas independentemente das limitações técnicas. A segurança do paciente e a
-                  privacidade dos dados são sempre priorizadas.
+                  Funcionalidades essenciais de atendimento médico e proteção de
+                  dados LGPD são mantidas independentemente das limitações
+                  técnicas. A segurança do paciente e a privacidade dos dados
+                  são sempre priorizadas.
                 </p>
               </div>
             </div>
@@ -642,19 +650,19 @@ export const ProgressiveEnhancement = React.forwardRef<
   },
 );
 
-ProgressiveEnhancement.displayName = 'ProgressiveEnhancement';
+ProgressiveEnhancement.displayName = "ProgressiveEnhancement";
 
 // Utility hooks and functions for feature detection
 export const useFeatureDetection = () => {
-  const [capabilities, setCapabilities] = React.useState<
-    ProgressiveEnhancementProps['deviceCapabilities']
-  >();
+  const [capabilities, setCapabilities] =
+    React.useState<ProgressiveEnhancementProps["deviceCapabilities"]>();
 
   React.useEffect(() => {
     const detectCapabilities = () => {
-      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      );
+      const isMobile =
+        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
       const isLowEnd = navigator.hardwareConcurrency
         ? navigator.hardwareConcurrency <= 2
         : false;
@@ -662,12 +670,12 @@ export const useFeatureDetection = () => {
       setCapabilities({
         isMobile,
         isLowEnd,
-        supportsTouchScreen: 'ontouchstart' in window,
+        supportsTouchScreen: "ontouchstart" in window,
         supportsWebGL: Boolean(window.WebGLRenderingContext),
-        supportsServiceWorker: 'serviceWorker' in navigator,
+        supportsServiceWorker: "serviceWorker" in navigator,
         hasGoodConnection: (
           navigator as any
-        ).connection?.effectiveType?.includes('4g'),
+        ).connection?.effectiveType?.includes("4g"),
         batteryLevel: (navigator as any).getBattery ? undefined : undefined, // Requires async call
       });
     };
@@ -679,28 +687,27 @@ export const useFeatureDetection = () => {
 };
 
 export const useNetworkStatus = () => {
-  const [networkStatus, setNetworkStatus] = React.useState<
-    ProgressiveEnhancementProps['networkStatus']
-  >();
+  const [networkStatus, setNetworkStatus] =
+    React.useState<ProgressiveEnhancementProps["networkStatus"]>();
 
   React.useEffect(() => {
     const updateNetworkStatus = () => {
       const connection = (navigator as any).connection;
       setNetworkStatus({
         online: navigator.onLine,
-        effectiveType: connection?.effectiveType || 'unknown',
+        effectiveType: connection?.effectiveType || "unknown",
         downlink: connection?.downlink,
         rtt: connection?.rtt,
       });
     };
 
     updateNetworkStatus();
-    window.addEventListener('online', updateNetworkStatus);
-    window.addEventListener('offline', updateNetworkStatus);
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
 
     return () => {
-      window.removeEventListener('online', updateNetworkStatus);
-      window.removeEventListener('offline', updateNetworkStatus);
+      window.removeEventListener("online", updateNetworkStatus);
+      window.removeEventListener("offline", updateNetworkStatus);
     };
   }, []);
 

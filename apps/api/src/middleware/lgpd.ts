@@ -6,41 +6,41 @@
  * com validação de consentimento, rastreamento e proteção de dados.
  */
 
-import type { Context, MiddlewareHandler } from 'hono';
-import { createRouteRegex } from '../lib/regex-constants';
-import { createError } from './error-handler';
+import type { Context, MiddlewareHandler } from "hono";
+import { createRouteRegex } from "../lib/regex-constants";
+import { createError } from "./error-handler";
 
 // LGPD consent types
 export enum ConsentType {
-  DATA_PROCESSING = 'data_processing', // Essential data processing
-  MARKETING = 'marketing', // Marketing communications
-  ANALYTICS = 'analytics', // Usage analytics
-  THIRD_PARTY_SHARING = 'third_party_sharing', // Data sharing with partners
-  RESEARCH = 'research', // Medical/academic research
-  PHOTOS = 'photos', // Photo/video for procedures
-  BIOMETRIC = 'biometric', // Biometric data collection
+  DATA_PROCESSING = "data_processing", // Essential data processing
+  MARKETING = "marketing", // Marketing communications
+  ANALYTICS = "analytics", // Usage analytics
+  THIRD_PARTY_SHARING = "third_party_sharing", // Data sharing with partners
+  RESEARCH = "research", // Medical/academic research
+  PHOTOS = "photos", // Photo/video for procedures
+  BIOMETRIC = "biometric", // Biometric data collection
 }
 
 // Data categories under LGPD
 export enum DataCategory {
-  IDENTIFYING = 'identifying', // Name, documents, contact
-  SENSITIVE = 'sensitive', // Health data, biometric
-  BEHAVIORAL = 'behavioral', // Usage patterns, preferences
-  FINANCIAL = 'financial', // Payment data, billing
-  BIOMETRIC = 'biometric', // Fingerprints, facial recognition
-  GENETIC = 'genetic', // Genetic information
-  HEALTH = 'health', // Medical records, procedures
-  LOCATION = 'location', // Geographic location data
+  IDENTIFYING = "identifying", // Name, documents, contact
+  SENSITIVE = "sensitive", // Health data, biometric
+  BEHAVIORAL = "behavioral", // Usage patterns, preferences
+  FINANCIAL = "financial", // Payment data, billing
+  BIOMETRIC = "biometric", // Fingerprints, facial recognition
+  GENETIC = "genetic", // Genetic information
+  HEALTH = "health", // Medical records, procedures
+  LOCATION = "location", // Geographic location data
 }
 
 // LGPD lawful basis for processing (Article 7)
 export enum LawfulBasis {
-  CONSENT = 'consent', // Article 7, I
-  CONTRACT = 'contract', // Article 7, II
-  LEGAL_OBLIGATION = 'legal_obligation', // Article 7, III
-  VITAL_INTERESTS = 'vital_interests', // Article 7, IV
-  PUBLIC_TASK = 'public_task', // Article 7, V
-  LEGITIMATE_INTEREST = 'legitimate_interest', // Article 7, VI
+  CONSENT = "consent", // Article 7, I
+  CONTRACT = "contract", // Article 7, II
+  LEGAL_OBLIGATION = "legal_obligation", // Article 7, III
+  VITAL_INTERESTS = "vital_interests", // Article 7, IV
+  PUBLIC_TASK = "public_task", // Article 7, V
+  LEGITIMATE_INTEREST = "legitimate_interest", // Article 7, VI
 }
 
 // Route-specific LGPD configuration
@@ -57,66 +57,66 @@ interface LGPDRouteConfig {
 // LGPD configuration per endpoint
 const LGPD_ROUTE_CONFIG: Record<string, LGPDRouteConfig> = {
   // Patient data endpoints
-  'POST /api/v1/patients': {
+  "POST /api/v1/patients": {
     requiresConsent: [ConsentType.DATA_PROCESSING],
     dataCategories: [DataCategory.IDENTIFYING, DataCategory.HEALTH],
     lawfulBasis: [LawfulBasis.CONSENT, LawfulBasis.CONTRACT],
     retentionPeriod: 3650, // 10 years for medical records
     requireExplicitConsent: true,
-    description: 'Patient registration with personal and health data',
+    description: "Patient registration with personal and health data",
   },
 
-  'GET /api/v1/patients': {
+  "GET /api/v1/patients": {
     requiresConsent: [ConsentType.DATA_PROCESSING],
     dataCategories: [DataCategory.IDENTIFYING, DataCategory.HEALTH],
     lawfulBasis: [LawfulBasis.LEGITIMATE_INTEREST],
-    description: 'Patient data access for healthcare providers',
+    description: "Patient data access for healthcare providers",
   },
 
-  'PUT /api/v1/patients/:id': {
+  "PUT /api/v1/patients/:id": {
     requiresConsent: [ConsentType.DATA_PROCESSING],
     dataCategories: [DataCategory.IDENTIFYING, DataCategory.HEALTH],
     lawfulBasis: [LawfulBasis.CONSENT, LawfulBasis.CONTRACT],
-    description: 'Patient data modification',
+    description: "Patient data modification",
   },
 
   // Appointment endpoints
-  'POST /api/v1/appointments': {
+  "POST /api/v1/appointments": {
     requiresConsent: [ConsentType.DATA_PROCESSING],
     dataCategories: [DataCategory.HEALTH, DataCategory.IDENTIFYING],
     lawfulBasis: [LawfulBasis.CONTRACT],
-    description: 'Appointment booking with health data',
+    description: "Appointment booking with health data",
   },
 
   // Photo/video consent for procedures
-  'POST /api/v1/appointments/:id/photos': {
+  "POST /api/v1/appointments/:id/photos": {
     requiresConsent: [ConsentType.PHOTOS],
     dataCategories: [DataCategory.BIOMETRIC, DataCategory.HEALTH],
     lawfulBasis: [LawfulBasis.CONSENT],
     requireExplicitConsent: true,
-    description: 'Photo/video documentation of procedures',
+    description: "Photo/video documentation of procedures",
   },
 
   // Analytics endpoints
-  'GET /api/v1/analytics': {
+  "GET /api/v1/analytics": {
     requiresConsent: [ConsentType.ANALYTICS],
     dataCategories: [DataCategory.BEHAVIORAL],
     lawfulBasis: [LawfulBasis.LEGITIMATE_INTEREST],
     allowAnonymous: true,
-    description: 'Usage analytics for business intelligence',
+    description: "Usage analytics for business intelligence",
   },
 
   // Marketing endpoints
-  'POST /api/v1/marketing/campaigns': {
+  "POST /api/v1/marketing/campaigns": {
     requiresConsent: [ConsentType.MARKETING],
     dataCategories: [DataCategory.IDENTIFYING, DataCategory.BEHAVIORAL],
     lawfulBasis: [LawfulBasis.CONSENT],
     requireExplicitConsent: true,
-    description: 'Marketing campaign targeting',
+    description: "Marketing campaign targeting",
   },
 
   // Data export (LGPD Article 15 - Right to portability)
-  'GET /api/v1/compliance/export': {
+  "GET /api/v1/compliance/export": {
     requiresConsent: [],
     dataCategories: [
       DataCategory.IDENTIFYING,
@@ -124,7 +124,7 @@ const LGPD_ROUTE_CONFIG: Record<string, LGPDRouteConfig> = {
       DataCategory.BEHAVIORAL,
     ],
     lawfulBasis: [LawfulBasis.LEGAL_OBLIGATION],
-    description: 'Personal data export for data portability',
+    description: "Personal data export for data portability",
   },
 };
 
@@ -163,7 +163,7 @@ class ConsentStore {
   grantConsent(
     patientId: string,
     consentType: ConsentType,
-    version = '1.0',
+    version = "1.0",
     ipAddress?: string,
     userAgent?: string,
   ) {
@@ -186,7 +186,7 @@ class ConsentStore {
       patientConsents.set(consentType, {
         granted: false,
         timestamp: new Date().toISOString(),
-        version: '1.0',
+        version: "1.0",
       });
     }
   }
@@ -200,16 +200,16 @@ class ConsentStore {
 const consentStore = new ConsentStore();
 
 // Initialize some mock consents for development
-consentStore.grantConsent('pat_123', ConsentType.DATA_PROCESSING, '1.0');
-consentStore.grantConsent('pat_123', ConsentType.MARKETING, '1.0');
-consentStore.grantConsent('pat_456', ConsentType.DATA_PROCESSING, '1.0');
+consentStore.grantConsent("pat_123", ConsentType.DATA_PROCESSING, "1.0");
+consentStore.grantConsent("pat_123", ConsentType.MARKETING, "1.0");
+consentStore.grantConsent("pat_456", ConsentType.DATA_PROCESSING, "1.0");
 
 /**
  * Extract patient ID from request
  */
 const extractPatientId = (c: Context): string | null => {
   // Try to get from URL parameters
-  const pathPatientId = c.req.param('id');
+  const pathPatientId = c.req.param("id");
   if (pathPatientId) {
     return pathPatientId;
   }
@@ -228,14 +228,14 @@ const extractPatientId = (c: Context): string | null => {
   }
 
   // Try to get from query parameters
-  const queryPatientId = c.req.query('patientId');
+  const queryPatientId = c.req.query("patientId");
   if (queryPatientId) {
     return queryPatientId;
   }
 
   // Try to get from authenticated user context
-  const userId = c.get('userId');
-  if (userId?.startsWith('pat_')) {
+  const userId = c.get("userId");
+  if (userId?.startsWith("pat_")) {
     return userId;
   }
 
@@ -313,12 +313,12 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
           );
 
           throw createError.lgpdCompliance(
-            'Consentimento LGPD obrigatório não fornecido',
+            "Consentimento LGPD obrigatório não fornecido",
             {
               requiredConsents: routeConfig.requiresConsent,
               missingConsents,
               patientId,
-              article: 'LGPD Art. 8º',
+              article: "LGPD Art. 8º",
             },
           );
         }
@@ -327,36 +327,37 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
       // Check data retention compliance
       if (patientId && !validateDataRetention(routeConfig, patientId)) {
         throw createError.lgpdCompliance(
-          'Dados fora do período de retenção permitido',
+          "Dados fora do período de retenção permitido",
           {
             retentionPeriod: routeConfig.retentionPeriod,
-            article: 'LGPD Art. 15º',
+            article: "LGPD Art. 15º",
           },
         );
       }
 
       // Set LGPD compliance headers
-      c.res.headers.set('X-LGPD-Compliant', 'true');
-      c.res.headers.set('X-LGPD-Basis', routeConfig.lawfulBasis.join(','));
+      c.res.headers.set("X-LGPD-Compliant", "true");
+      c.res.headers.set("X-LGPD-Basis", routeConfig.lawfulBasis.join(","));
       c.res.headers.set(
-        'X-LGPD-Categories',
-        routeConfig.dataCategories.join(','),
+        "X-LGPD-Categories",
+        routeConfig.dataCategories.join(","),
       );
 
       if (routeConfig.retentionPeriod) {
         c.res.headers.set(
-          'X-LGPD-Retention-Days',
+          "X-LGPD-Retention-Days",
           routeConfig.retentionPeriod.toString(),
         );
       }
 
       // Store LGPD context for audit
-      c.set('lgpdContext', {
+      c.set("lgpdContext", {
         config: routeConfig,
         patientId,
-        consentValidated: routeConfig.requiresConsent.length === 0
-          || (patientId
-            && consentStore.hasValidConsent(
+        consentValidated:
+          routeConfig.requiresConsent.length === 0 ||
+          (patientId &&
+            consentStore.hasValidConsent(
               patientId,
               routeConfig.requiresConsent,
             )),
@@ -381,7 +382,7 @@ export const lgpdUtils = {
   grantConsent: (
     patientId: string,
     consentType: ConsentType,
-    version = '1.0',
+    version = "1.0",
     ipAddress?: string,
     userAgent?: string,
   ) => {
@@ -436,13 +437,13 @@ export const lgpdUtils = {
 
     // Remove direct identifiers
     const identifyingFields = [
-      'id',
-      'email',
-      'phone',
-      'cpf',
-      'rg',
-      'name',
-      'fullName',
+      "id",
+      "email",
+      "phone",
+      "cpf",
+      "rg",
+      "name",
+      "fullName",
     ];
     for (const field of identifyingFields) {
       if (field in anonymized) {
@@ -452,11 +453,9 @@ export const lgpdUtils = {
 
     // Generate anonymous ID for analytics correlation
     if (data.id) {
-      anonymized.anonymousId = `anon_${
-        btoa(data.id.toString())
-          .replaceAll(/[^a-zA-Z0-9]/g, '')
-          .slice(0, 8)
-      }`;
+      anonymized.anonymousId = `anon_${btoa(data.id.toString())
+        .replaceAll(/[^a-zA-Z0-9]/g, "")
+        .slice(0, 8)}`;
     }
 
     return anonymized;

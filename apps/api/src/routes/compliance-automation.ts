@@ -6,14 +6,20 @@
  * Constitutional healthcare compliance with ≥9.9/10 standards
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { createBrazilianComplianceAutomationService, DEFAULT_COMPLIANCE_CONFIG } from '@neonpro/compliance';
-import type { ComplianceAutomationConfig, ComplianceAutomationResponse } from '@neonpro/compliance';
-import type { ApiResponse } from '@neonpro/shared/types';
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { HTTP_STATUS } from '../lib/constants.js';
-import { createSupabaseClient } from '../lib/supabase.js';
+import { zValidator } from "@hono/zod-validator";
+import {
+  createBrazilianComplianceAutomationService,
+  DEFAULT_COMPLIANCE_CONFIG,
+} from "@neonpro/compliance";
+import type {
+  ComplianceAutomationConfig,
+  ComplianceAutomationResponse,
+} from "@neonpro/compliance";
+import type { ApiResponse } from "@neonpro/shared/types";
+import { Hono } from "hono";
+import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants.js";
+import { createSupabaseClient } from "../lib/supabase.js";
 
 // Zod schemas for compliance automation
 const ComplianceAutomationConfigSchema = z.object({
@@ -42,8 +48,8 @@ const ComplianceExecutionSchema = z.object({
   tenant_id: z.string(),
   user_id: z.string(),
   compliance_areas: z
-    .array(z.enum(['lgpd', 'anvisa', 'cfm', 'all']))
-    .default(['all']),
+    .array(z.enum(["lgpd", "anvisa", "cfm", "all"]))
+    .default(["all"]),
   immediate_execution: z.boolean().default(true),
 });
 
@@ -55,11 +61,11 @@ const _MonitoringStatusSchema = z.object({
 // Create compliance automation router
 export const complianceAutomationRoutes = new Hono()
   // Authentication middleware
-  .use('*', async (c, next) => {
-    const auth = c.req.header('Authorization');
-    if (!auth?.startsWith('Bearer ')) {
+  .use("*", async (c, next) => {
+    const auth = c.req.header("Authorization");
+    if (!auth?.startsWith("Bearer ")) {
       return c.json(
-        { error: 'UNAUTHORIZED', message: 'Token de acesso obrigatório' },
+        { error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
         401,
       );
     }
@@ -67,10 +73,11 @@ export const complianceAutomationRoutes = new Hono()
   })
   // 🚀 Execute Comprehensive Compliance Automation
   .post(
-    '/execute',
-    zValidator('json', ComplianceExecutionSchema),
+    "/execute",
+    zValidator("json", ComplianceExecutionSchema),
     async (c) => {
-      const { tenant_id, user_id, compliance_areas, immediate_execution } = c.req.valid('json');
+      const { tenant_id, user_id, compliance_areas, immediate_execution } =
+        c.req.valid("json");
 
       try {
         // Initialize Supabase client
@@ -81,12 +88,15 @@ export const complianceAutomationRoutes = new Hono()
           ...DEFAULT_COMPLIANCE_CONFIG,
           tenant_id,
           // Override based on compliance_areas selection
-          lgpd_automation: compliance_areas.includes('lgpd')
-            || compliance_areas.includes('all'),
-          anvisa_automation: compliance_areas.includes('anvisa')
-            || compliance_areas.includes('all'),
-          cfm_automation: compliance_areas.includes('cfm')
-            || compliance_areas.includes('all'),
+          lgpd_automation:
+            compliance_areas.includes("lgpd") ||
+            compliance_areas.includes("all"),
+          anvisa_automation:
+            compliance_areas.includes("anvisa") ||
+            compliance_areas.includes("all"),
+          cfm_automation:
+            compliance_areas.includes("cfm") ||
+            compliance_areas.includes("all"),
         };
 
         // Create compliance automation service
@@ -96,14 +106,16 @@ export const complianceAutomationRoutes = new Hono()
         );
 
         // Execute compliance automation
-        const automationResult = await complianceService.executeComplianceAutomation(user_id);
+        const automationResult =
+          await complianceService.executeComplianceAutomation(user_id);
 
         if (!automationResult.success) {
           return c.json(
             {
               success: false,
-              error: 'COMPLIANCE_AUTOMATION_ERROR',
-              message: automationResult.error || 'Erro na automação de compliance',
+              error: "COMPLIANCE_AUTOMATION_ERROR",
+              message:
+                automationResult.error || "Erro na automação de compliance",
             },
             500,
           );
@@ -112,11 +124,12 @@ export const complianceAutomationRoutes = new Hono()
         const response: ApiResponse<ComplianceAutomationResponse> = {
           success: true,
           data: automationResult.data!,
-          message: 'Automação de compliance executada com sucesso',
+          message: "Automação de compliance executada com sucesso",
           metadata: {
             execution_time: new Date().toISOString(),
             compliance_areas,
-            constitutional_standard_met: automationResult.data?.overall_score >= 9.9,
+            constitutional_standard_met:
+              automationResult.data?.overall_score >= 9.9,
           },
         };
 
@@ -125,8 +138,8 @@ export const complianceAutomationRoutes = new Hono()
         return c.json(
           {
             success: false,
-            error: 'INTERNAL_ERROR',
-            message: 'Erro interno na automação de compliance',
+            error: "INTERNAL_ERROR",
+            message: "Erro interno na automação de compliance",
           },
           500,
         );
@@ -134,8 +147,8 @@ export const complianceAutomationRoutes = new Hono()
     },
   )
   // 📊 Get Real-Time Compliance Status
-  .get('/status/:tenant_id', async (c) => {
-    const tenant_id = c.req.param('tenant_id');
+  .get("/status/:tenant_id", async (c) => {
+    const tenant_id = c.req.param("tenant_id");
 
     try {
       // Initialize Supabase client
@@ -143,26 +156,27 @@ export const complianceAutomationRoutes = new Hono()
 
       // Get latest compliance assessment
       const { data: latestAssessment, error: assessmentError } = await supabase
-        .from('compliance_assessments')
-        .select('*')
-        .eq('tenant_id', tenant_id)
-        .order('assessed_at', { ascending: false })
+        .from("compliance_assessments")
+        .select("*")
+        .eq("tenant_id", tenant_id)
+        .order("assessed_at", { ascending: false })
         .limit(1)
         .single();
 
-      if (assessmentError && assessmentError.code !== 'PGRST116') {
+      if (assessmentError && assessmentError.code !== "PGRST116") {
         throw assessmentError;
       }
 
       // Get active monitoring status
       const { data: activeMonitor, error: monitorError } = await supabase
-        .from('enterprise_compliance_monitors')
-        .select('*')
-        .eq('tenant_id', tenant_id)
-        .eq('status', 'active')
+        .from("enterprise_compliance_monitors")
+        .select("*")
+        .eq("tenant_id", tenant_id)
+        .eq("status", "active")
         .single();
 
-      if (monitorError && monitorError.code !== 'PGRST116') {}
+      if (monitorError && monitorError.code !== "PGRST116") {
+      }
 
       const response: ApiResponse<{
         latest_assessment?: any;
@@ -181,14 +195,15 @@ export const complianceAutomationRoutes = new Hono()
           active_monitoring: !!activeMonitor,
           monitor_info: activeMonitor,
           status_summary: {
-            overall_compliant: latestAssessment?.overall_status === 'compliant'
-              || latestAssessment?.overall_score >= 9.9,
+            overall_compliant:
+              latestAssessment?.overall_status === "compliant" ||
+              latestAssessment?.overall_score >= 9.9,
             overall_score: latestAssessment?.overall_score || 9.9,
             last_assessment: latestAssessment?.assessed_at || undefined,
             monitoring_active: !!activeMonitor,
           },
         },
-        message: 'Status de compliance carregado',
+        message: "Status de compliance carregado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -196,17 +211,17 @@ export const complianceAutomationRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar status de compliance',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar status de compliance",
         },
         500,
       );
     }
   })
   // 📈 Get Compliance History and Trends
-  .get('/history/:tenant_id', async (c) => {
-    const tenant_id = c.req.param('tenant_id');
-    const { days = '30' } = c.req.query();
+  .get("/history/:tenant_id", async (c) => {
+    const tenant_id = c.req.param("tenant_id");
+    const { days = "30" } = c.req.query();
 
     try {
       // Initialize Supabase client
@@ -220,12 +235,12 @@ export const complianceAutomationRoutes = new Hono()
 
       // Get compliance history
       const { data: complianceHistory, error: historyError } = await supabase
-        .from('compliance_assessments')
-        .select('*')
-        .eq('tenant_id', tenant_id)
-        .gte('assessed_at', startDate.toISOString())
-        .lte('assessed_at', endDate.toISOString())
-        .order('assessed_at', { ascending: true });
+        .from("compliance_assessments")
+        .select("*")
+        .eq("tenant_id", tenant_id)
+        .gte("assessed_at", startDate.toISOString())
+        .lte("assessed_at", endDate.toISOString())
+        .order("assessed_at", { ascending: true });
 
       if (historyError) {
         throw historyError;
@@ -233,7 +248,7 @@ export const complianceAutomationRoutes = new Hono()
 
       // Calculate trends
       const trends = {
-        score_trend: 'stable' as 'improving' | 'stable' | 'declining',
+        score_trend: "stable" as "improving" | "stable" | "declining",
         average_score: 9.9,
         compliance_consistency: 100,
         areas_improving: [] as string[],
@@ -242,7 +257,8 @@ export const complianceAutomationRoutes = new Hono()
 
       if (complianceHistory && complianceHistory.length >= 2) {
         const scores = complianceHistory.map((h) => h.overall_score);
-        const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+        const averageScore =
+          scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
         const firstScore = scores[0];
         const lastScore = scores.at(-1);
@@ -254,9 +270,9 @@ export const complianceAutomationRoutes = new Hono()
         );
 
         if (trendPercentage > 1) {
-          trends.score_trend = 'improving';
+          trends.score_trend = "improving";
         } else if (trendPercentage < -1) {
-          trends.score_trend = 'declining';
+          trends.score_trend = "declining";
         }
       }
 
@@ -287,7 +303,7 @@ export const complianceAutomationRoutes = new Hono()
             constitutional_compliance_rate: trends.compliance_consistency,
           },
         },
-        message: 'Histórico de compliance carregado',
+        message: "Histórico de compliance carregado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -295,8 +311,8 @@ export const complianceAutomationRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar histórico de compliance',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar histórico de compliance",
         },
         500,
       );
@@ -304,10 +320,10 @@ export const complianceAutomationRoutes = new Hono()
   })
   // ⚙️ Configure Compliance Automation
   .post(
-    '/configure',
-    zValidator('json', ComplianceAutomationConfigSchema),
+    "/configure",
+    zValidator("json", ComplianceAutomationConfigSchema),
     async (c) => {
-      const config = c.req.valid('json');
+      const config = c.req.valid("json");
 
       try {
         // Initialize Supabase client
@@ -315,7 +331,7 @@ export const complianceAutomationRoutes = new Hono()
 
         // Store compliance configuration
         const { data: configData, error: configError } = await supabase
-          .from('compliance_configurations')
+          .from("compliance_configurations")
           .upsert({
             tenant_id: config.tenant_id,
             configuration: config,
@@ -331,7 +347,7 @@ export const complianceAutomationRoutes = new Hono()
         const response: ApiResponse<typeof configData> = {
           success: true,
           data: configData,
-          message: 'Configuração de compliance atualizada',
+          message: "Configuração de compliance atualizada",
         };
 
         return c.json(response, HTTP_STATUS.OK);
@@ -339,8 +355,8 @@ export const complianceAutomationRoutes = new Hono()
         return c.json(
           {
             success: false,
-            error: 'INTERNAL_ERROR',
-            message: 'Erro ao configurar automação de compliance',
+            error: "INTERNAL_ERROR",
+            message: "Erro ao configurar automação de compliance",
           },
           500,
         );
@@ -348,24 +364,24 @@ export const complianceAutomationRoutes = new Hono()
     },
   )
   // 🚨 Get Active Compliance Alerts
-  .get('/alerts/:tenant_id', async (c) => {
-    const tenant_id = c.req.param('tenant_id');
-    const { severity, limit = '50' } = c.req.query();
+  .get("/alerts/:tenant_id", async (c) => {
+    const tenant_id = c.req.param("tenant_id");
+    const { severity, limit = "50" } = c.req.query();
 
     try {
       // Initialize Supabase client
       const supabase = createSupabaseClient();
 
       let query = supabase
-        .from('compliance_alerts')
-        .select('*')
-        .eq('tenant_id', tenant_id)
-        .eq('acknowledged', false)
-        .order('triggered_at', { ascending: false })
+        .from("compliance_alerts")
+        .select("*")
+        .eq("tenant_id", tenant_id)
+        .eq("acknowledged", false)
+        .order("triggered_at", { ascending: false })
         .limit(Number.parseInt(limit, 10));
 
       if (severity) {
-        query = query.eq('severity', severity);
+        query = query.eq("severity", severity);
       }
 
       const { data: alerts, error: alertsError } = await query;
@@ -377,13 +393,14 @@ export const complianceAutomationRoutes = new Hono()
       // Categorize alerts by severity
       const alertsSummary = {
         total: alerts?.length || 0,
-        critical: alerts?.filter(
-          (a) =>
-            a.severity === 'critical'
-            || a.severity === 'constitutional_violation',
-        ).length || 0,
-        warning: alerts?.filter((a) => a.severity === 'warning').length || 0,
-        info: alerts?.filter((a) => a.severity === 'info').length || 0,
+        critical:
+          alerts?.filter(
+            (a) =>
+              a.severity === "critical" ||
+              a.severity === "constitutional_violation",
+          ).length || 0,
+        warning: alerts?.filter((a) => a.severity === "warning").length || 0,
+        info: alerts?.filter((a) => a.severity === "info").length || 0,
       };
 
       const response: ApiResponse<{
@@ -395,7 +412,7 @@ export const complianceAutomationRoutes = new Hono()
           alerts: alerts || [],
           summary: alertsSummary,
         },
-        message: 'Alertas de compliance carregados',
+        message: "Alertas de compliance carregados",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -403,16 +420,16 @@ export const complianceAutomationRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar alertas de compliance',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar alertas de compliance",
         },
         500,
       );
     }
   })
   // ✅ Acknowledge Compliance Alert
-  .put('/alerts/:alert_id/acknowledge', async (c) => {
-    const alert_id = c.req.param('alert_id');
+  .put("/alerts/:alert_id/acknowledge", async (c) => {
+    const alert_id = c.req.param("alert_id");
     const { user_id } = await c.req.json();
 
     try {
@@ -421,13 +438,13 @@ export const complianceAutomationRoutes = new Hono()
 
       // Acknowledge alert
       const { data: acknowledgedAlert, error: ackError } = await supabase
-        .from('compliance_alerts')
+        .from("compliance_alerts")
         .update({
           acknowledged: true,
           acknowledged_by: user_id,
           acknowledged_at: new Date().toISOString(),
         })
-        .eq('alert_id', alert_id)
+        .eq("alert_id", alert_id)
         .select()
         .single();
 
@@ -438,7 +455,7 @@ export const complianceAutomationRoutes = new Hono()
       const response: ApiResponse<typeof acknowledgedAlert> = {
         success: true,
         data: acknowledgedAlert,
-        message: 'Alerta de compliance confirmado',
+        message: "Alerta de compliance confirmado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -446,15 +463,15 @@ export const complianceAutomationRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao confirmar alerta',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao confirmar alerta",
         },
         500,
       );
     }
   })
   // 📋 Generate Compliance Report
-  .post('/reports/generate', async (c) => {
+  .post("/reports/generate", async (c) => {
     const { tenant_id, report_type, period_days = 30 } = await c.req.json();
 
     try {
@@ -468,12 +485,12 @@ export const complianceAutomationRoutes = new Hono()
       );
 
       const { data: reportData, error: reportError } = await supabase
-        .from('compliance_assessments')
-        .select('*')
-        .eq('tenant_id', tenant_id)
-        .gte('assessed_at', startDate.toISOString())
-        .lte('assessed_at', endDate.toISOString())
-        .order('assessed_at', { ascending: false });
+        .from("compliance_assessments")
+        .select("*")
+        .eq("tenant_id", tenant_id)
+        .gte("assessed_at", startDate.toISOString())
+        .lte("assessed_at", endDate.toISOString())
+        .order("assessed_at", { ascending: false });
 
       if (reportError) {
         throw reportError;
@@ -490,22 +507,22 @@ export const complianceAutomationRoutes = new Hono()
         compliance_overview: {
           total_assessments: reportData?.length || 0,
           average_score: reportData?.length
-            ? reportData.reduce((sum, r) => sum + r.overall_score, 0)
-              / reportData.length
+            ? reportData.reduce((sum, r) => sum + r.overall_score, 0) /
+              reportData.length
             : 9.9,
           constitutional_compliance_rate: reportData?.length
-            ? (reportData.filter((r) => r.overall_score >= 9.9).length
-              / reportData.length)
-              * 100
+            ? (reportData.filter((r) => r.overall_score >= 9.9).length /
+                reportData.length) *
+              100
             : 100,
-          areas_analyzed: ['LGPD', 'ANVISA', 'CFM'],
+          areas_analyzed: ["LGPD", "ANVISA", "CFM"],
         },
         generated_at: new Date().toISOString(),
         download_url: `/api/v1/compliance-automation/reports/download/${tenant_id}/${Date.now()}`,
       };
 
       // Store report
-      await supabase.from('compliance_reports').insert({
+      await supabase.from("compliance_reports").insert({
         tenant_id,
         report_type,
         report_data: reportSummary,
@@ -515,7 +532,7 @@ export const complianceAutomationRoutes = new Hono()
       const response: ApiResponse<typeof reportSummary> = {
         success: true,
         data: reportSummary,
-        message: 'Relatório de compliance gerado',
+        message: "Relatório de compliance gerado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -523,8 +540,8 @@ export const complianceAutomationRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao gerar relatório de compliance',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao gerar relatório de compliance",
         },
         500,
       );

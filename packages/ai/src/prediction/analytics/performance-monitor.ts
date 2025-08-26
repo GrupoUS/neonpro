@@ -1,4 +1,4 @@
-import type { ModelType } from '../types';
+import type { ModelType } from "../types";
 
 /**
  * Performance Monitoring System for AI Prediction Engine
@@ -60,9 +60,9 @@ export class PredictionPerformanceMonitor {
 
     const recentAccuracy = this.accuracyHistory.filter(
       (record) =>
-        record.modelType === modelType
-        && record.date >= startDate
-        && record.date <= endDate,
+        record.modelType === modelType &&
+        record.date >= startDate &&
+        record.date <= endDate,
     );
 
     if (recentAccuracy.length === 0) {
@@ -70,7 +70,7 @@ export class PredictionPerformanceMonitor {
         meetsTarget: false,
         currentAccuracy: 0,
         target: 0.85,
-        recommendation: 'Insufficient data for accuracy assessment',
+        recommendation: "Insufficient data for accuracy assessment",
       };
     }
 
@@ -86,11 +86,13 @@ export class PredictionPerformanceMonitor {
 
     let recommendation: string;
     if (meetsTarget) {
-      recommendation = 'Model performance is meeting accuracy targets';
+      recommendation = "Model performance is meeting accuracy targets";
     } else if (currentAccuracy >= 0.75) {
-      recommendation = 'Model performance slightly below target - consider fine-tuning';
+      recommendation =
+        "Model performance slightly below target - consider fine-tuning";
     } else {
-      recommendation = 'Model performance significantly below target - urgent retraining needed';
+      recommendation =
+        "Model performance significantly below target - urgent retraining needed";
     }
 
     return {

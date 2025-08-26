@@ -5,8 +5,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { useQueryClient } from '@tanstack/react-query';
-import type { QueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 // Enhanced query invalidation strategies

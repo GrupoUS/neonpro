@@ -1,5 +1,5 @@
-import { neonproAIIntegration } from '../integrations/neonpro-integration';
-import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
+import { neonproAIIntegration } from "../integrations/neonpro-integration";
+import type { PatientProfile, SkinType, TreatmentRequest } from "../types";
 
 /**
  * Utility Helper Functions for NeonPro AI Prediction Engine
@@ -7,9 +7,9 @@ import type { PatientProfile, SkinType, TreatmentRequest } from '../types';
  */
 
 // Type definitions for specific concerns, expectations, and urgency levels
-type ConcernType = 'wrinkles' | 'acne-scars' | 'pigmentation' | 'texture';
-type ExpectationType = 'subtle' | 'moderate' | 'dramatic';
-type UrgencyType = 'low' | 'moderate' | 'high';
+type ConcernType = "wrinkles" | "acne-scars" | "pigmentation" | "texture";
+type ExpectationType = "subtle" | "moderate" | "dramatic";
+type UrgencyType = "low" | "moderate" | "high";
 
 // Constants for time calculations and business rules
 const _MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -33,8 +33,8 @@ export function createPatientProfile(
   const defaultProfile: PatientProfile = {
     id: overrides.id || `patient_${Date.now()}`,
     age: 35,
-    gender: 'female',
-    skinType: 'fitzpatrick-3',
+    gender: "female",
+    skinType: "fitzpatrick-3",
     medicalHistory: {
       allergies: [],
       medications: [],
@@ -46,8 +46,8 @@ export function createPatientProfile(
     lifestyle: {
       smoking: false,
       alcohol: false,
-      sunExposure: 'moderate',
-      exerciseLevel: 'moderate',
+      sunExposure: "moderate",
+      exerciseLevel: "moderate",
       stressLevel: 5,
       sleepQuality: 7,
       skincare: {
@@ -61,9 +61,9 @@ export function createPatientProfile(
     },
     previousTreatments: [],
     goals: {
-      primary: 'Aesthetic improvement',
-      secondary: ['Preventive care'],
-      expectations: 'moderate',
+      primary: "Aesthetic improvement",
+      secondary: ["Preventive care"],
+      expectations: "moderate",
       maintenance: true,
       naturalLook: true,
     },
@@ -71,7 +71,7 @@ export function createPatientProfile(
       dataProcessingConsent: true,
       aiPredictionConsent: true,
       consentDate: new Date(),
-      consentVersion: '1.0',
+      consentVersion: "1.0",
       dataRetentionPeriod: 365,
       anonymizationRequested: false,
     },
@@ -94,25 +94,25 @@ export function createTreatmentRequest(
     treatmentType: treatmentType as any,
     targetAreas: targetAreas.map((area) => ({
       region: area as any,
-      concern: 'wrinkles' as ConcernType,
+      concern: "wrinkles" as ConcernType,
       severity: 5,
       priority: 1,
     })),
     goals: {
-      primary: 'Aesthetic improvement',
+      primary: "Aesthetic improvement",
       secondary: [],
-      expectations: 'moderate' as ExpectationType,
+      expectations: "moderate" as ExpectationType,
       maintenance: false,
       naturalLook: true,
     },
-    urgency: 'moderate' as UrgencyType,
+    urgency: "moderate" as UrgencyType,
     budgetRange: {
       min: 1000,
       max: 5000,
-      currency: 'BRL',
+      currency: "BRL",
       flexible: true,
     },
-    timeframe: 'within-month',
+    timeframe: "within-month",
   };
 
   return { ...defaultRequest, ...overrides };
@@ -131,32 +131,32 @@ export function validatePatientData(patient: PatientProfile): {
 
   // Required fields validation
   if (!patient.id) {
-    errors.push('Patient ID is required');
+    errors.push("Patient ID is required");
   }
   if (!patient.age || patient.age < 18 || patient.age > 100) {
-    errors.push('Patient age must be between 18 and 100');
+    errors.push("Patient age must be between 18 and 100");
   }
   if (!patient.skinType) {
-    errors.push('Skin type is required');
+    errors.push("Skin type is required");
   }
   if (!patient.consentStatus.aiPredictionConsent) {
-    errors.push('AI prediction consent is required');
+    errors.push("AI prediction consent is required");
   }
 
   // Warnings for data quality
   if (patient.previousTreatments.length === 0) {
     warnings.push(
-      'No previous treatment history - predictions may be less accurate',
+      "No previous treatment history - predictions may be less accurate",
     );
   }
   if (!patient.medicalHistory.medications) {
     warnings.push(
-      'No medication history provided - risk assessment may be incomplete',
+      "No medication history provided - risk assessment may be incomplete",
     );
   }
   if (patient.lifestyle.smoking) {
     warnings.push(
-      'Smoking detected - may affect treatment outcomes and healing',
+      "Smoking detected - may affect treatment outcomes and healing",
     );
   }
 
@@ -171,47 +171,47 @@ export function validatePatientData(patient: PatientProfile): {
  * Format skin type from string to SkinType enum
  */
 export function formatSkinType(skinType: string | number): SkinType {
-  if (typeof skinType === 'number') {
+  if (typeof skinType === "number") {
     const typeMap: Record<number, SkinType> = {
-      1: 'fitzpatrick-1',
-      2: 'fitzpatrick-2',
-      3: 'fitzpatrick-3',
-      4: 'fitzpatrick-4',
-      5: 'fitzpatrick-5',
-      6: 'fitzpatrick-6',
+      1: "fitzpatrick-1",
+      2: "fitzpatrick-2",
+      3: "fitzpatrick-3",
+      4: "fitzpatrick-4",
+      5: "fitzpatrick-5",
+      6: "fitzpatrick-6",
     };
-    return typeMap[skinType] || 'fitzpatrick-3';
+    return typeMap[skinType] || "fitzpatrick-3";
   }
 
-  if (skinType.includes('fitzpatrick')) {
+  if (skinType.includes("fitzpatrick")) {
     return skinType as SkinType;
   }
 
   // Handle common variations
   const normalizedType = skinType.toLowerCase();
   if (
-    normalizedType.includes('very fair')
-    || normalizedType.includes('type 1')
+    normalizedType.includes("very fair") ||
+    normalizedType.includes("type 1")
   ) {
-    return 'fitzpatrick-1';
+    return "fitzpatrick-1";
   }
-  if (normalizedType.includes('fair') || normalizedType.includes('type 2')) {
-    return 'fitzpatrick-2';
+  if (normalizedType.includes("fair") || normalizedType.includes("type 2")) {
+    return "fitzpatrick-2";
   }
-  if (normalizedType.includes('medium') || normalizedType.includes('type 3')) {
-    return 'fitzpatrick-3';
+  if (normalizedType.includes("medium") || normalizedType.includes("type 3")) {
+    return "fitzpatrick-3";
   }
-  if (normalizedType.includes('olive') || normalizedType.includes('type 4')) {
-    return 'fitzpatrick-4';
+  if (normalizedType.includes("olive") || normalizedType.includes("type 4")) {
+    return "fitzpatrick-4";
   }
-  if (normalizedType.includes('brown') || normalizedType.includes('type 5')) {
-    return 'fitzpatrick-5';
+  if (normalizedType.includes("brown") || normalizedType.includes("type 5")) {
+    return "fitzpatrick-5";
   }
-  if (normalizedType.includes('dark') || normalizedType.includes('type 6')) {
-    return 'fitzpatrick-6';
+  if (normalizedType.includes("dark") || normalizedType.includes("type 6")) {
+    return "fitzpatrick-6";
   }
 
-  return 'fitzpatrick-3'; // Default to medium skin type
+  return "fitzpatrick-3"; // Default to medium skin type
 }
 
 /**
@@ -219,11 +219,11 @@ export function formatSkinType(skinType: string | number): SkinType {
  */
 export function calculateRiskScore(riskLevel: string): number {
   const riskMap: Record<string, number> = {
-    'very-low': 0.1,
+    "very-low": 0.1,
     low: 0.25,
     moderate: 0.5,
     high: 0.75,
-    'very-high': 0.9,
+    "very-high": 0.9,
   };
 
   return riskMap[riskLevel] || 0.5;
@@ -239,16 +239,16 @@ export function formatRecommendations(recommendations: string[]): {
 } {
   const critical = recommendations.filter(
     (rec) =>
-      rec.toLowerCase().includes('urgent')
-      || rec.toLowerCase().includes('contraindication')
-      || rec.toLowerCase().includes('immediate'),
+      rec.toLowerCase().includes("urgent") ||
+      rec.toLowerCase().includes("contraindication") ||
+      rec.toLowerCase().includes("immediate"),
   );
 
   const important = recommendations.filter(
     (rec) =>
-      rec.toLowerCase().includes('consider')
-      || rec.toLowerCase().includes('recommend')
-      || rec.toLowerCase().includes('significant'),
+      rec.toLowerCase().includes("consider") ||
+      rec.toLowerCase().includes("recommend") ||
+      rec.toLowerCase().includes("significant"),
   );
 
   const general = recommendations.filter(
@@ -283,13 +283,14 @@ export async function checkAccuracyTargets(): Promise<{
       }
     }
 
-    const overallAccuracy = Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0)
-      / Object.values(health.accuracy).length;
+    const overallAccuracy =
+      Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) /
+      Object.values(health.accuracy).length;
     const overallTarget = overallAccuracy >= targetAccuracy;
 
     if (!overallTarget) {
       recommendations.push(
-        'Overall system accuracy below target - consider model retraining',
+        "Overall system accuracy below target - consider model retraining",
       );
     }
 
@@ -303,7 +304,7 @@ export async function checkAccuracyTargets(): Promise<{
       overallTarget: false,
       individualTargets: {},
       recommendations: [
-        'Unable to check accuracy targets - system may be offline',
+        "Unable to check accuracy targets - system may be offline",
       ],
     };
   }
@@ -314,58 +315,58 @@ export async function checkAccuracyTargets(): Promise<{
  */
 export const AESTHETIC_CONSTANTS = {
   TREATMENT_TYPES: [
-    'botox',
-    'dermal-fillers',
-    'laser-resurfacing',
-    'laser-hair-removal',
-    'chemical-peel',
-    'microneedling',
-    'coolsculpting',
-    'radiofrequency',
-    'photofacial',
-    'thread-lift',
+    "botox",
+    "dermal-fillers",
+    "laser-resurfacing",
+    "laser-hair-removal",
+    "chemical-peel",
+    "microneedling",
+    "coolsculpting",
+    "radiofrequency",
+    "photofacial",
+    "thread-lift",
   ] as const,
 
   FACIAL_REGIONS: [
-    'forehead',
-    'glabella',
-    'crows-feet',
-    'under-eyes',
-    'cheeks',
-    'nasolabial-folds',
-    'marionette-lines',
-    'lips',
-    'jawline',
-    'neck',
+    "forehead",
+    "glabella",
+    "crows-feet",
+    "under-eyes",
+    "cheeks",
+    "nasolabial-folds",
+    "marionette-lines",
+    "lips",
+    "jawline",
+    "neck",
   ] as const,
 
   BODY_REGIONS: [
-    'abdomen',
-    'thighs',
-    'arms',
-    'back',
-    'chest',
-    'flanks',
-    'buttocks',
+    "abdomen",
+    "thighs",
+    "arms",
+    "back",
+    "chest",
+    "flanks",
+    "buttocks",
   ] as const,
 
   SKIN_TYPES: [
-    'fitzpatrick-1',
-    'fitzpatrick-2',
-    'fitzpatrick-3',
-    'fitzpatrick-4',
-    'fitzpatrick-5',
-    'fitzpatrick-6',
+    "fitzpatrick-1",
+    "fitzpatrick-2",
+    "fitzpatrick-3",
+    "fitzpatrick-4",
+    "fitzpatrick-5",
+    "fitzpatrick-6",
   ] as const,
 
   ACCURACY_TARGET: 0.85,
   RESPONSE_TIME_TARGET: 2000, // milliseconds
 
   RISK_LEVELS: {
-    VERY_LOW: 'very-low',
-    LOW: 'low',
-    MODERATE: 'moderate',
-    HIGH: 'high',
-    VERY_HIGH: 'very-high',
+    VERY_LOW: "very-low",
+    LOW: "low",
+    MODERATE: "moderate",
+    HIGH: "high",
+    VERY_HIGH: "very-high",
   } as const,
 };

@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
-import path from 'node:path';
-import { defineConfig } from 'vitest/config';
+import path from "node:path";
+import { defineConfig } from "vitest/config";
 
 /**
  * NeonPro Healthcare Platform - Final Validation Test Suite
@@ -12,24 +12,24 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./setup/final-test-setup.ts'],
+    environment: "jsdom",
+    setupFiles: ["./setup/final-test-setup.ts"],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       include: [
-        'apps/api/src/**/*.{ts,tsx}',
-        'apps/web/app/**/*.{ts,tsx}',
-        'apps/web/components/**/*.{ts,tsx}',
-        'apps/web/lib/**/*.{ts,tsx}',
-        'packages/**/*.{ts,tsx}',
+        "apps/api/src/**/*.{ts,tsx}",
+        "apps/web/app/**/*.{ts,tsx}",
+        "apps/web/components/**/*.{ts,tsx}",
+        "apps/web/lib/**/*.{ts,tsx}",
+        "packages/**/*.{ts,tsx}",
       ],
       exclude: [
-        'node_modules/**',
-        'dist/**',
-        '**/*.d.ts',
-        '**/*.test.*',
-        '**/__tests__/**',
+        "node_modules/**",
+        "dist/**",
+        "**/*.d.ts",
+        "**/*.test.*",
+        "**/__tests__/**",
       ],
       thresholds: {
         global: {
@@ -43,7 +43,7 @@ export default defineConfig({
     testTimeout: 30_000,
     hookTimeout: 30_000,
     teardownTimeout: 30_000,
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         singleThread: false,
@@ -54,12 +54,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../../..'),
-      '@api': path.resolve(__dirname, '../../../apps/api/src'),
-      '@web': path.resolve(__dirname, '../../../apps/web'),
-      '@shared': path.resolve(__dirname, '../../../packages/shared/src'),
-      '@core': path.resolve(__dirname, '../../../packages/core-services/src'),
-      '@ui': path.resolve(__dirname, '../../../components'),
+      "@": path.resolve(__dirname, "../../.."),
+      "@api": path.resolve(__dirname, "../../../apps/api/src"),
+      "@web": path.resolve(__dirname, "../../../apps/web"),
+      "@shared": path.resolve(__dirname, "../../../packages/shared/src"),
+      "@core": path.resolve(__dirname, "../../../packages/core-services/src"),
+      "@ui": path.resolve(__dirname, "../../../components"),
     },
   },
 });

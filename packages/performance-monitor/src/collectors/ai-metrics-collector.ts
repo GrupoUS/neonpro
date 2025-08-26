@@ -1,5 +1,5 @@
-import { MetricType, MetricUnit } from '../types';
-import type { MetricCollector, PerformanceMetric } from '../types';
+import { MetricType, MetricUnit } from "../types";
+import type { MetricCollector, PerformanceMetric } from "../types";
 
 export class AIMetricsCollector implements MetricCollector {
   private enabled = true;
@@ -33,8 +33,8 @@ export class AIMetricsCollector implements MetricCollector {
         type: MetricType.ERROR_RATE,
         value: 1,
         unit: MetricUnit.COUNT,
-        tags: { component: 'ai', error: 'collection_failed' },
-        source: 'ai-metrics-collector',
+        tags: { component: "ai", error: "collection_failed" },
+        source: "ai-metrics-collector",
         context: {
           error: error instanceof Error ? error.message : String(error),
         },
@@ -60,21 +60,22 @@ export class AIMetricsCollector implements MetricCollector {
       type: MetricType.AI_API_CALLS,
       value: totalAPICalls,
       unit: MetricUnit.COUNT,
-      tags: { component: 'ai', metric: 'throughput' },
-      source: 'ai-metrics-collector',
+      tags: { component: "ai", metric: "throughput" },
+      source: "ai-metrics-collector",
       context: { successful: successfulCalls, failed: failedCalls },
     });
 
     // Error rate
-    const errorRate = totalAPICalls > 0 ? (failedCalls / totalAPICalls) * 100 : 0;
+    const errorRate =
+      totalAPICalls > 0 ? (failedCalls / totalAPICalls) * 100 : 0;
     metrics.push({
       id: `ai_error_rate_${timestamp}`,
       timestamp,
       type: MetricType.ERROR_RATE,
       value: errorRate,
       unit: MetricUnit.PERCENTAGE,
-      tags: { component: 'ai', service: 'api_calls' },
-      source: 'ai-metrics-collector',
+      tags: { component: "ai", service: "api_calls" },
+      source: "ai-metrics-collector",
       context: { total: totalAPICalls, failed: failedCalls },
     });
   }
@@ -98,9 +99,9 @@ export class AIMetricsCollector implements MetricCollector {
         type: MetricType.AI_COST,
         value: hourlyCost,
         unit: MetricUnit.COST_USD,
-        tags: { component: 'ai', period: 'hourly' },
-        source: 'ai-metrics-collector',
-        context: { period: 'hour', cost: hourlyCost },
+        tags: { component: "ai", period: "hourly" },
+        source: "ai-metrics-collector",
+        context: { period: "hour", cost: hourlyCost },
       });
 
       // Daily cost
@@ -110,9 +111,9 @@ export class AIMetricsCollector implements MetricCollector {
         type: MetricType.AI_COST,
         value: dailyCost,
         unit: MetricUnit.COST_USD,
-        tags: { component: 'ai', period: 'daily' },
-        source: 'ai-metrics-collector',
-        context: { period: 'day', cost: dailyCost },
+        tags: { component: "ai", period: "daily" },
+        source: "ai-metrics-collector",
+        context: { period: "day", cost: dailyCost },
       });
 
       // Monthly projected cost
@@ -122,9 +123,9 @@ export class AIMetricsCollector implements MetricCollector {
         type: MetricType.AI_COST,
         value: monthlyCost,
         unit: MetricUnit.COST_USD,
-        tags: { component: 'ai', period: 'monthly', projected: 'true' },
-        source: 'ai-metrics-collector',
-        context: { period: 'month', cost: monthlyCost, projected: 'true' },
+        tags: { component: "ai", period: "monthly", projected: "true" },
+        source: "ai-metrics-collector",
+        context: { period: "month", cost: monthlyCost, projected: "true" },
       });
     } catch {}
   }
@@ -144,8 +145,8 @@ export class AIMetricsCollector implements MetricCollector {
       type: MetricType.RESPONSE_TIME,
       value: averageResponseTime,
       unit: MetricUnit.MILLISECONDS,
-      tags: { component: 'ai', metric: 'average', service: 'api' },
-      source: 'ai-metrics-collector',
+      tags: { component: "ai", metric: "average", service: "api" },
+      source: "ai-metrics-collector",
     });
 
     // P95 response time
@@ -155,8 +156,8 @@ export class AIMetricsCollector implements MetricCollector {
       type: MetricType.RESPONSE_TIME,
       value: p95ResponseTime,
       unit: MetricUnit.MILLISECONDS,
-      tags: { component: 'ai', metric: 'p95', service: 'api' },
-      source: 'ai-metrics-collector',
+      tags: { component: "ai", metric: "p95", service: "api" },
+      source: "ai-metrics-collector",
     });
   } // Mock methods - will be replaced with actual service integration
   private async getTotalAPICalls(): Promise<number> {

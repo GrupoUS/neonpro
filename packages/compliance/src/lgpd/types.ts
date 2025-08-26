@@ -34,18 +34,18 @@ export interface LGPDDataCategory {
   id: string;
   name: string;
   description: string;
-  sensitivity: 'low' | 'medium' | 'high' | 'critical';
+  sensitivity: "low" | "medium" | "high" | "critical";
   retention: number; // days
   lawfulBasis: LGPDLawfulBasis;
 }
 
 export type LGPDLawfulBasis =
-  | 'consent'
-  | 'contract'
-  | 'legal_obligation'
-  | 'vital_interests'
-  | 'public_task'
-  | 'legitimate_interests';
+  | "consent"
+  | "contract"
+  | "legal_obligation"
+  | "vital_interests"
+  | "public_task"
+  | "legitimate_interests";
 
 export interface LGPDProcessingActivity {
   id: string;
@@ -72,7 +72,7 @@ export interface LGPDDataTransfer {
 
 export interface LGPDSecurityMeasure {
   id: string;
-  type: 'technical' | 'organizational';
+  type: "technical" | "organizational";
   description: string;
   implemented: boolean;
   implementedAt?: Date;
@@ -83,23 +83,23 @@ export interface LGPDDataBreach {
   detectedAt: Date;
   reportedAt?: Date;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   affectedSubjects: number;
   categories: string[];
   consequences: string[];
   measures: string[];
-  status: 'detected' | 'investigating' | 'reported' | 'resolved';
+  status: "detected" | "investigating" | "reported" | "resolved";
 }
 
 export interface LGPDSubjectRequest {
   id: string;
   subjectId: string;
-  type: 'access' | 'rectification' | 'erasure' | 'portability' | 'objection';
+  type: "access" | "rectification" | "erasure" | "portability" | "objection";
   description?: string;
   requestedAt: Date;
   processedAt?: Date;
   completedAt?: Date;
-  status: 'pending' | 'processing' | 'completed' | 'rejected';
+  status: "pending" | "processing" | "completed" | "rejected";
   response?: string;
 }
 
@@ -112,21 +112,21 @@ export interface LGPDDPIA {
   measures: LGPDSecurityMeasure[];
   assessment: LGPDRiskAssessment;
   reviewDate: Date;
-  status: 'draft' | 'review' | 'approved' | 'rejected';
+  status: "draft" | "review" | "approved" | "rejected";
 }
 
 export interface LGPDRisk {
   id: string;
   description: string;
-  likelihood: 'low' | 'medium' | 'high';
-  impact: 'low' | 'medium' | 'high';
-  category: 'confidentiality' | 'integrity' | 'availability';
+  likelihood: "low" | "medium" | "high";
+  impact: "low" | "medium" | "high";
+  category: "confidentiality" | "integrity" | "availability";
   mitigation: string[];
 }
 
 export interface LGPDRiskAssessment {
-  overallRisk: 'low' | 'medium' | 'high';
-  recommendation: 'proceed' | 'proceed_with_measures' | 'reject';
+  overallRisk: "low" | "medium" | "high";
+  recommendation: "proceed" | "proceed_with_measures" | "reject";
   justification: string;
   assessedBy: string;
   assessedAt: Date;
@@ -145,7 +145,7 @@ export interface LGPDAuditLog {
 
 export interface LGPDReport {
   id: string;
-  type: 'compliance' | 'breach' | 'dpia' | 'audit';
+  type: "compliance" | "breach" | "dpia" | "audit";
   period: {
     start: Date;
     end: Date;
@@ -189,7 +189,7 @@ export interface LGPDValidationResult {
   warnings: string[];
 }
 
-export type LGPDExportFormat = 'json' | 'xml' | 'csv' | 'pdf';
+export type LGPDExportFormat = "json" | "xml" | "csv" | "pdf";
 
 export interface LGPDExportOptions {
   format: LGPDExportFormat;

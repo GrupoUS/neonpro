@@ -1,10 +1,10 @@
-import { AlertCircle, Calendar, Eye, MapPin, Phone } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { formatDate, formatPhone } from '../utils/formatters';
-import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
-import { Badge } from './Badge';
-import { Button } from './Button';
+import { AlertCircle, Calendar, Eye, MapPin, Phone } from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { formatDate, formatPhone } from "../utils/formatters";
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 export interface PatientData {
   id: string;
@@ -14,7 +14,7 @@ export interface PatientData {
   email?: string;
   birthDate?: string;
   address?: string;
-  status: 'active' | 'inactive' | 'blocked';
+  status: "active" | "inactive" | "blocked";
   lastVisit?: string;
   nextAppointment?: string;
   urgentAlerts?: number;
@@ -37,9 +37,9 @@ export interface PatientCardProps {
 // Helper function to get initials from name
 const getInitials = (name: string): string => {
   return name
-    .split(' ')
+    .split(" ")
     .map((part) => part.charAt(0))
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 };
@@ -52,10 +52,10 @@ const formatRelativeTime = (dateString: string): string => {
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffDays === 0) {
-    return 'Hoje';
+    return "Hoje";
   }
   if (diffDays === 1) {
-    return 'Ontem';
+    return "Ontem";
   }
   if (diffDays < 7) {
     return `${diffDays} dias atrás`;
@@ -68,13 +68,13 @@ const formatRelativeTime = (dateString: string): string => {
 
 // Helper function to get status text
 const getStatusText = (patientStatus: string): string => {
-  if (patientStatus === 'active') {
-    return 'Ativo';
+  if (patientStatus === "active") {
+    return "Ativo";
   }
-  if (patientStatus === 'inactive') {
-    return 'Inativo';
+  if (patientStatus === "inactive") {
+    return "Inativo";
   }
-  return 'Bloqueado';
+  return "Bloqueado";
 };
 const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
   (
@@ -109,24 +109,24 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
 
     const age = birthDate
       ? Math.floor(
-        (Date.now() - new Date(birthDate).getTime())
-          / (365.25 * 24 * 60 * 60 * 1000),
-      )
+          (Date.now() - new Date(birthDate).getTime()) /
+            (365.25 * 24 * 60 * 60 * 1000),
+        )
       : undefined;
 
     const getStatusVariant = (patientStatus: string) => {
       switch (patientStatus) {
-        case 'active': {
-          return 'confirmed';
+        case "active": {
+          return "confirmed";
         }
-        case 'inactive': {
-          return 'pending';
+        case "inactive": {
+          return "pending";
         }
-        case 'blocked': {
-          return 'cancelled';
+        case "blocked": {
+          return "cancelled";
         }
         default: {
-          return 'default';
+          return "default";
         }
       }
     };
@@ -136,8 +136,8 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
     return (
       <button
         className={cn(
-          'w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-          onClick && 'cursor-pointer',
+          "w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          onClick && "cursor-pointer",
           className,
         )}
         onClick={onClick}
@@ -147,7 +147,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
       >
         {/* Header */}
         <div className="flex items-start gap-3">
-          <Avatar size={compact ? 'sm' : 'default'}>
+          <Avatar size={compact ? "sm" : "default"}>
             <AvatarImage alt={name} src={avatar} />
             <AvatarFallback>{getInitials(name)}</AvatarFallback>
           </Avatar>
@@ -157,13 +157,15 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
               <div>
                 <h3
                   className={cn(
-                    'truncate font-medium',
-                    compact ? 'text-sm' : 'text-base',
+                    "truncate font-medium",
+                    compact ? "text-sm" : "text-base",
                   )}
                 >
                   {name}
                 </h3>
-                {age && <p className="text-muted-foreground text-sm">{age} anos</p>}
+                {age && (
+                  <p className="text-muted-foreground text-sm">{age} anos</p>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -185,7 +187,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
               </p>
             )}
           </div>
-        </div>{' '}
+        </div>{" "}
         {/* Contact Info */}
         {!compact && (
           <div className="mt-3 space-y-2">
@@ -241,7 +243,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
               <span>{totalAppointments}</span>
             </div>
           )}
-        </div>{' '}
+        </div>{" "}
         {/* Actions */}
         {showActions && (
           <div className="mt-4 flex gap-2 border-t pt-3">
@@ -271,7 +273,7 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
                 variant="default"
               >
                 <Calendar className="mr-2 h-4 w-4" />
-                {compact ? 'Agendar' : 'Nova Consulta'}
+                {compact ? "Agendar" : "Nova Consulta"}
               </Button>
             )}
           </div>
@@ -287,6 +289,6 @@ const PatientCard = React.forwardRef<HTMLButtonElement, PatientCardProps>(
   },
 );
 
-PatientCard.displayName = 'PatientCard';
+PatientCard.displayName = "PatientCard";
 
 export { PatientCard };

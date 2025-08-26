@@ -1,9 +1,9 @@
 // AI-Driven Appointment Optimization Service
 // Intelligent scheduling optimization for maximum efficiency and patient satisfaction
 
-import { createClient } from '@supabase/supabase-js';
-import { EnhancedAIService } from './enhanced-service-base';
-import type { AIServiceInput, AIServiceOutput } from './enhanced-service-base';
+import { createClient } from "@supabase/supabase-js";
+import { EnhancedAIService } from "./enhanced-service-base";
+import type { AIServiceInput, AIServiceOutput } from "./enhanced-service-base";
 
 // Optimization Types and Interfaces
 export interface ScheduleContext {
@@ -24,11 +24,11 @@ export interface TimeSlot {
   end_time: string;
   available: boolean;
   slot_type:
-    | 'standard'
-    | 'extended'
-    | 'emergency'
-    | 'consultation'
-    | 'procedure';
+    | "standard"
+    | "extended"
+    | "emergency"
+    | "consultation"
+    | "procedure";
   capacity: number;
   current_bookings: number;
   preferred_appointment_types: string[];
@@ -41,8 +41,8 @@ export interface ExistingAppointment {
   start_time: string;
   end_time: string;
   appointment_type: string;
-  status: 'scheduled' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
-  urgency_level: 'low' | 'medium' | 'high' | 'urgent';
+  status: "scheduled" | "confirmed" | "checked_in" | "completed" | "cancelled";
+  urgency_level: "low" | "medium" | "high" | "urgent";
   preparation_time_minutes: number;
   cleanup_time_minutes: number;
 }
@@ -51,7 +51,7 @@ export interface ScheduleConstraints {
   max_appointments_per_day: number;
   min_break_minutes: number;
   max_consecutive_appointments: number;
-  lunch_break: { start_time: string; end_time: string; };
+  lunch_break: { start_time: string; end_time: string };
   doctor_preferences: DoctorPreferences;
   clinic_policies: ClinicPolicies;
   emergency_slots_percentage: number;
@@ -90,7 +90,7 @@ export interface AppointmentRequest {
   patient_profile: PatientOptimizationProfile;
   appointment_type: string;
   duration_minutes: number;
-  urgency_level: 'low' | 'medium' | 'high' | 'urgent';
+  urgency_level: "low" | "medium" | "high" | "urgent";
   preferred_times: TimePreference[];
   constraints: PatientConstraints;
   special_requirements: string[];
@@ -102,8 +102,8 @@ export interface PatientOptimizationProfile {
   chronic_conditions: string[];
   preferred_communication: string;
   distance_from_clinic_km: number;
-  transportation_method: 'car' | 'public_transport' | 'walk' | 'other';
-  work_schedule_flexibility: 'none' | 'low' | 'medium' | 'high';
+  transportation_method: "car" | "public_transport" | "walk" | "other";
+  work_schedule_flexibility: "none" | "low" | "medium" | "high";
   no_show_risk_score: number;
   satisfaction_history_score: number; // 1-10
 }
@@ -120,19 +120,19 @@ export interface PatientConstraints {
 
 export interface TimePreference {
   day_of_week: number; // 0-6, Sunday = 0
-  time_range: { start_time: string; end_time: string; };
+  time_range: { start_time: string; end_time: string };
   preference_score: number; // 1-10, 10 = most preferred
   flexibility_minutes: number;
 }
 
 export interface OptimizationInput extends AIServiceInput {
   action:
-    | 'optimize_schedule'
-    | 'suggest_appointment_time'
-    | 'reschedule_optimization'
-    | 'analyze_schedule_efficiency'
-    | 'generate_scheduling_insights'
-    | 'batch_optimize';
+    | "optimize_schedule"
+    | "suggest_appointment_time"
+    | "reschedule_optimization"
+    | "analyze_schedule_efficiency"
+    | "generate_scheduling_insights"
+    | "batch_optimize";
 
   schedule_context?: ScheduleContext;
   appointment_requests?: AppointmentRequest[];
@@ -141,28 +141,28 @@ export interface OptimizationInput extends AIServiceInput {
 
   // Single appointment optimization
   single_request?: AppointmentRequest;
-  preferred_date_range?: { start_date: string; end_date: string; };
+  preferred_date_range?: { start_date: string; end_date: string };
 
   // Rescheduling
   appointments_to_reschedule?: string[];
   reschedule_reason?:
-    | 'doctor_unavailable'
-    | 'emergency'
-    | 'patient_request'
-    | 'optimization';
+    | "doctor_unavailable"
+    | "emergency"
+    | "patient_request"
+    | "optimization";
 
   // Analysis
-  analysis_period?: { start_date: string; end_date: string; };
+  analysis_period?: { start_date: string; end_date: string };
   metrics_requested?: string[];
 }
 
 export interface OptimizationGoals {
   primary_goal:
-    | 'maximize_utilization'
-    | 'minimize_wait_times'
-    | 'maximize_satisfaction'
-    | 'balance_workload'
-    | 'minimize_no_shows';
+    | "maximize_utilization"
+    | "minimize_wait_times"
+    | "maximize_satisfaction"
+    | "balance_workload"
+    | "minimize_no_shows";
   secondary_goals: string[];
   goal_weights: Record<string, number>;
   success_metrics: string[];
@@ -199,7 +199,7 @@ export interface OptimizedSchedule {
   schedule_id: string;
   clinic_id: string;
   doctor_id?: string;
-  date_range: { start_date: string; end_date: string; };
+  date_range: { start_date: string; end_date: string };
   appointments: OptimizedAppointment[];
   utilization_rate: number;
   estimated_satisfaction_score: number;
@@ -239,7 +239,7 @@ export interface SuggestedAppointment {
 }
 
 export interface ScheduleChange {
-  change_type: 'add' | 'remove' | 'modify' | 'reschedule';
+  change_type: "add" | "remove" | "modify" | "reschedule";
   appointment_id?: string;
   old_time?: string;
   new_time?: string;
@@ -259,10 +259,10 @@ export interface EfficiencyMetrics {
 }
 
 export interface SchedulingInsight {
-  insight_type: 'pattern' | 'bottleneck' | 'opportunity' | 'risk' | 'trend';
+  insight_type: "pattern" | "bottleneck" | "opportunity" | "risk" | "trend";
   title: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   actionable_recommendations: string[];
   estimated_impact: number;
   confidence_level: number;
@@ -280,10 +280,10 @@ export interface AppointmentSuggestion {
 }
 
 export interface ScheduleAnalysis {
-  analysis_period: { start_date: string; end_date: string; };
+  analysis_period: { start_date: string; end_date: string };
   total_appointments: number;
   average_utilization: number;
-  peak_hours: { hour: number; utilization: number; }[];
+  peak_hours: { hour: number; utilization: number }[];
   appointment_type_distribution: Record<string, number>;
   patient_flow_patterns: FlowPattern[];
   bottleneck_analysis: BottleneckAnalysis;
@@ -319,10 +319,10 @@ export interface SatisfactionTrend {
 }
 
 export interface ImprovementRecommendation {
-  recommendation_type: 'scheduling' | 'resource' | 'policy' | 'workflow';
+  recommendation_type: "scheduling" | "resource" | "policy" | "workflow";
   title: string;
   description: string;
-  implementation_difficulty: 'easy' | 'medium' | 'hard';
+  implementation_difficulty: "easy" | "medium" | "hard";
   estimated_benefit: number;
   estimated_cost: number;
   timeline_weeks: number;
@@ -337,7 +337,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   private readonly optimizationCache: Map<string, unknown> = new Map();
 
   constructor() {
-    super('appointment_optimization_service');
+    super("appointment_optimization_service");
 
     this.supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -362,22 +362,22 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
     try {
       switch (input.action) {
-        case 'optimize_schedule': {
+        case "optimize_schedule": {
           return await this.optimizeSchedule(input);
         }
-        case 'suggest_appointment_time': {
+        case "suggest_appointment_time": {
           return await this.suggestAppointmentTime(input);
         }
-        case 'reschedule_optimization': {
+        case "reschedule_optimization": {
           return await this.rescheduleOptimization(input);
         }
-        case 'analyze_schedule_efficiency': {
+        case "analyze_schedule_efficiency": {
           return await this.analyzeScheduleEfficiency(input);
         }
-        case 'generate_scheduling_insights': {
+        case "generate_scheduling_insights": {
           return await this.generateSchedulingInsights(input);
         }
-        case 'batch_optimize': {
+        case "batch_optimize": {
           return await this.batchOptimize(input);
         }
         default: {
@@ -386,7 +386,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
       }
     } finally {
       const duration = performance.now() - startTime;
-      await this.recordMetric('appointment_optimization_operation', {
+      await this.recordMetric("appointment_optimization_operation", {
         action: input.action,
         duration_ms: duration,
       });
@@ -397,12 +397,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     input: OptimizationInput,
   ): Promise<OptimizationOutput> {
     if (!(input.schedule_context && input.appointment_requests)) {
-      throw new Error('schedule_context and appointment_requests are required');
+      throw new Error("schedule_context and appointment_requests are required");
     }
 
     const context = input.schedule_context;
     const requests = input.appointment_requests;
-    const goals = input.optimization_goals || this.getDefaultOptimizationGoals();
+    const goals =
+      input.optimization_goals || this.getDefaultOptimizationGoals();
 
     // Sort requests by priority and constraints
     const prioritizedRequests = this.prioritizeAppointmentRequests(requests);
@@ -461,16 +462,16 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     input: OptimizationInput,
   ): Promise<OptimizationOutput> {
     if (!(input.single_request && input.schedule_context)) {
-      throw new Error('single_request and schedule_context are required');
+      throw new Error("single_request and schedule_context are required");
     }
 
     const request = input.single_request;
     const context = input.schedule_context;
     const dateRange = input.preferred_date_range || {
-      start_date: new Date().toISOString().split('T')[0],
+      start_date: new Date().toISOString().split("T")[0],
       end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
         .toISOString()
-        .split('T')[0],
+        .split("T")[0],
     };
 
     // Find available slots within date range
@@ -528,17 +529,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   ): Promise<OptimizationOutput> {
     if (!(input.appointments_to_reschedule && input.schedule_context)) {
       throw new Error(
-        'appointments_to_reschedule and schedule_context are required',
+        "appointments_to_reschedule and schedule_context are required",
       );
     }
 
     const appointmentIds = input.appointments_to_reschedule;
     const context = input.schedule_context;
-    const reason = input.reschedule_reason || 'optimization';
+    const reason = input.reschedule_reason || "optimization";
 
     const scheduleChanges: ScheduleChange[] = [];
     const affectedAppointments = context.existing_appointments.filter((apt) =>
-      appointmentIds.includes(apt.appointment_id)
+      appointmentIds.includes(apt.appointment_id),
     );
 
     for (const appointment of affectedAppointments) {
@@ -552,7 +553,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
         const bestAlternative = alternatives[0];
 
         scheduleChanges.push({
-          change_type: 'reschedule',
+          change_type: "reschedule",
           appointment_id: appointment.appointment_id,
           old_time: appointment.start_time,
           new_time: bestAlternative.start_time,
@@ -598,7 +599,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     input: OptimizationInput,
   ): Promise<OptimizationOutput> {
     if (!(input.schedule_context && input.analysis_period)) {
-      throw new Error('schedule_context and analysis_period are required');
+      throw new Error("schedule_context and analysis_period are required");
     }
 
     const context = input.schedule_context;
@@ -606,7 +607,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
     // Analyze historical appointment data
     const appointments = context.existing_appointments.filter((apt) => {
-      const aptDate = apt.start_time.split('T')[0];
+      const aptDate = apt.start_time.split("T")[0];
       return aptDate >= period.start_date && aptDate <= period.end_date;
     });
 
@@ -618,7 +619,8 @@ export class AppointmentOptimizationService extends EnhancedAIService<
         context,
       ),
       peak_hours: this.identifyPeakHours(appointments),
-      appointment_type_distribution: this.calculateTypeDistribution(appointments),
+      appointment_type_distribution:
+        this.calculateTypeDistribution(appointments),
       patient_flow_patterns: this.identifyFlowPatterns(appointments),
       bottleneck_analysis: this.analyzeBottlenecks(appointments, context),
       satisfaction_trends: this.analyzeSatisfactionTrends(appointments, period),
@@ -639,7 +641,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     input: OptimizationInput,
   ): Promise<OptimizationOutput> {
     if (!input.schedule_context) {
-      throw new Error('schedule_context is required');
+      throw new Error("schedule_context is required");
     }
 
     const context = input.schedule_context;
@@ -658,18 +660,16 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     // Generate utilization insights
     if (utilization < 0.7) {
       insights.push({
-        insight_type: 'opportunity',
-        title: 'Low Schedule Utilization Detected',
-        description: `Current utilization is ${
-          (utilization * 100).toFixed(
-            1,
-          )
-        }%. Consider overbooking or adjusting slot sizes.`,
-        severity: 'medium',
+        insight_type: "opportunity",
+        title: "Low Schedule Utilization Detected",
+        description: `Current utilization is ${(utilization * 100).toFixed(
+          1,
+        )}%. Consider overbooking or adjusting slot sizes.`,
+        severity: "medium",
         actionable_recommendations: [
-          'Enable controlled overbooking for high no-show risk patients',
-          'Reduce appointment slot durations by 10-15%',
-          'Implement same-day booking slots',
+          "Enable controlled overbooking for high no-show risk patients",
+          "Reduce appointment slot durations by 10-15%",
+          "Implement same-day booking slots",
         ],
         estimated_impact: 0.15,
         confidence_level: 0.85,
@@ -679,18 +679,16 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     // Generate wait time insights
     if (waitTimes.average > 20) {
       insights.push({
-        insight_type: 'bottleneck',
-        title: 'Excessive Patient Wait Times',
-        description: `Average wait time is ${
-          waitTimes.average.toFixed(
-            1,
-          )
-        } minutes. This may impact patient satisfaction.`,
-        severity: 'high',
+        insight_type: "bottleneck",
+        title: "Excessive Patient Wait Times",
+        description: `Average wait time is ${waitTimes.average.toFixed(
+          1,
+        )} minutes. This may impact patient satisfaction.`,
+        severity: "high",
         actionable_recommendations: [
-          'Add buffer time between appointments',
-          'Implement patient flow optimization',
-          'Consider staggered check-in times',
+          "Add buffer time between appointments",
+          "Implement patient flow optimization",
+          "Consider staggered check-in times",
         ],
         estimated_impact: 0.25,
         confidence_level: 0.9,
@@ -701,13 +699,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     patterns.forEach((pattern) => {
       if (pattern.optimization_opportunity) {
         insights.push({
-          insight_type: 'pattern',
+          insight_type: "pattern",
           title: `Optimization Opportunity: ${pattern.pattern_name}`,
           description: pattern.description,
-          severity: 'medium',
+          severity: "medium",
           actionable_recommendations: [
             `Optimize ${pattern.pattern_name.toLowerCase()} scheduling`,
-            'Implement automated pattern-based suggestions',
+            "Implement automated pattern-based suggestions",
           ],
           estimated_impact: pattern.estimated_improvement,
           confidence_level: 0.75,
@@ -725,7 +723,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     input: OptimizationInput,
   ): Promise<OptimizationOutput> {
     if (!(input.appointment_requests && input.schedule_context)) {
-      throw new Error('appointment_requests and schedule_context are required');
+      throw new Error("appointment_requests and schedule_context are required");
     }
 
     // Process requests in batches for better performance
@@ -747,7 +745,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
           );
           return {
             patient_id: request.patient_id,
-            suggested_time: suggestions[0]?.suggested_datetime || '',
+            suggested_time: suggestions[0]?.suggested_datetime || "",
             duration_minutes: request.duration_minutes,
             confidence_score: suggestions[0]?.slot_score || 0.5,
             reasoning: [`Batch optimized for ${request.appointment_type}`],
@@ -763,8 +761,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<
       batchResults.push({
         batch_number: Math.floor(i / batchSize) + 1,
         processed_requests: batch.length,
-        success_rate: batchSuggestions.filter((s) => s.suggested_time !== '').length
-          / batch.length,
+        success_rate:
+          batchSuggestions.filter((s) => s.suggested_time !== "").length /
+          batch.length,
       });
     }
 
@@ -783,13 +782,15 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     return requests.sort((a, b) => {
       // Priority factors: urgency, no-show risk, patient satisfaction
       const urgencyWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
-      const aScore = urgencyWeight[a.urgency_level] * 0.4
-        + (1 - a.patient_profile.no_show_risk_score) * 0.3
-        + a.patient_profile.satisfaction_history_score * 0.3;
+      const aScore =
+        urgencyWeight[a.urgency_level] * 0.4 +
+        (1 - a.patient_profile.no_show_risk_score) * 0.3 +
+        a.patient_profile.satisfaction_history_score * 0.3;
 
-      const bScore = urgencyWeight[b.urgency_level] * 0.4
-        + (1 - b.patient_profile.no_show_risk_score) * 0.3
-        + b.patient_profile.satisfaction_history_score * 0.3;
+      const bScore =
+        urgencyWeight[b.urgency_level] * 0.4 +
+        (1 - b.patient_profile.no_show_risk_score) * 0.3 +
+        b.patient_profile.satisfaction_history_score * 0.3;
 
       return bScore - aScore;
     });
@@ -847,9 +848,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   ): Promise<TimeSlot | null> {
     const candidateSlots = state.availableSlots.filter(
       (slot: TimeSlot) =>
-        slot.available
-        && !state.bookedSlots.has(slot.start_time)
-        && this.slotMeetsConstraints(slot, request),
+        slot.available &&
+        !state.bookedSlots.has(slot.start_time) &&
+        this.slotMeetsConstraints(slot, request),
     );
 
     let bestSlot;
@@ -888,7 +889,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
       return false;
     }
 
-    const slotDateStr = slot.start_time.split('T')[0];
+    const slotDateStr = slot.start_time.split("T")[0];
     if (request.constraints.must_avoid_dates.includes(slotDateStr)) {
       return false;
     }
@@ -949,11 +950,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     for (const pref of request.preferred_times) {
       if (pref.day_of_week === dayOfWeek) {
         const prefStart = Number.parseInt(
-          pref.time_range.start_time.split(':')[0],
+          pref.time_range.start_time.split(":")[0],
           10,
         );
         const prefEnd = Number.parseInt(
-          pref.time_range.end_time.split(':')[0],
+          pref.time_range.end_time.split(":")[0],
           10,
         );
 
@@ -974,20 +975,21 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     let alignment = 0.5;
 
     switch (goals.primary_goal) {
-      case 'maximize_utilization': {
+      case "maximize_utilization": {
         alignment += (slot.current_bookings / slot.capacity) * 0.3;
         break;
       }
-      case 'minimize_wait_times': {
+      case "minimize_wait_times": {
         // Prefer slots with less congestion
         alignment += (1 - slot.current_bookings / slot.capacity) * 0.3;
         break;
       }
-      case 'maximize_satisfaction': {
-        alignment += (this.predictPatientSatisfaction(slot, request) / 10) * 0.3;
+      case "maximize_satisfaction": {
+        alignment +=
+          (this.predictPatientSatisfaction(slot, request) / 10) * 0.3;
         break;
       }
-      case 'minimize_no_shows': {
+      case "minimize_no_shows": {
         alignment += (1 - request.patient_profile.no_show_risk_score) * 0.3;
         break;
       }
@@ -1034,16 +1036,16 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     const advantages: string[] = [];
 
     if (slot.current_bookings < slot.capacity * 0.7) {
-      advantages.push('Low wait time expected');
+      advantages.push("Low wait time expected");
     }
 
     if (slot.preferred_appointment_types.includes(request.appointment_type)) {
-      advantages.push('Optimal slot type for this appointment');
+      advantages.push("Optimal slot type for this appointment");
     }
 
     const slotDate = new Date(slot.start_time);
     if (slotDate.getDay() >= 1 && slotDate.getDay() <= 5) {
-      advantages.push('Weekday appointment - better accessibility');
+      advantages.push("Weekday appointment - better accessibility");
     }
 
     return advantages;
@@ -1057,17 +1059,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     const concerns: string[] = [];
 
     if (slot.current_bookings >= slot.capacity * 0.9) {
-      concerns.push('High congestion - potential for delays');
+      concerns.push("High congestion - potential for delays");
     }
 
     const slotDate = new Date(slot.start_time);
     if (slotDate.getDay() === 1) {
       // Monday
-      concerns.push('Monday morning - typically busy period');
+      concerns.push("Monday morning - typically busy period");
     }
 
     if (request.patient_profile.no_show_risk_score > 0.3) {
-      concerns.push('Patient has elevated no-show risk');
+      concerns.push("Patient has elevated no-show risk");
     }
 
     return concerns;
@@ -1084,15 +1086,15 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
   private findAvailableSlots(
     context: ScheduleContext,
-    dateRange: { start_date: string; end_date: string; },
+    dateRange: { start_date: string; end_date: string },
     _durationMinutes: number,
   ): TimeSlot[] {
     return context.available_slots.filter((slot) => {
-      const slotDate = slot.start_time.split('T')[0];
+      const slotDate = slot.start_time.split("T")[0];
       return (
-        slot.available
-        && slotDate >= dateRange.start_date
-        && slotDate <= dateRange.end_date
+        slot.available &&
+        slotDate >= dateRange.start_date &&
+        slotDate <= dateRange.end_date
       );
     });
   }
@@ -1112,10 +1114,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     context: ScheduleContext,
   ): Promise<AppointmentSuggestion[]> {
     const dateRange = {
-      start_date: new Date().toISOString().split('T')[0],
+      start_date: new Date().toISOString().split("T")[0],
       end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
         .toISOString()
-        .split('T')[0],
+        .split("T")[0],
     };
 
     const availableSlots = this.findAvailableSlots(
@@ -1130,7 +1132,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
       slot_score: 0.8,
       satisfaction_prediction: 7.5,
       wait_time_minutes: 10,
-      scheduling_advantages: ['Available slot', 'Good timing'],
+      scheduling_advantages: ["Available slot", "Good timing"],
       scheduling_concerns: [],
       doctor_suitability_score: 0.85,
     }));
@@ -1138,17 +1140,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
   private getDefaultOptimizationGoals(): OptimizationGoals {
     return {
-      primary_goal: 'maximize_satisfaction',
-      secondary_goals: ['minimize_wait_times', 'maximize_utilization'],
+      primary_goal: "maximize_satisfaction",
+      secondary_goals: ["minimize_wait_times", "maximize_utilization"],
       goal_weights: {
         satisfaction: 0.4,
         utilization: 0.3,
         wait_time: 0.3,
       },
       success_metrics: [
-        'patient_satisfaction',
-        'utilization_rate',
-        'on_time_performance',
+        "patient_satisfaction",
+        "utilization_rate",
+        "on_time_performance",
       ],
     };
   }
@@ -1168,10 +1170,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<
       average_wait_time_minutes: 12,
       appointment_gaps_count: Math.max(0, totalSlots - bookedSlots),
       overtime_probability: 0.15,
-      patient_satisfaction_prediction: appointments.reduce(
-            (sum, apt) => sum + apt.satisfaction_prediction,
-            0,
-          ) / appointments.length || 7,
+      patient_satisfaction_prediction:
+        appointments.reduce(
+          (sum, apt) => sum + apt.satisfaction_prediction,
+          0,
+        ) / appointments.length || 7,
       resource_efficiency_score: utilization * 0.85,
       no_show_adjusted_utilization: utilization * 0.9,
     };
@@ -1226,7 +1229,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   // Public helper methods
   public async optimizeClinicSchedule(
     clinicId: string,
-    dateRange: { start_date: string; end_date: string; },
+    dateRange: { start_date: string; end_date: string },
     appointmentRequests: AppointmentRequest[],
   ): Promise<OptimizedSchedule> {
     // Simplified public interface
@@ -1239,13 +1242,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<
         max_appointments_per_day: 40,
         min_break_minutes: 15,
         max_consecutive_appointments: 8,
-        lunch_break: { start_time: '12:00', end_time: '13:00' },
+        lunch_break: { start_time: "12:00", end_time: "13:00" },
         doctor_preferences: {
-          preferred_appointment_types: ['consultation', 'follow_up'],
-          avoided_appointment_types: ['emergency'],
+          preferred_appointment_types: ["consultation", "follow_up"],
+          avoided_appointment_types: ["emergency"],
           preferred_time_blocks: [],
           max_procedure_appointments_per_day: 5,
-          preferred_patient_age_groups: ['adult'],
+          preferred_patient_age_groups: ["adult"],
           fatigue_factor: 0.1,
         },
         clinic_policies: {
@@ -1261,7 +1264,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     };
 
     const result = await this.execute({
-      action: 'optimize_schedule',
+      action: "optimize_schedule",
       schedule_context: mockContext,
       appointment_requests: appointmentRequests,
     });
@@ -1281,7 +1284,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
   private identifyPeakHours(
     _appointments: ExistingAppointment[],
-  ): { hour: number; utilization: number; }[] {
+  ): { hour: number; utilization: number }[] {
     // Implementation would analyze appointment distribution by hour
     return [
       { hour: 9, utilization: 0.9 },
@@ -1295,7 +1298,8 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   ): Record<string, number> {
     const distribution: Record<string, number> = {};
     appointments.forEach((apt) => {
-      distribution[apt.appointment_type] = (distribution[apt.appointment_type] || 0) + 1;
+      distribution[apt.appointment_type] =
+        (distribution[apt.appointment_type] || 0) + 1;
     });
     return distribution;
   }
@@ -1305,9 +1309,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   ): FlowPattern[] {
     return [
       {
-        pattern_name: 'Monday Morning Rush',
+        pattern_name: "Monday Morning Rush",
         frequency: 0.8,
-        description: 'High appointment density on Monday mornings',
+        description: "High appointment density on Monday mornings",
         optimization_opportunity: true,
         estimated_improvement: 0.15,
       },
@@ -1321,11 +1325,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<
     return {
       identified_bottlenecks: [
         {
-          time_period: '9:00-11:00 AM',
-          resource: 'Doctor availability',
+          time_period: "9:00-11:00 AM",
+          resource: "Doctor availability",
           severity: 0.7,
-          root_cause: 'High demand for morning slots',
-          solution_suggestions: ['Add morning slots', 'Implement overbooking'],
+          root_cause: "High demand for morning slots",
+          solution_suggestions: ["Add morning slots", "Implement overbooking"],
         },
       ],
       resource_utilization: { doctor: 0.85, rooms: 0.75 },
@@ -1335,7 +1339,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
   private analyzeSatisfactionTrends(
     _appointments: ExistingAppointment[],
-    period: { start_date: string; end_date: string; },
+    period: { start_date: string; end_date: string },
   ): SatisfactionTrend[] {
     return [
       {
@@ -1355,13 +1359,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 
     if (analysis.average_utilization < 0.7) {
       insights.push({
-        insight_type: 'opportunity',
-        title: 'Underutilized Schedule Capacity',
+        insight_type: "opportunity",
+        title: "Underutilized Schedule Capacity",
         description: `Average utilization is ${(analysis.average_utilization * 100).toFixed(1)}%`,
-        severity: 'medium',
+        severity: "medium",
         actionable_recommendations: [
-          'Implement overbooking',
-          'Adjust slot sizes',
+          "Implement overbooking",
+          "Adjust slot sizes",
         ],
         estimated_impact: 0.2,
         confidence_level: 0.85,
@@ -1376,10 +1380,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   ): ImprovementRecommendation[] {
     return [
       {
-        recommendation_type: 'scheduling',
-        title: 'Implement Dynamic Overbooking',
-        description: 'Use predictive analytics to enable smart overbooking',
-        implementation_difficulty: 'medium',
+        recommendation_type: "scheduling",
+        title: "Implement Dynamic Overbooking",
+        description: "Use predictive analytics to enable smart overbooking",
+        implementation_difficulty: "medium",
         estimated_benefit: 0.15,
         estimated_cost: 5000,
         timeline_weeks: 4,
@@ -1402,9 +1406,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   ): FlowPattern[] {
     return [
       {
-        pattern_name: 'Friday Afternoon Cancellations',
+        pattern_name: "Friday Afternoon Cancellations",
         frequency: 0.3,
-        description: 'Higher cancellation rate on Friday afternoons',
+        description: "Higher cancellation rate on Friday afternoons",
         optimization_opportunity: true,
         estimated_improvement: 0.1,
       },
@@ -1412,10 +1416,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<
   }
 
   private calculateBatchOptimizationScore(
-    batchResults: { success_rate: number; }[],
+    batchResults: { success_rate: number }[],
   ): number {
-    const avgSuccessRate = batchResults.reduce((sum, batch) => sum + batch.success_rate, 0)
-      / batchResults.length;
+    const avgSuccessRate =
+      batchResults.reduce((sum, batch) => sum + batch.success_rate, 0) /
+      batchResults.length;
     return avgSuccessRate * 0.9; // Slightly penalize batch processing
   }
 
@@ -1456,4 +1461,5 @@ export class AppointmentOptimizationService extends EnhancedAIService<
 }
 
 // Export singleton instance
-export const appointmentOptimizationService = new AppointmentOptimizationService();
+export const appointmentOptimizationService =
+  new AppointmentOptimizationService();

@@ -5,10 +5,10 @@
  * Comprehensive performance analysis with Lighthouse and Web Vitals
  */
 
-const fs = require('node:fs');
-const path = require('node:path');
-const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
+const fs = require("node:fs");
+const path = require("node:path");
+const lighthouse = require("lighthouse");
+const chromeLauncher = require("chrome-launcher");
 
 async function analyzePerformance() {
   try {
@@ -18,25 +18,26 @@ async function analyzePerformance() {
       for (const url of config.urls) {
         await analyzeUrl(url, config);
       }
-    } else {}
+    } else {
+    }
   } catch {
     process.exit(1);
   }
 }
 
 function loadConfig() {
-  const configPath = path.join(process.cwd(), 'performance-config.json');
+  const configPath = path.join(process.cwd(), "performance-config.json");
 
   if (fs.existsSync(configPath)) {
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    return JSON.parse(fs.readFileSync(configPath, "utf8"));
   }
 
   // Default configuration
   return {
-    urls: ['http://localhost:3000'],
+    urls: ["http://localhost:3000"],
     healthcareMode: true,
     mobileAnalysis: true,
-    categories: ['performance', 'accessibility', 'best-practices', 'seo'],
+    categories: ["performance", "accessibility", "best-practices", "seo"],
   };
 }
 
@@ -46,12 +47,12 @@ async function analyzeUrl(url, config) {
   try {
     // Launch Chrome
     chrome = await chromeLauncher.launch({
-      chromeFlags: ['--headless', '--disable-gpu', '--no-sandbox'],
+      chromeFlags: ["--headless", "--disable-gpu", "--no-sandbox"],
     });
     const desktopResults = await lighthouse(url, {
       port: chrome.port,
-      onlyCategories: config.categories || ['performance', 'accessibility'],
-      formFactor: 'desktop',
+      onlyCategories: config.categories || ["performance", "accessibility"],
+      formFactor: "desktop",
       throttling: {
         rttMs: 40,
         throughputKbps: 10_240,
@@ -64,8 +65,8 @@ async function analyzeUrl(url, config) {
     if (config.mobileAnalysis) {
       mobileResults = await lighthouse(url, {
         port: chrome.port,
-        onlyCategories: config.categories || ['performance', 'accessibility'],
-        formFactor: 'mobile',
+        onlyCategories: config.categories || ["performance", "accessibility"],
+        formFactor: "mobile",
         throttling: {
           rttMs: 150,
           throughputKbps: 1638.4,
@@ -83,8 +84,8 @@ async function analyzeUrl(url, config) {
     );
 
     // Save detailed results
-    const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-');
-    const urlSafe = url.replaceAll(/[^a-zA-Z0-9]/g, '_');
+    const timestamp = new Date().toISOString().replaceAll(/[:.]/g, "-");
+    const urlSafe = url.replaceAll(/[^a-zA-Z0-9]/g, "_");
 
     const desktopPath = path.join(
       process.cwd(),
@@ -123,23 +124,23 @@ URL: ${url}
 Timestamp: ${new Date().toISOString()}
 
 📊 PERFORMANCE SCORES:
-${formatScores('Desktop', desktop)}
-${mobile ? formatScores('Mobile', mobile) : ''}
+${formatScores("Desktop", desktop)}
+${mobile ? formatScores("Mobile", mobile) : ""}
 
 ⚡ CORE WEB VITALS (HEALTHCARE THRESHOLDS):
-${formatWebVitals('Desktop', desktop)}
-${mobile ? formatWebVitals('Mobile', mobile) : ''}
+${formatWebVitals("Desktop", desktop)}
+${mobile ? formatWebVitals("Mobile", mobile) : ""}
 
 🏥 HEALTHCARE-SPECIFIC METRICS:
-${formatHealthcareMetrics('Desktop', desktop)}
-${mobile ? formatHealthcareMetrics('Mobile', mobile) : ''}
+${formatHealthcareMetrics("Desktop", desktop)}
+${mobile ? formatHealthcareMetrics("Mobile", mobile) : ""}
 
 🎯 HEALTHCARE RECOMMENDATIONS:
 ${formatHealthcareRecommendations(desktop, mobile)}
 
 ♿ ACCESSIBILITY (HEALTHCARE CRITICAL):
-${formatAccessibility('Desktop', desktop)}
-${mobile ? formatAccessibility('Mobile', mobile) : ''}
+${formatAccessibility("Desktop", desktop)}
+${mobile ? formatAccessibility("Mobile", mobile) : ""}
 `;
 
   return report;
@@ -148,7 +149,7 @@ ${mobile ? formatAccessibility('Mobile', mobile) : ''}
 function formatScores(device, results) {
   const performance = results.categories.performance?.score * 100 || 0;
   const accessibility = results.categories.accessibility?.score * 100 || 0;
-  const bestPractices = results.categories['best-practices']?.score * 100 || 0;
+  const bestPractices = results.categories["best-practices"]?.score * 100 || 0;
 
   return `
 ${device}:
@@ -159,24 +160,24 @@ ${device}:
 
 function formatWebVitals(device, results) {
   const audits = results.audits;
-  const fcp = audits['first-contentful-paint']?.numericValue || 0;
-  const lcp = audits['largest-contentful-paint']?.numericValue || 0;
-  const cls = audits['cumulative-layout-shift']?.numericValue || 0;
-  const fid = audits['max-potential-fid']?.numericValue || 0;
+  const fcp = audits["first-contentful-paint"]?.numericValue || 0;
+  const lcp = audits["largest-contentful-paint"]?.numericValue || 0;
+  const cls = audits["cumulative-layout-shift"]?.numericValue || 0;
+  const fid = audits["max-potential-fid"]?.numericValue || 0;
 
   return `
 ${device}:
-  FCP: ${(fcp / 1000).toFixed(2)}s ${getWebVitalRating(fcp, 'FCP')}
-  LCP: ${(lcp / 1000).toFixed(2)}s ${getWebVitalRating(lcp, 'LCP')}
-  CLS: ${cls.toFixed(3)} ${getWebVitalRating(cls, 'CLS')}
-  FID: ${(fid / 1000).toFixed(2)}s ${getWebVitalRating(fid, 'FID')}`;
+  FCP: ${(fcp / 1000).toFixed(2)}s ${getWebVitalRating(fcp, "FCP")}
+  LCP: ${(lcp / 1000).toFixed(2)}s ${getWebVitalRating(lcp, "LCP")}
+  CLS: ${cls.toFixed(3)} ${getWebVitalRating(cls, "CLS")}
+  FID: ${(fid / 1000).toFixed(2)}s ${getWebVitalRating(fid, "FID")}`;
 }
 
 function formatHealthcareMetrics(device, results) {
   const audits = results.audits;
   const tti = audits.interactive?.numericValue || 0;
-  const si = audits['speed-index']?.numericValue || 0;
-  const tbt = audits['total-blocking-time']?.numericValue || 0;
+  const si = audits["speed-index"]?.numericValue || 0;
+  const tbt = audits["total-blocking-time"]?.numericValue || 0;
 
   return `
 ${device}:
@@ -192,7 +193,7 @@ function formatHealthcareRecommendations(desktop, mobile) {
   const desktopPerf = desktop.categories.performance?.score * 100 || 0;
   if (desktopPerf < 90) {
     recommendations.push(
-      '🔧 Optimize for clinical workflows - Performance score below healthcare standards (90+)',
+      "🔧 Optimize for clinical workflows - Performance score below healthcare standards (90+)",
     );
   }
 
@@ -200,7 +201,7 @@ function formatHealthcareRecommendations(desktop, mobile) {
   const desktopA11y = desktop.categories.accessibility?.score * 100 || 0;
   if (desktopA11y < 95) {
     recommendations.push(
-      '♿ Critical: Improve accessibility for healthcare compliance (target: 95+)',
+      "♿ Critical: Improve accessibility for healthcare compliance (target: 95+)",
     );
   }
 
@@ -209,25 +210,25 @@ function formatHealthcareRecommendations(desktop, mobile) {
     const mobilePerf = mobile.categories.performance?.score * 100 || 0;
     if (mobilePerf < 85) {
       recommendations.push(
-        '📱 Optimize mobile performance for clinic tablets and phones',
+        "📱 Optimize mobile performance for clinic tablets and phones",
       );
     }
   }
 
   // Core Web Vitals recommendations
-  const lcp = desktop.audits['largest-contentful-paint']?.numericValue || 0;
+  const lcp = desktop.audits["largest-contentful-paint"]?.numericValue || 0;
   if (lcp > 2000) {
-    recommendations.push('⚡ Reduce LCP for faster patient data loading');
+    recommendations.push("⚡ Reduce LCP for faster patient data loading");
   }
 
-  const cls = desktop.audits['cumulative-layout-shift']?.numericValue || 0;
+  const cls = desktop.audits["cumulative-layout-shift"]?.numericValue || 0;
   if (cls > 0.05) {
-    recommendations.push('🎯 Improve CLS for stable medical form interactions');
+    recommendations.push("🎯 Improve CLS for stable medical form interactions");
   }
 
   return recommendations.length > 0
-    ? recommendations.map((rec, i) => `${i + 1}. ${rec}`).join('\n')
-    : '✅ All healthcare performance targets met!';
+    ? recommendations.map((rec, i) => `${i + 1}. ${rec}`).join("\n")
+    : "✅ All healthcare performance targets met!";
 }
 
 function formatAccessibility(device, results) {
@@ -235,29 +236,29 @@ function formatAccessibility(device, results) {
   const audits = results.audits;
 
   const issues = [];
-  if (audits['color-contrast']?.score < 1) {
-    issues.push('Color contrast issues (critical for medical readability)');
+  if (audits["color-contrast"]?.score < 1) {
+    issues.push("Color contrast issues (critical for medical readability)");
   }
-  if (audits['aria-labels']?.score < 1) {
-    issues.push('Missing ARIA labels (required for screen readers)');
+  if (audits["aria-labels"]?.score < 1) {
+    issues.push("Missing ARIA labels (required for screen readers)");
   }
-  if (audits['keyboard-navigation']?.score < 1) {
-    issues.push('Keyboard navigation issues (critical for accessibility)');
+  if (audits["keyboard-navigation"]?.score < 1) {
+    issues.push("Keyboard navigation issues (critical for accessibility)");
   }
 
   return `
 ${device}: ${score.toFixed(0)}/100 ${getScoreEmoji(score)}
-${issues.length > 0 ? `  Issues: ${issues.join(', ')}` : '  ✅ No accessibility issues detected'}`;
+${issues.length > 0 ? `  Issues: ${issues.join(", ")}` : "  ✅ No accessibility issues detected"}`;
 }
 
 function getScoreEmoji(score) {
   if (score >= 90) {
-    return '✅';
+    return "✅";
   }
   if (score >= 75) {
-    return '⚠️';
+    return "⚠️";
   }
-  return '❌';
+  return "❌";
 }
 
 function getWebVitalRating(value, metric) {
@@ -270,16 +271,16 @@ function getWebVitalRating(value, metric) {
 
   const threshold = thresholds[metric];
   if (!threshold) {
-    return '';
+    return "";
   }
 
   if (value <= threshold.good) {
-    return '✅ Good';
+    return "✅ Good";
   }
   if (value <= threshold.poor) {
-    return '⚠️ Needs Improvement';
+    return "⚠️ Needs Improvement";
   }
-  return '❌ Poor';
+  return "❌ Poor";
 }
 
 // Run if called directly

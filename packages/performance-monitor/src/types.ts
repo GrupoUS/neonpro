@@ -10,29 +10,29 @@ export interface PerformanceMetric {
 }
 
 export enum MetricType {
-  CACHE_HIT_RATE = 'cache_hit_rate',
-  CACHE_MISS_RATE = 'cache_miss_rate',
-  RESPONSE_TIME = 'response_time',
-  ERROR_RATE = 'error_rate',
-  THROUGHPUT = 'throughput',
-  CPU_USAGE = 'cpu_usage',
-  MEMORY_USAGE = 'memory_usage',
-  DATABASE_QUERIES = 'database_queries',
-  AI_API_CALLS = 'ai_api_calls',
-  AI_COST = 'ai_cost',
-  LGPD_VIOLATIONS = 'lgpd_violations',
-  ANVISA_COMPLIANCE = 'anvisa_compliance',
-  BUSINESS_ROI = 'business_roi',
+  CACHE_HIT_RATE = "cache_hit_rate",
+  CACHE_MISS_RATE = "cache_miss_rate",
+  RESPONSE_TIME = "response_time",
+  ERROR_RATE = "error_rate",
+  THROUGHPUT = "throughput",
+  CPU_USAGE = "cpu_usage",
+  MEMORY_USAGE = "memory_usage",
+  DATABASE_QUERIES = "database_queries",
+  AI_API_CALLS = "ai_api_calls",
+  AI_COST = "ai_cost",
+  LGPD_VIOLATIONS = "lgpd_violations",
+  ANVISA_COMPLIANCE = "anvisa_compliance",
+  BUSINESS_ROI = "business_roi",
 }
 
 export enum MetricUnit {
-  PERCENTAGE = 'percentage',
-  MILLISECONDS = 'ms',
-  COUNT = 'count',
-  BYTES = 'bytes',
-  REQUESTS_PER_SECOND = 'rps',
-  COST_USD = 'usd',
-  SCORE = 'score',
+  PERCENTAGE = "percentage",
+  MILLISECONDS = "ms",
+  COUNT = "count",
+  BYTES = "bytes",
+  REQUESTS_PER_SECOND = "rps",
+  COST_USD = "usd",
+  SCORE = "score",
 }
 
 export interface MetricCollector {
@@ -55,17 +55,17 @@ export interface AlertRule {
 }
 
 export enum AlertCondition {
-  GREATER_THAN = 'gt',
-  LESS_THAN = 'lt',
-  EQUALS = 'eq',
-  NOT_EQUALS = 'ne',
+  GREATER_THAN = "gt",
+  LESS_THAN = "lt",
+  EQUALS = "eq",
+  NOT_EQUALS = "ne",
 }
 
 export enum AlertSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 export interface Alert {
@@ -90,10 +90,10 @@ export interface HealthCheckResult {
 }
 
 export enum HealthStatus {
-  HEALTHY = 'healthy',
-  DEGRADED = 'degraded',
-  UNHEALTHY = 'unhealthy',
-  CRITICAL = 'critical',
+  HEALTHY = "healthy",
+  DEGRADED = "degraded",
+  UNHEALTHY = "unhealthy",
+  CRITICAL = "critical",
 }
 
 export interface PerformanceInsight {
@@ -110,9 +110,9 @@ export interface PerformanceInsight {
 }
 
 export enum InsightType {
-  OPTIMIZATION_OPPORTUNITY = 'optimization',
-  PERFORMANCE_DEGRADATION = 'degradation',
-  COST_OPTIMIZATION = 'cost',
-  SECURITY_CONCERN = 'security',
-  COMPLIANCE_ISSUE = 'compliance',
+  OPTIMIZATION_OPPORTUNITY = "optimization",
+  PERFORMANCE_DEGRADATION = "degradation",
+  COST_OPTIMIZATION = "cost",
+  SECURITY_CONCERN = "security",
+  COMPLIANCE_ISSUE = "compliance",
 }

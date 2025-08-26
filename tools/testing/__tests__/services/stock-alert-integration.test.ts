@@ -1,13 +1,13 @@
 // Stock Alert Integration Tests - Updated for new StockAlertsService
 // Story 11.4: Alertas e Relatórios de Estoque
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type {
   AcknowledgeAlert,
   AlertsQuery,
   CreateStockAlertConfig,
   ResolveAlert,
-} from '../../../../apps/web/app/lib/types/stock-alerts';
+} from "../../../../apps/web/app/lib/types/stock-alerts";
 
 // Mock the entire service module
 const mockStockAlertsService = {
@@ -19,29 +19,31 @@ const mockStockAlertsService = {
   checkStockLevels: vi.fn(),
 };
 
-vi.mock<typeof import('../../../../apps/web/app/lib/services/stock-alerts.service')>('../../../../apps/web/app/lib/services/stock-alerts.service', () => ({
+vi.mock<
+  typeof import("../../../../apps/web/app/lib/services/stock-alerts.service")
+>("../../../../apps/web/app/lib/services/stock-alerts.service", () => ({
   StockAlertsService: vi.fn().mockImplementation(() => mockStockAlertsService),
   stockAlertsService: mockStockAlertsService,
 }));
 
 // Test data
-const mockClinicId = '123e4567-e89b-12d3-a456-426614174000';
-const mockUserId = '123e4567-e89b-12d3-a456-426614174001';
-const mockProductId = '123e4567-e89b-12d3-a456-426614174002';
+const mockClinicId = "123e4567-e89b-12d3-a456-426614174000";
+const mockUserId = "123e4567-e89b-12d3-a456-426614174001";
+const mockProductId = "123e4567-e89b-12d3-a456-426614174002";
 
 const mockAlertConfig: CreateStockAlertConfig = {
-  alertType: 'low_stock',
+  alertType: "low_stock",
   thresholdValue: 10,
-  thresholdUnit: 'quantity',
-  severityLevel: 'medium',
+  thresholdUnit: "quantity",
+  severityLevel: "medium",
   isActive: true,
-  notificationChannels: ['in_app', 'email'],
+  notificationChannels: ["in_app", "email"],
   productId: mockProductId,
   createdBy: mockUserId,
   createdAt: new Date(),
 };
 
-describe('stock Alert Integration Tests', () => {
+describe("stock Alert Integration Tests", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -50,10 +52,10 @@ describe('stock Alert Integration Tests', () => {
     vi.restoreAllMocks();
   });
 
-  describe('alert Configuration Management', () => {
-    it('should create alert configuration successfully', async () => {
+  describe("alert Configuration Management", () => {
+    it("should create alert configuration successfully", async () => {
       const expectedResult = {
-        id: 'new-config-id',
+        id: "new-config-id",
         clinic_id: mockClinicId,
         ...mockAlertConfig,
       };
@@ -75,13 +77,13 @@ describe('stock Alert Integration Tests', () => {
       );
     });
 
-    it('should handle duplicate configuration error', async () => {
-      const error = new Error('Alert configuration already exists');
+    it("should handle duplicate configuration error", async () => {
+      const error = new Error("Alert configuration already exists");
       mockStockAlertsService.createAlertConfig.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.createAlertConfig(mockAlertConfig, mockUserId),
-      ).rejects.toThrow('Alert configuration already exists');
+      ).rejects.toThrow("Alert configuration already exists");
 
       expect(mockStockAlertsService.createAlertConfig).toHaveBeenCalledWith(
         mockAlertConfig,
@@ -89,12 +91,12 @@ describe('stock Alert Integration Tests', () => {
       );
     });
 
-    it('should get alert configurations', async () => {
+    it("should get alert configurations", async () => {
       const mockConfigs = [
         {
-          id: 'config-1',
+          id: "config-1",
           clinicId: mockClinicId,
-          alertType: 'low_stock',
+          alertType: "low_stock",
           thresholdValue: 10,
         },
       ];
@@ -110,26 +112,26 @@ describe('stock Alert Integration Tests', () => {
     });
   });
 
-  describe('alert Queries', () => {
-    it('should get alerts with filtering', async () => {
+  describe("alert Queries", () => {
+    it("should get alerts with filtering", async () => {
       const query: AlertsQuery = {
         clinicId: mockClinicId,
-        alertType: 'low_stock',
+        alertType: "low_stock",
         limit: 10,
         offset: 0,
-        sortBy: 'created_at',
-        sortOrder: 'desc',
+        sortBy: "created_at",
+        sortOrder: "desc",
       };
 
       const mockResult = {
         alerts: [
           {
-            id: 'alert-1',
+            id: "alert-1",
             clinic_id: mockClinicId,
-            alert_type: 'low_stock',
-            severity_level: 'medium',
-            message: 'Test alert',
-            status: 'active',
+            alert_type: "low_stock",
+            severity_level: "medium",
+            message: "Test alert",
+            status: "active",
             created_at: new Date(),
           },
         ],
@@ -149,13 +151,13 @@ describe('stock Alert Integration Tests', () => {
       );
     });
 
-    it('should handle empty alert results', async () => {
+    it("should handle empty alert results", async () => {
       const query: AlertsQuery = {
         clinicId: mockClinicId,
         limit: 10,
         offset: 0,
-        sortBy: 'created_at',
-        sortOrder: 'desc',
+        sortBy: "created_at",
+        sortOrder: "desc",
       };
 
       const mockResult = {
@@ -172,83 +174,84 @@ describe('stock Alert Integration Tests', () => {
     });
   });
 
-  describe('alert Acknowledgment', () => {
-    it('should acknowledge alert successfully', async () => {
+  describe("alert Acknowledgment", () => {
+    it("should acknowledge alert successfully", async () => {
       const acknowledgeData: AcknowledgeAlert = {
-        alertId: 'alert-id',
+        alertId: "alert-id",
         acknowledgedBy: mockUserId,
-        note: 'Issue resolved',
+        note: "Issue resolved",
       };
 
       const mockResult = {
-        id: 'alert-id',
-        status: 'acknowledged',
+        id: "alert-id",
+        status: "acknowledged",
         acknowledged_by: mockUserId,
         acknowledged_at: new Date(),
       };
 
       mockStockAlertsService.acknowledgeAlert.mockResolvedValue(mockResult);
 
-      const result = await mockStockAlertsService.acknowledgeAlert(acknowledgeData);
+      const result =
+        await mockStockAlertsService.acknowledgeAlert(acknowledgeData);
 
       expect(result).toBeDefined();
-      expect(result.status).toBe('acknowledged');
+      expect(result.status).toBe("acknowledged");
       expect(result.acknowledged_by).toBe(mockUserId);
       expect(mockStockAlertsService.acknowledgeAlert).toHaveBeenCalledWith(
         acknowledgeData,
       );
     });
 
-    it('should handle acknowledgment of non-existent alert', async () => {
+    it("should handle acknowledgment of non-existent alert", async () => {
       const acknowledgeData: AcknowledgeAlert = {
-        alertId: 'non-existent',
+        alertId: "non-existent",
         acknowledgedBy: mockUserId,
       };
 
-      const error = new Error('Alert not found');
+      const error = new Error("Alert not found");
       mockStockAlertsService.acknowledgeAlert.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.acknowledgeAlert(acknowledgeData),
-      ).rejects.toThrow('Alert not found');
+      ).rejects.toThrow("Alert not found");
 
       expect(mockStockAlertsService.acknowledgeAlert).toHaveBeenCalledWith(
         acknowledgeData,
       );
     });
 
-    it('should handle acknowledgment of non-active alert', async () => {
+    it("should handle acknowledgment of non-active alert", async () => {
       const acknowledgeData: AcknowledgeAlert = {
-        alertId: 'alert-id',
+        alertId: "alert-id",
         acknowledgedBy: mockUserId,
       };
 
-      const error = new Error('Alert is not in active status');
+      const error = new Error("Alert is not in active status");
       mockStockAlertsService.acknowledgeAlert.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.acknowledgeAlert(acknowledgeData),
-      ).rejects.toThrow('Alert is not in active status');
+      ).rejects.toThrow("Alert is not in active status");
     });
   });
 
-  describe('alert Resolution', () => {
-    it('should resolve alert successfully', async () => {
+  describe("alert Resolution", () => {
+    it("should resolve alert successfully", async () => {
       const resolveData: ResolveAlert = {
-        alertId: 'alert-id',
+        alertId: "alert-id",
         resolvedBy: mockUserId,
-        resolution: 'Stock replenished',
-        actionsTaken: ['Ordered more inventory', 'Updated thresholds'],
+        resolution: "Stock replenished",
+        actionsTaken: ["Ordered more inventory", "Updated thresholds"],
       };
 
       const mockResult = {
-        id: 'alert-id',
-        status: 'resolved',
+        id: "alert-id",
+        status: "resolved",
         resolved_by: mockUserId,
         resolved_at: new Date(),
         metadata: {
-          resolution: 'Stock replenished',
-          actions_taken: ['Ordered more inventory', 'Updated thresholds'],
+          resolution: "Stock replenished",
+          actions_taken: ["Ordered more inventory", "Updated thresholds"],
         },
       };
 
@@ -257,43 +260,43 @@ describe('stock Alert Integration Tests', () => {
       const result = await mockStockAlertsService.resolveAlert(resolveData);
 
       expect(result).toBeDefined();
-      expect(result.status).toBe('resolved');
+      expect(result.status).toBe("resolved");
       expect(result.resolved_by).toBe(mockUserId);
-      expect(result.metadata.resolution).toBe('Stock replenished');
+      expect(result.metadata.resolution).toBe("Stock replenished");
       expect(mockStockAlertsService.resolveAlert).toHaveBeenCalledWith(
         resolveData,
       );
     });
 
-    it('should handle resolution of already resolved alert', async () => {
+    it("should handle resolution of already resolved alert", async () => {
       const resolveData: ResolveAlert = {
-        alertId: 'alert-id',
+        alertId: "alert-id",
         resolvedBy: mockUserId,
-        resolution: 'Already resolved',
+        resolution: "Already resolved",
       };
 
-      const error = new Error('Alert is already resolved');
+      const error = new Error("Alert is already resolved");
       mockStockAlertsService.resolveAlert.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.resolveAlert(resolveData),
-      ).rejects.toThrow('Alert is already resolved');
+      ).rejects.toThrow("Alert is already resolved");
     });
   });
 
-  describe('stock Level Evaluation', () => {
-    it('should check stock levels and generate alerts', async () => {
+  describe("stock Level Evaluation", () => {
+    it("should check stock levels and generate alerts", async () => {
       const mockGeneratedAlerts = [
         {
-          id: 'new-alert',
+          id: "new-alert",
           clinicId: mockClinicId,
           productId: mockProductId,
-          alertType: 'low_stock',
-          severityLevel: 'medium',
+          alertType: "low_stock",
+          severityLevel: "medium",
           currentValue: 5,
           thresholdValue: 10,
-          message: 'Low stock detected',
-          status: 'active',
+          message: "Low stock detected",
+          status: "active",
         },
       ];
 
@@ -304,14 +307,14 @@ describe('stock Alert Integration Tests', () => {
       const result = await mockStockAlertsService.checkStockLevels(mockUserId);
 
       expect(result).toHaveLength(1);
-      expect(result[0].alertType).toBe('low_stock');
+      expect(result[0].alertType).toBe("low_stock");
       expect(result[0].currentValue).toBe(5);
       expect(mockStockAlertsService.checkStockLevels).toHaveBeenCalledWith(
         mockUserId,
       );
     });
 
-    it('should handle no alerts generated', async () => {
+    it("should handle no alerts generated", async () => {
       mockStockAlertsService.checkStockLevels.mockResolvedValue([]);
 
       const result = await mockStockAlertsService.checkStockLevels(mockUserId);
@@ -320,40 +323,40 @@ describe('stock Alert Integration Tests', () => {
     });
   });
 
-  describe('error Handling', () => {
-    it('should handle database connection errors', async () => {
-      const error = new Error('Database connection failed');
+  describe("error Handling", () => {
+    it("should handle database connection errors", async () => {
+      const error = new Error("Database connection failed");
       mockStockAlertsService.createAlertConfig.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.createAlertConfig(mockAlertConfig, mockUserId),
-      ).rejects.toThrow('Database connection failed');
+      ).rejects.toThrow("Database connection failed");
     });
 
-    it('should handle invalid user context', async () => {
-      const error = new Error('User clinic context not found');
+    it("should handle invalid user context", async () => {
+      const error = new Error("User clinic context not found");
       mockStockAlertsService.getAlertConfigs.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.getAlertConfigs(mockUserId),
-      ).rejects.toThrow('User clinic context not found');
+      ).rejects.toThrow("User clinic context not found");
     });
 
-    it('should handle service initialization errors', async () => {
-      const error = new Error('Service initialization failed');
+    it("should handle service initialization errors", async () => {
+      const error = new Error("Service initialization failed");
       mockStockAlertsService.createAlertConfig.mockRejectedValue(error);
 
       await expect(
         mockStockAlertsService.createAlertConfig(mockAlertConfig, mockUserId),
-      ).rejects.toThrow('Service initialization failed');
+      ).rejects.toThrow("Service initialization failed");
     });
   });
 
-  describe('integration Workflows', () => {
-    it('should support complete alert lifecycle', async () => {
+  describe("integration Workflows", () => {
+    it("should support complete alert lifecycle", async () => {
       // Create alert config
       const configResult = {
-        id: 'config-id',
+        id: "config-id",
         ...mockAlertConfig,
         clinic_id: mockClinicId,
       };
@@ -362,9 +365,9 @@ describe('stock Alert Integration Tests', () => {
       // Generate alerts
       const generatedAlerts = [
         {
-          id: 'alert-id',
-          alertType: 'low_stock',
-          status: 'active',
+          id: "alert-id",
+          alertType: "low_stock",
+          status: "active",
         },
       ];
       mockStockAlertsService.checkStockLevels.mockResolvedValue(
@@ -373,8 +376,8 @@ describe('stock Alert Integration Tests', () => {
 
       // Acknowledge alert
       const acknowledgedAlert = {
-        id: 'alert-id',
-        status: 'acknowledged',
+        id: "alert-id",
+        status: "acknowledged",
       };
       mockStockAlertsService.acknowledgeAlert.mockResolvedValue(
         acknowledgedAlert,
@@ -382,8 +385,8 @@ describe('stock Alert Integration Tests', () => {
 
       // Resolve alert
       const resolvedAlert = {
-        id: 'alert-id',
-        status: 'resolved',
+        id: "alert-id",
+        status: "resolved",
       };
       mockStockAlertsService.resolveAlert.mockResolvedValue(resolvedAlert);
 
@@ -392,23 +395,23 @@ describe('stock Alert Integration Tests', () => {
         mockAlertConfig,
         mockUserId,
       );
-      expect(config.id).toBe('config-id');
+      expect(config.id).toBe("config-id");
 
       const alerts = await mockStockAlertsService.checkStockLevels(mockUserId);
       expect(alerts).toHaveLength(1);
 
       const acknowledged = await mockStockAlertsService.acknowledgeAlert({
-        alertId: 'alert-id',
+        alertId: "alert-id",
         acknowledgedBy: mockUserId,
       });
-      expect(acknowledged.status).toBe('acknowledged');
+      expect(acknowledged.status).toBe("acknowledged");
 
       const resolved = await mockStockAlertsService.resolveAlert({
-        alertId: 'alert-id',
+        alertId: "alert-id",
         resolvedBy: mockUserId,
-        resolution: 'Resolved by restocking',
+        resolution: "Resolved by restocking",
       });
-      expect(resolved.status).toBe('resolved');
+      expect(resolved.status).toBe("resolved");
     });
   });
 });

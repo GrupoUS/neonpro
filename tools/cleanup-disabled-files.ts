@@ -5,12 +5,12 @@
  * NEONPRO System Maintenance
  */
 
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 
 interface CleanupItem {
   path: string;
-  action: 'remove' | 'reactivate' | 'keep';
+  action: "remove" | "reactivate" | "keep";
   reason: string;
   category: string;
 }
@@ -18,98 +18,100 @@ interface CleanupItem {
 // Files to definitely REMOVE (duplicated/obsolete)
 const REMOVE_LIST: CleanupItem[] = [
   {
-    path: 'apps/web/types/lgpd.ts.disabled',
-    action: 'remove',
-    reason: 'LGPD types already implemented in packages/compliance/src/lgpd/types.ts',
-    category: 'duplicate',
+    path: "apps/web/types/lgpd.ts.disabled",
+    action: "remove",
+    reason:
+      "LGPD types already implemented in packages/compliance/src/lgpd/types.ts",
+    category: "duplicate",
   },
   {
-    path: 'apps/web/jest.config.js.disabled',
-    action: 'remove',
-    reason: 'Using Vitest now, Jest config obsolete',
-    category: 'obsolete',
+    path: "apps/web/jest.config.js.disabled",
+    action: "remove",
+    reason: "Using Vitest now, Jest config obsolete",
+    category: "obsolete",
   },
   {
-    path: 'apps/web/jest.setup.js.disabled',
-    action: 'remove',
-    reason: 'Using Vitest setup, Jest setup obsolete',
-    category: 'obsolete',
+    path: "apps/web/jest.setup.js.disabled",
+    action: "remove",
+    reason: "Using Vitest setup, Jest setup obsolete",
+    category: "obsolete",
   },
   {
-    path: 'packages/ui/jest.config.js.disabled',
-    action: 'remove',
-    reason: 'Using Vitest now, Jest config obsolete',
-    category: 'obsolete',
+    path: "packages/ui/jest.config.js.disabled",
+    action: "remove",
+    reason: "Using Vitest now, Jest config obsolete",
+    category: "obsolete",
   },
   {
-    path: 'packages/ui/vitest.config.mjs.disabled',
-    action: 'remove',
-    reason: 'Superseded by main vitest config',
-    category: 'obsolete',
+    path: "packages/ui/vitest.config.mjs.disabled",
+    action: "remove",
+    reason: "Superseded by main vitest config",
+    category: "obsolete",
   },
   {
-    path: 'packages/ai/src/chatbot/chatbot-service.ts.disabled',
-    action: 'remove',
-    reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental',
+    path: "packages/ai/src/chatbot/chatbot-service.ts.disabled",
+    action: "remove",
+    reason: "Experimental AI service, not part of core healthcare system",
+    category: "experimental",
   },
   {
-    path: 'packages/ai/src/ethics/explainable-ai.ts.disabled',
-    action: 'remove',
-    reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental',
+    path: "packages/ai/src/ethics/explainable-ai.ts.disabled",
+    action: "remove",
+    reason: "Experimental AI service, not part of core healthcare system",
+    category: "experimental",
   },
   {
-    path: 'packages/ai/src/follow-up/follow-up-service.ts.disabled',
-    action: 'remove',
-    reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental',
+    path: "packages/ai/src/follow-up/follow-up-service.ts.disabled",
+    action: "remove",
+    reason: "Experimental AI service, not part of core healthcare system",
+    category: "experimental",
   },
   {
-    path: 'packages/ai/src/scheduling/intelligent-scheduler.ts.disabled',
-    action: 'remove',
-    reason: 'Experimental AI service, not part of core healthcare system',
-    category: 'experimental',
+    path: "packages/ai/src/scheduling/intelligent-scheduler.ts.disabled",
+    action: "remove",
+    reason: "Experimental AI service, not part of core healthcare system",
+    category: "experimental",
   },
   {
-    path: 'packages/domain/src/api/anvisa.ts.disabled',
-    action: 'remove',
-    reason: 'ANVISA compliance already implemented in active compliance system',
-    category: 'duplicate',
+    path: "packages/domain/src/api/anvisa.ts.disabled",
+    action: "remove",
+    reason: "ANVISA compliance already implemented in active compliance system",
+    category: "duplicate",
   },
   {
-    path: 'packages/domain/src/api/lgpd.ts.disabled',
-    action: 'remove',
-    reason: 'LGPD API already implemented in active compliance system',
-    category: 'duplicate',
+    path: "packages/domain/src/api/lgpd.ts.disabled",
+    action: "remove",
+    reason: "LGPD API already implemented in active compliance system",
+    category: "duplicate",
   },
   {
-    path: 'packages/domain/src/api/compliance-automation.ts.disabled',
-    action: 'remove',
-    reason: 'Compliance automation already implemented in active system',
-    category: 'duplicate',
+    path: "packages/domain/src/api/compliance-automation.ts.disabled",
+    action: "remove",
+    reason: "Compliance automation already implemented in active system",
+    category: "duplicate",
   },
 ];
 
 // Files to potentially REACTIVATE (might be useful)
 const REACTIVATE_CANDIDATES: CleanupItem[] = [
   {
-    path: 'apps/web/types/rbac.ts.disabled',
-    action: 'keep',
-    reason: 'RBAC types may be needed, analyze if current implementation is complete',
-    category: 'evaluate',
+    path: "apps/web/types/rbac.ts.disabled",
+    action: "keep",
+    reason:
+      "RBAC types may be needed, analyze if current implementation is complete",
+    category: "evaluate",
   },
   {
-    path: 'apps/web/types/session.ts.disabled',
-    action: 'keep',
-    reason: 'Session types may be needed for advanced session management',
-    category: 'evaluate',
+    path: "apps/web/types/session.ts.disabled",
+    action: "keep",
+    reason: "Session types may be needed for advanced session management",
+    category: "evaluate",
   },
   {
-    path: 'apps/web/types/sso.ts.disabled',
-    action: 'keep',
-    reason: 'SSO types may be needed for enterprise integrations',
-    category: 'evaluate',
+    path: "apps/web/types/sso.ts.disabled",
+    action: "keep",
+    reason: "SSO types may be needed for enterprise integrations",
+    category: "evaluate",
   },
 ];
 
@@ -117,17 +119,17 @@ const REACTIVATE_CANDIDATES: CleanupItem[] = [
 const KEEP_DISABLED: CleanupItem[] = [
   // All analytics hooks - keeping for potential future activation
   {
-    path: 'packages/domain/src/hooks/analytics/*.disabled',
-    action: 'keep',
-    reason: 'Analytics hooks may be useful for advanced analytics features',
-    category: 'future',
+    path: "packages/domain/src/hooks/analytics/*.disabled",
+    action: "keep",
+    reason: "Analytics hooks may be useful for advanced analytics features",
+    category: "future",
   },
   // Legacy hooks - keeping for reference
   {
-    path: 'packages/domain/src/hooks/legacy/*.disabled',
-    action: 'keep',
-    reason: 'Legacy hooks kept for reference and potential migration',
-    category: 'legacy',
+    path: "packages/domain/src/hooks/legacy/*.disabled",
+    action: "keep",
+    reason: "Legacy hooks kept for reference and potential migration",
+    category: "legacy",
   },
 ];
 
@@ -145,7 +147,8 @@ function executeCleanup() {
       if (existsSync(fullPath)) {
         unlinkSync(fullPath);
         removedCount++;
-      } else {}
+      } else {
+      }
     } catch {
       errorCount++;
     }
@@ -173,10 +176,12 @@ function executeCleanup() {
   };
 
   // Write report
-  const reportPath = join(process.cwd(), 'scripts/cleanup-report.json');
+  const reportPath = join(process.cwd(), "scripts/cleanup-report.json");
   writeFileSync(reportPath, JSON.stringify(report, undefined, 2));
 
-  if (errorCount === 0) {} else {}
+  if (errorCount === 0) {
+  } else {
+  }
 }
 
 /**
@@ -184,49 +189,49 @@ function executeCleanup() {
  */
 function analyzeDisabledFile(filePath: string): CleanupItem {
   try {
-    const content = readFileSync(filePath, 'utf8');
-    const fileName = filePath.split('/').pop() || '';
+    const content = readFileSync(filePath, "utf8");
+    const fileName = filePath.split("/").pop() || "";
 
     // Analyze content to suggest action
-    if (content.includes('// Placeholder') || content.includes('placeholder')) {
+    if (content.includes("// Placeholder") || content.includes("placeholder")) {
       return {
         path: filePath,
-        action: 'remove',
-        reason: 'Contains only placeholder code',
-        category: 'placeholder',
+        action: "remove",
+        reason: "Contains only placeholder code",
+        category: "placeholder",
       };
     }
 
-    if (fileName.includes('jest') || fileName.includes('test')) {
+    if (fileName.includes("jest") || fileName.includes("test")) {
       return {
         path: filePath,
-        action: 'remove',
-        reason: 'Old test configuration, using Vitest now',
-        category: 'obsolete',
+        action: "remove",
+        reason: "Old test configuration, using Vitest now",
+        category: "obsolete",
       };
     }
 
-    if (content.includes('experimental') || content.includes('TODO')) {
+    if (content.includes("experimental") || content.includes("TODO")) {
       return {
         path: filePath,
-        action: 'keep',
-        reason: 'Experimental or incomplete code, may be useful later',
-        category: 'experimental',
+        action: "keep",
+        reason: "Experimental or incomplete code, may be useful later",
+        category: "experimental",
       };
     }
 
     return {
       path: filePath,
-      action: 'keep',
-      reason: 'Unable to determine action automatically',
-      category: 'unknown',
+      action: "keep",
+      reason: "Unable to determine action automatically",
+      category: "unknown",
     };
   } catch (error) {
     return {
       path: filePath,
-      action: 'keep',
+      action: "keep",
       reason: `Error analyzing file: ${error}`,
-      category: 'error',
+      category: "error",
     };
   }
 }
@@ -236,4 +241,9 @@ if (require.main === module) {
   executeCleanup();
 }
 
-export { analyzeDisabledFile, executeCleanup, REACTIVATE_CANDIDATES, REMOVE_LIST };
+export {
+  analyzeDisabledFile,
+  executeCleanup,
+  REACTIVATE_CANDIDATES,
+  REMOVE_LIST,
+};

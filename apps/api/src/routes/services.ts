@@ -6,11 +6,11 @@
  * com validação Zod, categorização e compliance ANVISA.
  */
 
-import { zValidator } from '@hono/zod-validator';
-import type { ApiResponse } from '@neonpro/shared/types';
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { HTTP_STATUS } from '../lib/constants';
+import { zValidator } from "@hono/zod-validator";
+import type { ApiResponse } from "@neonpro/shared/types";
+import { Hono } from "hono";
+import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants";
 
 // Constants for validation
 const MIN_DESCRIPTION_LENGTH = 10;
@@ -22,19 +22,19 @@ const DEFAULT_RESULTS_PER_PAGE = 10;
 
 // Zod schemas for services
 const ServiceCategorySchema = z.enum([
-  'facial_treatments',
-  'body_treatments',
-  'hair_removal',
-  'cosmetic_procedures',
-  'wellness',
-  'consultations',
+  "facial_treatments",
+  "body_treatments",
+  "hair_removal",
+  "cosmetic_procedures",
+  "wellness",
+  "consultations",
 ]);
 
 const CreateServiceSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   description: z
     .string()
-    .min(MIN_DESCRIPTION_LENGTH, 'Descrição deve ter pelo menos 10 caracteres'),
+    .min(MIN_DESCRIPTION_LENGTH, "Descrição deve ter pelo menos 10 caracteres"),
   category: ServiceCategorySchema,
   duration: z.number().min(MIN_SERVICE_DURATION).max(MAX_SERVICE_DURATION), // 15 minutes to 8 hours
   price: z.number().min(0),
@@ -42,14 +42,14 @@ const CreateServiceSchema = z.object({
 
   // ANVISA Compliance
   anvisaCategory: z
-    .enum(['cosmetic', 'medical_device', 'pharmaceutical', 'none'])
-    .default('none'),
+    .enum(["cosmetic", "medical_device", "pharmaceutical", "none"])
+    .default("none"),
   anvisaRegistration: z.string().optional(),
   requiresLicense: z.boolean().default(false),
 
   // Professional requirements
   requiredProfessions: z.array(
-    z.enum(['dermatologist', 'esthetician', 'therapist']),
+    z.enum(["dermatologist", "esthetician", "therapist"]),
   ),
 
   // Additional settings
@@ -71,7 +71,7 @@ const ServiceQuerySchema = z.object({
   search: z.string().optional(),
   category: ServiceCategorySchema.optional(),
   isActive: z.coerce.boolean().optional(),
-  profession: z.enum(['dermatologist', 'esthetician', 'therapist']).optional(),
+  profession: z.enum(["dermatologist", "esthetician", "therapist"]).optional(),
   priceMin: z.coerce.number().min(0).optional(),
   priceMax: z.coerce.number().min(0).optional(),
 });
@@ -79,18 +79,18 @@ const ServiceQuerySchema = z.object({
 // Create services router
 export const servicesRoutes = new Hono()
   // Authentication middleware
-  .use('*', async (c, next) => {
-    const auth = c.req.header('Authorization');
-    if (!auth?.startsWith('Bearer ')) {
+  .use("*", async (c, next) => {
+    const auth = c.req.header("Authorization");
+    if (!auth?.startsWith("Bearer ")) {
       return c.json(
-        { error: 'UNAUTHORIZED', message: 'Token de acesso obrigatório' },
+        { error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
         HTTP_STATUS.UNAUTHORIZED,
       );
     }
     await next();
   })
   // 📋 List services
-  .get('/', zValidator('query', ServiceQuerySchema), (c) => {
+  .get("/", zValidator("query", ServiceQuerySchema), (c) => {
     const {
       page,
       limit,
@@ -100,53 +100,54 @@ export const servicesRoutes = new Hono()
       profession,
       priceMin,
       priceMax,
-    } = c.req.valid('query');
+    } = c.req.valid("query");
 
     try {
       // TODO: Implement actual database query
       const mockServices = [
         {
-          id: 'srv_1',
-          name: 'Limpeza de Pele Profunda',
-          description: 'Tratamento completo de limpeza facial com extração e hidratação',
-          category: 'facial_treatments',
+          id: "srv_1",
+          name: "Limpeza de Pele Profunda",
+          description:
+            "Tratamento completo de limpeza facial com extração e hidratação",
+          category: "facial_treatments",
           duration: 60,
           price: 120,
           isActive: true,
-          anvisaCategory: 'cosmetic',
-          requiredProfessions: ['esthetician'],
+          anvisaCategory: "cosmetic",
+          requiredProfessions: ["esthetician"],
           createdAt: new Date().toISOString(),
         },
         {
-          id: 'srv_2',
-          name: 'Peeling Químico',
-          description: 'Renovação celular com ácidos para rejuvenescimento',
-          category: 'facial_treatments',
+          id: "srv_2",
+          name: "Peeling Químico",
+          description: "Renovação celular com ácidos para rejuvenescimento",
+          category: "facial_treatments",
           duration: 45,
           price: 200,
           isActive: true,
-          anvisaCategory: 'medical_device',
-          anvisaRegistration: 'ANVISA-123456',
-          requiredProfessions: ['dermatologist'],
+          anvisaCategory: "medical_device",
+          anvisaRegistration: "ANVISA-123456",
+          requiredProfessions: ["dermatologist"],
           requiresLicense: true,
           createdAt: new Date().toISOString(),
         },
         {
-          id: 'srv_3',
-          name: 'Massagem Relaxante',
-          description: 'Massagem corporal para alívio de tensões',
-          category: 'wellness',
+          id: "srv_3",
+          name: "Massagem Relaxante",
+          description: "Massagem corporal para alívio de tensões",
+          category: "wellness",
           duration: 90,
           price: 150,
           isActive: true,
-          anvisaCategory: 'none',
-          requiredProfessions: ['therapist'],
+          anvisaCategory: "none",
+          requiredProfessions: ["therapist"],
           createdAt: new Date().toISOString(),
         },
       ].filter((service) => {
         if (
-          search
-          && !service.name.toLowerCase().includes(search.toLowerCase())
+          search &&
+          !service.name.toLowerCase().includes(search.toLowerCase())
         ) {
           return false;
         }
@@ -192,7 +193,7 @@ export const servicesRoutes = new Hono()
             pages: Math.ceil(total / limit),
           },
         },
-        message: 'Serviços listados com sucesso',
+        message: "Serviços listados com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -200,37 +201,39 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao listar serviços',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao listar serviços",
         },
         HTTP_STATUS.INTERNAL_SERVER_ERROR,
       );
     }
   })
   // 💄 Get service by ID
-  .get('/:id', (c) => {
-    const id = c.req.param('id');
+  .get("/:id", (c) => {
+    const id = c.req.param("id");
 
     try {
       // TODO: Implement actual database query
       const mockService = {
         id,
-        name: 'Limpeza de Pele Profunda',
-        description: 'Tratamento completo de limpeza facial com extração e hidratação',
-        category: 'facial_treatments',
+        name: "Limpeza de Pele Profunda",
+        description:
+          "Tratamento completo de limpeza facial com extração e hidratação",
+        category: "facial_treatments",
         duration: 60,
         price: 120,
         isActive: true,
-        anvisaCategory: 'cosmetic',
-        requiredProfessions: ['esthetician'],
+        anvisaCategory: "cosmetic",
+        requiredProfessions: ["esthetician"],
         maxBookingAdvance: 90,
-        cancellationPolicy: 'Cancelamento até 24h antes sem taxa',
+        cancellationPolicy: "Cancelamento até 24h antes sem taxa",
         contraindications: [
-          'Gravidez',
-          'Tratamentos com ácido recentes',
-          'Pele com lesões ativas',
+          "Gravidez",
+          "Tratamentos com ácido recentes",
+          "Pele com lesões ativas",
         ],
-        aftercareInstructions: 'Evitar exposição solar por 24h. Usar protetor solar.',
+        aftercareInstructions:
+          "Evitar exposição solar por 24h. Usar protetor solar.",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -238,7 +241,7 @@ export const servicesRoutes = new Hono()
       const response: ApiResponse<typeof mockService> = {
         success: true,
         data: mockService,
-        message: 'Serviço encontrado',
+        message: "Serviço encontrado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -246,16 +249,16 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Serviço não encontrado',
+          error: "NOT_FOUND",
+          message: "Serviço não encontrado",
         },
         HTTP_STATUS.NOT_FOUND,
       );
     }
   })
   // ✨ Create service
-  .post('/', zValidator('json', CreateServiceSchema), (c) => {
-    const serviceData = c.req.valid('json');
+  .post("/", zValidator("json", CreateServiceSchema), (c) => {
+    const serviceData = c.req.valid("json");
 
     try {
       // TODO: Implement actual database creation
@@ -269,7 +272,7 @@ export const servicesRoutes = new Hono()
       const response: ApiResponse<typeof newService> = {
         success: true,
         data: newService,
-        message: 'Serviço criado com sucesso',
+        message: "Serviço criado com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.CREATED);
@@ -277,25 +280,25 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'VALIDATION_ERROR',
-          message: 'Erro ao criar serviço',
+          error: "VALIDATION_ERROR",
+          message: "Erro ao criar serviço",
         },
         HTTP_STATUS.BAD_REQUEST,
       );
     }
   })
   // ✏️ Update service
-  .put('/:id', zValidator('json', UpdateServiceSchema), (c) => {
-    const id = c.req.param('id');
-    const updateData = c.req.valid('json');
+  .put("/:id", zValidator("json", UpdateServiceSchema), (c) => {
+    const id = c.req.param("id");
+    const updateData = c.req.valid("json");
 
     try {
       // TODO: Implement actual database update
       const updatedService = {
         id,
-        name: 'Limpeza de Pele Profunda',
-        description: 'Tratamento completo de limpeza facial',
-        category: 'facial_treatments',
+        name: "Limpeza de Pele Profunda",
+        description: "Tratamento completo de limpeza facial",
+        category: "facial_treatments",
         duration: 60,
         price: 120,
         isActive: true,
@@ -306,7 +309,7 @@ export const servicesRoutes = new Hono()
       const response: ApiResponse<typeof updatedService> = {
         success: true,
         data: updatedService,
-        message: 'Serviço atualizado com sucesso',
+        message: "Serviço atualizado com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -314,23 +317,23 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Serviço não encontrado',
+          error: "NOT_FOUND",
+          message: "Serviço não encontrado",
         },
         HTTP_STATUS.NOT_FOUND,
       );
     }
   })
   // 🗑️ Delete service (soft delete)
-  .delete('/:id', (c) => {
-    const id = c.req.param('id');
+  .delete("/:id", (c) => {
+    const id = c.req.param("id");
 
     try {
       // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string; }> = {
+      const response: ApiResponse<{ id: string }> = {
         success: true,
         data: { id },
-        message: 'Serviço removido com sucesso',
+        message: "Serviço removido com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -338,29 +341,29 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Serviço não encontrado',
+          error: "NOT_FOUND",
+          message: "Serviço não encontrado",
         },
         HTTP_STATUS.NOT_FOUND,
       );
     }
   })
   // 📊 Get services by category
-  .get('/category/:category', (c) => {
-    const category = c.req.param('category');
+  .get("/category/:category", (c) => {
+    const category = c.req.param("category");
 
     try {
       // TODO: Implement actual category query
       const mockServices = [
         {
-          id: 'srv_1',
-          name: 'Limpeza de Pele Profunda',
+          id: "srv_1",
+          name: "Limpeza de Pele Profunda",
           price: 120,
           duration: 60,
         },
         {
-          id: 'srv_2',
-          name: 'Hidratação Facial',
+          id: "srv_2",
+          name: "Hidratação Facial",
           price: 80,
           duration: 45,
         },
@@ -385,16 +388,16 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Categoria não encontrada',
+          error: "NOT_FOUND",
+          message: "Categoria não encontrada",
         },
         404,
       );
     }
   })
   // 🏥 ANVISA compliance check
-  .get('/:id/compliance', (c) => {
-    const id = c.req.param('id');
+  .get("/:id/compliance", (c) => {
+    const id = c.req.param("id");
 
     try {
       // TODO: Implement actual compliance check
@@ -403,16 +406,16 @@ export const servicesRoutes = new Hono()
         anvisaCompliant: true,
         registrationValid: true,
         licenseRequired: true,
-        lastInspection: '2024-01-15',
-        expirationDate: '2025-01-15',
+        lastInspection: "2024-01-15",
+        expirationDate: "2025-01-15",
         warnings: [],
-        certifications: ['ANVISA-123456', 'ISO-9001'],
+        certifications: ["ANVISA-123456", "ISO-9001"],
       };
 
       const response: ApiResponse<typeof mockCompliance> = {
         success: true,
         data: mockCompliance,
-        message: 'Status de compliance ANVISA',
+        message: "Status de compliance ANVISA",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -420,8 +423,8 @@ export const servicesRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Dados de compliance não encontrados',
+          error: "NOT_FOUND",
+          message: "Dados de compliance não encontrados",
         },
         404,
       );

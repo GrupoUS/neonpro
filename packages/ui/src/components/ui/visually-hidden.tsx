@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { cn } from '../../lib/utils';
+import * as React from "react";
+import { cn } from "../../lib/utils";
 
 /**
  * NEONPRO HEALTHCARE - VISUALLY HIDDEN COMPONENT
@@ -37,16 +37,16 @@ interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLSpanElement> {
    * Healthcare context for specialized styling or behavior
    */
   medicalContext?:
-    | 'instruction'
-    | 'warning'
-    | 'privacy'
-    | 'emergency'
-    | 'definition';
+    | "instruction"
+    | "warning"
+    | "privacy"
+    | "emergency"
+    | "definition";
 
   /**
    * ARIA live region type for dynamic content
    */
-  liveRegion?: 'off' | 'polite' | 'assertive';
+  liveRegion?: "off" | "polite" | "assertive";
 
   /**
    * Whether to use atomic announcement (entire region is announced)
@@ -75,14 +75,14 @@ interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLSpanElement> {
  * - Allows focus when needed
  */
 const visuallyHiddenClasses = cn(
-  'absolute',
-  'h-px w-px',
-  'm-[-1px] p-0',
-  'overflow-hidden',
-  'whitespace-nowrap',
-  'border-0',
-  'clip-path-[inset(50%)]', // Modern browsers
-  '[clip:rect(0,0,0,0)]', // Legacy browsers fallback
+  "absolute",
+  "h-px w-px",
+  "m-[-1px] p-0",
+  "overflow-hidden",
+  "whitespace-nowrap",
+  "border-0",
+  "clip-path-[inset(50%)]", // Modern browsers
+  "[clip:rect(0,0,0,0)]", // Legacy browsers fallback
 );
 
 const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
@@ -92,10 +92,10 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
       className,
       focusable = false,
       medicalContext,
-      liveRegion = 'off',
+      liveRegion = "off",
       atomic = false,
       htmlFor,
-      as: Component = 'span',
+      as: Component = "span",
       ...props
     },
     ref,
@@ -105,38 +105,38 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
       const attrs: Record<string, any> = {};
 
       if (medicalContext) {
-        attrs['data-medical-context'] = medicalContext;
+        attrs["data-medical-context"] = medicalContext;
 
         // Add role based on context
         switch (medicalContext) {
-          case 'warning':
-          case 'emergency': {
-            attrs.role = 'alert';
-            attrs['aria-live'] = 'assertive';
+          case "warning":
+          case "emergency": {
+            attrs.role = "alert";
+            attrs["aria-live"] = "assertive";
             break;
           }
-          case 'instruction':
-          case 'definition': {
-            attrs.role = 'note';
+          case "instruction":
+          case "definition": {
+            attrs.role = "note";
             break;
           }
-          case 'privacy': {
-            attrs.role = 'region';
-            attrs['aria-label'] = 'Informações de Privacidade';
+          case "privacy": {
+            attrs.role = "region";
+            attrs["aria-label"] = "Informações de Privacidade";
             break;
           }
         }
       }
 
       // Live region attributes
-      if (liveRegion !== 'off') {
-        attrs['aria-live'] = liveRegion;
-        attrs['aria-atomic'] = atomic;
+      if (liveRegion !== "off") {
+        attrs["aria-live"] = liveRegion;
+        attrs["aria-atomic"] = atomic;
       }
 
       // Form association
       if (htmlFor) {
-        attrs['data-form-control'] = htmlFor;
+        attrs["data-form-control"] = htmlFor;
       }
 
       return attrs;
@@ -151,8 +151,8 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
         className: cn(
           visuallyHiddenClasses,
           // Allow focusing if focusable
-          focusable
-            && 'focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:m-0 focus:h-auto focus:w-auto focus:overflow-visible focus:whitespace-normal focus:rounded-md focus:border focus:bg-background focus:p-2 focus:text-foreground focus:shadow-lg',
+          focusable &&
+            "focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:m-0 focus:h-auto focus:w-auto focus:overflow-visible focus:whitespace-normal focus:rounded-md focus:border focus:bg-background focus:p-2 focus:text-foreground focus:shadow-lg",
           className,
         ),
         ...contextAttributes,
@@ -163,7 +163,7 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
   },
 );
 
-VisuallyHidden.displayName = 'VisuallyHidden';
+VisuallyHidden.displayName = "VisuallyHidden";
 
 /**
  * ScreenReaderOnly - Alias for VisuallyHidden with clearer intent
@@ -173,7 +173,8 @@ const ScreenReaderOnly = VisuallyHidden;
 /**
  * MedicalDefinition - Hidden medical term definitions
  */
-interface MedicalDefinitionProps extends Omit<VisuallyHiddenProps, 'medicalContext'> {
+interface MedicalDefinitionProps
+  extends Omit<VisuallyHiddenProps, "medicalContext"> {
   term: string;
   definition: string;
 }
@@ -191,13 +192,14 @@ const MedicalDefinition = React.forwardRef<HTMLElement, MedicalDefinitionProps>(
   ),
 );
 
-MedicalDefinition.displayName = 'MedicalDefinition';
+MedicalDefinition.displayName = "MedicalDefinition";
 
 /**
  * LGPDNotice - Hidden LGPD/privacy notices
  */
-interface LGPDNoticeProps extends Omit<VisuallyHiddenProps, 'medicalContext' | 'children'> {
-  context: 'collection' | 'processing' | 'storage' | 'sharing' | 'rights';
+interface LGPDNoticeProps
+  extends Omit<VisuallyHiddenProps, "medicalContext" | "children"> {
+  context: "collection" | "processing" | "storage" | "sharing" | "rights";
   notice?: string;
   children?: React.ReactNode;
 }
@@ -205,11 +207,13 @@ interface LGPDNoticeProps extends Omit<VisuallyHiddenProps, 'medicalContext' | '
 const LGPDNotice = React.forwardRef<HTMLElement, LGPDNoticeProps>(
   ({ context, notice, children, ...props }, ref) => {
     const defaultNotices = {
-      collection: 'Este campo coleta dados pessoais em conformidade com a LGPD',
-      processing: 'Seus dados serão processados conforme nossa política de privacidade',
-      storage: 'Dados armazenados com segurança por período determinado pela LGPD',
-      sharing: 'Dados não serão compartilhados sem seu consentimento explícito',
-      rights: 'Você pode exercer seus direitos LGPD a qualquer momento',
+      collection: "Este campo coleta dados pessoais em conformidade com a LGPD",
+      processing:
+        "Seus dados serão processados conforme nossa política de privacidade",
+      storage:
+        "Dados armazenados com segurança por período determinado pela LGPD",
+      sharing: "Dados não serão compartilhados sem seu consentimento explícito",
+      rights: "Você pode exercer seus direitos LGPD a qualquer momento",
     };
 
     return (
@@ -226,26 +230,25 @@ const LGPDNotice = React.forwardRef<HTMLElement, LGPDNoticeProps>(
   },
 );
 
-LGPDNotice.displayName = 'LGPDNotice';
+LGPDNotice.displayName = "LGPDNotice";
 
 /**
  * EmergencyInstruction - Hidden emergency procedure instructions
  */
 interface EmergencyInstructionProps
-  extends Omit<VisuallyHiddenProps, 'medicalContext' | 'liveRegion'>
-{
+  extends Omit<VisuallyHiddenProps, "medicalContext" | "liveRegion"> {
   instruction: string;
-  priority?: 'normal' | 'high' | 'critical';
+  priority?: "normal" | "high" | "critical";
 }
 
 const EmergencyInstruction = React.forwardRef<
   HTMLElement,
   EmergencyInstructionProps
->(({ instruction, priority = 'normal', children, ...props }, ref) => (
+>(({ instruction, priority = "normal", children, ...props }, ref) => (
   <VisuallyHidden
-    atomic={priority === 'critical'}
+    atomic={priority === "critical"}
     data-priority={priority}
-    liveRegion={priority === 'critical' ? 'assertive' : 'polite'}
+    liveRegion={priority === "critical" ? "assertive" : "polite"}
     medicalContext="emergency"
     ref={ref}
     role="alert"
@@ -255,12 +258,13 @@ const EmergencyInstruction = React.forwardRef<
   </VisuallyHidden>
 ));
 
-EmergencyInstruction.displayName = 'EmergencyInstruction';
+EmergencyInstruction.displayName = "EmergencyInstruction";
 
 /**
  * FormInstruction - Hidden form field instructions
  */
-interface FormInstructionProps extends Omit<VisuallyHiddenProps, 'medicalContext' | 'children'> {
+interface FormInstructionProps
+  extends Omit<VisuallyHiddenProps, "medicalContext" | "children"> {
   fieldId: string;
   instruction: string;
   required?: boolean;
@@ -289,22 +293,23 @@ const FormInstruction = React.forwardRef<HTMLElement, FormInstructionProps>(
       ref={ref}
       {...props}
     >
-      {children
-        || `${instruction}${required ? ' (Campo obrigatório)' : ''}${
-          sensitive ? ' (Dados sensíveis - protegido pela LGPD)' : ''
+      {children ||
+        `${instruction}${required ? " (Campo obrigatório)" : ""}${
+          sensitive ? " (Dados sensíveis - protegido pela LGPD)" : ""
         }`}
     </VisuallyHidden>
   ),
 );
 
-FormInstruction.displayName = 'FormInstruction';
+FormInstruction.displayName = "FormInstruction";
 
 /**
  * StatusAnnouncement - Live region for status announcements
  */
-interface StatusAnnouncementProps extends Omit<VisuallyHiddenProps, 'liveRegion'> {
+interface StatusAnnouncementProps
+  extends Omit<VisuallyHiddenProps, "liveRegion"> {
   message: string;
-  priority?: 'polite' | 'assertive';
+  priority?: "polite" | "assertive";
   temporary?: boolean;
   clearAfter?: number; // milliseconds
 }
@@ -316,7 +321,7 @@ const StatusAnnouncement = React.forwardRef<
   (
     {
       message,
-      priority = 'polite',
+      priority = "polite",
       temporary = false,
       clearAfter = 5000,
       children,
@@ -331,7 +336,7 @@ const StatusAnnouncement = React.forwardRef<
 
       if (temporary && clearAfter > 0) {
         const timer = setTimeout(() => {
-          setCurrentMessage('');
+          setCurrentMessage("");
         }, clearAfter);
 
         return () => clearTimeout(timer);
@@ -353,7 +358,7 @@ const StatusAnnouncement = React.forwardRef<
   },
 );
 
-StatusAnnouncement.displayName = 'StatusAnnouncement';
+StatusAnnouncement.displayName = "StatusAnnouncement";
 
 /**
  * Hook for programmatic announcements to screen readers
@@ -362,14 +367,14 @@ export const useScreenReaderAnnouncement = () => {
   const announce = React.useCallback(
     (
       message: string,
-      priority: 'polite' | 'assertive' = 'polite',
+      priority: "polite" | "assertive" = "polite",
       clearAfter = 5000,
     ) => {
       // Create temporary announcement element
-      const announcement = document.createElement('div');
+      const announcement = document.createElement("div");
       announcement.className = visuallyHiddenClasses;
-      announcement.setAttribute('aria-live', priority);
-      announcement.setAttribute('aria-atomic', 'true');
+      announcement.setAttribute("aria-live", priority);
+      announcement.setAttribute("aria-atomic", "true");
       announcement.textContent = message;
 
       // Add to DOM

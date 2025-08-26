@@ -1,20 +1,20 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from "tsup";
 
 export default defineConfig({
   // Entry points for Enhanced Service Layer only
   entry: {
     // Main entry point for Enhanced Service Layer
-    index: 'src/base/index.ts',
+    index: "src/base/index.ts",
 
     // Enhanced Service Layer types
-    types: 'src/types.ts',
+    types: "src/types.ts",
 
     // Enhanced Patient Service example
-    'enhanced-patient': 'src/patient/enhanced-service.ts',
+    "enhanced-patient": "src/patient/enhanced-service.ts",
   },
 
   // Output formats
-  format: ['cjs', 'esm'],
+  format: ["cjs", "esm"],
 
   // Generate TypeScript declarations
   dts: true,
@@ -33,26 +33,26 @@ export default defineConfig({
 
   // External dependencies (not bundled)
   external: [
-    '@neonpro/db',
-    '@neonpro/domain',
-    '@neonpro/utils',
-    '@neonpro/cache',
-    'date-fns',
-    'zod',
+    "@neonpro/db",
+    "@neonpro/domain",
+    "@neonpro/utils",
+    "@neonpro/cache",
+    "date-fns",
+    "zod",
   ],
 
   // Target environment
-  target: 'node18',
+  target: "node18",
 
   // Platform
-  platform: 'node',
+  platform: "node",
 
   // Output directory
-  outDir: 'dist',
+  outDir: "dist",
 
   // Bundle options
   bundle: true,
 
   // TypeScript config
-  tsconfig: './tsconfig.build.json',
+  tsconfig: "./tsconfig.build.json",
 });

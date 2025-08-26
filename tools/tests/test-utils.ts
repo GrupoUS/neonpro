@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 /**
  * Global test utilities for NeonPro tests
@@ -19,9 +19,9 @@ export const resetAllGlobalMocks = () => {
     // Reset all mock call histories recursively
     const resetMockRecursively = (obj: any) => {
       Object.values(obj).forEach((value: any) => {
-        if (typeof value === 'function' && 'mockClear' in value) {
+        if (typeof value === "function" && "mockClear" in value) {
           (value as any).mockClear();
-        } else if (typeof value === 'object' && value !== null) {
+        } else if (typeof value === "object" && value !== null) {
           resetMockRecursively(value);
         }
       });

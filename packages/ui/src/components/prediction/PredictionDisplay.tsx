@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 // Simplified Prediction Display - placeholder implementation
 interface PredictionDisplayProps {

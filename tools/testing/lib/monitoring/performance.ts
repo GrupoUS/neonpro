@@ -7,14 +7,14 @@ export interface PerformanceMetric {
 }
 
 export interface WebVital {
-  name: 'CLS' | 'FID' | 'FCP' | 'LCP' | 'TTFB';
+  name: "CLS" | "FID" | "FCP" | "LCP" | "TTFB";
   value: number;
   delta: number;
-  rating: 'good' | 'needs-improvement' | 'poor';
+  rating: "good" | "needs-improvement" | "poor";
 }
 
 export class PerformanceService {
-  static startTimer(name: string): { end: () => number; } {
+  static startTimer(name: string): { end: () => number } {
     const start = performance.now();
     return {
       end: () => {
@@ -22,7 +22,7 @@ export class PerformanceService {
         PerformanceService.recordMetric({
           name,
           value: duration,
-          unit: 'ms',
+          unit: "ms",
         });
         return duration;
       },

@@ -6,22 +6,22 @@
  * com validação Zod e type-safety completo.
  */
 
-import { zValidator } from '@hono/zod-validator';
-import type { ApiResponse } from '@neonpro/shared/types';
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { HTTP_STATUS } from '../lib/constants.js';
+import { zValidator } from "@hono/zod-validator";
+import type { ApiResponse } from "@neonpro/shared/types";
+import { Hono } from "hono";
+import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants.js";
 
 // Zod schemas for professionals
 const CreateProfessionalSchema = z.object({
-  fullName: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
-  phone: z.string().min(10, 'Telefone inválido'),
+  fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: z.string().email("Email inválido"),
+  phone: z.string().min(10, "Telefone inválido"),
   profession: z.enum([
-    'dermatologist',
-    'esthetician',
-    'therapist',
-    'coordinator',
+    "dermatologist",
+    "esthetician",
+    "therapist",
+    "coordinator",
   ]),
   specialization: z.string().optional(),
   registrationNumber: z.string().optional(),
@@ -47,7 +47,7 @@ const ProfessionalQuerySchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(10),
   search: z.string().optional(),
   profession: z
-    .enum(['dermatologist', 'esthetician', 'therapist', 'coordinator'])
+    .enum(["dermatologist", "esthetician", "therapist", "coordinator"])
     .optional(),
   isActive: z.coerce.boolean().optional(),
 });
@@ -55,49 +55,49 @@ const ProfessionalQuerySchema = z.object({
 // Create professionals router
 export const professionalsRoutes = new Hono()
   // Authentication middleware
-  .use('*', async (c, next) => {
-    const auth = c.req.header('Authorization');
-    if (!auth?.startsWith('Bearer ')) {
+  .use("*", async (c, next) => {
+    const auth = c.req.header("Authorization");
+    if (!auth?.startsWith("Bearer ")) {
       return c.json(
-        { error: 'UNAUTHORIZED', message: 'Token de acesso obrigatório' },
+        { error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
         401,
       );
     }
     await next();
   })
   // 📋 List professionals
-  .get('/', zValidator('query', ProfessionalQuerySchema), async (c) => {
-    const { page, limit, search, profession, isActive } = c.req.valid('query');
+  .get("/", zValidator("query", ProfessionalQuerySchema), async (c) => {
+    const { page, limit, search, profession, isActive } = c.req.valid("query");
 
     try {
       // TODO: Implement actual database query
       const mockProfessionals = [
         {
-          id: '1',
-          fullName: 'Dra. Ana Silva',
-          email: 'ana.silva@neonpro.com',
-          phone: '+5511999999999',
-          profession: 'dermatologist',
-          specialization: 'Dermatologia Estética',
-          registrationNumber: 'CRM 12345',
+          id: "1",
+          fullName: "Dra. Ana Silva",
+          email: "ana.silva@neonpro.com",
+          phone: "+5511999999999",
+          profession: "dermatologist",
+          specialization: "Dermatologia Estética",
+          registrationNumber: "CRM 12345",
           isActive: true,
           createdAt: new Date().toISOString(),
         },
         {
-          id: '2',
-          fullName: 'Carla Santos',
-          email: 'carla.santos@neonpro.com',
-          phone: '+5511888888888',
-          profession: 'esthetician',
-          specialization: 'Estética Facial',
+          id: "2",
+          fullName: "Carla Santos",
+          email: "carla.santos@neonpro.com",
+          phone: "+5511888888888",
+          profession: "esthetician",
+          specialization: "Estética Facial",
           registrationNumber: undefined,
           isActive: true,
           createdAt: new Date().toISOString(),
         },
       ].filter((prof) => {
         if (
-          search
-          && !prof.fullName.toLowerCase().includes(search.toLowerCase())
+          search &&
+          !prof.fullName.toLowerCase().includes(search.toLowerCase())
         ) {
           return false;
         }
@@ -137,7 +137,7 @@ export const professionalsRoutes = new Hono()
             pages: Math.ceil(total / limit),
           },
         },
-        message: 'Profissionais listados com sucesso',
+        message: "Profissionais listados com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -145,40 +145,40 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao listar profissionais',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao listar profissionais",
         },
         500,
       );
     }
   })
   // 👤 Get professional by ID
-  .get('/:id', async (c) => {
-    const id = c.req.param('id');
+  .get("/:id", async (c) => {
+    const id = c.req.param("id");
 
     try {
       // TODO: Implement actual database query
       const mockProfessional = {
         id,
-        fullName: 'Dra. Ana Silva',
-        email: 'ana.silva@neonpro.com',
-        phone: '+5511999999999',
-        profession: 'dermatologist',
-        specialization: 'Dermatologia Estética',
-        registrationNumber: 'CRM 12345',
+        fullName: "Dra. Ana Silva",
+        email: "ana.silva@neonpro.com",
+        phone: "+5511999999999",
+        profession: "dermatologist",
+        specialization: "Dermatologia Estética",
+        registrationNumber: "CRM 12345",
         isActive: true,
         workingHours: {
-          monday: ['09:00', '18:00'],
-          tuesday: ['09:00', '18:00'],
-          wednesday: ['09:00', '18:00'],
-          thursday: ['09:00', '18:00'],
-          friday: ['09:00', '17:00'],
+          monday: ["09:00", "18:00"],
+          tuesday: ["09:00", "18:00"],
+          wednesday: ["09:00", "18:00"],
+          thursday: ["09:00", "18:00"],
+          friday: ["09:00", "17:00"],
         },
         permissions: [
-          'read:patients',
-          'write:patients',
-          'read:appointments',
-          'write:appointments',
+          "read:patients",
+          "write:patients",
+          "read:appointments",
+          "write:appointments",
         ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -187,7 +187,7 @@ export const professionalsRoutes = new Hono()
       const response: ApiResponse<typeof mockProfessional> = {
         success: true,
         data: mockProfessional,
-        message: 'Profissional encontrado',
+        message: "Profissional encontrado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -195,16 +195,16 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Profissional não encontrado',
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
         },
         404,
       );
     }
   })
   // ✨ Create professional
-  .post('/', zValidator('json', CreateProfessionalSchema), async (c) => {
-    const professionalData = c.req.valid('json');
+  .post("/", zValidator("json", CreateProfessionalSchema), async (c) => {
+    const professionalData = c.req.valid("json");
 
     try {
       // TODO: Implement actual database creation
@@ -218,7 +218,7 @@ export const professionalsRoutes = new Hono()
       const response: ApiResponse<typeof newProfessional> = {
         success: true,
         data: newProfessional,
-        message: 'Profissional criado com sucesso',
+        message: "Profissional criado com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.CREATED);
@@ -226,26 +226,26 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'VALIDATION_ERROR',
-          message: 'Erro ao criar profissional',
+          error: "VALIDATION_ERROR",
+          message: "Erro ao criar profissional",
         },
         400,
       );
     }
   })
   // ✏️ Update professional
-  .put('/:id', zValidator('json', UpdateProfessionalSchema), async (c) => {
-    const id = c.req.param('id');
-    const updateData = c.req.valid('json');
+  .put("/:id", zValidator("json", UpdateProfessionalSchema), async (c) => {
+    const id = c.req.param("id");
+    const updateData = c.req.valid("json");
 
     try {
       // TODO: Implement actual database update
       const updatedProfessional = {
         id,
-        fullName: 'Dra. Ana Silva',
-        email: 'ana.silva@neonpro.com',
-        phone: '+5511999999999',
-        profession: 'dermatologist',
+        fullName: "Dra. Ana Silva",
+        email: "ana.silva@neonpro.com",
+        phone: "+5511999999999",
+        profession: "dermatologist",
         ...updateData,
         updatedAt: new Date().toISOString(),
       };
@@ -253,7 +253,7 @@ export const professionalsRoutes = new Hono()
       const response: ApiResponse<typeof updatedProfessional> = {
         success: true,
         data: updatedProfessional,
-        message: 'Profissional atualizado com sucesso',
+        message: "Profissional atualizado com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -261,23 +261,23 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Profissional não encontrado',
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
         },
         404,
       );
     }
   })
   // 🗑️ Delete professional (soft delete)
-  .delete('/:id', async (c) => {
-    const id = c.req.param('id');
+  .delete("/:id", async (c) => {
+    const id = c.req.param("id");
 
     try {
       // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string; }> = {
+      const response: ApiResponse<{ id: string }> = {
         success: true,
         data: { id },
-        message: 'Profissional removido com sucesso',
+        message: "Profissional removido com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -285,16 +285,16 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Profissional não encontrado',
+          error: "NOT_FOUND",
+          message: "Profissional não encontrado",
         },
         404,
       );
     }
   })
   // 📊 Get professional stats
-  .get('/:id/stats', async (c) => {
-    const _id = c.req.param('id');
+  .get("/:id/stats", async (c) => {
+    const _id = c.req.param("id");
 
     try {
       // TODO: Implement actual stats query
@@ -311,7 +311,7 @@ export const professionalsRoutes = new Hono()
       const response: ApiResponse<typeof mockStats> = {
         success: true,
         data: mockStats,
-        message: 'Estatísticas do profissional',
+        message: "Estatísticas do profissional",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -319,40 +319,40 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Estatísticas não encontradas',
+          error: "NOT_FOUND",
+          message: "Estatísticas não encontradas",
         },
         404,
       );
     }
   })
   // 📅 Get professional availability
-  .get('/:id/availability', async (c) => {
-    const _id = c.req.param('id');
-    const date = c.req.query('date'); // YYYY-MM-DD format
+  .get("/:id/availability", async (c) => {
+    const _id = c.req.param("id");
+    const date = c.req.query("date"); // YYYY-MM-DD format
 
     try {
       // TODO: Implement actual availability query
       const mockAvailability = {
-        date: date || new Date().toISOString().split('T')[0],
+        date: date || new Date().toISOString().split("T")[0],
         availableSlots: [
-          '09:00',
-          '09:30',
-          '10:00',
-          '10:30',
-          '14:00',
-          '14:30',
-          '15:00',
-          '15:30',
-          '16:00',
+          "09:00",
+          "09:30",
+          "10:00",
+          "10:30",
+          "14:00",
+          "14:30",
+          "15:00",
+          "15:30",
+          "16:00",
         ],
-        bookedSlots: ['11:00', '11:30', '16:30', '17:00'],
+        bookedSlots: ["11:00", "11:30", "16:30", "17:00"],
       };
 
       const response: ApiResponse<typeof mockAvailability> = {
         success: true,
         data: mockAvailability,
-        message: 'Disponibilidade do profissional',
+        message: "Disponibilidade do profissional",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -360,8 +360,8 @@ export const professionalsRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'NOT_FOUND',
-          message: 'Disponibilidade não encontrada',
+          error: "NOT_FOUND",
+          message: "Disponibilidade não encontrada",
         },
         404,
       );

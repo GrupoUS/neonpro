@@ -6,17 +6,17 @@
  * Used by GitHub Actions CI/CD pipeline
  */
 
-const path = require('node:path');
-const fs = require('node:fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 // Color codes for console output
 const colors = {
-  green: '\u001B[32m',
-  red: '\u001B[31m',
-  yellow: '\u001B[33m',
-  blue: '\u001B[34m',
-  reset: '\u001B[0m',
-  bold: '\u001B[1m',
+  green: "\u001B[32m",
+  red: "\u001B[31m",
+  yellow: "\u001B[33m",
+  blue: "\u001B[34m",
+  reset: "\u001B[0m",
+  bold: "\u001B[1m",
 };
 
 function log(_message, _color = colors.reset) {}
@@ -38,14 +38,14 @@ function logError(message) {
 }
 
 async function validateProjectStructure() {
-  logHeader('LGPD Project Structure Validation');
+  logHeader("LGPD Project Structure Validation");
 
   const requiredFiles = [
-    'packages/compliance/src/lgpd',
-    'packages/utils/src/compliance/lgpd.ts',
-    'apps/web/lib/healthcare/lgpd-consent-management.ts',
-    'supabase/migrations', // Database schema with LGPD compliance
-    'docs/privacy-policy.md', // Privacy policy documentation
+    "packages/compliance/src/lgpd",
+    "packages/utils/src/compliance/lgpd.ts",
+    "apps/web/lib/healthcare/lgpd-consent-management.ts",
+    "supabase/migrations", // Database schema with LGPD compliance
+    "docs/privacy-policy.md", // Privacy policy documentation
   ];
 
   let allValid = true;
@@ -64,29 +64,29 @@ async function validateProjectStructure() {
 }
 
 async function validateLGPDModules() {
-  logHeader('LGPD Compliance Modules Validation');
+  logHeader("LGPD Compliance Modules Validation");
 
   try {
     // Check if we can load the LGPD compliance modules
     const lgpdPath = path.resolve(
       process.cwd(),
-      'packages/compliance/src/lgpd',
+      "packages/compliance/src/lgpd",
     );
 
     if (!fs.existsSync(lgpdPath)) {
-      logError('LGPD compliance modules not found');
+      logError("LGPD compliance modules not found");
       return false;
     }
 
     const files = fs.readdirSync(lgpdPath);
     const expectedModules = [
-      'index.ts',
-      'consent-management-service.ts',
-      'data-subject-rights-service.ts',
-      'data-retention-service.ts',
-      'privacy-impact-assessment-service.ts',
-      'breach-notification-service.ts',
-      'data-portability-service.ts',
+      "index.ts",
+      "consent-management-service.ts",
+      "data-subject-rights-service.ts",
+      "data-retention-service.ts",
+      "privacy-impact-assessment-service.ts",
+      "breach-notification-service.ts",
+      "data-portability-service.ts",
     ];
 
     let moduleCount = 0;
@@ -105,7 +105,7 @@ async function validateLGPDModules() {
       return true;
     }
 
-    logError('Not enough LGPD modules found');
+    logError("Not enough LGPD modules found");
     return false;
   } catch (error) {
     logError(`Error validating LGPD modules: ${error.message}`);
@@ -114,38 +114,38 @@ async function validateLGPDModules() {
 }
 
 async function validateDatabaseSchema() {
-  logHeader('LGPD Database Schema Validation');
+  logHeader("LGPD Database Schema Validation");
 
   try {
-    const migrationsPath = path.resolve(process.cwd(), 'supabase/migrations');
+    const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
 
     if (!fs.existsSync(migrationsPath)) {
-      logError('Supabase migrations directory not found');
+      logError("Supabase migrations directory not found");
       return false;
     }
 
     const migrationFiles = fs
       .readdirSync(migrationsPath)
-      .filter((file) => file.endsWith('.sql'));
+      .filter((file) => file.endsWith(".sql"));
 
     // Check for LGPD-required tables and columns
     const requiredTables = [
-      'consent_records',
-      'data_subject_requests',
-      'data_retention_policies',
-      'activity_logs',
-      'data_access_logs',
+      "consent_records",
+      "data_subject_requests",
+      "data_retention_policies",
+      "activity_logs",
+      "data_access_logs",
     ];
 
     let foundTables = 0;
 
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
       for (const table of requiredTables) {
         if (
-          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`)
-          || content.includes(`CREATE TABLE ${table}`)
+          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) ||
+          content.includes(`CREATE TABLE ${table}`)
         ) {
           logSuccess(`LGPD table found in migration: ${table}`);
           foundTables++;
@@ -157,20 +157,20 @@ async function validateDatabaseSchema() {
     // Check for RLS (Row Level Security) - essential for LGPD
     let hasRLS = false;
     for (const file of migrationFiles) {
-      const content = fs.readFileSync(path.join(migrationsPath, file), 'utf8');
+      const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
       if (
-        content.includes('ENABLE ROW LEVEL SECURITY')
-        || content.includes('CREATE POLICY')
+        content.includes("ENABLE ROW LEVEL SECURITY") ||
+        content.includes("CREATE POLICY")
       ) {
         hasRLS = true;
-        logSuccess('Row Level Security (RLS) found in migrations');
+        logSuccess("Row Level Security (RLS) found in migrations");
         break;
       }
     }
 
     if (!hasRLS) {
       logError(
-        'Row Level Security (RLS) not found - required for LGPD compliance',
+        "Row Level Security (RLS) not found - required for LGPD compliance",
       );
       return false;
     }
@@ -182,7 +182,7 @@ async function validateDatabaseSchema() {
       return true;
     }
 
-    logError('Not enough LGPD-required tables found in database schema');
+    logError("Not enough LGPD-required tables found in database schema");
     return false;
   } catch (error) {
     logError(`Error validating database schema: ${error.message}`);
@@ -191,29 +191,29 @@ async function validateDatabaseSchema() {
 }
 
 async function validateConsentManagement() {
-  logHeader('Consent Management Validation');
+  logHeader("Consent Management Validation");
 
   try {
     // Test consent validation patterns
     const testConsents = [
-      { type: 'data_processing', status: 'given', legal_basis: 'consent' },
+      { type: "data_processing", status: "given", legal_basis: "consent" },
       {
-        type: 'marketing',
-        status: 'withdrawn',
-        legal_basis: 'legitimate_interest',
+        type: "marketing",
+        status: "withdrawn",
+        legal_basis: "legitimate_interest",
       },
-      { type: 'analytics', status: 'given', legal_basis: 'consent' },
-      { type: 'cookies', status: 'pending', legal_basis: 'consent' },
+      { type: "analytics", status: "given", legal_basis: "consent" },
+      { type: "cookies", status: "pending", legal_basis: "consent" },
     ];
 
-    const validStatuses = new Set(['pending', 'given', 'withdrawn', 'expired']);
+    const validStatuses = new Set(["pending", "given", "withdrawn", "expired"]);
     const validLegalBases = new Set([
-      'consent',
-      'legitimate_interest',
-      'vital_interest',
-      'legal_obligation',
-      'public_task',
-      'contract',
+      "consent",
+      "legitimate_interest",
+      "vital_interest",
+      "legal_obligation",
+      "public_task",
+      "contract",
     ]);
 
     let validConsents = 0;
@@ -235,11 +235,11 @@ async function validateConsentManagement() {
     });
 
     if (validConsents === testConsents.length) {
-      logSuccess('Consent management validation patterns working correctly');
+      logSuccess("Consent management validation patterns working correctly");
       return true;
     }
 
-    logError('Consent management validation patterns failing');
+    logError("Consent management validation patterns failing");
     return false;
   } catch (error) {
     logError(`Error validating consent management: ${error.message}`);
@@ -248,34 +248,34 @@ async function validateConsentManagement() {
 }
 
 async function validateDataSubjectRights() {
-  logHeader('Data Subject Rights Validation (LGPD Articles 18-22)');
+  logHeader("Data Subject Rights Validation (LGPD Articles 18-22)");
 
   try {
     // Test data subject rights implementation
     const testRequests = [
-      { type: 'access', status: 'submitted', timeline: 30 },
-      { type: 'rectification', status: 'in_progress', timeline: 15 },
-      { type: 'erasure', status: 'completed', timeline: 25 },
-      { type: 'portability', status: 'under_review', timeline: 20 },
-      { type: 'restriction', status: 'submitted', timeline: 5 },
-      { type: 'objection', status: 'rejected', timeline: 30 },
+      { type: "access", status: "submitted", timeline: 30 },
+      { type: "rectification", status: "in_progress", timeline: 15 },
+      { type: "erasure", status: "completed", timeline: 25 },
+      { type: "portability", status: "under_review", timeline: 20 },
+      { type: "restriction", status: "submitted", timeline: 5 },
+      { type: "objection", status: "rejected", timeline: 30 },
     ];
 
     const validTypes = new Set([
-      'access',
-      'rectification',
-      'erasure',
-      'portability',
-      'restriction',
-      'objection',
+      "access",
+      "rectification",
+      "erasure",
+      "portability",
+      "restriction",
+      "objection",
     ]);
     const validStatuses = new Set([
-      'submitted',
-      'under_review',
-      'in_progress',
-      'completed',
-      'rejected',
-      'cancelled',
+      "submitted",
+      "under_review",
+      "in_progress",
+      "completed",
+      "rejected",
+      "cancelled",
     ]);
     const maxTimelineDays = 30; // LGPD requires response within 30 days
 
@@ -304,11 +304,11 @@ async function validateDataSubjectRights() {
 
     if (validRequests >= testRequests.length * 0.8) {
       // Allow 20% tolerance
-      logSuccess('Data subject rights validation working correctly');
+      logSuccess("Data subject rights validation working correctly");
       return true;
     }
 
-    logError('Data subject rights validation failing');
+    logError("Data subject rights validation failing");
     return false;
   } catch (error) {
     logError(`Error validating data subject rights: ${error.message}`);
@@ -317,47 +317,47 @@ async function validateDataSubjectRights() {
 }
 
 async function validateDataRetention() {
-  logHeader('Data Retention Policies Validation');
+  logHeader("Data Retention Policies Validation");
 
   try {
     // Test data retention policy validation
     const testPolicies = [
       {
-        category: 'medical_records',
-        retention: '20 years',
-        legal_basis: 'legal_obligation',
+        category: "medical_records",
+        retention: "20 years",
+        legal_basis: "legal_obligation",
       },
       {
-        category: 'patient_contacts',
-        retention: '5 years',
-        legal_basis: 'legitimate_interest',
+        category: "patient_contacts",
+        retention: "5 years",
+        legal_basis: "legitimate_interest",
       },
       {
-        category: 'marketing_data',
-        retention: '2 years',
-        legal_basis: 'consent',
+        category: "marketing_data",
+        retention: "2 years",
+        legal_basis: "consent",
       },
       {
-        category: 'audit_logs',
-        retention: '7 years',
-        legal_basis: 'legal_obligation',
+        category: "audit_logs",
+        retention: "7 years",
+        legal_basis: "legal_obligation",
       },
     ];
 
     const validCategories = new Set([
-      'medical_records',
-      'patient_contacts',
-      'marketing_data',
-      'audit_logs',
-      'financial_data',
+      "medical_records",
+      "patient_contacts",
+      "marketing_data",
+      "audit_logs",
+      "financial_data",
     ]);
     const validLegalBases = new Set([
-      'consent',
-      'legitimate_interest',
-      'vital_interest',
-      'legal_obligation',
-      'public_task',
-      'contract',
+      "consent",
+      "legitimate_interest",
+      "vital_interest",
+      "legal_obligation",
+      "public_task",
+      "contract",
     ]);
 
     let validPolicies = 0;
@@ -365,8 +365,8 @@ async function validateDataRetention() {
     testPolicies.forEach((policy, index) => {
       const categoryValid = validCategories.has(policy.category);
       const basisValid = validLegalBases.has(policy.legal_basis);
-      const retentionValid = policy.retention.includes('year')
-        || policy.retention.includes('month');
+      const retentionValid =
+        policy.retention.includes("year") || policy.retention.includes("month");
 
       if (categoryValid && basisValid && retentionValid) {
         logSuccess(
@@ -385,11 +385,11 @@ async function validateDataRetention() {
     });
 
     if (validPolicies === testPolicies.length) {
-      logSuccess('Data retention policies validation working correctly');
+      logSuccess("Data retention policies validation working correctly");
       return true;
     }
 
-    logError('Data retention policies validation failing');
+    logError("Data retention policies validation failing");
     return false;
   } catch (error) {
     logError(`Error validating data retention: ${error.message}`);
@@ -398,25 +398,25 @@ async function validateDataRetention() {
 }
 
 async function validatePrivacyByDesign() {
-  logHeader('Privacy by Design Validation');
+  logHeader("Privacy by Design Validation");
 
   try {
     // Check for privacy-by-design implementation
     const codebaseChecks = [
       {
-        file: 'apps/web',
+        file: "apps/web",
         pattern: /privacy.?policy|data.?protection|lgpd.?compliance/i,
-        description: 'Privacy policy references',
+        description: "Privacy policy references",
       },
       {
-        file: 'packages',
+        file: "packages",
         pattern: /encrypt|hash|anonymize|pseudonymize/i,
-        description: 'Data protection mechanisms',
+        description: "Data protection mechanisms",
       },
       {
-        file: 'supabase',
+        file: "supabase",
         pattern: /row.?level.?security|rls|policy/i,
-        description: 'Database security policies',
+        description: "Database security policies",
       },
     ];
 
@@ -442,11 +442,11 @@ async function validatePrivacyByDesign() {
     }
 
     if (passedChecks >= 2) {
-      logSuccess('Privacy by Design principles appear to be implemented');
+      logSuccess("Privacy by Design principles appear to be implemented");
       return true;
     }
 
-    logError('Privacy by Design implementation insufficient');
+    logError("Privacy by Design implementation insufficient");
     return false;
   } catch (error) {
     logError(`Error validating privacy by design: ${error.message}`);
@@ -455,11 +455,11 @@ async function validatePrivacyByDesign() {
 }
 
 async function validateEnvironmentVariables() {
-  logHeader('Environment Variables Validation');
+  logHeader("Environment Variables Validation");
 
   const requiredEnvVars = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY',
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
     // LGPD-specific variables could be added here
   ];
 
@@ -478,55 +478,56 @@ async function validateEnvironmentVariables() {
 }
 
 async function validateLGPDConfiguration() {
-  logHeader('LGPD Configuration Validation');
+  logHeader("LGPD Configuration Validation");
 
   try {
     // Check package.json for LGPD-related dependencies
     const webPackageJsonPath = path.resolve(
       process.cwd(),
-      'apps/web/package.json',
+      "apps/web/package.json",
     );
-    const rootPackageJsonPath = path.resolve(process.cwd(), 'package.json');
+    const rootPackageJsonPath = path.resolve(process.cwd(), "package.json");
 
     let packageJsonPath = webPackageJsonPath;
 
     if (!fs.existsSync(webPackageJsonPath)) {
       if (!fs.existsSync(rootPackageJsonPath)) {
-        logError('package.json not found in apps/web or root');
+        logError("package.json not found in apps/web or root");
         return false;
       }
       packageJsonPath = rootPackageJsonPath;
     }
 
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     // Check for required dependencies
-    const hasSupabase = packageJson.dependencies?.['@supabase/supabase-js']
-      || packageJson.devDependencies?.['@supabase/supabase-js'];
+    const hasSupabase =
+      packageJson.dependencies?.["@supabase/supabase-js"] ||
+      packageJson.devDependencies?.["@supabase/supabase-js"];
 
     const hasCrypto = true; // crypto is a Node.js built-in module
 
     if (hasSupabase) {
       logSuccess(
         `Supabase client dependency found in ${
-          packageJsonPath.includes('apps/web') ? 'apps/web' : 'root'
+          packageJsonPath.includes("apps/web") ? "apps/web" : "root"
         }`,
       );
     } else {
-      logError('Supabase client dependency missing');
+      logError("Supabase client dependency missing");
       return false;
     }
 
     if (hasCrypto) {
-      logSuccess('Crypto module available for data encryption');
+      logSuccess("Crypto module available for data encryption");
     }
 
     // Check for TypeScript configuration (important for type safety in LGPD compliance)
-    const tsConfigPath = path.resolve(process.cwd(), 'tsconfig.json');
+    const tsConfigPath = path.resolve(process.cwd(), "tsconfig.json");
     if (fs.existsSync(tsConfigPath)) {
-      logSuccess('TypeScript configuration found (important for type safety)');
+      logSuccess("TypeScript configuration found (important for type safety)");
     } else {
-      logWarning('TypeScript configuration not found');
+      logWarning("TypeScript configuration not found");
     }
 
     return true;
@@ -537,18 +538,18 @@ async function validateLGPDConfiguration() {
 }
 
 async function runLGPDValidation() {
-  logHeader('LGPD Compliance Validation Suite');
+  logHeader("LGPD Compliance Validation Suite");
 
   const validations = [
-    { name: 'Project Structure', fn: validateProjectStructure },
-    { name: 'LGPD Modules', fn: validateLGPDModules },
-    { name: 'Database Schema', fn: validateDatabaseSchema },
-    { name: 'Consent Management', fn: validateConsentManagement },
-    { name: 'Data Subject Rights', fn: validateDataSubjectRights },
-    { name: 'Data Retention', fn: validateDataRetention },
-    { name: 'Privacy by Design', fn: validatePrivacyByDesign },
-    { name: 'Environment Variables', fn: validateEnvironmentVariables },
-    { name: 'LGPD Configuration', fn: validateLGPDConfiguration },
+    { name: "Project Structure", fn: validateProjectStructure },
+    { name: "LGPD Modules", fn: validateLGPDModules },
+    { name: "Database Schema", fn: validateDatabaseSchema },
+    { name: "Consent Management", fn: validateConsentManagement },
+    { name: "Data Subject Rights", fn: validateDataSubjectRights },
+    { name: "Data Retention", fn: validateDataRetention },
+    { name: "Privacy by Design", fn: validatePrivacyByDesign },
+    { name: "Environment Variables", fn: validateEnvironmentVariables },
+    { name: "LGPD Configuration", fn: validateLGPDConfiguration },
   ];
 
   let allPassed = true;
@@ -578,14 +579,14 @@ async function runLGPDValidation() {
   }
 
   // Summary
-  logHeader('LGPD Validation Summary');
+  logHeader("LGPD Validation Summary");
 
   results.forEach((result) => {
     if (result.passed) {
       logSuccess(`${result.name}: PASSED`);
     } else {
       logError(
-        `${result.name}: FAILED${result.error ? ` (${result.error})` : ''}`,
+        `${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
       );
     }
   });

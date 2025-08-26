@@ -10,23 +10,23 @@
  * @license Proprietary - NeonPro Healthcare System
  */
 // Privacy-Preserving Healthcare Analytics
-export * from './analytics';
+export * from "./analytics";
 // ANVISA (Agência Nacional de Vigilância Sanitária) - Brazilian Health Regulatory Agency
-export * from './anvisa';
+export * from "./anvisa";
 // Advanced Audit System for Constitutional Healthcare Compliance
-export * from './audit';
+export * from "./audit";
 // CFM (Conselho Federal de Medicina) - Brazilian Federal Council of Medicine
-export * from './cfm';
+export * from "./cfm";
 // Enterprise Healthcare Integration Features
-export * from './enterprise';
+export * from "./enterprise";
 // LGPD (Lei Geral de Proteção de Dados) - Brazilian Data Protection Law
-export * from './lgpd';
+export * from "./lgpd";
 // Brazilian Compliance Automation Service
 export {
   BrazilianComplianceAutomationService,
   createBrazilianComplianceAutomationService,
   DEFAULT_COMPLIANCE_CONFIG,
-} from './services/compliance-automation-service';
+} from "./services/compliance-automation-service";
 // Core Types and Interfaces (excluding audit types to avoid conflicts)
 export {
   AdverseEventType,
@@ -44,11 +44,11 @@ export {
   PatientDataClassification,
   ProfessionalValidationSchema,
   RegulatoryEventSchema,
-} from './types';
-export * from './utils/audit-utils';
+} from "./types";
+export * from "./utils/audit-utils";
 // Utilities and Helpers
-export * from './utils/compliance-helpers';
-export * from './utils/validation-helpers';
+export * from "./utils/compliance-helpers";
+export * from "./utils/validation-helpers";
 /**
  * Constitutional Healthcare Compliance Configuration
  *
@@ -62,24 +62,24 @@ export * from './utils/validation-helpers';
 export const CONSTITUTIONAL_HEALTHCARE_CONFIG = {
   QUALITY_STANDARD: 9.9,
   PATIENT_PRIVACY_FIRST: true,
-  REGULATORY_COMPLIANCE: ['LGPD', 'ANVISA', 'CFM'],
+  REGULATORY_COMPLIANCE: ["LGPD", "ANVISA", "CFM"],
   AI_ETHICS_REQUIRED: true,
   TRANSPARENCY_MANDATE: true,
   BREACH_NOTIFICATION_HOURS: 72,
   AUDIT_RETENTION_YEARS: 7,
-  CONSENT_GRANULARITY: 'field-level',
-  ENCRYPTION_STANDARD: 'AES-256',
-  ACCESS_CONTROL: 'RBAC-healthcare',
+  CONSENT_GRANULARITY: "field-level",
+  ENCRYPTION_STANDARD: "AES-256",
+  ACCESS_CONTROL: "RBAC-healthcare",
 };
 /**
  * Compliance Package Version and Metadata
  */
 export const COMPLIANCE_PACKAGE_INFO = {
-  version: '0.1.0',
-  name: '@neonpro/compliance',
-  description: 'Constitutional Brazilian Healthcare Compliance Utilities',
-  regulations: ['LGPD', 'ANVISA', 'CFM'],
-  qualityStandard: '≥9.9/10',
+  version: "0.1.0",
+  name: "@neonpro/compliance",
+  description: "Constitutional Brazilian Healthcare Compliance Utilities",
+  regulations: ["LGPD", "ANVISA", "CFM"],
+  qualityStandard: "≥9.9/10",
   lastUpdated: new Date().toISOString(),
-  maintainer: 'NeonPro Healthcare Team',
+  maintainer: "NeonPro Healthcare Team",
 };

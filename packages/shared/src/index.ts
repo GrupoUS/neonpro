@@ -57,7 +57,7 @@ export {
   UserRoleSchema,
   VitalSignsSchema,
   WorkingHoursSchema,
-} from './schemas';
+} from "./schemas";
 
 // Export types with specific re-exports to avoid conflicts
 export type {
@@ -133,11 +133,11 @@ export type {
   UUID,
   ValidationError,
   ValidationErrorResponse,
-} from './types';
+} from "./types";
 
 // Package version and metadata
-export const PACKAGE_VERSION = '1.0.0';
-export const PACKAGE_NAME = '@neonpro/shared';
+export const PACKAGE_VERSION = "1.0.0";
+export const PACKAGE_NAME = "@neonpro/shared";
 
 // Common constants
 export const CONSTANTS = {
@@ -157,11 +157,11 @@ export const CONSTANTS = {
 
   // File upload limits
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
-  ALLOWED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
+  ALLOWED_IMAGE_TYPES: ["image/jpeg", "image/png", "image/webp"],
   ALLOWED_DOCUMENT_TYPES: [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ],
 
   // Password requirements
@@ -177,9 +177,9 @@ export const CONSTANTS = {
   CEP_REGEX: /^\d{8}$/,
 
   // Time formats
-  TIME_FORMAT: 'HH:mm',
-  DATE_FORMAT: 'YYYY-MM-DD',
-  DATETIME_FORMAT: 'YYYY-MM-DDTHH:mm:ss.sssZ',
+  TIME_FORMAT: "HH:mm",
+  DATE_FORMAT: "YYYY-MM-DD",
+  DATETIME_FORMAT: "YYYY-MM-DDTHH:mm:ss.sssZ",
 
   // Cache TTL (seconds)
   CACHE_TTL: {
@@ -208,94 +208,94 @@ export const CONSTANTS = {
 // Error codes
 export const ERROR_CODES = {
   // Authentication
-  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
-  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
-  TOKEN_INVALID: 'TOKEN_INVALID',
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  FORBIDDEN: 'FORBIDDEN',
-  MFA_REQUIRED: 'MFA_REQUIRED',
-  MFA_INVALID: 'MFA_INVALID',
+  INVALID_CREDENTIALS: "INVALID_CREDENTIALS",
+  TOKEN_EXPIRED: "TOKEN_EXPIRED",
+  TOKEN_INVALID: "TOKEN_INVALID",
+  UNAUTHORIZED: "UNAUTHORIZED",
+  FORBIDDEN: "FORBIDDEN",
+  MFA_REQUIRED: "MFA_REQUIRED",
+  MFA_INVALID: "MFA_INVALID",
 
   // Validation
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
-  REQUIRED_FIELD: 'REQUIRED_FIELD',
-  INVALID_FORMAT: 'INVALID_FORMAT',
-  INVALID_LENGTH: 'INVALID_LENGTH',
-  INVALID_EMAIL: 'INVALID_EMAIL',
-  INVALID_PHONE: 'INVALID_PHONE',
-  INVALID_CPF: 'INVALID_CPF',
-  INVALID_CNPJ: 'INVALID_CNPJ',
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  REQUIRED_FIELD: "REQUIRED_FIELD",
+  INVALID_FORMAT: "INVALID_FORMAT",
+  INVALID_LENGTH: "INVALID_LENGTH",
+  INVALID_EMAIL: "INVALID_EMAIL",
+  INVALID_PHONE: "INVALID_PHONE",
+  INVALID_CPF: "INVALID_CPF",
+  INVALID_CNPJ: "INVALID_CNPJ",
 
   // Business logic
-  APPOINTMENT_CONFLICT: 'APPOINTMENT_CONFLICT',
-  APPOINTMENT_PAST_DATE: 'APPOINTMENT_PAST_DATE',
-  APPOINTMENT_TOO_FAR: 'APPOINTMENT_TOO_FAR',
-  PATIENT_NOT_FOUND: 'PATIENT_NOT_FOUND',
-  PROFESSIONAL_NOT_AVAILABLE: 'PROFESSIONAL_NOT_AVAILABLE',
-  CLINIC_CLOSED: 'CLINIC_CLOSED',
-  SERVICE_NOT_AVAILABLE: 'SERVICE_NOT_AVAILABLE',
+  APPOINTMENT_CONFLICT: "APPOINTMENT_CONFLICT",
+  APPOINTMENT_PAST_DATE: "APPOINTMENT_PAST_DATE",
+  APPOINTMENT_TOO_FAR: "APPOINTMENT_TOO_FAR",
+  PATIENT_NOT_FOUND: "PATIENT_NOT_FOUND",
+  PROFESSIONAL_NOT_AVAILABLE: "PROFESSIONAL_NOT_AVAILABLE",
+  CLINIC_CLOSED: "CLINIC_CLOSED",
+  SERVICE_NOT_AVAILABLE: "SERVICE_NOT_AVAILABLE",
 
   // System
-  INTERNAL_ERROR: 'INTERNAL_ERROR',
-  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
-  DATABASE_ERROR: 'DATABASE_ERROR',
-  EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
-  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
+  INTERNAL_ERROR: "INTERNAL_ERROR",
+  SERVICE_UNAVAILABLE: "SERVICE_UNAVAILABLE",
+  DATABASE_ERROR: "DATABASE_ERROR",
+  EXTERNAL_SERVICE_ERROR: "EXTERNAL_SERVICE_ERROR",
+  RATE_LIMIT_EXCEEDED: "RATE_LIMIT_EXCEEDED",
 
   // File operations
-  FILE_TOO_LARGE: 'FILE_TOO_LARGE',
-  FILE_TYPE_NOT_ALLOWED: 'FILE_TYPE_NOT_ALLOWED',
-  FILE_NOT_FOUND: 'FILE_NOT_FOUND',
-  UPLOAD_FAILED: 'UPLOAD_FAILED',
+  FILE_TOO_LARGE: "FILE_TOO_LARGE",
+  FILE_TYPE_NOT_ALLOWED: "FILE_TYPE_NOT_ALLOWED",
+  FILE_NOT_FOUND: "FILE_NOT_FOUND",
+  UPLOAD_FAILED: "UPLOAD_FAILED",
 
   // LGPD/Privacy
-  DATA_RETENTION_EXPIRED: 'DATA_RETENTION_EXPIRED',
-  CONSENT_REQUIRED: 'CONSENT_REQUIRED',
-  CONSENT_WITHDRAWN: 'CONSENT_WITHDRAWN',
-  DATA_EXPORT_FAILED: 'DATA_EXPORT_FAILED',
-  DATA_DELETION_FAILED: 'DATA_DELETION_FAILED',
+  DATA_RETENTION_EXPIRED: "DATA_RETENTION_EXPIRED",
+  CONSENT_REQUIRED: "CONSENT_REQUIRED",
+  CONSENT_WITHDRAWN: "CONSENT_WITHDRAWN",
+  DATA_EXPORT_FAILED: "DATA_EXPORT_FAILED",
+  DATA_DELETION_FAILED: "DATA_DELETION_FAILED",
 } as const;
 
 // Success messages
 export const SUCCESS_MESSAGES = {
   // Authentication
-  LOGIN_SUCCESS: 'Login realizado com sucesso',
-  LOGOUT_SUCCESS: 'Logout realizado com sucesso',
-  REGISTER_SUCCESS: 'Cadastro realizado com sucesso',
-  PASSWORD_CHANGED: 'Senha alterada com sucesso',
-  PASSWORD_RESET_SENT: 'Link de recuperação enviado por email',
+  LOGIN_SUCCESS: "Login realizado com sucesso",
+  LOGOUT_SUCCESS: "Logout realizado com sucesso",
+  REGISTER_SUCCESS: "Cadastro realizado com sucesso",
+  PASSWORD_CHANGED: "Senha alterada com sucesso",
+  PASSWORD_RESET_SENT: "Link de recuperação enviado por email",
 
   // CRUD operations
-  CREATED: 'Criado com sucesso',
-  UPDATED: 'Atualizado com sucesso',
-  DELETED: 'Removido com sucesso',
+  CREATED: "Criado com sucesso",
+  UPDATED: "Atualizado com sucesso",
+  DELETED: "Removido com sucesso",
 
   // Appointments
-  APPOINTMENT_CREATED: 'Consulta agendada com sucesso',
-  APPOINTMENT_UPDATED: 'Consulta atualizada com sucesso',
-  APPOINTMENT_CANCELLED: 'Consulta cancelada com sucesso',
-  APPOINTMENT_RESCHEDULED: 'Consulta reagendada com sucesso',
+  APPOINTMENT_CREATED: "Consulta agendada com sucesso",
+  APPOINTMENT_UPDATED: "Consulta atualizada com sucesso",
+  APPOINTMENT_CANCELLED: "Consulta cancelada com sucesso",
+  APPOINTMENT_RESCHEDULED: "Consulta reagendada com sucesso",
 
   // Notifications
-  NOTIFICATION_SENT: 'Notificação enviada com sucesso',
-  EMAIL_SENT: 'Email enviado com sucesso',
-  SMS_SENT: 'SMS enviado com sucesso',
+  NOTIFICATION_SENT: "Notificação enviada com sucesso",
+  EMAIL_SENT: "Email enviado com sucesso",
+  SMS_SENT: "SMS enviado com sucesso",
 
   // File operations
-  FILE_UPLOADED: 'Arquivo enviado com sucesso',
-  FILE_DELETED: 'Arquivo removido com sucesso',
+  FILE_UPLOADED: "Arquivo enviado com sucesso",
+  FILE_DELETED: "Arquivo removido com sucesso",
 
   // LGPD/Privacy
-  CONSENT_UPDATED: 'Consentimento atualizado com sucesso',
-  DATA_EXPORTED: 'Dados exportados com sucesso',
-  DATA_DELETED: 'Dados removidos com sucesso',
+  CONSENT_UPDATED: "Consentimento atualizado com sucesso",
+  DATA_EXPORTED: "Dados exportados com sucesso",
+  DATA_DELETED: "Dados removidos com sucesso",
 } as const;
 
 // Utility functions
 export const utils = {
   // Brazilian document validation
   isValidCPF: (cpf: string): boolean => {
-    const cleaned = cpf.replaceAll(/\D/g, '');
+    const cleaned = cpf.replaceAll(/\D/g, "");
     if (cleaned.length !== 11 || /^(.)\1*$/.test(cleaned)) {
       return false;
     }
@@ -326,7 +326,7 @@ export const utils = {
   },
 
   isValidCNPJ: (cnpj: string): boolean => {
-    const cleaned = cnpj.replaceAll(/\D/g, '');
+    const cleaned = cnpj.replaceAll(/\D/g, "");
     if (cleaned.length !== 14 || /^(.)\1*$/.test(cleaned)) {
       return false;
     }
@@ -359,7 +359,7 @@ export const utils = {
 
   // Phone formatting
   formatPhone: (phone: string): string => {
-    const cleaned = phone.replaceAll(/\D/g, '');
+    const cleaned = phone.replaceAll(/\D/g, "");
     if (cleaned.length === 11) {
       return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
     }
@@ -371,33 +371,29 @@ export const utils = {
 
   // CPF/CNPJ formatting
   formatCPF: (cpf: string): string => {
-    const cleaned = cpf.replaceAll(/\D/g, '');
+    const cleaned = cpf.replaceAll(/\D/g, "");
     if (cleaned.length === 11) {
-      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${
-        cleaned.slice(
-          9,
-        )
-      }`;
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(
+        9,
+      )}`;
     }
     return cpf;
   },
 
   formatCNPJ: (cnpj: string): string => {
-    const cleaned = cnpj.replaceAll(/\D/g, '');
+    const cleaned = cnpj.replaceAll(/\D/g, "");
     if (cleaned.length === 14) {
-      return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${
-        cleaned.slice(
-          8,
-          12,
-        )
-      }-${cleaned.slice(12)}`;
+      return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(
+        8,
+        12,
+      )}-${cleaned.slice(12)}`;
     }
     return cnpj;
   },
 
   // CEP formatting
   formatCEP: (cep: string): string => {
-    const cleaned = cep.replaceAll(/\D/g, '');
+    const cleaned = cep.replaceAll(/\D/g, "");
     if (cleaned.length === 8) {
       return `${cleaned.slice(0, 5)}-${cleaned.slice(5)}`;
     }
@@ -407,8 +403,8 @@ export const utils = {
   // Date utilities
   formatDate: (date: string | Date): string => {
     const d = new Date(date);
-    const parts = d.toISOString().split('T');
-    return parts[0] || '';
+    const parts = d.toISOString().split("T");
+    return parts[0] || "";
   },
 
   formatDateTime: (date: string | Date): string => {
@@ -419,10 +415,10 @@ export const utils = {
   slugify: (text: string): string => {
     return text
       .toLowerCase()
-      .normalize('NFD')
-      .replaceAll(/[\u0300-\u036F]/g, '')
-      .replaceAll(/[^a-z0-9]+/g, '-')
-      .replaceAll(/^-+|-+$/g, '');
+      .normalize("NFD")
+      .replaceAll(/[\u0300-\u036F]/g, "")
+      .replaceAll(/[^a-z0-9]+/g, "-")
+      .replaceAll(/^-+|-+$/g, "");
   },
 
   capitalize: (text: string): string => {
@@ -440,9 +436,9 @@ export type ErrorCode = keyof typeof ERROR_CODES;
 export type SuccessMessage = keyof typeof SUCCESS_MESSAGES;
 
 // API Client export
-export * from './api-client';
+export * from "./api-client";
 
 // Hooks exports
-export * from './hooks/use-healthcare-realtime';
-export * from './hooks/use-lgpd-realtime';
-export * from './hooks/use-realtime';
+export * from "./hooks/use-healthcare-realtime";
+export * from "./hooks/use-lgpd-realtime";
+export * from "./hooks/use-realtime";

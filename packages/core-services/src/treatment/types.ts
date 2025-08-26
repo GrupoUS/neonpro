@@ -1,6 +1,11 @@
-import { z } from 'zod';
-import { DateSchema, PositiveNumberSchema, TreatmentType, UUIDSchema } from '../types';
-import type { BaseEntity } from '../types';
+import { z } from "zod";
+import {
+  DateSchema,
+  PositiveNumberSchema,
+  TreatmentType,
+  UUIDSchema,
+} from "../types";
+import type { BaseEntity } from "../types";
 
 // Treatment plan and session interfaces
 export interface TreatmentPlan extends BaseEntity {
@@ -66,7 +71,7 @@ export interface TreatmentDetails {
 export interface InjectionSite {
   area: string;
   units: number;
-  depth: 'intradermal' | 'subcutaneous' | 'intramuscular';
+  depth: "intradermal" | "subcutaneous" | "intramuscular";
   technique: string;
 }
 
@@ -95,18 +100,18 @@ export interface TreatmentPhoto {
 }
 
 export enum AnesthesiaType {
-  NONE = 'none',
-  TOPICAL = 'topical',
-  LOCAL = 'local',
-  CONSCIOUS_SEDATION = 'conscious_sedation',
+  NONE = "none",
+  TOPICAL = "topical",
+  LOCAL = "local",
+  CONSCIOUS_SEDATION = "conscious_sedation",
 }
 
 export enum TreatmentStatus {
-  PLANNED = 'planned',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  PAUSED = 'paused',
-  CANCELLED = 'cancelled',
+  PLANNED = "planned",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  PAUSED = "paused",
+  CANCELLED = "cancelled",
 } // Validation schemas
 export const CreateTreatmentPlanSchema = z.object({
   patientId: UUIDSchema,
@@ -122,15 +127,16 @@ export const CreateTreatmentPlanSchema = z.object({
   price: PositiveNumberSchema,
   consentFormSigned: z
     .boolean()
-    .refine((val) => val === true, 'Consent form must be signed'),
+    .refine((val) => val === true, "Consent form must be signed"),
   beforePhotos: z.array(z.string()).default([]),
 });
 
-export const UpdateTreatmentPlanSchema = CreateTreatmentPlanSchema.partial().extend({
-  id: UUIDSchema,
-  isActive: z.boolean().optional(),
-  endDate: DateSchema.optional(),
-});
+export const UpdateTreatmentPlanSchema =
+  CreateTreatmentPlanSchema.partial().extend({
+    id: UUIDSchema,
+    isActive: z.boolean().optional(),
+    endDate: DateSchema.optional(),
+  });
 
 export const CreateTreatmentSessionSchema = z.object({
   treatmentPlanId: UUIDSchema,

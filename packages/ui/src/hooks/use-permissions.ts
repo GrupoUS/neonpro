@@ -1,5 +1,5 @@
 // packages/ui/src/hooks/use-permissions.ts
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 export interface Permission {
   create: boolean;

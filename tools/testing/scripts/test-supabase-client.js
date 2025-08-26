@@ -1,6 +1,6 @@
 // Teste alternativo: Supabase Client (sem Prisma)
-require('dotenv').config({ path: './apps/web/.env.local' });
-const { createClient } = require('@supabase/supabase-js');
+require("dotenv").config({ path: "./apps/web/.env.local" });
+const { createClient } = require("@supabase/supabase-js");
 
 async function testSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,29 +16,33 @@ async function testSupabaseClient() {
   try {
     // Listar algumas tabelas públicas
     const { data: tables, error } = await supabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public')
+      .from("information_schema.tables")
+      .select("table_name")
+      .eq("table_schema", "public")
       .limit(10);
 
-    if (error) {} else {}
+    if (error) {
+    } else {
+    }
 
     const tablesToTest = [
-      'tenants',
-      'profiles',
-      'products',
-      'appointments',
-      'patients',
+      "tenants",
+      "profiles",
+      "products",
+      "appointments",
+      "patients",
     ];
 
     for (const tableName of tablesToTest) {
       try {
-        const { count, error } = await supabase.from(tableName).select('*', {
-          count: 'exact',
+        const { count, error } = await supabase.from(tableName).select("*", {
+          count: "exact",
           head: true,
         });
 
-        if (error) {} else {}
+        if (error) {
+        } else {
+        }
       } catch {}
     }
   } catch {}

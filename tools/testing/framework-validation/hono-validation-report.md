@@ -30,12 +30,12 @@
 
 ```typescript
 // ✅ VALIDATED: Correct Hono app initialization
-const app = new Hono<{ Bindings: Env; }>();
+const app = new Hono<{ Bindings: Env }>();
 
 // ✅ VALIDATED: Proper route organization with app.route()
-app.route('/api/auth', authRoutes);
-app.route('/api/patients', patientsRoutes);
-app.route('/api/appointments', appointmentsRoutes);
+app.route("/api/auth", authRoutes);
+app.route("/api/patients", patientsRoutes);
+app.route("/api/appointments", appointmentsRoutes);
 ```
 
 ### ✅ **Route Organization Best Practices**
@@ -68,9 +68,9 @@ Following Hono's recommended pattern for larger applications:
 
 ```typescript
 // ✅ VALIDATED: Proper pattern - no controllers
-app.get('/patients/:id', (c) => {
-  const id = c.req.param('id'); // ✅ Type inference works
-  return c.json({ id, status: 'found' });
+app.get("/patients/:id", (c) => {
+  const id = c.req.param("id"); // ✅ Type inference works
+  return c.json({ id, status: "found" });
 });
 ```
 
@@ -79,14 +79,14 @@ app.get('/patients/:id', (c) => {
 ```typescript
 // ✅ VALIDATED: Proper Zod validator usage
 app.post(
-  '/patients',
-  zValidator('json', patientSchema, (result, c) => {
+  "/patients",
+  zValidator("json", patientSchema, (result, c) => {
     if (!result.success) {
-      return c.json({ error: 'Invalid patient data' }, 400);
+      return c.json({ error: "Invalid patient data" }, 400);
     }
   }),
   async (c) => {
-    const patient = c.req.valid('json'); // ✅ Type-safe access
+    const patient = c.req.valid("json"); // ✅ Type-safe access
     // Implementation...
   },
 );
@@ -100,38 +100,42 @@ app.onError((err, c) => {
   if (err instanceof HTTPException) {
     return err.getResponse();
   }
-  return c.json({ error: 'Internal server error' }, 500);
+  return c.json({ error: "Internal server error" }, 500);
 });
 ```
 
 ### ⚠️ **Best Practice Recommendations**
 
 1. **Factory Pattern for Complex Handlers** (Priority: Medium)
+
    ```typescript
    // 🔄 RECOMMENDATION: Use factory for complex middleware chains
    const factory = createFactory();
    const authHandler = factory.createHandlers(
      authMiddleware,
      lgpdComplianceMiddleware,
-     (c) => {/* handler logic */},
+     (c) => {
+       /* handler logic */
+     },
    );
    ```
 
 2. **Content-Type Headers in Tests** (Priority: Medium)
+
    ```typescript
    // 🔄 RECOMMENDATION: Always include Content-Type in JSON tests
-   const res = await app.request('/api/patients', {
-     method: 'POST',
+   const res = await app.request("/api/patients", {
+     method: "POST",
      body: JSON.stringify(patientData),
-     headers: { 'Content-Type': 'application/json' }, // ✅ Required
+     headers: { "Content-Type": "application/json" }, // ✅ Required
    });
    ```
 
 3. **Header Validation Casing** (Priority: High)
    ```typescript
    // 🔄 RECOMMENDATION: Use lowercase for header validation
-   validator('header', (value, c) => {
-     const idempotencyKey = value['idempotency-key']; // ✅ Lowercase
+   validator("header", (value, c) => {
+     const idempotencyKey = value["idempotency-key"]; // ✅ Lowercase
      // Not: value['Idempotency-Key'] // ❌ Would fail
    });
    ```
@@ -161,7 +165,7 @@ app.onError((err, c) => {
 1. **Response Caching** (Priority: Medium)
    ```typescript
    // 🔄 RECOMMENDATION: Add caching for read-heavy endpoints
-   app.get('/api/services', cache({ maxAge: 300 }), (c) => {
+   app.get("/api/services", cache({ maxAge: 300 }), (c) => {
      // Cached response for service listings
    });
    ```
@@ -175,19 +179,19 @@ app.onError((err, c) => {
 ```typescript
 // ✅ VALIDATED: CORS properly configured
 app.use(
-  '*',
+  "*",
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || [],
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || [],
     credentials: true,
   }),
 );
 
 // ✅ VALIDATED: Security headers
-app.use('*', secureHeaders());
+app.use("*", secureHeaders());
 
 // ✅ VALIDATED: Rate limiting
 app.use(
-  '*',
+  "*",
   rateLimiter({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
@@ -209,10 +213,11 @@ const patientSchema = z.object({
 ### ⚠️ **Security Recommendations**
 
 1. **CSP Headers** (Priority: Medium)
+
    ```typescript
    // 🔄 RECOMMENDATION: Add Content Security Policy
-   app.use('*', async (c, next) => {
-     c.header('Content-Security-Policy', "default-src 'self'");
+   app.use("*", async (c, next) => {
+     c.header("Content-Security-Policy", "default-src 'self'");
      await next();
    });
    ```
@@ -220,7 +225,7 @@ const patientSchema = z.object({
 2. **Request Size Limits** (Priority: High)
    ```typescript
    // 🔄 RECOMMENDATION: Add request size validation
-   app.use('*', bodyLimit({ maxSize: 10 * 1024 * 1024 })); // 10MB limit
+   app.use("*", bodyLimit({ maxSize: 10 * 1024 * 1024 })); // 10MB limit
    ```
 
 ---
@@ -231,8 +236,8 @@ const patientSchema = z.object({
 
 ```typescript
 // ✅ VALIDATED: Excellent type inference
-app.get('/patients/:id', (c) => {
-  const id = c.req.param('id'); // ✅ string (inferred)
+app.get("/patients/:id", (c) => {
+  const id = c.req.param("id"); // ✅ string (inferred)
   const query = c.req.query(); // ✅ Record<string, string> (inferred)
   return c.json({ patient: { id } }); // ✅ Type-safe response
 });
@@ -250,8 +255,8 @@ const app = new Hono<{
 
 ```typescript
 // ✅ VALIDATED: Perfect Zod integration
-app.post('/patients', zValidator('json', patientSchema), (c) => {
-  const patient = c.req.valid('json'); // ✅ Fully typed from schema
+app.post("/patients", zValidator("json", patientSchema), (c) => {
+  const patient = c.req.valid("json"); // ✅ Fully typed from schema
   // patient.name is string (from Zod schema)
   // patient.email is string (from Zod schema)
 });
@@ -285,12 +290,12 @@ apps/api/src/
 
 ```typescript
 // ✅ VALIDATED: Comprehensive test coverage
-describe('Hono App', () => {
-  it('should handle patient creation', async () => {
-    const res = await app.request('/api/patients', {
-      method: 'POST',
+describe("Hono App", () => {
+  it("should handle patient creation", async () => {
+    const res = await app.request("/api/patients", {
+      method: "POST",
       body: JSON.stringify(validPatientData),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
     expect(res.status).toBe(201);
   });
@@ -300,18 +305,19 @@ describe('Hono App', () => {
 ### 🔄 **Code Quality Recommendation**
 
 1. **OpenAPI Documentation** (Priority: Medium)
+
    ```typescript
    // 🔄 RECOMMENDATION: Add OpenAPI documentation
-   import { openAPISpecs } from 'hono-openapi';
+   import { openAPISpecs } from "hono-openapi";
 
    app.get(
-     '/openapi',
+     "/openapi",
      openAPISpecs(app, {
        documentation: {
          info: {
-           title: 'NeonPro API',
-           version: '1.0.0',
-           description: 'Sistema de Gestão para Clínicas Estéticas',
+           title: "NeonPro API",
+           version: "1.0.0",
+           description: "Sistema de Gestão para Clínicas Estéticas",
          },
        },
      }),
@@ -338,7 +344,7 @@ describe('Hono App', () => {
 ```typescript
 // ✅ VALIDATED: Optimized for edge deployment
 export default {
-  port: parseInt(process.env.PORT || '3000'),
+  port: parseInt(process.env.PORT || "3000"),
   fetch: app.fetch,
   // ✅ Zero cold start with proper initialization
 };
@@ -352,33 +358,33 @@ export default {
 
 ```typescript
 // ✅ VALIDATED: Data protection middleware
-app.use('/api/*', lgpdComplianceMiddleware);
+app.use("/api/*", lgpdComplianceMiddleware);
 
 // ✅ VALIDATED: Consent tracking
-app.post('/api/patients/:id/consent', consentHandler);
+app.post("/api/patients/:id/consent", consentHandler);
 
 // ✅ VALIDATED: Data deletion endpoints
-app.delete('/api/patients/:id/gdpr', dataErasureHandler);
+app.delete("/api/patients/:id/gdpr", dataErasureHandler);
 ```
 
 ### ✅ **ANVISA Compliance (Aesthetic Clinics)**
 
 ```typescript
 // ✅ VALIDATED: Product tracking endpoints
-app.get('/api/anvisa/products', anvisaProductsHandler);
+app.get("/api/anvisa/products", anvisaProductsHandler);
 
 // ✅ VALIDATED: Equipment maintenance logs
-app.post('/api/equipment/:id/maintenance', maintenanceLogHandler);
+app.post("/api/equipment/:id/maintenance", maintenanceLogHandler);
 ```
 
 ### ✅ **Healthcare Data Security**
 
 ```typescript
 // ✅ VALIDATED: Field-level encryption
-app.use('/api/patients/*', encryptionMiddleware);
+app.use("/api/patients/*", encryptionMiddleware);
 
 // ✅ VALIDATED: Audit logging
-app.use('/api/*', auditLoggingMiddleware);
+app.use("/api/*", auditLoggingMiddleware);
 ```
 
 ---
@@ -388,21 +394,23 @@ app.use('/api/*', auditLoggingMiddleware);
 ### 🔴 **High Priority (Implement Soon)**
 
 1. **Add Request Size Limits**
+
    ```typescript
-   app.use('*', bodyLimit({ maxSize: 10 * 1024 * 1024 }));
+   app.use("*", bodyLimit({ maxSize: 10 * 1024 * 1024 }));
    ```
 
 2. **Fix Header Validation Casing**
    ```typescript
    // Use lowercase keys in header validation
-   validator('header', (value, c) => {
-     const key = value['authorization']; // ✅ lowercase
+   validator("header", (value, c) => {
+     const key = value["authorization"]; // ✅ lowercase
    });
    ```
 
 ### 🟡 **Medium Priority (Next Sprint)**
 
 1. **Implement Factory Pattern for Complex Handlers**
+
    ```typescript
    const factory = createFactory();
    const secureHandler = factory.createHandlers(
@@ -414,18 +422,20 @@ app.use('/api/*', auditLoggingMiddleware);
    ```
 
 2. **Add Response Caching**
+
    ```typescript
-   app.get('/api/services', cache({ maxAge: 300 }), servicesHandler);
+   app.get("/api/services", cache({ maxAge: 300 }), servicesHandler);
    ```
 
 3. **Implement OpenAPI Documentation**
+
    ```typescript
-   app.get('/openapi', openAPISpecs(app, documentationConfig));
+   app.get("/openapi", openAPISpecs(app, documentationConfig));
    ```
 
 4. **Add CSP Headers**
    ```typescript
-   app.use('*', cspMiddleware);
+   app.use("*", cspMiddleware);
    ```
 
 ### 🟢 **Low Priority (Future Enhancement)**

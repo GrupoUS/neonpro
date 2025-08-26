@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import type { MfaMethod } from './mfa-service';
+import { createClient } from "@supabase/supabase-js";
+import type { MfaMethod } from "./mfa-service";
 
 export interface MfaSettings {
   id?: string;
@@ -45,7 +45,7 @@ export interface MfaVerificationCode {
   userId: string;
   clinicId?: string;
   code: string;
-  type: 'sms' | 'email' | 'totp' | 'recovery';
+  type: "sms" | "email" | "totp" | "recovery";
   phoneNumber?: string;
   email?: string;
   used: boolean;
@@ -85,13 +85,13 @@ export class MfaDatabaseService {
    */
   async getMfaSettings(userId: string): Promise<MfaSettings | null> {
     const { data, error } = await this.supabase
-      .from('user_mfa_settings')
-      .select('*')
-      .eq('user_id', userId)
+      .from("user_mfa_settings")
+      .select("*")
+      .eq("user_id", userId)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         // No settings found, return default
         return {
           userId,
@@ -182,7 +182,7 @@ export class MfaDatabaseService {
     };
 
     const { data, error } = await this.supabase
-      .from('user_mfa_settings')
+      .from("user_mfa_settings")
       .upsert(dbData)
       .select()
       .single();
@@ -198,7 +198,7 @@ export class MfaDatabaseService {
    * Store verification code
    */
   async storeVerificationCode(
-    code: Omit<MfaVerificationCode, 'id'>,
+    code: Omit<MfaVerificationCode, "id">,
   ): Promise<string> {
     const dbData = {
       user_id: code.userId,
@@ -214,9 +214,9 @@ export class MfaDatabaseService {
     };
 
     const { data, error } = await this.supabase
-      .from('mfa_verification_codes')
+      .from("mfa_verification_codes")
       .insert(dbData)
-      .select('id')
+      .select("id")
       .single();
 
     if (error) {
@@ -232,20 +232,20 @@ export class MfaDatabaseService {
   async verifyCode(
     userId: string,
     code: string,
-    type: MfaVerificationCode['type'],
+    type: MfaVerificationCode["type"],
   ): Promise<{
     valid: boolean;
     codeRecord?: MfaVerificationCode;
   }> {
     // Get the most recent unused code of this type for the user
     const { data: codes, error } = await this.supabase
-      .from('mfa_verification_codes')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('type', type)
-      .eq('used', false)
-      .gt('expires_at', new Date().toISOString())
-      .order('created_at', { ascending: false })
+      .from("mfa_verification_codes")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("type", type)
+      .eq("used", false)
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
       .limit(1);
 
     if (error) {
@@ -259,7 +259,8 @@ export class MfaDatabaseService {
     const codeRecord = codes[0];
 
     // Check if code matches
-    const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
+    const valid =
+      codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
 
     // Increment attempts and potentially mark as used
     const updates: any = {
@@ -272,9 +273,9 @@ export class MfaDatabaseService {
     }
 
     await this.supabase
-      .from('mfa_verification_codes')
+      .from("mfa_verification_codes")
       .update(updates)
-      .eq('id', codeRecord.id);
+      .eq("id", codeRecord.id);
 
     return {
       valid,
@@ -286,7 +287,7 @@ export class MfaDatabaseService {
    * Log MFA audit event
    */
   async logAuditEvent(
-    event: Omit<MfaAuditLog, 'id' | 'createdAt'>,
+    event: Omit<MfaAuditLog, "id" | "createdAt">,
   ): Promise<void> {
     const dbData = {
       user_id: event.userId,
@@ -300,7 +301,7 @@ export class MfaDatabaseService {
       metadata: event.metadata,
     };
 
-    const { error } = await this.supabase.from('mfa_audit_logs').insert(dbData);
+    const { error } = await this.supabase.from("mfa_audit_logs").insert(dbData);
 
     if (error) {
       throw error;
@@ -312,10 +313,10 @@ export class MfaDatabaseService {
    */
   async cleanExpiredCodes(): Promise<number> {
     const { data, error } = await this.supabase
-      .from('mfa_verification_codes')
+      .from("mfa_verification_codes")
       .delete()
-      .lt('expires_at', new Date().toISOString())
-      .select('id');
+      .lt("expires_at", new Date().toISOString())
+      .select("id");
 
     if (error) {
       throw error;
@@ -333,13 +334,13 @@ export class MfaDatabaseService {
     attempts: number;
   }> {
     const { data, error } = await this.supabase
-      .from('mfa_verification_codes')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('used', false)
-      .gte('attempts', 'max_attempts')
-      .gt('expires_at', new Date().toISOString())
-      .order('created_at', { ascending: false })
+      .from("mfa_verification_codes")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("used", false)
+      .gte("attempts", "max_attempts")
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
       .limit(1);
 
     if (error) {

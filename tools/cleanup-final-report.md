@@ -60,7 +60,7 @@
 #### 4.1 - Arquivos Temporários (RISCO BAIXO) ✅
 
 - **5 arquivos** temporários removidos
-- Arquivos temp-* eliminados com segurança
+- Arquivos temp-\* eliminados com segurança
 
 #### 4.2 - Logs e Reports (RISCO BAIXO) ✅
 

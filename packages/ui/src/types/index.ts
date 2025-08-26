@@ -5,9 +5,9 @@ export interface PatientData {
   email?: string;
   phone?: string;
   avatar?: string;
-  status: 'active' | 'inactive' | 'blocked';
+  status: "active" | "inactive" | "blocked";
   birthDate: Date | string;
-  gender?: 'male' | 'female' | 'other';
+  gender?: "male" | "female" | "other";
   cpf?: string;
   rg?: string;
   address?: {
@@ -44,19 +44,19 @@ export interface AppointmentData {
   startTime: Date;
   endTime: Date;
   status:
-    | 'scheduled'
-    | 'confirmed'
-    | 'in-progress'
-    | 'completed'
-    | 'cancelled'
-    | 'no-show';
-  type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
+    | "scheduled"
+    | "confirmed"
+    | "in-progress"
+    | "completed"
+    | "cancelled"
+    | "no-show";
+  type: "consultation" | "procedure" | "follow-up" | "emergency";
   location?: string;
   notes?: string;
   reminders?: {
     sent: boolean;
     sentAt?: Date;
-    type: 'email' | 'sms' | 'whatsapp';
+    type: "email" | "sms" | "whatsapp";
   }[];
   createdAt: Date;
   updatedAt: Date;
@@ -68,12 +68,12 @@ export interface UserProfile {
   name: string;
   email: string;
   avatar?: string;
-  role: 'admin' | 'doctor' | 'nurse' | 'receptionist' | 'manager';
+  role: "admin" | "doctor" | "nurse" | "receptionist" | "manager";
   clinic?: string;
   permissions?: string[];
   preferences?: {
-    theme: 'light' | 'dark' | 'system';
-    language: 'pt-BR' | 'en-US';
+    theme: "light" | "dark" | "system";
+    language: "pt-BR" | "en-US";
     notifications: {
       email: boolean;
       push: boolean;
@@ -96,7 +96,7 @@ export interface SelectOption {
 export interface FilterOption {
   key: string;
   label: string;
-  type: 'select' | 'date' | 'text' | 'boolean';
+  type: "select" | "date" | "text" | "boolean";
   options?: SelectOption[];
   defaultValue?: any;
 }
@@ -107,7 +107,7 @@ export interface TableColumn<T = any> {
   sortable?: boolean;
   filterable?: boolean;
   width?: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   render?: (item: T) => React.ReactNode;
 }
 
@@ -119,7 +119,7 @@ export interface PaginationConfig {
 
 export interface SortConfig {
   key: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 // Layout Types
@@ -144,7 +144,7 @@ export interface MedicalRecord {
   id: string;
   patientId: string;
   date: Date;
-  type: 'consultation' | 'procedure' | 'exam' | 'prescription';
+  type: "consultation" | "procedure" | "exam" | "prescription";
   title: string;
   description: string;
   doctor: string;
@@ -174,13 +174,13 @@ export interface Treatment {
   patientId: string;
   name: string;
   category: string;
-  status: 'planned' | 'in-progress' | 'completed' | 'cancelled';
+  status: "planned" | "in-progress" | "completed" | "cancelled";
   startDate: Date;
   endDate?: Date;
   sessions: {
     id: string;
     date: Date;
-    status: 'scheduled' | 'completed' | 'cancelled';
+    status: "scheduled" | "completed" | "cancelled";
     notes?: string;
   }[];
   cost: {
@@ -211,20 +211,20 @@ export interface FormComponentProps extends BaseComponentProps {
 
 // Status and variant types
 export type StatusVariant =
-  | 'default'
-  | 'confirmed'
-  | 'pending'
-  | 'cancelled'
-  | 'destructive';
-export type SizeVariant = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  | "default"
+  | "confirmed"
+  | "pending"
+  | "cancelled"
+  | "destructive";
+export type SizeVariant = "xs" | "sm" | "md" | "lg" | "xl";
 export type ButtonVariant =
-  | 'default'
-  | 'destructive'
-  | 'outline'
-  | 'secondary'
-  | 'ghost'
-  | 'link'
-  | 'medical';
+  | "default"
+  | "destructive"
+  | "outline"
+  | "secondary"
+  | "ghost"
+  | "link"
+  | "medical";
 
 // Export aliases removed to avoid conflicts
 // Basic Types
@@ -269,9 +269,9 @@ export interface TreatmentData extends BaseEntity {
   description?: string;
   patientId: string;
   practitionerId: string;
-  status: 'planned' | 'active' | 'completed' | 'cancelled' | 'on_hold';
+  status: "planned" | "active" | "completed" | "cancelled" | "on_hold";
   statusLabel?: string;
-  priority?: 'low' | 'normal' | 'high';
+  priority?: "low" | "normal" | "high";
   startDate?: Date;
   endDate?: Date;
   nextSession?: Date;
@@ -300,7 +300,7 @@ export interface ProcedureData extends BaseEntity {
   risks: string[];
   consentRequired: boolean;
   lgpdConsent: boolean;
-  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+  status: "scheduled" | "in_progress" | "completed" | "cancelled";
 }
 
 // Health Record Data Types
@@ -335,7 +335,7 @@ export interface ProcedureRecord {
   date: Date;
   time: string;
   practitioner: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
+  status: "scheduled" | "completed" | "cancelled";
   notes?: string;
   outcome?: string;
 }
@@ -364,10 +364,10 @@ export interface LayoutConfig {
     collapsed: boolean;
     width: number;
   };
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   notifications: {
     enabled: boolean;
-    position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+    position: "top-right" | "top-left" | "bottom-right" | "bottom-left";
   };
 }
 
@@ -376,7 +376,7 @@ export interface NavItem {
   id: string;
   label: string;
   href: string;
-  icon?: React.ComponentType<{ className?: string; }>;
+  icon?: React.ComponentType<{ className?: string }>;
   isActive?: boolean;
   children?: NavItem[];
 }
@@ -394,35 +394,35 @@ export interface FormFieldConfig {
   name: string;
   label: string;
   type:
-    | 'text'
-    | 'email'
-    | 'tel'
-    | 'date'
-    | 'time'
-    | 'select'
-    | 'textarea'
-    | 'checkbox';
+    | "text"
+    | "email"
+    | "tel"
+    | "date"
+    | "time"
+    | "select"
+    | "textarea"
+    | "checkbox";
   validation?: FormValidation;
-  options?: { value: string; label: string; }[];
+  options?: { value: string; label: string }[];
   placeholder?: string;
   description?: string;
 }
 
 // Component Variant Types
 export type ComponentVariant =
-  | 'default'
-  | 'secondary'
-  | 'destructive'
-  | 'outline'
-  | 'ghost'
-  | 'link'
-  | 'medical';
-export type ComponentSize = 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm';
+  | "default"
+  | "secondary"
+  | "destructive"
+  | "outline"
+  | "ghost"
+  | "link"
+  | "medical";
+export type ComponentSize = "default" | "sm" | "lg" | "icon" | "icon-sm";
 export type BadgeVariant =
-  | 'default'
-  | 'secondary'
-  | 'destructive'
-  | 'outline'
-  | 'success'
-  | 'warning';
-export type AvatarVariant = 'default' | 'patient' | 'practitioner' | 'system';
+  | "default"
+  | "secondary"
+  | "destructive"
+  | "outline"
+  | "success"
+  | "warning";
+export type AvatarVariant = "default" | "patient" | "practitioner" | "system";

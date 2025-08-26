@@ -176,8 +176,12 @@ export function PerformanceMetricsDashboard() {
       }
       return "error";
     }
-    if (value >= thresholds.good) {return "success";}
-    if (value >= thresholds.warning) {return "warning";}
+    if (value >= thresholds.good) {
+      return "success";
+    }
+    if (value >= thresholds.warning) {
+      return "warning";
+    }
     return "error";
   };
 
@@ -286,9 +290,9 @@ export function PerformanceMetricsDashboard() {
                 Target: &lt;80% | Status:
                 {metrics.systemPerformance.cpuUsage < 70
                   ? " Ótimo"
-                  : (metrics.systemPerformance.cpuUsage < 85
+                  : metrics.systemPerformance.cpuUsage < 85
                     ? " Bom"
-                    : " Atenção")}
+                    : " Atenção"}
               </div>
             </div>
           </CardContent>

@@ -250,12 +250,12 @@ export class StockAnalyticsService {
           previousMetrics.turnoverRate,
         ) === "increasing"
           ? "improving"
-          : (this.compareTrend(
+          : this.compareTrend(
                 currentMetrics.turnoverRate,
                 previousMetrics.turnoverRate,
               ) === "decreasing"
             ? "declining"
-            : "stable"),
+            : "stable",
     };
   }
 

@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AISchedulingConfig, CreatePatientData } from '../src';
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { AISchedulingConfig, CreatePatientData } from "../src";
 import {
   AISchedulingService, // Corrigido nome do service
   BillingService,
@@ -7,9 +7,9 @@ import {
   NotificationService,
   PatientService,
   TreatmentService,
-} from '../src';
+} from "../src";
 
-describe('core Services Integration', () => {
+describe("core Services Integration", () => {
   let schedulingService: AISchedulingService;
   let treatmentService: TreatmentService;
   let patientService: PatientService;
@@ -36,7 +36,7 @@ describe('core Services Integration', () => {
         satisfaction: 0.3,
         revenue: 0.3,
       },
-      conflictResolution: 'manual',
+      conflictResolution: "manual",
       enablePredictiveAnalytics: true,
       realtimeOptimization: true,
     };
@@ -49,8 +49,8 @@ describe('core Services Integration', () => {
     notificationService = new NotificationService(mockNotificationRepo);
   });
 
-  describe('service Initialization', () => {
-    it('should initialize all services without errors', () => {
+  describe("service Initialization", () => {
+    it("should initialize all services without errors", () => {
       expect(schedulingService).toBeInstanceOf(AISchedulingService);
       expect(treatmentService).toBeInstanceOf(TreatmentService);
       expect(patientService).toBeInstanceOf(PatientService);
@@ -60,8 +60,8 @@ describe('core Services Integration', () => {
     });
   });
 
-  describe('service Dependencies', () => {
-    it('should handle service repository dependencies', () => {
+  describe("service Dependencies", () => {
+    it("should handle service repository dependencies", () => {
       // Test that services can be created with their dependencies
       expect(() => {
         new AISchedulingService({
@@ -71,7 +71,7 @@ describe('core Services Integration', () => {
             satisfaction: 0.3,
             revenue: 0.3,
           },
-          conflictResolution: 'manual',
+          conflictResolution: "manual",
           enablePredictiveAnalytics: true,
           realtimeOptimization: true,
         });
@@ -87,24 +87,24 @@ describe('core Services Integration', () => {
     });
   });
 
-  describe('cross-Service Workflow', () => {
-    it('should support typical aesthetic clinic workflow', async () => {
+  describe("cross-Service Workflow", () => {
+    it("should support typical aesthetic clinic workflow", async () => {
       // Mock patient creation
       const mockPatientData: CreatePatientData = {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        phone: '+1234567890',
-        dateOfBirth: new Date('1990-01-01'),
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        phone: "+1234567890",
+        dateOfBirth: new Date("1990-01-01"),
         address: {
-          street: '123 Main St',
-          city: 'Any City',
-          state: 'Any State',
-          zipCode: '12345',
-          country: 'USA',
+          street: "123 Main St",
+          city: "Any City",
+          state: "Any State",
+          zipCode: "12345",
+          country: "USA",
         },
         preferences: {
-          preferredLanguage: 'en',
+          preferredLanguage: "en",
           communicationPreferences: {
             email: true,
             sms: true,
@@ -112,19 +112,19 @@ describe('core Services Integration', () => {
           },
           reminderPreferences: {
             daysBefore: [7, 1],
-            methods: ['email', 'sms'],
+            methods: ["email", "sms"],
           },
         },
         emergencyContact: {
-          name: 'Jane Doe',
-          phone: '+1234567891',
-          relationship: 'spouse',
+          name: "Jane Doe",
+          phone: "+1234567891",
+          relationship: "spouse",
         },
       };
 
       // This test validates that the workflow chain is properly configured
       // In a real implementation, these would involve actual service calls
-      expect(mockPatientData.firstName).toBe('John');
+      expect(mockPatientData.firstName).toBe("John");
       expect(schedulingService).toBeDefined();
       expect(treatmentService).toBeDefined();
       expect(patientService).toBeDefined();

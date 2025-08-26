@@ -236,7 +236,8 @@ export function CosmeticConsentBrazilian({
       };
 
       await onConsentGranted(consentData);
-    } catch {} finally {
+    } catch {
+    } finally {
       setIsSubmitting(false);
     }
   };

@@ -118,20 +118,20 @@ pnpm type-check
 ### Estrutura de Teste Unitário
 
 ```typescript
-describe('ComponentName', () => {
+describe("ComponentName", () => {
   beforeEach(() => {
     // Setup comum
   });
 
-  it('should render correctly', () => {
+  it("should render correctly", () => {
     // Teste de rendering básico
   });
 
-  it('should handle user interactions', () => {
+  it("should handle user interactions", () => {
     // Teste de interações
   });
 
-  it('should handle error states', () => {
+  it("should handle error states", () => {
     // Teste de estados de erro
   });
 });
@@ -140,12 +140,12 @@ describe('ComponentName', () => {
 ### Estrutura de Teste E2E
 
 ```typescript
-test.describe('Feature Name', () => {
+test.describe("Feature Name", () => {
   test.beforeEach(async ({ page }) => {
     // Setup da página
   });
 
-  test('should complete user journey', async ({ page }) => {
+  test("should complete user journey", async ({ page }) => {
     // Teste do fluxo completo
   });
 });
@@ -164,7 +164,7 @@ const mockSupabase = {
   },
 };
 
-jest.mock('@/app/utils/supabase/client', () => ({
+jest.mock("@/app/utils/supabase/client", () => ({
   createClient: () => mockSupabase,
 }));
 ```
@@ -172,7 +172,7 @@ jest.mock('@/app/utils/supabase/client', () => ({
 ### Next.js Router
 
 ```typescript
-jest.mock('next/navigation', () => ({
+jest.mock("next/navigation", () => ({
   useRouter: () => ({
     push: jest.fn(),
     replace: jest.fn(),

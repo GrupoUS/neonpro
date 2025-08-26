@@ -7,9 +7,9 @@
 
 // Intelligent Scheduling - Core configuration
 export const SchedulingConfig = {
-  version: '1.0.0',
-  features: ['optimization', 'patient-preferences', 'resource-allocation'],
-  status: 'development',
+  version: "1.0.0",
+  features: ["optimization", "patient-preferences", "resource-allocation"],
+  status: "development",
 } as const;
 
 /**
@@ -29,9 +29,9 @@ export const INTELLIGENT_SCHEDULING_CONFIG = {
   // Patient Preference Learning Parameters
   preferenceFactors: {
     timeSlots: {
-      morning: { start: '07:00', end: '12:00', weight: 0.3 },
-      afternoon: { start: '12:00', end: '17:00', weight: 0.4 },
-      evening: { start: '17:00', end: '20:00', weight: 0.3 },
+      morning: { start: "07:00", end: "12:00", weight: 0.3 },
+      afternoon: { start: "12:00", end: "17:00", weight: 0.4 },
+      evening: { start: "17:00", end: "20:00", weight: 0.3 },
     },
     dayOfWeek: {
       weekdays: { weight: 0.6 },
@@ -52,11 +52,11 @@ export const INTELLIGENT_SCHEDULING_CONFIG = {
 
   // Optimization Algorithms
   algorithms: {
-    scheduling: 'genetic_algorithm', // GA for complex optimization
-    preference: 'collaborative_filtering', // CF for preference learning
-    resource: 'linear_programming', // LP for resource allocation
-    prediction: 'gradient_boosting', // GB for cancellation prediction
-    analytics: 'time_series_analysis', // TSA for pattern analysis
+    scheduling: "genetic_algorithm", // GA for complex optimization
+    preference: "collaborative_filtering", // CF for preference learning
+    resource: "linear_programming", // LP for resource allocation
+    prediction: "gradient_boosting", // GB for cancellation prediction
+    analytics: "time_series_analysis", // TSA for pattern analysis
   },
 
   // Constitutional Healthcare Constraints
@@ -74,7 +74,7 @@ export const INTELLIGENT_SCHEDULING_CONFIG = {
     responseTime: 500, // ≤500ms for scheduling recommendations
     batchProcessing: 1000, // Process 1000 appointments per batch
     realTimeUpdates: true, // Real-time schedule updates
-    conflictResolution: 'automatic', // Automatic conflict resolution
+    conflictResolution: "automatic", // Automatic conflict resolution
     rollbackCapability: true, // Rollback failed scheduling attempts
     auditTrail: true, // Complete audit trail for all scheduling decisions
   },

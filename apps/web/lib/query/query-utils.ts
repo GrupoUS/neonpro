@@ -7,10 +7,22 @@
  */
 
 // Import our enhanced API client and schemas
-import { apiClient, ApiHelpers } from '@neonpro/shared/api-client';
-import type { ApiClient, ApiResponse } from '@neonpro/shared/api-client';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { InfiniteData, QueryClient, QueryKey, UseInfiniteQueryOptions, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
+import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
+import type { ApiClient, ApiResponse } from "@neonpro/shared/api-client";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import type {
+  InfiniteData,
+  QueryClient,
+  QueryKey,
+  UseInfiniteQueryOptions,
+  UseMutationOptions,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 // Import query keys and config from provider
 import { HealthcareQueryConfig, QueryKeys } from "@/providers/query-provider";

@@ -3,17 +3,21 @@
  * @package @neonpro/auth
  */
 
-import type { ComponentType } from 'react';
+import type { ComponentType } from "react";
 
 // Define component types that will be implemented in the web app
 export interface LoginFormProps {
-  onLogin?: (credentials: { email: string; password: string; }) => Promise<void>;
+  onLogin?: (credentials: { email: string; password: string }) => Promise<void>;
   loading?: boolean;
   error?: string;
 }
 
 export interface RegisterFormProps {
-  onRegister?: (data: { email: string; password: string; name: string; }) => Promise<void>;
+  onRegister?: (data: {
+    email: string;
+    password: string;
+    name: string;
+  }) => Promise<void>;
   loading?: boolean;
   error?: string;
 }
@@ -21,7 +25,7 @@ export interface RegisterFormProps {
 export interface AuthButtonProps {
   onClick?: () => void;
   loading?: boolean;
-  variant?: 'login' | 'logout' | 'register';
+  variant?: "login" | "logout" | "register";
   children?: React.ReactNode;
 }
 
@@ -54,23 +58,31 @@ export const AuthComponents = {
 };
 
 // Component registration utility
-export function registerAuthComponents(components: Partial<typeof AuthComponents>) {
+export function registerAuthComponents(
+  components: Partial<typeof AuthComponents>,
+) {
   Object.assign(AuthComponents, components);
 }
 
 // Validation helpers for component props
 export const validateLoginFormProps = (props: LoginFormProps): boolean => {
-  return typeof props === 'object' && props !== null;
+  return typeof props === "object" && props !== null;
 };
 
-export const validateRegisterFormProps = (props: RegisterFormProps): boolean => {
-  return typeof props === 'object' && props !== null;
+export const validateRegisterFormProps = (
+  props: RegisterFormProps,
+): boolean => {
+  return typeof props === "object" && props !== null;
 };
 
 export const validateAuthButtonProps = (props: AuthButtonProps): boolean => {
-  return typeof props === 'object' && props !== null;
+  return typeof props === "object" && props !== null;
 };
 
-export const validateProtectedRouteProps = (props: ProtectedRouteProps): boolean => {
-  return typeof props === 'object' && props !== null && props.children !== undefined;
+export const validateProtectedRouteProps = (
+  props: ProtectedRouteProps,
+): boolean => {
+  return (
+    typeof props === "object" && props !== null && props.children !== undefined
+  );
 };

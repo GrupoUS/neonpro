@@ -1,15 +1,21 @@
-import { AlertTriangle, Clock, FileText, Plus, User, X } from 'lucide-react';
-import * as React from 'react';
-import type { PractitionerData, ProcedureData, TreatmentData } from '../types';
-import { cn } from '../utils/cn';
-import { Button } from './Button';
-import { Checkbox } from './Checkbox';
-import { DatePicker } from './DatePicker';
-import { FormField } from './FormField';
-import { Input } from './Input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select';
-import { Textarea } from './Textarea';
-import { TimePicker } from './TimePicker';
+import { AlertTriangle, Clock, FileText, Plus, User, X } from "lucide-react";
+import * as React from "react";
+import type { PractitionerData, ProcedureData, TreatmentData } from "../types";
+import { cn } from "../utils/cn";
+import { Button } from "./Button";
+import { Checkbox } from "./Checkbox";
+import { DatePicker } from "./DatePicker";
+import { FormField } from "./FormField";
+import { Input } from "./Input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./Select";
+import { Textarea } from "./Textarea";
+import { TimePicker } from "./TimePicker";
 
 interface ProcedureFormProps {
   procedure?: Partial<ProcedureData>;
@@ -17,7 +23,7 @@ interface ProcedureFormProps {
   availableTreatments: TreatmentData[];
   onSubmit: (data: ProcedureData) => void;
   onCancel?: () => void;
-  mode?: 'create' | 'edit';
+  mode?: "create" | "edit";
   loading?: boolean;
   className?: string;
 }
@@ -41,12 +47,12 @@ interface FormData {
 }
 
 const categories = [
-  { value: 'facial', label: 'Facial' },
-  { value: 'body', label: 'Corporal' },
-  { value: 'skin', label: 'Dermatológico' },
-  { value: 'laser', label: 'Laser' },
-  { value: 'injectables', label: 'Injetáveis' },
-  { value: 'other', label: 'Outros' },
+  { value: "facial", label: "Facial" },
+  { value: "body", label: "Corporal" },
+  { value: "skin", label: "Dermatológico" },
+  { value: "laser", label: "Laser" },
+  { value: "injectables", label: "Injetáveis" },
+  { value: "other", label: "Outros" },
 ];
 const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
   (
@@ -56,7 +62,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
       availableTreatments,
       onSubmit,
       onCancel,
-      mode = 'create',
+      mode = "create",
       loading = false,
       className,
       ...props
@@ -64,18 +70,18 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
     ref,
   ) => {
     const [formData, setFormData] = React.useState<FormData>({
-      name: procedure?.name || '',
-      description: procedure?.description || '',
-      category: procedure?.category || '',
-      practitionerId: procedure?.practitionerId || '',
-      treatmentId: procedure?.treatmentId || '',
+      name: procedure?.name || "",
+      description: procedure?.description || "",
+      category: procedure?.category || "",
+      practitionerId: procedure?.practitionerId || "",
+      treatmentId: procedure?.treatmentId || "",
       scheduledDate: procedure?.scheduledDate
         ? new Date(procedure.scheduledDate)
         : undefined,
-      scheduledTime: procedure?.scheduledTime || '',
+      scheduledTime: procedure?.scheduledTime || "",
       estimatedDuration: procedure?.estimatedDuration || 60,
-      location: procedure?.location || '',
-      notes: procedure?.notes || '',
+      location: procedure?.location || "",
+      notes: procedure?.notes || "",
       preRequirements: procedure?.preRequirements || [],
       postCareInstructions: procedure?.postCareInstructions || [],
       risks: procedure?.risks || [],
@@ -88,12 +94,12 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
     const handleInputChange = (field: keyof FormData, value: any) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
       if (errors[field]) {
-        setErrors((prev) => ({ ...prev, [field]: '' }));
+        setErrors((prev) => ({ ...prev, [field]: "" }));
       }
     };
 
     const addListItem = (
-      field: 'preRequirements' | 'postCareInstructions' | 'risks',
+      field: "preRequirements" | "postCareInstructions" | "risks",
       item: string,
     ) => {
       if (item.trim()) {
@@ -104,7 +110,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
       }
     };
     const removeListItem = (
-      field: 'preRequirements' | 'postCareInstructions' | 'risks',
+      field: "preRequirements" | "postCareInstructions" | "risks",
       index: number,
     ) => {
       setFormData((prev) => ({
@@ -117,31 +123,31 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
       const newErrors: Record<string, string> = {};
 
       if (!formData.name.trim()) {
-        newErrors.name = 'Nome do procedimento é obrigatório';
+        newErrors.name = "Nome do procedimento é obrigatório";
       }
 
       if (!formData.category) {
-        newErrors.category = 'Categoria é obrigatória';
+        newErrors.category = "Categoria é obrigatória";
       }
 
       if (!formData.practitionerId) {
-        newErrors.practitionerId = 'Profissional é obrigatório';
+        newErrors.practitionerId = "Profissional é obrigatório";
       }
 
       if (!formData.scheduledDate) {
-        newErrors.scheduledDate = 'Data é obrigatória';
+        newErrors.scheduledDate = "Data é obrigatória";
       }
 
       if (!formData.scheduledTime) {
-        newErrors.scheduledTime = 'Horário é obrigatório';
+        newErrors.scheduledTime = "Horário é obrigatório";
       }
 
       if (formData.estimatedDuration <= 0) {
-        newErrors.estimatedDuration = 'Duração deve ser maior que 0';
+        newErrors.estimatedDuration = "Duração deve ser maior que 0";
       }
 
       if (!formData.lgpdConsent) {
-        newErrors.lgpdConsent = 'Consentimento LGPD é obrigatório';
+        newErrors.lgpdConsent = "Consentimento LGPD é obrigatório";
       }
 
       setErrors(newErrors);
@@ -155,7 +161,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
       }
 
       const procedureData: ProcedureData = {
-        id: procedure?.id || '',
+        id: procedure?.id || "",
         name: formData.name,
         description: formData.description,
         category: formData.category,
@@ -171,7 +177,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
         risks: formData.risks,
         consentRequired: formData.consentRequired,
         lgpdConsent: formData.lgpdConsent,
-        status: procedure?.status || 'scheduled',
+        status: procedure?.status || "scheduled",
         createdAt: procedure?.createdAt || new Date(),
         updatedAt: new Date(),
       };
@@ -181,7 +187,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 
     return (
       <form
-        className={cn('space-y-6', className)}
+        className={cn("space-y-6", className)}
         onSubmit={handleSubmit}
         ref={ref}
         {...props}
@@ -193,7 +199,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <h3 className="font-semibold text-lg">
               Informações do Procedimento
             </h3>
-          </div>{' '}
+          </div>{" "}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               error={errors.name}
@@ -201,7 +207,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               required
             >
               <Input
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                onChange={(e) => handleInputChange("name", e.target.value)}
                 placeholder="Ex: Limpeza de Pele Profunda"
                 value={formData.name}
               />
@@ -209,7 +215,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 
             <FormField error={errors.category} label="Categoria" required>
               <Select
-                onValueChange={(value) => handleInputChange('category', value)}
+                onValueChange={(value) => handleInputChange("category", value)}
                 value={formData.category}
               >
                 <SelectTrigger>
@@ -227,13 +233,13 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
           </div>
           <FormField error={errors.description} label="Descrição">
             <Textarea
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Descreva o procedimento em detalhes..."
               rows={3}
               value={formData.description}
             />
           </FormField>
-        </div>{' '}
+        </div>{" "}
         {/* Scheduling */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -244,14 +250,16 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <FormField error={errors.scheduledDate} label="Data" required>
               <DatePicker
                 date={formData.scheduledDate}
-                onDateChange={(date) => handleInputChange('scheduledDate', date)}
+                onDateChange={(date) =>
+                  handleInputChange("scheduledDate", date)
+                }
                 placeholder="Selecione a data"
               />
             </FormField>
 
             <FormField error={errors.scheduledTime} label="Horário" required>
               <TimePicker
-                onChange={(time) => handleInputChange('scheduledTime', time)}
+                onChange={(time) => handleInputChange("scheduledTime", time)}
                 placeholder="Selecione o horário"
                 value={formData.scheduledTime}
               />
@@ -266,15 +274,16 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
                 min="1"
                 onChange={(e) =>
                   handleInputChange(
-                    'estimatedDuration',
+                    "estimatedDuration",
                     Number.parseInt(e.target.value, 10) || 0,
-                  )}
+                  )
+                }
                 step="15"
                 type="number"
                 value={formData.estimatedDuration}
               />
             </FormField>
-          </div>{' '}
+          </div>{" "}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               error={errors.practitionerId}
@@ -282,7 +291,9 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               required
             >
               <Select
-                onValueChange={(value) => handleInputChange('practitionerId', value)}
+                onValueChange={(value) =>
+                  handleInputChange("practitionerId", value)
+                }
                 value={formData.practitionerId}
               >
                 <SelectTrigger>
@@ -305,7 +316,7 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 
             <FormField error={errors.location} label="Local">
               <Input
-                onChange={(e) => handleInputChange('location', e.target.value)}
+                onChange={(e) => handleInputChange("location", e.target.value)}
                 placeholder="Ex: Sala 1, Consultório Principal"
                 value={formData.location}
               />
@@ -317,8 +328,10 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               label="Tratamento Relacionado"
             >
               <Select
-                onValueChange={(value) => handleInputChange('treatmentId', value || undefined)}
-                value={formData.treatmentId || ''}
+                onValueChange={(value) =>
+                  handleInputChange("treatmentId", value || undefined)
+                }
+                value={formData.treatmentId || ""}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Vincular a um tratamento (opcional)" />
@@ -334,15 +347,15 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               </Select>
             </FormField>
           )}
-        </div>{' '}
+        </div>{" "}
         {/* Lists */}
         <div className="space-y-6">
           {/* Pre-requirements */}
           <ListField
             icon={<AlertTriangle className="h-5 w-5" />}
             items={formData.preRequirements}
-            onAdd={(item) => addListItem('preRequirements', item)}
-            onRemove={(index) => removeListItem('preRequirements', index)}
+            onAdd={(item) => addListItem("preRequirements", item)}
+            onRemove={(index) => removeListItem("preRequirements", index)}
             placeholder="Ex: Jejum de 2 horas, não usar maquiagem..."
             title="Pré-requisitos"
           />
@@ -351,8 +364,8 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
           <ListField
             icon={<FileText className="h-5 w-5" />}
             items={formData.postCareInstructions}
-            onAdd={(item) => addListItem('postCareInstructions', item)}
-            onRemove={(index) => removeListItem('postCareInstructions', index)}
+            onAdd={(item) => addListItem("postCareInstructions", item)}
+            onRemove={(index) => removeListItem("postCareInstructions", index)}
             placeholder="Ex: Aplicar protetor solar, evitar exposição ao sol..."
             title="Cuidados Pós-Procedimento"
           />
@@ -361,8 +374,8 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
           <ListField
             icon={<AlertTriangle className="h-5 w-5 text-red-500" />}
             items={formData.risks}
-            onAdd={(item) => addListItem('risks', item)}
-            onRemove={(index) => removeListItem('risks', index)}
+            onAdd={(item) => addListItem("risks", item)}
+            onRemove={(index) => removeListItem("risks", index)}
             placeholder="Ex: Vermelhidão temporária, sensibilidade..."
             title="Riscos e Contraindicações"
           />
@@ -370,12 +383,12 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
         {/* Notes */}
         <FormField error={errors.notes} label="Observações Adicionais">
           <Textarea
-            onChange={(e) => handleInputChange('notes', e.target.value)}
+            onChange={(e) => handleInputChange("notes", e.target.value)}
             placeholder="Informações adicionais sobre o procedimento..."
             rows={3}
             value={formData.notes}
           />
-        </FormField>{' '}
+        </FormField>{" "}
         {/* Consent Checkboxes */}
         <div className="space-y-4 rounded-lg bg-muted/30 p-4">
           <h4 className="font-semibold">Consentimentos Obrigatórios</h4>
@@ -384,14 +397,17 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <div className="flex items-start gap-3">
               <Checkbox
                 checked={formData.consentRequired}
-                onCheckedChange={(checked) => handleInputChange('consentRequired', checked)}
+                onCheckedChange={(checked) =>
+                  handleInputChange("consentRequired", checked)
+                }
               />
               <div className="space-y-1">
                 <label className="font-medium text-sm">
                   Termo de Consentimento do Procedimento
                 </label>
                 <p className="text-muted-foreground text-xs">
-                  O paciente deve assinar o termo específico para este procedimento
+                  O paciente deve assinar o termo específico para este
+                  procedimento
                 </p>
               </div>
             </div>
@@ -399,7 +415,9 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
             <div className="flex items-start gap-3">
               <Checkbox
                 checked={formData.lgpdConsent}
-                onCheckedChange={(checked) => handleInputChange('lgpdConsent', checked)}
+                onCheckedChange={(checked) =>
+                  handleInputChange("lgpdConsent", checked)
+                }
               />
               <div className="space-y-1">
                 <label className="font-medium text-sm">
@@ -411,9 +429,11 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
               </div>
             </div>
 
-            {errors.lgpdConsent && <p className="text-red-600 text-sm">{errors.lgpdConsent}</p>}
+            {errors.lgpdConsent && (
+              <p className="text-red-600 text-sm">{errors.lgpdConsent}</p>
+            )}
           </div>
-        </div>{' '}
+        </div>{" "}
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 border-t pt-6">
           {onCancel && (
@@ -429,10 +449,10 @@ const ProcedureForm = React.forwardRef<HTMLFormElement, ProcedureFormProps>(
 
           <Button disabled={loading} type="submit" variant="medical">
             {loading
-              ? 'Salvando...'
-              : (mode === 'create'
-              ? 'Criar Procedimento'
-              : 'Salvar Alterações')}
+              ? "Salvando..."
+              : mode === "create"
+                ? "Criar Procedimento"
+                : "Salvar Alterações"}
           </Button>
         </div>
       </form>
@@ -458,14 +478,14 @@ const ListField: React.FC<ListFieldProps> = ({
   onRemove,
   placeholder,
 }) => {
-  const [newItem, setNewItem] = React.useState('');
+  const [newItem, setNewItem] = React.useState("");
   const handleAdd = () => {
     onAdd(newItem);
-    setNewItem('');
+    setNewItem("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleAdd();
     }
@@ -520,6 +540,6 @@ const ListField: React.FC<ListFieldProps> = ({
   );
 };
 
-ProcedureForm.displayName = 'ProcedureForm';
+ProcedureForm.displayName = "ProcedureForm";
 
 export { ProcedureForm };

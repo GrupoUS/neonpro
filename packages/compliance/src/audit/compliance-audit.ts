@@ -5,10 +5,14 @@
  * Quality Standard: ≥9.9/10
  */
 
-import { HealthcareRegulation } from '../types';
-import type { ComplianceScore } from '../types';
-import { AuditSeverity } from './types';
-import type { ComplianceActionItem, ComplianceAuditFinding, ComplianceAuditReport } from './types';
+import { HealthcareRegulation } from "../types";
+import type { ComplianceScore } from "../types";
+import { AuditSeverity } from "./types";
+import type {
+  ComplianceActionItem,
+  ComplianceAuditFinding,
+  ComplianceAuditReport,
+} from "./types";
 
 /**
  * Constitutional Compliance Audit Service
@@ -39,10 +43,10 @@ export class ComplianceAuditService {
 
       // Get previous audit date
       const { data: previousAudit } = await this.supabaseClient
-        .from('compliance_audit_reports')
-        .select('audit_date')
-        .eq('tenant_id', tenantId)
-        .order('audit_date', { ascending: false })
+        .from("compliance_audit_reports")
+        .select("audit_date")
+        .eq("tenant_id", tenantId)
+        .order("audit_date", { ascending: false })
         .limit(1)
         .single();
 
@@ -60,10 +64,8 @@ export class ComplianceAuditService {
       let totalScore = 0;
 
       for (const reg of regulations) {
-        const { findings, actionItems, score, regRecommendations } = await this.auditRegulation(
-          tenantId,
-          reg,
-        );
+        const { findings, actionItems, score, regRecommendations } =
+          await this.auditRegulation(tenantId, reg);
         allFindings.push(...findings);
         allActionItems.push(...actionItems);
         recommendations.push(...regRecommendations);
@@ -88,21 +90,21 @@ export class ComplianceAuditService {
         recommendations: [...new Set(recommendations)], // Remove duplicates
         actionItems: allActionItems,
         nextAuditDue,
-        status: 'DRAFT',
+        status: "DRAFT",
         metadata: {
           regulationsAudited: regulations,
           totalFindings: allFindings.length,
           criticalFindings: allFindings.filter(
             (f) => f.severity === AuditSeverity.CRITICAL,
           ).length,
-          auditDuration: 'Generated automatically',
+          auditDuration: "Generated automatically",
           complianceThreshold: 9.9,
         },
       };
 
       // Save report to database
       const { error: saveError } = await this.supabaseClient
-        .from('compliance_audit_reports')
+        .from("compliance_audit_reports")
         .insert([
           {
             id: report.id,
@@ -129,7 +131,7 @@ export class ComplianceAuditService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -196,29 +198,29 @@ export class ComplianceAuditService {
     try {
       // Check consent management
       const { data: consents } = await this.supabaseClient
-        .from('lgpd_consents')
-        .select('*')
-        .eq('tenant_id', tenantId);
+        .from("lgpd_consents")
+        .select("*")
+        .eq("tenant_id", tenantId);
 
       if (!consents || consents.length === 0) {
         findings.push({
           id: `lgpd_consent_${Date.now()}`,
-          category: 'Consent Management',
+          category: "Consent Management",
           severity: AuditSeverity.CRITICAL,
-          description: 'No LGPD consent records found',
-          evidence: ['Missing consent management system'],
+          description: "No LGPD consent records found",
+          evidence: ["Missing consent management system"],
           regulation: HealthcareRegulation.LGPD,
           complianceScore: 0 as ComplianceScore,
-          status: 'OPEN',
+          status: "OPEN",
         });
 
         actionItems.push({
           id: `action_lgpd_consent_${Date.now()}`,
-          title: 'Implement LGPD Consent Management',
-          description: 'Set up comprehensive consent management system',
-          priority: 'CRITICAL',
+          title: "Implement LGPD Consent Management",
+          description: "Set up comprehensive consent management system",
+          priority: "CRITICAL",
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-          status: 'PENDING',
+          status: "PENDING",
           regulation: HealthcareRegulation.LGPD,
         });
 
@@ -227,20 +229,20 @@ export class ComplianceAuditService {
 
       // Check data breach notification procedures
       const { data: breachProcedures } = await this.supabaseClient
-        .from('lgpd_breach_procedures')
-        .select('*')
-        .eq('tenant_id', tenantId);
+        .from("lgpd_breach_procedures")
+        .select("*")
+        .eq("tenant_id", tenantId);
 
       if (!breachProcedures || breachProcedures.length === 0) {
         findings.push({
           id: `lgpd_breach_${Date.now()}`,
-          category: 'Data Breach Procedures',
+          category: "Data Breach Procedures",
           severity: AuditSeverity.HIGH,
-          description: 'No data breach notification procedures defined',
-          evidence: ['Missing breach response plan'],
+          description: "No data breach notification procedures defined",
+          evidence: ["Missing breach response plan"],
           regulation: HealthcareRegulation.LGPD,
           complianceScore: 5 as ComplianceScore,
-          status: 'OPEN',
+          status: "OPEN",
         });
 
         score -= 2;
@@ -248,10 +250,10 @@ export class ComplianceAuditService {
 
       // Add general recommendations
       recommendations.push(
-        'Ensure all patient data processing has explicit consent',
-        'Implement data minimization principles',
-        'Regular LGPD compliance training for staff',
-        'Maintain comprehensive data processing records',
+        "Ensure all patient data processing has explicit consent",
+        "Implement data minimization principles",
+        "Regular LGPD compliance training for staff",
+        "Maintain comprehensive data processing records",
       );
 
       return {
@@ -265,20 +267,20 @@ export class ComplianceAuditService {
         findings: [
           {
             id: `lgpd_error_${Date.now()}`,
-            category: 'System Error',
+            category: "System Error",
             severity: AuditSeverity.CRITICAL,
-            description: 'Failed to audit LGPD compliance',
+            description: "Failed to audit LGPD compliance",
             evidence: [
-              error instanceof Error ? error.message : 'Unknown error',
+              error instanceof Error ? error.message : "Unknown error",
             ],
             regulation: HealthcareRegulation.LGPD,
             complianceScore: 0 as ComplianceScore,
-            status: 'OPEN',
+            status: "OPEN",
           },
         ],
         actionItems: [],
         score: 0,
-        regRecommendations: ['Fix LGPD audit system errors'],
+        regRecommendations: ["Fix LGPD audit system errors"],
       };
     }
   }
@@ -295,10 +297,10 @@ export class ComplianceAuditService {
     const findings: ComplianceAuditFinding[] = [];
     const actionItems: ComplianceActionItem[] = [];
     const recommendations: string[] = [
-      'Ensure all medical devices are properly registered',
-      'Maintain adverse event reporting procedures',
-      'Regular ANVISA regulation updates review',
-      'Proper documentation of all medical procedures',
+      "Ensure all medical devices are properly registered",
+      "Maintain adverse event reporting procedures",
+      "Regular ANVISA regulation updates review",
+      "Proper documentation of all medical procedures",
     ];
 
     // For now, return a basic compliance check
@@ -328,10 +330,10 @@ export class ComplianceAuditService {
     const findings: ComplianceAuditFinding[] = [];
     const actionItems: ComplianceActionItem[] = [];
     const recommendations: string[] = [
-      'Ensure all medical professionals are properly licensed',
-      'Maintain medical ethics compliance',
-      'Proper telemedicine procedures',
-      'Digital signature compliance for medical documents',
+      "Ensure all medical professionals are properly licensed",
+      "Maintain medical ethics compliance",
+      "Proper telemedicine procedures",
+      "Digital signature compliance for medical documents",
     ];
 
     // For now, return a basic compliance check
@@ -361,10 +363,10 @@ export class ComplianceAuditService {
     const findings: ComplianceAuditFinding[] = [];
     const actionItems: ComplianceActionItem[] = [];
     const recommendations: string[] = [
-      'Ensure constitutional healthcare principles are upheld',
-      'Maintain patient dignity and privacy',
-      'Equal access to healthcare services',
-      'Transparent healthcare practices',
+      "Ensure constitutional healthcare principles are upheld",
+      "Maintain patient dignity and privacy",
+      "Equal access to healthcare services",
+      "Transparent healthcare practices",
     ];
 
     return {
@@ -385,9 +387,9 @@ export class ComplianceAuditService {
   }> {
     try {
       const { data, error } = await this.supabaseClient
-        .from('compliance_audit_reports')
-        .select('*')
-        .eq('id', reportId)
+        .from("compliance_audit_reports")
+        .select("*")
+        .eq("id", reportId)
         .single();
 
       if (error) {
@@ -395,7 +397,7 @@ export class ComplianceAuditService {
       }
 
       if (!data) {
-        return { success: false, error: 'Audit report not found' };
+        return { success: false, error: "Audit report not found" };
       }
 
       const report: ComplianceAuditReport = {
@@ -420,7 +422,7 @@ export class ComplianceAuditService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -430,13 +432,13 @@ export class ComplianceAuditService {
    */
   async updateReportStatus(
     reportId: string,
-    status: 'DRAFT' | 'FINAL' | 'APPROVED',
-  ): Promise<{ success: boolean; error?: string; }> {
+    status: "DRAFT" | "FINAL" | "APPROVED",
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const { error } = await this.supabaseClient
-        .from('compliance_audit_reports')
+        .from("compliance_audit_reports")
         .update({ status })
-        .eq('id', reportId);
+        .eq("id", reportId);
 
       if (error) {
         return { success: false, error: error.message };
@@ -446,7 +448,7 @@ export class ComplianceAuditService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }

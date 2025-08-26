@@ -3,16 +3,16 @@
  * This file must be loaded before any other setup files to ensure singleton pattern
  */
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Suppress Supabase warnings immediately
 const originalConsoleWarn = console.warn;
 console.warn = (...args) => {
-  const message = args.join(' ');
+  const message = args.join(" ");
   if (
-    message.includes('Multiple GoTrueClient instances detected')
-    || message.includes('GoTrueClient')
-    || message.includes('Multiple instances of auth client')
+    message.includes("Multiple GoTrueClient instances detected") ||
+    message.includes("GoTrueClient") ||
+    message.includes("Multiple instances of auth client")
   ) {
     return; // Suppress these warnings
   }
@@ -29,8 +29,12 @@ const createMockSupabaseClient = () => {
 
   singletonMockSupabaseClient = {
     auth: {
-      getSession: vi.fn(() => Promise.resolve({ data: { session: undefined }, error: undefined })),
-      getUser: vi.fn(() => Promise.resolve({ data: { user: undefined }, error: undefined })),
+      getSession: vi.fn(() =>
+        Promise.resolve({ data: { session: undefined }, error: undefined }),
+      ),
+      getUser: vi.fn(() =>
+        Promise.resolve({ data: { user: undefined }, error: undefined }),
+      ),
       signIn: vi.fn(),
       signOut: vi.fn(),
       onAuthStateChange: vi.fn(() => ({
@@ -54,7 +58,9 @@ const createMockSupabaseClient = () => {
       is: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
-      single: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
+      single: vi.fn(() =>
+        Promise.resolve({ data: undefined, error: undefined }),
+      ),
       then: vi.fn((fn) => fn({ data: [], error: undefined })),
     })),
     rpc: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
@@ -72,13 +78,16 @@ const createMockSupabaseClient = () => {
 };
 
 // Mock Supabase client creation with singleton pattern - this MUST be called early
-vi.mock<typeof import('@supabase/supabase-js')>('@supabase/supabase-js', () => ({
-  createClient: vi.fn(() => createMockSupabaseClient()),
-}));
+vi.mock<typeof import("@supabase/supabase-js")>(
+  "@supabase/supabase-js",
+  () => ({
+    createClient: vi.fn(() => createMockSupabaseClient()),
+  }),
+);
 
 // Mock the GoTrueClient directly to prevent multiple instances warning
-vi.mock<typeof import('@supabase/auth-js')>('@supabase/auth-js', () => {
-  const originalModule = vi.importActual('@supabase/auth-js');
+vi.mock<typeof import("@supabase/auth-js")>("@supabase/auth-js", () => {
+  const originalModule = vi.importActual("@supabase/auth-js");
   let singletonGoTrueClient: any;
 
   return {

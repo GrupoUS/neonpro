@@ -5,9 +5,13 @@
  * Tests load handling, response times, memory usage, and scalability
  */
 
-import { performance } from 'node:perf_hooks';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mockAppointment, mockPatient, mockUser } from '../setup/final-test-setup';
+import { performance } from "node:perf_hooks";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  mockAppointment,
+  mockPatient,
+  mockUser,
+} from "../setup/final-test-setup";
 
 // Performance monitoring utilities
 class PerformanceMonitor {
@@ -16,7 +20,7 @@ class PerformanceMonitor {
 
   start() {
     this.startTime = performance.now();
-    if (typeof process !== 'undefined' && process.memoryUsage) {
+    if (typeof process !== "undefined" && process.memoryUsage) {
       this.memoryBaseline = process.memoryUsage().heapUsed;
     }
   }
@@ -26,7 +30,7 @@ class PerformanceMonitor {
   }
 
   getMemoryDelta(): number {
-    if (typeof process !== 'undefined' && process.memoryUsage) {
+    if (typeof process !== "undefined" && process.memoryUsage) {
       return process.memoryUsage().heapUsed - this.memoryBaseline;
     }
     return 0;
@@ -56,8 +60,8 @@ class LoadTestSimulator {
       const requestStart = performance.now();
       try {
         const response = await fetch(endpoint, {
-          method: 'GET',
-          headers: { Authorization: 'Bearer test-token' },
+          method: "GET",
+          headers: { Authorization: "Bearer test-token" },
         });
 
         if (response.ok) {
@@ -110,7 +114,7 @@ class LoadTestSimulator {
   }
 }
 
-describe('performance Validation Tests - Final Production Readiness', () => {
+describe("performance Validation Tests - Final Production Readiness", () => {
   let monitor: PerformanceMonitor;
   let loadTester: LoadTestSimulator;
 
@@ -119,7 +123,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
     loadTester = new LoadTestSimulator();
 
     // Mock successful API responses with realistic delays
-    jest.spyOn(global, 'fetch').mockImplementation((url: string) => {
+    jest.spyOn(global, "fetch").mockImplementation((url: string) => {
       return new Promise((resolve) => {
         // Simulate realistic API response times
         const delay = Math.random() * 50 + 30; // 30-80ms
@@ -130,7 +134,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
             json: () =>
               Promise.resolve({
                 success: true,
-                data: url.includes('patients')
+                data: url.includes("patients")
                   ? [mockPatient]
                   : [mockAppointment],
               }),
@@ -144,8 +148,8 @@ describe('performance Validation Tests - Final Production Readiness', () => {
     vi.restoreAllMocks();
   });
 
-  describe('aPI Response Time Validation', () => {
-    it('should handle patient queries under 100ms P95', async () => {
+  describe("aPI Response Time Validation", () => {
+    it("should handle patient queries under 100ms P95", async () => {
       monitor.start();
 
       const responseTimes: number[] = [];
@@ -154,9 +158,9 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       for (let i = 0; i < 100; i++) {
         const requestStart = performance.now();
 
-        const response = await fetch('/api/patients', {
-          method: 'GET',
-          headers: { Authorization: 'Bearer test-token' },
+        const response = await fetch("/api/patients", {
+          method: "GET",
+          headers: { Authorization: "Bearer test-token" },
         });
 
         const responseTime = performance.now() - requestStart;
@@ -172,17 +176,18 @@ describe('performance Validation Tests - Final Production Readiness', () => {
 
       expect(p95ResponseTime).toBeLessThan(100); // P95 under 100ms
 
-      const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const averageTime =
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       expect(averageTime).toBeLessThan(50); // Average under 50ms
     });
 
-    it('should handle appointment booking under 150ms P95', async () => {
+    it("should handle appointment booking under 150ms P95", async () => {
       monitor.start();
 
       const responseTimes: number[] = [];
 
       // Mock appointment creation with slightly higher complexity
-      jest.spyOn(global, 'fetch').mockImplementation(() => {
+      jest.spyOn(global, "fetch").mockImplementation(() => {
         return new Promise((resolve) => {
           const delay = Math.random() * 80 + 50; // 50-130ms for booking
           setTimeout(() => {
@@ -192,7 +197,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
               json: () =>
                 Promise.resolve({
                   success: true,
-                  data: { ...mockAppointment, id: 'new-appointment-id' },
+                  data: { ...mockAppointment, id: "new-appointment-id" },
                 }),
             });
           }, delay);
@@ -202,11 +207,11 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       for (let i = 0; i < 50; i++) {
         const requestStart = performance.now();
 
-        const response = await fetch('/api/appointments', {
-          method: 'POST',
+        const response = await fetch("/api/appointments", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            "Content-Type": "application/json",
+            Authorization: "Bearer test-token",
           },
           body: JSON.stringify(mockAppointment),
         });
@@ -224,11 +229,11 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       expect(p95ResponseTime).toBeLessThan(150); // P95 under 150ms for booking
     });
 
-    it('should handle authentication under 200ms', async () => {
+    it("should handle authentication under 200ms", async () => {
       monitor.start();
 
       // Mock authentication with security processing delay
-      jest.spyOn(global, 'fetch').mockImplementation(() => {
+      jest.spyOn(global, "fetch").mockImplementation(() => {
         return new Promise((resolve) => {
           const delay = Math.random() * 100 + 80; // 80-180ms for auth
           setTimeout(() => {
@@ -240,7 +245,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
                   success: true,
                   user: mockUser,
                   session: {
-                    access_token: 'test-token',
+                    access_token: "test-token",
                     expires_at: Date.now() + 3_600_000,
                   },
                 }),
@@ -254,13 +259,13 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       for (let i = 0; i < 20; i++) {
         const requestStart = performance.now();
 
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: 'dr.silva@neonpro.health',
-            password: 'securePassword123',
-            crm_number: '12345-SP',
+            email: "dr.silva@neonpro.health",
+            password: "securePassword123",
+            crm_number: "12345-SP",
           }),
         });
 
@@ -270,17 +275,18 @@ describe('performance Validation Tests - Final Production Readiness', () => {
         expect(response.status).toBe(200);
       }
 
-      const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const averageTime =
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       expect(averageTime).toBeLessThan(200); // Average under 200ms
     });
   });
 
-  describe('concurrent Load Testing', () => {
-    it('should handle 100 concurrent users for patient queries', async () => {
+  describe("concurrent Load Testing", () => {
+    it("should handle 100 concurrent users for patient queries", async () => {
       monitor.start();
 
       const results = await loadTester.simulateConcurrentRequests(
-        '/api/patients',
+        "/api/patients",
         100, // 100 concurrent users
         5000, // 5 seconds duration
       );
@@ -297,11 +303,11 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       expect(executionTime).toBeLessThan(6000); // Completed within test duration + margin
     });
 
-    it('should handle 50 concurrent appointment bookings', async () => {
+    it("should handle 50 concurrent appointment bookings", async () => {
       monitor.start();
 
       const results = await loadTester.simulateConcurrentRequests(
-        '/api/appointments',
+        "/api/appointments",
         50, // 50 concurrent bookings
         3000, // 3 seconds duration
       );
@@ -314,52 +320,51 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       expect(results.requestsPerSecond).toBeGreaterThan(10); // At least 10 bookings/sec
     });
 
-    it('should maintain performance under mixed healthcare workload', async () => {
+    it("should maintain performance under mixed healthcare workload", async () => {
       monitor.start();
 
       // Simulate mixed workload
       const patientQueries = loadTester.simulateConcurrentRequests(
-        '/api/patients',
+        "/api/patients",
         50,
         3000,
       );
       const appointmentQueries = loadTester.simulateConcurrentRequests(
-        '/api/appointments',
+        "/api/appointments",
         30,
         3000,
       );
       const authRequests = loadTester.simulateConcurrentRequests(
-        '/api/auth/session',
+        "/api/auth/session",
         20,
         3000,
       );
 
-      const [patientResults, appointmentResults, authResults] = await Promise.all([
-        patientQueries,
-        appointmentQueries,
-        authRequests,
-      ]);
+      const [patientResults, appointmentResults, authResults] =
+        await Promise.all([patientQueries, appointmentQueries, authRequests]);
 
       // All endpoints should maintain performance under mixed load
       expect(patientResults.averageResponseTime).toBeLessThan(120);
       expect(appointmentResults.averageResponseTime).toBeLessThan(180);
       expect(authResults.averageResponseTime).toBeLessThan(250);
 
-      const totalSuccessfulRequests = patientResults.successfulRequests
-        + appointmentResults.successfulRequests
-        + authResults.successfulRequests;
+      const totalSuccessfulRequests =
+        patientResults.successfulRequests +
+        appointmentResults.successfulRequests +
+        authResults.successfulRequests;
 
-      const totalRequests = patientResults.totalRequests
-        + appointmentResults.totalRequests
-        + authResults.totalRequests;
+      const totalRequests =
+        patientResults.totalRequests +
+        appointmentResults.totalRequests +
+        authResults.totalRequests;
 
       // Overall success rate should remain high
       expect(totalSuccessfulRequests / totalRequests).toBeGreaterThan(0.85);
     });
   });
 
-  describe('memory Usage Optimization', () => {
-    it('should not leak memory during extended patient operations', async () => {
+  describe("memory Usage Optimization", () => {
+    it("should not leak memory during extended patient operations", async () => {
       monitor.start();
 
       const iterations = 1000;
@@ -396,40 +401,41 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       expect(memoryDelta).toBeLessThan(50 * 1024 * 1024); // 50MB
     });
 
-    it('should efficiently handle large appointment datasets', async () => {
+    it("should efficiently handle large appointment datasets", async () => {
       monitor.start();
 
       // Mock large appointment dataset
       const appointmentCount = 10_000;
-      const appointments = new Array(appointmentCount)
-        .fill()
-        .map((_, i) => ({
-          ...mockAppointment,
-          id: `appointment-${i}`,
-          scheduled_at: new Date(Date.now() + i * 3_600_000).toISOString(),
-        }));
+      const appointments = new Array(appointmentCount).fill().map((_, i) => ({
+        ...mockAppointment,
+        id: `appointment-${i}`,
+        scheduled_at: new Date(Date.now() + i * 3_600_000).toISOString(),
+      }));
 
-      jest.spyOn(global, 'fetch').mockImplementation().mockResolvedValue({
-        status: 200,
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            success: true,
-            data: appointments,
-            pagination: {
-              page: 1,
-              limit: appointmentCount,
-              total: appointmentCount,
-            },
-          }),
-      });
+      jest
+        .spyOn(global, "fetch")
+        .mockImplementation()
+        .mockResolvedValue({
+          status: 200,
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              data: appointments,
+              pagination: {
+                page: 1,
+                limit: appointmentCount,
+                total: appointmentCount,
+              },
+            }),
+        });
 
       const startTime = performance.now();
 
       // Process large dataset
-      const response = await fetch('/api/appointments?limit=10000', {
-        method: 'GET',
-        headers: { Authorization: 'Bearer test-token' },
+      const response = await fetch("/api/appointments?limit=10000", {
+        method: "GET",
+        headers: { Authorization: "Bearer test-token" },
       });
 
       const data = await response.json();
@@ -442,7 +448,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       expect(memoryDelta).toBeLessThan(100 * 1024 * 1024); // Memory efficient
     });
 
-    it('should garbage collect properly after operations', async () => {
+    it("should garbage collect properly after operations", async () => {
       monitor.start();
 
       const initialMemory = monitor.getMemoryDelta();
@@ -451,7 +457,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       for (let cycle = 0; cycle < 5; cycle++) {
         const tempData = new Array(1000).fill().map((_, i) => ({
           id: `temp-${cycle}-${i}`,
-          data: new Array(100).fill('x').join(''), // 100 char string
+          data: new Array(100).fill("x").join(""), // 100 char string
         }));
 
         // Process data
@@ -479,8 +485,8 @@ describe('performance Validation Tests - Final Production Readiness', () => {
     });
   });
 
-  describe('real-time Performance Under Load', () => {
-    it('should maintain real-time updates during high traffic', async () => {
+  describe("real-time Performance Under Load", () => {
+    it("should maintain real-time updates during high traffic", async () => {
       monitor.start();
 
       const updateTimes: number[] = [];
@@ -499,11 +505,11 @@ describe('performance Validation Tests - Final Production Readiness', () => {
 
         // Simulate real-time update processing
         const update = {
-          eventType: 'UPDATE',
+          eventType: "UPDATE",
           new: {
             ...mockAppointment,
             id: `appointment-${i}`,
-            status: 'updated',
+            status: "updated",
           },
           old: mockAppointment,
         };
@@ -527,14 +533,15 @@ describe('performance Validation Tests - Final Production Readiness', () => {
         updateTimes.push(updateTime);
       }
 
-      const averageUpdateTime = updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length;
+      const averageUpdateTime =
+        updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length;
       const maxUpdateTime = Math.max(...updateTimes);
 
       expect(averageUpdateTime).toBeLessThan(30); // Average under 30ms
       expect(maxUpdateTime).toBeLessThan(100); // Max under 100ms
     });
 
-    it('should handle subscription storms gracefully', async () => {
+    it("should handle subscription storms gracefully", async () => {
       monitor.start();
 
       const subscriptionCount = 500;
@@ -564,7 +571,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       const broadcastStart = performance.now();
 
       const broadcastData = {
-        type: 'appointment_update',
+        type: "appointment_update",
         data: mockAppointment,
       };
 
@@ -586,12 +593,12 @@ describe('performance Validation Tests - Final Production Readiness', () => {
     });
   });
 
-  describe('database Performance Validation', () => {
-    it('should handle complex patient queries efficiently', async () => {
+  describe("database Performance Validation", () => {
+    it("should handle complex patient queries efficiently", async () => {
       monitor.start();
 
       // Mock complex query with joins and filtering
-      jest.spyOn(global, 'fetch').mockImplementation(() => {
+      jest.spyOn(global, "fetch").mockImplementation(() => {
         return new Promise((resolve) => {
           // Simulate database query processing time
           const queryComplexity = Math.random() * 30 + 20; // 20-50ms
@@ -607,7 +614,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
                     execution_time_ms: queryComplexity,
                     rows_examined: 1000,
                     rows_returned: 1,
-                    index_usage: 'optimal',
+                    index_usage: "optimal",
                   },
                 }),
             });
@@ -617,20 +624,20 @@ describe('performance Validation Tests - Final Production Readiness', () => {
 
       const queryStart = performance.now();
 
-      const response = await fetch('/api/patients/search', {
-        method: 'POST',
+      const response = await fetch("/api/patients/search", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({
           filters: {
-            name: 'João',
+            name: "João",
             age_range: [30, 60],
             has_appointments: true,
-            consent_status: 'active',
+            consent_status: "active",
           },
-          sort: 'name',
+          sort: "name",
           limit: 50,
         }),
       });
@@ -640,10 +647,10 @@ describe('performance Validation Tests - Final Production Readiness', () => {
 
       expect(response.status).toBe(200);
       expect(queryTime).toBeLessThan(100); // Complex queries under 100ms
-      expect(data.query_stats.index_usage).toBe('optimal');
+      expect(data.query_stats.index_usage).toBe("optimal");
     });
 
-    it('should optimize bulk operations for performance', async () => {
+    it("should optimize bulk operations for performance", async () => {
       monitor.start();
 
       const bulkSize = 100;
@@ -654,7 +661,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       }));
 
       // Mock bulk insert
-      jest.spyOn(global, 'fetch').mockImplementation(() => {
+      jest.spyOn(global, "fetch").mockImplementation(() => {
         return new Promise((resolve) => {
           const bulkTime = Math.min(bulkSize * 2, 200); // Max 200ms for bulk
           setTimeout(() => {
@@ -680,11 +687,11 @@ describe('performance Validation Tests - Final Production Readiness', () => {
 
       const bulkStart = performance.now();
 
-      const response = await fetch('/api/patients/bulk', {
-        method: 'POST',
+      const response = await fetch("/api/patients/bulk", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          "Content-Type": "application/json",
+          Authorization: "Bearer test-token",
         },
         body: JSON.stringify({ patients }),
       });
@@ -699,8 +706,8 @@ describe('performance Validation Tests - Final Production Readiness', () => {
     });
   });
 
-  describe('production Scalability Validation', () => {
-    it('should scale to handle 1000+ concurrent healthcare professionals', async () => {
+  describe("production Scalability Validation", () => {
+    it("should scale to handle 1000+ concurrent healthcare professionals", async () => {
       monitor.start();
 
       // This is a simulation of production load
@@ -720,27 +727,29 @@ describe('performance Validation Tests - Final Production Readiness', () => {
             const actionStart = performance.now();
 
             try {
-              const response = await fetch('/api/patients', {
-                method: 'GET',
+              const response = await fetch("/api/patients", {
+                method: "GET",
                 headers: { Authorization: `Bearer token-${i}` },
               });
 
               const actionTime = performance.now() - actionStart;
               professional.actions.push({
-                type: 'patient_query',
+                type: "patient_query",
                 duration: actionTime,
                 success: response.ok,
               });
             } catch {
               professional.actions.push({
-                type: 'patient_query',
+                type: "patient_query",
                 duration: -1,
                 success: false,
               });
             }
 
             // Small delay between actions
-            await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
+            await new Promise((resolve) =>
+              setTimeout(resolve, Math.random() * 10),
+            );
           }
 
           return professional;
@@ -753,7 +762,8 @@ describe('performance Validation Tests - Final Production Readiness', () => {
         0,
       );
       const successfulActions = results.reduce(
-        (sum, prof) => sum + prof.actions.filter((action) => action.success).length,
+        (sum, prof) =>
+          sum + prof.actions.filter((action) => action.success).length,
         0,
       );
 
@@ -765,7 +775,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
       expect(totalTime).toBeLessThan(30_000); // Complete within 30 seconds
     });
 
-    it('should maintain consistent performance during peak hours', async () => {
+    it("should maintain consistent performance during peak hours", async () => {
       monitor.start();
 
       // Simulate peak hour load pattern
@@ -783,7 +793,7 @@ describe('performance Validation Tests - Final Production Readiness', () => {
         const duration = 2000; // 2 seconds per period
 
         const result = await loadTester.simulateConcurrentRequests(
-          '/api/appointments',
+          "/api/appointments",
           concurrency,
           duration,
         );
@@ -804,8 +814,9 @@ describe('performance Validation Tests - Final Production Readiness', () => {
         expect(result.requestsPerSecond).toBeGreaterThan(result.load * 30);
       }
 
-      const consistencyVariation = Math.max(...performanceResults.map((r) => r.averageResponseTime))
-        - Math.min(...performanceResults.map((r) => r.averageResponseTime));
+      const consistencyVariation =
+        Math.max(...performanceResults.map((r) => r.averageResponseTime)) -
+        Math.min(...performanceResults.map((r) => r.averageResponseTime));
 
       expect(consistencyVariation).toBeLessThan(100); // Less than 100ms variation
     });

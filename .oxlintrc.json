@@ -53,7 +53,11 @@
     "import/resolver": {
       "typescript": {
         "alwaysTryTypes": true,
-        "project": ["./tsconfig.json", "./apps/*/tsconfig.json", "./packages/*/tsconfig.json"]
+        "project": [
+          "./tsconfig.json",
+          "./apps/*/tsconfig.json",
+          "./packages/*/tsconfig.json"
+        ]
       }
     },
     "jest": {
@@ -73,18 +77,24 @@
     "typescript/consistent-type-imports": "error",
     "typescript/consistent-type-exports": "error",
     "typescript/no-explicit-any": "error",
-    "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "typescript/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
     "typescript/array-type": ["error", { "default": "array" }],
     "typescript/consistent-type-definitions": ["error", "interface"],
     "typescript/no-non-null-assertion": "warn",
     "typescript/prefer-as-const": "error",
     "typescript/prefer-ts-expect-error": "error",
-    "typescript/ban-ts-comment": ["error", {
-      "ts-expect-error": "allow-with-description",
-      "ts-ignore": false,
-      "ts-nocheck": false,
-      "ts-check": false
-    }],
+    "typescript/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": false,
+        "ts-nocheck": false,
+        "ts-check": false
+      }
+    ],
     "typescript/no-unnecessary-type-assertion": "error",
     "typescript/no-useless-empty-export": "error",
 
@@ -108,7 +118,10 @@
     "react/no-unescaped-entities": "warn",
     "react/self-closing-comp": ["warn", { "component": true, "html": true }],
     "react/jsx-boolean-value": ["warn", "never"],
-    "react/jsx-curly-brace-presence": ["warn", { "props": "never", "children": "never" }],
+    "react/jsx-curly-brace-presence": [
+      "warn",
+      { "props": "never", "children": "never" }
+    ],
     "react/jsx-fragments": ["warn", "syntax"],
 
     // React Hooks
@@ -159,12 +172,16 @@
     "prefer-template": "warn",
     "prefer-spread": "warn",
     "prefer-rest-params": "warn",
-    "prefer-destructuring": ["warn", {
-      "array": true,
-      "object": true
-    }, {
-      "enforceForRenamedProperties": false
-    }],
+    "prefer-destructuring": [
+      "warn",
+      {
+        "array": true,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
     "no-var": "error",
     "object-shorthand": "warn",
     "prefer-arrow-callback": "warn",
@@ -317,9 +334,12 @@
         "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
         "typescript/prefer-as-const": "error",
         "typescript/no-non-null-assertion": "warn",
-        "typescript/ban-ts-comment": ["error", {
-          "ts-expect-error": "allow-with-description"
-        }]
+        "typescript/ban-ts-comment": [
+          "error",
+          {
+            "ts-expect-error": "allow-with-description"
+          }
+        ]
       }
     },
     {
@@ -401,7 +421,11 @@
       }
     },
     {
-      "files": ["packages/compliance/**", "packages/auth/**", "packages/security/**"],
+      "files": [
+        "packages/compliance/**",
+        "packages/auth/**",
+        "packages/security/**"
+      ],
       "rules": {
         // Extra strict rules for security/compliance packages
         "typescript/no-explicit-any": "error",

@@ -10,8 +10,8 @@ import type {
   AppointmentPriority,
   AppointmentStatus,
   AppointmentType,
-} from '../schemas/appointment.schema';
-import type { MFAMethod, UserRole } from '../schemas/auth.schema';
+} from "../schemas/appointment.schema";
+import type { MFAMethod, UserRole } from "../schemas/auth.schema";
 
 // Base entity interface (all entities extend this)
 export interface BaseEntity {
@@ -93,9 +93,9 @@ export interface User extends BaseEntity, SoftDeletable, Auditable {
 
   // Preferences
   preferences: {
-    language: 'pt' | 'en' | 'es';
+    language: "pt" | "en" | "es";
     timezone: string;
-    theme: 'light' | 'dark' | 'auto';
+    theme: "light" | "dark" | "auto";
     emailNotifications: boolean;
     smsNotifications: boolean;
     marketingConsent: boolean;
@@ -114,7 +114,7 @@ export interface Patient extends BaseEntity, SoftDeletable, Auditable {
   cpf: string;
   rg?: string;
   birthDate: string;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  gender: "male" | "female" | "other" | "prefer_not_to_say";
 
   // Address
   address: Address;
@@ -130,7 +130,7 @@ export interface Patient extends BaseEntity, SoftDeletable, Auditable {
   allergies: string[];
   chronicConditions: string[];
   currentMedications: string[];
-  bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodType?: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
   height?: number; // cm
   weight?: number; // kg
 
@@ -155,8 +155,8 @@ export interface Patient extends BaseEntity, SoftDeletable, Auditable {
 }
 
 // Professional Entity (extends User)
-export interface Professional extends Omit<User, 'role'> {
-  role: 'doctor' | 'nurse' | 'aesthetician';
+export interface Professional extends Omit<User, "role"> {
+  role: "doctor" | "nurse" | "aesthetician";
 
   // Professional specific fields
   crm?: string; // For doctors
@@ -184,13 +184,13 @@ export interface Professional extends Omit<User, 'role'> {
 // Business hours type
 export interface BusinessHours {
   day:
-    | 'monday'
-    | 'tuesday'
-    | 'wednesday'
-    | 'thursday'
-    | 'friday'
-    | 'saturday'
-    | 'sunday';
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday";
   isOpen: boolean;
   openTime: string; // HH:MM
   closeTime: string; // HH:MM
@@ -202,14 +202,14 @@ export interface BusinessHours {
 export interface ClinicService extends BaseEntity {
   name: string;
   category:
-    | 'injectables'
-    | 'laser'
-    | 'skincare'
-    | 'body_treatments'
-    | 'hair_removal'
-    | 'wellness'
-    | 'consultation'
-    | 'other';
+    | "injectables"
+    | "laser"
+    | "skincare"
+    | "body_treatments"
+    | "hair_removal"
+    | "wellness"
+    | "consultation"
+    | "other";
   description?: string;
   duration: number; // minutes
   price?: number;
@@ -257,12 +257,12 @@ export interface Clinic extends BaseEntity, SoftDeletable, Auditable {
   capacity: number; // max simultaneous appointments
   acceptsInsurance: boolean;
   acceptedPaymentMethods: (
-    | 'cash'
-    | 'credit_card'
-    | 'debit_card'
-    | 'pix'
-    | 'bank_transfer'
-    | 'installments'
+    | "cash"
+    | "credit_card"
+    | "debit_card"
+    | "pix"
+    | "bank_transfer"
+    | "installments"
   )[];
 
   // Booking settings
@@ -290,8 +290,8 @@ export interface Clinic extends BaseEntity, SoftDeletable, Auditable {
 
   // Compliance
   complianceStatus: {
-    lgpd: 'compliant' | 'non_compliant' | 'pending';
-    anvisa: 'compliant' | 'non_compliant' | 'pending';
+    lgpd: "compliant" | "non_compliant" | "pending";
+    anvisa: "compliant" | "non_compliant" | "pending";
     lastAuditDate?: string;
   };
 }
@@ -329,7 +329,7 @@ export interface Appointment extends BaseEntity, SoftDeletable, Auditable {
   // Cancellation/Rescheduling
   cancelReason?: string;
   rescheduleReason?: string;
-  cancelledBy?: 'patient' | 'professional' | 'clinic' | 'system';
+  cancelledBy?: "patient" | "professional" | "clinic" | "system";
   originalScheduledAt?: string; // for rescheduled appointments
 
   // Actual times (for completed appointments)
@@ -337,7 +337,7 @@ export interface Appointment extends BaseEntity, SoftDeletable, Auditable {
   actualEndTime?: string;
 
   // Payment
-  paymentStatus?: 'pending' | 'paid' | 'partially_paid' | 'refunded';
+  paymentStatus?: "pending" | "paid" | "partially_paid" | "refunded";
   paymentMethod?: string;
 
   // Follow-up
@@ -396,11 +396,11 @@ export interface Payment extends BaseEntity {
 
   // Amount
   amount: number;
-  currency: 'BRL';
+  currency: "BRL";
 
   // Payment details
-  method: 'cash' | 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer';
-  status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
+  method: "cash" | "credit_card" | "debit_card" | "pix" | "bank_transfer";
+  status: "pending" | "completed" | "failed" | "cancelled" | "refunded";
 
   // External references
   transactionId?: string;
@@ -429,7 +429,7 @@ export interface FileDocument extends BaseEntity {
   size: number;
 
   // Storage
-  storageProvider: 'local' | 'aws' | 'gcs';
+  storageProvider: "local" | "aws" | "gcs";
   storageKey: string;
   url?: string;
 
@@ -438,7 +438,7 @@ export interface FileDocument extends BaseEntity {
   tags?: string[];
 
   // Relations
-  entityType: 'patient' | 'appointment' | 'clinic' | 'user' | 'treatment';
+  entityType: "patient" | "appointment" | "clinic" | "user" | "treatment";
   entityId: string;
   uploadedBy: string;
 
@@ -466,12 +466,12 @@ export type Entity =
   | FileDocument;
 
 export type EntityType =
-  | 'user'
-  | 'patient'
-  | 'professional'
-  | 'clinic'
-  | 'appointment'
-  | 'notification'
-  | 'treatment'
-  | 'payment'
-  | 'file';
+  | "user"
+  | "patient"
+  | "professional"
+  | "clinic"
+  | "appointment"
+  | "notification"
+  | "treatment"
+  | "payment"
+  | "file";

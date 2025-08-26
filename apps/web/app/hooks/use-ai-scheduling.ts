@@ -71,8 +71,7 @@ export const useAIScheduling = (
   // Core state
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>();
-  const [lastResult, setLastResult] = useState<SchedulingResult | null>(
-    );
+  const [lastResult, setLastResult] = useState<SchedulingResult | null>();
 
   // Optimization state
   const [optimizationScore, setOptimizationScore] = useState(0.8);
@@ -81,8 +80,7 @@ export const useAIScheduling = (
   >([]);
 
   // Analytics state
-  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>(
-    );
+  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>();
   const [processingTime, setProcessingTime] = useState(0);
 
   // Refs for AI engine and real-time connections
@@ -393,7 +391,8 @@ export const useAIScheduling = (
 
   // Update AI engine configuration
   const updateConfig = useCallback((_config: Partial<any>) => {
-    if (aiEngineRef.current) {}
+    if (aiEngineRef.current) {
+    }
   }, []);
 
   // Reset hook state
@@ -409,7 +408,8 @@ export const useAIScheduling = (
     switch (data.type) {
       case "schedule_change": {
         // Refresh available slots
-        if (data.affectedSlots) {}
+        if (data.affectedSlots) {
+        }
         break;
       }
 
@@ -442,7 +442,8 @@ export const useAIScheduling = (
           },
         );
 
-        if (response.ok) {}
+        if (response.ok) {
+        }
       } catch {}
     },
     [tenantId],

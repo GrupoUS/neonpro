@@ -25,7 +25,8 @@ export class PerformanceMonitor {
       PerformanceMonitor.metrics[operation] = duration;
 
       // Healthcare-specific thresholds
-      if (operation === 'patientDataLoadTime' && duration > 500) {}
+      if (operation === "patientDataLoadTime" && duration > 500) {
+      }
     };
   }
 
@@ -35,9 +36,9 @@ export class PerformanceMonitor {
 
   static isHealthcareCompliant(): boolean {
     return (
-      PerformanceMonitor.metrics.patientDataLoadTime < 500
-      && PerformanceMonitor.metrics.apiResponseTime < 200
-      && PerformanceMonitor.metrics.securityCheckTime < 100
+      PerformanceMonitor.metrics.patientDataLoadTime < 500 &&
+      PerformanceMonitor.metrics.apiResponseTime < 200 &&
+      PerformanceMonitor.metrics.securityCheckTime < 100
     );
   }
 }

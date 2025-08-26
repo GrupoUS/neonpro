@@ -7,7 +7,7 @@ export interface UserProfile {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'admin' | 'professional';
+  role: "user" | "admin" | "professional";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,8 +15,8 @@ export interface UserProfile {
 export interface SubscriptionStatus {
   id: string;
   userId: string;
-  tier: 'basic' | 'premium' | 'enterprise';
-  status: 'active' | 'inactive' | 'cancelled' | 'expired';
+  tier: "basic" | "premium" | "enterprise";
+  status: "active" | "inactive" | "cancelled" | "expired";
   startDate: Date;
   endDate: Date;
   autoRenew: boolean;

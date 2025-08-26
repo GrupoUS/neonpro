@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { patientApi, patientKeys } from '../lib/api/patients';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { patientApi, patientKeys } from "../lib/api/patients";
 
 // Hook to get all patients
 export function usePatients() {
@@ -34,10 +34,10 @@ export function useCreatePatient() {
       // Optionally add the new patient to the cache
       queryClient.setQueryData(patientKeys.detail(newPatient.id), newPatient);
 
-      toast.success('Paciente criado com sucesso!');
+      toast.success("Paciente criado com sucesso!");
     },
     onError: (_error) => {
-      toast.error('Erro ao criar paciente. Tente novamente.');
+      toast.error("Erro ao criar paciente. Tente novamente.");
     },
   });
 }
@@ -58,10 +58,10 @@ export function useUpdatePatient() {
       // Invalidate the patients list to refetch
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
 
-      toast.success('Paciente atualizado com sucesso!');
+      toast.success("Paciente atualizado com sucesso!");
     },
     onError: (_error) => {
-      toast.error('Erro ao atualizar paciente. Tente novamente.');
+      toast.error("Erro ao atualizar paciente. Tente novamente.");
     },
   });
 }
@@ -79,10 +79,10 @@ export function useDeletePatient() {
       // Invalidate the patients list to refetch
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
 
-      toast.success('Paciente removido com sucesso!');
+      toast.success("Paciente removido com sucesso!");
     },
     onError: (_error) => {
-      toast.error('Erro ao remover paciente. Tente novamente.');
+      toast.error("Erro ao remover paciente. Tente novamente.");
     },
   });
 }

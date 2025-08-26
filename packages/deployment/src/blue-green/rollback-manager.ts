@@ -21,7 +21,7 @@ export interface RollbackResult {
 export class RollbackManager {
   private readonly rollbackHistory: RollbackConfig[] = [];
 
-  constructor(private readonly config: { maxRollbackHistory: number; }) {}
+  constructor(private readonly config: { maxRollbackHistory: number }) {}
 
   /**
    * Execute rollback to previous version
@@ -46,7 +46,7 @@ export class RollbackManager {
       return {
         success: true,
         previousVersion: config.version,
-        currentVersion: 'previous',
+        currentVersion: "previous",
         rollbackTime,
       };
     } catch (error) {
@@ -55,7 +55,7 @@ export class RollbackManager {
         previousVersion: config.version,
         currentVersion: config.version,
         rollbackTime: Date.now() - startTime,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }

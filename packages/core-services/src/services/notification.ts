@@ -3,9 +3,9 @@
 // Centralized notification management microservice
 // ================================================
 
-import { createClient } from '@supabase/supabase-js';
-import { config } from './configuration';
-import { monitoring } from './monitoring';
+import { createClient } from "@supabase/supabase-js";
+import { config } from "./configuration";
+import { monitoring } from "./monitoring";
 
 // ================================================
 // TYPES AND INTERFACES
@@ -179,86 +179,86 @@ interface NotificationTrends {
 // ================================================
 
 enum NotificationType {
-  APPOINTMENT_REMINDER = 'appointment_reminder',
-  APPOINTMENT_CONFIRMATION = 'appointment_confirmation',
-  APPOINTMENT_CANCELLATION = 'appointment_cancellation',
-  APPOINTMENT_RESCHEDULED = 'appointment_rescheduled',
-  TREATMENT_COMPLETED = 'treatment_completed',
-  PAYMENT_DUE = 'payment_due',
-  PAYMENT_RECEIVED = 'payment_received',
-  PAYMENT_OVERDUE = 'payment_overdue',
-  INVOICE_SENT = 'invoice_sent',
-  MARKETING_CAMPAIGN = 'marketing_campaign',
-  HEALTH_TIP = 'health_tip',
-  BIRTHDAY_WISH = 'birthday_wish',
-  SYSTEM_ALERT = 'system_alert',
-  SECURITY_ALERT = 'security_alert',
-  COMPLIANCE_ALERT = 'compliance_alert',
-  CUSTOM = 'custom',
+  APPOINTMENT_REMINDER = "appointment_reminder",
+  APPOINTMENT_CONFIRMATION = "appointment_confirmation",
+  APPOINTMENT_CANCELLATION = "appointment_cancellation",
+  APPOINTMENT_RESCHEDULED = "appointment_rescheduled",
+  TREATMENT_COMPLETED = "treatment_completed",
+  PAYMENT_DUE = "payment_due",
+  PAYMENT_RECEIVED = "payment_received",
+  PAYMENT_OVERDUE = "payment_overdue",
+  INVOICE_SENT = "invoice_sent",
+  MARKETING_CAMPAIGN = "marketing_campaign",
+  HEALTH_TIP = "health_tip",
+  BIRTHDAY_WISH = "birthday_wish",
+  SYSTEM_ALERT = "system_alert",
+  SECURITY_ALERT = "security_alert",
+  COMPLIANCE_ALERT = "compliance_alert",
+  CUSTOM = "custom",
 }
 
 enum NotificationChannel {
-  EMAIL = 'email',
-  SMS = 'sms',
-  WHATSAPP = 'whatsapp',
-  PUSH = 'push',
-  IN_APP = 'in_app',
-  WEBHOOK = 'webhook',
+  EMAIL = "email",
+  SMS = "sms",
+  WHATSAPP = "whatsapp",
+  PUSH = "push",
+  IN_APP = "in_app",
+  WEBHOOK = "webhook",
 }
 
 enum NotificationPriority {
-  LOW = 'low',
-  NORMAL = 'normal',
-  HIGH = 'high',
-  URGENT = 'urgent',
+  LOW = "low",
+  NORMAL = "normal",
+  HIGH = "high",
+  URGENT = "urgent",
 }
 
 enum NotificationStatus {
-  PENDING = 'pending',
-  SCHEDULED = 'scheduled',
-  SENDING = 'sending',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  READ = 'read',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  EXPIRED = 'expired',
+  PENDING = "pending",
+  SCHEDULED = "scheduled",
+  SENDING = "sending",
+  SENT = "sent",
+  DELIVERED = "delivered",
+  READ = "read",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
+  EXPIRED = "expired",
 }
 
 enum RecipientType {
-  USER = 'user',
-  PATIENT = 'patient',
-  STAFF = 'staff',
-  ADMIN = 'admin',
-  ROLE = 'role',
-  EMAIL = 'email',
-  PHONE = 'phone',
+  USER = "user",
+  PATIENT = "patient",
+  STAFF = "staff",
+  ADMIN = "admin",
+  ROLE = "role",
+  EMAIL = "email",
+  PHONE = "phone",
 }
 
 enum BatchStatus {
-  PENDING = 'pending',
-  PROCESSING = 'processing',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
+  PENDING = "pending",
+  PROCESSING = "processing",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
 }
 
 enum ConditionOperator {
-  EQUALS = 'equals',
-  NOT_EQUALS = 'not_equals',
-  GREATER_THAN = 'greater_than',
-  LESS_THAN = 'less_than',
-  CONTAINS = 'contains',
-  NOT_CONTAINS = 'not_contains',
-  IN = 'in',
-  NOT_IN = 'not_in',
-  IS_NULL = 'is_null',
-  IS_NOT_NULL = 'is_not_null',
+  EQUALS = "equals",
+  NOT_EQUALS = "not_equals",
+  GREATER_THAN = "greater_than",
+  LESS_THAN = "less_than",
+  CONTAINS = "contains",
+  NOT_CONTAINS = "not_contains",
+  IN = "in",
+  NOT_IN = "not_in",
+  IS_NULL = "is_null",
+  IS_NOT_NULL = "is_not_null",
 }
 
 enum LogicalOperator {
-  AND = 'and',
-  OR = 'or',
+  AND = "and",
+  OR = "or",
 }
 
 // ================================================
@@ -318,7 +318,7 @@ interface NotificationFilters {
   limit?: number;
   offset?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 // ================================================
@@ -355,7 +355,7 @@ export class NotificationService {
     userId?: string,
   ): Promise<Notification> {
     try {
-      monitoring.info('Sending notification', 'notification-service', {
+      monitoring.info("Sending notification", "notification-service", {
         tenantId: request.tenantId,
         type: request.type,
         channel: request.channel,
@@ -376,15 +376,15 @@ export class NotificationService {
 
       if (!canSend) {
         monitoring.info(
-          'Notification blocked by user preferences',
-          'notification-service',
+          "Notification blocked by user preferences",
+          "notification-service",
           {
             recipientId: request.recipientId,
             type: request.type,
             channel: request.channel,
           },
         );
-        throw new Error('Notification blocked by user preferences');
+        throw new Error("Notification blocked by user preferences");
       }
 
       // Create notification record
@@ -410,15 +410,15 @@ export class NotificationService {
       };
 
       const { data, error } = await this.supabase
-        .from('notifications')
+        .from("notifications")
         .insert(notificationData)
         .select()
         .single();
 
       if (error) {
         monitoring.error(
-          'Notification creation failed',
-          'notification-service',
+          "Notification creation failed",
+          "notification-service",
           new Error(error.message),
           {
             tenantId: request.tenantId,
@@ -435,8 +435,8 @@ export class NotificationService {
       }
 
       monitoring.info(
-        'Notification created successfully',
-        'notification-service',
+        "Notification created successfully",
+        "notification-service",
         {
           notificationId: notification.id,
           tenantId: notification.tenantId,
@@ -446,8 +446,8 @@ export class NotificationService {
       return notification;
     } catch (error) {
       monitoring.error(
-        'Send notification error',
-        'notification-service',
+        "Send notification error",
+        "notification-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -463,7 +463,7 @@ export class NotificationService {
     userId: string,
   ): Promise<NotificationBatch> {
     try {
-      monitoring.info('Sending bulk notification', 'notification-service', {
+      monitoring.info("Sending bulk notification", "notification-service", {
         tenantId: request.tenantId,
         type: request.type,
         recipientCount: request.recipients.length,
@@ -478,7 +478,7 @@ export class NotificationService {
         name: `${request.type}_${Date.now()}`,
         type: request.type,
         channel: request.channel,
-        recipients: request.recipients.map((r) => r.id || r.contact || ''),
+        recipients: request.recipients.map((r) => r.id || r.contact || ""),
         status: BatchStatus.PENDING,
         total_count: request.recipients.length,
         sent_count: 0,
@@ -489,7 +489,7 @@ export class NotificationService {
       };
 
       const { data: batchRecord, error: batchError } = await this.supabase
-        .from('notification_batches')
+        .from("notification_batches")
         .insert(batchData)
         .select()
         .single();
@@ -501,7 +501,7 @@ export class NotificationService {
       // Create individual notifications
       const notifications = request.recipients.map((recipient) => ({
         tenant_id: request.tenantId,
-        recipient_id: recipient.id || '',
+        recipient_id: recipient.id || "",
         recipient_type: recipient.type,
         type: request.type,
         channel: request.channel,
@@ -521,7 +521,7 @@ export class NotificationService {
       }));
 
       const { error: notificationsError } = await this.supabase
-        .from('notifications')
+        .from("notifications")
         .insert(notifications);
 
       if (notificationsError) {
@@ -536,8 +536,8 @@ export class NotificationService {
       }
 
       monitoring.info(
-        'Bulk notification created successfully',
-        'notification-service',
+        "Bulk notification created successfully",
+        "notification-service",
         {
           batchId: batch.id,
           tenantId: batch.tenantId,
@@ -548,8 +548,8 @@ export class NotificationService {
       return batch;
     } catch (error) {
       monitoring.error(
-        'Send bulk notification error',
-        'notification-service',
+        "Send bulk notification error",
+        "notification-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -573,7 +573,7 @@ export class NotificationService {
       // Get template
       const template = await this.getTemplate(templateId, userId);
       if (!template?.isActive) {
-        throw new Error('Template not found or inactive');
+        throw new Error("Template not found or inactive");
       }
 
       // Process template variables
@@ -605,8 +605,8 @@ export class NotificationService {
       );
     } catch (error) {
       monitoring.error(
-        'Send templated notification error',
-        'notification-service',
+        "Send templated notification error",
+        "notification-service",
         error as Error,
         {
           templateId,
@@ -623,27 +623,27 @@ export class NotificationService {
 
   async processNotification(notificationId: string): Promise<boolean> {
     try {
-      monitoring.debug('Processing notification', 'notification-service', {
+      monitoring.debug("Processing notification", "notification-service", {
         notificationId,
       });
 
       // Get notification
       const { data, error } = await this.supabase
-        .from('notifications')
-        .select('*')
-        .eq('id', notificationId)
+        .from("notifications")
+        .select("*")
+        .eq("id", notificationId)
         .single();
 
       if (error || !data) {
-        throw new Error('Notification not found');
+        throw new Error("Notification not found");
       }
 
       const notification = this.mapNotificationFromDb(data);
 
       // Check if notification is valid for sending
       if (
-        notification.status !== NotificationStatus.PENDING
-        && notification.status !== NotificationStatus.SCHEDULED
+        notification.status !== NotificationStatus.PENDING &&
+        notification.status !== NotificationStatus.SCHEDULED
       ) {
         return false;
       }
@@ -673,8 +673,8 @@ export class NotificationService {
             new Date(),
           );
           monitoring.info(
-            'Notification sent successfully',
-            'notification-service',
+            "Notification sent successfully",
+            "notification-service",
             {
               notificationId,
             },
@@ -683,7 +683,7 @@ export class NotificationService {
         }
         await this.handleNotificationFailure(
           notificationId,
-          'Channel delivery failed',
+          "Channel delivery failed",
         );
         return false;
       } catch (error) {
@@ -695,8 +695,8 @@ export class NotificationService {
       }
     } catch (error) {
       monitoring.error(
-        'Process notification error',
-        'notification-service',
+        "Process notification error",
+        "notification-service",
         error as Error,
         {
           notificationId,
@@ -708,25 +708,25 @@ export class NotificationService {
 
   async processBatch(batchId: string): Promise<void> {
     try {
-      monitoring.info('Processing notification batch', 'notification-service', {
+      monitoring.info("Processing notification batch", "notification-service", {
         batchId,
       });
 
       // Update batch status
       await this.supabase
-        .from('notification_batches')
+        .from("notification_batches")
         .update({
           status: BatchStatus.PROCESSING,
           started_at: new Date().toISOString(),
         })
-        .eq('id', batchId);
+        .eq("id", batchId);
 
       // Get batch notifications
       const { data: notifications, error } = await this.supabase
-        .from('notifications')
-        .select('id')
-        .eq('data->>batchId', batchId)
-        .eq('status', NotificationStatus.PENDING);
+        .from("notifications")
+        .select("id")
+        .eq("data->>batchId", batchId)
+        .eq("status", NotificationStatus.PENDING);
 
       if (error) {
         throw new Error(error.message);
@@ -742,53 +742,53 @@ export class NotificationService {
 
         const promises = batch.map(async (notification) => {
           const success = await this.processNotification(notification.id);
-          return success ? 'sent' : 'failed';
+          return success ? "sent" : "failed";
         });
 
         const results = await Promise.all(promises);
-        sentCount += results.filter((r) => r === 'sent').length;
-        failedCount += results.filter((r) => r === 'failed').length;
+        sentCount += results.filter((r) => r === "sent").length;
+        failedCount += results.filter((r) => r === "failed").length;
 
         // Update batch progress
         await this.supabase
-          .from('notification_batches')
+          .from("notification_batches")
           .update({
             sent_count: sentCount,
             failed_count: failedCount,
           })
-          .eq('id', batchId);
+          .eq("id", batchId);
       }
 
       // Complete batch
       await this.supabase
-        .from('notification_batches')
+        .from("notification_batches")
         .update({
           status: BatchStatus.COMPLETED,
           completed_at: new Date().toISOString(),
         })
-        .eq('id', batchId);
+        .eq("id", batchId);
 
-      monitoring.info('Notification batch completed', 'notification-service', {
+      monitoring.info("Notification batch completed", "notification-service", {
         batchId,
         sentCount,
         failedCount,
       });
     } catch (error) {
       monitoring.error(
-        'Process batch error',
-        'notification-service',
+        "Process batch error",
+        "notification-service",
         error as Error,
         { batchId },
       );
 
       // Mark batch as failed
       await this.supabase
-        .from('notification_batches')
+        .from("notification_batches")
         .update({
           status: BatchStatus.FAILED,
           completed_at: new Date().toISOString(),
         })
-        .eq('id', batchId);
+        .eq("id", batchId);
     }
   }
 
@@ -802,9 +802,9 @@ export class NotificationService {
   ): Promise<Notification | null> {
     try {
       const { data, error } = await this.supabase
-        .from('notifications')
-        .select('*')
-        .eq('id', notificationId)
+        .from("notifications")
+        .select("*")
+        .eq("id", notificationId)
         .single();
 
       if (error || !data) {
@@ -817,8 +817,8 @@ export class NotificationService {
       return this.mapNotificationFromDb(data);
     } catch (error) {
       monitoring.error(
-        'Get notification error',
-        'notification-service',
+        "Get notification error",
+        "notification-service",
         error as Error,
         {
           notificationId,
@@ -831,9 +831,9 @@ export class NotificationService {
   async searchNotifications(
     filters: NotificationFilters,
     userId: string,
-  ): Promise<{ notifications: Notification[]; total: number; }> {
+  ): Promise<{ notifications: Notification[]; total: number }> {
     try {
-      monitoring.debug('Searching notifications', 'notification-service', {
+      monitoring.debug("Searching notifications", "notification-service", {
         filters,
       });
 
@@ -843,50 +843,50 @@ export class NotificationService {
       }
 
       let query = this.supabase
-        .from('notifications')
-        .select('*', { count: 'exact' });
+        .from("notifications")
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (filters.tenantId) {
-        query = query.eq('tenant_id', filters.tenantId);
+        query = query.eq("tenant_id", filters.tenantId);
       }
 
       if (filters.recipientId) {
-        query = query.eq('recipient_id', filters.recipientId);
+        query = query.eq("recipient_id", filters.recipientId);
       }
 
       if (filters.recipientType) {
-        query = query.eq('recipient_type', filters.recipientType);
+        query = query.eq("recipient_type", filters.recipientType);
       }
 
       if (filters.type) {
-        query = query.eq('type', filters.type);
+        query = query.eq("type", filters.type);
       }
 
       if (filters.channel) {
-        query = query.eq('channel', filters.channel);
+        query = query.eq("channel", filters.channel);
       }
 
       if (filters.priority) {
-        query = query.eq('priority', filters.priority);
+        query = query.eq("priority", filters.priority);
       }
 
       if (filters.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
 
       if (filters.dateFrom) {
-        query = query.gte('created_at', filters.dateFrom.toISOString());
+        query = query.gte("created_at", filters.dateFrom.toISOString());
       }
 
       if (filters.dateTo) {
-        query = query.lte('created_at', filters.dateTo.toISOString());
+        query = query.lte("created_at", filters.dateTo.toISOString());
       }
 
       // Apply sorting
-      const sortBy = filters.sortBy || 'created_at';
-      const sortOrder = filters.sortOrder || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = filters.sortBy || "created_at";
+      const sortOrder = filters.sortOrder || "desc";
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const limit = Math.min(filters.limit || 50, 100);
@@ -904,8 +904,8 @@ export class NotificationService {
       return { notifications, total: count || 0 };
     } catch (error) {
       monitoring.error(
-        'Search notifications error',
-        'notification-service',
+        "Search notifications error",
+        "notification-service",
         error as Error,
         {
           filters,
@@ -918,19 +918,19 @@ export class NotificationService {
   async markAsRead(notificationId: string, userId: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('notifications')
+        .from("notifications")
         .update({
           status: NotificationStatus.READ,
           read_at: new Date().toISOString(),
         })
-        .eq('id', notificationId)
-        .eq('recipient_id', userId);
+        .eq("id", notificationId)
+        .eq("recipient_id", userId);
 
       return !error;
     } catch (error) {
       monitoring.error(
-        'Mark as read error',
-        'notification-service',
+        "Mark as read error",
+        "notification-service",
         error as Error,
         {
           notificationId,
@@ -951,8 +951,8 @@ export class NotificationService {
   ): Promise<NotificationTemplate> {
     try {
       monitoring.info(
-        'Creating notification template',
-        'notification-service',
+        "Creating notification template",
+        "notification-service",
         {
           tenantId: request.tenantId,
           name: request.name,
@@ -976,7 +976,7 @@ export class NotificationService {
       };
 
       const { data, error } = await this.supabase
-        .from('notification_templates')
+        .from("notification_templates")
         .insert(templateData)
         .select()
         .single();
@@ -987,7 +987,7 @@ export class NotificationService {
 
       const template = this.mapTemplateFromDb(data);
 
-      monitoring.info('Template created successfully', 'notification-service', {
+      monitoring.info("Template created successfully", "notification-service", {
         templateId: template.id,
         name: template.name,
       });
@@ -995,8 +995,8 @@ export class NotificationService {
       return template;
     } catch (error) {
       monitoring.error(
-        'Create template error',
-        'notification-service',
+        "Create template error",
+        "notification-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -1013,9 +1013,9 @@ export class NotificationService {
   ): Promise<NotificationTemplate | null> {
     try {
       const { data, error } = await this.supabase
-        .from('notification_templates')
-        .select('*')
-        .eq('id', templateId)
+        .from("notification_templates")
+        .select("*")
+        .eq("id", templateId)
         .single();
 
       if (error || !data) {
@@ -1028,8 +1028,8 @@ export class NotificationService {
       return this.mapTemplateFromDb(data);
     } catch (error) {
       monitoring.error(
-        'Get template error',
-        'notification-service',
+        "Get template error",
+        "notification-service",
         error as Error,
         {
           templateId,
@@ -1051,8 +1051,8 @@ export class NotificationService {
   ): Promise<NotificationAnalytics> {
     try {
       monitoring.debug(
-        'Getting notification analytics',
-        'notification-service',
+        "Getting notification analytics",
+        "notification-service",
         {
           tenantId,
           periodStart,
@@ -1065,11 +1065,11 @@ export class NotificationService {
 
       // Get notification counts
       const { data: notifications, error } = await this.supabase
-        .from('notifications')
-        .select('channel, type, priority, status, created_at, sent_at, read_at')
-        .eq('tenant_id', tenantId)
-        .gte('created_at', periodStart.toISOString())
-        .lte('created_at', periodEnd.toISOString());
+        .from("notifications")
+        .select("channel, type, priority, status, created_at, sent_at, read_at")
+        .eq("tenant_id", tenantId)
+        .gte("created_at", periodStart.toISOString())
+        .lte("created_at", periodEnd.toISOString());
 
       if (error) {
         throw new Error(error.message);
@@ -1079,8 +1079,8 @@ export class NotificationService {
       const totalSent = notifications.filter((n) => n.sent_at).length;
       const totalDelivered = notifications.filter(
         (n) =>
-          n.status === NotificationStatus.DELIVERED
-          || n.status === NotificationStatus.READ,
+          n.status === NotificationStatus.DELIVERED ||
+          n.status === NotificationStatus.READ,
       ).length;
       const totalFailed = notifications.filter(
         (n) => n.status === NotificationStatus.FAILED,
@@ -1101,8 +1101,8 @@ export class NotificationService {
         ).length;
         const channelDelivered = channelNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED
-            || n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED ||
+            n.status === NotificationStatus.READ,
         ).length;
         const channelFailed = channelNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1128,8 +1128,8 @@ export class NotificationService {
         const typeSent = typeNotifications.filter((n) => n.sent_at).length;
         const typeDelivered = typeNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED
-            || n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED ||
+            n.status === NotificationStatus.READ,
         ).length;
         const typeFailed = typeNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1157,8 +1157,8 @@ export class NotificationService {
         ).length;
         const priorityDelivered = priorityNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED
-            || n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED ||
+            n.status === NotificationStatus.READ,
         ).length;
         const priorityFailed = priorityNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1167,21 +1167,22 @@ export class NotificationService {
         // Calculate average delivery time
         const deliveredNotifications = priorityNotifications.filter(
           (n) =>
-            n.sent_at
-            && (n.status === NotificationStatus.DELIVERED
-              || n.status === NotificationStatus.READ),
+            n.sent_at &&
+            (n.status === NotificationStatus.DELIVERED ||
+              n.status === NotificationStatus.READ),
         );
-        const avgDeliveryTime = deliveredNotifications.length > 0
-          ? deliveredNotifications.reduce((sum, n) => {
-            const sentTime = new Date(n.sent_at!).getTime();
-            const deliveredTime = new Date(
-              n.read_at || n.sent_at!,
-            ).getTime();
-            return sum + (deliveredTime - sentTime);
-          }, 0)
-            / deliveredNotifications.length
-            / 1000 // Convert to seconds
-          : 0;
+        const avgDeliveryTime =
+          deliveredNotifications.length > 0
+            ? deliveredNotifications.reduce((sum, n) => {
+                const sentTime = new Date(n.sent_at!).getTime();
+                const deliveredTime = new Date(
+                  n.read_at || n.sent_at!,
+                ).getTime();
+                return sum + (deliveredTime - sentTime);
+              }, 0) /
+              deliveredNotifications.length /
+              1000 // Convert to seconds
+            : 0;
 
         byPriority[priority] = {
           sent: prioritySent,
@@ -1212,8 +1213,8 @@ export class NotificationService {
       };
     } catch (error) {
       monitoring.error(
-        'Get notification analytics error',
-        'notification-service',
+        "Get notification analytics error",
+        "notification-service",
         error as Error,
         {
           tenantId,
@@ -1231,8 +1232,8 @@ export class NotificationService {
 
   private async initializeConfiguration(): Promise<void> {
     this.maxRetries = await config.getConfiguration(
-      'notifications.max_retries',
-      { environment: process.env.NODE_ENV || 'development' },
+      "notifications.max_retries",
+      { environment: process.env.NODE_ENV || "development" },
       3,
     );
   }
@@ -1252,11 +1253,11 @@ export class NotificationService {
   ): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
-        .from('notification_preferences')
-        .select('enabled, quiet_hours_start, quiet_hours_end, timezone')
-        .eq('user_id', recipientId)
-        .eq('type', type)
-        .eq('channel', channel)
+        .from("notification_preferences")
+        .select("enabled, quiet_hours_start, quiet_hours_end, timezone")
+        .eq("user_id", recipientId)
+        .eq("type", type)
+        .eq("channel", channel)
         .single();
 
       if (error || !data) {
@@ -1270,14 +1271,14 @@ export class NotificationService {
       // Check quiet hours
       if (data.quiet_hours_start && data.quiet_hours_end) {
         const now = new Date();
-        const currentTime = now.toLocaleTimeString('en-US', {
+        const currentTime = now.toLocaleTimeString("en-US", {
           hour12: false,
-          timeZone: data.timezone || 'America/Sao_Paulo',
+          timeZone: data.timezone || "America/Sao_Paulo",
         });
 
         if (
-          currentTime >= data.quiet_hours_start
-          && currentTime <= data.quiet_hours_end
+          currentTime >= data.quiet_hours_start &&
+          currentTime <= data.quiet_hours_end
         ) {
           return false;
         }
@@ -1286,8 +1287,8 @@ export class NotificationService {
       return true;
     } catch (error) {
       monitoring.error(
-        'Check notification preferences error',
-        'notification-service',
+        "Check notification preferences error",
+        "notification-service",
         error as Error,
         {
           recipientId,
@@ -1326,8 +1327,8 @@ export class NotificationService {
       }
     } catch (error) {
       monitoring.error(
-        'Send by channel error',
-        'notification-service',
+        "Send by channel error",
+        "notification-service",
         error as Error,
         {
           notificationId: notification.id,
@@ -1340,7 +1341,7 @@ export class NotificationService {
 
   private async sendEmail(notification: Notification): Promise<boolean> {
     // Implementation would integrate with email service (AWS SES, SendGrid, etc.)
-    monitoring.info('Email sent (mock)', 'notification-service', {
+    monitoring.info("Email sent (mock)", "notification-service", {
       notificationId: notification.id,
       recipientId: notification.recipientId,
     });
@@ -1349,7 +1350,7 @@ export class NotificationService {
 
   private async sendSMS(notification: Notification): Promise<boolean> {
     // Implementation would integrate with SMS service (Twilio, AWS SNS, etc.)
-    monitoring.info('SMS sent (mock)', 'notification-service', {
+    monitoring.info("SMS sent (mock)", "notification-service", {
       notificationId: notification.id,
       recipientId: notification.recipientId,
     });
@@ -1358,7 +1359,7 @@ export class NotificationService {
 
   private async sendWhatsApp(notification: Notification): Promise<boolean> {
     // Implementation would integrate with WhatsApp Business API
-    monitoring.info('WhatsApp sent (mock)', 'notification-service', {
+    monitoring.info("WhatsApp sent (mock)", "notification-service", {
       notificationId: notification.id,
       recipientId: notification.recipientId,
     });
@@ -1367,7 +1368,7 @@ export class NotificationService {
 
   private async sendPush(notification: Notification): Promise<boolean> {
     // Implementation would integrate with push notification service (Firebase, etc.)
-    monitoring.info('Push notification sent (mock)', 'notification-service', {
+    monitoring.info("Push notification sent (mock)", "notification-service", {
       notificationId: notification.id,
       recipientId: notification.recipientId,
     });
@@ -1376,7 +1377,7 @@ export class NotificationService {
 
   private async sendInApp(notification: Notification): Promise<boolean> {
     // In-app notifications are typically just stored in database
-    monitoring.info('In-app notification created', 'notification-service', {
+    monitoring.info("In-app notification created", "notification-service", {
       notificationId: notification.id,
       recipientId: notification.recipientId,
     });
@@ -1385,7 +1386,7 @@ export class NotificationService {
 
   private async sendWebhook(notification: Notification): Promise<boolean> {
     // Implementation would send HTTP request to webhook URL
-    monitoring.info('Webhook sent (mock)', 'notification-service', {
+    monitoring.info("Webhook sent (mock)", "notification-service", {
       notificationId: notification.id,
       recipientId: notification.recipientId,
     });
@@ -1407,9 +1408,9 @@ export class NotificationService {
     }
 
     await this.supabase
-      .from('notifications')
+      .from("notifications")
       .update(updateData)
-      .eq('id', notificationId);
+      .eq("id", notificationId);
   }
 
   private async handleNotificationFailure(
@@ -1418,30 +1419,31 @@ export class NotificationService {
   ): Promise<void> {
     // Get current notification
     const { data } = await this.supabase
-      .from('notifications')
-      .select('retry_count, max_retries')
-      .eq('id', notificationId)
+      .from("notifications")
+      .select("retry_count, max_retries")
+      .eq("id", notificationId)
       .single();
 
     if (data && data.retry_count < data.max_retries) {
       // Schedule retry
       const retryCount = data.retry_count + 1;
-      const retryDelay = this.retryDelays[Math.min(retryCount - 1, this.retryDelays.length - 1)];
+      const retryDelay =
+        this.retryDelays[Math.min(retryCount - 1, this.retryDelays.length - 1)];
       const scheduledAt = new Date(Date.now() + retryDelay);
 
       await this.supabase
-        .from('notifications')
+        .from("notifications")
         .update({
           status: NotificationStatus.SCHEDULED,
           retry_count: retryCount,
           scheduled_at: scheduledAt.toISOString(),
           error_message: errorMessage,
         })
-        .eq('id', notificationId);
+        .eq("id", notificationId);
 
       monitoring.info(
-        'Notification scheduled for retry',
-        'notification-service',
+        "Notification scheduled for retry",
+        "notification-service",
         {
           notificationId,
           retryCount,
@@ -1451,16 +1453,16 @@ export class NotificationService {
     } else {
       // Mark as failed
       await this.supabase
-        .from('notifications')
+        .from("notifications")
         .update({
           status: NotificationStatus.FAILED,
           error_message: errorMessage,
         })
-        .eq('id', notificationId);
+        .eq("id", notificationId);
 
       monitoring.warn(
-        'Notification failed after max retries',
-        'notification-service',
+        "Notification failed after max retries",
+        "notification-service",
         {
           notificationId,
           errorMessage,
@@ -1478,7 +1480,7 @@ export class NotificationService {
     Object.entries(variables).forEach(([key, value]) => {
       const placeholder = `{{${key}}}`;
       processed = processed.replaceAll(
-        new RegExp(placeholder, 'g'),
+        new RegExp(placeholder, "g"),
         String(value),
       );
     });

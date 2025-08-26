@@ -4,9 +4,9 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { securityAPI } from './index';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { securityAPI } from "./index";
 
 // Types
 interface SecurityContext {
@@ -36,7 +36,7 @@ const defaultSecurityConfig: SecurityConfig = {
   enableAuditLog: true,
   enableThreatDetection: true,
   blockedIPs: [],
-  allowedOrigins: ['http://localhost:3000', 'https://*.neonpro.com'],
+  allowedOrigins: ["http://localhost:3000", "https://*.neonpro.com"],
 };
 
 // Security middleware class
@@ -44,7 +44,7 @@ export class SecurityMiddleware {
   private config: SecurityConfig;
   private readonly rateLimitStore: Map<
     string,
-    { count: number; resetTime: number; }
+    { count: number; resetTime: number }
   > = new Map();
 
   constructor(config: Partial<SecurityConfig> = {}) {
@@ -58,40 +58,40 @@ export class SecurityMiddleware {
     try {
       // 1. IP blocking check
       if (this.isBlockedIP(context.ipAddress)) {
-        await this.logSecurityEvent('blocked_ip_access', context, 'warning');
-        return new NextResponse('Access Denied', { status: 403 });
+        await this.logSecurityEvent("blocked_ip_access", context, "warning");
+        return new NextResponse("Access Denied", { status: 403 });
       }
 
       // 2. Rate limiting
       if (this.config.enableRateLimit && this.isRateLimited(context)) {
-        await this.logSecurityEvent('rate_limit_exceeded', context, 'warning');
-        return new NextResponse('Rate Limit Exceeded', { status: 429 });
+        await this.logSecurityEvent("rate_limit_exceeded", context, "warning");
+        return new NextResponse("Rate Limit Exceeded", { status: 429 });
       }
 
       // 3. CORS validation
       if (!this.isValidOrigin(request)) {
-        await this.logSecurityEvent('invalid_origin', context, 'warning');
-        return new NextResponse('Invalid Origin', { status: 403 });
+        await this.logSecurityEvent("invalid_origin", context, "warning");
+        return new NextResponse("Invalid Origin", { status: 403 });
       }
 
       // 4. Threat detection
       if (
-        this.config.enableThreatDetection
-        && this.detectThreat(request, context)
+        this.config.enableThreatDetection &&
+        this.detectThreat(request, context)
       ) {
-        await this.logSecurityEvent('threat_detected', context, 'critical');
-        return new NextResponse('Threat Detected', { status: 403 });
+        await this.logSecurityEvent("threat_detected", context, "critical");
+        return new NextResponse("Threat Detected", { status: 403 });
       }
 
       // 5. Audit logging
       if (this.config.enableAuditLog) {
-        await this.logSecurityEvent('api_access', context, 'info');
+        await this.logSecurityEvent("api_access", context, "info");
       }
 
       return; // Continue to next middleware/handler
     } catch {
-      await this.logSecurityEvent('middleware_error', context, 'error');
-      return new NextResponse('Internal Security Error', { status: 500 });
+      await this.logSecurityEvent("middleware_error", context, "error");
+      return new NextResponse("Internal Security Error", { status: 500 });
     }
   }
 
@@ -99,10 +99,11 @@ export class SecurityMiddleware {
   private extractSecurityContext(request: NextRequest): SecurityContext {
     const url = new URL(request.url);
     return {
-      ipAddress: request.headers.get('x-forwarded-for')
-        || request.headers.get('x-real-ip')
-        || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress:
+        request.headers.get("x-forwarded-for") ||
+        request.headers.get("x-real-ip") ||
+        "unknown",
+      userAgent: request.headers.get("user-agent") || "unknown",
       endpoint: url.pathname,
       method: request.method,
     };
@@ -144,14 +145,14 @@ export class SecurityMiddleware {
 
   // CORS origin validation
   private isValidOrigin(request: NextRequest): boolean {
-    const origin = request.headers.get('origin');
+    const origin = request.headers.get("origin");
     if (!origin) {
       return true; // Allow requests without origin (like server-to-server)
     }
 
     return this.config.allowedOrigins.some((allowed) => {
-      if (allowed.includes('*')) {
-        const pattern = allowed.replaceAll("\\*", '.*');
+      if (allowed.includes("*")) {
+        const pattern = allowed.replaceAll("\\*", ".*");
         return new RegExp(pattern).test(origin);
       }
       return allowed === origin;
@@ -172,7 +173,7 @@ export class SecurityMiddleware {
     ];
 
     const url = request.url;
-    const userAgent = context.userAgent || '';
+    const userAgent = context.userAgent || "";
 
     return suspiciousPatterns.some(
       (pattern) => pattern.test(url) || pattern.test(userAgent),
@@ -183,7 +184,7 @@ export class SecurityMiddleware {
   private async logSecurityEvent(
     eventType: string,
     context: SecurityContext,
-    severity: 'info' | 'warning' | 'error' | 'critical',
+    severity: "info" | "warning" | "error" | "critical",
   ): Promise<void> {
     try {
       await securityAPI.createSecurityEvent({

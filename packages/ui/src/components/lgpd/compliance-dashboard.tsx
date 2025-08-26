@@ -1,11 +1,25 @@
-'use client';
+"use client";
 
-import { AlertTriangle, CheckCircle, Clock, FileText, Lock, Shield, Users } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Alert, AlertDescription } from '../ui/alert';
-import { Badge } from '../ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Progress } from '../ui/progress';
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  FileText,
+  Lock,
+  Shield,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Badge } from "../ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Progress } from "../ui/progress";
 
 // ============================================================================
 // TYPES
@@ -32,19 +46,21 @@ interface ComplianceStatus {
 // ============================================================================
 
 export function ComplianceDashboard() {
-  const [complianceStatus, setComplianceStatus] = useState<ComplianceStatus | null>();
+  const [complianceStatus, setComplianceStatus] =
+    useState<ComplianceStatus | null>();
   const [loading, setLoading] = useState(true);
 
   const loadComplianceStatus = async () => {
     try {
-      const response = await fetch('/api/lgpd/compliance/status');
+      const response = await fetch("/api/lgpd/compliance/status");
       if (!response.ok) {
-        throw new Error('Failed to load compliance status');
+        throw new Error("Failed to load compliance status");
       }
 
       const data: ComplianceStatus = await response.json();
       setComplianceStatus(data);
-    } catch {} finally {
+    } catch {
+    } finally {
       setLoading(false);
     }
   };
@@ -67,7 +83,9 @@ export function ComplianceDashboard() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map((i) => <div className="h-20 rounded-lg bg-gray-200" key={i} />)}
+            {[1, 2, 3].map((i) => (
+              <div className="h-20 rounded-lg bg-gray-200" key={i} />
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -87,7 +105,8 @@ export function ComplianceDashboard() {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Erro ao carregar status de conformidade. Tente novamente mais tarde.
+              Erro ao carregar status de conformidade. Tente novamente mais
+              tarde.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -95,64 +114,65 @@ export function ComplianceDashboard() {
     );
   }
 
-  const consentProgress = complianceStatus.consentCompliance.requiredConsentsCount > 0
-    ? (complianceStatus.consentCompliance.grantedRequiredConsentsCount
-      / complianceStatus.consentCompliance.requiredConsentsCount)
-      * 100
-    : 100;
+  const consentProgress =
+    complianceStatus.consentCompliance.requiredConsentsCount > 0
+      ? (complianceStatus.consentCompliance.grantedRequiredConsentsCount /
+          complianceStatus.consentCompliance.requiredConsentsCount) *
+        100
+      : 100;
 
-  const isFullyCompliant = complianceStatus.consentCompliance.hasAllRequiredConsents;
+  const isFullyCompliant =
+    complianceStatus.consentCompliance.hasAllRequiredConsents;
 
   return (
     <div className="space-y-6">
       {/* Overall Status Card */}
       <Card
-        className={isFullyCompliant
-          ? 'border-green-200 bg-green-50'
-          : 'border-yellow-200 bg-yellow-50'}
+        className={
+          isFullyCompliant
+            ? "border-green-200 bg-green-50"
+            : "border-yellow-200 bg-yellow-50"
+        }
       >
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
             Status Geral de Conformidade LGPD
-            {isFullyCompliant
-              ? (
-                <Badge className="bg-green-100 text-green-800">
-                  <CheckCircle className="mr-1 h-3 w-3" />
-                  Conforme
-                </Badge>
-              )
-              : (
-                <Badge className="bg-yellow-100 text-yellow-800">
-                  <AlertTriangle className="mr-1 h-3 w-3" />
-                  Atenção Necessária
-                </Badge>
-              )}
+            {isFullyCompliant ? (
+              <Badge className="bg-green-100 text-green-800">
+                <CheckCircle className="mr-1 h-3 w-3" />
+                Conforme
+              </Badge>
+            ) : (
+              <Badge className="bg-yellow-100 text-yellow-800">
+                <AlertTriangle className="mr-1 h-3 w-3" />
+                Atenção Necessária
+              </Badge>
+            )}
           </CardTitle>
           <CardDescription>
-            Última atualização: {new Date(complianceStatus.lastUpdated).toLocaleString('pt-BR')}
+            Última atualização:{" "}
+            {new Date(complianceStatus.lastUpdated).toLocaleString("pt-BR")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isFullyCompliant
-            ? (
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  Parabéns! Você está em total conformidade com a LGPD. Todos os consentimentos
-                  obrigatórios foram concedidos.
-                </AlertDescription>
-              </Alert>
-            )
-            : (
-              <Alert className="border-yellow-200 bg-yellow-50">
-                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <AlertDescription className="text-yellow-800">
-                  Alguns consentimentos obrigatórios estão pendentes. Revise suas preferências de
-                  privacidade para garantir conformidade total.
-                </AlertDescription>
-              </Alert>
-            )}
+          {isFullyCompliant ? (
+            <Alert className="border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                Parabéns! Você está em total conformidade com a LGPD. Todos os
+                consentimentos obrigatórios foram concedidos.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="border-yellow-200 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-800">
+                Alguns consentimentos obrigatórios estão pendentes. Revise suas
+                preferências de privacidade para garantir conformidade total.
+              </AlertDescription>
+            </Alert>
+          )}
         </CardContent>
       </Card>
 
@@ -172,10 +192,12 @@ export function ComplianceDashboard() {
                 <span className="font-bold text-2xl">
                   {consentProgress.toFixed(0)}%
                 </span>
-                <Badge variant={isFullyCompliant ? 'default' : 'secondary'}>
-                  {complianceStatus.consentCompliance
-                    .grantedRequiredConsentsCount} /{' '}
-                  {complianceStatus.consentCompliance.requiredConsentsCount}
+                <Badge variant={isFullyCompliant ? "default" : "secondary"}>
+                  {
+                    complianceStatus.consentCompliance
+                      .grantedRequiredConsentsCount
+                  }{" "}
+                  / {complianceStatus.consentCompliance.requiredConsentsCount}
                 </Badge>
               </div>
               <Progress className="h-2" value={consentProgress} />
@@ -231,28 +253,24 @@ export function ComplianceDashboard() {
           <CardContent>
             <div className="space-y-3">
               <div className="font-bold text-2xl">
-                {isFullyCompliant ? '100' : Math.floor(consentProgress)}
+                {isFullyCompliant ? "100" : Math.floor(consentProgress)}
               </div>
               <div className="flex items-center gap-1">
-                {isFullyCompliant
-                  ? (
-                    <Badge className="bg-green-100 text-green-800">
-                      Excelente
-                    </Badge>
-                  )
-                  : consentProgress >= 75
-                  ? <Badge className="bg-blue-100 text-blue-800">Bom</Badge>
-                  : consentProgress >= 50
-                  ? (
-                    <Badge className="bg-yellow-100 text-yellow-800">
-                      Regular
-                    </Badge>
-                  )
-                  : (
-                    <Badge className="bg-red-100 text-red-800">
-                      Precisa Melhorar
-                    </Badge>
-                  )}
+                {isFullyCompliant ? (
+                  <Badge className="bg-green-100 text-green-800">
+                    Excelente
+                  </Badge>
+                ) : consentProgress >= 75 ? (
+                  <Badge className="bg-blue-100 text-blue-800">Bom</Badge>
+                ) : consentProgress >= 50 ? (
+                  <Badge className="bg-yellow-100 text-yellow-800">
+                    Regular
+                  </Badge>
+                ) : (
+                  <Badge className="bg-red-100 text-red-800">
+                    Precisa Melhorar
+                  </Badge>
+                )}
               </div>
               <p className="text-muted-foreground text-xs">
                 Baseado na conformidade LGPD
@@ -285,19 +303,21 @@ export function ComplianceDashboard() {
                         <p className="font-medium">{request.requestType}</p>
                         <p className="text-gray-600 text-sm">
                           {new Date(request.requestedAt).toLocaleDateString(
-                            'pt-BR',
+                            "pt-BR",
                           )}
                         </p>
                       </div>
                     </div>
                     <Badge
-                      variant={request.status === 'completed'
-                        ? 'default'
-                        : request.status === 'processing'
-                        ? 'secondary'
-                        : request.status === 'denied'
-                        ? 'destructive'
-                        : 'outline'}
+                      variant={
+                        request.status === "completed"
+                          ? "default"
+                          : request.status === "processing"
+                            ? "secondary"
+                            : request.status === "denied"
+                              ? "destructive"
+                              : "outline"
+                      }
                     >
                       {request.status}
                     </Badge>

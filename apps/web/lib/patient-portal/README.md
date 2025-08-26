@@ -48,7 +48,10 @@ services, appointment management, document handling, and communication features.
 ## Installation
 
 ```typescript
-import { createDefaultPortalConfig, PatientPortal } from '@neonpro/patient-portal';
+import {
+  createDefaultPortalConfig,
+  PatientPortal,
+} from "@neonpro/patient-portal";
 
 // Initialize with default configuration
 const config = createDefaultPortalConfig();
@@ -64,7 +67,7 @@ const portal = new PatientPortal(
 // Initialize the portal
 const result = await portal.initialize();
 if (result.success) {
-  console.log('Portal initialized successfully!');
+  console.log("Portal initialized successfully!");
 }
 ```
 
@@ -75,13 +78,13 @@ if (result.success) {
 ```typescript
 // Create a new patient session
 const sessionResult = await portal.sessionManager.createSession({
-  patientId: 'patient-123',
+  patientId: "patient-123",
   deviceInfo: {
-    userAgent: req.headers['user-agent'],
+    userAgent: req.headers["user-agent"],
     ipAddress: req.ip,
-    deviceType: 'desktop',
+    deviceType: "desktop",
   },
-  loginMethod: 'password',
+  loginMethod: "password",
 });
 
 if (sessionResult.success) {
@@ -95,13 +98,13 @@ if (sessionResult.success) {
 ```typescript
 // Get patient dashboard data
 const dashboardData = await portal.dashboard.getDashboardData(
-  'patient-123',
+  "patient-123",
   sessionToken,
 );
 
-console.log('Patient Info:', dashboardData.patientInfo);
-console.log('Upcoming Appointments:', dashboardData.upcomingAppointments);
-console.log('Treatment Progress:', dashboardData.treatmentProgress);
+console.log("Patient Info:", dashboardData.patientInfo);
+console.log("Upcoming Appointments:", dashboardData.upcomingAppointments);
+console.log("Treatment Progress:", dashboardData.treatmentProgress);
 ```
 
 ### Appointment Booking
@@ -109,22 +112,22 @@ console.log('Treatment Progress:', dashboardData.treatmentProgress);
 ```typescript
 // Get available time slots
 const slots = await portal.appointments.getAvailableSlots(
-  'patient-123',
+  "patient-123",
   sessionToken,
-  'service-456',
-  new Date('2024-02-01'),
-  new Date('2024-02-07'),
+  "service-456",
+  new Date("2024-02-01"),
+  new Date("2024-02-07"),
 );
 
 // Book an appointment
 const bookingResult = await portal.appointments.bookAppointment(
   {
-    patientId: 'patient-123',
-    serviceId: 'service-456',
-    staffId: 'staff-789',
-    preferredDate: new Date('2024-02-05'),
-    preferredTime: '14:00',
-    notes: 'Follow-up consultation',
+    patientId: "patient-123",
+    serviceId: "service-456",
+    staffId: "staff-789",
+    preferredDate: new Date("2024-02-05"),
+    preferredTime: "14:00",
+    notes: "Follow-up consultation",
     isUrgent: false,
   },
   sessionToken,
@@ -137,18 +140,18 @@ const bookingResult = await portal.appointments.bookAppointment(
 // Upload patient documents
 const uploadResult = await portal.uploads.uploadFiles(
   {
-    patientId: 'patient-123',
+    patientId: "patient-123",
     files: [file1, file2],
-    category: 'medical_records',
-    description: 'Lab results from external clinic',
+    category: "medical_records",
+    description: "Lab results from external clinic",
     isPrivate: true,
-    tags: ['lab-results', 'external'],
+    tags: ["lab-results", "external"],
   },
   sessionToken,
 );
 
 if (uploadResult.success) {
-  console.log('Files uploaded:', uploadResult.files);
+  console.log("Files uploaded:", uploadResult.files);
 }
 ```
 
@@ -158,13 +161,13 @@ if (uploadResult.success) {
 // Send a message to healthcare provider
 const messageResult = await portal.communication.sendMessage(
   {
-    patientId: 'patient-123',
-    recipientId: 'doctor-456',
-    recipientType: 'staff',
-    subject: 'Question about medication',
-    content: 'I have a question about the dosage...',
-    messageType: 'general_inquiry',
-    priority: 'normal',
+    patientId: "patient-123",
+    recipientId: "doctor-456",
+    recipientType: "staff",
+    subject: "Question about medication",
+    content: "I have a question about the dosage...",
+    messageType: "general_inquiry",
+    priority: "normal",
   },
   sessionToken,
 );
@@ -203,7 +206,7 @@ const config: PatientPortalConfig = {
 ```typescript
 const uploadConfig: UploadConfig = {
   maxFileSize: 10 * 1024 * 1024, // 10MB
-  allowedFileTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+  allowedFileTypes: ["application/pdf", "image/jpeg", "image/png"],
   maxFilesPerUpload: 5,
   virusScanEnabled: true,
   encryptionEnabled: true,
@@ -237,9 +240,9 @@ const uploadConfig: UploadConfig = {
 ```typescript
 // Check portal health
 const healthCheck = await portal.performHealthCheck();
-console.log('Portal Status:', healthCheck.status);
-console.log('Components:', healthCheck.components);
-console.log('Response Time:', healthCheck.responseTime, 'ms');
+console.log("Portal Status:", healthCheck.status);
+console.log("Components:", healthCheck.components);
+console.log("Response Time:", healthCheck.responseTime, "ms");
 ```
 
 ## Error Handling
@@ -250,13 +253,13 @@ All portal methods include comprehensive error handling:
 try {
   const result = await portal.appointments.bookAppointment(request, token);
   if (!result.success) {
-    console.error('Booking failed:', result.message);
+    console.error("Booking failed:", result.message);
     if (result.suggestedAlternatives) {
-      console.log('Alternative slots:', result.suggestedAlternatives);
+      console.log("Alternative slots:", result.suggestedAlternatives);
     }
   }
 } catch (error) {
-  console.error('System error:', error.message);
+  console.error("System error:", error.message);
 }
 ```
 

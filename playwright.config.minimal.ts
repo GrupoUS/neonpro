@@ -5,11 +5,11 @@
  * Simplified config without webServer for basic E2E validation
  */
 
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tools/e2e',
-  testMatch: ['**/test-basic.spec.ts'],
+  testDir: "./tools/e2e",
+  testMatch: ["**/test-basic.spec.ts"],
 
   // Optimized settings
   fullyParallel: true,
@@ -21,14 +21,14 @@ export default defineConfig({
   timeout: 30_000,
 
   // Reporting
-  reporter: 'list',
+  reporter: "list",
 
   // Output - CONSOLIDATED TO TOOLS STRUCTURE
-  outputDir: 'tools/reports/test-results/e2e-minimal',
+  outputDir: "tools/reports/test-results/e2e-minimal",
 
   use: {
     // Test against external URL for now
-    baseURL: 'https://neonpro.vercel.app',
+    baseURL: "https://neonpro.vercel.app",
 
     // Basic settings
     actionTimeout: 15_000,
@@ -36,16 +36,16 @@ export default defineConfig({
 
     // Minimal features
     headless: true,
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    trace: 'on-first-retry',
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
+    trace: "on-first-retry",
   },
 
   // Single browser project for testing
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
   // No webServer - test against external endpoint

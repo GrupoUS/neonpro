@@ -3,7 +3,7 @@
 // Advanced compliance automation dashboard with React hooks
 // ================================================
 
-'use client';
+"use client";
 
 import {
   Activity,
@@ -14,15 +14,21 @@ import {
   RefreshCw,
   Settings,
   Shield,
-} from 'lucide-react';
-import type React from 'react';
-import { useComplianceAlerts, useComplianceScore } from '../../lib/utils';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Progress } from '../ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+} from "lucide-react";
+import type React from "react";
+import { useComplianceAlerts, useComplianceScore } from "../../lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Progress } from "../ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 // ================================================
 // TYPES AND INTERFACES
@@ -37,7 +43,7 @@ interface StatusCardProps {
   value: number;
   status: string;
   icon: React.ReactNode;
-  color: 'success' | 'warning' | 'error' | 'info';
+  color: "success" | "warning" | "error" | "info";
 }
 
 // ================================================
@@ -46,57 +52,57 @@ interface StatusCardProps {
 
 const _getStatusColor = (status: string): string => {
   switch (status.toLowerCase()) {
-    case 'compliant':
-    case 'active':
-    case 'completed': {
-      return 'bg-green-500';
+    case "compliant":
+    case "active":
+    case "completed": {
+      return "bg-green-500";
     }
-    case 'warning':
-    case 'pending': {
-      return 'bg-yellow-500';
+    case "warning":
+    case "pending": {
+      return "bg-yellow-500";
     }
-    case 'non_compliant':
-    case 'error':
-    case 'failed': {
-      return 'bg-red-500';
+    case "non_compliant":
+    case "error":
+    case "failed": {
+      return "bg-red-500";
     }
     default: {
-      return 'bg-gray-500';
+      return "bg-gray-500";
     }
   }
 };
 
 const getSeverityColor = (severity: string): string => {
   switch (severity.toLowerCase()) {
-    case 'critical': {
-      return 'destructive';
+    case "critical": {
+      return "destructive";
     }
-    case 'high': {
-      return 'destructive';
+    case "high": {
+      return "destructive";
     }
-    case 'medium': {
-      return 'secondary';
+    case "medium": {
+      return "secondary";
     }
-    case 'low': {
-      return 'outline';
+    case "low": {
+      return "outline";
     }
     default: {
-      return 'outline';
+      return "outline";
     }
   }
 };
 
 const formatDate = (dateString: string): string => {
   try {
-    return new Date(dateString).toLocaleString('pt-BR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleString("pt-BR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch {
-    return 'Data inválida';
+    return "Data inválida";
   }
 };
 
@@ -112,10 +118,10 @@ const StatusCard: React.FC<StatusCardProps> = ({
   color,
 }) => {
   const colorClasses = {
-    success: 'border-green-200 bg-green-50',
-    warning: 'border-yellow-200 bg-yellow-50',
-    error: 'border-red-200 bg-red-50',
-    info: 'border-blue-200 bg-blue-50',
+    success: "border-green-200 bg-green-50",
+    warning: "border-yellow-200 bg-yellow-50",
+    error: "border-red-200 bg-red-50",
+    info: "border-blue-200 bg-blue-50",
   };
 
   return (
@@ -180,11 +186,14 @@ export const ComplianceAutomationDashboard: React.FC<
     loading: false,
   });
 
-  const { status, alerts, loading, error, lastRefresh, refresh } = useComplianceStatus();
+  const { status, alerts, loading, error, lastRefresh, refresh } =
+    useComplianceStatus();
   const { classifyData, loading: classifyLoading } = useDataClassification();
   const { createRequest, loading: requestLoading } = useDataSubjectRequests();
-  const { validateSoftware, loading: softwareLoading } = useSoftwareValidation();
-  const { validateProfessional, loading: professionalLoading } = useProfessionalValidation();
+  const { validateSoftware, loading: softwareLoading } =
+    useSoftwareValidation();
+  const { validateProfessional, loading: professionalLoading } =
+    useProfessionalValidation();
   const { createAlert, loading: alertLoading } = useComplianceAlertsLocal();
   const {
     generateReport,
@@ -201,10 +210,10 @@ export const ComplianceAutomationDashboard: React.FC<
   const handleQuickDataClassification = async () => {
     try {
       await classifyData({
-        tableName: 'patients',
-        columnName: 'cpf',
+        tableName: "patients",
+        columnName: "cpf",
         overrideClassification: {
-          category: 'sensitive',
+          category: "sensitive",
           sensitivity: 5,
           encryptionRequired: true,
           retentionDays: 2555, // 7 years
@@ -218,10 +227,10 @@ export const ComplianceAutomationDashboard: React.FC<
   const handleQuickSoftwareValidation = async () => {
     try {
       await validateSoftware({
-        softwareItemName: 'NeonPro Core System',
-        softwareVersion: '1.0.0',
-        changeDescription: 'Initial system deployment',
-        safetyClassification: 'B',
+        softwareItemName: "NeonPro Core System",
+        softwareVersion: "1.0.0",
+        changeDescription: "Initial system deployment",
+        safetyClassification: "B",
         riskAssessmentRequired: true,
       });
 
@@ -232,11 +241,11 @@ export const ComplianceAutomationDashboard: React.FC<
   const handleCreateTestAlert = async () => {
     try {
       await createAlert({
-        alertType: 'system_test',
-        severity: 'low',
+        alertType: "system_test",
+        severity: "low",
         clinicId,
-        description: 'Teste do sistema de alertas de compliance',
-        affectedSystems: ['dashboard'],
+        description: "Teste do sistema de alertas de compliance",
+        affectedSystems: ["dashboard"],
         autoResolve: true,
       });
 
@@ -246,7 +255,7 @@ export const ComplianceAutomationDashboard: React.FC<
 
   const handleGenerateComprehensiveReport = async () => {
     try {
-      await generateReport('comprehensive', clinicId);
+      await generateReport("comprehensive", clinicId);
     } catch {}
   };
 
@@ -294,7 +303,8 @@ export const ComplianceAutomationDashboard: React.FC<
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Nenhum Dado de Compliance</AlertTitle>
         <AlertDescription>
-          Não foi possível carregar os dados de compliance. Verifique a configuração do sistema.
+          Não foi possível carregar os dados de compliance. Verifique a
+          configuração do sistema.
         </AlertDescription>
       </Alert>
     );
@@ -327,7 +337,7 @@ export const ComplianceAutomationDashboard: React.FC<
             variant="outline"
           >
             <RefreshCw
-              className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`}
+              className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}
             />
             Atualizar
           </Button>
@@ -337,44 +347,52 @@ export const ComplianceAutomationDashboard: React.FC<
       {/* Status Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatusCard
-          color={status.overall_score >= 80
-            ? 'success'
-            : (status.overall_score >= 60
-            ? 'warning'
-            : 'error')}
+          color={
+            status.overall_score >= 80
+              ? "success"
+              : status.overall_score >= 60
+                ? "warning"
+                : "error"
+          }
           icon={<Shield />}
           status={status.overall_status}
           title="Compliance Geral"
           value={status.overall_score}
         />
         <StatusCard
-          color={status.lgpd_score >= 80
-            ? 'success'
-            : (status.lgpd_score >= 60
-            ? 'warning'
-            : 'error')}
+          color={
+            status.lgpd_score >= 80
+              ? "success"
+              : status.lgpd_score >= 60
+                ? "warning"
+                : "error"
+          }
           icon={<Shield />}
           status="Monitorado"
           title="LGPD"
           value={status.lgpd_score}
         />
         <StatusCard
-          color={status.anvisa_score >= 80
-            ? 'success'
-            : (status.anvisa_score >= 60
-            ? 'warning'
-            : 'error')}
+          color={
+            status.anvisa_score >= 80
+              ? "success"
+              : status.anvisa_score >= 60
+                ? "warning"
+                : "error"
+          }
           icon={<Activity />}
           status="Ativo"
           title="ANVISA"
           value={status.anvisa_score}
         />
         <StatusCard
-          color={status.cfm_score >= 80
-            ? 'success'
-            : (status.cfm_score >= 60
-            ? 'warning'
-            : 'error')}
+          color={
+            status.cfm_score >= 80
+              ? "success"
+              : status.cfm_score >= 60
+                ? "warning"
+                : "error"
+          }
           icon={<CheckCircle />}
           status="Validado"
           title="CFM"
@@ -401,9 +419,11 @@ export const ComplianceAutomationDashboard: React.FC<
               onClick={handleQuickDataClassification}
               variant="outline"
             >
-              {classifyLoading
-                ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                : <Shield className="mr-2 h-4 w-4" />}
+              {classifyLoading ? (
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Shield className="mr-2 h-4 w-4" />
+              )}
               Classificar Dados
             </Button>
             <Button
@@ -412,9 +432,11 @@ export const ComplianceAutomationDashboard: React.FC<
               onClick={handleQuickSoftwareValidation}
               variant="outline"
             >
-              {softwareLoading
-                ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                : <Activity className="mr-2 h-4 w-4" />}
+              {softwareLoading ? (
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Activity className="mr-2 h-4 w-4" />
+              )}
               Validar Software
             </Button>
             <Button
@@ -423,9 +445,11 @@ export const ComplianceAutomationDashboard: React.FC<
               onClick={handleCreateTestAlert}
               variant="outline"
             >
-              {alertLoading
-                ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                : <AlertCircle className="mr-2 h-4 w-4" />}
+              {alertLoading ? (
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <AlertCircle className="mr-2 h-4 w-4" />
+              )}
               Teste de Alerta
             </Button>
             <Button
@@ -434,9 +458,11 @@ export const ComplianceAutomationDashboard: React.FC<
               onClick={handleGenerateComprehensiveReport}
               variant="outline"
             >
-              {reportLoading
-                ? <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                : <Download className="mr-2 h-4 w-4" />}
+              {reportLoading ? (
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
               Relatório Completo
             </Button>
           </div>
@@ -463,58 +489,56 @@ export const ComplianceAutomationDashboard: React.FC<
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {alerts.length === 0
-                ? (
-                  <div className="py-6 text-center">
-                    <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
-                    <p className="text-gray-500">
-                      Nenhum alerta ativo no momento
-                    </p>
-                  </div>
-                )
-                : (
-                  <div className="space-y-3">
-                    {alerts.map((alert) => (
-                      <div
-                        className="space-y-2 rounded-lg border p-4"
-                        key={alert.id}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <Badge
-                              variant={getSeverityColor(alert.severity) as any}
-                            >
-                              {alert.severity.toUpperCase()}
-                            </Badge>
-                            <span className="font-medium">
-                              {alert.alert_type}
-                            </span>
-                          </div>
-                          <span className="text-gray-500 text-sm">
-                            {formatDate(alert.created_at)}
+              {alerts.length === 0 ? (
+                <div className="py-6 text-center">
+                  <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
+                  <p className="text-gray-500">
+                    Nenhum alerta ativo no momento
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {alerts.map((alert) => (
+                    <div
+                      className="space-y-2 rounded-lg border p-4"
+                      key={alert.id}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Badge
+                            variant={getSeverityColor(alert.severity) as any}
+                          >
+                            {alert.severity.toUpperCase()}
+                          </Badge>
+                          <span className="font-medium">
+                            {alert.alert_type}
                           </span>
                         </div>
-                        <p className="text-gray-700">{alert.description}</p>
-                        {alert.affected_systems.length > 0 && (
-                          <div className="flex items-center space-x-2">
-                            <span className="text-gray-500 text-sm">
-                              Sistemas afetados:
-                            </span>
-                            {alert.affected_systems.map((system) => (
-                              <Badge
-                                className="text-xs"
-                                key={system}
-                                variant="outline"
-                              >
-                                {system}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
+                        <span className="text-gray-500 text-sm">
+                          {formatDate(alert.created_at)}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <p className="text-gray-700">{alert.description}</p>
+                      {alert.affected_systems.length > 0 && (
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-500 text-sm">
+                            Sistemas afetados:
+                          </span>
+                          {alert.affected_systems.map((system) => (
+                            <Badge
+                              className="text-xs"
+                              key={system}
+                              variant="outline"
+                            >
+                              {system}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -558,7 +582,9 @@ export const ComplianceAutomationDashboard: React.FC<
                 <div className="flex justify-between">
                   <span className="text-gray-600">Alertas Críticos:</span>
                   <Badge
-                    variant={status.critical_alerts > 0 ? 'destructive' : 'outline'}
+                    variant={
+                      status.critical_alerts > 0 ? "destructive" : "outline"
+                    }
                   >
                     {status.critical_alerts}
                   </Badge>
@@ -566,7 +592,9 @@ export const ComplianceAutomationDashboard: React.FC<
                 <div className="flex justify-between">
                   <span className="text-gray-600">Solicitações Pendentes:</span>
                   <Badge
-                    variant={status.pending_requests > 0 ? 'secondary' : 'outline'}
+                    variant={
+                      status.pending_requests > 0 ? "secondary" : "outline"
+                    }
                   >
                     {status.pending_requests}
                   </Badge>
@@ -574,9 +602,11 @@ export const ComplianceAutomationDashboard: React.FC<
                 <div className="flex justify-between">
                   <span className="text-gray-600">Requer Atenção:</span>
                   <Badge
-                    variant={status.requires_attention ? 'destructive' : 'outline'}
+                    variant={
+                      status.requires_attention ? "destructive" : "outline"
+                    }
                   >
-                    {status.requires_attention ? 'Sim' : 'Não'}
+                    {status.requires_attention ? "Sim" : "Não"}
                   </Badge>
                 </div>
                 <div className="flex justify-between">
@@ -606,7 +636,7 @@ export const ComplianceAutomationDashboard: React.FC<
                 <Button
                   className="w-full"
                   disabled={reportLoading}
-                  onClick={() => generateReport('lgpd', clinicId)}
+                  onClick={() => generateReport("lgpd", clinicId)}
                   variant="outline"
                 >
                   <FileText className="mr-2 h-4 w-4" />
@@ -615,7 +645,7 @@ export const ComplianceAutomationDashboard: React.FC<
                 <Button
                   className="w-full"
                   disabled={reportLoading}
-                  onClick={() => generateReport('anvisa', clinicId)}
+                  onClick={() => generateReport("anvisa", clinicId)}
                   variant="outline"
                 >
                   <FileText className="mr-2 h-4 w-4" />
@@ -624,7 +654,7 @@ export const ComplianceAutomationDashboard: React.FC<
                 <Button
                   className="w-full"
                   disabled={reportLoading}
-                  onClick={() => generateReport('cfm', clinicId)}
+                  onClick={() => generateReport("cfm", clinicId)}
                   variant="outline"
                 >
                   <FileText className="mr-2 h-4 w-4" />
@@ -633,7 +663,7 @@ export const ComplianceAutomationDashboard: React.FC<
                 <Button
                   className="w-full"
                   disabled={reportLoading}
-                  onClick={() => generateReport('comprehensive', clinicId)}
+                  onClick={() => generateReport("comprehensive", clinicId)}
                   variant="outline"
                 >
                   <Download className="mr-2 h-4 w-4" />

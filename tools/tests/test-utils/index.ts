@@ -14,7 +14,7 @@ export function resetAllGlobalMocks() {
   if (global.mockSupabaseClient) {
     // Reset all auth methods
     Object.values(global.mockSupabaseClient.auth).forEach((method: any) => {
-      if (typeof method === 'function' && method.mockReset) {
+      if (typeof method === "function" && method.mockReset) {
         method.mockReset();
       }
     });
@@ -26,7 +26,7 @@ export function resetAllGlobalMocks() {
 
     // Restore default implementations
     global.mockSupabaseClient.auth.signInWithPassword.mockResolvedValue({
-      data: { user: { id: 'user-123' }, session: { access_token: 'token' } },
+      data: { user: { id: "user-123" }, session: { access_token: "token" } },
       error: undefined,
     });
 
@@ -35,12 +35,12 @@ export function resetAllGlobalMocks() {
     });
 
     global.mockSupabaseClient.auth.getSession.mockResolvedValue({
-      data: { session: { access_token: 'token' } },
+      data: { session: { access_token: "token" } },
       error: undefined,
     });
 
     global.mockSupabaseClient.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: undefined,
     });
   }
@@ -48,7 +48,7 @@ export function resetAllGlobalMocks() {
   if (global.mockReactHooks) {
     // Reset React hooks
     Object.values(global.mockReactHooks).forEach((hook: any) => {
-      if (typeof hook === 'function' && hook.mockReset) {
+      if (typeof hook === "function" && hook.mockReset) {
         hook.mockReset();
       }
     });
@@ -59,11 +59,11 @@ export function resetAllGlobalMocks() {
  * Create a test wrapper with common providers
  */
 export function createTestWrapper(
-  options: { queryClient?: any; router?: any; } = {},
+  options: { queryClient?: any; router?: any } = {},
 ) {
   const { queryClient, router } = options;
 
-  return ({ children }: { children: React.ReactNode; }) => {
+  return ({ children }: { children: React.ReactNode }) => {
     let wrapper = children;
 
     if (queryClient) {

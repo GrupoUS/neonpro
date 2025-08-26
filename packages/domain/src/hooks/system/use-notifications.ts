@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import type { RealtimeChannel } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
-import { useCallback, useEffect, useState } from 'react';
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import { useCallback, useEffect, useState } from "react";
 
 export interface Notification {
   id: string;
   user_id: string;
   type:
-    | 'appointment_confirmed'
-    | 'appointment_cancelled'
-    | 'appointment_reminder'
-    | 'appointment_rescheduled'
-    | 'system'
-    | 'marketing';
+    | "appointment_confirmed"
+    | "appointment_cancelled"
+    | "appointment_reminder"
+    | "appointment_rescheduled"
+    | "system"
+    | "marketing";
   title: string;
   message: string;
   data?: Record<string, any>;
   read_at?: string;
   created_at: string;
   expires_at?: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   action_url?: string;
 }
 
@@ -40,7 +40,7 @@ interface UseNotificationsOptions {
   userId: string;
   autoMarkAsRead?: boolean;
   limit?: number;
-  types?: Notification['type'][];
+  types?: Notification["type"][];
   realtime?: boolean;
 }
 
@@ -60,7 +60,7 @@ interface UseNotificationsReturn {
     preferences: Partial<NotificationPreferences>,
   ) => Promise<void>;
   sendNotification: (
-    notification: Omit<Notification, 'id' | 'created_at'>,
+    notification: Omit<Notification, "id" | "created_at">,
   ) => Promise<void>;
   refreshNotifications: () => Promise<void>;
 }
@@ -73,15 +73,15 @@ export function useNotifications({
   realtime = true,
 }: UseNotificationsOptions): UseNotificationsReturn {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [preferences, setPreferences] = useState<NotificationPreferences | null>();
+  const [preferences, setPreferences] =
+    useState<NotificationPreferences | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
-  const [subscription, setSubscription] = useState<RealtimeChannel | null>(
-    );
+  const [subscription, setSubscription] = useState<RealtimeChannel | null>();
 
   const supabase = createClient(
-    'https://placeholder.supabase.co',
-    'placeholder-key',
+    "https://placeholder.supabase.co",
+    "placeholder-key",
   );
 
   // Load initial data
@@ -92,15 +92,15 @@ export function useNotifications({
 
       // Build query
       let query = supabase
-        .from('notifications')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       // Filter by types if specified
       if (types && types.length > 0) {
-        query = query.in('type', types);
+        query = query.in("type", types);
       }
 
       // Filter out expired notifications
@@ -108,7 +108,8 @@ export function useNotifications({
         `expires_at.is.null,expires_at.gt.${new Date().toISOString()}`,
       );
 
-      const { data: notificationsData, error: notificationsError } = await query;
+      const { data: notificationsData, error: notificationsError } =
+        await query;
 
       if (notificationsError) {
         throw notificationsError;
@@ -125,12 +126,12 @@ export function useNotifications({
   const loadPreferences = useCallback(async () => {
     try {
       const { data, error } = await supabase
-        .from('notification_preferences')
-        .select('*')
-        .eq('user_id', userId)
+        .from("notification_preferences")
+        .select("*")
+        .eq("user_id", userId)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code !== "PGRST116") {
         throw error;
       }
 
@@ -152,10 +153,10 @@ export function useNotifications({
   const markAsRead = useCallback(
     async (notificationId: string) => {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .update({ read_at: new Date().toISOString() })
-        .eq('id', notificationId)
-        .eq('user_id', userId);
+        .eq("id", notificationId)
+        .eq("user_id", userId);
 
       if (error) {
         throw new Error(
@@ -168,8 +169,8 @@ export function useNotifications({
         prev.map((notif) =>
           notif.id === notificationId
             ? { ...notif, read_at: new Date().toISOString() }
-            : notif
-        )
+            : notif,
+        ),
       );
     },
     [userId, supabase],
@@ -184,15 +185,15 @@ export function useNotifications({
     const channel = supabase
       .channel(`notifications:${userId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'notifications',
+          event: "*",
+          schema: "public",
+          table: "notifications",
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          if (payload.eventType === 'INSERT') {
+          if (payload.eventType === "INSERT") {
             const newNotification = payload.new as Notification;
             setNotifications((prev) => [
               newNotification,
@@ -205,19 +206,22 @@ export function useNotifications({
             }
 
             // Show toast notification for high priority
-            if (newNotification.priority === 'high') {}
-          } else if (payload.eventType === 'UPDATE') {
+            if (newNotification.priority === "high") {
+            }
+          } else if (payload.eventType === "UPDATE") {
             const updatedNotification = payload.new as Notification;
             setNotifications((prev) =>
               prev.map((notif) =>
                 notif.id === updatedNotification.id
                   ? updatedNotification
-                  : notif
-              )
+                  : notif,
+              ),
             );
-          } else if (payload.eventType === 'DELETE') {
+          } else if (payload.eventType === "DELETE") {
             const deletedId = payload.old.id;
-            setNotifications((prev) => prev.filter((notif) => notif.id !== deletedId));
+            setNotifications((prev) =>
+              prev.filter((notif) => notif.id !== deletedId),
+            );
           }
         },
       )
@@ -245,10 +249,10 @@ export function useNotifications({
     }
 
     const { error } = await supabase
-      .from('notifications')
+      .from("notifications")
       .update({ read_at: new Date().toISOString() })
-      .in('id', unreadIds)
-      .eq('user_id', userId);
+      .in("id", unreadIds)
+      .eq("user_id", userId);
 
     if (error) {
       throw new Error(`Failed to mark notifications as read: ${error.message}`);
@@ -257,7 +261,9 @@ export function useNotifications({
     // Update local state
     const now = new Date().toISOString();
     setNotifications((prev) =>
-      prev.map((notif) => unreadIds.includes(notif.id) ? { ...notif, read_at: now } : notif)
+      prev.map((notif) =>
+        unreadIds.includes(notif.id) ? { ...notif, read_at: now } : notif,
+      ),
     );
   }, [notifications, userId, supabase]);
 
@@ -265,17 +271,19 @@ export function useNotifications({
   const deleteNotification = useCallback(
     async (notificationId: string) => {
       const { error } = await supabase
-        .from('notifications')
+        .from("notifications")
         .delete()
-        .eq('id', notificationId)
-        .eq('user_id', userId);
+        .eq("id", notificationId)
+        .eq("user_id", userId);
 
       if (error) {
         throw new Error(`Failed to delete notification: ${error.message}`);
       }
 
       // Update local state
-      setNotifications((prev) => prev.filter((notif) => notif.id !== notificationId));
+      setNotifications((prev) =>
+        prev.filter((notif) => notif.id !== notificationId),
+      );
     },
     [userId, supabase],
   );
@@ -283,14 +291,14 @@ export function useNotifications({
   // Update notification preferences
   const updatePreferences = useCallback(
     async (newPreferences: Partial<NotificationPreferences>) => {
-      const { error } = await supabase.from('notification_preferences').upsert(
+      const { error } = await supabase.from("notification_preferences").upsert(
         {
           user_id: userId,
           ...preferences,
           ...newPreferences,
           updated_at: new Date().toISOString(),
         },
-        { onConflict: 'user_id' },
+        { onConflict: "user_id" },
       );
 
       if (error) {
@@ -310,8 +318,8 @@ export function useNotifications({
 
   // Send notification
   const sendNotification = useCallback(
-    async (notification: Omit<Notification, 'id' | 'created_at'>) => {
-      const { error } = await supabase.from('notifications').insert({
+    async (notification: Omit<Notification, "id" | "created_at">) => {
+      const { error } = await supabase.from("notifications").insert({
         ...notification,
         created_at: new Date().toISOString(),
       });

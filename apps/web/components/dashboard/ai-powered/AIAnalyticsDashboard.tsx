@@ -413,9 +413,9 @@ export function AIAnalyticsDashboard() {
                       aria-label={`Impacto ${
                         insight.impact === "high"
                           ? "alto"
-                          : (insight.impact === "medium"
+                          : insight.impact === "medium"
                             ? "médio"
-                            : "baixo")
+                            : "baixo"
                       }`}
                     >
                       {insight.impact === "high" && "Alto Impacto"}

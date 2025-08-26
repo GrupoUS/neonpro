@@ -1,5 +1,5 @@
-import { addHours, format, isBefore } from 'date-fns';
-import { NotificationType } from '../types';
+import { addHours, format, isBefore } from "date-fns";
+import { NotificationType } from "../types";
 import type {
   AudienceFilterData,
   CreateNotificationCampaignData,
@@ -11,7 +11,7 @@ import type {
   NotificationPreference,
   NotificationPreferenceData,
   NotificationTemplate,
-} from './types';
+} from "./types";
 import {
   CampaignStatus,
   NotificationChannel,
@@ -19,7 +19,7 @@ import {
   NotificationPriority,
   NotificationStatus,
   VariableType,
-} from './types';
+} from "./types";
 
 export interface NotificationRepository {
   // Notification operations
@@ -63,7 +63,7 @@ export interface NotificationRepository {
 
   // Log operations
   createLog(
-    data: Omit<NotificationLog, 'id' | 'createdAt' | 'updatedAt'>,
+    data: Omit<NotificationLog, "id" | "createdAt" | "updatedAt">,
   ): Promise<NotificationLog>;
   getLogs(notificationId: string): Promise<NotificationLog[]>;
 
@@ -118,7 +118,7 @@ export interface NotificationStats {
   deliveryRate: number;
   openRate: number;
   clickRate: number;
-  channelDistribution: { channel: NotificationChannel; count: number; }[];
+  channelDistribution: { channel: NotificationChannel; count: number }[];
 }
 
 export interface ExternalNotificationProvider {
@@ -151,7 +151,7 @@ export class NotificationService {
 
     // Check if recipient has opted in for this type of notification
     if (!this.canSendNotification(data, preferences)) {
-      throw new Error('Recipient has opted out of this notification type');
+      throw new Error("Recipient has opted out of this notification type");
     }
 
     // Create notification record
@@ -181,7 +181,7 @@ export class NotificationService {
       switch (notification.channel) {
         case NotificationChannel.EMAIL: {
           if (!notification.recipientEmail) {
-            throw new Error('Email address required for email notifications');
+            throw new Error("Email address required for email notifications");
           }
           externalId = await this.externalProvider.sendEmail(
             notification.recipientEmail,
@@ -194,7 +194,7 @@ export class NotificationService {
 
         case NotificationChannel.SMS: {
           if (!notification.recipientPhone) {
-            throw new Error('Phone number required for SMS notifications');
+            throw new Error("Phone number required for SMS notifications");
           }
           externalId = await this.externalProvider.sendSMS(
             notification.recipientPhone,
@@ -206,7 +206,7 @@ export class NotificationService {
 
         case NotificationChannel.WHATSAPP: {
           if (!notification.recipientPhone) {
-            throw new Error('Phone number required for WhatsApp notifications');
+            throw new Error("Phone number required for WhatsApp notifications");
           }
           externalId = await this.externalProvider.sendWhatsApp(
             notification.recipientPhone,
@@ -244,7 +244,7 @@ export class NotificationService {
           ? NotificationStatus.QUEUED
           : NotificationStatus.FAILED,
         retryCount,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
       });
 
       if (shouldRetry) {
@@ -261,7 +261,7 @@ export class NotificationService {
         event: NotificationEvent.FAILED,
         timestamp: new Date(),
         details: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           retryCount,
         },
       });
@@ -273,12 +273,12 @@ export class NotificationService {
   ): Promise<Notification> {
     const appointment = await this.repository.getAppointment(appointmentId);
     if (!appointment) {
-      throw new Error('Appointment not found');
+      throw new Error("Appointment not found");
     }
 
     const patient = await this.repository.getPatient(appointment.patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     const scheduledAt = addHours(
@@ -288,13 +288,13 @@ export class NotificationService {
 
     // Don't schedule if it's in the past
     if (isBefore(scheduledAt, new Date())) {
-      throw new Error('Cannot schedule reminder for past appointments');
+      throw new Error("Cannot schedule reminder for past appointments");
     }
 
     const templateData = {
       patientName: `${patient.firstName} ${patient.lastName}`,
-      appointmentDate: format(appointment.scheduledDate, 'dd/MM/yyyy'),
-      appointmentTime: format(appointment.scheduledDate, 'HH:mm'),
+      appointmentDate: format(appointment.scheduledDate, "dd/MM/yyyy"),
+      appointmentTime: format(appointment.scheduledDate, "HH:mm"),
       treatmentType: appointment.treatmentType,
       duration: appointment.duration,
     };
@@ -305,7 +305,7 @@ export class NotificationService {
       recipientEmail: patient.email,
       recipientPhone: patient.phone,
       channel: NotificationChannel.SMS, // Primary channel for reminders
-      title: 'Lembrete de Consulta',
+      title: "Lembrete de Consulta",
       message: this.buildAppointmentReminderMessage(templateData),
       scheduledAt,
       priority: NotificationPriority.HIGH,
@@ -319,18 +319,18 @@ export class NotificationService {
   ): Promise<Notification> {
     const appointment = await this.repository.getAppointment(appointmentId);
     if (!appointment) {
-      throw new Error('Appointment not found');
+      throw new Error("Appointment not found");
     }
 
     const patient = await this.repository.getPatient(appointment.patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     const templateData = {
       patientName: `${patient.firstName} ${patient.lastName}`,
-      appointmentDate: format(appointment.scheduledDate, 'dd/MM/yyyy'),
-      appointmentTime: format(appointment.scheduledDate, 'HH:mm'),
+      appointmentDate: format(appointment.scheduledDate, "dd/MM/yyyy"),
+      appointmentTime: format(appointment.scheduledDate, "HH:mm"),
       treatmentType: appointment.treatmentType,
     };
 
@@ -340,7 +340,7 @@ export class NotificationService {
       recipientEmail: patient.email,
       recipientPhone: patient.phone,
       channel: NotificationChannel.EMAIL,
-      title: 'Confirmação de Agendamento',
+      title: "Confirmação de Agendamento",
       message: this.buildAppointmentConfirmationMessage(templateData),
       priority: NotificationPriority.NORMAL,
       templateData,
@@ -352,14 +352,15 @@ export class NotificationService {
     treatmentPlanId: string,
     sessionNumber: number,
   ): Promise<Notification> {
-    const treatmentPlan = await this.repository.getTreatmentPlan(treatmentPlanId);
+    const treatmentPlan =
+      await this.repository.getTreatmentPlan(treatmentPlanId);
     if (!treatmentPlan) {
-      throw new Error('Treatment plan not found');
+      throw new Error("Treatment plan not found");
     }
 
     const patient = await this.repository.getPatient(treatmentPlan.patientId);
     if (!patient) {
-      throw new Error('Patient not found');
+      throw new Error("Patient not found");
     }
 
     // Schedule follow-up 24 hours after treatment
@@ -378,7 +379,7 @@ export class NotificationService {
       recipientEmail: patient.email,
       recipientPhone: patient.phone,
       channel: NotificationChannel.EMAIL,
-      title: 'Como você está se sentindo?',
+      title: "Como você está se sentindo?",
       message: this.buildTreatmentFollowUpMessage(templateData),
       scheduledAt,
       priority: NotificationPriority.NORMAL,
@@ -404,11 +405,11 @@ export class NotificationService {
   ): Promise<string> {
     const template = await this.repository.getTemplate(templateId);
     if (!template) {
-      throw new Error('Template not found');
+      throw new Error("Template not found");
     }
 
     if (!template.isActive) {
-      throw new Error('Template is not active');
+      throw new Error("Template is not active");
     }
 
     let content = template.content;
@@ -422,12 +423,12 @@ export class NotificationService {
         if (variable.required) {
           throw new Error(`Required variable '${variable.name}' is missing`);
         }
-        value = variable.defaultValue || '';
+        value = variable.defaultValue || "";
       }
 
       // Type conversion and validation
       value = this.convertAndValidateVariable(value, variable);
-      content = content.replaceAll(new RegExp(placeholder, 'g'), value);
+      content = content.replaceAll(new RegExp(placeholder, "g"), value);
     }
 
     return content;
@@ -437,7 +438,7 @@ export class NotificationService {
     switch (variable.type) {
       case VariableType.DATE: {
         if (value instanceof Date) {
-          return format(value, 'dd/MM/yyyy');
+          return format(value, "dd/MM/yyyy");
         }
         break;
       }
@@ -445,7 +446,7 @@ export class NotificationService {
         return Number(value).toString();
       }
       case VariableType.BOOLEAN: {
-        return value ? 'Sim' : 'Não';
+        return value ? "Sim" : "Não";
       }
       default: {
         return String(value);
@@ -460,7 +461,7 @@ export class NotificationService {
   ): Promise<NotificationCampaign> {
     const template = await this.repository.getTemplate(data.templateId);
     if (!template) {
-      throw new Error('Template not found');
+      throw new Error("Template not found");
     }
 
     // Get target audience
@@ -486,14 +487,14 @@ export class NotificationService {
   async launchCampaign(campaignId: string): Promise<void> {
     const campaign = await this.repository.getCampaign(campaignId);
     if (!campaign) {
-      throw new Error('Campaign not found');
+      throw new Error("Campaign not found");
     }
 
     if (
-      campaign.status !== CampaignStatus.SCHEDULED
-      && campaign.status !== CampaignStatus.DRAFT
+      campaign.status !== CampaignStatus.SCHEDULED &&
+      campaign.status !== CampaignStatus.DRAFT
     ) {
-      throw new Error('Can only launch scheduled or draft campaigns');
+      throw new Error("Can only launch scheduled or draft campaigns");
     }
 
     await this.repository.updateCampaign(campaignId, {
@@ -508,7 +509,7 @@ export class NotificationService {
     const template = await this.repository.getTemplate(campaign.templateId);
 
     if (!template) {
-      throw new Error('Campaign template not found');
+      throw new Error("Campaign template not found");
     }
 
     // Send notifications to all recipients
@@ -642,8 +643,8 @@ export class NotificationService {
       type: campaign.type as NotificationType,
       recipientId: recipient.id,
       channel: campaign.channel,
-      title: '',
-      message: '',
+      title: "",
+      message: "",
     };
 
     return this.canSendNotification(mockNotification, preferences);
@@ -664,7 +665,8 @@ export class NotificationService {
 
   // Scheduled notification processing
   async processScheduledNotifications(): Promise<void> {
-    const scheduledNotifications = await this.repository.getScheduledNotifications(new Date());
+    const scheduledNotifications =
+      await this.repository.getScheduledNotifications(new Date());
 
     for (const notification of scheduledNotifications) {
       try {
@@ -686,11 +688,12 @@ export class NotificationService {
     );
 
     // Filter by date range if provided
-    const filteredNotifications = startDate && endDate
-      ? allNotifications.filter(
-        (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
-      )
-      : allNotifications;
+    const filteredNotifications =
+      startDate && endDate
+        ? allNotifications.filter(
+            (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
+          )
+        : allNotifications;
 
     const totalSent = filteredNotifications.length;
     const totalDelivered = filteredNotifications.filter(
@@ -707,7 +710,8 @@ export class NotificationService {
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
+    const openRate =
+      totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
     const clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0;
 
     // Channel distribution
@@ -771,8 +775,8 @@ export class NotificationService {
         evening: false,
         weekend: false,
       },
-      timezone: preferences?.timezone || 'America/Sao_Paulo',
-      language: preferences?.language || 'pt-BR',
+      timezone: preferences?.timezone || "America/Sao_Paulo",
+      language: preferences?.language || "pt-BR",
     };
 
     await this.repository.createOrUpdatePreferences(updatedPreferences);

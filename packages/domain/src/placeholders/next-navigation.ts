@@ -11,4 +11,4 @@ export const useSearchParams = () => ({
   has: (_key: string) => false,
 });
 
-export const usePathname = () => '/';
+export const usePathname = () => "/";

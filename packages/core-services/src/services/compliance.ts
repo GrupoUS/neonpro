@@ -3,8 +3,8 @@
 // Regulatory compliance automation and monitoring
 // ================================================
 
-import { createClient } from '@supabase/supabase-js';
-import { monitoring } from './monitoring';
+import { createClient } from "@supabase/supabase-js";
+import { monitoring } from "./monitoring";
 
 // ================================================
 // TYPES AND INTERFACES
@@ -278,290 +278,290 @@ interface FrameworkCompliance {
 // ================================================
 
 enum PolicyType {
-  PRIVACY = 'privacy',
-  SECURITY = 'security',
-  DATA_RETENTION = 'data_retention',
-  ACCESS_CONTROL = 'access_control',
-  AUDIT = 'audit',
-  INCIDENT_RESPONSE = 'incident_response',
-  TRAINING = 'training',
-  VENDOR_MANAGEMENT = 'vendor_management',
+  PRIVACY = "privacy",
+  SECURITY = "security",
+  DATA_RETENTION = "data_retention",
+  ACCESS_CONTROL = "access_control",
+  AUDIT = "audit",
+  INCIDENT_RESPONSE = "incident_response",
+  TRAINING = "training",
+  VENDOR_MANAGEMENT = "vendor_management",
 }
 
 enum ComplianceCategory {
-  DATA_PROTECTION = 'data_protection',
-  HEALTHCARE = 'healthcare',
-  FINANCIAL = 'financial',
-  SECURITY = 'security',
-  OPERATIONAL = 'operational',
-  ENVIRONMENTAL = 'environmental',
-  QUALITY = 'quality',
+  DATA_PROTECTION = "data_protection",
+  HEALTHCARE = "healthcare",
+  FINANCIAL = "financial",
+  SECURITY = "security",
+  OPERATIONAL = "operational",
+  ENVIRONMENTAL = "environmental",
+  QUALITY = "quality",
 }
 
 enum ComplianceFramework {
-  LGPD = 'lgpd',
-  GDPR = 'gdpr',
-  ANVISA = 'anvisa',
-  CFM = 'cfm',
-  ISO27001 = 'iso27001',
-  HIPAA = 'hipaa',
-  SOX = 'sox',
-  PCI_DSS = 'pci_dss',
-  CUSTOM = 'custom',
+  LGPD = "lgpd",
+  GDPR = "gdpr",
+  ANVISA = "anvisa",
+  CFM = "cfm",
+  ISO27001 = "iso27001",
+  HIPAA = "hipaa",
+  SOX = "sox",
+  PCI_DSS = "pci_dss",
+  CUSTOM = "custom",
 }
 
 enum RuleType {
-  PREVENTIVE = 'preventive',
-  DETECTIVE = 'detective',
-  CORRECTIVE = 'corrective',
-  COMPENSATING = 'compensating',
+  PREVENTIVE = "preventive",
+  DETECTIVE = "detective",
+  CORRECTIVE = "corrective",
+  COMPENSATING = "compensating",
 }
 
 enum ConditionOperator {
-  EQUALS = 'equals',
-  NOT_EQUALS = 'not_equals',
-  GREATER_THAN = 'greater_than',
-  LESS_THAN = 'less_than',
-  GREATER_EQUAL = 'greater_equal',
-  LESS_EQUAL = 'less_equal',
-  CONTAINS = 'contains',
-  NOT_CONTAINS = 'not_contains',
-  IN = 'in',
-  NOT_IN = 'not_in',
-  IS_NULL = 'is_null',
-  IS_NOT_NULL = 'is_not_null',
-  REGEX = 'regex',
+  EQUALS = "equals",
+  NOT_EQUALS = "not_equals",
+  GREATER_THAN = "greater_than",
+  LESS_THAN = "less_than",
+  GREATER_EQUAL = "greater_equal",
+  LESS_EQUAL = "less_equal",
+  CONTAINS = "contains",
+  NOT_CONTAINS = "not_contains",
+  IN = "in",
+  NOT_IN = "not_in",
+  IS_NULL = "is_null",
+  IS_NOT_NULL = "is_not_null",
+  REGEX = "regex",
 }
 
 enum DataSource {
-  DATABASE = 'database',
-  LOG_FILE = 'log_file',
-  API = 'api',
-  FILE_SYSTEM = 'file_system',
-  EXTERNAL = 'external',
+  DATABASE = "database",
+  LOG_FILE = "log_file",
+  API = "api",
+  FILE_SYSTEM = "file_system",
+  EXTERNAL = "external",
 }
 
 enum LogicalOperator {
-  AND = 'and',
-  OR = 'or',
-  NOT = 'not',
+  AND = "and",
+  OR = "or",
+  NOT = "not",
 }
 
 enum ActionType {
-  BLOCK = 'block',
-  ALERT = 'alert',
-  LOG = 'log',
-  QUARANTINE = 'quarantine',
-  ENCRYPT = 'encrypt',
-  DELETE = 'delete',
-  BACKUP = 'backup',
-  NOTIFY = 'notify',
+  BLOCK = "block",
+  ALERT = "alert",
+  LOG = "log",
+  QUARANTINE = "quarantine",
+  ENCRYPT = "encrypt",
+  DELETE = "delete",
+  BACKUP = "backup",
+  NOTIFY = "notify",
 }
 
 enum SeverityLevel {
-  CRITICAL = 'critical',
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
-  INFO = 'info',
+  CRITICAL = "critical",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
+  INFO = "info",
 }
 
 enum AuditType {
-  INTERNAL = 'internal',
-  EXTERNAL = 'external',
-  REGULATORY = 'regulatory',
-  CERTIFICATION = 'certification',
-  CONTINUOUS = 'continuous',
+  INTERNAL = "internal",
+  EXTERNAL = "external",
+  REGULATORY = "regulatory",
+  CERTIFICATION = "certification",
+  CONTINUOUS = "continuous",
 }
 
 enum AuditScope {
-  FULL = 'full',
-  PARTIAL = 'partial',
-  FOCUSED = 'focused',
-  FOLLOW_UP = 'follow_up',
+  FULL = "full",
+  PARTIAL = "partial",
+  FOCUSED = "focused",
+  FOLLOW_UP = "follow_up",
 }
 
 enum AuditStatus {
-  PLANNED = 'planned',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  PENDING_REVIEW = 'pending_review',
+  PLANNED = "planned",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+  PENDING_REVIEW = "pending_review",
 }
 
 enum RiskLevel {
-  CRITICAL = 'critical',
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
+  CRITICAL = "critical",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
 }
 
 enum FindingType {
-  NON_COMPLIANCE = 'non_compliance',
-  WEAKNESS = 'weakness',
-  OPPORTUNITY = 'opportunity',
-  BEST_PRACTICE = 'best_practice',
+  NON_COMPLIANCE = "non_compliance",
+  WEAKNESS = "weakness",
+  OPPORTUNITY = "opportunity",
+  BEST_PRACTICE = "best_practice",
 }
 
 enum FindingStatus {
-  OPEN = 'open',
-  IN_PROGRESS = 'in_progress',
-  RESOLVED = 'resolved',
-  ACCEPTED = 'accepted',
-  DEFERRED = 'deferred',
+  OPEN = "open",
+  IN_PROGRESS = "in_progress",
+  RESOLVED = "resolved",
+  ACCEPTED = "accepted",
+  DEFERRED = "deferred",
 }
 
 enum EvidenceType {
-  DOCUMENT = 'document',
-  SCREENSHOT = 'screenshot',
-  LOG_ENTRY = 'log_entry',
-  DATABASE_RECORD = 'database_record',
-  AUDIT_TRAIL = 'audit_trail',
-  WITNESS_STATEMENT = 'witness_statement',
+  DOCUMENT = "document",
+  SCREENSHOT = "screenshot",
+  LOG_ENTRY = "log_entry",
+  DATABASE_RECORD = "database_record",
+  AUDIT_TRAIL = "audit_trail",
+  WITNESS_STATEMENT = "witness_statement",
 }
 
 enum IncidentType {
-  DATA_BREACH = 'data_breach',
-  PRIVACY_VIOLATION = 'privacy_violation',
-  SECURITY_INCIDENT = 'security_incident',
-  POLICY_VIOLATION = 'policy_violation',
-  SYSTEM_FAILURE = 'system_failure',
-  HUMAN_ERROR = 'human_error',
-  EXTERNAL_THREAT = 'external_threat',
+  DATA_BREACH = "data_breach",
+  PRIVACY_VIOLATION = "privacy_violation",
+  SECURITY_INCIDENT = "security_incident",
+  POLICY_VIOLATION = "policy_violation",
+  SYSTEM_FAILURE = "system_failure",
+  HUMAN_ERROR = "human_error",
+  EXTERNAL_THREAT = "external_threat",
 }
 
 enum IncidentStatus {
-  REPORTED = 'reported',
-  INVESTIGATING = 'investigating',
-  CONTAINED = 'contained',
-  RESOLVED = 'resolved',
-  CLOSED = 'closed',
+  REPORTED = "reported",
+  INVESTIGATING = "investigating",
+  CONTAINED = "contained",
+  RESOLVED = "resolved",
+  CLOSED = "closed",
 }
 
 enum SensitivityLevel {
-  PUBLIC = 'public',
-  INTERNAL = 'internal',
-  CONFIDENTIAL = 'confidential',
-  RESTRICTED = 'restricted',
+  PUBLIC = "public",
+  INTERNAL = "internal",
+  CONFIDENTIAL = "confidential",
+  RESTRICTED = "restricted",
 }
 
 enum ImpactLevel {
-  MINIMAL = 'minimal',
-  MINOR = 'minor',
-  MODERATE = 'moderate',
-  MAJOR = 'major',
-  CATASTROPHIC = 'catastrophic',
+  MINIMAL = "minimal",
+  MINOR = "minor",
+  MODERATE = "moderate",
+  MAJOR = "major",
+  CATASTROPHIC = "catastrophic",
 }
 
 enum EffectivenessLevel {
-  INEFFECTIVE = 'ineffective',
-  PARTIALLY_EFFECTIVE = 'partially_effective',
-  EFFECTIVE = 'effective',
-  HIGHLY_EFFECTIVE = 'highly_effective',
+  INEFFECTIVE = "ineffective",
+  PARTIALLY_EFFECTIVE = "partially_effective",
+  EFFECTIVE = "effective",
+  HIGHLY_EFFECTIVE = "highly_effective",
 }
 
 enum RemediationStatus {
-  PLANNED = 'planned',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  PLANNED = "planned",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }
 
 enum PriorityLevel {
-  CRITICAL = 'critical',
-  HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
+  CRITICAL = "critical",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
 }
 
 enum ActionStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  PENDING = "pending",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
 }
 
 enum DataSubjectType {
-  PATIENT = 'patient',
-  EMPLOYEE = 'employee',
-  CUSTOMER = 'customer',
-  VENDOR = 'vendor',
-  OTHER = 'other',
+  PATIENT = "patient",
+  EMPLOYEE = "employee",
+  CUSTOMER = "customer",
+  VENDOR = "vendor",
+  OTHER = "other",
 }
 
 enum LegalBasis {
-  CONSENT = 'consent',
-  CONTRACT = 'contract',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  VITAL_INTERESTS = 'vital_interests',
-  PUBLIC_TASK = 'public_task',
-  LEGITIMATE_INTERESTS = 'legitimate_interests',
+  CONSENT = "consent",
+  CONTRACT = "contract",
+  LEGAL_OBLIGATION = "legal_obligation",
+  VITAL_INTERESTS = "vital_interests",
+  PUBLIC_TASK = "public_task",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 
 enum ConsentMethod {
-  ELECTRONIC = 'electronic',
-  WRITTEN = 'written',
-  VERBAL = 'verbal',
-  IMPLIED = 'implied',
+  ELECTRONIC = "electronic",
+  WRITTEN = "written",
+  VERBAL = "verbal",
+  IMPLIED = "implied",
 }
 
 enum DataSubjectRequestType {
-  ACCESS = 'access',
-  RECTIFICATION = 'rectification',
-  ERASURE = 'erasure',
-  PORTABILITY = 'portability',
-  RESTRICTION = 'restriction',
-  OBJECTION = 'objection',
+  ACCESS = "access",
+  RECTIFICATION = "rectification",
+  ERASURE = "erasure",
+  PORTABILITY = "portability",
+  RESTRICTION = "restriction",
+  OBJECTION = "objection",
 }
 
 enum RequestStatus {
-  RECEIVED = 'received',
-  VERIFIED = 'verified',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  REJECTED = 'rejected',
-  EXTENDED = 'extended',
+  RECEIVED = "received",
+  VERIFIED = "verified",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  REJECTED = "rejected",
+  EXTENDED = "extended",
 }
 
 enum VerificationMethod {
-  DOCUMENT = 'document',
-  EMAIL = 'email',
-  PHONE = 'phone',
-  IN_PERSON = 'in_person',
-  BIOMETRIC = 'biometric',
+  DOCUMENT = "document",
+  EMAIL = "email",
+  PHONE = "phone",
+  IN_PERSON = "in_person",
+  BIOMETRIC = "biometric",
 }
 
 enum VerificationStatus {
-  PENDING = 'pending',
-  VERIFIED = 'verified',
-  FAILED = 'failed',
-  EXPIRED = 'expired',
+  PENDING = "pending",
+  VERIFIED = "verified",
+  FAILED = "failed",
+  EXPIRED = "expired",
 }
 
 enum ReportType {
-  COMPLIANCE_SUMMARY = 'compliance_summary',
-  INCIDENT_REPORT = 'incident_report',
-  AUDIT_REPORT = 'audit_report',
-  RISK_ASSESSMENT = 'risk_assessment',
-  DATA_BREACH_NOTIFICATION = 'data_breach_notification',
-  REGULATORY_FILING = 'regulatory_filing',
+  COMPLIANCE_SUMMARY = "compliance_summary",
+  INCIDENT_REPORT = "incident_report",
+  AUDIT_REPORT = "audit_report",
+  RISK_ASSESSMENT = "risk_assessment",
+  DATA_BREACH_NOTIFICATION = "data_breach_notification",
+  REGULATORY_FILING = "regulatory_filing",
 }
 
 enum ReportPeriod {
-  DAILY = 'daily',
-  WEEKLY = 'weekly',
-  MONTHLY = 'monthly',
-  QUARTERLY = 'quarterly',
-  ANNUALLY = 'annually',
-  CUSTOM = 'custom',
+  DAILY = "daily",
+  WEEKLY = "weekly",
+  MONTHLY = "monthly",
+  QUARTERLY = "quarterly",
+  ANNUALLY = "annually",
+  CUSTOM = "custom",
 }
 
 enum ReportStatus {
-  DRAFT = 'draft',
-  PENDING_REVIEW = 'pending_review',
-  APPROVED = 'approved',
-  SUBMITTED = 'submitted',
-  REJECTED = 'rejected',
+  DRAFT = "draft",
+  PENDING_REVIEW = "pending_review",
+  APPROVED = "approved",
+  SUBMITTED = "submitted",
+  REJECTED = "rejected",
 }
 
 // ================================================
@@ -575,7 +575,7 @@ interface CreatePolicyRequest {
   type: PolicyType;
   category: ComplianceCategory;
   framework: ComplianceFramework;
-  rules: Omit<ComplianceRule, 'id'>[];
+  rules: Omit<ComplianceRule, "id">[];
   effectiveDate: Date;
   expiryDate?: Date;
   metadata?: Record<string, any>;
@@ -604,7 +604,7 @@ interface ReportIncidentRequest {
   affectedSystems: string[];
   affectedData: Omit<
     DataImpactAssessment,
-    'notificationRequired' | 'regulatoryReportingRequired'
+    "notificationRequired" | "regulatoryReportingRequired"
   >;
   metadata?: Record<string, any>;
 }
@@ -643,7 +643,7 @@ interface ComplianceFilters {
   limit?: number;
   offset?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 // ================================================
@@ -677,7 +677,7 @@ export class ComplianceService {
     userId: string,
   ): Promise<CompliancePolicy> {
     try {
-      monitoring.info('Creating compliance policy', 'compliance-service', {
+      monitoring.info("Creating compliance policy", "compliance-service", {
         tenantId: request.tenantId,
         name: request.name,
         framework: request.framework,
@@ -706,15 +706,15 @@ export class ComplianceService {
       };
 
       const { data, error } = await this.supabase
-        .from('compliance_policies')
+        .from("compliance_policies")
         .insert(policyData)
         .select()
         .single();
 
       if (error) {
         monitoring.error(
-          'Policy creation failed',
-          'compliance-service',
+          "Policy creation failed",
+          "compliance-service",
           new Error(error.message),
           {
             tenantId: request.tenantId,
@@ -728,13 +728,13 @@ export class ComplianceService {
       // Create audit trail
       await this.createAuditTrail(
         request.tenantId,
-        'policy_created',
+        "policy_created",
         `Policy "${policy.name}" created`,
         { policyId: policy.id },
         userId,
       );
 
-      monitoring.info('Policy created successfully', 'compliance-service', {
+      monitoring.info("Policy created successfully", "compliance-service", {
         policyId: policy.id,
         tenantId: policy.tenantId,
       });
@@ -742,8 +742,8 @@ export class ComplianceService {
       return policy;
     } catch (error) {
       monitoring.error(
-        'Create policy error',
-        'compliance-service',
+        "Create policy error",
+        "compliance-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -760,9 +760,9 @@ export class ComplianceService {
   ): Promise<CompliancePolicy | null> {
     try {
       const { data, error } = await this.supabase
-        .from('compliance_policies')
-        .select('*')
-        .eq('id', policyId)
+        .from("compliance_policies")
+        .select("*")
+        .eq("id", policyId)
         .single();
 
       if (error || !data) {
@@ -775,8 +775,8 @@ export class ComplianceService {
       return this.mapPolicyFromDb(data);
     } catch (error) {
       monitoring.error(
-        'Get policy error',
-        'compliance-service',
+        "Get policy error",
+        "compliance-service",
         error as Error,
         { policyId },
       );
@@ -787,9 +787,9 @@ export class ComplianceService {
   async searchPolicies(
     filters: ComplianceFilters,
     userId: string,
-  ): Promise<{ policies: CompliancePolicy[]; total: number; }> {
+  ): Promise<{ policies: CompliancePolicy[]; total: number }> {
     try {
-      monitoring.debug('Searching compliance policies', 'compliance-service', {
+      monitoring.debug("Searching compliance policies", "compliance-service", {
         filters,
       });
 
@@ -799,34 +799,34 @@ export class ComplianceService {
       }
 
       let query = this.supabase
-        .from('compliance_policies')
-        .select('*', { count: 'exact' });
+        .from("compliance_policies")
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (filters.tenantId) {
-        query = query.eq('tenant_id', filters.tenantId);
+        query = query.eq("tenant_id", filters.tenantId);
       }
 
       if (filters.framework) {
-        query = query.eq('framework', filters.framework);
+        query = query.eq("framework", filters.framework);
       }
 
       if (filters.category) {
-        query = query.eq('category', filters.category);
+        query = query.eq("category", filters.category);
       }
 
       if (filters.dateFrom) {
-        query = query.gte('created_at', filters.dateFrom.toISOString());
+        query = query.gte("created_at", filters.dateFrom.toISOString());
       }
 
       if (filters.dateTo) {
-        query = query.lte('created_at', filters.dateTo.toISOString());
+        query = query.lte("created_at", filters.dateTo.toISOString());
       }
 
       // Apply sorting
-      const sortBy = filters.sortBy || 'created_at';
-      const sortOrder = filters.sortOrder || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = filters.sortBy || "created_at";
+      const sortOrder = filters.sortOrder || "desc";
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const limit = Math.min(filters.limit || 50, 100);
@@ -844,8 +844,8 @@ export class ComplianceService {
       return { policies, total: count || 0 };
     } catch (error) {
       monitoring.error(
-        'Search policies error',
-        'compliance-service',
+        "Search policies error",
+        "compliance-service",
         error as Error,
         { filters },
       );
@@ -862,7 +862,7 @@ export class ComplianceService {
     userId: string,
   ): Promise<ComplianceIncident> {
     try {
-      monitoring.info('Reporting compliance incident', 'compliance-service', {
+      monitoring.info("Reporting compliance incident", "compliance-service", {
         tenantId: request.tenantId,
         type: request.type,
         severity: request.severity,
@@ -891,7 +891,7 @@ export class ComplianceService {
         containment_actions: [],
         remediation: {
           actions: [],
-          timeline: '',
+          timeline: "",
           responsibleParty: userId,
           approvalRequired: request.severity === SeverityLevel.CRITICAL,
           status: RemediationStatus.PLANNED,
@@ -900,7 +900,7 @@ export class ComplianceService {
       };
 
       const { data, error } = await this.supabase
-        .from('compliance_incidents')
+        .from("compliance_incidents")
         .insert(incidentData)
         .select()
         .single();
@@ -913,8 +913,8 @@ export class ComplianceService {
 
       // Auto-assign based on severity
       if (
-        incident.severity === SeverityLevel.CRITICAL
-        || incident.severity === SeverityLevel.HIGH
+        incident.severity === SeverityLevel.CRITICAL ||
+        incident.severity === SeverityLevel.HIGH
       ) {
         await this.autoAssignIncident(incident.id, request.tenantId);
       }
@@ -930,13 +930,13 @@ export class ComplianceService {
       // Create audit trail
       await this.createAuditTrail(
         request.tenantId,
-        'incident_reported',
+        "incident_reported",
         `Incident "${incident.title}" reported`,
         { incidentId: incident.id, severity: incident.severity },
         userId,
       );
 
-      monitoring.info('Incident reported successfully', 'compliance-service', {
+      monitoring.info("Incident reported successfully", "compliance-service", {
         incidentId: incident.id,
         tenantId: incident.tenantId,
         severity: incident.severity,
@@ -945,8 +945,8 @@ export class ComplianceService {
       return incident;
     } catch (error) {
       monitoring.error(
-        'Report incident error',
-        'compliance-service',
+        "Report incident error",
+        "compliance-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -963,19 +963,19 @@ export class ComplianceService {
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('compliance_incidents')
+        .from("compliance_incidents")
         .update({
           status: IncidentStatus.INVESTIGATING,
           assigned_to: userId,
           acknowledged_at: new Date().toISOString(),
         })
-        .eq('id', incidentId);
+        .eq("id", incidentId);
 
       if (!error) {
         await this.createAuditTrail(
-          '', // Will be filled from incident data
-          'incident_acknowledged',
-          'Incident acknowledged by user',
+          "", // Will be filled from incident data
+          "incident_acknowledged",
+          "Incident acknowledged by user",
           { incidentId, userId },
           userId,
         );
@@ -984,8 +984,8 @@ export class ComplianceService {
       return !error;
     } catch (error) {
       monitoring.error(
-        'Acknowledge incident error',
-        'compliance-service',
+        "Acknowledge incident error",
+        "compliance-service",
         error as Error,
         {
           incidentId,
@@ -1005,7 +1005,7 @@ export class ComplianceService {
     userId: string,
   ): Promise<ConsentRecord> {
     try {
-      monitoring.info('Recording consent', 'compliance-service', {
+      monitoring.info("Recording consent", "compliance-service", {
         tenantId: request.tenantId,
         dataSubjectId: request.dataSubjectId,
         purpose: request.purpose,
@@ -1032,7 +1032,7 @@ export class ComplianceService {
       };
 
       const { data, error } = await this.supabase
-        .from('consent_records')
+        .from("consent_records")
         .insert(consentData)
         .select()
         .single();
@@ -1046,13 +1046,13 @@ export class ComplianceService {
       // Create audit trail
       await this.createAuditTrail(
         request.tenantId,
-        'consent_recorded',
+        "consent_recorded",
         `Consent recorded for ${request.dataSubjectId}`,
         { consentId: consent.id, purpose: request.purpose },
         userId,
       );
 
-      monitoring.info('Consent recorded successfully', 'compliance-service', {
+      monitoring.info("Consent recorded successfully", "compliance-service", {
         consentId: consent.id,
         dataSubjectId: consent.dataSubjectId,
       });
@@ -1060,8 +1060,8 @@ export class ComplianceService {
       return consent;
     } catch (error) {
       monitoring.error(
-        'Record consent error',
-        'compliance-service',
+        "Record consent error",
+        "compliance-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -1079,20 +1079,20 @@ export class ComplianceService {
   ): Promise<boolean> {
     try {
       const { error } = await this.supabase
-        .from('consent_records')
+        .from("consent_records")
         .update({
           consent_given: false,
           withdrawal_date: new Date().toISOString(),
           withdrawal_method: method,
           is_active: false,
         })
-        .eq('id', consentId);
+        .eq("id", consentId);
 
       if (!error) {
         await this.createAuditTrail(
-          '', // Will be filled from consent data
-          'consent_withdrawn',
-          'Consent withdrawn',
+          "", // Will be filled from consent data
+          "consent_withdrawn",
+          "Consent withdrawn",
           { consentId, method },
           userId,
         );
@@ -1101,8 +1101,8 @@ export class ComplianceService {
       return !error;
     } catch (error) {
       monitoring.error(
-        'Withdraw consent error',
-        'compliance-service',
+        "Withdraw consent error",
+        "compliance-service",
         error as Error,
         {
           consentId,
@@ -1122,7 +1122,7 @@ export class ComplianceService {
     userId: string,
   ): Promise<DataSubjectRequest> {
     try {
-      monitoring.info('Creating data subject request', 'compliance-service', {
+      monitoring.info("Creating data subject request", "compliance-service", {
         tenantId: request.tenantId,
         dataSubjectId: request.dataSubjectId,
         requestType: request.requestType,
@@ -1150,7 +1150,7 @@ export class ComplianceService {
       };
 
       const { data, error } = await this.supabase
-        .from('data_subject_requests')
+        .from("data_subject_requests")
         .insert(requestData)
         .select()
         .single();
@@ -1167,15 +1167,15 @@ export class ComplianceService {
       // Create audit trail
       await this.createAuditTrail(
         request.tenantId,
-        'data_subject_request_created',
+        "data_subject_request_created",
         `Data subject request created: ${request.requestType}`,
         { requestId: dsRequest.id, dataSubjectId: request.dataSubjectId },
         userId,
       );
 
       monitoring.info(
-        'Data subject request created successfully',
-        'compliance-service',
+        "Data subject request created successfully",
+        "compliance-service",
         {
           requestId: dsRequest.id,
           dataSubjectId: dsRequest.dataSubjectId,
@@ -1186,8 +1186,8 @@ export class ComplianceService {
       return dsRequest;
     } catch (error) {
       monitoring.error(
-        'Create data subject request error',
-        'compliance-service',
+        "Create data subject request error",
+        "compliance-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -1207,18 +1207,18 @@ export class ComplianceService {
       // Implementation would handle the specific request type
       // For now, we'll mark it as in progress
       const { error } = await this.supabase
-        .from('data_subject_requests')
+        .from("data_subject_requests")
         .update({
           status: RequestStatus.IN_PROGRESS,
           processed_by: userId,
         })
-        .eq('id', requestId);
+        .eq("id", requestId);
 
       return !error;
     } catch (error) {
       monitoring.error(
-        'Process data subject request error',
-        'compliance-service',
+        "Process data subject request error",
+        "compliance-service",
         error as Error,
         {
           requestId,
@@ -1240,7 +1240,7 @@ export class ComplianceService {
     userId: string,
   ): Promise<ComplianceMetrics> {
     try {
-      monitoring.debug('Getting compliance metrics', 'compliance-service', {
+      monitoring.debug("Getting compliance metrics", "compliance-service", {
         tenantId,
         periodStart,
         periodEnd,
@@ -1251,34 +1251,34 @@ export class ComplianceService {
 
       // Get policy compliance metrics
       const { data: policies } = await this.supabase
-        .from('compliance_policies')
-        .select('*')
-        .eq('tenant_id', tenantId)
-        .eq('is_active', true);
+        .from("compliance_policies")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .eq("is_active", true);
 
       // Get incident metrics
       const { data: incidents } = await this.supabase
-        .from('compliance_incidents')
-        .select('severity, status, detected_at')
-        .eq('tenant_id', tenantId)
-        .gte('detected_at', periodStart.toISOString())
-        .lte('detected_at', periodEnd.toISOString());
+        .from("compliance_incidents")
+        .select("severity, status, detected_at")
+        .eq("tenant_id", tenantId)
+        .gte("detected_at", periodStart.toISOString())
+        .lte("detected_at", periodEnd.toISOString());
 
       // Get audit findings
       const { data: findings } = await this.supabase
-        .from('compliance_findings')
-        .select('severity, status')
-        .eq('tenant_id', tenantId)
-        .gte('created_at', periodStart.toISOString())
-        .lte('created_at', periodEnd.toISOString());
+        .from("compliance_findings")
+        .select("severity, status")
+        .eq("tenant_id", tenantId)
+        .gte("created_at", periodStart.toISOString())
+        .lte("created_at", periodEnd.toISOString());
 
       // Get consent metrics
       const { data: consents } = await this.supabase
-        .from('consent_records')
-        .select('consent_given, created_at')
-        .eq('tenant_id', tenantId)
-        .gte('created_at', periodStart.toISOString())
-        .lte('created_at', periodEnd.toISOString());
+        .from("consent_records")
+        .select("consent_given, created_at")
+        .eq("tenant_id", tenantId)
+        .gte("created_at", periodStart.toISOString())
+        .lte("created_at", periodEnd.toISOString());
 
       // Calculate metrics
       const policyCompliance = this.calculatePolicyCompliance(policies || []);
@@ -1310,7 +1310,8 @@ export class ComplianceService {
       );
 
       // Create compliance by framework
-      const complianceByFramework = await this.createComplianceByFramework(tenantId);
+      const complianceByFramework =
+        await this.createComplianceByFramework(tenantId);
 
       return {
         policyCompliance,
@@ -1326,8 +1327,8 @@ export class ComplianceService {
       };
     } catch (error) {
       monitoring.error(
-        'Get compliance metrics error',
-        'compliance-service',
+        "Get compliance metrics error",
+        "compliance-service",
         error as Error,
         {
           tenantId,
@@ -1367,7 +1368,7 @@ export class ComplianceService {
     userId: string,
   ): Promise<void> {
     try {
-      await this.supabase.from('audit_trail').insert({
+      await this.supabase.from("audit_trail").insert({
         tenant_id: tenantId,
         event,
         description,
@@ -1377,8 +1378,8 @@ export class ComplianceService {
       });
     } catch (error) {
       monitoring.error(
-        'Create audit trail error',
-        'compliance-service',
+        "Create audit trail error",
+        "compliance-service",
         error as Error,
         {
           tenantId,
@@ -1391,17 +1392,19 @@ export class ComplianceService {
   private async assessDataImpact(
     affectedData: Omit<
       DataImpactAssessment,
-      'notificationRequired' | 'regulatoryReportingRequired'
+      "notificationRequired" | "regulatoryReportingRequired"
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification and regulatory reporting requirements
-    const notificationRequired = affectedData.recordsAffected > 100
-      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
+    const notificationRequired =
+      affectedData.recordsAffected > 100 ||
+      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
 
-    const regulatoryReportingRequired = affectedData.recordsAffected > 500
-      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
-      || affectedData.estimatedImpact === ImpactLevel.MAJOR
-      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const regulatoryReportingRequired =
+      affectedData.recordsAffected > 500 ||
+      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
+      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
+      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
     return {
       ...affectedData,
@@ -1415,7 +1418,7 @@ export class ComplianceService {
     tenantId: string,
   ): Promise<void> {
     // Implementation would auto-assign to appropriate compliance officer
-    monitoring.info('Auto-assigning incident', 'compliance-service', {
+    monitoring.info("Auto-assigning incident", "compliance-service", {
       incidentId,
       tenantId,
     });
@@ -1425,7 +1428,7 @@ export class ComplianceService {
     incident: ComplianceIncident,
   ): Promise<void> {
     // Create notifications for incident
-    monitoring.info('Creating incident notifications', 'compliance-service', {
+    monitoring.info("Creating incident notifications", "compliance-service", {
       incidentId: incident.id,
       severity: incident.severity,
     });
@@ -1435,7 +1438,7 @@ export class ComplianceService {
     incident: ComplianceIncident,
   ): Promise<void> {
     // Initiate regulatory reporting process
-    monitoring.info('Initiating regulatory reporting', 'compliance-service', {
+    monitoring.info("Initiating regulatory reporting", "compliance-service", {
       incidentId: incident.id,
     });
   }
@@ -1445,8 +1448,8 @@ export class ComplianceService {
   ): Promise<void> {
     // Create notifications for data subject request
     monitoring.info(
-      'Creating data subject request notifications',
-      'compliance-service',
+      "Creating data subject request notifications",
+      "compliance-service",
       {
         requestId: request.id,
         requestType: request.requestType,
@@ -1587,7 +1590,8 @@ export class ComplianceService {
     _tenantId: string,
   ): Promise<Record<ComplianceFramework, FrameworkCompliance>> {
     // Create compliance breakdown by framework (simplified)
-    const frameworks: Record<ComplianceFramework, FrameworkCompliance> = {} as any;
+    const frameworks: Record<ComplianceFramework, FrameworkCompliance> =
+      {} as any;
 
     Object.values(ComplianceFramework).forEach((framework) => {
       frameworks[framework] = {

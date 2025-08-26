@@ -8,7 +8,7 @@ export {
   EnhancedAIService,
   NoShowPredictionService,
   UniversalChatService,
-} from './services';
+} from "./services";
 
 // Types and Interfaces
 export type {
@@ -59,33 +59,33 @@ export type {
   ServiceStatus,
   UserRole,
   ValidationError,
-} from './types';
-export { decryptSensitiveData, encryptSensitiveData } from './utils/encryption';
-export { formatBrazilianData } from './utils/formatting';
+} from "./types";
+export { decryptSensitiveData, encryptSensitiveData } from "./utils/encryption";
+export { formatBrazilianData } from "./utils/formatting";
 // Utilities
-export { validateHealthcareData } from './utils/validation';
+export { validateHealthcareData } from "./utils/validation";
 
 // Constants
-export const AI_SERVICE_VERSION = '2.1.0';
-export const SUPPORTED_LANGUAGES = ['pt-BR', 'en'] as const;
-export const COMPLIANCE_STANDARDS = ['lgpd', 'anvisa', 'cfm'] as const;
+export const AI_SERVICE_VERSION = "2.1.0";
+export const SUPPORTED_LANGUAGES = ["pt-BR", "en"] as const;
+export const COMPLIANCE_STANDARDS = ["lgpd", "anvisa", "cfm"] as const;
 
 // Default configurations
 export const DEFAULT_AI_CONFIG: Partial<AIServiceConfiguration> = {
   openai: {
-    model: 'gpt-4-turbo-preview',
+    model: "gpt-4-turbo-preview",
     maxTokens: 1000,
     temperature: 0.7,
   },
   monitoring: {
     enabled: true,
-    logLevel: 'info',
+    logLevel: "info",
   },
   compliance: {
     lgpd: {
       enabled: true,
       dataRetentionDays: 1095, // 3 years
-      auditLogLevel: 'detailed',
+      auditLogLevel: "detailed",
     },
     anvisa: {
       enabled: true,
@@ -111,12 +111,12 @@ export async function initializeAIServices(_config: AIServiceConfiguration) {
     // Verify all services are healthy
     const healthChecks = await AIServiceHealthChecker.checkAllServices();
     const unhealthyServices = healthChecks.filter(
-      (check) => check.status !== 'healthy',
+      (check) => check.status !== "healthy",
     );
 
     if (unhealthyServices.length > 0) {
       throw new Error(
-        `Unhealthy services detected: ${unhealthyServices.map((s) => s.service).join(', ')}`,
+        `Unhealthy services detected: ${unhealthyServices.map((s) => s.service).join(", ")}`,
       );
     }
 
@@ -140,20 +140,21 @@ export async function initializeAIServices(_config: AIServiceConfiguration) {
 
 // Package metadata
 export const packageInfo = {
-  name: '@neonpro/ai',
+  name: "@neonpro/ai",
   version: AI_SERVICE_VERSION,
-  description: 'AI-First Healthcare Platform - Enhanced Service Layer for NeonPro',
-  author: 'NeonPro Development Team',
-  license: 'Proprietary',
+  description:
+    "AI-First Healthcare Platform - Enhanced Service Layer for NeonPro",
+  author: "NeonPro Development Team",
+  license: "Proprietary",
   features: [
-    'Universal AI Chat System with Portuguese healthcare optimization',
-    'ML-powered No-Show Prediction with Brazilian behavioral patterns',
-    'Enhanced Service Base Class with compliance automation',
-    'LGPD/ANVISA/CFM regulatory compliance automation',
-    'Multi-layer caching with Redis integration',
-    'Comprehensive audit trail and monitoring',
-    'Feature flag infrastructure',
-    'Healthcare-specific data validation and encryption',
+    "Universal AI Chat System with Portuguese healthcare optimization",
+    "ML-powered No-Show Prediction with Brazilian behavioral patterns",
+    "Enhanced Service Base Class with compliance automation",
+    "LGPD/ANVISA/CFM regulatory compliance automation",
+    "Multi-layer caching with Redis integration",
+    "Comprehensive audit trail and monitoring",
+    "Feature flag infrastructure",
+    "Healthcare-specific data validation and encryption",
   ],
   compliance: COMPLIANCE_STANDARDS,
   languages: SUPPORTED_LANGUAGES,

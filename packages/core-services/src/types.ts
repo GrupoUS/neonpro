@@ -4,7 +4,7 @@
  * Tipos compartilhados para o Enhanced Service Layer Pattern
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Zod Schemas for validation
 export const UUIDSchema = z.string().uuid();
@@ -23,49 +23,49 @@ export interface BaseEntity {
 
 // Status Enums
 export enum PatientStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  SUSPENDED = 'SUSPENDED',
-  PENDING = 'PENDING',
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  SUSPENDED = "SUSPENDED",
+  PENDING = "PENDING",
 }
 
 export enum BillingStatus {
-  PENDING = 'PENDING',
-  PAID = 'PAID',
-  OVERDUE = 'OVERDUE',
-  CANCELLED = 'CANCELLED',
+  PENDING = "PENDING",
+  PAID = "PAID",
+  OVERDUE = "OVERDUE",
+  CANCELLED = "CANCELLED",
 }
 
 export enum AppointmentStatus {
-  SCHEDULED = 'SCHEDULED',
-  CONFIRMED = 'CONFIRMED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  NO_SHOW = 'NO_SHOW',
+  SCHEDULED = "SCHEDULED",
+  CONFIRMED = "CONFIRMED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  NO_SHOW = "NO_SHOW",
 }
 
 export enum InventoryStatus {
-  IN_STOCK = 'IN_STOCK',
-  LOW_STOCK = 'LOW_STOCK',
-  OUT_OF_STOCK = 'OUT_OF_STOCK',
-  DISCONTINUED = 'DISCONTINUED',
+  IN_STOCK = "IN_STOCK",
+  LOW_STOCK = "LOW_STOCK",
+  OUT_OF_STOCK = "OUT_OF_STOCK",
+  DISCONTINUED = "DISCONTINUED",
 }
 
 export enum NotificationType {
-  APPOINTMENT_REMINDER = 'APPOINTMENT_REMINDER',
-  PAYMENT_DUE = 'PAYMENT_DUE',
-  TREATMENT_UPDATE = 'TREATMENT_UPDATE',
-  SYSTEM_ALERT = 'SYSTEM_ALERT',
-  MARKETING = 'MARKETING',
-  COMPLIANCE = 'COMPLIANCE',
+  APPOINTMENT_REMINDER = "APPOINTMENT_REMINDER",
+  PAYMENT_DUE = "PAYMENT_DUE",
+  TREATMENT_UPDATE = "TREATMENT_UPDATE",
+  SYSTEM_ALERT = "SYSTEM_ALERT",
+  MARKETING = "MARKETING",
+  COMPLIANCE = "COMPLIANCE",
 }
 
 export enum TreatmentType {
-  CONSULTATION = 'CONSULTATION',
-  PROCEDURE = 'PROCEDURE',
-  FOLLOW_UP = 'FOLLOW_UP',
-  EMERGENCY = 'EMERGENCY',
+  CONSULTATION = "CONSULTATION",
+  PROCEDURE = "PROCEDURE",
+  FOLLOW_UP = "FOLLOW_UP",
+  EMERGENCY = "EMERGENCY",
 }
 
 // Analytics Types
@@ -99,9 +99,9 @@ export interface AnalyticsInsight {
   id: string;
   title: string;
   description: string;
-  type: 'TREND' | 'ANOMALY' | 'RECOMMENDATION';
+  type: "TREND" | "ANOMALY" | "RECOMMENDATION";
   category: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+  severity: "LOW" | "MEDIUM" | "HIGH";
   data: Record<string, any>;
   createdAt: Date;
 }
@@ -175,8 +175,8 @@ export interface AuditRecord {
 export interface ComplianceReport {
   id: string;
   type: string;
-  framework: 'LGPD' | 'ANVISA' | 'CFM';
-  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING';
+  framework: "LGPD" | "ANVISA" | "CFM";
+  status: "COMPLIANT" | "NON_COMPLIANT" | "PENDING";
   score: number;
   findings: any[];
   generatedAt: Date;
@@ -209,8 +209,8 @@ export interface AuditEvent {
   version: string;
   userId?: string;
   patientId?: string;
-  severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  dataClassification?: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+  severity?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  dataClassification?: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
 }
 
 // Security Configuration
@@ -245,17 +245,17 @@ export interface PerformanceMetrics {
 // Healthcare Operation Context
 export interface HealthcareOperation {
   operationId: string;
-  operationType: 'READ' | 'WRITE' | 'DELETE' | 'UPDATE';
+  operationType: "READ" | "WRITE" | "DELETE" | "UPDATE";
   resourceType:
-    | 'PATIENT'
-    | 'APPOINTMENT'
-    | 'MEDICAL_RECORD'
-    | 'BILLING'
-    | 'INVENTORY';
-  dataClassification: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
+    | "PATIENT"
+    | "APPOINTMENT"
+    | "MEDICAL_RECORD"
+    | "BILLING"
+    | "INVENTORY";
+  dataClassification: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
   requiresConsent: boolean;
   retentionPolicy?: string;
-  complianceFramework: ('LGPD' | 'ANVISA' | 'CFM' | 'HIPAA')[];
+  complianceFramework: ("LGPD" | "ANVISA" | "CFM" | "HIPAA")[];
 }
 
 // Cache Configuration Types
@@ -280,14 +280,14 @@ export interface AnalyticsConfiguration {
 
 // Service Health Status
 export interface ServiceHealth {
-  status: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
+  status: "HEALTHY" | "DEGRADED" | "UNHEALTHY";
   service: string;
   version: string;
   uptime: number;
   lastHealthCheck: string;
   dependencies: {
     name: string;
-    status: 'UP' | 'DOWN' | 'DEGRADED';
+    status: "UP" | "DOWN" | "DEGRADED";
     responseTime?: number;
   }[];
   metrics: {
@@ -306,7 +306,7 @@ export interface ServiceError extends Error {
   operation?: string;
   context?: ServiceContext;
   timestamp: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   retryable: boolean;
   correlationId?: string;
 }
@@ -315,7 +315,7 @@ export interface ServiceError extends Error {
 export interface BaseServiceConfig {
   serviceName: string;
   version: string;
-  environment: 'development' | 'staging' | 'production';
+  environment: "development" | "staging" | "production";
   enableCache: boolean;
   enableAnalytics: boolean;
   enableSecurity: boolean;
@@ -334,7 +334,7 @@ export interface ConsentConfiguration {
     type: string;
     description: string;
     required: boolean;
-    category: 'FUNCTIONAL' | 'ANALYTICS' | 'MARKETING' | 'MEDICAL';
+    category: "FUNCTIONAL" | "ANALYTICS" | "MARKETING" | "MEDICAL";
   }[];
 }
 
@@ -347,5 +347,5 @@ export interface ResilienceConfiguration {
   circuitBreakerThreshold: number;
   circuitBreakerTimeout: number;
   enableFallback: boolean;
-  fallbackStrategy: 'CACHE' | 'DEFAULT_VALUE' | 'ALTERNATIVE_SERVICE';
+  fallbackStrategy: "CACHE" | "DEFAULT_VALUE" | "ALTERNATIVE_SERVICE";
 }

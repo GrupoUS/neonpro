@@ -6,15 +6,15 @@
  * com controle rigoroso de origins e headers sensíveis.
  */
 
-import type { Context, MiddlewareHandler } from 'hono';
-import { cors } from 'hono/cors';
-import { logger } from '../lib/logger';
+import type { Context, MiddlewareHandler } from "hono";
+import { cors } from "hono/cors";
+import { logger } from "../lib/logger";
 import {
   LOCALHOST_IP_PATTERN,
   LOCALHOST_PATTERN,
   VERCEL_PRODUCTION_PATTERN,
   VERCEL_STAGING_PATTERN,
-} from '../lib/regex-constants';
+} from "../lib/regex-constants";
 
 // Time constants for CORS cache control
 const CACHE_DURATION = {
@@ -34,73 +34,73 @@ const HTTP_STATUS = {
 
 // Environment-based CORS configuration
 const getCorsPolicyByEnvironment = () => {
-  const environment = process.env.NODE_ENV || 'development';
+  const environment = process.env.NODE_ENV || "development";
 
   switch (environment) {
-    case 'production': {
+    case "production": {
       return {
         // Production: strict origin control
         origin: [
-          'https://app.neonpro.com',
-          'https://neonpro.com',
-          'https://*.neonpro.com',
-          'https://neonpro.vercel.app',
+          "https://app.neonpro.com",
+          "https://neonpro.com",
+          "https://*.neonpro.com",
+          "https://neonpro.vercel.app",
           VERCEL_PRODUCTION_PATTERN,
         ],
         credentials: true,
         allowedHeaders: [
-          'Content-Type',
-          'Authorization',
-          'X-Requested-With',
-          'X-Request-ID',
-          'X-Correlation-ID',
-          'X-Client-Version',
+          "Content-Type",
+          "Authorization",
+          "X-Requested-With",
+          "X-Request-ID",
+          "X-Correlation-ID",
+          "X-Client-Version",
         ],
         exposedHeaders: [
-          'X-Request-ID',
-          'X-Correlation-ID',
-          'X-RateLimit-Limit',
-          'X-RateLimit-Remaining',
-          'X-RateLimit-Reset',
-          'X-LGPD-Compliant',
-          'X-Audit-ID',
+          "X-Request-ID",
+          "X-Correlation-ID",
+          "X-RateLimit-Limit",
+          "X-RateLimit-Remaining",
+          "X-RateLimit-Reset",
+          "X-LGPD-Compliant",
+          "X-Audit-ID",
         ],
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
         maxAge: CACHE_DURATION.PRODUCTION,
       };
     }
 
-    case 'staging': {
+    case "staging": {
       return {
         // Staging: moderate restrictions
         origin: [
-          'https://staging.neonpro.com',
-          'https://neonpro-staging.vercel.app',
+          "https://staging.neonpro.com",
+          "https://neonpro-staging.vercel.app",
           VERCEL_STAGING_PATTERN,
-          'http://localhost:3000',
-          'http://localhost:3001',
+          "http://localhost:3000",
+          "http://localhost:3001",
         ],
         credentials: true,
         allowedHeaders: [
-          'Content-Type',
-          'Authorization',
-          'X-Requested-With',
-          'X-Request-ID',
-          'X-Correlation-ID',
-          'X-Client-Version',
-          'X-Debug-Mode',
+          "Content-Type",
+          "Authorization",
+          "X-Requested-With",
+          "X-Request-ID",
+          "X-Correlation-ID",
+          "X-Client-Version",
+          "X-Debug-Mode",
         ],
         exposedHeaders: [
-          'X-Request-ID',
-          'X-Correlation-ID',
-          'X-RateLimit-Limit',
-          'X-RateLimit-Remaining',
-          'X-RateLimit-Reset',
-          'X-LGPD-Compliant',
-          'X-Audit-ID',
-          'X-Debug-Info',
+          "X-Request-ID",
+          "X-Correlation-ID",
+          "X-RateLimit-Limit",
+          "X-RateLimit-Remaining",
+          "X-RateLimit-Reset",
+          "X-LGPD-Compliant",
+          "X-Audit-ID",
+          "X-Debug-Info",
         ],
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
         maxAge: CACHE_DURATION.STAGING,
       };
     }
@@ -110,36 +110,36 @@ const getCorsPolicyByEnvironment = () => {
       return {
         // Development: permissive for local development
         origin: [
-          'http://localhost:3000',
-          'http://localhost:3001',
-          'http://127.0.0.1:3000',
-          'http://127.0.0.1:3001',
+          "http://localhost:3000",
+          "http://localhost:3001",
+          "http://127.0.0.1:3000",
+          "http://127.0.0.1:3001",
           LOCALHOST_PATTERN,
           LOCALHOST_IP_PATTERN,
         ],
         credentials: true,
         allowedHeaders: [
-          'Content-Type',
-          'Authorization',
-          'X-Requested-With',
-          'X-Request-ID',
-          'X-Correlation-ID',
-          'X-Client-Version',
-          'X-Debug-Mode',
-          'X-Dev-Tools',
+          "Content-Type",
+          "Authorization",
+          "X-Requested-With",
+          "X-Request-ID",
+          "X-Correlation-ID",
+          "X-Client-Version",
+          "X-Debug-Mode",
+          "X-Dev-Tools",
         ],
         exposedHeaders: [
-          'X-Request-ID',
-          'X-Correlation-ID',
-          'X-RateLimit-Limit',
-          'X-RateLimit-Remaining',
-          'X-RateLimit-Reset',
-          'X-LGPD-Compliant',
-          'X-Audit-ID',
-          'X-Debug-Info',
-          'X-Dev-Tools',
+          "X-Request-ID",
+          "X-Correlation-ID",
+          "X-RateLimit-Limit",
+          "X-RateLimit-Remaining",
+          "X-RateLimit-Reset",
+          "X-LGPD-Compliant",
+          "X-Audit-ID",
+          "X-Debug-Info",
+          "X-Dev-Tools",
         ],
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
         maxAge: CACHE_DURATION.DEVELOPMENT,
       };
     }
@@ -152,17 +152,17 @@ const getCorsPolicyByEnvironment = () => {
 const addHealthcareHeaders = (): MiddlewareHandler => {
   return async (c, next) => {
     // Add healthcare-specific headers
-    c.res.headers.set('X-Healthcare-API', 'NeonPro-v1');
-    c.res.headers.set('X-Data-Classification', 'Healthcare-Sensitive');
+    c.res.headers.set("X-Healthcare-API", "NeonPro-v1");
+    c.res.headers.set("X-Data-Classification", "Healthcare-Sensitive");
 
     // LGPD compliance headers
-    c.res.headers.set('X-Privacy-Policy', 'https://neonpro.com/privacy');
-    c.res.headers.set('X-Data-Controller', 'NeonPro Healthcare Solutions');
+    c.res.headers.set("X-Privacy-Policy", "https://neonpro.com/privacy");
+    c.res.headers.set("X-Data-Controller", "NeonPro Healthcare Solutions");
 
     // Security headers for healthcare data
-    c.res.headers.set('X-Content-Type-Options', 'nosniff');
-    c.res.headers.set('X-Frame-Options', 'DENY');
-    c.res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    c.res.headers.set("X-Content-Type-Options", "nosniff");
+    c.res.headers.set("X-Frame-Options", "DENY");
+    c.res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
     await next();
   };
@@ -203,7 +203,7 @@ const isStaticOriginAllowed = (
   }
 
   for (const allowedOrigin of allowedOrigins) {
-    if (typeof allowedOrigin === 'string' && allowedOrigin === origin) {
+    if (typeof allowedOrigin === "string" && allowedOrigin === origin) {
       return true;
     }
     if (allowedOrigin instanceof RegExp && allowedOrigin.test(origin)) {
@@ -238,7 +238,7 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
     }
 
     // Log rejected origins for monitoring
-    logger.warn('CORS: Rejected origin', {
+    logger.warn("CORS: Rejected origin", {
       origin,
       timestamp: new Date().toISOString(),
     });
@@ -266,18 +266,18 @@ export const corsMiddleware = (): MiddlewareHandler[] => {
  */
 export const optimizedPreflight = (): MiddlewareHandler => {
   return async (c, next) => {
-    if (c.req.method === 'OPTIONS') {
+    if (c.req.method === "OPTIONS") {
       // Add caching for preflight requests
-      c.res.headers.set('Vary', 'Origin');
+      c.res.headers.set("Vary", "Origin");
       c.res.headers.set(
-        'Cache-Control',
+        "Cache-Control",
         `public, max-age=${CACHE_DURATION.PREFLIGHT}`,
       );
 
       // Add timing header for monitoring
-      c.res.headers.set('X-Preflight-Time', Date.now().toString());
+      c.res.headers.set("X-Preflight-Time", Date.now().toString());
 
-      return c.text('', HTTP_STATUS.NO_CONTENT);
+      return c.text("", HTTP_STATUS.NO_CONTENT);
     }
 
     await next();
@@ -298,7 +298,7 @@ export const corsUtils = {
 
     if (Array.isArray(corsPolicy.origin)) {
       return corsPolicy.origin.some((allowed) => {
-        if (typeof allowed === 'string') {
+        if (typeof allowed === "string") {
           return allowed === origin;
         }
         if (allowed instanceof RegExp) {
@@ -317,7 +317,9 @@ export const corsUtils = {
   // Validate request headers
   validateHeaders: (headers: string[]): boolean => {
     const corsPolicy = getCorsPolicyByEnvironment();
-    return headers.every((header) => corsPolicy.allowedHeaders.includes(header));
+    return headers.every((header) =>
+      corsPolicy.allowedHeaders.includes(header),
+    );
   },
 
   // Set custom CORS headers for specific routes
@@ -338,8 +340,8 @@ export const strictCors = (): MiddlewareHandler => {
       return !origin; // No origin = same-origin request
     },
     credentials: false, // No credentials for strict mode
-    allowMethods: ['GET', 'POST'],
-    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ["GET", "POST"],
+    allowHeaders: ["Content-Type", "Authorization"],
     maxAge: CACHE_DURATION.NONE, // No caching for sensitive endpoints
   });
 };

@@ -4,46 +4,48 @@
  * Constitutional Healthcare Accessibility Compliance
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 import {
   HealthcareAccessibilityHelper,
   HealthcareWorkflowHelper,
-} from '../utils/healthcare-testing-utils';
+} from "../utils/healthcare-testing-utils";
 
-test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225', () => {
+test.describe("🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225", () => {
   test.beforeEach(async ({ page }) => {
     // Setup healthcare authentication for accessibility testing
-    await HealthcareWorkflowHelper.authenticateHealthcareUser(page, 'patient');
+    await HealthcareWorkflowHelper.authenticateHealthcareUser(page, "patient");
 
     // Enable accessibility tree for testing
     await page.addInitScript(() => {
-      window.addEventListener('DOMContentLoaded', () => {
+      window.addEventListener("DOMContentLoaded", () => {
         document.documentElement.setAttribute(
-          'data-accessibility-test',
-          'true',
+          "data-accessibility-test",
+          "true",
         );
       });
     });
   });
 
-  test('should validate WCAG 2.1 AA+ compliance for patient dashboard', async ({ page }) => {
-    await page.goto('/dashboard/patient');
+  test("should validate WCAG 2.1 AA+ compliance for patient dashboard", async ({
+    page,
+  }) => {
+    await page.goto("/dashboard/patient");
 
     // Comprehensive WCAG 2.1 AA+ validation
     await HealthcareAccessibilityHelper.validateAccessibility(page);
 
     // Test 1: Keyboard Navigation (WCAG 2.1.1)
-    await page.keyboard.press('Tab');
+    await page.keyboard.press("Tab");
     let focusedElement = await page.evaluate(
       () => document.activeElement?.tagName,
     );
-    expect(['BUTTON', 'INPUT', 'SELECT', 'A', 'TEXTAREA']).toContain(
+    expect(["BUTTON", "INPUT", "SELECT", "A", "TEXTAREA"]).toContain(
       focusedElement,
     );
 
     // Navigate through all interactive elements
     for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press("Tab");
       focusedElement = await page.evaluate(
         () => document.activeElement?.tagName,
       );
@@ -56,10 +58,10 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
         }
 
         const styles = getComputedStyle(element);
-        return styles.outline !== 'none' || styles.boxShadow !== 'none';
+        return styles.outline !== "none" || styles.boxShadow !== "none";
       });
 
-      if (focusedElement !== 'BODY') {
+      if (focusedElement !== "BODY") {
         expect(focusVisible).toBe(true);
       }
     }
@@ -67,7 +69,7 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
     // Test 2: Heading Structure (WCAG 1.3.1)
     const headings = await page.evaluate(() => {
       const headingElements = [
-        ...document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+        ...document.querySelectorAll("h1, h2, h3, h4, h5, h6"),
       ];
       return headingElements.map((h) => ({
         level: Number.parseInt(h.tagName.charAt(1), 10),
@@ -85,12 +87,12 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
     }
 
     // Test 3: Alternative Text for Images (WCAG 1.1.1)
-    const images = await page.locator('img').count();
+    const images = await page.locator("img").count();
     for (let i = 0; i < images; i++) {
-      const img = page.locator('img').nth(i);
-      const altText = await img.getAttribute('alt');
-      const ariaLabel = await img.getAttribute('aria-label');
-      const isDecorative = (await img.getAttribute('role')) === 'presentation';
+      const img = page.locator("img").nth(i);
+      const altText = await img.getAttribute("alt");
+      const ariaLabel = await img.getAttribute("aria-label");
+      const isDecorative = (await img.getAttribute("role")) === "presentation";
 
       if (!isDecorative) {
         expect(altText || ariaLabel).toBeTruthy();
@@ -98,12 +100,12 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
     }
 
     // Test 4: Form Labels (WCAG 1.3.1)
-    const inputs = await page.locator('input, select, textarea').count();
+    const inputs = await page.locator("input, select, textarea").count();
     for (let i = 0; i < inputs; i++) {
-      const input = page.locator('input, select, textarea').nth(i);
-      const id = await input.getAttribute('id');
-      const ariaLabel = await input.getAttribute('aria-label');
-      const ariaLabelledBy = await input.getAttribute('aria-labelledby');
+      const input = page.locator("input, select, textarea").nth(i);
+      const id = await input.getAttribute("id");
+      const ariaLabel = await input.getAttribute("aria-label");
+      const ariaLabelledBy = await input.getAttribute("aria-labelledby");
 
       if (id) {
         const label = page.locator(`label[for="${id}"]`);
@@ -113,35 +115,39 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
     }
   });
 
-  test('should validate NBR 17225 Brazilian accessibility standards', async ({ page }) => {
-    await page.goto('/dashboard/patient');
+  test("should validate NBR 17225 Brazilian accessibility standards", async ({
+    page,
+  }) => {
+    await page.goto("/dashboard/patient");
 
     // NBR 17225 specific validation
     await HealthcareAccessibilityHelper.validateBrazilianAccessibility(page);
 
     // Test 1: Portuguese Language Support (NBR 17225)
-    const htmlLang = await page.getAttribute('html', 'lang');
-    expect(htmlLang).toBe('pt-BR');
+    const htmlLang = await page.getAttribute("html", "lang");
+    expect(htmlLang).toBe("pt-BR");
 
     // Verify Portuguese content
-    const pageContent = await page.textContent('body');
+    const pageContent = await page.textContent("body");
     const portugueseWords = [
-      'Paciente',
-      'Agendamento',
-      'Tratamento',
-      'Privacidade',
-      'Dados',
-      'Consulta',
-      'Histórico',
-      'Contato',
+      "Paciente",
+      "Agendamento",
+      "Tratamento",
+      "Privacidade",
+      "Dados",
+      "Consulta",
+      "Histórico",
+      "Contato",
     ];
 
-    const hasPortugueseContent = portugueseWords.some((word) => pageContent?.includes(word));
+    const hasPortugueseContent = portugueseWords.some((word) =>
+      pageContent?.includes(word),
+    );
     expect(hasPortugueseContent).toBe(true);
 
     // Test 2: High Contrast Mode Support (NBR 17225)
-    await page.emulateMedia({ prefersColorScheme: 'dark' });
-    await expect(page.getByTestId('main-content')).toBeVisible();
+    await page.emulateMedia({ prefersColorScheme: "dark" });
+    await expect(page.getByTestId("main-content")).toBeVisible();
 
     // Verify contrast ratios in high contrast mode
     const contrastElements = await page
@@ -151,16 +157,16 @@ test.describe('🌐 Healthcare Accessibility Testing - WCAG 2.1 AA+ & NBR 17225'
 
     // Test 3: Font Size Accessibility (NBR 17225)
     await page.evaluate(() => {
-      document.body.style.fontSize = '150%';
+      document.body.style.fontSize = "150%";
     });
 
     // Verify content remains accessible at larger font sizes
-    await expect(page.getByTestId('main-content')).toBeVisible();
-    await expect(page.getByRole('navigation')).toBeVisible();
+    await expect(page.getByTestId("main-content")).toBeVisible();
+    await expect(page.getByRole("navigation")).toBeVisible();
 
     // Reset font size
     await page.evaluate(() => {
-      document.body.style.fontSize = '';
+      document.body.style.fontSize = "";
     });
 
     // Test 4: Brazilian Currency and Date Formats (NBR 17225)

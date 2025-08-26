@@ -6,11 +6,11 @@
  * para clínicas de estética brasileiras.
  */
 
-import { zValidator } from '@hono/zod-validator';
-import type { ApiResponse } from '@neonpro/shared/types';
-import { Hono } from 'hono';
-import { z } from 'zod';
-import { HTTP_STATUS } from '../lib/constants.js';
+import { zValidator } from "@hono/zod-validator";
+import type { ApiResponse } from "@neonpro/shared/types";
+import { Hono } from "hono";
+import { z } from "zod";
+import { HTTP_STATUS } from "../lib/constants.js";
 
 // Zod schemas for compliance
 const AuditLogQuerySchema = z.object({
@@ -20,34 +20,34 @@ const AuditLogQuerySchema = z.object({
   endDate: z.string().optional(),
   userId: z.string().optional(),
   action: z
-    .enum(['create', 'read', 'update', 'delete', 'login', 'logout', 'export'])
+    .enum(["create", "read", "update", "delete", "login", "logout", "export"])
     .optional(),
   resourceType: z
-    .enum(['patient', 'appointment', 'professional', 'service', 'user'])
+    .enum(["patient", "appointment", "professional", "service", "user"])
     .optional(),
 });
 
 const LGPDRequestSchema = z.object({
   type: z.enum([
-    'access',
-    'portability',
-    'deletion',
-    'rectification',
-    'objection',
+    "access",
+    "portability",
+    "deletion",
+    "rectification",
+    "objection",
   ]),
   patientId: z.string(),
   requesterName: z.string(),
   requesterEmail: z.string().email(),
   justification: z.string().min(10),
-  urgency: z.enum(['low', 'medium', 'high']).default('medium'),
+  urgency: z.enum(["low", "medium", "high"]).default("medium"),
 });
 
 const AnvisaReportSchema = z.object({
   reportType: z.enum([
-    'monthly_procedures',
-    'adverse_events',
-    'product_tracking',
-    'facility_inspection',
+    "monthly_procedures",
+    "adverse_events",
+    "product_tracking",
+    "facility_inspection",
   ]),
   period: z.object({
     startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -58,7 +58,7 @@ const AnvisaReportSchema = z.object({
 
 const ConsentUpdateSchema = z.object({
   patientId: z.string(),
-  consentType: z.enum(['data_processing', 'marketing', 'research', 'photos']),
+  consentType: z.enum(["data_processing", "marketing", "research", "photos"]),
   granted: z.boolean(),
   version: z.string(),
   ipAddress: z.string().optional(),
@@ -68,18 +68,18 @@ const ConsentUpdateSchema = z.object({
 // Create compliance router
 export const complianceRoutes = new Hono()
   // Authentication middleware
-  .use('*', async (c, next) => {
-    const auth = c.req.header('Authorization');
-    if (!auth?.startsWith('Bearer ')) {
+  .use("*", async (c, next) => {
+    const auth = c.req.header("Authorization");
+    if (!auth?.startsWith("Bearer ")) {
       return c.json(
-        { error: 'UNAUTHORIZED', message: 'Token de acesso obrigatório' },
+        { error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
         401,
       );
     }
     await next();
   })
   // 📋 LGPD Overview
-  .get('/lgpd/overview', async (c) => {
+  .get("/lgpd/overview", async (c) => {
     try {
       // TODO: Implement actual LGPD compliance overview
       const mockOverview = {
@@ -88,7 +88,7 @@ export const complianceRoutes = new Hono()
         activeConsents: 89,
         pendingRequests: 3,
         completedRequests: 127,
-        lastAudit: '2024-01-15T10:00:00Z',
+        lastAudit: "2024-01-15T10:00:00Z",
 
         consentBreakdown: {
           dataProcessing: { granted: 89, denied: 0 },
@@ -99,33 +99,34 @@ export const complianceRoutes = new Hono()
 
         recentActivity: [
           {
-            id: 'act_1',
-            type: 'consent_granted',
-            description: 'Paciente Maria Silva concedeu consentimento para fotos',
+            id: "act_1",
+            type: "consent_granted",
+            description:
+              "Paciente Maria Silva concedeu consentimento para fotos",
             timestamp: new Date(Date.now() - 3_600_000).toISOString(),
           },
           {
-            id: 'act_2',
-            type: 'data_exported',
-            description: 'Dados de João Santos exportados por solicitação',
+            id: "act_2",
+            type: "data_exported",
+            description: "Dados de João Santos exportados por solicitação",
             timestamp: new Date(Date.now() - 7_200_000).toISOString(),
           },
           {
-            id: 'act_3',
-            type: 'consent_updated',
-            description: 'Ana Costa atualizou preferências de marketing',
+            id: "act_3",
+            type: "consent_updated",
+            description: "Ana Costa atualizou preferências de marketing",
             timestamp: new Date(Date.now() - 10_800_000).toISOString(),
           },
         ],
 
         riskAssessment: {
-          level: 'low',
+          level: "low",
           score: 12, // out of 100, lower is better
           factors: [
-            { factor: 'Data minimization', status: 'compliant', risk: 0 },
-            { factor: 'Consent management', status: 'compliant', risk: 2 },
-            { factor: 'Data retention', status: 'needs_attention', risk: 8 },
-            { factor: 'Third-party sharing', status: 'compliant', risk: 2 },
+            { factor: "Data minimization", status: "compliant", risk: 0 },
+            { factor: "Consent management", status: "compliant", risk: 2 },
+            { factor: "Data retention", status: "needs_attention", risk: 8 },
+            { factor: "Third-party sharing", status: "compliant", risk: 2 },
           ],
         },
       };
@@ -133,7 +134,7 @@ export const complianceRoutes = new Hono()
       const response: ApiResponse<typeof mockOverview> = {
         success: true,
         data: mockOverview,
-        message: 'Visão geral LGPD carregada',
+        message: "Visão geral LGPD carregada",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -141,15 +142,15 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar visão geral LGPD',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar visão geral LGPD",
         },
         500,
       );
     }
   })
   // 📊 Audit logs
-  .get('/audit/logs', zValidator('query', AuditLogQuerySchema), async (c) => {
+  .get("/audit/logs", zValidator("query", AuditLogQuerySchema), async (c) => {
     const {
       page,
       limit,
@@ -158,7 +159,7 @@ export const complianceRoutes = new Hono()
       userId: _userId,
       action: _action,
       resourceType: _resourceType,
-    } = c.req.valid('query');
+    } = c.req.valid("query");
 
     try {
       // TODO: Implement actual audit log query
@@ -166,21 +167,22 @@ export const complianceRoutes = new Hono()
         id: `log_${i + 1}`,
         timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
         userId: `user_${Math.floor(Math.random() * 5) + 1}`,
-        userName: ['Ana Silva', 'João Santos', 'Maria Costa'][
+        userName: ["Ana Silva", "João Santos", "Maria Costa"][
           Math.floor(Math.random() * 3)
         ],
-        action: ['create', 'read', 'update', 'delete'][
+        action: ["create", "read", "update", "delete"][
           Math.floor(Math.random() * 4)
         ],
-        resourceType: ['patient', 'appointment', 'professional'][
+        resourceType: ["patient", "appointment", "professional"][
           Math.floor(Math.random() * 3)
         ],
         resourceId: `res_${Math.floor(Math.random() * 100)}`,
         ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        userAgent:
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         details: {
-          endpoint: '/api/v1/patients',
-          method: 'POST',
+          endpoint: "/api/v1/patients",
+          method: "POST",
           statusCode: 201,
           duration: Math.floor(Math.random() * 500) + 50,
         },
@@ -211,7 +213,7 @@ export const complianceRoutes = new Hono()
             pages: Math.ceil(total / limit),
           },
         },
-        message: 'Logs de auditoria carregados',
+        message: "Logs de auditoria carregados",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -219,59 +221,59 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar logs de auditoria',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar logs de auditoria",
         },
         500,
       );
     }
   })
   // ✉️ LGPD requests management
-  .get('/lgpd/requests', async (c) => {
+  .get("/lgpd/requests", async (c) => {
     try {
       // TODO: Implement actual LGPD requests query
       const mockRequests = [
         {
-          id: 'req_1',
-          type: 'access',
-          patientId: 'pat_123',
-          patientName: 'Maria Silva',
-          requesterName: 'Maria Silva',
-          requesterEmail: 'maria@email.com',
-          status: 'pending',
-          priority: 'medium',
-          createdAt: '2024-01-20T14:30:00Z',
-          dueDate: '2024-02-19T14:30:00Z', // 30 days for access requests
+          id: "req_1",
+          type: "access",
+          patientId: "pat_123",
+          patientName: "Maria Silva",
+          requesterName: "Maria Silva",
+          requesterEmail: "maria@email.com",
+          status: "pending",
+          priority: "medium",
+          createdAt: "2024-01-20T14:30:00Z",
+          dueDate: "2024-02-19T14:30:00Z", // 30 days for access requests
           processedAt: undefined,
           processorId: undefined,
         },
         {
-          id: 'req_2',
-          type: 'deletion',
-          patientId: 'pat_456',
-          patientName: 'João Santos',
-          requesterName: 'João Santos',
-          requesterEmail: 'joao@email.com',
-          status: 'completed',
-          priority: 'high',
-          createdAt: '2024-01-15T09:15:00Z',
-          dueDate: '2024-01-30T09:15:00Z', // 15 days for deletion
-          processedAt: '2024-01-18T16:45:00Z',
-          processorId: 'admin_1',
+          id: "req_2",
+          type: "deletion",
+          patientId: "pat_456",
+          patientName: "João Santos",
+          requesterName: "João Santos",
+          requesterEmail: "joao@email.com",
+          status: "completed",
+          priority: "high",
+          createdAt: "2024-01-15T09:15:00Z",
+          dueDate: "2024-01-30T09:15:00Z", // 15 days for deletion
+          processedAt: "2024-01-18T16:45:00Z",
+          processorId: "admin_1",
         },
         {
-          id: 'req_3',
-          type: 'portability',
-          patientId: 'pat_789',
-          patientName: 'Ana Costa',
-          requesterName: 'Ana Costa',
-          requesterEmail: 'ana@email.com',
-          status: 'in_progress',
-          priority: 'low',
-          createdAt: '2024-01-18T11:20:00Z',
-          dueDate: '2024-02-17T11:20:00Z',
+          id: "req_3",
+          type: "portability",
+          patientId: "pat_789",
+          patientName: "Ana Costa",
+          requesterName: "Ana Costa",
+          requesterEmail: "ana@email.com",
+          status: "in_progress",
+          priority: "low",
+          createdAt: "2024-01-18T11:20:00Z",
+          dueDate: "2024-02-17T11:20:00Z",
           processedAt: undefined,
-          processorId: 'admin_2',
+          processorId: "admin_2",
         },
       ];
 
@@ -290,17 +292,18 @@ export const complianceRoutes = new Hono()
           requests: mockRequests,
           summary: {
             total: mockRequests.length,
-            pending: mockRequests.filter((r) => r.status === 'pending').length,
-            inProgress: mockRequests.filter((r) => r.status === 'in_progress')
+            pending: mockRequests.filter((r) => r.status === "pending").length,
+            inProgress: mockRequests.filter((r) => r.status === "in_progress")
               .length,
-            completed: mockRequests.filter((r) => r.status === 'completed')
+            completed: mockRequests.filter((r) => r.status === "completed")
               .length,
             overdue: mockRequests.filter(
-              (r) => r.status !== 'completed' && new Date(r.dueDate) < new Date(),
+              (r) =>
+                r.status !== "completed" && new Date(r.dueDate) < new Date(),
             ).length,
           },
         },
-        message: 'Solicitações LGPD carregadas',
+        message: "Solicitações LGPD carregadas",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -308,23 +311,23 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar solicitações LGPD',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar solicitações LGPD",
         },
         500,
       );
     }
   })
   // ➕ Create LGPD request
-  .post('/lgpd/requests', zValidator('json', LGPDRequestSchema), async (c) => {
-    const requestData = c.req.valid('json');
+  .post("/lgpd/requests", zValidator("json", LGPDRequestSchema), async (c) => {
+    const requestData = c.req.valid("json");
 
     try {
       // TODO: Implement actual LGPD request creation
       const newRequest = {
         id: `req_${Date.now()}`,
         ...requestData,
-        status: 'pending',
+        status: "pending",
         createdAt: new Date().toISOString(),
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
         processedAt: undefined,
@@ -334,7 +337,7 @@ export const complianceRoutes = new Hono()
       const response: ApiResponse<typeof newRequest> = {
         success: true,
         data: newRequest,
-        message: 'Solicitação LGPD criada com sucesso',
+        message: "Solicitação LGPD criada com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.CREATED);
@@ -342,23 +345,23 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'VALIDATION_ERROR',
-          message: 'Erro ao criar solicitação LGPD',
+          error: "VALIDATION_ERROR",
+          message: "Erro ao criar solicitação LGPD",
         },
         400,
       );
     }
   })
   // 🏥 ANVISA compliance overview
-  .get('/anvisa/overview', async (c) => {
+  .get("/anvisa/overview", async (c) => {
     try {
       // TODO: Implement actual ANVISA compliance overview
       const mockAnvisaOverview = {
         complianceScore: 96.8, // percentage
         facilityLicense: {
-          number: 'AFE-SP-123456789',
-          status: 'active',
-          expirationDate: '2025-06-15',
+          number: "AFE-SP-123456789",
+          status: "active",
+          expirationDate: "2025-06-15",
           daysUntilExpiration: 147,
         },
 
@@ -377,9 +380,9 @@ export const complianceRoutes = new Hono()
         },
 
         inspections: {
-          last: '2023-08-15T10:00:00Z',
-          next: '2024-08-15T10:00:00Z',
-          result: 'approved',
+          last: "2023-08-15T10:00:00Z",
+          next: "2024-08-15T10:00:00Z",
+          result: "approved",
           recommendations: 2,
         },
 
@@ -387,36 +390,36 @@ export const complianceRoutes = new Hono()
           reported: 0,
           pending: 0,
           resolved: 3,
-          lastIncident: '2023-12-10T15:30:00Z',
+          lastIncident: "2023-12-10T15:30:00Z",
         },
 
         certifications: [
           {
-            name: 'Boas Práticas de Fabricação',
-            status: 'valid',
-            expirationDate: '2025-03-20',
+            name: "Boas Práticas de Fabricação",
+            status: "valid",
+            expirationDate: "2025-03-20",
           },
           {
-            name: 'ISO 13485',
-            status: 'valid',
-            expirationDate: '2025-11-10',
+            name: "ISO 13485",
+            status: "valid",
+            expirationDate: "2025-11-10",
           },
         ],
 
         recentAlerts: [
           {
-            id: 'alert_1',
-            type: 'product_recall',
-            description: 'Recall de lote específico de ácido hialurônico',
-            severity: 'medium',
-            timestamp: '2024-01-18T09:00:00Z',
+            id: "alert_1",
+            type: "product_recall",
+            description: "Recall de lote específico de ácido hialurônico",
+            severity: "medium",
+            timestamp: "2024-01-18T09:00:00Z",
           },
           {
-            id: 'alert_2',
-            type: 'regulation_update',
-            description: 'Nova RDC sobre procedimentos estéticos',
-            severity: 'high',
-            timestamp: '2024-01-15T14:00:00Z',
+            id: "alert_2",
+            type: "regulation_update",
+            description: "Nova RDC sobre procedimentos estéticos",
+            severity: "high",
+            timestamp: "2024-01-15T14:00:00Z",
           },
         ],
       };
@@ -424,7 +427,7 @@ export const complianceRoutes = new Hono()
       const response: ApiResponse<typeof mockAnvisaOverview> = {
         success: true,
         data: mockAnvisaOverview,
-        message: 'Visão geral ANVISA carregada',
+        message: "Visão geral ANVISA carregada",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -432,8 +435,8 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao carregar visão geral ANVISA',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao carregar visão geral ANVISA",
         },
         500,
       );
@@ -441,10 +444,10 @@ export const complianceRoutes = new Hono()
   })
   // 📋 Generate ANVISA report
   .post(
-    '/anvisa/reports',
-    zValidator('json', AnvisaReportSchema),
+    "/anvisa/reports",
+    zValidator("json", AnvisaReportSchema),
     async (c) => {
-      const { reportType, period, includeDetails } = c.req.valid('json');
+      const { reportType, period, includeDetails } = c.req.valid("json");
 
       try {
         // TODO: Implement actual ANVISA report generation
@@ -464,39 +467,39 @@ export const complianceRoutes = new Hono()
 
           procedures: includeDetails
             ? [
-              {
-                date: '2024-01-20',
-                patientId: 'pat_123_anonymized',
-                procedure: 'Aplicação de Botox',
-                product: 'Botox Allergan 100UI',
-                batchNumber: 'BT20240115',
-                professionalId: 'prof_1',
-                duration: 30,
-                outcome: 'success',
-              },
-              // ... more procedures
-            ]
+                {
+                  date: "2024-01-20",
+                  patientId: "pat_123_anonymized",
+                  procedure: "Aplicação de Botox",
+                  product: "Botox Allergan 100UI",
+                  batchNumber: "BT20240115",
+                  professionalId: "prof_1",
+                  duration: 30,
+                  outcome: "success",
+                },
+                // ... more procedures
+              ]
             : [],
 
           products: [
             {
-              name: 'Botox Allergan',
-              anvisaCode: 'ALS123456',
-              batchesUsed: ['BT20240115', 'BT20240118'],
+              name: "Botox Allergan",
+              anvisaCode: "ALS123456",
+              batchesUsed: ["BT20240115", "BT20240118"],
               totalUnits: 450,
-              expirationTracking: 'compliant',
+              expirationTracking: "compliant",
             },
             // ... more products
           ],
 
           downloadUrl: `/api/v1/compliance/anvisa/reports/anvisa_${Date.now()}/download`,
-          submissionDeadline: '2024-02-15T23:59:59Z',
+          submissionDeadline: "2024-02-15T23:59:59Z",
         };
 
         const response: ApiResponse<typeof mockReport> = {
           success: true,
           data: mockReport,
-          message: 'Relatório ANVISA gerado com sucesso',
+          message: "Relatório ANVISA gerado com sucesso",
         };
 
         return c.json(response, HTTP_STATUS.CREATED);
@@ -504,8 +507,8 @@ export const complianceRoutes = new Hono()
         return c.json(
           {
             success: false,
-            error: 'INTERNAL_ERROR',
-            message: 'Erro ao gerar relatório ANVISA',
+            error: "INTERNAL_ERROR",
+            message: "Erro ao gerar relatório ANVISA",
           },
           500,
         );
@@ -513,8 +516,8 @@ export const complianceRoutes = new Hono()
     },
   )
   // 🔐 Update patient consent
-  .put('/lgpd/consent', zValidator('json', ConsentUpdateSchema), async (c) => {
-    const consentData = c.req.valid('json');
+  .put("/lgpd/consent", zValidator("json", ConsentUpdateSchema), async (c) => {
+    const consentData = c.req.valid("json");
 
     try {
       // TODO: Implement actual consent update
@@ -522,14 +525,14 @@ export const complianceRoutes = new Hono()
         id: `consent_${Date.now()}`,
         ...consentData,
         updatedAt: new Date().toISOString(),
-        source: 'api',
+        source: "api",
         valid: true,
       };
 
       const response: ApiResponse<typeof updatedConsent> = {
         success: true,
         data: updatedConsent,
-        message: 'Consentimento atualizado com sucesso',
+        message: "Consentimento atualizado com sucesso",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -537,20 +540,20 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'VALIDATION_ERROR',
-          message: 'Erro ao atualizar consentimento',
+          error: "VALIDATION_ERROR",
+          message: "Erro ao atualizar consentimento",
         },
         400,
       );
     }
   })
   // 📊 Compliance dashboard export
-  .get('/export/dashboard', async (c) => {
+  .get("/export/dashboard", async (c) => {
     try {
       // TODO: Implement actual dashboard export
       const mockExport = {
         exportId: `exp_${Date.now()}`,
-        format: 'pdf',
+        format: "pdf",
         generatedAt: new Date().toISOString(),
         downloadUrl: `/api/v1/compliance/downloads/exp_${Date.now()}.pdf`,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
@@ -563,14 +566,14 @@ export const complianceRoutes = new Hono()
           recommendations: true,
         },
 
-        fileSize: '2.4 MB',
+        fileSize: "2.4 MB",
         pages: 15,
       };
 
       const response: ApiResponse<typeof mockExport> = {
         success: true,
         data: mockExport,
-        message: 'Dashboard de compliance exportado',
+        message: "Dashboard de compliance exportado",
       };
 
       return c.json(response, HTTP_STATUS.OK);
@@ -578,8 +581,8 @@ export const complianceRoutes = new Hono()
       return c.json(
         {
           success: false,
-          error: 'INTERNAL_ERROR',
-          message: 'Erro ao exportar dashboard',
+          error: "INTERNAL_ERROR",
+          message: "Erro ao exportar dashboard",
         },
         500,
       );

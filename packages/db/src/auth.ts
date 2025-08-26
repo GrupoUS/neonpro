@@ -4,11 +4,11 @@
  * LGPD + ANVISA + CFM compliance with audit trails
  */
 
-import type { Session, User } from '@supabase/supabase-js';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { cache } from 'react';
-import { createServerClient } from './client';
+import type { Session, User } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { cache } from "react";
+import { createServerClient } from "./client";
 
 /**
  * Server-side user authentication with healthcare audit trail
@@ -33,17 +33,17 @@ export const getUser = cache(async (): Promise<User | null> => {
     } = await supabase.auth.getUser();
 
     if (error) {
-      return;
+      return null;
     }
 
     // Healthcare audit logging for user access
     if (user) {
-      await logHealthcareAccess(user.id, 'user_authenticated');
+      await logHealthcareAccess(user.id, "user_authenticated");
     }
 
     return user;
   } catch {
-    return;
+    return null;
   }
 });
 
@@ -69,12 +69,12 @@ export const getSession = cache(async (): Promise<Session | null> => {
     } = await supabase.auth.getSession();
 
     if (error) {
-      return;
+      return null;
     }
 
     return session;
   } catch {
-    return;
+    return null;
   }
 });
 
@@ -86,7 +86,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
 
   if (!user) {
     // Healthcare compliance: redirect to secure login
-    redirect('/auth/login?reason=authentication_required');
+    redirect("/auth/login?reason=authentication_required");
   }
 
   return user;
@@ -111,18 +111,18 @@ export async function requireHealthcareProfessional(): Promise<User> {
 
   // Check professional role and CFM compliance
   const { data: professional } = await supabase
-    .from('healthcare_professionals')
-    .select('id, cfm_number, role, active')
-    .eq('user_id', user.id)
-    .eq('active', true)
+    .from("healthcare_professionals")
+    .select("id, cfm_number, role, active")
+    .eq("user_id", user.id)
+    .eq("active", true)
     .single();
 
   if (!professional) {
-    redirect('/auth/unauthorized?reason=healthcare_access_required');
+    redirect("/auth/unauthorized?reason=healthcare_access_required");
   }
 
   // Log healthcare professional access
-  await logHealthcareAccess(user.id, 'professional_access', {
+  await logHealthcareAccess(user.id, "professional_access", {
     cfm_number: professional?.cfm_number,
     role: professional?.role,
   });
@@ -150,12 +150,12 @@ async function logHealthcareAccess(
       },
     });
 
-    await supabase.from('healthcare_audit_logs').insert({
+    await supabase.from("healthcare_audit_logs").insert({
       user_id: userId,
       action,
       metadata,
-      ip_address: process.env.CF_CONNECTING_IP || 'unknown',
-      user_agent: process.env.HTTP_USER_AGENT || 'unknown',
+      ip_address: process.env.CF_CONNECTING_IP || "unknown",
+      user_agent: process.env.HTTP_USER_AGENT || "unknown",
       timestamp: new Date().toISOString(),
     });
   } catch {
@@ -180,9 +180,9 @@ export async function signOut(): Promise<void> {
   });
 
   if (user) {
-    await logHealthcareAccess(user.id, 'user_signout');
+    await logHealthcareAccess(user.id, "user_signout");
   }
 
   await supabase.auth.signOut();
-  redirect('/auth/login');
+  redirect("/auth/login");
 }

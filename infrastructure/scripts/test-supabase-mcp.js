@@ -5,10 +5,10 @@
  * Tests basic connectivity and authentication
  */
 
-const { createClient } = require('@supabase/supabase-js');
+const { createClient } = require("@supabase/supabase-js");
 
 // Load environment variables
-require('dotenv').config();
+require("dotenv").config();
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -37,8 +37,8 @@ async function testSupabaseMCP() {
     } else {
     }
 
-    const { data, error } = await supabase.from('profiles').select('count', {
-      count: 'exact',
+    const { data, error } = await supabase.from("profiles").select("count", {
+      count: "exact",
       head: true,
     });
 
@@ -48,7 +48,8 @@ async function testSupabaseMCP() {
     } else {
     }
 
-    const { data: authConfig, error: authError } = await supabase.auth.getUser();
+    const { data: authConfig, error: authError } =
+      await supabase.auth.getUser();
 
     if (authError) {
     } else {

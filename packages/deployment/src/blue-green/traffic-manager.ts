@@ -16,7 +16,7 @@ export interface TrafficStatus {
     blue: number;
     green: number;
   };
-  activeEnvironment: 'blue' | 'green' | 'mixed';
+  activeEnvironment: "blue" | "green" | "mixed";
   lastUpdate: Date;
 }
 
@@ -24,7 +24,7 @@ export class TrafficManager {
   private currentConfig: TrafficConfig | null = undefined;
   private readonly trafficHistory: TrafficStatus[] = [];
 
-  constructor(private readonly config: { maxHistorySize: number; }) {}
+  constructor(private readonly config: { maxHistorySize: number }) {}
 
   /**
    * Route traffic between blue and green environments
@@ -32,7 +32,7 @@ export class TrafficManager {
   async routeTraffic(config: TrafficConfig): Promise<TrafficStatus> {
     // Validate weights
     if (config.blueWeight + config.greenWeight !== 100) {
-      throw new Error('Traffic weights must sum to 100');
+      throw new Error("Traffic weights must sum to 100");
     }
 
     this.currentConfig = config;
@@ -72,7 +72,7 @@ export class TrafficManager {
       const config: TrafficConfig = {
         blueWeight: 100 - greenWeight,
         greenWeight,
-        environment: this.currentConfig?.environment || 'production',
+        environment: this.currentConfig?.environment || "production",
         gradualRollout: true,
       };
 
@@ -90,12 +90,12 @@ export class TrafficManager {
    * Switch all traffic to specified environment
    */
   async switchToEnvironment(
-    environment: 'blue' | 'green',
+    environment: "blue" | "green",
   ): Promise<TrafficStatus> {
     const config: TrafficConfig = {
-      blueWeight: environment === 'blue' ? 100 : 0,
-      greenWeight: environment === 'green' ? 100 : 0,
-      environment: this.currentConfig?.environment || 'production',
+      blueWeight: environment === "blue" ? 100 : 0,
+      greenWeight: environment === "green" ? 100 : 0,
+      environment: this.currentConfig?.environment || "production",
     };
 
     return this.routeTraffic(config);
@@ -118,32 +118,32 @@ export class TrafficManager {
   /**
    * Get current active environment
    */
-  async getCurrentEnvironment(): Promise<'blue' | 'green'> {
+  async getCurrentEnvironment(): Promise<"blue" | "green"> {
     const status = this.getCurrentStatus();
     if (!status) {
-      return 'blue'; // Default to blue if no status available
+      return "blue"; // Default to blue if no status available
     }
 
-    if (status.activeEnvironment === 'mixed') {
+    if (status.activeEnvironment === "mixed") {
       // If mixed, return the environment with higher weight
       return status.currentDistribution.blue > status.currentDistribution.green
-        ? 'blue'
-        : 'green';
+        ? "blue"
+        : "green";
     }
 
-    return status.activeEnvironment as 'blue' | 'green';
+    return status.activeEnvironment as "blue" | "green";
   }
 
   private determineActiveEnvironment(
     config: TrafficConfig,
-  ): 'blue' | 'green' | 'mixed' {
+  ): "blue" | "green" | "mixed" {
     if (config.blueWeight === 100) {
-      return 'blue';
+      return "blue";
     }
     if (config.greenWeight === 100) {
-      return 'green';
+      return "green";
     }
-    return 'mixed';
+    return "mixed";
   }
 
   private async applyTrafficRouting(_config: TrafficConfig): Promise<void> {

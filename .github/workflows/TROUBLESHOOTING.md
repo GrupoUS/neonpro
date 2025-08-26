@@ -84,9 +84,9 @@ Create `scripts/anvisa-validation.js`:
 
 ```javascript
 #!/usr/bin/env node
-console.log('🏥 ANVISA compliance validation...');
+console.log("🏥 ANVISA compliance validation...");
 // Add your ANVISA validation logic here
-console.log('✅ ANVISA compliance check passed');
+console.log("✅ ANVISA compliance check passed");
 process.exit(0);
 ```
 
@@ -94,9 +94,9 @@ Create `scripts/cfm-compliance.js`:
 
 ```javascript
 #!/usr/bin/env node
-console.log('👨‍⚕️ CFM compliance validation...');
+console.log("👨‍⚕️ CFM compliance validation...");
 // Add your CFM validation logic here
-console.log('✅ CFM compliance check passed');
+console.log("✅ CFM compliance check passed");
 process.exit(0);
 ```
 
@@ -182,6 +182,7 @@ strategy:
 ### 🕵️ **Debugging Workflow Runs**
 
 1. **Enable debug logging**:
+
    ```bash
    # Set repository secrets:
    ACTIONS_RUNNER_DEBUG: true
@@ -189,6 +190,7 @@ strategy:
    ```
 
 2. **Add debug steps**:
+
    ```yaml
    - name: 🐛 Debug Environment
      run: |
@@ -210,6 +212,7 @@ strategy:
 ### 📊 **Performance Optimization**
 
 1. **Monitor job timing**:
+
    ```yaml
    - name: ⏱️ Job Timer Start
      run: echo "start_time=$(date +%s)" >> $GITHUB_ENV
@@ -224,6 +227,7 @@ strategy:
    ```
 
 2. **Optimize dependencies**:
+
    ```bash
    # Use pnpm for faster installs
    pnpm install --frozen-lockfile --prefer-offline
@@ -235,6 +239,7 @@ strategy:
 ### 🔒 **Security Diagnostics**
 
 1. **Check for secrets in logs**:
+
    ```bash
    # Review workflow runs for exposed secrets
    grep -i "secret\|token\|password" workflow-run-logs.txt
@@ -267,24 +272,26 @@ Create `.github/scripts/monitor-workflows.js`:
 
 ```javascript
 #!/usr/bin/env node
-const { Octokit } = require('@octokit/rest');
+const { Octokit } = require("@octokit/rest");
 
 async function monitorWorkflows() {
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
   const { data: runs } = await octokit.rest.actions.listWorkflowRuns({
     owner: process.env.GITHUB_REPOSITORY_OWNER,
-    repo: process.env.GITHUB_REPOSITORY.split('/')[1],
+    repo: process.env.GITHUB_REPOSITORY.split("/")[1],
     per_page: 100,
   });
 
-  const successRate = runs.workflow_runs.filter(run => run.conclusion === 'success').length
-    / runs.workflow_runs.length * 100;
+  const successRate =
+    (runs.workflow_runs.filter((run) => run.conclusion === "success").length /
+      runs.workflow_runs.length) *
+    100;
 
   console.log(`Workflow Success Rate: ${successRate.toFixed(2)}%`);
 
   if (successRate < 95) {
-    console.log('⚠️ Workflow success rate below threshold!');
+    console.log("⚠️ Workflow success rate below threshold!");
     process.exit(1);
   }
 }
@@ -299,6 +306,7 @@ monitorWorkflows().catch(console.error);
 ### 🚨 **Workflow Completely Broken**
 
 1. **Immediate rollback**:
+
    ```bash
    git revert <commit-hash-of-workflow-changes>
    git push origin main

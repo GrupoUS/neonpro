@@ -4,8 +4,8 @@
  * Enhanced configuration with integrated performance monitoring
  */
 
-import { test as base, expect } from '@playwright/test';
-import { e2eMonitor } from './monitoring';
+import { test as base, expect } from "@playwright/test";
+import { e2eMonitor } from "./monitoring";
 
 // Extend the test with monitoring capabilities
 export const test = base.extend({
@@ -15,7 +15,7 @@ export const test = base.extend({
 
     // Collect network metrics
     let networkRequests = 0;
-    page.on('request', () => networkRequests++);
+    page.on("request", () => networkRequests++);
 
     // Use the page
     await use(page);
@@ -38,12 +38,12 @@ export { expect };
 
 // Test annotations for better categorization
 export const annotations = {
-  smoke: { type: 'tag', description: '@smoke' },
-  regression: { type: 'tag', description: '@regression' },
-  healthcare: { type: 'tag', description: '@healthcare' },
-  lgpd: { type: 'tag', description: '@lgpd' },
-  anvisa: { type: 'tag', description: '@anvisa' },
-  performance: { type: 'tag', description: '@performance' },
+  smoke: { type: "tag", description: "@smoke" },
+  regression: { type: "tag", description: "@regression" },
+  healthcare: { type: "tag", description: "@healthcare" },
+  lgpd: { type: "tag", description: "@lgpd" },
+  anvisa: { type: "tag", description: "@anvisa" },
+  performance: { type: "tag", description: "@performance" },
 };
 
 // Healthcare-specific test helpers
@@ -99,7 +99,7 @@ export const healthcareHelpers = {
     expect(loadTime).toBeLessThan(3000);
 
     // Check for accessibility compliance
-    await expect(page.locator('[aria-label]')).toHaveCount({ min: 1 });
+    await expect(page.locator("[aria-label]")).toHaveCount({ min: 1 });
   },
 };
 
@@ -116,13 +116,13 @@ export const performanceHelpers = {
           const vitals: any = {};
 
           entries.forEach((entry: any) => {
-            if (entry.entryType === 'largest-contentful-paint') {
+            if (entry.entryType === "largest-contentful-paint") {
               vitals.lcp = entry.startTime;
             }
-            if (entry.entryType === 'first-input') {
+            if (entry.entryType === "first-input") {
               vitals.fid = entry.processingStart - entry.startTime;
             }
-            if (entry.entryType === 'layout-shift' && !entry.hadRecentInput) {
+            if (entry.entryType === "layout-shift" && !entry.hadRecentInput) {
               vitals.cls = (vitals.cls || 0) + entry.value;
             }
           });
@@ -134,9 +134,9 @@ export const performanceHelpers = {
 
         observer.observe({
           entryTypes: [
-            'largest-contentful-paint',
-            'first-input',
-            'layout-shift',
+            "largest-contentful-paint",
+            "first-input",
+            "layout-shift",
           ],
         });
 

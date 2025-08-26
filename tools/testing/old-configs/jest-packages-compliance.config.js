@@ -6,16 +6,16 @@
  * Constitutional Data Protection Testing
  */
 
-const { createJestConfig } = require('../../jest.shared');
+const { createJestConfig } = require("../../jest.shared");
 
 /** @type {import('jest').Config} */
 const config = createJestConfig({
-  packageName: 'neonpro-compliance',
-  displayName: 'NeonPro Compliance',
+  packageName: "neonpro-compliance",
+  displayName: "NeonPro Compliance",
   rootDir: __dirname,
 
   // Additional setup files for compliance testing
-  additionalSetupFiles: ['<rootDir>/jest.setup.js'],
+  additionalSetupFiles: ["<rootDir>/jest.setup.js"],
 
   // Compliance coverage thresholds (highest standards)
   coverageThreshold: {
@@ -26,28 +26,28 @@ const config = createJestConfig({
       statements: 98,
     },
     // LGPD compliance (100% coverage)
-    '**/lgpd/**/*.{ts,tsx}': {
+    "**/lgpd/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
       statements: 100,
     },
     // ANVISA compliance (100% coverage)
-    '**/anvisa/**/*.{ts,tsx}': {
+    "**/anvisa/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
       statements: 100,
     },
     // CFM compliance (100% coverage)
-    '**/cfm/**/*.{ts,tsx}': {
+    "**/cfm/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
       statements: 100,
     },
     // Audit trails (100% coverage)
-    '**/audit/**/*.{ts,tsx}': {
+    "**/audit/**/*.{ts,tsx}": {
       branches: 100,
       functions: 100,
       lines: 100,
@@ -57,38 +57,38 @@ const config = createJestConfig({
 
   // Module name mapping for compliance package
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@/lgpd/(.*)$': '<rootDir>/src/lgpd/$1',
-    '^@/anvisa/(.*)$': '<rootDir>/src/anvisa/$1',
-    '^@/cfm/(.*)$': '<rootDir>/src/cfm/$1',
-    '^@/audit/(.*)$': '<rootDir>/src/audit/$1',
-    '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
-    '^@/types/(.*)$': '<rootDir>/src/types/$1',
-    '^@/validators/(.*)$': '<rootDir>/src/validators/$1',
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@/lgpd/(.*)$": "<rootDir>/src/lgpd/$1",
+    "^@/anvisa/(.*)$": "<rootDir>/src/anvisa/$1",
+    "^@/cfm/(.*)$": "<rootDir>/src/cfm/$1",
+    "^@/audit/(.*)$": "<rootDir>/src/audit/$1",
+    "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^@/types/(.*)$": "<rootDir>/src/types/$1",
+    "^@/validators/(.*)$": "<rootDir>/src/validators/$1",
     // Test utilities
-    '^@test/(.*)$': '<rootDir>/../../test-utils/$1',
+    "^@test/(.*)$": "<rootDir>/../../test-utils/$1",
     // Compliance test data
-    '^@test/compliance/(.*)$': '<rootDir>/../../test-utils/compliance/$1',
+    "^@test/compliance/(.*)$": "<rootDir>/../../test-utils/compliance/$1",
   },
 
   // Compliance-specific test patterns
   testMatch: [
-    '<rootDir>/**/__tests__/**/*.(ts|tsx)',
-    '<rootDir>/**/*.(test|spec).(ts|tsx)',
-    '<rootDir>/src/lgpd/**/*.test.(ts|tsx)',
-    '<rootDir>/src/anvisa/**/*.test.(ts|tsx)',
-    '<rootDir>/src/cfm/**/*.test.(ts|tsx)',
-    '<rootDir>/src/audit/**/*.test.(ts|tsx)',
+    "<rootDir>/**/__tests__/**/*.(ts|tsx)",
+    "<rootDir>/**/*.(test|spec).(ts|tsx)",
+    "<rootDir>/src/lgpd/**/*.test.(ts|tsx)",
+    "<rootDir>/src/anvisa/**/*.test.(ts|tsx)",
+    "<rootDir>/src/cfm/**/*.test.(ts|tsx)",
+    "<rootDir>/src/audit/**/*.test.(ts|tsx)",
   ],
 
   // Coverage collection for compliance components
   collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.config.{js,ts}',
-    '!src/index.ts', // Export file
-    '!src/types/**/*', // Type definitions
-    '!src/schemas/**/*.json', // Compliance schemas
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.config.{js,ts}",
+    "!src/index.ts", // Export file
+    "!src/types/**/*", // Type definitions
+    "!src/schemas/**/*.json", // Compliance schemas
   ],
 
   // Compliance testing globals
@@ -108,18 +108,18 @@ const config = createJestConfig({
 
   // Reporters for compliance testing
   reporters: [
-    'default',
+    "default",
     [
-      'jest-junit',
+      "jest-junit",
       {
-        outputDirectory: 'coverage',
-        outputName: 'compliance-junit.xml',
-        suiteNameTemplate: '{title} - Compliance Tests',
+        outputDirectory: "coverage",
+        outputName: "compliance-junit.xml",
+        suiteNameTemplate: "{title} - Compliance Tests",
       },
     ],
     // Custom compliance reporter
     [
-      '<rootDir>/../../test-utils/compliance-reporter.js',
+      "<rootDir>/../../test-utils/compliance-reporter.js",
       {
         lgpdCompliance: true,
         anvisaValidation: true,
@@ -130,10 +130,10 @@ const config = createJestConfig({
   ],
 
   // Cache directory for compliance tests
-  cacheDirectory: '<rootDir>/../../node_modules/.cache/jest-compliance',
+  cacheDirectory: "<rootDir>/../../node_modules/.cache/jest-compliance",
 
   // Node environment for compliance validation
-  testEnvironment: 'node',
+  testEnvironment: "node",
 
   // Verbose output for compliance testing
   verbose: true,
@@ -160,11 +160,11 @@ const config = createJestConfig({
 
   // Collect coverage from
   coveragePathIgnorePatterns: [
-    '/node_modules/',
-    '/coverage/',
-    '/dist/',
-    '/__tests__/',
-    '/test-utils/',
+    "/node_modules/",
+    "/coverage/",
+    "/dist/",
+    "/__tests__/",
+    "/test-utils/",
   ],
 });
 

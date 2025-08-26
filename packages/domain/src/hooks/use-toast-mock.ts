@@ -5,7 +5,7 @@ export interface Toast {
   title?: string;
   description?: string;
   action?: any;
-  variant?: 'default' | 'destructive' | 'success' | 'warning';
+  variant?: "default" | "destructive" | "success" | "warning";
 }
 
 export interface ToastActionElement {
@@ -14,21 +14,23 @@ export interface ToastActionElement {
 }
 
 export interface UseToastReturn {
-  toast: (props: Omit<Toast, 'id'>) => void;
+  toast: (props: Omit<Toast, "id">) => void;
   dismiss: (toastId?: string) => void;
   toasts: Toast[];
 }
 
 // Mock implementation para o pacote domain
 export const useToast = (): UseToastReturn => {
-  const toast = (_props: Omit<Toast, 'id'>) => {
+  const toast = (_props: Omit<Toast, "id">) => {
     // Mock implementation - apenas log no desenvolvimento
-    if (process.env.NODE_ENV === 'development') {}
+    if (process.env.NODE_ENV === "development") {
+    }
   };
 
   const dismiss = (_toastId?: string) => {
     // Mock implementation
-    if (process.env.NODE_ENV === 'development') {}
+    if (process.env.NODE_ENV === "development") {
+    }
   };
 
   return {

@@ -26,14 +26,14 @@ export interface HealthcareProvider {
 }
 
 export type UserRole =
-  | 'patient'
-  | 'doctor'
-  | 'nurse'
-  | 'admin'
-  | 'receptionist'
-  | 'manager'
-  | 'auditor'
-  | 'system';
+  | "patient"
+  | "doctor"
+  | "nurse"
+  | "admin"
+  | "receptionist"
+  | "manager"
+  | "auditor"
+  | "system";
 
 export interface Permission {
   resource: string;
@@ -51,7 +51,7 @@ export interface AuthConfig {
   passwordPolicy: PasswordPolicy;
   audit: {
     enabled: boolean;
-    logLevel: 'basic' | 'detailed' | 'forensic';
+    logLevel: "basic" | "detailed" | "forensic";
   };
 }
 
@@ -116,7 +116,13 @@ export interface TokenPayload {
 }
 
 export interface SecurityEvent {
-  type: 'login' | 'logout' | 'failed_login' | 'mfa_success' | 'mfa_failure' | 'suspicious_activity';
+  type:
+    | "login"
+    | "logout"
+    | "failed_login"
+    | "mfa_success"
+    | "mfa_failure"
+    | "suspicious_activity";
   userId?: string;
   ip: string;
   userAgent: string;
@@ -144,11 +150,16 @@ export interface User {
 }
 
 export interface AuthService {
-  login: (
-    credentials: { email: string; password: string; },
-  ) => Promise<{ user: User; token: string; }>;
+  login: (credentials: {
+    email: string;
+    password: string;
+  }) => Promise<{ user: User; token: string }>;
   logout: () => Promise<void>;
-  register: (data: { email: string; password: string; name: string; }) => Promise<User>;
+  register: (data: {
+    email: string;
+    password: string;
+    name: string;
+  }) => Promise<User>;
   getCurrentUser: () => Promise<User | null>;
   refreshToken: () => Promise<string>;
 }

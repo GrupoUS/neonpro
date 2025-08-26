@@ -23,11 +23,11 @@ export class AuthPerformanceTracker {
   };
 
   recordAuthenticationTime(duration: number): void {
-    this.recordMetric('authentication', duration);
+    this.recordMetric("authentication", duration);
   }
 
   recordRegistrationTime(duration: number): void {
-    this.recordMetric('registration', duration);
+    this.recordMetric("registration", duration);
   }
 
   private recordMetric(type: string, value: number): void {
@@ -41,7 +41,7 @@ export class AuthPerformanceTracker {
   }
 
   getAuthenticationMetrics(): AuthenticationMetrics {
-    const authTimes = this.metrics.get('authentication') || [];
+    const authTimes = this.metrics.get("authentication") || [];
     return {
       averageTime: authTimes.reduce((a, b) => a + b, 0) / authTimes.length || 0,
       p95Time: this.calculateP95(authTimes),

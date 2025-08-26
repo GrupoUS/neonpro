@@ -401,7 +401,7 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
-              ) : (recentPatients.length > 0 ? (
+              ) : recentPatients.length > 0 ? (
                 <div className="space-y-3">
                   {recentPatients.slice(0, 5).map((patient) => (
                     <div
@@ -430,7 +430,7 @@ export default function HomePage() {
                 <p className="text-slate-300">
                   Nenhum paciente cadastrado ainda
                 </p>
-              ))}
+              )}
 
               {!patientsLoading && recentPatients.length > 5 && (
                 <Button
@@ -472,7 +472,7 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
-              ) : (todaysAppointments.length > 0 ? (
+              ) : todaysAppointments.length > 0 ? (
                 <div className="space-y-3">
                   {todaysAppointments.slice(0, 3).map((appointment) => (
                     <div
@@ -510,7 +510,7 @@ export default function HomePage() {
                     Nenhuma consulta agendada para hoje
                   </p>
                 </div>
-              ))}
+              )}
 
               {!appointmentsLoading && todaysAppointments.length > 3 && (
                 <Button

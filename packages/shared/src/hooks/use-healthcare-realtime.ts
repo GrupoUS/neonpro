@@ -6,10 +6,10 @@
  * with LGPD compliance and TanStack Query integration
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { useCallback } from 'react';
-import type { UseRealtimeQueryConfig } from '../types/realtime.types';
-import { useRealtimeQuery } from './use-realtime';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { useCallback } from "react";
+import type { UseRealtimeQueryConfig } from "../types/realtime.types";
+import { useRealtimeQuery } from "./use-realtime";
 
 /**
  * Healthcare-specific patient real-time hook
@@ -25,14 +25,14 @@ export function usePatientRealtime(
 ) {
   const filter = options.patientId
     ? `id=eq.${options.patientId}`
-    : (options.clinicId
-    ? `clinic_id=eq.${options.clinicId}`
-    : '');
+    : options.clinicId
+      ? `clinic_id=eq.${options.clinicId}`
+      : "";
 
   const config: UseRealtimeQueryConfig = {
-    table: 'patients',
+    table: "patients",
     ...(filter && { filter }),
-    queryKey: ['patients', options.patientId, options.clinicId].filter(
+    queryKey: ["patients", options.patientId, options.clinicId].filter(
       Boolean,
     ) as string[],
     enabled: options.enabled ?? true,
@@ -60,7 +60,7 @@ export function useAppointmentRealtime(
     patientId?: string;
     professionalId?: string;
     clinicId?: string;
-    dateRange?: { start: string; end: string; };
+    dateRange?: { start: string; end: string };
     enabled?: boolean;
     onAppointmentUpdate?: (appointment: any) => void;
   },
@@ -85,14 +85,14 @@ export function useAppointmentRealtime(
       filters.push(`scheduled_at=lte.${options.dateRange.end}`);
     }
 
-    return filters.join(',');
+    return filters.join(",");
   }, [options]);
 
   const config: UseRealtimeQueryConfig = {
-    table: 'appointments',
+    table: "appointments",
     filter: buildFilter(),
     queryKey: [
-      'appointments',
+      "appointments",
       options.appointmentId,
       options.patientId,
       options.professionalId,
@@ -140,14 +140,14 @@ export function useProfessionalRealtime(
       filters.push(`specialty=eq.${options.specialty}`);
     }
 
-    return filters.join(',');
+    return filters.join(",");
   }, [options]);
 
   const config: UseRealtimeQueryConfig = {
-    table: 'professionals',
+    table: "professionals",
     filter: buildFilter(),
     queryKey: [
-      'professionals',
+      "professionals",
       options.professionalId,
       options.clinicId,
     ].filter(Boolean) as string[],
@@ -209,9 +209,10 @@ export function useDashboardRealtime(
     appointments: appointmentsRealtime,
     patients: patientsRealtime,
     professionals: professionalsRealtime,
-    isConnected: appointmentsRealtime.isConnected
-      || patientsRealtime.isConnected
-      || professionalsRealtime.isConnected,
+    isConnected:
+      appointmentsRealtime.isConnected ||
+      patientsRealtime.isConnected ||
+      professionalsRealtime.isConnected,
     errors: [
       appointmentsRealtime.error,
       patientsRealtime.error,
@@ -246,15 +247,15 @@ export function useAuditRealtime(
       filters.push(`action=eq.${options.action}`);
     }
 
-    return filters.join(',');
+    return filters.join(",");
   }, [options]);
 
   const config: UseRealtimeQueryConfig = {
-    table: 'audit_logs',
-    event: 'INSERT', // Only listen to new audit entries
+    table: "audit_logs",
+    event: "INSERT", // Only listen to new audit entries
     filter: buildFilter(),
     queryKey: [
-      'audit_logs',
+      "audit_logs",
       options.table,
       options.userId,
       options.action,

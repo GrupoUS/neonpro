@@ -91,7 +91,7 @@ SELECT * FROM validate_lgpd_compliance();
 
 ```sql
 SELECT * FROM test_emergency_medical_access(
-    'clinic-uuid-here'::UUID, 
+    'clinic-uuid-here'::UUID,
     'patient-uuid-here'::UUID
 );
 ```
@@ -109,11 +109,11 @@ SELECT * FROM monitor_rls_performance();
 #### 5. Policy Count Verification
 
 ```sql
-SELECT 
+SELECT
     tablename,
     COUNT(*) as policy_count,
     array_agg(policyname) as policies
-FROM pg_policies 
+FROM pg_policies
 WHERE tablename IN (/* all 26 tables */)
 GROUP BY tablename
 ORDER BY tablename;

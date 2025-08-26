@@ -7,14 +7,24 @@
  * @since 2025-01-25
  */
 
-import type { Database } from '@neonpro/types';
-import type { createClient } from '@supabase/supabase-js';
-import { createAnvisaServices, validateAnvisaCompliance } from '../anvisa/index.js';
-import { createCfmServices, validateCfmCompliance, validateCfmResolutions } from '../cfm/index.js';
-import { RealTimeComplianceMonitor } from '../enterprise/audit/real-time-monitor.js';
-import type { ComplianceMonitoringResponse } from '../enterprise/audit/real-time-monitor.js';
-import { LGPDValidator } from '../lgpd/validator.js';
-import type { LGPDValidationConfig, LGPDValidationResult } from '../lgpd/validator.js';
+import type { Database } from "@neonpro/types";
+import type { createClient } from "@supabase/supabase-js";
+import {
+  createAnvisaServices,
+  validateAnvisaCompliance,
+} from "../anvisa/index.js";
+import {
+  createCfmServices,
+  validateCfmCompliance,
+  validateCfmResolutions,
+} from "../cfm/index.js";
+import { RealTimeComplianceMonitor } from "../enterprise/audit/real-time-monitor.js";
+import type { ComplianceMonitoringResponse } from "../enterprise/audit/real-time-monitor.js";
+import { LGPDValidator } from "../lgpd/validator.js";
+import type {
+  LGPDValidationConfig,
+  LGPDValidationResult,
+} from "../lgpd/validator.js";
 
 /**
  * Compliance Automation Configuration
@@ -55,10 +65,10 @@ export interface ComplianceAutomationConfig {
 export interface ComplianceAutomationResponse {
   /** Overall compliance status */
   overall_status:
-    | 'compliant'
-    | 'warning'
-    | 'critical'
-    | 'constitutional_violation';
+    | "compliant"
+    | "warning"
+    | "critical"
+    | "constitutional_violation";
   /** Overall compliance score ≥9.9 */
   overall_score: number;
   /** LGPD compliance results */
@@ -117,7 +127,7 @@ export class BrazilianComplianceAutomationService {
 
     // Initialize compliance services
     const lgpdConfig: LGPDValidationConfig = {
-      validation_type: 'data_processing',
+      validation_type: "data_processing",
       strict_mode: true,
       constitutional_validation: true,
       audit_trail: true,
@@ -223,7 +233,7 @@ export class BrazilianComplianceAutomationService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare compliance automation service error',
+        error: "Constitutional healthcare compliance automation service error",
       };
     }
   }
@@ -243,12 +253,13 @@ export class BrazilianComplianceAutomationService {
       const actions: string[] = [];
 
       // Validate data processing activities
-      const dataProcessingValidation = await this.lgpdValidator.validateDataProcessing({
-        legal_basis: 'legitimate_interest',
-        purpose: ['healthcare_treatment', 'patient_management'],
-        data_minimization_applied: true,
-        transparent_processing: true,
-      });
+      const dataProcessingValidation =
+        await this.lgpdValidator.validateDataProcessing({
+          legal_basis: "legitimate_interest",
+          purpose: ["healthcare_treatment", "patient_management"],
+          data_minimization_applied: true,
+          transparent_processing: true,
+        });
 
       // Validate consent management
       const consentValidation = await this.lgpdValidator.validateConsent({
@@ -261,13 +272,13 @@ export class BrazilianComplianceAutomationService {
       // Automated remediation actions
       if (!dataProcessingValidation.valid) {
         actions.push(
-          'Automated LGPD data processing compliance remediation initiated',
+          "Automated LGPD data processing compliance remediation initiated",
         );
         await this.remediateLgpdDataProcessing(dataProcessingValidation);
       }
 
       if (!consentValidation.valid) {
-        actions.push('Automated LGPD consent management remediation initiated');
+        actions.push("Automated LGPD consent management remediation initiated");
         await this.remediateLgpdConsent(consentValidation);
       }
 
@@ -276,7 +287,8 @@ export class BrazilianComplianceAutomationService {
         dataProcessingValidation.compliance_score,
         consentValidation.compliance_score,
       );
-      const overallCompliant = dataProcessingValidation.valid && consentValidation.valid;
+      const overallCompliant =
+        dataProcessingValidation.valid && consentValidation.valid;
 
       // Collect all violations and recommendations
       const allViolations = [
@@ -300,8 +312,8 @@ export class BrazilianComplianceAutomationService {
       return {
         compliant: false,
         score: 9.9, // Constitutional minimum fallback
-        violations: ['Error in LGPD automation process'],
-        recommendations: ['Contact technical support for LGPD compliance'],
+        violations: ["Error in LGPD automation process"],
+        recommendations: ["Contact technical support for LGPD compliance"],
       };
     }
   }
@@ -327,17 +339,19 @@ export class BrazilianComplianceAutomationService {
       );
 
       // Automated remediation for expiring products
-      if (anvisaValidation.issues.some((issue) => issue.includes('expiring'))) {
-        actions.push('Automated ANVISA product renewal notifications sent');
+      if (anvisaValidation.issues.some((issue) => issue.includes("expiring"))) {
+        actions.push("Automated ANVISA product renewal notifications sent");
         await this.notifyExpiringAnvisaProducts();
       }
 
       // Automated remediation for missing registrations
       if (
-        anvisaValidation.issues.some((issue) => issue.includes('No registered products'))
+        anvisaValidation.issues.some((issue) =>
+          issue.includes("No registered products"),
+        )
       ) {
         actions.push(
-          'Automated ANVISA product registration workflow initiated',
+          "Automated ANVISA product registration workflow initiated",
         );
         await this.initiateAnvisaProductRegistration();
       }
@@ -353,8 +367,8 @@ export class BrazilianComplianceAutomationService {
       return {
         compliant: false,
         score: 9.9, // Constitutional minimum fallback
-        issues: ['Error in ANVISA automation process'],
-        recommendations: ['Contact technical support for ANVISA compliance'],
+        issues: ["Error in ANVISA automation process"],
+        recommendations: ["Contact technical support for ANVISA compliance"],
       };
     }
   }
@@ -387,21 +401,24 @@ export class BrazilianComplianceAutomationService {
       );
 
       // Automated remediation for expiring licenses
-      if (cfmValidation.issues.some((issue) => issue.includes('expiring'))) {
-        actions.push('Automated CFM license renewal notifications sent');
+      if (cfmValidation.issues.some((issue) => issue.includes("expiring"))) {
+        actions.push("Automated CFM license renewal notifications sent");
         await this.notifyExpiringCfmLicenses();
       }
 
       // Automated remediation for missing licenses
       if (
-        cfmValidation.issues.some((issue) => issue.includes('No CFM professional licenses'))
+        cfmValidation.issues.some((issue) =>
+          issue.includes("No CFM professional licenses"),
+        )
       ) {
-        actions.push('Automated CFM license registration workflow initiated');
+        actions.push("Automated CFM license registration workflow initiated");
         await this.initiateCfmLicenseRegistration();
       }
 
       // Combine results
-      const combinedCompliant = cfmValidation.compliant && resolutionValidation.compliant;
+      const combinedCompliant =
+        cfmValidation.compliant && resolutionValidation.compliant;
       const combinedIssues = [
         ...cfmValidation.issues,
         ...resolutionValidation.issues,
@@ -423,8 +440,8 @@ export class BrazilianComplianceAutomationService {
       return {
         compliant: false,
         score: 9.9, // Constitutional minimum fallback
-        issues: ['Error in CFM automation process'],
-        recommendations: ['Contact technical support for CFM compliance'],
+        issues: ["Error in CFM automation process"],
+        recommendations: ["Contact technical support for CFM compliance"],
         professional_standards_met: false,
       };
     }
@@ -446,13 +463,14 @@ export class BrazilianComplianceAutomationService {
         const monitoringParams = {
           tenant_id: this.config.tenant_id,
           compliance_areas: [
-            'lgpd',
-            'anvisa',
-            'cfm',
-            'constitutional_healthcare',
-          ] as ('lgpd' | 'anvisa' | 'cfm' | 'constitutional_healthcare')[],
+            "lgpd",
+            "anvisa",
+            "cfm",
+            "constitutional_healthcare",
+          ] as ("lgpd" | "anvisa" | "cfm" | "constitutional_healthcare")[],
           config: {
-            monitoring_interval_minutes: this.config.monitoring_config.interval_minutes,
+            monitoring_interval_minutes:
+              this.config.monitoring_config.interval_minutes,
             score_thresholds: {
               ...this.config.monitoring_config.alert_thresholds,
               target: 10, // Add required target score
@@ -476,10 +494,10 @@ export class BrazilianComplianceAutomationService {
             },
           },
           constitutional_requirements: [
-            'Patient Privacy Protection',
-            'Medical Professional Standards',
-            'Regulatory Compliance',
-            'Constitutional Healthcare Rights',
+            "Patient Privacy Protection",
+            "Medical Professional Standards",
+            "Regulatory Compliance",
+            "Constitutional Healthcare Rights",
           ],
         };
 
@@ -489,7 +507,7 @@ export class BrazilianComplianceAutomationService {
         );
 
         if (monitoringResult.success && monitoringResult.data) {
-          actions.push('Real-time compliance monitoring activated');
+          actions.push("Real-time compliance monitoring activated");
 
           // Get current monitoring status
           const statusResult = await this.realTimeMonitor.getMonitoringStatus(
@@ -507,7 +525,7 @@ export class BrazilianComplianceAutomationService {
 
       // Fallback monitoring status
       const fallbackStatus: ComplianceMonitoringResponse = {
-        status: 'healthy',
+        status: "healthy",
         compliance_scores: {
           lgpd: 9.9,
           anvisa: 9.9,
@@ -517,11 +535,11 @@ export class BrazilianComplianceAutomationService {
         overall_constitutional_score: 9.9,
         active_alerts: [],
         trends: {
-          score_trend: 'stable',
+          score_trend: "stable",
           trend_percentage: 0,
           next_period_prediction: 9.9,
         },
-        recommendations: ['Continue monitoring compliance standards'],
+        recommendations: ["Continue monitoring compliance standards"],
         constitutional_assessment: {
           constitutional_compliant: true,
           constitutional_issues: [],
@@ -537,20 +555,20 @@ export class BrazilianComplianceAutomationService {
     } catch {
       // Error fallback status
       const errorStatus: ComplianceMonitoringResponse = {
-        status: 'warning',
+        status: "warning",
         compliance_scores: { monitoring: 9.9 },
         overall_constitutional_score: 9.9,
         active_alerts: [],
         trends: {
-          score_trend: 'stable',
+          score_trend: "stable",
           trend_percentage: 0,
           next_period_prediction: 9.9,
         },
-        recommendations: ['Contact technical support for monitoring setup'],
+        recommendations: ["Contact technical support for monitoring setup"],
         constitutional_assessment: {
           constitutional_compliant: true,
-          constitutional_issues: ['Monitoring service error'],
-          constitutional_recommendations: ['Resolve monitoring service issues'],
+          constitutional_issues: ["Monitoring service error"],
+          constitutional_recommendations: ["Resolve monitoring service issues"],
         },
         monitoring_timestamp: new Date(),
       };
@@ -566,10 +584,10 @@ export class BrazilianComplianceAutomationService {
   ): Promise<void> {
     try {
       // Log remediation action
-      await this.supabase.from('compliance_remediation_log').insert({
+      await this.supabase.from("compliance_remediation_log").insert({
         tenant_id: this.config.tenant_id,
-        compliance_area: 'lgpd',
-        remediation_type: 'data_processing',
+        compliance_area: "lgpd",
+        remediation_type: "data_processing",
         validation_id: validation.validation_id,
         remediation_actions: validation.recommendations.map(
           (r) => r.description,
@@ -584,10 +602,10 @@ export class BrazilianComplianceAutomationService {
   ): Promise<void> {
     try {
       // Log remediation action
-      await this.supabase.from('compliance_remediation_log').insert({
+      await this.supabase.from("compliance_remediation_log").insert({
         tenant_id: this.config.tenant_id,
-        compliance_area: 'lgpd',
-        remediation_type: 'consent_management',
+        compliance_area: "lgpd",
+        remediation_type: "consent_management",
         validation_id: validation.validation_id,
         remediation_actions: validation.recommendations.map(
           (r) => r.description,
@@ -600,11 +618,12 @@ export class BrazilianComplianceAutomationService {
   private async notifyExpiringAnvisaProducts(): Promise<void> {
     try {
       // Implementation would send notifications to responsible parties
-      await this.supabase.from('compliance_notifications').insert({
+      await this.supabase.from("compliance_notifications").insert({
         tenant_id: this.config.tenant_id,
-        notification_type: 'anvisa_expiring_products',
-        message: 'ANVISA product registrations expiring soon - renewal required',
-        priority: 'high',
+        notification_type: "anvisa_expiring_products",
+        message:
+          "ANVISA product registrations expiring soon - renewal required",
+        priority: "high",
         sent_at: new Date().toISOString(),
       });
     } catch {}
@@ -613,10 +632,10 @@ export class BrazilianComplianceAutomationService {
   private async initiateAnvisaProductRegistration(): Promise<void> {
     try {
       // Implementation would initiate product registration workflow
-      await this.supabase.from('compliance_workflows').insert({
+      await this.supabase.from("compliance_workflows").insert({
         tenant_id: this.config.tenant_id,
-        workflow_type: 'anvisa_product_registration',
-        status: 'initiated',
+        workflow_type: "anvisa_product_registration",
+        status: "initiated",
         initiated_at: new Date().toISOString(),
       });
     } catch {}
@@ -625,11 +644,11 @@ export class BrazilianComplianceAutomationService {
   private async notifyExpiringCfmLicenses(): Promise<void> {
     try {
       // Implementation would send notifications to medical professionals
-      await this.supabase.from('compliance_notifications').insert({
+      await this.supabase.from("compliance_notifications").insert({
         tenant_id: this.config.tenant_id,
-        notification_type: 'cfm_expiring_licenses',
-        message: 'CFM professional licenses expiring soon - renewal required',
-        priority: 'critical',
+        notification_type: "cfm_expiring_licenses",
+        message: "CFM professional licenses expiring soon - renewal required",
+        priority: "critical",
         sent_at: new Date().toISOString(),
       });
     } catch {}
@@ -638,10 +657,10 @@ export class BrazilianComplianceAutomationService {
   private async initiateCfmLicenseRegistration(): Promise<void> {
     try {
       // Implementation would initiate license registration workflow
-      await this.supabase.from('compliance_workflows').insert({
+      await this.supabase.from("compliance_workflows").insert({
         tenant_id: this.config.tenant_id,
-        workflow_type: 'cfm_license_registration',
-        status: 'initiated',
+        workflow_type: "cfm_license_registration",
+        status: "initiated",
         initiated_at: new Date().toISOString(),
       });
     } catch {}
@@ -659,9 +678,10 @@ export class BrazilianComplianceAutomationService {
       cfm: 0.35, // 35% - Professional standards are essential
     };
 
-    const weightedScore = lgpdScore * weights.lgpd
-      + anvisaScore * weights.anvisa
-      + cfmScore * weights.cfm;
+    const weightedScore =
+      lgpdScore * weights.lgpd +
+      anvisaScore * weights.anvisa +
+      cfmScore * weights.cfm;
 
     // Ensure constitutional minimum
     return Math.max(weightedScore, 9.9);
@@ -669,24 +689,24 @@ export class BrazilianComplianceAutomationService {
 
   private determineOverallStatus(
     score: number,
-  ): ComplianceAutomationResponse['overall_status'] {
+  ): ComplianceAutomationResponse["overall_status"] {
     if (score < 9.9) {
-      return 'constitutional_violation';
+      return "constitutional_violation";
     }
     if (score < 9.95) {
-      return 'warning';
+      return "warning";
     }
     if (score < 9.99) {
-      return 'compliant';
+      return "compliant";
     }
-    return 'compliant';
+    return "compliant";
   }
 
   private async storeComplianceAssessment(
     assessment: ComplianceAutomationResponse,
   ): Promise<void> {
     try {
-      await this.supabase.from('compliance_assessments').insert({
+      await this.supabase.from("compliance_assessments").insert({
         tenant_id: this.config.tenant_id,
         assessment_data: assessment,
         overall_score: assessment.overall_score,
@@ -700,9 +720,9 @@ export class BrazilianComplianceAutomationService {
     assessment: ComplianceAutomationResponse,
   ): Promise<void> {
     try {
-      await this.supabase.from('compliance_reports').insert({
+      await this.supabase.from("compliance_reports").insert({
         tenant_id: this.config.tenant_id,
-        report_type: 'daily_compliance',
+        report_type: "daily_compliance",
         report_data: assessment,
         generated_at: new Date().toISOString(),
       });
@@ -727,7 +747,7 @@ export function createBrazilianComplianceAutomationService(
  */
 export const DEFAULT_COMPLIANCE_CONFIG: Omit<
   ComplianceAutomationConfig,
-  'tenant_id'
+  "tenant_id"
 > = {
   lgpd_automation: true,
   anvisa_automation: true,

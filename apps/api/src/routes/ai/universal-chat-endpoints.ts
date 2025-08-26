@@ -4,22 +4,22 @@
  * Supports both external (patient) and internal (staff) interfaces
  */
 
-import { openai } from '@ai-sdk/openai';
-import { createClient } from '@supabase/supabase-js';
-import { streamText } from 'ai';
-import { Hono } from 'hono';
+import { openai } from "@ai-sdk/openai";
+import { createClient } from "@supabase/supabase-js";
+import { streamText } from "ai";
+import { Hono } from "hono";
 
 const universalChat = new Hono();
 
 interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: string;
 }
 
 interface ChatRequest {
   messages: ChatMessage[];
-  interface: 'external' | 'internal';
+  interface: "external" | "internal";
   sessionId: string;
   userId?: string;
   clinicId?: string;
@@ -28,7 +28,7 @@ interface ChatRequest {
 }
 
 interface ChatResponse {
-  type: 'start' | 'content' | 'complete' | 'error';
+  type: "start" | "content" | "complete" | "error";
   content?: string;
   sessionId?: string;
   messageId?: string;
@@ -80,7 +80,7 @@ const HEALTHCARE_CONTEXT = {
 // MAIN CHAT ENDPOINT
 // =============================================================================
 
-universalChat.post('/', async (c) => {
+universalChat.post("/", async (c) => {
   try {
     const body = (await c.req.json()) as ChatRequest;
     const {
@@ -93,36 +93,37 @@ universalChat.post('/', async (c) => {
     } = body;
 
     if (!(messages && Array.isArray(messages)) || messages.length === 0) {
-      return c.json({ error: 'Messages array is required' }, 400);
+      return c.json({ error: "Messages array is required" }, 400);
     }
 
     if (!sessionId) {
-      return c.json({ error: 'Session ID is required' }, 400);
+      return c.json({ error: "Session ID is required" }, 400);
     }
 
     // Log conversation start
     const conversationId = `conv_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
-    await supabase.from('assistant_conversations').insert({
+    await supabase.from("assistant_conversations").insert({
       session_id: sessionId,
       conversation_id: conversationId,
       user_id: userId,
       clinic_id: clinicId,
       patient_id: patientId,
       interface_type: interfaceType,
-      status: 'active',
+      status: "active",
       created_at: new Date().toISOString(),
     });
 
     // Build system context
     const systemMessage = {
-      role: 'system' as const,
-      content: HEALTHCARE_CONTEXT[interfaceType]
-        + `\n\nContexto da sessão:
+      role: "system" as const,
+      content:
+        HEALTHCARE_CONTEXT[interfaceType] +
+        `\n\nContexto da sessão:
 			- Interface: ${interfaceType}
-			- Clínica: ${clinicId || 'não especificada'}
-			- Data: ${new Date().toLocaleDateString('pt-BR')}
-			- Horário: ${new Date().toLocaleTimeString('pt-BR')}`,
+			- Clínica: ${clinicId || "não especificada"}
+			- Data: ${new Date().toLocaleDateString("pt-BR")}
+			- Horário: ${new Date().toLocaleTimeString("pt-BR")}`,
     };
 
     // Prepare messages for OpenAI
@@ -136,20 +137,20 @@ universalChat.post('/', async (c) => {
 
     // Stream response
     const result = await streamText({
-      model: openai('gpt-4'),
+      model: openai("gpt-4"),
       messages: chatMessages,
       temperature: 0.7,
       maxTokens: 1000,
     });
 
     // Set up SSE headers
-    c.header('Content-Type', 'text/event-stream');
-    c.header('Cache-Control', 'no-cache');
-    c.header('Connection', 'keep-alive');
-    c.header('Access-Control-Allow-Origin', '*');
+    c.header("Content-Type", "text/event-stream");
+    c.header("Cache-Control", "no-cache");
+    c.header("Connection", "keep-alive");
+    c.header("Access-Control-Allow-Origin", "*");
 
     const encoder = new TextEncoder();
-    let fullResponse = '';
+    let fullResponse = "";
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
     // Start streaming
@@ -157,7 +158,7 @@ universalChat.post('/', async (c) => {
       async start(controller) {
         // Send start event
         const startEvent: ChatResponse = {
-          type: 'start',
+          type: "start",
           sessionId,
           messageId,
         };
@@ -171,7 +172,7 @@ universalChat.post('/', async (c) => {
             fullResponse += delta;
 
             const contentEvent: ChatResponse = {
-              type: 'content',
+              type: "content",
               content: delta,
             };
             controller.enqueue(
@@ -183,10 +184,10 @@ universalChat.post('/', async (c) => {
           const analysis = await analyzeResponse(fullResponse, interfaceType);
 
           // Log message to database
-          await supabase.from('assistant_messages').insert({
+          await supabase.from("assistant_messages").insert({
             conversation_id: conversationId,
             message_id: messageId,
-            role: 'assistant',
+            role: "assistant",
             content: fullResponse,
             interface_type: interfaceType,
             confidence_score: analysis.confidence,
@@ -197,7 +198,7 @@ universalChat.post('/', async (c) => {
 
           // Send complete event
           const completeEvent: ChatResponse = {
-            type: 'complete',
+            type: "complete",
             confidence: analysis.confidence,
             emergencyDetected: analysis.emergencyDetected,
             escalationTriggered: analysis.escalationTriggered,
@@ -209,8 +210,8 @@ universalChat.post('/', async (c) => {
           );
         } catch (error) {
           const errorEvent: ChatResponse = {
-            type: 'error',
-            error: error instanceof Error ? error.message : 'Unknown error',
+            type: "error",
+            error: error instanceof Error ? error.message : "Unknown error",
           };
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(errorEvent)}\n\n`),
@@ -223,16 +224,16 @@ universalChat.post('/', async (c) => {
 
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-        'Access-Control-Allow-Origin': '*',
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*",
       },
     });
   } catch (error) {
     return c.json(
       {
-        error: error instanceof Error ? error.message : 'Internal server error',
+        error: error instanceof Error ? error.message : "Internal server error",
       },
       500,
     );
@@ -244,37 +245,38 @@ universalChat.post('/', async (c) => {
 // =============================================================================
 
 // Create new session
-universalChat.put('/', async (c) => {
+universalChat.put("/", async (c) => {
   try {
     const body = await c.req.json();
     const { action, interface: interfaceType, clinicId, patientId } = body;
 
-    if (action !== 'create') {
-      return c.json({ error: 'Invalid action' }, 400);
+    if (action !== "create") {
+      return c.json({ error: "Invalid action" }, 400);
     }
 
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
-    await supabase.from('ai_chat_sessions').insert({
+    await supabase.from("ai_chat_sessions").insert({
       session_id: sessionId,
       interface_type: interfaceType,
       clinic_id: clinicId,
       patient_id: patientId,
-      status: 'active',
-      language: 'pt-BR',
+      status: "active",
+      language: "pt-BR",
       created_at: new Date().toISOString(),
     });
 
     return c.json({
       success: true,
       sessionId,
-      message: 'Session created successfully',
+      message: "Session created successfully",
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
     return c.json(
       {
-        error: error instanceof Error ? error.message : 'Failed to create session',
+        error:
+          error instanceof Error ? error.message : "Failed to create session",
       },
       500,
     );
@@ -282,18 +284,20 @@ universalChat.put('/', async (c) => {
 });
 
 // Get session history
-universalChat.get('/sessions/:sessionId', async (c) => {
+universalChat.get("/sessions/:sessionId", async (c) => {
   try {
-    const sessionId = c.req.param('sessionId');
+    const sessionId = c.req.param("sessionId");
 
     const { data: conversations, error } = await supabase
-      .from('assistant_conversations')
-      .select(`
+      .from("assistant_conversations")
+      .select(
+        `
 				*,
 				messages:assistant_messages(*)
-			`)
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true });
+			`,
+      )
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: true });
 
     if (error) {
       throw error;
@@ -307,7 +311,7 @@ universalChat.get('/sessions/:sessionId', async (c) => {
   } catch (error) {
     return c.json(
       {
-        error: error instanceof Error ? error.message : 'Failed to get session',
+        error: error instanceof Error ? error.message : "Failed to get session",
       },
       500,
     );
@@ -320,7 +324,7 @@ universalChat.get('/sessions/:sessionId', async (c) => {
 
 async function analyzeResponse(
   content: string,
-  _interfaceType: 'external' | 'internal',
+  _interfaceType: "external" | "internal",
 ) {
   // Emergency detection patterns
   const emergencyPatterns = [
@@ -334,16 +338,18 @@ async function analyzeResponse(
 
   // Check for medical advice (CFM compliance)
   if (/diagnóstico|prescrevo|recomendo tomar|dose de/i.test(content)) {
-    complianceFlags.push('CFM_MEDICAL_ADVICE');
+    complianceFlags.push("CFM_MEDICAL_ADVICE");
   }
 
   // Check for ANVISA device mentions
   if (/laser|botox|ácido hialurônico|peeling/i.test(content)) {
-    complianceFlags.push('ANVISA_DEVICE_MENTION');
+    complianceFlags.push("ANVISA_DEVICE_MENTION");
   }
 
   // Detect emergency
-  const emergencyDetected = emergencyPatterns.some((pattern) => pattern.test(content));
+  const emergencyDetected = emergencyPatterns.some((pattern) =>
+    pattern.test(content),
+  );
 
   // Escalation logic
   const escalationTriggered = emergencyDetected || complianceFlags.length > 2;
@@ -351,10 +357,10 @@ async function analyzeResponse(
   // Suggested actions
   const suggestedActions: string[] = [];
   if (emergencyDetected) {
-    suggestedActions.push('Contatar equipe médica imediatamente');
+    suggestedActions.push("Contatar equipe médica imediatamente");
   }
-  if (complianceFlags.includes('CFM_MEDICAL_ADVICE')) {
-    suggestedActions.push('Agendar consulta com profissional');
+  if (complianceFlags.includes("CFM_MEDICAL_ADVICE")) {
+    suggestedActions.push("Agendar consulta com profissional");
   }
 
   return {

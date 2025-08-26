@@ -125,7 +125,8 @@ export function HealthcareDashboard({
           userId: professionalId,
           details: { period, dataType: "healthcare_dashboard" },
         });
-      } catch {} finally {
+      } catch {
+      } finally {
         setIsLoading(false);
       }
     },

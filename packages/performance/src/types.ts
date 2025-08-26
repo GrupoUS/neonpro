@@ -4,18 +4,18 @@
  */
 
 export interface WebVitalsMetric {
-  name: 'CLS' | 'FCP' | 'FID' | 'LCP' | 'TTFB' | 'INP';
+  name: "CLS" | "FCP" | "FID" | "LCP" | "TTFB" | "INP";
   value: number;
   delta: number;
-  rating: 'good' | 'needs-improvement' | 'poor';
+  rating: "good" | "needs-improvement" | "poor";
   id: string;
   navigationType:
-    | 'navigate'
-    | 'reload'
-    | 'back-forward'
-    | 'back-forward-cache'
-    | 'prerender'
-    | 'restore';
+    | "navigate"
+    | "reload"
+    | "back-forward"
+    | "back-forward-cache"
+    | "prerender"
+    | "restore";
   timestamp: number;
   url: string;
   userAgent: string;
@@ -24,32 +24,32 @@ export interface WebVitalsMetric {
 export interface HealthcareVitalsMetric extends WebVitalsMetric {
   // Healthcare-specific context
   workflowType?:
-    | 'patient-registration'
-    | 'medical-form'
-    | 'procedure-scheduling'
-    | 'medical-history'
-    | 'real-time-update';
+    | "patient-registration"
+    | "medical-form"
+    | "procedure-scheduling"
+    | "medical-history"
+    | "real-time-update";
   clinicId?: string;
   userId?: string;
-  deviceType?: 'desktop' | 'tablet' | 'mobile';
-  networkConnection?: 'fast' | 'slow' | 'offline';
+  deviceType?: "desktop" | "tablet" | "mobile";
+  networkConnection?: "fast" | "slow" | "offline";
   criticalPath?: boolean; // Is this a critical healthcare workflow?
 }
 
 export interface PerformanceThresholds {
   // Core Web Vitals thresholds (healthcare-optimized)
-  CLS: { good: number; poor: number; };
-  FCP: { good: number; poor: number; };
-  FID: { good: number; poor: number; };
-  LCP: { good: number; poor: number; };
-  TTFB: { good: number; poor: number; };
-  INP: { good: number; poor: number; };
+  CLS: { good: number; poor: number };
+  FCP: { good: number; poor: number };
+  FID: { good: number; poor: number };
+  LCP: { good: number; poor: number };
+  TTFB: { good: number; poor: number };
+  INP: { good: number; poor: number };
 
   // Healthcare-specific thresholds
-  patientLookup: { good: number; poor: number; };
-  medicalFormLoad: { good: number; poor: number; };
-  procedureScheduling: { good: number; poor: number; };
-  realTimeUpdate: { good: number; poor: number; };
+  patientLookup: { good: number; poor: number };
+  medicalFormLoad: { good: number; poor: number };
+  procedureScheduling: { good: number; poor: number };
+  realTimeUpdate: { good: number; poor: number };
 }
 
 export interface PerformanceReport {
@@ -57,24 +57,24 @@ export interface PerformanceReport {
   url: string;
   metrics: HealthcareVitalsMetric[];
   overallScore: number; // 0-100
-  rating: 'excellent' | 'good' | 'needs-improvement' | 'poor';
+  rating: "excellent" | "good" | "needs-improvement" | "poor";
   recommendations: PerformanceRecommendation[];
   healthcareCompliance: HealthcareComplianceScore;
 }
 
 export interface PerformanceRecommendation {
-  type: 'critical' | 'important' | 'suggestion';
+  type: "critical" | "important" | "suggestion";
   category:
-    | 'bundle'
-    | 'images'
-    | 'fonts'
-    | 'javascript'
-    | 'css'
-    | 'network'
-    | 'caching';
+    | "bundle"
+    | "images"
+    | "fonts"
+    | "javascript"
+    | "css"
+    | "network"
+    | "caching";
   description: string;
-  impact: 'high' | 'medium' | 'low';
-  effort: 'high' | 'medium' | 'low';
+  impact: "high" | "medium" | "low";
+  effort: "high" | "medium" | "low";
   healthcareRelevance: boolean;
 }
 
@@ -106,14 +106,14 @@ export interface BundleChunk {
 }
 
 export interface BundleRecommendation {
-  type: 'size-reduction' | 'code-splitting' | 'lazy-loading' | 'tree-shaking';
+  type: "size-reduction" | "code-splitting" | "lazy-loading" | "tree-shaking";
   description: string;
   potentialSavings: number;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
 }
 
 export interface DatabasePerformanceMetric {
-  queryType: 'select' | 'insert' | 'update' | 'delete';
+  queryType: "select" | "insert" | "update" | "delete";
   table: string;
   executionTime: number;
   rowsAffected?: number;
@@ -121,19 +121,19 @@ export interface DatabasePerformanceMetric {
   timestamp: number;
   isSlowQuery: boolean;
   healthcareDataType?:
-    | 'patient'
-    | 'medical-record'
-    | 'appointment'
-    | 'billing'
-    | 'audit';
+    | "patient"
+    | "medical-record"
+    | "appointment"
+    | "billing"
+    | "audit";
 }
 
 export interface DatabaseOptimizationSuggestion {
   table: string;
-  type: 'index' | 'query-rewrite' | 'caching' | 'partitioning';
+  type: "index" | "query-rewrite" | "caching" | "partitioning";
   description: string;
   expectedImprovement: number; // percentage
-  healthcareImpact: 'critical' | 'important' | 'minor';
+  healthcareImpact: "critical" | "important" | "minor";
 }
 
 export type PerformanceEventHandler = (metric: HealthcareVitalsMetric) => void;

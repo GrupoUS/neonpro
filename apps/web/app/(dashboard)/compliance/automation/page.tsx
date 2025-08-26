@@ -300,9 +300,9 @@ function ComplianceOverview() {
                 <span className="ml-1 text-slate-400 text-xs">
                   {metric.trend === "up"
                     ? "Melhorando"
-                    : (metric.trend === "down"
+                    : metric.trend === "down"
                       ? "Declinando"
-                      : "Estável")}
+                      : "Estável"}
                 </span>
               </div>
             </div>
@@ -829,9 +829,9 @@ function ActionItemsSection() {
                     className={`${
                       item.category === "LGPD"
                         ? "bg-blue-500"
-                        : (item.category === "ANVISA"
+                        : item.category === "ANVISA"
                           ? "bg-green-500"
-                          : "bg-purple-500")
+                          : "bg-purple-500"
                     } text-white text-xs`}
                   >
                     {item.category}
@@ -1005,23 +1005,23 @@ function RegulatoryCalendar() {
                     className={`font-medium text-sm ${
                       daysUntil <= 7
                         ? "text-red-400"
-                        : (daysUntil <= 30
+                        : daysUntil <= 30
                           ? "text-yellow-400"
-                          : "text-green-400")
+                          : "text-green-400"
                     }`}
                   >
                     {daysUntil < 0
                       ? "Vencido"
-                      : (daysUntil === 0
+                      : daysUntil === 0
                         ? "Hoje"
-                        : `${daysUntil} dias`)}
+                        : `${daysUntil} dias`}
                   </div>
                   <p className="text-slate-400 text-xs">
                     {daysUntil < 0
                       ? "Ação urgente"
-                      : (daysUntil <= 7
+                      : daysUntil <= 7
                         ? "Urgente"
-                        : "No prazo")}
+                        : "No prazo"}
                   </p>
                 </div>
               </div>
@@ -1079,9 +1079,9 @@ export default function ComplianceAutomationPage() {
               className={`flex items-center space-x-2 rounded-lg px-3 py-2 ${
                 overallComplianceScore >= 90
                   ? "bg-green-500/20 text-green-400"
-                  : (overallComplianceScore >= 80
+                  : overallComplianceScore >= 80
                     ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-red-500/20 text-red-400")
+                    : "bg-red-500/20 text-red-400"
               }`}
             >
               <span className="font-medium text-sm">Compliance:</span>

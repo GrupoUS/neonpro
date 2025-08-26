@@ -1,10 +1,18 @@
 // Brazilian Healthcare UI Components
-export { EmergencyAccessInterface } from './components/emergency-access';
-export { DataClassificationBadge, LGPDComplianceDashboard } from './components/lgpd-compliance';
-export { ResponsiveLayout } from './components/responsive-layout';
-export type { BrazilianHealthcareTheme } from './design-system/theme';
+export { EmergencyAccessInterface } from "./components/emergency-access";
+export {
+  DataClassificationBadge,
+  LGPDComplianceDashboard,
+} from "./components/lgpd-compliance";
+export { ResponsiveLayout } from "./components/responsive-layout";
+export type { BrazilianHealthcareTheme } from "./design-system/theme";
 // Design System
-export { brazilianHealthcareTheme, colors, spacing, typography } from './design-system/theme';
+export {
+  brazilianHealthcareTheme,
+  colors,
+  spacing,
+  typography,
+} from "./design-system/theme";
 
 // Types
 export type {
@@ -22,4 +30,4 @@ export type {
   Medication,
   PatientInfo,
   RegionalSettings,
-} from './types';
+} from "./types";

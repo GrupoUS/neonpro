@@ -8,8 +8,11 @@
  * with TanStack Query integration and LGPD compliance
  */
 
-import { defaultRealtimeConfig, RealtimeQueryManager } from '@/lib/query/realtime-query-utils';
-import type { RealtimeQueryConfig } from '@/lib/query/realtime-query-utils';
+import {
+  defaultRealtimeConfig,
+  RealtimeQueryManager,
+} from "@/lib/query/realtime-query-utils";
+import type { RealtimeQueryConfig } from "@/lib/query/realtime-query-utils";
 import { createClient } from "@/lib/supabase/client";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
@@ -40,8 +43,7 @@ export function RealtimeProvider({
 }) {
   const queryClient = useQueryClient();
   const [supabaseClient] = useState(() => createClient());
-  const [manager, setManager] = useState<RealtimeQueryManager | null>(
-    );
+  const [manager, setManager] = useState<RealtimeQueryManager | null>();
   const [isEnabled, setIsEnabled] = useState(config.enabled);
   const [connectionStatus, setConnectionStatus] = useState<
     "connecting" | "connected" | "disconnected" | "error"

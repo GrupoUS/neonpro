@@ -1,5 +1,5 @@
-import { cva } from 'class-variance-authority';
-import type { VariantProps } from 'class-variance-authority';
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import {
   Activity,
   AlertCircle,
@@ -10,92 +10,92 @@ import {
   User,
   XCircle,
   Zap,
-} from 'lucide-react';
-import type * as React from 'react';
-import { forwardRef } from 'react';
-import { cn } from '../../lib/utils';
+} from "lucide-react";
+import type * as React from "react";
+import { forwardRef } from "react";
+import { cn } from "../../lib/utils";
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold text-xs backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  "inline-flex items-center rounded-md border px-2.5 py-0.5 font-semibold text-xs backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
         default:
-          'border-transparent bg-gradient-primary text-primary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md',
+          "border-transparent bg-gradient-primary text-primary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md",
         secondary:
-          'border-transparent bg-gradient-to-br from-secondary via-secondary/90 to-secondary text-secondary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md',
+          "border-transparent bg-gradient-to-br from-secondary via-secondary/90 to-secondary text-secondary-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md",
         destructive:
-          'border-transparent bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md',
+          "border-transparent bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground shadow-healthcare-sm hover:scale-105 hover:shadow-healthcare-md",
         outline:
-          'border-border/60 bg-background/80 text-foreground backdrop-blur-sm hover:bg-accent/50',
+          "border-border/60 bg-background/80 text-foreground backdrop-blur-sm hover:bg-accent/50",
 
         // NEONPROV1 Healthcare status variants
         patient:
-          'border-transparent bg-gradient-to-br from-primary/20 via-primary/15 to-primary/10 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-primary/20 via-primary/15 to-primary/10 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         appointment:
-          'border-transparent bg-gradient-to-br from-secondary/20 via-secondary/15 to-secondary/10 text-secondary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-secondary/20 via-secondary/15 to-secondary/10 text-secondary shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         professional:
-          'border-transparent bg-gradient-to-br from-info/20 via-info/15 to-info/10 text-info shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-info/20 via-info/15 to-info/10 text-info shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
 
         // NEONPROV1 Medical priority variants
         critical:
-          'animate-pulse-healthcare border-transparent bg-gradient-to-br from-destructive/20 via-destructive/15 to-destructive/10 text-destructive shadow-healthcare-md ring-2 ring-destructive/20 backdrop-blur-sm',
+          "animate-pulse-healthcare border-transparent bg-gradient-to-br from-destructive/20 via-destructive/15 to-destructive/10 text-destructive shadow-healthcare-md ring-2 ring-destructive/20 backdrop-blur-sm",
         urgent:
-          'border-transparent bg-gradient-to-br from-warning/20 via-warning/15 to-warning/10 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-warning/20 via-warning/15 to-warning/10 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         normal:
-          'border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
-        low:
-          'border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
+        low: "border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
 
         // NEONPROV1 Appointment status variants
         scheduled:
-          'border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         confirmed:
-          'border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
-        'in-progress':
-          'border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
+        "in-progress":
+          "border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         completed:
-          'border-transparent bg-gradient-to-br from-success/20 via-success/15 to-success/10 text-success shadow-healthcare-md backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-success/20 via-success/15 to-success/10 text-success shadow-healthcare-md backdrop-blur-sm hover:scale-105",
         cancelled:
-          'border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
-        'no-show':
-          'border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
+        "no-show":
+          "border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
 
         // NEONPROV1 Professional availability variants
         available:
-          'border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
-        busy:
-          'border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
+        busy: "border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         offline:
-          'border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105',
+          "border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
 
         // NEONPROV1 LGPD compliance variants
-        'lgpd-compliant':
-          'border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm ring-1 ring-success/20 backdrop-blur-sm hover:scale-105',
-        'lgpd-warning':
-          'border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm ring-1 ring-warning/20 backdrop-blur-sm hover:scale-105',
-        'lgpd-violation':
-          'border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-md ring-1 ring-destructive/20 backdrop-blur-sm hover:scale-105',
+        "lgpd-compliant":
+          "border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm ring-1 ring-success/20 backdrop-blur-sm hover:scale-105",
+        "lgpd-warning":
+          "border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm ring-1 ring-warning/20 backdrop-blur-sm hover:scale-105",
+        "lgpd-violation":
+          "border-transparent bg-gradient-to-br from-destructive/15 via-destructive/10 to-destructive/5 text-destructive shadow-healthcare-md ring-1 ring-destructive/20 backdrop-blur-sm hover:scale-105",
       },
       size: {
-        default: 'px-2.5 py-0.5 text-xs',
-        sm: 'rounded-sm px-2 py-0.5 text-xs',
-        lg: 'rounded-lg px-3 py-1 text-sm',
+        default: "px-2.5 py-0.5 text-xs",
+        sm: "rounded-sm px-2 py-0.5 text-xs",
+        lg: "rounded-lg px-3 py-1 text-sm",
       },
       withIcon: {
-        true: 'gap-1',
-        false: '',
+        true: "gap-1",
+        false: "",
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: "default",
+      size: "default",
       withIcon: false,
     },
   },
 );
 
-interface BadgeProps extends React.ComponentProps<'div'>, VariantProps<typeof badgeVariants> {
+interface BadgeProps
+  extends React.ComponentProps<"div">,
+    VariantProps<typeof badgeVariants> {
   icon?: React.ReactNode;
   pulse?: boolean;
   interactive?: boolean;
@@ -122,15 +122,15 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
       <div
         className={cn(
           badgeVariants({ variant, size, withIcon: hasIcon }),
-          pulse && 'animate-pulse',
-          interactive && 'cursor-pointer transition-shadow hover:shadow-sm',
+          pulse && "animate-pulse",
+          interactive && "cursor-pointer transition-shadow hover:shadow-sm",
           className,
         )}
         data-interactive={interactive}
         data-variant={variant}
         onClick={onClick}
         ref={ref}
-        role={interactive ? 'button' : undefined}
+        role={interactive ? "button" : undefined}
         tabIndex={interactive ? 0 : undefined}
         {...props}
       >
@@ -144,20 +144,20 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
     );
   },
 );
-Badge.displayName = 'Badge'; // Healthcare-specific badge components
+Badge.displayName = "Badge"; // Healthcare-specific badge components
 
-interface StatusBadgeProps extends Omit<BadgeProps, 'variant'> {
+interface StatusBadgeProps extends Omit<BadgeProps, "variant"> {
   status:
-    | 'critical'
-    | 'urgent'
-    | 'normal'
-    | 'low'
-    | 'scheduled'
-    | 'confirmed'
-    | 'in-progress'
-    | 'completed'
-    | 'cancelled'
-    | 'no-show';
+    | "critical"
+    | "urgent"
+    | "normal"
+    | "low"
+    | "scheduled"
+    | "confirmed"
+    | "in-progress"
+    | "completed"
+    | "cancelled"
+    | "no-show";
   showIcon?: boolean;
 }
 
@@ -169,34 +169,34 @@ const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(
       }
 
       switch (status) {
-        case 'critical': {
+        case "critical": {
           return <AlertCircle className="h-3 w-3" />;
         }
-        case 'urgent': {
+        case "urgent": {
           return <Zap className="h-3 w-3" />;
         }
-        case 'normal': {
+        case "normal": {
           return <Activity className="h-3 w-3" />;
         }
-        case 'low': {
+        case "low": {
           return <Clock className="h-3 w-3" />;
         }
-        case 'scheduled': {
+        case "scheduled": {
           return <Calendar className="h-3 w-3" />;
         }
-        case 'confirmed': {
+        case "confirmed": {
           return <CheckCircle className="h-3 w-3" />;
         }
-        case 'in-progress': {
+        case "in-progress": {
           return <Activity className="h-3 w-3" />;
         }
-        case 'completed': {
+        case "completed": {
           return <CheckCircle className="h-3 w-3" />;
         }
-        case 'cancelled': {
+        case "cancelled": {
           return <XCircle className="h-3 w-3" />;
         }
-        case 'no-show': {
+        case "no-show": {
           return <XCircle className="h-3 w-3" />;
         }
         default: {
@@ -207,38 +207,38 @@ const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(
 
     const getStatusLabel = () => {
       switch (status) {
-        case 'critical': {
-          return 'Crítico';
+        case "critical": {
+          return "Crítico";
         }
-        case 'urgent': {
-          return 'Urgente';
+        case "urgent": {
+          return "Urgente";
         }
-        case 'normal': {
-          return 'Normal';
+        case "normal": {
+          return "Normal";
         }
-        case 'low': {
-          return 'Baixa';
+        case "low": {
+          return "Baixa";
         }
-        case 'scheduled': {
-          return 'Agendado';
+        case "scheduled": {
+          return "Agendado";
         }
-        case 'confirmed': {
-          return 'Confirmado';
+        case "confirmed": {
+          return "Confirmado";
         }
-        case 'in-progress': {
-          return 'Em Andamento';
+        case "in-progress": {
+          return "Em Andamento";
         }
-        case 'completed': {
-          return 'Concluído';
+        case "completed": {
+          return "Concluído";
         }
-        case 'cancelled': {
-          return 'Cancelado';
+        case "cancelled": {
+          return "Cancelado";
         }
-        case 'no-show': {
-          return 'Faltou';
+        case "no-show": {
+          return "Faltou";
         }
         default: {
-          return 'Status';
+          return "Status";
         }
       }
     };
@@ -246,7 +246,7 @@ const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(
     return (
       <Badge
         icon={getStatusIcon()}
-        pulse={status === 'critical'}
+        pulse={status === "critical"}
         ref={ref}
         variant={status}
         {...props}
@@ -256,10 +256,10 @@ const StatusBadge = forwardRef<HTMLDivElement, StatusBadgeProps>(
     );
   },
 );
-StatusBadge.displayName = 'StatusBadge';
+StatusBadge.displayName = "StatusBadge";
 
-interface ProfessionalBadgeProps extends Omit<BadgeProps, 'variant'> {
-  availability: 'available' | 'busy' | 'offline';
+interface ProfessionalBadgeProps extends Omit<BadgeProps, "variant"> {
+  availability: "available" | "busy" | "offline";
   specialty?: string;
   showIcon?: boolean;
 }
@@ -272,13 +272,13 @@ const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
       }
 
       switch (availability) {
-        case 'available': {
+        case "available": {
           return <CheckCircle className="h-3 w-3" />;
         }
-        case 'busy': {
+        case "busy": {
           return <Clock className="h-3 w-3" />;
         }
-        case 'offline': {
+        case "offline": {
           return <XCircle className="h-3 w-3" />;
         }
         default: {
@@ -289,17 +289,17 @@ const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
 
     const getAvailabilityLabel = () => {
       switch (availability) {
-        case 'available': {
-          return 'Disponível';
+        case "available": {
+          return "Disponível";
         }
-        case 'busy': {
-          return 'Ocupado';
+        case "busy": {
+          return "Ocupado";
         }
-        case 'offline': {
-          return 'Offline';
+        case "offline": {
+          return "Offline";
         }
         default: {
-          return 'Status';
+          return "Status";
         }
       }
     };
@@ -308,9 +308,11 @@ const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
       <Badge
         icon={getAvailabilityIcon()}
         ref={ref}
-        title={specialty
-          ? `${getAvailabilityLabel()} - ${specialty}`
-          : getAvailabilityLabel()}
+        title={
+          specialty
+            ? `${getAvailabilityLabel()} - ${specialty}`
+            : getAvailabilityLabel()
+        }
         variant={availability}
         {...props}
       >
@@ -319,9 +321,9 @@ const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
     );
   },
 );
-ProfessionalBadge.displayName = 'ProfessionalBadge';
-interface LGPDBadgeProps extends Omit<BadgeProps, 'variant'> {
-  compliance: 'compliant' | 'warning' | 'violation';
+ProfessionalBadge.displayName = "ProfessionalBadge";
+interface LGPDBadgeProps extends Omit<BadgeProps, "variant"> {
+  compliance: "compliant" | "warning" | "violation";
   score?: number;
   showIcon?: boolean;
 }
@@ -334,13 +336,13 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
       }
 
       switch (compliance) {
-        case 'compliant': {
+        case "compliant": {
           return <Shield className="h-3 w-3" />;
         }
-        case 'warning': {
+        case "warning": {
           return <AlertCircle className="h-3 w-3" />;
         }
-        case 'violation': {
+        case "violation": {
           return <XCircle className="h-3 w-3" />;
         }
         default: {
@@ -351,34 +353,34 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
 
     const getComplianceLabel = () => {
       switch (compliance) {
-        case 'compliant': {
-          return score ? `LGPD Conforme (${score}%)` : 'LGPD Conforme';
+        case "compliant": {
+          return score ? `LGPD Conforme (${score}%)` : "LGPD Conforme";
         }
-        case 'warning': {
-          return score ? `LGPD Atenção (${score}%)` : 'LGPD Atenção';
+        case "warning": {
+          return score ? `LGPD Atenção (${score}%)` : "LGPD Atenção";
         }
-        case 'violation': {
-          return score ? `LGPD Violação (${score}%)` : 'LGPD Violação';
+        case "violation": {
+          return score ? `LGPD Violação (${score}%)` : "LGPD Violação";
         }
         default: {
-          return 'LGPD';
+          return "LGPD";
         }
       }
     };
 
     const getVariant = () => {
       switch (compliance) {
-        case 'compliant': {
-          return 'lgpd-compliant';
+        case "compliant": {
+          return "lgpd-compliant";
         }
-        case 'warning': {
-          return 'lgpd-warning';
+        case "warning": {
+          return "lgpd-warning";
         }
-        case 'violation': {
-          return 'lgpd-violation';
+        case "violation": {
+          return "lgpd-violation";
         }
         default: {
-          return 'lgpd-compliant';
+          return "lgpd-compliant";
         }
       }
     };
@@ -386,7 +388,7 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
     return (
       <Badge
         icon={getComplianceIcon()}
-        pulse={compliance === 'violation'}
+        pulse={compliance === "violation"}
         ref={ref}
         variant={getVariant() as any}
         {...props}
@@ -396,10 +398,10 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
     );
   },
 );
-LGPDBadge.displayName = 'LGPDBadge';
+LGPDBadge.displayName = "LGPDBadge";
 
-interface PriorityBadgeProps extends Omit<BadgeProps, 'variant'> {
-  priority: 'critical' | 'urgent' | 'normal' | 'low';
+interface PriorityBadgeProps extends Omit<BadgeProps, "variant"> {
+  priority: "critical" | "urgent" | "normal" | "low";
   showIcon?: boolean;
 }
 
@@ -411,16 +413,16 @@ const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(
       }
 
       switch (priority) {
-        case 'critical': {
+        case "critical": {
           return <AlertCircle className="h-3 w-3" />;
         }
-        case 'urgent': {
+        case "urgent": {
           return <Zap className="h-3 w-3" />;
         }
-        case 'normal': {
+        case "normal": {
           return <Activity className="h-3 w-3" />;
         }
-        case 'low': {
+        case "low": {
           return <Clock className="h-3 w-3" />;
         }
         default: {
@@ -431,20 +433,20 @@ const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(
 
     const getPriorityLabel = () => {
       switch (priority) {
-        case 'critical': {
-          return 'Crítico';
+        case "critical": {
+          return "Crítico";
         }
-        case 'urgent': {
-          return 'Urgente';
+        case "urgent": {
+          return "Urgente";
         }
-        case 'normal': {
-          return 'Normal';
+        case "normal": {
+          return "Normal";
         }
-        case 'low': {
-          return 'Baixa';
+        case "low": {
+          return "Baixa";
         }
         default: {
-          return 'Normal';
+          return "Normal";
         }
       }
     };
@@ -452,7 +454,7 @@ const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(
     return (
       <Badge
         icon={getPriorityIcon()}
-        pulse={priority === 'critical'}
+        pulse={priority === "critical"}
         ref={ref}
         variant={priority}
         {...props}
@@ -462,7 +464,7 @@ const PriorityBadge = forwardRef<HTMLDivElement, PriorityBadgeProps>(
     );
   },
 );
-PriorityBadge.displayName = 'PriorityBadge';
+PriorityBadge.displayName = "PriorityBadge";
 
 export {
   Badge,

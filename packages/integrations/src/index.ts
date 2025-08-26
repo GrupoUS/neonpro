@@ -19,16 +19,16 @@
 
 // Integration Configuration
 export const IntegrationConfig = {
-  version: '1.0.0',
-  protocols: ['HL7-FHIR-R4', 'LOINC', 'TISS', 'ANVISA-RDC44'],
-  compliance: ['LGPD', 'ANVISA', 'CFM', 'ANS'],
+  compliance: ["LGPD", "ANVISA", "CFM", "ANS"],
   features: [
-    'ehr-integration',
-    'lab-integration',
-    'insurance-integration',
-    'pharmacy-integration',
+    "ehr-integration",
+    "lab-integration",
+    "insurance-integration",
+    "pharmacy-integration",
   ],
-  status: 'development',
+  protocols: ["HL7-FHIR-R4", "LOINC", "TISS", "ANVISA-RDC44"],
+  status: "development",
+  version: "1.0.0",
 } as const;
 
 // Integration Types
@@ -41,7 +41,7 @@ export interface IntegrationStatus {
 }
 
 export interface IntegrationHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   lastCheck: string;
   endpoints: number;
   errors: number;
@@ -49,8 +49,8 @@ export interface IntegrationHealth {
 
 export const DefaultIntegrationStatus: IntegrationStatus = {
   ehr: false,
-  laboratory: false,
-  insurance: false,
-  pharmacy: false,
   government: false,
+  insurance: false,
+  laboratory: false,
+  pharmacy: false,
 } as const;

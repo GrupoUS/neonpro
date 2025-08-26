@@ -1,20 +1,22 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('Healthcare Accessibility Compliance', () => {
+test.describe("Healthcare Accessibility Compliance", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/dashboard');
+    await page.goto("/dashboard");
   });
 
-  test('should meet WCAG 2.1 AA standards for patient dashboard', async ({ page }) => {
+  test("should meet WCAG 2.1 AA standards for patient dashboard", async ({
+    page,
+  }) => {
     // Test keyboard navigation
-    await page.keyboard.press('Tab');
-    const focusedElement = await page.locator(':focus');
+    await page.keyboard.press("Tab");
+    const focusedElement = await page.locator(":focus");
     await expect(focusedElement).toBeVisible();
 
     // Test color contrast for healthcare data
     const patientCards = page.locator('[data-testid="patient-card"]');
     await expect(patientCards.first()).toHaveCSS(
-      'color',
+      "color",
       /rgb\(\d+,\s*\d+,\s*\d+\)/,
     );
 
@@ -23,8 +25,8 @@ test.describe('Healthcare Accessibility Compliance', () => {
     await expect(page.locator('[aria-label*="Medical"]')).toBeVisible();
   });
 
-  test('should provide accessible forms for LGPD consent', async ({ page }) => {
-    await page.goto('/patients/new');
+  test("should provide accessible forms for LGPD consent", async ({ page }) => {
+    await page.goto("/patients/new");
 
     // Test form labels and accessibility
     await expect(page.locator('label[for="patient-name"]')).toBeVisible();
@@ -40,8 +42,10 @@ test.describe('Healthcare Accessibility Compliance', () => {
     await expect(page.locator('[role="alert"]')).toBeVisible();
   });
 
-  test('should support screen readers for ANVISA compliance data', async ({ page }) => {
-    await page.goto('/compliance/anvisa');
+  test("should support screen readers for ANVISA compliance data", async ({
+    page,
+  }) => {
+    await page.goto("/compliance/anvisa");
 
     // Test ARIA landmarks
     await expect(page.locator('[role="main"]')).toBeVisible();
@@ -52,12 +56,14 @@ test.describe('Healthcare Accessibility Compliance', () => {
     await expect(page.locator('th[scope="col"]')).toHaveCount({ min: 1 });
   });
 
-  test('should provide accessible CFM professional validation interface', async ({ page }) => {
-    await page.goto('/professionals');
+  test("should provide accessible CFM professional validation interface", async ({
+    page,
+  }) => {
+    await page.goto("/professionals");
 
     // Test heading hierarchy
-    await expect(page.locator('h1')).toHaveCount(1);
-    await expect(page.locator('h2')).toHaveCount({ min: 1 });
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.locator("h2")).toHaveCount({ min: 1 });
 
     // Test professional data accessibility
     await expect(
@@ -68,8 +74,10 @@ test.describe('Healthcare Accessibility Compliance', () => {
     ).toBeVisible();
   });
 
-  test('should maintain accessibility during data loading states', async ({ page }) => {
-    await page.goto('/analytics');
+  test("should maintain accessibility during data loading states", async ({
+    page,
+  }) => {
+    await page.goto("/analytics");
 
     // Test loading state accessibility
     await expect(page.locator('[aria-live="polite"]')).toBeVisible();
@@ -77,6 +85,6 @@ test.describe('Healthcare Accessibility Compliance', () => {
 
     // Wait for data to load and test accessibility
     await page.waitForSelector('[data-testid="analytics-chart"]');
-    await expect(page.locator('svg[aria-label]')).toBeVisible();
+    await expect(page.locator("svg[aria-label]")).toBeVisible();
   });
 });

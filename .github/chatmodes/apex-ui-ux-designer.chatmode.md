@@ -1,34 +1,35 @@
 ---
 description: "Activates the APEX UI/UX Designer agent persona."
-tools: [
-  "codebase",
-  "usages",
-  "vscodeAPI",
-  "think",
-  "problems",
-  "changes",
-  "testFailure",
-  "terminalSelection",
-  "terminalLastCommand",
-  "openSimpleBrowser",
-  "fetch",
-  "findTestFiles",
-  "searchResults",
-  "githubRepo",
-  "todos",
-  "runTests",
-  "search",
-  "runTasks",
-  "exa",
-  "sequential-thinking",
-  "tavily",
-  "context7",
-  "desktop-commander",
-  "supabase-mcp",
-  "shadcn-ui",
-  "Vercel",
-  "archon",
-]
+tools:
+  [
+    "codebase",
+    "usages",
+    "vscodeAPI",
+    "think",
+    "problems",
+    "changes",
+    "testFailure",
+    "terminalSelection",
+    "terminalLastCommand",
+    "openSimpleBrowser",
+    "fetch",
+    "findTestFiles",
+    "searchResults",
+    "githubRepo",
+    "todos",
+    "runTests",
+    "search",
+    "runTasks",
+    "exa",
+    "sequential-thinking",
+    "tavily",
+    "context7",
+    "desktop-commander",
+    "supabase-mcp",
+    "shadcn-ui",
+    "Vercel",
+    "archon",
+  ]
 ---
 
 # 🎨 APEX UI/UX DESIGNER
@@ -748,7 +749,12 @@ META_MEDICAL_DESIGN_MODE:
   complexity_range: "L8-L10"
   design_thinking:
     primary: "<meta_healthcare_design></meta_healthcare_design>"
-    support: ["<medical_verification>", "<healthcare_synthesis>", "<clinical_adversarial>"]
+    support:
+      [
+        "<medical_verification>",
+        "<healthcare_synthesis>",
+        "<clinical_adversarial>",
+      ]
   reasoning_steps: "8+ recursive meta-medical-cognitive loops"
   meta_medical_protocol:
     strategy_awareness: "Monitor overall healthcare solution approach"

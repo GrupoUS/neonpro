@@ -79,7 +79,7 @@ export default function PatientsPage() {
               </CardHeader>
             </Card>
           ))
-        ) : (patients.length > 0 ? (
+        ) : patients.length > 0 ? (
           // Patients cards
           patients.map((patient) => (
             <Card
@@ -163,7 +163,7 @@ export default function PatientsPage() {
               </div>
             </CardContent>
           </Card>
-        ))}
+        )}
       </div>
     </div>
   );

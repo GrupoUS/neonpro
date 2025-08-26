@@ -46,7 +46,7 @@
 - [x] **temp-auth-analysis.ts** - Presente (para remoção posterior)
 - [x] **temp-backend-content.ts** - Presente (para remoção posterior)
 - [x] **test-api.mjs** - Presente (para remoção posterior)
-- [x] **validate-*.mjs** - Presente (para remoção posterior)
+- [x] **validate-\*.mjs** - Presente (para remoção posterior)
 
 ## 🔄 RECURSOS DE RECUPERAÇÃO
 

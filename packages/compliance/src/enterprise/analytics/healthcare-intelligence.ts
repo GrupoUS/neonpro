@@ -4,7 +4,7 @@
  * Compliance: LGPD + CFM Medical Ethics + Constitutional AI + ≥9.9/10 Standards
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Constitutional Healthcare Intelligence Schemas
 const HealthcareIntelligenceConfigSchema = z.object({
@@ -24,13 +24,13 @@ const HealthcareIntelligenceConfigSchema = z.object({
 const HealthcareIntelligenceQuerySchema = z.object({
   query_id: z.string().uuid(),
   query_type: z.enum([
-    'treatment_prediction',
-    'outcome_analysis',
-    'resource_optimization',
-    'risk_assessment',
-    'wellness_insights',
-    'population_health',
-    'clinical_decision_support',
+    "treatment_prediction",
+    "outcome_analysis",
+    "resource_optimization",
+    "risk_assessment",
+    "wellness_insights",
+    "population_health",
+    "clinical_decision_support",
   ]),
   patient_cohort: z.object({
     cohort_id: z.string().optional(),
@@ -53,7 +53,7 @@ const HealthcareIntelligenceQuerySchema = z.object({
     justice_principle: z.boolean().default(true),
   }),
   privacy_requirements: z.object({
-    anonymization_level: z.enum(['basic', 'advanced', 'full']),
+    anonymization_level: z.enum(["basic", "advanced", "full"]),
     consent_validation: z.boolean().default(true),
     lgpd_compliance: z.boolean().default(true),
     data_minimization: z.boolean().default(true),
@@ -70,12 +70,12 @@ const HealthcareIntelligenceResultsSchema = z.object({
         title: z.string(),
         description: z.string(),
         confidence_score: z.number().min(0).max(1),
-        clinical_significance: z.enum(['low', 'moderate', 'high', 'critical']),
+        clinical_significance: z.enum(["low", "moderate", "high", "critical"]),
         evidence_strength: z.enum([
-          'weak',
-          'moderate',
-          'strong',
-          'very_strong',
+          "weak",
+          "moderate",
+          "strong",
+          "very_strong",
         ]),
         recommendation: z.string(),
         contraindications: z.array(z.string()).optional(),
@@ -92,7 +92,7 @@ const HealthcareIntelligenceResultsSchema = z.object({
     risk_factors: z.array(
       z.object({
         factor_name: z.string(),
-        risk_level: z.enum(['low', 'moderate', 'high', 'very_high']),
+        risk_level: z.enum(["low", "moderate", "high", "very_high"]),
         odds_ratio: z.number().optional(),
         confidence_interval: z.string().optional(),
       }),
@@ -232,7 +232,8 @@ export class HealthcareIntelligenceService {
     );
 
     // Privacy certification
-    const privacyCertification = await this.generatePrivacyCertification(validatedQuery);
+    const privacyCertification =
+      await this.generatePrivacyCertification(validatedQuery);
 
     // Create comprehensive results
     const results: HealthcareIntelligenceResults = {
@@ -256,14 +257,15 @@ export class HealthcareIntelligenceService {
       privacy_impact_assessment: privacyCertification,
       medical_accuracy_validation: {
         accuracy_score: this.config.medical_accuracy_threshold,
-        validation_method: 'clinical_guidelines_validation',
+        validation_method: "clinical_guidelines_validation",
         human_reviewer_approval: true,
       },
       constitutional_compliance_score: 9.9,
       created_at: new Date().toISOString(),
-      created_by: 'healthcare-intelligence-service',
+      created_by: "healthcare-intelligence-service",
       reviewed_by_physician: this.config.human_oversight_required,
-      cfm_ethics_approval: validatedQuery.ethical_considerations.cfm_ethics_approval,
+      cfm_ethics_approval:
+        validatedQuery.ethical_considerations.cfm_ethics_approval,
     };
 
     this.auditTrail.push(auditEntry);
@@ -279,25 +281,25 @@ export class HealthcareIntelligenceService {
   ): Promise<void> {
     if (!this.config.constitutional_ai_compliance) {
       throw new Error(
-        'Constitutional AI compliance required for healthcare intelligence',
+        "Constitutional AI compliance required for healthcare intelligence",
       );
     }
 
     if (!query.ethical_considerations.cfm_ethics_approval) {
       throw new Error(
-        'CFM ethics approval required for healthcare AI applications',
+        "CFM ethics approval required for healthcare AI applications",
       );
     }
 
     if (!this.config.explainable_ai_required) {
       throw new Error(
-        'Explainable AI required for constitutional healthcare compliance',
+        "Explainable AI required for constitutional healthcare compliance",
       );
     }
 
     if (!this.config.human_oversight_required) {
       throw new Error(
-        'Human oversight required for constitutional healthcare AI',
+        "Human oversight required for constitutional healthcare AI",
       );
     }
   }
@@ -312,19 +314,19 @@ export class HealthcareIntelligenceService {
 
     // Validate four principles of medical ethics
     if (!ethical.patient_autonomy_respected) {
-      throw new Error('Patient autonomy principle must be respected');
+      throw new Error("Patient autonomy principle must be respected");
     }
 
     if (!ethical.beneficence_principle) {
-      throw new Error('Beneficence principle must be upheld');
+      throw new Error("Beneficence principle must be upheld");
     }
 
     if (!ethical.non_maleficence_principle) {
-      throw new Error('Non-maleficence principle must be ensured');
+      throw new Error("Non-maleficence principle must be ensured");
     }
 
     if (!ethical.justice_principle) {
-      throw new Error('Justice principle must be maintained');
+      throw new Error("Justice principle must be maintained");
     }
   }
 
@@ -339,11 +341,11 @@ export class HealthcareIntelligenceService {
 
     // Apply anonymization based on level
     switch (privacyRequirements.anonymization_level) {
-      case 'full': {
+      case "full": {
         protectedData = await this.applyFullAnonymization(protectedData);
         break;
       }
-      case 'advanced': {
+      case "advanced": {
         protectedData = await this.applyAdvancedAnonymization(protectedData);
         break;
       }
@@ -379,13 +381,13 @@ export class HealthcareIntelligenceService {
     // Demographic bias detection
     const demographicBias = await this.detectDemographicBias(data);
     if (demographicBias.bias_score > 0.3) {
-      throw new Error('Unacceptable demographic bias detected in dataset');
+      throw new Error("Unacceptable demographic bias detected in dataset");
     }
 
     // Treatment bias detection
     const treatmentBias = await this.detectTreatmentBias(data);
     if (treatmentBias.bias_score > 0.3) {
-      throw new Error('Unacceptable treatment bias detected in dataset');
+      throw new Error("Unacceptable treatment bias detected in dataset");
     }
 
     // Apply bias mitigation techniques
@@ -400,29 +402,29 @@ export class HealthcareIntelligenceService {
     query: HealthcareIntelligenceQuery,
   ): Promise<any> {
     switch (query.query_type) {
-      case 'treatment_prediction': {
+      case "treatment_prediction": {
         return await this.generateTreatmentPredictions(data, query);
       }
-      case 'outcome_analysis': {
+      case "outcome_analysis": {
         return await this.generateOutcomeAnalysis(data, query);
       }
-      case 'resource_optimization': {
+      case "resource_optimization": {
         return await this.generateResourceOptimization(data, query);
       }
-      case 'risk_assessment': {
+      case "risk_assessment": {
         return await this.generateRiskAssessment(data, query);
       }
-      case 'wellness_insights': {
+      case "wellness_insights": {
         return await this.generateWellnessInsights(data, query);
       }
-      case 'population_health': {
+      case "population_health": {
         return await this.generatePopulationHealthInsights(data, query);
       }
-      case 'clinical_decision_support': {
+      case "clinical_decision_support": {
         return await this.generateClinicalDecisionSupport(data, query);
       }
       default: {
-        throw new Error('Unsupported healthcare intelligence query type');
+        throw new Error("Unsupported healthcare intelligence query type");
       }
     }
   }
@@ -439,30 +441,32 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Recommended Treatment Protocol',
+          title: "Recommended Treatment Protocol",
           description:
-            'Based on patient cohort analysis, combination therapy shows 85% success rate',
+            "Based on patient cohort analysis, combination therapy shows 85% success rate",
           confidence_score: 0.87,
-          clinical_significance: 'high' as const,
-          evidence_strength: 'strong' as const,
-          recommendation: 'Consider combination therapy with modified dosing schedule',
-          contraindications: ['severe_liver_disease', 'pregnancy'],
+          clinical_significance: "high" as const,
+          evidence_strength: "strong" as const,
+          recommendation:
+            "Consider combination therapy with modified dosing schedule",
+          contraindications: ["severe_liver_disease", "pregnancy"],
         },
       ],
       secondary_findings: [
         {
           finding_id: crypto.randomUUID(),
-          description: 'Alternative treatment option with 78% success rate',
+          description: "Alternative treatment option with 78% success rate",
           statistical_significance: 0.95,
-          clinical_relevance: 'Suitable for patients with contraindications to primary therapy',
+          clinical_relevance:
+            "Suitable for patients with contraindications to primary therapy",
         },
       ],
       risk_factors: [
         {
-          factor_name: 'age_over_65',
-          risk_level: 'moderate' as const,
+          factor_name: "age_over_65",
+          risk_level: "moderate" as const,
           odds_ratio: 1.3,
-          confidence_interval: '1.1-1.6',
+          confidence_interval: "1.1-1.6",
         },
       ],
     };
@@ -481,12 +485,14 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Treatment Outcome Prediction',
-          description: 'Patient cohort shows 90% probability of positive outcome within 6 months',
+          title: "Treatment Outcome Prediction",
+          description:
+            "Patient cohort shows 90% probability of positive outcome within 6 months",
           confidence_score: 0.92,
-          clinical_significance: 'high' as const,
-          evidence_strength: 'very_strong' as const,
-          recommendation: 'Continue current treatment protocol with monthly monitoring',
+          clinical_significance: "high" as const,
+          evidence_strength: "very_strong" as const,
+          recommendation:
+            "Continue current treatment protocol with monthly monitoring",
         },
       ],
       secondary_findings: [],
@@ -505,12 +511,14 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Optimal Resource Allocation',
-          description: 'Resource optimization suggests 15% efficiency improvement possible',
+          title: "Optimal Resource Allocation",
+          description:
+            "Resource optimization suggests 15% efficiency improvement possible",
           confidence_score: 0.89,
-          clinical_significance: 'moderate' as const,
-          evidence_strength: 'strong' as const,
-          recommendation: 'Implement staggered scheduling with 30-minute intervals',
+          clinical_significance: "moderate" as const,
+          evidence_strength: "strong" as const,
+          recommendation:
+            "Implement staggered scheduling with 30-minute intervals",
         },
       ],
       secondary_findings: [],
@@ -529,21 +537,22 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Patient Risk Profile',
-          description: 'Low risk profile with 95% probability of positive outcome',
+          title: "Patient Risk Profile",
+          description:
+            "Low risk profile with 95% probability of positive outcome",
           confidence_score: 0.94,
-          clinical_significance: 'high' as const,
-          evidence_strength: 'very_strong' as const,
-          recommendation: 'Standard monitoring protocol sufficient',
+          clinical_significance: "high" as const,
+          evidence_strength: "very_strong" as const,
+          recommendation: "Standard monitoring protocol sufficient",
         },
       ],
       secondary_findings: [],
       risk_factors: [
         {
-          factor_name: 'comorbidity_present',
-          risk_level: 'low' as const,
+          factor_name: "comorbidity_present",
+          risk_level: "low" as const,
           odds_ratio: 1.1,
-          confidence_interval: '0.9-1.3',
+          confidence_interval: "0.9-1.3",
         },
       ],
     };
@@ -560,12 +569,12 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Wellness Optimization Opportunity',
-          description: 'Lifestyle modifications could improve outcomes by 20%',
+          title: "Wellness Optimization Opportunity",
+          description: "Lifestyle modifications could improve outcomes by 20%",
           confidence_score: 0.83,
-          clinical_significance: 'moderate' as const,
-          evidence_strength: 'moderate' as const,
-          recommendation: 'Integrate wellness coaching into treatment plan',
+          clinical_significance: "moderate" as const,
+          evidence_strength: "moderate" as const,
+          recommendation: "Integrate wellness coaching into treatment plan",
         },
       ],
       secondary_findings: [],
@@ -584,12 +593,13 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Population Health Trend',
-          description: 'Population shows improving health metrics over 12-month period',
+          title: "Population Health Trend",
+          description:
+            "Population shows improving health metrics over 12-month period",
           confidence_score: 0.91,
-          clinical_significance: 'high' as const,
-          evidence_strength: 'strong' as const,
-          recommendation: 'Continue current population health initiatives',
+          clinical_significance: "high" as const,
+          evidence_strength: "strong" as const,
+          recommendation: "Continue current population health initiatives",
         },
       ],
       secondary_findings: [],
@@ -608,12 +618,13 @@ export class HealthcareIntelligenceService {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
-          title: 'Clinical Decision Recommendation',
-          description: 'Evidence supports proceeding with proposed treatment approach',
+          title: "Clinical Decision Recommendation",
+          description:
+            "Evidence supports proceeding with proposed treatment approach",
           confidence_score: 0.88,
-          clinical_significance: 'high' as const,
-          evidence_strength: 'strong' as const,
-          recommendation: 'Proceed with treatment, monitor for adverse effects',
+          clinical_significance: "high" as const,
+          evidence_strength: "strong" as const,
+          recommendation: "Proceed with treatment, monitor for adverse effects",
         },
       ],
       secondary_findings: [],
@@ -632,9 +643,11 @@ export class HealthcareIntelligenceService {
     const validatedInsights = { ...insights };
 
     // Ensure all confidence scores meet threshold
-    validatedInsights.primary_findings = validatedInsights.primary_findings.filter(
-      (finding: any) => finding.confidence_score >= this.config.medical_accuracy_threshold,
-    );
+    validatedInsights.primary_findings =
+      validatedInsights.primary_findings.filter(
+        (finding: any) =>
+          finding.confidence_score >= this.config.medical_accuracy_threshold,
+      );
 
     return validatedInsights;
   }
@@ -656,9 +669,9 @@ export class HealthcareIntelligenceService {
 
     // Add human reviewer validation
     reviewedInsights.human_review = {
-      reviewed_by: 'physician_reviewer',
+      reviewed_by: "physician_reviewer",
       review_date: new Date().toISOString(),
-      approval_status: 'approved',
+      approval_status: "approved",
       clinical_validation: true,
     };
 
@@ -674,41 +687,45 @@ export class HealthcareIntelligenceService {
   ): Promise<any> {
     return {
       model_explanation:
-        'Machine learning model trained on anonymized patient cohort data with constitutional privacy protection',
+        "Machine learning model trained on anonymized patient cohort data with constitutional privacy protection",
       feature_importance: [
         {
-          feature_name: 'treatment_history',
+          feature_name: "treatment_history",
           importance_score: 0.35,
-          clinical_interpretation: 'Previous treatment response is strongest predictor of outcome',
+          clinical_interpretation:
+            "Previous treatment response is strongest predictor of outcome",
         },
         {
-          feature_name: 'age_group',
+          feature_name: "age_group",
           importance_score: 0.28,
-          clinical_interpretation: 'Age significantly influences treatment efficacy',
+          clinical_interpretation:
+            "Age significantly influences treatment efficacy",
         },
         {
-          feature_name: 'comorbidities',
+          feature_name: "comorbidities",
           importance_score: 0.22,
-          clinical_interpretation: 'Presence of comorbidities affects treatment selection',
+          clinical_interpretation:
+            "Presence of comorbidities affects treatment selection",
         },
       ],
       decision_pathway: [
-        'Patient data anonymization and privacy protection applied',
-        'Feature engineering with clinical validation',
-        'Model training with bias detection and mitigation',
-        'Prediction generation with uncertainty quantification',
-        'Clinical validation and human oversight review',
+        "Patient data anonymization and privacy protection applied",
+        "Feature engineering with clinical validation",
+        "Model training with bias detection and mitigation",
+        "Prediction generation with uncertainty quantification",
+        "Clinical validation and human oversight review",
       ],
       uncertainty_analysis: {
         confidence_intervals: {
-          primary_prediction: '85-92%',
-          secondary_outcome: '78-85%',
+          primary_prediction: "85-92%",
+          secondary_outcome: "78-85%",
         },
-        sensitivity_analysis: 'Model performance robust across different patient subgroups',
+        sensitivity_analysis:
+          "Model performance robust across different patient subgroups",
         limitation_disclosure: [
-          'Predictions based on historical data patterns',
-          'Individual patient factors may influence actual outcomes',
-          'Clinical judgment should always supersede AI recommendations',
+          "Predictions based on historical data patterns",
+          "Individual patient factors may influence actual outcomes",
+          "Clinical judgment should always supersede AI recommendations",
         ],
       },
     };
@@ -728,9 +745,9 @@ export class HealthcareIntelligenceService {
         treatment_bias_score: 0.12,
         outcome_bias_score: 0.08,
         bias_mitigation_applied: [
-          'demographic_balancing',
-          'treatment_history_normalization',
-          'outcome_standardization',
+          "demographic_balancing",
+          "treatment_history_normalization",
+          "outcome_standardization",
         ],
       },
       human_oversight_validation: this.config.human_oversight_required,
@@ -745,13 +762,15 @@ export class HealthcareIntelligenceService {
   private async generatePrivacyCertification(
     query: HealthcareIntelligenceQuery,
   ): Promise<any> {
-    const privacyBudgetConsumed = this.config.differential_privacy_epsilon * 0.6;
+    const privacyBudgetConsumed =
+      this.config.differential_privacy_epsilon * 0.6;
     this.privacyBudgetUsed += privacyBudgetConsumed;
 
     return {
       anonymization_verified: true,
       lgpd_compliance_score: 9.9,
-      consent_validation_complete: query.privacy_requirements.consent_validation,
+      consent_validation_complete:
+        query.privacy_requirements.consent_validation,
       data_minimization_applied: query.privacy_requirements.data_minimization,
       privacy_budget_consumed: privacyBudgetConsumed,
     };
@@ -795,7 +814,7 @@ export class HealthcareIntelligenceService {
     return data.map((record) => {
       const noisyRecord = { ...record };
       for (const [key, value] of Object.entries(record)) {
-        if (typeof value === 'number') {
+        if (typeof value === "number") {
           const noise = this.generateLaplaceNoise(
             1 / this.config.differential_privacy_epsilon,
           );
@@ -809,11 +828,11 @@ export class HealthcareIntelligenceService {
   private async applyDataMinimization(data: any[]): Promise<any[]> {
     // Remove unnecessary fields for analysis
     const essentialFields = [
-      'id',
-      'age',
-      'treatment_type',
-      'outcome',
-      'created_at',
+      "id",
+      "age",
+      "treatment_type",
+      "outcome",
+      "created_at",
     ];
     return data.map((record) => {
       const minimizedRecord: any = {};
@@ -834,14 +853,14 @@ export class HealthcareIntelligenceService {
   // Helper methods for bias detection
   private async detectDemographicBias(
     _data: any[],
-  ): Promise<{ bias_score: number; }> {
+  ): Promise<{ bias_score: number }> {
     // Mock demographic bias detection
     return { bias_score: 0.15 };
   }
 
   private async detectTreatmentBias(
     _data: any[],
-  ): Promise<{ bias_score: number; }> {
+  ): Promise<{ bias_score: number }> {
     // Mock treatment bias detection
     return { bias_score: 0.12 };
   }
@@ -856,17 +875,17 @@ export class HealthcareIntelligenceService {
 
   private getAiModelName(queryType: string): string {
     const modelMap = {
-      treatment_prediction: 'HealthcareML-Treatment-v2.1',
-      outcome_analysis: 'HealthcareML-Outcomes-v1.8',
-      resource_optimization: 'HealthcareML-Resource-v1.5',
-      risk_assessment: 'HealthcareML-Risk-v2.0',
-      wellness_insights: 'HealthcareML-Wellness-v1.3',
-      population_health: 'HealthcareML-Population-v1.7',
-      clinical_decision_support: 'HealthcareML-Clinical-v2.2',
+      treatment_prediction: "HealthcareML-Treatment-v2.1",
+      outcome_analysis: "HealthcareML-Outcomes-v1.8",
+      resource_optimization: "HealthcareML-Resource-v1.5",
+      risk_assessment: "HealthcareML-Risk-v2.0",
+      wellness_insights: "HealthcareML-Wellness-v1.3",
+      population_health: "HealthcareML-Population-v1.7",
+      clinical_decision_support: "HealthcareML-Clinical-v2.2",
     };
     return (
-      modelMap[queryType as keyof typeof modelMap]
-      || 'HealthcareML-Generic-v1.0'
+      modelMap[queryType as keyof typeof modelMap] ||
+      "HealthcareML-Generic-v1.0"
     );
   }
 
@@ -897,7 +916,7 @@ export class HealthcareIntelligenceService {
   /**
    * Get privacy budget usage
    */
-  getPrivacyBudgetUsage(): { used: number; remaining: number; } {
+  getPrivacyBudgetUsage(): { used: number; remaining: number } {
     return {
       used: this.privacyBudgetUsed,
       remaining: Math.max(0, 10 - this.privacyBudgetUsed), // Assuming max budget of 10
@@ -917,25 +936,25 @@ export class HealthcareIntelligenceService {
 
     // Check AI ethics requirements
     if (!this.config.ai_ethics_enabled) {
-      issues.push('AI ethics validation not enabled');
+      issues.push("AI ethics validation not enabled");
       score -= 0.2;
     }
 
     // Check explainable AI requirement
     if (!this.config.explainable_ai_required) {
-      issues.push('Explainable AI not required - constitutional violation');
+      issues.push("Explainable AI not required - constitutional violation");
       score -= 0.3;
     }
 
     // Check human oversight requirement
     if (!this.config.human_oversight_required) {
-      issues.push('Human oversight not required - constitutional violation');
+      issues.push("Human oversight not required - constitutional violation");
       score -= 0.3;
     }
 
     // Check CFM ethics validation
     if (!this.config.cfm_ethics_validation) {
-      issues.push('CFM ethics validation not enabled');
+      issues.push("CFM ethics validation not enabled");
       score -= 0.2;
     }
 
@@ -962,35 +981,35 @@ export function createHealthcareIntelligenceService(
 export async function validateHealthcareIntelligence(
   query: HealthcareIntelligenceQuery,
   config: HealthcareIntelligenceConfig,
-): Promise<{ valid: boolean; violations: string[]; }> {
+): Promise<{ valid: boolean; violations: string[] }> {
   const violations: string[] = [];
 
   // Validate AI ethics requirements
   if (!config.ai_ethics_enabled) {
-    violations.push('AI ethics must be enabled for healthcare intelligence');
+    violations.push("AI ethics must be enabled for healthcare intelligence");
   }
 
   // Validate explainable AI requirement
   if (!config.explainable_ai_required) {
     violations.push(
-      'Explainable AI required for constitutional healthcare compliance',
+      "Explainable AI required for constitutional healthcare compliance",
     );
   }
 
   // Validate human oversight requirement
   if (!config.human_oversight_required) {
-    violations.push('Human oversight required for healthcare AI applications');
+    violations.push("Human oversight required for healthcare AI applications");
   }
 
   // Validate CFM ethics approval
   if (!query.ethical_considerations.cfm_ethics_approval) {
-    violations.push('CFM ethics approval required for medical AI applications');
+    violations.push("CFM ethics approval required for medical AI applications");
   }
 
   // Validate medical accuracy threshold
   if (config.medical_accuracy_threshold < 0.95) {
     violations.push(
-      'Medical accuracy threshold must be ≥95% for healthcare applications',
+      "Medical accuracy threshold must be ≥95% for healthcare applications",
     );
   }
 

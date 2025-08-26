@@ -3,9 +3,9 @@
 // Centralized financial management microservice
 // ================================================
 
-import { createClient } from '@supabase/supabase-js';
-import { config } from './configuration';
-import { monitoring } from './monitoring';
+import { createClient } from "@supabase/supabase-js";
+import { config } from "./configuration";
+import { monitoring } from "./monitoring";
 
 // ================================================
 // TYPES AND INTERFACES
@@ -164,77 +164,77 @@ interface TaxData {
 // ================================================
 
 enum TransactionType {
-  INCOME = 'income',
-  EXPENSE = 'expense',
-  TRANSFER = 'transfer',
-  REFUND = 'refund',
+  INCOME = "income",
+  EXPENSE = "expense",
+  TRANSFER = "transfer",
+  REFUND = "refund",
 }
 
 enum TransactionCategory {
-  SERVICE_PAYMENT = 'service_payment',
-  PRODUCT_SALE = 'product_sale',
-  CONSULTATION_FEE = 'consultation_fee',
-  TREATMENT_PAYMENT = 'treatment_payment',
-  OFFICE_SUPPLIES = 'office_supplies',
-  EQUIPMENT = 'equipment',
-  RENT = 'rent',
-  UTILITIES = 'utilities',
-  SALARIES = 'salaries',
-  MARKETING = 'marketing',
-  INSURANCE = 'insurance',
-  TAXES = 'taxes',
-  OTHER = 'other',
+  SERVICE_PAYMENT = "service_payment",
+  PRODUCT_SALE = "product_sale",
+  CONSULTATION_FEE = "consultation_fee",
+  TREATMENT_PAYMENT = "treatment_payment",
+  OFFICE_SUPPLIES = "office_supplies",
+  EQUIPMENT = "equipment",
+  RENT = "rent",
+  UTILITIES = "utilities",
+  SALARIES = "salaries",
+  MARKETING = "marketing",
+  INSURANCE = "insurance",
+  TAXES = "taxes",
+  OTHER = "other",
 }
 
 enum TransactionStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  OVERDUE = 'overdue',
-  CANCELLED = 'cancelled',
-  REFUNDED = 'refunded',
+  PENDING = "pending",
+  PAID = "paid",
+  OVERDUE = "overdue",
+  CANCELLED = "cancelled",
+  REFUNDED = "refunded",
 }
 
 enum PaymentMethod {
-  CASH = 'cash',
-  CREDIT_CARD = 'credit_card',
-  DEBIT_CARD = 'debit_card',
-  PIX = 'pix',
-  BANK_TRANSFER = 'bank_transfer',
-  CHECK = 'check',
-  PAYMENT_PLAN = 'payment_plan',
-  INSURANCE = 'insurance',
+  CASH = "cash",
+  CREDIT_CARD = "credit_card",
+  DEBIT_CARD = "debit_card",
+  PIX = "pix",
+  BANK_TRANSFER = "bank_transfer",
+  CHECK = "check",
+  PAYMENT_PLAN = "payment_plan",
+  INSURANCE = "insurance",
 }
 
 enum PaymentPlanStatus {
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  DEFAULTED = 'defaulted',
-  CANCELLED = 'cancelled',
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  DEFAULTED = "defaulted",
+  CANCELLED = "cancelled",
 }
 
 enum InstallmentStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  OVERDUE = 'overdue',
-  CANCELLED = 'cancelled',
+  PENDING = "pending",
+  PAID = "paid",
+  OVERDUE = "overdue",
+  CANCELLED = "cancelled",
 }
 
 enum InvoiceStatus {
-  DRAFT = 'draft',
-  SENT = 'sent',
-  PAID = 'paid',
-  OVERDUE = 'overdue',
-  CANCELLED = 'cancelled',
+  DRAFT = "draft",
+  SENT = "sent",
+  PAID = "paid",
+  OVERDUE = "overdue",
+  CANCELLED = "cancelled",
 }
 
 enum ReportType {
-  REVENUE = 'revenue',
-  EXPENSES = 'expenses',
-  PROFIT_LOSS = 'profit_loss',
-  CASH_FLOW = 'cash_flow',
-  RECEIVABLES = 'receivables',
-  TAX = 'tax',
-  COMPREHENSIVE = 'comprehensive',
+  REVENUE = "revenue",
+  EXPENSES = "expenses",
+  PROFIT_LOSS = "profit_loss",
+  CASH_FLOW = "cash_flow",
+  RECEIVABLES = "receivables",
+  TAX = "tax",
+  COMPREHENSIVE = "comprehensive",
 }
 
 // ================================================
@@ -262,13 +262,13 @@ interface CreatePaymentPlanRequest {
   currency?: string;
   numberOfInstallments: number;
   firstInstallmentDate: Date;
-  installmentInterval: 'monthly' | 'weekly' | 'biweekly';
+  installmentInterval: "monthly" | "weekly" | "biweekly";
 }
 
 interface CreateInvoiceRequest {
   tenantId: string;
   patientId: string;
-  items: Omit<InvoiceItem, 'id' | 'taxAmount' | 'totalPrice'>[];
+  items: Omit<InvoiceItem, "id" | "taxAmount" | "totalPrice">[];
   dueDate: Date;
   notes?: string;
   metadata?: Record<string, any>;
@@ -288,7 +288,7 @@ interface FinancialFilters {
   limit?: number;
   offset?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 // ================================================
@@ -302,7 +302,7 @@ export class FinancialService {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 
-  private defaultCurrency = 'BRL';
+  private defaultCurrency = "BRL";
   private taxRate = 0.1; // 10% default tax rate
 
   private constructor() {
@@ -325,7 +325,7 @@ export class FinancialService {
     userId: string,
   ): Promise<FinancialTransaction> {
     try {
-      monitoring.info('Creating financial transaction', 'financial-service', {
+      monitoring.info("Creating financial transaction", "financial-service", {
         tenantId: request.tenantId,
         type: request.type,
         amount: request.amount,
@@ -352,15 +352,15 @@ export class FinancialService {
       };
 
       const { data, error } = await this.supabase
-        .from('financial_transactions')
+        .from("financial_transactions")
         .insert(transactionData)
         .select()
         .single();
 
       if (error) {
         monitoring.error(
-          'Transaction creation failed',
-          'financial-service',
+          "Transaction creation failed",
+          "financial-service",
           new Error(error.message),
           {
             tenantId: request.tenantId,
@@ -371,7 +371,7 @@ export class FinancialService {
 
       const transaction = this.mapTransactionFromDb(data);
 
-      monitoring.info('Transaction created successfully', 'financial-service', {
+      monitoring.info("Transaction created successfully", "financial-service", {
         transactionId: transaction.id,
         tenantId: transaction.tenantId,
       });
@@ -379,8 +379,8 @@ export class FinancialService {
       return transaction;
     } catch (error) {
       monitoring.error(
-        'Transaction creation error',
-        'financial-service',
+        "Transaction creation error",
+        "financial-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -396,9 +396,9 @@ export class FinancialService {
   ): Promise<FinancialTransaction | null> {
     try {
       const { data, error } = await this.supabase
-        .from('financial_transactions')
-        .select('*')
-        .eq('id', transactionId)
+        .from("financial_transactions")
+        .select("*")
+        .eq("id", transactionId)
         .single();
 
       if (error || !data) {
@@ -411,8 +411,8 @@ export class FinancialService {
       return this.mapTransactionFromDb(data);
     } catch (error) {
       monitoring.error(
-        'Get transaction error',
-        'financial-service',
+        "Get transaction error",
+        "financial-service",
         error as Error,
         {
           transactionId,
@@ -430,7 +430,7 @@ export class FinancialService {
     paidDate?: Date,
   ): Promise<FinancialTransaction | null> {
     try {
-      monitoring.info('Updating transaction status', 'financial-service', {
+      monitoring.info("Updating transaction status", "financial-service", {
         transactionId,
         status,
       });
@@ -452,9 +452,9 @@ export class FinancialService {
       }
 
       const { data, error } = await this.supabase
-        .from('financial_transactions')
+        .from("financial_transactions")
         .update(updateData)
-        .eq('id', transactionId)
+        .eq("id", transactionId)
         .select()
         .single();
 
@@ -467,7 +467,7 @@ export class FinancialService {
 
       const transaction = this.mapTransactionFromDb(data);
 
-      monitoring.info('Transaction status updated', 'financial-service', {
+      monitoring.info("Transaction status updated", "financial-service", {
         transactionId,
         status,
       });
@@ -475,8 +475,8 @@ export class FinancialService {
       return transaction;
     } catch (error) {
       monitoring.error(
-        'Update transaction status error',
-        'financial-service',
+        "Update transaction status error",
+        "financial-service",
         error as Error,
         {
           transactionId,
@@ -490,9 +490,9 @@ export class FinancialService {
   async searchTransactions(
     filters: FinancialFilters,
     userId: string,
-  ): Promise<{ transactions: FinancialTransaction[]; total: number; }> {
+  ): Promise<{ transactions: FinancialTransaction[]; total: number }> {
     try {
-      monitoring.debug('Searching transactions', 'financial-service', {
+      monitoring.debug("Searching transactions", "financial-service", {
         filters,
       });
 
@@ -502,54 +502,54 @@ export class FinancialService {
       }
 
       let query = this.supabase
-        .from('financial_transactions')
-        .select('*', { count: 'exact' });
+        .from("financial_transactions")
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (filters.tenantId) {
-        query = query.eq('tenant_id', filters.tenantId);
+        query = query.eq("tenant_id", filters.tenantId);
       }
 
       if (filters.patientId) {
-        query = query.eq('patient_id', filters.patientId);
+        query = query.eq("patient_id", filters.patientId);
       }
 
       if (filters.type) {
-        query = query.eq('type', filters.type);
+        query = query.eq("type", filters.type);
       }
 
       if (filters.category) {
-        query = query.eq('category', filters.category);
+        query = query.eq("category", filters.category);
       }
 
       if (filters.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
 
       if (filters.paymentMethod) {
-        query = query.eq('payment_method', filters.paymentMethod);
+        query = query.eq("payment_method", filters.paymentMethod);
       }
 
       if (filters.dateFrom) {
-        query = query.gte('created_at', filters.dateFrom.toISOString());
+        query = query.gte("created_at", filters.dateFrom.toISOString());
       }
 
       if (filters.dateTo) {
-        query = query.lte('created_at', filters.dateTo.toISOString());
+        query = query.lte("created_at", filters.dateTo.toISOString());
       }
 
       if (filters.amountMin) {
-        query = query.gte('amount', filters.amountMin);
+        query = query.gte("amount", filters.amountMin);
       }
 
       if (filters.amountMax) {
-        query = query.lte('amount', filters.amountMax);
+        query = query.lte("amount", filters.amountMax);
       }
 
       // Apply sorting
-      const sortBy = filters.sortBy || 'created_at';
-      const sortOrder = filters.sortOrder || 'desc';
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      const sortBy = filters.sortBy || "created_at";
+      const sortOrder = filters.sortOrder || "desc";
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const limit = Math.min(filters.limit || 50, 100);
@@ -567,8 +567,8 @@ export class FinancialService {
       return { transactions, total: count || 0 };
     } catch (error) {
       monitoring.error(
-        'Search transactions error',
-        'financial-service',
+        "Search transactions error",
+        "financial-service",
         error as Error,
         {
           filters,
@@ -587,7 +587,7 @@ export class FinancialService {
     userId: string,
   ): Promise<PaymentPlan> {
     try {
-      monitoring.info('Creating payment plan', 'financial-service', {
+      monitoring.info("Creating payment plan", "financial-service", {
         tenantId: request.tenantId,
         patientId: request.patientId,
         totalAmount: request.totalAmount,
@@ -597,7 +597,8 @@ export class FinancialService {
       await this.validateTenantAccess(userId, request.tenantId);
 
       // Calculate installment amount
-      const installmentAmount = request.totalAmount / request.numberOfInstallments;
+      const installmentAmount =
+        request.totalAmount / request.numberOfInstallments;
 
       // Create payment plan
       const paymentPlanData = {
@@ -612,7 +613,7 @@ export class FinancialService {
       };
 
       const { data: planData, error: planError } = await this.supabase
-        .from('payment_plans')
+        .from("payment_plans")
         .insert(paymentPlanData)
         .select()
         .single();
@@ -622,7 +623,7 @@ export class FinancialService {
       }
 
       // Create installments
-      const installments: Omit<PaymentInstallment, 'id'>[] = [];
+      const installments: Omit<PaymentInstallment, "id">[] = [];
       const currentDate = new Date(request.firstInstallmentDate);
 
       for (let i = 1; i <= request.numberOfInstallments; i++) {
@@ -636,11 +637,11 @@ export class FinancialService {
 
         // Calculate next installment date
         switch (request.installmentInterval) {
-          case 'weekly': {
+          case "weekly": {
             currentDate.setDate(currentDate.getDate() + 7);
             break;
           }
-          case 'biweekly': {
+          case "biweekly": {
             currentDate.setDate(currentDate.getDate() + 14);
             break;
           }
@@ -660,10 +661,11 @@ export class FinancialService {
         status: installment.status,
       }));
 
-      const { data: installmentRows, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .insert(installmentData)
-        .select();
+      const { data: installmentRows, error: installmentError } =
+        await this.supabase
+          .from("payment_installments")
+          .insert(installmentData)
+          .select();
 
       if (installmentError) {
         throw new Error(installmentError.message);
@@ -672,8 +674,8 @@ export class FinancialService {
       const paymentPlan = this.mapPaymentPlanFromDb(planData, installmentRows);
 
       monitoring.info(
-        'Payment plan created successfully',
-        'financial-service',
+        "Payment plan created successfully",
+        "financial-service",
         {
           paymentPlanId: paymentPlan.id,
           numberOfInstallments: request.numberOfInstallments,
@@ -683,8 +685,8 @@ export class FinancialService {
       return paymentPlan;
     } catch (error) {
       monitoring.error(
-        'Payment plan creation error',
-        'financial-service',
+        "Payment plan creation error",
+        "financial-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -701,9 +703,9 @@ export class FinancialService {
   ): Promise<PaymentPlan | null> {
     try {
       const { data: planData, error: planError } = await this.supabase
-        .from('payment_plans')
-        .select('*')
-        .eq('id', paymentPlanId)
+        .from("payment_plans")
+        .select("*")
+        .eq("id", paymentPlanId)
         .single();
 
       if (planError || !planData) {
@@ -713,11 +715,12 @@ export class FinancialService {
       // Validate tenant access
       await this.validateTenantAccess(userId, planData.tenant_id);
 
-      const { data: installmentData, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .select('*')
-        .eq('payment_plan_id', paymentPlanId)
-        .order('installment_number');
+      const { data: installmentData, error: installmentError } =
+        await this.supabase
+          .from("payment_installments")
+          .select("*")
+          .eq("payment_plan_id", paymentPlanId)
+          .order("installment_number");
 
       if (installmentError) {
         throw new Error(installmentError.message);
@@ -726,8 +729,8 @@ export class FinancialService {
       return this.mapPaymentPlanFromDb(planData, installmentData);
     } catch (error) {
       monitoring.error(
-        'Get payment plan error',
-        'financial-service',
+        "Get payment plan error",
+        "financial-service",
         error as Error,
         {
           paymentPlanId,
@@ -744,23 +747,26 @@ export class FinancialService {
     paidDate?: Date,
   ): Promise<PaymentInstallment | null> {
     try {
-      monitoring.info('Processing installment payment', 'financial-service', {
+      monitoring.info("Processing installment payment", "financial-service", {
         installmentId,
         paymentMethod,
       });
 
       // Get installment
-      const { data: installmentData, error: installmentError } = await this.supabase
-        .from('payment_installments')
-        .select(`
+      const { data: installmentData, error: installmentError } =
+        await this.supabase
+          .from("payment_installments")
+          .select(
+            `
           *,
           payment_plans!inner(tenant_id, paid_amount, total_amount)
-        `)
-        .eq('id', installmentId)
-        .single();
+        `,
+          )
+          .eq("id", installmentId)
+          .single();
 
       if (installmentError || !installmentData) {
-        throw new Error('Installment not found');
+        throw new Error("Installment not found");
       }
 
       // Validate tenant access
@@ -771,37 +777,41 @@ export class FinancialService {
 
       // Update installment
       const paymentDate = paidDate || new Date();
-      const { data: updatedInstallment, error: updateError } = await this.supabase
-        .from('payment_installments')
-        .update({
-          status: InstallmentStatus.PAID,
-          paid_date: paymentDate.toISOString(),
-          payment_method: paymentMethod,
-        })
-        .eq('id', installmentId)
-        .select()
-        .single();
+      const { data: updatedInstallment, error: updateError } =
+        await this.supabase
+          .from("payment_installments")
+          .update({
+            status: InstallmentStatus.PAID,
+            paid_date: paymentDate.toISOString(),
+            payment_method: paymentMethod,
+          })
+          .eq("id", installmentId)
+          .select()
+          .single();
 
       if (updateError) {
         throw new Error(updateError.message);
       }
 
       // Update payment plan totals
-      const newPaidAmount = installmentData.payment_plans.paid_amount + installmentData.amount;
-      const newRemainingAmount = installmentData.payment_plans.total_amount - newPaidAmount;
+      const newPaidAmount =
+        installmentData.payment_plans.paid_amount + installmentData.amount;
+      const newRemainingAmount =
+        installmentData.payment_plans.total_amount - newPaidAmount;
 
-      const planStatus = newRemainingAmount <= 0
-        ? PaymentPlanStatus.COMPLETED
-        : PaymentPlanStatus.ACTIVE;
+      const planStatus =
+        newRemainingAmount <= 0
+          ? PaymentPlanStatus.COMPLETED
+          : PaymentPlanStatus.ACTIVE;
 
       await this.supabase
-        .from('payment_plans')
+        .from("payment_plans")
         .update({
           paid_amount: newPaidAmount,
           remaining_amount: newRemainingAmount,
           status: planStatus,
         })
-        .eq('id', installmentData.payment_plan_id);
+        .eq("id", installmentData.payment_plan_id);
 
       // Create transaction record
       await this.createTransaction(
@@ -822,7 +832,7 @@ export class FinancialService {
 
       const installment = this.mapInstallmentFromDb(updatedInstallment);
 
-      monitoring.info('Installment payment processed', 'financial-service', {
+      monitoring.info("Installment payment processed", "financial-service", {
         installmentId,
         amount: installment.amount,
       });
@@ -830,8 +840,8 @@ export class FinancialService {
       return installment;
     } catch (error) {
       monitoring.error(
-        'Pay installment error',
-        'financial-service',
+        "Pay installment error",
+        "financial-service",
         error as Error,
         {
           installmentId,
@@ -851,7 +861,7 @@ export class FinancialService {
     userId: string,
   ): Promise<Invoice> {
     try {
-      monitoring.info('Creating invoice', 'financial-service', {
+      monitoring.info("Creating invoice", "financial-service", {
         tenantId: request.tenantId,
         patientId: request.patientId,
       });
@@ -906,7 +916,7 @@ export class FinancialService {
       };
 
       const { data, error } = await this.supabase
-        .from('invoices')
+        .from("invoices")
         .insert(invoiceData)
         .select()
         .single();
@@ -917,7 +927,7 @@ export class FinancialService {
 
       const invoice = this.mapInvoiceFromDb(data);
 
-      monitoring.info('Invoice created successfully', 'financial-service', {
+      monitoring.info("Invoice created successfully", "financial-service", {
         invoiceId: invoice.id,
         invoiceNumber: invoice.invoiceNumber,
       });
@@ -925,8 +935,8 @@ export class FinancialService {
       return invoice;
     } catch (error) {
       monitoring.error(
-        'Invoice creation error',
-        'financial-service',
+        "Invoice creation error",
+        "financial-service",
         error as Error,
         {
           tenantId: request.tenantId,
@@ -940,9 +950,9 @@ export class FinancialService {
   async getInvoice(invoiceId: string, userId: string): Promise<Invoice | null> {
     try {
       const { data, error } = await this.supabase
-        .from('invoices')
-        .select('*')
-        .eq('id', invoiceId)
+        .from("invoices")
+        .select("*")
+        .eq("id", invoiceId)
         .single();
 
       if (error || !data) {
@@ -955,8 +965,8 @@ export class FinancialService {
       return this.mapInvoiceFromDb(data);
     } catch (error) {
       monitoring.error(
-        'Get invoice error',
-        'financial-service',
+        "Get invoice error",
+        "financial-service",
         error as Error,
         { invoiceId },
       );
@@ -971,20 +981,20 @@ export class FinancialService {
     paidDate?: Date,
   ): Promise<Invoice | null> {
     try {
-      monitoring.info('Processing invoice payment', 'financial-service', {
+      monitoring.info("Processing invoice payment", "financial-service", {
         invoiceId,
         paymentMethod,
       });
 
       const paymentDate = paidDate || new Date();
       const { data, error } = await this.supabase
-        .from('invoices')
+        .from("invoices")
         .update({
           status: InvoiceStatus.PAID,
           paid_date: paymentDate.toISOString(),
           payment_method: paymentMethod,
         })
-        .eq('id', invoiceId)
+        .eq("id", invoiceId)
         .select()
         .single();
 
@@ -1014,7 +1024,7 @@ export class FinancialService {
 
       const invoice = this.mapInvoiceFromDb(data);
 
-      monitoring.info('Invoice payment processed', 'financial-service', {
+      monitoring.info("Invoice payment processed", "financial-service", {
         invoiceId,
         amount: invoice.totalAmount,
       });
@@ -1022,8 +1032,8 @@ export class FinancialService {
       return invoice;
     } catch (error) {
       monitoring.error(
-        'Pay invoice error',
-        'financial-service',
+        "Pay invoice error",
+        "financial-service",
         error as Error,
         {
           invoiceId,
@@ -1046,7 +1056,7 @@ export class FinancialService {
     userId: string,
   ): Promise<FinancialReport> {
     try {
-      monitoring.info('Generating financial report', 'financial-service', {
+      monitoring.info("Generating financial report", "financial-service", {
         tenantId,
         reportType,
         periodStart,
@@ -1129,7 +1139,7 @@ export class FinancialService {
       };
 
       const { data, error } = await this.supabase
-        .from('financial_reports')
+        .from("financial_reports")
         .insert(reportRecord)
         .select()
         .single();
@@ -1140,7 +1150,7 @@ export class FinancialService {
 
       const report = this.mapReportFromDb(data);
 
-      monitoring.info('Financial report generated', 'financial-service', {
+      monitoring.info("Financial report generated", "financial-service", {
         reportId: report.id,
         reportType,
       });
@@ -1148,8 +1158,8 @@ export class FinancialService {
       return report;
     } catch (error) {
       monitoring.error(
-        'Generate financial report error',
-        'financial-service',
+        "Generate financial report error",
+        "financial-service",
         error as Error,
         {
           tenantId,
@@ -1166,14 +1176,14 @@ export class FinancialService {
 
   private async initializeConfiguration(): Promise<void> {
     this.defaultCurrency = await config.getConfiguration(
-      'financial.default_currency',
-      { environment: process.env.NODE_ENV || 'development' },
-      'BRL',
+      "financial.default_currency",
+      { environment: process.env.NODE_ENV || "development" },
+      "BRL",
     );
 
     this.taxRate = await config.getConfiguration(
-      'financial.default_tax_rate',
-      { environment: process.env.NODE_ENV || 'development' },
+      "financial.default_tax_rate",
+      { environment: process.env.NODE_ENV || "development" },
       0.1,
     );
   }
@@ -1188,14 +1198,14 @@ export class FinancialService {
 
   private async generateInvoiceNumber(tenantId: string): Promise<string> {
     const { count } = await this.supabase
-      .from('invoices')
-      .select('*', { count: 'exact', head: true })
-      .eq('tenant_id', tenantId);
+      .from("invoices")
+      .select("*", { count: "exact", head: true })
+      .eq("tenant_id", tenantId);
 
     const nextNumber = (count || 0) + 1;
     const year = new Date().getFullYear();
 
-    return `INV-${year}-${nextNumber.toString().padStart(6, '0')}`;
+    return `INV-${year}-${nextNumber.toString().padStart(6, "0")}`;
   }
 
   private async generateRevenueReport(

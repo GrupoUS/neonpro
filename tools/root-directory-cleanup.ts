@@ -4,8 +4,8 @@
  * Healthcare SaaS Quality Standard: ≥9.9/10
  */
 
-import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
+import { promises as fs } from "node:fs";
+import { join } from "node:path";
 
 interface CleanupConfig {
   rootPath: string;
@@ -20,24 +20,24 @@ const healthcareCleanupConfig: CleanupConfig = {
 
   // Temporary and development files to remove
   filesToRemove: [
-    'temp_story_05_01.txt',
-    'temp_story_analysis.md',
-    'read_story_05_01.txt',
-    'check_anvisa_structure.js',
-    'check_middleware.js',
-    'check_story.js',
-    'copy_hook.js',
-    'copy_hook_direct.js',
-    'examine_and_migrate.js',
-    'examine_anvisa.js',
-    'examine_current_structure.js',
-    'examine_existing_anvisa.js',
-    'examine_files.js',
-    'examine_files_directly.js',
-    'examine_hook_content.js',
-    'examine_migration_files.js',
-    'examine_src_files.js',
-    'examine_structure.js',
+    "temp_story_05_01.txt",
+    "temp_story_analysis.md",
+    "read_story_05_01.txt",
+    "check_anvisa_structure.js",
+    "check_middleware.js",
+    "check_story.js",
+    "copy_hook.js",
+    "copy_hook_direct.js",
+    "examine_and_migrate.js",
+    "examine_anvisa.js",
+    "examine_current_structure.js",
+    "examine_existing_anvisa.js",
+    "examine_files.js",
+    "examine_files_directly.js",
+    "examine_hook_content.js",
+    "examine_migration_files.js",
+    "examine_src_files.js",
+    "examine_structure.js",
   ],
 
   // Patterns for files to remove
@@ -55,7 +55,7 @@ const healthcareCleanupConfig: CleanupConfig = {
   ],
 
   // Directories to clean (remove empty directories)
-  directoriesToClean: ['temp', 'temp_files', 'migration_temp', 'backup'],
+  directoriesToClean: ["temp", "temp_files", "migration_temp", "backup"],
 
   // Patterns to preserve (important files)
   preservePatterns: [
@@ -81,7 +81,7 @@ export class HealthcareDirectoryCleanup {
   private readonly config: CleanupConfig;
   private readonly cleanedFiles: string[] = [];
   private readonly preservedFiles: string[] = [];
-  private readonly errors: { file: string; error: string; }[] = [];
+  private readonly errors: { file: string; error: string }[] = [];
 
   constructor(config: CleanupConfig) {
     this.config = config;
@@ -111,7 +111,7 @@ export class HealthcareDirectoryCleanup {
         this.cleanedFiles.push(filename);
       } catch (error) {
         // File doesn't exist or can't be removed - this is often expected
-        if ((error as any).code !== 'ENOENT') {
+        if ((error as any).code !== "ENOENT") {
           this.errors.push({ file: filename, error: (error as Error).message });
         }
       }
@@ -125,7 +125,7 @@ export class HealthcareDirectoryCleanup {
       for (const filename of files) {
         // Check if file should be preserved
         const shouldPreserve = this.config.preservePatterns.some((pattern) =>
-          pattern.test(filename)
+          pattern.test(filename),
         );
 
         if (shouldPreserve) {
@@ -134,7 +134,9 @@ export class HealthcareDirectoryCleanup {
         }
 
         // Check if file matches removal patterns
-        const shouldRemove = this.config.patternsToRemove.some((pattern) => pattern.test(filename));
+        const shouldRemove = this.config.patternsToRemove.some((pattern) =>
+          pattern.test(filename),
+        );
 
         if (shouldRemove) {
           const filepath = join(this.config.rootPath, filename);
@@ -170,7 +172,7 @@ export class HealthcareDirectoryCleanup {
         }
       } catch (error) {
         // Directory doesn't exist - this is expected
-        if ((error as any).code !== 'ENOENT') {
+        if ((error as any).code !== "ENOENT") {
           this.errors.push({ file: dirName, error: (error as Error).message });
         }
       }

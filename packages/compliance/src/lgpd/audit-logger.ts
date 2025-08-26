@@ -4,24 +4,24 @@
  * Compliance: LGPD + Constitutional Privacy + ≥9.9/10 Standards
  */
 
-import type { Database } from '@neonpro/types';
-import { z } from 'zod';
+import type { Database } from "@neonpro/types";
+import { z } from "zod";
 
 // Audit Log Entry Schema
 export const LGPDAuditLogEntrySchema = z.object({
   log_id: z.string(),
   timestamp: z.string(),
   event_type: z.enum([
-    'data_access',
-    'data_modification',
-    'data_deletion',
-    'consent_given',
-    'consent_withdrawn',
-    'data_export',
-    'data_transfer',
-    'breach_detected',
-    'privacy_violation',
-    'constitutional_violation',
+    "data_access",
+    "data_modification",
+    "data_deletion",
+    "consent_given",
+    "consent_withdrawn",
+    "data_export",
+    "data_transfer",
+    "breach_detected",
+    "privacy_violation",
+    "constitutional_violation",
   ]),
   user_id: z.string().optional(),
   data_subject_id: z.string().optional(),
@@ -54,7 +54,7 @@ export const LGPDAuditLogEntrySchema = z.object({
 });
 
 // Audit Configuration Schema
-import { HEALTHCARE_DATA_RETENTION_DAYS } from '@neonpro/types/constants/healthcare-constants';
+import { HEALTHCARE_DATA_RETENTION_DAYS } from "@neonpro/types/constants/healthcare-constants";
 
 export const LGPDAuditConfigSchema = z.object({
   retention_period_days: z.number().default(HEALTHCARE_DATA_RETENTION_DAYS), // 7 years as per LGPD
@@ -85,7 +85,7 @@ export class LGPDAuditLogger {
    * Log data processing activity
    */
   async logDataProcessing(activity: {
-    event_type: LGPDAuditLogEntry['event_type'];
+    event_type: LGPDAuditLogEntry["event_type"];
     user_id?: string;
     data_subject_id?: string;
     legal_basis: string;
@@ -99,7 +99,8 @@ export class LGPDAuditLogger {
     const logId = `lgpd_audit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
     // Constitutional impact assessment
-    const constitutionalImpact = await this.assessConstitutionalImpact(activity);
+    const constitutionalImpact =
+      await this.assessConstitutionalImpact(activity);
 
     // Compliance validation
     const complianceValidation = await this.validateCompliance(activity);
@@ -129,8 +130,8 @@ export class LGPDAuditLogger {
       constitutional_impact: constitutionalImpact,
       compliance_validation: complianceValidation,
       audit_trail: {
-        logged_by: 'LGPDAuditLogger',
-        log_source: 'compliance_system',
+        logged_by: "LGPDAuditLogger",
+        log_source: "compliance_system",
         integrity_hash: integrityHash,
         quality_score: 9.9,
       },
@@ -141,8 +142,8 @@ export class LGPDAuditLogger {
 
     // Real-time monitoring alerts
     if (
-      this.config.real_time_monitoring
-      && !complianceValidation.lgpd_compliant
+      this.config.real_time_monitoring &&
+      !complianceValidation.lgpd_compliant
     ) {
       await this.triggerComplianceAlert(logEntry);
     }
@@ -154,7 +155,7 @@ export class LGPDAuditLogger {
    * Log consent activity
    */
   async logConsentActivity(activity: {
-    event_type: 'consent_given' | 'consent_withdrawn';
+    event_type: "consent_given" | "consent_withdrawn";
     data_subject_id: string;
     purpose: string;
     legal_basis: string;
@@ -170,7 +171,7 @@ export class LGPDAuditLogger {
       data_subject_id: activity.data_subject_id,
       legal_basis: activity.legal_basis,
       purpose: activity.purpose,
-      data_categories: ['consent_data'],
+      data_categories: ["consent_data"],
       operation: activity.event_type,
     });
   }
@@ -181,18 +182,18 @@ export class LGPDAuditLogger {
   async logDataBreach(breach: {
     data_subject_id?: string;
     affected_data_categories: string[];
-    breach_severity: 'low' | 'medium' | 'high' | 'critical';
+    breach_severity: "low" | "medium" | "high" | "critical";
     breach_description: string;
     containment_measures: string[];
     notification_required: boolean;
   }): Promise<LGPDAuditLogEntry> {
     return this.logDataProcessing({
-      event_type: 'breach_detected',
+      event_type: "breach_detected",
       data_subject_id: breach.data_subject_id,
-      legal_basis: 'legitimate_interest',
-      purpose: 'data_breach_management',
+      legal_basis: "legitimate_interest",
+      purpose: "data_breach_management",
       data_categories: breach.affected_data_categories,
-      operation: 'breach_incident_logging',
+      operation: "breach_incident_logging",
     });
   }
 
@@ -201,18 +202,18 @@ export class LGPDAuditLogger {
    */
   private async assessConstitutionalImpact(activity: any) {
     const privacyRightsAffected = [
-      'data_access',
-      'data_modification',
-      'data_deletion',
-      'data_transfer',
+      "data_access",
+      "data_modification",
+      "data_deletion",
+      "data_transfer",
     ].includes(activity.event_type);
 
     return {
       privacy_rights_affected: privacyRightsAffected,
       fundamental_rights_impact: privacyRightsAffected
-        ? 'privacy_and_data_protection'
+        ? "privacy_and_data_protection"
         : undefined,
-      constitutional_basis: 'Art. 5º, X e XII CF/88',
+      constitutional_basis: "Art. 5º, X e XII CF/88",
     };
   }
 
@@ -224,21 +225,22 @@ export class LGPDAuditLogger {
 
     // Validate legal basis
     if (!activity.legal_basis) {
-      violations.push('Missing legal basis for data processing');
+      violations.push("Missing legal basis for data processing");
     }
 
     // Validate purpose specification
     if (!activity.purpose || activity.purpose.length < 10) {
-      violations.push('Purpose not sufficiently specified');
+      violations.push("Purpose not sufficiently specified");
     }
 
     // Validate data categories
     if (!activity.data_categories || activity.data_categories.length === 0) {
-      violations.push('Data categories not specified');
+      violations.push("Data categories not specified");
     }
 
     const lgpdCompliant = violations.length === 0;
-    const constitutionalCompliant = lgpdCompliant && this.config.constitutional_validation;
+    const constitutionalCompliant =
+      lgpdCompliant && this.config.constitutional_validation;
 
     return {
       lgpd_compliant: lgpdCompliant,
@@ -255,9 +257,9 @@ export class LGPDAuditLogger {
     const dataString = JSON.stringify(data, Object.keys(data).sort());
     const encoder = new TextEncoder();
     const dataBuffer = encoder.encode(dataString);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", dataBuffer);
     const hashArray = [...new Uint8Array(hashBuffer)];
-    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
   }
 
   /**
@@ -275,7 +277,8 @@ export class LGPDAuditLogger {
   private async triggerComplianceAlert(
     _logEntry: LGPDAuditLogEntry,
   ): Promise<void> {
-    if (this.config.automated_alerts) {}
+    if (this.config.automated_alerts) {
+    }
   }
 
   /**
@@ -284,7 +287,7 @@ export class LGPDAuditLogger {
   async queryAuditLogs(_filters: {
     start_date?: string;
     end_date?: string;
-    event_type?: LGPDAuditLogEntry['event_type'];
+    event_type?: LGPDAuditLogEntry["event_type"];
     data_subject_id?: string;
     user_id?: string;
   }): Promise<LGPDAuditLogEntry[]> {
@@ -353,22 +356,22 @@ export async function validateLGPDAuditConfig(
   } catch (error) {
     if (error instanceof z.ZodError) {
       violations.push(
-        ...error.errors.map((e) => `${e.path.join('.')}: ${e.message}`),
+        ...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
       );
     }
   }
 
   // Constitutional validation requirements
   if (!config.constitutional_validation) {
-    violations.push('Constitutional validation must be enabled');
+    violations.push("Constitutional validation must be enabled");
   }
 
   if (!config.privacy_preserving_logging) {
-    violations.push('Privacy preserving logging must be enabled');
+    violations.push("Privacy preserving logging must be enabled");
   }
 
   if (!config.integrity_verification) {
-    violations.push('Integrity verification must be enabled');
+    violations.push("Integrity verification must be enabled");
   }
 
   if (config.retention_period_days < HEALTHCARE_DATA_RETENTION_DAYS) {

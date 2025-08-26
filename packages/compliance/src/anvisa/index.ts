@@ -13,7 +13,7 @@ export {
   type AdverseEventFilters,
   AdverseEventService,
   type AdverseEventSeverity,
-} from './adverse-event-service';
+} from "./adverse-event-service";
 
 // ANVISA Medical Device Services
 export {
@@ -22,14 +22,14 @@ export {
   type MedicalDevice,
   type MedicalDeviceFilters,
   MedicalDeviceService,
-} from './medical-device-service';
+} from "./medical-device-service";
 
 // ANVISA Procedure Classification Services
 export {
   type ProcedureClassification,
   ProcedureClassificationService,
   type ProcedureFilters,
-} from './procedure-classification-service';
+} from "./procedure-classification-service";
 
 // ANVISA Product Registration Services (NEW - Phase 5)
 export {
@@ -37,7 +37,7 @@ export {
   type ProductRegistrationAudit,
   type ProductRegistrationFilters,
   ProductRegistrationService,
-} from './product-registration-service';
+} from "./product-registration-service";
 
 // ANVISA Regulatory Documentation Services (NEW - Phase 5)
 export {
@@ -45,18 +45,18 @@ export {
   type DocumentGenerationParams,
   type RegulatoryDocument,
   RegulatoryDocumentationService,
-} from './regulatory-documentation-service';
+} from "./regulatory-documentation-service";
 
 // ANVISA Utilities and Constants
-export const ANVISA_COMPLIANCE_VERSION = '1.0.0';
+export const ANVISA_COMPLIANCE_VERSION = "1.0.0";
 export const CONSTITUTIONAL_COMPLIANCE_MINIMUM = 9.9;
 
 // Import classes for factory function
-import { AdverseEventService } from './adverse-event-service';
-import { MedicalDeviceService } from './medical-device-service';
-import { ProcedureClassificationService } from './procedure-classification-service';
-import { ProductRegistrationService } from './product-registration-service';
-import { RegulatoryDocumentationService } from './regulatory-documentation-service';
+import { AdverseEventService } from "./adverse-event-service";
+import { MedicalDeviceService } from "./medical-device-service";
+import { ProcedureClassificationService } from "./procedure-classification-service";
+import { ProductRegistrationService } from "./product-registration-service";
+import { RegulatoryDocumentationService } from "./regulatory-documentation-service";
 
 /**
  * ANVISA Service Factory
@@ -91,29 +91,29 @@ export async function validateAnvisaCompliance(
 
   try {
     // Check product registrations
-    const { data: products } = await services.productRegistration.getProductRegistrations(tenantId);
+    const { data: products } =
+      await services.productRegistration.getProductRegistrations(tenantId);
     if (!products || products.length === 0) {
-      issues.push('No registered products found');
+      issues.push("No registered products found");
       totalScore -= 1;
-      recommendations.push('Register all products used in clinic procedures');
+      recommendations.push("Register all products used in clinic procedures");
     }
 
     // Check for expiring registrations
-    const { data: expiringProducts } = await services.productRegistration.getExpiringProducts(
-      tenantId,
-      30,
-    );
+    const { data: expiringProducts } =
+      await services.productRegistration.getExpiringProducts(tenantId, 30);
     if (expiringProducts && expiringProducts.length > 0) {
       issues.push(
         `${expiringProducts.length} products expiring within 30 days`,
       );
       totalScore -= 0.5;
-      recommendations.push('Renew expiring product registrations');
+      recommendations.push("Renew expiring product registrations");
     }
 
     // Constitutional compliance minimum
     const finalScore = Math.max(totalScore, CONSTITUTIONAL_COMPLIANCE_MINIMUM);
-    const compliant = finalScore >= CONSTITUTIONAL_COMPLIANCE_MINIMUM && issues.length === 0;
+    const compliant =
+      finalScore >= CONSTITUTIONAL_COMPLIANCE_MINIMUM && issues.length === 0;
 
     return {
       compliant,
@@ -125,8 +125,8 @@ export async function validateAnvisaCompliance(
     return {
       compliant: false,
       score: 0,
-      issues: ['Failed to validate ANVISA compliance'],
-      recommendations: ['Contact technical support for compliance validation'],
+      issues: ["Failed to validate ANVISA compliance"],
+      recommendations: ["Contact technical support for compliance validation"],
     };
   }
 }

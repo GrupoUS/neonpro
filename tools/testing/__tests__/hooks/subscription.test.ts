@@ -9,15 +9,15 @@
  * @vitest-environment jsdom
  */
 
-import type { QueryClient } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { QueryClient } from "@tanstack/react-query";
+import { act, renderHook } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   AllTheProviders,
   createMockSubscription,
   createMockSubscriptionHook,
   createTestQueryClient,
-} from '../../utils/test-utils';
+} from "../../utils/test-utils";
 
 // Mock the subscription hooks (to be imported when they exist)
 const mockUseSubscriptionStatus = () => createMockSubscriptionHook();
@@ -26,7 +26,7 @@ const mockUseSubscriptionStatus = () => createMockSubscriptionHook();
 // Hook Tests
 // ============================================================================
 
-describe('subscription Hooks', () => {
+describe("subscription Hooks", () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
@@ -38,10 +38,10 @@ describe('subscription Hooks', () => {
   // useSubscriptionStatus Tests
   // ============================================================================
 
-  describe('useSubscriptionStatus', () => {
-    it('should return subscription data correctly', () => {
+  describe("useSubscriptionStatus", () => {
+    it("should return subscription data correctly", () => {
       const { result } = renderHook(() => mockUseSubscriptionStatus(), {
-        wrapper: ({ children }: { children: React.ReactNode; }) =>
+        wrapper: ({ children }: { children: React.ReactNode }) =>
           AllTheProviders({ queryClient, children }),
       });
 
@@ -50,15 +50,15 @@ describe('subscription Hooks', () => {
       expect(result.current.isError).toBeFalsy();
     });
 
-    it('should handle loading state correctly', () => {
+    it("should handle loading state correctly", () => {
       const mockHook = createMockSubscriptionHook({ isLoading: true });
 
       expect(mockHook.isLoading).toBeTruthy();
       expect(mockHook.data).toBeDefined();
     });
 
-    it('should handle error states correctly', () => {
-      const mockError = new Error('Failed to fetch subscription');
+    it("should handle error states correctly", () => {
+      const mockError = new Error("Failed to fetch subscription");
       const mockHook = createMockSubscriptionHook({
         isError: true,
         error: mockError,
@@ -68,7 +68,7 @@ describe('subscription Hooks', () => {
       expect(mockHook.error).toBe(mockError);
     });
 
-    it('should support refetching subscription data', async () => {
+    it("should support refetching subscription data", async () => {
       const mockRefetch = vi.fn().mockResolvedValue({
         data: createMockSubscription(),
       });
@@ -87,11 +87,11 @@ describe('subscription Hooks', () => {
   // Real-time Updates Tests
   // ============================================================================
 
-  describe('useSubscriptionEvents', () => {
-    it('should handle subscription change events', () => {
+  describe("useSubscriptionEvents", () => {
+    it("should handle subscription change events", () => {
       const mockEventHandler = vi.fn();
       const mockEvent = {
-        type: 'subscription_updated',
+        type: "subscription_updated",
         data: createMockSubscription(),
       };
 

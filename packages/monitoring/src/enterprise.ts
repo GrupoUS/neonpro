@@ -4,7 +4,7 @@
  * Maintains backward compatibility while adding enterprise features
  */
 
-import { EnhancedServiceBase } from '@neonpro/core-services';
+import { EnhancedServiceBase } from "@neonpro/core-services";
 import type {
   ComplianceMetrics,
   ComplianceReport,
@@ -14,8 +14,12 @@ import type {
   HealthcareMetricName,
   MonitoringConfig,
   MonitoringHooks,
-} from '../types';
-import { PerformanceMonitor, getPerformanceMonitor, initPerformanceMonitoring } from './client';
+} from "../types";
+import {
+  PerformanceMonitor,
+  getPerformanceMonitor,
+  initPerformanceMonitoring,
+} from "./client";
 
 /**
  * Enhanced monitoring service with enterprise analytics
@@ -24,7 +28,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
   private readonly performanceMonitor: PerformanceMonitor;
 
   constructor(config?: Partial<MonitoringConfig>, hooks?: MonitoringHooks) {
-    super('monitoring-service-factory', {
+    super("monitoring-service-factory", {
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -53,7 +57,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
       enableCompliance?: boolean;
     } = {},
   ): Promise<void> {
-    const startTime = this.startTiming('monitoring_track_metric');
+    const startTime = this.startTiming("monitoring_track_metric");
 
     try {
       // Use original performance monitor
@@ -84,7 +88,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
       // Enterprise audit for critical metrics
       if (this.isCriticalMetric(name)) {
-        await this.audit.logOperation('critical_metric_tracked', {
+        await this.audit.logOperation("critical_metric_tracked", {
           metricName: name,
           value,
           context: this.sanitizeContext(context),
@@ -92,10 +96,10 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
         });
       }
 
-      this.endTiming('monitoring_track_metric', startTime);
+      this.endTiming("monitoring_track_metric", startTime);
     } catch (error) {
-      this.endTiming('monitoring_track_metric', startTime, { error: true });
-      await this.audit.logOperation('metric_tracking_error', {
+      this.endTiming("monitoring_track_metric", startTime, { error: true });
+      await this.audit.logOperation("metric_tracking_error", {
         metricName: name,
         error: error.message,
         timestamp: new Date(),
@@ -107,16 +111,20 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
    * Enhanced healthcare-specific metric tracking
    */
   async trackHealthcareMetricEnhanced(
-    metricType: 'patient_safety' | 'data_privacy' | 'system_performance' | 'compliance',
+    metricType:
+      | "patient_safety"
+      | "data_privacy"
+      | "system_performance"
+      | "compliance",
     metricName: string,
     value: number,
     context?: Record<string, string | number | boolean>,
   ): Promise<void> {
-    const startTime = this.startTiming('healthcare_metric_enhanced');
+    const startTime = this.startTiming("healthcare_metric_enhanced");
 
     try {
       // Enterprise analytics with healthcare-specific insights
-      await this.analytics.trackEvent('healthcare_metric', {
+      await this.analytics.trackEvent("healthcare_metric", {
         type: metricType,
         name: metricName,
         value,
@@ -135,24 +143,37 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
       // Store insights for dashboard
       if (insights.length > 0) {
-        await this.cache.set(`healthcare_insights_${metricType}`, insights, 3_600_000); // 1 hour
+        await this.cache.set(
+          `healthcare_insights_${metricType}`,
+          insights,
+          3_600_000,
+        ); // 1 hour
       }
 
       // Compliance monitoring
-      await this.trackComplianceMetric(metricName as HealthcareMetricName, value, {
-        ...context,
-        healthcareType: metricType,
-      });
+      await this.trackComplianceMetric(
+        metricName as HealthcareMetricName,
+        value,
+        {
+          ...context,
+          healthcareType: metricType,
+        },
+      );
 
       // Alert on critical healthcare metrics
       if (await this.shouldAlertOnMetric(metricType, metricName, value)) {
-        await this.triggerHealthcareAlert(metricType, metricName, value, context);
+        await this.triggerHealthcareAlert(
+          metricType,
+          metricName,
+          value,
+          context,
+        );
       }
 
-      this.endTiming('healthcare_metric_enhanced', startTime);
+      this.endTiming("healthcare_metric_enhanced", startTime);
     } catch (error) {
-      this.endTiming('healthcare_metric_enhanced', startTime, { error: true });
-      await this.audit.logOperation('healthcare_metric_error', {
+      this.endTiming("healthcare_metric_enhanced", startTime, { error: true });
+      await this.audit.logOperation("healthcare_metric_error", {
         metricType,
         metricName,
         error: error.message,
@@ -180,7 +201,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
       this.performanceMonitor.trackFormSubmission(formType, startTime);
 
       // Enterprise analytics with form-specific insights
-      await this.analytics.trackEvent('form_submission_enhanced', {
+      await this.analytics.trackEvent("form_submission_enhanced", {
         formType,
         duration,
         containsPatientData: options.patientData || false,
@@ -190,7 +211,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
       // Healthcare compliance tracking
       if (options.patientData) {
-        await this.audit.logOperation('patient_form_submission', {
+        await this.audit.logOperation("patient_form_submission", {
           formType,
           duration,
           userId: options.userId,
@@ -201,8 +222,8 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
         // Enterprise security monitoring for patient data forms
         await this.security.logSensitiveDataAccess({
-          operation: 'form_submission',
-          dataType: 'patient_form',
+          operation: "form_submission",
+          dataType: "patient_form",
           userId: options.userId,
           formType,
         });
@@ -211,14 +232,14 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
       // Performance insights
       if (duration > 2000) {
         // > 2 seconds
-        await this.analytics.trackEvent('slow_form_submission', {
+        await this.analytics.trackEvent("slow_form_submission", {
           formType,
           duration,
           performance_issue: true,
         });
       }
     } catch (error) {
-      await this.audit.logOperation('form_tracking_error', {
+      await this.audit.logOperation("form_tracking_error", {
         formType,
         error: error.message,
         timestamp: new Date(),
@@ -236,10 +257,10 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
       // Get healthcare-specific insights
       const healthcareInsights = await Promise.all([
-        this.cache.get('healthcare_insights_patient_safety'),
-        this.cache.get('healthcare_insights_data_privacy'),
-        this.cache.get('healthcare_insights_system_performance'),
-        this.cache.get('healthcare_insights_compliance'),
+        this.cache.get("healthcare_insights_patient_safety"),
+        this.cache.get("healthcare_insights_data_privacy"),
+        this.cache.get("healthcare_insights_system_performance"),
+        this.cache.get("healthcare_insights_compliance"),
       ]);
 
       // Get compliance status
@@ -247,8 +268,8 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
       // Get performance trends
       const performanceTrends = await this.analytics.getPerformanceTrends({
-        timeframe: '24h',
-        metrics: ['response_time', 'error_rate', 'throughput'],
+        timeframe: "24h",
+        metrics: ["response_time", "error_rate", "throughput"],
       });
 
       // Get system health
@@ -273,7 +294,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
       };
     } catch {
       return {
-        error: 'Failed to retrieve enterprise metrics',
+        error: "Failed to retrieve enterprise metrics",
         timestamp: new Date().toISOString(),
       };
     }
@@ -283,7 +304,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
    * Healthcare compliance report generation
    */
   async generateComplianceReport(
-    timeframe: '24h' | '7d' | '30d' = '24h',
+    timeframe: "24h" | "7d" | "30d" = "24h",
   ): Promise<ComplianceReport> {
     try {
       const report = {
@@ -308,7 +329,8 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
         report.security.score,
         report.performance.score,
       ];
-      report.summary.overallScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+      report.summary.overallScore =
+        scores.reduce((a, b) => a + b, 0) / scores.length;
 
       // Count issues
       report.summary.criticalIssues = [
@@ -319,10 +341,11 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
       ].reduce((a, b) => a + b, 0);
 
       // Generate recommendations
-      report.summary.recommendations = await this.generateComplianceRecommendations(report);
+      report.summary.recommendations =
+        await this.generateComplianceRecommendations(report);
 
       // Audit the report generation
-      await this.audit.logOperation('compliance_report_generated', {
+      await this.audit.logOperation("compliance_report_generated", {
         timeframe,
         overallScore: report.summary.overallScore,
         criticalIssues: report.summary.criticalIssues,
@@ -331,7 +354,7 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
       return report;
     } catch (error) {
-      await this.audit.logOperation('compliance_report_error', {
+      await this.audit.logOperation("compliance_report_error", {
         error: error.message,
         timestamp: new Date(),
       });
@@ -346,17 +369,17 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     context?: Record<string, string | number | boolean>,
   ): Promise<void> {
     const complianceThresholds = {
-      patient_search_time: { max: 1000, compliance: 'LGPD_RESPONSE_TIME' },
-      form_submission_time: { max: 2000, compliance: 'USER_EXPERIENCE' },
-      data_encryption_time: { max: 500, compliance: 'LGPD_SECURITY' },
-      database_query_time: { max: 800, compliance: 'PERFORMANCE_SLA' },
-      auth_verification_time: { max: 1500, compliance: 'SECURITY_SLA' },
-      compliance_check_time: { max: 1000, compliance: 'ANVISA_RESPONSE' },
+      patient_search_time: { max: 1000, compliance: "LGPD_RESPONSE_TIME" },
+      form_submission_time: { max: 2000, compliance: "USER_EXPERIENCE" },
+      data_encryption_time: { max: 500, compliance: "LGPD_SECURITY" },
+      database_query_time: { max: 800, compliance: "PERFORMANCE_SLA" },
+      auth_verification_time: { max: 1500, compliance: "SECURITY_SLA" },
+      compliance_check_time: { max: 1000, compliance: "ANVISA_RESPONSE" },
     };
 
     const threshold = complianceThresholds[name];
     if (threshold && value > threshold.max) {
-      await this.analytics.trackEvent('compliance_threshold_exceeded', {
+      await this.analytics.trackEvent("compliance_threshold_exceeded", {
         metric: name,
         value,
         threshold: threshold.max,
@@ -368,9 +391,9 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
 
   private isCriticalMetric(name: HealthcareMetricName): boolean {
     const criticalMetrics = [
-      'auth_verification_time',
-      'data_encryption_time',
-      'compliance_check_time',
+      "auth_verification_time",
+      "data_encryption_time",
+      "compliance_check_time",
     ];
     return criticalMetrics.includes(name);
   }
@@ -378,14 +401,16 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
   private sanitizeContext(
     context?: Record<string, string | number | boolean>,
   ): Record<string, string | number | boolean> {
-    if (!context) {return {};}
+    if (!context) {
+      return {};
+    }
 
     const sanitized = { ...context };
-    const sensitiveFields = ['cpf', 'password', 'token', 'patientId'];
+    const sensitiveFields = ["cpf", "password", "token", "patientId"];
 
     for (const field of sensitiveFields) {
       if (sanitized[field]) {
-        sanitized[field] = '[REDACTED]';
+        sanitized[field] = "[REDACTED]";
       }
     }
 
@@ -428,8 +453,8 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
   ): Promise<void> {
     const alert = {
       id: `alert_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-      type: 'healthcare_metric_alert',
-      severity: 'high',
+      type: "healthcare_metric_alert",
+      severity: "high",
       metricType,
       metricName,
       value,
@@ -439,25 +464,27 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     };
 
     // Log alert for audit
-    await this.audit.logOperation('healthcare_alert_triggered', alert);
+    await this.audit.logOperation("healthcare_alert_triggered", alert);
 
     // Track alert in analytics
-    await this.analytics.trackEvent('healthcare_alert', alert);
+    await this.analytics.trackEvent("healthcare_alert", alert);
 
     // TODO: Integrate with notification system
-    console.warn('Healthcare Alert Triggered:', alert);
+    console.warn("Healthcare Alert Triggered:", alert);
   }
 
   private async getComplianceStatus(): Promise<ComplianceStatus> {
     return {
-      lgpd: { status: 'compliant', lastCheck: new Date(), score: 95 },
-      anvisa: { status: 'compliant', lastCheck: new Date(), score: 92 },
-      security: { status: 'compliant', lastCheck: new Date(), score: 88 },
-      overall: { status: 'compliant', score: 91.7 },
+      lgpd: { status: "compliant", lastCheck: new Date(), score: 95 },
+      anvisa: { status: "compliant", lastCheck: new Date(), score: 92 },
+      security: { status: "compliant", lastCheck: new Date(), score: 88 },
+      overall: { status: "compliant", score: 91.7 },
     };
   }
 
-  private async getLGPDComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
+  private async getLGPDComplianceMetrics(
+    _timeframe: string,
+  ): Promise<ComplianceMetrics> {
     return {
       score: 95,
       criticalIssues: 0,
@@ -469,7 +496,9 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     };
   }
 
-  private async getANVISAComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
+  private async getANVISAComplianceMetrics(
+    _timeframe: string,
+  ): Promise<ComplianceMetrics> {
     return {
       score: 92,
       criticalIssues: 0,
@@ -481,7 +510,9 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     };
   }
 
-  private async getSecurityComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
+  private async getSecurityComplianceMetrics(
+    _timeframe: string,
+  ): Promise<ComplianceMetrics> {
     return {
       score: 88,
       criticalIssues: 1,
@@ -493,7 +524,9 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     };
   }
 
-  private async getPerformanceComplianceMetrics(_timeframe: string): Promise<ComplianceMetrics> {
+  private async getPerformanceComplianceMetrics(
+    _timeframe: string,
+  ): Promise<ComplianceMetrics> {
     return {
       score: 90,
       criticalIssues: 0,
@@ -505,19 +538,27 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     };
   }
 
-  private async generateComplianceRecommendations(report: ComplianceReport): Promise<string[]> {
+  private async generateComplianceRecommendations(
+    report: ComplianceReport,
+  ): Promise<string[]> {
     const recommendations: string[] = [];
 
     if (report.security.mfaAdoption < 90) {
-      recommendations.push('Increase MFA adoption rate to improve security compliance');
+      recommendations.push(
+        "Increase MFA adoption rate to improve security compliance",
+      );
     }
 
     if (report.performance.errorRate > 0.01) {
-      recommendations.push('Investigate and reduce system error rate for better performance');
+      recommendations.push(
+        "Investigate and reduce system error rate for better performance",
+      );
     }
 
     if (report.lgpd.consentRate < 100) {
-      recommendations.push('Review consent collection processes to achieve 100% compliance');
+      recommendations.push(
+        "Review consent collection processes to achieve 100% compliance",
+      );
     }
 
     return recommendations;
@@ -544,8 +585,16 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     this.performanceMonitor.trackFormSubmission(formType, startTime);
   }
 
-  trackPatientSearch(searchType: string, resultCount: number, startTime: number): void {
-    this.performanceMonitor.trackPatientSearch(searchType, resultCount, startTime);
+  trackPatientSearch(
+    searchType: string,
+    resultCount: number,
+    startTime: number,
+  ): void {
+    this.performanceMonitor.trackPatientSearch(
+      searchType,
+      resultCount,
+      startTime,
+    );
   }
 
   trackFileUpload(fileType: string, fileSize: number, startTime: number): void {
@@ -564,8 +613,16 @@ export class MonitoringServiceFactory extends EnhancedServiceBase {
     this.performanceMonitor.trackDatabaseOperation(operation, startTime);
   }
 
-  trackReportGeneration(reportType: string, recordCount: number, startTime: number): void {
-    this.performanceMonitor.trackReportGeneration(reportType, recordCount, startTime);
+  trackReportGeneration(
+    reportType: string,
+    recordCount: number,
+    startTime: number,
+  ): void {
+    this.performanceMonitor.trackReportGeneration(
+      reportType,
+      recordCount,
+      startTime,
+    );
   }
 
   trackEncryption(dataType: string, dataSize: number, startTime: number): void {

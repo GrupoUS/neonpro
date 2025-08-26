@@ -19,9 +19,9 @@
  * - Maintains audit trail for search operations
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Types for enhanced type safety
 interface Patient {
@@ -32,7 +32,7 @@ interface Patient {
   cpf: string;
   date_of_birth: string;
   gender: string;
-  status: 'active' | 'inactive' | 'pending';
+  status: "active" | "inactive" | "pending";
   health_plan?: string;
   medical_conditions?: string[];
   allergies?: string[];
@@ -88,8 +88,8 @@ export const usePatientSearch = (
   } = options;
 
   // State management
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [searchTime, setSearchTime] = useState(0);
 
   // Refs for cleanup
@@ -117,7 +117,8 @@ export const usePatientSearch = (
       setSearchTime(searchDuration);
 
       // LGPD audit log for search operations
-      if (searchTerm.length >= minSearchLength) {}
+      if (searchTerm.length >= minSearchLength) {
+      }
     }, debounceMs);
 
     // Cleanup function - critical for preventing memory leaks
@@ -209,11 +210,13 @@ export const usePatientSearch = (
           patient.email,
           patient.phone,
           patient.cpf,
-          patient.health_plan || '',
+          patient.health_plan || "",
         ];
 
         // Check basic fields
-        const basicMatch = basicFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        const basicMatch = basicFields.some((field) =>
+          fuzzyMatch(field, debouncedSearchTerm),
+        );
 
         if (basicMatch) {
           return true;
@@ -226,7 +229,9 @@ export const usePatientSearch = (
           ...(patient.medications || []),
         ];
 
-        const medicalMatch = medicalFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        const medicalMatch = medicalFields.some((field) =>
+          fuzzyMatch(field, debouncedSearchTerm),
+        );
 
         return medicalMatch;
       })
@@ -234,7 +239,8 @@ export const usePatientSearch = (
 
     // Log performance for monitoring
     const filteringTime = Date.now() - startTime;
-    if (filteringTime > 100) {}
+    if (filteringTime > 100) {
+    }
 
     return filtered;
   }, [patients, debouncedSearchTerm, minSearchLength, maxResults, fuzzyMatch]);
@@ -243,8 +249,8 @@ export const usePatientSearch = (
    * Clear search function
    */
   const clearSearch = useCallback(() => {
-    setSearchTerm('');
-    setDebouncedSearchTerm('');
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
     setSearchTime(0);
   }, []);
 

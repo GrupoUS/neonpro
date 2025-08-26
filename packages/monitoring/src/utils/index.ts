@@ -4,7 +4,11 @@
  * Helper functions and utilities for performance monitoring.
  */
 
-import type { CustomMetric, HealthcareMetricName, PerformanceThresholds } from '../types';
+import type {
+  CustomMetric,
+  HealthcareMetricName,
+  PerformanceThresholds,
+} from "../types";
 
 /**
  * Performance thresholds for healthcare applications
@@ -51,7 +55,7 @@ export function sanitizeData(
   data: Record<string, unknown>,
   excludeFields: string[],
 ): Record<string, unknown> {
-  if (typeof data !== 'object' || data === null) {
+  if (typeof data !== "object" || data === null) {
     return data;
   }
 
@@ -59,7 +63,7 @@ export function sanitizeData(
 
   for (const field of excludeFields) {
     if (field in sanitized) {
-      if (typeof sanitized[field] === 'string' && sanitized[field].length > 0) {
+      if (typeof sanitized[field] === "string" && sanitized[field].length > 0) {
         sanitized[field] = hashSensitiveData(sanitized[field]);
       } else {
         delete sanitized[field];
@@ -77,16 +81,16 @@ export function calculateRating(
   metricName: HealthcareMetricName,
   value: number,
   thresholds: PerformanceThresholds = HEALTHCARE_THRESHOLDS,
-): 'good' | 'needs-improvement' | 'poor' {
+): "good" | "needs-improvement" | "poor" {
   const threshold = thresholds.healthcare[metricName];
 
   if (value <= threshold.good) {
-    return 'good';
+    return "good";
   }
   if (value <= threshold.needsImprovement) {
-    return 'needs-improvement';
+    return "needs-improvement";
   }
-  return 'poor';
+  return "poor";
 }
 
 /**
@@ -108,7 +112,7 @@ export function formatDuration(milliseconds: number): string {
  * Format file size in human-readable format
  */
 export function formatFileSize(bytes: number): string {
-  const units = ['B', 'KB', 'MB', 'GB'];
+  const units = ["B", "KB", "MB", "GB"];
   let size = bytes;
   let unitIndex = 0;
 
@@ -126,11 +130,11 @@ export function formatFileSize(bytes: number): string {
 export function getPerformanceInsights(metrics: CustomMetric[]): {
   insights: string[];
   recommendations: string[];
-  severity: 'low' | 'medium' | 'high';
+  severity: "low" | "medium" | "high";
 } {
   const insights: string[] = [];
   const recommendations: string[] = [];
-  let severity: 'low' | 'medium' | 'high' = 'low';
+  let severity: "low" | "medium" | "high" = "low";
 
   // Group metrics by name
   const metricGroups: Record<string, CustomMetric[]> = {};
@@ -149,57 +153,80 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
       return;
     }
 
-    const avgValue = values.reduce((sum, m) => sum + m.value, 0) / values.length;
-    const poorCount = values.filter((m) => m.rating === 'poor').length;
+    const avgValue =
+      values.reduce((sum, m) => sum + m.value, 0) / values.length;
+    const poorCount = values.filter((m) => m.rating === "poor").length;
     const poorPercentage = (poorCount / values.length) * 100;
 
     if (poorPercentage > 20) {
-      severity = 'high';
-      insights.push(`${name}: ${poorPercentage.toFixed(1)}% of operations are performing poorly`);
+      severity = "high";
+      insights.push(
+        `${name}: ${poorPercentage.toFixed(1)}% of operations are performing poorly`,
+      );
 
       switch (name) {
-        case 'patient_search_time': {
-          recommendations.push('Optimize patient search with database indexing and caching');
+        case "patient_search_time": {
+          recommendations.push(
+            "Optimize patient search with database indexing and caching",
+          );
           break;
         }
-        case 'form_submission_time': {
-          recommendations.push('Implement client-side validation and optimize API endpoints');
+        case "form_submission_time": {
+          recommendations.push(
+            "Implement client-side validation and optimize API endpoints",
+          );
           break;
         }
-        case 'data_encryption_time': {
-          recommendations.push('Consider hardware encryption or optimized encryption algorithms');
+        case "data_encryption_time": {
+          recommendations.push(
+            "Consider hardware encryption or optimized encryption algorithms",
+          );
           break;
         }
-        case 'database_query_time': {
-          recommendations.push('Review database queries and add appropriate indexes');
+        case "database_query_time": {
+          recommendations.push(
+            "Review database queries and add appropriate indexes",
+          );
           break;
         }
-        case 'image_upload_time': {
-          recommendations.push('Implement progressive upload and image compression');
+        case "image_upload_time": {
+          recommendations.push(
+            "Implement progressive upload and image compression",
+          );
           break;
         }
-        case 'report_generation_time': {
-          recommendations.push('Implement background processing and caching for reports');
+        case "report_generation_time": {
+          recommendations.push(
+            "Implement background processing and caching for reports",
+          );
           break;
         }
-        case 'auth_verification_time': {
-          recommendations.push('Optimize authentication flow and consider caching strategies');
+        case "auth_verification_time": {
+          recommendations.push(
+            "Optimize authentication flow and consider caching strategies",
+          );
           break;
         }
-        case 'compliance_check_time': {
-          recommendations.push('Cache compliance rules and implement batch processing');
+        case "compliance_check_time": {
+          recommendations.push(
+            "Cache compliance rules and implement batch processing",
+          );
           break;
         }
       }
     } else if (poorPercentage > 10) {
-      if (severity === 'low') {
-        severity = 'medium';
+      if (severity === "low") {
+        severity = "medium";
       }
-      insights.push(`${name}: ${poorPercentage.toFixed(1)}% of operations need improvement`);
+      insights.push(
+        `${name}: ${poorPercentage.toFixed(1)}% of operations need improvement`,
+      );
     }
 
     if (
-      avgValue > HEALTHCARE_THRESHOLDS.healthcare[name as HealthcareMetricName]?.needsImprovement
+      avgValue >
+      HEALTHCARE_THRESHOLDS.healthcare[name as HealthcareMetricName]
+        ?.needsImprovement
     ) {
       insights.push(
         `${name}: Average performance (${formatDuration(avgValue)}) exceeds acceptable thresholds`,
@@ -209,20 +236,26 @@ export function getPerformanceInsights(metrics: CustomMetric[]): {
 
   // General recommendations based on patterns
   if (metricGroups.database_query_time && metricGroups.form_submission_time) {
-    const dbSlow = metricGroups.database_query_time.some((m) => m.rating === 'poor').length > 0;
-    const formSlow = metricGroups.form_submission_time.some((m) => m.rating === 'poor').length > 0;
+    const dbSlow =
+      metricGroups.database_query_time.some((m) => m.rating === "poor").length >
+      0;
+    const formSlow =
+      metricGroups.form_submission_time.some((m) => m.rating === "poor")
+        .length > 0;
 
     if (dbSlow && formSlow) {
       recommendations.push(
-        'Database performance issues are affecting form submissions - prioritize database optimization',
+        "Database performance issues are affecting form submissions - prioritize database optimization",
       );
     }
   }
 
   if (insights.length === 0) {
-    insights.push('All healthcare operations are performing within acceptable thresholds');
+    insights.push(
+      "All healthcare operations are performing within acceptable thresholds",
+    );
     recommendations.push(
-      'Continue monitoring and consider implementing proactive performance testing',
+      "Continue monitoring and consider implementing proactive performance testing",
     );
   }
 
@@ -241,8 +274,7 @@ export function createAlertMessage(
   const formattedValue = formatDuration(value);
   const formattedThreshold = formatDuration(threshold);
 
-  let baseMessage =
-    `${metricName} performance alert: ${formattedValue} (threshold: ${formattedThreshold})`;
+  let baseMessage = `${metricName} performance alert: ${formattedValue} (threshold: ${formattedThreshold})`;
 
   if (context?.feature) {
     baseMessage += ` in ${context.feature}`;
@@ -258,7 +290,10 @@ export function createAlertMessage(
 /**
  * Calculate percentile from array of values
  */
-export function calculatePercentile(values: number[], percentile: number): number {
+export function calculatePercentile(
+  values: number[],
+  percentile: number,
+): number {
   if (values.length === 0) {
     return 0;
   }
@@ -279,7 +314,8 @@ export function calculateStandardDeviation(values: number[]): number {
 
   const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
   const squaredDiffs = values.map((val) => (val - mean) ** 2);
-  const avgSquaredDiff = squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+  const avgSquaredDiff =
+    squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
 
   return Math.sqrt(avgSquaredDiff);
 }
@@ -336,13 +372,13 @@ export function calculatePerformanceScore(metrics: CustomMetric[]): number {
   const scores = metrics.map((metric) => {
     const rating = metric.rating;
     switch (rating) {
-      case 'good': {
+      case "good": {
         return 100;
       }
-      case 'needs-improvement': {
+      case "needs-improvement": {
         return 75;
       }
-      case 'poor': {
+      case "poor": {
         return 25;
       }
       default: {
@@ -351,7 +387,9 @@ export function calculatePerformanceScore(metrics: CustomMetric[]): number {
     }
   });
 
-  return Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
+  return Math.round(
+    scores.reduce((sum, score) => sum + score, 0) / scores.length,
+  );
 }
 
 /**
@@ -363,20 +401,25 @@ export function formatMetricForDisplay(metric: CustomMetric): {
   rating: string;
   context: string;
 } {
-  const displayName = metric.name.replaceAll("_", ' ').replaceAll(/\b\w/g, (l) => l.toUpperCase());
+  const displayName = metric.name
+    .replaceAll("_", " ")
+    .replaceAll(/\b\w/g, (l) => l.toUpperCase());
   const formattedValue = formatDuration(metric.value);
-  const ratingColor = metric.rating === 'good'
-    ? 'green'
-    : (metric.rating === 'needs-improvement'
-    ? 'yellow'
-    : 'red');
+  const ratingColor =
+    metric.rating === "good"
+      ? "green"
+      : metric.rating === "needs-improvement"
+        ? "yellow"
+        : "red";
 
-  let context = '';
+  let context = "";
   if (metric.context?.feature) {
     context += `Feature: ${metric.context.feature}`;
   }
   if (metric.context?.userRole) {
-    context += context ? `, Role: ${metric.context.userRole}` : `Role: ${metric.context.userRole}`;
+    context += context
+      ? `, Role: ${metric.context.userRole}`
+      : `Role: ${metric.context.userRole}`;
   }
 
   return {

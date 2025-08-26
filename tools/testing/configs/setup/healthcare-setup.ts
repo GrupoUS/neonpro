@@ -4,9 +4,9 @@
  * Based on Medplum MockClient patterns for healthcare data integrity
  */
 
-import { cleanup } from '@testing-library/react';
-import { afterAll, beforeAll, beforeEach, vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { cleanup } from "@testing-library/react";
+import { afterAll, beforeAll, beforeEach, vi } from "vitest";
+import "@testing-library/jest-dom";
 
 // Healthcare Testing Types
 export interface HealthcareTestPatient {
@@ -27,7 +27,7 @@ export interface HealthcareTestAppointment {
   providerId: string;
   tenantId: string;
   scheduledAt: string;
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  status: "scheduled" | "in-progress" | "completed" | "cancelled";
   procedure: string;
   notes?: string;
 }
@@ -35,14 +35,15 @@ export interface HealthcareTestAppointment {
 // Healthcare Mock Client (Medplum-inspired pattern)
 export class HealthcareMockClient {
   private readonly patients: Map<string, HealthcareTestPatient> = new Map();
-  private readonly appointments: Map<string, HealthcareTestAppointment> = new Map();
+  private readonly appointments: Map<string, HealthcareTestAppointment> =
+    new Map();
   private readonly tenantId: string;
-  constructor(tenantId = 'test-tenant-healthcare') {
+  constructor(tenantId = "test-tenant-healthcare") {
     this.tenantId = tenantId;
   }
 
   async createPatient(
-    patient: Omit<HealthcareTestPatient, 'id' | 'createdAt' | 'updatedAt'>,
+    patient: Omit<HealthcareTestPatient, "id" | "createdAt" | "updatedAt">,
   ): Promise<HealthcareTestPatient> {
     const id = `patient-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const now = new Date().toISOString();
@@ -74,7 +75,7 @@ export class HealthcareMockClient {
   }
 
   async createAppointment(
-    appointment: Omit<HealthcareTestAppointment, 'id'>,
+    appointment: Omit<HealthcareTestAppointment, "id">,
   ): Promise<HealthcareTestAppointment> {
     const id = `appointment-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -97,17 +98,17 @@ let healthcareMockClient: HealthcareMockClient;
 
 beforeAll(() => {
   // Healthcare Environment Setup
-  process.env.NODE_ENV = 'test';
-  process.env.HEALTHCARE_TEST_MODE = 'true';
-  process.env.LGPD_COMPLIANCE_MODE = 'true';
+  process.env.NODE_ENV = "test";
+  process.env.HEALTHCARE_TEST_MODE = "true";
+  process.env.LGPD_COMPLIANCE_MODE = "true";
 
   // Supabase Test Configuration
-  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-  process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+  process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
 
   // Healthcare Test Tenant
-  process.env.TEST_TENANT_ID = 'test-tenant-healthcare';
+  process.env.TEST_TENANT_ID = "test-tenant-healthcare";
 });
 
 beforeEach(() => {
@@ -118,13 +119,13 @@ beforeEach(() => {
   (globalThis as any).__HEALTHCARE_MOCK_CLIENT__ = healthcareMockClient;
 
   // Mock fetch for healthcare APIs
-  jest.spyOn(global, 'fetch').mockImplementation();
+  jest.spyOn(global, "fetch").mockImplementation();
 
   // Mock console methods for cleaner test output
-  vi.spyOn(console, 'warn').mockImplementation(() => {});
-  vi.spyOn(console, 'error').mockImplementation(() => {});
+  vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 }); // Healthcare-specific mocks
-vi.mock<typeof import('next/navigation')>('next/navigation', () => ({
+vi.mock<typeof import("next/navigation")>("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
@@ -134,7 +135,7 @@ vi.mock<typeof import('next/navigation')>('next/navigation', () => ({
     prefetch: vi.fn(),
   }),
   useSearchParams: () => new URLSearchParams(),
-  usePathname: () => '/test-path',
+  usePathname: () => "/test-path",
 }));
 
 afterEach(() => {

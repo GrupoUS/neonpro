@@ -1,15 +1,18 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-// Re-export zod for tests and other consumers
-export { z };
+// Constants for phone validation
+const MIN_PHONE_LENGTH = 10;
+const MAX_PHONE_LENGTH = 15;
 
-export const emailSchema = z.string().email();
-export const phoneSchema = z.string().min(10).max(15);
+const emailSchema = z.string().email();
+const phoneSchema = z.string().min(MIN_PHONE_LENGTH).max(MAX_PHONE_LENGTH);
 
-export function validateEmail(email: string): boolean {
+const validateEmail = (email: string): boolean => {
   return emailSchema.safeParse(email).success;
-}
+};
 
-export function validatePhone(phone: string): boolean {
+const validatePhone = (phone: string): boolean => {
   return phoneSchema.safeParse(phone).success;
-}
+};
+
+export { z, emailSchema, phoneSchema, validateEmail, validatePhone };

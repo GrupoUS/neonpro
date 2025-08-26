@@ -29,13 +29,13 @@ class NeonProLogger implements Logger {
     context?: LogContext,
   ): string {
     const timestamp = new Date().toISOString();
-    const contextStr = context ? ` ${JSON.stringify(context)}` : '';
+    const contextStr = context ? ` ${JSON.stringify(context)}` : "";
     return `[${timestamp}] ${level.toUpperCase()}: ${message}${contextStr}`;
   }
 
   info(message: string, context?: LogContext): void {
-    const formatted = this.formatMessage('info', message, context);
-    if (process.env.NODE_ENV === 'production') {
+    const formatted = this.formatMessage("info", message, context);
+    if (process.env.NODE_ENV === "production") {
       // In production, send to logging service (Sentry, DataDog, etc.)
       // For now, use console.info as fallback
       // biome-ignore lint/suspicious/noConsole: Centralized logging utility
@@ -47,8 +47,8 @@ class NeonProLogger implements Logger {
   }
 
   warn(message: string, context?: LogContext): void {
-    const formatted = this.formatMessage('warn', message, context);
-    if (process.env.NODE_ENV === 'production') {
+    const formatted = this.formatMessage("warn", message, context);
+    if (process.env.NODE_ENV === "production") {
       // In production, send to logging service
       // biome-ignore lint/suspicious/noConsole: Centralized logging utility
       console.warn(formatted);
@@ -59,13 +59,14 @@ class NeonProLogger implements Logger {
   }
 
   error(message: string, error?: Error | unknown, context?: LogContext): void {
-    const errorContext = error instanceof Error
-      ? { ...context, error: error.message, stack: error.stack }
-      : { ...context, error: String(error) };
+    const errorContext =
+      error instanceof Error
+        ? { ...context, error: error.message, stack: error.stack }
+        : { ...context, error: String(error) };
 
-    const formatted = this.formatMessage('error', message, errorContext);
+    const formatted = this.formatMessage("error", message, errorContext);
 
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // In production, send to error tracking service
       // biome-ignore lint/suspicious/noConsole: Centralized logging utility
       console.error(formatted);
@@ -76,8 +77,8 @@ class NeonProLogger implements Logger {
   }
 
   debug(message: string, context?: LogContext): void {
-    if (process.env.NODE_ENV !== 'production') {
-      const formatted = this.formatMessage('debug', message, context);
+    if (process.env.NODE_ENV !== "production") {
+      const formatted = this.formatMessage("debug", message, context);
       // biome-ignore lint/suspicious/noConsole: Development debugging
       console.debug(formatted);
     }

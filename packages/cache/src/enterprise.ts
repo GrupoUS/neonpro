@@ -4,8 +4,8 @@
  * Maintains backward compatibility while adding enterprise features
  */
 
-import { EnhancedServiceBase } from '@neonpro/core-services';
-import { HealthcareCacheManager, healthcareCache } from './index';
+import { EnhancedServiceBase } from "@neonpro/core-services";
+import { HealthcareCacheManager, healthcareCache } from "./index";
 
 /**
  * Enhanced cache service with enterprise features
@@ -14,7 +14,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
   private readonly healthcareCache: HealthcareCacheManager;
 
   constructor(options: any = {}) {
-    super('cache-service-factory', {
+    super("cache-service-factory", {
       enableCache: true,
       enableAnalytics: true,
       enableSecurity: true,
@@ -43,7 +43,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       analytics?: boolean;
     } = {},
   ): Promise<void> {
-    const startTime = this.startTiming('cache_set_enhanced');
+    const startTime = this.startTiming("cache_set_enhanced");
 
     try {
       // Use original healthcare cache for basic functionality
@@ -53,7 +53,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       if (options.useMultiLayer) {
         await this.cache.setMultiLayer(key, value, {
           ttl: ttl || 300_000, // 5 minutes default
-          layers: ['memory', 'redis'],
+          layers: ["memory", "redis"],
           compress: true,
           encrypt: options.encrypt,
         });
@@ -61,7 +61,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
       // Enterprise analytics
       if (options.analytics !== false) {
-        await this.analytics.trackEvent('cache_set', {
+        await this.analytics.trackEvent("cache_set", {
           key: this.sanitizeKey(key),
           ttl,
           multiLayer: options.useMultiLayer,
@@ -71,7 +71,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
       // Enterprise audit
       if (options.auditLog !== false) {
-        await this.audit.logOperation('cache_set', {
+        await this.audit.logOperation("cache_set", {
           key: this.sanitizeKey(key),
           ttl,
           timestamp: new Date(),
@@ -79,9 +79,9 @@ export class CacheServiceFactory extends EnhancedServiceBase {
         });
       }
 
-      this.endTiming('cache_set_enhanced', startTime);
+      this.endTiming("cache_set_enhanced", startTime);
     } catch (error) {
-      this.endTiming('cache_set_enhanced', startTime, { error: true });
+      this.endTiming("cache_set_enhanced", startTime, { error: true });
       throw error;
     }
   }
@@ -97,7 +97,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       auditLog?: boolean;
     } = {},
   ): Promise<T | null> {
-    const startTime = this.startTiming('cache_get_enhanced');
+    const startTime = this.startTiming("cache_get_enhanced");
 
     try {
       let result: T | null;
@@ -114,7 +114,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
       // Enterprise analytics
       if (options.analytics !== false) {
-        await this.analytics.trackEvent('cache_get', {
+        await this.analytics.trackEvent("cache_get", {
           key: this.sanitizeKey(key),
           hit: !!result,
           multiLayer: options.useMultiLayer,
@@ -123,17 +123,17 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
       // Enterprise audit for sensitive data access
       if (options.auditLog && result) {
-        await this.audit.logOperation('cache_access', {
+        await this.audit.logOperation("cache_access", {
           key: this.sanitizeKey(key),
           timestamp: new Date(),
           hit: true,
         });
       }
 
-      this.endTiming('cache_get_enhanced', startTime, { hit: !!result });
+      this.endTiming("cache_get_enhanced", startTime, { hit: !!result });
       return result;
     } catch {
-      this.endTiming('cache_get_enhanced', startTime, { error: true });
+      this.endTiming("cache_get_enhanced", startTime, { error: true });
       return;
     }
   }
@@ -151,7 +151,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       purpose?: string;
     } = {},
   ): Promise<void> {
-    const startTime = this.startTiming('cache_set_sensitive');
+    const startTime = this.startTiming("cache_set_sensitive");
 
     try {
       // Use original healthcare cache
@@ -161,33 +161,33 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       if (patientConsent) {
         await this.cache.setMultiLayer(key, value, {
           ttl,
-          layers: ['redis'], // Sensitive data only in Redis, not memory
+          layers: ["redis"], // Sensitive data only in Redis, not memory
           encrypt: true,
           compress: true,
         });
 
         // Mandatory audit for sensitive data
-        await this.audit.logOperation('sensitive_cache_set', {
+        await this.audit.logOperation("sensitive_cache_set", {
           key: this.sanitizeKey(key),
           patientConsent,
           userId: options.auditUserId,
-          purpose: options.purpose || 'healthcare_data_access',
+          purpose: options.purpose || "healthcare_data_access",
           timestamp: new Date(),
           lgpdCompliant: true,
         });
 
         // Enterprise security monitoring
         await this.security.logSensitiveDataAccess({
-          operation: 'cache_set',
-          dataType: 'patient_data',
+          operation: "cache_set",
+          dataType: "patient_data",
           userId: options.auditUserId,
           consent: patientConsent,
         });
       }
 
-      this.endTiming('cache_set_sensitive', startTime);
+      this.endTiming("cache_set_sensitive", startTime);
     } catch (error) {
-      this.endTiming('cache_set_sensitive', startTime, { error: true });
+      this.endTiming("cache_set_sensitive", startTime, { error: true });
       throw error;
     }
   }
@@ -203,7 +203,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       emergencyAccess?: boolean;
     } = {},
   ): Promise<T | null> {
-    const startTime = this.startTiming('cache_get_sensitive');
+    const startTime = this.startTiming("cache_get_sensitive");
 
     try {
       // Use original healthcare cache first
@@ -216,10 +216,10 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
       if (result) {
         // Mandatory audit for sensitive data access
-        await this.audit.logOperation('sensitive_cache_access', {
+        await this.audit.logOperation("sensitive_cache_access", {
           key: this.sanitizeKey(key),
           userId: auditUserId,
-          purpose: options.purpose || 'healthcare_data_access',
+          purpose: options.purpose || "healthcare_data_access",
           emergencyAccess: options.emergencyAccess,
           timestamp: new Date(),
           lgpdCompliant: true,
@@ -227,24 +227,24 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 
         // Enterprise security monitoring
         await this.security.logSensitiveDataAccess({
-          operation: 'cache_get',
-          dataType: 'patient_data',
+          operation: "cache_get",
+          dataType: "patient_data",
           userId: auditUserId,
           emergencyAccess: options.emergencyAccess,
         });
 
         // Analytics for access patterns
-        await this.analytics.trackEvent('sensitive_data_access', {
-          dataType: 'cached_patient_data',
+        await this.analytics.trackEvent("sensitive_data_access", {
+          dataType: "cached_patient_data",
           userId: auditUserId,
           emergencyAccess: options.emergencyAccess,
         });
       }
 
-      this.endTiming('cache_get_sensitive', startTime, { hit: !!result });
+      this.endTiming("cache_get_sensitive", startTime, { hit: !!result });
       return result;
     } catch {
-      this.endTiming('cache_get_sensitive', startTime, { error: true });
+      this.endTiming("cache_get_sensitive", startTime, { error: true });
       return;
     }
   }
@@ -270,22 +270,22 @@ export class CacheServiceFactory extends EnhancedServiceBase {
         timestamp: new Date().toISOString(),
         performance: {
           avgSetTime: await this.analytics.getMetric(
-            'cache_set_enhanced',
-            'avg_duration',
+            "cache_set_enhanced",
+            "avg_duration",
           ),
           avgGetTime: await this.analytics.getMetric(
-            'cache_get_enhanced',
-            'avg_duration',
+            "cache_get_enhanced",
+            "avg_duration",
           ),
           hitRate: await this.analytics.getMetric(
-            'cache_get_enhanced',
-            'hit_rate',
+            "cache_get_enhanced",
+            "hit_rate",
           ),
         },
       };
     } catch {
       return {
-        error: 'Failed to retrieve cache statistics',
+        error: "Failed to retrieve cache statistics",
         timestamp: new Date().toISOString(),
       };
     }
@@ -306,22 +306,22 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       await this.cache.invalidatePattern(`patient_${patientId}*`);
 
       // Mandatory audit for LGPD compliance
-      await this.audit.logOperation('lgpd_patient_data_clear', {
+      await this.audit.logOperation("lgpd_patient_data_clear", {
         patientId,
         auditUserId,
         timestamp: new Date(),
-        compliance: 'LGPD_ARTICLE_17', // Right to erasure
-        scope: 'all_cache_layers',
+        compliance: "LGPD_ARTICLE_17", // Right to erasure
+        scope: "all_cache_layers",
       });
 
       // Enterprise analytics
-      await this.analytics.trackEvent('lgpd_data_erasure', {
-        dataType: 'patient_cache',
+      await this.analytics.trackEvent("lgpd_data_erasure", {
+        dataType: "patient_cache",
         patientId,
         auditUserId,
       });
     } catch (error) {
-      await this.audit.logOperation('lgpd_clear_error', {
+      await this.audit.logOperation("lgpd_clear_error", {
         patientId,
         auditUserId,
         error: error.message,
@@ -346,22 +346,22 @@ export class CacheServiceFactory extends EnhancedServiceBase {
       await this.cache.clearAll();
 
       // Mandatory audit for ANVISA compliance
-      await this.audit.logOperation('anvisa_audit_clearance', {
+      await this.audit.logOperation("anvisa_audit_clearance", {
         auditId,
         auditUserId,
         timestamp: new Date(),
-        compliance: 'ANVISA_RDC_301',
-        scope: 'all_cache_systems',
+        compliance: "ANVISA_RDC_301",
+        scope: "all_cache_systems",
       });
 
       // Enterprise analytics
-      await this.analytics.trackEvent('anvisa_audit_clearance', {
+      await this.analytics.trackEvent("anvisa_audit_clearance", {
         auditId,
         auditUserId,
-        cacheSystemsCleared: ['memory', 'redis', 'enterprise'],
+        cacheSystemsCleared: ["memory", "redis", "enterprise"],
       });
     } catch (error) {
-      await this.audit.logOperation('anvisa_clearance_error', {
+      await this.audit.logOperation("anvisa_clearance_error", {
         auditId,
         auditUserId,
         error: error.message,
@@ -375,9 +375,9 @@ export class CacheServiceFactory extends EnhancedServiceBase {
   private sanitizeKey(key: string): string {
     // Remove sensitive information from keys for logging
     return key
-      .replaceAll(/\b\d{11}\b/g, '[CPF]')
-      .replaceAll(/\b\d{15}\b/g, '[CNS]')
-      .replaceAll(/patient_\d+/g, 'patient_[ID]');
+      .replaceAll(/\b\d{11}\b/g, "[CPF]")
+      .replaceAll(/\b\d{15}\b/g, "[CNS]")
+      .replaceAll(/patient_\d+/g, "patient_[ID]");
   }
 
   // Backward compatibility methods - delegate to original implementation

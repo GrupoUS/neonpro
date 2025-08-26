@@ -3,11 +3,11 @@
  * Common utilities for healthcare compliance validation
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // CPF validation for Brazilian healthcare compliance
 export function validateCPF(cpf: string): boolean {
-  const cleanCPF = cpf.replaceAll(/\D/g, '');
+  const cleanCPF = cpf.replaceAll(/\D/g, "");
 
   if (cleanCPF.length !== 11) {
     return false;
@@ -44,7 +44,7 @@ export function validateCPF(cpf: string): boolean {
 
 // CNPJ validation for clinic registration
 export function validateCNPJ(cnpj: string): boolean {
-  const cleanCNPJ = cnpj.replaceAll(/\D/g, '');
+  const cleanCNPJ = cnpj.replaceAll(/\D/g, "");
 
   if (cleanCNPJ.length !== 14) {
     return false;
@@ -78,21 +78,21 @@ export function validateCNPJ(cnpj: string): boolean {
 // Professional registration validation (CRM, COREN, etc.)
 export function validateProfessionalRegistration(
   registration: string,
-  type: 'CRM' | 'COREN' | 'CRO' | 'CRF',
+  type: "CRM" | "COREN" | "CRO" | "CRF",
 ): boolean {
-  const clean = registration.replaceAll(/\D/g, '');
+  const clean = registration.replaceAll(/\D/g, "");
 
   switch (type) {
-    case 'CRM': {
+    case "CRM": {
       return clean.length >= 4 && clean.length <= 6;
     }
-    case 'COREN': {
+    case "COREN": {
       return clean.length >= 6 && clean.length <= 7;
     }
-    case 'CRO': {
+    case "CRO": {
       return clean.length >= 4 && clean.length <= 6;
     }
-    case 'CRF': {
+    case "CRF": {
       return clean.length >= 4 && clean.length <= 6;
     }
     default: {
@@ -104,78 +104,78 @@ export function validateProfessionalRegistration(
 // LGPD data classification helper
 export function classifyDataSensitivity(
   fieldName: string,
-): 'public' | 'internal' | 'confidential' | 'restricted' {
+): "public" | "internal" | "confidential" | "restricted" {
   const sensitiveFields = [
-    'cpf',
-    'rg',
-    'passport',
-    'medical_record',
-    'diagnosis',
-    'treatment',
-    'medication',
-    'allergy',
-    'health_condition',
-    'laboratory_result',
+    "cpf",
+    "rg",
+    "passport",
+    "medical_record",
+    "diagnosis",
+    "treatment",
+    "medication",
+    "allergy",
+    "health_condition",
+    "laboratory_result",
   ];
 
   const confidentialFields = [
-    'email',
-    'phone',
-    'address',
-    'birth_date',
-    'emergency_contact',
-    'insurance_number',
-    'payment_method',
+    "email",
+    "phone",
+    "address",
+    "birth_date",
+    "emergency_contact",
+    "insurance_number",
+    "payment_method",
   ];
 
   const fieldLower = fieldName.toLowerCase();
 
   if (sensitiveFields.some((field) => fieldLower.includes(field))) {
-    return 'restricted';
+    return "restricted";
   }
 
   if (confidentialFields.some((field) => fieldLower.includes(field))) {
-    return 'confidential';
+    return "confidential";
   }
 
-  if (fieldLower.includes('name') || fieldLower.includes('id')) {
-    return 'internal';
+  if (fieldLower.includes("name") || fieldLower.includes("id")) {
+    return "internal";
   }
 
-  return 'public';
+  return "public";
 }
 
 // Healthcare compliance schema validators
 export const HealthcareProfessionalSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  cpf: z.string().refine(validateCPF, 'CPF inválido'),
-  registration_number: z.string().min(4, 'Número de registro inválido'),
-  registration_type: z.enum(['CRM', 'COREN', 'CRO', 'CRF']),
-  registration_state: z.string().length(2, 'Estado deve ter 2 caracteres'),
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  cpf: z.string().refine(validateCPF, "CPF inválido"),
+  registration_number: z.string().min(4, "Número de registro inválido"),
+  registration_type: z.enum(["CRM", "COREN", "CRO", "CRF"]),
+  registration_state: z.string().length(2, "Estado deve ter 2 caracteres"),
   specialty: z.string().optional(),
 });
 
 export const ClinicSchema = z.object({
-  name: z.string().min(2, 'Nome da clínica deve ter pelo menos 2 caracteres'),
-  cnpj: z.string().refine(validateCNPJ, 'CNPJ inválido'),
+  name: z.string().min(2, "Nome da clínica deve ter pelo menos 2 caracteres"),
+  cnpj: z.string().refine(validateCNPJ, "CNPJ inválido"),
   anvisa_license: z.string().optional(),
-  operating_license: z.string().min(1, 'Licença de funcionamento obrigatória'),
+  operating_license: z.string().min(1, "Licença de funcionamento obrigatória"),
   address: z.object({
-    street: z.string().min(1, 'Logradouro obrigatório'),
-    number: z.string().min(1, 'Número obrigatório'),
-    city: z.string().min(1, 'Cidade obrigatória'),
-    state: z.string().length(2, 'Estado deve ter 2 caracteres'),
-    postal_code: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido'),
+    street: z.string().min(1, "Logradouro obrigatório"),
+    number: z.string().min(1, "Número obrigatório"),
+    city: z.string().min(1, "Cidade obrigatória"),
+    state: z.string().length(2, "Estado deve ter 2 caracteres"),
+    postal_code: z.string().regex(/^\d{5}-?\d{3}$/, "CEP inválido"),
   }),
 });
 
 export const PatientConsentSchema = z.object({
-  patient_id: z.string().uuid('ID do paciente inválido'),
+  patient_id: z.string().uuid("ID do paciente inválido"),
   consent_type: z.enum([
-    'data_processing',
-    'image_use',
-    'treatment',
-    'research',
+    "data_processing",
+    "image_use",
+    "treatment",
+    "research",
   ]),
   granted: z.boolean(),
   granted_at: z.date(),

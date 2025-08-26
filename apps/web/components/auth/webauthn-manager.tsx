@@ -253,7 +253,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
               Loading credentials...
             </p>
           </div>
-        ) : (credentials.length === 0 ? (
+        ) : credentials.length === 0 ? (
           <div className="py-8 text-center">
             <Shield className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
             <h3 className="font-semibold text-lg">
@@ -309,7 +309,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
               </div>
             ))}
           </div>
-        ))}
+        )}
       </CardContent>
     </Card>
   );

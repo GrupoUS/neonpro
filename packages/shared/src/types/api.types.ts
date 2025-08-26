@@ -7,7 +7,7 @@
  */
 
 // HTTP Methods
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 // API Status codes
 export type ApiStatusCode =
@@ -65,7 +65,7 @@ export interface PaginationParams {
 export interface SearchParams extends PaginationParams {
   query?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 // API Error structure
@@ -133,52 +133,52 @@ export interface BulkOperationResult<T = EntityId> {
 export interface ApiRoutes {
   // Authentication
   auth: {
-    login: '/auth/login';
-    register: '/auth/register';
-    logout: '/auth/logout';
-    refresh: '/auth/refresh';
-    profile: '/auth/profile';
-    'forgot-password': '/auth/forgot-password';
-    'reset-password': '/auth/reset-password';
-    'change-password': '/auth/change-password';
+    login: "/auth/login";
+    register: "/auth/register";
+    logout: "/auth/logout";
+    refresh: "/auth/refresh";
+    profile: "/auth/profile";
+    "forgot-password": "/auth/forgot-password";
+    "reset-password": "/auth/reset-password";
+    "change-password": "/auth/change-password";
     mfa: {
-      enable: '/auth/mfa/enable';
-      verify: '/auth/mfa/verify';
-      disable: '/auth/mfa/disable';
+      enable: "/auth/mfa/enable";
+      verify: "/auth/mfa/verify";
+      disable: "/auth/mfa/disable";
     };
   };
 
   // Patients
   patients: {
-    base: '/patients';
-    byId: '/patients/:id';
-    search: '/patients/search';
-    export: '/patients/export';
-    import: '/patients/import';
+    base: "/patients";
+    byId: "/patients/:id";
+    search: "/patients/search";
+    export: "/patients/export";
+    import: "/patients/import";
   };
 
   // Appointments
   appointments: {
-    base: '/appointments';
-    byId: '/appointments/:id';
-    search: '/appointments/search';
-    availability: '/appointments/availability';
-    reschedule: '/appointments/:id/reschedule';
-    cancel: '/appointments/:id/cancel';
+    base: "/appointments";
+    byId: "/appointments/:id";
+    search: "/appointments/search";
+    availability: "/appointments/availability";
+    reschedule: "/appointments/:id/reschedule";
+    cancel: "/appointments/:id/cancel";
   };
 
   // Clinics
   clinics: {
-    base: '/clinics';
-    byId: '/clinics/:id';
-    search: '/clinics/search';
-    staff: '/clinics/:id/staff';
-    services: '/clinics/:id/services';
-    availability: '/clinics/:id/availability';
+    base: "/clinics";
+    byId: "/clinics/:id";
+    search: "/clinics/search";
+    staff: "/clinics/:id/staff";
+    services: "/clinics/:id/services";
+    availability: "/clinics/:id/availability";
   };
 
   // Health check
-  health: '/health';
+  health: "/health";
 }
 
 // Request context type (middleware data)
@@ -228,24 +228,24 @@ export interface RateLimit {
 
 // API Headers type
 export interface ApiHeaders {
-  'Content-Type'?: string;
+  "Content-Type"?: string;
   Authorization?: string;
-  'X-Request-ID'?: string;
-  'X-Rate-Limit'?: string;
-  'X-User-Agent'?: string;
-  'X-Forwarded-For'?: string;
-  'Accept-Language'?: string;
+  "X-Request-ID"?: string;
+  "X-Rate-Limit"?: string;
+  "X-User-Agent"?: string;
+  "X-Forwarded-For"?: string;
+  "Accept-Language"?: string;
 }
 
 // WebSocket message types
 export type WebSocketMessageType =
-  | 'appointment_created'
-  | 'appointment_updated'
-  | 'appointment_cancelled'
-  | 'patient_registered'
-  | 'notification'
-  | 'system_alert'
-  | 'heartbeat';
+  | "appointment_created"
+  | "appointment_updated"
+  | "appointment_cancelled"
+  | "patient_registered"
+  | "notification"
+  | "system_alert"
+  | "heartbeat";
 
 export interface WebSocketMessage<T = unknown> {
   type: WebSocketMessageType;
@@ -267,20 +267,20 @@ export type ApiQuery<TParams = unknown, TResponse = unknown> = (
 // Type guards
 export const isApiError = (obj: unknown): obj is ApiError => {
   return (
-    typeof obj === 'object' && obj !== null && 'code' in obj && 'message' in obj
+    typeof obj === "object" && obj !== null && "code" in obj && "message" in obj
   );
 };
 
 export const isApiResponse = <T>(obj: unknown): obj is ApiResponse<T> => {
-  return typeof obj === 'object' && obj !== null && 'success' in obj;
+  return typeof obj === "object" && obj !== null && "success" in obj;
 };
 
 export const isValidationError = (obj: unknown): obj is ValidationError => {
   return (
-    typeof obj === 'object'
-    && obj !== null
-    && 'field' in obj
-    && 'message' in obj
+    typeof obj === "object" &&
+    obj !== null &&
+    "field" in obj &&
+    "message" in obj
   );
 };
 
@@ -408,22 +408,20 @@ export interface FileDocument extends BaseEntity {
 export interface ClinicResponse extends ApiResponse<Clinic> {}
 export interface PatientResponse extends ApiResponse<Patient> {}
 export interface AppointmentResponse extends ApiResponse<Appointment> {}
-export interface LoginResponse extends
-  ApiResponse<{
+export interface LoginResponse
+  extends ApiResponse<{
     user: User;
     token: string;
     expires_at: string;
-  }>
-{}
-export interface RegisterResponse extends
-  ApiResponse<{
+  }> {}
+export interface RegisterResponse
+  extends ApiResponse<{
     user: User;
     verification_required: boolean;
-  }>
-{}
+  }> {}
 
-export type SuccessResponse<T = unknown> = ApiResponse<T> & { success: true; };
-export type ErrorResponse = ApiResponse<never> & { success: false; };
+export type SuccessResponse<T = unknown> = ApiResponse<T> & { success: true };
+export type ErrorResponse = ApiResponse<never> & { success: false };
 export type HealthCheckResponse = ApiResponse<{
   status: string;
   timestamp: string;

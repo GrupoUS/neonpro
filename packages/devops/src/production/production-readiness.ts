@@ -10,49 +10,52 @@ export class ProductionReadiness {
    */
   static async validateProductionReadiness(): Promise<{
     ready: boolean;
-    checks: { name: string; status: boolean; details: string; }[];
+    checks: { name: string; status: boolean; details: string }[];
   }> {
     const checks = [
       // LGPD Compliance Checks
       {
-        name: 'LGPD Data Protection',
+        name: "LGPD Data Protection",
         status: await ProductionReadiness.validateLGPDCompliance(),
-        details: 'All patient data encrypted, consent mechanisms active, audit trails enabled',
+        details:
+          "All patient data encrypted, consent mechanisms active, audit trails enabled",
       },
 
       // CFM Compliance Checks
       {
-        name: 'CFM Medical Standards',
+        name: "CFM Medical Standards",
         status: await ProductionReadiness.validateCFMCompliance(),
-        details: 'AI recommendations require doctor approval, medical disclaimers active',
+        details:
+          "AI recommendations require doctor approval, medical disclaimers active",
       },
 
       // ANVISA Compliance Checks
       {
-        name: 'ANVISA Regulatory Compliance',
+        name: "ANVISA Regulatory Compliance",
         status: await ProductionReadiness.validateANVISACompliance(),
-        details: 'Medical device tracking, adverse event reporting active',
+        details: "Medical device tracking, adverse event reporting active",
       },
 
       // Performance Requirements
       {
-        name: 'Healthcare Performance SLA',
+        name: "Healthcare Performance SLA",
         status: await ProductionReadiness.validatePerformanceSLA(),
-        details: 'API responses <100ms, Core Web Vitals >95, medical accuracy ≥95%',
+        details:
+          "API responses <100ms, Core Web Vitals >95, medical accuracy ≥95%",
       },
 
       // Security & Infrastructure
       {
-        name: 'Healthcare Security Hardening',
+        name: "Healthcare Security Hardening",
         status: await ProductionReadiness.validateSecurityHardening(),
-        details: 'Security scans passed, vulnerability assessment complete',
+        details: "Security scans passed, vulnerability assessment complete",
       },
 
       // Disaster Recovery
       {
-        name: 'Patient Data Disaster Recovery',
+        name: "Patient Data Disaster Recovery",
         status: await ProductionReadiness.validateDisasterRecovery(),
-        details: 'Multi-region backup, LGPD-compliant data recovery, RTO <4h',
+        details: "Multi-region backup, LGPD-compliant data recovery, RTO <4h",
       },
     ];
 
@@ -102,13 +105,13 @@ export class ProductionReadiness {
   static getHealthcareScalingConfig() {
     return {
       consultationHours: {
-        schedule: '0 7-19 * * 1-6', // Business hours Mon-Sat
+        schedule: "0 7-19 * * 1-6", // Business hours Mon-Sat
         minInstances: 3,
         maxInstances: 10,
         targetCPU: 70,
       },
       emergencyHours: {
-        schedule: '0 20-6 * * *', // After hours
+        schedule: "0 20-6 * * *", // After hours
         minInstances: 2,
         maxInstances: 5,
         targetCPU: 60,

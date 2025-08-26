@@ -12,13 +12,13 @@ import {
   Type,
   Volume2,
   Zap,
-} from 'lucide-react';
-import * as React from 'react';
-import { useId } from 'react';
-import { cn } from '../utils/cn';
-import { Badge } from './Badge';
-import { Button } from './Button';
-import { Checkbox } from './Checkbox';
+} from "lucide-react";
+import * as React from "react";
+import { useId } from "react";
+import { cn } from "../utils/cn";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
+import { Checkbox } from "./Checkbox";
 
 export interface AccessibilityPreferences {
   /** Font size scale (0.8x to 2.0x) */
@@ -26,7 +26,7 @@ export interface AccessibilityPreferences {
   /** High contrast mode for visual impairments */
   highContrast: boolean;
   /** Theme preference */
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   /** Reduced motion for vestibular disorders */
   reducedMotion: boolean;
   /** Screen reader optimizations */
@@ -79,7 +79,7 @@ export interface AccessibilityControlsProps {
 const _defaultPreferences: AccessibilityPreferences = {
   fontSize: 1,
   highContrast: false,
-  theme: 'system',
+  theme: "system",
   reducedMotion: false,
   screenReader: false,
   focusIndicators: true,
@@ -92,7 +92,7 @@ const _defaultPreferences: AccessibilityPreferences = {
 
 const getWCAGComplianceLevel = (
   preferences: AccessibilityPreferences,
-): 'AA' | 'AAA' => {
+): "AA" | "AAA" => {
   // AAA level criteria
   const aaaFeatures = [
     preferences.highContrast,
@@ -102,7 +102,7 @@ const getWCAGComplianceLevel = (
   ];
 
   const activeAAAFeatures = aaaFeatures.filter(Boolean).length;
-  return activeAAAFeatures >= 2 ? 'AAA' : 'AA';
+  return activeAAAFeatures >= 2 ? "AAA" : "AA";
 };
 
 export const AccessibilityControls = React.forwardRef<
@@ -157,7 +157,7 @@ export const AccessibilityControls = React.forwardRef<
 
     const handleFontSizeChange = (delta: number) => {
       const newSize = Math.max(0.8, Math.min(2, preferences.fontSize + delta));
-      updatePreference('fontSize', Number(newSize.toFixed(1)));
+      updatePreference("fontSize", Number(newSize.toFixed(1)));
     };
 
     const complianceLevel = getWCAGComplianceLevel(preferences);
@@ -167,7 +167,7 @@ export const AccessibilityControls = React.forwardRef<
       return (
         <div
           className={cn(
-            'fixed right-4 bottom-4 z-50 rounded-full bg-primary p-3 text-primary-foreground shadow-lg transition-all hover:shadow-xl',
+            "fixed right-4 bottom-4 z-50 rounded-full bg-primary p-3 text-primary-foreground shadow-lg transition-all hover:shadow-xl",
             className,
           )}
           ref={ref}
@@ -191,7 +191,7 @@ export const AccessibilityControls = React.forwardRef<
     return (
       <div
         className={cn(
-          'fixed right-4 bottom-4 z-50 w-80 rounded-lg border bg-card p-6 text-card-foreground shadow-xl',
+          "fixed right-4 bottom-4 z-50 w-80 rounded-lg border bg-card p-6 text-card-foreground shadow-xl",
           className,
         )}
         id={panelId}
@@ -216,7 +216,7 @@ export const AccessibilityControls = React.forwardRef<
             {showComplianceStatus && (
               <Badge
                 size="sm"
-                variant={complianceLevel === 'AAA' ? 'confirmed' : 'medium'}
+                variant={complianceLevel === "AAA" ? "confirmed" : "medium"}
               >
                 WCAG {complianceLevel}
               </Badge>
@@ -276,21 +276,21 @@ export const AccessibilityControls = React.forwardRef<
               Tema
             </h4>
             <div className="flex gap-2">
-              {(['light', 'dark', 'system'] as const).map((theme) => (
+              {(["light", "dark", "system"] as const).map((theme) => (
                 <Button
                   aria-pressed={preferences.theme === theme}
                   className="flex-1"
                   key={theme}
-                  onClick={() => updatePreference('theme', theme)}
+                  onClick={() => updatePreference("theme", theme)}
                   size="sm"
-                  variant={preferences.theme === theme ? 'default' : 'outline'}
+                  variant={preferences.theme === theme ? "default" : "outline"}
                 >
-                  {theme === 'light' && <Sun className="mr-2 h-4 w-4" />}
-                  {theme === 'dark' && <Moon className="mr-2 h-4 w-4" />}
-                  {theme === 'system' && <Monitor className="mr-2 h-4 w-4" />}
-                  {theme === 'light' && 'Claro'}
-                  {theme === 'dark' && 'Escuro'}
-                  {theme === 'system' && 'Sistema'}
+                  {theme === "light" && <Sun className="mr-2 h-4 w-4" />}
+                  {theme === "dark" && <Moon className="mr-2 h-4 w-4" />}
+                  {theme === "system" && <Monitor className="mr-2 h-4 w-4" />}
+                  {theme === "light" && "Claro"}
+                  {theme === "dark" && "Escuro"}
+                  {theme === "system" && "Sistema"}
                 </Button>
               ))}
             </div>
@@ -311,7 +311,9 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={highContrastDescId}
                   checked={preferences.highContrast}
                   id={highContrastId}
-                  onCheckedChange={(checked) => updatePreference('highContrast', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference("highContrast", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Alto Contraste</span>
@@ -333,7 +335,8 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.colorBlindFriendly}
                   id={colorBlindId}
                   onCheckedChange={(checked) =>
-                    updatePreference('colorBlindFriendly', Boolean(checked))}
+                    updatePreference("colorBlindFriendly", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Cores Acessíveis</span>
@@ -354,7 +357,9 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={dyslexiaFontDescId}
                   checked={preferences.dyslexiaFont}
                   id={dyslexiaFontId}
-                  onCheckedChange={(checked) => updatePreference('dyslexiaFont', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference("dyslexiaFont", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -386,7 +391,9 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={reducedMotionDescId}
                   checked={preferences.reducedMotion}
                   id={reducedMotionId}
-                  onCheckedChange={(checked) => updatePreference('reducedMotion', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference("reducedMotion", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Reduzir Animações</span>
@@ -408,7 +415,8 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.simplifiedInterface}
                   id={simplifiedInterfaceId}
                   onCheckedChange={(checked) =>
-                    updatePreference('simplifiedInterface', Boolean(checked))}
+                    updatePreference("simplifiedInterface", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -432,7 +440,8 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.enhancedTooltips}
                   id={enhancedTooltipsId}
                   onCheckedChange={(checked) =>
-                    updatePreference('enhancedTooltips', Boolean(checked))}
+                    updatePreference("enhancedTooltips", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Dicas Detalhadas</span>
@@ -462,7 +471,9 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={screenReaderDescId}
                   checked={preferences.screenReader}
                   id={screenReaderId}
-                  onCheckedChange={(checked) => updatePreference('screenReader', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference("screenReader", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -485,7 +496,9 @@ export const AccessibilityControls = React.forwardRef<
                   aria-describedby={audioFeedbackDescId}
                   checked={preferences.audioFeedback}
                   id={audioFeedbackId}
-                  onCheckedChange={(checked) => updatePreference('audioFeedback', Boolean(checked))}
+                  onCheckedChange={(checked) =>
+                    updatePreference("audioFeedback", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">Feedback Sonoro</span>
@@ -507,7 +520,8 @@ export const AccessibilityControls = React.forwardRef<
                   checked={preferences.focusIndicators}
                   id={focusIndicatorsId}
                   onCheckedChange={(checked) =>
-                    updatePreference('focusIndicators', Boolean(checked))}
+                    updatePreference("focusIndicators", Boolean(checked))
+                  }
                 />
                 <div className="flex-1">
                   <span className="font-medium text-sm">
@@ -528,7 +542,8 @@ export const AccessibilityControls = React.forwardRef<
           <div className="space-y-3 border-t pt-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">
-                {activeFeatures} de {Object.keys(preferences).length} recursos ativos
+                {activeFeatures} de {Object.keys(preferences).length} recursos
+                ativos
               </span>
               <Badge size="sm" variant="outline">
                 WCAG {complianceLevel}
@@ -554,4 +569,4 @@ export const AccessibilityControls = React.forwardRef<
   },
 );
 
-AccessibilityControls.displayName = 'AccessibilityControls';
+AccessibilityControls.displayName = "AccessibilityControls";

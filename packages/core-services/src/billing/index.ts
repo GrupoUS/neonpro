@@ -1,8 +1,8 @@
 // Billing module exports
 
-export type { BillingRepository } from './service';
-export * from './service';
-export { BillingService } from './service';
+export type { BillingRepository } from "./service";
+export * from "./service";
+export { BillingService } from "./service";
 // Re-export commonly used types
 export type {
   BillingStats,
@@ -19,8 +19,8 @@ export type {
   PaymentPlan,
   Refund,
   TreatmentPackage,
-} from './types';
-export * from './types';
+} from "./types";
+export * from "./types";
 export {
   DiscountType,
   InstallmentFrequency,
@@ -29,4 +29,4 @@ export {
   PaymentPlanStatus,
   PaymentStatus,
   RefundStatus,
-} from './types';
+} from "./types";

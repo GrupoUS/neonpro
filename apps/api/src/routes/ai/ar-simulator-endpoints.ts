@@ -5,26 +5,26 @@
 // Features: 3D modeling, treatment simulation, AR visualization, outcome prediction
 // =============================================================================
 
-import { supabase } from '@/lib/supabase';
-import { ARResultsSimulatorService } from '@/services/ar-simulator/ARResultsSimulatorService';
-import { Hono } from 'hono';
-import { z } from 'zod';
+import { supabase } from "@/lib/supabase";
+import { ARResultsSimulatorService } from "@/services/ar-simulator/ARResultsSimulatorService";
+import { Hono } from "hono";
+import { z } from "zod";
 
 // =============================================================================
 // VALIDATION SCHEMAS
 // =============================================================================
 
 const CreateSimulationSchema = z.object({
-  patientId: z.string().min(1, 'Patient ID is required'),
+  patientId: z.string().min(1, "Patient ID is required"),
   treatmentType: z.enum([
-    'botox',
-    'filler',
-    'facial_harmonization',
-    'thread_lift',
-    'peeling',
+    "botox",
+    "filler",
+    "facial_harmonization",
+    "thread_lift",
+    "peeling",
   ]),
   preferences: z.object({
-    intensityLevel: z.enum(['subtle', 'moderate', 'dramatic']),
+    intensityLevel: z.enum(["subtle", "moderate", "dramatic"]),
     concerns: z.array(z.string()),
     goals: z.array(z.string()),
     referenceImages: z.array(z.string()).optional(),
@@ -32,11 +32,11 @@ const CreateSimulationSchema = z.object({
   }),
   treatmentParameters: z.object({
     treatmentType: z.enum([
-      'botox',
-      'filler',
-      'facial_harmonization',
-      'thread_lift',
-      'peeling',
+      "botox",
+      "filler",
+      "facial_harmonization",
+      "thread_lift",
+      "peeling",
     ]),
     areas: z.array(
       z.object({
@@ -62,18 +62,18 @@ const CreateSimulationSchema = z.object({
     sessionCount: z.number().min(1).max(10),
     combinedTreatments: z.array(z.string()).optional().default([]),
   }),
-  priority: z.enum(['low', 'normal', 'high']).optional().default('normal'),
+  priority: z.enum(["low", "normal", "high"]).optional().default("normal"),
 });
 
 const CompareSimulationsSchema = z.object({
   simulationIds: z
     .array(z.string())
-    .min(2, 'At least 2 simulations required for comparison')
-    .max(5, 'Maximum 5 simulations can be compared'),
+    .min(2, "At least 2 simulations required for comparison")
+    .max(5, "Maximum 5 simulations can be compared"),
   comparisonType: z.enum([
-    'before_after',
-    'treatment_options',
-    'timeline_progression',
+    "before_after",
+    "treatment_options",
+    "timeline_progression",
   ]),
 });
 
@@ -94,7 +94,7 @@ const simulatorService = ARResultsSimulatorService.getInstance();
  * POST /api/ai/ar-simulator/simulations
  * Create a new AR simulation
  */
-arSimulator.post('/simulations', async (c) => {
+arSimulator.post("/simulations", async (c) => {
   try {
     const body = await c.req.json();
     const validationResult = CreateSimulationSchema.safeParse(body);
@@ -103,7 +103,7 @@ arSimulator.post('/simulations', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Invalid simulation request data',
+          error: "Invalid simulation request data",
           details: validationResult.error.issues,
         },
         400,
@@ -129,7 +129,8 @@ arSimulator.post('/simulations', async (c) => {
       priority,
     };
 
-    const simulation = await simulatorService.createSimulation(simulationRequest);
+    const simulation =
+      await simulatorService.createSimulation(simulationRequest);
     return c.json({
       success: true,
       data: simulation,
@@ -138,8 +139,8 @@ arSimulator.post('/simulations', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to create AR simulation',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to create AR simulation",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       500,
     );
@@ -150,9 +151,9 @@ arSimulator.post('/simulations', async (c) => {
  * GET /api/ai/ar-simulator/simulations/:simulationId
  * Get a specific simulation by ID
  */
-arSimulator.get('/simulations/:simulationId', async (c) => {
+arSimulator.get("/simulations/:simulationId", async (c) => {
   try {
-    const simulationId = c.req.param('simulationId');
+    const simulationId = c.req.param("simulationId");
 
     const simulation = await simulatorService.getSimulation(simulationId);
 
@@ -160,7 +161,7 @@ arSimulator.get('/simulations/:simulationId', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Simulation not found',
+          error: "Simulation not found",
         },
         404,
       );
@@ -176,8 +177,8 @@ arSimulator.get('/simulations/:simulationId', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to retrieve AR simulation',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to retrieve AR simulation",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       500,
     );
@@ -188,9 +189,9 @@ arSimulator.get('/simulations/:simulationId', async (c) => {
  * GET /api/ai/ar-simulator/simulations/:simulationId/status
  * Get simulation processing status
  */
-arSimulator.get('/simulations/:simulationId/status', async (c) => {
+arSimulator.get("/simulations/:simulationId/status", async (c) => {
   try {
-    const simulationId = c.req.param('simulationId');
+    const simulationId = c.req.param("simulationId");
 
     const status = await simulatorService.getSimulationStatus(simulationId);
 
@@ -198,7 +199,7 @@ arSimulator.get('/simulations/:simulationId/status', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Simulation not found',
+          error: "Simulation not found",
         },
         404,
       );
@@ -216,7 +217,7 @@ arSimulator.get('/simulations/:simulationId/status', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to get simulation status',
+        error: "Failed to get simulation status",
       },
       500,
     );
@@ -227,9 +228,9 @@ arSimulator.get('/simulations/:simulationId/status', async (c) => {
  * GET /api/ai/ar-simulator/patients/:patientId/simulations
  * Get all simulations for a patient
  */
-arSimulator.get('/patients/:patientId/simulations', async (c) => {
+arSimulator.get("/patients/:patientId/simulations", async (c) => {
   try {
-    const patientId = c.req.param('patientId');
+    const patientId = c.req.param("patientId");
 
     const simulations = await simulatorService.getPatientSimulations(patientId);
     return c.json({
@@ -244,7 +245,7 @@ arSimulator.get('/patients/:patientId/simulations', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to retrieve patient simulations',
+        error: "Failed to retrieve patient simulations",
       },
       500,
     );
@@ -255,9 +256,9 @@ arSimulator.get('/patients/:patientId/simulations', async (c) => {
  * DELETE /api/ai/ar-simulator/simulations/:simulationId
  * Delete a simulation
  */
-arSimulator.delete('/simulations/:simulationId', async (c) => {
+arSimulator.delete("/simulations/:simulationId", async (c) => {
   try {
-    const simulationId = c.req.param('simulationId');
+    const simulationId = c.req.param("simulationId");
 
     await simulatorService.deleteSimulation(simulationId);
     return c.json({
@@ -268,7 +269,7 @@ arSimulator.delete('/simulations/:simulationId', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to delete AR simulation',
+        error: "Failed to delete AR simulation",
       },
       500,
     );
@@ -283,7 +284,7 @@ arSimulator.delete('/simulations/:simulationId', async (c) => {
  * POST /api/ai/ar-simulator/comparisons
  * Compare multiple simulations
  */
-arSimulator.post('/comparisons', async (c) => {
+arSimulator.post("/comparisons", async (c) => {
   try {
     const body = await c.req.json();
     const validationResult = CompareSimulationsSchema.safeParse(body);
@@ -292,7 +293,7 @@ arSimulator.post('/comparisons', async (c) => {
       return c.json(
         {
           success: false,
-          error: 'Invalid comparison request data',
+          error: "Invalid comparison request data",
           details: validationResult.error.issues,
         },
         400,
@@ -313,8 +314,8 @@ arSimulator.post('/comparisons', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to compare simulations',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Failed to compare simulations",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       500,
     );
@@ -329,20 +330,20 @@ arSimulator.post('/comparisons', async (c) => {
  * GET /api/ai/ar-simulator/analytics/overview
  * Get AR simulator analytics overview
  */
-arSimulator.get('/analytics/overview', async (c) => {
+arSimulator.get("/analytics/overview", async (c) => {
   try {
     // Get simulation counts by status
     const statusCounts = await Promise.all([
-      simulatorService.getSimulationsByStatus('ready'),
-      simulatorService.getSimulationsByStatus('processing'),
-      simulatorService.getSimulationsByStatus('failed'),
-      simulatorService.getSimulationsByStatus('completed'),
+      simulatorService.getSimulationsByStatus("ready"),
+      simulatorService.getSimulationsByStatus("processing"),
+      simulatorService.getSimulationsByStatus("failed"),
+      simulatorService.getSimulationsByStatus("completed"),
     ]);
 
     // Get treatment type distribution
     const { data: treatmentDistribution } = await supabase
-      .from('ar_simulations')
-      .select('treatment_type')
+      .from("ar_simulations")
+      .select("treatment_type")
       .then((result) => {
         if (result.error) {
           throw result.error;
@@ -363,9 +364,10 @@ arSimulator.get('/analytics/overview', async (c) => {
       0,
     );
     const completedSimulations = statusCounts[3].length; // completed status
-    const successRate = totalSimulations > 0
-      ? (completedSimulations / totalSimulations) * 100
-      : 0;
+    const successRate =
+      totalSimulations > 0
+        ? (completedSimulations / totalSimulations) * 100
+        : 0;
 
     // Calculate ROI metrics (estimated based on treatment type)
     const estimatedMonthlyROI = 72_917; // ~$875k/year ÷ 12
@@ -406,7 +408,7 @@ arSimulator.get('/analytics/overview', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to generate analytics overview',
+        error: "Failed to generate analytics overview",
       },
       500,
     );
@@ -417,16 +419,16 @@ arSimulator.get('/analytics/overview', async (c) => {
  * GET /api/ai/ar-simulator/analytics/treatments
  * Get treatment-specific analytics
  */
-arSimulator.get('/analytics/treatments', async (c) => {
+arSimulator.get("/analytics/treatments", async (c) => {
   try {
     const { treatment_type } = c.req.query();
 
     let query = supabase
-      .from('ar_simulations')
-      .select('treatment_type, status, metadata, output_data');
+      .from("ar_simulations")
+      .select("treatment_type, status, metadata, output_data");
 
     if (treatment_type) {
-      query = query.eq('treatment_type', treatment_type);
+      query = query.eq("treatment_type", treatment_type);
     }
 
     const { data: simulations, error } = await query;
@@ -473,14 +475,15 @@ arSimulator.get('/analytics/treatments', async (c) => {
     // Calculate averages
     Object.values(treatmentAnalytics).forEach((analytics: any) => {
       if (analytics.totalSimulations > 0) {
-        analytics.averageConfidence = analytics.confidenceScores.length > 0
-          ? Math.round(
-            analytics.confidenceScores.reduce(
-              (a: number, b: number) => a + b,
-              0,
-            ) / analytics.confidenceScores.length,
-          )
-          : 0;
+        analytics.averageConfidence =
+          analytics.confidenceScores.length > 0
+            ? Math.round(
+                analytics.confidenceScores.reduce(
+                  (a: number, b: number) => a + b,
+                  0,
+                ) / analytics.confidenceScores.length,
+              )
+            : 0;
 
         analytics.averageSatisfaction = Math.round(
           analytics.averageSatisfaction / analytics.totalSimulations,
@@ -489,8 +492,8 @@ arSimulator.get('/analytics/treatments', async (c) => {
           analytics.averageProcessingTime / analytics.totalSimulations / 1000,
         ); // Convert to seconds
         analytics.successRate = Math.round(
-          (analytics.confidenceScores.length / analytics.totalSimulations)
-            * 100,
+          (analytics.confidenceScores.length / analytics.totalSimulations) *
+            100,
         );
       }
 
@@ -500,14 +503,14 @@ arSimulator.get('/analytics/treatments', async (c) => {
       success: true,
       data: {
         treatments: Object.values(treatmentAnalytics),
-        filterApplied: treatment_type || 'all',
+        filterApplied: treatment_type || "all",
       },
     });
   } catch {
     return c.json(
       {
         success: false,
-        error: 'Failed to get treatment analytics',
+        error: "Failed to get treatment analytics",
       },
       500,
     );
@@ -522,15 +525,14 @@ arSimulator.get('/analytics/treatments', async (c) => {
  * POST /api/ai/ar-simulator/photos/upload
  * Upload photos for AR simulation
  */
-arSimulator.post('/photos/upload', async (c) => {
+arSimulator.post("/photos/upload", async (c) => {
   try {
     // Note: This is a simplified version. In production, you'd handle file uploads properly
     const body = await c.req.json();
     const { patientId, photoType, photoData } = body;
 
     // Mock photo processing
-    const photoUrl =
-      `https://storage.neonpro.com/ar-photos/${patientId}/${photoType}_${Date.now()}.jpg`;
+    const photoUrl = `https://storage.neonpro.com/ar-photos/${patientId}/${photoType}_${Date.now()}.jpg`;
     const quality = Math.random() * 40 + 60; // 60-100
 
     const processedPhoto = {
@@ -538,7 +540,7 @@ arSimulator.post('/photos/upload', async (c) => {
       type: photoType,
       url: photoUrl,
       quality: Math.round(quality),
-      lighting: quality > 80 ? 'excellent' : (quality > 70 ? 'good' : 'poor'),
+      lighting: quality > 80 ? "excellent" : quality > 70 ? "good" : "poor",
       resolution: { width: 1920, height: 1080 },
       landmarks: [], // Would be populated by facial landmark detection
       patientId,
@@ -551,7 +553,7 @@ arSimulator.post('/photos/upload', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to upload photo',
+        error: "Failed to upload photo",
       },
       500,
     );
@@ -566,23 +568,23 @@ arSimulator.post('/photos/upload', async (c) => {
  * GET /api/ai/ar-simulator/templates/treatments
  * Get available treatment templates
  */
-arSimulator.get('/templates/treatments', async (c) => {
+arSimulator.get("/templates/treatments", async (c) => {
   try {
     const treatmentTemplates = [
       {
-        id: 'botox_forehead',
-        name: 'Botox - Linha da Testa',
-        treatmentType: 'botox',
-        description: 'Suavização das linhas de expressão na testa',
+        id: "botox_forehead",
+        name: "Botox - Linha da Testa",
+        treatmentType: "botox",
+        description: "Suavização das linhas de expressão na testa",
         averageUnits: 15,
-        duration: '4-6 meses',
-        difficulty: 'beginner',
+        duration: "4-6 meses",
+        difficulty: "beginner",
         areas: [
           {
-            name: 'Testa',
+            name: "Testa",
             severity: 6,
             priority: 1,
-            technique: 'horizontal_injection',
+            technique: "horizontal_injection",
             units: 15,
             coordinates: [],
           },
@@ -592,27 +594,27 @@ arSimulator.get('/templates/treatments', async (c) => {
         satisfactionRate: 94,
       },
       {
-        id: 'filler_nasolabial',
-        name: 'Preenchimento - Sulco Nasogeniano',
-        treatmentType: 'filler',
-        description: 'Suavização dos sulcos nasogenianos com ácido hialurônico',
+        id: "filler_nasolabial",
+        name: "Preenchimento - Sulco Nasogeniano",
+        treatmentType: "filler",
+        description: "Suavização dos sulcos nasogenianos com ácido hialurônico",
         averageUnits: 1.5, // ml
-        duration: '12-18 meses',
-        difficulty: 'intermediate',
+        duration: "12-18 meses",
+        difficulty: "intermediate",
         areas: [
           {
-            name: 'Sulco nasogeniano esquerdo',
+            name: "Sulco nasogeniano esquerdo",
             severity: 7,
             priority: 1,
-            technique: 'linear_threading',
+            technique: "linear_threading",
             units: 0.75,
             coordinates: [],
           },
           {
-            name: 'Sulco nasogeniano direito',
+            name: "Sulco nasogeniano direito",
             severity: 7,
             priority: 1,
-            technique: 'linear_threading',
+            technique: "linear_threading",
             units: 0.75,
             coordinates: [],
           },
@@ -622,35 +624,35 @@ arSimulator.get('/templates/treatments', async (c) => {
         satisfactionRate: 91,
       },
       {
-        id: 'harmonization_complete',
-        name: 'Harmonização Facial Completa',
-        treatmentType: 'facial_harmonization',
-        description: 'Harmonização facial completa com múltiplas áreas',
+        id: "harmonization_complete",
+        name: "Harmonização Facial Completa",
+        treatmentType: "facial_harmonization",
+        description: "Harmonização facial completa com múltiplas áreas",
         averageUnits: 4, // ml total
-        duration: '18-24 meses',
-        difficulty: 'advanced',
+        duration: "18-24 meses",
+        difficulty: "advanced",
         areas: [
           {
-            name: 'Lábios',
+            name: "Lábios",
             severity: 5,
             priority: 1,
-            technique: 'micro_bolus',
+            technique: "micro_bolus",
             units: 1,
             coordinates: [],
           },
           {
-            name: 'Maçãs do rosto',
+            name: "Maçãs do rosto",
             severity: 6,
             priority: 2,
-            technique: 'deep_injection',
+            technique: "deep_injection",
             units: 2,
             coordinates: [],
           },
           {
-            name: 'Contorno mandibular',
+            name: "Contorno mandibular",
             severity: 4,
             priority: 3,
-            technique: 'linear_threading',
+            technique: "linear_threading",
             units: 1,
             coordinates: [],
           },
@@ -668,7 +670,7 @@ arSimulator.get('/templates/treatments', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'Failed to get treatment templates',
+        error: "Failed to get treatment templates",
       },
       500,
     );
@@ -683,12 +685,12 @@ arSimulator.get('/templates/treatments', async (c) => {
  * GET /api/ai/ar-simulator/health
  * Health check for AR simulator system
  */
-arSimulator.get('/health', async (c) => {
+arSimulator.get("/health", async (c) => {
   try {
     // Check database connectivity
     const { data: dbCheck } = await supabase
-      .from('ar_simulations')
-      .select('count(*)')
+      .from("ar_simulations")
+      .select("count(*)")
       .single();
 
     // Check service instance
@@ -696,17 +698,19 @@ arSimulator.get('/health', async (c) => {
 
     // Get system statistics
     const systemStats = {
-      activeSimulations: await simulatorService.getSimulationsByStatus('processing'),
-      readySimulations: await simulatorService.getSimulationsByStatus('ready'),
-      failedSimulations: await simulatorService.getSimulationsByStatus('failed'),
+      activeSimulations:
+        await simulatorService.getSimulationsByStatus("processing"),
+      readySimulations: await simulatorService.getSimulationsByStatus("ready"),
+      failedSimulations:
+        await simulatorService.getSimulationsByStatus("failed"),
     };
 
     const systemStatus = {
-      status: 'healthy',
+      status: "healthy",
       timestamp: new Date().toISOString(),
       service: serviceHealth,
       database: !!dbCheck,
-      version: '2.1.0',
+      version: "2.1.0",
       statistics: {
         processing: systemStats.activeSimulations.length,
         ready: systemStats.readySimulations.length,
@@ -721,7 +725,7 @@ arSimulator.get('/health', async (c) => {
     return c.json(
       {
         success: false,
-        error: 'System health check failed',
+        error: "System health check failed",
         timestamp: new Date().toISOString(),
       },
       503,
@@ -738,10 +742,11 @@ arSimulator.onError((error, c) => {
   return c.json(
     {
       success: false,
-      error: 'Internal server error',
-      message: process.env.NODE_ENV === 'development'
-        ? error.message
-        : 'Something went wrong',
+      error: "Internal server error",
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong",
       timestamp: new Date().toISOString(),
     },
     500,

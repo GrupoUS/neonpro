@@ -5,13 +5,13 @@
  * @quality ≥9.9/10 Healthcare Excellence Standard
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { render } from '@testing-library/react';
-import type { RenderOptions } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
-import React from 'react';
-import type { ReactElement } from 'react';
-import { vi } from 'vitest';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { render } from "@testing-library/react";
+import type { RenderOptions } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
+import React from "react";
+import type { ReactElement } from "react";
+import { vi } from "vitest";
 
 /**
  * Healthcare Test User Simulation
@@ -19,7 +19,7 @@ import { vi } from 'vitest';
  */
 export interface HealthcareTestUser {
   id: string;
-  role: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist';
+  role: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
   permissions: string[];
   tenantId: string;
   isActive: boolean;
@@ -33,31 +33,31 @@ export interface HealthcareTestUser {
  */
 export const generateTestPatient = () => ({
   id: `patient_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-  name: 'Test Patient',
-  cpf: '00000000000', // Placeholder CPF for testing
-  email: 'test.patient@example.com',
-  phone: '(11) 00000-0000',
-  birthDate: '1990-01-01',
-  gender: 'other' as const,
+  name: "Test Patient",
+  cpf: "00000000000", // Placeholder CPF for testing
+  email: "test.patient@example.com",
+  phone: "(11) 00000-0000",
+  birthDate: "1990-01-01",
+  gender: "other" as const,
   address: {
-    street: 'Test Street, 123',
-    city: 'São Paulo',
-    state: 'SP',
-    zipCode: '00000-000',
-    country: 'BR',
+    street: "Test Street, 123",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "00000-000",
+    country: "BR",
   },
-  medicalHistory: 'Test medical history - no real patient data',
-  allergies: ['none'],
+  medicalHistory: "Test medical history - no real patient data",
+  allergies: ["none"],
   medications: [],
   emergencyContact: {
-    name: 'Test Emergency Contact',
-    phone: '(11) 00000-0001',
-    relationship: 'family',
+    name: "Test Emergency Contact",
+    phone: "(11) 00000-0001",
+    relationship: "family",
   },
   // LGPD Compliance Fields
   consentGiven: true,
   consentDate: new Date().toISOString(),
-  dataRetentionPeriod: '5 years',
+  dataRetentionPeriod: "5 years",
   privacyPolicyAccepted: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
@@ -66,7 +66,7 @@ export const generateTestPatient = () => ({
 /**
  * Healthcare Component Render with Context
  * Enhanced render function with healthcare context providers
- */ interface HealthcareRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+ */ interface HealthcareRenderOptions extends Omit<RenderOptions, "wrapper"> {
   user?: HealthcareTestUser;
   tenantId?: string;
   initialRoute?: string;
@@ -76,20 +76,20 @@ export const generateTestPatient = () => ({
 export function renderWithHealthcareContext(
   ui: ReactElement,
   options: HealthcareRenderOptions = {},
-): ReturnType<typeof render> & { user: ReturnType<typeof userEvent.setup>; } {
+): ReturnType<typeof render> & { user: ReturnType<typeof userEvent.setup> } {
   const {
-    user = generateTestUser('doctor'),
-    tenantId = 'test-tenant',
-    initialRoute = '/',
+    user = generateTestUser("doctor"),
+    tenantId = "test-tenant",
+    initialRoute = "/",
     supabaseClient = createMockSupabaseClient(),
     ...renderOptions
   } = options;
 
   // Mock healthcare context providers
-  const HealthcareWrapper = ({ children }: { children: React.ReactNode; }) => {
+  const HealthcareWrapper = ({ children }: { children: React.ReactNode }) => {
     return React.createElement(
-      'div',
-      { 'data-testid': 'healthcare-context' },
+      "div",
+      { "data-testid": "healthcare-context" },
       children,
     );
   };
@@ -104,49 +104,49 @@ export function renderWithHealthcareContext(
  * Generate Test Healthcare Users
  */
 export function generateTestUser(
-  role: HealthcareTestUser['role'],
+  role: HealthcareTestUser["role"],
 ): HealthcareTestUser {
   const baseUser = {
     id: `user_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-    tenantId: 'test-tenant',
+    tenantId: "test-tenant",
     isActive: true,
   };
 
   switch (role) {
-    case 'doctor': {
+    case "doctor": {
       return {
         ...baseUser,
-        role: 'doctor',
+        role: "doctor",
         permissions: [
-          'patients:read',
-          'patients:write',
-          'appointments:manage',
-          'treatments:manage',
+          "patients:read",
+          "patients:write",
+          "appointments:manage",
+          "treatments:manage",
         ],
-        medicalLicense: 'CRM-SP-123456',
-        specialization: 'Dermatologia',
+        medicalLicense: "CRM-SP-123456",
+        specialization: "Dermatologia",
       };
     }
-    case 'patient': {
+    case "patient": {
       return {
         ...baseUser,
-        role: 'patient',
+        role: "patient",
         permissions: [
-          'appointments:read',
-          'treatments:read',
-          'profile:read',
-          'profile:write',
+          "appointments:read",
+          "treatments:read",
+          "profile:read",
+          "profile:write",
         ],
       };
     }
-    case 'nurse': {
+    case "nurse": {
       return {
         ...baseUser,
-        role: 'nurse',
+        role: "nurse",
         permissions: [
-          'patients:read',
-          'appointments:read',
-          'treatments:assist',
+          "patients:read",
+          "appointments:read",
+          "treatments:assist",
         ],
       };
     }
@@ -190,15 +190,15 @@ export function createMockSupabaseClient(): SupabaseClient {
     })),
     auth: {
       getUser: vi.fn().mockResolvedValue({
-        data: { user: generateTestUser('doctor') },
+        data: { user: generateTestUser("doctor") },
         error: undefined,
       }),
       getSession: vi.fn().mockResolvedValue({
-        data: { session: { user: generateTestUser('doctor') } },
+        data: { session: { user: generateTestUser("doctor") } },
         error: undefined,
       }),
       signInWithPassword: vi.fn().mockResolvedValue({
-        data: { user: generateTestUser('doctor'), session: {} },
+        data: { user: generateTestUser("doctor"), session: {} },
         error: undefined,
       }),
       signOut: vi.fn().mockResolvedValue({ error: undefined }),

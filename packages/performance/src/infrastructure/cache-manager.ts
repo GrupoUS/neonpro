@@ -32,20 +32,20 @@ export class HealthcareInfrastructureOptimizer {
    */
   private initializeHealthcareCacheStrategies(): void {
     // Static assets - long cache for non-sensitive content
-    this.cacheStrategies.set('static-assets', {
+    this.cacheStrategies.set("static-assets", {
       maxAge: 31_536_000, // 1 year
       healthcareSensitive: false,
     });
 
     // UI Components - medium cache for interface elements
-    this.cacheStrategies.set('ui-components', {
+    this.cacheStrategies.set("ui-components", {
       maxAge: 86_400, // 1 day
       staleWhileRevalidate: 3600, // 1 hour
       healthcareSensitive: false,
     });
 
     // Patient data - no cache for sensitive medical information
-    this.cacheStrategies.set('patient-data', {
+    this.cacheStrategies.set("patient-data", {
       maxAge: 0,
       mustRevalidate: true,
       private: true,
@@ -53,14 +53,14 @@ export class HealthcareInfrastructureOptimizer {
     });
 
     // Medical forms - short cache for form templates
-    this.cacheStrategies.set('medical-forms', {
+    this.cacheStrategies.set("medical-forms", {
       maxAge: 3600, // 1 hour
       staleWhileRevalidate: 300, // 5 minutes
       healthcareSensitive: false,
     });
 
     // Appointment data - very short cache
-    this.cacheStrategies.set('appointments', {
+    this.cacheStrategies.set("appointments", {
       maxAge: 300, // 5 minutes
       mustRevalidate: true,
       private: true,
@@ -68,14 +68,14 @@ export class HealthcareInfrastructureOptimizer {
     });
 
     // Medication database - medium cache for reference data
-    this.cacheStrategies.set('medication-reference', {
+    this.cacheStrategies.set("medication-reference", {
       maxAge: 86_400, // 1 day
       staleWhileRevalidate: 7200, // 2 hours
       healthcareSensitive: false,
     });
 
     // Audit logs - no cache for compliance data
-    this.cacheStrategies.set('audit-logs', {
+    this.cacheStrategies.set("audit-logs", {
       maxAge: 0,
       mustRevalidate: true,
       private: true,
@@ -89,19 +89,19 @@ export class HealthcareInfrastructureOptimizer {
   private initializeEdgeRegions(): void {
     this.edgeRegions = [
       {
-        region: 'sa-east-1', // São Paulo
+        region: "sa-east-1", // São Paulo
         latency: 20,
         healthcareCompliant: true,
         dataResidency: true, // Brazil data residency
       },
       {
-        region: 'us-east-1', // Virginia
+        region: "us-east-1", // Virginia
         latency: 150,
         healthcareCompliant: true,
         dataResidency: false,
       },
       {
-        region: 'eu-west-1', // Ireland
+        region: "eu-west-1", // Ireland
         latency: 200,
         healthcareCompliant: true,
         dataResidency: false,
@@ -122,9 +122,9 @@ export class HealthcareInfrastructureOptimizer {
 
     if (config.healthcareSensitive) {
       // Sensitive healthcare data - no caching
-      headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private';
-      headers.Pragma = 'no-cache';
-      headers.Expires = '0';
+      headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private";
+      headers.Pragma = "no-cache";
+      headers.Expires = "0";
     } else {
       // Non-sensitive data - optimized caching
       let cacheControl = `max-age=${config.maxAge}`;
@@ -134,23 +134,23 @@ export class HealthcareInfrastructureOptimizer {
       }
 
       if (config.mustRevalidate) {
-        cacheControl += ', must-revalidate';
+        cacheControl += ", must-revalidate";
       }
 
       if (config.private) {
-        cacheControl += ', private';
+        cacheControl += ", private";
       } else {
-        cacheControl += ', public';
+        cacheControl += ", public";
       }
 
-      headers['Cache-Control'] = cacheControl;
+      headers["Cache-Control"] = cacheControl;
     }
 
     // Add healthcare-specific headers
     if (config.healthcareSensitive) {
-      headers['X-Healthcare-Sensitive'] = 'true';
-      headers['X-Content-Type-Options'] = 'nosniff';
-      headers['X-Frame-Options'] = 'DENY';
+      headers["X-Healthcare-Sensitive"] = "true";
+      headers["X-Content-Type-Options"] = "nosniff";
+      headers["X-Frame-Options"] = "DENY";
     }
 
     return headers;
@@ -687,9 +687,9 @@ export default HealthcarePerformanceMonitor;
   getOptimalEdgeRegion(userLocation?: string): EdgeOptimization {
     // For healthcare, prefer Brazil region for data residency compliance
     const brazilRegion = this.edgeRegions.find(
-      (region) => region.region === 'sa-east-1',
+      (region) => region.region === "sa-east-1",
     );
-    if (brazilRegion && userLocation?.includes('BR')) {
+    if (brazilRegion && userLocation?.includes("BR")) {
       return brazilRegion;
     }
 
@@ -699,9 +699,9 @@ export default HealthcarePerformanceMonitor;
       .sort((a, b) => a.latency - b.latency);
 
     return (
-      compliantRegions[0]
-      || this.edgeRegions[0] || {
-        region: 'us-east-1',
+      compliantRegions[0] ||
+      this.edgeRegions[0] || {
+        region: "us-east-1",
         latency: 100,
         healthcareCompliant: true,
         dataResidency: false,
@@ -728,17 +728,15 @@ export default HealthcarePerformanceMonitor;
 - Standard Cacheable: ${cacheStrategiesCount - healthcareSensitiveCount}
 
 📍 Edge Computing Regions:
-${
-      this.edgeRegions
-        .map(
-          (region) => `
+${this.edgeRegions
+  .map(
+    (region) => `
 - ${region.region}: ${region.latency}ms
-  Healthcare Compliant: ${region.healthcareCompliant ? '✅' : '❌'}
-  Data Residency: ${region.dataResidency ? '✅ Brazil' : '❌ International'}
+  Healthcare Compliant: ${region.healthcareCompliant ? "✅" : "❌"}
+  Data Residency: ${region.dataResidency ? "✅ Brazil" : "❌ International"}
 `,
-        )
-        .join('')
-    }
+  )
+  .join("")}
 
 🎯 Optimization Status:
 - CDN Configuration: ✅ Healthcare-optimized

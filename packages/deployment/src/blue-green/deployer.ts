@@ -4,14 +4,14 @@
  * Enterprise-grade deployment with health checks, rollback, and monitoring
  */
 
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
-import ora from 'ora';
-import { DeploymentMonitor } from './deployment-monitor';
-import type { MonitorConfig } from './deployment-monitor';
-import { HealthChecker } from './health-checker';
-import { RollbackManager } from './rollback-manager';
-import { TrafficManager } from './traffic-manager';
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
+import ora from "ora";
+import { DeploymentMonitor } from "./deployment-monitor";
+import type { MonitorConfig } from "./deployment-monitor";
+import { HealthChecker } from "./health-checker";
+import { RollbackManager } from "./rollback-manager";
+import { TrafficManager } from "./traffic-manager";
 
 const execAsync = promisify(exec);
 
@@ -55,7 +55,7 @@ export interface DeploymentConfig {
 
 export interface DeploymentResult {
   success: boolean;
-  targetEnvironment: 'blue' | 'green';
+  targetEnvironment: "blue" | "green";
   version: string;
   duration: number;
   healthChecksPassed: boolean;
@@ -81,7 +81,7 @@ export class BlueGreenDeployer {
     this.config = config;
     this.healthChecker = new HealthChecker({
       maxHistoryPerEndpoint: 100,
-      baseUrl: config.environments.production.url || 'http://localhost:3000',
+      baseUrl: config.environments.production.url || "http://localhost:3000",
     });
     this.trafficManager = new TrafficManager({ maxHistorySize: 100 });
     this.rollbackManager = new RollbackManager({ maxRollbackHistory: 50 });
@@ -89,7 +89,7 @@ export class BlueGreenDeployer {
       maxDeploymentHistory: 100,
       metricsInterval: 5000,
     } as MonitorConfig);
-    this.spinner = ora('Blue-Green Deployment');
+    this.spinner = ora("Blue-Green Deployment");
   }
 
   /**
@@ -99,7 +99,7 @@ export class BlueGreenDeployer {
     const startTime = Date.now();
     const result: DeploymentResult = {
       success: false,
-      targetEnvironment: 'blue',
+      targetEnvironment: "blue",
       version: this.config.version,
       duration: 0,
       healthChecksPassed: false,
@@ -109,12 +109,12 @@ export class BlueGreenDeployer {
     };
 
     try {
-      this.spinner.start('Starting blue-green deployment...');
+      this.spinner.start("Starting blue-green deployment...");
 
       // 1. Pre-deployment checks
       if (this.config.deployment.preDeployChecks) {
         await this.runPreDeploymentChecks();
-        this.spinner.text = 'Pre-deployment checks passed';
+        this.spinner.text = "Pre-deployment checks passed";
       }
 
       // 2. Determine target environment
@@ -135,20 +135,20 @@ export class BlueGreenDeployer {
       result.healthChecksPassed = healthChecksPassed;
 
       if (!healthChecksPassed) {
-        throw new Error('Health checks failed');
+        throw new Error("Health checks failed");
       }
-      this.spinner.text = 'Health checks passed';
+      this.spinner.text = "Health checks passed";
 
       // 5. Switch traffic
       const trafficSwitchStartTime = Date.now();
       await this.switchTraffic(targetEnv);
       const trafficSwitchTime = Date.now() - trafficSwitchStartTime;
-      this.spinner.text = 'Traffic switched successfully';
+      this.spinner.text = "Traffic switched successfully";
 
       // 6. Post-deployment validation
       if (this.config.deployment.postDeployValidation) {
         await this.runPostDeploymentValidation();
-        this.spinner.text = 'Post-deployment validation passed';
+        this.spinner.text = "Post-deployment validation passed";
       }
 
       // 7. Success metrics
@@ -160,7 +160,7 @@ export class BlueGreenDeployer {
         trafficSwitchTime,
       };
 
-      this.spinner.succeed('Blue-green deployment completed successfully!');
+      this.spinner.succeed("Blue-green deployment completed successfully!");
       this.logDeploymentSuccess(result);
     } catch (error) {
       this.spinner.fail(`Deployment failed: ${error}`);
@@ -171,17 +171,17 @@ export class BlueGreenDeployer {
       // Rollback if enabled
       if (this.config.deployment.rollbackOnFailure) {
         try {
-          this.spinner.start('Rolling back deployment...');
+          this.spinner.start("Rolling back deployment...");
           await this.rollbackManager.rollback({
             version: this.config.version,
             environment: result.targetEnvironment,
-            reason: 'Deployment failure',
+            reason: "Deployment failure",
             timestamp: new Date(),
           });
           result.rollbackExecuted = true;
-          this.spinner.succeed('Rollback completed successfully');
+          this.spinner.succeed("Rollback completed successfully");
         } catch (error) {
-          this.spinner.fail('Rollback failed!');
+          this.spinner.fail("Rollback failed!");
           result.errors?.push(`Rollback failed: ${error}`);
         }
       }
@@ -213,27 +213,28 @@ export class BlueGreenDeployer {
     const results = await Promise.allSettled(checks);
     const failures = results
       .filter(
-        (result): result is PromiseRejectedResult => result.status === 'rejected',
+        (result): result is PromiseRejectedResult =>
+          result.status === "rejected",
       )
       .map((result) => result.reason);
 
     if (failures.length > 0) {
-      throw new Error(`Pre-deployment checks failed: ${failures.join(', ')}`);
+      throw new Error(`Pre-deployment checks failed: ${failures.join(", ")}`);
     }
   }
 
   /**
    * Determine which environment to deploy to
    */
-  private async determineTargetEnvironment(): Promise<'blue' | 'green'> {
+  private async determineTargetEnvironment(): Promise<"blue" | "green"> {
     try {
       // Check which environment is currently serving production traffic
       const currentEnv = await this.trafficManager.getCurrentEnvironment();
 
       // Deploy to the opposite environment
-      return currentEnv === 'blue' ? 'green' : 'blue';
+      return currentEnv === "blue" ? "green" : "blue";
     } catch {
-      return 'blue';
+      return "blue";
     }
   }
 
@@ -241,7 +242,7 @@ export class BlueGreenDeployer {
    * Deploy application to specified environment
    */
   private async deployToEnvironment(
-    environment: 'blue' | 'green',
+    environment: "blue" | "green",
   ): Promise<void> {
     const _envConfig = this.config.environments[environment];
 
@@ -287,7 +288,7 @@ export class BlueGreenDeployer {
    * Run comprehensive health checks
    */
   private async runHealthChecks(
-    environment: 'blue' | 'green',
+    environment: "blue" | "green",
   ): Promise<boolean> {
     const envConfig = this.config.environments[environment];
 
@@ -316,7 +317,7 @@ export class BlueGreenDeployer {
    * Switch production traffic to new environment
    */
   private async switchTraffic(
-    _targetEnvironment: 'blue' | 'green',
+    _targetEnvironment: "blue" | "green",
   ): Promise<void> {
     try {
       // Gradual traffic switch for healthcare applications
@@ -341,13 +342,14 @@ export class BlueGreenDeployer {
     const results = await Promise.allSettled(validations);
     const failures = results
       .filter(
-        (result): result is PromiseRejectedResult => result.status === 'rejected',
+        (result): result is PromiseRejectedResult =>
+          result.status === "rejected",
       )
       .map((result) => result.reason);
 
     if (failures.length > 0) {
       throw new Error(
-        `Post-deployment validation failed: ${failures.join(', ')}`,
+        `Post-deployment validation failed: ${failures.join(", ")}`,
       );
     }
   }
@@ -356,7 +358,7 @@ export class BlueGreenDeployer {
   private async checkDependencies(): Promise<void> {
     // Check if all required services are available
     const { stdout } = await execAsync('docker ps --format "table {{.Names}}"');
-    const requiredServices = ['postgres', 'redis', 'nginx'];
+    const requiredServices = ["postgres", "redis", "nginx"];
 
     for (const service of requiredServices) {
       if (!stdout.includes(service)) {
@@ -368,17 +370,17 @@ export class BlueGreenDeployer {
   private async checkDatabaseConnectivity(): Promise<void> {
     // Test database connection
     try {
-      await execAsync('pg_isready -h localhost -p 5432');
+      await execAsync("pg_isready -h localhost -p 5432");
     } catch {
-      throw new Error('Database connectivity check failed');
+      throw new Error("Database connectivity check failed");
     }
   }
 
   private async checkExternalServices(): Promise<void> {
     // Check external service dependencies
     const services = [
-      'https://api.exemplo.com/health',
-      'https://auth.exemplo.com/health',
+      "https://api.exemplo.com/health",
+      "https://auth.exemplo.com/health",
     ];
 
     for (const service of services) {
@@ -397,10 +399,10 @@ export class BlueGreenDeployer {
     // Run security scans
     try {
       await execAsync(
-        'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image neonpro:latest',
+        "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image neonpro:latest",
       );
     } catch {
-      throw new Error('Security scanning failed');
+      throw new Error("Security scanning failed");
     }
   }
 
@@ -449,7 +451,8 @@ export class BlueGreenDeployer {
    * Log successful deployment
    */
   private logDeploymentSuccess(result: DeploymentResult): void {
-    if (result.metrics) {}
+    if (result.metrics) {
+    }
   }
 
   /**
@@ -466,22 +469,22 @@ export class BlueGreenDeployer {
  * Default configuration for NeonPro
  */
 export const defaultConfig: DeploymentConfig = {
-  appName: 'neonpro',
-  version: process.env.VERSION || '1.0.0',
+  appName: "neonpro",
+  version: process.env.VERSION || "1.0.0",
   environments: {
     blue: {
-      url: 'https://blue.neonpro.com.br',
-      healthCheckPath: '/api/health',
+      url: "https://blue.neonpro.com.br",
+      healthCheckPath: "/api/health",
       port: 3000,
     },
     green: {
-      url: 'https://green.neonpro.com.br',
-      healthCheckPath: '/api/health',
+      url: "https://green.neonpro.com.br",
+      healthCheckPath: "/api/health",
       port: 3001,
     },
     production: {
-      url: 'https://api.neonpro.com.br',
-      healthCheckPath: '/api/health',
+      url: "https://api.neonpro.com.br",
+      healthCheckPath: "/api/health",
     },
   },
   healthCheck: {
@@ -499,7 +502,7 @@ export const defaultConfig: DeploymentConfig = {
   monitoring: {
     enabled: true,
     alertWebhook: process.env.DEPLOYMENT_WEBHOOK,
-    slackChannel: '#deployments',
+    slackChannel: "#deployments",
   },
 };
 

@@ -1,10 +1,18 @@
-import { AlertCircle, Calendar, CheckCircle, Clock, MapPin, User, X } from 'lucide-react';
-import * as React from 'react';
-import { cn } from '../utils/cn';
-import { formatDate } from '../utils/formatters';
-import { Avatar, AvatarFallback, AvatarImage } from './Avatar';
-import { Badge } from './Badge';
-import { Button } from './Button';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MapPin,
+  User,
+  X,
+} from "lucide-react";
+import * as React from "react";
+import { cn } from "../utils/cn";
+import { formatDate } from "../utils/formatters";
+import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
+import { Badge } from "./Badge";
+import { Button } from "./Button";
 
 export interface AppointmentData {
   id: string;
@@ -16,17 +24,17 @@ export interface AppointmentData {
   startTime: string;
   endTime: string;
   status:
-    | 'scheduled'
-    | 'confirmed'
-    | 'in-progress'
-    | 'completed'
-    | 'cancelled'
-    | 'no-show';
-  type: 'consultation' | 'procedure' | 'follow-up' | 'emergency';
+    | "scheduled"
+    | "confirmed"
+    | "in-progress"
+    | "completed"
+    | "cancelled"
+    | "no-show";
+  type: "consultation" | "procedure" | "follow-up" | "emergency";
   practitioner?: string;
   room?: string;
   notes?: string;
-  urgency?: 'low' | 'medium' | 'high' | 'urgent';
+  urgency?: "low" | "medium" | "high" | "urgent";
 }
 
 export interface AppointmentCardProps {
@@ -46,44 +54,44 @@ export interface AppointmentCardProps {
 // Helper function to get initials from name
 const getInitials = (name: string): string => {
   return name
-    .split(' ')
+    .split(" ")
     .map((part) => part.charAt(0))
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 };
 
 // Helper function to format time
 const formatTime = (dateString: string): string => {
-  return new Date(dateString).toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
+  return new Date(dateString).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 
 // Helper function to get status variant for badge
 const getStatusVariant = (appointmentStatus: string) => {
   switch (appointmentStatus) {
-    case 'scheduled': {
-      return 'pending';
+    case "scheduled": {
+      return "pending";
     }
-    case 'confirmed': {
-      return 'confirmed';
+    case "confirmed": {
+      return "confirmed";
     }
-    case 'in-progress': {
-      return 'processing';
+    case "in-progress": {
+      return "processing";
     }
-    case 'completed': {
-      return 'confirmed';
+    case "completed": {
+      return "confirmed";
     }
-    case 'cancelled': {
-      return 'cancelled';
+    case "cancelled": {
+      return "cancelled";
     }
-    case 'no-show': {
-      return 'cancelled';
+    case "no-show": {
+      return "cancelled";
     }
     default: {
-      return 'default';
+      return "default";
     }
   }
 };
@@ -91,13 +99,13 @@ const getStatusVariant = (appointmentStatus: string) => {
 // Helper function to get type icon
 const getTypeIcon = (appointmentType: string) => {
   switch (appointmentType) {
-    case 'emergency': {
+    case "emergency": {
       return <AlertCircle className="h-4 w-4" />;
     }
-    case 'procedure': {
+    case "procedure": {
       return <Calendar className="h-4 w-4" />;
     }
-    case 'follow-up': {
+    case "follow-up": {
       return <Clock className="h-4 w-4" />;
     }
     default: {
@@ -138,11 +146,11 @@ const AppointmentCard = React.forwardRef<
       practitioner,
       room,
       notes,
-      urgency = 'medium',
+      urgency = "medium",
     } = appointment;
 
     const statusVariant = getStatusVariant(status);
-    const isUrgent = urgency === 'urgent' || urgency === 'high';
+    const isUrgent = urgency === "urgent" || urgency === "high";
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
@@ -152,40 +160,40 @@ const AppointmentCard = React.forwardRef<
 
     const isToday = startDate.toDateString() === new Date().toDateString();
     const isPast = startDate < new Date();
-    const isInProgress = status === 'in-progress';
+    const isInProgress = status === "in-progress";
 
     const typeIcon = getTypeIcon(type);
 
     const getTypeColor = () => {
       switch (type) {
-        case 'emergency': {
-          return 'urgent';
+        case "emergency": {
+          return "urgent";
         }
-        case 'procedure': {
-          return 'processing';
+        case "procedure": {
+          return "processing";
         }
-        case 'follow-up': {
-          return 'pending';
+        case "follow-up": {
+          return "pending";
         }
         default: {
-          return 'confirmed';
+          return "confirmed";
         }
       }
     };
 
     const getTypeLabel = (appointmentType: string) => {
       switch (appointmentType) {
-        case 'consultation': {
-          return 'Consulta';
+        case "consultation": {
+          return "Consulta";
         }
-        case 'procedure': {
-          return 'Procedimento';
+        case "procedure": {
+          return "Procedimento";
         }
-        case 'follow-up': {
-          return 'Retorno';
+        case "follow-up": {
+          return "Retorno";
         }
-        case 'emergency': {
-          return 'Emergência';
+        case "emergency": {
+          return "Emergência";
         }
         default: {
           return appointmentType;
@@ -195,23 +203,23 @@ const AppointmentCard = React.forwardRef<
 
     const getStatusLabel = (appointmentStatus: string) => {
       switch (appointmentStatus) {
-        case 'scheduled': {
-          return 'Agendada';
+        case "scheduled": {
+          return "Agendada";
         }
-        case 'confirmed': {
-          return 'Confirmada';
+        case "confirmed": {
+          return "Confirmada";
         }
-        case 'in-progress': {
-          return 'Em andamento';
+        case "in-progress": {
+          return "Em andamento";
         }
-        case 'completed': {
-          return 'Concluída';
+        case "completed": {
+          return "Concluída";
         }
-        case 'cancelled': {
-          return 'Cancelada';
+        case "cancelled": {
+          return "Cancelada";
         }
-        case 'no-show': {
-          return 'Não compareceu';
+        case "no-show": {
+          return "Não compareceu";
         }
         default: {
           return appointmentStatus;
@@ -221,10 +229,10 @@ const AppointmentCard = React.forwardRef<
     return (
       <button
         className={cn(
-          'w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
-          isInProgress && 'ring-2 ring-blue-500 ring-opacity-50',
-          isUrgent && 'border-red-200',
-          onClick && 'cursor-pointer',
+          "w-full rounded-lg border bg-card p-4 text-left text-card-foreground transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          isInProgress && "ring-2 ring-blue-500 ring-opacity-50",
+          isUrgent && "border-red-200",
+          onClick && "cursor-pointer",
           className,
         )}
         onClick={onClick}
@@ -235,7 +243,7 @@ const AppointmentCard = React.forwardRef<
         {/* Header */}
         <div className="flex items-start gap-3">
           {showPatientInfo && (
-            <Avatar size={compact ? 'sm' : 'default'}>
+            <Avatar size={compact ? "sm" : "default"}>
               <AvatarImage alt={patientName} src={patientAvatar} />
               <AvatarFallback>{getInitials(patientName)}</AvatarFallback>
             </Avatar>
@@ -246,8 +254,8 @@ const AppointmentCard = React.forwardRef<
               <div>
                 <h3
                   className={cn(
-                    'truncate font-medium',
-                    compact ? 'text-sm' : 'text-base',
+                    "truncate font-medium",
+                    compact ? "text-sm" : "text-base",
                   )}
                 >
                   {showPatientInfo ? patientName : title}
@@ -270,7 +278,7 @@ const AppointmentCard = React.forwardRef<
               </div>
             </div>
           </div>
-        </div>{' '}
+        </div>{" "}
         {/* Time and Type Info */}
         <div className="mt-3 space-y-2">
           <div className="flex items-center gap-4 text-sm">
@@ -278,8 +286,8 @@ const AppointmentCard = React.forwardRef<
               <Clock className="h-4 w-4 text-muted-foreground" />
               <span
                 className={cn(
-                  isToday ? 'font-medium text-primary' : '',
-                  isPast && status === 'scheduled' ? 'text-red-600' : '',
+                  isToday ? "font-medium text-primary" : "",
+                  isPast && status === "scheduled" ? "text-red-600" : "",
                 )}
               >
                 {formatTime(startTime)} - {formatTime(endTime)}
@@ -327,9 +335,10 @@ const AppointmentCard = React.forwardRef<
               </p>
             )}
           </div>
-        )} {/* Actions */}
+        )}{" "}
+        {/* Actions */}
         <div className="mt-4 flex flex-wrap gap-2 border-t pt-3">
-          {status === 'scheduled' && onCheckIn && (
+          {status === "scheduled" && onCheckIn && (
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -343,7 +352,7 @@ const AppointmentCard = React.forwardRef<
             </Button>
           )}
 
-          {status === 'in-progress' && onComplete && (
+          {status === "in-progress" && onComplete && (
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -370,7 +379,7 @@ const AppointmentCard = React.forwardRef<
             </Button>
           )}
 
-          {onEdit && status !== 'completed' && status !== 'cancelled' && (
+          {onEdit && status !== "completed" && status !== "cancelled" && (
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -383,7 +392,7 @@ const AppointmentCard = React.forwardRef<
             </Button>
           )}
 
-          {onReschedule && status !== 'completed' && status !== 'cancelled' && (
+          {onReschedule && status !== "completed" && status !== "cancelled" && (
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -396,7 +405,7 @@ const AppointmentCard = React.forwardRef<
             </Button>
           )}
 
-          {onCancel && status !== 'completed' && status !== 'cancelled' && (
+          {onCancel && status !== "completed" && status !== "cancelled" && (
             <Button
               onClick={(e) => {
                 e.stopPropagation();
@@ -421,6 +430,6 @@ const AppointmentCard = React.forwardRef<
   },
 );
 
-AppointmentCard.displayName = 'AppointmentCard';
+AppointmentCard.displayName = "AppointmentCard";
 
 export { AppointmentCard };

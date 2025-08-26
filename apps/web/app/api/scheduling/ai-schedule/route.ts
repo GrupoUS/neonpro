@@ -1,6 +1,6 @@
 // Temporarily disabled until @neonpro/core-services scheduling is properly built
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(_request: NextRequest) {
   return NextResponse.json(

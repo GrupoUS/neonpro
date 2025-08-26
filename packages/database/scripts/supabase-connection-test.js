@@ -1,6 +1,6 @@
 // Teste de conectividade Supabase
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: './apps/web/.env.local' });
+const { createClient } = require("@supabase/supabase-js");
+require("dotenv").config({ path: "./apps/web/.env.local" });
 
 async function testSupabaseConnection() {
   // Configuração
@@ -16,8 +16,8 @@ async function testSupabaseConnection() {
 
   try {
     const { data: healthCheck, error: healthError } = await supabase
-      .from('tenants')
-      .select('count')
+      .from("tenants")
+      .select("count")
       .limit(1);
     if (healthError) {
       return;
@@ -26,24 +26,31 @@ async function testSupabaseConnection() {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    if (authError) {} else if (user) {} else {}
+    if (authError) {
+    } else if (user) {
+    } else {
+    }
     const criticalTables = [
-      'tenants',
-      'profiles',
-      'professionals',
-      'patients',
-      'appointments',
-      'clinics',
+      "tenants",
+      "profiles",
+      "professionals",
+      "patients",
+      "appointments",
+      "clinics",
     ];
 
     for (const table of criticalTables) {
-      const { data, error } = await supabase.from(table).select('*').limit(1);
-      if (error) {} else {}
+      const { data, error } = await supabase.from(table).select("*").limit(1);
+      if (error) {
+      } else {
+      }
     }
     const { data: rlsData, error: rlsError } = await supabase.rpc(
-      'get_table_rls_status',
+      "get_table_rls_status",
     );
-    if (rlsError) {} else {}
+    if (rlsError) {
+    } else {
+    }
   } catch {}
 }
 

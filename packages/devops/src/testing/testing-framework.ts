@@ -4,7 +4,7 @@
  * Story 05.01: Testing Infrastructure Consolidation
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Healthcare Testing Configuration
 export interface HealthcareTestFrameworkConfig {
@@ -76,16 +76,16 @@ export class HealthcareTestFramework {
         this.cleanupTestEnvironment();
       });
 
-      it('data Protection Validation', async () => {
+      it("data Protection Validation", async () => {
         if (!this.config.lgpd.enableDataProtectionTests) {
           return;
         }
 
         await this.validateDataProtection();
-        expect(this.getComplianceScore('lgpd')).toBeGreaterThanOrEqual(9.9);
+        expect(this.getComplianceScore("lgpd")).toBeGreaterThanOrEqual(9.9);
       });
 
-      it('consent Management Validation', async () => {
+      it("consent Management Validation", async () => {
         if (!this.config.lgpd.enableConsentValidation) {
           return;
         }
@@ -94,7 +94,7 @@ export class HealthcareTestFramework {
         expect(this.getConsentCompliance()).toBeTruthy();
       });
 
-      it('data Minimization Validation', async () => {
+      it("data Minimization Validation", async () => {
         if (!this.config.lgpd.enableDataMinimization) {
           return;
         }
@@ -114,7 +114,7 @@ export class HealthcareTestFramework {
         this.setupANVISATestEnvironment();
       });
 
-      it('medical Device Registration', async () => {
+      it("medical Device Registration", async () => {
         if (!this.config.anvisa.enableMedicalDeviceTests) {
           return;
         }
@@ -123,7 +123,7 @@ export class HealthcareTestFramework {
         expect(this.getANVISACompliance()).toBeTruthy();
       });
 
-      it('adverse Event Reporting', async () => {
+      it("adverse Event Reporting", async () => {
         if (!this.config.anvisa.enableAdverseEventTests) {
           return;
         }
@@ -132,7 +132,7 @@ export class HealthcareTestFramework {
         expect(this.getAdverseEventCompliance()).toBeTruthy();
       });
 
-      it('procedure Classification', async () => {
+      it("procedure Classification", async () => {
         if (!this.config.anvisa.enableProcedureValidation) {
           return;
         }
@@ -152,7 +152,7 @@ export class HealthcareTestFramework {
         this.setupCFMTestEnvironment();
       });
 
-      it('professional Licensing Validation', async () => {
+      it("professional Licensing Validation", async () => {
         if (!this.config.cfm.enableProfessionalValidation) {
           return;
         }
@@ -161,7 +161,7 @@ export class HealthcareTestFramework {
         expect(this.getCFMCompliance()).toBeTruthy();
       });
 
-      it('medical Ethics Compliance', async () => {
+      it("medical Ethics Compliance", async () => {
         if (!this.config.cfm.enableEthicsCompliance) {
           return;
         }
@@ -170,7 +170,7 @@ export class HealthcareTestFramework {
         expect(this.getEthicsComplianceScore()).toBeGreaterThanOrEqual(9.9);
       });
 
-      it('telemedicine Compliance', async () => {
+      it("telemedicine Compliance", async () => {
         if (!this.config.cfm.enableTelemedicineTests) {
           return;
         }
@@ -189,7 +189,7 @@ export class HealthcareTestFramework {
     testFn: () => void | Promise<void>,
   ) {
     return describe(`Quality Gates: ${testName}`, () => {
-      it('performance Validation', async () => {
+      it("performance Validation", async () => {
         if (!this.config.qualityGates.enablePerformanceTests) {
           return;
         }
@@ -200,7 +200,7 @@ export class HealthcareTestFramework {
         );
       });
 
-      it('security Validation', async () => {
+      it("security Validation", async () => {
         if (!this.config.qualityGates.enableSecurityTests) {
           return;
         }
@@ -211,7 +211,7 @@ export class HealthcareTestFramework {
         );
       });
 
-      it('accessibility Validation', async () => {
+      it("accessibility Validation", async () => {
         if (!this.config.qualityGates.enableAccessibilityTests) {
           return;
         }
@@ -240,17 +240,17 @@ export class HealthcareTestFramework {
         await this.cleanupE2EEnvironment();
       });
 
-      it('patient Journey Validation', async () => {
+      it("patient Journey Validation", async () => {
         await this.validatePatientJourney();
         expect(this.getPatientJourneyScore()).toBeGreaterThanOrEqual(9.9);
       });
 
-      it('healthcare Professional Workflow', async () => {
+      it("healthcare Professional Workflow", async () => {
         await this.validateHealthcareProfessionalWorkflow();
         expect(this.getWorkflowEfficiencyScore()).toBeGreaterThanOrEqual(9.9);
       });
 
-      it('clinic Operations Validation', async () => {
+      it("clinic Operations Validation", async () => {
         await this.validateClinicOperations();
         expect(this.getOperationalEfficiencyScore()).toBeGreaterThanOrEqual(
           9.9,
@@ -264,36 +264,45 @@ export class HealthcareTestFramework {
   // Test Environment Setup Methods
   private setupLGPDTestEnvironment(): void {
     // Setup LGPD-specific test environment
-    process.env.NODE_ENV = 'test';
-    process.env.LGPD_COMPLIANCE_MODE = 'strict';
+    process.env.NODE_ENV = "test";
+    process.env.LGPD_COMPLIANCE_MODE = "strict";
 
     // Mock LGPD services
-    vi.mock<typeof import('@/lib/lgpd/data-protection')>('@/lib/lgpd/data-protection', () => ({
-      validateDataProtection: vi.fn().mockResolvedValue(true),
-      checkConsentCompliance: vi.fn().mockResolvedValue(true),
-    }));
+    vi.mock<typeof import("@/lib/lgpd/data-protection")>(
+      "@/lib/lgpd/data-protection",
+      () => ({
+        validateDataProtection: vi.fn().mockResolvedValue(true),
+        checkConsentCompliance: vi.fn().mockResolvedValue(true),
+      }),
+    );
   }
 
   private setupANVISATestEnvironment(): void {
     // Setup ANVISA-specific test environment
-    process.env.ANVISA_COMPLIANCE_MODE = 'strict';
+    process.env.ANVISA_COMPLIANCE_MODE = "strict";
 
     // Mock ANVISA services
-    vi.mock<typeof import('@/lib/anvisa/medical-device')>('@/lib/anvisa/medical-device', () => ({
-      validateMedicalDevice: vi.fn().mockResolvedValue(true),
-      checkAdverseEvents: vi.fn().mockResolvedValue(true),
-    }));
+    vi.mock<typeof import("@/lib/anvisa/medical-device")>(
+      "@/lib/anvisa/medical-device",
+      () => ({
+        validateMedicalDevice: vi.fn().mockResolvedValue(true),
+        checkAdverseEvents: vi.fn().mockResolvedValue(true),
+      }),
+    );
   }
 
   private setupCFMTestEnvironment(): void {
     // Setup CFM-specific test environment
-    process.env.CFM_COMPLIANCE_MODE = 'strict';
+    process.env.CFM_COMPLIANCE_MODE = "strict";
 
     // Mock CFM services
-    vi.mock<typeof import('@/lib/cfm/professional-validation')>('@/lib/cfm/professional-validation', () => ({
-      validateProfessionalLicense: vi.fn().mockResolvedValue(true),
-      checkEthicsCompliance: vi.fn().mockResolvedValue(true),
-    }));
+    vi.mock<typeof import("@/lib/cfm/professional-validation")>(
+      "@/lib/cfm/professional-validation",
+      () => ({
+        validateProfessionalLicense: vi.fn().mockResolvedValue(true),
+        checkEthicsCompliance: vi.fn().mockResolvedValue(true),
+      }),
+    );
   }
 
   private async setupHealthcareE2EEnvironment(): Promise<void> {
@@ -306,81 +315,81 @@ export class HealthcareTestFramework {
   // Validation Methods
   private async validateDataProtection(): Promise<void> {
     // Implement LGPD data protection validation
-    this.testResults.set('lgpd_data_protection', {
+    this.testResults.set("lgpd_data_protection", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateConsentManagement(): Promise<void> {
     // Implement consent management validation
-    this.testResults.set('lgpd_consent', {
+    this.testResults.set("lgpd_consent", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateDataMinimization(): Promise<void> {
     // Implement data minimization validation
-    this.testResults.set('lgpd_minimization', {
+    this.testResults.set("lgpd_minimization", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateMedicalDeviceRegistration(): Promise<void> {
     // Implement ANVISA medical device validation
-    this.testResults.set('anvisa_medical_device', {
+    this.testResults.set("anvisa_medical_device", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateAdverseEventReporting(): Promise<void> {
     // Implement adverse event reporting validation
-    this.testResults.set('anvisa_adverse_events', {
+    this.testResults.set("anvisa_adverse_events", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateProcedureClassification(): Promise<void> {
     // Implement procedure classification validation
-    this.testResults.set('anvisa_procedures', {
+    this.testResults.set("anvisa_procedures", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateProfessionalLicensing(): Promise<void> {
     // Implement CFM professional licensing validation
-    this.testResults.set('cfm_licensing', {
+    this.testResults.set("cfm_licensing", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateMedicalEthics(): Promise<void> {
     // Implement medical ethics validation
-    this.testResults.set('cfm_ethics', {
+    this.testResults.set("cfm_ethics", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateTelemedicineCompliance(): Promise<void> {
     // Implement telemedicine compliance validation
-    this.testResults.set('cfm_telemedicine', {
+    this.testResults.set("cfm_telemedicine", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
@@ -402,27 +411,27 @@ export class HealthcareTestFramework {
 
   private async validatePatientJourney(): Promise<void> {
     // Implement patient journey validation
-    this.testResults.set('e2e_patient_journey', {
+    this.testResults.set("e2e_patient_journey", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateHealthcareProfessionalWorkflow(): Promise<void> {
     // Implement healthcare professional workflow validation
-    this.testResults.set('e2e_professional_workflow', {
+    this.testResults.set("e2e_professional_workflow", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
 
   private async validateClinicOperations(): Promise<void> {
     // Implement clinic operations validation
-    this.testResults.set('e2e_clinic_operations', {
+    this.testResults.set("e2e_clinic_operations", {
       score: 9.9,
-      status: 'passed',
+      status: "passed",
       timestamp: new Date(),
     });
   }
@@ -434,57 +443,57 @@ export class HealthcareTestFramework {
   }
 
   private getConsentCompliance(): boolean {
-    const result = this.testResults.get('lgpd_consent');
-    return result?.status === 'passed';
+    const result = this.testResults.get("lgpd_consent");
+    return result?.status === "passed";
   }
 
   private getDataMinimizationScore(): number {
-    const result = this.testResults.get('lgpd_minimization');
+    const result = this.testResults.get("lgpd_minimization");
     return result?.score || 0;
   }
 
   private getANVISACompliance(): boolean {
-    const result = this.testResults.get('anvisa_medical_device');
-    return result?.status === 'passed';
+    const result = this.testResults.get("anvisa_medical_device");
+    return result?.status === "passed";
   }
 
   private getAdverseEventCompliance(): boolean {
-    const result = this.testResults.get('anvisa_adverse_events');
-    return result?.status === 'passed';
+    const result = this.testResults.get("anvisa_adverse_events");
+    return result?.status === "passed";
   }
 
   private getProcedureComplianceScore(): number {
-    const result = this.testResults.get('anvisa_procedures');
+    const result = this.testResults.get("anvisa_procedures");
     return result?.score || 0;
   }
 
   private getCFMCompliance(): boolean {
-    const result = this.testResults.get('cfm_licensing');
-    return result?.status === 'passed';
+    const result = this.testResults.get("cfm_licensing");
+    return result?.status === "passed";
   }
 
   private getEthicsComplianceScore(): number {
-    const result = this.testResults.get('cfm_ethics');
+    const result = this.testResults.get("cfm_ethics");
     return result?.score || 0;
   }
 
   private getTelemedicineCompliance(): boolean {
-    const result = this.testResults.get('cfm_telemedicine');
-    return result?.status === 'passed';
+    const result = this.testResults.get("cfm_telemedicine");
+    return result?.status === "passed";
   }
 
   private getPatientJourneyScore(): number {
-    const result = this.testResults.get('e2e_patient_journey');
+    const result = this.testResults.get("e2e_patient_journey");
     return result?.score || 0;
   }
 
   private getWorkflowEfficiencyScore(): number {
-    const result = this.testResults.get('e2e_professional_workflow');
+    const result = this.testResults.get("e2e_professional_workflow");
     return result?.score || 0;
   }
 
   private getOperationalEfficiencyScore(): number {
-    const result = this.testResults.get('e2e_clinic_operations');
+    const result = this.testResults.get("e2e_clinic_operations");
     return result?.score || 0;
   }
 
@@ -526,7 +535,7 @@ export class HealthcareTestFramework {
 
   generateHealthcareComplianceReport(): HealthcareComplianceReport {
     const results = [...this.testResults.values()];
-    const passed = results.filter((r) => r.status === 'passed').length;
+    const passed = results.filter((r) => r.status === "passed").length;
     const total = results.length;
     const averageScore = results.reduce((sum, r) => sum + r.score, 0) / total;
 
@@ -543,42 +552,49 @@ export class HealthcareTestFramework {
   }
 
   private getLGPDComplianceStatus(): ComplianceStatus {
-    const lgpdResults = [...this.testResults.entries()].filter(([key]) => key.startsWith('lgpd_'));
+    const lgpdResults = [...this.testResults.entries()].filter(([key]) =>
+      key.startsWith("lgpd_"),
+    );
 
     return {
-      status: lgpdResults.every(([, result]) => result.status === 'passed')
-        ? 'compliant'
-        : 'non-compliant',
-      score: lgpdResults.reduce((sum, [, result]) => sum + result.score, 0)
-        / lgpdResults.length,
+      status: lgpdResults.every(([, result]) => result.status === "passed")
+        ? "compliant"
+        : "non-compliant",
+      score:
+        lgpdResults.reduce((sum, [, result]) => sum + result.score, 0) /
+        lgpdResults.length,
       details: lgpdResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
 
   private getANVISAComplianceStatus(): ComplianceStatus {
     const anvisaResults = [...this.testResults.entries()].filter(([key]) =>
-      key.startsWith('anvisa_')
+      key.startsWith("anvisa_"),
     );
 
     return {
-      status: anvisaResults.every(([, result]) => result.status === 'passed')
-        ? 'compliant'
-        : 'non-compliant',
-      score: anvisaResults.reduce((sum, [, result]) => sum + result.score, 0)
-        / anvisaResults.length,
+      status: anvisaResults.every(([, result]) => result.status === "passed")
+        ? "compliant"
+        : "non-compliant",
+      score:
+        anvisaResults.reduce((sum, [, result]) => sum + result.score, 0) /
+        anvisaResults.length,
       details: anvisaResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
 
   private getCFMComplianceStatus(): ComplianceStatus {
-    const cfmResults = [...this.testResults.entries()].filter(([key]) => key.startsWith('cfm_'));
+    const cfmResults = [...this.testResults.entries()].filter(([key]) =>
+      key.startsWith("cfm_"),
+    );
 
     return {
-      status: cfmResults.every(([, result]) => result.status === 'passed')
-        ? 'compliant'
-        : 'non-compliant',
-      score: cfmResults.reduce((sum, [, result]) => sum + result.score, 0)
-        / cfmResults.length,
+      status: cfmResults.every(([, result]) => result.status === "passed")
+        ? "compliant"
+        : "non-compliant",
+      score:
+        cfmResults.reduce((sum, [, result]) => sum + result.score, 0) /
+        cfmResults.length,
       details: cfmResults.map(([key, result]) => ({ test: key, ...result })),
     };
   }
@@ -587,52 +603,52 @@ export class HealthcareTestFramework {
 // Healthcare Test Utilities
 export const healthcareTestUtils = {
   createMockPatient: () => ({
-    id: 'test-patient-id',
-    name: 'Test Patient',
-    cpf: '12345678901',
-    email: 'test@patient.com',
-    phone: '11999999999',
+    id: "test-patient-id",
+    name: "Test Patient",
+    cpf: "12345678901",
+    email: "test@patient.com",
+    phone: "11999999999",
     lgpdConsent: true,
     createdAt: new Date(),
   }),
 
   createMockHealthcareProfessional: () => ({
-    id: 'test-professional-id',
-    name: 'Dr. Test Professional',
-    crm: '123456',
-    specialty: 'Dermatologia',
-    cfmLicense: 'active',
-    email: 'dr.test@clinic.com',
+    id: "test-professional-id",
+    name: "Dr. Test Professional",
+    crm: "123456",
+    specialty: "Dermatologia",
+    cfmLicense: "active",
+    email: "dr.test@clinic.com",
   }),
 
   createMockClinic: () => ({
-    id: 'test-clinic-id',
-    name: 'Test Healthcare Clinic',
-    cnpj: '12345678000123',
-    anvisaLicense: 'active',
-    address: 'Test Address, São Paulo, Brazil',
+    id: "test-clinic-id",
+    name: "Test Healthcare Clinic",
+    cnpj: "12345678000123",
+    anvisaLicense: "active",
+    address: "Test Address, São Paulo, Brazil",
   }),
 
   createMockAppointment: () => ({
-    id: 'test-appointment-id',
-    patientId: 'test-patient-id',
-    professionalId: 'test-professional-id',
+    id: "test-appointment-id",
+    patientId: "test-patient-id",
+    professionalId: "test-professional-id",
     datetime: new Date(),
-    procedure: 'Consulta Dermatológica',
-    status: 'scheduled',
+    procedure: "Consulta Dermatológica",
+    status: "scheduled",
   }),
 };
 
 // Type Definitions
 interface TestResult {
   score: number;
-  status: 'passed' | 'failed' | 'skipped';
+  status: "passed" | "failed" | "skipped";
   timestamp: Date;
   details?: string;
 }
 
 interface ComplianceStatus {
-  status: 'compliant' | 'non-compliant' | 'partial';
+  status: "compliant" | "non-compliant" | "partial";
   score: number;
   details: {
     test: string;
@@ -660,15 +676,16 @@ export const healthcareTestFramework = new HealthcareTestFramework();
 export const createLGPDTest = healthcareTestFramework.createLGPDTestSuite.bind(
   healthcareTestFramework,
 );
-export const createANVISATest = healthcareTestFramework.createANVISATestSuite.bind(
-  healthcareTestFramework,
-);
+export const createANVISATest =
+  healthcareTestFramework.createANVISATestSuite.bind(healthcareTestFramework);
 export const createCFMTest = healthcareTestFramework.createCFMTestSuite.bind(
   healthcareTestFramework,
 );
-export const createQualityGatesTest = healthcareTestFramework.createQualityGatesTestSuite.bind(
-  healthcareTestFramework,
-);
-export const createHealthcareE2ETest = healthcareTestFramework.createHealthcareE2ETestSuite.bind(
-  healthcareTestFramework,
-);
+export const createQualityGatesTest =
+  healthcareTestFramework.createQualityGatesTestSuite.bind(
+    healthcareTestFramework,
+  );
+export const createHealthcareE2ETest =
+  healthcareTestFramework.createHealthcareE2ETestSuite.bind(
+    healthcareTestFramework,
+  );

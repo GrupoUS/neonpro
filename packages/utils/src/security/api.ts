@@ -4,14 +4,14 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { z } from 'zod';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { z } from "zod";
 
 // Validation schemas
 const SecurityEventSchema = z.object({
   event_type: z.string(),
-  severity: z.enum(['info', 'warning', 'error', 'critical']),
+  severity: z.enum(["info", "warning", "error", "critical"]),
   title: z.string(),
   description: z.string().optional(),
   user_id: z.string().optional(),
@@ -25,8 +25,8 @@ const SecurityAlertSchema = z.object({
   alert_type: z.string(),
   title: z.string(),
   description: z.string().optional(),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  source_type: z.enum(['manual', 'automated', 'external']),
+  severity: z.enum(["low", "medium", "high", "critical"]),
+  source_type: z.enum(["manual", "automated", "external"]),
   affected_user_id: z.string().optional(),
   alert_data: z.record(z.any()).optional(),
 });
@@ -44,7 +44,7 @@ export async function createSecurityEvent(req: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to create security event' },
+      { error: "Failed to create security event" },
       { status: 500 },
     );
   }
@@ -62,7 +62,7 @@ export async function createSecurityAlert(req: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to create security alert' },
+      { error: "Failed to create security alert" },
       { status: 500 },
     );
   }
@@ -78,7 +78,7 @@ export async function getSecurityEvents(_req: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to fetch security events' },
+      { error: "Failed to fetch security events" },
       { status: 500 },
     );
   }
@@ -94,7 +94,7 @@ export async function getSecurityAlerts(_req: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to fetch security alerts' },
+      { error: "Failed to fetch security alerts" },
       { status: 500 },
     );
   }
@@ -109,13 +109,13 @@ export async function updateSecurityAlert(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const alertId = searchParams.get('id');
+    const alertId = searchParams.get("id");
     const rawBody = await req.json();
     const body = AlertUpdateSchema.parse(rawBody);
 
     if (!alertId) {
       return NextResponse.json(
-        { error: 'Alert ID is required' },
+        { error: "Alert ID is required" },
         { status: 400 },
       );
     }
@@ -127,7 +127,7 @@ export async function updateSecurityAlert(req: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to update security alert' },
+      { error: "Failed to update security alert" },
       { status: 500 },
     );
   }
@@ -146,7 +146,7 @@ export async function getSecurityDashboard(_req: NextRequest) {
     });
   } catch {
     return NextResponse.json(
-      { error: 'Failed to fetch security dashboard' },
+      { error: "Failed to fetch security dashboard" },
       { status: 500 },
     );
   }

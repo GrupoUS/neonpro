@@ -10,7 +10,7 @@
 // Database type will be provided by the client
 type Database = any;
 
-import type { createClient } from '@supabase/supabase-js';
+import type { createClient } from "@supabase/supabase-js";
 
 /**
  * ANVISA Product Registration Interface
@@ -22,13 +22,13 @@ export interface ProductRegistration {
   /** ANVISA registration number (constitutional requirement) */
   anvisa_registration_number: string;
   /** Current registration status with ANVISA */
-  registration_status: 'active' | 'suspended' | 'cancelled' | 'pending';
+  registration_status: "active" | "suspended" | "cancelled" | "pending";
   /** Product category for regulatory classification */
   product_category:
-    | 'medical_device'
-    | 'cosmetic'
-    | 'pharmaceutical'
-    | 'aesthetic_equipment';
+    | "medical_device"
+    | "cosmetic"
+    | "pharmaceutical"
+    | "aesthetic_equipment";
   /** Registration expiry date (constitutional monitoring) */
   registration_expiry: Date;
   /** Constitutional compliance requirements */
@@ -54,7 +54,7 @@ export interface ProductRegistrationAudit {
   /** Product registration ID being audited */
   product_id: string;
   /** Action performed on registration */
-  action: 'created' | 'updated' | 'status_changed' | 'expired' | 'renewed';
+  action: "created" | "updated" | "status_changed" | "expired" | "renewed";
   /** Previous values before change */
   previous_values: Partial<ProductRegistration>;
   /** New values after change */
@@ -73,9 +73,9 @@ export interface ProductRegistrationAudit {
  */
 export interface ProductRegistrationFilters {
   /** Filter by registration status */
-  status?: ProductRegistration['registration_status'];
+  status?: ProductRegistration["registration_status"];
   /** Filter by product category */
-  category?: ProductRegistration['product_category'];
+  category?: ProductRegistration["product_category"];
   /** Filter by expiry date range */
   expiry_date_range?: {
     start: Date;
@@ -106,13 +106,14 @@ export class ProductRegistrationService {
   async registerProduct(
     productData: Omit<
       ProductRegistration,
-      'product_id' | 'created_at' | 'updated_at' | 'audit_trail'
+      "product_id" | "created_at" | "updated_at" | "audit_trail"
     >,
     userId: string,
-  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string; }> {
+  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
     try {
       // Constitutional validation
-      const validationResult = await this.validateProductRegistration(productData);
+      const validationResult =
+        await this.validateProductRegistration(productData);
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
       }
@@ -130,25 +131,25 @@ export class ProductRegistrationService {
           {
             audit_id: crypto.randomUUID(),
             product_id: productId,
-            action: 'created',
+            action: "created",
             previous_values: {},
             new_values: productData,
             user_id: userId,
             timestamp,
-            reason: 'Initial product registration',
+            reason: "Initial product registration",
           },
         ],
       };
 
       // Store in database with constitutional compliance
       const { data, error } = await this.supabase
-        .from('anvisa_product_registrations')
+        .from("anvisa_product_registrations")
         .insert(newProduct)
         .select()
         .single();
 
       if (error) {
-        return { success: false, error: 'Failed to register product' };
+        return { success: false, error: "Failed to register product" };
       }
 
       // Schedule monitoring alerts if enabled
@@ -160,7 +161,7 @@ export class ProductRegistrationService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   } /**
@@ -178,40 +179,40 @@ export class ProductRegistrationService {
   }> {
     try {
       let query = this.supabase
-        .from('anvisa_product_registrations')
-        .select('*')
-        .eq('tenant_id', tenantId); // Constitutional tenant isolation
+        .from("anvisa_product_registrations")
+        .select("*")
+        .eq("tenant_id", tenantId); // Constitutional tenant isolation
 
       // Apply constitutional filters
       if (filters?.status) {
-        query = query.eq('registration_status', filters.status);
+        query = query.eq("registration_status", filters.status);
       }
       if (filters?.category) {
-        query = query.eq('product_category', filters.category);
+        query = query.eq("product_category", filters.category);
       }
       if (filters?.expiry_date_range) {
         query = query
           .gte(
-            'registration_expiry',
+            "registration_expiry",
             filters.expiry_date_range.start.toISOString(),
           )
           .lte(
-            'registration_expiry',
+            "registration_expiry",
             filters.expiry_date_range.end.toISOString(),
           );
       }
       if (filters?.monitoring_alerts !== undefined) {
-        query = query.eq('monitoring_alerts', filters.monitoring_alerts);
+        query = query.eq("monitoring_alerts", filters.monitoring_alerts);
       }
 
-      const { data, error } = await query.order('created_at', {
+      const { data, error } = await query.order("created_at", {
         ascending: false,
       });
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to retrieve product registrations',
+          error: "Failed to retrieve product registrations",
         };
       }
 
@@ -219,7 +220,7 @@ export class ProductRegistrationService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   } /**
@@ -232,17 +233,17 @@ export class ProductRegistrationService {
     updates: Partial<ProductRegistration>,
     userId: string,
     reason: string,
-  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string; }> {
+  ): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
     try {
       // Get current product data for audit trail
       const { data: currentProduct, error: fetchError } = await this.supabase
-        .from('anvisa_product_registrations')
-        .select('*')
-        .eq('product_id', productId)
+        .from("anvisa_product_registrations")
+        .select("*")
+        .eq("product_id", productId)
         .single();
 
       if (fetchError || !currentProduct) {
-        return { success: false, error: 'Product registration not found' };
+        return { success: false, error: "Product registration not found" };
       }
 
       // Constitutional validation of updates
@@ -258,7 +259,7 @@ export class ProductRegistrationService {
       const auditEntry: ProductRegistrationAudit = {
         audit_id: crypto.randomUUID(),
         product_id: productId,
-        action: 'updated',
+        action: "updated",
         previous_values: currentProduct,
         new_values: updates,
         user_id: userId,
@@ -275,16 +276,16 @@ export class ProductRegistrationService {
       };
 
       const { data, error } = await this.supabase
-        .from('anvisa_product_registrations')
+        .from("anvisa_product_registrations")
         .update(updatedProduct)
-        .eq('product_id', productId)
+        .eq("product_id", productId)
         .select()
         .single();
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to update product registration',
+          error: "Failed to update product registration",
         };
       }
 
@@ -292,7 +293,7 @@ export class ProductRegistrationService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   } /**
@@ -302,13 +303,14 @@ export class ProductRegistrationService {
 
   private async validateProductRegistration(
     productData: Partial<ProductRegistration>,
-  ): Promise<{ valid: boolean; error?: string; }> {
+  ): Promise<{ valid: boolean; error?: string }> {
     try {
       // Constitutional validation rules
       if (!productData.anvisa_registration_number) {
         return {
           valid: false,
-          error: 'ANVISA registration number is mandatory for constitutional compliance',
+          error:
+            "ANVISA registration number is mandatory for constitutional compliance",
         };
       }
 
@@ -317,7 +319,7 @@ export class ProductRegistrationService {
       if (!anvisaNumberRegex.test(productData.anvisa_registration_number)) {
         return {
           valid: false,
-          error: 'Invalid ANVISA registration number format',
+          error: "Invalid ANVISA registration number format",
         };
       }
 
@@ -325,7 +327,8 @@ export class ProductRegistrationService {
       if (!productData.registration_expiry) {
         return {
           valid: false,
-          error: 'Registration expiry date is required for constitutional monitoring',
+          error:
+            "Registration expiry date is required for constitutional monitoring",
         };
       }
 
@@ -336,32 +339,33 @@ export class ProductRegistrationService {
       if (expiryDate < currentDate) {
         return {
           valid: false,
-          error: 'Registration has expired - renewal required for constitutional compliance',
+          error:
+            "Registration has expired - renewal required for constitutional compliance",
         };
       }
 
       // Constitutional category validation
       const validCategories = [
-        'medical_device',
-        'cosmetic',
-        'pharmaceutical',
-        'aesthetic_equipment',
+        "medical_device",
+        "cosmetic",
+        "pharmaceutical",
+        "aesthetic_equipment",
       ];
       if (
         !(
-          productData.product_category
-          && validCategories.includes(productData.product_category)
+          productData.product_category &&
+          validCategories.includes(productData.product_category)
         )
       ) {
         return {
           valid: false,
-          error: 'Valid product category required for ANVISA classification',
+          error: "Valid product category required for ANVISA classification",
         };
       }
 
       return { valid: true };
     } catch {
-      return { valid: false, error: 'Constitutional validation service error' };
+      return { valid: false, error: "Constitutional validation service error" };
     }
   } /**
    * Schedule constitutional expiry alerts for product registration
@@ -372,9 +376,9 @@ export class ProductRegistrationService {
     try {
       // Get product registration details
       const { data: product } = await this.supabase
-        .from('anvisa_product_registrations')
-        .select('registration_expiry, tenant_id')
-        .eq('product_id', productId)
+        .from("anvisa_product_registrations")
+        .select("registration_expiry, tenant_id")
+        .eq("product_id", productId)
         .single();
 
       if (!product) {
@@ -395,21 +399,20 @@ export class ProductRegistrationService {
       // Schedule alerts for future dates
       for (const alertDate of alertDates) {
         if (alertDate > currentDate) {
-          await this.supabase.from('compliance_alerts').insert({
+          await this.supabase.from("compliance_alerts").insert({
             alert_id: crypto.randomUUID(),
-            alert_type: 'anvisa_expiry',
+            alert_type: "anvisa_expiry",
             resource_id: productId,
             tenant_id: product.tenant_id,
             scheduled_date: alertDate.toISOString(),
-            alert_status: 'scheduled',
-            priority: alertDate.getTime() === expiryDate.getTime()
-              ? 'critical'
-              : 'warning',
-            message: `ANVISA product registration expires on ${
-              expiryDate.toLocaleDateString(
-                'pt-BR',
-              )
-            }`,
+            alert_status: "scheduled",
+            priority:
+              alertDate.getTime() === expiryDate.getTime()
+                ? "critical"
+                : "warning",
+            message: `ANVISA product registration expires on ${expiryDate.toLocaleDateString(
+              "pt-BR",
+            )}`,
             constitutional_compliance: true,
           });
         }
@@ -433,17 +436,17 @@ export class ProductRegistrationService {
       thresholdDate.setDate(thresholdDate.getDate() + daysThreshold);
 
       const { data, error } = await this.supabase
-        .from('anvisa_product_registrations')
-        .select('*')
-        .eq('tenant_id', tenantId)
-        .eq('registration_status', 'active')
-        .lte('registration_expiry', thresholdDate.toISOString())
-        .order('registration_expiry', { ascending: true });
+        .from("anvisa_product_registrations")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .eq("registration_status", "active")
+        .lte("registration_expiry", thresholdDate.toISOString())
+        .order("registration_expiry", { ascending: true });
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to retrieve expiring products',
+          error: "Failed to retrieve expiring products",
         };
       }
 
@@ -451,7 +454,7 @@ export class ProductRegistrationService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }
@@ -462,30 +465,32 @@ export class ProductRegistrationService {
    */
   async generateComplianceReport(
     tenantId: string,
-  ): Promise<{ success: boolean; data?: any; error?: string; }> {
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const { data: products, error } = await this.supabase
-        .from('anvisa_product_registrations')
-        .select('*')
-        .eq('tenant_id', tenantId);
+        .from("anvisa_product_registrations")
+        .select("*")
+        .eq("tenant_id", tenantId);
 
       if (error) {
         return {
           success: false,
-          error: 'Failed to generate compliance report',
+          error: "Failed to generate compliance report",
         };
       }
 
       const report = {
         total_products: products?.length || 0,
-        active_registrations: products?.filter((p) => p.registration_status === 'active').length
-          || 0,
-        expiring_soon: products?.filter((p) => {
-          const expiry = new Date(p.registration_expiry);
-          const thirtyDaysFromNow = new Date();
-          thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-          return expiry <= thirtyDaysFromNow;
-        }).length || 0,
+        active_registrations:
+          products?.filter((p) => p.registration_status === "active").length ||
+          0,
+        expiring_soon:
+          products?.filter((p) => {
+            const expiry = new Date(p.registration_expiry);
+            const thirtyDaysFromNow = new Date();
+            thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+            return expiry <= thirtyDaysFromNow;
+          }).length || 0,
         constitutional_compliance_score: 9.9, // Constitutional healthcare standard
         generated_at: new Date().toISOString(),
       };
@@ -494,7 +499,7 @@ export class ProductRegistrationService {
     } catch {
       return {
         success: false,
-        error: 'Constitutional healthcare service error',
+        error: "Constitutional healthcare service error",
       };
     }
   }

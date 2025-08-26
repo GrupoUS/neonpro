@@ -5,21 +5,21 @@
  * com checks automatizados de todos os componentes críticos.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import axios from 'axios';
-import fs from 'node:fs/promises';
-import { performance } from 'node:perf_hooks';
+import { createClient } from "@supabase/supabase-js";
+import axios from "axios";
+import fs from "node:fs/promises";
+import { performance } from "node:perf_hooks";
 
 interface HealthCheckResult {
   component: string;
-  status: 'healthy' | 'degraded' | 'down';
+  status: "healthy" | "degraded" | "down";
   responseTime: number;
   message: string;
   metadata?: Record<string, any>;
 }
 
 interface SystemHealth {
-  overall: 'healthy' | 'degraded' | 'down';
+  overall: "healthy" | "degraded" | "down";
   score: number;
   timestamp: number;
   checks: HealthCheckResult[];
@@ -52,14 +52,14 @@ export class HealthCheckService {
     const results = await Promise.allSettled(checkPromises);
 
     results.forEach((result, index) => {
-      if (result.status === 'fulfilled') {
+      if (result.status === "fulfilled") {
         checks.push(result.value);
       } else {
         checks.push({
           component: `check-${index}`,
-          status: 'down',
+          status: "down",
           responseTime: -1,
-          message: `Check failed: ${result.reason?.message || 'Unknown error'}`,
+          message: `Check failed: ${result.reason?.message || "Unknown error"}`,
         });
       }
     });
@@ -86,16 +86,16 @@ export class HealthCheckService {
     try {
       // Test basic connectivity
       const { data, error } = await this.supabase
-        .from('patients')
-        .select('id')
+        .from("patients")
+        .select("id")
         .limit(1);
 
       const responseTime = performance.now() - start;
 
       if (error) {
         return {
-          component: 'database',
-          status: 'down',
+          component: "database",
+          status: "down",
           responseTime,
           message: `Database error: ${error.message}`,
           metadata: { error: error.code },
@@ -103,16 +103,16 @@ export class HealthCheckService {
       }
 
       // Check response time thresholds
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (responseTime > 1000) {
-        status = 'degraded';
+        status = "degraded";
       }
       if (responseTime > 5000) {
-        status = 'down';
+        status = "down";
       }
 
       return {
-        component: 'database',
+        component: "database",
         status,
         responseTime,
         message: `Database ${status} (${responseTime.toFixed(2)}ms)`,
@@ -120,8 +120,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'database',
-        status: 'down',
+        component: "database",
+        status: "down",
         responseTime: performance.now() - start,
         message: `Database connection failed: ${error.message}`,
       };
@@ -133,31 +133,33 @@ export class HealthCheckService {
    */
   private async checkAPI(): Promise<HealthCheckResult> {
     const start = performance.now();
-    const baseURL = process.env.API_BASE_URL || 'http://localhost:3000';
+    const baseURL = process.env.API_BASE_URL || "http://localhost:3000";
 
     try {
-      const endpoints = ['/api/health', '/api/patients', '/api/appointments'];
+      const endpoints = ["/api/health", "/api/patients", "/api/appointments"];
 
       const results = await Promise.allSettled(
-        endpoints.map((endpoint) => axios.get(`${baseURL}${endpoint}`, { timeout: 5000 })),
+        endpoints.map((endpoint) =>
+          axios.get(`${baseURL}${endpoint}`, { timeout: 5000 }),
+        ),
       );
 
       const responseTime = performance.now() - start;
       const successCount = results.filter(
-        (r) => r.status === 'fulfilled',
+        (r) => r.status === "fulfilled",
       ).length;
       const successRate = (successCount / endpoints.length) * 100;
 
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (successRate < 100) {
-        status = 'degraded';
+        status = "degraded";
       }
       if (successRate < 50) {
-        status = 'down';
+        status = "down";
       }
 
       return {
-        component: 'api',
+        component: "api",
         status,
         responseTime,
         message: `API ${status} (${successCount}/${endpoints.length} endpoints)`,
@@ -169,8 +171,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'api',
-        status: 'down',
+        component: "api",
+        status: "down",
         responseTime: performance.now() - start,
         message: `API check failed: ${error.message}`,
       };
@@ -186,10 +188,10 @@ export class HealthCheckService {
     try {
       // Verificar diretórios críticos
       const criticalPaths = [
-        './uploads',
-        './reports',
-        './coverage',
-        './tools/testing',
+        "./uploads",
+        "./reports",
+        "./coverage",
+        "./tools/testing",
       ];
 
       const pathChecks = await Promise.allSettled(
@@ -201,20 +203,20 @@ export class HealthCheckService {
 
       const responseTime = performance.now() - start;
       const accessiblePaths = pathChecks.filter(
-        (r) => r.status === 'fulfilled',
+        (r) => r.status === "fulfilled",
       ).length;
       const successRate = (accessiblePaths / criticalPaths.length) * 100;
 
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (successRate < 100) {
-        status = 'degraded';
+        status = "degraded";
       }
       if (successRate < 75) {
-        status = 'down';
+        status = "down";
       }
 
       return {
-        component: 'filesystem',
+        component: "filesystem",
         status,
         responseTime,
         message: `FileSystem ${status} (${accessiblePaths}/${criticalPaths.length} paths)`,
@@ -226,8 +228,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'filesystem',
-        status: 'down',
+        component: "filesystem",
+        status: "down",
         responseTime: performance.now() - start,
         message: `FileSystem check failed: ${error.message}`,
       };
@@ -248,16 +250,16 @@ export class HealthCheckService {
       const heapTotalMB = memory.heapTotal / 1024 / 1024;
       const usagePercent = (memory.heapUsed / memory.heapTotal) * 100;
 
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (usagePercent > 80) {
-        status = 'degraded';
+        status = "degraded";
       }
       if (usagePercent > 95) {
-        status = 'down';
+        status = "down";
       }
 
       return {
-        component: 'memory',
+        component: "memory",
         status,
         responseTime,
         message: `Memory ${status} (${usagePercent.toFixed(1)}% used)`,
@@ -271,8 +273,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'memory',
-        status: 'down',
+        component: "memory",
+        status: "down",
         responseTime: performance.now() - start,
         message: `Memory check failed: ${error.message}`,
       };
@@ -287,9 +289,9 @@ export class HealthCheckService {
 
     try {
       const requiredEnvVars = [
-        'NEXT_PUBLIC_SUPABASE_URL',
-        'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-        'NODE_ENV',
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "NODE_ENV",
       ];
 
       const missingVars = requiredEnvVars.filter(
@@ -297,18 +299,19 @@ export class HealthCheckService {
       );
       const responseTime = performance.now() - start;
 
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (missingVars.length > 0) {
-        status = missingVars.length > 2 ? 'down' : 'degraded';
+        status = missingVars.length > 2 ? "down" : "degraded";
       }
 
       return {
-        component: 'environment',
+        component: "environment",
         status,
         responseTime,
-        message: status === 'healthy'
-          ? 'Environment variables configured'
-          : `Missing variables: ${missingVars.join(', ')}`,
+        message:
+          status === "healthy"
+            ? "Environment variables configured"
+            : `Missing variables: ${missingVars.join(", ")}`,
         metadata: {
           required: requiredEnvVars.length,
           missing: missingVars.length,
@@ -318,8 +321,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'environment',
-        status: 'down',
+        component: "environment",
+        status: "down",
         responseTime: performance.now() - start,
         message: `Environment check failed: ${error.message}`,
       };
@@ -335,10 +338,10 @@ export class HealthCheckService {
     try {
       // Verificar se módulos críticos estão carregando
       const criticalModules = [
-        '@supabase/supabase-js',
-        'next',
-        'react',
-        'typescript',
+        "@supabase/supabase-js",
+        "next",
+        "react",
+        "typescript",
       ];
 
       const moduleChecks = criticalModules.map((moduleName) => {
@@ -354,16 +357,16 @@ export class HealthCheckService {
       const availableModules = moduleChecks.filter((m) => m.available).length;
       const successRate = (availableModules / criticalModules.length) * 100;
 
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (successRate < 100) {
-        status = 'degraded';
+        status = "degraded";
       }
       if (successRate < 75) {
-        status = 'down';
+        status = "down";
       }
 
       return {
-        component: 'dependencies',
+        component: "dependencies",
         status,
         responseTime,
         message: `Dependencies ${status} (${availableModules}/${criticalModules.length} available)`,
@@ -376,8 +379,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'dependencies',
-        status: 'down',
+        component: "dependencies",
+        status: "down",
         responseTime: performance.now() - start,
         message: `Dependencies check failed: ${error.message}`,
       };
@@ -400,20 +403,21 @@ export class HealthCheckService {
       };
 
       const responseTime = performance.now() - start;
-      const passedChecks = Object.values(complianceChecks).filter(Boolean).length;
+      const passedChecks =
+        Object.values(complianceChecks).filter(Boolean).length;
       const totalChecks = Object.keys(complianceChecks).length;
       const complianceRate = (passedChecks / totalChecks) * 100;
 
-      let status: 'healthy' | 'degraded' | 'down' = 'healthy';
+      let status: "healthy" | "degraded" | "down" = "healthy";
       if (complianceRate < 100) {
-        status = 'degraded';
+        status = "degraded";
       }
       if (complianceRate < 80) {
-        status = 'down';
+        status = "down";
       }
 
       return {
-        component: 'compliance',
+        component: "compliance",
         status,
         responseTime,
         message: `Compliance ${status} (${passedChecks}/${totalChecks} checks passed)`,
@@ -426,8 +430,8 @@ export class HealthCheckService {
       };
     } catch (error) {
       return {
-        component: 'compliance',
-        status: 'down',
+        component: "compliance",
+        status: "down",
         responseTime: performance.now() - start,
         message: `Compliance check failed: ${error.message}`,
       };
@@ -456,15 +460,15 @@ export class HealthCheckService {
       let score = 0;
 
       switch (check.status) {
-        case 'healthy': {
+        case "healthy": {
           score = 100;
           break;
         }
-        case 'degraded': {
+        case "degraded": {
           score = 60;
           break;
         }
-        case 'down': {
+        case "down": {
           score = 0;
           break;
         }
@@ -482,13 +486,13 @@ export class HealthCheckService {
    */
   private determineOverallStatus(
     score: number,
-  ): 'healthy' | 'degraded' | 'down' {
+  ): "healthy" | "degraded" | "down" {
     if (score >= 90) {
-      return 'healthy';
+      return "healthy";
     }
     if (score >= 60) {
-      return 'degraded';
+      return "degraded";
     }
-    return 'down';
+    return "down";
   }
 }

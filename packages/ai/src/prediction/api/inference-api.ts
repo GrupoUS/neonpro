@@ -1,4 +1,4 @@
-import { aestheticPredictionEngine } from '../core/prediction-engine';
+import { aestheticPredictionEngine } from "../core/prediction-engine";
 import type {
   DurationEstimation,
   PatientProfile,
@@ -7,7 +7,7 @@ import type {
   SuccessProbability,
   TreatmentOutcomePrediction,
   TreatmentRequest,
-} from '../types';
+} from "../types";
 
 /**
  * Real-time AI Inference API for NeonPro Aesthetic Treatments
@@ -17,7 +17,7 @@ import type {
 export class AestheticInferenceAPI {
   private readonly cache = new Map<
     string,
-    { data: any; timestamp: number; ttl: number; }
+    { data: any; timestamp: number; ttl: number }
   >();
   private readonly isInitialized = false;
   private requestCount = 0;
@@ -55,7 +55,7 @@ export class AestheticInferenceAPI {
     try {
       // Check cache first
       const cacheKey = this.generateCacheKey(
-        'treatment-outcome',
+        "treatment-outcome",
         patientId,
         treatment,
       );
@@ -65,16 +65,17 @@ export class AestheticInferenceAPI {
           cached,
           requestId,
           startTime,
-          '2.1.0',
+          "2.1.0",
           0.87,
         );
       }
 
       // Make prediction
-      const prediction = await aestheticPredictionEngine.predictTreatmentOutcome(
-        patient,
-        treatment,
-      );
+      const prediction =
+        await aestheticPredictionEngine.predictTreatmentOutcome(
+          patient,
+          treatment,
+        );
 
       // Cache result for 1 hour
       this.setCache(cacheKey, prediction, 3_600_000);
@@ -86,15 +87,15 @@ export class AestheticInferenceAPI {
         prediction,
         requestId,
         startTime,
-        '2.1.0',
+        "2.1.0",
         0.87,
       );
     } catch (error) {
       return this.createErrorResponse(
-        'Prediction failed',
+        "Prediction failed",
         requestId,
         startTime,
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.message : "Unknown error",
       );
     }
   } /**
@@ -118,7 +119,7 @@ export class AestheticInferenceAPI {
 
     try {
       const cacheKey = this.generateCacheKey(
-        'comprehensive',
+        "comprehensive",
         patientId,
         treatment,
       );
@@ -128,15 +129,16 @@ export class AestheticInferenceAPI {
           cached,
           requestId,
           startTime,
-          'multi-model',
+          "multi-model",
           0.89,
         );
       }
 
-      const prediction = await aestheticPredictionEngine.getComprehensivePrediction(
-        patient,
-        treatment,
-      );
+      const prediction =
+        await aestheticPredictionEngine.getComprehensivePrediction(
+          patient,
+          treatment,
+        );
 
       this.setCache(cacheKey, prediction, 1_800_000); // Cache for 30 minutes
       this.trackPerformance(startTime);
@@ -145,15 +147,15 @@ export class AestheticInferenceAPI {
         prediction,
         requestId,
         startTime,
-        'multi-model',
+        "multi-model",
         0.89,
       );
     } catch (error) {
       return this.createErrorResponse(
-        'Comprehensive prediction failed',
+        "Comprehensive prediction failed",
         requestId,
         startTime,
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.message : "Unknown error",
       );
     }
   }
@@ -162,7 +164,7 @@ export class AestheticInferenceAPI {
    * Health check endpoint for monitoring
    */
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     details: Record<string, any>;
   }> {
     try {
@@ -177,16 +179,17 @@ export class AestheticInferenceAPI {
       };
 
       return {
-        status: this.isInitialized && engineHealth.status === 'healthy'
-          ? 'healthy'
-          : engineHealth.status,
+        status:
+          this.isInitialized && engineHealth.status === "healthy"
+            ? "healthy"
+            : engineHealth.status,
         details: apiDetails,
       };
     } catch (error) {
       return {
-        status: 'unhealthy',
+        status: "unhealthy",
         details: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           initialized: this.isInitialized,
         },
       };
@@ -339,7 +342,7 @@ export class AestheticInferenceAPI {
         requestId,
         timestamp: new Date(),
         processingTime: performance.now() - startTime,
-        modelVersion: 'error',
+        modelVersion: "error",
         accuracyScore: 0,
       },
     };

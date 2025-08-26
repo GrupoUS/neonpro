@@ -29,8 +29,8 @@ export class ComplianceAnalyticsService {
     return {
       success: true,
       report: {
-        summary: 'Compliance analytics report',
-        recommendations: ['Improve access control', 'Enhance audit trail'],
+        summary: "Compliance analytics report",
+        recommendations: ["Improve access control", "Enhance audit trail"],
       },
     };
   }
@@ -67,10 +67,10 @@ export async function validateAnalyticsCompliance(
       return {
         isCompliant: false,
         score: 0,
-        issues: ['Failed to retrieve compliance metrics'],
+        issues: ["Failed to retrieve compliance metrics"],
         recommendations: [
-          'Fix analytics system',
-          'Ensure proper data collection',
+          "Fix analytics system",
+          "Ensure proper data collection",
         ],
       };
     }
@@ -86,7 +86,7 @@ export async function validateAnalyticsCompliance(
         `Overall compliance score (${metrics.overallScore}) below threshold (9.0)`,
       );
       recommendations.push(
-        'Improve compliance processes to meet minimum standards',
+        "Improve compliance processes to meet minimum standards",
       );
       score -= 2;
     }
@@ -96,7 +96,7 @@ export async function validateAnalyticsCompliance(
       issues.push(
         `Data quality score (${metrics.dataQualityScore}) below threshold (8.5)`,
       );
-      recommendations.push('Implement data quality improvement measures');
+      recommendations.push("Implement data quality improvement measures");
       score -= 1;
     }
 
@@ -106,7 +106,7 @@ export async function validateAnalyticsCompliance(
       issues.push(
         `Audit frequency (${metrics.auditFrequency}/year) below minimum (4/year)`,
       );
-      recommendations.push('Increase audit frequency to quarterly minimum');
+      recommendations.push("Increase audit frequency to quarterly minimum");
       score -= 1;
     }
 
@@ -118,17 +118,17 @@ export async function validateAnalyticsCompliance(
       issues,
       recommendations: [
         ...recommendations,
-        'Regular compliance monitoring',
-        'Automated compliance reporting',
-        'Staff training on compliance requirements',
+        "Regular compliance monitoring",
+        "Automated compliance reporting",
+        "Staff training on compliance requirements",
       ],
     };
   } catch {
     return {
       isCompliant: false,
       score: 0,
-      issues: ['Analytics compliance validation system error'],
-      recommendations: ['Fix analytics compliance validation system'],
+      issues: ["Analytics compliance validation system error"],
+      recommendations: ["Fix analytics compliance validation system"],
     };
   }
 }

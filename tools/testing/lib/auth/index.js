@@ -1,16 +1,16 @@
 // CommonJS compatibility wrapper for auth modules
-const fs = require('node:fs');
-const path = require('node:path');
+const fs = require("node:fs");
+const path = require("node:path");
 
 // WebAuthn Service
 let webAuthnService;
 try {
-  const webAuthnServicePath = path.join(__dirname, 'webauthn-service.ts');
+  const webAuthnServicePath = path.join(__dirname, "webauthn-service.ts");
   if (fs.existsSync(webAuthnServicePath)) {
     webAuthnService = {
       validateCredential: () => ({ valid: true }),
       getCredentials: () => [],
-      createCredential: () => ({ id: 'test-credential' }),
+      createCredential: () => ({ id: "test-credential" }),
       validateChallenge: () => true,
       getPublicKeyCredentialRequestOptions: () => ({}),
       getPublicKeyCredentialCreationOptions: () => ({}),

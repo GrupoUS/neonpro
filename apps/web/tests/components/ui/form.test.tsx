@@ -25,12 +25,15 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock Brazilian validation functions
-vi.mock<typeof import('@neonpro/utils/validation')>("@neonpro/utils/validation", () => ({
-  validateCPF: vi.fn(),
-  validatePhone: vi.fn(),
-  validateCEP: vi.fn(),
-  validateEmail: vi.fn(),
-}));
+vi.mock<typeof import("@neonpro/utils/validation")>(
+  "@neonpro/utils/validation",
+  () => ({
+    validateCPF: vi.fn(),
+    validatePhone: vi.fn(),
+    validateCEP: vi.fn(),
+    validateEmail: vi.fn(),
+  }),
+);
 
 // Mock theme provider
 const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (

@@ -5,8 +5,15 @@
  * Based on 2025 performance best practices
  */
 
-import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { DependencyList } from 'react';
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { DependencyList } from "react";
 
 // Performance thresholds for monitoring
 const PERFORMANCE_THRESHOLDS = {
@@ -44,9 +51,10 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 
     // Warn about slow callbacks in development
     if (
-      process.env.NODE_ENV === 'development'
-      && duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
-    ) {}
+      process.env.NODE_ENV === "development" &&
+      duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
+    ) {
+    }
 
     return result;
   }, deps) as T;
@@ -80,9 +88,10 @@ export function useOptimizedMemo<T>(
 
     // Warn about expensive computations in development
     if (
-      process.env.NODE_ENV === 'development'
-      && duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
-    ) {}
+      process.env.NODE_ENV === "development" &&
+      duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
+    ) {
+    }
 
     return result;
   }, deps);
@@ -104,10 +113,13 @@ export function useRenderPerformance(_componentName: string) {
     totalRenderTimeRef.current += renderTime;
 
     // Log performance in development
-    if (process.env.NODE_ENV === 'development') {
-      const _avgRenderTime = totalRenderTimeRef.current / renderCountRef.current;
+    if (process.env.NODE_ENV === "development") {
+      const _avgRenderTime =
+        totalRenderTimeRef.current / renderCountRef.current;
 
-      if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_ERROR) {} else if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {}
+      if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_ERROR) {
+      } else if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {
+      }
     }
   });
 
@@ -180,10 +192,10 @@ export function useVirtualScrolling<T>(
         item,
         index: visibleRange.start + index,
         style: {
-          position: 'absolute' as const,
+          position: "absolute" as const,
           top: (visibleRange.start + index) * itemHeight,
           height: itemHeight,
-          width: '100%',
+          width: "100%",
         },
       }));
   }, [items, visibleRange, itemHeight]);
@@ -195,7 +207,7 @@ export function useVirtualScrolling<T>(
       setScrollTop(event.currentTarget.scrollTop);
     },
     [],
-    'virtualScrolling',
+    "virtualScrolling",
   );
 
   return {
@@ -242,13 +254,14 @@ export function useIntersectionObserver(
 // Memory usage monitor hook
 export function useMemoryMonitor(_componentName: string) {
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && 'memory' in performance) {
+    if (process.env.NODE_ENV === "development" && "memory" in performance) {
       const checkMemory = () => {
         const memory = (performance as any).memory;
         const used = memory.usedJSHeapSize;
         const total = memory.totalJSHeapSize;
 
-        if (used > PERFORMANCE_THRESHOLDS.MEMORY_USAGE_WARNING) {}
+        if (used > PERFORMANCE_THRESHOLDS.MEMORY_USAGE_WARNING) {
+        }
 
         return { used, total, percentage: (used / total) * 100 };
       };
@@ -289,7 +302,7 @@ export function useOptimizedChartData<T>(
       return processor(rawData);
     },
     [rawData, ...deps],
-    'chartDataProcessor',
+    "chartDataProcessor",
   );
 }
 
@@ -299,19 +312,19 @@ export function usePreloadResources(resources: string[]) {
     const links: HTMLLinkElement[] = [];
 
     resources.forEach((resource) => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
+      const link = document.createElement("link");
+      link.rel = "preload";
 
       // Determine resource type
-      if (resource.endsWith('.js')) {
-        link.as = 'script';
-      } else if (resource.endsWith('.css')) {
-        link.as = 'style';
+      if (resource.endsWith(".js")) {
+        link.as = "script";
+      } else if (resource.endsWith(".css")) {
+        link.as = "style";
       } else if (/\.(woff|woff2|ttf|otf)$/.test(resource)) {
-        link.as = 'font';
-        link.crossOrigin = 'anonymous';
+        link.as = "font";
+        link.crossOrigin = "anonymous";
       } else if (/\.(jpg|jpeg|png|webp|avif|svg)$/.test(resource)) {
-        link.as = 'image';
+        link.as = "image";
       }
 
       link.href = resource;
@@ -332,9 +345,9 @@ export function usePreloadResources(resources: string[]) {
 // Performance profiler hook for development
 export function usePerformanceProfiler(
   name: string,
-  enabled: boolean = process.env.NODE_ENV === 'development',
+  enabled: boolean = process.env.NODE_ENV === "development",
 ) {
-  const marksRef = useRef<{ [key: string]: number; }>({});
+  const marksRef = useRef<{ [key: string]: number }>({});
 
   const mark = useCallback(
     (markName: string) => {
@@ -365,7 +378,8 @@ export function usePerformanceProfiler(
           endName,
         );
 
-        const duration = marksRef.current[endMark] - marksRef.current[startMark];
+        const duration =
+          marksRef.current[endMark] - marksRef.current[startMark];
 
         return duration;
       } catch {}

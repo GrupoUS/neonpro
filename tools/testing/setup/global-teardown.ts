@@ -13,9 +13,9 @@
  * - Database cleanup for healthcare scenarios
  */
 
-import type { FullConfig } from '@playwright/test';
-import fs from 'node:fs';
-import path from 'node:path';
+import type { FullConfig } from "@playwright/test";
+import fs from "node:fs";
+import path from "node:path";
 
 /**
  * Global teardown function for Playwright healthcare testing
@@ -45,7 +45,8 @@ async function globalTeardown(_config: FullConfig) {
  * Cleanup sensitive healthcare test data
  */
 async function cleanupTestData() {
-  try {} catch {}
+  try {
+  } catch {}
 }
 
 /**
@@ -53,7 +54,7 @@ async function cleanupTestData() {
  */
 async function generateComplianceReports() {
   try {
-    const reportsDir = path.join(__dirname, '../reports/compliance');
+    const reportsDir = path.join(__dirname, "../reports/compliance");
 
     // Ensure reports directory exists
     if (!fs.existsSync(reportsDir)) {
@@ -63,11 +64,11 @@ async function generateComplianceReports() {
     // Generate LGPD compliance report
     const lgpdReport = {
       timestamp: new Date().toISOString(),
-      compliance_level: 'healthcare',
-      data_processed: 'test-data-only',
-      privacy_controls: 'active',
-      audit_trail: 'complete',
-      data_retention: 'test-cleanup-applied',
+      compliance_level: "healthcare",
+      data_processed: "test-data-only",
+      privacy_controls: "active",
+      audit_trail: "complete",
+      data_retention: "test-cleanup-applied",
     };
 
     fs.writeFileSync(
@@ -78,10 +79,10 @@ async function generateComplianceReports() {
     // Generate ANVISA compliance report
     const anvisaReport = {
       timestamp: new Date().toISOString(),
-      regulatory_compliance: 'test-mode',
-      medical_device_validation: 'passed',
-      safety_protocols: 'active',
-      quality_standards: 'maintained',
+      regulatory_compliance: "test-mode",
+      medical_device_validation: "passed",
+      safety_protocols: "active",
+      quality_standards: "maintained",
     };
 
     fs.writeFileSync(
@@ -96,8 +97,8 @@ async function generateComplianceReports() {
  */
 async function archiveTestArtifacts() {
   try {
-    const artifactsDir = path.join(__dirname, '../test-results');
-    const archiveDir = path.join(__dirname, '../reports/archives');
+    const artifactsDir = path.join(__dirname, "../test-results");
+    const archiveDir = path.join(__dirname, "../reports/archives");
 
     if (fs.existsSync(artifactsDir)) {
       // Ensure archive directory exists
@@ -106,16 +107,16 @@ async function archiveTestArtifacts() {
       }
 
       // Archive test results for compliance audit
-      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, '-');
+      const timestamp = new Date().toISOString().replaceAll(/[:.]/g, "-");
       const _archivePath = path.join(archiveDir, `test-artifacts-${timestamp}`);
 
       // Create archive metadata
       const metadata = {
         archived_at: new Date().toISOString(),
-        test_type: 'healthcare-e2e',
-        compliance_frameworks: ['LGPD', 'ANVISA', 'CFM'],
-        retention_period: '7-years', // Healthcare data retention requirement
-        purpose: 'regulatory-compliance-audit',
+        test_type: "healthcare-e2e",
+        compliance_frameworks: ["LGPD", "ANVISA", "CFM"],
+        retention_period: "7-years", // Healthcare data retention requirement
+        purpose: "regulatory-compliance-audit",
       };
 
       fs.writeFileSync(
@@ -131,12 +132,12 @@ async function archiveTestArtifacts() {
  */
 async function cleanupAuthStates() {
   try {
-    const authDir = path.join(__dirname, 'auth');
+    const authDir = path.join(__dirname, "auth");
 
     if (fs.existsSync(authDir)) {
       const authFiles = fs
         .readdirSync(authDir)
-        .filter((file) => file.endsWith('.json'));
+        .filter((file) => file.endsWith(".json"));
 
       for (const file of authFiles) {
         const filePath = path.join(authDir, file);
@@ -154,10 +155,10 @@ async function performSecurityCleanup() {
   try {
     // Clear sensitive environment variables
     const sensitiveVars = [
-      'TEST_DATABASE_URL',
-      'SUPABASE_TEST_KEY',
-      'TEST_JWT_SECRET',
-      'HEALTHCARE_ADMIN_TOKEN',
+      "TEST_DATABASE_URL",
+      "SUPABASE_TEST_KEY",
+      "TEST_JWT_SECRET",
+      "HEALTHCARE_ADMIN_TOKEN",
     ];
 
     sensitiveVars.forEach((varName) => {
@@ -169,14 +170,14 @@ async function performSecurityCleanup() {
     // Generate security cleanup report
     const securityReport = {
       timestamp: new Date().toISOString(),
-      action: 'security-cleanup-completed',
+      action: "security-cleanup-completed",
       sensitive_data_purged: true,
       auth_states_cleared: true,
       environment_sanitized: true,
-      compliance_status: 'secure',
+      compliance_status: "secure",
     };
 
-    const reportsDir = path.join(__dirname, '../reports/security');
+    const reportsDir = path.join(__dirname, "../reports/security");
     if (!fs.existsSync(reportsDir)) {
       fs.mkdirSync(reportsDir, { recursive: true });
     }

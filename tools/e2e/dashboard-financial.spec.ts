@@ -1,22 +1,24 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 // Dashboard Financial E2E Tests
 // Tests revenue analytics, billing management, payment processing, and financial reporting
 
-test.describe('Dashboard Financial Page', () => {
+test.describe("Dashboard Financial Page", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to financial dashboard
-    await page.goto('/dashboard/financial');
+    await page.goto("/dashboard/financial");
 
     // Wait for page to load
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState("networkidle");
   });
 
-  test.describe('Financial Overview', () => {
-    test('should display financial dashboard with key metrics', async ({ page }) => {
+  test.describe("Financial Overview", () => {
+    test("should display financial dashboard with key metrics", async ({
+      page,
+    }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Financial.*NeonPro/);
-      await expect(page.locator('h1')).toContainText('Financial Dashboard');
+      await expect(page.locator("h1")).toContainText("Financial Dashboard");
 
       // Verify financial metrics cards
       await expect(page.locator('[data-testid="total-revenue"]')).toBeVisible();
@@ -34,7 +36,7 @@ test.describe('Dashboard Financial Page', () => {
       await expect(revenueGrowth).toContainText(/%/);
     });
 
-    test('should show revenue trends chart', async ({ page }) => {
+    test("should show revenue trends chart", async ({ page }) => {
       // Check revenue trends visualization
       await expect(
         page.locator('[data-testid="revenue-trends-chart"]'),
@@ -44,7 +46,7 @@ test.describe('Dashboard Financial Page', () => {
       await expect(page.locator('[data-testid="period-filter"]')).toBeVisible();
 
       // Test different time periods
-      const periods = ['7d', '30d', '90d', '1y'];
+      const periods = ["7d", "30d", "90d", "1y"];
       for (const period of periods) {
         await page.click(`[data-testid="period-${period}"]`);
         await page.waitForTimeout(1000);
@@ -54,7 +56,7 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should display payment methods distribution', async ({ page }) => {
+    test("should display payment methods distribution", async ({ page }) => {
       // Check payment methods chart
       await expect(
         page.locator('[data-testid="payment-methods-chart"]'),
@@ -62,12 +64,12 @@ test.describe('Dashboard Financial Page', () => {
 
       // Verify Brazilian payment methods
       const paymentMethods = [
-        'pix',
-        'credit-card',
-        'debit-card',
-        'boleto',
-        'cash',
-        'insurance',
+        "pix",
+        "credit-card",
+        "debit-card",
+        "boleto",
+        "cash",
+        "insurance",
       ];
 
       for (const method of paymentMethods) {
@@ -80,7 +82,7 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should show top revenue sources', async ({ page }) => {
+    test("should show top revenue sources", async ({ page }) => {
       const revenueSourcesSection = page.locator(
         '[data-testid="revenue-sources"]',
       );
@@ -103,8 +105,8 @@ test.describe('Dashboard Financial Page', () => {
     });
   });
 
-  test.describe('Revenue Analytics', () => {
-    test('should display detailed revenue analytics', async ({ page }) => {
+  test.describe("Revenue Analytics", () => {
+    test("should display detailed revenue analytics", async ({ page }) => {
       // Navigate to revenue analytics
       await page.click('[data-testid="revenue-analytics-tab"]');
 
@@ -127,16 +129,16 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should analyze revenue by treatment type', async ({ page }) => {
+    test("should analyze revenue by treatment type", async ({ page }) => {
       await page.click('[data-testid="revenue-analytics-tab"]');
 
       // Check treatment revenue breakdown
       const treatmentTypes = [
-        'botox',
-        'dermal-fillers',
-        'laser-therapy',
-        'chemical-peels',
-        'consultations',
+        "botox",
+        "dermal-fillers",
+        "laser-therapy",
+        "chemical-peels",
+        "consultations",
       ];
 
       for (const type of treatmentTypes) {
@@ -153,7 +155,7 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should track revenue goals and targets', async ({ page }) => {
+    test("should track revenue goals and targets", async ({ page }) => {
       await page.click('[data-testid="revenue-analytics-tab"]');
 
       // Navigate to goals section
@@ -170,7 +172,7 @@ test.describe('Dashboard Financial Page', () => {
       await expect(page.locator('[data-testid="goal-progress"]')).toBeVisible();
     });
 
-    test('should generate revenue forecasts', async ({ page }) => {
+    test("should generate revenue forecasts", async ({ page }) => {
       await page.click('[data-testid="revenue-analytics-tab"]');
 
       // Navigate to forecasting
@@ -190,7 +192,7 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
 
       // Test forecast generation
-      await page.selectOption('[data-testid="forecast-period"]', '6months');
+      await page.selectOption('[data-testid="forecast-period"]', "6months");
       await page.click('[data-testid="generate-forecast"]');
 
       // Verify forecast results
@@ -200,8 +202,8 @@ test.describe('Dashboard Financial Page', () => {
     });
   });
 
-  test.describe('Billing Management', () => {
-    test('should display billing overview', async ({ page }) => {
+  test.describe("Billing Management", () => {
+    test("should display billing overview", async ({ page }) => {
       // Navigate to billing
       await page.click('[data-testid="billing-tab"]');
 
@@ -222,14 +224,14 @@ test.describe('Dashboard Financial Page', () => {
       await expect(billingTable).toBeVisible();
     });
 
-    test('should create new invoice', async ({ page }) => {
+    test("should create new invoice", async ({ page }) => {
       await page.click('[data-testid="billing-tab"]');
 
       // Click create invoice
       await page.click('[data-testid="create-invoice"]');
 
       // Fill invoice form
-      await page.fill('[data-testid="patient-search"]', 'Ana Costa');
+      await page.fill('[data-testid="patient-search"]', "Ana Costa");
       await page.waitForTimeout(500);
       await page.click('[data-testid="patient-option"]');
 
@@ -237,22 +239,22 @@ test.describe('Dashboard Financial Page', () => {
       await page.click('[data-testid="add-invoice-item"]');
       await page.selectOption(
         '[data-testid="service-select"]',
-        'botox-consultation',
+        "botox-consultation",
       );
-      await page.fill('[data-testid="item-quantity"]', '1');
-      await page.fill('[data-testid="item-price"]', '800.00');
+      await page.fill('[data-testid="item-quantity"]', "1");
+      await page.fill('[data-testid="item-price"]', "800.00");
 
       // Add another item
       await page.click('[data-testid="add-invoice-item"]');
       await page.selectOption(
         '[data-testid="service-select"]',
-        'botox-treatment',
+        "botox-treatment",
       );
-      await page.fill('[data-testid="item-quantity"]', '1');
-      await page.fill('[data-testid="item-price"]', '1200.00');
+      await page.fill('[data-testid="item-quantity"]', "1");
+      await page.fill('[data-testid="item-price"]', "1200.00");
 
       // Set payment terms
-      await page.selectOption('[data-testid="payment-terms"]', '30-days');
+      await page.selectOption('[data-testid="payment-terms"]', "30-days");
 
       // Add notes
       await page.fill(
@@ -269,10 +271,10 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Invoice created successfully');
+      ).toContainText("Invoice created successfully");
     });
 
-    test('should process invoice payments', async ({ page }) => {
+    test("should process invoice payments", async ({ page }) => {
       await page.click('[data-testid="billing-tab"]');
 
       // Find an unpaid invoice
@@ -285,13 +287,13 @@ test.describe('Dashboard Financial Page', () => {
         await page.click('[data-testid="record-payment"]');
 
         // Fill payment form
-        await page.fill('[data-testid="payment-amount"]', '2000.00');
-        await page.selectOption('[data-testid="payment-method"]', 'pix');
+        await page.fill('[data-testid="payment-amount"]', "2000.00");
+        await page.selectOption('[data-testid="payment-method"]', "pix");
 
         // Set payment date
         await page.fill(
           '[data-testid="payment-date"]',
-          new Date().toISOString().split('T')[0],
+          new Date().toISOString().split("T")[0],
         );
 
         // Add payment reference
@@ -309,17 +311,17 @@ test.describe('Dashboard Financial Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Payment recorded');
+        ).toContainText("Payment recorded");
       }
     });
 
-    test('should send invoice reminders', async ({ page }) => {
+    test("should send invoice reminders", async ({ page }) => {
       await page.click('[data-testid="billing-tab"]');
 
       // Filter overdue invoices
       await page.selectOption(
         '[data-testid="invoice-status-filter"]',
-        'overdue',
+        "overdue",
       );
       await page.waitForTimeout(1000);
 
@@ -336,7 +338,7 @@ test.describe('Dashboard Financial Page', () => {
         // Customize reminder message
         await page.fill(
           '[data-testid="reminder-message"]',
-          'Gentle reminder: Your invoice is now overdue. Please process payment at your earliest convenience.',
+          "Gentle reminder: Your invoice is now overdue. Please process payment at your earliest convenience.",
         );
 
         // Select reminder method
@@ -352,11 +354,11 @@ test.describe('Dashboard Financial Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Reminder sent');
+        ).toContainText("Reminder sent");
       }
     });
 
-    test('should generate billing reports', async ({ page }) => {
+    test("should generate billing reports", async ({ page }) => {
       await page.click('[data-testid="billing-tab"]');
 
       // Navigate to billing reports
@@ -367,18 +369,18 @@ test.describe('Dashboard Financial Page', () => {
       startDate.setMonth(startDate.getMonth() - 1);
       await page.fill(
         '[data-testid="report-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="report-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Select report type
-      await page.selectOption('[data-testid="report-type"]', 'aging-report');
+      await page.selectOption('[data-testid="report-type"]', "aging-report");
 
       // Generate report
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="generate-billing-report"]');
 
       // Verify download
@@ -389,8 +391,8 @@ test.describe('Dashboard Financial Page', () => {
     });
   });
 
-  test.describe('Payment Processing', () => {
-    test('should display payment processing overview', async ({ page }) => {
+  test.describe("Payment Processing", () => {
+    test("should display payment processing overview", async ({ page }) => {
       // Navigate to payments
       await page.click('[data-testid="payments-tab"]');
 
@@ -414,17 +416,17 @@ test.describe('Dashboard Financial Page', () => {
       await expect(successRate).toContainText(/%/);
     });
 
-    test('should process PIX payments', async ({ page }) => {
+    test("should process PIX payments", async ({ page }) => {
       await page.click('[data-testid="payments-tab"]');
 
       // Test PIX payment processing
       await page.click('[data-testid="process-pix-payment"]');
 
       // Fill PIX payment form
-      await page.fill('[data-testid="pix-amount"]', '1500.00');
+      await page.fill('[data-testid="pix-amount"]', "1500.00");
       await page.fill(
         '[data-testid="pix-description"]',
-        'Botox treatment payment',
+        "Botox treatment payment",
       );
 
       // Generate PIX QR code
@@ -442,21 +444,21 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
     });
 
-    test('should handle credit card payments', async ({ page }) => {
+    test("should handle credit card payments", async ({ page }) => {
       await page.click('[data-testid="payments-tab"]');
 
       // Test credit card payment
       await page.click('[data-testid="process-card-payment"]');
 
       // Fill card payment form
-      await page.fill('[data-testid="card-amount"]', '2400.00');
-      await page.fill('[data-testid="card-number"]', '4111111111111111');
-      await page.fill('[data-testid="card-expiry"]', '12/25');
-      await page.fill('[data-testid="card-cvv"]', '123');
-      await page.fill('[data-testid="cardholder-name"]', 'Maria Silva');
+      await page.fill('[data-testid="card-amount"]', "2400.00");
+      await page.fill('[data-testid="card-number"]', "4111111111111111");
+      await page.fill('[data-testid="card-expiry"]', "12/25");
+      await page.fill('[data-testid="card-cvv"]', "123");
+      await page.fill('[data-testid="cardholder-name"]', "Maria Silva");
 
       // Select installments
-      await page.selectOption('[data-testid="installments"]', '3');
+      await page.selectOption('[data-testid="installments"]', "3");
 
       // Process payment
       await page.click('[data-testid="process-card-payment-button"]');
@@ -467,7 +469,7 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
     });
 
-    test('should manage payment refunds', async ({ page }) => {
+    test("should manage payment refunds", async ({ page }) => {
       await page.click('[data-testid="payments-tab"]');
 
       // Navigate to refunds section
@@ -483,11 +485,11 @@ test.describe('Dashboard Financial Page', () => {
           .click();
 
         // Fill refund form
-        await page.selectOption('[data-testid="refund-type"]', 'partial');
-        await page.fill('[data-testid="refund-amount"]', '500.00');
+        await page.selectOption('[data-testid="refund-type"]', "partial");
+        await page.fill('[data-testid="refund-amount"]', "500.00");
         await page.fill(
           '[data-testid="refund-reason"]',
-          'Treatment cancelled by patient',
+          "Treatment cancelled by patient",
         );
 
         // Process refund
@@ -499,11 +501,11 @@ test.describe('Dashboard Financial Page', () => {
         ).toBeVisible();
         await expect(
           page.locator('[data-testid="success-message"]'),
-        ).toContainText('Refund processed');
+        ).toContainText("Refund processed");
       }
     });
 
-    test('should track payment disputes', async ({ page }) => {
+    test("should track payment disputes", async ({ page }) => {
       await page.click('[data-testid="payments-tab"]');
 
       // Navigate to disputes section
@@ -536,8 +538,8 @@ test.describe('Dashboard Financial Page', () => {
     });
   });
 
-  test.describe('Tax and Compliance', () => {
-    test('should display tax overview', async ({ page }) => {
+  test.describe("Tax and Compliance", () => {
+    test("should display tax overview", async ({ page }) => {
       // Navigate to tax section
       await page.click('[data-testid="tax-tab"]');
 
@@ -556,7 +558,9 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
     });
 
-    test('should generate tax reports for Brazilian compliance', async ({ page }) => {
+    test("should generate tax reports for Brazilian compliance", async ({
+      page,
+    }) => {
       await page.click('[data-testid="tax-tab"]');
 
       // Navigate to tax reports
@@ -567,21 +571,21 @@ test.describe('Dashboard Financial Page', () => {
       startDate.setMonth(startDate.getMonth() - 1);
       await page.fill(
         '[data-testid="tax-report-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="tax-report-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Select report type (Brazilian tax requirements)
       await page.selectOption(
         '[data-testid="tax-report-type"]',
-        'simples-nacional',
+        "simples-nacional",
       );
 
       // Generate tax report
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="generate-tax-report"]');
 
       // Verify download
@@ -591,7 +595,7 @@ test.describe('Dashboard Financial Page', () => {
       );
     });
 
-    test('should track ISS (Service Tax) compliance', async ({ page }) => {
+    test("should track ISS (Service Tax) compliance", async ({ page }) => {
       await page.click('[data-testid="tax-tab"]');
 
       // Navigate to ISS section
@@ -606,9 +610,9 @@ test.describe('Dashboard Financial Page', () => {
 
       // Check ISS calculation by service
       const serviceTypes = [
-        'consultation',
-        'aesthetic-procedure',
-        'dermatological-treatment',
+        "consultation",
+        "aesthetic-procedure",
+        "dermatological-treatment",
       ];
 
       for (const service of serviceTypes) {
@@ -622,7 +626,7 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should manage COFINS and PIS compliance', async ({ page }) => {
+    test("should manage COFINS and PIS compliance", async ({ page }) => {
       await page.click('[data-testid="tax-tab"]');
 
       // Navigate to federal taxes section
@@ -643,8 +647,10 @@ test.describe('Dashboard Financial Page', () => {
     });
   });
 
-  test.describe('Financial Reports', () => {
-    test('should generate comprehensive financial reports', async ({ page }) => {
+  test.describe("Financial Reports", () => {
+    test("should generate comprehensive financial reports", async ({
+      page,
+    }) => {
       // Navigate to reports section
       await page.click('[data-testid="reports-tab"]');
 
@@ -663,7 +669,7 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
     });
 
-    test('should export financial data', async ({ page }) => {
+    test("should export financial data", async ({ page }) => {
       await page.click('[data-testid="reports-tab"]');
 
       // Configure export parameters
@@ -671,11 +677,11 @@ test.describe('Dashboard Financial Page', () => {
       startDate.setMonth(startDate.getMonth() - 3);
       await page.fill(
         '[data-testid="export-start-date"]',
-        startDate.toISOString().split('T')[0],
+        startDate.toISOString().split("T")[0],
       );
       await page.fill(
         '[data-testid="export-end-date"]',
-        new Date().toISOString().split('T')[0],
+        new Date().toISOString().split("T")[0],
       );
 
       // Select data to export
@@ -685,10 +691,10 @@ test.describe('Dashboard Financial Page', () => {
       await page.check('[data-testid="export-taxes"]');
 
       // Select export format
-      await page.selectOption('[data-testid="export-format"]', 'xlsx');
+      await page.selectOption('[data-testid="export-format"]', "xlsx");
 
       // Export data
-      const downloadPromise = page.waitForEvent('download');
+      const downloadPromise = page.waitForEvent("download");
       await page.click('[data-testid="export-financial-data"]');
 
       // Verify download
@@ -696,7 +702,7 @@ test.describe('Dashboard Financial Page', () => {
       expect(download.suggestedFilename()).toMatch(/financial.*data.*\.xlsx$/);
     });
 
-    test('should schedule automated reports', async ({ page }) => {
+    test("should schedule automated reports", async ({ page }) => {
       await page.click('[data-testid="reports-tab"]');
 
       // Navigate to automated reports
@@ -706,18 +712,18 @@ test.describe('Dashboard Financial Page', () => {
       await page.click('[data-testid="create-automated-report"]');
 
       // Configure report settings
-      await page.fill('[data-testid="report-name"]', 'Monthly Revenue Summary');
-      await page.selectOption('[data-testid="report-type"]', 'revenue-summary');
-      await page.selectOption('[data-testid="report-frequency"]', 'monthly');
+      await page.fill('[data-testid="report-name"]', "Monthly Revenue Summary");
+      await page.selectOption('[data-testid="report-type"]', "revenue-summary");
+      await page.selectOption('[data-testid="report-frequency"]', "monthly");
 
       // Set recipients
       await page.fill(
         '[data-testid="report-recipients"]',
-        'admin@neonpro.com.br, finance@neonpro.com.br',
+        "admin@neonpro.com.br, finance@neonpro.com.br",
       );
 
       // Set delivery day
-      await page.selectOption('[data-testid="delivery-day"]', '1');
+      await page.selectOption('[data-testid="delivery-day"]', "1");
 
       // Save automated report
       await page.click('[data-testid="save-automated-report"]');
@@ -728,15 +734,17 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="success-message"]'),
-      ).toContainText('Automated report created');
+      ).toContainText("Automated report created");
     });
   });
 
-  test.describe('Performance and Accessibility', () => {
-    test('should load financial dashboard within performance thresholds', async ({ page }) => {
+  test.describe("Performance and Accessibility", () => {
+    test("should load financial dashboard within performance thresholds", async ({
+      page,
+    }) => {
       const startTime = Date.now();
-      await page.goto('/dashboard/financial');
-      await page.waitForLoadState('networkidle');
+      await page.goto("/dashboard/financial");
+      await page.waitForLoadState("networkidle");
       const loadTime = Date.now() - startTime;
 
       // Should load within 3 seconds
@@ -744,24 +752,26 @@ test.describe('Dashboard Financial Page', () => {
 
       // Check for performance metrics
       const performanceEntries = await page.evaluate(() => {
-        return JSON.stringify(performance.getEntriesByType('navigation'));
+        return JSON.stringify(performance.getEntriesByType("navigation"));
       });
 
       expect(performanceEntries).toBeDefined();
     });
 
-    test('should support keyboard navigation', async ({ page }) => {
+    test("should support keyboard navigation", async ({ page }) => {
       // Test tab navigation through financial sections
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
 
       // Should be able to navigate to main sections
-      const focusedElement = page.locator(':focus');
+      const focusedElement = page.locator(":focus");
       await expect(focusedElement).toBeVisible();
     });
 
-    test('should have proper ARIA labels for financial data', async ({ page }) => {
+    test("should have proper ARIA labels for financial data", async ({
+      page,
+    }) => {
       // Check ARIA labels on financial metrics
       await expect(
         page.locator('[data-testid="total-revenue"][aria-label]'),
@@ -771,13 +781,13 @@ test.describe('Dashboard Financial Page', () => {
       ).toBeVisible();
 
       // Check table accessibility
-      const tables = page.locator('table');
+      const tables = page.locator("table");
       if ((await tables.count()) > 0) {
-        await expect(tables.first()).toHaveAttribute('role', 'table');
+        await expect(tables.first()).toHaveAttribute("role", "table");
       }
     });
 
-    test('should be responsive on mobile devices', async ({ page }) => {
+    test("should be responsive on mobile devices", async ({ page }) => {
       // Test mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
 
@@ -796,7 +806,9 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should support screen readers for financial information', async ({ page }) => {
+    test("should support screen readers for financial information", async ({
+      page,
+    }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',
@@ -806,7 +818,7 @@ test.describe('Dashboard Financial Page', () => {
       }
 
       // Check for descriptive headings
-      const headings = page.locator('h1, h2, h3, h4, h5, h6');
+      const headings = page.locator("h1, h2, h3, h4, h5, h6");
       if ((await headings.count()) > 0) {
         await expect(headings.first()).toBeVisible();
       }
@@ -820,7 +832,7 @@ test.describe('Dashboard Financial Page', () => {
       }
     });
 
-    test('should handle real-time financial data updates', async ({ page }) => {
+    test("should handle real-time financial data updates", async ({ page }) => {
       // Check for real-time update indicators
       const updateIndicators = page.locator(
         '[data-testid="real-time-indicator"]',

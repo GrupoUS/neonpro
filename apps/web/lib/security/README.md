@@ -24,7 +24,7 @@ lib/security/
 ### 1. Configuração Inicial
 
 ```typescript
-import { IntegratedSessionSecurity } from '@/lib/security/integrated-session-security';
+import { IntegratedSessionSecurity } from "@/lib/security/integrated-session-security";
 
 // Inicializar segurança de sessão
 const sessionSecurity = new IntegratedSessionSecurity();
@@ -46,7 +46,7 @@ const result = await sessionSecurity.initializeSessionSecurity(
 ### 2. Uso em APIs
 
 ```typescript
-import { SessionSecurityMiddleware } from '@/lib/security/session-security-middleware';
+import { SessionSecurityMiddleware } from "@/lib/security/session-security-middleware";
 
 // Em rotas de API
 const middleware = new SessionSecurityMiddleware();
@@ -94,7 +94,7 @@ function MyComponent() {
 **Propósito:** Proteção contra ataques Cross-Site Request Forgery
 
 ```typescript
-import { CSRFProtection } from './csrf-protection';
+import { CSRFProtection } from "./csrf-protection";
 
 const csrf = new CSRFProtection();
 
@@ -120,7 +120,7 @@ await csrf.invalidateTokensForSession(sessionId);
 **Propósito:** Detecção e prevenção de sequestro de sessão
 
 ```typescript
-import { SessionHijackingProtection } from './session-hijacking-protection';
+import { SessionHijackingProtection } from "./session-hijacking-protection";
 
 const hijackingProtection = new SessionHijackingProtection();
 
@@ -154,7 +154,7 @@ const result = await hijackingProtection.checkSession(
 **Propósito:** Gerenciamento inteligente de timeout de sessão
 
 ```typescript
-import { SessionTimeoutManager } from './session-timeout-manager';
+import { SessionTimeoutManager } from "./session-timeout-manager";
 
 const timeoutManager = new SessionTimeoutManager();
 
@@ -229,16 +229,16 @@ O middleware global (`middleware.ts`) aplica proteções automaticamente:
 ```typescript
 // Rotas protegidas (aplicação automática)
 const PROTECTED_ROUTES = [
-  '/api/patients',
-  '/api/appointments',
-  '/api/medical-records',
-  '/dashboard',
-  '/patients',
-  '/appointments',
+  "/api/patients",
+  "/api/appointments",
+  "/api/medical-records",
+  "/dashboard",
+  "/patients",
+  "/appointments",
 ];
 
 // Rotas isentas
-const EXEMPT_ROUTES = ['/api/auth', '/api/public', '/login', '/register'];
+const EXEMPT_ROUTES = ["/api/auth", "/api/public", "/login", "/register"];
 ```
 
 **Headers de Segurança Aplicados:**
@@ -256,18 +256,18 @@ O sistema registra automaticamente eventos de segurança:
 ```typescript
 // Tipos de eventos
 type SecurityEventType =
-  | 'csrf_validation_failed'
-  | 'session_hijacking_detected'
-  | 'session_timeout_warning'
-  | 'session_terminated'
-  | 'concurrent_session_limit'
-  | 'suspicious_activity';
+  | "csrf_validation_failed"
+  | "session_hijacking_detected"
+  | "session_timeout_warning"
+  | "session_terminated"
+  | "concurrent_session_limit"
+  | "suspicious_activity";
 
 // Consultar eventos
 const events = await getSecurityEvents(userId, {
-  startDate: new Date('2025-01-01'),
+  startDate: new Date("2025-01-01"),
   endDate: new Date(),
-  eventTypes: ['session_hijacking_detected'],
+  eventTypes: ["session_hijacking_detected"],
 });
 ```
 
@@ -293,10 +293,10 @@ await setUserSecurityConfig(userId, {
 
 ```typescript
 // Adicionar IP confiável
-await addTrustedIP(userId, '192.168.1.100', 'Office Network');
+await addTrustedIP(userId, "192.168.1.100", "Office Network");
 
 // Remover IP confiável
-await removeTrustedIP(userId, '192.168.1.100');
+await removeTrustedIP(userId, "192.168.1.100");
 
 // Listar IPs confiáveis
 const trustedIPs = await getTrustedIPs(userId);
@@ -306,7 +306,7 @@ const trustedIPs = await getTrustedIPs(userId);
 
 ```typescript
 // Adicionar sessão à blacklist
-await addToSessionBlacklist(sessionId, 'Suspicious activity detected');
+await addToSessionBlacklist(sessionId, "Suspicious activity detected");
 
 // Verificar se sessão está na blacklist
 const isBlacklisted = await isSessionBlacklisted(sessionId);
@@ -322,19 +322,19 @@ await removeFromSessionBlacklist(sessionId);
 ```typescript
 // Teste de geração de token
 const token = await csrf.generateToken(
-  'session123',
-  'Mozilla/5.0...',
-  '192.168.1.1',
+  "session123",
+  "Mozilla/5.0...",
+  "192.168.1.1",
 );
 expect(token).toBeDefined();
 expect(token.length).toBe(64); // 32 bytes em hex
 
 // Teste de validação
-const isValid = await csrf.validateToken(token, 'session123');
+const isValid = await csrf.validateToken(token, "session123");
 expect(isValid).toBe(true);
 
 // Teste de token inválido
-const isInvalid = await csrf.validateToken('invalid-token', 'session123');
+const isInvalid = await csrf.validateToken("invalid-token", "session123");
 expect(isInvalid).toBe(false);
 ```
 
@@ -347,17 +347,17 @@ const result1 = await hijackingProtection.checkSession(
   sessionId,
   request1,
 );
-expect(result1.action).toBe('allow');
+expect(result1.action).toBe("allow");
 expect(result1.riskScore).toBeLessThan(3);
 
 // Teste de mudança de IP (risco médio)
-const request2 = { ...request1, ip: '10.0.0.1' };
+const request2 = { ...request1, ip: "10.0.0.1" };
 const result2 = await hijackingProtection.checkSession(
   userId,
   sessionId,
   request2,
 );
-expect(result2.action).toBe('challenge');
+expect(result2.action).toBe("challenge");
 expect(result2.riskScore).toBeGreaterThan(3);
 ```
 
@@ -413,7 +413,7 @@ Solução: Aguardar o reset da janela ou aumentar os limites
 
 ```typescript
 // Habilitar logs detalhados
-process.env.SECURITY_DEBUG = 'true';
+process.env.SECURITY_DEBUG = "true";
 
 // Logs serão exibidos no console:
 // [SECURITY] CSRF token generated for session: session123

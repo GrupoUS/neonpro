@@ -5,16 +5,16 @@
  * Verifica conectividade com Supabase e URLs de callback
  */
 
-const https = require('node:https');
-const fs = require('node:fs');
+const https = require("node:https");
+const fs = require("node:fs");
 
 // Ler variáveis de ambiente
-const envFile = '.env.local';
-let supabaseUrl = '';
-let _supabaseKey = '';
+const envFile = ".env.local";
+let supabaseUrl = "";
+let _supabaseKey = "";
 
 if (fs.existsSync(envFile)) {
-  const envContent = fs.readFileSync(envFile, 'utf8');
+  const envContent = fs.readFileSync(envFile, "utf8");
   const urlMatch = envContent.match(/NEXT_PUBLIC_SUPABASE_URL=(.+)/);
   const keyMatch = envContent.match(/NEXT_PUBLIC_SUPABASE_ANON_KEY=(.+)/);
 
@@ -33,7 +33,7 @@ function testUrl(url, _description) {
       resolve(true);
     });
 
-    request.on('error', (_error) => {
+    request.on("error", (_error) => {
       resolve(false);
     });
 
@@ -47,11 +47,11 @@ function testUrl(url, _description) {
 // Função principal de teste
 async function runTests() {
   if (supabaseUrl) {
-    await testUrl(supabaseUrl, 'Supabase Base URL');
-    await testUrl(`${supabaseUrl}/auth/v1/settings`, 'Supabase Auth Settings');
+    await testUrl(supabaseUrl, "Supabase Base URL");
+    await testUrl(`${supabaseUrl}/auth/v1/settings`, "Supabase Auth Settings");
   }
-  await testUrl('https://neonpro.vercel.app', 'Site Principal');
-  await testUrl('https://neonpro.vercel.app/login', 'Página de Login');
+  await testUrl("https://neonpro.vercel.app", "Site Principal");
+  await testUrl("https://neonpro.vercel.app/login", "Página de Login");
   if (supabaseUrl) {
   }
 }

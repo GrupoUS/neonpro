@@ -7,8 +7,8 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState } from 'react';
-import type { ReactNode } from 'react';
+import { useState } from "react";
+import type { ReactNode } from "react";
 
 // Healthcare-specific query configuration
 export const HealthcareQueryConfig = {

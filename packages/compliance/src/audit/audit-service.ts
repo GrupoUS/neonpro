@@ -5,9 +5,21 @@
  * Quality Standard: ≥9.9/10
  */
 
-import type { ComplianceScore } from '../types';
-import { AuditConfigSchema, AuditEventSchema, AuditEventType, AuditFiltersSchema, AuditSeverity } from './types';
-import type { AuditConfig, AuditEvent, AuditFilters, AuditLog, AuditTrailValidation } from './types';
+import type { ComplianceScore } from "../types";
+import {
+  AuditConfigSchema,
+  AuditEventSchema,
+  AuditEventType,
+  AuditFiltersSchema,
+  AuditSeverity,
+} from "./types";
+import type {
+  AuditConfig,
+  AuditEvent,
+  AuditFilters,
+  AuditLog,
+  AuditTrailValidation,
+} from "./types";
 
 /**
  * Constitutional Audit Service
@@ -26,7 +38,7 @@ export class AuditService {
   async logEvent(
     tenantId: string,
     event: AuditEvent,
-  ): Promise<{ success: boolean; auditLogId?: string; error?: string; }> {
+  ): Promise<{ success: boolean; auditLogId?: string; error?: string }> {
     try {
       // Validate event data
       const validatedEvent = AuditEventSchema.parse(event);
@@ -37,7 +49,7 @@ export class AuditService {
         event.severity,
       );
 
-      const auditLog: Omit<AuditLog, 'id'> = {
+      const auditLog: Omit<AuditLog, "id"> = {
         tenantId,
         eventType: validatedEvent.eventType,
         severity: validatedEvent.severity,
@@ -56,9 +68,9 @@ export class AuditService {
       };
 
       const { data, error } = await this.supabaseClient
-        .from('audit_logs')
+        .from("audit_logs")
         .insert([auditLog])
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
@@ -74,7 +86,7 @@ export class AuditService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -84,67 +96,67 @@ export class AuditService {
    */
   async queryLogs(
     filters: AuditFilters,
-  ): Promise<{ success: boolean; logs?: AuditLog[]; error?: string; }> {
+  ): Promise<{ success: boolean; logs?: AuditLog[]; error?: string }> {
     try {
       // Validate filters
       const validatedFilters = AuditFiltersSchema.parse(filters);
 
       let query = this.supabaseClient
-        .from('audit_logs')
-        .select('*')
-        .order('timestamp', {
+        .from("audit_logs")
+        .select("*")
+        .order("timestamp", {
           ascending: false,
         });
 
       // Apply filters
       if (validatedFilters.tenantId) {
-        query = query.eq('tenant_id', validatedFilters.tenantId);
+        query = query.eq("tenant_id", validatedFilters.tenantId);
       }
 
       if (
-        validatedFilters.eventTypes
-        && validatedFilters.eventTypes.length > 0
+        validatedFilters.eventTypes &&
+        validatedFilters.eventTypes.length > 0
       ) {
-        query = query.in('event_type', validatedFilters.eventTypes);
+        query = query.in("event_type", validatedFilters.eventTypes);
       }
 
       if (
-        validatedFilters.severities
-        && validatedFilters.severities.length > 0
+        validatedFilters.severities &&
+        validatedFilters.severities.length > 0
       ) {
-        query = query.in('severity', validatedFilters.severities);
+        query = query.in("severity", validatedFilters.severities);
       }
 
       if (validatedFilters.userId) {
-        query = query.eq('user_id', validatedFilters.userId);
+        query = query.eq("user_id", validatedFilters.userId);
       }
 
       if (validatedFilters.patientId) {
-        query = query.eq('patient_id', validatedFilters.patientId);
+        query = query.eq("patient_id", validatedFilters.patientId);
       }
 
       if (validatedFilters.resourceType) {
-        query = query.eq('resource_type', validatedFilters.resourceType);
+        query = query.eq("resource_type", validatedFilters.resourceType);
       }
 
       if (validatedFilters.startDate) {
         query = query.gte(
-          'timestamp',
+          "timestamp",
           validatedFilters.startDate.toISOString(),
         );
       }
 
       if (validatedFilters.endDate) {
-        query = query.lte('timestamp', validatedFilters.endDate.toISOString());
+        query = query.lte("timestamp", validatedFilters.endDate.toISOString());
       }
 
       if (validatedFilters.regulation) {
-        query = query.eq('regulation', validatedFilters.regulation);
+        query = query.eq("regulation", validatedFilters.regulation);
       }
 
       if (validatedFilters.minComplianceScore !== undefined) {
         query = query.gte(
-          'compliance_score',
+          "compliance_score",
           validatedFilters.minComplianceScore,
         );
       }
@@ -170,7 +182,7 @@ export class AuditService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -185,11 +197,11 @@ export class AuditService {
 
       // Get audit logs for the last 30 days
       const { data: logs, error } = await this.supabaseClient
-        .from('audit_logs')
-        .select('*')
-        .eq('tenant_id', tenantId)
-        .gte('timestamp', thirtyDaysAgo.toISOString())
-        .order('timestamp', { ascending: true });
+        .from("audit_logs")
+        .select("*")
+        .eq("tenant_id", tenantId)
+        .gte("timestamp", thirtyDaysAgo.toISOString())
+        .order("timestamp", { ascending: true });
 
       if (error) {
         throw new Error(`Failed to fetch audit logs: ${error.message}`);
@@ -220,7 +232,8 @@ export class AuditService {
       // Check for gaps in audit trail (periods without any logs)
       if (logs.length > 0) {
         const sortedLogs = logs.sort(
-          (a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+          (a: any, b: any) =>
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
         );
 
         for (let i = 1; i < sortedLogs.length; i++) {
@@ -243,21 +256,21 @@ export class AuditService {
         (log: any) => log.severity === AuditSeverity.CRITICAL,
       );
       if (criticalEvents.length > 10) {
-        violations.push('High number of critical events detected');
-        recommendations.push('Review security measures and access controls');
+        violations.push("High number of critical events detected");
+        recommendations.push("Review security measures and access controls");
         integrityScore -= 1;
       }
 
       // Generate recommendations
       if (missingEvents.length > 0) {
         recommendations.push(
-          'Ensure all required healthcare operations are properly logged',
+          "Ensure all required healthcare operations are properly logged",
         );
       }
 
       if (violations.length === 0) {
         recommendations.push(
-          'Audit trail integrity is maintained - continue current practices',
+          "Audit trail integrity is maintained - continue current practices",
         );
       }
 
@@ -275,9 +288,9 @@ export class AuditService {
         missingEvents: [],
         integrityScore: 0 as ComplianceScore,
         lastValidation: new Date(),
-        violations: ['Audit trail validation system failure'],
+        violations: ["Audit trail validation system failure"],
         recommendations: [
-          'Contact system administrator to resolve audit validation issues',
+          "Contact system administrator to resolve audit validation issues",
         ],
       };
     }
@@ -288,14 +301,14 @@ export class AuditService {
    */
   async configureAudit(
     config: AuditConfig,
-  ): Promise<{ success: boolean; error?: string; }> {
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Validate configuration
       const validatedConfig = AuditConfigSchema.parse(config);
 
       const { error } = await this.supabaseClient
-        .from('audit_configurations')
-        .upsert([validatedConfig], { onConflict: 'tenant_id' });
+        .from("audit_configurations")
+        .upsert([validatedConfig], { onConflict: "tenant_id" });
 
       if (error) {
         return { success: false, error: error.message };
@@ -305,7 +318,7 @@ export class AuditService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -356,7 +369,7 @@ export class AuditService {
    */
   private async triggerRealTimeAlert(
     _tenantId: string,
-    _auditLog: Omit<AuditLog, 'id'>,
+    _auditLog: Omit<AuditLog, "id">,
   ): Promise<void> {
     try {
       // In a real implementation, you would:

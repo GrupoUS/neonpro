@@ -6,35 +6,35 @@
  * Ensures data protection, audit logging, and consent validation
  */
 
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { z } from 'zod';
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import { z } from "zod";
 
 // LGPD data categories for real-time processing
 export enum LGPDDataCategory {
-  PERSONAL = 'personal', // Nome, email, telefone
-  SENSITIVE = 'sensitive', // CPF, RG, dados médicos
-  ANONYMOUS = 'anonymous', // Dados totalmente anonimizados
-  PSEUDONYMOUS = 'pseudonymous', // Dados pseudonimizados
-  AGGREGATE = 'aggregate', // Dados agregados/estatísticos
+  PERSONAL = "personal", // Nome, email, telefone
+  SENSITIVE = "sensitive", // CPF, RG, dados médicos
+  ANONYMOUS = "anonymous", // Dados totalmente anonimizados
+  PSEUDONYMOUS = "pseudonymous", // Dados pseudonimizados
+  AGGREGATE = "aggregate", // Dados agregados/estatísticos
 }
 
 // LGPD processing purposes for real-time data
 export enum LGPDProcessingPurpose {
-  HEALTHCARE_DELIVERY = 'healthcare_delivery',
-  APPOINTMENT_MANAGEMENT = 'appointment_management',
-  COMPLIANCE_MONITORING = 'compliance_monitoring',
-  AUDIT_LOGGING = 'audit_logging',
-  ANALYTICS = 'analytics',
-  NOTIFICATION = 'notification',
+  HEALTHCARE_DELIVERY = "healthcare_delivery",
+  APPOINTMENT_MANAGEMENT = "appointment_management",
+  COMPLIANCE_MONITORING = "compliance_monitoring",
+  AUDIT_LOGGING = "audit_logging",
+  ANALYTICS = "analytics",
+  NOTIFICATION = "notification",
 }
 
 // LGPD consent status
 export enum LGPDConsentStatus {
-  GRANTED = 'granted',
-  REVOKED = 'revoked',
-  PENDING = 'pending',
-  EXPIRED = 'expired',
-  NOT_REQUIRED = 'not_required', // For legitimate interest cases
+  GRANTED = "granted",
+  REVOKED = "revoked",
+  PENDING = "pending",
+  EXPIRED = "expired",
+  NOT_REQUIRED = "not_required", // For legitimate interest cases
 }
 
 // LGPD real-time configuration schema
@@ -69,7 +69,7 @@ export interface LGPDAuditLogEntry {
   timestamp: string;
   userId?: string;
   table: string;
-  action: 'INSERT' | 'UPDATE' | 'DELETE' | 'SELECT';
+  action: "INSERT" | "UPDATE" | "DELETE" | "SELECT";
   dataCategory: LGPDDataCategory;
   processingPurpose: LGPDProcessingPurpose;
   consentStatus: LGPDConsentStatus;
@@ -88,22 +88,22 @@ export interface LGPDAuditLogEntry {
 // Data anonymization/pseudonymization utilities
 export class LGPDDataProcessor {
   private static readonly SENSITIVE_FIELD_PATTERNS = [
-    'cpf',
-    'rg',
-    'email',
-    'phone',
-    'telefone',
-    'celular',
-    'address',
-    'endereco',
-    'cep',
-    'birth_date',
-    'nascimento',
-    'password',
-    'senha',
-    'ssn',
-    'passport',
-    'passaporte',
+    "cpf",
+    "rg",
+    "email",
+    "phone",
+    "telefone",
+    "celular",
+    "address",
+    "endereco",
+    "cep",
+    "birth_date",
+    "nascimento",
+    "password",
+    "senha",
+    "ssn",
+    "passport",
+    "passaporte",
   ];
 
   /**
@@ -193,7 +193,7 @@ export class LGPDDataProcessor {
   }
 
   private static anonymizeFields(data: any, sensitiveFields: string[]): any {
-    if (!data || typeof data !== 'object') {
+    if (!data || typeof data !== "object") {
       return data;
     }
 
@@ -202,8 +202,8 @@ export class LGPDDataProcessor {
     // Auto-detect sensitive fields
     const detectedSensitiveFields = Object.keys(data).filter((field) =>
       LGPDDataProcessor.SENSITIVE_FIELD_PATTERNS.some((pattern) =>
-        field.toLowerCase().includes(pattern.toLowerCase())
-      )
+        field.toLowerCase().includes(pattern.toLowerCase()),
+      ),
     );
 
     const fieldsToAnonymize = [...sensitiveFields, ...detectedSensitiveFields];
@@ -221,7 +221,7 @@ export class LGPDDataProcessor {
   }
 
   private static pseudonymizeFields(data: any, sensitiveFields: string[]): any {
-    if (!data || typeof data !== 'object') {
+    if (!data || typeof data !== "object") {
       return data;
     }
 
@@ -240,7 +240,7 @@ export class LGPDDataProcessor {
   }
 
   private static extractFields(data: any, allowedFields: string[]): any {
-    if (!data || typeof data !== 'object') {
+    if (!data || typeof data !== "object") {
       return data;
     }
 
@@ -261,33 +261,33 @@ export class LGPDDataProcessor {
   ): string {
     const fieldLower = fieldName.toLowerCase();
 
-    if (fieldLower.includes('email')) {
-      return '***@***.***';
+    if (fieldLower.includes("email")) {
+      return "***@***.***";
     }
     if (
-      fieldLower.includes('phone')
-      || fieldLower.includes('telefone')
-      || fieldLower.includes('celular')
+      fieldLower.includes("phone") ||
+      fieldLower.includes("telefone") ||
+      fieldLower.includes("celular")
     ) {
-      return '***-***-****';
+      return "***-***-****";
     }
-    if (fieldLower.includes('cpf')) {
-      return '***.***.**-**';
+    if (fieldLower.includes("cpf")) {
+      return "***.***.**-**";
     }
-    if (fieldLower.includes('rg')) {
-      return '**.***.**-*';
+    if (fieldLower.includes("rg")) {
+      return "**.***.**-*";
     }
-    if (fieldLower.includes('cep')) {
-      return '*****-***';
+    if (fieldLower.includes("cep")) {
+      return "*****-***";
     }
-    if (fieldLower.includes('address') || fieldLower.includes('endereco')) {
-      return '*** *** *** ***';
+    if (fieldLower.includes("address") || fieldLower.includes("endereco")) {
+      return "*** *** *** ***";
     }
 
     // Generic anonymization
-    return typeof originalValue === 'string'
-      ? '*'.repeat(Math.min(originalValue.length, 10))
-      : '***PROTECTED***';
+    return typeof originalValue === "string"
+      ? "*".repeat(Math.min(originalValue.length, 10))
+      : "***PROTECTED***";
   }
 
   private static generatePseudonym(
@@ -298,16 +298,16 @@ export class LGPDDataProcessor {
     const hash = LGPDDataProcessor.simpleHash(String(originalValue));
     const fieldLower = fieldName.toLowerCase();
 
-    if (fieldLower.includes('email')) {
+    if (fieldLower.includes("email")) {
       return `user${hash}@example.com`;
     }
-    if (fieldLower.includes('phone') || fieldLower.includes('telefone')) {
+    if (fieldLower.includes("phone") || fieldLower.includes("telefone")) {
       return `+55${hash}`;
     }
-    if (fieldLower.includes('cpf')) {
+    if (fieldLower.includes("cpf")) {
       return `${hash.slice(0, 11)}`;
     }
-    if (fieldLower.includes('rg')) {
+    if (fieldLower.includes("rg")) {
       return `${hash.slice(0, 9)}`;
     }
 
@@ -329,7 +329,7 @@ export class LGPDDataProcessor {
 export class LGPDConsentValidator {
   private static consentCache = new Map<
     string,
-    { status: LGPDConsentStatus; expiresAt?: Date; }
+    { status: LGPDConsentStatus; expiresAt?: Date }
   >();
 
   /**
@@ -376,7 +376,7 @@ export class LGPDConsentValidator {
     return {
       valid: result.status === LGPDConsentStatus.GRANTED,
       status: result.status,
-      reason: result.reason || '',
+      reason: result.reason || "",
     };
   }
 
@@ -415,6 +415,8 @@ export class LGPDConsentValidator {
       (key) => key.startsWith(`${userId}:`),
     );
 
-    keysToDelete.forEach((key) => LGPDConsentValidator.consentCache.delete(key));
+    keysToDelete.forEach((key) =>
+      LGPDConsentValidator.consentCache.delete(key),
+    );
   }
 }

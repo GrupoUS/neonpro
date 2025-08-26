@@ -23,163 +23,191 @@
  */
 
 // Load environment variables
-import 'dotenv/config';
+import "dotenv/config";
 
 // Import Hono and middleware
-import { Hono } from 'hono';
-import { compress } from 'hono/compress';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { prettyJSON } from 'hono/pretty-json';
-import { secureHeaders } from 'hono/secure-headers';
-import { timing } from 'hono/timing';
+import { Hono } from "hono";
+import { compress } from "hono/compress";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import { prettyJSON } from "hono/pretty-json";
+import { secureHeaders } from "hono/secure-headers";
+import { timing } from "hono/timing";
 
-// Import middleware
-import { auditMiddleware } from '@/middleware/audit';
-import { errorHandler } from '@/middleware/error-handler';
-import { lgpdMiddleware } from '@/middleware/lgpd';
-import { rateLimitMiddleware } from '@/middleware/rate-limit';
-
-// Import routes
-import { aiRoutes } from '@/routes/ai';
-import { analyticsRoutes } from '@/routes/analytics';
-import { appointmentRoutes } from '@/routes/appointments';
-import { authRoutes } from '@/routes/auth';
-import { clinicRoutes } from '@/routes/clinics';
-import { complianceRoutes } from '@/routes/compliance';
-import complianceAutomationRoutes from '@/routes/compliance-automation';
-import { patientRoutes } from '@/routes/patients';
-import { professionalsRoutes } from '@/routes/professionals';
-import { servicesRoutes } from '@/routes/services';
-
-// Import utilities
-import type { AppEnv } from '@/types/env';
-import { HTTP_STATUS, RESPONSE_MESSAGES } from './lib/constants';
+// Import application modules (sorted alphabetically)
+import { aiRoutes } from "@/routes/ai";
+import { analyticsRoutes } from "@/routes/analytics";
+import { appointmentRoutes } from "@/routes/appointments";
+import { auditMiddleware } from "@/middleware/audit";
+import { authRoutes } from "@/routes/auth";
+import { clinicRoutes } from "@/routes/clinics";
+import complianceAutomationRoutes from "@/routes/compliance-automation";
+import { complianceRoutes } from "@/routes/compliance";
+import { errorHandler } from "@/middleware/error-handler";
+import { HTTP_STATUS, RESPONSE_MESSAGES } from "./lib/constants";
+import { lgpdMiddleware } from "@/middleware/lgpd";
+import { patientRoutes } from "@/routes/patients";
+import { professionalsRoutes } from "@/routes/professionals";
+import { rateLimitMiddleware } from "@/middleware/rate-limit";
+import { servicesRoutes } from "@/routes/services";
+import type { AppEnv } from "@/types/env";
 
 // Environment configuration
-const ENVIRONMENT = process.env.NODE_ENV || 'development';
-const IS_PRODUCTION = ENVIRONMENT === 'production';
+const ENVIRONMENT = process.env.NODE_ENV || "development";
+const IS_PRODUCTION = ENVIRONMENT === "production";
+
+// HTTP Status Constants
+const HTTP_STATUS_NOT_FOUND = 404;
 
 // Create Hono app with environment bindings
 const app = new Hono<AppEnv>();
 
 // Global middleware stack
-app.use('*', timing());
-app.use('*', logger());
+app.use("*", timing());
+app.use("*", logger());
 
 // Security middleware
+let contentSecurityPolicyConfig: false | Record<string, string[]> = false;
+if (IS_PRODUCTION) {
+  contentSecurityPolicyConfig = {
+    connectSrc: ["'self'", "https://*.supabase.co"],
+    defaultSrc: ["'self'"],
+    imgSrc: ["'self'", "data:", "https:"],
+    scriptSrc: ["'self'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+  };
+} else {
+  contentSecurityPolicyConfig = false;
+}
+
 app.use(
-  '*',
+  "*",
   secureHeaders({
-    contentSecurityPolicy: IS_PRODUCTION
-      ? {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://*.supabase.co'],
-      }
-      : false,
+    contentSecurityPolicy: contentSecurityPolicyConfig,
     crossOriginEmbedderPolicy: false, // Required for Vercel Edge Functions
   }),
 );
 
 // CORS configuration - Simple configuration for development
-app.use('*', cors());
+app.use("*", cors());
 
 // Compression for better performance
-app.use('*', compress());
+app.use("*", compress());
 
 // Pretty JSON in development
 if (!IS_PRODUCTION) {
-  app.use('*', prettyJSON());
+  app.use("*", prettyJSON());
 }
 
 // Custom middleware
-app.use('*', auditMiddleware());
-app.use('*', lgpdMiddleware());
-app.use('*', rateLimitMiddleware());
+app.use("*", auditMiddleware());
+app.use("*", lgpdMiddleware());
+app.use("*", rateLimitMiddleware());
 
 // Database middleware
-app.use('*', async (c, next) => {
+app.use("*", async (context, next) => {
   try {
     // Make database available in context
-    c.set('dbClient', 'supabase');
+    context.set("dbClient", "supabase");
     await next();
   } catch {
-    return c.json(
+    return context.json(
       { error: RESPONSE_MESSAGES.DATABASE_ERROR },
       HTTP_STATUS.INTERNAL_SERVER_ERROR,
     );
   }
 });
 
+// Root endpoint configuration
+const getDocsUrl = (): string => "/docs";
+
 // Root endpoint
-app.get('/', (c) => {
-  return c.json({
-    name: 'NeonPro API',
-    version: '1.0.0',
-    description: 'Sistema de gestão para clínicas de estética multiprofissionais brasileiras',
-    status: 'healthy',
+app.get("/", (context) => {
+  const docsUrl = getDocsUrl();
+  return context.json({
+    description:
+      "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
+    docs: docsUrl,
     environment: ENVIRONMENT,
-    framework: 'Hono.dev',
-    runtime: 'TypeScript',
     features: [
-      'Gerenciamento de pacientes',
-      'Inteligência financeira',
-      'IA para otimização',
-      'ML Pipeline Management',
-      'A/B Testing e Drift Detection',
-      'Compliance LGPD + ANVISA',
-      'Multi-profissional',
+      "Gerenciamento de pacientes",
+      "Inteligência financeira",
+      "IA para otimização",
+      "ML Pipeline Management",
+      "A/B Testing e Drift Detection",
+      "Compliance LGPD + ANVISA",
+      "Multi-profissional",
     ],
+    framework: "Hono.dev",
+    name: "NeonPro API",
     performance: {
-      framework: 'Hono.dev',
-      benchmark: '402,820 req/sec',
-      bundle_size: '14KB',
-      deployment: 'Vercel Edge Functions',
+      benchmark: "402,820 req/sec",
+      bundle_size: "14KB",
+      deployment: "Vercel Edge Functions",
+      framework: "Hono.dev",
     },
-    docs: IS_PRODUCTION ? undefined : '/docs',
+    runtime: "TypeScript",
+    status: "healthy",
     timestamp: new Date().toISOString(),
+    version: "1.0.0",
   });
 });
 
+// Health check helpers
+interface DatabaseHealth {
+  connected: boolean;
+}
+
+const checkHealthStatus = (dbHealth: DatabaseHealth) => {
+  if (dbHealth.connected) {
+    return "healthy";
+  }
+  return "degraded";
+};
+
+const getResponseStatus = (isHealthy: boolean) => {
+  if (isHealthy) {
+    return HTTP_STATUS.OK;
+  }
+  return HTTP_STATUS.SERVICE_UNAVAILABLE;
+};
+
 // Health check endpoint
-app.get('/health', async (c) => {
+app.get("/health", async (context) => {
   try {
     // Import database service for health check
-    const { db } = await import('@/lib/database');
+    const { db } = await import("@/lib/database");
 
     // Perform database health check
     const dbHealth = await db.healthCheck();
+    const healthStatus = checkHealthStatus(dbHealth);
 
-    const healthStatus = {
-      status: dbHealth.connected ? 'healthy' : 'degraded',
-      timestamp: new Date().toISOString(),
-      version: '1.0.0',
+    const healthData = {
+      database: dbHealth,
       environment: ENVIRONMENT,
+      memory: process.memoryUsage(),
       services: {
+        auth: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
         database: dbHealth.connected,
         supabase: !!process.env.SUPABASE_URL,
-        auth: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
       },
-      database: dbHealth,
+      status: healthStatus,
+      timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      memory: process.memoryUsage(),
+      version: "1.0.0",
     };
 
-    const isHealthy = healthStatus.services.database && healthStatus.services.supabase;
+    const isHealthy =
+      healthData.services.database && healthData.services.supabase;
+    const responseStatus = getResponseStatus(isHealthy);
 
-    return c.json(
-      healthStatus,
-      isHealthy ? HTTP_STATUS.OK : HTTP_STATUS.SERVICE_UNAVAILABLE,
-    );
+    return context.json(healthData, responseStatus);
   } catch (error) {
-    return c.json(
+    return context.json(
       {
-        status: 'unhealthy',
-        error: RESPONSE_MESSAGES.HEALTH_CHECK_FAILED,
         details: error.message,
+        error: RESPONSE_MESSAGES.HEALTH_CHECK_FAILED,
+        status: "unhealthy",
         timestamp: new Date().toISOString(),
       },
       HTTP_STATUS.SERVICE_UNAVAILABLE,
@@ -189,36 +217,33 @@ app.get('/health', async (c) => {
 
 // API routes - Structured for optimal Hono RPC inference
 const apiV1 = new Hono<AppEnv>()
-  .route('/auth', authRoutes)
-  .route('/clinics', clinicRoutes)
-  .route('/patients', patientRoutes)
-  .route('/appointments', appointmentRoutes)
-  .route('/professionals', professionalsRoutes)
-  .route('/services', servicesRoutes)
-  .route('/analytics', analyticsRoutes)
-  .route('/compliance', complianceRoutes)
-  .route('/compliance-automation', complianceAutomationRoutes)
-  .route('/ai', aiRoutes);
+  .route("/auth", authRoutes)
+  .route("/clinics", clinicRoutes)
+  .route("/patients", patientRoutes)
+  .route("/appointments", appointmentRoutes)
+  .route("/professionals", professionalsRoutes)
+  .route("/services", servicesRoutes)
+  .route("/analytics", analyticsRoutes)
+  .route("/compliance", complianceRoutes)
+  .route("/compliance-automation", complianceAutomationRoutes)
+  .route("/ai", aiRoutes);
 
 // Mount API v1
-app.route('/api/v1', apiV1);
-
-// Constants
-const HTTP_STATUS_NOT_FOUND = 404;
+app.route("/api/v1", apiV1);
 
 // 404 handler
-app.notFound((c) => {
-  return c.json(
+app.notFound((context) =>
+  context.json(
     {
-      error: 'Not Found',
-      message: 'The requested endpoint does not exist',
-      path: c.req.path,
-      method: c.req.method,
+      error: "Not Found",
+      message: "The requested endpoint does not exist",
+      method: context.req.method,
+      path: context.req.path,
       timestamp: new Date().toISOString(),
     },
     HTTP_STATUS_NOT_FOUND,
-  );
-});
+  ),
+);
 
 // Global error handler
 app.onError(errorHandler);
@@ -233,10 +258,10 @@ export type ApiV1Type = typeof apiV1;
 export default app;
 
 // Development server
-if (ENVIRONMENT === 'development') {
-  const { serve } = await import('@hono/node-server');
+if (ENVIRONMENT === "development") {
+  const { serve } = await import("@hono/node-server");
 
-  const port = Number.parseInt(process.env.PORT || '8000', 10);
+  const port = Number.parseInt(process.env.PORT || "8000", 10);
 
   serve({
     fetch: app.fetch,

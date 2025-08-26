@@ -264,23 +264,13 @@ DEVELOPMENT_DEPENDENCIES:
     },
     "ai:validate": {
       "cache": true,
-      "inputs": [
-        "src/ai/**/*.ts",
-        "ai.config.ts",
-        "prompts/**/*.md"
-      ],
-      "outputs": [
-        ".ai-validation/**"
-      ]
+      "inputs": ["src/ai/**/*.ts", "ai.config.ts", "prompts/**/*.md"],
+      "outputs": [".ai-validation/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env.local",
-        "ai.config.ts"
-      ]
+      "inputs": ["$TURBO_DEFAULT$", ".env.local", "ai.config.ts"]
     },
     "lint:constitutional": {
       "dependsOn": ["^lint:constitutional"],
@@ -302,9 +292,7 @@ DEVELOPMENT_DEPENDENCIES:
         "__tests__/ai/**/*.{ts,tsx}",
         "vitest.ai.config.ts"
       ],
-      "outputs": [
-        "coverage/ai/**"
-      ]
+      "outputs": ["coverage/ai/**"]
     },
     "test:compliance": {
       "dependsOn": ["^build"],
@@ -314,10 +302,7 @@ DEVELOPMENT_DEPENDENCIES:
         "__tests__/compliance/**/*.{ts,tsx}",
         "vitest.compliance.config.ts"
       ],
-      "outputs": [
-        "coverage/compliance/**",
-        "compliance-reports/**"
-      ]
+      "outputs": ["coverage/compliance/**", "compliance-reports/**"]
     }
   },
   "remoteCache": {
@@ -334,20 +319,20 @@ DEVELOPMENT_DEPENDENCIES:
 
 ```typescript
 // ai.config.ts - Core AI configuration
-import { defineConfig } from '@neonpro/ai-config';
+import { defineConfig } from "@neonpro/ai-config";
 
 export default defineConfig({
   providers: {
     openai: {
       apiKey: process.env.OPENAI_API_KEY,
       models: {
-        'gpt-4-turbo-preview': {
+        "gpt-4-turbo-preview": {
           maxTokens: 128000,
           contextWindow: 128000,
           supportsFunctionCalling: true,
           supportsStreaming: true,
         },
-        'gpt-3.5-turbo': {
+        "gpt-3.5-turbo": {
           maxTokens: 16384,
           contextWindow: 16384,
           supportsFunctionCalling: true,
@@ -358,7 +343,7 @@ export default defineConfig({
     anthropic: {
       apiKey: process.env.ANTHROPIC_API_KEY,
       models: {
-        'claude-3-5-sonnet-20241022': {
+        "claude-3-5-sonnet-20241022": {
           maxTokens: 200000,
           contextWindow: 200000,
           supportsFunctionCalling: true,
@@ -378,9 +363,9 @@ export default defineConfig({
 
     dataHandling: {
       anonymization: true,
-      encryption: 'AES-256',
+      encryption: "AES-256",
       auditTrail: true,
-      dataRetention: '7-years', // Medical record retention
+      dataRetention: "7-years", // Medical record retention
     },
 
     safeguards: {
@@ -399,7 +384,7 @@ export default defineConfig({
 
     caching: {
       enabled: true,
-      strategy: 'constitutional', // AI-validated caching
+      strategy: "constitutional", // AI-validated caching
       ttl: 3600, // 1 hour default
     },
 
@@ -423,61 +408,62 @@ export default defineConfig({
 
 ```typescript
 // apps/api/src/index.ts - AI-Enhanced Hono application
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { secureHeaders } from 'hono/secure-headers';
-import { stream } from 'hono/streaming';
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import { secureHeaders } from "hono/secure-headers";
+import { stream } from "hono/streaming";
 
 // AI-specific imports
-import { aiMiddleware } from './middleware/ai';
-import { complianceMiddleware } from './middleware/compliance';
-import { streamingMiddleware } from './middleware/streaming';
+import { aiMiddleware } from "./middleware/ai";
+import { complianceMiddleware } from "./middleware/compliance";
+import { streamingMiddleware } from "./middleware/streaming";
 
 // Route imports
-import { aiAnalyticsRoutes } from './routes/ai/analytics';
-import { aiChatRoutes } from './routes/ai/chat';
-import { aiNoShowRoutes } from './routes/ai/no-show';
-import { appointmentsRoutes } from './routes/appointments';
-import { authRoutes } from './routes/auth';
-import { clinicsRoutes } from './routes/clinics';
-import { patientsRoutes } from './routes/patients';
+import { aiAnalyticsRoutes } from "./routes/ai/analytics";
+import { aiChatRoutes } from "./routes/ai/chat";
+import { aiNoShowRoutes } from "./routes/ai/no-show";
+import { appointmentsRoutes } from "./routes/appointments";
+import { authRoutes } from "./routes/auth";
+import { clinicsRoutes } from "./routes/clinics";
+import { patientsRoutes } from "./routes/patients";
 
 // Middleware imports
-import { auditTrailMiddleware } from './middleware/audit-trail';
-import { authMiddleware } from './middleware/auth';
-import { lgpdMiddleware } from './middleware/lgpd';
-import { rateLimitMiddleware } from './middleware/rate-limit';
+import { auditTrailMiddleware } from "./middleware/audit-trail";
+import { authMiddleware } from "./middleware/auth";
+import { lgpdMiddleware } from "./middleware/lgpd";
+import { rateLimitMiddleware } from "./middleware/rate-limit";
 
 const app = new Hono();
 
 // Global middleware
 app.use(
-  '*',
+  "*",
   cors({
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://neonpro.app', 'https://*.neonpro.app']
-      : ['http://localhost:3000', 'http://localhost:3001'],
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://neonpro.app", "https://*.neonpro.app"]
+        : ["http://localhost:3000", "http://localhost:3001"],
     credentials: true,
   }),
 );
 
-app.use('*', logger());
-app.use('*', secureHeaders());
-app.use('*', rateLimitMiddleware());
-app.use('*', lgpdMiddleware());
-app.use('*', auditTrailMiddleware());
-app.use('*', complianceMiddleware());
+app.use("*", logger());
+app.use("*", secureHeaders());
+app.use("*", rateLimitMiddleware());
+app.use("*", lgpdMiddleware());
+app.use("*", auditTrailMiddleware());
+app.use("*", complianceMiddleware());
 
 // AI-specific middleware
-app.use('/api/v1/ai/*', aiMiddleware());
-app.use('/api/v1/ai/stream/*', streamingMiddleware());
+app.use("/api/v1/ai/*", aiMiddleware());
+app.use("/api/v1/ai/stream/*", streamingMiddleware());
 
 // Health check with AI status
-app.get('/health', async (c) => {
+app.get("/health", async (c) => {
   const aiStatus = await checkAIProviders();
   return c.json({
-    status: 'ok',
+    status: "ok",
     timestamp: new Date().toISOString(),
     ai: aiStatus,
     compliance: {
@@ -489,23 +475,23 @@ app.get('/health', async (c) => {
 });
 
 // API routes with authentication
-app.route('/api/v1/auth', authRoutes);
-app.use('/api/v1/*', authMiddleware());
-app.route('/api/v1/patients', patientsRoutes);
-app.route('/api/v1/appointments', appointmentsRoutes);
-app.route('/api/v1/clinics', clinicsRoutes);
+app.route("/api/v1/auth", authRoutes);
+app.use("/api/v1/*", authMiddleware());
+app.route("/api/v1/patients", patientsRoutes);
+app.route("/api/v1/appointments", appointmentsRoutes);
+app.route("/api/v1/clinics", clinicsRoutes);
 
 // AI routes (authenticated)
-app.route('/api/v1/ai/chat', aiChatRoutes);
-app.route('/api/v1/ai/analytics', aiAnalyticsRoutes);
-app.route('/api/v1/ai/no-show', aiNoShowRoutes);
+app.route("/api/v1/ai/chat", aiChatRoutes);
+app.route("/api/v1/ai/analytics", aiAnalyticsRoutes);
+app.route("/api/v1/ai/no-show", aiNoShowRoutes);
 
 async function checkAIProviders() {
   // Implementation for AI provider health checks
   return {
-    openai: 'healthy',
-    anthropic: 'healthy',
-    supabase_vectors: 'healthy',
+    openai: "healthy",
+    anthropic: "healthy",
+    supabase_vectors: "healthy",
   };
 }
 
@@ -569,53 +555,53 @@ export type AppType = typeof app;
 const nextConfig = {
   experimental: {
     optimizePackageImports: [
-      '@neonpro/ui',
-      '@neonpro/shared',
-      '@neonpro/ai-chat',
-      '@neonpro/anti-no-show',
-      '@neonpro/ar-simulator',
-      'lucide-react',
-      '@radix-ui/react-icons',
-      'ai',
-      '@ai-sdk/openai',
-      '@ai-sdk/anthropic',
+      "@neonpro/ui",
+      "@neonpro/shared",
+      "@neonpro/ai-chat",
+      "@neonpro/anti-no-show",
+      "@neonpro/ar-simulator",
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "ai",
+      "@ai-sdk/openai",
+      "@ai-sdk/anthropic",
     ],
     turbo: {
       rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
         },
-        '*.md': {
-          loaders: ['raw-loader'],
-          as: '*.js',
+        "*.md": {
+          loaders: ["raw-loader"],
+          as: "*.js",
         },
       },
     },
     serverComponentsExternalPackages: [
-      'openai',
-      '@anthropic-ai/sdk',
-      'langchain',
+      "openai",
+      "@anthropic-ai/sdk",
+      "langchain",
     ],
   },
 
   transpilePackages: [
-    '@neonpro/ui',
-    '@neonpro/shared',
-    '@neonpro/types',
-    '@neonpro/ai-chat',
-    '@neonpro/anti-no-show',
-    '@neonpro/ar-simulator',
-    '@neonpro/compliance-ai',
+    "@neonpro/ui",
+    "@neonpro/shared",
+    "@neonpro/types",
+    "@neonpro/ai-chat",
+    "@neonpro/anti-no-show",
+    "@neonpro/ar-simulator",
+    "@neonpro/compliance-ai",
   ],
 
   images: {
     domains: [
-      'avatars.githubusercontent.com',
-      'images.unsplash.com',
-      'cdn.neonpro.app',
+      "avatars.githubusercontent.com",
+      "images.unsplash.com",
+      "cdn.neonpro.app",
     ],
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
@@ -623,41 +609,41 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
           },
           {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
           },
           {
-            key: 'Content-Security-Policy',
+            key: "Content-Security-Policy",
             value:
               "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
           },
         ],
       },
       {
-        source: '/api/ai/(.*)',
+        source: "/api/ai/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'no-cache, no-store, must-revalidate',
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
           },
           {
-            key: 'X-AI-Provider',
-            value: 'neonpro-constitutional',
+            key: "X-AI-Provider",
+            value: "neonpro-constitutional",
           },
         ],
       },
@@ -667,12 +653,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/ai-chat/:path*',
-        destination: '/api/ai/chat/:path*',
+        source: "/ai-chat/:path*",
+        destination: "/api/ai/chat/:path*",
       },
       {
-        source: '/ai-analytics/:path*',
-        destination: '/api/ai/analytics/:path*',
+        source: "/ai-analytics/:path*",
+        destination: "/api/ai/analytics/:path*",
       },
     ];
   },
@@ -692,19 +678,19 @@ AI_PERFORMANCE_METRICS:
     - Token throughput: >50 tokens/second
     - Stream completion: <5s for 1000 tokens
     - Function calling latency: <100ms
-    
+
   Healthcare_Compliance_Performance:
     - LGPD validation: <50ms per request
     - ANVISA compliance check: <100ms per operation
     - Audit trail logging: <10ms per event
     - Data anonymization: <200ms per record
-    
+
   AI_Model_Performance:
     - RAG retrieval: <300ms for context gathering
     - Vector similarity search: <100ms for 1000 vectors
     - Embeddings generation: <500ms per document
     - Knowledge base queries: <200ms per query
-    
+
   Real_Time_Performance:
     - WebSocket connection: <50ms establishment
     - Real-time updates: <100ms propagation

@@ -3,12 +3,12 @@
  * Usa o useAuthToken hook e AuthTokenManager para gerenciar estado
  */
 
-'use client';
+"use client";
 
-import { createContext, useContext } from 'react';
-import type { ReactNode } from 'react';
-import { useAuthToken } from './use-auth-token';
-import type { AuthUser, LoginCredentials } from './use-auth-token';
+import { createContext, useContext } from "react";
+import type { ReactNode } from "react";
+import { useAuthToken } from "./use-auth-token";
+import type { AuthUser, LoginCredentials } from "./use-auth-token";
 
 interface AuthContextType {
   // Estado
@@ -20,7 +20,7 @@ interface AuthContextType {
   // Ações
   login: (
     credentials: LoginCredentials,
-  ) => Promise<{ success: boolean; error?: string; }>;
+  ) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 
   // Utilidades
@@ -68,7 +68,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     timeUntilExpiration: authHook.timeUntilExpiration,
   };
 
-  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
 }
 
 /**
@@ -78,7 +80,7 @@ export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
 
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
 
   return context;

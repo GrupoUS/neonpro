@@ -3,7 +3,7 @@
  * Real-time constitutional compliance monitoring dashboard for healthcare regulatory oversight
  * Compliance: LGPD + ANVISA + CFM + Constitutional Healthcare + ≥9.9/10 Standards
  */
-import { z } from 'zod';
+import { z } from "zod";
 declare const ComplianceDashboardConfigSchema: z.ZodObject<
   {
     refresh_interval_ms: z.ZodNumber;
@@ -14,7 +14,7 @@ declare const ComplianceDashboardConfigSchema: z.ZodObject<
         privacy_budget_warning: z.ZodNumber;
         audit_trail_gap_hours: z.ZodNumber;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         critical_compliance_score: number;
@@ -36,7 +36,7 @@ declare const ComplianceDashboardConfigSchema: z.ZodObject<
     cfm_tracking_enabled: z.ZodDefault<z.ZodBoolean>;
     automated_reporting: z.ZodDefault<z.ZodBoolean>;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     refresh_interval_ms: number;
@@ -83,7 +83,7 @@ declare const ComplianceDashboardMetricsSchema: z.ZodObject<
         privacy_violations_count: z.ZodNumber;
         data_subject_requests_pending: z.ZodNumber;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         privacy_budget_utilization: number;
@@ -105,7 +105,7 @@ declare const ComplianceDashboardMetricsSchema: z.ZodObject<
         data_breach_incidents: z.ZodNumber;
         encryption_coverage_percentage: z.ZodNumber;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         failed_authentication_attempts: number;
@@ -127,7 +127,7 @@ declare const ComplianceDashboardMetricsSchema: z.ZodObject<
         error_rate_percentage: z.ZodNumber;
         concurrent_users: z.ZodNumber;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         system_uptime_percentage: number;
@@ -144,7 +144,7 @@ declare const ComplianceDashboardMetricsSchema: z.ZodObject<
     >;
     last_updated: z.ZodString;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     overall_compliance_score: number;
@@ -202,16 +202,16 @@ declare const ComplianceDashboardMetricsSchema: z.ZodObject<
 declare const ComplianceAlertSchema: z.ZodObject<
   {
     alert_id: z.ZodString;
-    alert_type: z.ZodEnum<['critical', 'warning', 'info']>;
+    alert_type: z.ZodEnum<["critical", "warning", "info"]>;
     category: z.ZodEnum<
       [
-        'lgpd',
-        'anvisa',
-        'cfm',
-        'constitutional',
-        'privacy',
-        'security',
-        'operational',
+        "lgpd",
+        "anvisa",
+        "cfm",
+        "constitutional",
+        "privacy",
+        "security",
+        "operational",
       ]
     >;
     title: z.ZodString;
@@ -224,7 +224,7 @@ declare const ComplianceAlertSchema: z.ZodObject<
         affects_constitutional_rights: z.ZodBoolean;
         affects_medical_accuracy: z.ZodBoolean;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         affects_patient_privacy: boolean;
@@ -244,19 +244,19 @@ declare const ComplianceAlertSchema: z.ZodObject<
     created_at: z.ZodString;
     resolved_at: z.ZodOptional<z.ZodString>;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     alert_id: string;
-    alert_type: 'critical' | 'warning' | 'info';
+    alert_type: "critical" | "warning" | "info";
     category:
-      | 'lgpd'
-      | 'anvisa'
-      | 'cfm'
-      | 'constitutional'
-      | 'privacy'
-      | 'security'
-      | 'operational';
+      | "lgpd"
+      | "anvisa"
+      | "cfm"
+      | "constitutional"
+      | "privacy"
+      | "security"
+      | "operational";
     title: string;
     description: string;
     severity_score: number;
@@ -273,15 +273,15 @@ declare const ComplianceAlertSchema: z.ZodObject<
   },
   {
     alert_id: string;
-    alert_type: 'critical' | 'warning' | 'info';
+    alert_type: "critical" | "warning" | "info";
     category:
-      | 'lgpd'
-      | 'anvisa'
-      | 'cfm'
-      | 'constitutional'
-      | 'privacy'
-      | 'security'
-      | 'operational';
+      | "lgpd"
+      | "anvisa"
+      | "cfm"
+      | "constitutional"
+      | "privacy"
+      | "security"
+      | "operational";
     title: string;
     description: string;
     severity_score: number;
@@ -301,7 +301,7 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
   {
     report_id: z.ZodString;
     report_type: z.ZodEnum<
-      ['daily', 'weekly', 'monthly', 'quarterly', 'annual', 'incident']
+      ["daily", "weekly", "monthly", "quarterly", "annual", "incident"]
     >;
     generated_at: z.ZodString;
     reporting_period: z.ZodObject<
@@ -309,7 +309,7 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
         start_date: z.ZodString;
         end_date: z.ZodString;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         start_date: string;
@@ -323,32 +323,32 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
     executive_summary: z.ZodObject<
       {
         overall_compliance_rating: z.ZodEnum<
-          ['excellent', 'good', 'fair', 'poor', 'critical']
+          ["excellent", "good", "fair", "poor", "critical"]
         >;
-        key_achievements: z.ZodArray<z.ZodString, 'many'>;
-        critical_issues: z.ZodArray<z.ZodString, 'many'>;
-        recommendations: z.ZodArray<z.ZodString, 'many'>;
+        key_achievements: z.ZodArray<z.ZodString, "many">;
+        critical_issues: z.ZodArray<z.ZodString, "many">;
+        recommendations: z.ZodArray<z.ZodString, "many">;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         overall_compliance_rating:
-          | 'critical'
-          | 'excellent'
-          | 'good'
-          | 'fair'
-          | 'poor';
+          | "critical"
+          | "excellent"
+          | "good"
+          | "fair"
+          | "poor";
         key_achievements: string[];
         critical_issues: string[];
         recommendations: string[];
       },
       {
         overall_compliance_rating:
-          | 'critical'
-          | 'excellent'
-          | 'good'
-          | 'fair'
-          | 'poor';
+          | "critical"
+          | "excellent"
+          | "good"
+          | "fair"
+          | "poor";
         key_achievements: string[];
         critical_issues: string[];
         recommendations: string[];
@@ -362,7 +362,7 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
         constitutional_standards_met: z.ZodBoolean;
         audit_trail_complete: z.ZodBoolean;
       },
-      'strip',
+      "strip",
       z.ZodTypeAny,
       {
         privacy_officer_review: boolean;
@@ -378,17 +378,17 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
       }
     >;
   },
-  'strip',
+  "strip",
   z.ZodTypeAny,
   {
     report_id: string;
     report_type:
-      | 'daily'
-      | 'weekly'
-      | 'monthly'
-      | 'quarterly'
-      | 'annual'
-      | 'incident';
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "quarterly"
+      | "annual"
+      | "incident";
     generated_at: string;
     reporting_period: {
       start_date: string;
@@ -396,11 +396,11 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
     };
     executive_summary: {
       overall_compliance_rating:
-        | 'critical'
-        | 'excellent'
-        | 'good'
-        | 'fair'
-        | 'poor';
+        | "critical"
+        | "excellent"
+        | "good"
+        | "fair"
+        | "poor";
       key_achievements: string[];
       critical_issues: string[];
       recommendations: string[];
@@ -416,12 +416,12 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
   {
     report_id: string;
     report_type:
-      | 'daily'
-      | 'weekly'
-      | 'monthly'
-      | 'quarterly'
-      | 'annual'
-      | 'incident';
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "quarterly"
+      | "annual"
+      | "incident";
     generated_at: string;
     reporting_period: {
       start_date: string;
@@ -429,11 +429,11 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
     };
     executive_summary: {
       overall_compliance_rating:
-        | 'critical'
-        | 'excellent'
-        | 'good'
-        | 'fair'
-        | 'poor';
+        | "critical"
+        | "excellent"
+        | "good"
+        | "fair"
+        | "poor";
       key_achievements: string[];
       critical_issues: string[];
       recommendations: string[];
@@ -510,12 +510,12 @@ export declare class ComplianceDashboardService {
    */
   generateComplianceReport(
     reportType:
-      | 'daily'
-      | 'weekly'
-      | 'monthly'
-      | 'quarterly'
-      | 'annual'
-      | 'incident',
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "quarterly"
+      | "annual"
+      | "incident",
     options?: {
       reason?: string;
       include_active_alerts?: boolean;

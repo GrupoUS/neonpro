@@ -4,10 +4,16 @@
  * Compliance: LGPD + CFM + Constitutional Healthcare + ≥9.9/10 Standards
  */
 
-import type { RateLimitConfig } from './api-rate-limiting';
-import { createApiRateLimitingService, validateApiRateLimiting } from './api-rate-limiting';
-import type { RbacConfig } from './healthcare-rbac';
-import { createHealthcareRbacService, validateHealthcareRbac } from './healthcare-rbac';
+import type { RateLimitConfig } from "./api-rate-limiting";
+import {
+  createApiRateLimitingService,
+  validateApiRateLimiting,
+} from "./api-rate-limiting";
+import type { RbacConfig } from "./healthcare-rbac";
+import {
+  createHealthcareRbacService,
+  validateHealthcareRbac,
+} from "./healthcare-rbac";
 
 // API Rate Limiting Service
 export {
@@ -19,7 +25,7 @@ export {
   type RateLimitConfig,
   type RateLimitViolation,
   validateApiRateLimiting,
-} from './api-rate-limiting';
+} from "./api-rate-limiting";
 // Healthcare Role-Based Access Control Service
 export {
   type AccessRequest,
@@ -30,7 +36,7 @@ export {
   type HealthcareUser,
   type RbacConfig,
   validateHealthcareRbac,
-} from './healthcare-rbac';
+} from "./healthcare-rbac";
 
 /**
  * Enterprise Security Service Factory
@@ -174,42 +180,44 @@ export const ENTERPRISE_SECURITY_CONFIGS = {
  * Constitutional healthcare security with comprehensive access control and API protection
  */
 export const ENTERPRISE_SECURITY_MODULE = {
-  name: 'Enterprise Security',
-  version: '1.0.0',
+  name: "Enterprise Security",
+  version: "1.0.0",
   compliance_standards: [
-    'LGPD',
-    'CFM',
-    'Constitutional Healthcare',
-    'API Security',
+    "LGPD",
+    "CFM",
+    "Constitutional Healthcare",
+    "API Security",
   ],
   quality_score: 9.9,
   services: [
     {
-      name: 'Healthcare RBAC',
-      description: 'Constitutional healthcare access control with patient privacy protection',
+      name: "Healthcare RBAC",
+      description:
+        "Constitutional healthcare access control with patient privacy protection",
       compliance_features: [
-        'Role-Based Access Control',
-        'CFM Professional Validation',
-        'Patient Consent Management',
-        'Emergency Access Protocols',
+        "Role-Based Access Control",
+        "CFM Professional Validation",
+        "Patient Consent Management",
+        "Emergency Access Protocols",
       ],
     },
     {
-      name: 'API Rate Limiting',
-      description: 'Constitutional healthcare API protection with intelligent throttling',
+      name: "API Rate Limiting",
+      description:
+        "Constitutional healthcare API protection with intelligent throttling",
       compliance_features: [
-        'Intelligent Throttling',
-        'Healthcare Priority Routing',
-        'Emergency Bypass',
-        'Abuse Detection',
+        "Intelligent Throttling",
+        "Healthcare Priority Routing",
+        "Emergency Bypass",
+        "Abuse Detection",
       ],
     },
   ],
   constitutional_guarantees: [
-    'Patient privacy protection through role-based access control',
-    'Medical professional standards validation with CFM compliance',
-    'Emergency access protocols for critical healthcare situations',
-    'API protection with healthcare-specific priorities',
-    'Comprehensive audit trails for regulatory compliance',
+    "Patient privacy protection through role-based access control",
+    "Medical professional standards validation with CFM compliance",
+    "Emergency access protocols for critical healthcare situations",
+    "API protection with healthcare-specific priorities",
+    "Comprehensive audit trails for regulatory compliance",
   ],
 } as const;
