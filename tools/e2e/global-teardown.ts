@@ -5,7 +5,7 @@
  * This file runs once after all tests to clean up the test environment
  */
 
-import type { FullConfig } from "@playwright/test";
+import type { FullConfig } from '@playwright/test';
 
 async function globalTeardown(_config: FullConfig) {}
 

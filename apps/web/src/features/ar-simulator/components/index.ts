@@ -7,9 +7,9 @@
 
 // Re-export hooks for convenience
 export {
-	useARSimulator,
-	useSimulationComparison,
-	useSimulationMetrics,
+  useARSimulator,
+  useSimulationComparison,
+  useSimulationMetrics,
 } from "../hooks/useARSimulator";
 export type { SimulationData } from "./ARResultsSimulator";
 export { default as ARResultsSimulator } from "./ARResultsSimulator";

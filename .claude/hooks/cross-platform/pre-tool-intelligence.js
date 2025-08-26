@@ -59,25 +59,29 @@ async function preToolIntelligence() {
 async function handleToolSpecificLogic(toolName, env) {
 	try {
 		switch (toolName.toLowerCase()) {
-			case "bash":
+			case "bash": {
 				await handleBashTool(env);
 				break;
+			}
 
 			case "read":
 			case "edit":
-			case "write":
+			case "write": {
 				handleFileTool(toolName, env);
 				break;
+			}
 
-			case "task":
+			case "task": {
 				handleTaskTool(env);
 				break;
+			}
 
-			case "todowrite":
+			case "todowrite": {
 				handleTodoTool(env);
 				break;
+			}
 
-			default:
+			default: {
 				// Generic tool handling
 				utils.log(
 					"DEBUG",
@@ -85,6 +89,7 @@ async function handleToolSpecificLogic(toolName, env) {
 					`Generic pre-processing for tool: ${toolName}`,
 				);
 				break;
+			}
 		}
 	} catch (error) {
 		utils.log(

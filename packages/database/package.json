@@ -1,35 +1,35 @@
 {
-	"name": "@neonpro/database",
-	"version": "1.0.0",
-	"private": true,
-	"description": "NeonPro Database Layer - Prisma ORM with Supabase PostgreSQL",
-	"main": "index.ts",
-	"scripts": {
-		"build": "prisma generate",
-		"dev": "prisma generate --watch",
-		"db:generate": "prisma generate",
-		"db:push": "prisma db push",
-		"db:migrate": "prisma migrate dev",
-		"db:deploy": "prisma migrate deploy",
-		"db:reset": "prisma migrate reset",
-		"db:seed": "tsx prisma/seed.ts",
-		"db:studio": "prisma studio",
-		"db:format": "prisma format",
-		"db:validate": "prisma validate",
-		"type-check": "prisma validate"
-	},
-	"dependencies": {
-		"@prisma/client": "^5.22.0",
-		"prisma": "^5.22.0",
-		"zod": "^3.23.8"
-	},
-	"devDependencies": {
-		"@types/node": "^22.10.2",
-		"tsx": "^4.6.0",
-		"typescript": "^5.7.2"
-	},
-	"prisma": {
-		"schema": "prisma/schema.prisma",
-		"seed": "tsx prisma/seed.ts"
-	}
+  "name": "@neonpro/database",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NeonPro Database Layer - Prisma ORM with Supabase PostgreSQL",
+  "main": "index.ts",
+  "scripts": {
+    "build": "prisma generate",
+    "dev": "prisma generate --watch",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "prisma migrate reset",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:format": "prisma format",
+    "db:validate": "prisma validate",
+    "type-check": "prisma validate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "prisma": "^5.22.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.6.0",
+    "typescript": "^5.7.2"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "tsx prisma/seed.ts"
+  }
 }

@@ -21,7 +21,7 @@
   "scripts": {
     "build": "npx tsc",
     "dev": "npx tsc --watch",
-    "lint": "biome lint .",
+    "lint": "oxlint",
     "type-check": "npx tsc --noEmit"
   },
   "dependencies": {

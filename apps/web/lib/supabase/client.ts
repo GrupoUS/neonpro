@@ -11,7 +11,7 @@ import { createClient as createDbClient } from "@neonpro/db";
  * Implements proper browser-side authentication and real-time
  */
 export function createClient() {
-	return createDbClient();
+  return createDbClient();
 }
 
 // Default export for compatibility
@@ -25,10 +25,10 @@ export { createClient as supabase };
  * Optimized for appointment updates and patient notifications
  */
 export function createRealtimeClient() {
-	const client = createDbClient();
+  const client = createDbClient();
 
-	// Healthcare-specific real-time configuration
-	// Additional configuration would be handled in the base client
+  // Healthcare-specific real-time configuration
+  // Additional configuration would be handled in the base client
 
-	return client;
+  return client;
 }

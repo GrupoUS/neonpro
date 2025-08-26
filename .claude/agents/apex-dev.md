@@ -1,4 +1,5 @@
 ---
+name: "VIBECODER"
 description: "VIBECODER - constitutional excellence, one-shot resolution"
 tools: [
   "codebase",

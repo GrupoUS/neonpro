@@ -1,164 +1,164 @@
-"use strict";
-const { execSync } = require("node:child_process");
-const { readFileSync, existsSync } = require("node:fs");
-const { join } = require("node:path");
-const { logger } = require("../apps/api/src/lib/logger");
+'use strict';
+const { execSync } = require('node:child_process');
+const { readFileSync, existsSync } = require('node:fs');
+const { join } = require('node:path');
+const { logger } = require('../apps/api/src/lib/logger');
 
 const rootDir = process.cwd();
 
 class MigrationValidator {
-	constructor() {
-		this.errors = [];
-		this.warnings = [];
-		this.success = [];
-	}
+  constructor() {
+    this.errors = [];
+    this.warnings = [];
+    this.success = [];
+  }
 
-	log(message, type = "info") {
-		const timestamp = new Date().toISOString();
-		const prefix = {
-			error: "❌",
-			warning: "⚠️ ",
-			success: "✅",
-			info: "ℹ️ ",
-		}[type];
+  log(message, type = 'info') {
+    const timestamp = new Date().toISOString();
+    const prefix = {
+      error: '❌',
+      warning: '⚠️ ',
+      success: '✅',
+      info: 'ℹ️ ',
+    }[type];
 
-		logger.info(`${prefix} [${timestamp}] ${message}`);
+    logger.info(`${prefix} [${timestamp}] ${message}`);
 
-		if (type === "error") {
-			this.errors.push(message);
-		}
-		if (type === "warning") {
-			this.warnings.push(message);
-		}
-		if (type === "success") {
-			this.success.push(message);
-		}
-	}
+    if (type === 'error') {
+      this.errors.push(message);
+    }
+    if (type === 'warning') {
+      this.warnings.push(message);
+    }
+    if (type === 'success') {
+      this.success.push(message);
+    }
+  }
 
-	// Validar estrutura básica do Turborepo
-	validateTurborepoStructure() {
-		this.log("🔍 Validando estrutura Turborepo...", "info");
+  // Validar estrutura básica do Turborepo
+  validateTurborepoStructure() {
+    this.log('🔍 Validando estrutura Turborepo...', 'info');
 
-		const requiredFiles = ["turbo.json", "pnpm-workspace.yaml", "package.json"];
+    const requiredFiles = ['turbo.json', 'pnpm-workspace.yaml', 'package.json'];
 
-		const requiredDirs = [
-			"apps",
-			"packages",
-			"apps/web",
-			"packages/ui",
-			"packages/utils",
-			"packages/types",
-		];
+    const requiredDirs = [
+      'apps',
+      'packages',
+      'apps/web',
+      'packages/ui',
+      'packages/utils',
+      'packages/types',
+    ];
 
-		// Verificar arquivos obrigatórios
-		for (const file of requiredFiles) {
-			const filePath = join(rootDir, file);
-			if (existsSync(filePath)) {
-				this.log(`Arquivo encontrado: ${file}`, "success");
-			} else {
-				this.log(`Arquivo obrigatório ausente: ${file}`, "error");
-			}
-		}
+    // Verificar arquivos obrigatórios
+    for (const file of requiredFiles) {
+      const filePath = join(rootDir, file);
+      if (existsSync(filePath)) {
+        this.log(`Arquivo encontrado: ${file}`, 'success');
+      } else {
+        this.log(`Arquivo obrigatório ausente: ${file}`, 'error');
+      }
+    }
 
-		// Verificar diretórios obrigatórios
-		for (const dir of requiredDirs) {
-			const dirPath = join(rootDir, dir);
-			if (existsSync(dirPath)) {
-				this.log(`Diretório encontrado: ${dir}`, "success");
-			} else {
-				this.log(`Diretório obrigatório ausente: ${dir}`, "error");
-			}
-		}
-	}
+    // Verificar diretórios obrigatórios
+    for (const dir of requiredDirs) {
+      const dirPath = join(rootDir, dir);
+      if (existsSync(dirPath)) {
+        this.log(`Diretório encontrado: ${dir}`, 'success');
+      } else {
+        this.log(`Diretório obrigatório ausente: ${dir}`, 'error');
+      }
+    }
+  }
 
-	// Validar configuração do Turbo
-	validateTurboConfig() {
-		this.log("🔍 Validando configuração Turbo...", "info");
+  // Validar configuração do Turbo
+  validateTurboConfig() {
+    this.log('🔍 Validando configuração Turbo...', 'info');
 
-		try {
-			const turboConfigPath = join(rootDir, "turbo.json");
-			const turboConfig = JSON.parse(readFileSync(turboConfigPath, "utf-8"));
+    try {
+      const turboConfigPath = join(rootDir, 'turbo.json');
+      const turboConfig = JSON.parse(readFileSync(turboConfigPath, 'utf8'));
 
-			// Verificar tasks essenciais
-			const requiredTasks = ["build", "dev", "lint", "test", "type-check"];
+      // Verificar tasks essenciais
+      const requiredTasks = ['build', 'dev', 'lint', 'test', 'type-check'];
 
-			for (const task of requiredTasks) {
-				if (turboConfig.tasks?.[task]) {
-					this.log(`Task configurada: ${task}`, "success");
-				} else {
-					this.log(`Task ausente: ${task}`, "warning");
-				}
-			}
+      for (const task of requiredTasks) {
+        if (turboConfig.tasks?.[task]) {
+          this.log(`Task configurada: ${task}`, 'success');
+        } else {
+          this.log(`Task ausente: ${task}`, 'warning');
+        }
+      }
 
-			// Verificar remote cache
-			if (turboConfig.remoteCache) {
-				this.log("Remote cache configurado", "success");
-			} else {
-				this.log("Remote cache não configurado", "warning");
-			}
-		} catch (error) {
-			this.log(`Erro ao ler turbo.json: ${error.message}`, "error");
-		}
-	}
+      // Verificar remote cache
+      if (turboConfig.remoteCache) {
+        this.log('Remote cache configurado', 'success');
+      } else {
+        this.log('Remote cache não configurado', 'warning');
+      }
+    } catch (error) {
+      this.log(`Erro ao ler turbo.json: ${error.message}`, 'error');
+    }
+  }
 
-	// Validar workspace PNPM
-	validatePnpmWorkspace() {
-		this.log("🔍 Validando PNPM workspace...", "info");
+  // Validar workspace PNPM
+  validatePnpmWorkspace() {
+    this.log('🔍 Validando PNPM workspace...', 'info');
 
-		try {
-			const workspacePath = join(rootDir, "pnpm-workspace.yaml");
-			const workspaceContent = readFileSync(workspacePath, "utf-8");
+    try {
+      const workspacePath = join(rootDir, 'pnpm-workspace.yaml');
+      const workspaceContent = readFileSync(workspacePath, 'utf8');
 
-			if (workspaceContent.includes("apps/*")) {
-				this.log("Apps workspace configurado", "success");
-			} else {
-				this.log("Apps workspace não configurado", "error");
-			}
+      if (workspaceContent.includes('apps/*')) {
+        this.log('Apps workspace configurado', 'success');
+      } else {
+        this.log('Apps workspace não configurado', 'error');
+      }
 
-			if (workspaceContent.includes("packages/*")) {
-				this.log("Packages workspace configurado", "success");
-			} else {
-				this.log("Packages workspace não configurado", "error");
-			}
+      if (workspaceContent.includes('packages/*')) {
+        this.log('Packages workspace configurado', 'success');
+      } else {
+        this.log('Packages workspace não configurado', 'error');
+      }
 
-			// Verificar catalog
-			if (workspaceContent.includes("catalog:")) {
-				this.log("PNPM catalog configurado", "success");
-			} else {
-				this.log("PNPM catalog ausente", "warning");
-			}
-		} catch (error) {
-			this.log(`Erro ao ler pnpm-workspace.yaml: ${error.message}`, "error");
-		}
-	}
+      // Verificar catalog
+      if (workspaceContent.includes('catalog:')) {
+        this.log('PNPM catalog configurado', 'success');
+      } else {
+        this.log('PNPM catalog ausente', 'warning');
+      }
+    } catch (error) {
+      this.log(`Erro ao ler pnpm-workspace.yaml: ${error.message}`, 'error');
+    }
+  }
 
-	// Executar todas as validações
-	runAll() {
-		logger.info("🚀 INICIANDO VALIDAÇÃO COMPLETA DA MIGRAÇÃO TURBOREPO\n");
+  // Executar todas as validações
+  runAll() {
+    logger.info('🚀 INICIANDO VALIDAÇÃO COMPLETA DA MIGRAÇÃO TURBOREPO\n');
 
-		this.validateTurborepoStructure();
-		this.validateTurboConfig();
-		this.validatePnpmWorkspace();
+    this.validateTurborepoStructure();
+    this.validateTurboConfig();
+    this.validatePnpmWorkspace();
 
-		logger.info("\n📊 RELATÓRIO FINAL:");
-		logger.info(`✅ Sucessos: ${this.success.length}`);
-		logger.info(`⚠️  Avisos: ${this.warnings.length}`);
-		logger.info(`❌ Erros: ${this.errors.length}`);
+    logger.info('\n📊 RELATÓRIO FINAL:');
+    logger.info(`✅ Sucessos: ${this.success.length}`);
+    logger.info(`⚠️  Avisos: ${this.warnings.length}`);
+    logger.info(`❌ Erros: ${this.errors.length}`);
 
-		if (this.errors.length === 0) {
-			logger.info("\n🎉 MIGRAÇÃO VALIDADA COM SUCESSO!");
-			return true;
-		}
-		logger.info("\n🔧 ERROS ENCONTRADOS - REQUER ATENÇÃO");
-		return false;
-	}
+    if (this.errors.length === 0) {
+      logger.info('\n🎉 MIGRAÇÃO VALIDADA COM SUCESSO!');
+      return true;
+    }
+    logger.info('\n🔧 ERROS ENCONTRADOS - REQUER ATENÇÃO');
+    return false;
+  }
 }
 
 // Executar se chamado diretamente
 if (require.main === module) {
-	const validator = new MigrationValidator();
-	const success = validator.runAll();
-	process.exit(success ? 0 : 1);
+  const validator = new MigrationValidator();
+  const success = validator.runAll();
+  process.exit(success ? 0 : 1);
 }
 
 module.exports = MigrationValidator;

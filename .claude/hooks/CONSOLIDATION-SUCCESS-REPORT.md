@@ -24,7 +24,7 @@
 - sequential-thinking-hook.bat
 - session-stop.bat
 - subagent-stop.bat
-- ultracite-post-hook.bat
+- oxlint-dprint-post-hook.bat
 - validate-system.bat
 + 3+ additional intelligence hooks
 ```
@@ -41,7 +41,7 @@
 🎯 post-tool-intelligence.bat (1950 lines)  
    ├── Task completion detection with AI analysis
    ├── Automatic quality-control.md execution
-   ├── Ultracite quality validation (≥9.5/10)
+   ├── oxlint + dprint quality validation (≥9.5/10)
    ├── Healthcare compliance (LGPD/ANVISA/CFM)
    └── Intelligent cleanup detection
 
@@ -114,7 +114,7 @@
 
 - **Completion Detection**: AI-powered task completion analysis
 - **Quality Automation**: Automatic quality-control.md execution
-- **Ultracite Integration**: ≥9.5/10 quality enforcement
+- **oxlint + dprint Integration**: ≥9.5/10 quality enforcement
 - **Healthcare Validation**: LGPD/ANVISA/CFM compliance
 - **Cleanup Intelligence**: Duplicate/obsolete code detection
 
@@ -148,7 +148,7 @@
 
 ### Quality Standards
 
-- **Code Quality**: ≥9.5/10 Ultracite validation
+- **Code Quality**: ≥9.5/10 oxlint + dprint validation
 - **Performance**: 70% API request reduction sustained
 - **Healthcare**: 100% regulatory compliance maintained
 - **Error Rate**: <1% with automatic recovery

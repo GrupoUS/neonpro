@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json-schema.org/draft-07/schema#",
 	"title": "Claude Code Enhanced Hook Configuration",
-	"description": "NEONPRO Healthcare optimized configuration with PNPM, Ultracite, and Archon MCP integration",
+	"description": "NEONPRO Healthcare optimized configuration with PNPM, oxlint, dprint, and Archon MCP integration",
 	"version": "3.0.0",
 
 	"taskCompletionCommands": {
@@ -17,10 +17,10 @@
 		"onSuccess": [
 			{
 				"command": "npx",
-				"args": ["ultracite", "format"],
+				"args": ["run", "format"],
 				"timeout": 15,
 				"continueOnFailure": true,
-				"description": "Ultracite auto-format for ≥9.5/10 quality",
+				"description": "dprint + prettier auto-format for ≥9.5/10 quality",
 				"conditions": {
 					"fileExists": "package.json",
 					"hasTypeScriptFiles": true
@@ -76,10 +76,10 @@
 		"onSuccess": [
 			{
 				"command": "npx",
-				"args": ["ultracite", "format", "--check"],
+				"args": ["run", "format:check"],
 				"timeout": 15,
 				"continueOnFailure": true,
-				"description": "Ultracite quality validation",
+				"description": "dprint format check validation",
 				"conditions": {
 					"fileExists": "package.json"
 				}

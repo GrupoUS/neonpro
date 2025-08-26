@@ -9,189 +9,183 @@
  * - Emergency access <10s
  */
 
-import { performance } from "node:perf_hooks";
+import { performance } from 'node:perf_hooks';
 
-type PerformanceTargets = {
-	lighthouseScore: number;
-	pageLoadTime: number;
-	apiResponseTime: number;
-	emergencyAccessTime: number;
-	bundleSize: number;
-};
+interface PerformanceTargets {
+  lighthouseScore: number;
+  pageLoadTime: number;
+  apiResponseTime: number;
+  emergencyAccessTime: number;
+  bundleSize: number;
+}
 
-type PerformanceResults = {
-	lighthouse: number;
-	pageLoad: number;
-	apiResponse: number;
-	emergencyAccess: number;
-	bundle: number;
-	overall: "PASS" | "FAIL";
-};
+interface PerformanceResults {
+  lighthouse: number;
+  pageLoad: number;
+  apiResponse: number;
+  emergencyAccess: number;
+  bundle: number;
+  overall: 'PASS' | 'FAIL';
+}
 
 class PerformanceValidator {
-	private readonly targets: PerformanceTargets = {
-		lighthouseScore: 90,
-		pageLoadTime: 3000, // 3s em ms
-		apiResponseTime: 100, // 100ms
-		emergencyAccessTime: 10_000, // 10s em ms
-		bundleSize: 500, // 500KB
-	};
+  private readonly targets: PerformanceTargets = {
+    lighthouseScore: 90,
+    pageLoadTime: 3000, // 3s em ms
+    apiResponseTime: 100, // 100ms
+    emergencyAccessTime: 10_000, // 10s em ms
+    bundleSize: 500, // 500KB
+  };
 
-	async validateLighthouseScore(): Promise<number> {
-		// Simular verificação de performance
-		const mockScore = 92; // Score mockado - em produção seria real
+  async validateLighthouseScore(): Promise<number> {
+    // Simular verificação de performance
+    const mockScore = 92; // Score mockado - em produção seria real
 
-		return mockScore;
-	}
+    return mockScore;
+  }
 
-	async validatePageLoadTime(): Promise<number> {
-		const startTime = performance.now();
+  async validatePageLoadTime(): Promise<number> {
+    const startTime = performance.now();
 
-		// Simular carregamento de página
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Mock delay
+    // Simular carregamento de página
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Mock delay
 
-		const endTime = performance.now();
-		const _loadTime = endTime - startTime;
+    const endTime = performance.now();
+    const _loadTime = endTime - startTime;
 
-		// Mock realistic page load time
-		const mockLoadTime = 2500; // 2.5s
+    // Mock realistic page load time
+    const mockLoadTime = 2500; // 2.5s
 
-		return mockLoadTime;
-	}
+    return mockLoadTime;
+  }
 
-	async validateApiResponseTime(): Promise<number> {
-		const apiEndpoints = [
-			"/api/patients",
-			"/api/auth/session",
-			"/api/healthcare/appointments",
-			"/api/analytics/dashboard",
-		];
+  async validateApiResponseTime(): Promise<number> {
+    const apiEndpoints = [
+      '/api/patients',
+      '/api/auth/session',
+      '/api/healthcare/appointments',
+      '/api/analytics/dashboard',
+    ];
 
-		let totalResponseTime = 0;
+    let totalResponseTime = 0;
 
-		for (const _endpoint of apiEndpoints) {
-			const startTime = performance.now();
+    for (const _endpoint of apiEndpoints) {
+      const startTime = performance.now();
 
-			// Mock API call
-			await new Promise((resolve) => setTimeout(resolve, 50)); // Mock API delay
+      // Mock API call
+      await new Promise((resolve) => setTimeout(resolve, 50)); // Mock API delay
 
-			const endTime = performance.now();
-			const responseTime = endTime - startTime;
-			totalResponseTime += responseTime;
-		}
+      const endTime = performance.now();
+      const responseTime = endTime - startTime;
+      totalResponseTime += responseTime;
+    }
 
-		const _averageResponseTime = totalResponseTime / apiEndpoints.length;
+    const _averageResponseTime = totalResponseTime / apiEndpoints.length;
 
-		// Mock realistic API response time
-		const mockApiResponseTime = 85; // 85ms average
+    // Mock realistic API response time
+    const mockApiResponseTime = 85; // 85ms average
 
-		return mockApiResponseTime;
-	}
+    return mockApiResponseTime;
+  }
 
-	async validateEmergencyAccessTime(): Promise<number> {
-		const startTime = performance.now();
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Auth bypass
-		await new Promise((resolve) => setTimeout(resolve, 200)); // Emergency auth
-		await new Promise((resolve) => setTimeout(resolve, 300)); // Emergency UI
-		await new Promise((resolve) => setTimeout(resolve, 150)); // Permission check
+  async validateEmergencyAccessTime(): Promise<number> {
+    const startTime = performance.now();
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Auth bypass
+    await new Promise((resolve) => setTimeout(resolve, 200)); // Emergency auth
+    await new Promise((resolve) => setTimeout(resolve, 300)); // Emergency UI
+    await new Promise((resolve) => setTimeout(resolve, 150)); // Permission check
 
-		const endTime = performance.now();
-		const _emergencyAccessTime = endTime - startTime;
+    const endTime = performance.now();
+    const _emergencyAccessTime = endTime - startTime;
 
-		// Mock realistic emergency access time
-		const mockEmergencyTime = 8500; // 8.5s
+    // Mock realistic emergency access time
+    const mockEmergencyTime = 8500; // 8.5s
 
-		return mockEmergencyTime;
-	}
+    return mockEmergencyTime;
+  }
 
-	async validateBundleSize(): Promise<number> {
-		// Mock bundle analysis - em produção analisaria bundles reais
-		const mockBundleSize = 420; // 420KB
+  async validateBundleSize(): Promise<number> {
+    // Mock bundle analysis - em produção analisaria bundles reais
+    const mockBundleSize = 420; // 420KB
 
-		return mockBundleSize;
-	}
+    return mockBundleSize;
+  }
 
-	async runCompleteValidation(): Promise<PerformanceResults> {
-		const results: PerformanceResults = {
-			lighthouse: await this.validateLighthouseScore(),
-			pageLoad: await this.validatePageLoadTime(),
-			apiResponse: await this.validateApiResponseTime(),
-			emergencyAccess: await this.validateEmergencyAccessTime(),
-			bundle: await this.validateBundleSize(),
-			overall: "PASS",
-		};
+  async runCompleteValidation(): Promise<PerformanceResults> {
+    const results: PerformanceResults = {
+      lighthouse: await this.validateLighthouseScore(),
+      pageLoad: await this.validatePageLoadTime(),
+      apiResponse: await this.validateApiResponseTime(),
+      emergencyAccess: await this.validateEmergencyAccessTime(),
+      bundle: await this.validateBundleSize(),
+      overall: 'PASS',
+    };
 
-		const validations = [
-			{
-				name: "Lighthouse Score",
-				result: results.lighthouse,
-				target: `>${this.targets.lighthouseScore}`,
-				passed: results.lighthouse > this.targets.lighthouseScore,
-			},
-			{
-				name: "Page Load Time",
-				result: `${results.pageLoad}ms`,
-				target: `<${this.targets.pageLoadTime}ms`,
-				passed: results.pageLoad < this.targets.pageLoadTime,
-			},
-			{
-				name: "API Response Time",
-				result: `${results.apiResponse}ms`,
-				target: `<${this.targets.apiResponseTime}ms`,
-				passed: results.apiResponse < this.targets.apiResponseTime,
-			},
-			{
-				name: "Emergency Access Time",
-				result: `${results.emergencyAccess}ms`,
-				target: `<${this.targets.emergencyAccessTime}ms`,
-				passed: results.emergencyAccess < this.targets.emergencyAccessTime,
-			},
-			{
-				name: "Bundle Size",
-				result: `${results.bundle}KB`,
-				target: `<${this.targets.bundleSize}KB`,
-				passed: results.bundle < this.targets.bundleSize,
-			},
-		];
+    const validations = [
+      {
+        name: 'Lighthouse Score',
+        result: results.lighthouse,
+        target: `>${this.targets.lighthouseScore}`,
+        passed: results.lighthouse > this.targets.lighthouseScore,
+      },
+      {
+        name: 'Page Load Time',
+        result: `${results.pageLoad}ms`,
+        target: `<${this.targets.pageLoadTime}ms`,
+        passed: results.pageLoad < this.targets.pageLoadTime,
+      },
+      {
+        name: 'API Response Time',
+        result: `${results.apiResponse}ms`,
+        target: `<${this.targets.apiResponseTime}ms`,
+        passed: results.apiResponse < this.targets.apiResponseTime,
+      },
+      {
+        name: 'Emergency Access Time',
+        result: `${results.emergencyAccess}ms`,
+        target: `<${this.targets.emergencyAccessTime}ms`,
+        passed: results.emergencyAccess < this.targets.emergencyAccessTime,
+      },
+      {
+        name: 'Bundle Size',
+        result: `${results.bundle}KB`,
+        target: `<${this.targets.bundleSize}KB`,
+        passed: results.bundle < this.targets.bundleSize,
+      },
+    ];
 
-		let allPassed = true;
+    let allPassed = true;
 
-		validations.forEach((validation) => {
-			const _status = validation.passed ? "✅ PASS" : "❌ FAIL";
+    validations.forEach((validation) => {
+      const _status = validation.passed ? '✅ PASS' : '❌ FAIL';
 
-			if (!validation.passed) {
-				allPassed = false;
-			}
-		});
+      if (!validation.passed) {
+        allPassed = false;
+      }
+    });
 
-		results.overall = allPassed ? "PASS" : "FAIL";
+    results.overall = allPassed ? 'PASS' : 'FAIL';
 
-		if (results.overall === "PASS") {
-		} else {
-		}
+    if (results.overall === 'PASS') {} else {}
 
-		return results;
-	}
+    return results;
+  }
 }
 
 // Função principal para execução
 async function main() {
-	const validator = new PerformanceValidator();
-	const results = await validator.runCompleteValidation();
+  const validator = new PerformanceValidator();
+  const results = await validator.runCompleteValidation();
 
-	// Exit code baseado nos resultados
-	process.exit(results.overall === "PASS" ? 0 : 1);
+  // Exit code baseado nos resultados
+  process.exit(results.overall === 'PASS' ? 0 : 1);
 }
 
 // Executar se chamado diretamente
 if (require.main === module) {
-	main().catch((_error) => {
-		process.exit(1);
-	});
+  main().catch((_error) => {
+    process.exit(1);
+  });
 }
 
-export {
-	type PerformanceResults,
-	type PerformanceTargets,
-	PerformanceValidator,
-};
+export { type PerformanceResults, type PerformanceTargets, PerformanceValidator };

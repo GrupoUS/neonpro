@@ -3,93 +3,93 @@
  * Handles subscription validation, route protection, and caching
  */
 
-export type SubscriptionStatus = {
-	id: string;
-	status: "active" | "expired" | "cancelled" | "pending";
-	features: string[];
-	expiresAt?: Date;
-	planType: "basic" | "premium" | "enterprise";
-};
+export interface SubscriptionStatus {
+  id: string;
+  status: 'active' | 'expired' | 'cancelled' | 'pending';
+  features: string[];
+  expiresAt?: Date;
+  planType: 'basic' | 'premium' | 'enterprise';
+}
 
 export const validateSubscriptionStatus = (
-	subscription: SubscriptionStatus | null,
+  subscription: SubscriptionStatus | null,
 ): boolean => {
-	if (!subscription) {
-		return false;
-	}
-	if (subscription.status === "active") {
-		return true;
-	}
-	if (
-		subscription.status === "expired" ||
-		subscription.status === "cancelled"
-	) {
-		return false;
-	}
-	return false;
+  if (!subscription) {
+    return false;
+  }
+  if (subscription.status === 'active') {
+    return true;
+  }
+  if (
+    subscription.status === 'expired'
+    || subscription.status === 'cancelled'
+  ) {
+    return false;
+  }
+  return false;
 };
 
 export const routeProtection = {
-	isPublicRoute: (route: string): boolean => {
-		const publicRoutes = ["/login", "/signup", "/public", "/"];
-		return publicRoutes.some((pub) => route.startsWith(pub));
-	},
+  isPublicRoute: (route: string): boolean => {
+    const publicRoutes = ['/login', '/signup', '/public', '/'];
+    return publicRoutes.some((pub) => route.startsWith(pub));
+  },
 
-	isPremiumRoute: (route: string): boolean => {
-		const premiumRoutes = ["/premium", "/analytics", "/reports"];
-		return premiumRoutes.some((premium) => route.startsWith(premium));
-	},
+  isPremiumRoute: (route: string): boolean => {
+    const premiumRoutes = ['/premium', '/analytics', '/reports'];
+    return premiumRoutes.some((premium) => route.startsWith(premium));
+  },
 
-	shouldRedirectToUpgrade: (
-		subscription: SubscriptionStatus | null,
-		route: string,
-	): boolean => {
-		if (routeProtection.isPublicRoute(route)) {
-			return false;
-		}
-		if (
-			routeProtection.isPremiumRoute(route) &&
-			(!subscription || subscription.status !== "active")
-		) {
-			return true;
-		}
-		return false;
-	},
+  shouldRedirectToUpgrade: (
+    subscription: SubscriptionStatus | null,
+    route: string,
+  ): boolean => {
+    if (routeProtection.isPublicRoute(route)) {
+      return false;
+    }
+    if (
+      routeProtection.isPremiumRoute(route)
+      && (!subscription || subscription.status !== 'active')
+    ) {
+      return true;
+    }
+    return false;
+  },
 };
 
 export const subscriptionCaching = {
-	cache: new Map<string, { data: SubscriptionStatus; expires: number }>(),
+  cache: new Map<string, { data: SubscriptionStatus; expires: number; }>(),
 
-	get: (userId: string): SubscriptionStatus | null => {
-		const cached = subscriptionCaching.cache.get(userId);
-		if (cached && cached.expires > Date.now()) {
-			return cached.data;
-		}
-		return null;
-	},
+  get: (userId: string): SubscriptionStatus | null => {
+    const cached = subscriptionCaching.cache.get(userId);
+    if (cached && cached.expires > Date.now()) {
+      return cached.data;
+    }
+    return;
+  },
 
-	set: (userId: string, data: SubscriptionStatus, ttl = 300_000): void => {
-		subscriptionCaching.cache.set(userId, {
-			data,
-			expires: Date.now() + ttl,
-		});
-	},
+  set: (userId: string, data: SubscriptionStatus, ttl = 300_000): void => {
+    subscriptionCaching.cache.set(userId, {
+      data,
+      expires: Date.now() + ttl,
+    });
+  },
 
-	invalidate: (userId: string): void => {
-		subscriptionCaching.cache.delete(userId);
-	},
+  invalidate: (userId: string): void => {
+    subscriptionCaching.cache.delete(userId);
+  },
 
-	clear: (): void => {
-		subscriptionCaching.cache.clear();
-	},
+  clear: (): void => {
+    subscriptionCaching.cache.clear();
+  },
 };
 
 export const errorHandling = {
-	handleNetworkError: (_error: Error): SubscriptionStatus | null => {
-		return null;
-	},
+  handleNetworkError: (_error: Error): SubscriptionStatus | null => {
+    return;
+  },
 
-	handleInvalidResponse: (_response: any): SubscriptionStatus | null => {
-		return null;
-	},
+  handleInvalidResponse: (_response: any): SubscriptionStatus | null => {
+    return;
+  },
 };

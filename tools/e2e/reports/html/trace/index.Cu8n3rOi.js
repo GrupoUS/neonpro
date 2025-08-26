@@ -1,14 +1,14 @@
 import {
 	a as B,
-	b as U,
-	c as z,
-	D as M,
-	d as I,
-	j as e,
-	M as E,
-	r as s,
-	T as F,
 	W as C,
+	M as E,
+	T as F,
+	d as I,
+	D as M,
+	b as U,
+	j as e,
+	r as s,
+	c as z,
 } from "./assets/defaultSettingsView-CUd-tHFm.js";
 
 const A = ({
@@ -22,7 +22,7 @@ const A = ({
 		dataTestId: T,
 		children: y,
 	}) => {
-		const w = s.useRef(null),
+		const w = s.useRef(),
 			[_b, x] = s.useState(0);
 		let S = o;
 		if (h?.current) {
@@ -42,11 +42,11 @@ const A = ({
 				const g = (j) => {
 						!(w.current && j.target instanceof Node) ||
 							w.current.contains(j.target) ||
-							u == null ||
+							u === undefined ||
 							u();
 					},
 					p = (j) => {
-						j.key === "Escape" && (u == null || u());
+						j.key === "Escape" && (u === undefined || u());
 					};
 				return r
 					? (document.addEventListener("mousedown", g),
@@ -94,7 +94,7 @@ const A = ({
 		return { value: n.right - o, inBounds: n.right - o >= 0 };
 	},
 	V = () => {
-		const n = s.useRef(null),
+		const n = s.useRef(),
 			[o, r] = s.useState(!1);
 		return e.jsxs(e.Fragment, {
 			children: [
@@ -127,8 +127,8 @@ const A = ({
 			[h, T] = s.useState(D),
 			[y, w] = s.useState({ done: 0, total: 0 }),
 			[b, x] = s.useState(!1),
-			[S, g] = s.useState(null),
-			[p, j] = s.useState(null),
+			[S, g] = s.useState(),
+			[p, j] = s.useState(),
 			L = s.useCallback((t) => {
 				const c = [],
 					l = [],
@@ -145,12 +145,12 @@ const A = ({
 						i.searchParams.append("traceFileName", v.name);
 				}
 				const m = i.toString();
-				window.history.pushState({}, "", m), a(c), u(l), x(!1), g(null);
+				window.history.pushState({}, "", m), a(c), u(l), x(!1), g();
 			}, []);
 		s.useEffect(() => {
 			const t = async (c) => {
 				let l;
-				if ((l = c.clipboardData) != null && l.files.length) {
+				if ((l = c.clipboardData) !== undefined && l.files.length > 0) {
 					for (const i of c.clipboardData.files) {
 						if (i.type !== "application/zip") {
 							return;
@@ -169,7 +169,7 @@ const A = ({
 					const { method: l, params: i } = c.data;
 					if (
 						l !== "load" ||
-						!((i == null ? void 0 : i.trace) instanceof Blob)
+						!((i === undefined ? void 0 : i.trace) instanceof Blob)
 					) {
 						return;
 					}
@@ -202,7 +202,7 @@ const A = ({
 			o(t.has("isServer"));
 			for (const l of c) {
 				if (l.startsWith("file:")) {
-					j(l || null);
+					j(l || undefined);
 					return;
 				}
 			}
@@ -212,7 +212,7 @@ const A = ({
 				i.protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 				const m = new B(new C(i));
 				m.onLoadTraceRequested(async (f) => {
-					a(f.traceUrl ? [f.traceUrl] : []), x(!1), g(null);
+					a(f.traceUrl ? [f.traceUrl] : []), x(!1), g();
 				}),
 					m.initialize({}).catch(() => {});
 			} else {
@@ -221,7 +221,7 @@ const A = ({
 		}, []),
 			s.useEffect(() => {
 				(async () => {
-					if (r.length) {
+					if (r.length > 0) {
 						const t = (i) => {
 							i.data.method === "progress" && w(i.data.params);
 						};
@@ -249,7 +249,7 @@ const A = ({
 					}
 				})();
 			}, [n, r, d]);
-		const k = !!(!(n || b || p) && (!r.length || S));
+		const k = !!(!(n || b || p) && (r.length === 0 || S));
 		return e.jsxs("div", {
 			className: "vbox workbench-loader",
 			onDragOver: (t) => {
@@ -351,7 +351,7 @@ const A = ({
 						],
 					}),
 				n &&
-					!r.length &&
+					r.length === 0 &&
 					e.jsx("div", {
 						className: "drop-target",
 						children: e.jsx("div", {
@@ -378,7 +378,7 @@ const A = ({
 	G = ({ traceJson: n }) => {
 		const [o, r] = s.useState(void 0),
 			[a, d] = s.useState(0),
-			u = s.useRef(null);
+			u = s.useRef();
 		return (
 			s.useEffect(
 				() => (
@@ -430,7 +430,7 @@ Make sure to serve the Trace Viewer (${window.location}) via HTTPS or localhost.
 			}, 1e4);
 	}
 	const o = n.get("trace"),
-		a = (o == null ? void 0 : o.endsWith(".json"))
+		a = (o === undefined ? void 0 : o.endsWith(".json"))
 			? e.jsx(G, { traceJson: o })
 			: e.jsx($, {});
 	I.createRoot(document.querySelector("#root")).render(a);

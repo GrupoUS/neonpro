@@ -1,8 +1,8 @@
 {
-	"extends": ["//"],
-	"pipeline": {
-		"build": {},
-		"dev": {},
-		"test": {}
-	}
+  "extends": ["//"],
+  "pipeline": {
+    "build": {},
+    "dev": {},
+    "test": {}
+  }
 }

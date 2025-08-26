@@ -89,7 +89,7 @@ async function generateFinalReport(env) {
 
 		// Save comprehensive report
 		const reportFile = `${utils.cacheDir}/final-report-${env.sessionId}.json`;
-		utils.safeWriteFile(reportFile, JSON.stringify(report, null, 2));
+		utils.safeWriteFile(reportFile, JSON.stringify(report, undefined, 2));
 
 		// Create summary for easy reading
 		const summaryFile = `${utils.cacheDir}/session-summary-${env.sessionId}.txt`;
@@ -145,7 +145,7 @@ async function gatherSessionData(_env) {
 		sessionLines.forEach((line) => {
 			// Parse timestamp
 			const timestampMatch = line.match(/\[(.*?)\]/);
-			const timestamp = timestampMatch ? timestampMatch[1] : null;
+			const timestamp = timestampMatch ? timestampMatch[1] : undefined;
 
 			// Parse tool usage
 			if (
@@ -264,8 +264,8 @@ async function calculateSessionMetrics(sessionData) {
 		// Performance metrics
 		const performance = {
 			avgToolDuration: 0,
-			fastestTool: null,
-			slowestTool: null,
+			fastestTool: undefined,
+			slowestTool: undefined,
 			toolDurations: [],
 		};
 
@@ -281,7 +281,7 @@ async function calculateSessionMetrics(sessionData) {
 						tool: tool.name,
 						duration,
 					});
-				} catch (_e) {
+				} catch {
 					// Ignore timestamp parsing errors
 				}
 			}
@@ -339,10 +339,10 @@ async function calculateSessionMetrics(sessionData) {
 async function analyzeUsagePatterns(tools, _sessionData) {
 	try {
 		const patterns = {
-			mostUsedTool: null,
+			mostUsedTool: undefined,
 			toolSequences: [],
 			workflowTypes: [],
-			peakActivity: null,
+			peakActivity: undefined,
 		};
 
 		// Find most used tool
@@ -484,7 +484,7 @@ async function clearSessionTempData(env) {
 				const filePath = `${utils.cacheDir}/${file}`;
 				fs.unlinkSync(filePath);
 				removedCount++;
-			} catch (_e) {
+			} catch {
 				// Ignore individual file errors
 			}
 		});
@@ -530,7 +530,7 @@ async function optimizeCache() {
 					fs.unlinkSync(filePath);
 					optimizedCount++;
 				}
-			} catch (_e) {
+			} catch {
 				// Ignore individual file errors
 			}
 		});
@@ -581,7 +581,7 @@ async function archiveSessionData(env) {
 					fs.copyFileSync(sourcePath, destPath);
 					archivedCount++;
 				}
-			} catch (_e) {
+			} catch {
 				// Ignore individual file errors
 			}
 		});
@@ -637,7 +637,7 @@ async function updateSystemStats(env) {
 		if (existing) {
 			try {
 				stats = JSON.parse(existing);
-			} catch (_e) {
+			} catch {
 				stats = {};
 			}
 		}
@@ -648,7 +648,7 @@ async function updateSystemStats(env) {
 		stats.totalSessions = (stats.totalSessions || 0) + 1;
 		stats.platform = env.platform;
 
-		utils.safeWriteFile(statsFile, JSON.stringify(stats, null, 2));
+		utils.safeWriteFile(statsFile, JSON.stringify(stats, undefined, 2));
 	} catch (error) {
 		utils.log(
 			"WARN",

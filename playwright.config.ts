@@ -6,186 +6,186 @@
  * ARCHITECTURE: Constitutional Turborepo structure
  */
 
-import { defineConfig, devices } from "@playwright/test";
-import { cpus } from "node:os";
+import { defineConfig, devices } from '@playwright/test';
+import { cpus } from 'node:os';
 
 export default defineConfig({
-	// Constitutional test directory structure - UPDATED TO NEW STRUCTURE
-	testDir: "./tools/e2e",
+  // Constitutional test directory structure - UPDATED TO NEW STRUCTURE
+  testDir: './tools/e2e',
 
-	// Optimized test patterns - E2E ONLY
-	testMatch: ["**/*.spec.ts"],
+  // Optimized test patterns - E2E ONLY
+  testMatch: ['**/*.spec.ts'],
 
-	// EXCLUDE PATTERNS - SYNCHRONIZED WITH BIOME.JSON
-	testIgnore: [
-		// === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
-		"**/node_modules/**",
-		"**/dist/**",
-		"**/build/**",
-		"**/.next/**",
-		"**/.turbo/**",
-		"**/coverage/**",
-		"**/playwright-report/**",
-		"**/test-results/**",
-		"**/logs/**",
-		"**/temp-*",
-		"**/*.log",
-		"**/*.cache",
-		"**/*cache/**",
-		"**/.git/**",
-		"**/.vscode/**",
-		"**/supabase/migrations/**",
-		"**/archon/original_archon/**",
-		"**/serena/**",
-		"**/temp-broken-files/**",
-		"**/.tmp.*/**",
-		"**/pnpm-lock.yaml",
-		"**/package-lock.json*",
-		"**/*.tsbuildinfo",
-		"**/tsconfig.tsbuildinfo",
-		"**/.env*",
-		"**/scripts/*.ps1",
-		"**/scripts/*.sh",
-		"**/validate-*.mjs",
-		"**/test-*.ts",
-		"**/rpc-*.ts",
-		"**/backend-*.txt",
-		// === PLAYWRIGHT SPECIFIC EXCLUDES ===
-		// EXCLUDE UNIT TESTS TO AVOID CONFLICTS
-		"**/*.test.ts",
-		"**/*.test.tsx",
-		"**/packages/**/*.test.{ts,tsx}",
-		"**/src/**/*.test.{ts,tsx}",
-		"**/vitest/**",
-		"**/__tests__/**",
-	],
+  // EXCLUDE PATTERNS - SYNCHRONIZED WITH BIOME.JSON
+  testIgnore: [
+    // === BIOME IGNORE PATTERNS (SYNCHRONIZED) ===
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/.next/**',
+    '**/.turbo/**',
+    '**/coverage/**',
+    '**/playwright-report/**',
+    '**/test-results/**',
+    '**/logs/**',
+    '**/temp-*',
+    '**/*.log',
+    '**/*.cache',
+    '**/*cache/**',
+    '**/.git/**',
+    '**/.vscode/**',
+    '**/supabase/migrations/**',
+    '**/archon/original_archon/**',
+    '**/serena/**',
+    '**/temp-broken-files/**',
+    '**/.tmp.*/**',
+    '**/pnpm-lock.yaml',
+    '**/package-lock.json*',
+    '**/*.tsbuildinfo',
+    '**/tsconfig.tsbuildinfo',
+    '**/.env*',
+    '**/scripts/*.ps1',
+    '**/scripts/*.sh',
+    '**/validate-*.mjs',
+    '**/test-*.ts',
+    '**/rpc-*.ts',
+    '**/backend-*.txt',
+    // === PLAYWRIGHT SPECIFIC EXCLUDES ===
+    // EXCLUDE UNIT TESTS TO AVOID CONFLICTS
+    '**/*.test.ts',
+    '**/*.test.tsx',
+    '**/packages/**/*.test.{ts,tsx}',
+    '**/src/**/*.test.{ts,tsx}',
+    '**/vitest/**',
+    '**/__tests__/**',
+  ],
 
-	// 🚀 PERFORMANCE OPTIMIZATIONS
-	fullyParallel: true,
-	forbidOnly: !!process.env.CI,
+  // 🚀 PERFORMANCE OPTIMIZATIONS
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
 
-	// Optimized retry strategy
-	retries: process.env.CI ? 2 : 1,
+  // Optimized retry strategy
+  retries: process.env.CI ? 2 : 1,
 
-	// Dynamic worker allocation for maximum performance
-	workers: process.env.CI ? 4 : Math.min(4, cpus().length),
+  // Dynamic worker allocation for maximum performance
+  workers: process.env.CI ? 4 : Math.min(4, cpus().length),
 
-	// Faster test discovery and execution
-	timeout: 60_000, // 1 minute max per test
-	globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
+  // Faster test discovery and execution
+  timeout: 60_000, // 1 minute max per test
+  globalTimeout: process.env.CI ? 30 * 60_000 : 15 * 60_000, // 30min CI / 15min local
 
-	// Optimized reporting - CONSOLIDATED TO TOOLS STRUCTURE
-	reporter: [
-		[
-			"html",
-			{
-				outputFolder: "tools/reports/e2e/html",
-				open: "never",
-				attachmentsBaseURL: "../",
-			},
-		],
-		[
-			"junit",
-			{
-				outputFile: "tools/reports/e2e/junit-results.xml",
-				includeProjectInTestName: true,
-			},
-		],
-		// Performance metrics reporter
-		[
-			"json",
-			{
-				outputFile: "tools/reports/e2e/performance-metrics.json",
-			},
-		],
-		// CI-friendly reporter
-		process.env.CI ? ["github"] : ["list"],
-	],
+  // Optimized reporting - CONSOLIDATED TO TOOLS STRUCTURE
+  reporter: [
+    [
+      'html',
+      {
+        outputFolder: 'tools/reports/e2e/html',
+        open: 'never',
+        attachmentsBaseURL: '../',
+      },
+    ],
+    [
+      'junit',
+      {
+        outputFile: 'tools/reports/e2e/junit-results.xml',
+        includeProjectInTestName: true,
+      },
+    ],
+    // Performance metrics reporter
+    [
+      'json',
+      {
+        outputFile: 'tools/reports/e2e/performance-metrics.json',
+      },
+    ],
+    // CI-friendly reporter
+    process.env.CI ? ['github'] : ['list'],
+  ],
 
-	// Enhanced expect configurations for reliability
-	expect: {
-		timeout: 10_000, // 10 seconds for assertions
-		toHaveScreenshot: {
-			threshold: 0.2,
-			animations: "disabled", // Faster screenshot comparison
-		},
-		toMatchSnapshot: {
-			threshold: 0.2,
-		},
-	},
+  // Enhanced expect configurations for reliability
+  expect: {
+    timeout: 10_000, // 10 seconds for assertions
+    toHaveScreenshot: {
+      threshold: 0.2,
+      animations: 'disabled', // Faster screenshot comparison
+    },
+    toMatchSnapshot: {
+      threshold: 0.2,
+    },
+  },
 
-	// Organized output structure - CONSOLIDATED TO TOOLS STRUCTURE
-	outputDir: "tools/reports/test-results/e2e",
+  // Organized output structure - CONSOLIDATED TO TOOLS STRUCTURE
+  outputDir: 'tools/reports/test-results/e2e',
 
-	// Global setup for performance optimization
-	globalSetup: "./tools/e2e/global-setup.ts",
-	globalTeardown: "./tools/e2e/global-teardown.ts",
+  // Global setup for performance optimization
+  globalSetup: './tools/e2e/global-setup.ts',
+  globalTeardown: './tools/e2e/global-teardown.ts',
 
-	// Enhanced use block for test isolation
-	use: {
-		// Base URL for all tests - CRITICAL FOR E2E FUNCTIONALITY
-		baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
+  // Enhanced use block for test isolation
+  use: {
+    // Base URL for all tests - CRITICAL FOR E2E FUNCTIONALITY
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
 
-		// Optimized for maximum performance
-		actionTimeout: 15_000, // 15 seconds max for actions
-		navigationTimeout: 30_000, // 30 seconds for navigation
+    // Optimized for maximum performance
+    actionTimeout: 15_000, // 15 seconds max for actions
+    navigationTimeout: 30_000, // 30 seconds for navigation
 
-		// Performance optimizations
-		headless: true,
-		screenshot: process.env.CI ? "only-on-failure" : "off", // Screenshots only on failure in CI
-		video: process.env.CI ? "retain-on-failure" : "off", // Videos only on failure in CI
-		trace: process.env.CI ? "retain-on-failure" : "on-first-retry", // Selective tracing
+    // Performance optimizations
+    headless: true,
+    screenshot: process.env.CI ? 'only-on-failure' : 'off', // Screenshots only on failure in CI
+    video: process.env.CI ? 'retain-on-failure' : 'off', // Videos only on failure in CI
+    trace: process.env.CI ? 'retain-on-failure' : 'on-first-retry', // Selective tracing
 
-		// Modern browser features
-		locale: "pt-BR",
-		timezoneId: "America/Sao_Paulo",
+    // Modern browser features
+    locale: 'pt-BR',
+    timezoneId: 'America/Sao_Paulo',
 
-		// Security & Privacy (Healthcare compliance)
-		acceptDownloads: false,
-		ignoreHTTPSErrors: false,
-		permissions: [],
-	},
-	projects: [
-		{
-			name: "chromium-desktop",
-			use: {
-				...devices["Desktop Chrome"],
-				viewport: { width: 1920, height: 1080 },
-			},
-		},
+    // Security & Privacy (Healthcare compliance)
+    acceptDownloads: false,
+    ignoreHTTPSErrors: false,
+    permissions: [],
+  },
+  projects: [
+    {
+      name: 'chromium-desktop',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+      },
+    },
 
-		{
-			name: "mobile-android",
-			use: {
-				...devices["Pixel 5"],
-			},
-			testDir: "./tools/e2e/mobile",
-		},
+    {
+      name: 'mobile-android',
+      use: {
+        ...devices['Pixel 5'],
+      },
+      testDir: './tools/e2e/mobile',
+    },
 
-		{
-			name: "webkit-desktop",
-			use: {
-				...devices["Desktop Safari"],
-			},
-			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on WebKit
-		},
+    {
+      name: 'webkit-desktop',
+      use: {
+        ...devices['Desktop Safari'],
+      },
+      testIgnore: ['**/heavy-performance/**'], // Skip heavy tests on WebKit
+    },
 
-		{
-			name: "firefox-desktop",
-			use: {
-				...devices["Desktop Firefox"],
-			},
-			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on Firefox
-		},
-	],
-	// Development server configuration - DISABLED temporarily
-	// TODO: Re-enable after fixing turbo/pnpm configuration
-	// webServer: {
-	//   command: "npm run dev:web",
-	//   port: 3000,
-	//   reuseExistingServer: !process.env.CI,
-	//   timeout: 120_000,
-	// },
+    {
+      name: 'firefox-desktop',
+      use: {
+        ...devices['Desktop Firefox'],
+      },
+      testIgnore: ['**/heavy-performance/**'], // Skip heavy tests on Firefox
+    },
+  ],
+  // Development server configuration - DISABLED temporarily
+  // TODO: Re-enable after fixing turbo/pnpm configuration
+  // webServer: {
+  //   command: "npm run dev:web",
+  //   port: 3000,
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 120_000,
+  // },
 });
 
 /**

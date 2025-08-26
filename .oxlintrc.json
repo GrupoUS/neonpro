@@ -5,50 +5,219 @@
     "style": "warn",
     "pedantic": "warn",
     "perf": "warn"
+    // Note: Avoiding "nursery" (unstable) and selective "restriction" rules below
   },
   "plugins": [
     "typescript",
     "react",
     "jsx-a11y",
     "nextjs",
-    "unicorn"
+    "unicorn",
+    "jest",
+    "vitest",
+    "promise",
+    "import",
+    "jsdoc"
   ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true,
+    "jest": true,
+    "vitest": true
+  },
+  "globals": {
+    // Healthcare/Medical specific globals
+    "HL7": "readonly",
+    "FHIR": "readonly",
+
+    // Modern web globals
+    "globalThis": "readonly",
+    "structuredClone": "readonly",
+
+    // Testing globals
+    "describe": "readonly",
+    "it": "readonly",
+    "test": "readonly",
+    "expect": "readonly",
+    "beforeEach": "readonly",
+    "afterEach": "readonly",
+    "beforeAll": "readonly",
+    "afterAll": "readonly",
+    "vi": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": ["./tsconfig.json", "./apps/*/tsconfig.json", "./packages/*/tsconfig.json"]
+      }
+    },
+    "jest": {
+      "version": "detect"
+    }
+  },
   "rules": {
-    // Import/Export rules
+    // ===== CORRECTNESS RULES (Healthcare Critical) =====
+    "no-debugger": "error",
+    "no-console": "warn",
+    "no-alert": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+
+    // ===== TYPESCRIPT EXCELLENCE =====
     "typescript/consistent-type-imports": "error",
     "typescript/consistent-type-exports": "error",
-
-    // Style rules
-    "no-console": "warn",
-    "no-debugger": "error",
-    "prefer-const": "error",
-    "prefer-template": "warn",
-
-    // TypeScript specific
     "typescript/no-explicit-any": "error",
-    "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "typescript/array-type": ["error", { "default": "array" }],
+    "typescript/consistent-type-definitions": ["error", "interface"],
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/prefer-as-const": "error",
+    "typescript/prefer-ts-expect-error": "error",
+    "typescript/ban-ts-comment": ["error", {
+      "ts-expect-error": "allow-with-description",
+      "ts-ignore": false,
+      "ts-nocheck": false,
+      "ts-check": false
+    }],
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-useless-empty-export": "error",
 
-    // React specific
-    "react/jsx-uses-react": "off",
+    // ===== IMPORT/EXPORT EXCELLENCE =====
+    "import/first": "error",
+    "import/no-duplicates": "error",
+    "import/no-self-import": "error",
+    "import/no-cycle": "error",
+    "import/no-useless-path-segments": "error",
+    "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
+
+    // ===== REACT EXCELLENCE =====
+    "react/jsx-uses-react": "off", // Next.js 17+ doesn't need React import
     "react/react-in-jsx-scope": "off",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/no-children-prop": "error",
+    "react/no-danger-with-children": "error",
+    "react/no-direct-mutation-state": "error",
+    "react/no-unescaped-entities": "warn",
+    "react/self-closing-comp": ["warn", { "component": true, "html": true }],
+    "react/jsx-boolean-value": ["warn", "never"],
+    "react/jsx-curly-brace-presence": ["warn", { "props": "never", "children": "never" }],
+    "react/jsx-fragments": ["warn", "syntax"],
 
-    // Accessibility
+    // React Hooks
+    "react/exhaustive-deps": "warn",
+    "react/rules-of-hooks": "error",
+
+    // ===== ACCESSIBILITY (WCAG 2.1 AA+) =====
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/aria-props": "error",
     "jsx-a11y/aria-role": "error",
+    "jsx-a11y/aria-unsupported-elements": "error",
+    "jsx-a11y/autocomplete-valid": "error",
+    "jsx-a11y/click-events-have-key-events": "error",
+    "jsx-a11y/heading-has-content": "error",
+    "jsx-a11y/html-has-lang": "error",
+    "jsx-a11y/iframe-has-title": "error",
+    "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y/label-has-associated-control": "error",
+    "jsx-a11y/media-has-caption": "error",
+    "jsx-a11y/mouse-events-have-key-events": "error",
+    "jsx-a11y/no-access-key": "error",
+    "jsx-a11y/no-autofocus": "error",
+    "jsx-a11y/no-distracting-elements": "error",
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/role-supports-aria-props": "error",
+    "jsx-a11y/scope": "error",
+    "jsx-a11y/tabindex-no-positive": "error",
 
-    // Performance
+    // ===== PERFORMANCE OPTIMIZATION =====
     "no-accumulating-spread": "warn",
     "no-delete": "warn",
+    "react/jsx-no-jsx-as-prop": "warn",
+    "react/jsx-no-new-array-as-prop": "warn",
+    "react/jsx-no-new-function-as-prop": "warn",
+    "react/jsx-no-new-object-as-prop": "warn",
+    "unicorn/prefer-array-find": "warn",
+    "unicorn/prefer-array-flat-map": "warn",
+    "unicorn/prefer-set-has": "warn",
 
-    // Unicorn rules for better practices
+    // ===== SECURITY & HEALTHCARE COMPLIANCE =====
+    "no-script-url": "error",
+    "react/jsx-no-script-url": "error",
+    "react/jsx-no-target-blank": "error",
+    "unicorn/no-document-cookie": "error", // LGPD/GDPR compliance
+
+    // ===== MODERN JAVASCRIPT/TYPESCRIPT =====
+    "prefer-const": "error",
+    "prefer-template": "warn",
+    "prefer-spread": "warn",
+    "prefer-rest-params": "warn",
+    "prefer-destructuring": ["warn", {
+      "array": true,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }],
+    "no-var": "error",
+    "object-shorthand": "warn",
+    "prefer-arrow-callback": "warn",
+
+    // ===== UNICORN BEST PRACTICES =====
     "unicorn/prefer-node-protocol": "error",
-    "unicorn/prefer-module": "warn"
+    "unicorn/prefer-module": "warn",
+    "unicorn/prefer-string-starts-ends-with": "error",
+    "unicorn/prefer-string-trim-start-end": "error",
+    "unicorn/prefer-string-slice": "warn",
+    "unicorn/prefer-regexp-test": "warn",
+    "unicorn/prefer-math-trunc": "warn",
+    "unicorn/prefer-modern-dom-apis": "warn",
+    "unicorn/prefer-query-selector": "warn",
+    "unicorn/prefer-dom-node-text-content": "warn",
+    "unicorn/prefer-dom-node-append": "warn",
+    "unicorn/prefer-dom-node-remove": "warn",
+    "unicorn/prefer-add-event-listener": "warn",
+    "unicorn/prefer-optional-catch-binding": "warn",
+    "unicorn/throw-new-error": "error",
+    "unicorn/error-message": "error",
+    "unicorn/no-null": "warn",
+    "unicorn/no-useless-undefined": "warn",
+    "unicorn/no-zero-fractions": "error",
+    "unicorn/number-literal-case": "error",
+    "unicorn/numeric-separators-style": "error",
+
+    // ===== PROMISE/ASYNC PATTERNS =====
+    "promise/always-return": "warn",
+    "promise/no-return-wrap": "warn",
+    "promise/param-names": "error",
+    "promise/catch-or-return": "warn",
+    "promise/no-nesting": "warn",
+    "promise/no-promise-in-callback": "warn",
+    "promise/no-callback-in-promise": "warn",
+    "promise/avoid-new": "warn",
+    "promise/prefer-await-to-then": "warn",
+
+    // ===== SELECTIVE RESTRICTION RULES (Healthcare Critical) =====
+    "no-void": "error",
+    "typescript/no-var-requires": "error",
+    "typescript/no-require-imports": "error",
+
+    // ===== JSDOC (Documentation Quality) =====
+    "jsdoc/check-tag-names": "warn",
+    "jsdoc/require-param": "warn",
+    "jsdoc/require-param-name": "warn",
+    "jsdoc/require-param-type": "warn",
+    "jsdoc/require-returns": "warn",
+    "jsdoc/require-returns-type": "warn"
   },
   "ignorePatterns": [
+    // Build and dependency directories
     "**/node_modules/**",
     "**/.next/**",
     "**/.turbo/**",
@@ -60,40 +229,41 @@
     "**/.cache/**",
     "**/.tmp/**",
     "**/temp-*/**",
+
+    // System and temporary files
     "**/*.log",
     "**/.tmp.*",
     "**/.git/**",
     "**/.DS_Store",
     "**/Thumbs.db",
+    "**/nul",
+    "**/$null",
+    "**/~/**",
+
+    // Legacy and archive directories
     "**/archon/original_archon/**",
     "**/serena/test/**",
     "**/temp-broken-files/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/old/**",
+    "**/unused/**",
+
+    // Infrastructure and configuration
     "**/infrastructure/scripts/**",
     "**/supabase/migrations/**",
-    "**/playwright-report/**",
-    "**/test-results/**",
     "**/.vscode/settings.json",
     "**/.claude/settings.*.json",
+
+    // Configuration files
     "**/sentry.*.config.*",
     "**/next.config.*",
     "**/turbo.json",
     "**/trigger.config.*",
     "**/instrumentation*.ts",
     "**/vitest.setup.*",
-    "**/MIGRATION_LOG.md",
-    "**/CI-CD-OPTIMIZATION-REPORT.md",
-    "**/DEPLOYMENT-STATUS-REPORT.md",
-    "**/DEVOPS-FIXES-DOCUMENTATION.md",
-    "**/PRODUCTION-DEPLOYMENT-REPORT.md",
-    "**/TURBOREPO-ANALYSIS-REPORT.md",
-    "**/WORKFLOW-EXECUTION-REPORT.md",
-    "**/performance-report.json",
-    "**/load-test-report.json",
-    "**/pnpm-lock.yaml",
-    "**/package-lock.json",
-    "**/yarn.lock",
-    "**/tsconfig.tsbuildinfo",
-    "**/*.d.ts",
     "**/playwright.config.*",
     "**/vitest.config.*",
     "**/eslint.config.*",
@@ -104,21 +274,38 @@
     "**/webpack.config.*",
     "**/babel.config.*",
     "**/jest.config.*",
+
+    // Lock files and type definitions
+    "**/pnpm-lock.yaml",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/tsconfig.tsbuildinfo",
+    "**/*.d.ts",
+
+    // Environment and security
     "**/.env*",
-    "**/nul",
-    "**/$null",
-    "**/~/**",
-    "**/archives/**",
-    "**/backups/**",
-    "**/deprecated/**",
-    "**/legacy/**",
-    "**/old/**",
-    "**/unused/**",
+
+    // Test and report outputs
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/performance-report.json",
+    "**/load-test-report.json",
+
+    // Documentation (specific subdirectories)
     "**/docs/api/**",
     "**/docs/deployment/**",
     "**/docs/qa/**",
     "**/docs/realtime/**",
-    "**/docs/shards/**"
+    "**/docs/shards/**",
+
+    // Project specific reports
+    "**/MIGRATION_LOG.md",
+    "**/CI-CD-OPTIMIZATION-REPORT.md",
+    "**/DEPLOYMENT-STATUS-REPORT.md",
+    "**/DEVOPS-FIXES-DOCUMENTATION.md",
+    "**/PRODUCTION-DEPLOYMENT-REPORT.md",
+    "**/TURBOREPO-ANALYSIS-REPORT.md",
+    "**/WORKFLOW-EXECUTION-REPORT.md"
   ],
   "overrides": [
     {
@@ -126,28 +313,104 @@
       "plugins": ["typescript"],
       "rules": {
         "typescript/no-explicit-any": "error",
-        "typescript/consistent-type-imports": "error"
+        "typescript/consistent-type-imports": "error",
+        "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        "typescript/prefer-as-const": "error",
+        "typescript/no-non-null-assertion": "warn",
+        "typescript/ban-ts-comment": ["error", {
+          "ts-expect-error": "allow-with-description"
+        }]
       }
     },
     {
       "files": ["**/*.{jsx,tsx}"],
       "plugins": ["react", "jsx-a11y"],
+      "env": {
+        "browser": true
+      },
       "rules": {
         "react/jsx-uses-react": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-key": "error",
+        "react/no-unescaped-entities": "warn",
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-role": "error"
       }
     },
     {
-      "files": ["**/test/**", "**/*.test.*", "**/*.spec.*"],
+      "files": ["**/test/**", "**/*.test.*", "**/*.spec.*", "**/__tests__/**"],
+      "plugins": ["jest", "vitest"],
+      "env": {
+        "jest": true,
+        "vitest": true
+      },
+      "rules": {
+        // Relax rules for tests
+        "no-console": "off",
+        "typescript/no-explicit-any": "warn",
+        "typescript/no-non-null-assertion": "off",
+        "import/no-extraneous-dependencies": "off",
+
+        // Jest/Vitest specific
+        "jest/expect-expect": "error",
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/valid-expect": "error",
+        "jest/valid-title": "error",
+        "vitest/expect-expect": "error",
+        "vitest/no-conditional-tests": "error"
+      }
+    },
+    {
+      "files": ["scripts/**/*.js", "tools/**/*.js", "infrastructure/**/*.js"],
+      "env": {
+        "node": true
+      },
       "rules": {
         "no-console": "off",
-        "typescript/no-explicit-any": "warn"
+        "unicorn/prefer-module": "off", // Allow CommonJS in scripts
+        "import/no-extraneous-dependencies": "off"
       }
     },
     {
-      "files": ["scripts/**/*.js"],
+      "files": ["**/pages/**", "**/app/**"],
+      "plugins": ["nextjs"],
       "rules": {
-        "no-console": "off"
+        "nextjs/no-html-link-for-pages": "error",
+        "nextjs/no-img-element": "error",
+        "nextjs/no-page-custom-font": "error",
+        "nextjs/no-title-in-document-head": "error"
+      }
+    },
+    {
+      "files": ["packages/brazilian-healthcare-ui/**"],
+      "rules": {
+        // Extra strict rules for healthcare UI components
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-role": "error",
+        "jsx-a11y/autocomplete-valid": "error",
+        "jsx-a11y/click-events-have-key-events": "error",
+        "jsx-a11y/label-has-associated-control": "error",
+        "jsx-a11y/role-has-required-aria-props": "error",
+        "jsx-a11y/role-supports-aria-props": "error",
+        "jsx-a11y/tabindex-no-positive": "error",
+        "typescript/no-explicit-any": "error",
+        "no-console": "error" // No console logs in healthcare UI
+      }
+    },
+    {
+      "files": ["packages/compliance/**", "packages/auth/**", "packages/security/**"],
+      "rules": {
+        // Extra strict rules for security/compliance packages
+        "typescript/no-explicit-any": "error",
+        "typescript/no-non-null-assertion": "error",
+        "no-console": "error",
+        "no-debugger": "error",
+        "no-alert": "error",
+        "no-eval": "error",
+        "unicorn/no-document-cookie": "error"
       }
     }
   ]

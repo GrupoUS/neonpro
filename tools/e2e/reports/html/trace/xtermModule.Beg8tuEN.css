@@ -130,7 +130,7 @@
 	overflow: hidden;
 }
 .xterm-dim {
-	opacity: 1 !important;
+	opacity: 1;
 }
 .xterm-underline-1 {
 	text-decoration: underline;

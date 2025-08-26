@@ -54,7 +54,7 @@ class HookInstaller {
 
 			// Step 6: Show completion message
 			this.showCompletionMessage();
-		} catch (_error) {
+		} catch {
 			process.exit(1);
 		}
 	}
@@ -69,13 +69,13 @@ class HookInstaller {
 
 			// Check if version is compatible (Node 14+)
 			const majorVersion = Number.parseInt(
-				nodeVersion.substring(1).split(".")[0],
+				nodeVersion.slice(1).split(".")[0],
 				10,
 			);
 			if (majorVersion < MIN_NODE_VERSION) {
 				throw new Error(`Node.js ${MIN_NODE_VERSION} or higher is required`);
 			}
-		} catch (_error) {
+		} catch {
 			throw new Error("Node.js is not available or version is too old");
 		}
 
@@ -91,7 +91,7 @@ class HookInstaller {
 			const testFile = path.join(this.rootDir, "test-write-permissions.tmp");
 			fs.writeFileSync(testFile, "test");
 			fs.unlinkSync(testFile);
-		} catch (_error) {
+		} catch {
 			throw new Error("No write permissions in the configuration directory");
 		}
 	}
@@ -133,8 +133,7 @@ class HookInstaller {
 				}
 			});
 
-			if (backedUpFiles > 0) {
-			}
+			if (backedUpFiles > 0) {}
 
 			// Backup Ubuntu hooks if they exist
 			const ubuntuHooksDir = path.join(this.hooksDir, "ubuntu");
@@ -142,7 +141,7 @@ class HookInstaller {
 				const backupUbuntuDir = path.join(this.backupDir, "ubuntu");
 				this.copyDirectoryRecursive(ubuntuHooksDir, backupUbuntuDir);
 			}
-		} catch (_error) {}
+		} catch {}
 	}
 
 	/**
@@ -186,7 +185,7 @@ class HookInstaller {
 					await this.executeCommand(`chmod +x "${filePath}"`);
 				}
 			}
-		} catch (_error) {}
+		} catch {}
 	}
 
 	/**

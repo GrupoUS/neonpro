@@ -1,376 +1,374 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-export type Permission = {
-	id: string;
-	resource: string;
-	action: string;
-	conditions?: Record<string, any>;
-};
+export interface Permission {
+  id: string;
+  resource: string;
+  action: string;
+  conditions?: Record<string, any>;
+}
 
 export type HealthcareRole =
-	| "admin"
-	| "doctor"
-	| "nurse"
-	| "receptionist"
-	| "patient";
+  | 'admin'
+  | 'doctor'
+  | 'nurse'
+  | 'receptionist'
+  | 'patient';
 
-export type UserPermissions = {
-	userId: string;
-	roles: HealthcareRole[];
-	permissions: Permission[];
-	lastUpdated: string;
-};
+export interface UserPermissions {
+  userId: string;
+  roles: HealthcareRole[];
+  permissions: Permission[];
+  lastUpdated: string;
+}
 
-export type PermissionCheckResult = {
-	hasPermission: boolean;
-	reason?: string;
-};
+export interface PermissionCheckResult {
+  hasPermission: boolean;
+  reason?: string;
+}
 
-export type UsePermissionsOptions = {
-	userId?: string;
-	cacheTime?: number;
-	enableRealtime?: boolean;
-};
+export interface UsePermissionsOptions {
+  userId?: string;
+  cacheTime?: number;
+  enableRealtime?: boolean;
+}
 
-export type UsePermissionsReturn = {
-	permissions: Permission[];
-	roles: HealthcareRole[];
-	isLoading: boolean;
-	error: string | null;
-	hasPermission: (
-		resource: string,
-		action: string,
-		context?: Record<string, any>,
-	) => PermissionCheckResult;
-	hasRole: (role: HealthcareRole) => boolean;
-	canAccessResource: (resource: string) => boolean;
-	canPerformAction: (action: string) => boolean;
-	hasAnyRole: (roles: HealthcareRole[]) => boolean;
-	hasAllRoles: (roles: HealthcareRole[]) => boolean;
-	isAdmin: boolean;
-	isHealthcareProfessional: boolean;
-	grantPermission: (
-		userId: string,
-		permission: Omit<Permission, "id">,
-	) => Promise<boolean>;
-	revokePermission: (userId: string, permissionId: string) => Promise<boolean>;
-	assignRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
-	removeRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
-	refreshPermissions: () => Promise<void>;
-	clearCache: () => void;
-};
+export interface UsePermissionsReturn {
+  permissions: Permission[];
+  roles: HealthcareRole[];
+  isLoading: boolean;
+  error: string | null;
+  hasPermission: (
+    resource: string,
+    action: string,
+    context?: Record<string, any>,
+  ) => PermissionCheckResult;
+  hasRole: (role: HealthcareRole) => boolean;
+  canAccessResource: (resource: string) => boolean;
+  canPerformAction: (action: string) => boolean;
+  hasAnyRole: (roles: HealthcareRole[]) => boolean;
+  hasAllRoles: (roles: HealthcareRole[]) => boolean;
+  isAdmin: boolean;
+  isHealthcareProfessional: boolean;
+  grantPermission: (
+    userId: string,
+    permission: Omit<Permission, 'id'>,
+  ) => Promise<boolean>;
+  revokePermission: (userId: string, permissionId: string) => Promise<boolean>;
+  assignRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
+  removeRole: (userId: string, role: HealthcareRole) => Promise<boolean>;
+  refreshPermissions: () => Promise<void>;
+  clearCache: () => void;
+}
 
 // Mock toast functions
 const toast = {
-	error: () => {},
-	success: () => {},
+  error: () => {},
+  success: () => {},
 };
 
 export function usePermissions(
-	options: UsePermissionsOptions = {},
+  options: UsePermissionsOptions = {},
 ): UsePermissionsReturn {
-	const [permissions, setPermissions] = useState<Permission[]>([]);
-	const [roles, setRoles] = useState<HealthcareRole[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [roles, setRoles] = useState<HealthcareRole[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>();
 
-	const user = { id: options.userId || "user-1" };
+  const user = { id: options.userId || 'user-1' };
 
-	const refreshPermissions = useCallback(async (): Promise<void> => {
-		try {
-			setIsLoading(true);
-			setError(null);
+  const refreshPermissions = useCallback(async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      setError(undefined);
 
-			// Placeholder implementation
-			const mockPermissions: Permission[] = [
-				{
-					id: "1",
-					resource: "appointments",
-					action: "read",
-				},
-				{
-					id: "2",
-					resource: "patients",
-					action: "read",
-				},
-			];
+      // Placeholder implementation
+      const mockPermissions: Permission[] = [
+        {
+          id: '1',
+          resource: 'appointments',
+          action: 'read',
+        },
+        {
+          id: '2',
+          resource: 'patients',
+          action: 'read',
+        },
+      ];
 
-			const mockRoles: HealthcareRole[] = ["doctor"];
+      const mockRoles: HealthcareRole[] = ['doctor'];
 
-			setPermissions(mockPermissions);
-			setRoles(mockRoles);
-		} catch (err) {
-			const errorMessage =
-				err instanceof Error ? err.message : "Failed to refresh permissions";
-			setError(errorMessage);
-		} finally {
-			setIsLoading(false);
-		}
-	}, []);
+      setPermissions(mockPermissions);
+      setRoles(mockRoles);
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'Failed to refresh permissions';
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-	const clearCache = useCallback(() => {}, []);
+  const clearCache = useCallback(() => {}, []);
 
-	const loadUserPermissions = useCallback(
-		async (_userId: string) => {
-			await refreshPermissions();
-		},
-		[refreshPermissions],
-	);
+  const loadUserPermissions = useCallback(
+    async (_userId: string) => {
+      await refreshPermissions();
+    },
+    [refreshPermissions],
+  );
 
-	const resetPermissions = useCallback(() => {
-		setPermissions([]);
-		setRoles([]);
-		setError(null);
-	}, []);
+  const resetPermissions = useCallback(() => {
+    setPermissions([]);
+    setRoles([]);
+    setError(undefined);
+  }, []);
 
-	const subscribeToUpdates = useCallback((_userId: string) => {
-		// Placeholder implementation
-		return () => {};
-	}, []);
+  const subscribeToUpdates = useCallback((_userId: string) => {
+    // Placeholder implementation
+    return () => {};
+  }, []);
 
-	const logDataAccess = useCallback(
-		(_action: string, _resource: string) => {},
-		[],
-	);
+  const logDataAccess = useCallback(
+    (_action: string, _resource: string) => {},
+    [],
+  );
 
-	const _logDataModification = useCallback(
-		(_action: string, _resource: string) => {},
-		[],
-	);
+  const _logDataModification = useCallback(
+    (_action: string, _resource: string) => {},
+    [],
+  );
 
-	const hasPermission = useCallback(
-		(
-			resource: string,
-			action: string,
-			_context?: Record<string, any>,
-		): PermissionCheckResult => {
-			try {
-				if (!user?.id) {
-					return {
-						hasPermission: false,
-						reason: "User not authenticated",
-					};
-				}
+  const hasPermission = useCallback(
+    (
+      resource: string,
+      action: string,
+      _context?: Record<string, any>,
+    ): PermissionCheckResult => {
+      try {
+        if (!user?.id) {
+          return {
+            hasPermission: false,
+            reason: 'User not authenticated',
+          };
+        }
 
-				logDataAccess("permission_check", resource);
+        logDataAccess('permission_check', resource);
 
-				const permission = permissions.find(
-					(p) => p.resource === resource && p.action === action,
-				);
+        const permission = permissions.find(
+          (p) => p.resource === resource && p.action === action,
+        );
 
-				if (!permission) {
-					return {
-						hasPermission: false,
-						reason: `Permission not found for ${action} on ${resource}`,
-					};
-				}
+        if (!permission) {
+          return {
+            hasPermission: false,
+            reason: `Permission not found for ${action} on ${resource}`,
+          };
+        }
 
-				return {
-					hasPermission: true,
-				};
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Permission check failed";
-				setError(errorMessage);
-				return {
-					hasPermission: false,
-					reason: errorMessage,
-				};
-			}
-		},
-		[permissions, user?.id, logDataAccess],
-	);
+        return {
+          hasPermission: true,
+        };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Permission check failed';
+        setError(errorMessage);
+        return {
+          hasPermission: false,
+          reason: errorMessage,
+        };
+      }
+    },
+    [permissions, user?.id, logDataAccess],
+  );
 
-	const hasRole = useCallback(
-		(role: HealthcareRole): boolean => {
-			if (!user?.id) {
-				return false;
-			}
-			return roles.includes(role);
-		},
-		[roles, user?.id],
-	);
+  const hasRole = useCallback(
+    (role: HealthcareRole): boolean => {
+      if (!user?.id) {
+        return false;
+      }
+      return roles.includes(role);
+    },
+    [roles, user?.id],
+  );
 
-	const canAccessResource = useCallback(
-		(resource: string): boolean => {
-			if (!user?.id) {
-				return false;
-			}
-			return permissions.some((p) => p.resource === resource);
-		},
-		[permissions, user?.id],
-	);
+  const canAccessResource = useCallback(
+    (resource: string): boolean => {
+      if (!user?.id) {
+        return false;
+      }
+      return permissions.some((p) => p.resource === resource);
+    },
+    [permissions, user?.id],
+  );
 
-	const canPerformAction = useCallback(
-		(action: string): boolean => {
-			if (!user?.id) {
-				return false;
-			}
-			return permissions.some((p) => p.action === action);
-		},
-		[permissions, user?.id],
-	);
+  const canPerformAction = useCallback(
+    (action: string): boolean => {
+      if (!user?.id) {
+        return false;
+      }
+      return permissions.some((p) => p.action === action);
+    },
+    [permissions, user?.id],
+  );
 
-	const hasAnyRole = useCallback(
-		(rolesToCheck: HealthcareRole[]): boolean => {
-			if (!user?.id) {
-				return false;
-			}
-			return rolesToCheck.some((role) => roles.includes(role));
-		},
-		[roles, user?.id],
-	);
+  const hasAnyRole = useCallback(
+    (rolesToCheck: HealthcareRole[]): boolean => {
+      if (!user?.id) {
+        return false;
+      }
+      return rolesToCheck.some((role) => roles.includes(role));
+    },
+    [roles, user?.id],
+  );
 
-	const hasAllRoles = useCallback(
-		(rolesToCheck: HealthcareRole[]): boolean => {
-			if (!user?.id) {
-				return false;
-			}
-			return rolesToCheck.every((role) => roles.includes(role));
-		},
-		[roles, user?.id],
-	);
+  const hasAllRoles = useCallback(
+    (rolesToCheck: HealthcareRole[]): boolean => {
+      if (!user?.id) {
+        return false;
+      }
+      return rolesToCheck.every((role) => roles.includes(role));
+    },
+    [roles, user?.id],
+  );
 
-	const grantPermission = useCallback(
-		async (
-			_userId: string,
-			permission: Omit<Permission, "id">,
-		): Promise<boolean> => {
-			try {
-				if (!user?.id) {
-					toast.error();
-					return false;
-				}
+  const grantPermission = useCallback(
+    async (
+      _userId: string,
+      permission: Omit<Permission, 'id'>,
+    ): Promise<boolean> => {
+      try {
+        if (!user?.id) {
+          toast.error();
+          return false;
+        }
 
-				const newPermission: Permission = {
-					...permission,
-					id: `perm-${Date.now()}`,
-				};
+        const newPermission: Permission = {
+          ...permission,
+          id: `perm-${Date.now()}`,
+        };
 
-				setPermissions((prev) => [...prev, newPermission]);
-				toast.success();
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to grant permission";
-				setError(errorMessage);
-				toast.error();
-				return false;
-			}
-		},
-		[user?.id],
-	);
+        setPermissions((prev) => [...prev, newPermission]);
+        toast.success();
+        return true;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to grant permission';
+        setError(errorMessage);
+        toast.error();
+        return false;
+      }
+    },
+    [user?.id],
+  );
 
-	const revokePermission = useCallback(
-		async (_userId: string, permissionId: string): Promise<boolean> => {
-			try {
-				if (!user?.id) {
-					toast.error();
-					return false;
-				}
+  const revokePermission = useCallback(
+    async (_userId: string, permissionId: string): Promise<boolean> => {
+      try {
+        if (!user?.id) {
+          toast.error();
+          return false;
+        }
 
-				setPermissions((prev) => prev.filter((p) => p.id !== permissionId));
-				clearCache();
-				refreshPermissions();
-				toast.success();
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to revoke permission";
-				setError(errorMessage);
-				toast.error();
-				return false;
-			}
-		},
-		[user?.id, clearCache, refreshPermissions],
-	);
+        setPermissions((prev) => prev.filter((p) => p.id !== permissionId));
+        clearCache();
+        refreshPermissions();
+        toast.success();
+        return true;
+      } catch (error) {
+        const errorMessage = error instanceof Error
+          ? error.message
+          : 'Failed to revoke permission';
+        setError(errorMessage);
+        toast.error();
+        return false;
+      }
+    },
+    [user?.id, clearCache, refreshPermissions],
+  );
 
-	const assignRole = useCallback(
-		async (_userId: string, role: HealthcareRole): Promise<boolean> => {
-			try {
-				if (!roles.includes(role)) {
-					setRoles((prev) => [...prev, role]);
-				}
+  const assignRole = useCallback(
+    async (_userId: string, role: HealthcareRole): Promise<boolean> => {
+      try {
+        if (!roles.includes(role)) {
+          setRoles((prev) => [...prev, role]);
+        }
 
-				clearCache();
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to assign role";
-				setError(errorMessage);
-				return false;
-			}
-		},
-		[roles, clearCache],
-	);
+        clearCache();
+        return true;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to assign role';
+        setError(errorMessage);
+        return false;
+      }
+    },
+    [roles, clearCache],
+  );
 
-	const removeRole = useCallback(
-		async (_userId: string, role: HealthcareRole): Promise<boolean> => {
-			try {
-				if (!user?.id) {
-					return false;
-				}
+  const removeRole = useCallback(
+    async (_userId: string, role: HealthcareRole): Promise<boolean> => {
+      try {
+        if (!user?.id) {
+          return false;
+        }
 
-				setRoles((prev) => prev.filter((r) => r !== role));
+        setRoles((prev) => prev.filter((r) => r !== role));
 
-				// Remove permissions associated with this role
-				const roleName = role;
-				setPermissions((prev) => prev.filter((p) => p.resource !== roleName));
+        // Remove permissions associated with this role
+        const roleName = role;
+        setPermissions((prev) => prev.filter((p) => p.resource !== roleName));
 
-				return true;
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "Failed to remove role";
-				setError(errorMessage);
-				return false;
-			}
-		},
-		[user?.id],
-	);
+        return true;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to remove role';
+        setError(errorMessage);
+        return false;
+      }
+    },
+    [user?.id],
+  );
 
-	// Computed properties
-	const isAdmin = hasRole("admin");
-	const isHealthcareProfessional = hasAnyRole(["doctor", "nurse"]);
+  // Computed properties
+  const isAdmin = hasRole('admin');
+  const isHealthcareProfessional = hasAnyRole(['doctor', 'nurse']);
 
-	// Initialize permissions
-	useEffect(() => {
-		if (user?.id) {
-			loadUserPermissions(user.id);
-		} else {
-			resetPermissions();
-		}
-	}, [user?.id, loadUserPermissions, resetPermissions]);
+  // Initialize permissions
+  useEffect(() => {
+    if (user?.id) {
+      loadUserPermissions(user.id);
+    } else {
+      resetPermissions();
+    }
+  }, [user?.id, loadUserPermissions, resetPermissions]);
 
-	// Subscribe to realtime updates
-	useEffect(() => {
-		if (!(options.enableRealtime && user?.id)) {
-			return;
-		}
+  // Subscribe to realtime updates
+  useEffect(() => {
+    if (!(options.enableRealtime && user?.id)) {
+      return;
+    }
 
-		const unsubscribe = subscribeToUpdates(user.id);
-		return unsubscribe;
-	}, [options.enableRealtime, user?.id, subscribeToUpdates]);
+    const unsubscribe = subscribeToUpdates(user.id);
+    return unsubscribe;
+  }, [options.enableRealtime, user?.id, subscribeToUpdates]);
 
-	return {
-		permissions,
-		roles,
-		isLoading,
-		error,
-		hasPermission,
-		hasRole,
-		canAccessResource,
-		canPerformAction,
-		hasAnyRole,
-		hasAllRoles,
-		isAdmin: Boolean(isAdmin),
-		isHealthcareProfessional: Boolean(isHealthcareProfessional),
-		grantPermission,
-		revokePermission,
-		assignRole,
-		removeRole,
-		refreshPermissions,
-		clearCache,
-	};
+  return {
+    permissions,
+    roles,
+    isLoading,
+    error,
+    hasPermission,
+    hasRole,
+    canAccessResource,
+    canPerformAction,
+    hasAnyRole,
+    hasAllRoles,
+    isAdmin: Boolean(isAdmin),
+    isHealthcareProfessional: Boolean(isHealthcareProfessional),
+    grantPermission,
+    revokePermission,
+    assignRole,
+    removeRole,
+    refreshPermissions,
+    clearCache,
+  };
 }

@@ -19,7 +19,7 @@
 
 // Healthcare Chatbot - Core configuration
 export const ChatbotConfig = {
-	version: "1.0.0",
-	features: ["nlp", "privacy", "lgpd-compliance"],
-	status: "development",
+  version: '1.0.0',
+  features: ['nlp', 'privacy', 'lgpd-compliance'],
+  status: 'development',
 } as const;

@@ -4,167 +4,164 @@
  * Implements turbo prune and Docker build optimization for healthcare systems
  */
 
-import { execSync } from "node:child_process";
-import { promises as fs } from "node:fs";
-import { join } from "node:path";
+import { execSync } from 'node:child_process';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 
-export type DockerOptimizationConfig = {
-	targetApp: string;
-	outputDirectory: string;
-	pruneOptions: TurboPruneOptions;
-	dockerOptions: DockerBuildOptions;
-	healthcareSpecific: boolean;
-};
+export interface DockerOptimizationConfig {
+  targetApp: string;
+  outputDirectory: string;
+  pruneOptions: TurboPruneOptions;
+  dockerOptions: DockerBuildOptions;
+  healthcareSpecific: boolean;
+}
 
-export type TurboPruneOptions = {
-	docker: boolean;
-	scope: string;
-	includeDevDependencies: boolean;
-	generateLockfile: boolean;
-};
+export interface TurboPruneOptions {
+  docker: boolean;
+  scope: string;
+  includeDevDependencies: boolean;
+  generateLockfile: boolean;
+}
 
-export type DockerBuildOptions = {
-	platform: string[];
-	buildArgs: Record<string, string>;
-	labels: Record<string, string>;
-	healthcareCompliance: boolean;
-	securityScanning: boolean;
-};
+export interface DockerBuildOptions {
+  platform: string[];
+  buildArgs: Record<string, string>;
+  labels: Record<string, string>;
+  healthcareCompliance: boolean;
+  securityScanning: boolean;
+}
 
-export type DockerOptimizationResult = {
-	success: boolean;
-	prunedWorkspace: string;
-	dockerfileGenerated: string;
-	buildSize: number;
-	optimizationScore: number;
-	recommendations: string[];
-	healthcareValidation: HealthcareDockerValidation;
-};
+export interface DockerOptimizationResult {
+  success: boolean;
+  prunedWorkspace: string;
+  dockerfileGenerated: string;
+  buildSize: number;
+  optimizationScore: number;
+  recommendations: string[];
+  healthcareValidation: HealthcareDockerValidation;
+}
 
-export type HealthcareDockerValidation = {
-	lgpdCompliant: boolean;
-	securityHardened: boolean;
-	auditLogging: boolean;
-	encryptionEnabled: boolean;
-	complianceScore: number;
-};
+export interface HealthcareDockerValidation {
+  lgpdCompliant: boolean;
+  securityHardened: boolean;
+  auditLogging: boolean;
+  encryptionEnabled: boolean;
+  complianceScore: number;
+}
 
 export class TurborepoDockerOptimizer {
-	private readonly config: DockerOptimizationConfig;
-	private readonly projectRoot: string;
+  private readonly config: DockerOptimizationConfig;
+  private readonly projectRoot: string;
 
-	constructor(
-		projectRoot: string,
-		config: Partial<DockerOptimizationConfig> = {},
-	) {
-		this.projectRoot = projectRoot;
-		this.config = {
-			targetApp: "web",
-			outputDirectory: "out",
-			pruneOptions: {
-				docker: true,
-				scope: "web",
-				includeDevDependencies: false,
-				generateLockfile: true,
-			},
-			dockerOptions: {
-				platform: ["linux/amd64", "linux/arm64"],
-				buildArgs: {
-					NODE_VERSION: "18-alpine",
-					PNPM_VERSION: "8",
-				},
-				labels: {
-					"org.opencontainers.image.source":
-						"https://github.com/neonpro/healthcare",
-					"org.opencontainers.image.description":
-						"NeonPro Healthcare Management System",
-					"healthcare.compliance.lgpd": "true",
-					"healthcare.compliance.anvisa": "true",
-					"healthcare.compliance.cfm": "true",
-				},
-				healthcareCompliance: true,
-				securityScanning: true,
-			},
-			healthcareSpecific: true,
-			...config,
-		};
-	}
+  constructor(
+    projectRoot: string,
+    config: Partial<DockerOptimizationConfig> = {},
+  ) {
+    this.projectRoot = projectRoot;
+    this.config = {
+      targetApp: 'web',
+      outputDirectory: 'out',
+      pruneOptions: {
+        docker: true,
+        scope: 'web',
+        includeDevDependencies: false,
+        generateLockfile: true,
+      },
+      dockerOptions: {
+        platform: ['linux/amd64', 'linux/arm64'],
+        buildArgs: {
+          NODE_VERSION: '18-alpine',
+          PNPM_VERSION: '8',
+        },
+        labels: {
+          'org.opencontainers.image.source': 'https://github.com/neonpro/healthcare',
+          'org.opencontainers.image.description': 'NeonPro Healthcare Management System',
+          'healthcare.compliance.lgpd': 'true',
+          'healthcare.compliance.anvisa': 'true',
+          'healthcare.compliance.cfm': 'true',
+        },
+        healthcareCompliance: true,
+        securityScanning: true,
+      },
+      healthcareSpecific: true,
+      ...config,
+    };
+  }
 
-	async optimizeForDocker(): Promise<DockerOptimizationResult> {
-		// Step 1: Run turbo prune
-		const prunedWorkspace = await this.executeTurboPrune();
+  async optimizeForDocker(): Promise<DockerOptimizationResult> {
+    // Step 1: Run turbo prune
+    const prunedWorkspace = await this.executeTurboPrune();
 
-		// Step 2: Generate optimized Dockerfile
-		const dockerfileGenerated = await this.generateHealthcareDockerfile();
+    // Step 2: Generate optimized Dockerfile
+    const dockerfileGenerated = await this.generateHealthcareDockerfile();
 
-		// Step 3: Create Docker optimization files
-		await this.createDockerOptimizationFiles();
+    // Step 3: Create Docker optimization files
+    await this.createDockerOptimizationFiles();
 
-		// Step 4: Validate healthcare compliance
-		const healthcareValidation = await this.validateHealthcareCompliance();
+    // Step 4: Validate healthcare compliance
+    const healthcareValidation = await this.validateHealthcareCompliance();
 
-		// Step 5: Calculate optimization metrics
-		const buildSize = await this.calculateBuildSize();
-		const optimizationScore = this.calculateOptimizationScore(
-			buildSize,
-			healthcareValidation,
-		);
+    // Step 5: Calculate optimization metrics
+    const buildSize = await this.calculateBuildSize();
+    const optimizationScore = this.calculateOptimizationScore(
+      buildSize,
+      healthcareValidation,
+    );
 
-		// Step 6: Generate recommendations
-		const recommendations =
-			this.generateOptimizationRecommendations(healthcareValidation);
+    // Step 6: Generate recommendations
+    const recommendations = this.generateOptimizationRecommendations(healthcareValidation);
 
-		const result: DockerOptimizationResult = {
-			success: true,
-			prunedWorkspace,
-			dockerfileGenerated,
-			buildSize,
-			optimizationScore,
-			recommendations,
-			healthcareValidation,
-		};
+    const result: DockerOptimizationResult = {
+      success: true,
+      prunedWorkspace,
+      dockerfileGenerated,
+      buildSize,
+      optimizationScore,
+      recommendations,
+      healthcareValidation,
+    };
 
-		await this.generateOptimizationReport(result);
-		return result;
-	}
+    await this.generateOptimizationReport(result);
+    return result;
+  }
 
-	private async executeTurboPrune(): Promise<string> {
-		try {
-			const pruneCommand = [
-				"turbo prune",
-				this.config.pruneOptions.scope,
-				this.config.pruneOptions.docker ? "--docker" : "",
-				`--out-dir=${this.config.outputDirectory}`,
-			]
-				.filter(Boolean)
-				.join(" ");
+  private async executeTurboPrune(): Promise<string> {
+    try {
+      const pruneCommand = [
+        'turbo prune',
+        this.config.pruneOptions.scope,
+        this.config.pruneOptions.docker ? '--docker' : '',
+        `--out-dir=${this.config.outputDirectory}`,
+      ]
+        .filter(Boolean)
+        .join(' ');
 
-			execSync(pruneCommand, {
-				cwd: this.projectRoot,
-				stdio: "inherit",
-			});
+      execSync(pruneCommand, {
+        cwd: this.projectRoot,
+        stdio: 'inherit',
+      });
 
-			const prunedPath = join(this.projectRoot, this.config.outputDirectory);
+      const prunedPath = join(this.projectRoot, this.config.outputDirectory);
 
-			return prunedPath;
-		} catch (error) {
-			throw new Error(
-				`Turbo prune failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-			);
-		}
-	}
+      return prunedPath;
+    } catch (error) {
+      throw new Error(
+        `Turbo prune failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    }
+  }
 
-	private async generateHealthcareDockerfile(): Promise<string> {
-		const dockerfile = this.createHealthcareDockerfileContent();
-		const dockerfilePath = join(this.projectRoot, "Dockerfile.healthcare");
+  private async generateHealthcareDockerfile(): Promise<string> {
+    const dockerfile = this.createHealthcareDockerfileContent();
+    const dockerfilePath = join(this.projectRoot, 'Dockerfile.healthcare');
 
-		await fs.writeFile(dockerfilePath, dockerfile);
+    await fs.writeFile(dockerfilePath, dockerfile);
 
-		return dockerfilePath;
-	}
+    return dockerfilePath;
+  }
 
-	private createHealthcareDockerfileContent(): string {
-		return `# Healthcare-Optimized Multi-Stage Dockerfile for NeonPro
+  private createHealthcareDockerfileContent(): string {
+    return `# Healthcare-Optimized Multi-Stage Dockerfile for NeonPro
 # Implements LGPD, ANVISA, and CFM compliance requirements
 # Generated by Turborepo Docker Optimizer
 
@@ -259,9 +256,11 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV HEALTHCARE_RUNTIME_MODE=true
 
 # Healthcare security labels
-${Object.entries(this.config.dockerOptions.labels)
-	.map(([key, value]) => `LABEL ${key}="${value}"`)
-	.join("\n")}
+${
+      Object.entries(this.config.dockerOptions.labels)
+        .map(([key, value]) => `LABEL ${key}="${value}"`)
+        .join('\n')
+    }
 
 # Healthcare compliance environment variables
 ENV LGPD_AUDIT_ENABLED=true
@@ -299,33 +298,33 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \\
 # Healthcare-compliant startup
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["node", "apps/web/server.js"]`;
-	}
+  }
 
-	private async createDockerOptimizationFiles(): Promise<void> {
-		// Create .dockerignore for healthcare
-		const dockerignore = this.createHealthcareDockerignore();
-		await fs.writeFile(
-			join(this.projectRoot, ".dockerignore.healthcare"),
-			dockerignore,
-		);
+  private async createDockerOptimizationFiles(): Promise<void> {
+    // Create .dockerignore for healthcare
+    const dockerignore = this.createHealthcareDockerignore();
+    await fs.writeFile(
+      join(this.projectRoot, '.dockerignore.healthcare'),
+      dockerignore,
+    );
 
-		// Create docker-compose for healthcare development
-		const dockerCompose = this.createHealthcareDockerCompose();
-		await fs.writeFile(
-			join(this.projectRoot, "docker-compose.healthcare.yml"),
-			dockerCompose,
-		);
+    // Create docker-compose for healthcare development
+    const dockerCompose = this.createHealthcareDockerCompose();
+    await fs.writeFile(
+      join(this.projectRoot, 'docker-compose.healthcare.yml'),
+      dockerCompose,
+    );
 
-		// Create healthcare Docker configuration
-		const healthcareConfig = this.createHealthcareDockerConfig();
-		await fs.writeFile(
-			join(this.projectRoot, "healthcare-docker-config.json"),
-			JSON.stringify(healthcareConfig, null, 2),
-		);
-	}
+    // Create healthcare Docker configuration
+    const healthcareConfig = this.createHealthcareDockerConfig();
+    await fs.writeFile(
+      join(this.projectRoot, 'healthcare-docker-config.json'),
+      JSON.stringify(healthcareConfig, undefined, 2),
+    );
+  }
 
-	private createHealthcareDockerignore(): string {
-		return `# Healthcare-specific Docker ignore patterns
+  private createHealthcareDockerignore(): string {
+    return `# Healthcare-specific Docker ignore patterns
 
 # Development files
 .env.local
@@ -378,10 +377,10 @@ compliance-reports/**
 **/*.key
 **/*.pem
 **/*.p12`;
-	}
+  }
 
-	private createHealthcareDockerCompose(): string {
-		return `# Healthcare Development Docker Compose
+  private createHealthcareDockerCompose(): string {
+    return `# Healthcare Development Docker Compose
 # LGPD, ANVISA, and CFM compliant development environment
 
 version: '3.8'
@@ -428,192 +427,190 @@ volumes:
 networks:
   default:
     name: neonpro_healthcare_network`;
-	}
+  }
 
-	private createHealthcareDockerConfig(): object {
-		return {
-			healthcare: {
-				compliance: {
-					lgpd: {
-						enabled: true,
-						auditLogging: true,
-						dataEncryption: true,
-						consentManagement: true,
-					},
-					anvisa: {
-						enabled: true,
-						medicalDeviceTracking: true,
-						adverseEventReporting: true,
-						procedureValidation: true,
-					},
-					cfm: {
-						enabled: true,
-						professionalValidation: true,
-						ethicsCompliance: true,
-						telemedicineCompliance: true,
-					},
-				},
-				security: {
-					encryption: {
-						atRest: true,
-						inTransit: true,
-						algorithm: "AES-256-GCM",
-					},
-					authentication: {
-						multiFactorRequired: true,
-						sessionTimeout: 3600,
-						passwordPolicy: "strict",
-					},
-				},
-				monitoring: {
-					healthChecks: {
-						enabled: true,
-						interval: 30,
-						timeout: 10,
-						retries: 3,
-					},
-				},
-			},
-		};
-	}
+  private createHealthcareDockerConfig(): object {
+    return {
+      healthcare: {
+        compliance: {
+          lgpd: {
+            enabled: true,
+            auditLogging: true,
+            dataEncryption: true,
+            consentManagement: true,
+          },
+          anvisa: {
+            enabled: true,
+            medicalDeviceTracking: true,
+            adverseEventReporting: true,
+            procedureValidation: true,
+          },
+          cfm: {
+            enabled: true,
+            professionalValidation: true,
+            ethicsCompliance: true,
+            telemedicineCompliance: true,
+          },
+        },
+        security: {
+          encryption: {
+            atRest: true,
+            inTransit: true,
+            algorithm: 'AES-256-GCM',
+          },
+          authentication: {
+            multiFactorRequired: true,
+            sessionTimeout: 3600,
+            passwordPolicy: 'strict',
+          },
+        },
+        monitoring: {
+          healthChecks: {
+            enabled: true,
+            interval: 30,
+            timeout: 10,
+            retries: 3,
+          },
+        },
+      },
+    };
+  }
 
-	private async validateHealthcareCompliance(): Promise<HealthcareDockerValidation> {
-		const validation: HealthcareDockerValidation = {
-			lgpdCompliant: this.validateLGPDCompliance(),
-			securityHardened: this.validateSecurityHardening(),
-			auditLogging: this.validateAuditLogging(),
-			encryptionEnabled: this.validateEncryption(),
-			complianceScore: 0,
-		};
+  private async validateHealthcareCompliance(): Promise<HealthcareDockerValidation> {
+    const validation: HealthcareDockerValidation = {
+      lgpdCompliant: this.validateLGPDCompliance(),
+      securityHardened: this.validateSecurityHardening(),
+      auditLogging: this.validateAuditLogging(),
+      encryptionEnabled: this.validateEncryption(),
+      complianceScore: 0,
+    };
 
-		// Calculate compliance score
-		const checks = [
-			validation.lgpdCompliant,
-			validation.securityHardened,
-			validation.auditLogging,
-			validation.encryptionEnabled,
-		];
-		validation.complianceScore =
-			(checks.filter(Boolean).length / checks.length) * 10;
-		return validation;
-	}
+    // Calculate compliance score
+    const checks = [
+      validation.lgpdCompliant,
+      validation.securityHardened,
+      validation.auditLogging,
+      validation.encryptionEnabled,
+    ];
+    validation.complianceScore = (checks.filter(Boolean).length / checks.length) * 10;
+    return validation;
+  }
 
-	private validateLGPDCompliance(): boolean {
-		return (
-			this.config.healthcareSpecific &&
-			this.config.dockerOptions.healthcareCompliance
-		);
-	}
+  private validateLGPDCompliance(): boolean {
+    return (
+      this.config.healthcareSpecific
+      && this.config.dockerOptions.healthcareCompliance
+    );
+  }
 
-	private validateSecurityHardening(): boolean {
-		return (
-			this.config.dockerOptions.buildArgs.NODE_VERSION.includes("alpine") &&
-			this.config.dockerOptions.securityScanning
-		);
-	}
+  private validateSecurityHardening(): boolean {
+    return (
+      this.config.dockerOptions.buildArgs.NODE_VERSION.includes('alpine')
+      && this.config.dockerOptions.securityScanning
+    );
+  }
 
-	private validateAuditLogging(): boolean {
-		return this.config.healthcareSpecific;
-	}
+  private validateAuditLogging(): boolean {
+    return this.config.healthcareSpecific;
+  }
 
-	private validateEncryption(): boolean {
-		return this.config.dockerOptions.healthcareCompliance;
-	}
+  private validateEncryption(): boolean {
+    return this.config.dockerOptions.healthcareCompliance;
+  }
 
-	private async calculateBuildSize(): Promise<number> {
-		// Mock build size calculation - optimized with turbo prune
-		return 150; // MB
-	}
+  private async calculateBuildSize(): Promise<number> {
+    // Mock build size calculation - optimized with turbo prune
+    return 150; // MB
+  }
 
-	private calculateOptimizationScore(
-		buildSize: number,
-		healthcareValidation: HealthcareDockerValidation,
-	): number {
-		let score = 0;
+  private calculateOptimizationScore(
+    buildSize: number,
+    healthcareValidation: HealthcareDockerValidation,
+  ): number {
+    let score = 0;
 
-		// Build size optimization (40% weight)
-		const sizeScore = Math.max(0, (200 - buildSize) / 200) * 4;
-		score += sizeScore;
+    // Build size optimization (40% weight)
+    const sizeScore = Math.max(0, (200 - buildSize) / 200) * 4;
+    score += sizeScore;
 
-		// Healthcare compliance (40% weight)
-		score += (healthcareValidation.complianceScore / 10) * 4;
+    // Healthcare compliance (40% weight)
+    score += (healthcareValidation.complianceScore / 10) * 4;
 
-		// Security and optimization features (20% weight)
-		const features = [
-			this.config.pruneOptions.docker,
-			this.config.dockerOptions.securityScanning,
-			this.config.dockerOptions.healthcareCompliance,
-			this.config.healthcareSpecific,
-		];
-		const featureScore =
-			(features.filter(Boolean).length / features.length) * 2;
-		score += featureScore;
+    // Security and optimization features (20% weight)
+    const features = [
+      this.config.pruneOptions.docker,
+      this.config.dockerOptions.securityScanning,
+      this.config.dockerOptions.healthcareCompliance,
+      this.config.healthcareSpecific,
+    ];
+    const featureScore = (features.filter(Boolean).length / features.length) * 2;
+    score += featureScore;
 
-		return Math.round(score * 10) / 10;
-	}
+    return Math.round(score * 10) / 10;
+  }
 
-	private generateOptimizationRecommendations(
-		healthcareValidation: HealthcareDockerValidation,
-	): string[] {
-		const recommendations: string[] = [];
+  private generateOptimizationRecommendations(
+    healthcareValidation: HealthcareDockerValidation,
+  ): string[] {
+    const recommendations: string[] = [];
 
-		if (!healthcareValidation.lgpdCompliant) {
-			recommendations.push(
-				"Implement LGPD compliance configurations in Docker setup",
-			);
-		}
+    if (!healthcareValidation.lgpdCompliant) {
+      recommendations.push(
+        'Implement LGPD compliance configurations in Docker setup',
+      );
+    }
 
-		if (!healthcareValidation.securityHardened) {
-			recommendations.push(
-				"Enable security hardening features (non-root user, read-only filesystem)",
-			);
-		}
+    if (!healthcareValidation.securityHardened) {
+      recommendations.push(
+        'Enable security hardening features (non-root user, read-only filesystem)',
+      );
+    }
 
-		recommendations.push("Regular security scanning of Docker images");
-		recommendations.push("Monitor healthcare compliance metrics in production");
+    recommendations.push('Regular security scanning of Docker images');
+    recommendations.push('Monitor healthcare compliance metrics in production');
 
-		return recommendations;
-	}
+    return recommendations;
+  }
 
-	private async generateOptimizationReport(
-		result: DockerOptimizationResult,
-	): Promise<void> {
-		const reportPath = join(
-			this.projectRoot,
-			"docker-optimization-report.json",
-		);
+  private async generateOptimizationReport(
+    result: DockerOptimizationResult,
+  ): Promise<void> {
+    const reportPath = join(
+      this.projectRoot,
+      'docker-optimization-report.json',
+    );
 
-		const report = {
-			timestamp: new Date().toISOString(),
-			config: this.config,
-			result,
-			turborepoOptimization: {
-				pruneEnabled: this.config.pruneOptions.docker,
-				targetApp: this.config.targetApp,
-				outputDirectory: this.config.outputDirectory,
-			},
-			healthcareCompliance: result.healthcareValidation,
-		};
+    const report = {
+      timestamp: new Date().toISOString(),
+      config: this.config,
+      result,
+      turborepoOptimization: {
+        pruneEnabled: this.config.pruneOptions.docker,
+        targetApp: this.config.targetApp,
+        outputDirectory: this.config.outputDirectory,
+      },
+      healthcareCompliance: result.healthcareValidation,
+    };
 
-		try {
-			await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
-		} catch (_error) {}
-	}
+    try {
+      await fs.writeFile(reportPath, JSON.stringify(report, undefined, 2));
+    } catch {}
+  }
 }
 
 // Utility functions
 export async function optimizeForDocker(
-	projectRoot: string,
-	config: Partial<DockerOptimizationConfig> = {},
+  projectRoot: string,
+  config: Partial<DockerOptimizationConfig> = {},
 ): Promise<DockerOptimizationResult> {
-	const optimizer = new TurborepoDockerOptimizer(projectRoot, config);
-	return optimizer.optimizeForDocker();
+  const optimizer = new TurborepoDockerOptimizer(projectRoot, config);
+  return optimizer.optimizeForDocker();
 }
 
 export async function generateHealthcareDockerfile(
-	projectRoot: string,
-	targetApp = "web",
+  projectRoot: string,
+  targetApp = 'web',
 ): Promise<string> {
-	const optimizer = new TurborepoDockerOptimizer(projectRoot, { targetApp });
-	return optimizer.generateHealthcareDockerfile();
+  const optimizer = new TurborepoDockerOptimizer(projectRoot, { targetApp });
+  return optimizer.generateHealthcareDockerfile();
 }

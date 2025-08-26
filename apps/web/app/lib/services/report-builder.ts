@@ -1,19 +1,19 @@
 // Reportbuilder Module
-export type ReportbuilderConfig = {
-	enabled: boolean;
-	data?: unknown;
-};
+export interface ReportbuilderConfig {
+  enabled: boolean;
+  data?: unknown;
+}
 
 export const Reportbuilder_DEFAULT: ReportbuilderConfig = {
-	enabled: true,
-	data: null,
+  enabled: true,
+  data: undefined,
 };
 
 export function createReportbuilder() {
-	return Reportbuilder_DEFAULT;
+  return Reportbuilder_DEFAULT;
 }
 
 export default {
-	config: Reportbuilder_DEFAULT,
-	create: createReportbuilder,
+  config: Reportbuilder_DEFAULT,
+  create: createReportbuilder,
 };

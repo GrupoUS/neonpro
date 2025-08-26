@@ -1,0 +1,29 @@
+# Build outputs
+node_modules/
+dist/
+build/
+out/
+.next/
+.turbo/
+.vercel/
+coverage/
+playwright-report/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+.claude/
+
+# Project specific - not maintained by formatters
+archon/
+serena/
+
+# Testing reports
+tools/testing/reports/assets/
+tools/e2e/reports/
+tools/reports/
+.ruler/

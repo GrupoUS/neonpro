@@ -7,17 +7,17 @@
 export { useTreatments } from "@/hooks/useTreatments";
 // Type exports for convenience
 export type {
-	AestheticTreatmentCategory,
-	CFMComplianceStatus,
-	LGPDPhotoConsentStatus,
-	PatientConsent,
-	TreatmentPhoto,
-	TreatmentPlan,
-	TreatmentPlanType,
-	TreatmentProgress,
-	TreatmentProtocol,
-	TreatmentSession,
-	TreatmentStatus,
+  AestheticTreatmentCategory,
+  CFMComplianceStatus,
+  LGPDPhotoConsentStatus,
+  PatientConsent,
+  TreatmentPhoto,
+  TreatmentPlan,
+  TreatmentPlanType,
+  TreatmentProgress,
+  TreatmentProtocol,
+  TreatmentSession,
+  TreatmentStatus,
 } from "@/types/treatments";
 // Main treatment components
 export { default as AestheticTreatmentPlan } from "./AestheticTreatmentPlan";

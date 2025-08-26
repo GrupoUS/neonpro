@@ -40,7 +40,7 @@ class CrossPlatformUtils {
 			if (!fs.existsSync(dir)) {
 				try {
 					fs.mkdirSync(dir, { recursive: true });
-				} catch (_error) {
+				} catch {
 					// Ignore errors - directories might already exist or be inaccessible
 				}
 			}
@@ -73,7 +73,7 @@ class CrossPlatformUtils {
 			if (process.env.CLAUDE_DEBUG === "true") {
 				// Console logging disabled - use this block for debugging if needed
 			}
-		} catch (_error) {
+		} catch {
 			// Silent fail - logging should never break the hook
 		}
 	}
@@ -159,14 +159,14 @@ class CrossPlatformUtils {
 			if (fs.existsSync(filePath)) {
 				return fs.readFileSync(filePath, { encoding: "utf8" });
 			}
-			return null;
+			return;
 		} catch (error) {
 			this.log(
 				"ERROR",
 				"FILE_READ",
 				`Failed to read file ${filePath}: ${error.message}`,
 			);
-			return null;
+			return;
 		}
 	}
 

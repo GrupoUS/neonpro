@@ -4,39 +4,39 @@
  * Sets up development environment with healthcare compliance validation
  */
 
-import { execSync } from "node:child_process";
-import { existsSync, writeFileSync } from "node:fs";
+import { execSync } from 'node:child_process';
+import { existsSync, writeFileSync } from 'node:fs';
 
 const _HEALTHCARE_REQUIREMENTS = {
-	node: ">=20.0.0",
-	pnpm: ">=8.0.0",
-	qualityThreshold: 9.9,
+  node: '>=20.0.0',
+  pnpm: '>=8.0.0',
+  qualityThreshold: 9.9,
 };
 
 function executeCommand(command, _description) {
-	try {
-		execSync(command, { stdio: "inherit" });
-	} catch (_error) {
-		process.exit(1);
-	}
+  try {
+    execSync(command, { stdio: 'inherit' });
+  } catch {
+    process.exit(1);
+  }
 }
 
 function validateEnvironment() {
-	// Check Node.js version
-	const _nodeVersion = process.version;
+  // Check Node.js version
+  const _nodeVersion = process.version;
 
-	// Check pnpm
-	try {
-		const _pnpmVersion = execSync("pnpm --version", {
-			encoding: "utf8",
-		}).trim();
-	} catch (_error) {
-		process.exit(1);
-	}
+  // Check pnpm
+  try {
+    const _pnpmVersion = execSync('pnpm --version', {
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    process.exit(1);
+  }
 }
 
 function setupHealthcareCompliance() {
-	const envTemplate = `# NeonPro Healthcare Environment Variables
+  const envTemplate = `# NeonPro Healthcare Environment Variables
 # ===========================================
 
 # Healthcare Compliance Mode
@@ -68,44 +68,43 @@ E2E_BASE_URL=http://localhost:3000
 PLAYWRIGHT_BROWSERS_PATH=.playwright
 `;
 
-	if (existsSync(".env.local")) {
-	} else {
-		writeFileSync(".env.local", envTemplate);
-	}
+  if (existsSync('.env.local')) {} else {
+    writeFileSync('.env.local', envTemplate);
+  }
 }
 
 function installDependencies() {
-	executeCommand("pnpm install --frozen-lockfile", "Installing dependencies");
+  executeCommand('pnpm install --frozen-lockfile', 'Installing dependencies');
 }
 
 function setupPlaywright() {
-	executeCommand("npx playwright install", "Setting up Playwright browsers");
+  executeCommand('npx playwright install', 'Setting up Playwright browsers');
 }
 
 function validateHealthcareSetup() {
-	executeCommand("pnpm validate:healthcare", "Healthcare validation");
-	executeCommand("pnpm test:compliance", "Compliance testing");
+  executeCommand('pnpm validate:healthcare', 'Healthcare validation');
+  executeCommand('pnpm test:compliance', 'Compliance testing');
 }
 
 function setupGitHooks() {
-	executeCommand("npx husky install", "Setting up Git hooks");
+  executeCommand('npx husky install', 'Setting up Git hooks');
 }
 
 function displayNextSteps() {}
 
 // Main execution
 async function main() {
-	try {
-		validateEnvironment();
-		setupHealthcareCompliance();
-		installDependencies();
-		setupPlaywright();
-		setupGitHooks();
-		validateHealthcareSetup();
-		displayNextSteps();
-	} catch (_error) {
-		process.exit(1);
-	}
+  try {
+    validateEnvironment();
+    setupHealthcareCompliance();
+    installDependencies();
+    setupPlaywright();
+    setupGitHooks();
+    validateHealthcareSetup();
+    displayNextSteps();
+  } catch {
+    process.exit(1);
+  }
 }
 
 main();

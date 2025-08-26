@@ -2,51 +2,55 @@
  * GitHub Actions Healthcare CI/CD Utilities
  */
 
-export type GitHubActionConfig = {
-	workflowName: string;
-	triggers: string[];
-	healthcareMode: boolean;
-	qualityThreshold: number;
-};
+export interface GitHubActionConfig {
+  workflowName: string;
+  triggers: string[];
+  healthcareMode: boolean;
+  qualityThreshold: number;
+}
 
 export const HEALTHCARE_WORKFLOW_TEMPLATES = {
-	ci: {
-		name: "CI - Healthcare Quality Pipeline",
-		file: "ci.yml",
-		description: "Main CI pipeline with healthcare compliance validation",
-	},
-	security: {
-		name: "Security & Healthcare Compliance Scan",
-		file: "security.yml",
-		description: "Advanced security scanning with LGPD/ANVISA/CFM compliance",
-	},
-	deploy: {
-		name: "Healthcare Deployment Pipeline",
-		file: "deploy.yml",
-		description: "Production deployment with healthcare approval gates",
-	},
+  ci: {
+    name: 'CI - Healthcare Quality Pipeline',
+    file: 'ci.yml',
+    description: 'Main CI pipeline with healthcare compliance validation',
+  },
+  security: {
+    name: 'Security & Healthcare Compliance Scan',
+    file: 'security.yml',
+    description: 'Advanced security scanning with LGPD/ANVISA/CFM compliance',
+  },
+  deploy: {
+    name: 'Healthcare Deployment Pipeline',
+    file: 'deploy.yml',
+    description: 'Production deployment with healthcare approval gates',
+  },
 };
 
 export class GitHubActionsManager {
-	async generateWorkflow(
-		template: keyof typeof HEALTHCARE_WORKFLOW_TEMPLATES,
-	): Promise<string> {
-		const _workflowTemplate = HEALTHCARE_WORKFLOW_TEMPLATES[template];
+  async generateWorkflow(
+    template: keyof typeof HEALTHCARE_WORKFLOW_TEMPLATES,
+  ): Promise<string> {
+    const _workflowTemplate = HEALTHCARE_WORKFLOW_TEMPLATES[template];
 
-		switch (template) {
-			case "ci":
-				return this.generateCIWorkflow();
-			case "security":
-				return this.generateSecurityWorkflow();
-			case "deploy":
-				return this.generateDeploymentWorkflow();
-			default:
-				throw new Error(`Unknown workflow template: ${template}`);
-		}
-	}
+    switch (template) {
+      case 'ci': {
+        return this.generateCIWorkflow();
+      }
+      case 'security': {
+        return this.generateSecurityWorkflow();
+      }
+      case 'deploy': {
+        return this.generateDeploymentWorkflow();
+      }
+      default: {
+        throw new Error(`Unknown workflow template: ${template}`);
+      }
+    }
+  }
 
-	private generateCIWorkflow(): string {
-		return `
+  private generateCIWorkflow(): string {
+    return `
 name: CI - Healthcare Quality Pipeline
 
 on:
@@ -76,10 +80,10 @@ jobs:
       - run: pnpm test:compliance
       - run: pnpm test:security
     `;
-	}
+  }
 
-	private generateSecurityWorkflow(): string {
-		return `
+  private generateSecurityWorkflow(): string {
+    return `
 name: Security & Healthcare Compliance Scan
 
 on:
@@ -101,10 +105,10 @@ jobs:
       - name: CFM Professional Standards
         run: pnpm test:cfm
     `;
-	}
+  }
 
-	private generateDeploymentWorkflow(): string {
-		return `
+  private generateDeploymentWorkflow(): string {
+    return `
 name: Healthcare Deployment Pipeline
 
 on:
@@ -123,5 +127,5 @@ jobs:
       - name: Deploy with Healthcare Compliance
         run: pnpm deploy:production
     `;
-	}
+  }
 }

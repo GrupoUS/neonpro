@@ -22,7 +22,7 @@
 				"args": ["run", "lint"],
 				"timeout": 30,
 				"continueOnFailure": true,
-				"description": "Quick Biome code quality check",
+				"description": "Quick oxlint code quality check and dprint formatting",
 				"conditions": {
 					"fileExists": "package.json",
 					"scriptExists": "lint"

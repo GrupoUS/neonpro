@@ -1,12 +1,12 @@
-var Ys = Object.defineProperty;
-var Vs = (n, t, e) =>
+const Ys = Object.defineProperty;
+const Vs = (n, t, e) =>
 	t in n
 		? Ys(n, t, { enumerable: !0, configurable: !0, writable: !0, value: e })
 		: (n[t] = e);
-var L = (n, t, e) => Vs(n, typeof t != "symbol" ? t + "" : t, e);
+const L = (n, t, e) => Vs(n, typeof t !== "symbol" ? `${t}` : t, e);
 function Gs(n, t) {
 	const e = new Array(t.length).fill(0);
-	return new Array(t.length).fill(0).map((s, r) => (i, a) => {
+	return new Array(t.length).fill(0).map((_s, r) => (i, a) => {
 		(e[r] = (i / a) * t[r] * 1e3),
 			n(
 				e.reduce((c, l) => c + l, 0),
@@ -22,20 +22,20 @@ const vn = {
 	"'": "&#39;",
 };
 function Zs(n) {
-	return n.replace(/[&<>"']/gu, (t) => vn[t]);
+	return n.replaceAll(/[&<>"']/gu, (t) => vn[t]);
 }
 function Ks(n) {
-	return n.replace(/[&<]/gu, (t) => vn[t]);
+	return n.replaceAll(/[&<]/gu, (t) => vn[t]);
 }
 function Lt(n, t, e) {
 	return n.find((s, r) => {
-		if (r === n.length - 1) return !0;
+		if (r === n.length - 1) {return !0;}
 		const i = n[r + 1];
 		return Math.abs(t(s) - e) < Math.abs(t(i) - e);
 	});
 }
 function Ln(n) {
-	return Array.isArray(n) && typeof n[0] == "string";
+	return Array.isArray(n) && typeof n[0] === "string";
 }
 function Xs(n) {
 	return Array.isArray(n) && Array.isArray(n[0]);
@@ -66,18 +66,20 @@ class $s {
 		return this._snapshots[this._index].viewport;
 	}
 	closestScreenshot() {
-		var r;
+		let r;
 		const { wallTime: t, timestamp: e } = this.snapshot(),
 			s =
-				t && (r = this._screencastFrames[0]) != null && r.frameSwapWallTime
+				t &&
+				(r = this._screencastFrames[0]) !== undefined &&
+				r.frameSwapWallTime
 					? Lt(this._screencastFrames, (i) => i.frameSwapWallTime, t)
 					: Lt(this._screencastFrames, (i) => i.timestamp, e);
-		return s == null ? void 0 : s.sha1;
+		return s === undefined ? void 0 : s.sha1;
 	}
 	render() {
 		const t = [],
 			e = (i, a, c, l) => {
-				if (typeof i == "string") {
+				if (typeof i === "string") {
 					c === "STYLE" || c === "style" ? t.push(rr(tr(i))) : t.push(Ks(i));
 					return;
 				}
@@ -86,7 +88,7 @@ class $s {
 					if (_ >= 0 && _ <= a) {
 						const f = Qs(this._snapshots[_]),
 							b = i[0][1];
-						if (b >= 0 && b < f.length) return e(f[b], _, c, l);
+						if (b >= 0 && b < f.length) {return e(f[b], _, c, l);}
 					}
 				} else if (Ln(i)) {
 					const [_, f, ...b] = i,
@@ -101,17 +103,17 @@ class $s {
 						g =
 							h === "SOURCE" &&
 							c === "PICTURE" &&
-							(l == null ? void 0 : l.some((m) => m[0] === C));
+							(l === undefined ? void 0 : l.some((m) => m[0] === C));
 					for (const [m, E] of S) {
 						let p = m;
 						u && m.toLowerCase() === "src" && (p = "__playwright_src__"),
 							d && m === C && (p = "src"),
 							["src", "srcset"].includes(m.toLowerCase()) &&
 								(y || g) &&
-								(p = "_" + p);
+								(p = `_${p}`);
 						let R = E;
 						o && m.toLowerCase() === "href"
-							? (R = "link://" + E)
+							? (R = `link://${E}`)
 							: (m.toLowerCase() === "href" ||
 									m.toLowerCase() === "src" ||
 									m === C) &&
@@ -119,10 +121,10 @@ class $s {
 							t.push(" ", p, '="', Zs(R), '"');
 					}
 					t.push(">");
-					for (const m of b) e(m, a, h, S);
+					for (const m of b) {e(m, a, h, S);}
 					Js.has(h) || t.push("</", h, ">");
 					return;
-				} else return;
+				} else {return;}
 			},
 			s = this._snapshot;
 		return {
@@ -147,10 +149,11 @@ class $s {
 		let r, i;
 		for (const c of this._resources) {
 			if (
-				typeof c._monotonicTime == "number" &&
+				typeof c._monotonicTime === "number" &&
 				c._monotonicTime >= s.timestamp
-			)
+			) {
 				break;
+			}
 			c.response.status !== 304 &&
 				c.request.url === t &&
 				c.request.method === e &&
@@ -197,10 +200,10 @@ function Qs(n) {
 	if (!n._nodes) {
 		const t = [],
 			e = (s) => {
-				if (typeof s == "string") t.push(s);
+				if (typeof s === "string") {t.push(s);}
 				else if (Ln(s)) {
 					const [, , ...r] = s;
-					for (const i of r) e(i);
+					for (const i of r) {e(i);}
 					t.push(s);
 				}
 			};
@@ -222,13 +225,16 @@ function zs(n, ...t) {
 			S = [],
 			C = [];
 		let u = window;
-		while (u !== u.parent && !u.location.pathname.match(/\/page@[a-z0-9]+$/))
+		while (u !== u.parent && !/\/page@[a-z0-9]+$/.test(u.location.pathname)) {
 			u = u.parent;
+		}
 		const o = (g) => {
-				for (const m of g.querySelectorAll("[__playwright_scroll_top_]"))
+				for (const m of g.querySelectorAll("[__playwright_scroll_top_]")) {
 					b.push(m);
-				for (const m of g.querySelectorAll("[__playwright_scroll_left_]"))
+				}
+				for (const m of g.querySelectorAll("[__playwright_scroll_left_]")) {
 					h.push(m);
+				}
 				for (const m of g.querySelectorAll("[__playwright_value_]")) {
 					const E = m;
 					E.type !== "file" &&
@@ -277,14 +283,15 @@ function zs(n, ...t) {
 					if (R) {
 						const T = new URL(s(window.location.href)),
 							A = T.pathname.lastIndexOf("/snapshot/");
-						A !== -1 && (T.pathname = T.pathname.substring(0, A + 1)),
-							(T.pathname += R.substring(1)),
+						A !== -1 && (T.pathname = T.pathname.slice(0, A + 1)),
+							(T.pathname += R.slice(1)),
 							m.setAttribute("src", T.toString());
-					} else
+					} else {
 						m.setAttribute(
 							"src",
 							'data:text/html,<body style="background: #ddd"></body>',
 						);
+					}
 				}
 				{
 					const m = g.querySelector("body[__playwright_custom_elements__]");
@@ -292,8 +299,9 @@ function zs(n, ...t) {
 						const E = (
 							m.getAttribute("__playwright_custom_elements__") || ""
 						).split(",");
-						for (const p of E)
+						for (const p of E) {
 							window.customElements.define(p, class extends HTMLElement {});
+						}
 					}
 				}
 				for (const m of g.querySelectorAll(
@@ -301,7 +309,7 @@ function zs(n, ...t) {
 				)) {
 					const E = m,
 						p = E.parentElement.attachShadow({ mode: "open" });
-					p.appendChild(E.content), E.remove(), o(p);
+					p.append(E.content), E.remove(), o(p);
 				}
 				if ("adoptedStyleSheets" in g) {
 					const m = [...g.adoptedStyleSheets];
@@ -357,8 +365,8 @@ function zs(n, ...t) {
 								I = O.left + O.width / 2,
 								N = O.top + O.height / 2;
 							if (
-								((w.style.left = I + "px"),
-								(w.style.top = N + "px"),
+								((w.style.left = `${I}px`),
+								(w.style.top = `${N}px`),
 								m && (Math.abs(I - E) >= 10 || Math.abs(N - p) >= 10))
 							) {
 								const P = document.createElement("x-pw-pointer-warning");
@@ -367,16 +375,16 @@ function zs(n, ...t) {
 									(P.style.color = "white"),
 									(P.style.marginTop = "-3.5px"),
 									(P.style.userSelect = "none"),
-									w.appendChild(P),
+									w.append(P),
 									w.setAttribute("title", f);
 							}
-							document.documentElement.appendChild(w);
+							document.documentElement.append(w);
 						} else {
 							m &&
 								!R &&
-								((w.style.left = E + "px"),
-								(w.style.top = p + "px"),
-								document.documentElement.appendChild(w));
+								((w.style.left = `${E}px`),
+								(w.style.top = `${p}px`),
+								document.documentElement.append(w));
 						}
 					}
 				}
@@ -384,8 +392,8 @@ function zs(n, ...t) {
 					const E = (R, T) => {
 						function A() {
 							const x = document.createElement("canvas");
-							(x.width = x.width / Math.floor(x.width / 24)),
-								(x.height = x.height / Math.floor(x.height / 24));
+							(x.width /= Math.floor(x.width / 24)),
+								(x.height /= Math.floor(x.height / 24));
 							const w = x.getContext("2d");
 							return (
 								(w.fillStyle = "lightgray"),
@@ -400,12 +408,13 @@ function zs(n, ...t) {
 					};
 					const p = new Image();
 					(p.onload = () => {
-						var R;
+						let R;
 						for (const T of C) {
 							const A = T.getContext("2d"),
 								x = T.getAttribute("__playwright_bounding_rect__");
-							if ((T.removeAttribute("__playwright_bounding_rect__"), !x))
+							if ((T.removeAttribute("__playwright_bounding_rect__"), !x)) {
 								continue;
+							}
 							let w;
 							try {
 								w = JSON.parse(x);
@@ -417,20 +426,17 @@ function zs(n, ...t) {
 								const M = O.frameElement;
 								O = O.parent;
 								const v =
-									(R = O.__playwright_frame_bounding_rects__) == null
+									(R = O.__playwright_frame_bounding_rects__) === undefined
 										? void 0
 										: R.frames.get(M);
-								if (!(v != null && v.boundingRect)) break;
+								if (!v?.boundingRect) {break;}
 								const Y = v.boundingRect.left - v.scrollLeft,
 									D = v.boundingRect.top - v.scrollTop;
 								(w.left += Y), (w.top += D), (w.right += Y), (w.bottom += D);
 							}
 							const { width: I, height: N } =
 								u.__playwright_frame_bounding_rects__.viewport;
-							(w.left = w.left / I),
-								(w.top = w.top / N),
-								(w.right = w.right / I),
-								(w.bottom = w.bottom / N);
+							(w.left /= I), (w.top /= N), (w.right /= I), (w.bottom /= N);
 							const P = w.right > 1 || w.bottom > 1;
 							if (w.left > 1 || w.top > 1) {
 								T.title =
@@ -485,7 +491,7 @@ function zs(n, ...t) {
 	return `
 (${e.toString()})(${it.toString()}, ${JSON.stringify(n)}${t.map((s) => `, "${s}"`).join("")})`;
 }
-const Fn = [
+const Fn = new Set([
 		"about:",
 		"blob:",
 		"data:",
@@ -497,18 +503,19 @@ const Fn = [
 		"sftp:",
 		"ws:",
 		"wss:",
-	],
+	]),
 	Ft = "http://playwright.bloburl/#";
 function rt(n) {
-	n.startsWith(Ft) && (n = n.substring(Ft.length));
+	n.startsWith(Ft) && (n = n.slice(Ft.length));
 	try {
 		const t = new URL(n);
-		if (t.protocol === "javascript:" || t.protocol === "vbscript:")
+		if (t.protocol === "javascript:" || t.protocol === "vbscript:") {
 			return "javascript:void(0)";
+		}
 		const e = t.protocol === "blob:",
 			s = t.protocol === "file:";
-		if (!(e || s) && Fn.includes(t.protocol)) return n;
-		const r = "pw-" + t.protocol.slice(0, t.protocol.length - 1);
+		if (!(e || s) && Fn.has(t.protocol)) {return n;}
+		const r = `pw-${t.protocol.slice(0, - 1)}`;
 		return (
 			s || (t.protocol = "https:"),
 			(t.hostname = t.hostname ? `${r}--${t.hostname}` : r),
@@ -522,9 +529,9 @@ function rt(n) {
 const er = /url\(['"]?([\w-]+:)\/\//gi;
 function tr(n) {
 	return n.replace(er, (t, e) =>
-		!(e === "blob:" || e === "file:") && Fn.includes(e)
+		!(e === "blob:" || e === "file:") && Fn.has(e)
 			? t
-			: t.replace(e + "//", `https://pw-${e.slice(0, -1)}--`),
+			: t.replace(`${e}//`, `https://pw-${e.slice(0, -1)}--`),
 	);
 }
 const nr = /url\(\s*'([^']*)'\s*\)/gi,
@@ -546,7 +553,7 @@ class ir {
 	}
 	serveSnapshot(t, e, s) {
 		const r = this._snapshot(t, e);
-		if (!r) return new Response(null, { status: 404 });
+		if (!r) {return new Response(null, { status: 404 });}
 		const i = r.render();
 		return (
 			this._snapshotIds.set(s, r),
@@ -558,10 +565,10 @@ class ir {
 	}
 	async serveClosestScreenshot(t, e) {
 		const s = this._snapshot(t, e),
-			r = s == null ? void 0 : s.closestScreenshot();
+			r = s === undefined ? void 0 : s.closestScreenshot();
 		return r
 			? new Response(await this._resourceLoader(r))
-			: new Response(null, { status: 404 });
+			: new Response(undefined, { status: 404 });
 	}
 	serveSnapshotInfo(t, e) {
 		const s = this._snapshot(t, e);
@@ -592,9 +599,11 @@ class ir {
 	async serveResource(t, e, s) {
 		let r;
 		const i = this._snapshotIds.get(s);
-		for (const S of t)
-			if (((r = i == null ? void 0 : i.resourceByUrl(ar(S), e)), r)) break;
-		if (!r) return new Response(null, { status: 404 });
+		for (const S of t) {
+			if (((r = i === undefined ? void 0 : i.resourceByUrl(ar(S), e)), r))
+				{break;}
+		}
+		if (!r) {return new Response(null, { status: 404 });}
 		const a = r.response.content._sha1,
 			c = a ? (await this._resourceLoader(a)) || new Blob([]) : new Blob([]);
 		let l = r.response.content.mimeType;
@@ -603,7 +612,7 @@ class ir {
 			(l = `${l}; charset=utf-8`);
 		const f = new Headers();
 		l !== "x-unknown" && f.set("Content-Type", l);
-		for (const { name: S, value: C } of r.response.headers) f.set(S, C);
+		for (const { name: S, value: C } of r.response.headers) {f.set(S, C);}
 		f.delete("Content-Encoding"),
 			f.delete("Access-Control-Allow-Origin"),
 			f.set("Access-Control-Allow-Origin", "*"),
@@ -612,7 +621,7 @@ class ir {
 			f.set("Cache-Control", "public, max-age=31536000");
 		const { status: b } = r.response,
 			h = b === 101 || b === 204 || b === 205 || b === 304;
-		return new Response(h ? null : c, {
+		return new Response(h ? undefined : c, {
 			headers: f,
 			status: r.response.status,
 			statusText: r.response.statusText,
@@ -657,7 +666,7 @@ class cr {
 			return this._map.delete(t), this._map.set(t, r), r.value;
 		}
 		const s = e();
-		while (this._map.size && this._size + s.size > this._maxSize) {
+		while (this._map.size > 0 && this._size + s.size > this._maxSize) {
 			const [r, i] = this._map.entries().next().value;
 			(this._size -= i.size), this._map.delete(r);
 		}
@@ -675,7 +684,7 @@ class lr {
 			this._ensureResourcesForContext(t).push(e);
 	}
 	addFrameSnapshot(t, e, s) {
-		for (const c of e.resourceOverrides) c.url = rt(c.url);
+		for (const c of e.resourceOverrides) {c.url = rt(c.url);}
 		let r = this._frameSnapshots.get(e.frameId);
 		r ||
 			((r = { raw: [], renderers: [] }),
@@ -688,7 +697,9 @@ class lr {
 	}
 	snapshotByName(t, e) {
 		const s = this._frameSnapshots.get(t);
-		return s == null ? void 0 : s.renderers.find((r) => r.snapshotName === e);
+		return s === undefined
+			? void 0
+			: s.renderers.find((r) => r.snapshotName === e);
 	}
 	snapshotsForTest() {
 		return [...this._frameSnapshots.keys()];
@@ -740,9 +751,9 @@ class fr {
 		);
 	}
 	_appendEvent(t) {
-		if (!t) return;
+		if (!t) {return;}
 		const e = this._modernize(JSON.parse(t));
-		for (const s of e) this._innerAppendEvent(s);
+		for (const s of e) {this._innerAppendEvent(s);}
 	}
 	_innerAppendEvent(t) {
 		const e = this._contextEntry;
@@ -787,7 +798,7 @@ class fr {
 			}
 			case "log": {
 				const s = this._actionMap.get(t.callId);
-				if (!s) return;
+				if (!s) {return;}
 				s.log.push({ time: t.time, message: t.message });
 				break;
 			}
@@ -826,20 +837,22 @@ class fr {
 				e.events.push(t);
 				break;
 			}
-			case "resource-snapshot":
+			case "resource-snapshot": {
 				this._snapshotStorage.addResource(
 					this._contextEntry.contextId,
 					t.snapshot,
 				),
 					e.resources.push(t.snapshot);
 				break;
-			case "frame-snapshot":
+			}
+			case "frame-snapshot": {
 				this._snapshotStorage.addFrameSnapshot(
 					this._contextEntry.contextId,
 					t.snapshot,
 					this._pageEntry(t.snapshot.pageId).screencastFrames,
 				);
 				break;
+			}
 		}
 		"pageId" in t && t.pageId && this._pageEntry(t.pageId),
 			(t.type === "action" || t.type === "before") &&
@@ -859,13 +872,13 @@ class fr {
 	_modernize(t) {
 		let e = this._version ?? t.version ?? 6,
 			s = [t];
-		for (; e < Ut; ++e) s = this[`_modernize_${e}_to_${e + 1}`].call(this, s);
+		for (; e < Ut; ++e) {s = this[`_modernize_${e}_to_${e + 1}`].call(this, s);}
 		return s;
 	}
 	_modernize_0_to_1(t) {
 		for (const e of t) {
 			e.type === "action" &&
-				typeof e.metadata.error == "string" &&
+				typeof e.metadata.error === "string" &&
 				(e.metadata.error = {
 					error: { name: "Error", message: e.metadata.error },
 				});
@@ -873,11 +886,11 @@ class fr {
 		return t;
 	}
 	_modernize_1_to_2(t) {
-		var e;
+		let e;
 		for (const s of t) {
 			s.type !== "frame-snapshot" ||
 				!s.snapshot.isMainFrame ||
-				(s.snapshot.viewport = ((e = this._contextEntry.options) == null
+				(s.snapshot.viewport = ((e = this._contextEntry.options) === undefined
 					? void 0
 					: e.viewport) || {
 					width: 1280,
@@ -888,7 +901,7 @@ class fr {
 	}
 	_modernize_2_to_3(t) {
 		for (const e of t) {
-			if (e.type !== "resource-snapshot" || e.snapshot.request) continue;
+			if (e.type !== "resource-snapshot" || e.snapshot.request) {continue;}
 			const s = e.snapshot;
 			e.snapshot = {
 				_frameref: s.frameId,
@@ -917,11 +930,11 @@ class fr {
 		return e;
 	}
 	_modernize_event_3_to_4(t) {
-		var s, r, i, a;
-		if (t.type !== "action" && t.type !== "event") return t;
+		let s, r, i, a;
+		if (t.type !== "action" && t.type !== "event") {return t;}
 		const e = t.metadata;
 		return e.internal || e.method.startsWith("tracing")
-			? null
+			? undefined
 			: t.type === "event"
 				? e.method === "__create__" && e.type === "ConsoleMessage"
 					? {
@@ -943,25 +956,25 @@ class fr {
 						callId: e.id,
 						startTime: e.startTime,
 						endTime: e.endTime,
-						apiName: e.apiName || e.type + "." + e.method,
+						apiName: e.apiName || `${e.type}.${e.method}`,
 						class: e.type,
 						method: e.method,
 						params: e.params,
 						wallTime: e.wallTime || Date.now(),
 						log: e.log,
 						beforeSnapshot:
-							(s = e.snapshots.find((c) => c.title === "before")) == null
+							(s = e.snapshots.find((c) => c.title === "before")) === undefined
 								? void 0
 								: s.snapshotName,
 						inputSnapshot:
-							(r = e.snapshots.find((c) => c.title === "input")) == null
+							(r = e.snapshots.find((c) => c.title === "input")) === undefined
 								? void 0
 								: r.snapshotName,
 						afterSnapshot:
-							(i = e.snapshots.find((c) => c.title === "after")) == null
+							(i = e.snapshots.find((c) => c.title === "after")) === undefined
 								? void 0
 								: i.snapshotName,
-						error: (a = e.error) == null ? void 0 : a.error,
+						error: (a = e.error) === undefined ? void 0 : a.error,
 						result: e.result,
 						point: e.point,
 						pageId: e.pageId,
@@ -976,7 +989,7 @@ class fr {
 		return e;
 	}
 	_modernize_event_4_to_5(t) {
-		var e, s;
+		let e, s;
 		if (
 			(t.type === "event" &&
 				t.method === "__create__" &&
@@ -984,15 +997,15 @@ class fr {
 				this._jsHandles.set(t.params.guid, t.params.initializer),
 			t.type === "object")
 		) {
-			if (t.class !== "ConsoleMessage") return null;
+			if (t.class !== "ConsoleMessage") {return null;}
 			const r =
-				(e = t.initializer.args) == null
+				(e = t.initializer.args) === undefined
 					? void 0
 					: e.map((i) => {
 							if (i.guid) {
 								const a = this._jsHandles.get(i.guid);
 								return {
-									preview: (a == null ? void 0 : a.preview) || "",
+									preview: (a === undefined ? void 0 : a.preview) || "",
 									value: "",
 								};
 							}
@@ -1005,12 +1018,12 @@ class fr {
 					location: t.initializer.location,
 					args: r,
 				}),
-				null
+				undefined
 			);
 		}
 		if (t.type === "event" && t.method === "console") {
 			const r = this._consoleObjects.get(
-				((s = t.params.message) == null ? void 0 : s.guid) || "",
+				((s = t.params.message) === undefined ? void 0 : s.guid) || "",
 			);
 			return r
 				? {
@@ -1022,16 +1035,17 @@ class fr {
 						args: r.args,
 						location: r.location,
 					}
-				: null;
+				: undefined;
 		}
 		return t;
 	}
 	_modernize_5_to_6(t) {
 		const e = [];
 		for (const s of t) {
-			if ((e.push(s), !(s.type !== "after" || !s.log.length))) {
-				for (const r of s.log)
+			if ((e.push(s), !(s.type !== "after" || s.log.length === 0))) {
+				for (const r of s.log) {
 					e.push({ type: "log", callId: s.callId, message: r, time: -1 });
+				}
 			}
 		}
 		return e;
@@ -1067,7 +1081,7 @@ class fr {
 				const r = s,
 					i = s;
 				(i.stepId = `${r.apiName}@${r.wallTime}`), e.push(i);
-			} else e.push(s);
+			} else {e.push(s);}
 		}
 		return e;
 	}
@@ -1080,7 +1094,7 @@ class fr {
 				r.apiName && ((i.title = r.apiName), delete i.apiName),
 					(i.stepId = r.stepId ?? r.callId),
 					e.push(i);
-			} else e.push(s);
+			} else {e.push(s);}
 		}
 		return e;
 	}
@@ -1093,7 +1107,7 @@ class ur {
 		L(this, "_resourceToContentType", new Map());
 	}
 	async load(t, e) {
-		var c, l;
+		let c, l;
 		this._backend = t;
 		const s = [];
 		let r = !1;
@@ -1101,7 +1115,7 @@ class ur {
 			const f = _.match(/(.+)\.trace$/);
 			f && s.push(f[1] || ""), _.includes("src@") && (r = !0);
 		}
-		if (!s.length) throw new Error("Cannot find .trace file");
+		if (s.length === 0) {throw new Error("Cannot find .trace file");}
 		this._snapshotStorage = new lr();
 		const i = s.length * 3;
 		let a = 0;
@@ -1109,16 +1123,16 @@ class ur {
 			const f = dr();
 			(f.traceUrl = t.traceURL()), (f.hasSource = r);
 			const b = new fr(f, this._snapshotStorage),
-				h = (await this._backend.readText(_ + ".trace")) || "";
+				h = (await this._backend.readText(`${_}.trace`)) || "";
 			b.appendTrace(h), e(++a, i);
-			const S = (await this._backend.readText(_ + ".network")) || "";
+			const S = (await this._backend.readText(`${_}.network`)) || "";
 			if (
 				(b.appendTrace(S),
 				e(++a, i),
 				(f.actions = b.actions().sort((u, o) => u.startTime - o.startTime)),
 				!t.isLive())
 			) {
-				for (const u of f.actions.slice().reverse()) {
+				for (const u of [...f.actions].reverse()) {
 					if (!(u.endTime || u.error)) {
 						for (const o of f.actions) {
 							o.parentId === u.callId &&
@@ -1128,20 +1142,20 @@ class ur {
 					}
 				}
 			}
-			const C = await this._backend.readText(_ + ".stacks");
+			const C = await this._backend.readText(`${_}.stacks`);
 			if (C) {
 				const u = or(JSON.parse(C));
-				for (const o of f.actions) o.stack = o.stack || u.get(o.callId);
+				for (const o of f.actions) {o.stack = o.stack || u.get(o.callId);}
 			}
 			e(++a, i);
 			for (const u of f.resources) {
-				(c = u.request.postData) != null &&
+				(c = u.request.postData) !== undefined &&
 					c._sha1 &&
 					this._resourceToContentType.set(
 						u.request.postData._sha1,
 						Mt(u.request.postData.mimeType),
 					),
-					(l = u.response.content) != null &&
+					(l = u.response.content) !== undefined &&
 						l._sha1 &&
 						this._resourceToContentType.set(
 							u.response.content._sha1,
@@ -1156,7 +1170,7 @@ class ur {
 		return this._backend.hasEntry(t);
 	}
 	async resourceForSha1(t) {
-		const e = await this._backend.readBlob("resources/" + t),
+		const e = await this._backend.readBlob(`resources/${t}`),
 			s = this._resourceToContentType.get(t);
 		return !e || s === void 0 || s === "x-unknown"
 			? e
@@ -1314,20 +1328,23 @@ function at() {
 	function c(_, f, b, h, S, C, u, o, d, y, g) {
 		let m, E, p, R, T, A, x, w, O, I, N, P, k, M, v;
 		(I = 0), (T = b);
-		do s[_[f + I]]++, I++, T--;
-		while (T !== 0);
-		if (s[0] == b) return (u[0] = -1), (o[0] = 0), F;
-		for (w = o[0], A = 1; A <= ne && s[A] === 0; A++);
-		for (x = A, w < A && (w = A), T = ne; T !== 0 && s[T] === 0; T--);
+		do {
+			s[_[f + I]]++, I++, T--;
+		} while (T !== 0);
+		if (s[0] === b) {return (u[0] = -1), (o[0] = 0), F;}
+		for (w = o[0], A = 1; A <= ne && s[A] === 0; A++) {}
+		for (x = A, w < A && (w = A), T = ne; T !== 0 && s[T] === 0; T--) {}
 		for (p = T, w > T && (w = T), o[0] = w, M = 1 << A; A < T; A++, M <<= 1) {
-			if ((M -= s[A]) < 0) return H;
+			if ((M -= s[A]) < 0) {return H;}
 		}
-		if ((M -= s[T]) < 0) return H;
-		for (s[T] += M, a[1] = A = 0, I = 1, k = 2; --T !== 0; )
+		if ((M -= s[T]) < 0) {return H;}
+		for (s[T] += M, a[1] = A = 0, I = 1, k = 2; --T !== 0; ) {
 			(a[k] = A += s[I]), k++, I++;
+		}
 		(T = 0), (I = 0);
-		do (A = _[f + I]) !== 0 && (g[a[A]++] = T), I++;
-		while (++T < b);
+		do {
+			(A = _[f + I]) !== 0 && (g[a[A]++] = T), I++;
+		} while (++T < b);
 		for (
 			b = a[p], a[0] = T = 0, I = 0, R = -1, P = -w, i[0] = 0, N = 0, v = 0;
 			x <= p;
@@ -1342,9 +1359,9 @@ function at() {
 						(v = v > w ? w : v),
 						(E = 1 << (A = x - P)) > m + 1 && ((E -= m + 1), (k = x), A < v))
 					) {
-						while (++A < v && !((E <<= 1) <= s[++k])) E -= s[k];
+						while (++A < v && !((E <<= 1) <= s[++k])) {E -= s[k];}
 					}
-					if (((v = 1 << A), y[0] + v > Mn)) return H;
+					if (((v = 1 << A), y[0] + v > Mn)) {return H;}
 					(i[R] = N = y[0]),
 						(y[0] += v),
 						R !== 0
@@ -1360,9 +1377,9 @@ function at() {
 					r[1] = x - P,
 						I >= b
 							? (r[0] = 192)
-							: g[I] < h
+							: (g[I] < h
 								? ((r[0] = g[I] < 256 ? 0 : 96), (r[2] = g[I++]))
-								: ((r[0] = C[g[I] - h] + 16 + 64), (r[2] = S[g[I++] - h])),
+								: ((r[0] = C[g[I] - h] + 16 + 64), (r[2] = S[g[I++] - h]))),
 						E = 1 << (x - P),
 						A = T >>> P;
 					A < v;
@@ -1370,12 +1387,13 @@ function at() {
 				) {
 					d.set(r, (N + A) * 3);
 				}
-				for (A = 1 << (x - 1); (T & A) !== 0; A >>>= 1) T ^= A;
-				for (T ^= A, O = (1 << P) - 1; (T & O) != a[R]; )
+				for (A = 1 << (x - 1); (T & A) !== 0; A >>>= 1) {T ^= A;}
+				for (T ^= A, O = (1 << P) - 1; (T & O) !== a[R]; ) {
 					R--, (P -= w), (O = (1 << P) - 1);
+				}
 			}
 		}
-		return M !== 0 && p != 1 ? te : F;
+		return M !== 0 && p !== 1 ? te : F;
 	}
 	function l(_) {
 		let f;
@@ -1394,8 +1412,8 @@ function at() {
 		) {
 			e[f] = 0;
 		}
-		for (f = 0; f < ne + 1; f++) s[f] = 0;
-		for (f = 0; f < 3; f++) r[f] = 0;
+		for (f = 0; f < ne + 1; f++) {s[f] = 0;}
+		for (f = 0; f < 3; f++) {r[f] = 0;}
 		i.set(s.subarray(0, ne), 0), a.set(s.subarray(0, ne + 1), 0);
 	}
 	(this.inflate_trees_bits = (_, f, b, h, S) => {
@@ -1403,10 +1421,10 @@ function at() {
 		return (
 			l(19),
 			(t[0] = 0),
-			(C = c(_, 0, 19, 19, null, null, b, f, h, t, e)),
-			C == H
+			(C = c(_, 0, 19, 19, undefined, undefined, b, f, h, t, e)),
+			C === H
 				? (S.msg = "oversubscribed dynamic bit lengths tree")
-				: (C == te || f[0] === 0) &&
+				: (C === te || f[0] === 0) &&
 					((S.msg = "incomplete dynamic bit lengths tree"), (C = H)),
 			C
 		);
@@ -1417,21 +1435,21 @@ function at() {
 				l(288),
 				(t[0] = 0),
 				(y = c(b, 0, _, 257, xr, Er, C, h, o, t, e)),
-				y != F || h[0] === 0
-					? (y == H
+				y !== F || h[0] === 0
+					? (y === H
 							? (d.msg = "oversubscribed literal/length tree")
-							: y != Wt &&
+							: y !== Wt &&
 								((d.msg = "incomplete literal/length tree"), (y = H)),
 						y)
 					: (l(288),
 						(y = c(b, _, f, 0, Tr, Sr, u, S, o, t, e)),
-						y != F || (S[0] === 0 && _ > 257)
-							? (y == H
+						y !== F || (S[0] === 0 && _ > 257)
+							? (y === H
 									? (d.msg = "oversubscribed distance tree")
-									: y == te
+									: (y === te
 										? ((d.msg = "incomplete distance tree"), (y = H))
-										: y != Wt &&
-											((d.msg = "empty distance tree with lengths"), (y = H)),
+										: y !== Wt &&
+											((d.msg = "empty distance tree with lengths"), (y = H))),
 								y)
 							: F)
 			);
@@ -1476,7 +1494,7 @@ function Rr() {
 			(v = $[o]),
 			(Y = $[d]);
 		do {
-			while (I < 20) P--, (O |= (R.read_byte(N++) & 255) << I), (I += 8);
+			while (I < 20) {P--, (O |= (R.read_byte(N++) & 255) << I), (I += 8);}
 			if (
 				((T = O & v), (A = y), (x = g), (W = (x + T) * 3), (w = A[W]) === 0)
 			) {
@@ -1489,10 +1507,11 @@ function Rr() {
 						P--, (O |= (R.read_byte(N++) & 255) << I), (I += 8);
 					}
 					(T = O & Y), (A = m), (x = E), (W = (x + T) * 3), (w = A[W]);
-					do
+					do {
 						if (((O >>= A[W + 1]), (I -= A[W + 1]), (w & 16) !== 0)) {
-							for (w &= 15; I < w; )
+							for (w &= 15; I < w; ) {
 								P--, (O |= (R.read_byte(N++) & 255) << I), (I += 8);
+							}
 							if (
 								((_e = A[W + 2] + (O & $[w])),
 								(O >>= w),
@@ -1511,28 +1530,30 @@ function Rr() {
 											(D -= 2));
 							} else {
 								U = k - _e;
-								do U += p.end;
+								do {U += p.end;}
 								while (U < 0);
 								if (((w = p.end - U), D > w)) {
 									if (((D -= w), k - U > 0 && w > k - U)) {
-										do p.win[k++] = p.win[U++];
+										do {p.win[k++] = p.win[U++];}
 										while (--w !== 0);
-									} else
+									} else {
 										p.win.set(p.win.subarray(U, U + w), k),
 											(k += w),
 											(U += w),
 											(w = 0);
+									}
 									U = 0;
 								}
 							}
 							if (k - U > 0 && D > k - U) {
-								do p.win[k++] = p.win[U++];
+								do {p.win[k++] = p.win[U++];}
 								while (--D !== 0);
-							} else
+							} else {
 								p.win.set(p.win.subarray(U, U + D), k),
 									(k += D),
 									(U += D),
 									(D = 0);
+							}
 							break;
 						} else if ((w & 64) === 0) {
 							(T += A[W + 2]), (T += O & $[w]), (W = (x + T) * 3), (w = A[W]);
@@ -1553,7 +1574,7 @@ function Rr() {
 								H
 							);
 						}
-					while (!0);
+					} while (!0);
 					break;
 				}
 				if ((w & 64) === 0) {
@@ -1612,7 +1633,14 @@ function Rr() {
 		);
 	}
 	(this.init = (o, d, y, g, m, E) => {
-		(t = Ne), (_ = o), (f = d), (b = y), (h = g), (S = m), (C = E), (s = null);
+		(t = Ne),
+			(_ = o),
+			(f = d),
+			(b = y),
+			(h = g),
+			(S = m),
+			(C = E),
+			(s = undefined);
 	}),
 		(this.proc = (o, d, y) => {
 			let g,
@@ -1635,7 +1663,7 @@ function Rr() {
 				;
 			) {
 				switch (t) {
-					case Ne:
+					case Ne: {
 						if (
 							w >= 258 &&
 							A >= 10 &&
@@ -1652,15 +1680,16 @@ function Rr() {
 							(R = o.bitk),
 							(x = o.write),
 							(w = x < o.read ? o.read - x - 1 : o.end - x),
-							y != F)
+							y !== F)
 						) {
-							t = y == ee ? Xe : ve;
+							t = y === ee ? Xe : ve;
 							break;
 						}
 						(i = _), (s = b), (r = h), (t = Ht);
-					case Ht:
+					}
+					case Ht: {
 						for (g = i; R < g; ) {
-							if (A !== 0) y = F;
+							if (A !== 0) {y = F;}
 							else {
 								return (
 									(o.bitb = p),
@@ -1708,9 +1737,10 @@ function Rr() {
 							(o.write = x),
 							o.inflate_flush(d, y)
 						);
-					case Bt:
+					}
+					case Bt: {
 						for (g = c; R < g; ) {
-							if (A !== 0) y = F;
+							if (A !== 0) {y = F;}
 							else {
 								return (
 									(o.bitb = p),
@@ -1731,9 +1761,10 @@ function Rr() {
 							(s = S),
 							(r = C),
 							(t = jt);
-					case jt:
+					}
+					case jt: {
 						for (g = i; R < g; ) {
-							if (A !== 0) y = F;
+							if (A !== 0) {y = F;}
 							else {
 								return (
 									(o.bitb = p),
@@ -1773,9 +1804,10 @@ function Rr() {
 							(o.write = x),
 							o.inflate_flush(d, y)
 						);
-					case qt:
+					}
+					case qt: {
 						for (g = c; R < g; ) {
-							if (A !== 0) y = F;
+							if (A !== 0) {y = F;}
 							else {
 								return (
 									(o.bitb = p),
@@ -1790,12 +1822,13 @@ function Rr() {
 							A--, (p |= (d.read_byte(T++) & 255) << R), (R += 8);
 						}
 						(l += p & $[g]), (p >>= g), (R -= g), (t = Yt);
-					case Yt:
-						for (O = x - l; O < 0; ) O += o.end;
+					}
+					case Yt: {
+						for (O = x - l; O < 0; ) {O += o.end;}
 						while (e !== 0) {
 							if (
 								w === 0 &&
-								(x == o.end &&
+								(x === o.end &&
 									o.read !== 0 &&
 									((x = 0), (w = x < o.read ? o.read - x - 1 : o.end - x)),
 								w === 0 &&
@@ -1803,7 +1836,7 @@ function Rr() {
 									(y = o.inflate_flush(d, y)),
 									(x = o.write),
 									(w = x < o.read ? o.read - x - 1 : o.end - x),
-									x == o.end &&
+									x === o.end &&
 										o.read !== 0 &&
 										((x = 0), (w = x < o.read ? o.read - x - 1 : o.end - x)),
 									w === 0))
@@ -1818,14 +1851,15 @@ function Rr() {
 									o.inflate_flush(d, y)
 								);
 							}
-							(o.win[x++] = o.win[O++]), w--, O == o.end && (O = 0), e--;
+							(o.win[x++] = o.win[O++]), w--, O === o.end && (O = 0), e--;
 						}
 						t = Ne;
 						break;
-					case Vt:
+					}
+					case Vt: {
 						if (
 							w === 0 &&
-							(x == o.end &&
+							(x === o.end &&
 								o.read !== 0 &&
 								((x = 0), (w = x < o.read ? o.read - x - 1 : o.end - x)),
 							w === 0 &&
@@ -1833,7 +1867,7 @@ function Rr() {
 								(y = o.inflate_flush(d, y)),
 								(x = o.write),
 								(w = x < o.read ? o.read - x - 1 : o.end - x),
-								x == o.end &&
+								x === o.end &&
 									o.read !== 0 &&
 									((x = 0), (w = x < o.read ? o.read - x - 1 : o.end - x)),
 								w === 0))
@@ -1850,14 +1884,15 @@ function Rr() {
 						}
 						(y = F), (o.win[x++] = a), w--, (t = Ne);
 						break;
-					case Xe:
+					}
+					case Xe: {
 						if (
 							(R > 7 && ((R -= 8), A++, T--),
 							(o.write = x),
 							(y = o.inflate_flush(d, y)),
 							(x = o.write),
 							(w = x < o.read ? o.read - x - 1 : o.end - x),
-							o.read != o.write)
+							o.read !== o.write)
 						) {
 							return (
 								(o.bitb = p),
@@ -1870,7 +1905,8 @@ function Rr() {
 							);
 						}
 						t = Gt;
-					case Gt:
+					}
+					case Gt: {
 						return (
 							(y = ee),
 							(o.bitb = p),
@@ -1881,7 +1917,8 @@ function Rr() {
 							(o.write = x),
 							o.inflate_flush(d, y)
 						);
-					case ve:
+					}
+					case ve: {
 						return (
 							(y = H),
 							(o.bitb = p),
@@ -1892,7 +1929,8 @@ function Rr() {
 							(o.write = x),
 							o.inflate_flush(d, y)
 						);
-					default:
+					}
+					default: {
 						return (
 							(y = X),
 							(o.bitb = p),
@@ -1903,6 +1941,7 @@ function Rr() {
 							(o.write = x),
 							o.inflate_flush(d, y)
 						);
+					}
 				}
 			}
 		}),
@@ -1940,13 +1979,13 @@ function Ar(n, t) {
 		(this.write = 0),
 		(this.reset = (u, o) => {
 			o && (o[0] = S),
-				s == Le && f.free(u),
+				s === Le && f.free(u),
 				(s = we),
 				(this.bitk = 0),
 				(this.bitb = 0),
 				(this.read = this.write = 0);
 		}),
-		this.reset(n, null),
+		this.reset(n),
 		(this.inflate_flush = (u, o) => {
 			let d, y, g;
 			return (
@@ -1954,18 +1993,18 @@ function Ar(n, t) {
 				(g = this.read),
 				(d = (g <= this.write ? this.write : this.end) - g),
 				d > u.avail_out && (d = u.avail_out),
-				d !== 0 && o == te && (o = F),
+				d !== 0 && o === te && (o = F),
 				(u.avail_out -= d),
 				(u.total_out += d),
 				u.next_out.set(this.win.subarray(g, g + d), y),
 				(y += d),
 				(g += d),
-				g == this.end &&
+				g === this.end &&
 					((g = 0),
-					this.write == this.end && (this.write = 0),
+					this.write === this.end && (this.write = 0),
 					(d = this.write - g),
 					d > u.avail_out && (d = u.avail_out),
-					d !== 0 && o == te && (o = F),
+					d !== 0 && o === te && (o = F),
 					(u.avail_out -= d),
 					(u.total_out += d),
 					u.next_out.set(this.win.subarray(g, g + d), y),
@@ -1989,9 +2028,9 @@ function Ar(n, t) {
 			) {
 				let A, x, w, O, I, N, P, k;
 				switch (s) {
-					case we:
+					case we: {
 						while (g < 3) {
-							if (E !== 0) o = F;
+							if (E !== 0) {o = F;}
 							else {
 								return (
 									(this.bitb = y),
@@ -2006,7 +2045,7 @@ function Ar(n, t) {
 							E--, (y |= (u.read_byte(m++) & 255) << g), (g += 8);
 						}
 						switch (((d = y & 7), (b = d & 1), d >>> 1)) {
-							case 0:
+							case 0: {
 								(y >>>= 3),
 									(g -= 3),
 									(d = g & 7),
@@ -2014,7 +2053,8 @@ function Ar(n, t) {
 									(g -= d),
 									(s = $e);
 								break;
-							case 1:
+							}
+							case 1: {
 								(A = []),
 									(x = []),
 									(w = [[]]),
@@ -2025,10 +2065,12 @@ function Ar(n, t) {
 									(g -= 3),
 									(s = Le);
 								break;
-							case 2:
+							}
+							case 2: {
 								(y >>>= 3), (g -= 3), (s = Xt);
 								break;
-							case 3:
+							}
+							case 3: {
 								return (
 									(y >>>= 3),
 									(g -= 3),
@@ -2043,11 +2085,13 @@ function Ar(n, t) {
 									(this.write = p),
 									this.inflate_flush(u, o)
 								);
+							}
 						}
 						break;
-					case $e:
+					}
+					case $e: {
 						while (g < 32) {
-							if (E !== 0) o = F;
+							if (E !== 0) {o = F;}
 							else {
 								return (
 									(this.bitb = y),
@@ -2061,7 +2105,7 @@ function Ar(n, t) {
 							}
 							E--, (y |= (u.read_byte(m++) & 255) << g), (g += 8);
 						}
-						if (((~y >>> 16) & 65_535) != (y & 65_535)) {
+						if (((~y >>> 16) & 65_535) !== (y & 65_535)) {
 							return (
 								(s = he),
 								(u.msg = "invalid stored block lengths"),
@@ -2077,13 +2121,14 @@ function Ar(n, t) {
 						}
 						(r = y & 65_535),
 							(y = g = 0),
-							(s = r !== 0 ? Kt : b !== 0 ? Fe : we);
+							(s = r !== 0 ? Kt : (b !== 0 ? Fe : we));
 						break;
-					case Kt:
+					}
+					case Kt: {
 						if (
 							E === 0 ||
 							(R === 0 &&
-								(p == this.end &&
+								(p === this.end &&
 									this.read !== 0 &&
 									((p = 0),
 									(R = p < this.read ? this.read - p - 1 : this.end - p)),
@@ -2092,7 +2137,7 @@ function Ar(n, t) {
 									(o = this.inflate_flush(u, o)),
 									(p = this.write),
 									(R = p < this.read ? this.read - p - 1 : this.end - p),
-									p == this.end &&
+									p === this.end &&
 										this.read !== 0 &&
 										((p = 0),
 										(R = p < this.read ? this.read - p - 1 : this.end - p)),
@@ -2124,9 +2169,10 @@ function Ar(n, t) {
 						}
 						s = b !== 0 ? Fe : we;
 						break;
-					case Xt:
+					}
+					case Xt: {
 						while (g < 14) {
-							if (E !== 0) o = F;
+							if (E !== 0) {o = F;}
 							else {
 								return (
 									(this.bitb = y),
@@ -2154,14 +2200,15 @@ function Ar(n, t) {
 								this.inflate_flush(u, o)
 							);
 						}
-						if (((d = 258 + (d & 31) + ((d >> 5) & 31)), !c || c.length < d))
+						if (((d = 258 + (d & 31) + ((d >> 5) & 31)), !c || c.length < d)) {
 							c = [];
-						else for (T = 0; T < d; T++) c[T] = 0;
+						} else {for (T = 0; T < d; T++) c[T] = 0;}
 						(y >>>= 14), (g -= 14), (a = 0), (s = $t);
-					case $t:
+					}
+					case $t: {
 						while (a < 4 + (i >>> 10)) {
 							while (g < 3) {
-								if (E !== 0) o = F;
+								if (E !== 0) {o = F;}
 								else {
 									return (
 										(this.bitb = y),
@@ -2177,13 +2224,13 @@ function Ar(n, t) {
 							}
 							(c[Zt[a++]] = y & 7), (y >>>= 3), (g -= 3);
 						}
-						while (a < 19) c[Zt[a++]] = 0;
+						while (a < 19) {c[Zt[a++]] = 0;}
 						if (
-							((l[0] = 7), (d = C.inflate_trees_bits(c, l, _, h, u)), d != F)
+							((l[0] = 7), (d = C.inflate_trees_bits(c, l, _, h, u)), d !== F)
 						) {
 							return (
 								(o = d),
-								o == H && ((c = null), (s = he)),
+								o === H && ((c = undefined), (s = he)),
 								(this.bitb = y),
 								(this.bitk = g),
 								(u.avail_in = E),
@@ -2194,11 +2241,12 @@ function Ar(n, t) {
 							);
 						}
 						(a = 0), (s = Jt);
-					case Jt:
+					}
+					case Jt: {
 						while (((d = i), !(a >= 258 + (d & 31) + ((d >> 5) & 31)))) {
 							let M, v;
 							for (d = l[0]; g < d; ) {
-								if (E !== 0) o = F;
+								if (E !== 0) {o = F;}
 								else {
 									return (
 										(this.bitb = y),
@@ -2220,10 +2268,10 @@ function Ar(n, t) {
 								(y >>>= d), (g -= d), (c[a++] = v);
 							} else {
 								for (
-									T = v == 18 ? 7 : v - 14, M = v == 18 ? 11 : 3;
+									T = v === 18 ? 7 : v - 14, M = v === 18 ? 11 : 3;
 									g < d + T;
 								) {
-									if (E !== 0) o = F;
+									if (E !== 0) {o = F;}
 									else {
 										return (
 											(this.bitb = y),
@@ -2246,10 +2294,10 @@ function Ar(n, t) {
 									(T = a),
 									(d = i),
 									T + M > 258 + (d & 31) + ((d >> 5) & 31) ||
-										(v == 16 && T < 1))
+										(v === 16 && T < 1))
 								) {
 									return (
-										(c = null),
+										(c = undefined),
 										(s = he),
 										(u.msg = "invalid bit length repeat"),
 										(o = H),
@@ -2262,8 +2310,8 @@ function Ar(n, t) {
 										this.inflate_flush(u, o)
 									);
 								}
-								v = v == 16 ? c[T - 1] : 0;
-								do c[T++] = v;
+								v = v === 16 ? c[T - 1] : 0;
+								do {c[T++] = v;}
 								while (--M !== 0);
 								a = T;
 							}
@@ -2288,10 +2336,10 @@ function Ar(n, t) {
 								h,
 								u,
 							)),
-							d != F)
+							d !== F)
 						) {
 							return (
-								d == H && ((c = null), (s = he)),
+								d === H && ((c = undefined), (s = he)),
 								(o = d),
 								(this.bitb = y),
 								(this.bitk = g),
@@ -2303,7 +2351,8 @@ function Ar(n, t) {
 							);
 						}
 						f.init(I[0], N[0], h, P[0], h, k[0]), (s = Le);
-					case Le:
+					}
+					case Le: {
 						if (
 							((this.bitb = y),
 							(this.bitk = g),
@@ -2311,7 +2360,7 @@ function Ar(n, t) {
 							(u.total_in += m - u.next_in_index),
 							(u.next_in_index = m),
 							(this.write = p),
-							(o = f.proc(this, u, o)) != ee)
+							(o = f.proc(this, u, o)) !== ee)
 						) {
 							return this.inflate_flush(u, o);
 						}
@@ -2330,13 +2379,14 @@ function Ar(n, t) {
 							break;
 						}
 						s = Fe;
-					case Fe:
+					}
+					case Fe: {
 						if (
 							((this.write = p),
 							(o = this.inflate_flush(u, o)),
 							(p = this.write),
 							(R = p < this.read ? this.read - p - 1 : this.end - p),
-							this.read != this.write)
+							this.read !== this.write)
 						) {
 							return (
 								(this.bitb = y),
@@ -2349,7 +2399,8 @@ function Ar(n, t) {
 							);
 						}
 						s = Qt;
-					case Qt:
+					}
+					case Qt: {
 						return (
 							(o = ee),
 							(this.bitb = y),
@@ -2360,7 +2411,8 @@ function Ar(n, t) {
 							(this.write = p),
 							this.inflate_flush(u, o)
 						);
-					case he:
+					}
+					case he: {
 						return (
 							(o = H),
 							(this.bitb = y),
@@ -2371,7 +2423,8 @@ function Ar(n, t) {
 							(this.write = p),
 							this.inflate_flush(u, o)
 						);
-					default:
+					}
+					default: {
 						return (
 							(o = X),
 							(this.bitb = y),
@@ -2382,16 +2435,17 @@ function Ar(n, t) {
 							(this.write = p),
 							this.inflate_flush(u, o)
 						);
+					}
 				}
 			}
 		}),
 		(this.free = (u) => {
-			this.reset(u, null), (this.win = null), (h = null);
+			this.reset(u), (this.win = undefined), (h = undefined);
 		}),
 		(this.set_dictionary = (u, o, d) => {
 			this.win.set(u.subarray(o, o + d), 0), (this.read = this.write = d);
 		}),
-		(this.sync_point = () => (s == $e ? 1 : 0));
+		(this.sync_point = () => (s === $e ? 1 : 0));
 }
 const Cr = 32,
 	Ir = 8,
@@ -2414,37 +2468,37 @@ function kr() {
 		(this.marker = 0),
 		(this.wbits = 0);
 	function t(e) {
-		return e && e.istate
+		return e?.istate
 			? ((e.total_in = e.total_out = 0),
-				(e.msg = null),
+				(e.msg = undefined),
 				(e.istate.mode = xe),
-				e.istate.blocks.reset(e, null),
+				e.istate.blocks.reset(e),
 				F)
 			: X;
 	}
 	(this.inflateEnd = (e) => (
-		this.blocks && this.blocks.free(e), (this.blocks = null), F
+		this.blocks?.free(e), (this.blocks = undefined), F
 	)),
 		(this.inflateInit = (e, s) => (
-			(e.msg = null),
-			(this.blocks = null),
+			(e.msg = undefined),
+			(this.blocks = undefined),
 			s < 8 || s > 15
 				? (this.inflateEnd(e), X)
 				: ((this.wbits = s), (e.istate.blocks = new Ar(e, 1 << s)), t(e), F)
 		)),
 		(this.inflate = (e, s) => {
 			let r, i;
-			if (!(e && e.istate && e.next_in)) return X;
+			if (!(e?.istate && e.next_in)) {return X;}
 			const a = e.istate;
-			for (s = s == mr ? te : F, r = te; ; ) {
+			for (s = s === mr ? te : F, r = te; ; ) {
 				switch (a.mode) {
-					case Or:
-						if (e.avail_in === 0) return r;
+					case Or: {
+						if (e.avail_in === 0) {return r;}
 						if (
 							((r = s),
 							e.avail_in--,
 							e.total_in++,
-							((a.method = e.read_byte(e.next_in_index++)) & 15) != Ir)
+							((a.method = e.read_byte(e.next_in_index++)) & 15) !== Ir)
 						) {
 							(a.mode = se),
 								(e.msg = "unknown compression method"),
@@ -2456,8 +2510,9 @@ function kr() {
 							break;
 						}
 						a.mode = zt;
-					case zt:
-						if (e.avail_in === 0) return r;
+					}
+					case zt: {
+						if (e.avail_in === 0) {return r;}
 						if (
 							((r = s),
 							e.avail_in--,
@@ -2473,31 +2528,35 @@ function kr() {
 							break;
 						}
 						a.mode = en;
-					case en:
-						if (e.avail_in === 0) return r;
+					}
+					case en: {
+						if (e.avail_in === 0) {return r;}
 						(r = s),
 							e.avail_in--,
 							e.total_in++,
 							(a.need =
 								((e.read_byte(e.next_in_index++) & 255) << 24) & 4_278_190_080),
 							(a.mode = tn);
-					case tn:
-						if (e.avail_in === 0) return r;
+					}
+					case tn: {
+						if (e.avail_in === 0) {return r;}
 						(r = s),
 							e.avail_in--,
 							e.total_in++,
 							(a.need +=
 								((e.read_byte(e.next_in_index++) & 255) << 16) & 16_711_680),
 							(a.mode = nn);
-					case nn:
-						if (e.avail_in === 0) return r;
+					}
+					case nn: {
+						if (e.avail_in === 0) {return r;}
 						(r = s),
 							e.avail_in--,
 							e.total_in++,
 							(a.need +=
 								((e.read_byte(e.next_in_index++) & 255) << 8) & 65_280),
 							(a.mode = sn);
-					case sn:
+					}
+					case sn: {
 						return e.avail_in === 0
 							? r
 							: ((r = s),
@@ -2506,30 +2565,36 @@ function kr() {
 								(a.need += e.read_byte(e.next_in_index++) & 255),
 								(a.mode = Je),
 								hr);
-					case Je:
+					}
+					case Je: {
 						return (
 							(a.mode = se), (e.msg = "need dictionary"), (a.marker = 0), X
 						);
-					case xe:
-						if (((r = a.blocks.proc(e, r)), r == H)) {
+					}
+					case xe: {
+						if (((r = a.blocks.proc(e, r)), r === H)) {
 							(a.mode = se), (a.marker = 0);
 							break;
 						}
-						if ((r == F && (r = s), r != ee)) return r;
+						if ((r === F && (r = s), r !== ee)) {return r;}
 						(r = s), a.blocks.reset(e, a.was), (a.mode = rn);
-					case rn:
+					}
+					case rn: {
 						return (e.avail_in = 0), ee;
-					case se:
+					}
+					case se: {
 						return H;
-					default:
+					}
+					default: {
 						return X;
+					}
 				}
 			}
 		}),
 		(this.inflateSetDictionary = (e, s, r) => {
 			let i = 0,
 				a = r;
-			if (!(e && e.istate) || e.istate.mode != Je) return X;
+			if (!e?.istate || e.istate.mode !== Je) {return X;}
 			const c = e.istate;
 			return (
 				a >= 1 << c.wbits && ((a = (1 << c.wbits) - 1), (i = r - a)),
@@ -2540,19 +2605,20 @@ function kr() {
 		}),
 		(this.inflateSync = (e) => {
 			let s, r, i, a, c;
-			if (!(e && e.istate)) return X;
+			if (!e?.istate) {return X;}
 			const l = e.istate;
 			if (
-				(l.mode != se && ((l.mode = se), (l.marker = 0)),
+				(l.mode !== se && ((l.mode = se), (l.marker = 0)),
 				(s = e.avail_in) === 0)
-			)
+			) {
 				return te;
+			}
 			for (r = e.next_in_index, i = l.marker; s !== 0 && i < 4; ) {
-				e.read_byte(r) == Pr[i]
+				e.read_byte(r) === Pr[i]
 					? i++
-					: e.read_byte(r) !== 0
+					: (e.read_byte(r) !== 0
 						? (i = 0)
-						: (i = 4 - i),
+						: (i = 4 - i)),
 					r++,
 					s--;
 			}
@@ -2561,7 +2627,7 @@ function kr() {
 				(e.next_in_index = r),
 				(e.avail_in = s),
 				(l.marker = i),
-				i != 4
+				i !== 4
 					? H
 					: ((a = e.total_in),
 						(c = e.total_out),
@@ -2573,7 +2639,7 @@ function kr() {
 			);
 		}),
 		(this.inflateSyncPoint = (e) =>
-			e && e.istate && e.istate.blocks ? e.istate.blocks.sync_point() : X);
+			e?.istate?.blocks ? e.istate.blocks.sync_point() : X);
 }
 function Wn() {}
 Wn.prototype = {
@@ -2586,9 +2652,9 @@ Wn.prototype = {
 		return this.istate ? this.istate.inflate(this, n) : X;
 	},
 	inflateEnd() {
-		if (!this.istate) return X;
+		if (!this.istate) {return X;}
 		const t = this.istate.inflateEnd(this);
-		return (this.istate = null), t;
+		return (this.istate = undefined), t;
 	},
 	inflateSync() {
 		return this.istate ? this.istate.inflateSync(this) : X;
@@ -2605,7 +2671,7 @@ Wn.prototype = {
 };
 function Dr(n) {
 	const e = new Wn(),
-		s = n && n.chunkSize ? Math.floor(n.chunkSize * 2) : 128 * 1024,
+		s = n?.chunkSize ? Math.floor(n.chunkSize * 2) : 128 * 1024,
 		r = pr,
 		i = new Uint8Array(s);
 	let a = !1;
@@ -2618,7 +2684,7 @@ function Dr(n) {
 				h = 0,
 				S = 0,
 				C = 0;
-			if (c.length !== 0) {
+			if (c.length > 0) {
 				(e.next_in_index = 0), (e.next_in = c), (e.avail_in = c.length);
 				do {
 					if (
@@ -2628,11 +2694,13 @@ function Dr(n) {
 						(f = e.inflate(r)),
 						a && f === te)
 					) {
-						if (e.avail_in !== 0) throw new Error("inflating: bad input");
-					} else if (f !== F && f !== ee)
-						throw new Error("inflating: " + e.msg);
-					if ((a || f === ee) && e.avail_in === c.length)
+						if (e.avail_in !== 0) {throw new Error("inflating: bad input");}
+					} else if (f !== F && f !== ee) {
+						throw new Error(`inflating: ${e.msg}`);
+					}
+					if ((a || f === ee) && e.avail_in === c.length) {
 						throw new Error("inflating: bad input");
+					}
 					e.next_out_index &&
 						(e.next_out_index === s
 							? _.push(new Uint8Array(i))
@@ -2640,7 +2708,7 @@ function Dr(n) {
 						(C += e.next_out_index),
 						l &&
 							e.next_in_index > 0 &&
-							e.next_in_index != h &&
+							e.next_in_index !== h &&
 							(l(e.next_in_index), (h = e.next_in_index));
 				} while (e.avail_in > 0 || e.avail_out === 0);
 				return (
@@ -2694,7 +2762,7 @@ const pe = 4_294_967_295,
 class pn {
 	constructor(t) {
 		return class extends TransformStream {
-			constructor(e, s) {
+			constructor(_e, s) {
 				const r = new t(s);
 				super({
 					transform(i, a) {
@@ -2712,7 +2780,7 @@ class pn {
 const Xr = 64;
 let Hn = 2;
 try {
-	typeof navigator != ue &&
+	typeof navigator !== ue &&
 		navigator.hardwareConcurrency &&
 		(Hn = navigator.hardwareConcurrency);
 } catch {}
@@ -2724,9 +2792,9 @@ const $r = {
 		useCompressionStream: !0,
 		workerScripts: G,
 		CompressionStreamNative:
-			typeof CompressionStream != ue && CompressionStream,
+			typeof CompressionStream !== ue && CompressionStream,
 		DecompressionStreamNative:
-			typeof DecompressionStream != ue && DecompressionStream,
+			typeof DecompressionStream !== ue && DecompressionStream,
 	},
 	ce = { ...$r };
 function Bn() {
@@ -2764,13 +2832,15 @@ function jn(n) {
 	) {
 		const { deflate: h, inflate: S } = b;
 		if (((h || S) && (ce.workerScripts || (ce.workerScripts = {})), h)) {
-			if (!Array.isArray(h))
-				throw new Error("workerScripts.deflate must be an array");
+			if (!Array.isArray(h)) {
+				throw new TypeError("workerScripts.deflate must be an array");
+			}
 			ce.workerScripts.deflate = h;
 		}
 		if (S) {
-			if (!Array.isArray(S))
-				throw new Error("workerScripts.inflate must be an array");
+			if (!Array.isArray(S)) {
+				throw new TypeError("workerScripts.inflate must be an array");
+			}
 			ce.workerScripts.inflate = S;
 		}
 	}
@@ -2784,8 +2854,9 @@ function Qr() {
 const qn = [];
 for (let n = 0; n < 256; n++) {
 	let t = n;
-	for (let e = 0; e < 8; e++)
-		t & 1 ? (t = (t >>> 1) ^ 3_988_292_384) : (t = t >>> 1);
+	for (let e = 0; e < 8; e++) {
+		t & 1 ? (t = (t >>> 1) ^ 3_988_292_384) : (t >>>= 1);
+	}
 	qn[n] = t;
 }
 class Be {
@@ -2794,8 +2865,9 @@ class Be {
 	}
 	append(t) {
 		let e = this.crc | 0;
-		for (let s = 0, r = t.length | 0; s < r; s++)
+		for (let s = 0, r = t.length | 0; s < r; s++) {
 			e = (e >>> 8) ^ qn[(e ^ t[s]) & 255];
+		}
 		this.crc = e;
 	}
 	get() {
@@ -2819,35 +2891,35 @@ class Yn extends TransformStream {
 	}
 }
 function zr(n) {
-	if (typeof TextEncoder == ue) {
+	if (typeof TextEncoder === ue) {
 		n = unescape(encodeURIComponent(n));
 		const t = new Uint8Array(n.length);
-		for (let e = 0; e < t.length; e++) t[e] = n.charCodeAt(e);
+		for (let e = 0; e < t.length; e++) {t[e] = n.charCodeAt(e);}
 		return t;
 	}
 	return new TextEncoder().encode(n);
 }
 const K = {
 		concat(n, t) {
-			if (n.length === 0 || t.length === 0) return n.concat(t);
+			if (n.length === 0 || t.length === 0) {return n.concat(t);}
 			const e = n[n.length - 1],
 				s = K.getPartial(e);
 			return s === 32
 				? n.concat(t)
-				: K._shiftRight(t, s, e | 0, n.slice(0, n.length - 1));
+				: K._shiftRight(t, s, e | 0, n.slice(0, -1));
 		},
 		bitLength(n) {
 			const t = n.length;
-			if (t === 0) return 0;
+			if (t === 0) {return 0;}
 			const e = n[t - 1];
 			return (t - 1) * 32 + K.getPartial(e);
 		},
 		clamp(n, t) {
-			if (n.length * 32 < t) return n;
+			if (n.length * 32 < t) {return n;}
 			n = n.slice(0, Math.ceil(t / 32));
 			const e = n.length;
 			return (
-				(t = t & 31),
+				(t &= 31),
 				e > 0 &&
 					t &&
 					(n[e - 1] = K.partial(t, n[e - 1] & (2_147_483_648 >> (t - 1)), 1)),
@@ -2861,11 +2933,12 @@ const K = {
 			return Math.round(n / 1_099_511_627_776) || 32;
 		},
 		_shiftRight(n, t, e, s) {
-			for (s === void 0 && (s = []); t >= 32; t -= 32) s.push(e), (e = 0);
-			if (t === 0) return s.concat(n);
-			for (let a = 0; a < n.length; a++)
+			for (s === void 0 && (s = []); t >= 32; t -= 32) {s.push(e), (e = 0);}
+			if (t === 0) {return s.concat(n);}
+			for (let a = 0; a < n.length; a++) {
 				s.push(e | (n[a] >>> t)), (e = n[a] << (32 - t));
-			const r = n.length ? n[n.length - 1] : 0,
+			}
+			const r = n.length > 0 ? n[n.length - 1] : 0,
 				i = K.getPartial(r);
 			return s.push(K.partial((t + i) & 31, t + i > 32 ? e : s.pop(), 1)), s;
 		},
@@ -2876,16 +2949,18 @@ const K = {
 				const e = K.bitLength(n) / 8,
 					s = new Uint8Array(e);
 				let r;
-				for (let i = 0; i < e; i++)
+				for (let i = 0; i < e; i++) {
 					(i & 3) === 0 && (r = n[i / 4]), (s[i] = r >>> 24), (r <<= 8);
+				}
 				return s;
 			},
 			toBits(n) {
 				const t = [];
 				let e,
 					s = 0;
-				for (e = 0; e < n.length; e++)
+				for (e = 0; e < n.length; e++) {
 					(s = (s << 8) | n[e]), (e & 3) === 3 && (t.push(s), (s = 0));
+				}
 				return e & 3 && t.push(K.partial(8 * (e & 3), s)), t;
 			},
 		},
@@ -2901,26 +2976,24 @@ Vn.sha1 = class {
 				1_518_500_249, 1_859_775_393, 2_400_959_708, 3_395_469_782,
 			]),
 			n
-				? ((this._h = n._h.slice(0)),
-					(this._buffer = n._buffer.slice(0)),
+				? ((this._h = [...n._h]),
+					(this._buffer = [...n._buffer]),
 					(this._length = n._length))
 				: this.reset();
 	}
 	reset() {
 		return (
-			(this._h = this._init.slice(0)),
-			(this._buffer = []),
-			(this._length = 0),
-			this
+			(this._h = [...this._init]), (this._buffer = []), (this._length = 0), this
 		);
 	}
 	update(n) {
-		typeof n == "string" && (n = je.utf8String.toBits(n));
+		typeof n === "string" && (n = je.utf8String.toBits(n));
 		const e = (this._buffer = K.concat(this._buffer, n)),
 			s = this._length,
 			r = (this._length = s + K.bitLength(n));
-		if (r > 9_007_199_254_740_991)
+		if (r > 9_007_199_254_740_991) {
 			throw new Error("Cannot hash more than 2^53 - 1 bits");
+		}
 		const i = new Uint32Array(e);
 		let a = 0;
 		for (
@@ -2937,21 +3010,21 @@ Vn.sha1 = class {
 		let t = this._buffer;
 		const e = this._h;
 		t = K.concat(t, [K.partial(1, 1)]);
-		for (let s = t.length + 2; s & 15; s++) t.push(0);
+		for (let s = t.length + 2; s & 15; s++) {t.push(0);}
 		for (
 			t.push(Math.floor(this._length / 4_294_967_296)),
 				t.push(this._length | 0);
-			t.length;
+			t.length > 0;
 		) {
 			this._block(t.splice(0, 16));
 		}
 		return this.reset(), e;
 	}
 	_f(n, t, e, s) {
-		if (n <= 19) return (t & e) | (~t & s);
-		if (n <= 39) return t ^ e ^ s;
-		if (n <= 59) return (t & e) | (t & s) | (e & s);
-		if (n <= 79) return t ^ e ^ s;
+		if (n <= 19) {return (t & e) | (~t & s);}
+		if (n <= 39) {return t ^ e ^ s;}
+		if (n <= 59) {return (t & e) | (t & s) | (e & s);}
+		if (n <= 79) {return t ^ e ^ s;}
 	}
 	_S(n, t) {
 		return (t << n) | (t >>> (32 - n));
@@ -2959,7 +3032,7 @@ Vn.sha1 = class {
 	_block(n) {
 		const e = this._h,
 			s = Array(80);
-		for (let _ = 0; _ < 16; _++) s[_] = n[_];
+		for (let _ = 0; _ < 16; _++) {s[_] = n[_];}
 		let r = e[0],
 			i = e[1],
 			a = e[2],
@@ -2999,8 +3072,8 @@ Gn.aes = class {
 			a,
 			c,
 			l = 1;
-		if (r !== 4 && r !== 6 && r !== 8) throw new Error("invalid aes key size");
-		for (this._key = [(a = n.slice(0)), (c = [])], i = r; i < 4 * r + 28; i++) {
+		if (r !== 4 && r !== 6 && r !== 8) {throw new Error("invalid aes key size");}
+		for (this._key = [(a = [...n]), (c = [])], i = r; i < 4 * r + 28; i++) {
 			let _ = a[i - 1];
 			(i % r === 0 || (r === 8 && i % r === 4)) &&
 				((_ =
@@ -3038,8 +3111,9 @@ Gn.aes = class {
 			r = [],
 			i = [];
 		let a, c, l, _;
-		for (let f = 0; f < 256; f++)
+		for (let f = 0; f < 256; f++) {
 			i[(r[f] = (f << 1) ^ ((f >> 7) * 283)) ^ f] = f;
+		}
 		for (let f = (a = 0); !e[f]; f ^= c || 1, a = i[a] || 1) {
 			let b = a ^ (a << 1) ^ (a << 2) ^ (a << 3) ^ (a << 4);
 			(b = (b >> 8) ^ (b & 255) ^ 99),
@@ -3053,10 +3127,10 @@ Gn.aes = class {
 					(t[C][b] = h = (h << 24) ^ (h >>> 8));
 			}
 		}
-		for (let f = 0; f < 5; f++) (n[f] = n[f].slice(0)), (t[f] = t[f].slice(0));
+		for (let f = 0; f < 5; f++) {(n[f] = n[f].slice(0)), (t[f] = t[f].slice(0));}
 	}
 	_crypt(n, t) {
-		if (n.length !== 4) throw new Error("invalid aes block size");
+		if (n.length !== 4) {throw new Error("invalid aes block size");}
 		const e = this._key[t],
 			s = e.length / 4 - 2,
 			r = [0, 0, 0, 0],
@@ -3163,7 +3237,7 @@ Zn.ctrGladman = class {
 				(n += t << 16),
 				(n += e << 8),
 				(n += s);
-		} else n += 1 << 24;
+		} else {n += 1 << 24;}
 		return n;
 	}
 	incCounter(n) {
@@ -3171,7 +3245,7 @@ Zn.ctrGladman = class {
 	}
 	calculate(n, t, e) {
 		let s;
-		if (!(s = t.length)) return [];
+		if (!(s = t.length)) {return [];}
 		const r = K.bitLength(t);
 		for (let i = 0; i < s; i += 4) {
 			this.incCounter(e);
@@ -3189,8 +3263,9 @@ const me = {
 		return new me.hmacSha1(je.bytes.toBits(n));
 	},
 	pbkdf2(n, t, e, s) {
-		if (((e = e || 1e4), s < 0 || e < 0))
+		if (((e = e || 1e4), s < 0 || e < 0)) {
 			throw new Error("invalid params to pbkdf2");
+		}
 		const r = ((s >> 5) + 1) << 2;
 		let i, a, c, l, _;
 		const f = new ArrayBuffer(r),
@@ -3199,10 +3274,11 @@ const me = {
 		const S = K;
 		for (t = je.bytes.toBits(t), _ = 1; h < (r || 1); _++) {
 			for (i = a = n.encrypt(S.concat(t, [_])), c = 1; c < e; c++) {
-				for (a = n.encrypt(a), l = 0; l < a.length; l++) i[l] ^= a[l];
+				for (a = n.encrypt(a), l = 0; l < a.length; l++) {i[l] ^= a[l];}
 			}
-			for (c = 0; h < (r || 1) && c < i.length; c++)
+			for (c = 0; h < (r || 1) && c < i.length; c++) {
 				b.setInt32(h, i[c]), (h += 4);
+			}
 		}
 		return f.slice(0, s / 8);
 	},
@@ -3214,8 +3290,9 @@ me.hmacSha1 = class {
 		this._baseHash = [new e(), new e()];
 		const r = this._baseHash[0].blockSize / 32;
 		n.length > r && (n = new e().update(n).finalize());
-		for (let i = 0; i < r; i++)
+		for (let i = 0; i < r; i++) {
 			(s[0][i] = n[i] ^ 909_522_486), (s[1][i] = n[i] ^ 1_549_556_828);
+		}
 		this._baseHash[0].update(s[0]),
 			this._baseHash[1].update(s[1]),
 			(this._resultHash = new e(this._baseHash[0]));
@@ -3233,12 +3310,13 @@ me.hmacSha1 = class {
 		return this.reset(), e;
 	}
 	encrypt(n) {
-		if (this._updated)
+		if (this._updated) {
 			throw new Error("encrypt on already updated hmac called!");
+		}
 		return this.update(n), this.digest(n);
 	}
 };
-const ti = typeof crypto != ue && typeof crypto.getRandomValues == Oe,
+const ti = typeof crypto !== ue && typeof crypto.getRandomValues === Oe,
 	mt = "Invalid password",
 	wt = "Invalid signature",
 	gt = "zipjs-abort-check-password";
@@ -3257,15 +3335,15 @@ const ge = 16,
 	Ee = [16, 24, 32],
 	ie = 10,
 	oi = [0, 0, 0, 0],
-	Ye = typeof crypto != ue,
+	Ye = typeof crypto !== ue,
 	Pe = Ye && crypto.subtle,
-	$n = Ye && typeof Pe != ue,
+	$n = Ye && typeof Pe !== ue,
 	Q = je.bytes,
 	ci = Gn.aes,
 	li = Zn.ctrGladman,
 	fi = me.hmacSha1;
-let mn = Ye && $n && typeof Pe.importKey == Oe,
-	wn = Ye && $n && typeof Pe.deriveBits == Oe;
+let mn = Ye && $n && typeof Pe.importKey === Oe,
+	wn = Ye && $n && typeof Pe.deriveBits === Oe;
 class ui extends TransformStream {
 	constructor({
 		password: t,
@@ -3301,7 +3379,7 @@ class ui extends TransformStream {
 					const h = J(f, 0, f.length - ie),
 						S = J(f, f.length - ie);
 					let C = new Uint8Array();
-					if (h.length) {
+					if (h.length > 0) {
 						const u = Ae(Q, h);
 						_.update(u);
 						const o = l.update(u);
@@ -3309,7 +3387,7 @@ class ui extends TransformStream {
 					}
 					if (c) {
 						const u = J(Re(Q, _.digest()), 0, ie);
-						for (let o = 0; o < ie; o++) if (u[o] != S[o]) throw new Error(wt);
+						for (let o = 0; o < ie; o++) {if (u[o] !== S[o]) throw new Error(wt);}
 					}
 					a.enqueue(C);
 				}
@@ -3341,7 +3419,7 @@ class di extends TransformStream {
 				if (c && a) {
 					await _;
 					let f = new Uint8Array();
-					if (l.length) {
+					if (l.length > 0) {
 						const b = a.update(Ae(Q, l));
 						c.update(b), (f = Re(Q, b));
 					}
@@ -3369,7 +3447,7 @@ function Jn(n, t, e, s, r, i) {
 async function _i(n, t, e, s) {
 	const r = await Qn(n, t, e, J(s, 0, Se[t])),
 		i = J(s, Se[t]);
-	if (r[0] != i[0] || r[1] != i[1]) throw new Error(mt);
+	if (r[0] !== i[0] || r[1] !== i[1]) {throw new Error(mt);}
 }
 async function hi(n, t, e) {
 	const s = Kn(new Uint8Array(Se[t])),
@@ -3377,7 +3455,7 @@ async function hi(n, t, e) {
 	return bt(s, r);
 }
 async function Qn(n, t, e, s) {
-	n.password = null;
+	n.password = undefined;
 	const r = await pi(ni, e, ii, !1, ai),
 		i = await mi({ salt: s, ...ot }, r, 8 * (Ee[t] * 2 + 2)),
 		a = new Uint8Array(i),
@@ -3387,7 +3465,7 @@ async function Qn(n, t, e, s) {
 	return (
 		Object.assign(n, {
 			keys: { key: c, authentication: l, passwordVerification: _ },
-			ctr: new li(new ci(c), Array.from(oi)),
+			ctr: new li(new ci(c), [...oi]),
 			hmac: new fi(l),
 		}),
 		_
@@ -3400,7 +3478,7 @@ async function pi(n, t, e, s, r) {
 		} catch {
 			return (mn = !1), me.importKey(t);
 		}
-	} else return me.importKey(t);
+	} else {return me.importKey(t);}
 }
 async function mi(n, t, e) {
 	if (wn) {
@@ -3409,7 +3487,7 @@ async function mi(n, t, e) {
 		} catch {
 			return (wn = !1), me.pbkdf2(t, n.salt, ot.iterations, e);
 		}
-	} else return me.pbkdf2(t, n.salt, ot.iterations, e);
+	} else {return me.pbkdf2(t, n.salt, ot.iterations, e);}
 }
 function zn(n, t) {
 	return t === G ? zr(n) : t;
@@ -3451,8 +3529,12 @@ class gi extends TransformStream {
 			transform(r, i) {
 				if (this.password) {
 					const c = gn(this, r.subarray(0, be));
-					if (((this.password = null), c[be - 1] != this.passwordVerification))
+					if (
+						((this.password = undefined),
+						c[be - 1] !== this.passwordVerification)
+					) {
 						throw new Error(mt);
+					}
 					r = r.subarray(be);
 				}
 				s ? i.error(new Error(gt)) : i.enqueue(gn(this, r));
@@ -3470,13 +3552,13 @@ class bi extends TransformStream {
 			transform(s, r) {
 				let a, c;
 				if (this.password) {
-					this.password = null;
+					this.password = undefined;
 					const l = Kn(new Uint8Array(be));
 					(l[be - 1] = this.passwordVerification),
 						(a = new Uint8Array(s.length + l.length)),
 						a.set(bn(this, l), 0),
 						(c = be);
-				} else (a = new Uint8Array(s.length)), (c = 0);
+				} else {(a = new Uint8Array(s.length)), (c = 0);}
 				a.set(bn(this, s), c), r.enqueue(a);
 			},
 		});
@@ -3484,18 +3566,18 @@ class bi extends TransformStream {
 }
 function gn(n, t) {
 	const e = new Uint8Array(t.length);
-	for (let s = 0; s < t.length; s++) (e[s] = ts(n) ^ t[s]), yt(n, e[s]);
+	for (let s = 0; s < t.length; s++) {(e[s] = ts(n) ^ t[s]), yt(n, e[s]);}
 	return e;
 }
 function bn(n, t) {
 	const e = new Uint8Array(t.length);
-	for (let s = 0; s < t.length; s++) (e[s] = ts(n) ^ t[s]), yt(n, t[s]);
+	for (let s = 0; s < t.length; s++) {(e[s] = ts(n) ^ t[s]), yt(n, t[s]);}
 	return e;
 }
 function es(n, t) {
 	const e = [305_419_896, 591_751_049, 878_082_192];
 	Object.assign(n, { keys: e, crcKey0: new Be(e[0]), crcKey2: new Be(e[2]) });
-	for (let s = 0; s < t.length; s++) yt(n, t.charCodeAt(s));
+	for (let s = 0; s < t.length; s++) {yt(n, t.charCodeAt(s));}
 }
 function yt(n, t) {
 	let [e, s, r] = n.keys;
@@ -3568,7 +3650,7 @@ class xi extends TransformStream {
 			rs(this, S, () => {
 				if ((!a || i) && c) {
 					const C = new DataView(b.value.buffer);
-					if (l != C.getUint32(0, !1)) throw new Error(wt);
+					if (l !== C.getUint32(0, !1)) {throw new Error(wt);}
 				}
 			});
 	}
@@ -3578,7 +3660,7 @@ function ss(n) {
 		n,
 		new TransformStream({
 			transform(t, e) {
-				t && t.length && e.enqueue(t);
+				t?.length && e.enqueue(t);
 			},
 		}),
 	);
@@ -3602,7 +3684,7 @@ function is(n, t, e, s, r) {
 			} catch {
 				return n;
 			}
-		} else return n;
+		} else {return n;}
 	}
 	return n;
 }
@@ -3630,7 +3712,7 @@ class Ci extends TransformStream {
 			_ = super.readable,
 			f = new TransformStream({
 				transform(h, S) {
-					h && h.length && ((c += h.length), S.enqueue(h));
+					h?.length && ((c += h.length), S.enqueue(h));
 				},
 				flush() {
 					Object.assign(s, { inputSize: c });
@@ -3638,7 +3720,7 @@ class Ci extends TransformStream {
 			}),
 			b = new TransformStream({
 				transform(h, S) {
-					h && h.length && ((a += h.length), S.enqueue(h));
+					h?.length && ((a += h.length), S.enqueue(h));
 				},
 				flush() {
 					const { signature: h } = l;
@@ -3658,19 +3740,19 @@ class Ii extends TransformStream {
 		super({
 			transform: s,
 			flush(r) {
-				e && e.length && r.enqueue(e);
+				e?.length && r.enqueue(e);
 			},
 		});
 		function s(r, i) {
 			if (e) {
 				const a = new Uint8Array(e.length + r.length);
-				a.set(e), a.set(r, e.length), (r = a), (e = null);
+				a.set(e), a.set(r, e.length), (r = a), (e = undefined);
 			}
 			r.length > t ? (i.enqueue(r.slice(0, t)), s(r.slice(t), i)) : (e = r);
 		}
 	}
 }
-let os = typeof Worker != ue;
+let os = typeof Worker !== ue;
 class et {
 	constructor(
 		t,
@@ -3701,14 +3783,14 @@ class et {
 						const { worker: S, busy: C } = t;
 						S
 							? (C ? (t.resolveTerminated = h) : (S.terminate(), h()),
-								(t.interface = null))
+								(t.interface = undefined))
 							: h();
 					});
 				},
 				onTaskFinished() {
 					const { resolveTerminated: h } = t;
 					h &&
-						((t.resolveTerminated = null),
+						((t.resolveTerminated = undefined),
 						(t.terminated = !0),
 						t.worker.terminate(),
 						h()),
@@ -3779,8 +3861,8 @@ async function Di(n, t) {
 		(e = h), (s = S);
 	});
 	Object.assign(n, {
-		reader: null,
-		writer: null,
+		reader: undefined,
+		writer: undefined,
 		resolveResult: e,
 		rejectResult: s,
 		result: r,
@@ -3826,7 +3908,7 @@ let Sn = !0,
 function vi(n, t, e) {
 	const s = { type: "module" };
 	let r, i;
-	typeof n == Oe && (n = n());
+	typeof n === Oe && (n = n());
 	try {
 		r = new URL(n, t);
 	} catch {
@@ -3838,7 +3920,7 @@ function vi(n, t, e) {
 		} catch {
 			(Sn = !1), (i = new Worker(r, s));
 		}
-	} else i = new Worker(r, s);
+	} else {i = new Worker(r, s);}
 	return i.addEventListener(Ei, (a) => Li(a, e)), i;
 }
 function Ue(
@@ -3856,17 +3938,17 @@ function Ue(
 				l.push(n.value)),
 			r && Rn
 				? (a && l.push(a), c && l.push(c))
-				: (n.readable = n.writable = null),
+				: (n.readable = n.writable = undefined),
 			l.length)
 		) {
 			try {
 				return t.postMessage(n, l), !0;
 			} catch {
-				(Rn = !1), (n.readable = n.writable = null), t.postMessage(n);
+				(Rn = !1), (n.readable = n.writable = undefined), t.postMessage(n);
 			}
-		} else t.postMessage(n);
-	} catch (i) {
-		throw (e && e.releaseLock(), s(), i);
+		} else {t.postMessage(n);}
+	} catch (error) {
+		throw (e?.releaseLock(), s(), error);
 	}
 }
 async function Li({ data: n }, t) {
@@ -3884,21 +3966,21 @@ async function Li({ data: n }, t) {
 				d = new Error(S);
 			Object.assign(d, { stack: C, code: u, name: o }), h(d);
 		} else {
-			if (e == Si) {
+			if (e === Si) {
 				const { value: S, done: C } = await c.read();
 				Ue({ type: En, value: S, done: C, messageId: r }, t);
 			}
-			e == En &&
+			e === En &&
 				(await l.ready,
 				await l.write(new Uint8Array(s)),
 				Ue({ type: Ri, messageId: r }, t)),
-				e == Tn && h(null, i);
+				e === Tn && h(undefined, i);
 		}
-	} catch (S) {
-		Ue({ type: Tn, messageId: r }, t), h(S);
+	} catch (error) {
+		Ue({ type: Tn, messageId: r }, t), h(error);
 	}
 	function h(S, C) {
-		S ? f(S) : _(C), l && l.releaseLock(), b();
+		S ? f(S) : _(C), l?.releaseLock(), b();
 	}
 }
 let le = [];
@@ -3926,7 +4008,7 @@ async function Fi(n, t) {
 	);
 	async function C() {
 		const o = le.find((d) => !d.busy);
-		if (o) return ct(o), new et(o, n, t, u);
+		if (o) {return ct(o), new et(o, n, t, u);}
 		if (le.length < h) {
 			const d = { indexWorker: An };
 			return An++, le.push(d), new et(d, n, t, u);
@@ -3936,10 +4018,10 @@ async function Fi(n, t) {
 		);
 	}
 	function u(o) {
-		if (nt.length) {
+		if (nt.length > 0) {
 			const [{ resolve: d, stream: y, workerOptions: g }] = nt.splice(0, 1);
 			d(new et(o, y, g, u));
-		} else o.worker ? (ct(o), Ui(o, t)) : (le = le.filter((d) => d != o));
+		} else {o.worker ? (ct(o), Ui(o, t)) : (le = le.filter((d) => d !== o));}
 	}
 }
 function Ui(n, t) {
@@ -3950,7 +4032,7 @@ function Ui(n, t) {
 		(n.terminated
 			? (n.terminated = !1)
 			: (n.terminateTimeout = setTimeout(async () => {
-					le = le.filter((r) => r != n);
+					le = le.filter((r) => r !== n);
 					try {
 						await n.terminate();
 					} catch {}
@@ -3958,7 +4040,7 @@ function Ui(n, t) {
 }
 function ct(n) {
 	const { terminateTimeout: t } = n;
-	t && (clearTimeout(t), (n.terminateTimeout = null));
+	t && (clearTimeout(t), (n.terminateTimeout = undefined));
 }
 async function Mi() {
 	await Promise.allSettled(le.map((n) => (ct(n), n.terminate())));
@@ -4024,7 +4106,7 @@ class Zi extends de {
 	constructor(t) {
 		super();
 		let e = t.length;
-		while (t.charAt(e - 1) == "=") e--;
+		while (t.charAt(e - 1) === "=") {e--;}
 		const s = t.indexOf(",") + 1;
 		Object.assign(this, {
 			dataURI: t,
@@ -4036,9 +4118,9 @@ class Zi extends de {
 		const { dataStart: s, dataURI: r } = this,
 			i = new Uint8Array(e),
 			a = Math.floor(t / 3) * 4,
-			c = atob(r.substring(a + s, Math.ceil((t + e) / 3) * 4 + s)),
+			c = atob(r.slice(a + s, Math.ceil((t + e) / 3) * 4 + s)),
 			l = t - Math.floor(a / 4) * 3;
-		for (let _ = l; _ < l + e; _++) i[_ - l] = c.charCodeAt(_);
+		for (let _ = l; _ < l + e; _++) {i[_ - l] = c.charCodeAt(_);}
 		return i;
 	}
 }
@@ -4046,7 +4128,7 @@ class Ki extends Tt {
 	constructor(t) {
 		super(),
 			Object.assign(this, {
-				data: "data:" + (t || "") + ";base64,",
+				data: `data:${t || ""};base64,`,
 				pending: [],
 			});
 	}
@@ -4059,9 +4141,9 @@ class Ki extends Tt {
 			s < Math.floor((i + t.length) / 3) * 3 - i;
 			s++
 		) {
-			r += String.fromCharCode(t[s]);
+			r += String.fromCodePoint(t[s]);
 		}
-		for (; s < t.length; s++) this.pending += String.fromCharCode(t[s]);
+		for (; s < t.length; s++) {this.pending += String.fromCharCode(t[s]);}
 		r.length > 2 ? (this.data += btoa(r)) : (this.pending = r);
 	}
 	getData() {
@@ -4108,13 +4190,13 @@ class $i extends ds {
 		super(t),
 			Object.assign(this, {
 				encoding: t,
-				utf8: !t || t.toLowerCase() == "utf-8",
+				utf8: !t || t.toLowerCase() === "utf8",
 			});
 	}
 	async getData() {
 		const { encoding: t, utf8: e } = this,
 			s = await super.getData();
-		if (s.text && e) return s.text();
+		if (s.text && e) {return s.text();}
 		{
 			const r = new FileReader();
 			return new Promise((i, a) => {
@@ -4181,21 +4263,21 @@ async function hs(n, t, e) {
 	} = n;
 	if (na(s) && (i || a) && (typeof r > "u" || r)) {
 		const l = await t(xt, n, ms(n, c ? -22 : void 0));
-		if (!a && l.headers.get(ji) != us) throw new Error(ke);
+		if (!a && l.headers.get(ji) !== us) {throw new Error(ke);}
 		{
 			c && (n.eocdCache = new Uint8Array(await l.arrayBuffer()));
 			let _;
 			const f = l.headers.get(Bi);
 			if (f) {
 				const b = f.trim().split(/\s*\/\s*/);
-				if (b.length) {
+				if (b.length > 0) {
 					const h = b[1];
-					h && h != "*" && (_ = Number(h));
+					h && h !== "*" && (_ = Number(h));
 				}
 			}
 			_ === G ? await On(n, t, e) : (n.size = _);
 		}
-	} else await On(n, t, e);
+	} else {await On(n, t, e);}
 }
 async function ps(n, t, e, s, r) {
 	const {
@@ -4206,20 +4288,20 @@ async function ps(n, t, e, s, r) {
 		options: _,
 	} = n;
 	if (i || a) {
-		if (c && t == l - oe && e == oe) return c;
+		if (c && t === l - oe && e === oe) {return c;}
 		const f = await s(xt, n, ms(n, t, e));
-		if (f.status != 206) throw new Error(ke);
+		if (f.status !== 206) {throw new Error(ke);}
 		return new Uint8Array(await f.arrayBuffer());
 	}
 	const { data: f } = n;
 	return f || (await r(n, _)), new Uint8Array(n.data.subarray(t, t + e));
 }
 function ms(n, t = 0, e = 1) {
-	return { ...Rt(n), [qi]: us + "=" + (t < 0 ? t : t + "-" + (t + e - 1)) };
+	return { ...Rt(n), [qi]: `${us}=${t < 0 ? t : `${t}-${t + e - 1}`}` };
 }
 function Rt({ options: n }) {
 	const { headers: t } = n;
-	if (t) return Symbol.iterator in t ? Object.fromEntries(t) : t;
+	if (t) {return Symbol.iterator in t ? Object.fromEntries(t) : t;}
 }
 async function Cn(n) {
 	await ws(n, lt);
@@ -4233,7 +4315,7 @@ async function ws(n, t) {
 		n.size || (n.size = n.data.length);
 }
 async function On(n, t, e) {
-	if (n.preventHeadRequest) await e(n, n.options);
+	if (n.preventHeadRequest) {await e(n, n.options);}
 	else {
 		const r = (await t(Vi, n, Rt(n))).headers.get(Hi);
 		r ? (n.size = Number(r)) : await e(n, n.options);
@@ -4241,8 +4323,8 @@ async function On(n, t, e) {
 }
 async function lt(n, { options: t, url: e }, s) {
 	const r = await fetch(e, { ...t, method: n, headers: s });
-	if (r.status < 400) return r;
-	throw r.status == 416
+	if (r.status < 400) {return r;}
+	throw r.status === 416
 		? new Error(ke)
 		: new Error(ls + (r.statusText || r.status));
 }
@@ -4263,7 +4345,7 @@ function ft(n, { url: t }, e) {
 								const l = c.trim().split(/\s*:\s*/);
 								(l[0] = l[0]
 									.trim()
-									.replace(/^[a-z]|-[a-z]/g, (_) => _.toUpperCase())),
+									.replaceAll(/^[a-z]|-[a-z]/g, (_) => _.toUpperCase())),
 									a.push(l);
 							}),
 							s({
@@ -4271,12 +4353,13 @@ function ft(n, { url: t }, e) {
 								arrayBuffer: () => i.response,
 								headers: new Map(a),
 							});
-					} else
+					} else {
 						r(
-							i.status == 416
+							i.status === 416
 								? new Error(ke)
 								: new Error(ls + (i.statusText || i.status)),
 						);
+					}
 				},
 				!1,
 			),
@@ -4288,7 +4371,7 @@ function ft(n, { url: t }, e) {
 			i.open(n, t),
 			e)
 		) {
-			for (const a of Object.entries(e)) i.setRequestHeader(a[0], a[1]);
+			for (const a of Object.entries(e)) {i.setRequestHeader(a[0], a[1]);}
 		}
 		(i.responseType = "arraybuffer"), i.send();
 	});
@@ -4301,7 +4384,7 @@ class gs extends de {
 				reader: e.useXHR ? new Qi(t, e) : new Ji(t, e),
 			});
 	}
-	set size(t) {}
+	set size(_t) {}
 	get size() {
 		return this.reader.size;
 	}
@@ -4351,7 +4434,7 @@ class At extends de {
 			await Promise.all(
 				e.map(async (s, r) => {
 					await s.init(),
-						r != e.length - 1 && (this.lastDiskOffset += s.size),
+						r !== e.length - 1 && (this.lastDiskOffset += s.size),
 						(this.size += s.size);
 				}),
 			),
@@ -4361,12 +4444,12 @@ class At extends de {
 		const { readers: i } = this;
 		let a,
 			c = s;
-		c == -1 && (c = i.length - 1);
+		c === -1 && (c = i.length - 1);
 		let l = t;
-		while (l >= i[c].size) (l -= i[c].size), c++;
+		while (l >= i[c].size) {(l -= i[c].size), c++;}
 		const _ = i[c],
 			f = _.size;
-		if (l + e <= f) a = await V(_, l, e);
+		if (l + e <= f) {a = await V(_, l, e);}
 		else {
 			const b = f - l;
 			(a = new Uint8Array(e)),
@@ -4397,12 +4480,12 @@ class qe extends Ve {
 							await _(),
 							(s.diskOffset += r.size),
 							s.diskNumber++,
-							(a = null),
+							(a = undefined),
 							await this.write(f.slice(b)))
 						: await l(f);
 				} else {
 					const { value: h, done: S } = await t.next();
-					if (S && !h) throw new Error(fs);
+					if (S && !h) {throw new Error(fs);}
 					(r = h),
 						(r.size = 0),
 						r.maxSize && (s.maxSize = r.maxSize),
@@ -4439,11 +4522,11 @@ class qe extends Ve {
 function na(n) {
 	const { baseURL: t } = Bn(),
 		{ protocol: e } = new URL(n, t);
-	return e == "http:" || e == "https:";
+	return e === "http:" || e === "https:";
 }
 async function Ce(n, t) {
-	if (n.init && !n.initialized) await n.init(t);
-	else return Promise.resolve();
+	if (n.init && !n.initialized) {await n.init(t);}
+	else {return Promise.resolve();}
 }
 function bs(n) {
 	return (
@@ -4453,7 +4536,7 @@ function bs(n) {
 	);
 }
 function ys(n) {
-	n.writable === G && typeof n.next == Oe && (n = new qe(n)),
+	n.writable === G && typeof n.next === Oe && (n = new qe(n)),
 		n instanceof WritableStream && (n = { writable: n });
 	const { writable: t } = n;
 	return (
@@ -4473,21 +4556,20 @@ function V(n, t, e, s) {
 }
 const sa = At,
 	ra = qe,
-	xs =
-		"\0☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ".split(
-			"",
-		),
-	ia = xs.length == 256;
+	xs = [
+		..."\0☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■ ",
+	],
+	ia = xs.length === 256;
 function aa(n) {
 	if (ia) {
 		let t = "";
-		for (let e = 0; e < n.length; e++) t += xs[n[e]];
+		for (let e = 0; e < n.length; e++) {t += xs[n[e]];}
 		return t;
 	}
 	return new TextDecoder().decode(n);
 }
 function Me(n, t) {
-	return t && t.trim().toLowerCase() == "cp437"
+	return t && t.trim().toLowerCase() === "cp437"
 		? aa(n)
 		: new TextDecoder(t).decode(n);
 }
@@ -4572,7 +4654,7 @@ const We = "File format is not recognized",
 	Us = "Encryption method not supported",
 	ht = "Compression method not supported",
 	pt = "Split zip file",
-	kn = "utf-8",
+	kn = "utf8",
 	Dn = "cp437",
 	Ea = [
 		[As, pe],
@@ -4601,7 +4683,7 @@ class Ms {
 		if (!i) {
 			const x = await V(s, 0, 4),
 				w = q(x);
-			throw B(w) == Ur ? new Error(pt) : new Error(ks);
+			throw B(w) === Ur ? new Error(pt) : new Error(ks);
 		}
 		const a = q(i);
 		let c = B(a, 12),
@@ -4615,46 +4697,46 @@ class Ms {
 			u = j(a, 8),
 			o = 0,
 			d = 0;
-		if (l == pe || c == pe || u == ae || C == ae) {
+		if (l === pe || c === pe || u === ae || C === ae) {
 			const x = await V(s, i.offset - Qe, Qe),
 				w = q(x);
-			if (B(w, 0) == Wr) {
+			if (B(w, 0) === Wr) {
 				l = He(w, 8);
 				let O = await V(s, l, ze, -1),
 					I = q(O);
 				const N = i.offset - Qe - ze;
-				if (B(I, 0) != on && l != N) {
+				if (B(I, 0) !== on && l !== N) {
 					const P = l;
 					(l = N), (o = l - P), (O = await V(s, l, ze, -1)), (I = q(O));
 				}
-				if (B(I, 0) != on) throw new Error(Ds);
-				h == ae && (h = B(I, 16)),
-					C == ae && (C = B(I, 20)),
-					u == ae && (u = He(I, 32)),
-					c == pe && (c = He(I, 40)),
+				if (B(I, 0) !== on) {throw new Error(Ds);}
+				h === ae && (h = B(I, 16)),
+					C === ae && (C = B(I, 20)),
+					u === ae && (u = He(I, 32)),
+					c === pe && (c = He(I, 40)),
 					(l -= c);
 			}
 		}
 		if (
 			(l >= s.size && ((o = s.size - l - c - oe), (l = s.size - c - oe)),
-			S != h)
+			S !== h)
 		) {
 			throw new Error(pt);
 		}
-		if (l < 0) throw new Error(We);
+		if (l < 0) {throw new Error(We);}
 		let y = 0,
 			g = await V(s, l, c, C),
 			m = q(g);
 		if (c) {
 			const x = i.offset - c;
-			if (B(m, y) != an && l != x) {
+			if (B(m, y) !== an && l !== x) {
 				const w = l;
 				(l = x), (o += l - w), (g = await V(s, l, c, C)), (m = q(g));
 			}
 		}
 		const E = i.offset - l - (s.lastDiskOffset || 0);
 		if (
-			(c != E && E >= 0 && ((c = E), (g = await V(s, l, c, C)), (m = q(g))),
+			(c !== E && E >= 0 && ((c = E), (g = await V(s, l, c, C)), (m = q(g))),
 			l < 0 || l >= s.size)
 		) {
 			throw new Error(We);
@@ -4663,15 +4745,15 @@ class Ms {
 			R = Z(this, t, "commentEncoding");
 		for (let x = 0; x < u; x++) {
 			const w = new Ra(s, r, this.options);
-			if (B(m, y) != an) throw new Error(Ns);
+			if (B(m, y) !== an) {throw new Error(Ns);}
 			Ws(w, m, y + 6);
 			const O = !!w.bitFlag.languageEncodingFlag,
 				I = y + 46,
 				N = I + w.filenameLength,
 				P = N + w.extraFieldLength,
 				k = j(m, y + 4),
-				M = k >> 8 == 0,
-				v = k >> 8 == 3,
+				M = k >> 8 === 0,
+				v = k >> 8 === 3,
 				Y = g.subarray(I, N),
 				D = j(m, y + 32),
 				_e = P + D,
@@ -4680,10 +4762,10 @@ class Ms {
 				Ct = O,
 				Ge = B(m, y + 38),
 				It =
-					(M && (ye(m, y + 38) & un) == un) ||
-					(v && ((Ge >> 16) & dn) == dn) ||
-					(Y.length && Y[Y.length - 1] == hn.charCodeAt(0)),
-				js = v && ((Ge >> 16) & _n) == _n,
+					(M && (ye(m, y + 38) & un) === un) ||
+					(v && ((Ge >> 16) & dn) === dn) ||
+					(Y.length && Y[Y.length - 1] === hn.codePointAt(0)),
+				js = v && ((Ge >> 16) & _n) === _n,
 				Ot = B(m, y + 42) + o;
 			Object.assign(w, {
 				versionMadeBy: k,
@@ -4743,7 +4825,7 @@ class Ms {
 	}
 	async getEntries(t = {}) {
 		const e = [];
-		for await (const s of this.getEntriesGenerator(t)) e.push(s);
+		for await (const s of this.getEntriesGenerator(t)) {e.push(s);}
 		return e;
 	}
 	async close() {}
@@ -4755,12 +4837,12 @@ class Sa {
 		(this.readable = new ReadableStream({
 			async pull(i) {
 				const { done: a, value: c } = await r.next();
-				if (a) return i.close();
+				if (a) {return i.close();}
 				const l = {
 					...c,
 					readable: (() => {
 						const { readable: _, writable: f } = new TransformStream();
-						if (c.getData) return c.getData(f), _;
+						if (c.getData) {return c.getData(f), _;}
 					})(),
 				};
 				delete l.getData, i.enqueue(l);
@@ -4794,14 +4876,14 @@ class Ra {
 			m = Z(this, s, "rawPassword");
 		const E = Z(this, s, "passThrough");
 		if (
-			((g = g && g.length && g),
-			(m = m && m.length && m),
-			l && l.originalCompressionMethod != Lr)
+			((g = g?.length && g),
+			(m = m?.length && m),
+			l && l.originalCompressionMethod !== Lr)
 		) {
 			throw new Error(ht);
 		}
-		if (_ != vr && _ != Nr && !E) throw new Error(ht);
-		if (B(y, 0) != Fr) throw new Error(vs);
+		if (_ !== vr && _ !== Nr && !E) {throw new Error(ht);}
+		if (B(y, 0) !== Fr) {throw new Error(vs);}
 		Ws(o, y, 4),
 			(o.rawExtraField = o.extraFieldLength
 				? await V(i, a + 30 + o.filenameLength, o.extraFieldLength, c)
@@ -4814,8 +4896,8 @@ class Ra {
 		const p = this.encrypted && o.encrypted && !E,
 			R = p && !l;
 		if ((E || (e.zipCrypto = R), p)) {
-			if (!R && l.strength === G) throw new Error(Us);
-			if (!(g || m)) throw new Error(Fs);
+			if (!R && l.strength === G) {throw new Error(Us);}
+			if (!(g || m)) {throw new Error(Fs);}
 		}
 		const T = a + 30 + o.filenameLength + o.extraFieldLength,
 			A = u,
@@ -4832,12 +4914,12 @@ class Ra {
 					password: g,
 					rawPassword: m,
 					zipCrypto: R,
-					encryptionStrength: l && l.strength,
+					encryptionStrength: l?.strength,
 					signed: Z(this, s, "checkSignature") && !E,
 					passwordVerification:
 						R && (b.dataDescriptor ? (S >>> 8) & 255 : (h >>> 24) & 255),
 					signature: h,
-					compressed: _ != 0 && !E,
+					compressed: _ !== 0 && !E,
 					encrypted: this.encrypted && !E,
 					useWebWorkers: Z(this, s, "useWebWorkers"),
 					useCompressionStream: Z(this, s, "useCompressionStream"),
@@ -4856,26 +4938,26 @@ class Ra {
 		let v = 0;
 		try {
 			({ outputSize: v } = await Fi({ readable: x, writable: I }, M));
-		} catch (Y) {
-			if (!O || Y.message != gt) throw Y;
+		} catch (error) {
+			if (!O || error.message !== gt) {throw error;}
 		} finally {
 			const Y = Z(this, s, "preventClose");
 			(I.size += v), !(Y || I.locked) && (await I.getWriter().close());
 		}
-		return O ? G : t.getData ? t.getData() : I;
+		return O ? G : (t.getData ? t.getData() : I);
 	}
 }
 function Ws(n, t, e) {
 	const s = (n.rawBitFlag = j(t, e + 2)),
-		r = (s & cn) == cn,
+		r = (s & cn) === cn,
 		i = B(t, e + 6);
 	Object.assign(n, {
 		encrypted: r,
 		version: j(t, e),
 		bitFlag: {
 			level: (s & Kr) >> 1,
-			dataDescriptor: (s & ln) == ln,
-			languageEncodingFlag: (s & fn) == fn,
+			dataDescriptor: (s & ln) === ln,
+			languageEncodingFlag: (s & fn) === fn,
 		},
 		rawLastModDate: i,
 		lastModDate: ka(i),
@@ -4919,13 +5001,13 @@ function Hs(n, t, e, s, r) {
 function Aa(n, t) {
 	t.zip64 = !0;
 	const e = q(n.data),
-		s = Ea.filter(([r, i]) => t[r] == i);
+		s = Ea.filter(([r, i]) => t[r] === i);
 	for (let r = 0, i = 0; r < s.length; r++) {
 		const [a, c] = s[r];
-		if (t[a] == c) {
+		if (t[a] === c) {
 			const l = Ta[c];
 			(t[a] = n[a] = l.getValue(e, i)), (i += l.bytes);
-		} else if (n[a]) throw new Error(Ls);
+		} else if (n[a]) {throw new Error(Ls);}
 	}
 }
 function Nn(n, t, e, s, r) {
@@ -4938,9 +5020,9 @@ function Nn(n, t, e, s, r) {
 	Object.assign(n, {
 		version: ye(i, 0),
 		[t]: Me(n.data.subarray(5)),
-		valid: !r.bitFlag.languageEncodingFlag && l == B(c, 0),
+		valid: !r.bitFlag.languageEncodingFlag && l === B(c, 0),
 	}),
-		n.valid && ((s[t] = n[t]), (s[t + "UTF8"] = !0));
+		n.valid && ((s[t] = n[t]), (s[`${t}utf8`] = !0));
 }
 function Ca(n, t, e) {
 	const s = q(n.data),
@@ -4962,11 +5044,11 @@ function Ia(n, t) {
 		while (s < n.data.length && !r) {
 			const i = j(e, s),
 				a = j(e, s + 2);
-			i == qr && (r = n.data.slice(s + 4, s + 4 + a)), (s += 4 + a);
+			i === qr && (r = n.data.slice(s + 4, s + 4 + a)), (s += 4 + a);
 		}
 	} catch {}
 	try {
-		if (r && r.length == 24) {
+		if (r && r.length === 24) {
 			const i = q(r),
 				a = i.getBigUint64(0, !0),
 				c = i.getBigUint64(8, !0),
@@ -4990,9 +5072,9 @@ function Oa(n, t, e) {
 		i = [],
 		a = [];
 	e
-		? ((r & 1) == 1 && (i.push(dt), a.push(_t)),
-			(r & 2) == 2 && (i.push(Os), a.push(oa)),
-			(r & 4) == 4 && (i.push(Ps), a.push(ca)))
+		? ((r & 1) === 1 && (i.push(dt), a.push(_t)),
+			(r & 2) === 2 && (i.push(Os), a.push(oa)),
+			(r & 4) === 4 && (i.push(Ps), a.push(ca)))
 		: n.data.length >= 5 && (i.push(dt), a.push(_t));
 	let c = 1;
 	i.forEach((l, _) => {
@@ -5016,10 +5098,10 @@ async function Pa(n, t, e, s, r) {
 			b = await V(n, f, _);
 		for (let h = b.length - s; h >= 0; h--) {
 			if (
-				b[h] == i[0] &&
-				b[h + 1] == i[1] &&
-				b[h + 2] == i[2] &&
-				b[h + 3] == i[3]
+				b[h] === i[0] &&
+				b[h + 1] === i[1] &&
+				b[h + 2] === i[2] &&
+				b[h + 3] === i[3]
 			) {
 				return { offset: f + h, buffer: b.slice(h, h + s).buffer };
 			}
@@ -5069,7 +5151,7 @@ jn({ Inflate: Dr });
 const Na = Object.freeze(
 		Object.defineProperty(
 			{
-				__proto__: null,
+				__proto__: undefined,
 				BlobReader: St,
 				BlobWriter: ds,
 				Data64URIReader: Zi,
@@ -5132,7 +5214,7 @@ class va {
 				.getEntries({ onprogress: s })
 				.then((r) => {
 					const i = new Map();
-					for (const a of r) i.set(a.filename, a);
+					for (const a of r) {i.set(a.filename, a);}
 					return i;
 				}));
 	}
@@ -5149,15 +5231,17 @@ class va {
 		return (await this._entriesPromise).has(t);
 	}
 	async readText(t) {
-		var i;
+		let i;
 		const s = (await this._entriesPromise).get(t);
-		if (!s) return;
+		if (!s) {return;}
 		const r = new Te.TextWriter();
-		return await ((i = s.getData) == null ? void 0 : i.call(s, r)), r.getData();
+		return (
+			await ((i = s.getData) === undefined ? void 0 : i.call(s, r)), r.getData()
+		);
 	}
 	async readBlob(t) {
 		const s = (await this._entriesPromise).get(t);
-		if (!s) return;
+		if (!s) {return;}
 		const r = new Te.BlobWriter();
 		return await s.getData(r), r.getData();
 	}
@@ -5170,10 +5254,10 @@ class La {
 		(this._path = t),
 			(this._server = e),
 			(this._entriesPromise = e.readFile(t).then(async (s) => {
-				if (!s) throw new Error("File not found");
+				if (!s) {throw new Error("File not found");}
 				const r = await s.json(),
 					i = new Map();
-				for (const a of r.entries) i.set(a.name, a.path);
+				for (const a of r.entries) {i.set(a.name, a.path);}
 				return i;
 			}));
 	}
@@ -5191,17 +5275,17 @@ class La {
 	}
 	async readText(t) {
 		const e = await this._readEntry(t);
-		return e == null ? void 0 : e.text();
+		return e === undefined ? void 0 : e.text();
 	}
 	async readBlob(t) {
 		const e = await this._readEntry(t);
-		return (e == null ? void 0 : e.status) === 200
-			? await (e == null ? void 0 : e.blob())
+		return (e === undefined ? void 0 : e.status) === 200
+			? await (e === undefined ? void 0 : e.blob())
 			: void 0;
 	}
 	async _readEntry(t) {
 		const s = (await this._entriesPromise).get(t);
-		if (s) return this._server.readFile(s);
+		if (s) {return this._server.readFile(s);}
 	}
 }
 function Fa(n, t) {
@@ -5211,7 +5295,7 @@ function Fa(n, t) {
 			: t.getFileURL(n).toString();
 	return (
 		e.startsWith("https://www.dropbox.com/") &&
-			(e = "https://dl.dropboxusercontent.com/" + e.substring(24)),
+			(e = `https://dl.dropboxusercontent.com/${e.slice(24)}`),
 		e
 	);
 }
@@ -5225,10 +5309,10 @@ class Ua {
 	}
 	async readFile(t) {
 		const e = await fetch(this.getFileURL(t));
-		if (e.status !== 404) return e;
+		if (e.status !== 404) {return e;}
 	}
 }
-self.addEventListener("install", (n) => {
+self.addEventListener("install", (_n) => {
 	self.skipWaiting();
 });
 self.addEventListener("activate", (n) => {
@@ -5238,12 +5322,14 @@ const Ma = new URL(self.registration.scope).pathname,
 	fe = new Map(),
 	Ie = new Map();
 async function Wa(n, t, e, s, r) {
-	var _;
+	let _;
 	await Bs();
-	const i = (e == null ? void 0 : e.id) ?? "";
+	const i = (e === undefined ? void 0 : e.id) ?? "";
 	let a = Ie.get(i);
 	if (!a) {
-		const f = new URL((e == null ? void 0 : e.url) ?? self.registration.scope),
+		const f = new URL(
+				(e === undefined ? void 0 : e.url) ?? self.registration.scope,
+			),
 			b = new URL(f.searchParams.get("server") ?? "../", f);
 		(a = { limit: s, traceUrls: new Set(), traceViewerServer: new Ua(b) }),
 			Ie.set(i, a);
@@ -5256,17 +5342,17 @@ async function Wa(n, t, e, s, r) {
 				? new La(n, a.traceViewerServer)
 				: new va(n, a.traceViewerServer, f);
 		await c.load(h, b);
-	} catch (f) {
+	} catch (error) {
 		throw (
-			(console.error(f),
-			(_ = f == null ? void 0 : f.message) != null &&
+			(console.error(error),
+			(_ = error == undefined ? void 0 : error.message) != undefined &&
 			_.includes("Cannot find .trace file") &&
 			(await c.hasEntry("index.html"))
 				? new Error(
 						"Could not load trace. Did you upload a Playwright HTML report instead? Make sure to extract the archive first and then double-click the index.html file or put it on a web server.",
 					)
-				: f instanceof Un
-					? new Error(`Could not load trace from ${t || n}. ${f.message}`)
+				: error instanceof Un
+					? new Error(`Could not load trace from ${t || n}. ${error.message}`)
 					: t
 						? new Error(
 								`Could not load trace from ${t}. Make sure to upload a valid Playwright trace.`,
@@ -5280,8 +5366,8 @@ async function Wa(n, t, e, s, r) {
 	return fe.set(n, { traceModel: c, snapshotServer: l }), c;
 }
 async function Ha(n) {
-	var l;
-	if (n.request.url.startsWith("chrome-extension://")) return fetch(n.request);
+	let l;
+	if (n.request.url.startsWith("chrome-extension://")) {return fetch(n.request);}
 	if (n.request.headers.get("x-pw-serviceworker") === "forward") {
 		const _ = new Request(n.request);
 		return _.headers.delete("x-pw-serviceworker"), fetch(_);
@@ -5291,8 +5377,8 @@ async function Ha(n) {
 		s = self.registration.scope.startsWith("https://");
 	if (t.url.startsWith(self.registration.scope)) {
 		const _ = new URL(it(t.url)),
-			f = _.pathname.substring(Ma.length - 1);
-		if (f === "/ping") return await Bs(), new Response(null, { status: 200 });
+			f = _.pathname.slice(Ma.length - 1);
+		if (f === "/ping") {return await Bs(), new Response(null, { status: 200 });}
 		const b = _.searchParams.get("trace");
 		if (f === "/contexts") {
 			try {
@@ -5309,9 +5395,9 @@ async function Ha(n) {
 					status: 200,
 					headers: { "Content-Type": "application/json" },
 				});
-			} catch (h) {
+			} catch (error) {
 				return new Response(
-					JSON.stringify({ error: h == null ? void 0 : h.message }),
+					JSON.stringify({ error: error == undefined ? void 0 : error.message }),
 					{
 						status: 500,
 						headers: { "Content-Type": "application/json" },
@@ -5321,14 +5407,14 @@ async function Ha(n) {
 		}
 		if (f.startsWith("/snapshotInfo/")) {
 			const { snapshotServer: h } = fe.get(b) || {};
-			if (!h) return new Response(null, { status: 404 });
-			const S = f.substring(14);
+			if (!h) {return new Response(null, { status: 404 });}
+			const S = f.slice(14);
 			return h.serveSnapshotInfo(S, _.searchParams);
 		}
 		if (f.startsWith("/snapshot/")) {
 			const { snapshotServer: h } = fe.get(b) || {};
-			if (!h) return new Response(null, { status: 404 });
-			const S = f.substring(10),
+			if (!h) {return new Response(null, { status: 404 });}
+			const S = f.slice(10),
 				C = h.serveSnapshot(S, _.searchParams, _.href);
 			return (
 				s &&
@@ -5338,33 +5424,36 @@ async function Ha(n) {
 		}
 		if (f.startsWith("/closest-screenshot/")) {
 			const { snapshotServer: h } = fe.get(b) || {};
-			if (!h) return new Response(null, { status: 404 });
-			const S = f.substring(20);
+			if (!h) {return new Response(null, { status: 404 });}
+			const S = f.slice(20);
 			return h.serveClosestScreenshot(S, _.searchParams);
 		}
 		if (f.startsWith("/sha1/")) {
 			const h = f.slice(6);
 			for (const S of fe.values()) {
 				const C = await S.traceModel.resourceForSha1(h);
-				if (C)
+				if (C) {
 					return new Response(C, { status: 200, headers: Ba(_.searchParams) });
+				}
 			}
-			return new Response(null, { status: 404 });
+			return new Response(undefined, { status: 404 });
 		}
 		if (f.startsWith("/file/")) {
 			const h = _.searchParams.get("path"),
 				S =
-					(l = Ie.get(n.clientId ?? "")) == null ? void 0 : l.traceViewerServer;
-			if (!S) throw new Error("client is not initialized");
+					(l = Ie.get(n.clientId ?? "")) === undefined
+						? void 0
+						: l.traceViewerServer;
+			if (!S) {throw new Error("client is not initialized");}
 			const C = await S.readFile(h);
-			return C || new Response(null, { status: 404 });
+			return C || new Response(undefined, { status: 404 });
 		}
 		return fetch(n.request);
 	}
 	const r = it(e.url),
 		i = new URL(r).searchParams.get("trace"),
 		{ snapshotServer: a } = fe.get(i) || {};
-	if (!a) return new Response(null, { status: 404 });
+	if (!a) {return new Response(null, { status: 404 });}
 	const c = [t.url];
 	return (
 		s &&
@@ -5376,7 +5465,7 @@ async function Ha(n) {
 function Ba(n) {
 	const t = n.get("dn"),
 		e = n.get("dct");
-	if (!t) return;
+	if (!t) {return;}
 	const s = new Headers();
 	return (
 		s.set(
@@ -5391,7 +5480,7 @@ async function Bs() {
 	const n = await self.clients.matchAll(),
 		t = new Set();
 	for (const [e, s] of Ie) {
-		if (!n.find((r) => r.id === e)) {
+		if (!n.some((r) => r.id === e)) {
 			Ie.delete(e);
 			continue;
 		}
@@ -5401,7 +5490,7 @@ async function Bs() {
 		}
 		s.traceUrls.forEach((r) => t.add(r));
 	}
-	for (const e of fe.keys()) t.has(e) || fe.delete(e);
+	for (const e of fe.keys()) {t.has(e) || fe.delete(e);}
 }
 self.addEventListener("fetch", (n) => {
 	n.respondWith(Ha(n));

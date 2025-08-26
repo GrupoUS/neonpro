@@ -9,24 +9,36 @@
 import { ComplianceStatusDashboard } from "@/components/dashboard/ai-powered";
 
 interface CompliancePageProps {
-	searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Record<string, string | string[] | undefined>;
 }
 
 export default function CompliancePage({ searchParams }: CompliancePageProps) {
-	return (
-		<main className="min-h-screen bg-background p-4 md:p-6" aria-labelledby="compliance-heading">
-			<div className="space-y-6">
-				<div>
-					<h1 id="compliance-heading" className="text-3xl font-bold tracking-tight">
-						Compliance Monitor
-					</h1>
-					<p className="text-muted-foreground">Monitoramento em tempo real da conformidade LGPD, ANVISA e CFM</p>
-				</div>
+  return (
+    <main
+      className="min-h-screen bg-background p-4 md:p-6"
+      aria-labelledby="compliance-heading"
+    >
+      <div className="space-y-6">
+        <div>
+          <h1
+            id="compliance-heading"
+            className="text-3xl font-bold tracking-tight"
+          >
+            Compliance Monitor
+          </h1>
+          <p className="text-muted-foreground">
+            Monitoramento em tempo real da conformidade LGPD, ANVISA e CFM
+          </p>
+        </div>
 
-				<div role="region" aria-label="Dashboard de monitoramento de compliance regulatório" className="w-full">
-					<ComplianceStatusDashboard />
-				</div>
-			</div>
-		</main>
-	);
+        <div
+          role="region"
+          aria-label="Dashboard de monitoramento de compliance regulatório"
+          className="w-full"
+        >
+          <ComplianceStatusDashboard />
+        </div>
+      </div>
+    </main>
+  );
 }

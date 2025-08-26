@@ -2,82 +2,103 @@
 
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 const patientInsights = new PatientInsightsIntegration();
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
-	try {
-		const supabase = await createClient();
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ patientId: string }> },
+) {
+  try {
+    const supabase = await createClient();
 
-		// Verify authentication
-		const {
-			data: { session },
-		} = await supabase.auth.getSession();
-		if (!session) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+    // Verify authentication
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-		const { patientId } = await params;
+    const { patientId } = await params;
 
-		// Validate patient access
-		const { data: patient } = await supabase.from("patients").select("id").eq("id", patientId).single();
+    // Validate patient access
+    const { data: patient } = await supabase
+      .from("patients")
+      .select("id")
+      .eq("id", patientId)
+      .single();
 
-		if (!patient) {
-			return NextResponse.json({ error: "Patient not found" }, { status: 404 });
-		}
+    if (!patient) {
+      return NextResponse.json({ error: "Patient not found" }, { status: 404 });
+    }
 
-		// Monitor patient alerts
-		const alertSummary = await patientInsights.monitorPatientAlerts(patientId);
+    // Monitor patient alerts
+    const alertSummary = await patientInsights.monitorPatientAlerts(patientId);
 
-		return NextResponse.json({
-			success: true,
-			data: alertSummary,
-		});
-	} catch (_error) {
-		return NextResponse.json({ error: "Failed to retrieve patient alerts" }, { status: 500 });
-	}
+    return NextResponse.json({
+      success: true,
+      data: alertSummary,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to retrieve patient alerts" },
+      { status: 500 },
+    );
+  }
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ patientId: string }> }) {
-	try {
-		const supabase = await createClient();
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ patientId: string }> },
+) {
+  try {
+    const supabase = await createClient();
 
-		// Verify authentication
-		const {
-			data: { session },
-		} = await supabase.auth.getSession();
-		if (!session) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
+    // Verify authentication
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-		const { patientId } = await params;
-		const body = await request.json();
-		const { alertTypes = [], severityFilter = null } = body;
+    const { patientId } = await params;
+    const body = await request.json();
+    const { alertTypes = [], severityFilter } = body;
 
-		// Get detailed alerts with filters
-		const alertSummary = await patientInsights.monitorPatientAlerts(patientId);
+    // Get detailed alerts with filters
+    const alertSummary = await patientInsights.monitorPatientAlerts(patientId);
 
-		// Apply filters
-		let filteredAlerts = alertSummary.active_alerts;
+    // Apply filters
+    let filteredAlerts = alertSummary.active_alerts;
 
-		if (alertTypes.length > 0) {
-			filteredAlerts = filteredAlerts.filter((alert) => alertTypes.includes(alert.type));
-		}
+    if (alertTypes.length > 0) {
+      filteredAlerts = filteredAlerts.filter((alert) =>
+        alertTypes.includes(alert.type),
+      );
+    }
 
-		if (severityFilter) {
-			filteredAlerts = filteredAlerts.filter((alert) => alert.severity === severityFilter);
-		}
+    if (severityFilter) {
+      filteredAlerts = filteredAlerts.filter(
+        (alert) => alert.severity === severityFilter,
+      );
+    }
 
-		return NextResponse.json({
-			success: true,
-			data: {
-				...alertSummary,
-				alerts: filteredAlerts,
-				totalFiltered: filteredAlerts.length,
-			},
-		});
-	} catch (_error) {
-		return NextResponse.json({ error: "Failed to retrieve filtered alerts" }, { status: 500 });
-	}
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...alertSummary,
+        alerts: filteredAlerts,
+        totalFiltered: filteredAlerts.length,
+      },
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to retrieve filtered alerts" },
+      { status: 500 },
+    );
+  }
 }

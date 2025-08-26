@@ -148,7 +148,14 @@
 	"environmentSetup": {
 		"description": "Environment variables and setup for development workflow",
 		"requiredTools": ["npm", "node", "git"],
-		"optionalTools": ["typescript", "@biomejs/biome", "vitest", "playwright"],
+		"optionalTools": [
+			"typescript",
+			"oxc",
+			"dprint",
+			"prettier",
+			"vitest",
+			"playwright"
+		],
 		"environmentVariables": {
 			"NODE_ENV": "development",
 			"CI": "false",
@@ -160,7 +167,7 @@
 		"description": "Quality gates that must pass for workflow success",
 		"linting": {
 			"enabled": true,
-			"tool": "biome",
+			"tool": "oxlint",
 			"failOnError": true,
 			"autoFix": true,
 			"formatOnSave": true
@@ -204,7 +211,7 @@
 	"examples": {
 		"description": "Example usage scenarios for development workflow",
 		"reactProject": {
-			"description": "React project with TypeScript and Biome",
+			"description": "React project with TypeScript, oxlint, and dprint",
 			"requiredScripts": [
 				"lint",
 				"lint:fix",
@@ -217,7 +224,7 @@
 				{
 					"command": "npm",
 					"args": ["run", "format"],
-					"description": "Format code with Biome"
+					"description": "Format code with dprint and prettier fallback"
 				}
 			]
 		},
@@ -249,7 +256,7 @@
 		"description": "Common issues and solutions for development workflow",
 		"commonIssues": {
 			"lintFailures": {
-				"problem": "Biome linting fails with style errors",
+				"problem": "oxlint linting fails with style errors",
 				"solution": "Run 'npm run lint:fix' to auto-fix issues, or manually resolve remaining errors"
 			},
 			"testFailures": {

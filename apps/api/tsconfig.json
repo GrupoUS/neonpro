@@ -1,49 +1,49 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"noUncheckedIndexedAccess": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"skipLibCheck": true,
-		"declaration": true,
-		"declarationMap": true,
-		"outDir": "./dist",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"noEmit": true,
-		"lib": ["ESNext"],
-		"types": ["node", "vitest/globals"],
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["./src/*"],
-			"@/types/*": ["./src/types/*"],
-			"@/lib/*": ["./src/lib/*"],
-			"@/middleware/*": ["./src/middleware/*"],
-			"@/routes/*": ["./src/routes/*"],
-			"@neonpro/shared": ["../../packages/shared/src"],
-			"@neonpro/shared/*": ["../../packages/shared/src/*"],
-			"@neonpro/database": ["../../packages/database/src"],
-			"@neonpro/types": ["../../packages/types/src"]
-		}
-	},
-	"include": [
-		"src/**/*",
-		"src/**/*.json",
-		"vitest.config.ts",
-		"vitest.setup.ts"
-	],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"**/*.test.ts",
-		"**/*.spec.ts",
-		"main.py",
-		"routers/"
-	]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "lib": ["ESNext"],
+    "types": ["node", "vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/middleware/*": ["./src/middleware/*"],
+      "@/routes/*": ["./src/routes/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/types": ["../../packages/types/src"]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.json",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "main.py",
+    "routers/"
+  ]
 }

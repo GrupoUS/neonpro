@@ -6,31 +6,31 @@ const __vite__mapDeps = (
 ) => i.map((i) => d[i]);
 
 import {
-	_ as Ft,
-	a as Ht,
-	b as Kt,
-	c as Xt,
-	D as Qt,
-	d as Jt,
-	E as Ut,
-	e as Dt,
-	f as Ot,
+	l as $t,
 	g as At,
 	h as at,
-	i as Wt,
-	j as o,
-	k as Y,
-	l as $t,
 	M as bt,
-	m as Vt,
+	e as Dt,
 	R as d,
-	r as K,
-	S as Yt,
-	s as vt,
 	T as F,
-	t as zt,
+	_ as Ft,
+	a as Ht,
+	d as Jt,
+	r as K,
+	b as Kt,
 	u as Mt,
+	f as Ot,
+	j as o,
+	D as Qt,
 	W as qt,
+	E as Ut,
+	m as Vt,
+	s as vt,
+	i as Wt,
+	c as Xt,
+	k as Y,
+	S as Yt,
+	t as zt,
 } from "./assets/defaultSettingsView-CUd-tHFm.js";
 
 const Zt = {};
@@ -98,7 +98,8 @@ class ot {
 		let e, s;
 		(this._rootDir = t.rootDir),
 			(this._config = this._parseConfig(t)),
-			(s = (e = this._reporter).onConfigure) == null || s.call(e, this._config);
+			(s = (e = this._reporter).onConfigure) === undefined ||
+				s.call(e, this._config);
 	}
 	_onProject(t) {
 		let e = this._options.mergeProjects
@@ -112,7 +113,8 @@ class ot {
 	}
 	_onBegin() {
 		let t, e;
-		(e = (t = this._reporter).onBegin) == null || e.call(t, this._rootSuite);
+		(e = (t = this._reporter).onBegin) === undefined ||
+			e.call(t, this._rootSuite);
 	}
 	_onTestBegin(t, e) {
 		let c, n;
@@ -123,7 +125,7 @@ class ot {
 			(i.workerIndex = e.workerIndex),
 			(i.parallelIndex = e.parallelIndex),
 			i.setStartTimeNumber(e.startTime),
-			(n = (c = this._reporter).onTestBegin) == null || n.call(c, s, i);
+			(n = (c = this._reporter).onTestBegin) === undefined || n.call(c, s, i);
 	}
 	_onTestEnd(t, e) {
 		let c, n, g;
@@ -133,13 +135,13 @@ class ot {
 		(i.duration = e.duration),
 			(i.status = e.status),
 			(i.errors = e.errors),
-			(i.error = (c = i.errors) == null ? void 0 : c[0]),
+			(i.error = (c = i.errors) === undefined ? void 0 : c[0]),
 			e.attachments && (i.attachments = this._parseAttachments(e.attachments)),
 			e.annotations &&
 				(this._absoluteAnnotationLocationsInplace(e.annotations),
 				(i.annotations = e.annotations),
 				(s.annotations = e.annotations)),
-			(g = (n = this._reporter).onTestEnd) == null || g.call(n, s, i),
+			(g = (n = this._reporter).onTestEnd) === undefined || g.call(n, s, i),
 			(i._stepMap = new Map());
 	}
 	_onStepBegin(t, e, s) {
@@ -151,7 +153,8 @@ class ot {
 			l = new te(s, n, g, c);
 		n ? n.steps.push(l) : c.steps.push(l),
 			c._stepMap.set(s.id, l),
-			(a = (_ = this._reporter).onStepBegin) == null || a.call(_, i, c, l);
+			(a = (_ = this._reporter).onStepBegin) === undefined ||
+				a.call(_, i, c, l);
 	}
 	_onStepEnd(t, e, s) {
 		let g, l;
@@ -161,7 +164,7 @@ class ot {
 		(n._endPayload = s),
 			(n.duration = s.duration),
 			(n.error = s.error),
-			(l = (g = this._reporter).onStepEnd) == null || l.call(g, i, c, n);
+			(l = (g = this._reporter).onStepEnd) === undefined || l.call(g, i, c, n);
 	}
 	_onAttach(t, e, s) {
 		this._tests
@@ -181,7 +184,7 @@ class ot {
 	}
 	_onError(t) {
 		let e, s;
-		(s = (e = this._reporter).onError) == null || s.call(e, t);
+		(s = (e = this._reporter).onError) === undefined || s.call(e, t);
 	}
 	_onStdIO(t, e, s, i, c) {
 		let _, a, h, v;
@@ -189,14 +192,15 @@ class ot {
 			g = e ? this._tests.get(e) : void 0,
 			l = g && s ? g.results.find((u) => u._id === s) : void 0;
 		t === "stdout"
-			? (l == null || l.stdout.push(n),
-				(a = (_ = this._reporter).onStdOut) == null || a.call(_, n, g, l))
-			: (l == null || l.stderr.push(n),
-				(v = (h = this._reporter).onStdErr) == null || v.call(h, n, g, l));
+			? (l === undefined || l.stdout.push(n),
+				(a = (_ = this._reporter).onStdOut) === undefined || a.call(_, n, g, l))
+			: (l === undefined || l.stderr.push(n),
+				(v = (h = this._reporter).onStdErr) === undefined ||
+					v.call(h, n, g, l));
 	}
 	async _onEnd(t) {
 		let e, s;
-		await ((s = (e = this._reporter).onEnd) == null
+		await ((s = (e = this._reporter).onEnd) === undefined
 			? void 0
 			: s.call(e, {
 					status: t.status,
@@ -206,7 +210,7 @@ class ot {
 	}
 	_onExit() {
 		let t, e;
-		return (e = (t = this._reporter).onExit) == null ? void 0 : e.call(t);
+		return (e = (t = this._reporter).onExit) === undefined ? void 0 : e.call(t);
 	}
 	_parseConfig(t) {
 		const e = { ...se, ...t };
@@ -336,7 +340,9 @@ class Q {
 	}
 	project() {
 		let t;
-		return this._project ?? ((t = this.parent) == null ? void 0 : t.project());
+		return (
+			this._project ?? ((t = this.parent) === undefined ? void 0 : t.project())
+		);
 	}
 	_addTest(t) {
 		(t.parent = this), this._entries.push(t);
@@ -392,7 +398,7 @@ class te {
 	titlePath() {
 		let e;
 		return [
-			...(((e = this.parent) == null ? void 0 : e.titlePath()) || []),
+			...(((e = this.parent) === undefined ? void 0 : e.titlePath()) || []),
 			this.title,
 		];
 	}
@@ -405,14 +411,17 @@ class te {
 	get attachments() {
 		let t, e;
 		return (
-			((e = (t = this._endPayload) == null ? void 0 : t.attachments) == null
+			((e = (t = this._endPayload) === undefined ? void 0 : t.attachments) ===
+			undefined
 				? void 0
 				: e.map((s) => this._result.attachments[s])) ?? []
 		);
 	}
 	get annotations() {
 		let t;
-		return ((t = this._endPayload) == null ? void 0 : t.annotations) ?? [];
+		return (
+			((t = this._endPayload) === undefined ? void 0 : t.annotations) ?? []
+		);
 	}
 }
 class ee {
@@ -445,11 +454,11 @@ class ee {
 const se = {
 	forbidOnly: !1,
 	fullyParallel: !1,
-	globalSetup: null,
-	globalTeardown: null,
+	globalSetup: undefined,
+	globalTeardown: undefined,
 	globalTimeout: 0,
 	grep: /.*/,
-	grepInvert: null,
+	grepInvert: undefined,
 	maxFailures: 0,
 	metadata: {},
 	preserveOutput: "always",
@@ -459,12 +468,12 @@ const se = {
 	configFile: "",
 	rootDir: "",
 	quiet: !1,
-	shard: null,
+	shard: undefined,
 	updateSnapshots: "missing",
 	updateSourceMethod: "patch",
 	version: "",
 	workers: 0,
-	webServer: null,
+	webServer: undefined,
 };
 function st(r) {
 	return r.map((t) =>
@@ -554,13 +563,13 @@ class nt {
 					this._addChild(a, u));
 				const b = h.results[0];
 				let S = "none";
-				(b == null ? void 0 : b[X]) === "scheduled"
+				(b === undefined ? void 0 : b[X]) === "scheduled"
 					? (S = "scheduled")
-					: (b == null ? void 0 : b[X]) === "running"
+					: (b === undefined ? void 0 : b[X]) === "running"
 						? (S = "running")
-						: (b == null ? void 0 : b.status) === "skipped"
+						: (b === undefined ? void 0 : b.status) === "skipped"
 							? (S = "skipped")
-							: (b == null ? void 0 : b.status) === "interrupted"
+							: (b === undefined ? void 0 : b.status) === "interrupted"
 								? (S = "none")
 								: b && h.outcome() !== "expected"
 									? (S = "failed")
@@ -575,7 +584,8 @@ class nt {
 					parent: u,
 					children: [],
 					status: S,
-					duration: h.results.length ? Math.max(0, h.results[0].duration) : 0,
+					duration:
+						h.results.length > 0 ? Math.max(0, h.results[0].duration) : 0,
 					project: l,
 				};
 				this._addChild(u, B),
@@ -583,7 +593,7 @@ class nt {
 					(u.duration = u.children.reduce((C, T) => C + T.duration, 0));
 			}
 		};
-		for (const l of (e == null ? void 0 : e.suites) || []) {
+		for (const l of (e === undefined ? void 0 : e.suites) || []) {
 			if (!(n && !i.get(l.title))) {
 				for (const _ of l.suites) {
 					const a = this._fileItem(_.location.file.split(c), !0);
@@ -610,15 +620,15 @@ class nt {
 					.join(" ")
 					.toLowerCase();
 				return i.every((a) => _.includes(a)) ||
-					l.tests.some((a) => (s == null ? void 0 : s.has(a.id)))
+					l.tests.some((a) => (s === undefined ? void 0 : s.has(a.id)))
 					? ((l.children = l.children.filter(
 							(a) =>
 								!c ||
-								(s == null ? void 0 : s.has(a.test.id)) ||
+								(s === undefined ? void 0 : s.has(a.test.id)) ||
 								e.get(a.status),
 						)),
 						(l.tests = l.children.map((a) => a.test)),
-						!!l.children.length)
+						l.children.length > 0)
 					: !1;
 			},
 			g = (l) => {
@@ -641,7 +651,7 @@ class nt {
 		if (i) {
 			return i;
 		}
-		const c = this._fileItem(t.slice(0, t.length - 1), !1),
+		const c = this._fileItem(t.slice(0, -1), !1),
 			n = {
 				kind: "group",
 				subKind: e ? "file" : "folder",
@@ -750,9 +760,9 @@ function re(r) {
 			let i;
 			s.kind === "case"
 				? s.tests.map((c) => c.id).forEach((c) => t.add(c))
-				: s.kind === "test"
+				: (s.kind === "test"
 					? t.add(s.id)
-					: (i = s.children) == null || i.forEach(e);
+					: (i = s.children) == null || i.forEach(e));
 		};
 	return e(r), t;
 }
@@ -797,7 +807,7 @@ class oe {
 				) {
 					for (const s of this.rootSuite.allTests()) {
 						s.results =
-							((e = this._testResultsSnapshot) == null
+							((e = this._testResultsSnapshot) === undefined
 								? void 0
 								: e.get(s.id)) || s.results;
 					}
@@ -818,9 +828,9 @@ class oe {
 			onTestEnd: (t, e) => {
 				t.outcome() === "skipped"
 					? ++this.progress.skipped
-					: t.outcome() === "unexpected"
+					: (t.outcome() === "unexpected"
 						? ++this.progress.failed
-						: ++this.progress.passed,
+						: ++this.progress.passed),
 					(e[X] = e.status),
 					this._options.onUpdate();
 			},
@@ -842,7 +852,8 @@ class oe {
 	}
 	processListReport(t) {
 		let s;
-		const e = ((s = this.rootSuite) == null ? void 0 : s.allTests()) || [];
+		const e =
+			((s = this.rootSuite) === undefined ? void 0 : s.allTests()) || [];
 		(this._testResultsSnapshot = new Map(e.map((i) => [i.id, i.results]))),
 			this._receiver.reset();
 		for (const i of t) {
@@ -851,14 +862,14 @@ class oe {
 	}
 	processTestReportEvent(t) {
 		let e, s, i;
-		(s = (e = this._lastRunReceiver) == null ? void 0 : e.dispatch(t)) ==
-			null || s.catch(() => {}),
-			(i = this._receiver.dispatch(t)) == null || i.catch(() => {});
+		(s = (e = this._lastRunReceiver) === undefined ? void 0 : e.dispatch(t)) ===
+			undefined || s.catch(() => {}),
+			(i = this._receiver.dispatch(t)) === undefined || i.catch(() => {});
 	}
 	_handleOnError(t) {
 		let e, s;
 		this.loadErrors.push(t),
-			(s = (e = this._options).onError) == null || s.call(e, t),
+			(s = (e = this._options).onError) === undefined || s.call(e, t),
 			this._options.onUpdate();
 	}
 	asModel() {
@@ -880,7 +891,7 @@ const ne = ({ source: r }) => {
 					import.meta.url,
 				).then((g) => g.default),
 			),
-			n = K.useRef(null);
+			n = K.useRef();
 		return (
 			K.useEffect(() => (Ot(i), () => At(i)), []),
 			K.useEffect(() => {
@@ -997,10 +1008,10 @@ const ne = ({ source: r }) => {
 		runTests: g,
 	}) => {
 		const [l, _] = d.useState(!1),
-			a = d.useRef(null);
+			a = d.useRef();
 		d.useEffect(() => {
 			let u;
-			(u = a.current) == null || u.focus();
+			(u = a.current) === undefined || u.focus();
 		}, []);
 		const h =
 				[...e.entries()]
@@ -1103,7 +1114,8 @@ Projects: ` +
 															const S = new Map(i);
 															S.set(u, !S.get(u)), c(S);
 															const B =
-																(C = n == null ? void 0 : n.config) == null
+																(C = n === undefined ? void 0 : n.config) ===
+																undefined
 																	? void 0
 																	: C.configFile;
 															B &&
@@ -1139,7 +1151,7 @@ Projects: ` +
 function de(r) {
 	let t = 0;
 	for (let e = 0; e < r.length; e++) {
-		t = r.charCodeAt(e) + ((t << 8) - t);
+		t = r.codePointAt(e) + ((t << 8) - t);
 	}
 	return Math.abs(t % 6);
 }
@@ -1193,7 +1205,9 @@ const he = Wt,
 						x.status === "failed" &&
 						((x.kind === "test" && c.testIds.has(x.test.id)) ||
 							(x.kind === "case" &&
-								c.testIds.has((M = x.tests[0]) == null ? void 0 : M.id))) &&
+								c.testIds.has(
+									(M = x.tests[0]) === undefined ? void 0 : M.id,
+								))) &&
 						(f = x);
 			};
 			E(s.rootItem), f && T(f.id);
@@ -1209,9 +1223,9 @@ const he = Wt,
 			}
 			const f = pe(R, t);
 			let E;
-			(R == null ? void 0 : R.kind) === "test"
+			(R === undefined ? void 0 : R.kind) === "test"
 				? (E = R.test)
-				: (R == null ? void 0 : R.kind) === "case" &&
+				: (R === undefined ? void 0 : R.kind) === "case" &&
 					R.tests.length === 1 &&
 					(E = R.tests[0]),
 				a({ treeItem: R, testCase: E, testFile: f });
@@ -1219,15 +1233,15 @@ const he = Wt,
 			d.useEffect(() => {
 				if (!_) {
 					if (n) {
-						e == null || e.watchNoReply({ fileNames: s.fileNames() });
+						e === undefined || e.watchNoReply({ fileNames: s.fileNames() });
 					} else {
 						const f = new Set();
 						for (const E of g.value) {
 							const x = s.treeItemById(E),
-								M = x == null ? void 0 : x.location.file;
+								M = x === undefined ? void 0 : x.location.file;
 							M && f.add(M);
 						}
-						e == null || e.watchNoReply({ fileNames: [...f] });
+						e === undefined || e.watchNoReply({ fileNames: [...f] });
 					}
 				}
 			}, [_, s, n, g, e]);
@@ -1265,7 +1279,7 @@ const he = Wt,
 			rootItem: s.rootItem,
 			dataTestId: "test-tree",
 			render: (f) => {
-				const E = f.id.replace(/[^\w\d-_]/g, "-"),
+				const E = f.id.replaceAll(/[^\w\d-_]/g, "-"),
 					x = `${E}-label`,
 					M = `${E}-time`;
 				return o.jsxs("div", {
@@ -1285,7 +1299,7 @@ const he = Wt,
 												q,
 											),
 										)
-									: null,
+									: undefined,
 							],
 						}),
 						!!f.duration &&
@@ -1354,7 +1368,8 @@ function pe(r, t) {
 					.filter((e) => {
 						let s;
 						return (
-							((s = e.location) == null ? void 0 : s.file) === r.location.file
+							((s = e.location) === undefined ? void 0 : s.file) ===
+							r.location.file
 						);
 					})
 					.map((e) => ({ line: e.location.line, message: e.message })),
@@ -1376,7 +1391,7 @@ const me = ({
 		let h, v;
 		const [c, n] = d.useState(void 0),
 			[g, l] = d.useState(0),
-			_ = d.useRef(null),
+			_ = d.useRef(),
 			{ outputDir: a } = d.useMemo(
 				() => ({ outputDir: r.testCase ? _e(r.testCase) : void 0 }),
 				[r],
@@ -1385,7 +1400,7 @@ const me = ({
 			d.useEffect(() => {
 				let B, C;
 				_.current && clearTimeout(_.current);
-				const u = (B = r.testCase) == null ? void 0 : B.results[0];
+				const u = (B = r.testCase) === undefined ? void 0 : B.results[0];
 				if (!u) {
 					n(void 0);
 					return;
@@ -1404,7 +1419,7 @@ const me = ({
 					a,
 					ge(u.workerIndex),
 					"traces",
-					`${((C = r.testCase)) == null ? void 0 : C.id}.json`,
+					`${((C = r.testCase)) === undefined ? void 0 : C.id}.json`,
 				].join(i);
 				return (
 					(_.current = setTimeout(async () => {
@@ -1431,14 +1446,14 @@ const me = ({
 			o.jsx(
 				Kt,
 				{
-					model: c == null ? void 0 : c.model,
+					model: c === undefined ? void 0 : c.model,
 					showSourcesFirst: !0,
 					rootDir: t,
 					fallbackLocation: r.testFile,
-					isLive: c == null ? void 0 : c.isLive,
-					status: (h = r.treeItem) == null ? void 0 : h.status,
+					isLive: c === undefined ? void 0 : c.isLive,
+					status: (h = r.treeItem) === undefined ? void 0 : h.status,
 					annotations:
-						((v = r.testCase) == null ? void 0 : v.annotations) ?? [],
+						((v = r.testCase) === undefined ? void 0 : v.annotations) ?? [],
 					onOpenExternally: e,
 					revealSource: s,
 				},
@@ -1450,7 +1465,7 @@ const me = ({
 		let t;
 		for (let e = r.parent; e; e = e.parent) {
 			if (e.project()) {
-				return (t = e.project()) == null ? void 0 : t.outputDir;
+				return (t = e.project()) === undefined ? void 0 : t.outputDir;
 			}
 		}
 	};
@@ -1524,13 +1539,13 @@ const wt = navigator.platform === "MacIntel",
 			[ht, _xe] = d.useState(!1),
 			[ft, _Te] = d.useState(!1),
 			[pt, _ke] = d.useState(!1),
-			Ct = d.useRef(null),
+			Ct = d.useRef(),
 			et = d.useCallback(() => {
-				jt((p) => (p == null || p.close(), new Ht(new qt(lt))));
+				jt((p) => (p === undefined || p.close(), new Ht(new qt(lt))));
 			}, []);
 		d.useEffect(() => {
 			let p;
-			(p = Ct.current) == null || p.focus(), L(!0), et();
+			(p = Ct.current) === undefined || p.focus(), L(!0), et();
 		}, [et]),
 			d.useEffect(() => {
 				if (!w) {
@@ -1642,7 +1657,7 @@ const wt = navigator.platform === "MacIntel",
 						_(y);
 			}, [l, a]),
 			d.useEffect(() => {
-				N && a != null && a.progress ? u(a.progress) : a || u(void 0);
+				N && a !== undefined && a.progress ? u(a.progress) : a || u(void 0);
 			}, [a, N]);
 		const { testTree: Pt } = d.useMemo(() => {
 				if (!a) {
@@ -1652,7 +1667,11 @@ const wt = navigator.platform === "MacIntel",
 				}
 				const p = new nt("", a.rootSuite, a.loadErrors, l, I.pathSeparator);
 				return (
-					p.filterTree(r, n, N ? (O == null ? void 0 : O.testIds) : void 0),
+					p.filterTree(
+						r,
+						n,
+						N ? (O === undefined ? void 0 : O.testIds) : void 0,
+					),
 					p.sortAndPropagateStatus(),
 					p.shortenRoot(),
 					p.flattenForSingleProject(),
@@ -1668,10 +1687,10 @@ const wt = navigator.platform === "MacIntel",
 						(E.current = E.current.then(async () => {
 							let P, U, D;
 							const k = x.current;
-							if (((x.current = new Set()), !k.size)) {
+							if (((x.current = new Set()), k.size === 0)) {
 								return;
 							}
-							for (const j of ((P = a.rootSuite) == null
+							for (const j of ((P = a.rootSuite) === undefined
 								? void 0
 								: P.allTests()) || []) {
 								if (k.has(j.id)) {
@@ -1683,7 +1702,7 @@ const wt = navigator.platform === "MacIntel",
 							h({ ...a });
 							const y = `  [${new Date().toLocaleTimeString()}]`;
 							z.write(
-								`${"\x1B[2m—".repeat(Math.max(0, _t.cols - y.length)) + y}\x1B[22m`,
+								`${"\u001B[2m—".repeat(Math.max(0, _t.cols - y.length)) + y}\u001B[22m`,
 							),
 								u({ total: 0, passed: 0, failed: 0, skipped: 0 }),
 								$({ testIds: k }),
@@ -1699,11 +1718,11 @@ const wt = navigator.platform === "MacIntel",
 									reporters: I.reporters,
 									trace: "on",
 								});
-							for (const j of ((U = a.rootSuite) == null
+							for (const j of ((U = a.rootSuite) === undefined
 								? void 0
 								: U.allTests()) || []) {
-								((D = j.results[0]) == null ? void 0 : D.duration) === -1 &&
-									(j.results = []);
+								((D = j.results[0]) === undefined ? void 0 : D.duration) ===
+									-1 && (j.results = []);
 							}
 							h({ ...a }), $((j) => (j ? { ...j, completed: !0 } : void 0));
 						})));
@@ -1726,8 +1745,7 @@ const wt = navigator.platform === "MacIntel",
 								grepInvert: I.grepInvert,
 							});
 							G.processListReport(D.report);
-						} catch (_D) {
-						} finally {
+						} catch {} finally {
 							L(!1);
 						}
 					})),
@@ -1752,7 +1770,7 @@ const wt = navigator.platform === "MacIntel",
 				} else {
 					for (const D of H.value) {
 						const j = y.treeItemById(D),
-							W = j == null ? void 0 : j.location.file;
+							W = j === undefined ? void 0 : j.location.file;
 						W && U.has(W) && P.push(...y.collectTestIds(j));
 					}
 				}
@@ -1767,9 +1785,9 @@ const wt = navigator.platform === "MacIntel",
 				const p = (m) => {
 					m.code === "Backquote" && m.ctrlKey
 						? (m.preventDefault(), s(!e))
-						: m.code === "F5" && m.shiftKey
+						: (m.code === "F5" && m.shiftKey
 							? (m.preventDefault(), w == null || w.stopTestsNoReply({}))
-							: m.code === "F5" && (m.preventDefault(), V("bounce-if-busy", B));
+							: m.code === "F5" && (m.preventDefault(), V("bounce-if-busy", B)));
 				};
 				return (
 					addEventListener("keydown", p),
@@ -1778,27 +1796,27 @@ const wt = navigator.platform === "MacIntel",
 					}
 				);
 			}, [V, et, w, B, e]);
-		const it = d.useRef(null),
+		const it = d.useRef(),
 			Nt = d.useCallback((p) => {
 				let m;
 				p.preventDefault(),
 					p.stopPropagation(),
-					(m = it.current) == null || m.showModal();
+					(m = it.current) === undefined || m.showModal();
 			}, []),
 			rt = d.useCallback((p) => {
 				let m;
 				p.preventDefault(),
 					p.stopPropagation(),
-					(m = it.current) == null || m.close();
+					(m = it.current) === undefined || m.close();
 			}, []),
 			Lt = d.useCallback(
 				(p) => {
 					rt(p),
 						s(!0),
-						w == null ||
+						w === undefined ||
 							w.installBrowsers({}).then(async () => {
 								s(!1);
-								const { hasBrowsers: m } = await (w == null
+								const { hasBrowsers: m } = await (w === undefined
 									? void 0
 									: w.checkBrowsers({}));
 								ut(m);
@@ -1904,12 +1922,12 @@ const wt = navigator.platform === "MacIntel",
 									pathSeparator: I.pathSeparator,
 									item: b,
 									rootDir:
-										(gt = a == null ? void 0 : a.config) == null
+										(gt = a === undefined ? void 0 : a.config) === undefined
 											? void 0
 											: gt.rootDir,
 									revealSource: It,
 									onOpenExternally: (p) =>
-										w == null
+										w === undefined
 											? void 0
 											: w.openNoReply({
 													location: {
@@ -2039,7 +2057,7 @@ const wt = navigator.platform === "MacIntel",
 									o.jsx(F, {
 										icon: "debug-stop",
 										title: `Stop — ${wt ? "⇧F5" : "Shift + F5"}`,
-										onClick: () => (w == null ? void 0 : w.stopTests({})),
+										onClick: () => (w === undefined ? void 0 : w.stopTests({})),
 										disabled: !N || T,
 									}),
 									o.jsx(F, {

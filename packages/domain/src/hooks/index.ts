@@ -5,15 +5,15 @@
 
 // Placeholder exports for missing hooks
 export const useConsentManagement = () => ({
-	consent: null,
-	grantConsent: async () => {},
-	withdrawConsent: async () => {},
+  consent: undefined,
+  grantConsent: async () => {},
+  withdrawConsent: async () => {},
 });
 
 export const useDataSubjectRights = () => ({
-	requests: [],
-	createRequest: async () => {},
-	downloadData: async () => {},
+  requests: [],
+  createRequest: async () => {},
+  downloadData: async () => {},
 });
 
 // Appointments & scheduling hooks (commented out to avoid conflicts)

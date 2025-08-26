@@ -34,97 +34,108 @@ export * from "./ui/toaster";
 
 // FASE 4 Component Categories
 export const COMPONENT_CATEGORIES = {
-	"AI-Powered Dashboards": [
-		"AIAnalyticsDashboard",
-		"HealthMonitoringDashboard",
-		"ComplianceStatusDashboard",
-		"PerformanceMetricsDashboard",
-		"RealTimeActivityDashboard",
-	],
+  "AI-Powered Dashboards": [
+    "AIAnalyticsDashboard",
+    "HealthMonitoringDashboard",
+    "ComplianceStatusDashboard",
+    "PerformanceMetricsDashboard",
+    "RealTimeActivityDashboard",
+  ],
 
-	"Mobile Components": ["MobileNavigation", "MobileBottomNavigation", "MobileDashboardCard", "MobileQuickActions"],
+  "Mobile Components": [
+    "MobileNavigation",
+    "MobileBottomNavigation",
+    "MobileDashboardCard",
+    "MobileQuickActions",
+  ],
 
-	Accessibility: [
-		"AccessibilityPanel",
-		"SkipToContentLink",
-		"ScreenReaderOnly",
-		"LiveRegion",
-		"FocusTrap",
-		"KeyboardHelper",
-	],
+  Accessibility: [
+    "AccessibilityPanel",
+    "SkipToContentLink",
+    "ScreenReaderOnly",
+    "LiveRegion",
+    "FocusTrap",
+    "KeyboardHelper",
+  ],
 
-	"Layout System": ["MainLayout", "DashboardPageLayout", "AuthLayout", "ErrorLayout", "PrintLayout"],
+  "Layout System": [
+    "MainLayout",
+    "DashboardPageLayout",
+    "AuthLayout",
+    "ErrorLayout",
+    "PrintLayout",
+  ],
 
-	"Healthcare Specific": [
-		"PatientCard",
-		"AppointmentCard",
-		"MedicalRecordViewer",
-		"ComplianceIndicator",
-		"TelemedicineInterface",
-	],
+  "Healthcare Specific": [
+    "PatientCard",
+    "AppointmentCard",
+    "MedicalRecordViewer",
+    "ComplianceIndicator",
+    "TelemedicineInterface",
+  ],
 } as const;
 
 // Component status tracking for FASE 4
 export const COMPONENT_STATUS = {
-	completed: [
-		// AI-Powered Dashboards
-		"AIAnalyticsDashboard",
-		"HealthMonitoringDashboard",
-		"ComplianceStatusDashboard",
-		"PerformanceMetricsDashboard",
-		"RealTimeActivityDashboard",
-		"DashboardLayout",
+  completed: [
+    // AI-Powered Dashboards
+    "AIAnalyticsDashboard",
+    "HealthMonitoringDashboard",
+    "ComplianceStatusDashboard",
+    "PerformanceMetricsDashboard",
+    "RealTimeActivityDashboard",
+    "DashboardLayout",
 
-		// Mobile Components
-		"MobileNavigation",
-		"MobileBottomNavigation",
-		"MobileDashboardCard",
-		"MobileQuickActions",
+    // Mobile Components
+    "MobileNavigation",
+    "MobileBottomNavigation",
+    "MobileDashboardCard",
+    "MobileQuickActions",
 
-		// Accessibility
-		"AccessibilityPanel",
-		"SkipToContentLink",
-		"ScreenReaderOnly",
-		"LiveRegion",
-		"FocusTrap",
-		"KeyboardHelper",
+    // Accessibility
+    "AccessibilityPanel",
+    "SkipToContentLink",
+    "ScreenReaderOnly",
+    "LiveRegion",
+    "FocusTrap",
+    "KeyboardHelper",
 
-		// Layout System
-		"MainLayout",
-		"DashboardPageLayout",
-		"AuthLayout",
-		"ErrorLayout",
-		"PrintLayout",
-	],
+    // Layout System
+    "MainLayout",
+    "DashboardPageLayout",
+    "AuthLayout",
+    "ErrorLayout",
+    "PrintLayout",
+  ],
 
-	inProgress: [
-		// Healthcare specific components (next phase)
-		"PatientCard",
-		"AppointmentCard",
-		"MedicalRecordViewer",
-	],
+  inProgress: [
+    // Healthcare specific components (next phase)
+    "PatientCard",
+    "AppointmentCard",
+    "MedicalRecordViewer",
+  ],
 
-	planned: [
-		// Advanced features
-		"TelemedicineInterface",
-		"ARVisualization",
-		"VoiceInterface",
-		"BiometricAuth",
-	],
+  planned: [
+    // Advanced features
+    "TelemedicineInterface",
+    "ARVisualization",
+    "VoiceInterface",
+    "BiometricAuth",
+  ],
 } as const;
 
 // Export component registry for dynamic loading
 export const FASE4_COMPONENT_REGISTRY = {
-	...COMPONENT_CATEGORIES,
-	status: COMPONENT_STATUS,
-	compliance: {
-		LGPD: "Todas as funcionalidades em compliance com LGPD",
-		ANVISA: "Componentes médicos seguem normas ANVISA",
-		CFM: "Interface médica em conformidade com CFM",
-		WCAG: "Acessibilidade WCAG 2.1 AA implementada",
-	},
-	version: "4.0.0",
-	lastUpdated: new Date().toISOString(),
+  ...COMPONENT_CATEGORIES,
+  status: COMPONENT_STATUS,
+  compliance: {
+    LGPD: "Todas as funcionalidades em compliance com LGPD",
+    ANVISA: "Componentes médicos seguem normas ANVISA",
+    CFM: "Interface médica em conformidade com CFM",
+    WCAG: "Acessibilidade WCAG 2.1 AA implementada",
+  },
+  version: "4.0.0",
+  lastUpdated: new Date().toISOString(),
 } as const;
 // =============================================================================
 // 🤖 HEALTHCARE AI AGENT CHAT COMPONENT EXPORT

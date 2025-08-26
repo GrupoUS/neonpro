@@ -1,63 +1,63 @@
 {
-	"timestamp": "2025-08-25T16:40:05.846Z",
-	"config": {
-		"baseUrl": "http://localhost:3000",
-		"apiUrl": "http://localhost:3001",
-		"targets": {
-			"dashboard": 2000,
-			"api": 500,
-			"ml": 1000
-		},
-		"iterations": 5
-	},
-	"results": [
-		{
-			"test": "Dashboard Load",
-			"duration": 1617,
-			"target": 2000,
-			"passed": true,
-			"status": "3/3 components found"
-		},
-		{
-			"test": "API ML Models List",
-			"duration": 207,
-			"target": 500,
-			"passed": true,
-			"status": "implemented"
-		},
-		{
-			"test": "API No-Show Predictions",
-			"duration": 338,
-			"target": 500,
-			"passed": true,
-			"status": "implemented"
-		},
-		{
-			"test": "API Dashboard Stats",
-			"duration": 310,
-			"target": 500,
-			"passed": true,
-			"status": "implemented"
-		},
-		{
-			"test": "API A/B Test Creation",
-			"duration": 218,
-			"target": 500,
-			"passed": true,
-			"status": "implemented"
-		},
-		{
-			"test": "ML Predictions",
-			"duration": 953,
-			"target": 1000,
-			"passed": true,
-			"status": "2/2 ML services found"
-		}
-	],
-	"summary": {
-		"total": 6,
-		"passed": 6,
-		"percentage": 100,
-		"overallPass": true
-	}
+  "timestamp": "2025-08-25T16:40:05.846Z",
+  "config": {
+    "baseUrl": "http://localhost:3000",
+    "apiUrl": "http://localhost:3001",
+    "targets": {
+      "dashboard": 2000,
+      "api": 500,
+      "ml": 1000
+    },
+    "iterations": 5
+  },
+  "results": [
+    {
+      "test": "Dashboard Load",
+      "duration": 1617,
+      "target": 2000,
+      "passed": true,
+      "status": "3/3 components found"
+    },
+    {
+      "test": "API ML Models List",
+      "duration": 207,
+      "target": 500,
+      "passed": true,
+      "status": "implemented"
+    },
+    {
+      "test": "API No-Show Predictions",
+      "duration": 338,
+      "target": 500,
+      "passed": true,
+      "status": "implemented"
+    },
+    {
+      "test": "API Dashboard Stats",
+      "duration": 310,
+      "target": 500,
+      "passed": true,
+      "status": "implemented"
+    },
+    {
+      "test": "API A/B Test Creation",
+      "duration": 218,
+      "target": 500,
+      "passed": true,
+      "status": "implemented"
+    },
+    {
+      "test": "ML Predictions",
+      "duration": 953,
+      "target": 1000,
+      "passed": true,
+      "status": "2/2 ML services found"
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "percentage": 100,
+    "overallPass": true
+  }
 }

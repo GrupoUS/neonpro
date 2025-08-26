@@ -43,7 +43,7 @@
 }
 .cm-fat-cursor .CodeMirror-cursor {
 	width: auto;
-	border: 0 !important;
+	border: 0;
 	background: #7e7;
 }
 .cm-fat-cursor div.CodeMirror-cursors {
@@ -195,7 +195,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 	background: #fff;
 }
 .CodeMirror-scroll {
-	overflow: scroll !important;
+	overflow: scroll;
 	margin-bottom: -50px;
 	margin-right: -50px;
 	padding-bottom: 50px;
@@ -254,8 +254,8 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
 .CodeMirror-gutter-wrapper {
 	position: absolute;
 	z-index: 4;
-	background: none !important;
-	border: none !important;
+	background: none;
+	border: none;
 }
 .CodeMirror-gutter-background {
 	position: absolute;

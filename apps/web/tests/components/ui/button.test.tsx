@@ -17,282 +17,294 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock theme provider if needed
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => <div className="neonprov1-theme">{children}</div>;
+const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div className="neonprov1-theme">{children}</div>
+);
 
-describe("Button Component - NeonPro Healthcare UI", () => {
-	afterEach(() => {
-		cleanup();
-	});
+describe("button Component - NeonPro Healthcare UI", () => {
+  afterEach(() => {
+    cleanup();
+  });
 
-	describe("Basic Rendering and Variants", () => {
-		it("should render button with default props", () => {
-			render(
-				<ThemeWrapper>
-					<Button data-testid="default-button">Default Button</Button>
-				</ThemeWrapper>
-			);
+  describe("basic Rendering and Variants", () => {
+    it("should render button with default props", () => {
+      render(
+        <ThemeWrapper>
+          <Button data-testid="default-button">Default Button</Button>
+        </ThemeWrapper>,
+      );
 
-			const button = screen.getByTestId("default-button");
-			expect(button).toBeInTheDocument();
-			expect(button).toHaveTextContent("Default Button");
-			expect(button.tagName).toBe("BUTTON");
-		});
+      const button = screen.getByTestId("default-button");
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveTextContent("Default Button");
+      expect(button.tagName).toBe("BUTTON");
+    });
 
-		it("should render healthcare-specific button variants", () => {
-			const variants = ["medical", "emergency", "success", "warning"] as const;
+    it("should render healthcare-specific button variants", () => {
+      const variants = ["medical", "emergency", "success", "warning"] as const;
 
-			variants.forEach((variant) => {
-				render(
-					<ThemeWrapper>
-						<Button data-testid={`button-${variant}`} variant={variant}>
-							{variant} Button
-						</Button>
-					</ThemeWrapper>
-				);
+      variants.forEach((variant) => {
+        render(
+          <ThemeWrapper>
+            <Button data-testid={`button-${variant}`} variant={variant}>
+              {variant} Button
+            </Button>
+          </ThemeWrapper>,
+        );
 
-				const button = screen.getByTestId(`button-${variant}`);
-				expect(button).toBeInTheDocument();
+        const button = screen.getByTestId(`button-${variant}`);
+        expect(button).toBeInTheDocument();
 
-				// Check for variant-specific classes in the className
-				const className = button.className;
-				if (variant === "medical") {
-					expect(className).toContain("bg-gradient-primary");
-				} else if (variant === "emergency") {
-					expect(className).toContain("animate-pulse-healthcare");
-					expect(className).toContain("from-destructive");
-				} else if (variant === "success") {
-					expect(className).toContain("from-success");
-				} else if (variant === "warning") {
-					expect(className).toContain("from-warning");
-				}
+        // Check for variant-specific classes in the className
+        const className = button.className;
+        if (variant === "medical") {
+          expect(className).toContain("bg-gradient-primary");
+        } else if (variant === "emergency") {
+          expect(className).toContain("animate-pulse-healthcare");
+          expect(className).toContain("from-destructive");
+        } else if (variant === "success") {
+          expect(className).toContain("from-success");
+        } else if (variant === "warning") {
+          expect(className).toContain("from-warning");
+        }
 
-				cleanup();
-			});
-		});
-		it("should handle different button sizes", () => {
-			const sizes = ["sm", "default", "lg"] as const;
+        cleanup();
+      });
+    });
 
-			sizes.forEach((size) => {
-				render(
-					<ThemeWrapper>
-						<Button data-testid={`button-${size}`} size={size}>
-							Size {size}
-						</Button>
-					</ThemeWrapper>
-				);
+    it("should handle different button sizes", () => {
+      const sizes = ["sm", "default", "lg"] as const;
 
-				const button = screen.getByTestId(`button-${size}`);
-				const className = button.className;
+      sizes.forEach((size) => {
+        render(
+          <ThemeWrapper>
+            <Button data-testid={`button-${size}`} size={size}>
+              Size {size}
+            </Button>
+          </ThemeWrapper>,
+        );
 
-				// Check for size-specific classes
-				if (size === "sm") {
-					expect(className).toContain("h-8");
-				} else if (size === "lg") {
-					expect(className).toContain("h-12");
-				} else {
-					expect(className).toContain("h-10"); // default size
-				}
+        const button = screen.getByTestId(`button-${size}`);
+        const className = button.className;
 
-				cleanup();
-			});
-		});
-	});
+        // Check for size-specific classes
+        if (size === "sm") {
+          expect(className).toContain("h-8");
+        } else if (size === "lg") {
+          expect(className).toContain("h-12");
+        } else {
+          expect(className).toContain("h-10"); // default size
+        }
 
-	describe("Interactive States and Behavior", () => {
-		it("should handle click events", async () => {
-			const mockClick = vi.fn();
-			const user = userEvent.setup();
+        cleanup();
+      });
+    });
+  });
 
-			render(
-				<ThemeWrapper>
-					<Button data-testid="clickable-button" onClick={mockClick}>
-						Click Me
-					</Button>
-				</ThemeWrapper>
-			);
+  describe("interactive States and Behavior", () => {
+    it("should handle click events", async () => {
+      const mockClick = vi.fn();
+      const user = userEvent.setup();
 
-			const button = screen.getByTestId("clickable-button");
-			await user.click(button);
+      render(
+        <ThemeWrapper>
+          <Button data-testid="clickable-button" onClick={mockClick}>
+            Click Me
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			expect(mockClick).toHaveBeenCalledTimes(1);
-		});
+      const button = screen.getByTestId("clickable-button");
+      await user.click(button);
 
-		it("should handle disabled state", async () => {
-			const mockClick = vi.fn();
-			const user = userEvent.setup();
+      expect(mockClick).toHaveBeenCalledTimes(1);
+    });
 
-			render(
-				<ThemeWrapper>
-					<Button data-testid="disabled-button" disabled onClick={mockClick}>
-						Disabled Button
-					</Button>
-				</ThemeWrapper>
-			);
+    it("should handle disabled state", async () => {
+      const mockClick = vi.fn();
+      const user = userEvent.setup();
 
-			const button = screen.getByTestId("disabled-button");
-			expect(button).toBeDisabled();
+      render(
+        <ThemeWrapper>
+          <Button data-testid="disabled-button" disabled onClick={mockClick}>
+            Disabled Button
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			await user.click(button);
-			expect(mockClick).not.toHaveBeenCalled();
-		});
-		it("should show loading state properly", () => {
-			render(
-				<ThemeWrapper>
-					<Button data-testid="loading-button" loading={true} loadingText="Salvando paciente...">
-						Salvar Paciente
-					</Button>
-				</ThemeWrapper>
-			);
+      const button = screen.getByTestId("disabled-button");
+      expect(button).toBeDisabled();
 
-			const button = screen.getByTestId("loading-button");
-			expect(button).toHaveAttribute("aria-disabled", "true");
-			expect(button).toHaveTextContent("Salvando paciente...");
-			expect(button).toHaveAttribute("data-loading", "true");
-		});
-	});
+      await user.click(button);
+      expect(mockClick).not.toHaveBeenCalled();
+    });
 
-	describe("Accessibility (WCAG 2.1 AA) Compliance", () => {
-		it("should have proper ARIA attributes", () => {
-			render(
-				<ThemeWrapper>
-					<Button aria-describedby="button-help" aria-label="Cadastrar novo paciente" data-testid="accessible-button">
-						<span className="sr-only">Ícone de adicionar</span>
-						Cadastrar Paciente
-					</Button>
-				</ThemeWrapper>
-			);
+    it("should show loading state properly", () => {
+      render(
+        <ThemeWrapper>
+          <Button
+            data-testid="loading-button"
+            loading
+            loadingText="Salvando paciente..."
+          >
+            Salvar Paciente
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			const button = screen.getByTestId("accessible-button");
-			expect(button).toHaveAttribute("aria-label", "Cadastrar novo paciente");
-			expect(button).toHaveAttribute("aria-describedby", "button-help");
-		});
+      const button = screen.getByTestId("loading-button");
+      expect(button).toHaveAttribute("aria-disabled", "true");
+      expect(button).toHaveTextContent("Salvando paciente...");
+      expect(button).toHaveAttribute("data-loading", "true");
+    });
+  });
 
-		it("should support keyboard navigation", async () => {
-			const mockClick = vi.fn();
-			const user = userEvent.setup();
+  describe("accessibility (WCAG 2.1 AA) Compliance", () => {
+    it("should have proper ARIA attributes", () => {
+      render(
+        <ThemeWrapper>
+          <Button
+            aria-describedby="button-help"
+            aria-label="Cadastrar novo paciente"
+            data-testid="accessible-button"
+          >
+            <span className="sr-only">Ícone de adicionar</span>
+            Cadastrar Paciente
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			render(
-				<ThemeWrapper>
-					<Button data-testid="keyboard-button" onClick={mockClick}>
-						Pressione Enter ou Espaço
-					</Button>
-				</ThemeWrapper>
-			);
+      const button = screen.getByTestId("accessible-button");
+      expect(button).toHaveAttribute("aria-label", "Cadastrar novo paciente");
+      expect(button).toHaveAttribute("aria-describedby", "button-help");
+    });
 
-			const button = screen.getByTestId("keyboard-button");
-			button.focus();
+    it("should support keyboard navigation", async () => {
+      const mockClick = vi.fn();
+      const user = userEvent.setup();
 
-			// Test Enter key
-			await user.keyboard("{Enter}");
-			expect(mockClick).toHaveBeenCalledTimes(1);
+      render(
+        <ThemeWrapper>
+          <Button data-testid="keyboard-button" onClick={mockClick}>
+            Pressione Enter ou Espaço
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			// Test Space key
-			await user.keyboard(" ");
-			expect(mockClick).toHaveBeenCalledTimes(2);
-		});
+      const button = screen.getByTestId("keyboard-button");
+      button.focus();
 
-		it("should have sufficient color contrast for healthcare use", () => {
-			render(
-				<ThemeWrapper>
-					<Button data-testid="emergency-button" variant="emergency">
-						Emergência
-					</Button>
-				</ThemeWrapper>
-			);
+      // Test Enter key
+      await user.keyboard("{Enter}");
+      expect(mockClick).toHaveBeenCalledTimes(1);
 
-			const button = screen.getByTestId("emergency-button");
-			const className = button.className;
+      // Test Space key
+      await user.keyboard(" ");
+      expect(mockClick).toHaveBeenCalledTimes(2);
+    });
 
-			// Emergency buttons should have the emergency variant styling
-			expect(className).toContain("from-destructive");
-			expect(className).toContain("animate-pulse-healthcare");
-		});
-	});
-	describe("Healthcare-Specific Features", () => {
-		it("should handle emergency button with high priority styling", () => {
-			render(
-				<ThemeWrapper>
-					<Button data-testid="critical-emergency-button" priority="critical">
-						PARADA CARDÍACA
-					</Button>
-				</ThemeWrapper>
-			);
+    it("should have sufficient color contrast for healthcare use", () => {
+      render(
+        <ThemeWrapper>
+          <Button data-testid="emergency-button" variant="emergency">
+            Emergência
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			const button = screen.getByTestId("critical-emergency-button");
-			// The component auto-maps critical priority to emergency variant
-			const className = button.className;
-			expect(className).toContain("from-destructive");
-			expect(button).toHaveAttribute("data-priority", "critical");
-			expect(button).toHaveAttribute("role", "button");
-		});
+      const button = screen.getByTestId("emergency-button");
+      const className = button.className;
 
-		it("should handle patient action confirmations", async () => {
-			const mockClick = vi.fn();
-			const user = userEvent.setup();
+      // Emergency buttons should have the emergency variant styling
+      expect(className).toContain("from-destructive");
+      expect(className).toContain("animate-pulse-healthcare");
+    });
+  });
+  describe("healthcare-Specific Features", () => {
+    it("should handle emergency button with high priority styling", () => {
+      render(
+        <ThemeWrapper>
+          <Button data-testid="critical-emergency-button" priority="critical">
+            PARADA CARDÍACA
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			render(
-				<ThemeWrapper>
-					<Button
-						confirmAction={true}
-						confirmMessage="Confirma exclusão do paciente?"
-						data-testid="confirm-button"
-						onClick={mockClick}
-						variant="warning"
-					>
-						Excluir Paciente
-					</Button>
-				</ThemeWrapper>
-			);
+      const button = screen.getByTestId("critical-emergency-button");
+      // The component auto-maps critical priority to emergency variant
+      const className = button.className;
+      expect(className).toContain("from-destructive");
+      expect(button).toHaveAttribute("data-priority", "critical");
+      expect(button).toHaveAttribute("role", "button");
+    });
 
-			const button = screen.getByTestId("confirm-button");
-			await user.click(button);
+    it("should handle patient action confirmations", async () => {
+      const mockClick = vi.fn();
+      const user = userEvent.setup();
 
-			// The component should call window.confirm before executing the action
-			// Since we mocked window.confirm to return true, the action should be called
-			expect(mockClick).toHaveBeenCalledTimes(1);
-		});
+      render(
+        <ThemeWrapper>
+          <Button
+            confirmAction
+            confirmMessage="Confirma exclusão do paciente?"
+            data-testid="confirm-button"
+            onClick={mockClick}
+            variant="warning"
+          >
+            Excluir Paciente
+          </Button>
+        </ThemeWrapper>,
+      );
 
-		it("should display LGPD compliance indicators", () => {
-			render(
-				<ThemeWrapper>
-					<Button data-lgpd-compliant="true" data-testid="lgpd-button">
-						Processar Dados do Paciente
-					</Button>
-				</ThemeWrapper>
-			);
+      const button = screen.getByTestId("confirm-button");
+      await user.click(button);
 
-			const button = screen.getByTestId("lgpd-button");
-			expect(button).toHaveAttribute("data-lgpd-compliant", "true");
-		});
-	});
+      // The component should call window.confirm before executing the action
+      // Since we mocked window.confirm to return true, the action should be called
+      expect(mockClick).toHaveBeenCalledTimes(1);
+    });
 
-	describe("Error Handling and Edge Cases", () => {
-		it("should handle invalid props gracefully", () => {
-			render(
-				<ThemeWrapper>
-					<Button
-						// @ts-expect-error - Testing invalid props
-						data-testid="invalid-button"
-						variant="invalid-variant"
-					>
-						Invalid Button
-					</Button>
-				</ThemeWrapper>
-			);
+    it("should display LGPD compliance indicators", () => {
+      render(
+        <ThemeWrapper>
+          <Button data-lgpd-compliant="true" data-testid="lgpd-button">
+            Processar Dados do Paciente
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			const button = screen.getByTestId("invalid-button");
-			expect(button).toBeInTheDocument();
-		});
+      const button = screen.getByTestId("lgpd-button");
+      expect(button).toHaveAttribute("data-lgpd-compliant", "true");
+    });
+  });
 
-		it("should handle missing children gracefully", () => {
-			render(
-				<ThemeWrapper>
-					<Button data-testid="empty-button" />
-				</ThemeWrapper>
-			);
+  describe("error Handling and Edge Cases", () => {
+    it("should handle invalid props gracefully", () => {
+      render(
+        <ThemeWrapper>
+          <Button
+            // @ts-expect-error - Testing invalid props
+            data-testid="invalid-button"
+            variant="invalid-variant"
+          >
+            Invalid Button
+          </Button>
+        </ThemeWrapper>,
+      );
 
-			const button = screen.getByTestId("empty-button");
-			expect(button).toBeInTheDocument();
-		});
-	});
+      const button = screen.getByTestId("invalid-button");
+      expect(button).toBeInTheDocument();
+    });
+
+    it("should handle missing children gracefully", () => {
+      render(
+        <ThemeWrapper>
+          <Button data-testid="empty-button" />
+        </ThemeWrapper>,
+      );
+
+      const button = screen.getByTestId("empty-button");
+      expect(button).toBeInTheDocument();
+    });
+  });
 });

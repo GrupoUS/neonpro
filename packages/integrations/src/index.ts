@@ -19,38 +19,38 @@
 
 // Integration Configuration
 export const IntegrationConfig = {
-	version: "1.0.0",
-	protocols: ["HL7-FHIR-R4", "LOINC", "TISS", "ANVISA-RDC44"],
-	compliance: ["LGPD", "ANVISA", "CFM", "ANS"],
-	features: [
-		"ehr-integration",
-		"lab-integration",
-		"insurance-integration",
-		"pharmacy-integration",
-	],
-	status: "development",
+  version: '1.0.0',
+  protocols: ['HL7-FHIR-R4', 'LOINC', 'TISS', 'ANVISA-RDC44'],
+  compliance: ['LGPD', 'ANVISA', 'CFM', 'ANS'],
+  features: [
+    'ehr-integration',
+    'lab-integration',
+    'insurance-integration',
+    'pharmacy-integration',
+  ],
+  status: 'development',
 } as const;
 
 // Integration Types
-export type IntegrationStatus = {
-	ehr: boolean;
-	laboratory: boolean;
-	insurance: boolean;
-	pharmacy: boolean;
-	government: boolean;
-};
+export interface IntegrationStatus {
+  ehr: boolean;
+  laboratory: boolean;
+  insurance: boolean;
+  pharmacy: boolean;
+  government: boolean;
+}
 
-export type IntegrationHealth = {
-	status: "healthy" | "degraded" | "unhealthy";
-	lastCheck: string;
-	endpoints: number;
-	errors: number;
-};
+export interface IntegrationHealth {
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  lastCheck: string;
+  endpoints: number;
+  errors: number;
+}
 
 export const DefaultIntegrationStatus: IntegrationStatus = {
-	ehr: false,
-	laboratory: false,
-	insurance: false,
-	pharmacy: false,
-	government: false,
+  ehr: false,
+  laboratory: false,
+  insurance: false,
+  pharmacy: false,
+  government: false,
 } as const;

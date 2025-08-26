@@ -8,6 +8,6 @@
  */
 
 // Export all domain APIs
-export * from "./api";
+export * from './api';
 // Export all domain hooks
-export * from "./hooks";
+export * from './hooks';

@@ -3,30 +3,31 @@
 // Note that this config is unrelated to the Vercel Edge Runtime and is also required when running locally.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
-	dsn: "https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248",
+  dsn:
+    'https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248',
 
-	// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-	tracesSampleRate: 1,
+  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+  tracesSampleRate: 1,
 
-	// Enable logs to be sent to Sentry
-	_experiments: {
-		enableLogs: true,
-	},
+  // Enable logs to be sent to Sentry
+  _experiments: {
+    enableLogs: true,
+  },
 
-	// Setting this option to true will print useful information to the console while you're setting up Sentry.
-	debug: false,
+  // Setting this option to true will print useful information to the console while you're setting up Sentry.
+  debug: false,
 
-	// Add the OpenAI integration
-	integrations: [
-		Sentry.openAIIntegration({
-			recordInputs: true,
-			recordOutputs: true,
-		}),
-	],
+  // Add the OpenAI integration
+  integrations: [
+    Sentry.openAIIntegration({
+      recordInputs: true,
+      recordOutputs: true,
+    }),
+  ],
 
-	// Send default PII data
-	sendDefaultPii: true,
+  // Send default PII data
+  sendDefaultPii: true,
 });

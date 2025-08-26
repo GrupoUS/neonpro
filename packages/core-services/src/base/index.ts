@@ -6,17 +6,17 @@
 
 // Re-export types for convenience
 export type {
-	AnalyticsConfiguration,
-	AuditEvent,
-	BaseServiceConfig,
-	CacheConfiguration,
-	ConsentConfiguration,
-	HealthcareOperation,
-	PerformanceMetrics,
-	ResilienceConfiguration,
-	SecurityConfig,
-	ServiceContext,
-	ServiceError,
-	ServiceHealth,
-} from "../types";
-export { EnhancedServiceBase } from "./EnhancedServiceBase";
+  AnalyticsConfiguration,
+  AuditEvent,
+  BaseServiceConfig,
+  CacheConfiguration,
+  ConsentConfiguration,
+  HealthcareOperation,
+  PerformanceMetrics,
+  ResilienceConfiguration,
+  SecurityConfig,
+  ServiceContext,
+  ServiceError,
+  ServiceHealth,
+} from '../types';
+export { EnhancedServiceBase } from './EnhancedServiceBase';

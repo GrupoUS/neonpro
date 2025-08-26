@@ -60,35 +60,41 @@ async function postToolIntelligence() {
 async function handleToolSpecificAnalysis(toolName, env) {
 	try {
 		switch (toolName.toLowerCase()) {
-			case "bash":
+			case "bash": {
 				await analyzeBashExecution(env);
 				break;
+			}
 
 			case "read":
 			case "edit":
-			case "write":
+			case "write": {
 				await analyzeFileOperation(toolName, env);
 				break;
+			}
 
-			case "task":
+			case "task": {
 				await analyzeTaskExecution(env);
 				break;
+			}
 
-			case "todowrite":
+			case "todowrite": {
 				await analyzeTodoUpdate(env);
 				break;
+			}
 
 			case "mcp__desktop-commander__write_file":
-			case "mcp__desktop-commander__edit_block":
+			case "mcp__desktop-commander__edit_block": {
 				await analyzeFileModification(env);
 				break;
+			}
 
 			case "mcp__archon__create_task":
-			case "mcp__archon__update_task":
+			case "mcp__archon__update_task": {
 				await analyzeArchonTaskActivity(env);
 				break;
+			}
 
-			default:
+			default: {
 				// Generic tool analysis
 				utils.log(
 					"DEBUG",
@@ -96,6 +102,7 @@ async function handleToolSpecificAnalysis(toolName, env) {
 					`Generic post-processing analysis for tool: ${toolName}`,
 				);
 				break;
+			}
 		}
 	} catch (error) {
 		utils.log(

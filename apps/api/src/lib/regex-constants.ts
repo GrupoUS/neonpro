@@ -10,7 +10,7 @@ export const ROUTE_PARAM_PATTERN = /:\w+/g;
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const PHONE_PATTERN = /^\+?[\d\s\-()]+$/;
 export const UUID_PATTERN =
-	/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 // CORS patterns
 export const CLINIC_SUBDOMAIN_PATTERN = /^https:\/\/[\w-]+\.neonpro\.health$/;
@@ -21,10 +21,9 @@ export const LOCALHOST_PATTERN = /^https?:\/\/localhost:\d+$/;
 export const LOCALHOST_IP_PATTERN = /^https?:\/\/127\.0\.0\.1:\d+$/;
 
 // Security patterns
-export const SENSITIVE_HEADERS_PATTERN =
-	/^(authorization|cookie|x-api-key|x-auth-token)$/i;
+export const SENSITIVE_HEADERS_PATTERN = /^(authorization|cookie|x-api-key|x-auth-token)$/i;
 export const SQL_INJECTION_PATTERN =
-	/('|(\\%27)|(\\x27)|(\\')|(\\')|(;)|(%3B)|(\\%3B)|(\\x3B)|(\\\x3B)|(\\;))/i;
+  /('|(\\%27)|(\\x27)|(\\')|(\\')|(;)|(%3B)|(\\%3B)|(\\x3B)|(\\\u003B)|(\\;))/i;
 
 // File extension patterns
 export const IMAGE_EXTENSIONS_PATTERN = /\.(jpg|jpeg|png|gif|webp)$/i;
@@ -45,8 +44,8 @@ export const LOG_LEVEL_PATTERN = /^(debug|info|warn|error)$/i;
  * @returns Compiled regex for route matching
  */
 export function createRouteRegex(pattern: string): RegExp {
-	const escapedPattern = pattern.replace(ROUTE_PARAM_PATTERN, "[^/]+");
-	return new RegExp(`^${escapedPattern}$`);
+  const escapedPattern = pattern.replace(ROUTE_PARAM_PATTERN, '[^/]+');
+  return new RegExp(`^${escapedPattern}$`);
 }
 
 /**
@@ -55,7 +54,7 @@ export function createRouteRegex(pattern: string): RegExp {
  * @returns True if email is valid
  */
 export function isValidEmail(email: string): boolean {
-	return EMAIL_PATTERN.test(email);
+  return EMAIL_PATTERN.test(email);
 }
 
 /**
@@ -64,7 +63,7 @@ export function isValidEmail(email: string): boolean {
  * @returns True if UUID is valid
  */
 export function isValidUUID(uuid: string): boolean {
-	return UUID_PATTERN.test(uuid);
+  return UUID_PATTERN.test(uuid);
 }
 
 /**
@@ -73,6 +72,6 @@ export function isValidUUID(uuid: string): boolean {
  * @returns Array of resource IDs found in path
  */
 export function extractResourceIds(path: string): string[] {
-	const matches = path.match(RESOURCE_ID_PATTERN);
-	return matches ? matches.map((match) => match.replace(/[/]/g, "")) : [];
+  const matches = path.match(RESOURCE_ID_PATTERN);
+  return matches ? matches.map((match) => match.replaceAll(/[/]/g, '')) : [];
 }

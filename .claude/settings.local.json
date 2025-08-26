@@ -3,7 +3,6 @@
   "permissions": {
     "allow": [
       "TodoWrite",
-      "Task",
       "mcp__desktop-commander__list_directory",
       "mcp__desktop-commander__read_file",
       "mcp__desktop-commander__search_code",
@@ -17,7 +16,6 @@
       "mcp__desktop-commander__create_directory",
       "mcp__desktop-commander__force_terminate",
       "mcp__desktop-commander__list_sessions",
-      "mcp__desktop-commander__force_terminate",
       "mcp__desktop-commander__interact_with_process",
       "mcp__context7__get-library-docs",
       "mcp__tavily__searchQNA",
@@ -38,7 +36,6 @@
       "mcp__supabase-mcp__apply_migration",
       "mcp__tavily__tavily-search",
       "mcp__shadcn-ui__get_component",
-      "mcp__context7__resolve-library-id",
       "mcp__context7__resolve-library-id",
       "mcp__serena__find_symbol",
       "mcp__serena__get_symbols_overview",
@@ -91,7 +88,7 @@
       "mcp__supabase-mcp__search_docs",
       "mcp__vercel__get_project",
       "mcp__vercel__list_teams",
-      "mcp__vercel__list_projects",
+      "mcp__vercel__list_projects"
     ],
     "deny": [
       "Edit",
@@ -102,7 +99,7 @@
       "NotebookEdit",
       "WebSearch",
       "WebFetch"
-    ],
+    ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
@@ -124,7 +121,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /mnt/d/neonpro/.claude/hooks/ubuntu/pre-tool-intelligence.sh",
+            "command": "D:\\neonpro\\.claude\\hooks\\pre-tool-intelligence.bat",
             "timeout": 45
           }
         ]
@@ -136,7 +133,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /mnt/d/neonpro/.claude/hooks/ubuntu/post-tool-intelligence.sh",
+            "command": "D:\\neonpro\\.claude\\hooks\\post-tool-intelligence.bat",
             "timeout": 60
           }
         ]
@@ -147,7 +144,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /mnt/d/neonpro/.claude/hooks/ubuntu/session-intelligence.sh",
+            "command": "D:\\neonpro\\.claude\\hooks\\session-intelligence.bat",
             "timeout": 120
           }
         ]
@@ -158,7 +155,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /mnt/d/neonpro/.claude/hooks/ubuntu/session-stop.sh",
+            "command": "D:\\neonpro\\.claude\\hooks\\session-stop.bat",
             "timeout": 90
           }
         ]

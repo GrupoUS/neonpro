@@ -3,4 +3,4 @@
  * Simplified prediction display component
  */
 
-export { default as PredictionDisplay } from "./PredictionDisplay";
+export { default as PredictionDisplay } from './PredictionDisplay';

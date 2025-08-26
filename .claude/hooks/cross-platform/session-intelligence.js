@@ -110,8 +110,8 @@ async function getSessionStatistics(env) {
 		const tools = [];
 		let errors = 0;
 		let warnings = 0;
-		let startTime = null;
-		let endTime = null;
+		let startTime;
+		let endTime;
 
 		sessionLines.forEach((line) => {
 			// Extract timestamp
@@ -377,7 +377,7 @@ async function generateSessionSummary(env) {
 
 		// Save summary to cache
 		const summaryFile = `${utils.cacheDir}/session-${env.sessionId}-summary.json`;
-		utils.safeWriteFile(summaryFile, JSON.stringify(summary, null, 2));
+		utils.safeWriteFile(summaryFile, JSON.stringify(summary, undefined, 2));
 
 		utils.log(
 			"INFO",
@@ -441,7 +441,7 @@ async function cleanupOldCache() {
 					fs.unlinkSync(filePath);
 					cleanedFiles++;
 				}
-			} catch (_e) {
+			} catch {
 				// Ignore individual file errors
 			}
 		});

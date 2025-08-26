@@ -91,10 +91,10 @@ dialog .body {
 }
 *[hidden],
 .hidden {
-	display: none !important;
+	display: none;
 }
 .invisible {
-	visibility: hidden !important;
+	visibility: hidden;
 }
 svg {
 	fill: currentColor;
@@ -2060,7 +2060,7 @@ body.dark-mode ::-webkit-scrollbar-track:hover {
 	cursor: inherit;
 }
 .tree-view-entry.highlighted:not(.selected) {
-	background-color: var(--vscode-list-inactiveSelectionBackground) !important;
+	background-color: var(--vscode-list-inactiveSelectionBackground);
 }
 .tree-view-entry.selected {
 	z-index: 10;
@@ -2077,11 +2077,11 @@ body.dark-mode ::-webkit-scrollbar-track:hover {
 	background-color: var(--vscode-list-inactiveSelectionBackground);
 }
 .tree-view-content:focus .tree-view-entry.selected * {
-	color: var(--vscode-list-activeSelectionForeground) !important;
-	background-color: transparent !important;
+	color: var(--vscode-list-activeSelectionForeground);
+	background-color: transparent;
 }
 .tree-view-content:focus .tree-view-entry.selected .codicon {
-	color: var(--vscode-list-activeSelectionForeground) !important;
+	color: var(--vscode-list-activeSelectionForeground);
 }
 .tree-view-content:focus .tree-view-entry.selected button.eye.toggled {
 	border-radius: 6px;
@@ -2116,7 +2116,7 @@ body.dark-mode ::-webkit-scrollbar-track:hover {
 	align-items: center;
 }
 .toolbar-button:disabled {
-	color: var(--vscode-disabledForeground) !important;
+	color: var(--vscode-disabledForeground);
 	cursor: default;
 }
 .toolbar-button:not(:disabled):hover {
@@ -2245,7 +2245,7 @@ a.call-value:hover {
 	cursor: inherit;
 }
 .list-view-entry.highlighted:not(.selected) {
-	background-color: var(--vscode-list-inactiveSelectionBackground) !important;
+	background-color: var(--vscode-list-inactiveSelectionBackground);
 }
 .list-view-entry.selected {
 	z-index: 10;
@@ -2262,11 +2262,11 @@ a.call-value:hover {
 	background-color: var(--vscode-list-inactiveSelectionBackground);
 }
 .list-view-content:focus .list-view-entry.selected * {
-	color: var(--vscode-list-activeSelectionForeground) !important;
-	background-color: transparent !important;
+	color: var(--vscode-list-activeSelectionForeground);
+	background-color: transparent;
 }
 .list-view-content:focus .list-view-entry.selected .codicon {
-	color: var(--vscode-list-activeSelectionForeground) !important;
+	color: var(--vscode-list-activeSelectionForeground);
 }
 .list-view-empty {
 	flex: auto;
@@ -3617,7 +3617,7 @@ body.dark-mode .CodeMirror span.cm-type {
 	color: var(--vscode-editorBracketHighlight-foreground3);
 }
 .CodeMirror-cursor {
-	border-left: 1px solid var(--vscode-editor-foreground) !important;
+	border-left: 1px solid var(--vscode-editor-foreground);
 }
 .CodeMirror div.CodeMirror-selected {
 	background: var(--vscode-terminal-inactiveSelectionBackground);
@@ -3636,14 +3636,14 @@ body.dark-mode .CodeMirror span.cm-type {
 }
 .CodeMirror .CodeMirror-matchingbracket {
 	background-color: var(--vscode-editorBracketPairGuide-background1);
-	color: var(--vscode-editorBracketHighlight-foreground1) !important;
+	color: var(--vscode-editorBracketHighlight-foreground1);
 }
 .CodeMirror {
-	font-family: var(--vscode-editor-font-family) !important;
-	color: var(--vscode-editor-foreground) !important;
-	background-color: var(--vscode-editor-background) !important;
-	font-weight: var(--vscode-editor-font-weight) !important;
-	font-size: var(--vscode-editor-font-size) !important;
+	font-family: var(--vscode-editor-font-family);
+	color: var(--vscode-editor-foreground);
+	background-color: var(--vscode-editor-background);
+	font-weight: var(--vscode-editor-font-weight);
+	font-size: var(--vscode-editor-font-size);
 }
 .CodeMirror .source-line-running {
 	background-color: var(--vscode-editor-selectionBackground);
@@ -3671,7 +3671,7 @@ span.cm-linkified {
 	text-decoration-style: wavy;
 }
 .CodeMirror-placeholder {
-	color: var(--vscode-input-placeholderForeground) !important;
+	color: var(--vscode-input-placeholderForeground);
 }
 .expandable {
 	flex: none;
@@ -3906,12 +3906,12 @@ span.cm-linkified {
 	text-align: center;
 }
 .tab-network .toolbar {
-	min-height: 30px !important;
-	background-color: initial !important;
+	min-height: 30px;
+	background-color: initial;
 	border-bottom: 1px solid var(--vscode-panel-border);
 }
 .tab-network .toolbar:after {
-	box-shadow: none !important;
+	box-shadow: none;
 }
 .tab-network .tabbed-pane-tab.selected {
 	font-weight: 700;
@@ -4036,10 +4036,10 @@ span.cm-linkified {
 	display: none;
 }
 .grid-view-header > .filter-positive .codicon-triangle-down {
-	display: initial !important;
+	display: initial;
 }
 .grid-view-header > .filter-negative .codicon-triangle-up {
-	display: initial !important;
+	display: initial;
 }
 .grid-view-header-cell {
 	flex: none;
