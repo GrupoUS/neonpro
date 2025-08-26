@@ -35,4 +35,22 @@ export class ProfileManager {
       last_updated: new Date().toISOString(),
     };
   }
+
+  async updatePatientProfile(patientId: string, profileData: any) {
+    // Mock implementation for build compatibility
+    return {
+      patient_id: patientId,
+      profile_data: profileData,
+      updated_at: new Date().toISOString(),
+    };
+  }
+
+  async archivePatientProfile(patientId: string) {
+    // Mock implementation for build compatibility
+    return {
+      patient_id: patientId,
+      archived: true,
+      archived_at: new Date().toISOString(),
+    };
+  }
 }

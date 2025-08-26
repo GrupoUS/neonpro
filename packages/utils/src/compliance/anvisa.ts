@@ -55,8 +55,14 @@ export class ANVISACompliance {
   classifyProcedure(data: any) {
     return this.procedureManager.classifyProcedure(data);
   }
-  validateProcedureQualifications(procedureId: string, professionalQualifications: string[]) {
-    return this.procedureManager.validateProcedureQualifications(procedureId, professionalQualifications);
+  validateProcedureQualifications(
+    procedureId: string,
+    professionalQualifications: string[],
+  ) {
+    return this.procedureManager.validateProcedureQualifications(
+      procedureId,
+      professionalQualifications,
+    );
   }
 
   // Adverse Event Management

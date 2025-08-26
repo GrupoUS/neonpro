@@ -49,7 +49,11 @@ export class PatientInsightsIntegration {
     };
   }
 
-  async updatePatientOutcome(patientId: string, treatmentId: string, outcomeData: any) {
+  async updatePatientOutcome(
+    patientId: string,
+    treatmentId: string,
+    outcomeData: any,
+  ) {
     // Mock implementation for build compatibility
     return {
       learning_insights: [],

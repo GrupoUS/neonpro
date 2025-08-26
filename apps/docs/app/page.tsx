@@ -21,7 +21,9 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-2">
               <button className="px-4 py-2 border rounded">GitHub</button>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded">Get Started</button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded">
+                Get Started
+              </button>
             </div>
           </div>
         </div>
