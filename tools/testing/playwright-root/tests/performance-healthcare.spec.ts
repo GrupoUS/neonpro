@@ -25,7 +25,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		});
 	});
 
-	test("should validate emergency access performance (<100ms requirement)", async ({ page }) => {
+	test("should validate emergency access performance (<100ms requirement)", async ({
+		page,
+	}) => {
 		// Test 1: Emergency Patient Data Access
 		const testPatient = HealthcareDataAnonymizer.generateAnonymousPatient();
 
@@ -78,45 +80,65 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		expect(contactAccessTime).toBeLessThan(100);
 
 		// Validate overall emergency workflow performance
-		await HealthcareWorkflowHelper.validateEmergencyAccess(page, testPatient.id);
+		await HealthcareWorkflowHelper.validateEmergencyAccess(
+			page,
+			testPatient.id,
+		);
 	});
 
-	test("should validate routine healthcare operations performance (<500ms requirement)", async ({ page }) => {
+	test("should validate routine healthcare operations performance (<500ms requirement)", async ({
+		page,
+	}) => {
 		// Test 1: Patient Dashboard Loading
-		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-			await page.goto("/dashboard/patients");
-			await expect(page.getByTestId("patients-dashboard")).toBeVisible();
-		});
+		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+			page,
+			async () => {
+				await page.goto("/dashboard/patients");
+				await expect(page.getByTestId("patients-dashboard")).toBeVisible();
+			},
+		);
 
 		// Test 2: Appointment Scheduling Performance
-		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-			await page.getByTestId("schedule-appointment-button").click();
-			await expect(page.getByTestId("appointment-form")).toBeVisible();
-		});
+		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+			page,
+			async () => {
+				await page.getByTestId("schedule-appointment-button").click();
+				await expect(page.getByTestId("appointment-form")).toBeVisible();
+			},
+		);
 
 		// Test 3: Treatment History Loading
-		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-			await page.getByTestId("treatment-history-tab").click();
-			await expect(page.getByTestId("treatment-history-list")).toBeVisible();
-		});
+		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+			page,
+			async () => {
+				await page.getByTestId("treatment-history-tab").click();
+				await expect(page.getByTestId("treatment-history-list")).toBeVisible();
+			},
+		);
 
 		// Test 4: Patient Search Performance
 		const testPatient = HealthcareDataAnonymizer.generateAnonymousPatient();
 
-		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-			await page.getByTestId("patient-search-input").fill(testPatient.name);
-			await page.getByTestId("search-button").click();
-			await expect(page.getByTestId("search-results")).toBeVisible();
-		});
+		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+			page,
+			async () => {
+				await page.getByTestId("patient-search-input").fill(testPatient.name);
+				await page.getByTestId("search-button").click();
+				await expect(page.getByTestId("search-results")).toBeVisible();
+			},
+		);
 
 		// Test 5: Form Submission Performance
-		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-			await page.getByTestId("new-patient-button").click();
-			await page.getByTestId("patient-name-input").fill(testPatient.name);
-			await page.getByTestId("patient-email-input").fill(testPatient.email);
-			await page.getByTestId("save-patient-button").click();
-			await expect(page.getByTestId("patient-saved-message")).toBeVisible();
-		});
+		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+			page,
+			async () => {
+				await page.getByTestId("new-patient-button").click();
+				await page.getByTestId("patient-name-input").fill(testPatient.name);
+				await page.getByTestId("patient-email-input").fill(testPatient.email);
+				await page.getByTestId("save-patient-button").click();
+				await expect(page.getByTestId("patient-saved-message")).toBeVisible();
+			},
+		);
 
 		// Test 6: Navigation Performance
 		const navigationTests = [
@@ -130,14 +152,19 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		];
 
 		for (const navTest of navigationTests) {
-			await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-				await page.goto(navTest.path);
-				await expect(page.getByTestId(navTest.testId)).toBeVisible();
-			});
+			await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+				page,
+				async () => {
+					await page.goto(navTest.path);
+					await expect(page.getByTestId(navTest.testId)).toBeVisible();
+				},
+			);
 		}
 	});
 
-	test("should validate Core Web Vitals for patient interfaces (≥95% requirement)", async ({ page }) => {
+	test("should validate Core Web Vitals for patient interfaces (≥95% requirement)", async ({
+		page,
+	}) => {
 		// Test 1: Patient Dashboard Core Web Vitals
 		await page.goto("/dashboard/patient");
 
@@ -152,7 +179,10 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 					const metrics: any = {};
 
 					entries.forEach((entry) => {
-						if (entry.entryType === "paint" && entry.name === "first-contentful-paint") {
+						if (
+							entry.entryType === "paint" &&
+							entry.name === "first-contentful-paint"
+						) {
 							metrics.fcp = entry.startTime;
 						}
 						if (entry.entryType === "largest-contentful-paint") {
@@ -164,11 +194,15 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 					});
 
 					// Add navigation timing
-					const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+					const navigation = performance.getEntriesByType(
+						"navigation",
+					)[0] as PerformanceNavigationTiming;
 					if (navigation) {
 						metrics.ttfb = navigation.responseStart - navigation.requestStart;
-						metrics.domContentLoaded = navigation.domContentLoadedEventEnd - navigation.navigationStart;
-						metrics.loadComplete = navigation.loadEventEnd - navigation.navigationStart;
+						metrics.domContentLoaded =
+							navigation.domContentLoadedEventEnd - navigation.navigationStart;
+						metrics.loadComplete =
+							navigation.loadEventEnd - navigation.navigationStart;
 					}
 
 					resolve(metrics);
@@ -180,12 +214,19 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 
 				// Fallback timeout
 				setTimeout(() => {
-					const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+					const navigation = performance.getEntriesByType(
+						"navigation",
+					)[0] as PerformanceNavigationTiming;
 					resolve({
 						ttfb: navigation?.responseStart - navigation?.requestStart || 0,
-						fcp: performance.getEntriesByName("first-contentful-paint")[0]?.startTime || 0,
-						domContentLoaded: navigation?.domContentLoadedEventEnd - navigation?.navigationStart || 0,
-						loadComplete: navigation?.loadEventEnd - navigation?.navigationStart || 0,
+						fcp:
+							performance.getEntriesByName("first-contentful-paint")[0]
+								?.startTime || 0,
+						domContentLoaded:
+							navigation?.domContentLoadedEventEnd -
+								navigation?.navigationStart || 0,
+						loadComplete:
+							navigation?.loadEventEnd - navigation?.navigationStart || 0,
 					});
 				}, 5000);
 			});
@@ -202,7 +243,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		// Test 3: Performance Under Load (Simulated)
 		const loadTestPromises = [];
 		for (let i = 0; i < 5; i++) {
-			loadTestPromises.push(page.evaluate(() => fetch("/api/patients").then((r) => r.status)));
+			loadTestPromises.push(
+				page.evaluate(() => fetch("/api/patients").then((r) => r.status)),
+			);
 		}
 
 		const startTime = Date.now();
@@ -216,7 +259,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		expect(loadTestTime).toBeLessThan(2000);
 	});
 
-	test("should validate mobile healthcare performance with accessibility", async ({ page }) => {
+	test("should validate mobile healthcare performance with accessibility", async ({
+		page,
+	}) => {
 		// Set mobile viewport for healthcare mobile testing
 		await page.setViewportSize({ width: 375, height: 667 });
 
@@ -250,15 +295,19 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		}
 
 		// Average touch response should be fast for healthcare mobile UX
-		const avgTouchResponse = touchResponses.reduce((a, b) => a + b, 0) / touchResponses.length;
+		const avgTouchResponse =
+			touchResponses.reduce((a, b) => a + b, 0) / touchResponses.length;
 
 		expect(avgTouchResponse).toBeLessThan(300);
 
 		// Test 3: Mobile Form Performance
-		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(page, async () => {
-			await page.getByTestId("mobile-quick-action-button").tap();
-			await expect(page.getByTestId("mobile-form-panel")).toBeVisible();
-		});
+		await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
+			page,
+			async () => {
+				await page.getByTestId("mobile-quick-action-button").tap();
+				await expect(page.getByTestId("mobile-form-panel")).toBeVisible();
+			},
+		);
 
 		// Test 4: Mobile Accessibility Performance
 		await page.addInitScript(() => {
@@ -281,7 +330,10 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		expect(accessibilityTestTime).toBeLessThan(500);
 	});
 
-	test("should validate performance under various network conditions", async ({ page, context }) => {
+	test("should validate performance under various network conditions", async ({
+		page,
+		context,
+	}) => {
 		// Test 1: Fast 3G Network Simulation
 		await context.route("**/*", async (route) => {
 			// Simulate Fast 3G: ~1.6 Mbps down, ~750 Kbps up, ~562ms latency
@@ -342,7 +394,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		await context.setOffline(false);
 	});
 
-	test("should validate database and API performance for healthcare operations", async ({ page }) => {
+	test("should validate database and API performance for healthcare operations", async ({
+		page,
+	}) => {
 		// Test 1: Database Query Performance
 		const dbQueries = [
 			{ endpoint: "/api/patients", operation: "Patient List" },
@@ -405,7 +459,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		expect(largeDataTime).toBeLessThan(5000);
 	});
 
-	test("should validate healthcare memory and resource usage", async ({ page }) => {
+	test("should validate healthcare memory and resource usage", async ({
+		page,
+	}) => {
 		// Test 1: Memory Usage Monitoring
 		await page.goto("/dashboard/patient");
 
@@ -437,7 +493,8 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 		});
 
 		if (initialMemory && finalMemory) {
-			const memoryIncrease = finalMemory.usedJSMemory - initialMemory.usedJSMemory;
+			const memoryIncrease =
+				finalMemory.usedJSMemory - initialMemory.usedJSMemory;
 
 			// Memory usage should not increase excessively
 			expect(memoryIncrease).toBeLessThan(50 * 1024 * 1024); // <50MB increase
@@ -448,7 +505,9 @@ test.describe("⚡ Healthcare Performance Testing - Critical Medical Workflows",
 			const images = document.images.length;
 			const scripts = document.scripts.length;
 			const stylesheets = document.styleSheets.length;
-			const eventListeners = document.querySelectorAll("*[onclick], *[onload]").length;
+			const eventListeners = document.querySelectorAll(
+				"*[onclick], *[onload]",
+			).length;
 
 			return { images, scripts, stylesheets, eventListeners };
 		});

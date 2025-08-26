@@ -7,8 +7,8 @@
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
-		"lint": "biome lint src/",
-		"format": "biome format --write .",
+		"lint": "oxlint src/",
+		"format": "dprint fmt",
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {

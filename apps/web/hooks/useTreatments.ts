@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/app/utils/supabase/client";
 import type {
 	AestheticTreatmentCategory,
@@ -11,6 +10,7 @@ import type {
 	TreatmentSession,
 	TreatmentStatus,
 } from "@/types/treatments";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type TreatmentsHook = {
 	// Treatment Plans
@@ -95,7 +95,9 @@ export function useTreatments(): TreatmentsHook {
 			setLoading(true);
 			setError(null);
 
-			let query = supabase.from("treatment_plans").select("*").order("created_at", { ascending: false });
+			let query = supabase.from("treatment_plans").select("*").order("created_at", {
+				ascending: false,
+			});
 
 			// Apply filters
 			if (searchQuery.trim()) {

@@ -63,7 +63,8 @@ export const AuditEventType = {
 	BACKUP_CREATED: "admin.backup.created",
 	BACKUP_RESTORED: "admin.backup.restored",
 } as const;
-export type AuditEventType = (typeof AuditEventType)[keyof typeof AuditEventType];
+export type AuditEventType =
+	(typeof AuditEventType)[keyof typeof AuditEventType];
 
 /**
  * Audit event severity levels
@@ -135,8 +136,17 @@ export const auditEventSchema = z.object({
 		AuditEventType.BACKUP_CREATED,
 		AuditEventType.BACKUP_RESTORED,
 	] as const),
-	severity: z.enum([AuditSeverity.INFO, AuditSeverity.WARNING, AuditSeverity.ERROR, AuditSeverity.CRITICAL] as const),
-	outcome: z.enum([AuditOutcome.SUCCESS, AuditOutcome.FAILURE, AuditOutcome.PARTIAL] as const),
+	severity: z.enum([
+		AuditSeverity.INFO,
+		AuditSeverity.WARNING,
+		AuditSeverity.ERROR,
+		AuditSeverity.CRITICAL,
+	] as const),
+	outcome: z.enum([
+		AuditOutcome.SUCCESS,
+		AuditOutcome.FAILURE,
+		AuditOutcome.PARTIAL,
+	] as const),
 	userId: z.string().uuid().optional(),
 	sessionId: z.string().uuid().optional(),
 	ipAddress: z.string().ip(),
@@ -234,7 +244,10 @@ const AUDIT_HASH_ALGORITHM = "sha256";
 /**
  * Calculate hash for audit event
  */
-export function calculateAuditHash(event: AuditEvent, previousHash?: string): string {
+export function calculateAuditHash(
+	event: AuditEvent,
+	previousHash?: string,
+): string {
 	// Create canonical representation
 	const canonical = {
 		eventType: event.eventType,
@@ -297,13 +310,18 @@ export class AuditService {
 	/**
 	 * Log audit event
 	 */
-	async logEvent(eventData: Omit<AuditEvent, "id" | "hash" | "previousHash">): Promise<string | null> {
+	async logEvent(
+		eventData: Omit<AuditEvent, "id" | "hash" | "previousHash">,
+	): Promise<string | null> {
 		if (!this.config.enabled) {
 			return null;
 		}
 
 		// Check minimum severity
-		if (this.getSeverityLevel(eventData.severity) < this.getSeverityLevel(this.config.minSeverity)) {
+		if (
+			this.getSeverityLevel(eventData.severity) <
+			this.getSeverityLevel(this.config.minSeverity)
+		) {
 			return null;
 		}
 
@@ -333,7 +351,11 @@ export class AuditService {
 	/**
 	 * Log authentication success
 	 */
-	logLoginSuccess(userId: string, ipAddress: string, userAgent?: string): Promise<string | null> {
+	logLoginSuccess(
+		userId: string,
+		ipAddress: string,
+		userAgent?: string,
+	): Promise<string | null> {
 		return this.logEvent({
 			eventType: AuditEventType.LOGIN_SUCCESS,
 			severity: AuditSeverity.INFO,
@@ -350,7 +372,12 @@ export class AuditService {
 	/**
 	 * Log authentication failure
 	 */
-	logLoginFailure(email: string, ipAddress: string, reason: string, userAgent?: string): Promise<string | null> {
+	logLoginFailure(
+		email: string,
+		ipAddress: string,
+		reason: string,
+		userAgent?: string,
+	): Promise<string | null> {
 		return this.logEvent({
 			eventType: AuditEventType.LOGIN_FAILURE,
 			severity: AuditSeverity.WARNING,
@@ -384,7 +411,8 @@ export class AuditService {
 
 		return this.logEvent({
 			eventType: eventTypeMap[action],
-			severity: action === "delete" ? AuditSeverity.WARNING : AuditSeverity.INFO,
+			severity:
+				action === "delete" ? AuditSeverity.WARNING : AuditSeverity.INFO,
 			outcome: AuditOutcome.SUCCESS,
 			userId,
 			resourceId: patientId,
@@ -408,7 +436,10 @@ export class AuditService {
 		ipAddress: string;
 	}): Promise<string | null> {
 		const { userId, patientId, action, purpose, ipAddress } = options;
-		const eventType = action === "given" ? AuditEventType.CONSENT_GIVEN : AuditEventType.CONSENT_WITHDRAWN;
+		const eventType =
+			action === "given"
+				? AuditEventType.CONSENT_GIVEN
+				: AuditEventType.CONSENT_WITHDRAWN;
 
 		return this.logEvent({
 			eventType,
@@ -436,7 +467,8 @@ export class AuditService {
 		userId?: string;
 		details?: Record<string, unknown>;
 	}): Promise<string | null> {
-		const { eventType, severity, description, ipAddress, userId, details } = options;
+		const { eventType, severity, description, ipAddress, userId, details } =
+			options;
 		return this.logEvent({
 			eventType,
 			severity,
@@ -461,7 +493,14 @@ export class AuditService {
 		ipAddress?: string;
 		details?: Record<string, unknown>;
 	}): Promise<string | null> {
-		const { description, affectedRecords, severity, userId, ipAddress, details } = options;
+		const {
+			description,
+			affectedRecords,
+			severity,
+			userId,
+			ipAddress,
+			details,
+		} = options;
 		const severityMap = {
 			low: AuditSeverity.WARNING,
 			medium: AuditSeverity.WARNING,
@@ -508,7 +547,10 @@ export class AuditService {
 	/**
 	 * Verify audit chain integrity
 	 */
-	async verifyIntegrity(startDate?: Date, endDate?: Date): Promise<{ valid: boolean; brokenAt?: number }> {
+	async verifyIntegrity(
+		startDate?: Date,
+		endDate?: Date,
+	): Promise<{ valid: boolean; brokenAt?: number }> {
 		const events = await this.getEvents({
 			startDate,
 			endDate,

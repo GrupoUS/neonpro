@@ -11,7 +11,9 @@ import { logger } from "../../../../utils/logger";
 
 // Mock deployment utilities
 class DeploymentValidator {
-	async validateEnvironmentVariables(requiredVars: string[]): Promise<{ valid: boolean; missing: string[] }> {
+	async validateEnvironmentVariables(
+		requiredVars: string[],
+	): Promise<{ valid: boolean; missing: string[] }> {
 		const missing = requiredVars.filter((variable) => !process.env[variable]);
 		return { valid: missing.length === 0, missing };
 	}
@@ -22,7 +24,9 @@ class DeploymentValidator {
 	}> {
 		const start = performance.now();
 		// Simulate database connection check
-		await new Promise((resolve) => setTimeout(resolve, Math.random() * 20 + 10));
+		await new Promise((resolve) =>
+			setTimeout(resolve, Math.random() * 20 + 10),
+		);
 		const latency = performance.now() - start;
 		return { connected: true, latency };
 	}
@@ -35,7 +39,9 @@ class DeploymentValidator {
 
 		for (const service of services) {
 			const start = performance.now();
-			await new Promise((resolve) => setTimeout(resolve, Math.random() * 30 + 10));
+			await new Promise((resolve) =>
+				setTimeout(resolve, Math.random() * 30 + 10),
+			);
 			results[service] = {
 				status: "healthy",
 				responseTime: performance.now() - start,
@@ -67,7 +73,11 @@ class BuildValidator {
 		artifacts: string[];
 		issues: string[];
 	}> {
-		const artifacts = ["apps/api/dist/index.js", "apps/web/.next/BUILD_ID", "packages/shared/dist/index.js"];
+		const artifacts = [
+			"apps/api/dist/index.js",
+			"apps/web/.next/BUILD_ID",
+			"packages/shared/dist/index.js",
+		];
 
 		const issues: string[] = [];
 
@@ -172,11 +182,17 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			expect(result.sizes["web-bundle.js"]).toBeDefined();
 
 			// Bundle sizes should be reasonable for healthcare app
-			const webBundleSize = Number.parseInt(result.sizes["web-bundle.js"].replace(/[^\d]/g, ""), 10);
+			const webBundleSize = Number.parseInt(
+				result.sizes["web-bundle.js"].replace(/[^\d]/g, ""),
+				10,
+			);
 			expect(webBundleSize).toBeLessThan(1500); // Under 1.5MB for main bundle
 
 			if (!result.optimized) {
-				logger.info("Bundle optimization recommendations:", result.recommendations);
+				logger.info(
+					"Bundle optimization recommendations:",
+					result.recommendations,
+				);
 			}
 		});
 
@@ -213,7 +229,8 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 				"ENCRYPTION_KEY",
 			];
 
-			const result = await deploymentValidator.validateEnvironmentVariables(requiredVars);
+			const result =
+				await deploymentValidator.validateEnvironmentVariables(requiredVars);
 
 			expect(result.valid).toBe(true);
 			expect(result.missing.length).toBe(0);
@@ -281,7 +298,12 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 		});
 
 		it("should validate API endpoints are responding", async () => {
-			const endpoints = ["/api/health", "/api/auth/session", "/api/patients", "/api/appointments"];
+			const endpoints = [
+				"/api/health",
+				"/api/auth/session",
+				"/api/patients",
+				"/api/appointments",
+			];
 
 			for (const endpoint of endpoints) {
 				const response = await fetch(`http://localhost:3000${endpoint}`, {
@@ -325,7 +347,10 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 	describe("Security Configuration Validation", () => {
 		it("should validate CORS configuration for healthcare compliance", async () => {
 			const corsConfig = {
-				allowed_origins: ["https://neonpro.health", "https://app.neonpro.health"],
+				allowed_origins: [
+					"https://neonpro.health",
+					"https://app.neonpro.health",
+				],
 				allowed_methods: ["GET", "POST", "PUT", "DELETE"],
 				allowed_headers: ["Authorization", "Content-Type"],
 				credentials_allowed: true,
@@ -333,7 +358,11 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			};
 
 			expect(corsConfig.allowed_origins.length).toBeGreaterThan(0);
-			expect(corsConfig.allowed_origins.every((origin) => origin.startsWith("https://"))).toBe(true);
+			expect(
+				corsConfig.allowed_origins.every((origin) =>
+					origin.startsWith("https://"),
+				),
+			).toBe(true);
 			expect(corsConfig.credentials_allowed).toBe(true);
 		});
 
@@ -431,7 +460,10 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 			expect(rollbackTest.database_schema_compatible).toBe(true);
 			expect(rollbackTest.data_migration_reversible).toBe(true);
 
-			const rollbackTimeMinutes = Number.parseInt(rollbackTest.rollback_time, 10);
+			const rollbackTimeMinutes = Number.parseInt(
+				rollbackTest.rollback_time,
+				10,
+			);
 			expect(rollbackTimeMinutes).toBeLessThan(10); // Under 10 minutes
 		});
 
@@ -513,9 +545,15 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 				error_rate_alert: "1%",
 			};
 
-			expect(Number.parseInt(resourceMonitoring.cpu_usage_alert, 10)).toBeLessThan(90);
-			expect(Number.parseInt(resourceMonitoring.memory_usage_alert, 10)).toBeLessThan(90);
-			expect(Number.parseInt(resourceMonitoring.disk_usage_alert, 10)).toBeLessThan(95);
+			expect(
+				Number.parseInt(resourceMonitoring.cpu_usage_alert, 10),
+			).toBeLessThan(90);
+			expect(
+				Number.parseInt(resourceMonitoring.memory_usage_alert, 10),
+			).toBeLessThan(90);
+			expect(
+				Number.parseInt(resourceMonitoring.disk_usage_alert, 10),
+			).toBeLessThan(95);
 		});
 	});
 
@@ -584,13 +622,23 @@ describe("Production Deployment Validation Tests - Final Readiness", () => {
 				},
 			};
 
-			expect(Number.parseInt(loadTestResults.average_response_time, 10)).toBeLessThan(100);
-			expect(Number.parseInt(loadTestResults.p95_response_time, 10)).toBeLessThan(200);
+			expect(
+				Number.parseInt(loadTestResults.average_response_time, 10),
+			).toBeLessThan(100);
+			expect(
+				Number.parseInt(loadTestResults.p95_response_time, 10),
+			).toBeLessThan(200);
 			expect(Number.parseFloat(loadTestResults.error_rate)).toBeLessThan(0.1);
-			expect(Number.parseInt(loadTestResults.throughput.split(" ")[0], 10)).toBeGreaterThan(1000);
+			expect(
+				Number.parseInt(loadTestResults.throughput.split(" ")[0], 10),
+			).toBeGreaterThan(1000);
 
-			expect(Number.parseInt(loadTestResults.resource_utilization.cpu, 10)).toBeLessThan(80);
-			expect(Number.parseInt(loadTestResults.resource_utilization.memory, 10)).toBeLessThan(85);
+			expect(
+				Number.parseInt(loadTestResults.resource_utilization.cpu, 10),
+			).toBeLessThan(80);
+			expect(
+				Number.parseInt(loadTestResults.resource_utilization.memory, 10),
+			).toBeLessThan(85);
 		});
 
 		it("should validate failover and recovery under load", async () => {

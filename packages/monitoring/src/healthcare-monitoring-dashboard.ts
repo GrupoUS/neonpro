@@ -177,6 +177,7 @@ export type QualityMetrics = {
  * Real-time Healthcare Monitoring Dashboard
  * Provides comprehensive monitoring for NEONPRO Healthcare SaaS
  */
+
 export class HealthcareMonitoringDashboard {
 	private readonly metrics: HealthcareMetrics;
 	private readonly alertThresholds: AlertThresholds;
@@ -216,6 +217,7 @@ export class HealthcareMonitoringDashboard {
 	} /**
 	 * Collect all metrics from various sources
 	 */
+
 	private async collectMetrics(): Promise<void> {
 		try {
 			// Collect system health metrics
@@ -261,6 +263,7 @@ export class HealthcareMonitoringDashboard {
 	} /**
 	 * Generate comprehensive monitoring reports
 	 */
+
 	private generateReports(): void {
 		const report: MonitoringReport = {
 			timestamp: new Date().toISOString(),

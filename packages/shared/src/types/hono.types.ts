@@ -19,11 +19,13 @@ export type AuthContext = {
 export type NeonProContext = Context;
 
 // Hono Route Handler type with our context
-export type NeonProHandler<T = unknown> = (c: NeonProContext) => Promise<Response> | Response | Promise<T> | T;
+export type NeonProHandler<T = unknown> = (
+	c: NeonProContext,
+) => Promise<Response> | Response | Promise<T> | T;
 
 // Validated route handler with Zod
 export type ValidatedHandler<TInput = unknown, TOutput = unknown> = (
-	c: NeonProContext & { req: { valid: (target: string) => TInput } }
+	c: NeonProContext & { req: { valid: (target: string) => TInput } },
 ) => Promise<ApiResponse<TOutput>> | ApiResponse<TOutput>;
 
 // Route configuration for type inference
@@ -31,7 +33,9 @@ export type RouteConfig<TInput = unknown, TOutput = unknown> = {
 	method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 	path: string;
 	handler: ValidatedHandler<TInput, TOutput>;
-	middleware?: Array<(c: NeonProContext, next: () => Promise<void>) => Promise<void>>;
+	middleware?: Array<
+		(c: NeonProContext, next: () => Promise<void>) => Promise<void>
+	>;
 	validation?: {
 		body?: any; // Zod schema
 		query?: any; // Zod schema
@@ -54,8 +58,12 @@ export type RouteConfig<TInput = unknown, TOutput = unknown> = {
 };
 
 // Hono App Type inference helpers
-export type ExtractRouteInput<T> = T extends RouteConfig<infer I, any> ? I : never;
-export type ExtractRouteOutput<T> = T extends RouteConfig<any, infer O> ? O : never;
+export type ExtractRouteInput<T> = T extends RouteConfig<infer I, any>
+	? I
+	: never;
+export type ExtractRouteOutput<T> = T extends RouteConfig<any, infer O>
+	? O
+	: never;
 
 // RPC Client types for frontend
 export type RpcClient = {
@@ -467,7 +475,10 @@ export type RpcError = {
 // Type guard for RPC responses
 export const isRpcError = (response: unknown): response is RpcError => {
 	return (
-		typeof response === "object" && response !== null && "success" in response && (response as any).success === false
+		typeof response === "object" &&
+		response !== null &&
+		"success" in response &&
+		(response as any).success === false
 	);
 };
 

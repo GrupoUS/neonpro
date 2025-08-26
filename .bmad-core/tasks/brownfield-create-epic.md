@@ -4,7 +4,9 @@
 
 ## Purpose
 
-Create a single epic for smaller brownfield enhancements that don't require the full PRD and Architecture documentation process. This task is for isolated features or modifications that can be completed within a focused scope.
+Create a single epic for smaller brownfield enhancements that don't require the full PRD and
+Architecture documentation process. This task is for isolated features or modifications that can be
+completed within a focused scope.
 
 ## When to Use This Task
 

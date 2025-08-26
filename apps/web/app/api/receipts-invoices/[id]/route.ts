@@ -1,7 +1,7 @@
+import { ReceiptInvoiceManager } from "@/lib/payments/receipts/receipt-invoice-manager";
 import { createClient } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { ReceiptInvoiceManager } from "@/lib/payments/receipts/receipt-invoice-manager";
 
 // Validation schemas
 const SendEmailSchema = z.object({
@@ -223,7 +223,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 				const document = await manager.getDocument(documentId);
 
 				if (document.type !== "invoice") {
-					return NextResponse.json({ error: "NFSe can only be generated for invoices" }, { status: 400 });
+					return NextResponse.json(
+						{ error: "NFSe can only be generated for invoices" },
+						{
+							status: 400,
+						}
+					);
 				}
 
 				const result = await manager.generateNFSe(document.data);

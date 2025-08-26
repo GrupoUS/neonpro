@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { PredictiveAnalyticsService } from "@/app/lib/services/predictive-analytics";
+import { type NextRequest, NextResponse } from "next/server";
 
 const service = new PredictiveAnalyticsService();
 

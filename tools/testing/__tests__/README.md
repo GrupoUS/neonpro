@@ -1,6 +1,7 @@
 # NeonPro Test Suite
 
-Este diretório contém a suite de testes completa do NeonPro, seguindo os padrões VIBECODE V1.0 com cobertura mínima de 80%.
+Este diretório contém a suite de testes completa do NeonPro, seguindo os padrões VIBECODE V1.0 com
+cobertura mínima de 80%.
 
 ## 📋 Estrutura de Testes
 

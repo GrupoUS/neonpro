@@ -3,7 +3,9 @@ const https = require("node:https");
 require("dotenv").config({ path: "../.env.local" });
 
 // Configurações do Supabase - USAR VARIÁVEIS DE AMBIENTE
-const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1]?.split(".")[0] || "gfkskrkbnawkuppazkpt";
+const projectRef =
+	process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1]?.split(".")[0] ||
+	"gfkskrkbnawkuppazkpt";
 const accessToken = process.env.SUPABASE_ACCESS_TOKEN;
 
 // Ler o arquivo SQL

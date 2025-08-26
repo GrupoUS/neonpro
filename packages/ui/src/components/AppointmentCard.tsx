@@ -1,4 +1,12 @@
-import { AlertCircle, Calendar, CheckCircle, Clock, MapPin, User, X } from "lucide-react";
+import {
+	AlertCircle,
+	Calendar,
+	CheckCircle,
+	Clock,
+	MapPin,
+	User,
+	X,
+} from "lucide-react";
 import * as React from "react";
 import { cn } from "../utils/cn";
 import { formatDate } from "../utils/formatters";
@@ -15,7 +23,13 @@ export type AppointmentData = {
 	description?: string;
 	startTime: string;
 	endTime: string;
-	status: "scheduled" | "confirmed" | "in-progress" | "completed" | "cancelled" | "no-show";
+	status:
+		| "scheduled"
+		| "confirmed"
+		| "in-progress"
+		| "completed"
+		| "cancelled"
+		| "no-show";
 	type: "consultation" | "procedure" | "follow-up" | "emergency";
 	practitioner?: string;
 	room?: string;
@@ -88,7 +102,10 @@ const getTypeIcon = (appointmentType: string) => {
 			return <User className="h-4 w-4" />;
 	}
 };
-const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps>(
+const AppointmentCard = React.forwardRef<
+	HTMLButtonElement,
+	AppointmentCardProps
+>(
 	(
 		{
 			appointment,
@@ -104,7 +121,7 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 			onClick,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const {
 			patientName,
@@ -126,7 +143,9 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 
 		const startDate = new Date(startTime);
 		const endDate = new Date(endTime);
-		const duration = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
+		const duration = Math.round(
+			(endDate.getTime() - startDate.getTime()) / (1000 * 60),
+		);
 
 		const isToday = startDate.toDateString() === new Date().toDateString();
 		const isPast = startDate < new Date();
@@ -187,7 +206,7 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 					isInProgress && "ring-2 ring-blue-500 ring-opacity-50",
 					isUrgent && "border-red-200",
 					onClick && "cursor-pointer",
-					className
+					className,
 				)}
 				onClick={onClick}
 				ref={ref}
@@ -206,10 +225,17 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 					<div className="min-w-0 flex-1">
 						<div className="flex items-start justify-between gap-2">
 							<div>
-								<h3 className={cn("truncate font-medium", compact ? "text-sm" : "text-base")}>
+								<h3
+									className={cn(
+										"truncate font-medium",
+										compact ? "text-sm" : "text-base",
+									)}
+								>
 									{showPatientInfo ? patientName : title}
 								</h3>
-								<p className="truncate text-muted-foreground text-sm">{showPatientInfo ? title : patientName}</p>
+								<p className="truncate text-muted-foreground text-sm">
+									{showPatientInfo ? title : patientName}
+								</p>
 							</div>
 
 							<div className="flex items-center gap-2">
@@ -234,7 +260,7 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 							<span
 								className={cn(
 									isToday ? "font-medium text-primary" : "",
-									isPast && status === "scheduled" ? "text-red-600" : ""
+									isPast && status === "scheduled" ? "text-red-600" : "",
 								)}
 							>
 								{formatTime(startTime)} - {formatTime(endTime)}
@@ -271,7 +297,11 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 				{/* Description/Notes */}
 				{!compact && (description || notes) && (
 					<div className="mt-3 border-t pt-3">
-						{description && <p className="mb-2 text-muted-foreground text-sm">{description}</p>}
+						{description && (
+							<p className="mb-2 text-muted-foreground text-sm">
+								{description}
+							</p>
+						)}
 						{notes && (
 							<p className="text-muted-foreground text-xs">
 								<strong>Observações:</strong> {notes}
@@ -363,10 +393,14 @@ const AppointmentCard = React.forwardRef<HTMLButtonElement, AppointmentCardProps
 					)}
 				</div>
 				{/* Date Display for Non-Today Appointments */}
-				{!isToday && <div className="mt-2 text-muted-foreground text-xs">{formatDate(startTime)}</div>}
+				{!isToday && (
+					<div className="mt-2 text-muted-foreground text-xs">
+						{formatDate(startTime)}
+					</div>
+				)}
 			</button>
 		);
-	}
+	},
 );
 
 AppointmentCard.displayName = "AppointmentCard";

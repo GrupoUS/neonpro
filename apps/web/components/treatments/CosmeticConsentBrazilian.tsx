@@ -1,8 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle, FileText, Info, Lock, Shield, Signature, X } from "lucide-react";
-import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +19,9 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import type { PatientConsent, TreatmentPlan } from "@/types/treatments";
+import { motion } from "framer-motion";
+import { AlertTriangle, CheckCircle, FileText, Info, Lock, Shield, Signature, X } from "lucide-react";
+import { useState } from "react";
 
 // Visual components maintaining NeonPro design
 type NeonGradientCardProps = {

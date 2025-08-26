@@ -285,5 +285,7 @@ export const CreateDiscountSchema = z.object({
 export type CreateInvoiceData = z.infer<typeof CreateInvoiceSchema>;
 export type CreatePaymentData = z.infer<typeof CreatePaymentSchema>;
 export type CreatePaymentPlanData = z.infer<typeof CreatePaymentPlanSchema>;
-export type CreateTreatmentPackageData = z.infer<typeof CreateTreatmentPackageSchema>;
+export type CreateTreatmentPackageData = z.infer<
+	typeof CreateTreatmentPackageSchema
+>;
 export type CreateDiscountData = z.infer<typeof CreateDiscountSchema>;

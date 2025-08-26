@@ -8,7 +8,7 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
-import { type ModelPerformanceMetrics, modelManager } from "./model-management";
+import { modelManager, type ModelPerformanceMetrics } from "./model-management";
 
 interface PatientProfile {
 	id: string;
@@ -519,4 +519,4 @@ export class NoShowEngine {
 // Singleton instance
 export const noShowEngine = new NoShowEngine();
 
-export type { PatientProfile, AppointmentFeatures, NoShowPrediction };
+export type { AppointmentFeatures, NoShowPrediction, PatientProfile };

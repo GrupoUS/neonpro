@@ -4,10 +4,10 @@
 // API endpoints for patient-specific retention metrics
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -87,7 +87,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			.single();
 
 		if (patientError || !patient) {
-			return NextResponse.json({ error: "Patient not found or does not belong to clinic" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Patient not found or does not belong to clinic" },
+				{
+					status: 404,
+				}
+			);
 		}
 
 		// Get retention metrics
@@ -173,13 +178,23 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			.single();
 
 		if (patientError || !patient) {
-			return NextResponse.json({ error: "Patient not found or does not belong to clinic" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Patient not found or does not belong to clinic" },
+				{
+					status: 404,
+				}
+			);
 		}
 
 		// Check if user has permission to calculate metrics
 		const allowedRoles = ["admin", "manager", "analyst"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json({ error: "Insufficient permissions to calculate metrics" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions to calculate metrics" },
+				{
+					status: 403,
+				}
+			);
 		}
 
 		// Calculate retention metrics

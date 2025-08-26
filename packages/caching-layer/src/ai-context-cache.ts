@@ -20,7 +20,7 @@ export class AIContextCacheLayer implements CacheOperation {
 			compressionEnabled: true,
 			targetHitRate: 95, // 95%+ target
 			contextRetention: true,
-		}
+		},
 	) {
 		this.initializeUpstash();
 	}
@@ -58,7 +58,9 @@ export class AIContextCacheLayer implements CacheOperation {
 
 			this.stats.hits++;
 			this.updateStats(startTime);
-			return this.config.compressionEnabled ? this.decompress(parsed.value) : parsed.value;
+			return this.config.compressionEnabled
+				? this.decompress(parsed.value)
+				: parsed.value;
 		} catch (_error) {
 			this.stats.misses++;
 			this.updateStats(startTime);
@@ -75,15 +77,20 @@ export class AIContextCacheLayer implements CacheOperation {
 			importance: "low" | "medium" | "high" | "critical";
 			userId?: string;
 			sessionId?: string;
-		}
+		},
 	): Promise<void> {
 		try {
-			const effectiveTTL = Math.min(ttl || this.config.defaultTTL, this.config.maxTTL);
+			const effectiveTTL = Math.min(
+				ttl || this.config.defaultTTL,
+				this.config.maxTTL,
+			);
 
 			// Adjust TTL based on importance and context type
 			const adjustedTTL = this.adjustTTLForContext(effectiveTTL, metadata);
 
-			const processedValue = this.config.compressionEnabled ? this.compress(value) : value;
+			const processedValue = this.config.compressionEnabled
+				? this.compress(value)
+				: value;
 
 			const cacheEntry = {
 				value: processedValue,
@@ -93,7 +100,11 @@ export class AIContextCacheLayer implements CacheOperation {
 				lastAccess: Date.now(),
 			};
 
-			await this.redis.setex(this.buildKey(key), adjustedTTL, JSON.stringify(cacheEntry));
+			await this.redis.setex(
+				this.buildKey(key),
+				adjustedTTL,
+				JSON.stringify(cacheEntry),
+			);
 
 			// Track context patterns for optimization
 			if (this.config.contextRetention) {
@@ -118,7 +129,10 @@ export class AIContextCacheLayer implements CacheOperation {
 	}
 
 	async getStats(): Promise<CacheStats> {
-		this.stats.hitRate = this.stats.totalRequests > 0 ? (this.stats.hits / this.stats.totalRequests) * 100 : 0;
+		this.stats.hitRate =
+			this.stats.totalRequests > 0
+				? (this.stats.hits / this.stats.totalRequests) * 100
+				: 0;
 		return { ...this.stats };
 	}
 
@@ -129,7 +143,9 @@ export class AIContextCacheLayer implements CacheOperation {
 				const cached = await this.redis.get(key);
 				if (cached) {
 					const parsed = JSON.parse(cached);
-					if (parsed.metadata?.tags?.some((tag: string) => tags.includes(tag))) {
+					if (
+						parsed.metadata?.tags?.some((tag: string) => tags.includes(tag))
+					) {
 						await this.redis.del(key);
 					}
 				}
@@ -189,7 +205,10 @@ export class AIContextCacheLayer implements CacheOperation {
 		} catch (_error) {}
 	}
 
-	private async trackContextPattern(key: string, metadata?: any): Promise<void> {
+	private async trackContextPattern(
+		key: string,
+		metadata?: any,
+	): Promise<void> {
 		if (!metadata) {
 			return;
 		}
@@ -203,7 +222,7 @@ export class AIContextCacheLayer implements CacheOperation {
 					created: Date.now(),
 					importance: metadata.importance,
 					userId: metadata.userId,
-				})
+				}),
 			);
 		} catch (_error) {}
 	}
@@ -230,11 +249,18 @@ export class AIContextCacheLayer implements CacheOperation {
 		}
 
 		this.stats.averageResponseTime =
-			this.responseTimeBuffer.reduce((a, b) => a + b, 0) / this.responseTimeBuffer.length;
+			this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+			this.responseTimeBuffer.length;
 	}
 
 	private resetStats(): void {
-		this.stats = { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 };
+		this.stats = {
+			hits: 0,
+			misses: 0,
+			hitRate: 0,
+			totalRequests: 0,
+			averageResponseTime: 0,
+		};
 		this.responseTimeBuffer = [];
 	}
 

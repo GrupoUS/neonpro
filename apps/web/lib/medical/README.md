@@ -2,7 +2,10 @@
 
 ## 📋 Visão Geral
 
-O Sistema de Histórico Médico e Registros do NeonPro é uma solução completa e segura para gerenciamento de informações médicas, projetada especificamente para clínicas estéticas. O sistema oferece funcionalidades avançadas de armazenamento, versionamento, assinatura digital e conformidade com a LGPD.
+O Sistema de Histórico Médico e Registros do NeonPro é uma solução completa e segura para
+gerenciamento de informações médicas, projetada especificamente para clínicas estéticas. O sistema
+oferece funcionalidades avançadas de armazenamento, versionamento, assinatura digital e conformidade
+com a LGPD.
 
 ## ✨ Funcionalidades Principais
 
@@ -159,7 +162,7 @@ const result = await manager.createMedicalRecord(
       estimatedCost: 2500,
     },
   },
-  'user-789'
+  'user-789',
 );
 
 if (result.success) {
@@ -188,7 +191,7 @@ const result = await docManager.uploadDocument(
     tags: ['pre-op', 'blood'],
     accessLevel: 'restricted',
   },
-  'user-789'
+  'user-789',
 );
 ```
 
@@ -266,7 +269,7 @@ const form = await consentManager.createForm(
     dataCategories: ['personal_data', 'health_data'],
     retentionPeriod: 20,
   },
-  'user-789'
+  'user-789',
 );
 ```
 
@@ -478,7 +481,8 @@ Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICEN
 
 ## 🤝 Contribuição
 
-Contribuições são bem-vindas! Por favor, leia o [CONTRIBUTING.md](CONTRIBUTING.md) para detalhes sobre nosso código de conduta e processo de submissão de pull requests.
+Contribuições são bem-vindas! Por favor, leia o [CONTRIBUTING.md](CONTRIBUTING.md) para detalhes
+sobre nosso código de conduta e processo de submissão de pull requests.
 
 ---
 

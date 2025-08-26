@@ -1227,7 +1227,10 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 											<Switch
 												checked={aiState.featureFlags.aiInsights}
 												onCheckedChange={(checked) =>
-													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { aiInsights: checked } })
+													aiDispatch({
+														type: "UPDATE_FEATURE_FLAGS",
+														payload: { aiInsights: checked },
+													})
 												}
 											/>
 											<label className="text-sm">AI Insights</label>
@@ -1236,7 +1239,10 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 											<Switch
 												checked={aiState.featureFlags.predictiveAnalytics}
 												onCheckedChange={(checked) =>
-													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { predictiveAnalytics: checked } })
+													aiDispatch({
+														type: "UPDATE_FEATURE_FLAGS",
+														payload: { predictiveAnalytics: checked },
+													})
 												}
 											/>
 											<label className="text-sm">Análise Preditiva</label>
@@ -1245,7 +1251,10 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 											<Switch
 												checked={aiState.featureFlags.realTimeAlerts}
 												onCheckedChange={(checked) =>
-													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { realTimeAlerts: checked } })
+													aiDispatch({
+														type: "UPDATE_FEATURE_FLAGS",
+														payload: { realTimeAlerts: checked },
+													})
 												}
 											/>
 											<label className="text-sm">Alertas em Tempo Real</label>
@@ -1254,7 +1263,10 @@ export default function NeonProHealthcareDashboard({ userId, tenantId }: NeonPro
 											<Switch
 												checked={aiState.featureFlags.smartMetrics}
 												onCheckedChange={(checked) =>
-													aiDispatch({ type: "UPDATE_FEATURE_FLAGS", payload: { smartMetrics: checked } })
+													aiDispatch({
+														type: "UPDATE_FEATURE_FLAGS",
+														payload: { smartMetrics: checked },
+													})
 												}
 											/>
 											<label className="text-sm">Métricas Inteligentes</label>

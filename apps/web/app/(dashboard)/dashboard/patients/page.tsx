@@ -1,12 +1,12 @@
 "use client";
 
-import { Calendar, Mail, Phone, Plus, Search, Users } from "lucide-react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePatients } from "@/hooks/usePatients";
+import { Calendar, Mail, Phone, Plus, Search, Users } from "lucide-react";
+import { useState } from "react";
 
 export default function PatientsPage() {
 	const { patients, loading, error, searchPatients, totalCount } = usePatients();

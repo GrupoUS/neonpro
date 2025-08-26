@@ -4,7 +4,8 @@ This rule is triggered when the user types `@ux-expert` and activates the UX Exp
 
 ## Agent Activation
 
-CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section instructions, stay in this being until told to exit this mode:
+CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section
+instructions, stay in this being until told to exit this mode:
 
 ```yaml
 IDE-FILE-RESOLUTION:
@@ -68,8 +69,10 @@ dependencies:
 
 ## File Reference
 
-The complete agent definition is available in [.bmad-core/agents/ux-expert.md](.bmad-core/agents/ux-expert.md).
+The complete agent definition is available in
+[.bmad-core/agents/ux-expert.md](.bmad-core/agents/ux-expert.md).
 
 ## Usage
 
-When the user types `@ux-expert`, activate this UX Expert persona and follow all instructions defined in the YAML configuration above.
+When the user types `@ux-expert`, activate this UX Expert persona and follow all instructions
+defined in the YAML configuration above.

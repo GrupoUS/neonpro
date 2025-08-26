@@ -3,6 +3,7 @@
 ## 🚨 Quick Diagnostics
 
 ### ✅ **Immediate Validation Checklist**
+
 Run these commands to validate your workflow setup:
 
 ```bash
@@ -29,26 +30,31 @@ ls -la .github/workflows/
 ## 🐛 Common Issues & Solutions
 
 ### 1. 🚫 **PNPM Version Mismatch**
+
 **Error**: `pnpm/action-setup@v4 requires PNPM 9+`
 
 **Solution**:
+
 ```yaml
 # In workflow file, ensure:
 - name: 📦 Setup PNPM
   uses: pnpm/action-setup@v4
   with:
-    version: 9  # or latest
+    version: 9 # or latest
 ```
 
 **Local fix**:
+
 ```bash
 npm install -g pnpm@latest
 ```
 
 ### 2. 🔒 **Permission Denied Errors**
+
 **Error**: `Resource not accessible by integration`
 
 **Solution**: Update repository settings
+
 ```yaml
 permissions:
   contents: read
@@ -59,19 +65,23 @@ permissions:
 ```
 
 **Repository Settings**:
+
 1. Go to Settings → Actions → General
 2. Set "Workflow permissions" to "Read and write permissions"
 3. Enable "Allow GitHub Actions to create and approve pull requests"
 
 ### 3. 🏥 **Healthcare Compliance Script Missing**
+
 **Error**: `scripts/anvisa-validation.js not found`
 
 **Solution**: Create compliance scripts
+
 ```bash
 mkdir -p scripts
 ```
 
 Create `scripts/anvisa-validation.js`:
+
 ```javascript
 #!/usr/bin/env node
 console.log('🏥 ANVISA compliance validation...');
@@ -81,6 +91,7 @@ process.exit(0);
 ```
 
 Create `scripts/cfm-compliance.js`:
+
 ```javascript
 #!/usr/bin/env node
 console.log('👨‍⚕️ CFM compliance validation...');
@@ -90,14 +101,17 @@ process.exit(0);
 ```
 
 Make them executable:
+
 ```bash
 chmod +x scripts/*.js
 ```
 
 ### 4. 🔄 **Cache Issues**
+
 **Error**: `Cache restore failed`
 
 **Solution**: Clear and rebuild cache
+
 ```yaml
 # Add cache busting when needed
 cache-dependency-path: |
@@ -108,14 +122,17 @@ cache-dependency-path: |
 ```
 
 **Manual cache clearing**:
+
 1. Go to Actions → Caches
 2. Delete old caches
 3. Re-run workflow
 
 ### 5. 🧪 **Test Failures**
+
 **Error**: `Tests failed in CI but pass locally`
 
 **Solutions**:
+
 ```bash
 # 1. Run tests with CI environment
 CI=true npm test
@@ -128,23 +145,27 @@ npm test -- --testTimeout=30000
 ```
 
 ### 6. 🏗️ **Build Failures**
+
 **Error**: `Build failed with out of memory`
 
 **Solution**: Optimize build process
+
 ```yaml
 # In workflow, add memory limits
 env:
-  NODE_OPTIONS: '--max-old-space-size=4096'
+  NODE_OPTIONS: "--max-old-space-size=4096"
   NEXT_TELEMETRY_DISABLED: 1
 ```
 
 ### 7. 🔍 **Matrix Strategy Issues**
+
 **Error**: `Matrix job failed`
 
 **Solution**: Add error handling
+
 ```yaml
 strategy:
-  fail-fast: false  # Continue other jobs if one fails
+  fail-fast: false # Continue other jobs if one fails
   matrix:
     node-version: [18, 20]
     include:
@@ -192,9 +213,9 @@ strategy:
    ```yaml
    - name: ⏱️ Job Timer Start
      run: echo "start_time=$(date +%s)" >> $GITHUB_ENV
-   
+
    # ... your job steps ...
-   
+
    - name: ⏱️ Job Timer End
      run: |
        end_time=$(date +%s)
@@ -206,7 +227,7 @@ strategy:
    ```bash
    # Use pnpm for faster installs
    pnpm install --frozen-lockfile --prefer-offline
-   
+
    # Remove unnecessary devDependencies in production builds
    pnpm prune --prod
    ```
@@ -241,26 +262,27 @@ strategy:
 4. **Flaky Test Rate**: `< 5%`
 
 ### 📊 **Monitoring Script**
+
 Create `.github/scripts/monitor-workflows.js`:
+
 ```javascript
 #!/usr/bin/env node
 const { Octokit } = require('@octokit/rest');
 
 async function monitorWorkflows() {
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-  
+
   const { data: runs } = await octokit.rest.actions.listWorkflowRuns({
     owner: process.env.GITHUB_REPOSITORY_OWNER,
     repo: process.env.GITHUB_REPOSITORY.split('/')[1],
-    per_page: 100
+    per_page: 100,
   });
-  
-  const successRate = runs.workflow_runs.filter(run => 
-    run.conclusion === 'success'
-  ).length / runs.workflow_runs.length * 100;
-  
+
+  const successRate = runs.workflow_runs.filter(run => run.conclusion === 'success').length
+    / runs.workflow_runs.length * 100;
+
   console.log(`Workflow Success Rate: ${successRate.toFixed(2)}%`);
-  
+
   if (successRate < 95) {
     console.log('⚠️ Workflow success rate below threshold!');
     process.exit(1);
@@ -310,6 +332,7 @@ monitorWorkflows().catch(console.error);
 ## 📞 **Getting Help**
 
 ### 🔍 **Diagnostic Information**
+
 When requesting help, provide:
 
 ```bash
@@ -335,6 +358,7 @@ gh run list --limit 5 >> diagnostic-report.txt
 ```
 
 ### 📚 **Additional Resources**
+
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [PNPM Documentation](https://pnpm.io/)
 - [NeonPro Project Documentation](../docs/)
@@ -342,6 +366,6 @@ gh run list --limit 5 >> diagnostic-report.txt
 
 ---
 
-**🔧 Last Updated**: 2025-01-20  
-**📝 Version**: 2.0  
+**🔧 Last Updated**: 2025-01-20\
+**📝 Version**: 2.0\
 **🎯 Compatibility**: NeonPro v2.0+

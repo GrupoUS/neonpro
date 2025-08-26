@@ -305,7 +305,8 @@
 
 	.healthcare-button {
 		@apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium;
-		@apply transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+		@apply transition-all duration-200 focus-visible:outline-none focus-visible:ring-2
+      focus-visible:ring-ring;
 		@apply disabled:pointer-events-none disabled:opacity-50;
 	}
 
@@ -313,7 +314,8 @@
 		@apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm;
 		@apply ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium;
 		@apply placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2;
-		@apply focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+		@apply focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed
+      disabled:opacity-50;
 	}
 
 	.healthcare-badge {
@@ -348,7 +350,8 @@
 	}
 
 	.healthcare-focus {
-		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+		@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+      focus-visible:ring-offset-2;
 	}
 
 	.healthcare-transition {

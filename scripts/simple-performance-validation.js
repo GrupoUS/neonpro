@@ -86,7 +86,11 @@ async function validatePerformanceOptimization() {
 	results.details.forEach((_detail) => {});
 	Object.entries(PERFORMANCE_TARGETS).forEach(([metric, _target]) => {
 		const _displayMetric = metric.replace(/([A-Z])/g, " $1").toLowerCase();
-		const unit = metric.includes("Time") ? "ms" : metric.includes("Rate") || metric.includes("Score") ? "%" : "";
+		const unit = metric.includes("Time")
+			? "ms"
+			: metric.includes("Rate") || metric.includes("Score")
+				? "%"
+				: "";
 		const _operator = unit === "ms" ? "≤" : "≥";
 	});
 
@@ -114,10 +118,14 @@ async function validateFiles() {
 			const stats = fs.statSync(filePath);
 			if (stats.size > 1000) {
 				// At least 1KB
-				results.details.push(`  📏 File size: ${Math.round(stats.size / 1024)}KB - Substantial implementation`);
+				results.details.push(
+					`  📏 File size: ${Math.round(stats.size / 1024)}KB - Substantial implementation`,
+				);
 			} else {
 				results.warnings++;
-				results.details.push(`  ⚠️ File size: ${stats.size}B - May need more implementation`);
+				results.details.push(
+					`  ⚠️ File size: ${stats.size}B - May need more implementation`,
+				);
 			}
 		} else {
 			results.failed++;
@@ -138,7 +146,7 @@ async function validateConfiguration() {
 		// Check if performance service exists and has proper structure
 		const performanceServiceFile = path.join(
 			process.cwd(),
-			"packages/performance/src/performance-optimization-service.ts"
+			"packages/performance/src/performance-optimization-service.ts",
 		);
 
 		if (fs.existsSync(performanceServiceFile)) {
@@ -157,7 +165,9 @@ async function validateConfiguration() {
 			requiredFeatures.forEach((feature) => {
 				if (content.includes(feature)) {
 					results.passed++;
-					results.details.push(`✅ Performance feature: ${feature} implemented`);
+					results.details.push(
+						`✅ Performance feature: ${feature} implemented`,
+					);
 				} else {
 					results.failed++;
 					results.details.push(`❌ Performance feature: ${feature} missing`);
@@ -165,7 +175,14 @@ async function validateConfiguration() {
 			});
 
 			// Check for healthcare-specific optimizations
-			const healthcareFeatures = ["healthcare", "constitutional", "compliance", "LGPD", "ANVISA", "CFM"];
+			const healthcareFeatures = [
+				"healthcare",
+				"constitutional",
+				"compliance",
+				"LGPD",
+				"ANVISA",
+				"CFM",
+			];
 
 			let healthcareScore = 0;
 			healthcareFeatures.forEach((feature) => {
@@ -177,21 +194,25 @@ async function validateConfiguration() {
 			if (healthcareScore >= 4) {
 				results.passed++;
 				results.details.push(
-					`✅ Healthcare optimization: Strong focus (${healthcareScore}/${healthcareFeatures.length} indicators)`
+					`✅ Healthcare optimization: Strong focus (${healthcareScore}/${healthcareFeatures.length} indicators)`,
 				);
 			} else {
 				results.warnings++;
 				results.details.push(
-					`⚠️ Healthcare optimization: Moderate focus (${healthcareScore}/${healthcareFeatures.length} indicators)`
+					`⚠️ Healthcare optimization: Moderate focus (${healthcareScore}/${healthcareFeatures.length} indicators)`,
 				);
 			}
 		} else {
 			results.failed++;
-			results.details.push("❌ Performance service configuration file not found");
+			results.details.push(
+				"❌ Performance service configuration file not found",
+			);
 		}
 	} catch (error) {
 		results.failed++;
-		results.details.push(`❌ Configuration validation failed: ${error.message}`);
+		results.details.push(
+			`❌ Configuration validation failed: ${error.message}`,
+		);
 	}
 
 	return results;
@@ -208,7 +229,12 @@ async function validateFeatures() {
 		{
 			name: "Multi-layer Caching",
 			files: ["packages/caching-layer/src/cache-manager.ts"],
-			keywords: ["MultiLayerCacheManager", "CacheLayer", "BrowserCache", "EdgeCache"],
+			keywords: [
+				"MultiLayerCacheManager",
+				"CacheLayer",
+				"BrowserCache",
+				"EdgeCache",
+			],
 		},
 		{
 			name: "AI Performance Optimization",
@@ -253,10 +279,14 @@ async function validateFeatures() {
 
 		if (featureImplemented && implementationStrength >= 2) {
 			results.passed++;
-			results.details.push(`✅ ${check.name}: Well implemented (${implementationStrength} indicators)`);
+			results.details.push(
+				`✅ ${check.name}: Well implemented (${implementationStrength} indicators)`,
+			);
 		} else if (featureImplemented) {
 			results.warnings++;
-			results.details.push(`⚠️ ${check.name}: Basic implementation (${implementationStrength} indicators)`);
+			results.details.push(
+				`⚠️ ${check.name}: Basic implementation (${implementationStrength} indicators)`,
+			);
 		} else {
 			results.failed++;
 			results.details.push(`❌ ${check.name}: Not implemented`);
@@ -276,7 +306,7 @@ async function validateIntegrationPoints() {
 		// Check for performance integration file
 		const integrationFile = path.join(
 			process.cwd(),
-			"packages/performance/src/integration/performance-optimization-integration.ts"
+			"packages/performance/src/integration/performance-optimization-integration.ts",
 		);
 
 		if (fs.existsSync(integrationFile)) {
@@ -299,7 +329,9 @@ async function validateIntegrationPoints() {
 					results.details.push(`✅ Integration point: ${point} connected`);
 				} else {
 					results.warnings++;
-					results.details.push(`⚠️ Integration point: ${point} may need attention`);
+					results.details.push(
+						`⚠️ Integration point: ${point} may need attention`,
+					);
 				}
 			});
 		} else {
@@ -308,7 +340,10 @@ async function validateIntegrationPoints() {
 		}
 
 		// Check for validation script
-		const validationScript = path.join(process.cwd(), "scripts/performance-optimization-validation.js");
+		const validationScript = path.join(
+			process.cwd(),
+			"scripts/performance-optimization-validation.js",
+		);
 
 		if (fs.existsSync(validationScript)) {
 			results.passed++;

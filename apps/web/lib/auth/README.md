@@ -2,11 +2,14 @@
 
 ## 📋 Visão Geral
 
-O **NeonPro Advanced Authentication System** é um sistema de autenticação empresarial completo que oferece gerenciamento avançado de sessões, segurança em tempo real, monitoramento comportamental e conformidade com regulamentações como LGPD e GDPR.
+O **NeonPro Advanced Authentication System** é um sistema de autenticação empresarial completo que
+oferece gerenciamento avançado de sessões, segurança em tempo real, monitoramento comportamental e
+conformidade com regulamentações como LGPD e GDPR.
 
 ### 🚀 Características Principais
 
-- **🧠 Gerenciamento Inteligente de Timeout** - Timeouts adaptativos baseados em comportamento do usuário
+- **🧠 Gerenciamento Inteligente de Timeout** - Timeouts adaptativos baseados em comportamento do
+  usuário
 - **👥 Sessões Concorrentes** - Controle avançado de múltiplas sessões por usuário
 - **🕵️ Detecção de Atividades Suspeitas** - Análise comportamental e detecção de anomalias
 - **🛡️ Monitoramento de Segurança** - Detecção de ameaças em tempo real
@@ -49,11 +52,7 @@ O **NeonPro Advanced Authentication System** é um sistema de autenticação emp
 ### Instalação Básica
 
 ```typescript
-import {
-  AdvancedAuthSystem,
-  initializeAuthSystem,
-  setupSecureAuth,
-} from '@/lib/auth';
+import { AdvancedAuthSystem, initializeAuthSystem, setupSecureAuth } from '@/lib/auth';
 
 // Configuração rápida com segurança alta
 const authSystem = await setupSecureAuth();
@@ -519,7 +518,7 @@ await authSystem.reportSuspiciousActivity(sessionId, {
 // Disparar shutdown de emergência
 await authSystem.triggerEmergencyShutdown(
   'Múltiplas tentativas de invasão detectadas',
-  'system'
+  'system',
 );
 
 // Verificar status após emergência
@@ -582,7 +581,7 @@ status.components.forEach((component) => {
 const metrics = authSystem.getMetrics();
 console.log(
   'Tempo médio de resposta:',
-  metrics.performance.averageResponseTime
+  metrics.performance.averageResponseTime,
 );
 console.log('Uso de memória:', metrics.performance.memoryUsage, 'MB');
 console.log('Taxa de erro:', metrics.performance.errorRate);

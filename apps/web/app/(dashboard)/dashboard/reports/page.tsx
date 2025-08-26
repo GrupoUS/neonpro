@@ -1,5 +1,10 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import {
 	Activity,
@@ -30,11 +35,6 @@ import {
 	Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
 	HEALTHCARE_ANNOUNCEMENTS,
 	initializeAccessibility,
@@ -104,7 +104,9 @@ const CosmicGlowButton = ({
 			whileTap={{ scale: disabled ? 1 : 0.98 }}
 		>
 			<ButtonComponent
-				className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl ${variants[variant]} ${sizes[size]} ${className} ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
+				className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl ${
+					variants[variant]
+				} ${sizes[size]} ${className} ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
 				disabled={disabled}
 				href={href}
 				onClick={disabled ? undefined : onClick}

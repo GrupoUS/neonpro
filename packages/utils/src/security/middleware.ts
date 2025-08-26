@@ -41,7 +41,10 @@ const defaultSecurityConfig: SecurityConfig = {
 // Security middleware class
 export class SecurityMiddleware {
 	private config: SecurityConfig;
-	private readonly rateLimitStore: Map<string, { count: number; resetTime: number }> = new Map();
+	private readonly rateLimitStore: Map<
+		string,
+		{ count: number; resetTime: number }
+	> = new Map();
 
 	constructor(config: Partial<SecurityConfig> = {}) {
 		this.config = { ...defaultSecurityConfig, ...config };
@@ -71,7 +74,10 @@ export class SecurityMiddleware {
 			}
 
 			// 4. Threat detection
-			if (this.config.enableThreatDetection && this.detectThreat(request, context)) {
+			if (
+				this.config.enableThreatDetection &&
+				this.detectThreat(request, context)
+			) {
 				await this.logSecurityEvent("threat_detected", context, "critical");
 				return new NextResponse("Threat Detected", { status: 403 });
 			}
@@ -92,7 +98,10 @@ export class SecurityMiddleware {
 	private extractSecurityContext(request: NextRequest): SecurityContext {
 		const url = new URL(request.url);
 		return {
-			ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown",
+			ipAddress:
+				request.headers.get("x-forwarded-for") ||
+				request.headers.get("x-real-ip") ||
+				"unknown",
 			userAgent: request.headers.get("user-agent") || "unknown",
 			endpoint: url.pathname,
 			method: request.method,
@@ -150,7 +159,10 @@ export class SecurityMiddleware {
 	}
 
 	// Simple threat detection
-	private detectThreat(request: NextRequest, context: SecurityContext): boolean {
+	private detectThreat(
+		request: NextRequest,
+		context: SecurityContext,
+	): boolean {
 		// Check for common attack patterns
 		const suspiciousPatterns = [
 			/\.\.\//, // Directory traversal
@@ -162,14 +174,16 @@ export class SecurityMiddleware {
 		const url = request.url;
 		const userAgent = context.userAgent || "";
 
-		return suspiciousPatterns.some((pattern) => pattern.test(url) || pattern.test(userAgent));
+		return suspiciousPatterns.some(
+			(pattern) => pattern.test(url) || pattern.test(userAgent),
+		);
 	}
 
 	// Log security events
 	private async logSecurityEvent(
 		eventType: string,
 		context: SecurityContext,
-		severity: "info" | "warning" | "error" | "critical"
+		severity: "info" | "warning" | "error" | "critical",
 	): Promise<void> {
 		try {
 			await securityAPI.createSecurityEvent({

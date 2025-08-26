@@ -81,7 +81,7 @@ async function measureDashboardLoad() {
 		"Dashboard Load",
 		duration,
 		config.targets.dashboard,
-		`${componentsExist}/${dashboardComponents.length} components found`
+		`${componentsExist}/${dashboardComponents.length} components found`,
 	);
 
 	return duration <= config.targets.dashboard;
@@ -90,7 +90,10 @@ async function measureDashboardLoad() {
 async function measureApiEndpoints() {
 	const endpoints = [
 		{ name: "ML Models List", path: "/api/ai/ml-pipeline/models" },
-		{ name: "No-Show Predictions", path: "/api/ai/no-show-prediction/predictions" },
+		{
+			name: "No-Show Predictions",
+			path: "/api/ai/no-show-prediction/predictions",
+		},
 		{ name: "Dashboard Stats", path: "/api/ai/no-show-prediction/stats" },
 		{ name: "A/B Test Creation", path: "/api/ai/ml-pipeline/ab-test" },
 	];
@@ -124,7 +127,9 @@ async function measureApiEndpoints() {
 			`API ${endpoint.name}`,
 			duration,
 			config.targets.api,
-			fs.existsSync(routeFile) || fs.existsSync(apiFile) ? "implemented" : "missing"
+			fs.existsSync(routeFile) || fs.existsSync(apiFile)
+				? "implemented"
+				: "missing",
 		);
 	}
 
@@ -155,7 +160,12 @@ async function measureMLPredictions() {
 
 	const duration = Math.round(baseTime + modelComplexity + computeTime);
 
-	logResult("ML Predictions", duration, config.targets.ml, `${servicesExist}/${mlServices.length} ML services found`);
+	logResult(
+		"ML Predictions",
+		duration,
+		config.targets.ml,
+		`${servicesExist}/${mlServices.length} ML services found`,
+	);
 
 	return duration <= config.targets.ml;
 }
@@ -168,12 +178,19 @@ async function checkDependencies() {
 	}
 
 	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
-	const perfDependencies = ["react", "next", "@tanstack/react-query", "recharts"];
+	const perfDependencies = [
+		"react",
+		"next",
+		"@tanstack/react-query",
+		"recharts",
+	];
 
 	let allFound = true;
 	for (const dep of perfDependencies) {
 		if (packageJson.dependencies?.[dep]) {
-			logInfo(`Performance dependency found: ${dep}@${packageJson.dependencies[dep]}`);
+			logInfo(
+				`Performance dependency found: ${dep}@${packageJson.dependencies[dep]}`,
+			);
 		} else {
 			logError(`Missing performance dependency: ${dep}`);
 			allFound = false;

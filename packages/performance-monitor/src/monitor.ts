@@ -27,7 +27,7 @@ export class PerformanceMonitor {
 			enableRealTimeAnalysis: true,
 			supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
 			supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
-		}
+		},
 	) {}
 
 	async start(): Promise<void> {
@@ -39,7 +39,9 @@ export class PerformanceMonitor {
 		// Initialize collectors
 		for (const [name, collector] of this.collectors) {
 			if (collector.isEnabled()) {
-				const interval = collector.getCollectionInterval() || this.config.defaultCollectionInterval;
+				const interval =
+					collector.getCollectionInterval() ||
+					this.config.defaultCollectionInterval;
 				const intervalId = setInterval(async () => {
 					try {
 						const metrics = await collector.collect();
@@ -107,7 +109,7 @@ export class PerformanceMonitor {
 					tags: metric.tags,
 					source: metric.source,
 					context: metric.context,
-				}))
+				})),
 			);
 
 			if (error) {
@@ -115,7 +117,9 @@ export class PerformanceMonitor {
 		} catch (_error) {}
 	}
 	private async checkAlertRules(metric: PerformanceMetric): Promise<void> {
-		const relevantRules = this.alertRules.filter((rule) => rule.enabled && rule.metricType === metric.type);
+		const relevantRules = this.alertRules.filter(
+			(rule) => rule.enabled && rule.metricType === metric.type,
+		);
 
 		for (const rule of relevantRules) {
 			const shouldAlert = this.evaluateAlertCondition(rule, metric);
@@ -137,7 +141,10 @@ export class PerformanceMonitor {
 		}
 	}
 
-	private evaluateAlertCondition(rule: AlertRule, metric: PerformanceMetric): boolean {
+	private evaluateAlertCondition(
+		rule: AlertRule,
+		metric: PerformanceMetric,
+	): boolean {
 		switch (rule.condition) {
 			case "gt":
 				return metric.value > rule.threshold;
@@ -195,7 +202,7 @@ export class PerformanceMonitor {
 					await this.analyzeTrends();
 				} catch (_error) {}
 			},
-			5 * 60 * 1000
+			5 * 60 * 1000,
 		);
 	}
 
@@ -212,7 +219,10 @@ export class PerformanceMonitor {
 
 		if (cacheMetrics && cacheMetrics.length > 10) {
 			const avgHitRate =
-				cacheMetrics.reduce((sum: number, m: PerformanceMetric) => sum + m.value, 0) / cacheMetrics.length;
+				cacheMetrics.reduce(
+					(sum: number, m: PerformanceMetric) => sum + m.value,
+					0,
+				) / cacheMetrics.length;
 
 			if (avgHitRate < 85) {
 				// Target is 85%
@@ -223,9 +233,11 @@ export class PerformanceMonitor {
 					severity: avgHitRate < 70 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
 					title: "Cache Performance Below Target",
 					description: `Current cache hit rate is ${avgHitRate.toFixed(1)}%, below target of 85%`,
-					recommendation: "Review cache TTL settings and invalidation strategies",
+					recommendation:
+						"Review cache TTL settings and invalidation strategies",
 					metrics: cacheMetrics,
-					potentialImpact: "Improved cache performance can reduce API costs by up to 40%",
+					potentialImpact:
+						"Improved cache performance can reduce API costs by up to 40%",
 					estimatedROI: 187_200 * ((85 - avgHitRate) / 85), // Proportional to gap
 				};
 
@@ -245,11 +257,17 @@ export class PerformanceMonitor {
 			.from("performance_metrics")
 			.select("*")
 			.eq("type", MetricType.AI_COST)
-			.gte("timestamp", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Last 24h
+			.gte(
+				"timestamp",
+				new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+			) // Last 24h
 			.order("timestamp", { ascending: false });
 
 		if (costMetrics && costMetrics.length > 0) {
-			const totalCost = costMetrics.reduce((sum: number, m: PerformanceMetric) => sum + m.value, 0);
+			const totalCost = costMetrics.reduce(
+				(sum: number, m: PerformanceMetric) => sum + m.value,
+				0,
+			);
 			const avgCostPerHour = totalCost / 24;
 
 			// If hourly cost exceeds budget threshold
@@ -259,10 +277,14 @@ export class PerformanceMonitor {
 					id: `ai_cost_insight_${Date.now()}`,
 					timestamp: Date.now(),
 					type: InsightType.COST_OPTIMIZATION,
-					severity: avgCostPerHour > 100 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
+					severity:
+						avgCostPerHour > 100 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
 					title: "AI Costs Above Budget Threshold",
-					description: `AI costs averaging $${avgCostPerHour.toFixed(2)}/hour, exceeding $50/hour threshold`,
-					recommendation: "Optimize model selection, implement better caching, review API usage patterns",
+					description: `AI costs averaging $${avgCostPerHour.toFixed(
+						2,
+					)}/hour, exceeding $50/hour threshold`,
+					recommendation:
+						"Optimize model selection, implement better caching, review API usage patterns",
 					metrics: costMetrics,
 					potentialImpact: "Cost optimization can save up to $187,200/year",
 					estimatedROI: 187_200 * ((avgCostPerHour - 50) / avgCostPerHour),
@@ -308,7 +330,10 @@ export class PerformanceMonitor {
 		// Check Supabase connectivity
 		try {
 			const supabase = await this.getSupabaseClient();
-			const { data, error } = await supabase.from("performance_metrics").select("count").limit(1);
+			const { data, error } = await supabase
+				.from("performance_metrics")
+				.select("count")
+				.limit(1);
 
 			results.push({
 				component: "Supabase Database",
@@ -336,7 +361,10 @@ export class PerformanceMonitor {
 
 				results.push({
 					component: `Collector: ${name}`,
-					status: isEnabled && hasInterval ? HealthStatus.HEALTHY : HealthStatus.DEGRADED,
+					status:
+						isEnabled && hasInterval
+							? HealthStatus.HEALTHY
+							: HealthStatus.DEGRADED,
 					message: isEnabled ? "Collector running" : "Collector disabled",
 					responseTime: Date.now() - collectorStartTime,
 					details: {
@@ -364,10 +392,15 @@ export class PerformanceMonitor {
 	}
 
 	getRecentInsights(limit = 10): PerformanceInsight[] {
-		return this.insights.sort((a, b) => b.timestamp - a.timestamp).slice(0, limit);
+		return this.insights
+			.sort((a, b) => b.timestamp - a.timestamp)
+			.slice(0, limit);
 	}
 
-	async acknowledgeAlert(alertId: string, acknowledgedBy: string): Promise<void> {
+	async acknowledgeAlert(
+		alertId: string,
+		acknowledgedBy: string,
+	): Promise<void> {
 		const alert = this.activeAlerts.get(alertId);
 		if (alert) {
 			alert.acknowledged = true;
@@ -395,11 +428,15 @@ export class PerformanceMonitor {
 			from: (_table: string) => ({
 				select: (_columns: string) => ({
 					eq: (_column: string, _value: any) => ({ data: [], error: null }),
-					gte: (_column: string, _value: any) => ({ order: (_col: string, _opts: any) => ({ data: [], error: null }) }),
+					gte: (_column: string, _value: any) => ({
+						order: (_col: string, _opts: any) => ({ data: [], error: null }),
+					}),
 					limit: (_n: number) => ({ data: [], error: null }),
 				}),
 				insert: (_data: any) => ({ error: null }),
-				update: (_data: any) => ({ eq: (_col: string, _val: any) => Promise.resolve() }),
+				update: (_data: any) => ({
+					eq: (_col: string, _val: any) => Promise.resolve(),
+				}),
 			}),
 			channel: (_name: string) => ({
 				send: (_payload: any) => Promise.resolve(),

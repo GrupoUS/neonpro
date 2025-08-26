@@ -8,9 +8,9 @@
 
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Home, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export function NotFound() {
 	return (

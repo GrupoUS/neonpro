@@ -3,6 +3,7 @@
 ## 📍 Nova Localização Centralizada
 
 **✅ MIGRAÇÃO CONCLUÍDA**: Todos os testes E2E foram migrados e consolidados em:
+
 ```
 tools/testing/e2e/tests/
 ```
@@ -47,12 +48,14 @@ e2e/tests/
    - ✅ Sistema de notificações e lembretes
 
 ### 🗑️ Arquivos Removidos:
+
 - ❌ `authentication-v2.spec.ts` (consolidado no original)
 - ❌ `appointment-booking-v2.spec.ts` (consolidado no original)
 
 ## 🎯 Princípios da Consolidação
 
 ### Mantivemos:
+
 - ✅ **Robustez Técnica**: Múltiplas estratégias de seletores, wait conditions robustas
 - ✅ **Healthcare Focus**: Validações específicas de saúde, terminologia médica
 - ✅ **Compliance**: Cenários LGPD, ANVISA, CFM
@@ -60,6 +63,7 @@ e2e/tests/
 - ✅ **Performance**: Budget de performance para ambientes de saúde
 
 ### Eliminamos:
+
 - ❌ Código duplicado
 - ❌ Inconsistências entre versões
 - ❌ Seletores frágeis
@@ -68,6 +72,7 @@ e2e/tests/
 ## 🚀 Como Executar
 
 ### Testes E2E Consolidados:
+
 ```bash
 # Todos os testes E2E
 pnpm test:e2e
@@ -85,6 +90,7 @@ pnpm exec playwright show-report
 ```
 
 ### Configuração:
+
 - **Playwright Config**: `d:\neonpro\playwright.config.ts` (centralizada)
 - **Test Directory**: `tools/testing/e2e` (constitutional)
 - **Browser Support**: Chrome, Firefox, Safari (healthcare compatibility)
@@ -92,16 +98,19 @@ pnpm exec playwright show-report
 ## 📋 Próximos Passos
 
 ### ✅ Concluído:
+
 1. ✅ Migração para localização constitutional (`tools/testing/e2e/`)
 2. ✅ Consolidação de duplicados (-v2 files)
 3. ✅ Validação de funcionamento (testes executam corretamente)
 4. ✅ Atualização de documentação
 
 ### 🔄 Em Progresso:
+
 - 📝 Documentação completa dos cenários consolidados
 - 🔍 Verificação de redundâncias adicionais
 
 ### 📅 Próximos:
+
 - 🧪 Otimização de performance dos testes
 - 📊 Métricas de cobertura healthcare-specific
 - 🤖 Integração com CI/CD pipeline
@@ -110,16 +119,19 @@ pnpm exec playwright show-report
 ## 🏥 Healthcare Testing Standards
 
 ### Compliance Testing:
+
 - **LGPD**: Proteção de dados de pacientes
 - **ANVISA**: Regulamentações de software médico
 - **CFM**: Compliance com Conselho Federal de Medicina
 
 ### Professional Validation:
+
 - **CRM**: Validação de registros médicos
 - **COREN**: Validação de registros de enfermagem
 - **Licenças**: Verificação de validade profissional
 
 ### Healthcare Workflows:
+
 - **Agendamentos**: Fluxos médicos completos
 - **Prontuários**: Gestão de registros médicos
 - **Prescrições**: Workflows de medicação
@@ -127,4 +139,5 @@ pnpm exec playwright show-report
 
 ---
 
-**📞 Suporte**: Para dúvidas sobre os testes E2E consolidados, consulte o time de QA ou o desenvolvedor responsável pela migração.
+**📞 Suporte**: Para dúvidas sobre os testes E2E consolidados, consulte o time de QA ou o
+desenvolvedor responsável pela migração.

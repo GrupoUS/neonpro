@@ -1,6 +1,10 @@
 "use client";
 
-import type { Alert, HealthCheckResult, PerformanceInsight } from "@neonpro/performance-monitor";
+import type {
+	Alert,
+	HealthCheckResult,
+	PerformanceInsight,
+} from "@neonpro/performance-monitor";
 import { useEffect, useState } from "react";
 
 type DashboardProps = {
@@ -8,7 +12,10 @@ type DashboardProps = {
 	refreshInterval?: number;
 };
 
-export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_000 }: DashboardProps) {
+export function PerformanceDashboard({
+	performanceMonitor,
+	refreshInterval = 30_000,
+}: DashboardProps) {
 	const [alerts, setAlerts] = useState<Alert[]>([]);
 	const [healthChecks, setHealthChecks] = useState<HealthCheckResult[]>([]);
 	const [insights, setInsights] = useState<PerformanceInsight[]>([]);
@@ -24,11 +31,12 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 			try {
 				setIsLoading(true);
 
-				const [currentAlerts, healthResults, recentInsights] = await Promise.all([
-					performanceMonitor.getActiveAlerts(),
-					performanceMonitor.performHealthCheck(),
-					performanceMonitor.getRecentInsights(10),
-				]);
+				const [currentAlerts, healthResults, recentInsights] =
+					await Promise.all([
+						performanceMonitor.getActiveAlerts(),
+						performanceMonitor.performHealthCheck(),
+						performanceMonitor.getRecentInsights(10),
+					]);
 
 				setAlerts(currentAlerts);
 				setHealthChecks(healthResults);
@@ -65,15 +73,20 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 			<div className="mx-auto max-w-7xl">
 				{/* Header */}
 				<div className="mb-8">
-					<h1 className="font-bold text-3xl text-gray-900">Performance Dashboard</h1>
+					<h1 className="font-bold text-3xl text-gray-900">
+						Performance Dashboard
+					</h1>
 					<p className="mt-2 text-gray-600">
-						Real-time monitoring and analytics • Last updated: {lastUpdated?.toLocaleTimeString()}
+						Real-time monitoring and analytics • Last updated:{" "}
+						{lastUpdated?.toLocaleTimeString()}
 					</p>
 				</div>
 				{/* Alerts Section */}
 				{alerts.length > 0 && (
 					<div className="mb-8">
-						<h2 className="mb-4 font-semibold text-gray-900 text-xl">Active Alerts</h2>
+						<h2 className="mb-4 font-semibold text-gray-900 text-xl">
+							Active Alerts
+						</h2>
 						<div className="grid gap-4">
 							{alerts.map((alert) => (
 								<div
@@ -90,8 +103,12 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 								>
 									<div className="flex items-start justify-between">
 										<div>
-											<h3 className="font-medium text-gray-900">{alert.message}</h3>
-											<p className="mt-1 text-gray-600 text-sm">{new Date(alert.timestamp).toLocaleString()}</p>
+											<h3 className="font-medium text-gray-900">
+												{alert.message}
+											</h3>
+											<p className="mt-1 text-gray-600 text-sm">
+												{new Date(alert.timestamp).toLocaleString()}
+											</p>
 										</div>
 										{!alert.acknowledged && (
 											<button
@@ -109,12 +126,16 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 				)}
 				{/* Health Checks */}
 				<div className="mb-8">
-					<h2 className="mb-4 font-semibold text-gray-900 text-xl">System Health</h2>
+					<h2 className="mb-4 font-semibold text-gray-900 text-xl">
+						System Health
+					</h2>
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 						{healthChecks.map((check, index) => (
 							<div className="rounded-lg bg-white p-4 shadow" key={index}>
 								<div className="mb-2 flex items-center justify-between">
-									<h3 className="font-medium text-gray-900">{check.component}</h3>
+									<h3 className="font-medium text-gray-900">
+										{check.component}
+									</h3>
 									<span
 										className={`rounded-full px-2 py-1 text-xs ${
 											check.status === "healthy"
@@ -130,7 +151,9 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 									</span>
 								</div>
 								<p className="text-gray-600 text-sm">{check.message}</p>
-								<p className="mt-1 text-gray-500 text-xs">Response: {check.responseTime}ms</p>
+								<p className="mt-1 text-gray-500 text-xs">
+									Response: {check.responseTime}ms
+								</p>
 							</div>
 						))}
 					</div>
@@ -138,13 +161,20 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 				{/* Performance Insights */}
 				{insights.length > 0 && (
 					<div className="mb-8">
-						<h2 className="mb-4 font-semibold text-gray-900 text-xl">Performance Insights</h2>
+						<h2 className="mb-4 font-semibold text-gray-900 text-xl">
+							Performance Insights
+						</h2>
 						<div className="grid gap-6">
 							{insights.map((insight) => (
-								<div className="rounded-lg bg-white p-6 shadow" key={insight.id}>
+								<div
+									className="rounded-lg bg-white p-6 shadow"
+									key={insight.id}
+								>
 									<div className="mb-4 flex items-start justify-between">
 										<div>
-											<h3 className="font-medium text-gray-900 text-lg">{insight.title}</h3>
+											<h3 className="font-medium text-gray-900 text-lg">
+												{insight.title}
+											</h3>
 											<span
 												className={`mt-1 inline-block rounded-full px-2 py-1 text-xs ${
 													insight.severity === "critical"
@@ -159,18 +189,24 @@ export function PerformanceDashboard({ performanceMonitor, refreshInterval = 30_
 												{insight.severity}
 											</span>
 										</div>
-										<p className="text-gray-500 text-sm">{new Date(insight.timestamp).toLocaleDateString()}</p>
+										<p className="text-gray-500 text-sm">
+											{new Date(insight.timestamp).toLocaleDateString()}
+										</p>
 									</div>
 
 									<p className="mb-3 text-gray-700">{insight.description}</p>
 
 									<div className="mb-3 rounded-lg bg-blue-50 p-4">
-										<h4 className="mb-2 font-medium text-blue-900">Recommendation</h4>
+										<h4 className="mb-2 font-medium text-blue-900">
+											Recommendation
+										</h4>
 										<p className="text-blue-800">{insight.recommendation}</p>
 									</div>
 
 									<div className="flex items-center justify-between text-sm">
-										<span className="text-gray-600">Impact: {insight.potentialImpact}</span>
+										<span className="text-gray-600">
+											Impact: {insight.potentialImpact}
+										</span>
 										{insight.estimatedROI && (
 											<span className="font-medium text-green-600">
 												Potential ROI: ${insight.estimatedROI.toLocaleString()}

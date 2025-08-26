@@ -105,7 +105,13 @@ async function validateProfessionalLicensing() {
 
 	try {
 		// Simulate CFM license validation patterns
-		const testLicenses = ["CRM/SP 123456", "CRM/RJ 78901", "CRM/MG 234567", "INVALID123", "CRM/XX 999999"];
+		const testLicenses = [
+			"CRM/SP 123456",
+			"CRM/RJ 78901",
+			"CRM/MG 234567",
+			"INVALID123",
+			"CRM/XX 999999",
+		];
 
 		const cfmPattern = /^CRM\/[A-Z]{2}\s?\d{4,6}$/;
 
@@ -117,7 +123,9 @@ async function validateProfessionalLicensing() {
 				logSuccess(`Valid CFM license format: ${license}`);
 				validCount++;
 			} else {
-				logWarning(`Invalid CFM license format: ${license} (expected for testing)`);
+				logWarning(
+					`Invalid CFM license format: ${license} (expected for testing)`,
+				);
 			}
 		});
 
@@ -161,7 +169,12 @@ async function validateTelemedicineCompliance() {
 
 	try {
 		// Test telemedicine platform validation
-		const approvedPlatforms = ["telemedicina-cfm", "medcloud", "conexa-saude", "teleconsulta-brasil"];
+		const approvedPlatforms = [
+			"telemedicina-cfm",
+			"medcloud",
+			"conexa-saude",
+			"teleconsulta-brasil",
+		];
 		const testPlatforms = ["telemedicina-cfm", "zoom", "teams", "medcloud"];
 
 		let approvedCount = 0;
@@ -207,7 +220,11 @@ async function validateContinuingEducation() {
 			const meetsRequirement = scenario.hours >= requiredHours;
 
 			if (meetsRequirement === scenario.expected) {
-				logSuccess(`Scenario ${index + 1}: ${scenario.hours}h/${requiredHours}h required - Validation correct`);
+				logSuccess(
+					`Scenario ${
+						index + 1
+					}: ${scenario.hours}h/${requiredHours}h required - Validation correct`,
+				);
 				validScenarios++;
 			} else {
 				logError(`Scenario ${index + 1}: Validation logic error`);
@@ -229,7 +246,10 @@ async function validateContinuingEducation() {
 async function validateEnvironmentVariables() {
 	logHeader("Environment Variables Validation");
 
-	const requiredEnvVars = ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"];
+	const requiredEnvVars = [
+		"NEXT_PUBLIC_SUPABASE_URL",
+		"SUPABASE_SERVICE_ROLE_KEY",
+	];
 
 	const allValid = true;
 
@@ -250,7 +270,10 @@ async function validateCFMConfiguration() {
 
 	try {
 		// Check package.json for CFM-related dependencies - look in apps/web first
-		const webPackageJsonPath = path.resolve(process.cwd(), "apps/web/package.json");
+		const webPackageJsonPath = path.resolve(
+			process.cwd(),
+			"apps/web/package.json",
+		);
 		const rootPackageJsonPath = path.resolve(process.cwd(), "package.json");
 
 		let packageJsonPath = webPackageJsonPath;
@@ -267,12 +290,17 @@ async function validateCFMConfiguration() {
 
 		// Check for required dependencies
 		const hasSupabase =
-			packageJson.dependencies?.["@supabase/supabase-js"] || packageJson.devDependencies?.["@supabase/supabase-js"];
+			packageJson.dependencies?.["@supabase/supabase-js"] ||
+			packageJson.devDependencies?.["@supabase/supabase-js"];
 
 		const hasCrypto = true; // crypto is a Node.js built-in module
 
 		if (hasSupabase) {
-			logSuccess(`Supabase client dependency found in ${packageJsonPath.includes("apps/web") ? "apps/web" : "root"}`);
+			logSuccess(
+				`Supabase client dependency found in ${
+					packageJsonPath.includes("apps/web") ? "apps/web" : "root"
+				}`,
+			);
 		} else {
 			logError("Supabase client dependency missing");
 			return false;
@@ -320,7 +348,11 @@ async function runCFMValidation() {
 			}
 		} catch (error) {
 			logError(`${validation.name} validation error: ${error.message}`);
-			results.push({ name: validation.name, passed: false, error: error.message });
+			results.push({
+				name: validation.name,
+				passed: false,
+				error: error.message,
+			});
 			allPassed = false;
 		}
 	}
@@ -332,15 +364,21 @@ async function runCFMValidation() {
 		if (result.passed) {
 			logSuccess(`${result.name}: PASSED`);
 		} else {
-			logError(`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`);
+			logError(
+				`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
+			);
 		}
 	});
 
 	if (allPassed) {
-		log(`\n${colors.bold}${colors.green}🎉 All CFM compliance validations passed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.green}🎉 All CFM compliance validations passed!${colors.reset}`,
+		);
 		process.exit(0);
 	} else {
-		log(`\n${colors.bold}${colors.red}💥 Some CFM compliance validations failed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.red}💥 Some CFM compliance validations failed!${colors.reset}`,
+		);
 		process.exit(1);
 	}
 }

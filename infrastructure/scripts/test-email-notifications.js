@@ -29,30 +29,38 @@ async function testEmailNotificationService() {
 		}
 		const dueSoonData = {
 			...sampleNotificationData,
-			dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 3 days from now
+			dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+				.toISOString()
+				.split("T")[0], // 3 days from now
 		};
-		const dueSoonResult = await notificationService.sendDueSoonNotification(dueSoonData);
+		const dueSoonResult =
+			await notificationService.sendDueSoonNotification(dueSoonData);
 
 		await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between sends
 		const dueTodayData = {
 			...sampleNotificationData,
 			dueDate: new Date().toISOString().split("T")[0], // Today
 		};
-		const dueTodayResult = await notificationService.sendDueTodayNotification(dueTodayData);
+		const dueTodayResult =
+			await notificationService.sendDueTodayNotification(dueTodayData);
 
 		await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between sends
 		const overdueData = {
 			...sampleNotificationData,
-			dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 2 days ago
+			dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+				.toISOString()
+				.split("T")[0], // 2 days ago
 		};
-		const overdueResult = await notificationService.sendOverduePaymentNotification(overdueData);
+		const overdueResult =
+			await notificationService.sendOverduePaymentNotification(overdueData);
 
 		await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay between sends
 		const completedData = {
 			...sampleNotificationData,
 			paymentId: `pay_${Date.now()}`,
 		};
-		const completedResult = await notificationService.sendPaymentCompletedNotification(completedData);
+		const completedResult =
+			await notificationService.sendPaymentCompletedNotification(completedData);
 		const batchNotifications = [
 			{
 				type: "dueSoon",
@@ -72,8 +80,15 @@ async function testEmailNotificationService() {
 			},
 		];
 
-		const batchResults = await notificationService.sendBatchNotifications(batchNotifications);
-		const allResults = [dueSoonResult, dueTodayResult, overdueResult, completedResult, ...batchResults];
+		const batchResults =
+			await notificationService.sendBatchNotifications(batchNotifications);
+		const allResults = [
+			dueSoonResult,
+			dueTodayResult,
+			overdueResult,
+			completedResult,
+			...batchResults,
+		];
 		const successCount = allResults.filter((r) => r).length;
 		const totalCount = allResults.length;
 
@@ -92,7 +107,7 @@ async function testEmailNotificationService() {
 		const _helperData = EmailNotificationService.createNotificationData(
 			mockAccountsPayable,
 			"test@example.com",
-			"+5511999999999"
+			"+5511999999999",
 		);
 	} catch (_error) {}
 }

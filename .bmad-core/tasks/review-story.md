@@ -2,16 +2,17 @@
 
 # review-story
 
-Perform a comprehensive test architecture review with quality gate decision. This adaptive, risk-aware review creates both a story update and a detailed gate file.
+Perform a comprehensive test architecture review with quality gate decision. This adaptive,
+risk-aware review creates both a story update and a detailed gate file.
 
 ## Inputs
 
 ```yaml
 required:
-  - story_id: '{epic}.{story}' # e.g., "1.3"
-  - story_path: '{devStoryLocation}/{epic}.{story}.*.md' # Path from core-config.yaml
-  - story_title: '{title}' # If missing, derive from story file H1
-  - story_slug: '{slug}' # If missing, derive from title (lowercase, hyphenated)
+  - story_id: "{epic}.{story}" # e.g., "1.3"
+  - story_path: "{devStoryLocation}/{epic}.{story}.*.md" # Path from core-config.yaml
+  - story_title: "{title}" # If missing, derive from story file H1
+  - story_slug: "{slug}" # If missing, derive from title (lowercase, hyphenated)
 ```
 
 ## Prerequisites
@@ -36,7 +37,8 @@ required:
 
 **A. Requirements Traceability**
 
-- Map each acceptance criteria to its validating tests (document mapping with Given-When-Then, not test code)
+- Map each acceptance criteria to its validating tests (document mapping with Given-When-Then, not
+  test code)
 - Identify coverage gaps
 - Verify all requirements have corresponding test cases
 
@@ -108,7 +110,8 @@ required:
 
 ## Output 1: Update Story File - QA Results Section ONLY
 
-**CRITICAL**: You are ONLY authorized to update the "QA Results" section of the story file. DO NOT modify any other sections.
+**CRITICAL**: You are ONLY authorized to update the "QA Results" section of the story file. DO NOT
+modify any other sections.
 
 **QA Results Anchor Rule:**
 
@@ -169,16 +172,16 @@ After review and any refactoring, append your results to the story file in the Q
 
 ### Gate Status
 
-Gate: {STATUS} → qa.qaLocation/gates/{epic}.{story}-{slug}.yml
-Risk profile: qa.qaLocation/assessments/{epic}.{story}-risk-{YYYYMMDD}.md
-NFR assessment: qa.qaLocation/assessments/{epic}.{story}-nfr-{YYYYMMDD}.md
+Gate: {STATUS} → qa.qaLocation/gates/{epic}.{story}-{slug}.yml Risk profile:
+qa.qaLocation/assessments/{epic}.{story}-risk-{YYYYMMDD}.md NFR assessment:
+qa.qaLocation/assessments/{epic}.{story}-nfr-{YYYYMMDD}.md
 
 # Note: Paths should reference core-config.yaml for custom configurations
 
 ### Recommended Status
 
-[✓ Ready for Done] / [✗ Changes Required - See unchecked items above]
-(Story owner decides final status)
+[✓ Ready for Done] / [✗ Changes Required - See unchecked items above] (Story owner decides final
+status)
 ```
 
 ## Output 2: Create Quality Gate File
@@ -193,19 +196,19 @@ Gate file structure:
 
 ```yaml
 schema: 1
-story: '{epic}.{story}'
-story_title: '{story title}'
+story: "{epic}.{story}"
+story_title: "{story title}"
 gate: PASS|CONCERNS|FAIL|WAIVED
-status_reason: '1-2 sentence explanation of gate decision'
-reviewer: 'Quinn (Test Architect)'
-updated: '{ISO-8601 timestamp}'
+status_reason: "1-2 sentence explanation of gate decision"
+reviewer: "Quinn (Test Architect)"
+updated: "{ISO-8601 timestamp}"
 
 top_issues: [] # Empty if no issues
 waiver: { active: false } # Set active: true only if WAIVED
 
 # Extended fields (optional but recommended):
 quality_score: 0-100 # 100 - (20*FAILs) - (10*CONCERNS) or use technical-preferences.md weights
-expires: '{ISO-8601 timestamp}' # Typically 2 weeks from review
+expires: "{ISO-8601 timestamp}" # Typically 2 weeks from review
 
 evidence:
   tests_reviewed: { count }
@@ -217,31 +220,32 @@ evidence:
 nfr_validation:
   security:
     status: PASS|CONCERNS|FAIL
-    notes: 'Specific findings'
+    notes: "Specific findings"
   performance:
     status: PASS|CONCERNS|FAIL
-    notes: 'Specific findings'
+    notes: "Specific findings"
   reliability:
     status: PASS|CONCERNS|FAIL
-    notes: 'Specific findings'
+    notes: "Specific findings"
   maintainability:
     status: PASS|CONCERNS|FAIL
-    notes: 'Specific findings'
+    notes: "Specific findings"
 
 recommendations:
   immediate: # Must fix before production
-    - action: 'Add rate limiting'
-      refs: ['api/auth/login.ts']
+    - action: "Add rate limiting"
+      refs: ["api/auth/login.ts"]
   future: # Can be addressed later
-    - action: 'Consider caching'
-      refs: ['services/data.ts']
+    - action: "Consider caching"
+      refs: ["services/data.ts"]
 ```
 
 ### Gate Decision Criteria
 
 **Deterministic rule (apply in order):**
 
-If risk_summary exists, apply its thresholds first (≥9 → FAIL, ≥6 → CONCERNS), then NFR statuses, then top_issues severity.
+If risk_summary exists, apply its thresholds first (≥9 → FAIL, ≥6 → CONCERNS), then NFR statuses,
+then top_issues severity.
 
 1. **Risk thresholds (if risk_summary present):**
    - If any risk score ≥ 9 → Gate = FAIL (unless waived)

@@ -11,8 +11,8 @@ export * from "./useAppointments";
 export {
 	APPOINTMENT_QUERY_KEYS,
 	useAppointment,
-	useAppointmentStats,
 	useAppointments,
+	useAppointmentStats,
 	useAppointmentUtils,
 	useAvailability,
 	useCalendarAppointments,

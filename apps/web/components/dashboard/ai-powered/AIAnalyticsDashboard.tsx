@@ -6,6 +6,11 @@
 
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Activity,
 	AlertTriangle,
@@ -19,11 +24,6 @@ import {
 	Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface AnalyticsMetrics {
 	totalRevenue: number;
@@ -320,7 +320,9 @@ export function AIAnalyticsDashboard() {
 										</h4>
 										<Badge
 											variant={getInsightBadgeVariant(insight.impact)}
-											aria-label={`Impacto ${insight.impact === "high" ? "alto" : insight.impact === "medium" ? "médio" : "baixo"}`}
+											aria-label={`Impacto ${
+												insight.impact === "high" ? "alto" : insight.impact === "medium" ? "médio" : "baixo"
+											}`}
 										>
 											{insight.impact === "high" && "Alto Impacto"}
 											{insight.impact === "medium" && "Médio Impacto"}

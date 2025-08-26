@@ -1,22 +1,22 @@
 {
-  "folders": [
-    {
-      "path": "."
-    }
-  ],
-  "settings": {
-    "terminal.integrated.defaultProfile.windows": "PowerShell",
-    "files.associations": {
-      "biome.json": "jsonc",
-      "biome.jsonc": "jsonc"
-    },
-    "typescript.disableAutomaticTypeAcquisition": true,
-    "extensions.ignoreRecommendations": false,
-    "testing.automaticallyOpenPeekView": "never",
-    "testing.followRunningTest": false,
-    "testing.alwaysRevealTestOnStateChange": false,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.preferences.includePackageJsonAutoImports": "off",
-    "emmet.showExpandedAbbreviation": "never"
-  }
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.defaultProfile.windows": "PowerShell",
+		"files.associations": {
+			"biome.json": "jsonc",
+			"biome.jsonc": "jsonc"
+		},
+		"typescript.disableAutomaticTypeAcquisition": true,
+		"extensions.ignoreRecommendations": false,
+		"testing.automaticallyOpenPeekView": "never",
+		"testing.followRunningTest": false,
+		"testing.alwaysRevealTestOnStateChange": false,
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.preferences.includePackageJsonAutoImports": "off",
+		"emmet.showExpandedAbbreviation": "never"
+	}
 }

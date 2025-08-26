@@ -9,7 +9,10 @@
  * - Compliance LGPD/CFM para dados médicos
  */
 
-import { EnhancedServiceBase, type ServiceConfig } from "../base/EnhancedServiceBase";
+import {
+	EnhancedServiceBase,
+	type ServiceConfig,
+} from "../base/EnhancedServiceBase";
 import type { ServiceContext } from "../types";
 
 // ================================================
@@ -67,7 +70,11 @@ type HealthcareContext = {
 };
 
 type PredictionRequest = {
-	type: "appointment_noshow" | "treatment_outcome" | "patient_risk" | "demand_forecast";
+	type:
+		| "appointment_noshow"
+		| "treatment_outcome"
+		| "patient_risk"
+		| "demand_forecast";
 	data: Record<string, any>;
 	modelVersion?: string;
 	confidenceThreshold?: number;
@@ -164,7 +171,10 @@ export class AIService extends EnhancedServiceBase {
 	/**
 	 * Processar chat com assistente médico
 	 */
-	async processChat(request: ChatRequest, context: ServiceContext): Promise<ChatResponse> {
+	async processChat(
+		request: ChatRequest,
+		context: ServiceContext,
+	): Promise<ChatResponse> {
 		return this.executeOperation(
 			"processChat",
 			async () => {
@@ -207,7 +217,12 @@ export class AIService extends EnhancedServiceBase {
 
 				// Save conversation to database if patient context exists
 				if (request.patientId) {
-					await this.saveConversation(request.patientId, messages, responseMessage, context);
+					await this.saveConversation(
+						request.patientId,
+						messages,
+						responseMessage,
+						context,
+					);
 				}
 
 				return {
@@ -223,11 +238,13 @@ export class AIService extends EnhancedServiceBase {
 			},
 			context,
 			{
-				cacheKey: request.stream ? undefined : this.generateChatCacheKey(request),
+				cacheKey: request.stream
+					? undefined
+					: this.generateChatCacheKey(request),
 				cacheTTL: 5 * 60 * 1000, // 5 minutes for chat responses
 				requiresAuth: true,
 				sensitiveData: !!request.patientId,
-			}
+			},
 		);
 	}
 
@@ -237,14 +254,17 @@ export class AIService extends EnhancedServiceBase {
 	async processChatStream(
 		request: ChatRequest,
 		context: ServiceContext,
-		onChunk: (chunk: string) => void
+		onChunk: (chunk: string) => void,
 	): Promise<ChatResponse> {
 		return this.executeOperation(
 			"processChatStream",
 			async () => {
 				// Streaming implementation would go here
 				// For now, fall back to regular chat
-				const response = await this.processChat({ ...request, stream: false }, context);
+				const response = await this.processChat(
+					{ ...request, stream: false },
+					context,
+				);
 				onChunk(response.message.content);
 				return response;
 			},
@@ -252,7 +272,7 @@ export class AIService extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: !!request.patientId,
-			}
+			},
 		);
 	}
 
@@ -263,7 +283,10 @@ export class AIService extends EnhancedServiceBase {
 	/**
 	 * Fazer predições usando modelos de ML
 	 */
-	async makePrediction(request: PredictionRequest, context: ServiceContext): Promise<PredictionResponse> {
+	async makePrediction(
+		request: PredictionRequest,
+		context: ServiceContext,
+	): Promise<PredictionResponse> {
 		return this.executeOperation(
 			"makePrediction",
 			async () => {
@@ -273,11 +296,18 @@ export class AIService extends EnhancedServiceBase {
 				}
 
 				// Prepare data for prediction
-				const processedData = await this.preprocessData(request.data, request.type);
+				const processedData = await this.preprocessData(
+					request.data,
+					request.type,
+				);
 
 				// Make prediction based on type
 				const startTime = performance.now();
-				const result = await this.executePrediction(request.type, processedData, request);
+				const result = await this.executePrediction(
+					request.type,
+					processedData,
+					request,
+				);
 				const processingTime = performance.now() - startTime;
 
 				// Build response
@@ -304,7 +334,7 @@ export class AIService extends EnhancedServiceBase {
 				cacheTTL: 30 * 60 * 1000, // 30 minutes for predictions
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -313,7 +343,7 @@ export class AIService extends EnhancedServiceBase {
 	 */
 	async analyzePatientRisk(
 		patientData: Record<string, any>,
-		context: ServiceContext
+		context: ServiceContext,
 	): Promise<{
 		riskLevel: "low" | "medium" | "high" | "critical";
 		factors: string[];
@@ -330,7 +360,7 @@ export class AIService extends EnhancedServiceBase {
 						data: patientData,
 						confidenceThreshold: 0.8,
 					},
-					context
+					context,
 				);
 
 				return {
@@ -344,7 +374,7 @@ export class AIService extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -358,7 +388,7 @@ export class AIService extends EnhancedServiceBase {
 	async analyzeSymptoms(
 		symptoms: string[],
 		patientContext: HealthcareContext,
-		context: ServiceContext
+		context: ServiceContext,
 	): Promise<{
 		urgencyLevel: "low" | "medium" | "high" | "critical";
 		suggestedSpecialists: string[];
@@ -368,7 +398,10 @@ export class AIService extends EnhancedServiceBase {
 		return this.executeOperation(
 			"analyzeSymptoms",
 			async () => {
-				const analysisPrompt = this.buildSymptomsAnalysisPrompt(symptoms, patientContext);
+				const analysisPrompt = this.buildSymptomsAnalysisPrompt(
+					symptoms,
+					patientContext,
+				);
 
 				const chatResponse = await this.processChat(
 					{
@@ -382,7 +415,7 @@ export class AIService extends EnhancedServiceBase {
 						],
 						context: patientContext,
 					},
-					context
+					context,
 				);
 
 				// Parse structured response from AI
@@ -392,7 +425,7 @@ export class AIService extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -402,7 +435,7 @@ export class AIService extends EnhancedServiceBase {
 	async generateMedicalReport(
 		reportType: "consultation" | "treatment" | "discharge",
 		data: Record<string, any>,
-		context: ServiceContext
+		context: ServiceContext,
 	): Promise<{
 		report: string;
 		summary: string;
@@ -425,7 +458,7 @@ export class AIService extends EnhancedServiceBase {
 							},
 						],
 					},
-					context
+					context,
 				);
 
 				return this.parseMedicalReportResponse(chatResponse.message.content);
@@ -434,7 +467,7 @@ export class AIService extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -445,7 +478,11 @@ export class AIService extends EnhancedServiceBase {
 	/**
 	 * Processar job de IA em background
 	 */
-	async submitProcessingJob(type: string, input: any, context: ServiceContext): Promise<string> {
+	async submitProcessingJob(
+		type: string,
+		input: any,
+		context: ServiceContext,
+	): Promise<string> {
 		return this.executeOperation(
 			"submitProcessingJob",
 			async () => {
@@ -477,14 +514,17 @@ export class AIService extends EnhancedServiceBase {
 			context,
 			{
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Verificar status de job
 	 */
-	async getJobStatus(jobId: string, context: ServiceContext): Promise<ProcessingJob | null> {
+	async getJobStatus(
+		jobId: string,
+		context: ServiceContext,
+	): Promise<ProcessingJob | null> {
 		return this.executeOperation(
 			"getJobStatus",
 			async () => {
@@ -493,7 +533,7 @@ export class AIService extends EnhancedServiceBase {
 			context,
 			{
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -531,7 +571,9 @@ export class AIService extends EnhancedServiceBase {
 	}
 
 	private getModelConfig(modelName: string): AIModelConfig {
-		return this.modelConfigs.get(modelName) || this.modelConfigs.get("default")!;
+		return (
+			this.modelConfigs.get(modelName) || this.modelConfigs.get("default")!
+		);
 	}
 
 	private buildSystemPrompt(healthcareContext?: HealthcareContext): string {
@@ -553,7 +595,10 @@ export class AIService extends EnhancedServiceBase {
 		return prompt;
 	}
 
-	private buildSymptomsAnalysisPrompt(symptoms: string[], context: HealthcareContext): string {
+	private buildSymptomsAnalysisPrompt(
+		symptoms: string[],
+		context: HealthcareContext,
+	): string {
 		return `Analise os seguintes sintomas e forneça uma triagem médica:
 
 Sintomas relatados: ${symptoms.join(", ")}
@@ -574,7 +619,10 @@ Por favor, forneça:
 Responda em formato JSON estruturado.`;
 	}
 
-	private buildReportGenerationPrompt(reportType: string, data: Record<string, any>): string {
+	private buildReportGenerationPrompt(
+		reportType: string,
+		data: Record<string, any>,
+	): string {
 		return `Gere um relatório médico do tipo "${reportType}" baseado nos seguintes dados:
 
 ${JSON.stringify(data, null, 2)}
@@ -588,7 +636,10 @@ O relatório deve incluir:
 Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 	}
 
-	private async callAIProvider(_messages: ChatMessage[], _config: AIModelConfig): Promise<any> {
+	private async callAIProvider(
+		_messages: ChatMessage[],
+		_config: AIModelConfig,
+	): Promise<any> {
 		// Mock implementation - replace with actual AI provider calls
 		return {
 			content:
@@ -607,15 +658,25 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 	}
 
 	private generatePredictionCacheKey(request: PredictionRequest): string {
-		const dataHash = Buffer.from(JSON.stringify(request.data)).toString("base64").substring(0, 32);
+		const dataHash = Buffer.from(JSON.stringify(request.data))
+			.toString("base64")
+			.substring(0, 32);
 		return `pred_${request.type}_${dataHash}`;
 	}
 
 	private isSupportedPredictionType(type: string): boolean {
-		return ["appointment_noshow", "treatment_outcome", "patient_risk", "demand_forecast"].includes(type);
+		return [
+			"appointment_noshow",
+			"treatment_outcome",
+			"patient_risk",
+			"demand_forecast",
+		].includes(type);
 	}
 
-	private async preprocessData(data: any, predictionType: string): Promise<any> {
+	private async preprocessData(
+		data: any,
+		predictionType: string,
+	): Promise<any> {
 		// Preprocessing logic based on prediction type
 		switch (predictionType) {
 			case "appointment_noshow":
@@ -650,7 +711,11 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 		};
 	}
 
-	private async executePrediction(type: string, _data: any, _request: PredictionRequest): Promise<any> {
+	private async executePrediction(
+		type: string,
+		_data: any,
+		_request: PredictionRequest,
+	): Promise<any> {
 		// Mock prediction execution - replace with actual ML models
 		switch (type) {
 			case "appointment_noshow":
@@ -659,8 +724,15 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 					confidence: 0.89,
 					modelVersion: "noshow_v1.2.0",
 					explanation: "Baixo risco de falta baseado no histórico do paciente",
-					recommendations: ["Enviar lembrete 24h antes", "Confirmar presença por WhatsApp"],
-					featuresUsed: ["previousNoShows", "daysSinceScheduled", "appointmentType"],
+					recommendations: [
+						"Enviar lembrete 24h antes",
+						"Confirmar presença por WhatsApp",
+					],
+					featuresUsed: [
+						"previousNoShows",
+						"daysSinceScheduled",
+						"appointmentType",
+					],
 					modelAccuracy: 0.92,
 				};
 
@@ -673,7 +745,8 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 					},
 					confidence: 0.84,
 					modelVersion: "risk_v2.1.0",
-					explanation: "Risco moderado devido a fatores de idade e histórico médico",
+					explanation:
+						"Risco moderado devido a fatores de idade e histórico médico",
 					recommendations: ["Monitoramento regular", "Exames preventivos"],
 					featuresUsed: ["age", "chronicConditions", "vitalSigns"],
 					modelAccuracy: 0.88,
@@ -713,7 +786,10 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 		}
 	}
 
-	private async processJobAsync(jobId: string, _context: ServiceContext): Promise<void> {
+	private async processJobAsync(
+		jobId: string,
+		_context: ServiceContext,
+	): Promise<void> {
 		const job = this.processingJobs.get(jobId);
 		if (!job) {
 			return;
@@ -743,7 +819,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 		_patientId: string,
 		_messages: ChatMessage[],
 		_response: ChatMessage,
-		_context: ServiceContext
+		_context: ServiceContext,
 	): Promise<void> {}
 
 	// ================================================
@@ -752,7 +828,10 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 
 	protected async initialize(): Promise<void> {
 		// Validate environment variables
-		if (!process.env.OPENAI_API_KEY && this.modelConfigs.get("default")?.provider === "openai") {
+		if (
+			!process.env.OPENAI_API_KEY &&
+			this.modelConfigs.get("default")?.provider === "openai"
+		) {
 		}
 
 		// Initialize model configurations from environment if available

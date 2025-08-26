@@ -56,7 +56,7 @@ class HealthcareCacheManager {
 				timestamp: Date.now(),
 				auditLog: [`Cache set: ${new Date().toISOString()}`],
 			},
-			{ ttl }
+			{ ttl },
 		);
 	}
 
@@ -75,7 +75,7 @@ class HealthcareCacheManager {
 		key: string,
 		value: T,
 		patientConsent = false,
-		ttl: number = 1000 * 60 * 5 // 5 minutes default
+		ttl: number = 1000 * 60 * 5, // 5 minutes default
 	): void {
 		if (!patientConsent) {
 			return;
@@ -105,7 +105,7 @@ class HealthcareCacheManager {
 			cached.auditLog.push(
 				`Sensitive access: ${new Date().toISOString()}`,
 				`User: ${auditUserId || "anonymous"}`,
-				`Consent verified: ${cached.patientConsent}`
+				`Consent verified: ${cached.patientConsent}`,
 			);
 
 			// Check expiration (extra security layer)
@@ -144,7 +144,9 @@ class HealthcareCacheManager {
 
 	// Healthcare-specific cache invalidation
 	invalidatePatientData(patientId: string): void {
-		const keys = Array.from(this.memoryCache.keys()).filter((key) => key.includes(`patient_${patientId}`));
+		const keys = Array.from(this.memoryCache.keys()).filter((key) =>
+			key.includes(`patient_${patientId}`),
+		);
 
 		for (const key of keys) {
 			this.memoryCache.delete(key);

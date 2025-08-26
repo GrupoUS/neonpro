@@ -2,11 +2,13 @@
 
 ## 📋 Visão Geral
 
-Este diretório contém scripts para migrar e configurar o ambiente de desenvolvimento NeonPro no WSL Ubuntu, copiando todas as configurações de usuário do Windows.
+Este diretório contém scripts para migrar e configurar o ambiente de desenvolvimento NeonPro no WSL
+Ubuntu, copiando todas as configurações de usuário do Windows.
 
 ## 📜 Scripts Disponíveis
 
 ### 1. `setup-wsl-ubuntu.sh` - Setup Completo
+
 **Uso**: Setup completo do ambiente WSL Ubuntu
 
 ```bash
@@ -14,6 +16,7 @@ Este diretório contém scripts para migrar e configurar o ambiente de desenvolv
 ```
 
 **O que faz**:
+
 - ✅ Instala todas as dependências (Node.js, PNPM, Docker)
 - ✅ Copia e configura projeto completo
 - ✅ Adapta configurações VS Code para WSL
@@ -27,6 +30,7 @@ Este diretório contém scripts para migrar e configurar o ambiente de desenvolv
 **Tempo estimado**: 15-30 minutos
 
 ### 2. `copy-user-settings-to-wsl.sh` - Cópia Rápida
+
 **Uso**: Cópia rápida apenas das configurações essenciais
 
 ```bash
@@ -34,6 +38,7 @@ Este diretório contém scripts para migrar e configurar o ambiente de desenvolv
 ```
 
 **O que faz**:
+
 - ✅ Copia configurações VS Code adaptadas para WSL
 - ✅ Copia configurações do projeto (.vscode, .npmrc, .pnpmrc)
 - ✅ Configura NPM/PNPM globais
@@ -46,6 +51,7 @@ Este diretório contém scripts para migrar e configurar o ambiente de desenvolv
 ## 🚀 Como Executar
 
 ### Pré-requisitos
+
 - WSL Ubuntu instalado e funcionando
 - Acesso ao projeto Windows em `/mnt/d/neonpro`
 - Permissões sudo no Ubuntu (para setup completo)
@@ -53,6 +59,7 @@ Este diretório contém scripts para migrar e configurar o ambiente de desenvolv
 ### Execução Recomendada
 
 #### Para novo ambiente WSL:
+
 ```bash
 # Navegar para o diretório scripts
 cd /mnt/d/neonpro/scripts
@@ -65,6 +72,7 @@ source ~/.bashrc
 ```
 
 #### Para cópia rápida de configurações:
+
 ```bash
 # Navegar para o diretório scripts
 cd /mnt/d/neonpro/scripts
@@ -78,31 +86,35 @@ source ~/.bashrc
 
 ## 📂 Configurações Migradas
 
-| Categoria | Arquivos/Configs | Localização WSL |
-|-----------|------------------|-----------------|
-| **VS Code** | `settings.json`, `tasks.json` | `~/.vscode-server/data/Machine/` |
-| **Git** | Configurações globais | `~/.gitconfig` |
-| **NPM/PNPM** | `.npmrc`, `.pnpmrc` | `~/` e `~/neonpro/` |
-| **Environment** | Aliases, PATH, NODE_OPTIONS | `~/.bashrc` |
-| **Projeto** | Estrutura completa | `~/neonpro/` |
-| **SSH** | Chaves (se geradas) | `~/.ssh/` |
+| Categoria       | Arquivos/Configs              | Localização WSL                  |
+| --------------- | ----------------------------- | -------------------------------- |
+| **VS Code**     | `settings.json`, `tasks.json` | `~/.vscode-server/data/Machine/` |
+| **Git**         | Configurações globais         | `~/.gitconfig`                   |
+| **NPM/PNPM**    | `.npmrc`, `.pnpmrc`           | `~/` e `~/neonpro/`              |
+| **Environment** | Aliases, PATH, NODE_OPTIONS   | `~/.bashrc`                      |
+| **Projeto**     | Estrutura completa            | `~/neonpro/`                     |
+| **SSH**         | Chaves (se geradas)           | `~/.ssh/`                        |
 
 ## 🔧 Configurações Específicas WSL
 
 ### Terminal Profile
+
 - Windows: `PowerShell`
 - WSL: `bash`
 
 ### Git Line Endings
+
 - `core.autocrlf=input`
 - `core.eol=lf`
 
 ### Node.js Memory
+
 - `NODE_OPTIONS="--max-old-space-size=4096"`
 
 ## 📝 Aliases Configurados
 
 ### Git
+
 ```bash
 gs      # git status
 ga      # git add
@@ -112,6 +124,7 @@ gl      # git log --oneline
 ```
 
 ### PNPM
+
 ```bash
 pi      # pnpm install
 pr      # pnpm run
@@ -121,6 +134,7 @@ pt      # pnpm test
 ```
 
 ### Sistema
+
 ```bash
 ll      # ls -alF
 la      # ls -A
@@ -132,6 +146,7 @@ cdneon  # cd ~/neonpro
 ## 🧪 Validação
 
 ### Comandos de Teste
+
 ```bash
 # Verificar instalações
 node --version
@@ -146,6 +161,7 @@ pnpm run build
 ```
 
 ### Checklist Pós-Instalação
+
 - [ ] Commands básicos funcionando (node, npm, pnpm, git)
 - [ ] VS Code abrindo projeto corretamente
 - [ ] Aliases bash funcionando
@@ -155,6 +171,7 @@ pnpm run build
 ## 🔍 Troubleshooting
 
 ### PNPM não encontrado
+
 ```bash
 source ~/.bashrc
 # ou
@@ -163,6 +180,7 @@ export PATH="$PNPM_HOME:$PATH"
 ```
 
 ### VS Code não reconhece settings
+
 ```bash
 # Verificar diretório
 ls -la ~/.vscode-server/data/Machine/
@@ -172,6 +190,7 @@ code --install-extension biomejs.biome
 ```
 
 ### Git pede credenciais
+
 ```bash
 # Configurar usuário se não configurado
 git config --global user.name "Seu Nome"
@@ -204,30 +223,34 @@ ssh-keygen -t rsa -b 4096 -C "seu.email@exemplo.com"
 
 ## �� Comparação dos Scripts
 
-| Aspecto | `setup-wsl-ubuntu.sh` | `copy-user-settings-to-wsl.sh` |
-|---------|----------------------|--------------------------------|
-| **Tempo** | 15-30 min | 2-5 min |
-| **Dependências** | Instala tudo | Só copia configs |
-| **Interativo** | Sim (Git config) | Mínimo |
-| **Projeto** | Copia + instala deps | Só copia estrutura |
-| **Validação** | Completa | Básica |
-| **Relatório** | Detalhado | Resumo |
-| **Ideal para** | Novo ambiente | Sync rápido |
+| Aspecto          | `setup-wsl-ubuntu.sh` | `copy-user-settings-to-wsl.sh` |
+| ---------------- | --------------------- | ------------------------------ |
+| **Tempo**        | 15-30 min             | 2-5 min                        |
+| **Dependências** | Instala tudo          | Só copia configs               |
+| **Interativo**   | Sim (Git config)      | Mínimo                         |
+| **Projeto**      | Copia + instala deps  | Só copia estrutura             |
+| **Validação**    | Completa              | Básica                         |
+| **Relatório**    | Detalhado             | Resumo                         |
+| **Ideal para**   | Novo ambiente         | Sync rápido                    |
 
 ## 🎯 Recomendações de Uso
 
 ### Cenário 1: Primeiro Setup WSL
+
 Use `setup-wsl-ubuntu.sh` - instala tudo do zero
 
 ### Cenário 2: Sync Rápido de Configs
+
 Use `copy-user-settings-to-wsl.sh` - atualiza apenas configurações
 
 ### Cenário 3: Configuração Manual
+
 Consulte `docs/wsl-ubuntu-setup.md` para executar cada etapa manualmente
 
 ## 📞 Suporte
 
 Para problemas:
+
 1. Consultar logs em `~/neonpro-setup.log` (setup completo)
 2. Verificar backups em `~/.config/neonpro-backup-*/`
 3. Consultar documentação completa em `docs/wsl-ubuntu-setup.md`
@@ -235,5 +258,4 @@ Para problemas:
 
 ---
 
-**Última atualização**: $(date)
-**Scripts testados no**: Ubuntu 20.04+ WSL2
+**Última atualização**: $(date) **Scripts testados no**: Ubuntu 20.04+ WSL2

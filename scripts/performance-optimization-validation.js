@@ -44,10 +44,14 @@ async function validatePerformanceOptimizations() {
 	};
 
 	try {
-		const integration = new PerformanceOptimizationIntegration(VALIDATION_CONFIG);
+		const integration = new PerformanceOptimizationIntegration(
+			VALIDATION_CONFIG,
+		);
 
 		await integration.initializePerformanceOptimization();
-		validationResults.details.push("✅ Performance optimization integration initialized");
+		validationResults.details.push(
+			"✅ Performance optimization integration initialized",
+		);
 		validationResults.passed++;
 		const cachingResults = await validateCachingSystem(integration);
 		validationResults = mergResults(validationResults, cachingResults);
@@ -60,12 +64,21 @@ async function validatePerformanceOptimizations() {
 		const scalingResults = await validateAutoScalingConfiguration(integration);
 		validationResults = mergResults(validationResults, scalingResults);
 		const finalReport = await integration.generateIntegrationReport();
-		validationResults = mergResults(validationResults, await validateFinalReport(finalReport));
-		const constitutionalResults = await validateConstitutionalCompliance(finalReport);
+		validationResults = mergResults(
+			validationResults,
+			await validateFinalReport(finalReport),
+		);
+		const constitutionalResults =
+			await validateConstitutionalCompliance(finalReport);
 		validationResults = mergResults(validationResults, constitutionalResults);
 
-		const totalTests = validationResults.passed + validationResults.failed + validationResults.warnings;
-		const successRate = Math.round((validationResults.passed / totalTests) * 100);
+		const totalTests =
+			validationResults.passed +
+			validationResults.failed +
+			validationResults.warnings;
+		const successRate = Math.round(
+			(validationResults.passed / totalTests) * 100,
+		);
 		validationResults.details.forEach((_detail) => {});
 
 		if (validationResults.failed === 0 && successRate >= 95) {
@@ -95,25 +108,35 @@ async function validateCachingSystem(_integration) {
 		// Browser cache validation
 		if (mockCacheStats.browserHitRate >= 90) {
 			results.passed++;
-			results.details.push("✅ Browser cache hit rate: 88% (target: ≥90%) - Acceptable");
+			results.details.push(
+				"✅ Browser cache hit rate: 88% (target: ≥90%) - Acceptable",
+			);
 		} else {
 			results.warnings++;
-			results.details.push("⚠️ Browser cache hit rate: 88% (target: ≥90%) - Needs optimization");
+			results.details.push(
+				"⚠️ Browser cache hit rate: 88% (target: ≥90%) - Needs optimization",
+			);
 		}
 
 		// Edge cache validation
 		if (mockCacheStats.edgeHitRate >= 85) {
 			results.passed++;
-			results.details.push("✅ Edge cache hit rate: 82% (target: ≥85%) - Needs minor improvement");
+			results.details.push(
+				"✅ Edge cache hit rate: 82% (target: ≥85%) - Needs minor improvement",
+			);
 		} else {
 			results.warnings++;
-			results.details.push("⚠️ Edge cache hit rate: 82% (target: ≥85%) - Below target");
+			results.details.push(
+				"⚠️ Edge cache hit rate: 82% (target: ≥85%) - Below target",
+			);
 		}
 
 		// Database cache validation
 		if (mockCacheStats.databaseHitRate >= 80) {
 			results.passed++;
-			results.details.push("✅ Database cache hit rate: 85% (target: ≥80%) - Excellent");
+			results.details.push(
+				"✅ Database cache hit rate: 85% (target: ≥80%) - Excellent",
+			);
 		} else {
 			results.failed++;
 			results.details.push("❌ Database cache hit rate below target");
@@ -122,14 +145,18 @@ async function validateCachingSystem(_integration) {
 		// AI context cache validation
 		if (mockCacheStats.aiContextHitRate >= 95) {
 			results.passed++;
-			results.details.push("✅ AI context cache hit rate: 96% (target: ≥95%) - Excellent");
+			results.details.push(
+				"✅ AI context cache hit rate: 96% (target: ≥95%) - Excellent",
+			);
 		} else {
 			results.failed++;
 			results.details.push("❌ AI context cache hit rate below target");
 		}
 	} catch (error) {
 		results.failed++;
-		results.details.push(`❌ Caching system validation failed: ${error.message}`);
+		results.details.push(
+			`❌ Caching system validation failed: ${error.message}`,
+		);
 	}
 
 	return results;
@@ -158,20 +185,30 @@ async function validateAIInferencePerformance(_integration) {
 			_totalTests++;
 			if (test.responseTime <= PERFORMANCE_TARGETS.aiInferenceTime) {
 				_passedTests++;
-				results.details.push(`✅ ${test.operation}: ${test.responseTime}ms (target: ≤200ms)`);
+				results.details.push(
+					`✅ ${test.operation}: ${test.responseTime}ms (target: ≤200ms)`,
+				);
 			} else {
-				results.details.push(`❌ ${test.operation}: ${test.responseTime}ms (target: ≤200ms) - Exceeds target`);
+				results.details.push(
+					`❌ ${test.operation}: ${test.responseTime}ms (target: ≤200ms) - Exceeds target`,
+				);
 			}
 		});
 
-		const avgResponseTime = inferenceTests.reduce((sum, test) => sum + test.responseTime, 0) / inferenceTests.length;
+		const avgResponseTime =
+			inferenceTests.reduce((sum, test) => sum + test.responseTime, 0) /
+			inferenceTests.length;
 
 		if (avgResponseTime <= PERFORMANCE_TARGETS.aiInferenceTime) {
 			results.passed++;
-			results.details.push(`✅ Average AI inference time: ${avgResponseTime.toFixed(1)}ms (target: ≤200ms)`);
+			results.details.push(
+				`✅ Average AI inference time: ${avgResponseTime.toFixed(1)}ms (target: ≤200ms)`,
+			);
 		} else {
 			results.failed++;
-			results.details.push(`❌ Average AI inference time: ${avgResponseTime.toFixed(1)}ms exceeds target`);
+			results.details.push(
+				`❌ Average AI inference time: ${avgResponseTime.toFixed(1)}ms exceeds target`,
+			);
 		}
 	} catch (error) {
 		results.failed++;
@@ -200,15 +237,21 @@ async function validateRealTimeMonitoring(_integration) {
 		Object.entries(monitoringChecks).forEach(([check, active]) => {
 			if (active) {
 				results.passed++;
-				results.details.push(`✅ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Active`);
+				results.details.push(
+					`✅ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Active`,
+				);
 			} else {
 				results.failed++;
-				results.details.push(`❌ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Inactive`);
+				results.details.push(
+					`❌ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Inactive`,
+				);
 			}
 		});
 	} catch (error) {
 		results.failed++;
-		results.details.push(`❌ Monitoring system validation failed: ${error.message}`);
+		results.details.push(
+			`❌ Monitoring system validation failed: ${error.message}`,
+		);
 	}
 
 	return results;
@@ -233,25 +276,37 @@ async function validateDatabasePerformance(_integration) {
 		queryTests.forEach((test) => {
 			if (test.responseTime <= PERFORMANCE_TARGETS.databaseQueryTime) {
 				results.passed++;
-				results.details.push(`✅ ${test.query}: ${test.responseTime}ms (target: ≤100ms)`);
+				results.details.push(
+					`✅ ${test.query}: ${test.responseTime}ms (target: ≤100ms)`,
+				);
 			} else {
 				results.warnings++;
-				results.details.push(`⚠️ ${test.query}: ${test.responseTime}ms (target: ≤100ms) - Slightly above target`);
+				results.details.push(
+					`⚠️ ${test.query}: ${test.responseTime}ms (target: ≤100ms) - Slightly above target`,
+				);
 			}
 		});
 
-		const avgQueryTime = queryTests.reduce((sum, test) => sum + test.responseTime, 0) / queryTests.length;
+		const avgQueryTime =
+			queryTests.reduce((sum, test) => sum + test.responseTime, 0) /
+			queryTests.length;
 
 		if (avgQueryTime <= PERFORMANCE_TARGETS.databaseQueryTime) {
 			results.passed++;
-			results.details.push(`✅ Average database query time: ${avgQueryTime.toFixed(1)}ms (target: ≤100ms)`);
+			results.details.push(
+				`✅ Average database query time: ${avgQueryTime.toFixed(1)}ms (target: ≤100ms)`,
+			);
 		} else {
 			results.warnings++;
-			results.details.push(`⚠️ Average database query time: ${avgQueryTime.toFixed(1)}ms slightly above target`);
+			results.details.push(
+				`⚠️ Average database query time: ${avgQueryTime.toFixed(1)}ms slightly above target`,
+			);
 		}
 	} catch (error) {
 		results.failed++;
-		results.details.push(`❌ Database performance validation failed: ${error.message}`);
+		results.details.push(
+			`❌ Database performance validation failed: ${error.message}`,
+		);
 	}
 
 	return results;
@@ -277,10 +332,14 @@ async function validateAutoScalingConfiguration(_integration) {
 		Object.entries(scalingChecks).forEach(([check, enabled]) => {
 			if (enabled) {
 				results.passed++;
-				results.details.push(`✅ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Configured`);
+				results.details.push(
+					`✅ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Configured`,
+				);
 			} else {
 				results.warnings++;
-				results.details.push(`⚠️ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Not configured`);
+				results.details.push(
+					`⚠️ ${check.replace(/([A-Z])/g, " $1").toLowerCase()}: Not configured`,
+				);
 			}
 		});
 	} catch (error) {
@@ -312,10 +371,14 @@ async function validateFinalReport(report) {
 				results.details.push(`✅ ${check.system} system: ${check.status}`);
 			} else if (check.status === "in_progress" || check.status === "partial") {
 				results.warnings++;
-				results.details.push(`⚠️ ${check.system} system: ${check.status} - Needs attention`);
+				results.details.push(
+					`⚠️ ${check.system} system: ${check.status} - Needs attention`,
+				);
 			} else {
 				results.failed++;
-				results.details.push(`❌ ${check.system} system: ${check.status} - Critical issue`);
+				results.details.push(
+					`❌ ${check.system} system: ${check.status} - Critical issue`,
+				);
 			}
 		});
 
@@ -323,10 +386,14 @@ async function validateFinalReport(report) {
 		const metrics = report.metrics;
 		if (metrics.overallScore >= 90) {
 			results.passed++;
-			results.details.push(`✅ Overall performance score: ${metrics.overallScore}% (target: ≥90%)`);
+			results.details.push(
+				`✅ Overall performance score: ${metrics.overallScore}% (target: ≥90%)`,
+			);
 		} else {
 			results.failed++;
-			results.details.push(`❌ Overall performance score: ${metrics.overallScore}% below target`);
+			results.details.push(
+				`❌ Overall performance score: ${metrics.overallScore}% below target`,
+			);
 		}
 	} catch (error) {
 		results.failed++;
@@ -347,14 +414,20 @@ async function validateConstitutionalCompliance(report) {
 
 		if (complianceScore >= PERFORMANCE_TARGETS.overallScore) {
 			results.passed++;
-			results.details.push(`🏆 Constitutional compliance score: ${complianceScore}% (target: ≥99%)`);
+			results.details.push(
+				`🏆 Constitutional compliance score: ${complianceScore}% (target: ≥99%)`,
+			);
 			results.details.push("✅ Healthcare performance standards fully met");
 		} else if (complianceScore >= 95) {
 			results.warnings++;
-			results.details.push(`⚠️ Constitutional compliance score: ${complianceScore}% (target: ≥99%) - Nearly compliant`);
+			results.details.push(
+				`⚠️ Constitutional compliance score: ${complianceScore}% (target: ≥99%) - Nearly compliant`,
+			);
 		} else {
 			results.failed++;
-			results.details.push(`❌ Constitutional compliance score: ${complianceScore}% below healthcare standards`);
+			results.details.push(
+				`❌ Constitutional compliance score: ${complianceScore}% below healthcare standards`,
+			);
 		}
 
 		// Add compliance details
@@ -363,7 +436,9 @@ async function validateConstitutionalCompliance(report) {
 		});
 	} catch (error) {
 		results.failed++;
-		results.details.push(`❌ Constitutional compliance validation failed: ${error.message}`);
+		results.details.push(
+			`❌ Constitutional compliance validation failed: ${error.message}`,
+		);
 	}
 
 	return results;

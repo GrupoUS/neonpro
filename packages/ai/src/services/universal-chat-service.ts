@@ -1,6 +1,11 @@
 import { EnhancedServiceBase } from "@neonpro/core-services";
 import { createClient } from "@supabase/supabase-js";
-import type { ChatMessage, ChatSession, ComplianceMetrics, HealthcareChatContext } from "../types";
+import type {
+	ChatMessage,
+	ChatSession,
+	ComplianceMetrics,
+	HealthcareChatContext,
+} from "../types";
 
 type ChatServiceInput = {
 	message: string;
@@ -24,7 +29,8 @@ type ChatServiceOutput = {
 export class UniversalChatService extends EnhancedServiceBase {
 	protected serviceId = "universal-chat";
 	protected version = "1.0.0";
-	protected description = "AI-powered universal chat system for healthcare with Portuguese optimization";
+	protected description =
+		"AI-powered universal chat system for healthcare with Portuguese optimization";
 	private readonly supabase: ReturnType<typeof createClient>;
 
 	constructor() {
@@ -45,7 +51,10 @@ export class UniversalChatService extends EnhancedServiceBase {
 		});
 
 		// Initialize Supabase client
-		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+		this.supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		);
 	}
 
 	getServiceName(): string {
@@ -79,14 +88,16 @@ export class UniversalChatService extends EnhancedServiceBase {
 					cacheTTL: 300,
 					requiresAuth: true,
 					sensitiveData: true,
-				}
+				},
 			);
 		} catch (error) {
 			throw new Error(`Universal Chat Service failed: ${error.message}`);
 		}
 	}
 
-	private async processChat(input: ChatServiceInput): Promise<ChatServiceOutput> {
+	private async processChat(
+		input: ChatServiceInput,
+	): Promise<ChatServiceOutput> {
 		// Load chat session context
 		const session = await this.loadChatSession(input.sessionId, input.userId);
 
@@ -97,7 +108,10 @@ export class UniversalChatService extends EnhancedServiceBase {
 		const aiResponse = await this.callOpenAI(prompt, input.language || "pt-BR");
 
 		// Process response for healthcare compliance
-		const processedResponse = await this.processHealthcareResponse(aiResponse, input);
+		const processedResponse = await this.processHealthcareResponse(
+			aiResponse,
+			input,
+		);
 
 		// Save conversation to database
 		await this.saveConversation(input, processedResponse);
@@ -137,7 +151,10 @@ export class UniversalChatService extends EnhancedServiceBase {
 		}
 	}
 
-	private async loadChatSession(sessionId: string, userId: string): Promise<ChatSession> {
+	private async loadChatSession(
+		sessionId: string,
+		userId: string,
+	): Promise<ChatSession> {
 		try {
 			// Try to load existing session
 			const { data: sessionData, error: sessionError } = await this.supabase
@@ -169,7 +186,9 @@ export class UniversalChatService extends EnhancedServiceBase {
 					content: msg.content,
 					timestamp: new Date(msg.created_at),
 					confidence: msg.confidence_score || undefined,
-					complianceFlags: msg.compliance_flags ? Object.keys(msg.compliance_flags) : undefined,
+					complianceFlags: msg.compliance_flags
+						? Object.keys(msg.compliance_flags)
+						: undefined,
 				}));
 
 				return {
@@ -222,7 +241,10 @@ export class UniversalChatService extends EnhancedServiceBase {
 		}
 	}
 
-	private async buildHealthcarePrompt(input: ChatServiceInput, session: ChatSession): Promise<string> {
+	private async buildHealthcarePrompt(
+		input: ChatServiceInput,
+		session: ChatSession,
+	): Promise<string> {
 		const systemPrompt = `
     Você é um assistente inteligente especializado em saúde para clínicas brasileiras.
     
@@ -271,25 +293,39 @@ export class UniversalChatService extends EnhancedServiceBase {
 		});
 
 		if (!response.ok) {
-			throw new Error(`OpenAI API error: ${response.status} ${response.statusText}`);
+			throw new Error(
+				`OpenAI API error: ${response.status} ${response.statusText}`,
+			);
 		}
 
 		const data = await response.json();
 		return data.choices[0].message.content;
 	}
 
-	private async processHealthcareResponse(aiResponse: string, input: ChatServiceInput): Promise<ChatServiceOutput> {
+	private async processHealthcareResponse(
+		aiResponse: string,
+		input: ChatServiceInput,
+	): Promise<ChatServiceOutput> {
 		// Compliance checking
 		const complianceFlags = await this.checkHealthcareCompliance(aiResponse);
 
 		// Confidence scoring
-		const confidence = await this.calculateResponseConfidence(aiResponse, input);
+		const confidence = await this.calculateResponseConfidence(
+			aiResponse,
+			input,
+		);
 
 		// Escalation detection
-		const escalationRequired = await this.detectEscalationNeed(aiResponse, input);
+		const escalationRequired = await this.detectEscalationNeed(
+			aiResponse,
+			input,
+		);
 
 		// Action suggestions
-		const suggestedActions = await this.generateSuggestedActions(aiResponse, input);
+		const suggestedActions = await this.generateSuggestedActions(
+			aiResponse,
+			input,
+		);
 
 		return {
 			response: aiResponse,
@@ -302,7 +338,9 @@ export class UniversalChatService extends EnhancedServiceBase {
 		};
 	}
 
-	private async checkHealthcareCompliance(response: string): Promise<ComplianceMetrics> {
+	private async checkHealthcareCompliance(
+		response: string,
+	): Promise<ComplianceMetrics> {
 		const flags: ComplianceMetrics = {
 			lgpdCompliant: true,
 			anvisaCompliant: true,
@@ -335,38 +373,45 @@ export class UniversalChatService extends EnhancedServiceBase {
 		return flags;
 	}
 
-	private async saveConversation(input: ChatServiceInput, output: ChatServiceOutput): Promise<void> {
+	private async saveConversation(
+		input: ChatServiceInput,
+		output: ChatServiceOutput,
+	): Promise<void> {
 		try {
 			// Save user message
-			const { error: userError } = await this.supabase.from("ai_chat_messages").insert({
-				session_id: input.sessionId,
-				role: "user",
-				content: input.message,
-				metadata: {
-					userId: input.userId,
-					clinicId: input.clinicId,
-					context: input.context,
-					timestamp: new Date().toISOString(),
-				},
-			});
+			const { error: userError } = await this.supabase
+				.from("ai_chat_messages")
+				.insert({
+					session_id: input.sessionId,
+					role: "user",
+					content: input.message,
+					metadata: {
+						userId: input.userId,
+						clinicId: input.clinicId,
+						context: input.context,
+						timestamp: new Date().toISOString(),
+					},
+				});
 
 			if (userError) {
 			}
 
 			// Save assistant response
-			const { error: assistantError } = await this.supabase.from("ai_chat_messages").insert({
-				session_id: input.sessionId,
-				role: "assistant",
-				content: output.response,
-				confidence_score: output.confidence,
-				compliance_flags: output.complianceFlags || {},
-				metadata: {
-					messageId: output.messageId,
-					suggestedActions: output.suggestedActions,
-					escalationRequired: output.escalationRequired,
-					timestamp: new Date().toISOString(),
-				},
-			});
+			const { error: assistantError } = await this.supabase
+				.from("ai_chat_messages")
+				.insert({
+					session_id: input.sessionId,
+					role: "assistant",
+					content: output.response,
+					confidence_score: output.confidence,
+					compliance_flags: output.complianceFlags || {},
+					metadata: {
+						messageId: output.messageId,
+						suggestedActions: output.suggestedActions,
+						escalationRequired: output.escalationRequired,
+						timestamp: new Date().toISOString(),
+					},
+				});
 
 			if (assistantError) {
 			}
@@ -390,7 +435,7 @@ export class UniversalChatService extends EnhancedServiceBase {
 	private async updateChatSession(
 		session: ChatSession,
 		_input: ChatServiceInput,
-		output: ChatServiceOutput
+		output: ChatServiceOutput,
 	): Promise<void> {
 		try {
 			const { error } = await this.supabase
@@ -422,7 +467,10 @@ export class UniversalChatService extends EnhancedServiceBase {
 		return sensitivePatterns.some((pattern) => pattern.test(message));
 	}
 
-	private async calculateResponseConfidence(response: string, _input: ChatServiceInput): Promise<number> {
+	private async calculateResponseConfidence(
+		response: string,
+		_input: ChatServiceInput,
+	): Promise<number> {
 		let confidence = 0.8; // Base confidence
 
 		// Adjust based on response length and completeness
@@ -439,7 +487,10 @@ export class UniversalChatService extends EnhancedServiceBase {
 		return Math.min(confidence, 1.0);
 	}
 
-	private async detectEscalationNeed(response: string, input: ChatServiceInput): Promise<boolean> {
+	private async detectEscalationNeed(
+		response: string,
+		input: ChatServiceInput,
+	): Promise<boolean> {
 		const escalationKeywords = [
 			"emergência",
 			"urgente",
@@ -452,11 +503,16 @@ export class UniversalChatService extends EnhancedServiceBase {
 		];
 
 		return escalationKeywords.some(
-			(keyword) => input.message.toLowerCase().includes(keyword) || response.toLowerCase().includes(keyword)
+			(keyword) =>
+				input.message.toLowerCase().includes(keyword) ||
+				response.toLowerCase().includes(keyword),
 		);
 	}
 
-	private async generateSuggestedActions(response: string, input: ChatServiceInput): Promise<string[]> {
+	private async generateSuggestedActions(
+		response: string,
+		input: ChatServiceInput,
+	): Promise<string[]> {
 		const actions: string[] = [];
 
 		if (response.includes("agendar")) {

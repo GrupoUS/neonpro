@@ -338,9 +338,15 @@ vi.mock("react", async (importOriginal) => {
 		useId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
 		useDeferredValue: vi.fn((value) => value),
 		useTransition: vi.fn(() => [false, vi.fn()]),
-		useSyncExternalStore: vi.fn((_subscribe, getSnapshot, getServerSnapshot) => {
-			return getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined;
-		}),
+		useSyncExternalStore: vi.fn(
+			(_subscribe, getSnapshot, getServerSnapshot) => {
+				return getSnapshot
+					? getSnapshot()
+					: getServerSnapshot
+						? getServerSnapshot()
+						: undefined;
+			},
+		),
 		useInsertionEffect: vi.fn((effect, _deps) => {
 			try {
 				const cleanup = effect();
@@ -371,7 +377,9 @@ vi.mock("@neonpro/shared/api-client", () => {
 				if (typeof error === "object" && error && "error" in error) {
 					const apiError = error as any;
 					if (apiError.error?.validation_errors?.length > 0) {
-						return apiError.error.validation_errors.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
+						return apiError.error.validation_errors
+							.map((ve: any) => `${ve.field}: ${ve.message}`)
+							.join(", ");
 					}
 					return apiError.message || "API error occurred";
 				}
@@ -506,15 +514,23 @@ const mockReactHooks = () => {
 			return [initialState, vi.fn()];
 		}),
 		useRef: vi.fn((initialValue) => ({ current: initialValue })),
-		useContext: vi.fn((context) => context._currentValue || context.defaultValue || {}),
+		useContext: vi.fn(
+			(context) => context._currentValue || context.defaultValue || {},
+		),
 		useImperativeHandle: vi.fn(),
 		useDebugValue: vi.fn(),
 		useId: vi.fn(() => `test-id-${Math.random().toString(36).substr(2, 9)}`),
 		useDeferredValue: vi.fn((value) => value),
 		useTransition: vi.fn(() => [false, vi.fn()]),
-		useSyncExternalStore: vi.fn((_subscribe, getSnapshot, getServerSnapshot) => {
-			return getSnapshot ? getSnapshot() : getServerSnapshot ? getServerSnapshot() : undefined;
-		}),
+		useSyncExternalStore: vi.fn(
+			(_subscribe, getSnapshot, getServerSnapshot) => {
+				return getSnapshot
+					? getSnapshot()
+					: getServerSnapshot
+						? getServerSnapshot()
+						: undefined;
+			},
+		),
 		useInsertionEffect: vi.fn((effect, _deps) => {
 			// Execute effect immediately in tests
 			effect();
@@ -752,7 +768,10 @@ if (!globalThis.SubmitEvent) {
 	class SubmitEventPolyfill extends Event {
 		submitter: HTMLElement | null;
 
-		constructor(type: string, eventInitDict?: EventInit & { submitter?: HTMLElement | null }) {
+		constructor(
+			type: string,
+			eventInitDict?: EventInit & { submitter?: HTMLElement | null },
+		) {
 			super(type, eventInitDict);
 			this.submitter = eventInitDict?.submitter || null;
 		}
@@ -791,7 +810,9 @@ const polyfillFormSubmission = () => {
 		if (HTMLFormElement.prototype.requestSubmit) {
 		} else {
 			// Only add polyfill if requestSubmit doesn't exist
-			HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement | null) {
+			HTMLFormElement.prototype.requestSubmit = function (
+				submitter?: HTMLElement | null,
+			) {
 				// Create and dispatch submit event
 				let submitEvent: Event;
 
@@ -843,10 +864,16 @@ Object.defineProperty(HTMLFormElement.prototype, "checkValidity", {
 		let isValid = true;
 
 		for (const input of Array.from(inputs)) {
-			const element = input as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+			const element = input as
+				| HTMLInputElement
+				| HTMLSelectElement
+				| HTMLTextAreaElement;
 
 			// Check required fields
-			if (element.hasAttribute("required") && (!element.value || element.value.trim() === "")) {
+			if (
+				element.hasAttribute("required") &&
+				(!element.value || element.value.trim() === "")
+			) {
 				isValid = false;
 				break;
 			}
@@ -855,7 +882,10 @@ Object.defineProperty(HTMLFormElement.prototype, "checkValidity", {
 			if (element instanceof HTMLInputElement) {
 				switch (element.type) {
 					case "email":
-						if (element.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(element.value)) {
+						if (
+							element.value &&
+							!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(element.value)
+						) {
 							isValid = false;
 						}
 						break;
@@ -905,7 +935,10 @@ Object.defineProperty(HTMLFormElement.prototype, "reportValidity", {
 // Individual input validation polyfills
 Object.defineProperty(HTMLInputElement.prototype, "checkValidity", {
 	value(this: HTMLInputElement) {
-		if (this.hasAttribute("required") && (!this.value || this.value.trim() === "")) {
+		if (
+			this.hasAttribute("required") &&
+			(!this.value || this.value.trim() === "")
+		) {
 			return false;
 		}
 
@@ -961,7 +994,7 @@ const mockFetch = vi.fn(() =>
 		status: 200,
 		json: () => Promise.resolve({}),
 		text: () => Promise.resolve(""),
-	})
+	}),
 );
 
 // Add mock methods that tests expect
@@ -1354,12 +1387,14 @@ const createSupabaseClientMock = () => {
 
 		// Functions mock for Edge Functions
 		functions: {
-			invoke: vi.fn().mockImplementation((_functionName: string, _options?: any) => {
-				return Promise.resolve({
-					data: null,
-					error: null,
-				});
-			}),
+			invoke: vi
+				.fn()
+				.mockImplementation((_functionName: string, _options?: any) => {
+					return Promise.resolve({
+						data: null,
+						error: null,
+					});
+				}),
 		},
 	};
 };
@@ -1462,9 +1497,11 @@ const globalMocks = vi.hoisted(() => {
 				messageId: `push-${Math.random().toString(36).substr(2, 9)}`,
 			};
 		}),
-		getDeliveryStatus: vi.fn().mockImplementation(async (_messageId: string) => {
-			return { status: "delivered", timestamp: new Date().toISOString() };
-		}),
+		getDeliveryStatus: vi
+			.fn()
+			.mockImplementation(async (_messageId: string) => {
+				return { status: "delivered", timestamp: new Date().toISOString() };
+			}),
 		// Add the method emergency tests are looking for
 		sendEmergencyAlert: vi.fn().mockImplementation(async (_alert: any) => {
 			return {
@@ -1473,13 +1510,15 @@ const globalMocks = vi.hoisted(() => {
 			};
 		}),
 		// Add methods required by emergency access protocol tests
-		notifyMedicalStaff: vi.fn().mockImplementation(async (_notification: any) => {
-			return {
-				medical_team_alerted: true,
-				specialists_contacted: ["cardiologist", "anesthesiologist"],
-				notification_time: new Date().toISOString(),
-			};
-		}),
+		notifyMedicalStaff: vi
+			.fn()
+			.mockImplementation(async (_notification: any) => {
+				return {
+					medical_team_alerted: true,
+					specialists_contacted: ["cardiologist", "anesthesiologist"],
+					notification_time: new Date().toISOString(),
+				};
+			}),
 		logEmergencyNotification: vi.fn().mockImplementation(async (_log: any) => {
 			return {
 				notification_logged: true,
@@ -1523,14 +1562,16 @@ const globalMocks = vi.hoisted(() => {
 			return { success: true, deletedAt: new Date().toISOString() };
 		}),
 		// Add the additional methods that integration tests expect
-		validateDataProcessing: vi.fn().mockImplementation(async (_processingData: any) => {
-			return {
-				valid: true,
-				purpose_compliant: true,
-				legal_basis: "consent",
-				details: "Processing valid under LGPD consent provisions",
-			};
-		}),
+		validateDataProcessing: vi
+			.fn()
+			.mockImplementation(async (_processingData: any) => {
+				return {
+					valid: true,
+					purpose_compliant: true,
+					legal_basis: "consent",
+					details: "Processing valid under LGPD consent provisions",
+				};
+			}),
 		recordConsent: vi.fn().mockImplementation(async (_consentData: any) => {
 			return {
 				success: true,
@@ -1545,33 +1586,43 @@ const globalMocks = vi.hoisted(() => {
 				data_deletion_scheduled: true,
 			};
 		}),
-		processDataSubjectRequest: vi.fn().mockImplementation(async (_requestData: any) => {
-			return {
-				success: true,
-				request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
-				processed_at: new Date().toISOString(),
-				status: "completed",
-			};
-		}),
-		anonymizePatientData: vi.fn().mockImplementation(async (_patientId: string) => {
-			return {
-				success: true,
-				patient_id: _patientId,
-				anonymized_at: new Date().toISOString(),
-				anonymization_method: "k-anonymity",
-				anonymized_fields: ["name", "cpf", "email", "phone"],
-			};
-		}),
-		exportPatientData: vi.fn().mockImplementation(async (_patientId: string) => {
-			return {
-				success: true,
-				export_url: "https://example.com/patient-data-export.zip",
-				expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-				request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
-				status: "processing",
-				estimated_completion: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-			};
-		}),
+		processDataSubjectRequest: vi
+			.fn()
+			.mockImplementation(async (_requestData: any) => {
+				return {
+					success: true,
+					request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
+					processed_at: new Date().toISOString(),
+					status: "completed",
+				};
+			}),
+		anonymizePatientData: vi
+			.fn()
+			.mockImplementation(async (_patientId: string) => {
+				return {
+					success: true,
+					patient_id: _patientId,
+					anonymized_at: new Date().toISOString(),
+					anonymization_method: "k-anonymity",
+					anonymized_fields: ["name", "cpf", "email", "phone"],
+				};
+			}),
+		exportPatientData: vi
+			.fn()
+			.mockImplementation(async (_patientId: string) => {
+				return {
+					success: true,
+					export_url: "https://example.com/patient-data-export.zip",
+					expires_at: new Date(
+						Date.now() + 7 * 24 * 60 * 60 * 1000,
+					).toISOString(),
+					request_id: `request-${Math.random().toString(36).substr(2, 9)}`,
+					status: "processing",
+					estimated_completion: new Date(
+						Date.now() + 30 * 24 * 60 * 60 * 1000,
+					).toISOString(),
+				};
+			}),
 		createAuditEntry: vi.fn().mockImplementation(async (_auditData: any) => {
 			return {
 				success: true,
@@ -1595,35 +1646,41 @@ const globalMocks = vi.hoisted(() => {
 				total_count: 1,
 			};
 		}),
-		checkRetentionPolicy: vi.fn().mockImplementation(async (_clinicId: string) => {
-			return {
-				policy_compliant: true,
-				retention_periods: {
-					medical_records: "10_years",
-					patient_data: "5_years",
-				},
-				healthcare_exceptions: [
-					"Medical records retained for 10 years",
-					"Medical records retained for 10 years as per Brazilian medical law",
-					"Patient data retained for 5 years according to CFM guidelines",
-				],
-				upcoming_expirations: [
-					{
-						patient_id: "patient-789",
-						data_type: "consultation_notes",
-						expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+		checkRetentionPolicy: vi
+			.fn()
+			.mockImplementation(async (_clinicId: string) => {
+				return {
+					policy_compliant: true,
+					retention_periods: {
+						medical_records: "10_years",
+						patient_data: "5_years",
 					},
-				],
-			};
-		}),
-		validatePurposeLimitation: vi.fn().mockImplementation(async (_purpose: string, dataTypes: string[]) => {
-			return {
-				valid: true,
-				purpose_compliant: true,
-				allowed_data_types: dataTypes,
-				restrictions: [],
-			};
-		}),
+					healthcare_exceptions: [
+						"Medical records retained for 10 years",
+						"Medical records retained for 10 years as per Brazilian medical law",
+						"Patient data retained for 5 years according to CFM guidelines",
+					],
+					upcoming_expirations: [
+						{
+							patient_id: "patient-789",
+							data_type: "consultation_notes",
+							expires_at: new Date(
+								Date.now() + 30 * 24 * 60 * 60 * 1000,
+							).toISOString(),
+						},
+					],
+				};
+			}),
+		validatePurposeLimitation: vi
+			.fn()
+			.mockImplementation(async (_purpose: string, dataTypes: string[]) => {
+				return {
+					valid: true,
+					purpose_compliant: true,
+					allowed_data_types: dataTypes,
+					restrictions: [],
+				};
+			}),
 	};
 
 	return {
@@ -1634,7 +1691,8 @@ const globalMocks = vi.hoisted(() => {
 });
 
 // Extract the hoisted mocks
-const { mockCpfValidator, mockNotificationService, mockLgpdService } = globalMocks;
+const { mockCpfValidator, mockNotificationService, mockLgpdService } =
+	globalMocks;
 
 // CRITICAL: Export global mocks with proper accessibility
 // Use Object.defineProperty to ensure these are available across all test contexts
@@ -1779,7 +1837,11 @@ afterEach(() => {
 				const bodyListeners = (window as any).getEventListeners(document.body);
 				Object.keys(bodyListeners).forEach((type) => {
 					bodyListeners[type].forEach((listener: any) => {
-						document.body.removeEventListener(type, listener.listener, listener.useCapture);
+						document.body.removeEventListener(
+							type,
+							listener.listener,
+							listener.useCapture,
+						);
 					});
 				});
 			} catch (_error) {}

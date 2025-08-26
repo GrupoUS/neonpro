@@ -6,13 +6,13 @@
 
 "use client";
 
-import { Activity, BarChart3, Gauge, Grid3X3, List, Maximize2, RefreshCw, Settings, Shield } from "lucide-react";
-import { Suspense, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Activity, BarChart3, Gauge, Grid3X3, List, Maximize2, RefreshCw, Settings, Shield } from "lucide-react";
+import { Suspense, useState } from "react";
 
 // Import all dashboards
 import { AIAnalyticsDashboard } from "./ai-powered/AIAnalyticsDashboard";

@@ -176,7 +176,9 @@ export class NotificationService {
 				type: "email",
 				category: "payment",
 				title: "Cobrança Pendente",
-				content: `Você possui uma cobrança pendente de R$ ${amount.toFixed(2)} com vencimento em ${new Date(dueDate).toLocaleDateString("pt-BR")}. Descrição: ${description}`,
+				content: `Você possui uma cobrança pendente de R$ ${amount.toFixed(2)} com vencimento em ${new Date(
+					dueDate
+				).toLocaleDateString("pt-BR")}. Descrição: ${description}`,
 				status: "pending",
 				metadata: {
 					amount,

@@ -7,11 +7,25 @@
 
 "use client";
 
-import { Camera, Eye, Monitor, Move3d, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import {
+	Camera,
+	Eye,
+	Monitor,
+	Move3d,
+	RotateCcw,
+	ZoomIn,
+	ZoomOut,
+} from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../Card";
 import { Progress } from "../Progress";
 import { Switch } from "../Switch";
 import { Slider } from "../ui/slider";
@@ -99,7 +113,8 @@ export function ARVRViewer({
 	};
 
 	const [settings, setSettings] = useState(defaultSettings);
-	const [_currentAnnotation, _setCurrentAnnotation] = useState<Partial<Annotation> | null>(null);
+	const [_currentAnnotation, _setCurrentAnnotation] =
+		useState<Partial<Annotation> | null>(null);
 
 	useEffect(() => {
 		// Simulate loading process
@@ -118,7 +133,9 @@ export function ARVRViewer({
 				await initializeViewer();
 				setIsLoading(false);
 			} catch (err) {
-				setError(`Erro ao carregar conteúdo: ${err instanceof Error ? err.message : "Erro desconhecido"}`);
+				setError(
+					`Erro ao carregar conteúdo: ${err instanceof Error ? err.message : "Erro desconhecido"}`,
+				);
 				setIsLoading(false);
 			}
 		};
@@ -151,24 +168,64 @@ export function ARVRViewer({
 
 		switch (content.type) {
 			case "dicom":
-				ctx.fillText("DICOM Medical Image Viewer", canvas.width / 2, canvas.height / 2 - 20);
-				ctx.fillText(`Modality: ${content.metadata.modality || "Unknown"}`, canvas.width / 2, canvas.height / 2);
-				ctx.fillText(`Body Part: ${content.metadata.bodyPart || "Unknown"}`, canvas.width / 2, canvas.height / 2 + 20);
+				ctx.fillText(
+					"DICOM Medical Image Viewer",
+					canvas.width / 2,
+					canvas.height / 2 - 20,
+				);
+				ctx.fillText(
+					`Modality: ${content.metadata.modality || "Unknown"}`,
+					canvas.width / 2,
+					canvas.height / 2,
+				);
+				ctx.fillText(
+					`Body Part: ${content.metadata.bodyPart || "Unknown"}`,
+					canvas.width / 2,
+					canvas.height / 2 + 20,
+				);
 				break;
 			case "3d_model":
-				ctx.fillText("3D Medical Model", canvas.width / 2, canvas.height / 2 - 10);
-				ctx.fillText("Interactive 3D visualization would be rendered here", canvas.width / 2, canvas.height / 2 + 10);
+				ctx.fillText(
+					"3D Medical Model",
+					canvas.width / 2,
+					canvas.height / 2 - 10,
+				);
+				ctx.fillText(
+					"Interactive 3D visualization would be rendered here",
+					canvas.width / 2,
+					canvas.height / 2 + 10,
+				);
 				break;
 			case "ar_overlay":
-				ctx.fillText("AR Medical Overlay", canvas.width / 2, canvas.height / 2 - 10);
-				ctx.fillText("Augmented Reality overlay would be displayed here", canvas.width / 2, canvas.height / 2 + 10);
+				ctx.fillText(
+					"AR Medical Overlay",
+					canvas.width / 2,
+					canvas.height / 2 - 10,
+				);
+				ctx.fillText(
+					"Augmented Reality overlay would be displayed here",
+					canvas.width / 2,
+					canvas.height / 2 + 10,
+				);
 				break;
 			case "vr_environment":
-				ctx.fillText("VR Medical Environment", canvas.width / 2, canvas.height / 2 - 10);
-				ctx.fillText("Virtual Reality environment would be rendered here", canvas.width / 2, canvas.height / 2 + 10);
+				ctx.fillText(
+					"VR Medical Environment",
+					canvas.width / 2,
+					canvas.height / 2 - 10,
+				);
+				ctx.fillText(
+					"Virtual Reality environment would be rendered here",
+					canvas.width / 2,
+					canvas.height / 2 + 10,
+				);
 				break;
 			default:
-				ctx.fillText("Medical Content Viewer", canvas.width / 2, canvas.height / 2);
+				ctx.fillText(
+					"Medical Content Viewer",
+					canvas.width / 2,
+					canvas.height / 2,
+				);
 		}
 
 		// Draw grid if enabled
@@ -182,7 +239,11 @@ export function ARVRViewer({
 		}
 	};
 
-	const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+	const drawGrid = (
+		ctx: CanvasRenderingContext2D,
+		width: number,
+		height: number,
+	) => {
 		ctx.strokeStyle = "#ddd";
 		ctx.lineWidth = 0.5;
 
@@ -202,18 +263,33 @@ export function ARVRViewer({
 		}
 	};
 
-	const drawAnnotations = (ctx: CanvasRenderingContext2D, annotations: Annotation[]) => {
+	const drawAnnotations = (
+		ctx: CanvasRenderingContext2D,
+		annotations: Annotation[],
+	) => {
 		annotations.forEach((annotation) => {
 			ctx.fillStyle = annotation.color || "#ff0000";
-			ctx.fillRect(annotation.position.x - 5, annotation.position.y - 5, 10, 10);
+			ctx.fillRect(
+				annotation.position.x - 5,
+				annotation.position.y - 5,
+				10,
+				10,
+			);
 
 			ctx.fillStyle = "#000";
 			ctx.font = "12px sans-serif";
-			ctx.fillText(annotation.content, annotation.position.x + 10, annotation.position.y);
+			ctx.fillText(
+				annotation.content,
+				annotation.position.x + 10,
+				annotation.position.y,
+			);
 		});
 	};
 
-	const handleSettingChange = <K extends keyof ViewerSettings>(key: K, value: ViewerSettings[K]) => {
+	const handleSettingChange = <K extends keyof ViewerSettings>(
+		key: K,
+		value: ViewerSettings[K],
+	) => {
 		const newSettings = { ...settings, [key]: value };
 		setSettings(newSettings);
 		onSettingsChange?.(newSettings);
@@ -276,11 +352,16 @@ export function ARVRViewer({
 							{content.type.replace("_", " ").toUpperCase()} •
 							{content.metadata.modality && ` ${content.metadata.modality} •`}
 							{content.metadata.bodyPart && ` ${content.metadata.bodyPart} •`}
-							{content.metadata.studyDate && ` ${content.metadata.studyDate.toLocaleDateString()}`}
+							{content.metadata.studyDate &&
+								` ${content.metadata.studyDate.toLocaleDateString()}`}
 						</CardDescription>
 					</div>
 					<div className="flex items-center gap-2">
-						<Badge variant={content.accessLevel === "restricted" ? "destructive" : "default"}>
+						<Badge
+							variant={
+								content.accessLevel === "restricted" ? "destructive" : "default"
+							}
+						>
 							{content.accessLevel}
 						</Badge>
 						{content.lgpdCompliant && <Badge variant="outline">LGPD</Badge>}
@@ -331,7 +412,9 @@ export function ARVRViewer({
 							</Button>
 							<Button
 								aria-label="Diminuir zoom"
-								onClick={() => handleSettingChange("zoom", Math.max(10, settings.zoom - 10))}
+								onClick={() =>
+									handleSettingChange("zoom", Math.max(10, settings.zoom - 10))
+								}
 								size="sm"
 								variant="secondary"
 							>
@@ -339,7 +422,9 @@ export function ARVRViewer({
 							</Button>
 							<Button
 								aria-label="Resetar rotação"
-								onClick={() => handleSettingChange("rotation", { x: 0, y: 0, z: 0 })}
+								onClick={() =>
+									handleSettingChange("rotation", { x: 0, y: 0, z: 0 })
+								}
 								size="sm"
 								variant="secondary"
 							>
@@ -360,7 +445,9 @@ export function ARVRViewer({
 									className="w-full"
 									max={100}
 									min={0}
-									onValueChange={([value]: number[]) => handleSettingChange("brightness", value)}
+									onValueChange={([value]: number[]) =>
+										handleSettingChange("brightness", value)
+									}
 									step={1}
 									value={[settings.brightness]}
 								/>
@@ -373,7 +460,9 @@ export function ARVRViewer({
 									className="w-full"
 									max={100}
 									min={0}
-									onValueChange={([value]: number[]) => handleSettingChange("contrast", value)}
+									onValueChange={([value]: number[]) =>
+										handleSettingChange("contrast", value)
+									}
 									step={1}
 									value={[settings.contrast]}
 								/>
@@ -381,12 +470,16 @@ export function ARVRViewer({
 
 							{/* Zoom */}
 							<div className="space-y-2">
-								<label className="font-medium text-sm">Zoom ({settings.zoom}%)</label>
+								<label className="font-medium text-sm">
+									Zoom ({settings.zoom}%)
+								</label>
 								<Slider
 									className="w-full"
 									max={500}
 									min={10}
-									onValueChange={([value]: number[]) => handleSettingChange("zoom", value)}
+									onValueChange={([value]: number[]) =>
+										handleSettingChange("zoom", value)
+									}
 									step={10}
 									value={[settings.zoom]}
 								/>
@@ -399,7 +492,9 @@ export function ARVRViewer({
 								<Switch
 									checked={settings.showAnnotations}
 									id="annotations"
-									onCheckedChange={(checked) => handleSettingChange("showAnnotations", checked)}
+									onCheckedChange={(checked) =>
+										handleSettingChange("showAnnotations", checked)
+									}
 								/>
 								<label className="text-sm" htmlFor="annotations">
 									Mostrar Anotações
@@ -410,7 +505,9 @@ export function ARVRViewer({
 								<Switch
 									checked={settings.showGrid}
 									id="grid"
-									onCheckedChange={(checked) => handleSettingChange("showGrid", checked)}
+									onCheckedChange={(checked) =>
+										handleSettingChange("showGrid", checked)
+									}
 								/>
 								<label className="text-sm" htmlFor="grid">
 									Mostrar Grade
@@ -425,7 +522,10 @@ export function ARVRViewer({
 									className="rounded border bg-background px-2 py-1 text-sm"
 									id="quality"
 									onChange={(e) =>
-										handleSettingChange("renderQuality", e.target.value as ViewerSettings["renderQuality"])
+										handleSettingChange(
+											"renderQuality",
+											e.target.value as ViewerSettings["renderQuality"],
+										)
 									}
 									value={settings.renderQuality}
 								>

@@ -1,8 +1,8 @@
 "use client";
 
+import { createClient } from "@/lib/supabase/client";
 import type { AIActionType, AIAdoptionMetrics, AIFeatureType, AIUsageAnalytic } from "@neonpro/types/monitoring";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 interface AIAnalyticsConfig {
 	enableAutoTracking?: boolean;

@@ -18,7 +18,13 @@ export type DeploymentMetrics = {
 
 export type DeploymentEvent = {
 	timestamp: Date;
-	type: "start" | "progress" | "health-check" | "error" | "complete" | "rollback";
+	type:
+		| "start"
+		| "progress"
+		| "health-check"
+		| "error"
+		| "complete"
+		| "rollback";
 	message: string;
 	data?: any;
 };
@@ -43,7 +49,10 @@ export class DeploymentMonitor {
 	/**
 	 * Start monitoring a deployment
 	 */
-	startMonitoring(deploymentId: string, metrics: Omit<DeploymentMetrics, "startTime" | "status">): void {
+	startMonitoring(
+		deploymentId: string,
+		metrics: Omit<DeploymentMetrics, "startTime" | "status">,
+	): void {
 		const deployment: DeploymentMetrics = {
 			...metrics,
 			deploymentId,
@@ -76,7 +85,10 @@ export class DeploymentMonitor {
 	/**
 	 * Update deployment metrics
 	 */
-	updateMetrics(deploymentId: string, updates: Partial<DeploymentMetrics>): void {
+	updateMetrics(
+		deploymentId: string,
+		updates: Partial<DeploymentMetrics>,
+	): void {
 		const deployment = this.deployments.get(deploymentId);
 		if (!deployment) {
 			throw new Error(`Deployment ${deploymentId} not found`);
@@ -164,7 +176,9 @@ export class DeploymentMonitor {
 	 * Get all active deployments
 	 */
 	getActiveDeployments(): DeploymentMetrics[] {
-		return Array.from(this.deployments.values()).filter((d) => d.status === "in-progress" || d.status === "pending");
+		return Array.from(this.deployments.values()).filter(
+			(d) => d.status === "in-progress" || d.status === "pending",
+		);
 	}
 
 	/**
@@ -189,7 +203,10 @@ export class DeploymentMonitor {
 		// Simulate health check - in real implementation, this would check actual endpoints
 		const healthScore = Math.max(0, deployment.healthScore - Math.random() * 5);
 		const responseTime = deployment.responseTime + (Math.random() - 0.5) * 50;
-		const errorRate = Math.max(0, deployment.errorRate + (Math.random() - 0.7) * 2);
+		const errorRate = Math.max(
+			0,
+			deployment.errorRate + (Math.random() - 0.7) * 2,
+		);
 		const throughput = deployment.throughput + (Math.random() - 0.5) * 100;
 
 		this.updateMetrics(deploymentId, {
@@ -207,23 +224,34 @@ export class DeploymentMonitor {
 		});
 	}
 
-	private checkAlertThresholds(deploymentId: string, deployment: DeploymentMetrics): void {
+	private checkAlertThresholds(
+		deploymentId: string,
+		deployment: DeploymentMetrics,
+	): void {
 		const { alertThresholds } = this.config;
 		const alerts: string[] = [];
 
 		if (deployment.errorRate > alertThresholds.errorRate) {
-			alerts.push(`Error rate (${deployment.errorRate.toFixed(2)}%) exceeds threshold (${alertThresholds.errorRate}%)`);
+			alerts.push(
+				`Error rate (${deployment.errorRate.toFixed(
+					2,
+				)}%) exceeds threshold (${alertThresholds.errorRate}%)`,
+			);
 		}
 
 		if (deployment.responseTime > alertThresholds.responseTime) {
 			alerts.push(
-				`Response time (${deployment.responseTime.toFixed(2)}ms) exceeds threshold (${alertThresholds.responseTime}ms)`
+				`Response time (${deployment.responseTime.toFixed(
+					2,
+				)}ms) exceeds threshold (${alertThresholds.responseTime}ms)`,
 			);
 		}
 
 		if (deployment.healthScore < alertThresholds.healthScore) {
 			alerts.push(
-				`Health score (${deployment.healthScore.toFixed(2)}) below threshold (${alertThresholds.healthScore})`
+				`Health score (${deployment.healthScore.toFixed(
+					2,
+				)}) below threshold (${alertThresholds.healthScore})`,
 			);
 		}
 

@@ -570,4 +570,4 @@ export class DriftDetectionSystem {
 // Singleton instance
 export const driftDetector = new DriftDetectionSystem();
 
-export type { DriftMetrics, DriftAlert };
+export type { DriftAlert, DriftMetrics };

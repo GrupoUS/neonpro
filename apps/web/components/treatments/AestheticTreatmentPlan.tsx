@@ -1,20 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-	Activity,
-	AlertTriangle,
-	Calendar,
-	CheckCircle,
-	Clock,
-	FileText,
-	Info,
-	MapPin,
-	Shield,
-	Star,
-	Target,
-} from "lucide-react";
-import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +16,21 @@ import type {
 	TreatmentSession,
 	TreatmentStatus,
 } from "@/types/treatments";
+import { motion } from "framer-motion";
+import {
+	Activity,
+	AlertTriangle,
+	Calendar,
+	CheckCircle,
+	Clock,
+	FileText,
+	Info,
+	MapPin,
+	Shield,
+	Star,
+	Target,
+} from "lucide-react";
+import { useState } from "react";
 
 // Visual components maintaining NeonPro design
 type NeonGradientCardProps = {

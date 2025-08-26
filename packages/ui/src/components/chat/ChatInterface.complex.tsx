@@ -134,7 +134,9 @@ export function ChatInterface({
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	// FASE 3 AI-powered state
-	const [smartSuggestions, setSmartSuggestions] = useState<HealthcareSuggestion[]>([]);
+	const [smartSuggestions, setSmartSuggestions] = useState<
+		HealthcareSuggestion[]
+	>([]);
 	const [showSuggestions, setShowSuggestions] = useState(false);
 	const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 	const [voiceRecording, setVoiceRecording] = useState<VoiceRecordingState>({
@@ -170,7 +172,7 @@ export function ChatInterface({
 			cirurgia: { english: "surgery", context: "treatment" },
 			fisioterapia: { english: "physiotherapy", context: "treatment" },
 		}),
-		[]
+		[],
 	);
 
 	// FASE 3 AI-powered smart suggestions generator
@@ -226,7 +228,7 @@ export function ChatInterface({
 
 			return suggestions.slice(0, 3); // Limit to top 3 suggestions
 		},
-		[enableSmartSuggestions, healthcareTerms]
+		[enableSmartSuggestions, healthcareTerms],
 	);
 
 	// Auto-scroll to bottom on new messages
@@ -240,11 +242,18 @@ export function ChatInterface({
 			inputRef.current.focus();
 			if (screenReaderAnnouncements) {
 				announceToScreenReader(
-					`Interface de chat ${interface_type === "external" ? "do paciente" : "da equipe médica"} carregada. Digite sua mensagem.`
+					`Interface de chat ${
+						interface_type === "external" ? "do paciente" : "da equipe médica"
+					} carregada. Digite sua mensagem.`,
 				);
 			}
 		}
-	}, [autoFocus, interface_type, screenReaderAnnouncements, announceToScreenReader]);
+	}, [
+		autoFocus,
+		interface_type,
+		screenReaderAnnouncements,
+		announceToScreenReader,
+	]);
 
 	// Handle interface switch
 	useEffect(() => {
@@ -268,7 +277,7 @@ export function ChatInterface({
 			}
 			setAnnouncements((prev) => [...prev.slice(-4), message]); // Keep last 5 announcements
 		},
-		[screenReaderAnnouncements]
+		[screenReaderAnnouncements],
 	);
 
 	// FASE 3: Enhanced message sending with AI context
@@ -305,16 +314,24 @@ export function ChatInterface({
 			switch (e.key) {
 				case "ArrowDown":
 					e.preventDefault();
-					setSelectedSuggestionIndex((prev) => (prev < smartSuggestions.length - 1 ? prev + 1 : 0));
+					setSelectedSuggestionIndex((prev) =>
+						prev < smartSuggestions.length - 1 ? prev + 1 : 0,
+					);
 					announceToScreenReader(
-						`Sugestão ${selectedSuggestionIndex + 1}: ${smartSuggestions[selectedSuggestionIndex]?.text}`
+						`Sugestão ${selectedSuggestionIndex + 1}: ${
+							smartSuggestions[selectedSuggestionIndex]?.text
+						}`,
 					);
 					return;
 				case "ArrowUp":
 					e.preventDefault();
-					setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : smartSuggestions.length - 1));
+					setSelectedSuggestionIndex((prev) =>
+						prev > 0 ? prev - 1 : smartSuggestions.length - 1,
+					);
 					announceToScreenReader(
-						`Sugestão ${selectedSuggestionIndex + 1}: ${smartSuggestions[selectedSuggestionIndex]?.text}`
+						`Sugestão ${selectedSuggestionIndex + 1}: ${
+							smartSuggestions[selectedSuggestionIndex]?.text
+						}`,
 					);
 					return;
 				case "Tab":
@@ -367,11 +384,17 @@ export function ChatInterface({
 		} else {
 			// Start recording
 			try {
-				setVoiceRecording((prev) => ({ ...prev, isRecording: true, error: undefined }));
+				setVoiceRecording((prev) => ({
+					...prev,
+					isRecording: true,
+					error: undefined,
+				}));
 				announceToScreenReader("Iniciando gravação de voz");
 
 				// Request microphone permission and start recording
-				const _stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+				const _stream = await navigator.mediaDevices.getUserMedia({
+					audio: true,
+				});
 
 				// Here you would implement actual voice recording
 				// For now, we'll simulate the recording state
@@ -403,7 +426,9 @@ export function ChatInterface({
 					isRecording: false,
 					error: "Erro ao acessar microfone",
 				}));
-				announceToScreenReader("Erro ao iniciar gravação. Verifique as permissões do microfone.");
+				announceToScreenReader(
+					"Erro ao iniciar gravação. Verifique as permissões do microfone.",
+				);
 			}
 		}
 	}, [enableVoiceInput, voiceRecording.isRecording, announceToScreenReader]);
@@ -425,7 +450,9 @@ export function ChatInterface({
 
 			// Validate file size
 			if (file.size > maxFileSize * 1024 * 1024) {
-				announceToScreenReader(`Arquivo muito grande. Tamanho máximo: ${maxFileSize}MB`);
+				announceToScreenReader(
+					`Arquivo muito grande. Tamanho máximo: ${maxFileSize}MB`,
+				);
 				return;
 			}
 
@@ -449,7 +476,7 @@ export function ChatInterface({
 			// Reset file input
 			event.target.value = "";
 		},
-		[maxFileSize, announceToScreenReader]
+		[maxFileSize, announceToScreenReader],
 	);
 
 	const getStatusColor = () => {
@@ -493,14 +520,20 @@ export function ChatInterface({
 						<Bot className="h-6 w-6 text-primary" />
 						<div>
 							<h3 className="font-semibold">
-								{interface_type === "external" ? "Assistente Virtual NeonPro" : "Assistente Interno"}
+								{interface_type === "external"
+									? "Assistente Virtual NeonPro"
+									: "Assistente Interno"}
 							</h3>
-							<p className={cn("text-sm", getStatusColor())}>{getStatusText()}</p>
+							<p className={cn("text-sm", getStatusColor())}>
+								{getStatusText()}
+							</p>
 						</div>
 					</div>
 
 					<div className="flex items-center gap-2">
-						<Badge variant={interface_type === "external" ? "default" : "secondary"}>
+						<Badge
+							variant={interface_type === "external" ? "default" : "secondary"}
+						>
 							{interface_type === "external" ? "Paciente" : "Equipe"}
 						</Badge>
 
@@ -550,7 +583,11 @@ export function ChatInterface({
 					</div>
 				) : (
 					messages.map((message: ChatMessage) => (
-						<MessageBubble interface_type={interface_type} key={message.id} message={message} />
+						<MessageBubble
+							interface_type={interface_type}
+							key={message.id}
+							message={message}
+						/>
 					))
 				)}
 
@@ -582,18 +619,23 @@ export function ChatInterface({
 						<div className="space-y-1">
 							{smartSuggestions.map((suggestion, index) => (
 								<button
-									aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${Math.round(suggestion.confidence * 100)}%`}
+									aria-label={`Sugestão ${index + 1}: ${suggestion.text}. Confiança: ${Math.round(
+										suggestion.confidence * 100,
+									)}%`}
 									className={cn(
 										"w-full rounded-md p-2 text-left text-sm transition-colors",
 										"hover:bg-muted focus:bg-muted focus:outline-none",
-										selectedSuggestionIndex === index && "border border-primary/20 bg-primary/10"
+										selectedSuggestionIndex === index &&
+											"border border-primary/20 bg-primary/10",
 									)}
 									key={suggestion.id}
 									onClick={() => {
 										setInputValue(suggestion.text);
 										setShowSuggestions(false);
 										setSelectedSuggestionIndex(-1);
-										announceToScreenReader(`Sugestão selecionada: ${suggestion.text}`);
+										announceToScreenReader(
+											`Sugestão selecionada: ${suggestion.text}`,
+										);
 										inputRef.current?.focus();
 									}}
 									onMouseEnter={() => setSelectedSuggestionIndex(index)}
@@ -613,7 +655,7 @@ export function ChatInterface({
 														? "bg-green-100 text-green-700"
 														: suggestion.confidence > 0.6
 															? "bg-yellow-100 text-yellow-700"
-															: "bg-gray-100 text-gray-700"
+															: "bg-gray-100 text-gray-700",
 												)}
 												variant="secondary"
 											>
@@ -630,16 +672,28 @@ export function ChatInterface({
 				<div className="flex items-center gap-2">
 					<div className="relative flex-1">
 						<Input
-							aria-describedby={showSuggestions ? "smart-suggestions" : undefined}
-							aria-label={`Campo de mensagem do chat ${interface_type === "external" ? "do paciente" : "da equipe médica"}`}
+							aria-describedby={
+								showSuggestions ? "smart-suggestions" : undefined
+							}
+							aria-label={`Campo de mensagem do chat ${
+								interface_type === "external"
+									? "do paciente"
+									: "da equipe médica"
+							}`}
 							autoComplete="off"
 							className={cn(
 								"pr-32",
 								voiceRecording.isRecording && "border-red-300 bg-red-50",
-								fileUpload.isUploading && "border-blue-300 bg-blue-50"
+								fileUpload.isUploading && "border-blue-300 bg-blue-50",
 							)}
-							disabled={state.is_loading || !isConnected() || voiceRecording.isProcessing}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+							disabled={
+								state.is_loading ||
+								!isConnected() ||
+								voiceRecording.isProcessing
+							}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+								setInputValue(e.target.value)
+							}
 							onKeyDown={handleKeyPress}
 							placeholder={
 								voiceRecording.isProcessing
@@ -660,7 +714,11 @@ export function ChatInterface({
 							{enableFileUpload && (
 								<Button
 									aria-label="Enviar arquivo médico (PDF, imagens, documentos)"
-									className={cn("h-8 w-8", fileUpload.isUploading && "animate-pulse bg-blue-50 text-blue-500")}
+									className={cn(
+										"h-8 w-8",
+										fileUpload.isUploading &&
+											"animate-pulse bg-blue-50 text-blue-500",
+									)}
 									disabled={state.is_loading || fileUpload.isUploading}
 									onClick={handleFileUpload}
 									size="icon"
@@ -687,8 +745,10 @@ export function ChatInterface({
 									}
 									className={cn(
 										"h-8 w-8 transition-all duration-200",
-										voiceRecording.isRecording && "scale-110 animate-pulse bg-red-50 text-red-500",
-										voiceRecording.isProcessing && "animate-spin bg-blue-50 text-blue-500"
+										voiceRecording.isRecording &&
+											"scale-110 animate-pulse bg-red-50 text-red-500",
+										voiceRecording.isProcessing &&
+											"animate-spin bg-blue-50 text-blue-500",
 									)}
 									disabled={state.is_loading || voiceRecording.isProcessing}
 									onClick={toggleRecording}
@@ -756,9 +816,14 @@ export function ChatInterface({
 
 					<div className="flex items-center gap-2">
 						{enableSmartSuggestions && showSuggestions && (
-							<span className="text-primary">↑↓ navegar • Tab selecionar • Esc fechar</span>
+							<span className="text-primary">
+								↑↓ navegar • Tab selecionar • Esc fechar
+							</span>
 						)}
-						<span aria-label={`${inputValue.length} de 500 caracteres digitados`} aria-live="polite">
+						<span
+							aria-label={`${inputValue.length} de 500 caracteres digitados`}
+							aria-live="polite"
+						>
 							{inputValue.length}/500
 						</span>
 					</div>
@@ -767,7 +832,12 @@ export function ChatInterface({
 
 			{/* FASE 3: Screen Reader Announcements */}
 			{screenReaderAnnouncements && announcements.length > 0 && (
-				<div aria-atomic="true" aria-live="polite" className="sr-only" role="status">
+				<div
+					aria-atomic="true"
+					aria-live="polite"
+					className="sr-only"
+					role="status"
+				>
 					{announcements.at(-1)}
 				</div>
 			)}
@@ -810,11 +880,18 @@ function MessageBubble({ message, interface_type }: MessageBubbleProps) {
 	}
 
 	return (
-		<div className={cn("flex max-w-[80%] gap-3", isUser ? "ml-auto flex-row-reverse" : "mr-auto")}>
+		<div
+			className={cn(
+				"flex max-w-[80%] gap-3",
+				isUser ? "ml-auto flex-row-reverse" : "mr-auto",
+			)}
+		>
 			<div
 				className={cn(
 					"flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full",
-					isUser ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+					isUser
+						? "bg-primary text-primary-foreground"
+						: "bg-muted text-muted-foreground",
 				)}
 			>
 				{isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -823,16 +900,23 @@ function MessageBubble({ message, interface_type }: MessageBubbleProps) {
 			<div
 				className={cn(
 					"max-w-full rounded-lg px-4 py-2",
-					isUser ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+					isUser
+						? "bg-primary text-primary-foreground"
+						: "bg-muted text-muted-foreground",
 				)}
 			>
 				<div className="whitespace-pre-wrap break-words">
 					{message.content}
-					{message.streaming && <span className="ml-1 inline-block h-5 w-2 animate-pulse bg-current" />}
+					{message.streaming && (
+						<span className="ml-1 inline-block h-5 w-2 animate-pulse bg-current" />
+					)}
 				</div>
 
 				<div
-					className={cn("mt-2 flex items-center justify-between text-xs opacity-70", isUser ? "flex-row-reverse" : "")}
+					className={cn(
+						"mt-2 flex items-center justify-between text-xs opacity-70",
+						isUser ? "flex-row-reverse" : "",
+					)}
 				>
 					<span>
 						{new Date(message.timestamp).toLocaleTimeString("pt-BR", {
@@ -870,7 +954,9 @@ function TypingIndicator() {
 							/>
 						))}
 					</div>
-					<span className="ml-2 text-muted-foreground text-sm">Digitando...</span>
+					<span className="ml-2 text-muted-foreground text-sm">
+						Digitando...
+					</span>
 				</div>
 			</div>
 		</div>

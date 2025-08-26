@@ -41,7 +41,10 @@ type ChatResponse = {
 };
 
 // Initialize Supabase client
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+const supabase = createClient(
+	process.env.SUPABASE_URL!,
+	process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
 // Healthcare context prompts
 const HEALTHCARE_CONTEXT = {
@@ -80,7 +83,14 @@ const HEALTHCARE_CONTEXT = {
 universalChat.post("/", async (c) => {
 	try {
 		const body = (await c.req.json()) as ChatRequest;
-		const { messages, interface: interfaceType, sessionId, userId, clinicId, patientId } = body;
+		const {
+			messages,
+			interface: interfaceType,
+			sessionId,
+			userId,
+			clinicId,
+			patientId,
+		} = body;
 
 		if (!(messages && Array.isArray(messages)) || messages.length === 0) {
 			return c.json({ error: "Messages array is required" }, 400);
@@ -152,7 +162,9 @@ universalChat.post("/", async (c) => {
 					sessionId,
 					messageId,
 				};
-				controller.enqueue(encoder.encode(`data: ${JSON.stringify(startEvent)}\n\n`));
+				controller.enqueue(
+					encoder.encode(`data: ${JSON.stringify(startEvent)}\n\n`),
+				);
 
 				try {
 					// Stream content
@@ -163,7 +175,9 @@ universalChat.post("/", async (c) => {
 							type: "content",
 							content: delta,
 						};
-						controller.enqueue(encoder.encode(`data: ${JSON.stringify(contentEvent)}\n\n`));
+						controller.enqueue(
+							encoder.encode(`data: ${JSON.stringify(contentEvent)}\n\n`),
+						);
 					}
 
 					// Analyze response for compliance and emergency detection
@@ -191,13 +205,17 @@ universalChat.post("/", async (c) => {
 						suggestedActions: analysis.suggestedActions,
 						complianceFlags: analysis.complianceFlags,
 					};
-					controller.enqueue(encoder.encode(`data: ${JSON.stringify(completeEvent)}\n\n`));
+					controller.enqueue(
+						encoder.encode(`data: ${JSON.stringify(completeEvent)}\n\n`),
+					);
 				} catch (error) {
 					const errorEvent: ChatResponse = {
 						type: "error",
 						error: error instanceof Error ? error.message : "Unknown error",
 					};
-					controller.enqueue(encoder.encode(`data: ${JSON.stringify(errorEvent)}\n\n`));
+					controller.enqueue(
+						encoder.encode(`data: ${JSON.stringify(errorEvent)}\n\n`),
+					);
 				} finally {
 					controller.close();
 				}
@@ -217,7 +235,7 @@ universalChat.post("/", async (c) => {
 			{
 				error: error instanceof Error ? error.message : "Internal server error",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -257,9 +275,10 @@ universalChat.put("/", async (c) => {
 	} catch (error) {
 		return c.json(
 			{
-				error: error instanceof Error ? error.message : "Failed to create session",
+				error:
+					error instanceof Error ? error.message : "Failed to create session",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -292,7 +311,7 @@ universalChat.get("/sessions/:sessionId", async (c) => {
 			{
 				error: error instanceof Error ? error.message : "Failed to get session",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -301,7 +320,10 @@ universalChat.get("/sessions/:sessionId", async (c) => {
 // ANALYSIS FUNCTIONS
 // =============================================================================
 
-async function analyzeResponse(content: string, _interfaceType: "external" | "internal") {
+async function analyzeResponse(
+	content: string,
+	_interfaceType: "external" | "internal",
+) {
 	// Emergency detection patterns
 	const emergencyPatterns = [
 		/emergência|urgente|socorro|ajuda médica/i,
@@ -323,7 +345,9 @@ async function analyzeResponse(content: string, _interfaceType: "external" | "in
 	}
 
 	// Detect emergency
-	const emergencyDetected = emergencyPatterns.some((pattern) => pattern.test(content));
+	const emergencyDetected = emergencyPatterns.some((pattern) =>
+		pattern.test(content),
+	);
 
 	// Escalation logic
 	const escalationTriggered = emergencyDetected || complianceFlags.length > 2;

@@ -9,7 +9,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type RenderOptions, render } from "@testing-library/react";
+import { render, type RenderOptions } from "@testing-library/react";
 import type React from "react";
 import { vi } from "vitest";
 
@@ -58,7 +58,9 @@ export type SubscriptionStatus = {
 /**
  * Factory for creating mock user profiles
  */
-export const createMockUserProfile = (overrides: Partial<UserProfile> = {}): UserProfile => ({
+export const createMockUserProfile = (
+	overrides: Partial<UserProfile> = {},
+): UserProfile => ({
 	id: "test-user-123",
 	email: "test@example.com",
 	name: "Test User",
@@ -71,7 +73,9 @@ export const createMockUserProfile = (overrides: Partial<UserProfile> = {}): Use
 /**
  * Factory for creating mock subscription statuses
  */
-export const createMockSubscription = (overrides: Partial<SubscriptionStatus> = {}): SubscriptionStatus => ({
+export const createMockSubscription = (
+	overrides: Partial<SubscriptionStatus> = {},
+): SubscriptionStatus => ({
 	id: "test-subscription-123",
 	userId: "test-user-123",
 	tier: "premium",
@@ -130,7 +134,9 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
 	children,
 	queryClient = createTestQueryClient(),
 }) => {
-	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+	return (
+		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+	);
 };
 
 // ============================================================================
@@ -144,7 +150,10 @@ interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
 	queryClient?: QueryClient;
 }
 
-export const renderWithProviders = (ui: React.ReactElement, options: CustomRenderOptions = {}) => {
+export const renderWithProviders = (
+	ui: React.ReactElement,
+	options: CustomRenderOptions = {},
+) => {
 	const { queryClient, ...renderOptions } = options;
 
 	const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -155,8 +164,10 @@ export const renderWithProviders = (ui: React.ReactElement, options: CustomRende
 };
 
 // Legacy custom render (for backward compatibility)
-const customRender = (ui: React.ReactElement, options?: Omit<RenderOptions, "wrapper">) =>
-	render(ui, { wrapper: AllTheProviders, ...options });
+const customRender = (
+	ui: React.ReactElement,
+	options?: Omit<RenderOptions, "wrapper">,
+) => render(ui, { wrapper: AllTheProviders, ...options });
 
 // ============================================================================
 // Test Helpers and Utilities
@@ -172,7 +183,7 @@ export const createMockSubscriptionHook = (
 		isError: boolean;
 		error: Error | null;
 		refetch: () => void;
-	}> = {}
+	}> = {},
 ) => ({
 	data: overrides.data || createMockSubscription(),
 	isLoading: overrides.isLoading ?? false,
@@ -184,7 +195,8 @@ export const createMockSubscriptionHook = (
 /**
  * Waits for specified time in milliseconds (for async testing)
  */
-export const waitFor = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+export const waitFor = (ms: number): Promise<void> =>
+	new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Creates mock server responses for fetch requests

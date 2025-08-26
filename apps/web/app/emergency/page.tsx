@@ -1,5 +1,11 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import {
 	Activity,
 	AlertTriangle,
@@ -18,12 +24,6 @@ import {
 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 
 // Emergency patient interface for critical medical information
 type EmergencyPatient = {
@@ -831,7 +831,7 @@ export default function EmergencyAccessPage() {
 				<div className="border-t py-4 text-center text-muted-foreground text-sm">
 					<p>
 						NeonPro Healthcare Emergency Access • Versão 1.0 •
-						<span className="font-mono"> {new Date().toLocaleString("pt-BR")}</span>
+						<span className="font-mono">{new Date().toLocaleString("pt-BR")}</span>
 					</p>
 					<p className="mt-1">🔒 Acesso monitorado e auditado conforme LGPD • ☎️ Suporte 24h: 0800-NEONPRO</p>
 				</div>

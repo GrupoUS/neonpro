@@ -1,0 +1,154 @@
+{
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "style": "warn",
+    "pedantic": "warn",
+    "perf": "warn"
+  },
+  "plugins": [
+    "typescript",
+    "react",
+    "jsx-a11y",
+    "nextjs",
+    "unicorn"
+  ],
+  "rules": {
+    // Import/Export rules
+    "typescript/consistent-type-imports": "error",
+    "typescript/consistent-type-exports": "error",
+
+    // Style rules
+    "no-console": "warn",
+    "no-debugger": "error",
+    "prefer-const": "error",
+    "prefer-template": "warn",
+
+    // TypeScript specific
+    "typescript/no-explicit-any": "error",
+    "typescript/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "typescript/array-type": ["error", { "default": "array" }],
+
+    // React specific
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+
+    // Accessibility
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-role": "error",
+
+    // Performance
+    "no-accumulating-spread": "warn",
+    "no-delete": "warn",
+
+    // Unicorn rules for better practices
+    "unicorn/prefer-node-protocol": "error",
+    "unicorn/prefer-module": "warn"
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/out/**",
+    "**/logs/**",
+    "**/.cache/**",
+    "**/.tmp/**",
+    "**/temp-*/**",
+    "**/*.log",
+    "**/.tmp.*",
+    "**/.git/**",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/archon/original_archon/**",
+    "**/serena/test/**",
+    "**/temp-broken-files/**",
+    "**/infrastructure/scripts/**",
+    "**/supabase/migrations/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/.vscode/settings.json",
+    "**/.claude/settings.*.json",
+    "**/sentry.*.config.*",
+    "**/next.config.*",
+    "**/turbo.json",
+    "**/trigger.config.*",
+    "**/instrumentation*.ts",
+    "**/vitest.setup.*",
+    "**/MIGRATION_LOG.md",
+    "**/CI-CD-OPTIMIZATION-REPORT.md",
+    "**/DEPLOYMENT-STATUS-REPORT.md",
+    "**/DEVOPS-FIXES-DOCUMENTATION.md",
+    "**/PRODUCTION-DEPLOYMENT-REPORT.md",
+    "**/TURBOREPO-ANALYSIS-REPORT.md",
+    "**/WORKFLOW-EXECUTION-REPORT.md",
+    "**/performance-report.json",
+    "**/load-test-report.json",
+    "**/pnpm-lock.yaml",
+    "**/package-lock.json",
+    "**/yarn.lock",
+    "**/tsconfig.tsbuildinfo",
+    "**/*.d.ts",
+    "**/playwright.config.*",
+    "**/vitest.config.*",
+    "**/eslint.config.*",
+    "**/tailwind.config.*",
+    "**/postcss.config.*",
+    "**/vite.config.*",
+    "**/rollup.config.*",
+    "**/webpack.config.*",
+    "**/babel.config.*",
+    "**/jest.config.*",
+    "**/.env*",
+    "**/nul",
+    "**/$null",
+    "**/~/**",
+    "**/archives/**",
+    "**/backups/**",
+    "**/deprecated/**",
+    "**/legacy/**",
+    "**/old/**",
+    "**/unused/**",
+    "**/docs/api/**",
+    "**/docs/deployment/**",
+    "**/docs/qa/**",
+    "**/docs/realtime/**",
+    "**/docs/shards/**"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.{ts,tsx}"],
+      "plugins": ["typescript"],
+      "rules": {
+        "typescript/no-explicit-any": "error",
+        "typescript/consistent-type-imports": "error"
+      }
+    },
+    {
+      "files": ["**/*.{jsx,tsx}"],
+      "plugins": ["react", "jsx-a11y"],
+      "rules": {
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off"
+      }
+    },
+    {
+      "files": ["**/test/**", "**/*.test.*", "**/*.spec.*"],
+      "rules": {
+        "no-console": "off",
+        "typescript/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["scripts/**/*.js"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}

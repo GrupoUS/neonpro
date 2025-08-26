@@ -15,7 +15,8 @@ process.env.NODE_ENV = "test";
 process.env.NEXT_PUBLIC_SUPABASE_URL = "http://localhost:54321";
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
-process.env.DATABASE_URL = "postgresql://test:test@localhost:54322/neonpro_test";
+process.env.DATABASE_URL =
+	"postgresql://test:test@localhost:54322/neonpro_test";
 
 // Mock global fetch for API testing
 global.fetch = vi.fn();
@@ -24,13 +25,17 @@ global.fetch = vi.fn();
 vi.mock("@supabase/supabase-js", () => ({
 	createClient: vi.fn(() => ({
 		auth: {
-			getSession: vi.fn(() => Promise.resolve({ data: { session: null }, error: null })),
-			getUser: vi.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+			getSession: vi.fn(() =>
+				Promise.resolve({ data: { session: null }, error: null }),
+			),
+			getUser: vi.fn(() =>
+				Promise.resolve({ data: { user: null }, error: null }),
+			),
 			signInWithPassword: vi.fn(() =>
 				Promise.resolve({
 					data: { user: mockUser, session: mockSession },
 					error: null,
-				})
+				}),
 			),
 			signOut: vi.fn(() => Promise.resolve({ error: null })),
 			onAuthStateChange: vi.fn(() => ({
@@ -48,8 +53,12 @@ vi.mock("@supabase/supabase-js", () => ({
 		})),
 		storage: {
 			from: vi.fn(() => ({
-				upload: vi.fn(() => Promise.resolve({ data: { path: "test-path" }, error: null })),
-				download: vi.fn(() => Promise.resolve({ data: new Blob(), error: null })),
+				upload: vi.fn(() =>
+					Promise.resolve({ data: { path: "test-path" }, error: null }),
+				),
+				download: vi.fn(() =>
+					Promise.resolve({ data: new Blob(), error: null }),
+				),
 			})),
 		},
 		realtime: {

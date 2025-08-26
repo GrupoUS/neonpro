@@ -46,7 +46,10 @@ function ensureDirectoryExists(dirPath) {
 function createLGPDConsentManagement() {
 	logHeader("Creating LGPD Consent Management");
 
-	const filePath = path.resolve(process.cwd(), "apps/web/lib/healthcare/lgpd-consent-management.ts");
+	const filePath = path.resolve(
+		process.cwd(),
+		"apps/web/lib/healthcare/lgpd-consent-management.ts",
+	);
 	ensureDirectoryExists(path.dirname(filePath));
 
 	const content = `/**
@@ -536,7 +539,10 @@ Telefone: (11) 77777-7777
 function createHealthcareTablesMigration() {
 	logHeader("Creating Healthcare Tables Migration");
 
-	const filePath = path.resolve(process.cwd(), "supabase/migrations/20250126000001_lgpd_healthcare_tables.sql");
+	const filePath = path.resolve(
+		process.cwd(),
+		"supabase/migrations/20250126000001_lgpd_healthcare_tables.sql",
+	);
 	ensureDirectoryExists(path.dirname(filePath));
 
 	const content = `-- LGPD Healthcare Compliance Tables
@@ -1021,7 +1027,9 @@ async function runFixes() {
 		logSuccess("Created healthcare tables migration");
 		logSuccess("Created Supabase configuration files");
 
-		log(`\n${colors.bold}${colors.green}🎉 All fixes completed successfully!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.green}🎉 All fixes completed successfully!${colors.reset}`,
+		);
 		log(`\n${colors.bold}${colors.blue}Next Steps:${colors.reset}`);
 		log("1. Run the new migration: supabase db push");
 		log("2. Configure environment variables with actual values");

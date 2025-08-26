@@ -6,8 +6,8 @@
  * ARCHITECTURE: Constitutional Turborepo structure
  */
 
-import { cpus } from "node:os";
 import { defineConfig, devices } from "@playwright/test";
+import { cpus } from "node:os";
 
 export default defineConfig({
 	// Constitutional test directory structure - UPDATED TO NEW STRUCTURE
@@ -178,7 +178,6 @@ export default defineConfig({
 			testIgnore: ["**/heavy-performance/**"], // Skip heavy tests on Firefox
 		},
 	],
-
 	// Development server configuration - DISABLED temporarily
 	// TODO: Re-enable after fixing turbo/pnpm configuration
 	// webServer: {

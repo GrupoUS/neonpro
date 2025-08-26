@@ -7,7 +7,13 @@
  */
 
 const { execSync } = require("node:child_process");
-const { readFileSync, writeFileSync, existsSync, readdirSync, statSync } = require("node:fs");
+const {
+	readFileSync,
+	writeFileSync,
+	existsSync,
+	readdirSync,
+	statSync,
+} = require("node:fs");
 const { join, extname } = require("node:path");
 const { logger } = require("../apps/api/src/lib/logger");
 
@@ -55,7 +61,10 @@ class NextJSOptimizer {
 
 		this.scanDirectory(appDir, appDir);
 
-		this.log(`App Router pages encontradas: ${this.appRouterPages.length}`, "success");
+		this.log(
+			`App Router pages encontradas: ${this.appRouterPages.length}`,
+			"success",
+		);
 		this.appRouterPages.forEach((page) => {
 			this.log(`  📄 ${page}`, "info");
 		});
@@ -72,7 +81,9 @@ class NextJSOptimizer {
 				if (stat.isDirectory()) {
 					this.scanDirectory(fullPath, baseDir);
 				} else if (item === "page.tsx" || item === "page.js") {
-					const relativePath = fullPath.replace(baseDir, "").replace(/\\/g, "/");
+					const relativePath = fullPath
+						.replace(baseDir, "")
+						.replace(/\\/g, "/");
 					this.appRouterPages.push(relativePath);
 				}
 			}
@@ -88,7 +99,10 @@ class NextJSOptimizer {
 		const pagesDir = join(webAppDir, "pages");
 
 		if (existsSync(pagesDir)) {
-			this.log("ATENÇÃO: Diretório pages/ encontrado - migração necessária", "warning");
+			this.log(
+				"ATENÇÃO: Diretório pages/ encontrado - migração necessária",
+				"warning",
+			);
 			this.scanPagesDirectory(pagesDir);
 		} else {
 			this.log("Nenhum Pages Router residual encontrado", "success");
@@ -156,7 +170,10 @@ class NextJSOptimizer {
 				if (layoutContent.includes("metadata")) {
 					this.log("Metadata API detectada no layout", "success");
 				} else {
-					this.log("Metadata API não encontrada - recomendado implementar", "warning");
+					this.log(
+						"Metadata API não encontrada - recomendado implementar",
+						"warning",
+					);
 				}
 
 				if (layoutContent.includes("viewport")) {
@@ -198,9 +215,15 @@ class NextJSOptimizer {
 			try {
 				const content = readFileSync(fullPath, "utf-8");
 
-				if (content.includes("'use client'") || content.includes('"use client"')) {
+				if (
+					content.includes("'use client'") ||
+					content.includes('"use client"')
+				) {
 					clientComponents++;
-				} else if (content.includes("async function") && !content.includes("'use client'")) {
+				} else if (
+					content.includes("async function") &&
+					!content.includes("'use client'")
+				) {
 					serverComponents++;
 				} else {
 					mixedComponents++;
@@ -215,7 +238,10 @@ class NextJSOptimizer {
 		this.log(`Componentes não classificados: ${mixedComponents}`, "info");
 
 		if (clientComponents > serverComponents) {
-			this.log("RECOMENDAÇÃO: Considere converter mais componentes para Server Components", "warning");
+			this.log(
+				"RECOMENDAÇÃO: Considere converter mais componentes para Server Components",
+				"warning",
+			);
 		}
 	}
 

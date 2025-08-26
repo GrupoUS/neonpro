@@ -27,13 +27,13 @@ healthcare_validation:
     patient_data_access: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     medical_history: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     emergency_access: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
-    
+
   appointment_system:
     scheduling_functionality: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     calendar_integration: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     real_time_updates: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     mobile_access: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
-    
+
   compliance_systems:
     lgpd_privacy: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     anvisa_medical_device: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
@@ -47,13 +47,13 @@ ai_feature_validation:
     healthcare_integration: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     fallback_behavior: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
     error_handling: "PASS|CONCERNS|FAIL|NOT_APPLICABLE"
-    
+
   performance:
     ai_response_time: "{X}ms (Target: <500ms)"
     ai_prediction_time: "{X}ms (Target: <200ms)"
     ai_dashboard_load: "{X}ms (Target: <1000ms)"
     performance_meets_targets: "PASS|CONCERNS|FAIL"
-    
+
   security:
     ai_data_access: "PASS|CONCERNS|FAIL"
     patient_data_protection: "PASS|CONCERNS|FAIL"
@@ -67,7 +67,7 @@ performance_analysis:
     patient_search_time: "{X}ms (Target: <500ms)"
     appointment_booking_time: "{X}ms (Target: <500ms)"
     real_time_update_latency: "{X}ms (Target: <100ms)"
-    
+
   regression_analysis:
     dashboard_performance_change: "{better|same|worse} by {X}%"
     api_performance_change: "{better|same|worse} by {X}%"
@@ -80,12 +80,12 @@ integration_assessment:
     breaking_changes: "{Yes|No}"
     consumer_impact: "NONE|MINOR|MODERATE|SIGNIFICANT"
     migration_required: "{Yes|No}"
-    
+
   data_migration:
     migration_safety: "SAFE|CONCERNS|UNSAFE"
     rollback_capability: "IMMEDIATE|DELAYED|COMPLEX|IMPOSSIBLE"
     data_integrity: "VERIFIED|CONCERNS|FAILED"
-    
+
   dependency_impact:
     downstream_systems: "UNAFFECTED|MINOR_IMPACT|SIGNIFICANT_IMPACT"
     third_party_integrations: "COMPATIBLE|CONCERNS|INCOMPATIBLE"
@@ -99,7 +99,7 @@ critical_issues:
       impact: "PATIENT_CARE|DATA_INTEGRITY|COMPLIANCE|SYSTEM_AVAILABILITY"
       severity: "CRITICAL|HIGH|MEDIUM|LOW"
       status: "OPEN|IN_PROGRESS|RESOLVED"
-      
+
   high_priority_issues:
     - issue_id: "P1-{X}"
       description: "{Description of important healthcare enhancement issue}"
@@ -114,13 +114,13 @@ risk_assessment:
       probability: "{HIGH|MEDIUM|LOW}"
       impact: "{CRITICAL|SIGNIFICANT|MODERATE|MINOR}"
       mitigation: "{Mitigation strategy}"
-      
+
   healthcare_risks:
     - risk: "{Healthcare workflow risk description}"
       probability: "{HIGH|MEDIUM|LOW}"
       impact: "{PATIENT_CARE|WORKFLOW_DISRUPTION|COMPLIANCE_VIOLATION}"
       mitigation: "{Mitigation strategy}"
-      
+
   compliance_risks:
     - risk: "{Regulatory compliance risk description}"
       probability: "{HIGH|MEDIUM|LOW}"
@@ -136,7 +136,7 @@ pass_criteria_met:
   compliance_requirements_validated: "{Yes|No}"
   rollback_procedures_tested: "{Yes|No}"
   ai_features_functional: "{Yes|No}"
-  
+
 pass_criteria_evaluation: "ALL_MET|PARTIAL|NOT_MET"
 
 ## CONCERNS Criteria (Score 4-6)
@@ -145,7 +145,7 @@ concerns_criteria:
   test_coverage_gaps: "{Yes|No}"
   managed_technical_debt: "{Yes|No}"
   team_review_required: "{Yes|No}"
-  
+
 concerns_criteria_evaluation: "ACCEPTABLE|NEEDS_ATTENTION|UNACCEPTABLE"
 
 ## FAIL Criteria (Score 7-9)
@@ -154,7 +154,7 @@ fail_criteria:
   critical_performance_degradation: "{Yes|No}"
   compliance_violations: "{Yes|No}"
   missing_rollback_capability: "{Yes|No}"
-  
+
 fail_criteria_evaluation: "CRITICAL_ISSUES|MANAGEABLE|NO_ISSUES"
 
 # Decision Rationale
@@ -163,12 +163,12 @@ decision_rationale:
     - "{Primary factor influencing gate decision}"
     - "{Secondary factor influencing gate decision}"
     - "{Additional factor if applicable}"
-    
+
   healthcare_considerations:
     - "{Healthcare-specific consideration}"
     - "{Patient care impact consideration}"
     - "{Regulatory compliance consideration}"
-    
+
   technical_considerations:
     - "{Technical implementation consideration}"
     - "{Performance impact consideration}"
@@ -181,7 +181,7 @@ conditions:
       status: "COMPLETED|IN_PROGRESS|NOT_STARTED"
       responsible_party: "{Team/Individual responsible}"
       deadline: "{YYYY-MM-DD}"
-      
+
   post_deployment_monitoring:
     - metric: "{Monitoring metric}"
       threshold: "{Alert threshold}"
@@ -190,18 +190,18 @@ conditions:
 
 # Approval and Sign-off
 approvals:
-  test_architect: 
+  test_architect:
     name: "Quinn (Test Architect)"
     decision: "APPROVE|APPROVE_WITH_CONDITIONS|REJECT"
     timestamp: "{YYYY-MM-DD HH:MM:SS}"
     comments: "{Additional comments if needed}"
-    
+
   healthcare_compliance_officer:
     name: "{Name if required}"
     decision: "APPROVE|APPROVE_WITH_CONDITIONS|REJECT|NOT_REQUIRED"
     timestamp: "{YYYY-MM-DD HH:MM:SS}"
     comments: "{Compliance-specific comments}"
-    
+
   technical_lead:
     name: "{Name if required}"
     decision: "APPROVE|APPROVE_WITH_CONDITIONS|REJECT|NOT_REQUIRED"
@@ -215,23 +215,23 @@ monitoring_plan:
       frequency: "Every 5 minutes"
       duration: "24 hours post-deployment"
       alert_threshold: ">2.5s"
-      
+
     - metric: "AI feature error rate"
       frequency: "Real-time"
       duration: "72 hours post-deployment"
       alert_threshold: ">1%"
-      
+
     - metric: "Patient workflow completion rate"
       frequency: "Every hour"
       duration: "48 hours post-deployment"
       alert_threshold: "<95%"
-      
+
   extended_monitoring:
     - metric: "Healthcare professional satisfaction"
       frequency: "Weekly"
       duration: "4 weeks post-deployment"
       success_criteria: ">4.0/5.0 rating"
-      
+
     - metric: "AI feature adoption rate"
       frequency: "Daily"
       duration: "2 weeks post-deployment"
@@ -243,15 +243,15 @@ rollback_plan:
     - condition: "Healthcare workflow failure rate >5%"
       action: "IMMEDIATE_ROLLBACK"
       responsible_party: "Operations Team"
-      
+
     - condition: "Dashboard load time >5s consistently"
       action: "IMMEDIATE_ROLLBACK"
       responsible_party: "Operations Team"
-      
+
     - condition: "Patient data integrity issue detected"
       action: "IMMEDIATE_ROLLBACK"
       responsible_party: "Security Team"
-      
+
   rollback_procedure:
     estimated_time: "{X} minutes"
     verification_steps:
@@ -259,7 +259,7 @@ rollback_plan:
       - "Confirm performance baseline achieved"
       - "Validate patient data integrity"
       - "Test emergency access procedures"
-    
+
     communication_plan:
       - "Notify healthcare professionals via internal system"
       - "Update system status page"
@@ -270,7 +270,7 @@ final_decision:
   status: "APPROVED|APPROVED_WITH_CONDITIONS|REJECTED|WAIVED"
   effective_date: "{YYYY-MM-DD}"
   review_date: "{YYYY-MM-DD (for conditional approvals)}"
-  
+
   waiver_justification: # Only if status is WAIVED
     business_justification: "{Business reason for waiving quality gate}"
     risk_acceptance: "{Explicit acceptance of identified risks}"
@@ -283,7 +283,7 @@ audit_trail:
   gate_reviewed: "{YYYY-MM-DD HH:MM:SS}"
   gate_decided: "{YYYY-MM-DD HH:MM:SS}"
   decision_communicated: "{YYYY-MM-DD HH:MM:SS}"
-  
+
   review_participants:
     - name: "{Participant name}"
       role: "{Participant role}"
@@ -295,12 +295,12 @@ healthcare_validations:
     data_integrity_verified: "{Yes|No}"
     emergency_access_tested: "{Yes|No}"
     privacy_controls_validated: "{Yes|No}"
-    
+
   regulatory_compliance:
     lgpd_assessment_complete: "{Yes|No}"
     anvisa_requirements_met: "{Yes|No}"
     cfm_standards_verified: "{Yes|No}"
-    
+
   professional_workflow:
     healthcare_professional_training_plan: "{Required|Not Required}"
     workflow_documentation_updated: "{Yes|No}"

@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
-import path from "node:path";
 import react from "@vitejs/plugin-react";
+import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -10,7 +10,13 @@ export default defineConfig({
 		// Integration test configuration
 		name: "integration",
 		include: ["apps/web/tests/integration/**/*.test.{ts,tsx}"],
-		exclude: ["node_modules/**", "dist/**", "**/*.d.ts", "apps/web/tests/unit/**", "apps/web/tests/e2e/**"],
+		exclude: [
+			"node_modules/**",
+			"dist/**",
+			"**/*.d.ts",
+			"apps/web/tests/unit/**",
+			"apps/web/tests/e2e/**",
+		],
 
 		// Test environment
 		environment: "happy-dom",

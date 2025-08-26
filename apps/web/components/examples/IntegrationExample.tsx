@@ -8,8 +8,6 @@
 
 "use client";
 
-import type { CreateAppointment, CreatePatient, Login } from "@neonpro/shared/schemas";
-import { useState } from "react";
 import {
 	useAppointments,
 	useAuthStatus,
@@ -19,6 +17,8 @@ import {
 	usePatients,
 	useProfile,
 } from "@/hooks/api";
+import type { CreateAppointment, CreatePatient, Login } from "@neonpro/shared/schemas";
+import { useState } from "react";
 
 export function IntegrationExample() {
 	const [loginData, setLoginData] = useState<Login>({
@@ -32,11 +32,21 @@ export function IntegrationExample() {
 	const { data: profile, refetch: refetchProfile } = useProfile();
 
 	// Patient hooks
-	const { data: patients, isLoading: patientsLoading, error: patientsError } = usePatients({ page: 1, limit: 5 });
+	const {
+		data: patients,
+		isLoading: patientsLoading,
+		error: patientsError,
+	} = usePatients({
+		page: 1,
+		limit: 5,
+	});
 	const createPatientMutation = useCreatePatient();
 
 	// Appointment hooks
-	const { data: appointments, isLoading: appointmentsLoading } = useAppointments({ page: 1, limit: 3 });
+	const { data: appointments, isLoading: appointmentsLoading } = useAppointments({
+		page: 1,
+		limit: 3,
+	});
 	const createAppointmentMutation = useCreateAppointment();
 
 	const handleLogin = async () => {

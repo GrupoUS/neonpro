@@ -2,7 +2,12 @@ import { AIContextCacheLayer } from "./ai-context-cache";
 import { BrowserCacheLayer } from "./browser-cache";
 import { DatabaseCacheLayer } from "./database-cache";
 import { EdgeCacheLayer } from "./edge-cache";
-import { CacheLayer, type CacheOperation, type CacheStats, type HealthcareDataPolicy } from "./types";
+import {
+	CacheLayer,
+	type CacheOperation,
+	type CacheStats,
+	type HealthcareDataPolicy,
+} from "./types";
 
 export class MultiLayerCacheManager {
 	private readonly browser: BrowserCacheLayer;
@@ -31,12 +36,16 @@ export class MultiLayerCacheManager {
 
 	async get<T>(
 		key: string,
-		layers: CacheLayer[] = [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.DATABASE],
+		layers: CacheLayer[] = [
+			CacheLayer.BROWSER,
+			CacheLayer.EDGE,
+			CacheLayer.DATABASE,
+		],
 		options?: {
 			healthcareData?: boolean;
 			lgpdCompliant?: boolean;
 			fallbackToAll?: boolean;
-		}
+		},
 	): Promise<T | null> {
 		// Try each layer in order (fastest to slowest)
 		for (const layer of layers) {
@@ -73,7 +82,11 @@ export class MultiLayerCacheManager {
 	async set<T>(
 		key: string,
 		value: T,
-		layers: CacheLayer[] = [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.DATABASE],
+		layers: CacheLayer[] = [
+			CacheLayer.BROWSER,
+			CacheLayer.EDGE,
+			CacheLayer.DATABASE,
+		],
 		options?: {
 			ttl?: number;
 			healthcareData?: boolean;
@@ -84,7 +97,7 @@ export class MultiLayerCacheManager {
 				userId?: string;
 				sessionId?: string;
 			};
-		}
+		},
 	): Promise<void> {
 		const promises: Promise<void>[] = [];
 
@@ -96,16 +109,30 @@ export class MultiLayerCacheManager {
 				const layerTTL = this.getOptimalTTL(layer, options?.ttl);
 
 				if (layer === CacheLayer.AI_CONTEXT && options?.aiContextMetadata) {
-					promises.push((cache as AIContextCacheLayer).set(key, value, layerTTL, options.aiContextMetadata));
+					promises.push(
+						(cache as AIContextCacheLayer).set(
+							key,
+							value,
+							layerTTL,
+							options.aiContextMetadata,
+						),
+					);
 				} else if (layer === CacheLayer.DATABASE && options?.healthcareData) {
 					promises.push(
 						(cache as DatabaseCacheLayer).set(key, value, layerTTL, {
 							healthcareData: options.healthcareData,
 							auditContext: `cache_set_${Date.now()}`,
-						})
+						}),
 					);
 				} else if (layer === CacheLayer.BROWSER && options?.policy) {
-					promises.push((cache as BrowserCacheLayer).set(key, value, layerTTL, options.policy));
+					promises.push(
+						(cache as BrowserCacheLayer).set(
+							key,
+							value,
+							layerTTL,
+							options.policy,
+						),
+					);
 				} else {
 					promises.push(cache.set(key, value, layerTTL));
 				}
@@ -159,7 +186,13 @@ export class MultiLayerCacheManager {
 				stats[result.value.layer] = result.value.stats;
 			} else {
 				const layer = Object.values(CacheLayer)[index];
-				stats[layer] = { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 };
+				stats[layer] = {
+					hits: 0,
+					misses: 0,
+					hitRate: 0,
+					totalRequests: 0,
+					averageResponseTime: 0,
+				};
 			}
 		});
 
@@ -168,16 +201,25 @@ export class MultiLayerCacheManager {
 
 	async performHealthCheck(): Promise<{
 		healthy: boolean;
-		layers: Record<CacheLayer, { healthy: boolean; hitRate: number; target: number }>;
+		layers: Record<
+			CacheLayer,
+			{ healthy: boolean; hitRate: number; target: number }
+		>;
 		recommendations: string[];
 	}> {
 		const allStats = await this.getAllStats();
 		const recommendations: string[] = [];
 		let overallHealthy = true;
 
-		const layerHealth: Record<CacheLayer, { healthy: boolean; hitRate: number; target: number }> = {} as any;
+		const layerHealth: Record<
+			CacheLayer,
+			{ healthy: boolean; hitRate: number; target: number }
+		> = {} as any;
 
-		for (const [layer, stats] of Object.entries(allStats) as [CacheLayer, CacheStats][]) {
+		for (const [layer, stats] of Object.entries(allStats) as [
+			CacheLayer,
+			CacheStats,
+		][]) {
 			const target = this.hitRateTargets[layer];
 			const healthy = stats.hitRate >= target;
 
@@ -189,7 +231,9 @@ export class MultiLayerCacheManager {
 
 			if (!healthy) {
 				overallHealthy = false;
-				recommendations.push(`${layer} cache hit rate (${stats.hitRate.toFixed(1)}%) below target (${target}%)`);
+				recommendations.push(
+					`${layer} cache hit rate (${stats.hitRate.toFixed(1)}%) below target (${target}%)`,
+				);
 			}
 		}
 
@@ -239,7 +283,7 @@ export class MultiLayerCacheManager {
 		value: T,
 		foundLayer: CacheLayer,
 		searchedLayers: CacheLayer[],
-		_options?: any
+		_options?: any,
 	): Promise<void> {
 		const layerIndex = searchedLayers.indexOf(foundLayer);
 		if (layerIndex <= 0) {
@@ -262,7 +306,12 @@ export class MultiLayerCacheManager {
 	}
 
 	// Healthcare-specific methods
-	async setPatientData<T>(patientId: string, dataKey: string, value: T, policy: HealthcareDataPolicy): Promise<void> {
+	async setPatientData<T>(
+		patientId: string,
+		dataKey: string,
+		value: T,
+		policy: HealthcareDataPolicy,
+	): Promise<void> {
 		const key = `patient:${patientId}:${dataKey}`;
 		const layers =
 			policy.dataClassification === "RESTRICTED"
@@ -275,7 +324,11 @@ export class MultiLayerCacheManager {
 		});
 	}
 
-	async getPatientData<T>(patientId: string, dataKey: string, policy: HealthcareDataPolicy): Promise<T | null> {
+	async getPatientData<T>(
+		patientId: string,
+		dataKey: string,
+		policy: HealthcareDataPolicy,
+	): Promise<T | null> {
 		const key = `patient:${patientId}:${dataKey}`;
 		const layers =
 			policy.dataClassification === "RESTRICTED"

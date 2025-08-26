@@ -34,9 +34,12 @@ export type MfaMethod = (typeof MfaMethod)[keyof typeof MfaMethod];
  */
 export const mfaSetupSchema = z.object({
 	userId: z.string().uuid("User ID deve ser um UUID válido"),
-	method: z.enum([MfaMethod.TOTP, MfaMethod.SMS, MfaMethod.EMAIL, MfaMethod.BACKUP_CODES], {
-		errorMap: () => ({ message: "Método MFA inválido" }),
-	}),
+	method: z.enum(
+		[MfaMethod.TOTP, MfaMethod.SMS, MfaMethod.EMAIL, MfaMethod.BACKUP_CODES],
+		{
+			errorMap: () => ({ message: "Método MFA inválido" }),
+		},
+	),
 	phoneNumber: z
 		.string()
 		.regex(/^\+?[\d\s\-()]{10,20}$/)
@@ -61,8 +64,17 @@ const HOTP_MASK = 0x7f; // 127 - masks lower 7 bits for sign bit removal
 
 export const mfaVerificationSchema = z.object({
 	userId: z.string().uuid("User ID deve ser um UUID válido"),
-	method: z.enum([MfaMethod.TOTP, MfaMethod.SMS, MfaMethod.EMAIL, MfaMethod.BACKUP_CODES]),
-	code: z.string().min(MIN_CODE_LENGTH).max(MAX_CODE_LENGTH).regex(/^\d+$/, "Código deve conter apenas dígitos"),
+	method: z.enum([
+		MfaMethod.TOTP,
+		MfaMethod.SMS,
+		MfaMethod.EMAIL,
+		MfaMethod.BACKUP_CODES,
+	]),
+	code: z
+		.string()
+		.min(MIN_CODE_LENGTH)
+		.max(MAX_CODE_LENGTH)
+		.regex(/^\d+$/, "Código deve conter apenas dígitos"),
 	sessionId: z.string().uuid("Session ID deve ser um UUID válido"),
 });
 
@@ -120,7 +132,11 @@ export function generateTotpSecret(): string {
 /**
  * Generate QR code URL for authenticator app setup
  */
-export function generateTotpQrCodeUrl(secret: string, accountName: string, issuer = "NeonPro Healthcare"): string {
+export function generateTotpQrCodeUrl(
+	secret: string,
+	accountName: string,
+	issuer = "NeonPro Healthcare",
+): string {
 	const params = new URLSearchParams({
 		secret,
 		issuer,
@@ -129,22 +145,32 @@ export function generateTotpQrCodeUrl(secret: string, accountName: string, issue
 		period: TOTP_PERIOD.toString(),
 	});
 
-	return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(accountName)}?${params}`;
+	return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(
+		accountName,
+	)}?${params}`;
 }
 
 /**
  * Generate TOTP code for current time
  */
 export function generateTotpCode(secret: string, timestamp?: number): string {
-	const time = Math.floor((timestamp || Date.now()) / MILLISECONDS_PER_SECOND / TOTP_PERIOD);
+	const time = Math.floor(
+		(timestamp || Date.now()) / MILLISECONDS_PER_SECOND / TOTP_PERIOD,
+	);
 	return generateHotp(secret, time);
 }
 
 /**
  * Verify TOTP code with time window tolerance
  */
-export function verifyTotpCode(secret: string, code: string, timestamp?: number): boolean {
-	const time = Math.floor((timestamp || Date.now()) / MILLISECONDS_PER_SECOND / TOTP_PERIOD);
+export function verifyTotpCode(
+	secret: string,
+	code: string,
+	timestamp?: number,
+): boolean {
+	const time = Math.floor(
+		(timestamp || Date.now()) / MILLISECONDS_PER_SECOND / TOTP_PERIOD,
+	);
 
 	// Check current time and adjacent windows
 	for (let i = -TOTP_WINDOW; i <= TOTP_WINDOW; i++) {
@@ -209,7 +235,8 @@ function base32Decode(encoded: string): Buffer {
 
 	for (let i = 0; i < cleanEncoded.length; i++) {
 		// biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
-		value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
+		value =
+			(value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
 		bits += BASE32_BITS_PER_CHAR;
 
 		if (bits >= BYTE_SIZE) {
@@ -315,7 +342,9 @@ const _LOCKOUT_DURATION = LOCKOUT_DURATION_MINUTES * MINUTES_TO_MILLISECONDS; //
 /**
  * Setup MFA for user
  */
-export async function setupMfa(request: z.infer<typeof mfaSetupSchema>): Promise<{
+export async function setupMfa(
+	request: z.infer<typeof mfaSetupSchema>,
+): Promise<{
 	success: boolean;
 	secret?: string;
 	qrCode?: string;
@@ -394,7 +423,13 @@ export async function setupMfa(request: z.infer<typeof mfaSetupSchema>): Promise
 
 				// In production, send email with code
 				// For now, store the code
-				await storeVerificationCode(userId, emailCode, "email", undefined, email);
+				await storeVerificationCode(
+					userId,
+					emailCode,
+					"email",
+					undefined,
+					email,
+				);
 
 				const settings = await mfaDb.getMfaSettings(userId);
 				await mfaDb.upsertMfaSettings({
@@ -445,7 +480,9 @@ export async function setupMfa(request: z.infer<typeof mfaSetupSchema>): Promise
 /**
  * Verify MFA code
  */
-export async function verifyMfa(request: z.infer<typeof mfaVerificationSchema>): Promise<MfaVerificationResult> {
+export async function verifyMfa(
+	request: z.infer<typeof mfaVerificationSchema>,
+): Promise<MfaVerificationResult> {
 	try {
 		const { userId, method, code } = request;
 
@@ -456,7 +493,8 @@ export async function verifyMfa(request: z.infer<typeof mfaVerificationSchema>):
 				success: false,
 				method,
 				lockoutUntil: lockoutResult.lockoutUntil,
-				message: "Conta temporariamente bloqueada devido a tentativas excessivas",
+				message:
+					"Conta temporariamente bloqueada devido a tentativas excessivas",
 			};
 		}
 
@@ -476,7 +514,9 @@ export async function verifyMfa(request: z.infer<typeof mfaVerificationSchema>):
 				break;
 
 			case MfaMethod.EMAIL:
-				verified = await mfaDb.verifyCode(userId, code, "email").then((r) => r.valid);
+				verified = await mfaDb
+					.verifyCode(userId, code, "email")
+					.then((r) => r.valid);
 				break;
 
 			case MfaMethod.BACKUP_CODES:
@@ -507,7 +547,8 @@ export async function verifyMfa(request: z.infer<typeof mfaVerificationSchema>):
 				method,
 				remainingAttempts: 0,
 				lockoutUntil: newLockoutStatus.lockoutUntil,
-				message: "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
+				message:
+					"Muitas tentativas incorretas. Conta bloqueada temporariamente.",
 			};
 		}
 
@@ -517,7 +558,11 @@ export async function verifyMfa(request: z.infer<typeof mfaVerificationSchema>):
 			message: "Código de verificação inválido",
 		};
 	} catch (_error) {
-		await recordFailedMfa(request.userId, request.method, "Internal verification error");
+		await recordFailedMfa(
+			request.userId,
+			request.method,
+			"Internal verification error",
+		);
 		return {
 			success: false,
 			method: request.method,
@@ -564,7 +609,10 @@ async function getUserTotpSecret(userId: string): Promise<string | null> {
 /**
  * Verify SMS code from temporary storage
  */
-async function verifySmsCodeForUser(userId: string, code: string): Promise<boolean> {
+async function verifySmsCodeForUser(
+	userId: string,
+	code: string,
+): Promise<boolean> {
 	try {
 		const result = await mfaDb.verifyCode(userId, code, "sms");
 		return result.valid;
@@ -576,7 +624,10 @@ async function verifySmsCodeForUser(userId: string, code: string): Promise<boole
 /**
  * Verify backup code and mark as used
  */
-async function verifyBackupCodeForUser(userId: string, code: string): Promise<boolean> {
+async function verifyBackupCodeForUser(
+	userId: string,
+	code: string,
+): Promise<boolean> {
 	try {
 		const result = await mfaDb.verifyCode(userId, code, "recovery");
 		return result.valid;
@@ -593,7 +644,7 @@ async function storeVerificationCode(
 	code: string,
 	type: "sms" | "email",
 	phoneNumber?: string,
-	email?: string
+	email?: string,
 ): Promise<void> {
 	const expiresAt = new Date();
 	expiresAt.setMinutes(expiresAt.getMinutes() + 5); // 5 minute expiry
@@ -614,7 +665,10 @@ async function storeVerificationCode(
 /**
  * Record successful MFA authentication
  */
-async function recordSuccessfulMfa(userId: string, method: MfaMethod): Promise<void> {
+async function recordSuccessfulMfa(
+	userId: string,
+	method: MfaMethod,
+): Promise<void> {
 	try {
 		await mfaDb.logAuditEvent({
 			userId,
@@ -651,7 +705,11 @@ async function recordSuccessfulMfa(userId: string, method: MfaMethod): Promise<v
 /**
  * Record failed MFA authentication
  */
-async function recordFailedMfa(userId: string, method: MfaMethod, errorMessage?: string): Promise<void> {
+async function recordFailedMfa(
+	userId: string,
+	method: MfaMethod,
+	errorMessage?: string,
+): Promise<void> {
 	try {
 		await mfaDb.logAuditEvent({
 			userId,

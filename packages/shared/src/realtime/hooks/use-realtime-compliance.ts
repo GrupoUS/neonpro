@@ -63,7 +63,9 @@ export type UseRealtimeComplianceReturn = {
  * Real-time Compliance Hook
  * Sistema crítico para monitoramento LGPD e ANVISA em healthcare brasileiro
  */
-export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): UseRealtimeComplianceReturn {
+export function useRealtimeCompliance(
+	options: UseRealtimeComplianceOptions,
+): UseRealtimeComplianceReturn {
 	const {
 		tenantId,
 		complianceType,
@@ -86,80 +88,97 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 	/**
 	 * Determine compliance type based on payload
 	 */
-	const determineComplianceType = useCallback((payload: any): keyof ComplianceEventType => {
-		const eventData = payload.new || payload.old;
+	const determineComplianceType = useCallback(
+		(payload: any): keyof ComplianceEventType => {
+			const eventData = payload.new || payload.old;
 
-		if (!eventData) {
-			return "LGPD_DATA_ACCESS";
-		}
-
-		// Map based on action categories
-		if (eventData.action?.includes("consent")) {
-			return eventData.action === "consent_granted" ? "LGPD_CONSENT_GRANTED" : "LGPD_CONSENT_REVOKED";
-		}
-
-		if (eventData.action?.includes("deletion") || eventData.action?.includes("delete")) {
-			return "LGPD_DATA_DELETION";
-		}
-
-		if (eventData.action?.includes("anvisa")) {
-			const metadata = (eventData.metadata as Record<string, any>) || {};
-			if (metadata.severity === "CRITICAL") {
-				return "ANVISA_VIOLATION";
+			if (!eventData) {
+				return "LGPD_DATA_ACCESS";
 			}
-			return "ANVISA_COMPLIANCE_CHECK";
-		}
 
-		if (eventData.action?.includes("breach") || eventData.action?.includes("vazamento")) {
-			return "DATA_BREACH_DETECTED";
-		}
+			// Map based on action categories
+			if (eventData.action?.includes("consent")) {
+				return eventData.action === "consent_granted"
+					? "LGPD_CONSENT_GRANTED"
+					: "LGPD_CONSENT_REVOKED";
+			}
 
-		if (eventData.action?.includes("unauthorized") || eventData.action?.includes("nao_autorizado")) {
-			return "UNAUTHORIZED_ACCESS";
-		}
+			if (
+				eventData.action?.includes("deletion") ||
+				eventData.action?.includes("delete")
+			) {
+				return "LGPD_DATA_DELETION";
+			}
 
-		return "LGPD_DATA_ACCESS";
-	}, []);
+			if (eventData.action?.includes("anvisa")) {
+				const metadata = (eventData.metadata as Record<string, any>) || {};
+				if (metadata.severity === "CRITICAL") {
+					return "ANVISA_VIOLATION";
+				}
+				return "ANVISA_COMPLIANCE_CHECK";
+			}
+
+			if (
+				eventData.action?.includes("breach") ||
+				eventData.action?.includes("vazamento")
+			) {
+				return "DATA_BREACH_DETECTED";
+			}
+
+			if (
+				eventData.action?.includes("unauthorized") ||
+				eventData.action?.includes("nao_autorizado")
+			) {
+				return "UNAUTHORIZED_ACCESS";
+			}
+
+			return "LGPD_DATA_ACCESS";
+		},
+		[],
+	);
 
 	/**
 	 * Determine severity level based on compliance event
 	 */
-	const determineSeverity = useCallback((payload: any): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
-		const eventData = payload.new || payload.old;
-		const eventType = payload.eventType;
+	const determineSeverity = useCallback(
+		(payload: any): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
+			const eventData = payload.new || payload.old;
+			const eventType = payload.eventType;
 
-		// Critical severity scenarios
-		if (
-			eventData?.action?.includes("breach") ||
-			eventData?.action?.includes("unauthorized") ||
-			eventData?.action?.includes("violation") ||
-			eventData?.action?.includes("vazamento") ||
-			eventData?.action?.includes("nao_autorizado")
-		) {
-			return "CRITICAL";
-		}
+			// Critical severity scenarios
+			if (
+				eventData?.action?.includes("breach") ||
+				eventData?.action?.includes("unauthorized") ||
+				eventData?.action?.includes("violation") ||
+				eventData?.action?.includes("vazamento") ||
+				eventData?.action?.includes("nao_autorizado")
+			) {
+				return "CRITICAL";
+			}
 
-		// High severity scenarios
-		if (
-			eventType === "DELETE" ||
-			eventData?.action?.includes("consent_revoked") ||
-			eventData?.action?.includes("data_deletion") ||
-			eventData?.action?.includes("anvisa_violation")
-		) {
-			return "HIGH";
-		}
+			// High severity scenarios
+			if (
+				eventType === "DELETE" ||
+				eventData?.action?.includes("consent_revoked") ||
+				eventData?.action?.includes("data_deletion") ||
+				eventData?.action?.includes("anvisa_violation")
+			) {
+				return "HIGH";
+			}
 
-		// Medium severity scenarios
-		if (
-			eventData?.action?.includes("consent_granted") ||
-			eventData?.action?.includes("data_export") ||
-			eventData?.action?.includes("anvisa_compliance_check")
-		) {
-			return "MEDIUM";
-		}
+			// Medium severity scenarios
+			if (
+				eventData?.action?.includes("consent_granted") ||
+				eventData?.action?.includes("data_export") ||
+				eventData?.action?.includes("anvisa_compliance_check")
+			) {
+				return "MEDIUM";
+			}
 
-		return "LOW";
-	}, []);
+			return "LOW";
+		},
+		[],
+	);
 
 	/**
 	 * Handle realtime compliance changes
@@ -223,7 +242,7 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 			generateAuditEntry, // Update TanStack Query cache
 			updateComplianceCache, // Update compliance score
 			updateComplianceScore,
-		]
+		],
 	);
 
 	// Additional helper functions
@@ -247,7 +266,7 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 				timestamp: new Date().toISOString(),
 			};
 		},
-		[tenantId]
+		[tenantId],
 	);
 
 	const updateComplianceCache = useCallback(
@@ -255,34 +274,39 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 			const { eventType, new: newData, old: oldData } = payload;
 
 			// Update compliance logs cache
-			queryClient.setQueryData(["compliance-logs", tenantId], (oldCache: ComplianceLog[] | undefined) => {
-				if (!oldCache) {
-					return oldCache;
-				}
-
-				switch (eventType) {
-					case "INSERT":
-						if (newData && newData.clinic_id === tenantId) {
-							return [newData, ...oldCache].slice(0, 1000); // Keep only last 1000 events
-						}
+			queryClient.setQueryData(
+				["compliance-logs", tenantId],
+				(oldCache: ComplianceLog[] | undefined) => {
+					if (!oldCache) {
 						return oldCache;
+					}
 
-					case "UPDATE":
-						if (newData) {
-							return oldCache.map((log) => (log.id === newData.id ? newData : log));
-						}
-						return oldCache;
+					switch (eventType) {
+						case "INSERT":
+							if (newData && newData.clinic_id === tenantId) {
+								return [newData, ...oldCache].slice(0, 1000); // Keep only last 1000 events
+							}
+							return oldCache;
 
-					case "DELETE":
-						if (oldData) {
-							return oldCache.filter((log) => log.id !== oldData.id);
-						}
-						return oldCache;
+						case "UPDATE":
+							if (newData) {
+								return oldCache.map((log) =>
+									log.id === newData.id ? newData : log,
+								);
+							}
+							return oldCache;
 
-					default:
-						return oldCache;
-				}
-			});
+						case "DELETE":
+							if (oldData) {
+								return oldCache.filter((log) => log.id !== oldData.id);
+							}
+							return oldCache;
+
+						default:
+							return oldCache;
+					}
+				},
+			);
 
 			// Update compliance statistics
 			queryClient.invalidateQueries({
@@ -293,50 +317,53 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 			});
 			queryClient.invalidateQueries({ queryKey: ["audit-trail", tenantId] });
 		},
-		[queryClient, tenantId]
+		[queryClient, tenantId],
 	);
 
-	const updateComplianceScore = useCallback((payload: RealtimeCompliancePayload) => {
-		const { severity, complianceType } = payload;
+	const updateComplianceScore = useCallback(
+		(payload: RealtimeCompliancePayload) => {
+			const { severity, complianceType } = payload;
 
-		setComplianceScore((prev) => {
-			let scoreDelta = 0;
+			setComplianceScore((prev) => {
+				let scoreDelta = 0;
 
-			// Score penalties based on severity
-			switch (severity) {
-				case "CRITICAL":
-					scoreDelta = -15; // Major penalty for critical issues
-					break;
-				case "HIGH":
-					scoreDelta = -8;
-					break;
-				case "MEDIUM":
-					scoreDelta = -3;
-					break;
-				case "LOW":
-					scoreDelta = -1;
-					break;
-			}
+				// Score penalties based on severity
+				switch (severity) {
+					case "CRITICAL":
+						scoreDelta = -15; // Major penalty for critical issues
+						break;
+					case "HIGH":
+						scoreDelta = -8;
+						break;
+					case "MEDIUM":
+						scoreDelta = -3;
+						break;
+					case "LOW":
+						scoreDelta = -1;
+						break;
+				}
 
-			// Additional penalties for specific violations
-			if (complianceType === "DATA_BREACH_DETECTED") {
-				scoreDelta -= 20;
-			}
-			if (complianceType === "UNAUTHORIZED_ACCESS") {
-				scoreDelta -= 10;
-			}
+				// Additional penalties for specific violations
+				if (complianceType === "DATA_BREACH_DETECTED") {
+					scoreDelta -= 20;
+				}
+				if (complianceType === "UNAUTHORIZED_ACCESS") {
+					scoreDelta -= 10;
+				}
 
-			// Positive adjustments for good compliance actions
-			if (complianceType === "LGPD_CONSENT_GRANTED") {
-				scoreDelta = 1; // Small positive for consent
-			}
+				// Positive adjustments for good compliance actions
+				if (complianceType === "LGPD_CONSENT_GRANTED") {
+					scoreDelta = 1; // Small positive for consent
+				}
 
-			// Ensure score stays within bounds
-			const newScore = Math.max(0, Math.min(100, prev + scoreDelta));
+				// Ensure score stays within bounds
+				const newScore = Math.max(0, Math.min(100, prev + scoreDelta));
 
-			return newScore;
-		});
-	}, []);
+				return newScore;
+			});
+		},
+		[],
+	);
 
 	/**
 	 * Subscribe to realtime compliance updates
@@ -359,13 +386,19 @@ export function useRealtimeCompliance(options: UseRealtimeComplianceOptions): Us
 				table: "compliance_audit_logs",
 				filter,
 			},
-			handleComplianceChange
+			handleComplianceChange,
 		);
 
 		setUnsubscribeFn(() => unsubscribe);
 		setIsConnected(true);
 		setConnectionHealth(100);
-	}, [enabled, tenantId, complianceType, unsubscribeFn, handleComplianceChange]);
+	}, [
+		enabled,
+		tenantId,
+		complianceType,
+		unsubscribeFn,
+		handleComplianceChange,
+	]);
 
 	/**
 	 * Unsubscribe from realtime compliance updates

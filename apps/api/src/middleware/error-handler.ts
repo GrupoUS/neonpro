@@ -38,7 +38,7 @@ export class NeonProError extends Error {
 		message: string,
 		statusCode: StatusCode = 500,
 		userMessage?: string,
-		metadata?: Record<string, unknown>
+		metadata?: Record<string, unknown>,
 	) {
 		super(message);
 		this.name = "NeonProError";
@@ -59,7 +59,8 @@ export class NeonProError extends Error {
 			[ErrorType.AUTHENTICATION_ERROR]: "Credenciais inválidas",
 			[ErrorType.AUTHORIZATION_ERROR]: "Acesso negado",
 			[ErrorType.NOT_FOUND_ERROR]: "Recurso não encontrado",
-			[ErrorType.RATE_LIMIT_ERROR]: "Muitas tentativas. Tente novamente mais tarde",
+			[ErrorType.RATE_LIMIT_ERROR]:
+				"Muitas tentativas. Tente novamente mais tarde",
 			[ErrorType.DATABASE_ERROR]: "Erro interno do banco de dados",
 			[ErrorType.EXTERNAL_API_ERROR]: "Erro de serviço externo",
 			[ErrorType.BUSINESS_LOGIC_ERROR]: "Operação não permitida",
@@ -127,7 +128,9 @@ const sanitizeError = (error: unknown): unknown => {
 			const lowerKey = key.toLowerCase();
 
 			// Check if key contains sensitive information
-			const isSensitive = sensitiveFields.some((field) => lowerKey.includes(field));
+			const isSensitive = sensitiveFields.some((field) =>
+				lowerKey.includes(field),
+			);
 
 			if (isSensitive) {
 				sanitized[key] = "[REDACTED]";
@@ -204,7 +207,10 @@ const logError = (error: unknown, context: Context): void => {
 /**
  * Format error response based on error type and environment
  */
-const formatErrorResponse = (error: unknown, context: Context): { response: ErrorResponse; statusCode: StatusCode } => {
+const formatErrorResponse = (
+	error: unknown,
+	context: Context,
+): { response: ErrorResponse; statusCode: StatusCode } => {
 	const requestId = context.req.header("X-Request-ID");
 	const auditId = context.req.header("X-Audit-ID");
 	const isProduction = process.env.NODE_ENV === "production";
@@ -296,7 +302,10 @@ const formatErrorResponse = (error: unknown, context: Context): { response: Erro
 	}
 
 	// Handle database errors
-	if (error.name === "PrismaClientKnownRequestError" || error.name === "PrismaClientUnknownRequestError") {
+	if (
+		error.name === "PrismaClientKnownRequestError" ||
+		error.name === "PrismaClientUnknownRequestError"
+	) {
 		return {
 			response: {
 				success: false,
@@ -321,7 +330,9 @@ const formatErrorResponse = (error: unknown, context: Context): { response: Erro
 		response: {
 			success: false,
 			error: ErrorType.INTERNAL_SERVER_ERROR,
-			message: isProduction ? "Erro interno do servidor" : error.message || "Something went wrong",
+			message: isProduction
+				? "Erro interno do servidor"
+				: error.message || "Something went wrong",
 			details: isProduction ? undefined : sanitizeError(error),
 			timestamp: new Date().toISOString(),
 			requestId,
@@ -354,30 +365,73 @@ export const errorHandler: ErrorHandler = (error, context) => {
  */
 export const createError = {
 	validation: (message: string, details?: unknown) =>
-		new NeonProError(ErrorType.VALIDATION_ERROR, message, 400, message, details),
+		new NeonProError(
+			ErrorType.VALIDATION_ERROR,
+			message,
+			400,
+			message,
+			details,
+		),
 
-	authentication: (message = "Credenciais inválidas") => new NeonProError(ErrorType.AUTHENTICATION_ERROR, message, 401),
+	authentication: (message = "Credenciais inválidas") =>
+		new NeonProError(ErrorType.AUTHENTICATION_ERROR, message, 401),
 
-	authorization: (message = "Acesso negado") => new NeonProError(ErrorType.AUTHORIZATION_ERROR, message, 403),
+	authorization: (message = "Acesso negado") =>
+		new NeonProError(ErrorType.AUTHORIZATION_ERROR, message, 403),
 
-	notFound: (resource = "Recurso") => new NeonProError(ErrorType.NOT_FOUND_ERROR, `${resource} não encontrado`, 404),
+	notFound: (resource = "Recurso") =>
+		new NeonProError(
+			ErrorType.NOT_FOUND_ERROR,
+			`${resource} não encontrado`,
+			404,
+		),
 
-	rateLimit: (message = "Muitas tentativas") => new NeonProError(ErrorType.RATE_LIMIT_ERROR, message, 429),
+	rateLimit: (message = "Muitas tentativas") =>
+		new NeonProError(ErrorType.RATE_LIMIT_ERROR, message, 429),
 
 	database: (message: string, details?: unknown) =>
-		new NeonProError(ErrorType.DATABASE_ERROR, message, 500, "Erro de banco de dados", details),
+		new NeonProError(
+			ErrorType.DATABASE_ERROR,
+			message,
+			500,
+			"Erro de banco de dados",
+			details,
+		),
 
 	businessLogic: (message: string, userMessage?: string) =>
-		new NeonProError(ErrorType.BUSINESS_LOGIC_ERROR, message, 400, userMessage || message),
+		new NeonProError(
+			ErrorType.BUSINESS_LOGIC_ERROR,
+			message,
+			400,
+			userMessage || message,
+		),
 
 	lgpdCompliance: (message: string, details?: unknown) =>
-		new NeonProError(ErrorType.LGPD_COMPLIANCE_ERROR, message, 400, message, details),
+		new NeonProError(
+			ErrorType.LGPD_COMPLIANCE_ERROR,
+			message,
+			400,
+			message,
+			details,
+		),
 
 	anvisaCompliance: (message: string, details?: unknown) =>
-		new NeonProError(ErrorType.ANVISA_COMPLIANCE_ERROR, message, 400, message, details),
+		new NeonProError(
+			ErrorType.ANVISA_COMPLIANCE_ERROR,
+			message,
+			400,
+			message,
+			details,
+		),
 
 	internal: (message = "Erro interno", details?: unknown) =>
-		new NeonProError(ErrorType.INTERNAL_SERVER_ERROR, message, 500, "Erro interno do servidor", details),
+		new NeonProError(
+			ErrorType.INTERNAL_SERVER_ERROR,
+			message,
+			500,
+			"Erro interno do servidor",
+			details,
+		),
 };
 
 // Types and utilities are already exported when defined above

@@ -67,7 +67,11 @@ async function runAllTests() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const subscriptionMiddlewareFile = path.join(process.cwd(), "middleware", "subscription.ts");
+		const subscriptionMiddlewareFile = path.join(
+			process.cwd(),
+			"middleware",
+			"subscription.ts",
+		);
 		if (!fs.existsSync(subscriptionMiddlewareFile)) {
 			throw new Error("Arquivo middleware/subscription.ts não encontrado");
 		}
@@ -100,7 +104,11 @@ async function runAllTests() {
 		}
 
 		const content = fs.readFileSync(hookFile, "utf8");
-		const requiredExports = ["SubscriptionProvider", "useSubscription", "useSubscriptionStatus"];
+		const requiredExports = [
+			"SubscriptionProvider",
+			"useSubscription",
+			"useSubscriptionStatus",
+		];
 
 		for (const exportName of requiredExports) {
 			if (!content.includes(exportName)) {
@@ -116,7 +124,11 @@ async function runAllTests() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const componentsDir = path.join(process.cwd(), "components", "subscription");
+		const componentsDir = path.join(
+			process.cwd(),
+			"components",
+			"subscription",
+		);
 		if (!fs.existsSync(componentsDir)) {
 			throw new Error("Diretório components/subscription não encontrado");
 		}
@@ -163,7 +175,10 @@ async function runAllTests() {
 
 	// Teste 6: Verificar schema de subscription no banco
 	await runTest("Verificar tabela de subscriptions", async () => {
-		const { data, error } = await supabase.from("subscriptions").select("count").limit(1);
+		const { data, error } = await supabase
+			.from("subscriptions")
+			.select("count")
+			.limit(1);
 
 		if (error && error.code !== "PGRST116") {
 			throw new Error(`Erro ao acessar tabela subscriptions: ${error.message}`);
@@ -177,7 +192,9 @@ async function runAllTests() {
 		const fs = require("node:fs");
 		const content = fs.readFileSync("middleware/subscription.ts", "utf8");
 
-		const protectedRoutesMatch = content.match(/PROTECTED_ROUTES\s*=\s*\[([\s\S]*?)\]/);
+		const protectedRoutesMatch = content.match(
+			/PROTECTED_ROUTES\s*=\s*\[([\s\S]*?)\]/,
+		);
 		if (!protectedRoutesMatch) {
 			throw new Error("PROTECTED_ROUTES não definido");
 		}
@@ -195,9 +212,17 @@ async function runAllTests() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const subscriptionPageFile = path.join(process.cwd(), "app", "dashboard", "subscription", "page.tsx");
+		const subscriptionPageFile = path.join(
+			process.cwd(),
+			"app",
+			"dashboard",
+			"subscription",
+			"page.tsx",
+		);
 		if (!fs.existsSync(subscriptionPageFile)) {
-			throw new Error("Página app/dashboard/subscription/page.tsx não encontrada");
+			throw new Error(
+				"Página app/dashboard/subscription/page.tsx não encontrada",
+			);
 		}
 
 		const content = fs.readFileSync(subscriptionPageFile, "utf8");

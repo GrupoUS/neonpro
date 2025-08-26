@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { riskAssessmentInputSchema } from "@/app/lib/validations/risk-assessment-automation";
 import type {
 	EmergencyEscalation,
@@ -9,6 +8,7 @@ import type {
 	RiskLevel,
 	RiskScoreBreakdown,
 } from "@/app/types/risk-assessment-automation";
+import { z } from "zod";
 import {
 	calculateComprehensiveRiskAssessment,
 	determineEmergencyEscalation,
@@ -112,6 +112,7 @@ const DEFAULT_OVERSIGHT_CONFIG: ProfessionalOversightConfig = {
  * Main Risk Scoring Algorithm
  * Real-time risk assessment with constitutional healthcare compliance
  */
+
 export class RiskScoringEngine {
 	private performanceMetrics: PerformanceMetrics[] = [];
 	private readonly cache: Map<string, RiskAssessmentCache> = new Map();
@@ -213,7 +214,9 @@ export class RiskScoringEngine {
 			return validatedInput;
 		} catch (error) {
 			throw new Error(
-				`Validação de dados falhou: ${error instanceof z.ZodError ? error.errors.map((e) => e.message).join(", ") : error}`
+				`Validação de dados falhou: ${
+					error instanceof z.ZodError ? error.errors.map((e) => e.message).join(", ") : error
+				}`
 			);
 		}
 	}
@@ -255,7 +258,9 @@ export class RiskScoringEngine {
 
 			if (contraindicatedInteractions.length > 0) {
 				throw new Error(
-					`Interações medicamentosas contraindicadas detectadas: ${contraindicatedInteractions.map((i) => `${i.medication1} + ${i.medication2}`).join(", ")}`
+					`Interações medicamentosas contraindicadas detectadas: ${contraindicatedInteractions
+						.map((i) => `${i.medication1} + ${i.medication2}`)
+						.join(", ")}`
 				);
 			}
 		}
@@ -263,6 +268,7 @@ export class RiskScoringEngine {
 	 * Calculate Risk Score
 	 * Execute comprehensive risk assessment using ML models
 	 */
+
 	private calculateRiskScore(input: RiskAssessmentInput): RiskScoreBreakdown {
 		try {
 			return calculateComprehensiveRiskAssessment(input);
@@ -782,6 +788,6 @@ export const riskScoringEngine = new RiskScoringEngine();
 export {
 	DEFAULT_OVERSIGHT_CONFIG,
 	type PerformanceMetrics,
-	type RiskAssessmentCache,
 	type ProfessionalOversightConfig,
+	type RiskAssessmentCache,
 };

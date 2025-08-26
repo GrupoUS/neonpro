@@ -28,8 +28,16 @@ const INTEGRATION_TESTS = [
 			{ file: "src/hooks/index.ts", required: true },
 			{ file: "src/components/index.ts", required: true },
 			{ file: "src/utils.ts", required: true },
-			{ content: "EnhancedServiceBase", file: "src/AuthService.ts", required: true },
-			{ content: "@neonpro/core-services", file: "package.json", required: true },
+			{
+				content: "EnhancedServiceBase",
+				file: "src/AuthService.ts",
+				required: true,
+			},
+			{
+				content: "@neonpro/core-services",
+				file: "package.json",
+				required: true,
+			},
 			{ content: "jsonwebtoken", file: "package.json", required: true },
 			{ content: "bcrypt", file: "package.json", required: true },
 			{ content: "speakeasy", file: "package.json", required: true },
@@ -39,13 +47,33 @@ const INTEGRATION_TESTS = [
 		name: "@neonpro/cache",
 		tests: [
 			{ file: "src/enterprise.ts", required: true },
-			{ content: "CacheServiceFactory", file: "src/enterprise.ts", required: true },
-			{ content: "EnhancedServiceBase", file: "src/enterprise.ts", required: true },
-			{ content: "@neonpro/core-services", file: "package.json", required: true },
-			{ content: 'export \\* from "./enterprise"', file: "src/index.ts", required: true },
+			{
+				content: "CacheServiceFactory",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "EnhancedServiceBase",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "@neonpro/core-services",
+				file: "package.json",
+				required: true,
+			},
+			{
+				content: 'export \\* from "./enterprise"',
+				file: "src/index.ts",
+				required: true,
+			},
 			{ content: "setEnhanced", file: "src/enterprise.ts", required: true },
 			{ content: "getEnhanced", file: "src/enterprise.ts", required: true },
-			{ content: "setSensitiveEnhanced", file: "src/enterprise.ts", required: true },
+			{
+				content: "setSensitiveEnhanced",
+				file: "src/enterprise.ts",
+				required: true,
+			},
 			{ content: "lgpdCompliant", file: "src/enterprise.ts", required: true },
 		],
 	},
@@ -53,28 +81,92 @@ const INTEGRATION_TESTS = [
 		name: "@neonpro/monitoring",
 		tests: [
 			{ file: "src/enterprise.ts", required: true },
-			{ content: "MonitoringServiceFactory", file: "src/enterprise.ts", required: true },
-			{ content: "EnhancedServiceBase", file: "src/enterprise.ts", required: true },
-			{ content: "@neonpro/core-services", file: "package.json", required: true },
-			{ content: 'export \\* from "./enterprise"', file: "src/index.ts", required: true },
-			{ content: "trackCustomMetricEnhanced", file: "src/enterprise.ts", required: true },
-			{ content: "trackHealthcareMetricEnhanced", file: "src/enterprise.ts", required: true },
-			{ content: "generateComplianceReport", file: "src/enterprise.ts", required: true },
+			{
+				content: "MonitoringServiceFactory",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "EnhancedServiceBase",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "@neonpro/core-services",
+				file: "package.json",
+				required: true,
+			},
+			{
+				content: 'export \\* from "./enterprise"',
+				file: "src/index.ts",
+				required: true,
+			},
+			{
+				content: "trackCustomMetricEnhanced",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "trackHealthcareMetricEnhanced",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "generateComplianceReport",
+				file: "src/enterprise.ts",
+				required: true,
+			},
 		],
 	},
 	{
 		name: "@neonpro/types",
 		tests: [
 			{ file: "src/enterprise.ts", required: true },
-			{ content: 'export \\* from "./enterprise"', file: "src/index.ts", required: true },
-			{ content: "EnterpriseServiceConfig", file: "src/enterprise.ts", required: true },
-			{ content: "EnterpriseCacheConfig", file: "src/enterprise.ts", required: true },
-			{ content: "EnterpriseAnalyticsConfig", file: "src/enterprise.ts", required: true },
-			{ content: "EnterpriseSecurityConfig", file: "src/enterprise.ts", required: true },
-			{ content: "EnterpriseAuditConfig", file: "src/enterprise.ts", required: true },
-			{ content: "HealthcareEnterpriseConfig", file: "src/enterprise.ts", required: true },
-			{ content: "PatientDataAccess", file: "src/enterprise.ts", required: true },
-			{ content: "ComplianceFramework", file: "src/enterprise.ts", required: true },
+			{
+				content: 'export \\* from "./enterprise"',
+				file: "src/index.ts",
+				required: true,
+			},
+			{
+				content: "EnterpriseServiceConfig",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "EnterpriseCacheConfig",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "EnterpriseAnalyticsConfig",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "EnterpriseSecurityConfig",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "EnterpriseAuditConfig",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "HealthcareEnterpriseConfig",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "PatientDataAccess",
+				file: "src/enterprise.ts",
+				required: true,
+			},
+			{
+				content: "ComplianceFramework",
+				file: "src/enterprise.ts",
+				required: true,
+			},
 		],
 	},
 ];
@@ -102,7 +194,10 @@ function checkFileContent(packagePath, fileName, content) {
 }
 
 function validatePackageIntegration(packageName, tests) {
-	const packagePath = path.join(PACKAGES_DIR, packageName.replace("@neonpro/", ""));
+	const packagePath = path.join(
+		PACKAGES_DIR,
+		packageName.replace("@neonpro/", ""),
+	);
 
 	if (!fs.existsSync(packagePath)) {
 		log(`❌ Package directory not found: ${packagePath}`, COLORS.RED);
@@ -156,7 +251,10 @@ function validateEnterpriseIntegrations() {
 	let totalTests = 0;
 
 	for (const integration of INTEGRATION_TESTS) {
-		const result = validatePackageIntegration(integration.name, integration.tests);
+		const result = validatePackageIntegration(
+			integration.name,
+			integration.tests,
+		);
 		totalPassed += result.passed;
 		totalFailed += result.failed;
 		totalTests += result.total;
@@ -170,14 +268,20 @@ function validateEnterpriseIntegrations() {
 	log(`   Failed: ${totalFailed}`, totalFailed > 0 ? COLORS.RED : COLORS.GREEN);
 	log(
 		`   Success Rate: ${((totalPassed / totalTests) * 100).toFixed(1)}%`,
-		totalFailed === 0 ? COLORS.GREEN : COLORS.YELLOW
+		totalFailed === 0 ? COLORS.GREEN : COLORS.YELLOW,
 	);
 
 	if (totalFailed === 0) {
 		log("\n🎉 ALL PACKAGE INTEGRATIONS VALIDATED SUCCESSFULLY!", COLORS.GREEN);
-		log("📊 FASE 3 IMPLEMENTATION STATUS: ✅ STRUCTURE_VALIDATED", COLORS.GREEN);
+		log(
+			"📊 FASE 3 IMPLEMENTATION STATUS: ✅ STRUCTURE_VALIDATED",
+			COLORS.GREEN,
+		);
 	} else {
-		log("\n⚠️  Some integration tests failed. Check the details above.", COLORS.YELLOW);
+		log(
+			"\n⚠️  Some integration tests failed. Check the details above.",
+			COLORS.YELLOW,
+		);
 		log("📊 FASE 3 IMPLEMENTATION STATUS: ⚠️  NEEDS_ATTENTION", COLORS.YELLOW);
 	}
 
@@ -193,31 +297,50 @@ function validateAuthIntegration() {
 	const authChecks = [
 		{
 			desc: "AuthService extends EnhancedServiceBase",
-			check: () => checkFileContent(authPath, "src/AuthService.ts", "extends EnhancedServiceBase"),
+			check: () =>
+				checkFileContent(
+					authPath,
+					"src/AuthService.ts",
+					"extends EnhancedServiceBase",
+				),
 		},
 		{
 			desc: "Enterprise security integration",
-			check: () => checkFileContent(authPath, "src/AuthService.ts", "this\\.security\\."),
+			check: () =>
+				checkFileContent(authPath, "src/AuthService.ts", "this\\.security\\."),
 		},
 		{
 			desc: "Enterprise analytics integration",
-			check: () => checkFileContent(authPath, "src/AuthService.ts", "this\\.analytics\\."),
+			check: () =>
+				checkFileContent(authPath, "src/AuthService.ts", "this\\.analytics\\."),
 		},
 		{
 			desc: "Enterprise audit integration",
-			check: () => checkFileContent(authPath, "src/AuthService.ts", "this\\.audit\\."),
+			check: () =>
+				checkFileContent(authPath, "src/AuthService.ts", "this\\.audit\\."),
 		},
 		{
 			desc: "Healthcare-specific types",
-			check: () => checkFileContent(authPath, "src/types.ts", "HealthcareProvider"),
+			check: () =>
+				checkFileContent(authPath, "src/types.ts", "HealthcareProvider"),
 		},
-		{ desc: "React hooks provided", check: () => checkFileContent(authPath, "src/hooks/index.ts", "useAuth") },
-		{ desc: "Components provided", check: () => checkFileContent(authPath, "src/components/index.ts", "LoginForm") },
+		{
+			desc: "React hooks provided",
+			check: () => checkFileContent(authPath, "src/hooks/index.ts", "useAuth"),
+		},
+		{
+			desc: "Components provided",
+			check: () =>
+				checkFileContent(authPath, "src/components/index.ts", "LoginForm"),
+		},
 	];
 
 	for (const authCheck of authChecks) {
 		const result = authCheck.check();
-		log(`  ${result ? "✅" : "❌"} ${authCheck.desc}`, result ? COLORS.GREEN : COLORS.RED);
+		log(
+			`  ${result ? "✅" : "❌"} ${authCheck.desc}`,
+			result ? COLORS.GREEN : COLORS.RED,
+		);
 	}
 }
 
@@ -229,33 +352,50 @@ function validateCacheIntegration() {
 	const cacheChecks = [
 		{
 			desc: "CacheServiceFactory extends EnhancedServiceBase",
-			check: () => checkFileContent(cachePath, "src/enterprise.ts", "extends EnhancedServiceBase"),
+			check: () =>
+				checkFileContent(
+					cachePath,
+					"src/enterprise.ts",
+					"extends EnhancedServiceBase",
+				),
 		},
 		{
 			desc: "Multi-layer caching support",
-			check: () => checkFileContent(cachePath, "src/enterprise.ts", "setMultiLayer"),
+			check: () =>
+				checkFileContent(cachePath, "src/enterprise.ts", "setMultiLayer"),
 		},
 		{
 			desc: "LGPD compliance features",
-			check: () => checkFileContent(cachePath, "src/enterprise.ts", "lgpdCompliant"),
+			check: () =>
+				checkFileContent(cachePath, "src/enterprise.ts", "lgpdCompliant"),
 		},
 		{
 			desc: "Sensitive data handling",
-			check: () => checkFileContent(cachePath, "src/enterprise.ts", "setSensitiveEnhanced"),
+			check: () =>
+				checkFileContent(
+					cachePath,
+					"src/enterprise.ts",
+					"setSensitiveEnhanced",
+				),
 		},
 		{
 			desc: "Enterprise analytics integration",
-			check: () => checkFileContent(cachePath, "src/enterprise.ts", "this\\.analytics\\."),
+			check: () =>
+				checkFileContent(cachePath, "src/enterprise.ts", "this\\.analytics\\."),
 		},
 		{
 			desc: "Backward compatibility maintained",
-			check: () => checkFileContent(cachePath, "src/enterprise.ts", "healthcareCache"),
+			check: () =>
+				checkFileContent(cachePath, "src/enterprise.ts", "healthcareCache"),
 		},
 	];
 
 	for (const cacheCheck of cacheChecks) {
 		const result = cacheCheck.check();
-		log(`  ${result ? "✅" : "❌"} ${cacheCheck.desc}`, result ? COLORS.GREEN : COLORS.RED);
+		log(
+			`  ${result ? "✅" : "❌"} ${cacheCheck.desc}`,
+			result ? COLORS.GREEN : COLORS.RED,
+		);
 	}
 }
 
@@ -267,33 +407,66 @@ function validateMonitoringIntegration() {
 	const monitoringChecks = [
 		{
 			desc: "MonitoringServiceFactory extends EnhancedServiceBase",
-			check: () => checkFileContent(monitoringPath, "src/enterprise.ts", "extends EnhancedServiceBase"),
+			check: () =>
+				checkFileContent(
+					monitoringPath,
+					"src/enterprise.ts",
+					"extends EnhancedServiceBase",
+				),
 		},
 		{
 			desc: "Healthcare-specific tracking",
-			check: () => checkFileContent(monitoringPath, "src/enterprise.ts", "trackHealthcareMetricEnhanced"),
+			check: () =>
+				checkFileContent(
+					monitoringPath,
+					"src/enterprise.ts",
+					"trackHealthcareMetricEnhanced",
+				),
 		},
 		{
 			desc: "Compliance reporting",
-			check: () => checkFileContent(monitoringPath, "src/enterprise.ts", "generateComplianceReport"),
+			check: () =>
+				checkFileContent(
+					monitoringPath,
+					"src/enterprise.ts",
+					"generateComplianceReport",
+				),
 		},
 		{
 			desc: "Enterprise insights generation",
-			check: () => checkFileContent(monitoringPath, "src/enterprise.ts", "generateHealthcareInsights"),
+			check: () =>
+				checkFileContent(
+					monitoringPath,
+					"src/enterprise.ts",
+					"generateHealthcareInsights",
+				),
 		},
 		{
 			desc: "Real-time dashboard support",
-			check: () => checkFileContent(monitoringPath, "src/enterprise.ts", "getEnterpriseDashboardMetrics"),
+			check: () =>
+				checkFileContent(
+					monitoringPath,
+					"src/enterprise.ts",
+					"getEnterpriseDashboardMetrics",
+				),
 		},
 		{
 			desc: "Backward compatibility maintained",
-			check: () => checkFileContent(monitoringPath, "src/enterprise.ts", "PerformanceMonitor"),
+			check: () =>
+				checkFileContent(
+					monitoringPath,
+					"src/enterprise.ts",
+					"PerformanceMonitor",
+				),
 		},
 	];
 
 	for (const monitoringCheck of monitoringChecks) {
 		const result = monitoringCheck.check();
-		log(`  ${result ? "✅" : "❌"} ${monitoringCheck.desc}`, result ? COLORS.GREEN : COLORS.RED);
+		log(
+			`  ${result ? "✅" : "❌"} ${monitoringCheck.desc}`,
+			result ? COLORS.GREEN : COLORS.RED,
+		);
 	}
 }
 
@@ -305,30 +478,50 @@ function validateTypesIntegration() {
 	const typesChecks = [
 		{
 			desc: "Enterprise service configuration types",
-			check: () => checkFileContent(typesPath, "src/enterprise.ts", "EnterpriseServiceConfig"),
+			check: () =>
+				checkFileContent(
+					typesPath,
+					"src/enterprise.ts",
+					"EnterpriseServiceConfig",
+				),
 		},
 		{
 			desc: "Healthcare-specific enterprise types",
-			check: () => checkFileContent(typesPath, "src/enterprise.ts", "HealthcareEnterpriseConfig"),
+			check: () =>
+				checkFileContent(
+					typesPath,
+					"src/enterprise.ts",
+					"HealthcareEnterpriseConfig",
+				),
 		},
 		{
 			desc: "Compliance framework types",
-			check: () => checkFileContent(typesPath, "src/enterprise.ts", "ComplianceFramework"),
+			check: () =>
+				checkFileContent(typesPath, "src/enterprise.ts", "ComplianceFramework"),
 		},
 		{
 			desc: "Patient data access types",
-			check: () => checkFileContent(typesPath, "src/enterprise.ts", "PatientDataAccess"),
+			check: () =>
+				checkFileContent(typesPath, "src/enterprise.ts", "PatientDataAccess"),
 		},
-		{ desc: "Security event types", check: () => checkFileContent(typesPath, "src/enterprise.ts", "SecurityEvent") },
+		{
+			desc: "Security event types",
+			check: () =>
+				checkFileContent(typesPath, "src/enterprise.ts", "SecurityEvent"),
+		},
 		{
 			desc: "Analytics insight types",
-			check: () => checkFileContent(typesPath, "src/enterprise.ts", "AnalyticsInsight"),
+			check: () =>
+				checkFileContent(typesPath, "src/enterprise.ts", "AnalyticsInsight"),
 		},
 	];
 
 	for (const typesCheck of typesChecks) {
 		const result = typesCheck.check();
-		log(`  ${result ? "✅" : "❌"} ${typesCheck.desc}`, result ? COLORS.GREEN : COLORS.RED);
+		log(
+			`  ${result ? "✅" : "❌"} ${typesCheck.desc}`,
+			result ? COLORS.GREEN : COLORS.RED,
+		);
 	}
 }
 

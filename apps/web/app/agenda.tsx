@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate, formatTime } from "@/lib/utils";
 import { Button, Card } from "@neonpro/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -16,7 +17,6 @@ import {
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { formatDate, formatTime } from "@/lib/utils";
 
 // Dados mock para a agenda
 const agendaData = {

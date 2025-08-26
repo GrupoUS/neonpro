@@ -27,17 +27,28 @@ test.describe("Profile Page - Basic Information", () => {
 
 	test("should display user profile information", async ({ page }) => {
 		// Check profile page title
-		await expect(page.locator("h1, .profile-title")).toContainText(/Perfil|Profile/);
+		await expect(page.locator("h1, .profile-title")).toContainText(
+			/Perfil|Profile/,
+		);
 
 		// Should display user name
-		await expect(page.locator('[data-testid="user-name"]').or(page.locator(".user-name"))).toBeVisible();
+		await expect(
+			page.locator('[data-testid="user-name"]').or(page.locator(".user-name")),
+		).toBeVisible();
 
 		// Should display email
-		await expect(page.locator('[data-testid="user-email"]').or(page.locator(".user-email"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="user-email"]')
+				.or(page.locator(".user-email")),
+		).toBeVisible();
 
 		// Should display profile photo or avatar
 		await expect(
-			page.locator('[data-testid="profile-photo"]').or(page.locator(".profile-photo")).or(page.locator(".avatar"))
+			page
+				.locator('[data-testid="profile-photo"]')
+				.or(page.locator(".profile-photo"))
+				.or(page.locator(".avatar")),
 		).toBeVisible();
 	});
 
@@ -50,15 +61,23 @@ test.describe("Profile Page - Basic Information", () => {
 		await editButton.click();
 
 		// Should show editable form
-		await expect(page.locator('[data-testid="profile-form"]').or(page.locator(".profile-form"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="profile-form"]')
+				.or(page.locator(".profile-form")),
+		).toBeVisible();
 
 		// Update name
-		const nameField = page.locator('[data-testid="name-input"]').or(page.locator('input[name="name"]'));
+		const nameField = page
+			.locator('[data-testid="name-input"]')
+			.or(page.locator('input[name="name"]'));
 		await nameField.clear();
 		await nameField.fill("Dr. Silva Santos");
 
 		// Update phone
-		const phoneField = page.locator('[data-testid="phone-input"]').or(page.locator('input[name="phone"]'));
+		const phoneField = page
+			.locator('[data-testid="phone-input"]')
+			.or(page.locator('input[name="phone"]'));
 		if (await phoneField.isVisible()) {
 			await phoneField.clear();
 			await phoneField.fill("(11) 99999-9999");
@@ -69,7 +88,10 @@ test.describe("Profile Page - Basic Information", () => {
 
 		// Should show success message
 		await expect(
-			page.locator(".success").or(page.locator("text=salvo")).or(page.locator("text=atualizado"))
+			page
+				.locator(".success")
+				.or(page.locator("text=salvo"))
+				.or(page.locator("text=atualizado")),
 		).toBeVisible();
 
 		// Should display updated information
@@ -78,11 +100,15 @@ test.describe("Profile Page - Basic Information", () => {
 
 	test("should upload profile photo", async ({ page }) => {
 		// Look for photo upload section
-		const uploadSection = page.locator('[data-testid="photo-upload"]').or(page.locator(".photo-upload"));
+		const uploadSection = page
+			.locator('[data-testid="photo-upload"]')
+			.or(page.locator(".photo-upload"));
 
 		if (await uploadSection.isVisible()) {
 			// Click upload button
-			const uploadButton = page.locator('input[type="file"]').or(page.locator('[data-testid="upload-photo"]'));
+			const uploadButton = page
+				.locator('input[type="file"]')
+				.or(page.locator('[data-testid="upload-photo"]'));
 
 			if (await uploadButton.isVisible()) {
 				// Simulate file upload (note: actual file upload would need real file)
@@ -93,7 +119,9 @@ test.describe("Profile Page - Basic Information", () => {
 				});
 
 				// Should show upload progress or success
-				await expect(page.locator(".upload-success").or(page.locator("text=carregada"))).toBeVisible({
+				await expect(
+					page.locator(".upload-success").or(page.locator("text=carregada")),
+				).toBeVisible({
 					timeout: 10_000,
 				});
 			}
@@ -109,14 +137,18 @@ test.describe("Profile Page - Basic Information", () => {
 		await editButton.click();
 
 		// Clear required field (name)
-		const nameField = page.locator('[data-testid="name-input"]').or(page.locator('input[name="name"]'));
+		const nameField = page
+			.locator('[data-testid="name-input"]')
+			.or(page.locator('input[name="name"]'));
 		await nameField.clear();
 
 		// Try to save
 		await page.click('[data-testid="save-profile"]');
 
 		// Should show validation error
-		await expect(page.locator(".error").or(page.locator("text=obrigatório"))).toBeVisible();
+		await expect(
+			page.locator(".error").or(page.locator("text=obrigatório")),
+		).toBeVisible();
 
 		// Should not save changes
 		await expect(page.locator('[data-testid="profile-form"]')).toBeVisible();
@@ -145,13 +177,17 @@ test.describe("Profile Page - Professional Information", () => {
 		}
 
 		// Should display CRM number
-		const crmField = page.locator('[data-testid="crm-number"]').or(page.locator("text=CRM"));
+		const crmField = page
+			.locator('[data-testid="crm-number"]')
+			.or(page.locator("text=CRM"));
 		if (await crmField.isVisible()) {
 			await expect(crmField).toBeVisible();
 		}
 
 		// Should display specialty
-		const specialtyField = page.locator('[data-testid="specialty"]').or(page.locator("text=Especialidade"));
+		const specialtyField = page
+			.locator('[data-testid="specialty"]')
+			.or(page.locator("text=Especialidade"));
 		if (await specialtyField.isVisible()) {
 			await expect(specialtyField).toBeVisible();
 		}
@@ -159,13 +195,19 @@ test.describe("Profile Page - Professional Information", () => {
 
 	test("should manage professional licenses", async ({ page }) => {
 		// Navigate to licenses section
-		const licensesSection = page.locator('[data-testid="licenses-section"]').or(page.locator("text=Licenças"));
+		const licensesSection = page
+			.locator('[data-testid="licenses-section"]')
+			.or(page.locator("text=Licenças"));
 
 		if (await licensesSection.isVisible()) {
 			await licensesSection.click();
 
 			// Should display license list
-			await expect(page.locator('[data-testid="license-list"]').or(page.locator(".license-list"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="license-list"]')
+					.or(page.locator(".license-list")),
+			).toBeVisible();
 
 			// Should have add license button
 			const addLicenseButton = page
@@ -176,7 +218,11 @@ test.describe("Profile Page - Professional Information", () => {
 				await addLicenseButton.click();
 
 				// Should show license form
-				await expect(page.locator('[data-testid="license-form"]').or(page.locator(".license-form"))).toBeVisible();
+				await expect(
+					page
+						.locator('[data-testid="license-form"]')
+						.or(page.locator(".license-form")),
+				).toBeVisible();
 			}
 		}
 	});
@@ -201,19 +247,26 @@ test.describe("Profile Page - Professional Information", () => {
 			await page.click('[data-testid="save-specialty"]');
 
 			// Should show success message
-			await expect(page.locator("text=atualizada").or(page.locator(".success"))).toBeVisible();
+			await expect(
+				page.locator("text=atualizada").or(page.locator(".success")),
+			).toBeVisible();
 		}
 	});
 
 	test("should validate CRM format", async ({ page }) => {
 		// Look for CRM edit field
-		const editCRM = page.locator('[data-testid="edit-crm"]').or(page.locator('button:has-text("Editar CRM")')).first();
+		const editCRM = page
+			.locator('[data-testid="edit-crm"]')
+			.or(page.locator('button:has-text("Editar CRM")'))
+			.first();
 
 		if (await editCRM.isVisible()) {
 			await editCRM.click();
 
 			// Enter invalid CRM format
-			const crmField = page.locator('[data-testid="crm-input"]').or(page.locator('input[name="crm"]'));
+			const crmField = page
+				.locator('[data-testid="crm-input"]')
+				.or(page.locator('input[name="crm"]'));
 			await crmField.clear();
 			await crmField.fill("123");
 
@@ -221,7 +274,9 @@ test.describe("Profile Page - Professional Information", () => {
 			await page.click('[data-testid="save-crm"]');
 
 			// Should show validation error
-			await expect(page.locator(".error").or(page.locator("text=inválido"))).toBeVisible();
+			await expect(
+				page.locator(".error").or(page.locator("text=inválido")),
+			).toBeVisible();
 		}
 	});
 });
@@ -258,7 +313,11 @@ test.describe("Profile Page - Security Settings", () => {
 			await changePasswordButton.click();
 
 			// Should show password form
-			await expect(page.locator('[data-testid="password-form"]').or(page.locator(".password-form"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="password-form"]')
+					.or(page.locator(".password-form")),
+			).toBeVisible();
 
 			// Fill current password
 			await page.fill('[data-testid="current-password"]', "healthcare123");
@@ -273,7 +332,9 @@ test.describe("Profile Page - Security Settings", () => {
 			await page.click('[data-testid="save-password"]');
 
 			// Should show success message
-			await expect(page.locator("text=alterada").or(page.locator(".success"))).toBeVisible();
+			await expect(
+				page.locator("text=alterada").or(page.locator(".success")),
+			).toBeVisible();
 		}
 	});
 
@@ -304,7 +365,9 @@ test.describe("Profile Page - Security Settings", () => {
 			await page.click('[data-testid="save-password"]');
 
 			// Should show validation error
-			await expect(page.locator(".error").or(page.locator("text=muito fraca"))).toBeVisible();
+			await expect(
+				page.locator(".error").or(page.locator("text=muito fraca")),
+			).toBeVisible();
 		}
 	});
 
@@ -325,26 +388,42 @@ test.describe("Profile Page - Security Settings", () => {
 				await enable2FA.click();
 
 				// Should show 2FA setup instructions
-				await expect(page.locator('[data-testid="2fa-setup"]').or(page.locator(".two-factor-setup"))).toBeVisible();
+				await expect(
+					page
+						.locator('[data-testid="2fa-setup"]')
+						.or(page.locator(".two-factor-setup")),
+				).toBeVisible();
 
 				// Should display QR code or setup key
-				const qrCode = page.locator('[data-testid="qr-code"]').or(page.locator(".qr-code"));
-				const setupKey = page.locator('[data-testid="setup-key"]').or(page.locator(".setup-key"));
+				const qrCode = page
+					.locator('[data-testid="qr-code"]')
+					.or(page.locator(".qr-code"));
+				const setupKey = page
+					.locator('[data-testid="setup-key"]')
+					.or(page.locator(".setup-key"));
 
-				expect((await qrCode.isVisible()) || (await setupKey.isVisible())).toBeTruthy();
+				expect(
+					(await qrCode.isVisible()) || (await setupKey.isVisible()),
+				).toBeTruthy();
 			}
 		}
 	});
 
 	test("should manage active sessions", async ({ page }) => {
 		// Look for active sessions section
-		const sessionsSection = page.locator('[data-testid="active-sessions"]').or(page.locator("text=sessões ativas"));
+		const sessionsSection = page
+			.locator('[data-testid="active-sessions"]')
+			.or(page.locator("text=sessões ativas"));
 
 		if (await sessionsSection.isVisible()) {
 			await expect(sessionsSection).toBeVisible();
 
 			// Should display current session
-			await expect(page.locator('[data-testid="current-session"]').or(page.locator(".current-session"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="current-session"]')
+					.or(page.locator(".current-session")),
+			).toBeVisible();
 
 			// Should have option to terminate other sessions
 			const terminateButton = page
@@ -381,16 +460,25 @@ test.describe("Profile Page - Privacy & LGPD", () => {
 
 	test("should display LGPD data rights", async ({ page }) => {
 		// Should show LGPD information
-		await expect(page.locator("text=LGPD").or(page.locator("text=Lei Geral de Proteção de Dados"))).toBeVisible();
+		await expect(
+			page
+				.locator("text=LGPD")
+				.or(page.locator("text=Lei Geral de Proteção de Dados")),
+		).toBeVisible();
 
 		// Should display data rights
-		const dataRights = page.locator('[data-testid="data-rights"]').or(page.locator(".data-rights"));
+		const dataRights = page
+			.locator('[data-testid="data-rights"]')
+			.or(page.locator(".data-rights"));
 		if (await dataRights.isVisible()) {
 			await expect(dataRights).toBeVisible();
 
 			// Should mention right to access, correct, delete
 			await expect(
-				page.locator("text=acessar").or(page.locator("text=corrigir")).or(page.locator("text=excluir"))
+				page
+					.locator("text=acessar")
+					.or(page.locator("text=corrigir"))
+					.or(page.locator("text=excluir")),
 			).toBeVisible();
 		}
 	});
@@ -408,7 +496,11 @@ test.describe("Profile Page - Privacy & LGPD", () => {
 			await exportButton.click();
 
 			// Should show export confirmation
-			await expect(page.locator("text=exportação").or(page.locator(".export-confirmation"))).toBeVisible();
+			await expect(
+				page
+					.locator("text=exportação")
+					.or(page.locator(".export-confirmation")),
+			).toBeVisible();
 
 			// Should initiate download
 			try {
@@ -422,7 +514,9 @@ test.describe("Profile Page - Privacy & LGPD", () => {
 
 	test("should manage data sharing preferences", async ({ page }) => {
 		// Look for data sharing settings
-		const dataSharingSection = page.locator('[data-testid="data-sharing"]').or(page.locator("text=compartilhamento"));
+		const dataSharingSection = page
+			.locator('[data-testid="data-sharing"]')
+			.or(page.locator("text=compartilhamento"));
 
 		if (await dataSharingSection.isVisible()) {
 			await expect(dataSharingSection).toBeVisible();
@@ -445,7 +539,9 @@ test.describe("Profile Page - Privacy & LGPD", () => {
 					await saveButton.click();
 
 					// Should show success message
-					await expect(page.locator("text=salvas").or(page.locator(".success"))).toBeVisible();
+					await expect(
+						page.locator("text=salvas").or(page.locator(".success")),
+					).toBeVisible();
 				}
 			}
 		}
@@ -463,11 +559,15 @@ test.describe("Profile Page - Privacy & LGPD", () => {
 
 			// Should show confirmation dialog
 			await expect(
-				page.locator('[data-testid="delete-confirmation"]').or(page.locator(".delete-confirmation"))
+				page
+					.locator('[data-testid="delete-confirmation"]')
+					.or(page.locator(".delete-confirmation")),
 			).toBeVisible();
 
 			// Should require password confirmation
-			const passwordField = page.locator('[data-testid="confirm-delete-password"]');
+			const passwordField = page.locator(
+				'[data-testid="confirm-delete-password"]',
+			);
 			if (await passwordField.isVisible()) {
 				await expect(passwordField).toBeVisible();
 			}
@@ -529,27 +629,36 @@ test.describe("Profile Page - Notification Preferences", () => {
 				await saveButton.click();
 
 				// Should show success message
-				await expect(page.locator("text=salvas").or(page.locator(".success"))).toBeVisible();
+				await expect(
+					page.locator("text=salvas").or(page.locator(".success")),
+				).toBeVisible();
 			}
 		}
 	});
 
 	test("should manage SMS notifications", async ({ page }) => {
 		// Look for SMS notification settings
-		const smsSection = page.locator('[data-testid="sms-notifications"]').or(page.locator("text=notificações por SMS"));
+		const smsSection = page
+			.locator('[data-testid="sms-notifications"]')
+			.or(page.locator("text=notificações por SMS"));
 
 		if (await smsSection.isVisible()) {
 			await expect(smsSection).toBeVisible();
 
 			// Should have phone number field
-			const phoneField = page.locator('[data-testid="notification-phone"]').or(page.locator('input[name="phone"]'));
+			const phoneField = page
+				.locator('[data-testid="notification-phone"]')
+				.or(page.locator('input[name="phone"]'));
 			if (await phoneField.isVisible()) {
 				await phoneField.clear();
 				await phoneField.fill("(11) 99999-9999");
 			}
 
 			// Enable SMS notifications
-			const smsToggle = page.locator('input[type="checkbox"]').filter({ hasText: /SMS/ }).first();
+			const smsToggle = page
+				.locator('input[type="checkbox"]')
+				.filter({ hasText: /SMS/ })
+				.first();
 			if (await smsToggle.isVisible()) {
 				await smsToggle.click();
 			}
@@ -558,7 +667,9 @@ test.describe("Profile Page - Notification Preferences", () => {
 
 	test("should set notification frequency", async ({ page }) => {
 		// Look for frequency settings
-		const frequencySection = page.locator('[data-testid="notification-frequency"]').or(page.locator("text=frequência"));
+		const frequencySection = page
+			.locator('[data-testid="notification-frequency"]')
+			.or(page.locator("text=frequência"));
 
 		if (await frequencySection.isVisible()) {
 			await expect(frequencySection).toBeVisible();
@@ -619,7 +730,11 @@ test.describe("Profile Page - Accessibility", () => {
 			// Should have associated labels
 			const firstField = formFields.first();
 			const hasLabel = await firstField.evaluate((el) => {
-				return el.labels?.length > 0 || el.getAttribute("aria-label") || el.getAttribute("aria-labelledby");
+				return (
+					el.labels?.length > 0 ||
+					el.getAttribute("aria-label") ||
+					el.getAttribute("aria-labelledby")
+				);
 			});
 			expect(hasLabel).toBeTruthy();
 		}

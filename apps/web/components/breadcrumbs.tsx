@@ -8,10 +8,10 @@
 
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Link, useLocation, useParams } from "@tanstack/react-router";
 import { ChevronRight, Home } from "lucide-react";
 import type React from "react";
-import { cn } from "@/lib/utils";
 
 type BreadcrumbItem = {
 	label: string;

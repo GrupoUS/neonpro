@@ -1,4 +1,11 @@
-import { AlertTriangle, CheckCircle, Eye, Keyboard, Volume2, X } from "lucide-react";
+import {
+	AlertTriangle,
+	CheckCircle,
+	Eye,
+	Keyboard,
+	Volume2,
+	X,
+} from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { calculateContrastRatio } from "./contrast-validator";
@@ -75,7 +82,10 @@ type AccessibilityMonitorProps = {
 	/**
 	 * Callback when issues are found
 	 */
-	onIssuesFound?: (issues: AccessibilityIssue[], stats: AccessibilityStats) => void;
+	onIssuesFound?: (
+		issues: AccessibilityIssue[],
+		stats: AccessibilityStats,
+	) => void;
 
 	/**
 	 * Development mode (shows more detailed information)
@@ -124,11 +134,17 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 			const fontSize = Number.parseFloat(computedStyle.fontSize);
 
 			// Skip elements with transparent backgrounds or no text
-			if (backgroundColor === "rgba(0, 0, 0, 0)" || !htmlElement.textContent?.trim()) {
+			if (
+				backgroundColor === "rgba(0, 0, 0, 0)" ||
+				!htmlElement.textContent?.trim()
+			) {
 				continue;
 			}
 
-			const textSize = fontSize >= 18 || computedStyle.fontWeight === "bold" ? "large" : "normal";
+			const textSize =
+				fontSize >= 18 || computedStyle.fontWeight === "bold"
+					? "large"
+					: "normal";
 			const isHealthcareElement =
 				htmlElement.hasAttribute("data-medical-context") ||
 				htmlElement.hasAttribute("data-sensitive") ||
@@ -149,9 +165,12 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 				violations.push({
 					id: `contrast-${index}`,
 					type: "contrast",
-					severity: ratio < 3.0 ? "critical" : ratio < 4.5 ? "serious" : "moderate",
+					severity:
+						ratio < 3.0 ? "critical" : ratio < 4.5 ? "serious" : "moderate",
 					element: htmlElement,
-					description: `Color contrast ratio ${ratio.toFixed(2)}:1 is below minimum ${minimumRatio}:1`,
+					description: `Color contrast ratio ${ratio.toFixed(
+						2,
+					)}:1 is below minimum ${minimumRatio}:1`,
 					wcagCriterion: "WCAG 2.1 SC 1.4.3 Contrast (Minimum)",
 					suggestion: `Increase contrast between background (${backgroundColor}) and text (${color})`,
 					healthcare: isHealthcareElement,
@@ -168,7 +187,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 	const scanKeyboardViolations = (): AccessibilityIssue[] => {
 		const violations: AccessibilityIssue[] = [];
 		const interactiveElements = document.querySelectorAll(
-			'button, [role="button"], input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])'
+			'button, [role="button"], input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])',
 		);
 
 		for (const [index, element] of Array.from(interactiveElements).entries()) {
@@ -197,7 +216,10 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 			}
 
 			// Check for skip links
-			if (htmlElement.tagName === "MAIN" && !document.querySelector('[data-skip-link="true"]')) {
+			if (
+				htmlElement.tagName === "MAIN" &&
+				!document.querySelector('[data-skip-link="true"]')
+			) {
 				violations.push({
 					id: "missing-skip-link",
 					type: "keyboard",
@@ -236,11 +258,15 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 		});
 
 		// Check for form labels
-		const inputs = document.querySelectorAll('input:not([type="hidden"]), select, textarea');
+		const inputs = document.querySelectorAll(
+			'input:not([type="hidden"]), select, textarea',
+		);
 		inputs.forEach((input, index) => {
 			const htmlInput = input as HTMLInputElement;
 			const hasLabel = htmlInput.labels && htmlInput.labels.length > 0;
-			const hasAriaLabel = htmlInput.hasAttribute("aria-label") || htmlInput.hasAttribute("aria-labelledby");
+			const hasAriaLabel =
+				htmlInput.hasAttribute("aria-label") ||
+				htmlInput.hasAttribute("aria-labelledby");
 
 			if (!(hasLabel || hasAriaLabel)) {
 				violations.push({
@@ -257,7 +283,9 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 		});
 
 		// Check for heading hierarchy
-		const headings = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"));
+		const headings = Array.from(
+			document.querySelectorAll("h1, h2, h3, h4, h5, h6"),
+		);
 		let previousLevel = 0;
 
 		headings.forEach((heading, index) => {
@@ -300,21 +328,29 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 			const keyboardViolations = scanKeyboardViolations();
 			const ariaViolations = scanAriaViolations();
 
-			const allViolations = [...contrastViolations, ...keyboardViolations, ...ariaViolations].filter((issue) => {
+			const allViolations = [
+				...contrastViolations,
+				...keyboardViolations,
+				...ariaViolations,
+			].filter((issue) => {
 				const severityLevels = {
 					critical: 4,
 					serious: 3,
 					moderate: 2,
 					minor: 1,
 				};
-				return severityLevels[issue.severity] >= severityLevels[minimumSeverity];
+				return (
+					severityLevels[issue.severity] >= severityLevels[minimumSeverity]
+				);
 			});
 
 			const totalElements = document.querySelectorAll("*").length;
 			const healthcareElements = document.querySelectorAll(
-				"[data-medical-context], [data-sensitive], [data-lgpd]"
+				"[data-medical-context], [data-sensitive], [data-lgpd]",
 			).length;
-			const healthcareViolations = allViolations.filter((v) => v.healthcare).length;
+			const healthcareViolations = allViolations.filter(
+				(v) => v.healthcare,
+			).length;
 
 			const newStats: AccessibilityStats = {
 				totalElements,
@@ -324,7 +360,11 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 				ariaIssues: ariaViolations.length,
 				healthcareCompliance:
 					healthcareElements > 0
-						? Math.round(((healthcareElements - healthcareViolations) / healthcareElements) * 100)
+						? Math.round(
+								((healthcareElements - healthcareViolations) /
+									healthcareElements) *
+									100,
+							)
 						: 100,
 				wcagLevel: allViolations.some((v) => v.severity === "critical")
 					? "Failed"
@@ -341,7 +381,14 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 		} finally {
 			setIsScanning(false);
 		}
-	}, [enabled, minimumSeverity, onIssuesFound, scanAriaViolations, scanContrastViolations, scanKeyboardViolations]);
+	}, [
+		enabled,
+		minimumSeverity,
+		onIssuesFound,
+		scanAriaViolations,
+		scanContrastViolations,
+		scanKeyboardViolations,
+	]);
 
 	// Auto-scan setup
 	React.useEffect(() => {
@@ -406,7 +453,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 			<div
 				className={cn(
 					"cursor-pointer rounded-lg border bg-white p-3 transition-all duration-200 hover:shadow-lg",
-					isExpanded && "rounded-b-none border-b-0"
+					isExpanded && "rounded-b-none border-b-0",
 				)}
 				onClick={() => setIsExpanded(!isExpanded)}
 				onKeyDown={(e) => {
@@ -422,18 +469,31 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 						<div
 							className={cn(
 								"h-3 w-3 rounded-full",
-								stats.wcagLevel === "AAA" ? "bg-green-500" : stats.wcagLevel === "AA" ? "bg-yellow-500" : "bg-red-500"
+								stats.wcagLevel === "AAA"
+									? "bg-green-500"
+									: stats.wcagLevel === "AA"
+										? "bg-yellow-500"
+										: "bg-red-500",
 							)}
 						/>
 						<span className="font-medium text-sm">A11y Monitor</span>
-						<span className={cn("rounded px-2 py-1 font-medium text-xs", getWcagLevelColor())}>{stats.wcagLevel}</span>
+						<span
+							className={cn(
+								"rounded px-2 py-1 font-medium text-xs",
+								getWcagLevelColor(),
+							)}
+						>
+							{stats.wcagLevel}
+						</span>
 					</div>
 
 					<div className="flex items-center gap-2">
 						{isScanning && (
 							<div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
 						)}
-						<span className="text-gray-500 text-xs">{stats.violationsCount} issues</span>
+						<span className="text-gray-500 text-xs">
+							{stats.violationsCount} issues
+						</span>
 						<button
 							aria-label="Close accessibility monitor"
 							className="text-gray-400 hover:text-gray-600"
@@ -455,12 +515,20 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 					<div className="border-b bg-gray-50 p-3">
 						<div className="grid grid-cols-2 gap-4 text-xs">
 							<div>
-								<div className="font-medium text-gray-700">Elements Scanned</div>
-								<div className="font-bold text-gray-900 text-lg">{stats.totalElements}</div>
+								<div className="font-medium text-gray-700">
+									Elements Scanned
+								</div>
+								<div className="font-bold text-gray-900 text-lg">
+									{stats.totalElements}
+								</div>
 							</div>
 							<div>
-								<div className="font-medium text-gray-700">Healthcare Compliance</div>
-								<div className="font-bold text-green-600 text-lg">{stats.healthcareCompliance}%</div>
+								<div className="font-medium text-gray-700">
+									Healthcare Compliance
+								</div>
+								<div className="font-bold text-green-600 text-lg">
+									{stats.healthcareCompliance}%
+								</div>
 							</div>
 						</div>
 
@@ -479,7 +547,9 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 							</div>
 						</div>
 
-						<div className="mt-2 text-gray-500 text-xs">Last scan: {stats.lastScan.toLocaleTimeString()}</div>
+						<div className="mt-2 text-gray-500 text-xs">
+							Last scan: {stats.lastScan.toLocaleTimeString()}
+						</div>
 					</div>
 
 					{/* Issues List */}
@@ -487,7 +557,9 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 						{issues.length === 0 ? (
 							<div className="flex items-center gap-2 p-3 text-green-600">
 								<CheckCircle className="h-4 w-4" />
-								<span className="font-medium text-sm">No accessibility issues found!</span>
+								<span className="font-medium text-sm">
+									No accessibility issues found!
+								</span>
 							</div>
 						) : (
 							<div className="space-y-2">
@@ -498,7 +570,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 											issue.severity === "critical" && "border-l-red-500",
 											issue.severity === "serious" && "border-l-orange-500",
 											issue.severity === "moderate" && "border-l-yellow-500",
-											issue.severity === "minor" && "border-l-blue-500"
+											issue.severity === "minor" && "border-l-blue-500",
 										)}
 										key={issue.id}
 										onClick={() => {
@@ -519,23 +591,36 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 														issue.severity === "critical" && "text-red-500",
 														issue.severity === "serious" && "text-orange-500",
 														issue.severity === "moderate" && "text-yellow-500",
-														issue.severity === "minor" && "text-blue-500"
+														issue.severity === "minor" && "text-blue-500",
 													)}
 												/>
 												<div className="flex-1">
-													<div className="font-medium text-gray-900 text-xs">{issue.description}</div>
-													<div className="mt-1 text-gray-500 text-xs">{issue.wcagCriterion}</div>
-													{devMode && <div className="mt-1 text-gray-400 text-xs">{issue.suggestion}</div>}
+													<div className="font-medium text-gray-900 text-xs">
+														{issue.description}
+													</div>
+													<div className="mt-1 text-gray-500 text-xs">
+														{issue.wcagCriterion}
+													</div>
+													{devMode && (
+														<div className="mt-1 text-gray-400 text-xs">
+															{issue.suggestion}
+														</div>
+													)}
 												</div>
 											</div>
 											<div className="flex gap-1">
 												<span
-													className={cn("rounded px-1.5 py-0.5 font-medium text-xs", getSeverityColor(issue.severity))}
+													className={cn(
+														"rounded px-1.5 py-0.5 font-medium text-xs",
+														getSeverityColor(issue.severity),
+													)}
 												>
 													{issue.severity}
 												</span>
 												{issue.healthcare && (
-													<span className="rounded bg-blue-50 px-1.5 py-0.5 font-medium text-blue-600 text-xs">HC</span>
+													<span className="rounded bg-blue-50 px-1.5 py-0.5 font-medium text-blue-600 text-xs">
+														HC
+													</span>
 												)}
 											</div>
 										</div>
@@ -543,7 +628,9 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 								))}
 
 								{issues.length > 10 && (
-									<div className="p-2 text-center text-gray-500 text-xs">... and {issues.length - 10} more issues</div>
+									<div className="p-2 text-center text-gray-500 text-xs">
+										... and {issues.length - 10} more issues
+									</div>
 								)}
 							</div>
 						)}
@@ -566,4 +653,9 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 
 AccessibilityMonitor.displayName = "AccessibilityMonitor";
 
-export { AccessibilityMonitor, type AccessibilityIssue, type AccessibilityStats, type AccessibilityMonitorProps };
+export {
+	type AccessibilityIssue,
+	AccessibilityMonitor,
+	type AccessibilityMonitorProps,
+	type AccessibilityStats,
+};

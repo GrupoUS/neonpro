@@ -3,6 +3,7 @@
 ## 📋 Status da Migração
 
 ✅ **Estrutura migrada com sucesso para:**
+
 - `infrastructure/database/config/config.toml`
 - `infrastructure/database/migrations/` (101 arquivos)
 - `infrastructure/functions/` (3 Edge Functions)
@@ -80,6 +81,7 @@ infrastructure/
 ## ⚠️ Comandos Atualizados
 
 Todos os scripts foram atualizados para usar os novos paths:
+
 - ✅ `scripts/verify-oauth-config.js`
 - ✅ `infrastructure/scripts/verify-oauth-config.js`
 - ✅ `scripts/apply-migration.js`

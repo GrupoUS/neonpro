@@ -114,7 +114,10 @@ export function createMockSupabaseClient(): MockSupabaseClient {
 } /**
  * Creates a mock Supabase client with preset successful responses
  */
-export function createSuccessfulMockSupabaseClient(data: any = []): MockSupabaseClient {
+
+export function createSuccessfulMockSupabaseClient(
+	data: any = [],
+): MockSupabaseClient {
 	const client = createMockSupabaseClient();
 
 	// Override with successful responses
@@ -293,11 +296,29 @@ export function createCriticalPatientData() {
 	return createMockPatientData({
 		age: 85,
 		medicalHistory: {
-			chronicConditions: ["diabetes", "hipertensão", "doença cardíaca", "insuficiência renal", "DPOC"],
+			chronicConditions: [
+				"diabetes",
+				"hipertensão",
+				"doença cardíaca",
+				"insuficiência renal",
+				"DPOC",
+			],
 			previousSurgeries: ["bypass", "angioplastia", "marca-passo"],
 			allergies: ["penicilina", "sulfa"],
-			medications: ["metformina", "losartana", "atorvastatina", "furosemida", "digoxina"],
-			familyHistory: ["diabetes", "hipertensão", "doença cardíaca", "avc", "câncer"],
+			medications: [
+				"metformina",
+				"losartana",
+				"atorvastatina",
+				"furosemida",
+				"digoxina",
+			],
+			familyHistory: [
+				"diabetes",
+				"hipertensão",
+				"doença cardíaca",
+				"avc",
+				"câncer",
+			],
 		},
 		vitalSigns: {
 			heartRate: 110,

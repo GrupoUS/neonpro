@@ -17,7 +17,12 @@ const CreateProfessionalSchema = z.object({
 	fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
 	email: z.string().email("Email inválido"),
 	phone: z.string().min(10, "Telefone inválido"),
-	profession: z.enum(["dermatologist", "esthetician", "therapist", "coordinator"]),
+	profession: z.enum([
+		"dermatologist",
+		"esthetician",
+		"therapist",
+		"coordinator",
+	]),
 	specialization: z.string().optional(),
 	registrationNumber: z.string().optional(),
 	isActive: z.boolean().default(true),
@@ -41,22 +46,25 @@ const ProfessionalQuerySchema = z.object({
 	page: z.coerce.number().min(1).default(1),
 	limit: z.coerce.number().min(1).max(100).default(10),
 	search: z.string().optional(),
-	profession: z.enum(["dermatologist", "esthetician", "therapist", "coordinator"]).optional(),
+	profession: z
+		.enum(["dermatologist", "esthetician", "therapist", "coordinator"])
+		.optional(),
 	isActive: z.coerce.boolean().optional(),
 });
 
 // Create professionals router
 export const professionalsRoutes = new Hono()
-
 	// Authentication middleware
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
 		if (!auth?.startsWith("Bearer ")) {
-			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
+			return c.json(
+				{ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
+				401,
+			);
 		}
 		await next();
 	})
-
 	// 📋 List professionals
 	.get("/", zValidator("query", ProfessionalQuerySchema), async (c) => {
 		const { page, limit, search, profession, isActive } = c.req.valid("query");
@@ -87,7 +95,10 @@ export const professionalsRoutes = new Hono()
 					createdAt: new Date().toISOString(),
 				},
 			].filter((prof) => {
-				if (search && !prof.fullName.toLowerCase().includes(search.toLowerCase())) {
+				if (
+					search &&
+					!prof.fullName.toLowerCase().includes(search.toLowerCase())
+				) {
 					return false;
 				}
 				if (profession && prof.profession !== profession) {
@@ -102,7 +113,10 @@ export const professionalsRoutes = new Hono()
 			const total = mockProfessionals.length;
 			const startIndex = (page - 1) * limit;
 			const endIndex = startIndex + limit;
-			const paginatedProfessionals = mockProfessionals.slice(startIndex, endIndex);
+			const paginatedProfessionals = mockProfessionals.slice(
+				startIndex,
+				endIndex,
+			);
 
 			const response: ApiResponse<{
 				professionals: typeof paginatedProfessionals;
@@ -134,11 +148,10 @@ export const professionalsRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao listar profissionais",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// 👤 Get professional by ID
 	.get("/:id", async (c) => {
 		const id = c.req.param("id");
@@ -161,7 +174,12 @@ export const professionalsRoutes = new Hono()
 					thursday: ["09:00", "18:00"],
 					friday: ["09:00", "17:00"],
 				},
-				permissions: ["read:patients", "write:patients", "read:appointments", "write:appointments"],
+				permissions: [
+					"read:patients",
+					"write:patients",
+					"read:appointments",
+					"write:appointments",
+				],
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 			};
@@ -180,11 +198,10 @@ export const professionalsRoutes = new Hono()
 					error: "NOT_FOUND",
 					message: "Profissional não encontrado",
 				},
-				404
+				404,
 			);
 		}
 	})
-
 	// ✨ Create professional
 	.post("/", zValidator("json", CreateProfessionalSchema), async (c) => {
 		const professionalData = c.req.valid("json");
@@ -212,11 +229,10 @@ export const professionalsRoutes = new Hono()
 					error: "VALIDATION_ERROR",
 					message: "Erro ao criar profissional",
 				},
-				400
+				400,
 			);
 		}
 	})
-
 	// ✏️ Update professional
 	.put("/:id", zValidator("json", UpdateProfessionalSchema), async (c) => {
 		const id = c.req.param("id");
@@ -248,11 +264,10 @@ export const professionalsRoutes = new Hono()
 					error: "NOT_FOUND",
 					message: "Profissional não encontrado",
 				},
-				404
+				404,
 			);
 		}
 	})
-
 	// 🗑️ Delete professional (soft delete)
 	.delete("/:id", async (c) => {
 		const id = c.req.param("id");
@@ -273,11 +288,10 @@ export const professionalsRoutes = new Hono()
 					error: "NOT_FOUND",
 					message: "Profissional não encontrado",
 				},
-				404
+				404,
 			);
 		}
 	})
-
 	// 📊 Get professional stats
 	.get("/:id/stats", async (c) => {
 		const _id = c.req.param("id");
@@ -308,11 +322,10 @@ export const professionalsRoutes = new Hono()
 					error: "NOT_FOUND",
 					message: "Estatísticas não encontradas",
 				},
-				404
+				404,
 			);
 		}
 	})
-
 	// 📅 Get professional availability
 	.get("/:id/availability", async (c) => {
 		const _id = c.req.param("id");
@@ -322,7 +335,17 @@ export const professionalsRoutes = new Hono()
 			// TODO: Implement actual availability query
 			const mockAvailability = {
 				date: date || new Date().toISOString().split("T")[0],
-				availableSlots: ["09:00", "09:30", "10:00", "10:30", "14:00", "14:30", "15:00", "15:30", "16:00"],
+				availableSlots: [
+					"09:00",
+					"09:30",
+					"10:00",
+					"10:30",
+					"14:00",
+					"14:30",
+					"15:00",
+					"15:30",
+					"16:00",
+				],
 				bookedSlots: ["11:00", "11:30", "16:30", "17:00"],
 			};
 
@@ -340,7 +363,7 @@ export const professionalsRoutes = new Hono()
 					error: "NOT_FOUND",
 					message: "Disponibilidade não encontrada",
 				},
-				404
+				404,
 			);
 		}
 	});

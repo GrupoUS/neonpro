@@ -1,14 +1,14 @@
 import {
 	a as B,
-	W as C,
-	M as E,
-	j as e,
-	T as F,
-	d as I,
-	D as M,
-	r as s,
 	b as U,
 	c as z,
+	D as M,
+	d as I,
+	j as e,
+	M as E,
+	r as s,
+	T as F,
+	W as C,
 } from "./assets/defaultSettingsView-CUd-tHFm.js";
 
 const A = ({
@@ -27,12 +27,23 @@ const A = ({
 		let S = o;
 		if (h?.current) {
 			const g = h.current.getBoundingClientRect();
-			S = { position: "fixed", margin: 0, top: g.bottom + (d ?? 0), left: O(g, a), width: a, zIndex: 1, ...o };
+			S = {
+				position: "fixed",
+				margin: 0,
+				top: g.bottom + (d ?? 0),
+				left: O(g, a),
+				width: a,
+				zIndex: 1,
+				...o,
+			};
 		}
 		return (
 			s.useEffect(() => {
 				const g = (j) => {
-						!(w.current && j.target instanceof Node) || w.current.contains(j.target) || u == null || u();
+						!(w.current && j.target instanceof Node) ||
+							w.current.contains(j.target) ||
+							u == null ||
+							u();
 					},
 					p = (j) => {
 						j.key === "Escape" && (u == null || u());
@@ -41,7 +52,8 @@ const A = ({
 					? (document.addEventListener("mousedown", g),
 						document.addEventListener("keydown", p),
 						() => {
-							document.removeEventListener("mousedown", g), document.removeEventListener("keydown", p);
+							document.removeEventListener("mousedown", g),
+								document.removeEventListener("keydown", p);
 						})
 					: () => {};
 			}, [r, u]),
@@ -54,7 +66,15 @@ const A = ({
 					}
 				);
 			}, []),
-			r && e.jsx("dialog", { ref: w, style: S, className: n, "data-testid": T, open: !0, children: y })
+			r &&
+				e.jsx("dialog", {
+					ref: w,
+					style: S,
+					className: n,
+					"data-testid": T,
+					open: !0,
+					children: y,
+				})
 		);
 	},
 	O = (n, o) => {
@@ -78,9 +98,17 @@ const A = ({
 			[o, r] = s.useState(!1);
 		return e.jsxs(e.Fragment, {
 			children: [
-				e.jsx(F, { ref: n, icon: "settings-gear", title: "Settings", onClick: () => r((a) => !a) }),
+				e.jsx(F, {
+					ref: n,
+					icon: "settings-gear",
+					title: "Settings",
+					onClick: () => r((a) => !a),
+				}),
 				e.jsx(A, {
-					style: { backgroundColor: "var(--vscode-sideBar-background)", padding: "4px 8px" },
+					style: {
+						backgroundColor: "var(--vscode-sideBar-background)",
+						padding: "4px 8px",
+					},
 					open: o,
 					width: 200,
 					verticalOffset: 8,
@@ -111,7 +139,10 @@ const A = ({
 						continue;
 					}
 					const R = URL.createObjectURL(v);
-					c.push(R), l.push(v.name), i.searchParams.append("trace", R), i.searchParams.append("traceFileName", v.name);
+					c.push(R),
+						l.push(v.name),
+						i.searchParams.append("trace", R),
+						i.searchParams.append("traceFileName", v.name);
 				}
 				const m = i.toString();
 				window.history.pushState({}, "", m), a(c), u(l), x(!1), g(null);
@@ -128,31 +159,42 @@ const A = ({
 					c.preventDefault(), L(c.clipboardData.files);
 				}
 			};
-			return document.addEventListener("paste", t), () => document.removeEventListener("paste", t);
+			return (
+				document.addEventListener("paste", t),
+				() => document.removeEventListener("paste", t)
+			);
 		}),
 			s.useEffect(() => {
 				const t = (c) => {
 					const { method: l, params: i } = c.data;
-					if (l !== "load" || !((i == null ? void 0 : i.trace) instanceof Blob)) {
+					if (
+						l !== "load" ||
+						!((i == null ? void 0 : i.trace) instanceof Blob)
+					) {
 						return;
 					}
-					const m = new File([i.trace], "trace.zip", { type: "application/zip" }),
+					const m = new File([i.trace], "trace.zip", {
+							type: "application/zip",
+						}),
 						f = new DataTransfer();
 					f.items.add(m), L(f.files);
 				};
-				return window.addEventListener("message", t), () => window.removeEventListener("message", t);
+				return (
+					window.addEventListener("message", t),
+					() => window.removeEventListener("message", t)
+				);
 			});
 		const P = s.useCallback(
 				(t) => {
 					t.preventDefault(), L(t.dataTransfer.files);
 				},
-				[L]
+				[L],
 			),
 			W = s.useCallback(
 				(t) => {
 					t.preventDefault(), t.target.files && L(t.target.files);
 				},
-				[L]
+				[L],
 			);
 		s.useEffect(() => {
 			const t = new URL(window.location.href).searchParams,
@@ -183,12 +225,15 @@ const A = ({
 						const t = (i) => {
 							i.data.method === "progress" && w(i.data.params);
 						};
-						navigator.serviceWorker.addEventListener("message", t), w({ done: 0, total: 1 });
+						navigator.serviceWorker.addEventListener("message", t),
+							w({ done: 0, total: 1 });
 						const c = [];
 						for (let i = 0; i < r.length; i++) {
 							const m = r[i],
 								f = new URLSearchParams();
-							f.set("trace", m), d.length && f.set("traceFileName", d[i]), f.set("limit", String(r.length));
+							f.set("trace", m),
+								d.length && f.set("traceFileName", d[i]),
+								f.set("limit", String(r.length));
 							const v = await fetch(`contexts?${f.toString()}`);
 							if (!v.ok) {
 								n || a([]), g((await v.json()).error);
@@ -217,7 +262,10 @@ const A = ({
 					children: [
 						e.jsx("div", {
 							className: "logo",
-							children: e.jsx("img", { src: "playwright-logo.svg", alt: "Playwright logo" }),
+							children: e.jsx("img", {
+								src: "playwright-logo.svg",
+								alt: "Playwright logo",
+							}),
 						}),
 						e.jsx("div", { className: "product", children: "Playwright" }),
 						h.title && e.jsx("div", { className: "title", children: h.title }),
@@ -237,7 +285,10 @@ const A = ({
 					e.jsxs("div", {
 						className: "drop-target",
 						children: [
-							e.jsx("div", { children: "Trace Viewer uses Service Workers to show traces. To view trace:" }),
+							e.jsx("div", {
+								children:
+									"Trace Viewer uses Service Workers to show traces. To view trace:",
+							}),
 							e.jsxs("div", {
 								style: { paddingTop: 20 },
 								children: [
@@ -251,10 +302,16 @@ const A = ({
 									e.jsxs("div", {
 										children: [
 											"2. Go to ",
-											e.jsx("a", { href: "https://trace.playwright.dev", children: "trace.playwright.dev" }),
+											e.jsx("a", {
+												href: "https://trace.playwright.dev",
+												children: "trace.playwright.dev",
+											}),
 										],
 									}),
-									e.jsx("div", { children: "3. Drop the trace from the download shelf into the page" }),
+									e.jsx("div", {
+										children:
+											"3. Drop the trace from the download shelf into the page",
+									}),
 								],
 							}),
 						],
@@ -263,7 +320,11 @@ const A = ({
 					e.jsxs("div", {
 						className: "drop-target",
 						children: [
-							e.jsx("div", { className: "processing-error", role: "alert", children: S }),
+							e.jsx("div", {
+								className: "processing-error",
+								role: "alert",
+								children: S,
+							}),
 							e.jsx("div", {
 								className: "title",
 								role: "heading",
@@ -274,7 +335,10 @@ const A = ({
 							e.jsx("button", {
 								onClick: () => {
 									const t = document.createElement("input");
-									(t.type = "file"), (t.multiple = !0), t.click(), t.addEventListener("change", (c) => W(c));
+									(t.type = "file"),
+										(t.multiple = !0),
+										t.click(),
+										t.addEventListener("change", (c) => W(c));
 								},
 								type: "button",
 								children: "Select file(s)",
@@ -290,7 +354,10 @@ const A = ({
 					!r.length &&
 					e.jsx("div", {
 						className: "drop-target",
-						children: e.jsx("div", { className: "title", children: "Select test to see the trace" }),
+						children: e.jsx("div", {
+							className: "title",
+							children: "Select test to see the trace",
+						}),
 					}),
 				b &&
 					e.jsx("div", {
@@ -299,7 +366,10 @@ const A = ({
 							x(!1);
 						},
 						onDrop: (t) => P(t),
-						children: e.jsx("div", { className: "title", children: "Release to analyse the Playwright Trace" }),
+						children: e.jsx("div", {
+							className: "title",
+							children: "Release to analyse the Playwright Trace",
+						}),
 					}),
 			],
 		});
@@ -328,7 +398,7 @@ const A = ({
 						u.current && clearTimeout(u.current);
 					}
 				),
-				[n, a]
+				[n, a],
 			),
 			e.jsx(U, { model: o, isLive: !0 })
 		);
@@ -342,7 +412,11 @@ async function H(n) {
 (async () => {
 	const n = new URLSearchParams(window.location.search);
 	if ((z(), window.location.protocol !== "file:")) {
-		if ((n.get("isUnderTest") === "true" && (await new Promise((d) => setTimeout(d, 1e3))), !navigator.serviceWorker)) {
+		if (
+			(n.get("isUnderTest") === "true" &&
+				(await new Promise((d) => setTimeout(d, 1e3))),
+			!navigator.serviceWorker)
+		) {
 			throw new Error(`Service workers are not supported.
 Make sure to serve the Trace Viewer (${window.location}) via HTTPS or localhost.`);
 		}
@@ -356,6 +430,8 @@ Make sure to serve the Trace Viewer (${window.location}) via HTTPS or localhost.
 			}, 1e4);
 	}
 	const o = n.get("trace"),
-		a = (o == null ? void 0 : o.endsWith(".json")) ? e.jsx(G, { traceJson: o }) : e.jsx($, {});
+		a = (o == null ? void 0 : o.endsWith(".json"))
+			? e.jsx(G, { traceJson: o })
+			: e.jsx($, {});
 	I.createRoot(document.querySelector("#root")).render(a);
 })();

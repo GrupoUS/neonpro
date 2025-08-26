@@ -1,8 +1,5 @@
 "use client";
 
-import { AlertCircle, Check, Eye, EyeOff, UserPlus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { toastHelpers } from "@/lib/toast-helpers";
+import { AlertCircle, Check, Eye, EyeOff, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 // Tipos simplificados
 type SignupFormData = {

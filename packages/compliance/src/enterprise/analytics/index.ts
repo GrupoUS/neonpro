@@ -63,9 +63,15 @@ export function createEnterpriseAnalyticsServices(config: {
 	healthcareIntelligence: HealthcareIntelligenceConfig;
 }) {
 	return {
-		privacyAnalytics: createPrivacyPreservingAnalyticsService(config.privacyAnalytics),
-		complianceDashboard: createComplianceDashboardService(config.complianceDashboard),
-		healthcareIntelligence: createHealthcareIntelligenceService(config.healthcareIntelligence),
+		privacyAnalytics: createPrivacyPreservingAnalyticsService(
+			config.privacyAnalytics,
+		),
+		complianceDashboard: createComplianceDashboardService(
+			config.complianceDashboard,
+		),
+		healthcareIntelligence: createHealthcareIntelligenceService(
+			config.healthcareIntelligence,
+		),
 	};
 }
 
@@ -77,7 +83,7 @@ export async function validateEnterpriseAnalyticsCompliance(
 	privacyConfig: PrivacyPreservingAnalyticsConfig,
 	dashboardConfig: ComplianceDashboardConfig,
 	intelligenceQuery: HealthcareIntelligenceQuery,
-	intelligenceConfig: HealthcareIntelligenceConfig
+	intelligenceConfig: HealthcareIntelligenceConfig,
 ): Promise<{
 	valid: boolean;
 	violations: string[];
@@ -86,27 +92,46 @@ export async function validateEnterpriseAnalyticsCompliance(
 	const violations: string[] = [];
 
 	// Validate privacy-preserving analytics
-	const privacyValidation = await validatePrivacyPreservingAnalytics(privacyQuery, privacyConfig);
+	const privacyValidation = await validatePrivacyPreservingAnalytics(
+		privacyQuery,
+		privacyConfig,
+	);
 	if (!privacyValidation.valid) {
-		violations.push(...privacyValidation.violations.map((v) => `Privacy Analytics: ${v}`));
+		violations.push(
+			...privacyValidation.violations.map((v) => `Privacy Analytics: ${v}`),
+		);
 	}
 
 	// Validate compliance dashboard
-	const dashboardValidation = await validateComplianceDashboard(dashboardConfig);
+	const dashboardValidation =
+		await validateComplianceDashboard(dashboardConfig);
 	if (!dashboardValidation.valid) {
-		violations.push(...dashboardValidation.violations.map((v) => `Compliance Dashboard: ${v}`));
+		violations.push(
+			...dashboardValidation.violations.map(
+				(v) => `Compliance Dashboard: ${v}`,
+			),
+		);
 	}
 
 	// Validate healthcare intelligence
-	const intelligenceValidation = await validateHealthcareIntelligence(intelligenceQuery, intelligenceConfig);
+	const intelligenceValidation = await validateHealthcareIntelligence(
+		intelligenceQuery,
+		intelligenceConfig,
+	);
 	if (!intelligenceValidation.valid) {
-		violations.push(...intelligenceValidation.violations.map((v: string) => `Healthcare Intelligence: ${v}`));
+		violations.push(
+			...intelligenceValidation.violations.map(
+				(v: string) => `Healthcare Intelligence: ${v}`,
+			),
+		);
 	}
 
 	// Calculate overall compliance score
-	const validationsPassing = [privacyValidation, dashboardValidation, intelligenceValidation].filter(
-		(v) => v.valid
-	).length;
+	const validationsPassing = [
+		privacyValidation,
+		dashboardValidation,
+		intelligenceValidation,
+	].filter((v) => v.valid).length;
 	const totalValidations = 3;
 	const complianceScore = (validationsPassing / totalValidations) * 10;
 
@@ -222,23 +247,46 @@ export const ENTERPRISE_ANALYTICS_CONFIGS = {
 export const ENTERPRISE_ANALYTICS_MODULE = {
 	name: "Enterprise Analytics",
 	version: "1.0.0",
-	compliance_standards: ["LGPD", "Constitutional Privacy", "AI Ethics", "CFM Medical Ethics"],
+	compliance_standards: [
+		"LGPD",
+		"Constitutional Privacy",
+		"AI Ethics",
+		"CFM Medical Ethics",
+	],
 	quality_score: 9.9,
 	services: [
 		{
 			name: "Privacy-Preserving Analytics",
-			description: "Patient privacy-preserving analytics with constitutional compliance",
-			compliance_features: ["Differential Privacy", "K-Anonymity", "L-Diversity", "LGPD Compliance"],
+			description:
+				"Patient privacy-preserving analytics with constitutional compliance",
+			compliance_features: [
+				"Differential Privacy",
+				"K-Anonymity",
+				"L-Diversity",
+				"LGPD Compliance",
+			],
 		},
 		{
 			name: "Compliance Dashboard",
-			description: "Real-time compliance monitoring dashboard for regulatory oversight",
-			compliance_features: ["Real-time Monitoring", "Alert Management", "Regulatory Reporting", "Executive Dashboards"],
+			description:
+				"Real-time compliance monitoring dashboard for regulatory oversight",
+			compliance_features: [
+				"Real-time Monitoring",
+				"Alert Management",
+				"Regulatory Reporting",
+				"Executive Dashboards",
+			],
 		},
 		{
 			name: "Healthcare Intelligence",
-			description: "AI-driven healthcare insights with constitutional medical ethics",
-			compliance_features: ["Explainable AI", "Bias Detection", "Human Oversight", "CFM Ethics Validation"],
+			description:
+				"AI-driven healthcare insights with constitutional medical ethics",
+			compliance_features: [
+				"Explainable AI",
+				"Bias Detection",
+				"Human Oversight",
+				"CFM Ethics Validation",
+			],
 		},
 	],
 	constitutional_guarantees: [

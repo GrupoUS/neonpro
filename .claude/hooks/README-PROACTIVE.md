@@ -2,13 +2,18 @@
 
 ## 🚀 Overview
 
-The Claude Code Proactive Hooks System is a comprehensive automation framework that automatically executes commands when tasks complete and plans finish. This revolutionary system transforms your development workflow by providing intelligent, context-aware command execution without manual intervention.
+The Claude Code Proactive Hooks System is a comprehensive automation framework that automatically
+executes commands when tasks complete and plans finish. This revolutionary system transforms your
+development workflow by providing intelligent, context-aware command execution without manual
+intervention.
 
 ### 🎯 Key Features
 
-- **🔄 Automatic Command Execution**: Commands run automatically when tasks complete and plans finish
+- **🔄 Automatic Command Execution**: Commands run automatically when tasks complete and plans
+  finish
 - **📊 Intelligent Plan Tracking**: Advanced JSON-based state management tracks your entire workflow
-- **🛡️ Robust Error Handling**: Comprehensive error recovery with retry logic and fallback strategies
+- **🛡️ Robust Error Handling**: Comprehensive error recovery with retry logic and fallback
+  strategies
 - **⚙️ Flexible Configuration**: Easy-to-customize JSON configurations for any workflow
 - **🔍 Plan Completion Detection**: Smart detection of when multi-step plans are fully completed
 - **📝 Comprehensive Logging**: Detailed execution logs with performance metrics
@@ -17,16 +22,22 @@ The Claude Code Proactive Hooks System is a comprehensive automation framework t
 ### 🌟 What Makes This Revolutionary
 
 Unlike traditional hooks that just log events, our proactive system:
-- **Detects Plan Completion**: Knows when your entire multi-step plan is done, not just individual tasks
-- **Executes Contextual Commands**: Runs different commands based on project type, success/failure, and completion phase
-- **Provides Intelligent Recovery**: Automatically retries failed commands and provides fallback strategies
-- **Maintains State Across Sessions**: Advanced state management tracks progress across multiple Claude Code sessions
+
+- **Detects Plan Completion**: Knows when your entire multi-step plan is done, not just individual
+  tasks
+- **Executes Contextual Commands**: Runs different commands based on project type, success/failure,
+  and completion phase
+- **Provides Intelligent Recovery**: Automatically retries failed commands and provides fallback
+  strategies
+- **Maintains State Across Sessions**: Advanced state management tracks progress across multiple
+  Claude Code sessions
 
 ## 🏗️ System Architecture
 
 ### Hook Components
 
 #### 1. **Pre-Tool-Use Hook** (`pre-tool-use.bat`)
+
 - **Triggers**: Before each tool execution
 - **Purpose**: Plan initialization detection, environment preparation
 - **Key Features**:
@@ -36,6 +47,7 @@ Unlike traditional hooks that just log events, our proactive system:
   - Sets up plan tracking infrastructure
 
 #### 2. **Post-Tool-Use Hook** (`post-tool-use.bat`)
+
 - **Triggers**: After each tool execution
 - **Purpose**: Plan progression tracking, completion detection
 - **Key Features**:
@@ -45,6 +57,7 @@ Unlike traditional hooks that just log events, our proactive system:
   - Executes plan completion commands automatically
 
 #### 3. **Subagent Stop Hook** (`subagent-stop.bat`)
+
 - **Triggers**: When a subagent completes execution
 - **Purpose**: Task completion command execution
 - **Key Features**:
@@ -54,6 +67,7 @@ Unlike traditional hooks that just log events, our proactive system:
   - Integrates with error handling system
 
 #### 4. **Session Stop Hook** (`session-stop.bat`)
+
 - **Triggers**: When Claude Code session ends
 - **Purpose**: Final cleanup, summarization, archival
 - **Key Features**:
@@ -65,7 +79,9 @@ Unlike traditional hooks that just log events, our proactive system:
 ### Supporting Systems
 
 #### 🧠 **Plan State Manager** (`plan-state-manager.js` + `.bat`)
+
 Advanced Node.js-based state management system providing:
+
 - Real-time plan state tracking with JSON persistence
 - Timeline event logging and analysis
 - Task progress monitoring and metrics
@@ -74,7 +90,9 @@ Advanced Node.js-based state management system providing:
 - Performance analytics and reporting
 
 #### 🛠️ **Shared Utilities** (`hook-commons.bat`)
+
 Common functionality used by all hooks:
+
 - Centralized logging and error reporting
 - Configuration file management
 - Command execution with timeout handling
@@ -82,7 +100,9 @@ Common functionality used by all hooks:
 - Cross-platform path handling
 
 #### ⚠️ **Error Handler** (`error-handler.bat`)
+
 Comprehensive error handling and recovery system:
+
 - Multi-level error severity assessment
 - Automatic retry with exponential backoff
 - Fallback command execution
@@ -93,7 +113,8 @@ Comprehensive error handling and recovery system:
 
 ### Main Configuration File (`hook-config.json`)
 
-The heart of the proactive system is the `hook-config.json` file that defines what commands to run and when:
+The heart of the proactive system is the `hook-config.json` file that defines what commands to run
+and when:
 
 ```json
 {
@@ -113,6 +134,7 @@ The heart of the proactive system is the `hook-config.json` file that defines wh
 ### Settings Integration (`settings.local.json`)
 
 Enhanced hook configuration in Claude Code settings:
+
 ```json
 {
   "hooks": {
@@ -134,7 +156,9 @@ Enhanced hook configuration in Claude Code settings:
 ## 🚀 Quick Start Guide
 
 ### Step 1: Choose Your Workflow
+
 Select from our pre-built workflow examples:
+
 - **Simple Workflow**: Basic linting and testing
 - **Development Workflow**: Comprehensive quality checks
 - **Deployment Workflow**: Production deployment pipeline
@@ -146,7 +170,9 @@ cp .claude/hooks/examples/development-workflow.json .claude/hooks/hook-config.js
 ```
 
 ### Step 2: Verify Your Environment
+
 Ensure you have the required tools:
+
 ```bash
 # Check Node.js (required for advanced state management)
 node --version
@@ -159,7 +185,9 @@ git --version
 ```
 
 ### Step 3: Configure Your Scripts
+
 Add the required scripts to your `package.json`:
+
 ```json
 {
   "scripts": {
@@ -171,6 +199,7 @@ Add the required scripts to your `package.json`:
 ```
 
 ### Step 4: Test the System
+
 1. Start a Claude Code session
 2. Use TodoWrite to create a plan with multiple tasks
 3. Complete tasks and watch the proactive commands execute automatically
@@ -181,12 +210,14 @@ Add the required scripts to your `package.json`:
 ### Basic Development Workflow
 
 When you complete a development task, the system automatically:
+
 1. **Runs ESLint** to check code quality
 2. **Executes tests** to ensure functionality
 3. **Performs type checking** (if TypeScript)
 4. **Provides success/failure feedback**
 
 When your entire plan completes, the system automatically:
+
 1. **Creates a production build**
 2. **Generates test coverage reports**
 3. **Runs comprehensive quality checks**
@@ -195,6 +226,7 @@ When your entire plan completes, the system automatically:
 ### Advanced Deployment Workflow
 
 For production deployments, the system provides:
+
 1. **Security audits** before any deployment
 2. **Staging deployment** with smoke tests
 3. **Production deployment** with health checks
@@ -246,6 +278,7 @@ For production deployments, the system provides:
 ### Conditional Execution
 
 Commands can have conditions that determine when they run:
+
 - **fileExists**: Only run if specific file exists
 - **scriptExists**: Only run if npm script exists
 - **previousCommandSuccess**: Only run if previous command succeeded
@@ -254,6 +287,7 @@ Commands can have conditions that determine when they run:
 ### Error Handling Strategies
 
 Configure how the system handles failures:
+
 ```json
 {
   "errorHandling": {
@@ -276,6 +310,7 @@ Configure how the system handles failures:
 ### How It Works
 
 The system uses multiple indicators to detect plan completion:
+
 1. **Todo Activity Monitoring**: Tracks TodoWrite usage patterns
 2. **Tool Usage Analysis**: Identifies completion-indicating tools
 3. **Task Progression Tracking**: Monitors subagent completion rates
@@ -285,6 +320,7 @@ The system uses multiple indicators to detect plan completion:
 ### Completion Criteria
 
 A plan is considered complete when at least 3 of these conditions are met:
+
 - All tracked tasks have completed
 - No TodoWrite activity for specified period
 - Build/test commands have been executed
@@ -327,6 +363,7 @@ A plan is considered complete when at least 3 of these conditions are met:
 ### Monitoring & Alerting
 
 The error handling system provides:
+
 - Real-time error tracking and classification
 - System health monitoring and reporting
 - Performance metrics and bottleneck identification
@@ -377,40 +414,45 @@ node .claude/hooks/plan-state-manager.js check-completion
 ### Common Issues & Solutions
 
 #### 1. Commands Don't Execute
-**Problem**: Hook system is active but commands don't run
-**Solutions**:
+
+**Problem**: Hook system is active but commands don't run **Solutions**:
+
 - Verify `hook-config.json` exists and is valid JSON
 - Check that required npm scripts exist in `package.json`
 - Ensure Node.js is available in PATH
 - Check `claude-hooks.log` for error messages
 
 #### 2. Plan Completion Never Detected
-**Problem**: Individual tasks work but plan completion doesn't trigger
-**Solutions**:
+
+**Problem**: Individual tasks work but plan completion doesn't trigger **Solutions**:
+
 - Ensure you're using TodoWrite to create plans
 - Check plan state with `plan-state-manager.js summary`
 - Verify completion detection settings in configuration
 - Look for plan tracking logs in `.cache/plan-timeline.log`
 
 #### 3. Commands Take Too Long
-**Problem**: Hook execution is slow or times out
-**Solutions**:
+
+**Problem**: Hook execution is slow or times out **Solutions**:
+
 - Increase timeout values in hook configurations
 - Enable parallel execution where possible
 - Optimize npm scripts for speed
 - Use `continueOnFailure: true` for non-critical commands
 
 #### 4. Error Recovery Not Working
-**Problem**: Failures aren't handled gracefully
-**Solutions**:
+
+**Problem**: Failures aren't handled gracefully **Solutions**:
+
 - Check error handler configuration
 - Verify retry settings and fallback commands
 - Ensure error thresholds are appropriate
 - Review error classification in `error-log.txt`
 
 #### 5. State Management Issues
-**Problem**: Plan state becomes corrupted or inconsistent
-**Solutions**:
+
+**Problem**: Plan state becomes corrupted or inconsistent **Solutions**:
+
 - Use state manager reset: `plan-state-manager.js reset`
 - Check for Node.js availability and permissions
 - Verify `.cache` directory is writable
@@ -419,6 +461,7 @@ node .claude/hooks/plan-state-manager.js check-completion
 ### Debug Mode
 
 Enable verbose logging for troubleshooting:
+
 ```bash
 # Windows
 set HOOK_DEBUG=1
@@ -449,6 +492,7 @@ set HOOK_DEBUG=1
 ### Performance Metrics
 
 The system tracks:
+
 - Hook execution times
 - Command success/failure rates
 - Plan completion detection accuracy
@@ -460,13 +504,14 @@ The system tracks:
 ### CI/CD Integration
 
 Configure hooks to work with your CI/CD pipeline:
+
 ```json
 {
   "taskCompletionCommands": {
     "onSuccess": [
-      {"command": "git", "args": ["add", "."]},
-      {"command": "git", "args": ["commit", "-m", "Auto-commit: Task completed"]},
-      {"command": "git", "args": ["push", "origin", "feature-branch"]}
+      { "command": "git", "args": ["add", "."] },
+      { "command": "git", "args": ["commit", "-m", "Auto-commit: Task completed"] },
+      { "command": "git", "args": ["push", "origin", "feature-branch"] }
     ]
   }
 }
@@ -475,13 +520,14 @@ Configure hooks to work with your CI/CD pipeline:
 ### Docker Integration
 
 For containerized development:
+
 ```json
 {
   "planCompletionCommands": {
     "onSuccess": [
-      {"command": "docker", "args": ["build", "-t", "myapp", "."]},
-      {"command": "docker", "args": ["run", "--rm", "myapp", "npm", "test"]},
-      {"command": "docker", "args": ["tag", "myapp", "myapp:latest"]}
+      { "command": "docker", "args": ["build", "-t", "myapp", "."] },
+      { "command": "docker", "args": ["run", "--rm", "myapp", "npm", "test"] },
+      { "command": "docker", "args": ["tag", "myapp", "myapp:latest"] }
     ]
   }
 }
@@ -490,13 +536,14 @@ For containerized development:
 ### Testing Framework Integration
 
 For comprehensive testing workflows:
+
 ```json
 {
   "taskCompletionCommands": {
     "onSuccess": [
-      {"command": "npm", "args": ["run", "test:unit"]},
-      {"command": "npm", "args": ["run", "test:integration"]},
-      {"command": "npm", "args": ["run", "test:e2e"]}
+      { "command": "npm", "args": ["run", "test:unit"] },
+      { "command": "npm", "args": ["run", "test:integration"] },
+      { "command": "npm", "args": ["run", "test:e2e"] }
     ]
   }
 }
@@ -542,6 +589,7 @@ For comprehensive testing workflows:
 ### Extensibility
 
 The system is designed for easy extension:
+
 - Add new hook types by creating additional batch files
 - Extend state management with custom Node.js modules
 - Create custom command types and execution strategies
@@ -624,6 +672,7 @@ We welcome contributions to improve the Claude Code Proactive Hooks System:
 ## 📞 Support
 
 For support and questions:
+
 1. Check the troubleshooting section above
 2. Review the examples in the `examples/` directory
 3. Enable debug logging and examine log files
@@ -634,4 +683,4 @@ For support and questions:
 
 **Transform your development workflow with intelligent, proactive automation! 🚀**
 
-*The Claude Code Proactive Hooks System - Where automation meets intelligence.*
+_The Claude Code Proactive Hooks System - Where automation meets intelligence._

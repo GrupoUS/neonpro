@@ -2,7 +2,6 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Unit tests for Zod schemas and validation functions
 
-import { describe, expect, it } from "vitest";
 import {
 	acknowledgeAlertSchema,
 	alertsQuerySchema,
@@ -19,6 +18,7 @@ import {
 	validateResolveAlert,
 	validateStockAlertConfig,
 } from "@/app/lib/types/stock-alerts";
+import { describe, expect, it } from "vitest";
 
 // =====================================================
 // TEST DATA FIXTURES - Aligned with actual schemas
@@ -108,7 +108,9 @@ describe("Stock Alert Config Schema Validation", () => {
 			const result = stockAlertConfigSchema.safeParse(invalidConfig);
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0].message).toContain("Must be a positive number");
+				expect(result.error.issues[0].message).toContain(
+					"Must be a positive number",
+				);
 			}
 		});
 
@@ -123,7 +125,9 @@ describe("Stock Alert Config Schema Validation", () => {
 			const result = stockAlertConfigSchema.safeParse(invalidConfig);
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0].message).toContain("At least one notification channel required");
+				expect(result.error.issues[0].message).toContain(
+					"At least one notification channel required",
+				);
 			}
 		});
 
@@ -151,7 +155,9 @@ describe("Stock Alert Config Schema Validation", () => {
 
 	describe("createStockAlertConfigSchema", () => {
 		it("should validate valid create request", () => {
-			const result = createStockAlertConfigSchema.safeParse(validCreateAlertConfig);
+			const result = createStockAlertConfigSchema.safeParse(
+				validCreateAlertConfig,
+			);
 			expect(result.success).toBe(true);
 		});
 
@@ -227,7 +233,9 @@ describe("Stock Alert Schema Validation", () => {
 			const result = stockAlertSchema.safeParse(invalidAlert);
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0].message).toContain("Must be non-negative");
+				expect(result.error.issues[0].message).toContain(
+					"Must be non-negative",
+				);
 			}
 		});
 
@@ -256,7 +264,9 @@ describe("Stock Alert Schema Validation", () => {
 			const result = stockAlertSchema.safeParse(invalidAck);
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0].message).toContain("Both acknowledgedBy and acknowledgedAt must be provided");
+				expect(result.error.issues[0].message).toContain(
+					"Both acknowledgedBy and acknowledgedAt must be provided",
+				);
 			}
 		});
 	});
@@ -297,7 +307,9 @@ describe("Stock Alert Schema Validation", () => {
 			const result = resolveAlertSchema.safeParse(invalidResolve);
 			expect(result.success).toBe(false);
 			if (!result.success) {
-				expect(result.error.issues[0].message).toContain("Resolution description required");
+				expect(result.error.issues[0].message).toContain(
+					"Resolution description required",
+				);
 			}
 		});
 
@@ -373,7 +385,9 @@ describe("Custom Stock Reports Schema Validation", () => {
 		const result = customStockReportSchema.safeParse(invalidDateRange);
 		expect(result.success).toBe(false);
 		if (!result.success) {
-			expect(result.error.issues[0].message).toContain("Start date must be before or equal to end date");
+			expect(result.error.issues[0].message).toContain(
+				"Start date must be before or equal to end date",
+			);
 		}
 	});
 
@@ -608,7 +622,9 @@ describe("Validation Functions", () => {
 
 	describe("validateCreateStockAlertConfig", () => {
 		it("should validate valid create config", () => {
-			expect(() => validateCreateStockAlertConfig(validCreateAlertConfig)).not.toThrow();
+			expect(() =>
+				validateCreateStockAlertConfig(validCreateAlertConfig),
+			).not.toThrow();
 		});
 
 		it("should throw on invalid create config", () => {
@@ -619,7 +635,9 @@ describe("Validation Functions", () => {
 
 	describe("validateAcknowledgeAlert", () => {
 		it("should validate valid acknowledge request", () => {
-			expect(() => validateAcknowledgeAlert(validAcknowledgeAlert)).not.toThrow();
+			expect(() =>
+				validateAcknowledgeAlert(validAcknowledgeAlert),
+			).not.toThrow();
 		});
 
 		it("should throw on invalid acknowledge request", () => {
@@ -650,7 +668,9 @@ describe("Edge Cases and Security", () => {
 			...validCreateAlertConfig,
 			thresholdValue: Number.MAX_SAFE_INTEGER,
 		};
-		const result = createStockAlertConfigSchema.safeParse(configWithLargeNumber);
+		const result = createStockAlertConfigSchema.safeParse(
+			configWithLargeNumber,
+		);
 		expect(result.success).toBe(true);
 	});
 
@@ -676,7 +696,9 @@ describe("Edge Cases and Security", () => {
 			...validCreateAlertConfig,
 			notificationChannels: ["invalid_channel"],
 		};
-		const result = createStockAlertConfigSchema.safeParse(configWithInvalidChannels);
+		const result = createStockAlertConfigSchema.safeParse(
+			configWithInvalidChannels,
+		);
 		expect(result.success).toBe(false);
 	});
 });

@@ -3,9 +3,9 @@
  * Handles ANVISA, CFM, and LGPD compliance report generation
  */
 
-import { type NextRequest, NextResponse } from "next/server";
 import { regulatoryReportingService } from "@/lib/services/regulatory-reporting";
 import { createClient } from "@/lib/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -22,7 +22,12 @@ export async function POST(request: NextRequest) {
 		const { reportType, periodStart, periodEnd, autoSchedule } = await request.json();
 
 		if (!(reportType || autoSchedule)) {
-			return NextResponse.json({ error: "Report type or auto-schedule flag is required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Report type or auto-schedule flag is required" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		let result;

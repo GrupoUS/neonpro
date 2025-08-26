@@ -7,13 +7,13 @@
 
 "use client";
 
-import { Camera, Eye, Maximize, Pause, Play, RotateCcw, Target, TrendingUp, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { Camera, Eye, Maximize, Pause, Play, RotateCcw, Target, TrendingUp, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 
 // =============================================================================
 // TYPES & INTERFACES

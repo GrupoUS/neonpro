@@ -1,9 +1,9 @@
 "use client";
 
+import { useAIScheduling } from "@/hooks/use-ai-scheduling";
 import type { Patient, SchedulingResult, Staff, TreatmentType } from "@neonpro/core-services/scheduling";
 import type React from "react";
 import { useState } from "react";
-import { useAIScheduling } from "@/hooks/use-ai-scheduling";
 import { IntelligentScheduler } from "./intelligent-scheduler";
 import { SchedulingAnalyticsDashboard } from "./scheduling-analytics-dashboard";
 

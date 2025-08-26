@@ -1,9 +1,9 @@
 // NFe Authorization API Endpoint
 // Story 5.5: Authorize NFe documents with SEFAZ
 
-import { NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { nfeService } from "@/lib/services/tax/nfe-service";
+import { NextResponse } from "next/server";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
 	try {
@@ -45,7 +45,12 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
 
 		// Check if NFe can be authorized
 		if (nfeDocument.status !== "draft") {
-			return NextResponse.json({ error: "Only draft NFe documents can be authorized" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Only draft NFe documents can be authorized" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// Authorize NFe with SEFAZ

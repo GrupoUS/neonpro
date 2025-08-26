@@ -2,7 +2,11 @@
 // Intelligent scheduling optimization for maximum efficiency and patient satisfaction
 
 import { createClient } from "@supabase/supabase-js";
-import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
+import {
+	type AIServiceInput,
+	type AIServiceOutput,
+	EnhancedAIService,
+} from "./enhanced-service-base";
 
 // Optimization Types and Interfaces
 export type ScheduleContext = {
@@ -22,7 +26,12 @@ export type TimeSlot = {
 	start_time: string;
 	end_time: string;
 	available: boolean;
-	slot_type: "standard" | "extended" | "emergency" | "consultation" | "procedure";
+	slot_type:
+		| "standard"
+		| "extended"
+		| "emergency"
+		| "consultation"
+		| "procedure";
 	capacity: number;
 	current_bookings: number;
 	preferred_appointment_types: string[];
@@ -54,7 +63,11 @@ export type ScheduleConstraints = {
 export type DoctorPreferences = {
 	preferred_appointment_types: string[];
 	avoided_appointment_types: string[];
-	preferred_time_blocks: Array<{ start_time: string; end_time: string; preference_score: number }>;
+	preferred_time_blocks: Array<{
+		start_time: string;
+		end_time: string;
+		preference_score: number;
+	}>;
 	max_procedure_appointments_per_day: number;
 	preferred_patient_age_groups: string[];
 	fatigue_factor: number; // How much efficiency decreases over the day
@@ -135,7 +148,11 @@ export interface OptimizationInput extends AIServiceInput {
 
 	// Rescheduling
 	appointments_to_reschedule?: string[];
-	reschedule_reason?: "doctor_unavailable" | "emergency" | "patient_request" | "optimization";
+	reschedule_reason?:
+		| "doctor_unavailable"
+		| "emergency"
+		| "patient_request"
+		| "optimization";
 
 	// Analysis
 	analysis_period?: { start_date: string; end_date: string };
@@ -156,7 +173,11 @@ export type OptimizationGoals = {
 
 export type OptimizationConstraints = {
 	hard_constraints: string[]; // Must be satisfied
-	soft_constraints: Array<{ constraint: string; priority: number; penalty_weight: number }>;
+	soft_constraints: Array<{
+		constraint: string;
+		priority: number;
+		penalty_weight: number;
+	}>;
 	optimization_time_limit_seconds: number;
 	max_schedule_changes: number;
 };
@@ -305,13 +326,19 @@ export type ImprovementRecommendation = {
 };
 
 // Appointment Optimization Service Implementation
-export class AppointmentOptimizationService extends EnhancedAIService<OptimizationInput, OptimizationOutput> {
+export class AppointmentOptimizationService extends EnhancedAIService<
+	OptimizationInput,
+	OptimizationOutput
+> {
 	private readonly optimizationCache: Map<string, any> = new Map();
 
 	constructor() {
 		super("appointment_optimization_service");
 
-		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		this.supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Initialize optimization algorithms
 		this.initializeOptimization();
@@ -324,7 +351,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		} catch (_error) {}
 	}
 
-	protected async executeCore(input: OptimizationInput): Promise<OptimizationOutput> {
+	protected async executeCore(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		const startTime = performance.now();
 
 		try {
@@ -353,14 +382,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		}
 	}
 
-	private async optimizeSchedule(input: OptimizationInput): Promise<OptimizationOutput> {
+	private async optimizeSchedule(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		if (!(input.schedule_context && input.appointment_requests)) {
 			throw new Error("schedule_context and appointment_requests are required");
 		}
 
 		const context = input.schedule_context;
 		const requests = input.appointment_requests;
-		const goals = input.optimization_goals || this.getDefaultOptimizationGoals();
+		const goals =
+			input.optimization_goals || this.getDefaultOptimizationGoals();
 
 		// Sort requests by priority and constraints
 		const prioritizedRequests = this.prioritizeAppointmentRequests(requests);
@@ -369,13 +401,23 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		const optimizationState = this.initializeOptimizationState(context);
 
 		// Run optimization algorithm
-		const optimizedAppointments = await this.runOptimizationAlgorithm(prioritizedRequests, optimizationState, goals);
+		const optimizedAppointments = await this.runOptimizationAlgorithm(
+			prioritizedRequests,
+			optimizationState,
+			goals,
+		);
 
 		// Calculate metrics
-		const metrics = this.calculateEfficiencyMetrics(optimizedAppointments, context);
+		const metrics = this.calculateEfficiencyMetrics(
+			optimizedAppointments,
+			context,
+		);
 
 		// Generate schedule changes
-		const scheduleChanges = this.generateScheduleChanges(context.existing_appointments, optimizedAppointments);
+		const scheduleChanges = this.generateScheduleChanges(
+			context.existing_appointments,
+			optimizedAppointments,
+		);
 
 		const optimizedSchedule: OptimizedSchedule = {
 			schedule_id: `opt_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -398,11 +440,16 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 			optimized_schedule: optimizedSchedule,
 			schedule_changes: scheduleChanges,
 			efficiency_metrics: metrics,
-			optimization_score: this.calculateOverallOptimizationScore(metrics, goals),
+			optimization_score: this.calculateOverallOptimizationScore(
+				metrics,
+				goals,
+			),
 		};
 	}
 
-	private async suggestAppointmentTime(input: OptimizationInput): Promise<OptimizationOutput> {
+	private async suggestAppointmentTime(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		if (!(input.single_request && input.schedule_context)) {
 			throw new Error("single_request and schedule_context are required");
 		}
@@ -411,11 +458,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		const context = input.schedule_context;
 		const dateRange = input.preferred_date_range || {
 			start_date: new Date().toISOString().split("T")[0],
-			end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+			end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+				.toISOString()
+				.split("T")[0],
 		};
 
 		// Find available slots within date range
-		const availableSlots = this.findAvailableSlots(context, dateRange, request.duration_minutes);
+		const availableSlots = this.findAvailableSlots(
+			context,
+			dateRange,
+			request.duration_minutes,
+		);
 
 		// Score each slot
 		const scoredSlots = await Promise.all(
@@ -430,15 +483,29 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 					slot_score: score,
 					satisfaction_prediction: satisfaction,
 					wait_time_minutes: waitTime,
-					scheduling_advantages: this.getSchedulingAdvantages(slot, request, context),
-					scheduling_concerns: this.getSchedulingConcerns(slot, request, context),
-					doctor_suitability_score: this.calculateDoctorSuitability(slot, request, context),
+					scheduling_advantages: this.getSchedulingAdvantages(
+						slot,
+						request,
+						context,
+					),
+					scheduling_concerns: this.getSchedulingConcerns(
+						slot,
+						request,
+						context,
+					),
+					doctor_suitability_score: this.calculateDoctorSuitability(
+						slot,
+						request,
+						context,
+					),
 				};
-			})
+			}),
 		);
 
 		// Sort by score and return top suggestions
-		const topSuggestions = scoredSlots.sort((a, b) => b.slot_score - a.slot_score).slice(0, 5);
+		const topSuggestions = scoredSlots
+			.sort((a, b) => b.slot_score - a.slot_score)
+			.slice(0, 5);
 
 		return {
 			success: true,
@@ -446,9 +513,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		};
 	}
 
-	private async rescheduleOptimization(input: OptimizationInput): Promise<OptimizationOutput> {
+	private async rescheduleOptimization(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		if (!(input.appointments_to_reschedule && input.schedule_context)) {
-			throw new Error("appointments_to_reschedule and schedule_context are required");
+			throw new Error(
+				"appointments_to_reschedule and schedule_context are required",
+			);
 		}
 
 		const appointmentIds = input.appointments_to_reschedule;
@@ -457,12 +528,15 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 		const scheduleChanges: ScheduleChange[] = [];
 		const affectedAppointments = context.existing_appointments.filter((apt) =>
-			appointmentIds.includes(apt.appointment_id)
+			appointmentIds.includes(apt.appointment_id),
 		);
 
 		for (const appointment of affectedAppointments) {
 			// Find alternative times
-			const alternatives = await this.findAlternativeSlots(appointment, context);
+			const alternatives = await this.findAlternativeSlots(
+				appointment,
+				context,
+			);
 
 			if (alternatives.length > 0) {
 				const bestAlternative = alternatives[0];
@@ -473,14 +547,20 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 					old_time: appointment.start_time,
 					new_time: bestAlternative.start_time,
 					reason: `Rescheduled due to ${reason}`,
-					impact_score: this.calculateRescheduleImpact(appointment, bestAlternative),
+					impact_score: this.calculateRescheduleImpact(
+						appointment,
+						bestAlternative,
+					),
 					affected_patients: [appointment.patient_id],
 				});
 			}
 		}
 
 		// Recalculate metrics after changes
-		const updatedAppointments = this.applyScheduleChanges(context.existing_appointments, scheduleChanges);
+		const updatedAppointments = this.applyScheduleChanges(
+			context.existing_appointments,
+			scheduleChanges,
+		);
 		const metrics = this.calculateEfficiencyMetrics(
 			updatedAppointments.map((apt) => ({
 				appointment_id: apt.appointment_id,
@@ -494,7 +574,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 				no_show_probability: 0.15,
 				scheduling_notes: [],
 			})),
-			context
+			context,
 		);
 
 		return {
@@ -504,7 +584,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		};
 	}
 
-	private async analyzeScheduleEfficiency(input: OptimizationInput): Promise<OptimizationOutput> {
+	private async analyzeScheduleEfficiency(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		if (!(input.schedule_context && input.analysis_period)) {
 			throw new Error("schedule_context and analysis_period are required");
 		}
@@ -521,9 +603,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		const analysis: ScheduleAnalysis = {
 			analysis_period: period,
 			total_appointments: appointments.length,
-			average_utilization: this.calculateAverageUtilization(appointments, context),
+			average_utilization: this.calculateAverageUtilization(
+				appointments,
+				context,
+			),
 			peak_hours: this.identifyPeakHours(appointments),
-			appointment_type_distribution: this.calculateTypeDistribution(appointments),
+			appointment_type_distribution:
+				this.calculateTypeDistribution(appointments),
 			patient_flow_patterns: this.identifyFlowPatterns(appointments),
 			bottleneck_analysis: this.analyzeBottlenecks(appointments, context),
 			satisfaction_trends: this.analyzeSatisfactionTrends(appointments, period),
@@ -540,7 +626,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		};
 	}
 
-	private async generateSchedulingInsights(input: OptimizationInput): Promise<OptimizationOutput> {
+	private async generateSchedulingInsights(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		if (!input.schedule_context) {
 			throw new Error("schedule_context is required");
 		}
@@ -549,16 +637,23 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		const insights: SchedulingInsight[] = [];
 
 		// Analyze current schedule for insights
-		const utilization = this.calculateAverageUtilization(context.existing_appointments, context);
+		const utilization = this.calculateAverageUtilization(
+			context.existing_appointments,
+			context,
+		);
 		const waitTimes = this.analyzeWaitTimes(context.existing_appointments);
-		const patterns = this.identifySchedulingPatterns(context.existing_appointments);
+		const patterns = this.identifySchedulingPatterns(
+			context.existing_appointments,
+		);
 
 		// Generate utilization insights
 		if (utilization < 0.7) {
 			insights.push({
 				insight_type: "opportunity",
 				title: "Low Schedule Utilization Detected",
-				description: `Current utilization is ${(utilization * 100).toFixed(1)}%. Consider overbooking or adjusting slot sizes.`,
+				description: `Current utilization is ${(utilization * 100).toFixed(
+					1,
+				)}%. Consider overbooking or adjusting slot sizes.`,
 				severity: "medium",
 				actionable_recommendations: [
 					"Enable controlled overbooking for high no-show risk patients",
@@ -575,7 +670,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 			insights.push({
 				insight_type: "bottleneck",
 				title: "Excessive Patient Wait Times",
-				description: `Average wait time is ${waitTimes.average.toFixed(1)} minutes. This may impact patient satisfaction.`,
+				description: `Average wait time is ${waitTimes.average.toFixed(
+					1,
+				)} minutes. This may impact patient satisfaction.`,
 				severity: "high",
 				actionable_recommendations: [
 					"Add buffer time between appointments",
@@ -611,7 +708,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		};
 	}
 
-	private async batchOptimize(input: OptimizationInput): Promise<OptimizationOutput> {
+	private async batchOptimize(
+		input: OptimizationInput,
+	): Promise<OptimizationOutput> {
 		if (!(input.appointment_requests && input.schedule_context)) {
 			throw new Error("appointment_requests and schedule_context are required");
 		}
@@ -629,24 +728,32 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 			const batchSuggestions = await Promise.all(
 				batch.map(async (request) => {
-					const suggestions = await this.findOptimalTimeForRequest(request, context);
+					const suggestions = await this.findOptimalTimeForRequest(
+						request,
+						context,
+					);
 					return {
 						patient_id: request.patient_id,
 						suggested_time: suggestions[0]?.suggested_datetime || "",
 						duration_minutes: request.duration_minutes,
 						confidence_score: suggestions[0]?.slot_score || 0.5,
 						reasoning: [`Batch optimized for ${request.appointment_type}`],
-						alternative_times: suggestions.slice(1, 4).map((s) => s.suggested_datetime),
-						expected_satisfaction: suggestions[0]?.satisfaction_prediction || 7.0,
+						alternative_times: suggestions
+							.slice(1, 4)
+							.map((s) => s.suggested_datetime),
+						expected_satisfaction:
+							suggestions[0]?.satisfaction_prediction || 7.0,
 					};
-				})
+				}),
 			);
 
 			allSuggestions.push(...batchSuggestions);
 			batchResults.push({
 				batch_number: Math.floor(i / batchSize) + 1,
 				processed_requests: batch.length,
-				success_rate: batchSuggestions.filter((s) => s.suggested_time !== "").length / batch.length,
+				success_rate:
+					batchSuggestions.filter((s) => s.suggested_time !== "").length /
+					batch.length,
 			});
 		}
 
@@ -659,7 +766,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 	// Helper methods for optimization algorithms
 
-	private prioritizeAppointmentRequests(requests: AppointmentRequest[]): AppointmentRequest[] {
+	private prioritizeAppointmentRequests(
+		requests: AppointmentRequest[],
+	): AppointmentRequest[] {
 		return requests.sort((a, b) => {
 			// Priority factors: urgency, no-show risk, patient satisfaction
 			const urgencyWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
@@ -680,7 +789,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	private initializeOptimizationState(context: ScheduleContext): any {
 		return {
 			availableSlots: context.available_slots,
-			bookedSlots: new Set(context.existing_appointments.map((a) => a.start_time)),
+			bookedSlots: new Set(
+				context.existing_appointments.map((a) => a.start_time),
+			),
 			utilizationTarget: 0.85,
 			satisfactionTarget: 8.0,
 		};
@@ -689,7 +800,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	private async runOptimizationAlgorithm(
 		requests: AppointmentRequest[],
 		state: any,
-		goals: OptimizationGoals
+		goals: OptimizationGoals,
 	): Promise<OptimizedAppointment[]> {
 		const optimizedAppointments: OptimizedAppointment[] = [];
 
@@ -721,11 +832,13 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	private async findBestSlotForRequest(
 		request: AppointmentRequest,
 		state: any,
-		goals: OptimizationGoals
+		goals: OptimizationGoals,
 	): Promise<any> {
 		const candidateSlots = state.availableSlots.filter(
 			(slot: TimeSlot) =>
-				slot.available && !state.bookedSlots.has(slot.start_time) && this.slotMeetsConstraints(slot, request)
+				slot.available &&
+				!state.bookedSlots.has(slot.start_time) &&
+				this.slotMeetsConstraints(slot, request),
 		);
 
 		let bestSlot = null;
@@ -749,7 +862,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return bestSlot;
 	}
 
-	private slotMeetsConstraints(slot: TimeSlot, request: AppointmentRequest): boolean {
+	private slotMeetsConstraints(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+	): boolean {
 		// Check patient constraints
 		const slotDate = new Date(slot.start_time);
 		const hour = slotDate.getHours();
@@ -769,7 +885,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return true;
 	}
 
-	private calculateSlotScore(slot: TimeSlot, request: AppointmentRequest, goals: OptimizationGoals): number {
+	private calculateSlotScore(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+		goals: OptimizationGoals,
+	): number {
 		let score = 0;
 
 		// Base score from slot suitability
@@ -784,7 +904,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.max(0, Math.min(1, score));
 	}
 
-	private calculateSlotSuitability(slot: TimeSlot, request: AppointmentRequest): number {
+	private calculateSlotSuitability(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+	): number {
 		let suitability = 0.5; // Base suitability
 
 		// Appointment type match
@@ -801,7 +924,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.max(0, Math.min(1, suitability));
 	}
 
-	private calculatePreferenceAlignment(slot: TimeSlot, request: AppointmentRequest): number {
+	private calculatePreferenceAlignment(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+	): number {
 		const slotDate = new Date(slot.start_time);
 		const dayOfWeek = slotDate.getDay();
 		const hour = slotDate.getHours();
@@ -811,8 +937,14 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		// Check time preferences
 		for (const pref of request.preferred_times) {
 			if (pref.day_of_week === dayOfWeek) {
-				const prefStart = Number.parseInt(pref.time_range.start_time.split(":")[0], 10);
-				const prefEnd = Number.parseInt(pref.time_range.end_time.split(":")[0], 10);
+				const prefStart = Number.parseInt(
+					pref.time_range.start_time.split(":")[0],
+					10,
+				);
+				const prefEnd = Number.parseInt(
+					pref.time_range.end_time.split(":")[0],
+					10,
+				);
 
 				if (hour >= prefStart && hour <= prefEnd) {
 					alignment += (pref.preference_score / 10) * 0.3;
@@ -823,7 +955,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.max(0, Math.min(1, alignment));
 	}
 
-	private calculateGoalAlignment(slot: TimeSlot, request: AppointmentRequest, goals: OptimizationGoals): number {
+	private calculateGoalAlignment(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+		goals: OptimizationGoals,
+	): number {
 		let alignment = 0.5;
 
 		switch (goals.primary_goal) {
@@ -835,7 +971,8 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 				alignment += (1 - slot.current_bookings / slot.capacity) * 0.3;
 				break;
 			case "maximize_satisfaction":
-				alignment += (this.predictPatientSatisfaction(slot, request) / 10) * 0.3;
+				alignment +=
+					(this.predictPatientSatisfaction(slot, request) / 10) * 0.3;
 				break;
 			case "minimize_no_shows":
 				alignment += (1 - request.patient_profile.no_show_risk_score) * 0.3;
@@ -845,7 +982,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.max(0, Math.min(1, alignment));
 	}
 
-	private predictPatientSatisfaction(slot: TimeSlot, request: AppointmentRequest): number {
+	private predictPatientSatisfaction(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+	): number {
 		// Simple satisfaction prediction model
 		let satisfaction = 7.0; // Base satisfaction
 
@@ -872,7 +1012,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return Math.round(baseWaitTime * (1 + congestionFactor * 2));
 	}
 
-	private getSchedulingAdvantages(slot: TimeSlot, request: AppointmentRequest, _context: ScheduleContext): string[] {
+	private getSchedulingAdvantages(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+		_context: ScheduleContext,
+	): string[] {
 		const advantages: string[] = [];
 
 		if (slot.current_bookings < slot.capacity * 0.7) {
@@ -891,7 +1035,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return advantages;
 	}
 
-	private getSchedulingConcerns(slot: TimeSlot, request: AppointmentRequest, _context: ScheduleContext): string[] {
+	private getSchedulingConcerns(
+		slot: TimeSlot,
+		request: AppointmentRequest,
+		_context: ScheduleContext,
+	): string[] {
 		const concerns: string[] = [];
 
 		if (slot.current_bookings >= slot.capacity * 0.9) {
@@ -911,22 +1059,34 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return concerns;
 	}
 
-	private calculateDoctorSuitability(_slot: TimeSlot, _request: AppointmentRequest, _context: ScheduleContext): number {
+	private calculateDoctorSuitability(
+		_slot: TimeSlot,
+		_request: AppointmentRequest,
+		_context: ScheduleContext,
+	): number {
 		// In a full implementation, this would consider doctor-patient matching
 		return 0.85; // Default good suitability
 	}
 
-	private findAvailableSlots(context: ScheduleContext, dateRange: any, _durationMinutes: number): TimeSlot[] {
+	private findAvailableSlots(
+		context: ScheduleContext,
+		dateRange: any,
+		_durationMinutes: number,
+	): TimeSlot[] {
 		return context.available_slots.filter((slot) => {
 			const slotDate = slot.start_time.split("T")[0];
-			return slot.available && slotDate >= dateRange.start_date && slotDate <= dateRange.end_date;
+			return (
+				slot.available &&
+				slotDate >= dateRange.start_date &&
+				slotDate <= dateRange.end_date
+			);
 		});
 	}
 
 	private async scoreAppointmentSlot(
 		slot: TimeSlot,
 		request: AppointmentRequest,
-		_context: ScheduleContext
+		_context: ScheduleContext,
 	): Promise<number> {
 		// Comprehensive scoring algorithm
 		const goals = this.getDefaultOptimizationGoals();
@@ -935,14 +1095,20 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 	private async findOptimalTimeForRequest(
 		request: AppointmentRequest,
-		context: ScheduleContext
+		context: ScheduleContext,
 	): Promise<AppointmentSuggestion[]> {
 		const dateRange = {
 			start_date: new Date().toISOString().split("T")[0],
-			end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+			end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+				.toISOString()
+				.split("T")[0],
 		};
 
-		const availableSlots = this.findAvailableSlots(context, dateRange, request.duration_minutes);
+		const availableSlots = this.findAvailableSlots(
+			context,
+			dateRange,
+			request.duration_minutes,
+		);
 
 		return availableSlots.slice(0, 3).map((slot) => ({
 			suggested_datetime: slot.start_time,
@@ -965,7 +1131,11 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 				utilization: 0.3,
 				wait_time: 0.3,
 			},
-			success_metrics: ["patient_satisfaction", "utilization_rate", "on_time_performance"],
+			success_metrics: [
+				"patient_satisfaction",
+				"utilization_rate",
+				"on_time_performance",
+			],
 		};
 	}
 
@@ -973,7 +1143,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 	private calculateEfficiencyMetrics(
 		appointments: OptimizedAppointment[],
-		context: ScheduleContext
+		context: ScheduleContext,
 	): EfficiencyMetrics {
 		const totalSlots = context.available_slots.length;
 		const bookedSlots = appointments.length;
@@ -985,7 +1155,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 			appointment_gaps_count: Math.max(0, totalSlots - bookedSlots),
 			overtime_probability: 0.15,
 			patient_satisfaction_prediction:
-				appointments.reduce((sum, apt) => sum + apt.satisfaction_prediction, 0) / appointments.length || 7.0,
+				appointments.reduce(
+					(sum, apt) => sum + apt.satisfaction_prediction,
+					0,
+				) / appointments.length || 7.0,
 			resource_efficiency_score: utilization * 0.85,
 			no_show_adjusted_utilization: utilization * 0.9,
 		};
@@ -993,7 +1166,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 	private generateScheduleChanges(
 		_existing: ExistingAppointment[],
-		_optimized: OptimizedAppointment[]
+		_optimized: OptimizedAppointment[],
 	): ScheduleChange[] {
 		const changes: ScheduleChange[] = [];
 
@@ -1004,7 +1177,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return changes;
 	}
 
-	private calculateOverallOptimizationScore(metrics: EfficiencyMetrics, _goals: OptimizationGoals): number {
+	private calculateOverallOptimizationScore(
+		metrics: EfficiencyMetrics,
+		_goals: OptimizationGoals,
+	): number {
 		let score = 0;
 
 		score += metrics.utilization_rate * 0.3;
@@ -1019,7 +1195,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return 10; // Default 10 minutes
 	}
 
-	private cacheOptimizationResult(clinicId: string, result: OptimizedSchedule): void {
+	private cacheOptimizationResult(
+		clinicId: string,
+		result: OptimizedSchedule,
+	): void {
 		const cacheKey = `optimization_${clinicId}_${Date.now()}`;
 		this.optimizationCache.set(cacheKey, {
 			result,
@@ -1035,7 +1214,7 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	public async optimizeClinicSchedule(
 		clinicId: string,
 		dateRange: { start_date: string; end_date: string },
-		appointmentRequests: AppointmentRequest[]
+		appointmentRequests: AppointmentRequest[],
 	): Promise<OptimizedSchedule> {
 		// Simplified public interface
 		const mockContext: ScheduleContext = {
@@ -1079,12 +1258,17 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 
 	// More helper methods would continue here...
 
-	private calculateAverageUtilization(_appointments: ExistingAppointment[], _context: ScheduleContext): number {
+	private calculateAverageUtilization(
+		_appointments: ExistingAppointment[],
+		_context: ScheduleContext,
+	): number {
 		// Implementation would calculate actual utilization
 		return 0.75; // Mock value
 	}
 
-	private identifyPeakHours(_appointments: ExistingAppointment[]): Array<{ hour: number; utilization: number }> {
+	private identifyPeakHours(
+		_appointments: ExistingAppointment[],
+	): Array<{ hour: number; utilization: number }> {
 		// Implementation would analyze appointment distribution by hour
 		return [
 			{ hour: 9, utilization: 0.9 },
@@ -1093,15 +1277,20 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		];
 	}
 
-	private calculateTypeDistribution(appointments: ExistingAppointment[]): Record<string, number> {
+	private calculateTypeDistribution(
+		appointments: ExistingAppointment[],
+	): Record<string, number> {
 		const distribution: Record<string, number> = {};
 		appointments.forEach((apt) => {
-			distribution[apt.appointment_type] = (distribution[apt.appointment_type] || 0) + 1;
+			distribution[apt.appointment_type] =
+				(distribution[apt.appointment_type] || 0) + 1;
 		});
 		return distribution;
 	}
 
-	private identifyFlowPatterns(_appointments: ExistingAppointment[]): FlowPattern[] {
+	private identifyFlowPatterns(
+		_appointments: ExistingAppointment[],
+	): FlowPattern[] {
 		return [
 			{
 				pattern_name: "Monday Morning Rush",
@@ -1113,7 +1302,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		];
 	}
 
-	private analyzeBottlenecks(_appointments: ExistingAppointment[], _context: ScheduleContext): BottleneckAnalysis {
+	private analyzeBottlenecks(
+		_appointments: ExistingAppointment[],
+		_context: ScheduleContext,
+	): BottleneckAnalysis {
 		return {
 			identified_bottlenecks: [
 				{
@@ -1129,7 +1321,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		};
 	}
 
-	private analyzeSatisfactionTrends(_appointments: ExistingAppointment[], period: any): SatisfactionTrend[] {
+	private analyzeSatisfactionTrends(
+		_appointments: ExistingAppointment[],
+		period: any,
+	): SatisfactionTrend[] {
 		return [
 			{
 				date: period.start_date,
@@ -1141,7 +1336,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		];
 	}
 
-	private generateInsightsFromAnalysis(analysis: ScheduleAnalysis): SchedulingInsight[] {
+	private generateInsightsFromAnalysis(
+		analysis: ScheduleAnalysis,
+	): SchedulingInsight[] {
 		const insights: SchedulingInsight[] = [];
 
 		if (analysis.average_utilization < 0.7) {
@@ -1150,7 +1347,10 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 				title: "Underutilized Schedule Capacity",
 				description: `Average utilization is ${(analysis.average_utilization * 100).toFixed(1)}%`,
 				severity: "medium",
-				actionable_recommendations: ["Implement overbooking", "Adjust slot sizes"],
+				actionable_recommendations: [
+					"Implement overbooking",
+					"Adjust slot sizes",
+				],
 				estimated_impact: 0.2,
 				confidence_level: 0.85,
 			});
@@ -1159,7 +1359,9 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		return insights;
 	}
 
-	private generateImprovementRecommendations(_analysis: ScheduleAnalysis): ImprovementRecommendation[] {
+	private generateImprovementRecommendations(
+		_analysis: ScheduleAnalysis,
+	): ImprovementRecommendation[] {
 		return [
 			{
 				recommendation_type: "scheduling",
@@ -1174,12 +1376,18 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 		];
 	}
 
-	private analyzeWaitTimes(_appointments: ExistingAppointment[]): { average: number; median: number; peak: number } {
+	private analyzeWaitTimes(_appointments: ExistingAppointment[]): {
+		average: number;
+		median: number;
+		peak: number;
+	} {
 		// Mock implementation
 		return { average: 18, median: 15, peak: 35 };
 	}
 
-	private identifySchedulingPatterns(_appointments: ExistingAppointment[]): FlowPattern[] {
+	private identifySchedulingPatterns(
+		_appointments: ExistingAppointment[],
+	): FlowPattern[] {
 		return [
 			{
 				pattern_name: "Friday Afternoon Cancellations",
@@ -1192,31 +1400,48 @@ export class AppointmentOptimizationService extends EnhancedAIService<Optimizati
 	}
 
 	private calculateBatchOptimizationScore(batchResults: any[]): number {
-		const avgSuccessRate = batchResults.reduce((sum, batch) => sum + batch.success_rate, 0) / batchResults.length;
+		const avgSuccessRate =
+			batchResults.reduce((sum, batch) => sum + batch.success_rate, 0) /
+			batchResults.length;
 		return avgSuccessRate * 0.9; // Slightly penalize batch processing
 	}
 
-	private async findAlternativeSlots(appointment: ExistingAppointment, context: ScheduleContext): Promise<TimeSlot[]> {
+	private async findAlternativeSlots(
+		appointment: ExistingAppointment,
+		context: ScheduleContext,
+	): Promise<TimeSlot[]> {
 		// Find alternative time slots for rescheduling
 		return context.available_slots
-			.filter((slot) => slot.available && slot.start_time !== appointment.start_time)
+			.filter(
+				(slot) => slot.available && slot.start_time !== appointment.start_time,
+			)
 			.slice(0, 3);
 	}
 
-	private calculateRescheduleImpact(_original: ExistingAppointment, _alternative: TimeSlot): number {
+	private calculateRescheduleImpact(
+		_original: ExistingAppointment,
+		_alternative: TimeSlot,
+	): number {
 		// Calculate impact score of rescheduling
 		return 0.6; // Mock implementation
 	}
 
-	private applyScheduleChanges(appointments: ExistingAppointment[], _changes: ScheduleChange[]): ExistingAppointment[] {
+	private applyScheduleChanges(
+		appointments: ExistingAppointment[],
+		_changes: ScheduleChange[],
+	): ExistingAppointment[] {
 		// Apply schedule changes and return updated appointment list
 		return appointments; // Mock implementation
 	}
 
-	private generateSchedulingNotes(_slot: TimeSlot, request: AppointmentRequest): string[] {
+	private generateSchedulingNotes(
+		_slot: TimeSlot,
+		request: AppointmentRequest,
+	): string[] {
 		return [`Scheduled for ${request.appointment_type} appointment`];
 	}
 }
 
 // Export singleton instance
-export const appointmentOptimizationService = new AppointmentOptimizationService();
+export const appointmentOptimizationService =
+	new AppointmentOptimizationService();

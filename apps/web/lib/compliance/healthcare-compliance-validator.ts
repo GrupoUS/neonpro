@@ -167,6 +167,7 @@ export class HealthcareComplianceValidator {
 	} /**
 	 * Comprehensive compliance validation for critical components
 	 */
+
 	async validateComponentCompliance(componentPath: string): Promise<{
 		overallCompliance: boolean;
 		complianceScore: number;

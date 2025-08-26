@@ -9,7 +9,10 @@
  * - Analytics de compliance
  */
 
-import { EnhancedServiceBase, type ServiceConfig } from "../base/EnhancedServiceBase";
+import {
+	EnhancedServiceBase,
+	type ServiceConfig,
+} from "../base/EnhancedServiceBase";
 import type { ServiceContext } from "../types";
 
 // ================================================
@@ -385,7 +388,10 @@ type ReportIncidentRequest = {
 	category: ComplianceCategory;
 	severity: SeverityLevel;
 	affectedSystems: string[];
-	affectedData: Omit<DataImpactAssessment, "notificationRequired" | "regulatoryReportingRequired">;
+	affectedData: Omit<
+		DataImpactAssessment,
+		"notificationRequired" | "regulatoryReportingRequired"
+	>;
 	metadata?: Record<string, any>;
 };
 
@@ -418,7 +424,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			rules: [
 				{
 					name: "Consentimento Explícito",
-					description: "Verificar consentimento antes de processar dados pessoais",
+					description:
+						"Verificar consentimento antes de processar dados pessoais",
 					type: RuleType.PREVENTIVE,
 					severity: SeverityLevel.HIGH,
 				},
@@ -502,7 +509,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Criar política de compliance
 	 */
-	async createPolicy(request: CreatePolicyRequest, context: ServiceContext): Promise<CompliancePolicy> {
+	async createPolicy(
+		request: CreatePolicyRequest,
+		context: ServiceContext,
+	): Promise<CompliancePolicy> {
 		return this.executeOperation(
 			"createPolicy",
 			async () => {
@@ -544,7 +554,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 					`policy_${policyId}`,
 					policy,
 					true, // Always consent for policies
-					this.config.cacheOptions?.defaultTTL
+					this.config.cacheOptions?.defaultTTL,
 				);
 
 				// Start compliance monitoring for this policy
@@ -556,7 +566,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -570,7 +580,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			category?: ComplianceCategory;
 			isActive?: boolean;
 		},
-		context: ServiceContext
+		context: ServiceContext,
 	): Promise<CompliancePolicy[]> {
 		return this.executeOperation(
 			"searchPolicies",
@@ -585,7 +595,11 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				}
 
 				// Fetch from database (mock implementation)
-				const policies = await this.fetchPoliciesFromDatabase(tenantId, filters, context);
+				const policies = await this.fetchPoliciesFromDatabase(
+					tenantId,
+					filters,
+					context,
+				);
 
 				// Cache results
 				await this.cache.set(cacheKey, policies, 10 * 60 * 1000); // 10 minutes
@@ -595,7 +609,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			context,
 			{
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -606,7 +620,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Reportar incidente de compliance
 	 */
-	async reportIncident(request: ReportIncidentRequest, context: ServiceContext): Promise<ComplianceIncident> {
+	async reportIncident(
+		request: ReportIncidentRequest,
+		context: ServiceContext,
+	): Promise<ComplianceIncident> {
 		return this.executeOperation(
 			"reportIncident",
 			async () => {
@@ -614,7 +631,9 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				this.validateIncidentRequest(request);
 
 				// Assess data impact automatically
-				const impactAssessment = await this.assessDataImpact(request.affectedData);
+				const impactAssessment = await this.assessDataImpact(
+					request.affectedData,
+				);
 
 				// Generate incident ID
 				const incidentId = `incident_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -634,7 +653,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 					affectedSystems: request.affectedSystems,
 					affectedData: impactAssessment,
 					containmentActions: [],
-					remediation: this.createDefaultRemediationPlan(request.severity, context.userId!),
+					remediation: this.createDefaultRemediationPlan(
+						request.severity,
+						context.userId!,
+					),
 					metadata: request.metadata || {},
 					createdAt: new Date(),
 					updatedAt: new Date(),
@@ -644,7 +666,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				await this.storeIncidentInDatabase(incident, context);
 
 				// Auto-assign based on severity
-				if (incident.severity === SeverityLevel.CRITICAL || incident.severity === SeverityLevel.HIGH) {
+				if (
+					incident.severity === SeverityLevel.CRITICAL ||
+					incident.severity === SeverityLevel.HIGH
+				) {
 					await this.autoAssignIncident(incident);
 				}
 
@@ -662,7 +687,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -673,7 +698,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		tenantId: string,
 		periodStart: Date,
 		periodEnd: Date,
-		context: ServiceContext
+		context: ServiceContext,
 	): Promise<ComplianceMetrics> {
 		return this.executeOperation(
 			"getComplianceMetrics",
@@ -687,7 +712,12 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				}
 
 				// Calculate metrics
-				const metrics = await this.calculateComplianceMetrics(tenantId, periodStart, periodEnd, context);
+				const metrics = await this.calculateComplianceMetrics(
+					tenantId,
+					periodStart,
+					periodEnd,
+					context,
+				);
 
 				// Cache metrics for 5 minutes
 				await this.cache.set(cacheKey, metrics, 5 * 60 * 1000);
@@ -697,7 +727,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			context,
 			{
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -708,7 +738,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Registrar consentimento LGPD
 	 */
-	async recordConsent(request: CreateConsentRequest, context: ServiceContext): Promise<ConsentRecord> {
+	async recordConsent(
+		request: CreateConsentRequest,
+		context: ServiceContext,
+	): Promise<ConsentRecord> {
 		return this.executeOperation(
 			"recordConsent",
 			async () => {
@@ -747,7 +780,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 					`consent_${request.dataSubjectId}_${request.purpose}`,
 					consent,
 					true, // Consent records always have consent
-					this.config.cacheOptions?.defaultTTL
+					this.config.cacheOptions?.defaultTTL,
 				);
 
 				return consent;
@@ -756,14 +789,18 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Retirar consentimento
 	 */
-	async withdrawConsent(consentId: string, withdrawalMethod: string, context: ServiceContext): Promise<boolean> {
+	async withdrawConsent(
+		consentId: string,
+		withdrawalMethod: string,
+		context: ServiceContext,
+	): Promise<boolean> {
 		return this.executeOperation(
 			"withdrawConsent",
 			async () => {
@@ -776,7 +813,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 						withdrawalMethod,
 						isActive: false,
 					},
-					context
+					context,
 				);
 
 				if (success) {
@@ -793,7 +830,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
@@ -804,7 +841,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	/**
 	 * Iniciar monitoramento de compliance em tempo real
 	 */
-	async startComplianceMonitoring(tenantId: string, context: ServiceContext): Promise<string> {
+	async startComplianceMonitoring(
+		tenantId: string,
+		context: ServiceContext,
+	): Promise<string> {
 		return this.executeOperation(
 			"startComplianceMonitoring",
 			async () => {
@@ -822,14 +862,17 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			context,
 			{
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Parar monitoramento
 	 */
-	async stopComplianceMonitoring(monitorId: string, context: ServiceContext): Promise<boolean> {
+	async stopComplianceMonitoring(
+		monitorId: string,
+		context: ServiceContext,
+	): Promise<boolean> {
 		return this.executeOperation(
 			"stopComplianceMonitoring",
 			async () => {
@@ -844,7 +887,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 			context,
 			{
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -857,12 +900,15 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	 */
 	async checkBrazilianCompliance(
 		tenantId: string,
-		context: ServiceContext
+		context: ServiceContext,
 	): Promise<{
 		lgpd: { compliant: boolean; issues: string[] };
 		anvisa: { compliant: boolean; issues: string[] };
 		cfm: { compliant: boolean; issues: string[] };
-		overall: { score: number; status: "compliant" | "non-compliant" | "warning" };
+		overall: {
+			score: number;
+			status: "compliant" | "non-compliant" | "warning";
+		};
 	}> {
 		return this.executeOperation(
 			"checkBrazilianCompliance",
@@ -877,11 +923,16 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				const cfmCheck = await this.checkCFMCompliance(tenantId, context);
 
 				// Calculate overall score
-				const _issues = lgpdCheck.issues.length + anvisaCheck.issues.length + cfmCheck.issues.length;
+				const _issues =
+					lgpdCheck.issues.length +
+					anvisaCheck.issues.length +
+					cfmCheck.issues.length;
 				const totalChecks = 3;
-				const compliantFrameworks = [lgpdCheck.compliant, anvisaCheck.compliant, cfmCheck.compliant].filter(
-					Boolean
-				).length;
+				const compliantFrameworks = [
+					lgpdCheck.compliant,
+					anvisaCheck.compliant,
+					cfmCheck.compliant,
+				].filter(Boolean).length;
 
 				const score = (compliantFrameworks / totalChecks) * 100;
 				let status: "compliant" | "non-compliant" | "warning";
@@ -906,7 +957,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 				cacheKey: `brazilian_compliance_${tenantId}`,
 				cacheTTL: 5 * 60 * 1000, // 5 minutes
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -953,7 +1004,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 	}
 
 	private async assessDataImpact(
-		affectedData: Omit<DataImpactAssessment, "notificationRequired" | "regulatoryReportingRequired">
+		affectedData: Omit<
+			DataImpactAssessment,
+			"notificationRequired" | "regulatoryReportingRequired"
+		>,
 	): Promise<DataImpactAssessment> {
 		// Assess notification requirements based on Brazilian laws
 		const notificationRequired =
@@ -975,7 +1029,10 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		};
 	}
 
-	private createDefaultRemediationPlan(severity: SeverityLevel, userId: string): RemediationPlan {
+	private createDefaultRemediationPlan(
+		severity: SeverityLevel,
+		userId: string,
+	): RemediationPlan {
 		const actions: RemediationAction[] = [];
 
 		if (severity === SeverityLevel.CRITICAL) {
@@ -1001,7 +1058,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
 	private async checkLGPDCompliance(
 		_tenantId: string,
-		_context: ServiceContext
+		_context: ServiceContext,
 	): Promise<{ compliant: boolean; issues: string[] }> {
 		// Mock LGPD compliance check
 		return {
@@ -1012,7 +1069,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
 	private async checkANVISACompliance(
 		_tenantId: string,
-		_context: ServiceContext
+		_context: ServiceContext,
 	): Promise<{ compliant: boolean; issues: string[] }> {
 		// Mock ANVISA compliance check
 		return {
@@ -1023,7 +1080,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
 	private async checkCFMCompliance(
 		_tenantId: string,
-		_context: ServiceContext
+		_context: ServiceContext,
 	): Promise<{ compliant: boolean; issues: string[] }> {
 		// Mock CFM compliance check
 		return {
@@ -1036,7 +1093,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		_tenantId: string,
 		_periodStart: Date,
 		_periodEnd: Date,
-		_context: ServiceContext
+		_context: ServiceContext,
 	): Promise<ComplianceMetrics> {
 		// Mock metrics calculation
 		return {
@@ -1062,34 +1119,61 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 		};
 	}
 
-	private async performComplianceCheck(_tenantId: string, _context: ServiceContext): Promise<void> {}
+	private async performComplianceCheck(
+		_tenantId: string,
+		_context: ServiceContext,
+	): Promise<void> {}
 
-	private async startPolicyMonitoring(_policy: CompliancePolicy): Promise<void> {}
+	private async startPolicyMonitoring(
+		_policy: CompliancePolicy,
+	): Promise<void> {}
 
-	private async autoAssignIncident(_incident: ComplianceIncident): Promise<void> {}
+	private async autoAssignIncident(
+		_incident: ComplianceIncident,
+	): Promise<void> {}
 
-	private async createIncidentNotifications(_incident: ComplianceIncident): Promise<void> {}
+	private async createIncidentNotifications(
+		_incident: ComplianceIncident,
+	): Promise<void> {}
 
-	private async initiateRegulatoryReporting(_incident: ComplianceIncident): Promise<void> {}
+	private async initiateRegulatoryReporting(
+		_incident: ComplianceIncident,
+	): Promise<void> {}
 
-	private async initiateDataCleanup(_consentId: string, _context: ServiceContext): Promise<void> {}
+	private async initiateDataCleanup(
+		_consentId: string,
+		_context: ServiceContext,
+	): Promise<void> {}
 
 	// Mock database operations
-	private async storePolicyInDatabase(_policy: CompliancePolicy, _context: ServiceContext): Promise<void> {}
+	private async storePolicyInDatabase(
+		_policy: CompliancePolicy,
+		_context: ServiceContext,
+	): Promise<void> {}
 
 	private async fetchPoliciesFromDatabase(
 		_tenantId: string,
 		_filters: any,
-		_context: ServiceContext
+		_context: ServiceContext,
 	): Promise<CompliancePolicy[]> {
 		return []; // Mock empty result
 	}
 
-	private async storeIncidentInDatabase(_incident: ComplianceIncident, _context: ServiceContext): Promise<void> {}
+	private async storeIncidentInDatabase(
+		_incident: ComplianceIncident,
+		_context: ServiceContext,
+	): Promise<void> {}
 
-	private async storeConsentInDatabase(_consent: ConsentRecord, _context: ServiceContext): Promise<void> {}
+	private async storeConsentInDatabase(
+		_consent: ConsentRecord,
+		_context: ServiceContext,
+	): Promise<void> {}
 
-	private async updateConsentInDatabase(_consentId: string, _updates: any, _context: ServiceContext): Promise<boolean> {
+	private async updateConsentInDatabase(
+		_consentId: string,
+		_updates: any,
+		_context: ServiceContext,
+	): Promise<boolean> {
 		return true;
 	}
 

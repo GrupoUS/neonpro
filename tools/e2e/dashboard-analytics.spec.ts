@@ -28,21 +28,31 @@ test.describe("Dashboard Analytics - Overview", () => {
 
 	test("should display analytics dashboard overview", async ({ page }) => {
 		// Check analytics dashboard title
-		await expect(page.locator("h1, .analytics-title")).toContainText(/Analytics|Análises|Dashboard/);
+		await expect(page.locator("h1, .analytics-title")).toContainText(
+			/Analytics|Análises|Dashboard/,
+		);
 
 		// Should display key performance indicators
-		const kpiCards = page.locator('[data-testid="kpi-cards"]').or(page.locator(".kpi-cards"));
+		const kpiCards = page
+			.locator('[data-testid="kpi-cards"]')
+			.or(page.locator(".kpi-cards"));
 		if (await kpiCards.isVisible()) {
 			await expect(kpiCards).toBeVisible();
 
 			// Should show patient metrics
-			await expect(page.locator("text=pacientes").or(page.locator("text=patients"))).toBeVisible();
+			await expect(
+				page.locator("text=pacientes").or(page.locator("text=patients")),
+			).toBeVisible();
 
 			// Should show appointment metrics
-			await expect(page.locator("text=consultas").or(page.locator("text=appointments"))).toBeVisible();
+			await expect(
+				page.locator("text=consultas").or(page.locator("text=appointments")),
+			).toBeVisible();
 
 			// Should show revenue metrics
-			await expect(page.locator("text=receita").or(page.locator("text=revenue"))).toBeVisible();
+			await expect(
+				page.locator("text=receita").or(page.locator("text=revenue")),
+			).toBeVisible();
 		}
 
 		// Should display time period selector
@@ -54,7 +64,9 @@ test.describe("Dashboard Analytics - Overview", () => {
 		}
 
 		// Should show analytics charts
-		const analyticsCharts = page.locator('[data-testid="analytics-charts"]').or(page.locator(".analytics-charts"));
+		const analyticsCharts = page
+			.locator('[data-testid="analytics-charts"]')
+			.or(page.locator(".analytics-charts"));
 		if (await analyticsCharts.isVisible()) {
 			await expect(analyticsCharts).toBeVisible();
 		}
@@ -62,12 +74,16 @@ test.describe("Dashboard Analytics - Overview", () => {
 
 	test("should display real-time metrics", async ({ page }) => {
 		// Should show today's metrics
-		const todayMetrics = page.locator('[data-testid="today-metrics"]').or(page.locator(".today-metrics"));
+		const todayMetrics = page
+			.locator('[data-testid="today-metrics"]')
+			.or(page.locator(".today-metrics"));
 		if (await todayMetrics.isVisible()) {
 			await expect(todayMetrics).toBeVisible();
 
 			// Should display current day stats
-			await expect(page.locator("text=hoje").or(page.locator("text=today"))).toBeVisible();
+			await expect(
+				page.locator("text=hoje").or(page.locator("text=today")),
+			).toBeVisible();
 		}
 
 		// Should have real-time indicators
@@ -79,13 +95,17 @@ test.describe("Dashboard Analytics - Overview", () => {
 		}
 
 		// Should show live appointment count
-		const liveAppointments = page.locator('[data-testid="live-appointments"]').or(page.locator(".live-appointments"));
+		const liveAppointments = page
+			.locator('[data-testid="live-appointments"]')
+			.or(page.locator(".live-appointments"));
 		if (await liveAppointments.isVisible()) {
 			await expect(liveAppointments).toBeVisible();
 		}
 
 		// Should display active patients
-		const activePatients = page.locator('[data-testid="active-patients"]').or(page.locator(".active-patients"));
+		const activePatients = page
+			.locator('[data-testid="active-patients"]')
+			.or(page.locator(".active-patients"));
 		if (await activePatients.isVisible()) {
 			await expect(activePatients).toBeVisible();
 		}
@@ -102,7 +122,9 @@ test.describe("Dashboard Analytics - Overview", () => {
 			await page.waitForTimeout(1000);
 
 			// Should update charts
-			const weeklyCharts = page.locator('[data-testid="weekly-chart"]').or(page.locator(".weekly-chart"));
+			const weeklyCharts = page
+				.locator('[data-testid="weekly-chart"]')
+				.or(page.locator(".weekly-chart"));
 			if (await weeklyCharts.isVisible()) {
 				await expect(weeklyCharts).toBeVisible();
 			}
@@ -112,7 +134,9 @@ test.describe("Dashboard Analytics - Overview", () => {
 			await page.waitForTimeout(1000);
 
 			// Should update to monthly data
-			const monthlyCharts = page.locator('[data-testid="monthly-chart"]').or(page.locator(".monthly-chart"));
+			const monthlyCharts = page
+				.locator('[data-testid="monthly-chart"]')
+				.or(page.locator(".monthly-chart"));
 			if (await monthlyCharts.isVisible()) {
 				await expect(monthlyCharts).toBeVisible();
 			}
@@ -122,7 +146,9 @@ test.describe("Dashboard Analytics - Overview", () => {
 			await page.waitForTimeout(1000);
 
 			// Should show yearly trends
-			const yearlyCharts = page.locator('[data-testid="yearly-chart"]').or(page.locator(".yearly-chart"));
+			const yearlyCharts = page
+				.locator('[data-testid="yearly-chart"]')
+				.or(page.locator(".yearly-chart"));
 			if (await yearlyCharts.isVisible()) {
 				await expect(yearlyCharts).toBeVisible();
 			}
@@ -138,10 +164,14 @@ test.describe("Dashboard Analytics - Overview", () => {
 			await departmentFilter.selectOption("dermatology");
 
 			// Should update analytics for dermatology
-			await expect(page.locator("text=dermatologia").or(page.locator("text=dermatology"))).toBeVisible();
+			await expect(
+				page.locator("text=dermatologia").or(page.locator("text=dermatology")),
+			).toBeVisible();
 
 			// Should show department-specific metrics
-			const deptMetrics = page.locator('[data-testid="department-metrics"]').or(page.locator(".department-metrics"));
+			const deptMetrics = page
+				.locator('[data-testid="department-metrics"]')
+				.or(page.locator(".department-metrics"));
 			if (await deptMetrics.isVisible()) {
 				await expect(deptMetrics).toBeVisible();
 			}
@@ -158,12 +188,16 @@ test.describe("Dashboard Analytics - Overview", () => {
 			await exportButton.click();
 
 			// Should show export options
-			const exportOptions = page.locator('[data-testid="export-options"]').or(page.locator(".export-options"));
+			const exportOptions = page
+				.locator('[data-testid="export-options"]')
+				.or(page.locator(".export-options"));
 			if (await exportOptions.isVisible()) {
 				await expect(exportOptions).toBeVisible();
 
 				// Should have PDF and Excel options
-				await expect(page.locator("text=PDF").or(page.locator("text=Excel"))).toBeVisible();
+				await expect(
+					page.locator("text=PDF").or(page.locator("text=Excel")),
+				).toBeVisible();
 			}
 		}
 	});
@@ -198,19 +232,25 @@ test.describe("Dashboard Analytics - Patient Analytics", () => {
 			}
 
 			// Should show age distribution
-			const ageDistribution = page.locator('[data-testid="age-distribution"]').or(page.locator(".age-distribution"));
+			const ageDistribution = page
+				.locator('[data-testid="age-distribution"]')
+				.or(page.locator(".age-distribution"));
 			if (await ageDistribution.isVisible()) {
 				await expect(ageDistribution).toBeVisible();
 			}
 
 			// Should display gender breakdown
-			const genderBreakdown = page.locator('[data-testid="gender-breakdown"]').or(page.locator(".gender-breakdown"));
+			const genderBreakdown = page
+				.locator('[data-testid="gender-breakdown"]')
+				.or(page.locator(".gender-breakdown"));
 			if (await genderBreakdown.isVisible()) {
 				await expect(genderBreakdown).toBeVisible();
 			}
 
 			// Should show geographic distribution
-			const geoDistribution = page.locator('[data-testid="geo-distribution"]').or(page.locator(".geo-distribution"));
+			const geoDistribution = page
+				.locator('[data-testid="geo-distribution"]')
+				.or(page.locator(".geo-distribution"));
 			if (await geoDistribution.isVisible()) {
 				await expect(geoDistribution).toBeVisible();
 			}
@@ -234,13 +274,17 @@ test.describe("Dashboard Analytics - Patient Analytics", () => {
 			}
 
 			// Should display referral sources
-			const referralSources = page.locator('[data-testid="referral-sources"]').or(page.locator(".referral-sources"));
+			const referralSources = page
+				.locator('[data-testid="referral-sources"]')
+				.or(page.locator(".referral-sources"));
 			if (await referralSources.isVisible()) {
 				await expect(referralSources).toBeVisible();
 			}
 
 			// Should show conversion rates
-			const conversionRates = page.locator('[data-testid="conversion-rates"]').or(page.locator(".conversion-rates"));
+			const conversionRates = page
+				.locator('[data-testid="conversion-rates"]')
+				.or(page.locator(".conversion-rates"));
 			if (await conversionRates.isVisible()) {
 				await expect(conversionRates).toBeVisible();
 			}
@@ -256,19 +300,25 @@ test.describe("Dashboard Analytics - Patient Analytics", () => {
 			await expect(retentionAnalytics).toBeVisible();
 
 			// Should show retention rates
-			const retentionRates = page.locator('[data-testid="retention-rates"]').or(page.locator(".retention-rates"));
+			const retentionRates = page
+				.locator('[data-testid="retention-rates"]')
+				.or(page.locator(".retention-rates"));
 			if (await retentionRates.isVisible()) {
 				await expect(retentionRates).toBeVisible();
 			}
 
 			// Should display churn analysis
-			const churnAnalysis = page.locator('[data-testid="churn-analysis"]').or(page.locator(".churn-analysis"));
+			const churnAnalysis = page
+				.locator('[data-testid="churn-analysis"]')
+				.or(page.locator(".churn-analysis"));
 			if (await churnAnalysis.isVisible()) {
 				await expect(churnAnalysis).toBeVisible();
 			}
 
 			// Should show patient lifetime value
-			const lifetimeValue = page.locator('[data-testid="lifetime-value"]').or(page.locator(".lifetime-value"));
+			const lifetimeValue = page
+				.locator('[data-testid="lifetime-value"]')
+				.or(page.locator(".lifetime-value"));
 			if (await lifetimeValue.isVisible()) {
 				await expect(lifetimeValue).toBeVisible();
 			}
@@ -284,7 +334,9 @@ test.describe("Dashboard Analytics - Patient Analytics", () => {
 			await expect(satisfactionAnalytics).toBeVisible();
 
 			// Should show NPS scores
-			const npsScores = page.locator("text=NPS").or(page.locator('[data-testid="nps-scores"]'));
+			const npsScores = page
+				.locator("text=NPS")
+				.or(page.locator('[data-testid="nps-scores"]'));
 			if (await npsScores.isVisible()) {
 				await expect(npsScores).toBeVisible();
 			}
@@ -329,19 +381,25 @@ test.describe("Dashboard Analytics - Treatment Analytics", () => {
 			await treatmentAnalytics.click();
 
 			// Should display outcome metrics
-			const outcomeMetrics = page.locator('[data-testid="outcome-metrics"]').or(page.locator(".outcome-metrics"));
+			const outcomeMetrics = page
+				.locator('[data-testid="outcome-metrics"]')
+				.or(page.locator(".outcome-metrics"));
 			if (await outcomeMetrics.isVisible()) {
 				await expect(outcomeMetrics).toBeVisible();
 			}
 
 			// Should show success rates
-			const successRates = page.locator('[data-testid="success-rates"]').or(page.locator(".success-rates"));
+			const successRates = page
+				.locator('[data-testid="success-rates"]')
+				.or(page.locator(".success-rates"));
 			if (await successRates.isVisible()) {
 				await expect(successRates).toBeVisible();
 			}
 
 			// Should display treatment duration analysis
-			const durationAnalysis = page.locator('[data-testid="duration-analysis"]').or(page.locator(".duration-analysis"));
+			const durationAnalysis = page
+				.locator('[data-testid="duration-analysis"]')
+				.or(page.locator(".duration-analysis"));
 			if (await durationAnalysis.isVisible()) {
 				await expect(durationAnalysis).toBeVisible();
 			}
@@ -357,13 +415,17 @@ test.describe("Dashboard Analytics - Treatment Analytics", () => {
 			await expect(treatmentTypeAnalytics).toBeVisible();
 
 			// Should show aesthetic treatment analytics
-			const aestheticAnalytics = page.locator("text=estético").or(page.locator("text=aesthetic"));
+			const aestheticAnalytics = page
+				.locator("text=estético")
+				.or(page.locator("text=aesthetic"));
 			if (await aestheticAnalytics.isVisible()) {
 				await expect(aestheticAnalytics).toBeVisible();
 			}
 
 			// Should display dermatological treatment analytics
-			const dermatologyAnalytics = page.locator("text=dermatológico").or(page.locator("text=dermatological"));
+			const dermatologyAnalytics = page
+				.locator("text=dermatológico")
+				.or(page.locator("text=dermatological"));
 			if (await dermatologyAnalytics.isVisible()) {
 				await expect(dermatologyAnalytics).toBeVisible();
 			}
@@ -403,7 +465,9 @@ test.describe("Dashboard Analytics - Treatment Analytics", () => {
 			}
 
 			// Should show ANVISA reporting compliance
-			const anvisaCompliance = page.locator("text=ANVISA").or(page.locator('[data-testid="anvisa-compliance"]'));
+			const anvisaCompliance = page
+				.locator("text=ANVISA")
+				.or(page.locator('[data-testid="anvisa-compliance"]'));
 			if (await anvisaCompliance.isVisible()) {
 				await expect(anvisaCompliance).toBeVisible();
 			}
@@ -412,7 +476,9 @@ test.describe("Dashboard Analytics - Treatment Analytics", () => {
 
 	test("should analyze treatment costs and ROI", async ({ page }) => {
 		// Look for cost analytics
-		const costAnalytics = page.locator('[data-testid="cost-analytics"]').or(page.locator(".cost-analytics"));
+		const costAnalytics = page
+			.locator('[data-testid="cost-analytics"]')
+			.or(page.locator(".cost-analytics"));
 		if (await costAnalytics.isVisible()) {
 			await expect(costAnalytics).toBeVisible();
 
@@ -425,7 +491,9 @@ test.describe("Dashboard Analytics - Treatment Analytics", () => {
 			}
 
 			// Should display ROI metrics
-			const roiMetrics = page.locator('[data-testid="roi-metrics"]').or(page.locator(".roi-metrics"));
+			const roiMetrics = page
+				.locator('[data-testid="roi-metrics"]')
+				.or(page.locator(".roi-metrics"));
 			if (await roiMetrics.isVisible()) {
 				await expect(roiMetrics).toBeVisible();
 			}
@@ -462,13 +530,17 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 			await financialAnalytics.click();
 
 			// Should display revenue charts
-			const revenueCharts = page.locator('[data-testid="revenue-charts"]').or(page.locator(".revenue-charts"));
+			const revenueCharts = page
+				.locator('[data-testid="revenue-charts"]')
+				.or(page.locator(".revenue-charts"));
 			if (await revenueCharts.isVisible()) {
 				await expect(revenueCharts).toBeVisible();
 			}
 
 			// Should show monthly revenue trends
-			const monthlyRevenue = page.locator('[data-testid="monthly-revenue"]').or(page.locator(".monthly-revenue"));
+			const monthlyRevenue = page
+				.locator('[data-testid="monthly-revenue"]')
+				.or(page.locator(".monthly-revenue"));
 			if (await monthlyRevenue.isVisible()) {
 				await expect(monthlyRevenue).toBeVisible();
 			}
@@ -485,18 +557,24 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 
 	test("should analyze payment methods and trends", async ({ page }) => {
 		// Look for payment analytics
-		const paymentAnalytics = page.locator('[data-testid="payment-analytics"]').or(page.locator(".payment-analytics"));
+		const paymentAnalytics = page
+			.locator('[data-testid="payment-analytics"]')
+			.or(page.locator(".payment-analytics"));
 		if (await paymentAnalytics.isVisible()) {
 			await expect(paymentAnalytics).toBeVisible();
 
 			// Should show PIX payment trends
-			const pixTrends = page.locator("text=PIX").or(page.locator('[data-testid="pix-trends"]'));
+			const pixTrends = page
+				.locator("text=PIX")
+				.or(page.locator('[data-testid="pix-trends"]'));
 			if (await pixTrends.isVisible()) {
 				await expect(pixTrends).toBeVisible();
 			}
 
 			// Should display credit card analytics
-			const cardAnalytics = page.locator("text=cartão").or(page.locator("text=card"));
+			const cardAnalytics = page
+				.locator("text=cartão")
+				.or(page.locator("text=card"));
 			if (await cardAnalytics.isVisible()) {
 				await expect(cardAnalytics).toBeVisible();
 			}
@@ -511,7 +589,9 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 		}
 	});
 
-	test("should track outstanding payments and collections", async ({ page }) => {
+	test("should track outstanding payments and collections", async ({
+		page,
+	}) => {
 		// Look for collections analytics
 		const collectionsAnalytics = page
 			.locator('[data-testid="collections-analytics"]')
@@ -528,7 +608,9 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 			}
 
 			// Should display aging analysis
-			const agingAnalysis = page.locator('[data-testid="aging-analysis"]').or(page.locator(".aging-analysis"));
+			const agingAnalysis = page
+				.locator('[data-testid="aging-analysis"]')
+				.or(page.locator(".aging-analysis"));
 			if (await agingAnalysis.isVisible()) {
 				await expect(agingAnalysis).toBeVisible();
 			}
@@ -543,7 +625,9 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 		}
 	});
 
-	test("should analyze insurance claims and reimbursements", async ({ page }) => {
+	test("should analyze insurance claims and reimbursements", async ({
+		page,
+	}) => {
 		// Look for insurance analytics
 		const insuranceAnalytics = page
 			.locator('[data-testid="insurance-analytics"]')
@@ -552,7 +636,9 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 			await expect(insuranceAnalytics).toBeVisible();
 
 			// Should show claims processing times
-			const claimsProcessing = page.locator('[data-testid="claims-processing"]').or(page.locator(".claims-processing"));
+			const claimsProcessing = page
+				.locator('[data-testid="claims-processing"]')
+				.or(page.locator(".claims-processing"));
 			if (await claimsProcessing.isVisible()) {
 				await expect(claimsProcessing).toBeVisible();
 			}
@@ -566,7 +652,9 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
 			}
 
 			// Should show denial rates and reasons
-			const denialRates = page.locator('[data-testid="denial-rates"]').or(page.locator(".denial-rates"));
+			const denialRates = page
+				.locator('[data-testid="denial-rates"]')
+				.or(page.locator(".denial-rates"));
 			if (await denialRates.isVisible()) {
 				await expect(denialRates).toBeVisible();
 			}
@@ -594,13 +682,17 @@ test.describe("Dashboard Analytics - Operational Analytics", () => {
 			await expect(appointmentAnalytics).toBeVisible();
 
 			// Should show appointment volume trends
-			const volumeTrends = page.locator('[data-testid="volume-trends"]').or(page.locator(".volume-trends"));
+			const volumeTrends = page
+				.locator('[data-testid="volume-trends"]')
+				.or(page.locator(".volume-trends"));
 			if (await volumeTrends.isVisible()) {
 				await expect(volumeTrends).toBeVisible();
 			}
 
 			// Should display no-show rates
-			const noShowRates = page.locator('[data-testid="no-show-rates"]').or(page.locator(".no-show-rates"));
+			const noShowRates = page
+				.locator('[data-testid="no-show-rates"]')
+				.or(page.locator(".no-show-rates"));
 			if (await noShowRates.isVisible()) {
 				await expect(noShowRates).toBeVisible();
 			}
@@ -617,7 +709,9 @@ test.describe("Dashboard Analytics - Operational Analytics", () => {
 
 	test("should track staff productivity metrics", async ({ page }) => {
 		// Look for staff analytics
-		const staffAnalytics = page.locator('[data-testid="staff-analytics"]').or(page.locator(".staff-analytics"));
+		const staffAnalytics = page
+			.locator('[data-testid="staff-analytics"]')
+			.or(page.locator(".staff-analytics"));
 		if (await staffAnalytics.isVisible()) {
 			await expect(staffAnalytics).toBeVisible();
 
@@ -630,7 +724,9 @@ test.describe("Dashboard Analytics - Operational Analytics", () => {
 			}
 
 			// Should display utilization rates
-			const utilizationRates = page.locator('[data-testid="utilization-rates"]').or(page.locator(".utilization-rates"));
+			const utilizationRates = page
+				.locator('[data-testid="utilization-rates"]')
+				.or(page.locator(".utilization-rates"));
 			if (await utilizationRates.isVisible()) {
 				await expect(utilizationRates).toBeVisible();
 			}
@@ -662,13 +758,17 @@ test.describe("Dashboard Analytics - Operational Analytics", () => {
 			}
 
 			// Should display room occupancy rates
-			const roomOccupancy = page.locator('[data-testid="room-occupancy"]').or(page.locator(".room-occupancy"));
+			const roomOccupancy = page
+				.locator('[data-testid="room-occupancy"]')
+				.or(page.locator(".room-occupancy"));
 			if (await roomOccupancy.isVisible()) {
 				await expect(roomOccupancy).toBeVisible();
 			}
 
 			// Should show capacity planning metrics
-			const capacityPlanning = page.locator('[data-testid="capacity-planning"]').or(page.locator(".capacity-planning"));
+			const capacityPlanning = page
+				.locator('[data-testid="capacity-planning"]')
+				.or(page.locator(".capacity-planning"));
 			if (await capacityPlanning.isVisible()) {
 				await expect(capacityPlanning).toBeVisible();
 			}
@@ -684,7 +784,9 @@ test.describe("Dashboard Analytics - Operational Analytics", () => {
 			await expect(efficiencyAnalytics).toBeVisible();
 
 			// Should show average wait times
-			const waitTimes = page.locator('[data-testid="wait-times"]').or(page.locator(".wait-times"));
+			const waitTimes = page
+				.locator('[data-testid="wait-times"]')
+				.or(page.locator(".wait-times"));
 			if (await waitTimes.isVisible()) {
 				await expect(waitTimes).toBeVisible();
 			}
@@ -724,7 +826,9 @@ test.describe("Dashboard Analytics - Performance & Accessibility", () => {
 		expect(loadTime).toBeLessThan(5000);
 
 		// Critical elements should be visible
-		await expect(page.locator('[data-testid="kpi-cards"]').or(page.locator(".kpi-cards"))).toBeVisible();
+		await expect(
+			page.locator('[data-testid="kpi-cards"]').or(page.locator(".kpi-cards")),
+		).toBeVisible();
 	});
 
 	test("should be keyboard accessible", async ({ page }) => {
@@ -763,11 +867,17 @@ test.describe("Dashboard Analytics - Performance & Accessibility", () => {
 		await page.waitForLoadState("networkidle");
 
 		// Check for chart accessibility
-		const charts = page.locator('[data-testid="analytics-charts"]').or(page.locator(".chart"));
+		const charts = page
+			.locator('[data-testid="analytics-charts"]')
+			.or(page.locator(".chart"));
 		if ((await charts.count()) > 0) {
 			const firstChart = charts.first();
 			const hasAriaLabel = await firstChart.evaluate((el) => {
-				return el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || el.getAttribute("role");
+				return (
+					el.getAttribute("aria-label") ||
+					el.getAttribute("aria-labelledby") ||
+					el.getAttribute("role")
+				);
 			});
 			expect(hasAriaLabel).toBeTruthy();
 		}
@@ -784,7 +894,9 @@ test.describe("Dashboard Analytics - Performance & Accessibility", () => {
 		await page.goto("/dashboard/analytics");
 
 		// Should be responsive
-		await expect(page.locator('[data-testid="kpi-cards"]').or(page.locator(".kpi-cards"))).toBeVisible();
+		await expect(
+			page.locator('[data-testid="kpi-cards"]').or(page.locator(".kpi-cards")),
+		).toBeVisible();
 
 		// Touch targets should be appropriate size
 		const analyticsButton = page

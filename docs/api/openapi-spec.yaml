@@ -3,28 +3,28 @@ info:
   title: NeonPro Healthcare AI Services API
   description: |
     Comprehensive API documentation for NeonPro Healthcare AI Services platform.
-    
+
     This API provides advanced AI-powered healthcare services including:
     - Universal AI Chat for patient interactions
     - Compliance automation for LGPD, ANVISA, and CFM regulations
     - No-show prediction and appointment optimization
     - Real-time monitoring and feature management
-    
+
     All services are designed with healthcare compliance in mind and include:
     - LGPD (Lei Geral de Proteção de Dados) compliance
     - ANVISA (Agência Nacional de Vigilância Sanitária) regulations
     - CFM (Conselho Federal de Medicina) guidelines
     - Comprehensive audit trails and data protection measures
-    
+
     ## Authentication
     All endpoints require Bearer token authentication using JWT tokens.
-    
+
     ## Rate Limiting
     API requests are rate limited to ensure system stability:
     - Standard endpoints: 1000 requests per minute
     - AI processing endpoints: 100 requests per minute
     - Compliance endpoints: 500 requests per minute
-    
+
     ## Healthcare Data Protection
     This API handles sensitive healthcare data and implements:
     - End-to-end encryption for all data transmission
@@ -32,7 +32,7 @@ info:
     - Data minimization principles
     - Patient consent tracking
     - Automatic data anonymization where applicable
-    
+
   version: 2.0.0
   contact:
     name: NeonPro API Support
@@ -59,13 +59,13 @@ paths:
       summary: Create new chat session
       description: |
         Creates a new AI chat session for patient interaction.
-        
+
         **Healthcare Compliance:**
         - Requires valid patient consent
         - Automatically applies LGPD data protection
         - Generates audit trail entry
         - Implements healthcare-specific content filtering
-        
+
       security:
         - bearerAuth: []
       requestBody:
@@ -122,7 +122,7 @@ paths:
                       type: boolean
                       description: Optional consent for anonymized analytics
       responses:
-        '200':
+        "200":
           description: Chat session created successfully
           content:
             application/json:
@@ -163,13 +163,13 @@ paths:
                             type: string
                             example: "audit-789"
                   metadata:
-                    $ref: '#/components/schemas/ApiMetadata'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '429':
-          $ref: '#/components/responses/RateLimitExceeded'
+                    $ref: "#/components/schemas/ApiMetadata"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimitExceeded"
 
   /api/ai/universal-chat/message:
     post:
@@ -178,14 +178,14 @@ paths:
       summary: Send message in chat session
       description: |
         Sends a message to an active AI chat session and receives an AI response.
-        
+
         **Healthcare Features:**
         - Automatic symptom detection and severity assessment
         - Emergency situation identification with escalation protocols
         - Medical terminology processing in Portuguese
         - Integration with patient medical history (when available)
         - Real-time compliance monitoring
-        
+
       security:
         - bearerAuth: []
       requestBody:
@@ -233,7 +233,7 @@ paths:
                       type: string
                       description: Client IP for audit purposes
       responses:
-        '200':
+        "200":
           description: AI response generated successfully
           content:
             application/json:
@@ -285,7 +285,7 @@ paths:
                             type: boolean
                             example: true
                   metadata:
-                    $ref: '#/components/schemas/ApiMetadata'
+                    $ref: "#/components/schemas/ApiMetadata"
 
   # Feature Flags Service
   /api/ai/feature-flags/evaluate:
@@ -295,13 +295,13 @@ paths:
       summary: Evaluate feature flag
       description: |
         Evaluates whether a feature flag should be enabled for a specific context.
-        
+
         **Use Cases:**
         - A/B testing for AI model variations
         - Gradual rollout of new healthcare features
         - Emergency feature disabling
         - User-specific feature access control
-        
+
       security:
         - bearerAuth: []
       requestBody:
@@ -342,7 +342,7 @@ paths:
                   description: Default value if flag cannot be evaluated
                   default: false
       responses:
-        '200':
+        "200":
           description: Feature flag evaluated successfully
           content:
             application/json:
@@ -382,13 +382,13 @@ paths:
       summary: Predict appointment no-show probability
       description: |
         Analyzes patient and appointment data to predict the likelihood of a no-show.
-        
+
         **Healthcare Applications:**
         - Optimize appointment scheduling
         - Implement proactive patient engagement
         - Reduce healthcare resource waste
         - Improve patient care continuity
-        
+
       security:
         - bearerAuth: []
       requestBody:
@@ -464,7 +464,7 @@ paths:
                       type: boolean
                       example: false
       responses:
-        '200':
+        "200":
           description: No-show prediction completed successfully
           content:
             application/json:
@@ -533,14 +533,14 @@ paths:
       summary: Optimize appointment scheduling
       description: |
         Uses AI to optimize appointment scheduling for maximum efficiency and patient satisfaction.
-        
+
         **Optimization Goals:**
         - Maximize healthcare provider utilization
         - Minimize patient wait times
         - Balance appointment types throughout the day
         - Consider no-show predictions
         - Respect patient preferences and constraints
-        
+
       security:
         - bearerAuth: []
       requestBody:
@@ -647,7 +647,7 @@ paths:
                             type: string
                             format: time
       responses:
-        '200':
+        "200":
           description: Appointment optimization completed successfully
           content:
             application/json:
@@ -717,14 +717,14 @@ paths:
       summary: Validate LGPD compliance
       description: |
         Validates operations against LGPD (Lei Geral de Proteção de Dados) requirements.
-        
+
         **LGPD Validation Areas:**
         - Data processing consent verification
         - Data minimization compliance
         - Purpose limitation adherence
         - Data subject rights implementation
         - Cross-border data transfer compliance
-        
+
       security:
         - bearerAuth: []
       requestBody:
@@ -786,7 +786,7 @@ paths:
                       type: boolean
                       example: false
       responses:
-        '200':
+        "200":
           description: LGPD compliance validation completed
           content:
             application/json:
@@ -886,18 +886,18 @@ paths:
       summary: Get all services health status
       description: |
         Retrieves the current health status of all AI services.
-        
+
         **Health Metrics:**
         - Service availability and response times
         - Error rates and success rates
         - Resource utilization
         - Dependency health
         - Recent performance trends
-        
+
       security:
         - bearerAuth: []
       responses:
-        '200':
+        "200":
           description: Services health retrieved successfully
           content:
             application/json:
@@ -1007,7 +1007,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             success: false
             error:
@@ -1025,7 +1025,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             success: false
             error:
@@ -1039,7 +1039,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             success: false
             error:
@@ -1058,15 +1058,15 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: |
-        JWT Bearer token authentication. 
-        
+        JWT Bearer token authentication.
+
         **Token Requirements:**
         - Valid JWT token with healthcare service claims
         - Must include user role and permissions
         - Tokens expire after 24 hours for security
         - Refresh tokens available for long-term access
-        
-        **Example:** 
+
+        **Example:**
         ```
         Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         ```

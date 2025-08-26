@@ -17,7 +17,13 @@ import type {
 	PerformanceMetrics,
 } from "@neonpro/types/ai-chat";
 import type React from "react";
-import { createContext, useCallback, useContext, useEffect, useReducer } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useReducer,
+} from "react";
 
 // Initial State
 const initialChatState: ChatState = {
@@ -78,7 +84,10 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 			return {
 				...state,
 				sessions: updatedSessions,
-				active_session_id: state.active_session_id === action.payload.session_id ? undefined : state.active_session_id,
+				active_session_id:
+					state.active_session_id === action.payload.session_id
+						? undefined
+						: state.active_session_id,
 			};
 		}
 
@@ -89,7 +98,10 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 					...state.sessions,
 					[action.payload.session_id]: {
 						...state.sessions[action.payload.session_id],
-						messages: [...state.sessions[action.payload.session_id].messages, action.payload.message],
+						messages: [
+							...state.sessions[action.payload.session_id].messages,
+							action.payload.message,
+						],
 						updated_at: new Date(),
 					},
 				},
@@ -103,7 +115,10 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 					...state.sessions,
 					[action.payload.session_id]: {
 						...state.sessions[action.payload.session_id],
-						messages: [...state.sessions[action.payload.session_id].messages, action.payload.message],
+						messages: [
+							...state.sessions[action.payload.session_id].messages,
+							action.payload.message,
+						],
 						updated_at: new Date(),
 					},
 				},
@@ -118,8 +133,11 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 					...state.sessions,
 					[action.payload.session_id]: {
 						...state.sessions[action.payload.session_id],
-						messages: state.sessions[action.payload.session_id].messages.map((msg) =>
-							msg.id === action.payload.message_id ? { ...msg, ...action.payload.updates } : msg
+						messages: state.sessions[action.payload.session_id].messages.map(
+							(msg) =>
+								msg.id === action.payload.message_id
+									? { ...msg, ...action.payload.updates }
+									: msg,
 						),
 						updated_at: new Date(),
 					},
@@ -140,14 +158,15 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 					...state.sessions,
 					[action.payload.session_id]: {
 						...state.sessions[action.payload.session_id],
-						messages: state.sessions[action.payload.session_id].messages.map((msg) =>
-							msg.id === action.payload.message_id
-								? {
-										...msg,
-										content: msg.content + action.payload.chunk,
-										streaming: true,
-									}
-								: msg
+						messages: state.sessions[action.payload.session_id].messages.map(
+							(msg) =>
+								msg.id === action.payload.message_id
+									? {
+											...msg,
+											content: msg.content + action.payload.chunk,
+											streaming: true,
+										}
+									: msg,
 						),
 						updated_at: new Date(),
 					},
@@ -162,8 +181,11 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 					...state.sessions,
 					[action.payload.session_id]: {
 						...state.sessions[action.payload.session_id],
-						messages: state.sessions[action.payload.session_id].messages.map((msg) =>
-							msg.id === action.payload.message_id ? { ...msg, streaming: false, status: "delivered" } : msg
+						messages: state.sessions[action.payload.session_id].messages.map(
+							(msg) =>
+								msg.id === action.payload.message_id
+									? { ...msg, streaming: false, status: "delivered" }
+									: msg,
 						),
 						updated_at: new Date(),
 					},
@@ -239,7 +261,10 @@ type ChatContextType = {
 	setActiveSession: (sessionId: string) => void;
 
 	// Message Management
-	sendMessage: (content: string, type?: "text" | "voice" | "image") => Promise<void>;
+	sendMessage: (
+		content: string,
+		type?: "text" | "voice" | "image",
+	) => Promise<void>;
 	streamMessage: (content: string) => Promise<void>;
 
 	// Configuration
@@ -307,7 +332,7 @@ export function ChatProvider({
 				throw error;
 			}
 		},
-		[apiBaseUrl]
+		[apiBaseUrl],
 	);
 
 	const endSession = useCallback(
@@ -323,7 +348,7 @@ export function ChatProvider({
 				throw error;
 			}
 		},
-		[apiBaseUrl]
+		[apiBaseUrl],
 	);
 
 	const setActiveSession = useCallback(
@@ -335,12 +360,15 @@ export function ChatProvider({
 				});
 			}
 		},
-		[state.sessions]
+		[state.sessions],
 	);
 
 	// Message Management
 	const sendMessage = useCallback(
-		async (content: string, type: "text" | "voice" | "image" = "text"): Promise<void> => {
+		async (
+			content: string,
+			type: "text" | "voice" | "image" = "text",
+		): Promise<void> => {
 			if (!state.active_session_id) {
 				throw new Error("No active session");
 			}
@@ -394,7 +422,7 @@ export function ChatProvider({
 				throw error;
 			}
 		},
-		[state.active_session_id, apiBaseUrl]
+		[state.active_session_id, apiBaseUrl],
 	);
 
 	const streamMessage = useCallback(
@@ -431,7 +459,10 @@ export function ChatProvider({
 
 			dispatch({
 				type: "RECEIVE_MESSAGE",
-				payload: { session_id: state.active_session_id, message: assistantMessage },
+				payload: {
+					session_id: state.active_session_id,
+					message: assistantMessage,
+				},
 			});
 
 			try {
@@ -490,7 +521,7 @@ export function ChatProvider({
 				throw error;
 			}
 		},
-		[state.active_session_id, apiBaseUrl]
+		[state.active_session_id, apiBaseUrl],
 	);
 
 	// Configuration
@@ -502,7 +533,7 @@ export function ChatProvider({
 		(interfaceType: ChatInterface) => {
 			updateConfig({ interface_type: interfaceType });
 		},
-		[updateConfig]
+		[updateConfig],
 	);
 
 	// AI Features
@@ -516,7 +547,9 @@ export function ChatProvider({
 
 	// Utilities
 	const getCurrentSession = useCallback((): ChatSession | null => {
-		return state.active_session_id ? state.sessions[state.active_session_id] || null : null;
+		return state.active_session_id
+			? state.sessions[state.active_session_id] || null
+			: null;
 	}, [state.active_session_id, state.sessions]);
 
 	const getSessionHistory = useCallback(
@@ -524,7 +557,7 @@ export function ChatProvider({
 			const id = sessionId || state.active_session_id;
 			return id ? state.sessions[id]?.messages || [] : [];
 		},
-		[state.active_session_id, state.sessions]
+		[state.active_session_id, state.sessions],
 	);
 
 	const isConnected = useCallback((): boolean => {
@@ -537,10 +570,18 @@ export function ChatProvider({
 
 	// Auto-connect effect
 	useEffect(() => {
-		if (!state.active_session_id && state.connection_status === "disconnected") {
+		if (
+			!state.active_session_id &&
+			state.connection_status === "disconnected"
+		) {
 			startSession(state.config.interface_type).catch(console.error);
 		}
-	}, [startSession, state.active_session_id, state.connection_status, state.config.interface_type]);
+	}, [
+		startSession,
+		state.active_session_id,
+		state.connection_status,
+		state.config.interface_type,
+	]);
 
 	const contextValue: ChatContextType = {
 		state,
@@ -560,7 +601,9 @@ export function ChatProvider({
 		hasActiveSession,
 	};
 
-	return <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>;
+	return (
+		<ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>
+	);
 }
 
 // Hook

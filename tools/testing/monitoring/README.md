@@ -1,10 +1,12 @@
 # 📈 NeonPro Production Monitoring System
 
-Sistema abrangente de monitoramento de produção para garantir máxima qualidade e disponibilidade do sistema NeonPro em ambiente healthcare.
+Sistema abrangente de monitoramento de produção para garantir máxima qualidade e disponibilidade do
+sistema NeonPro em ambiente healthcare.
 
 ## 🎯 Objetivos do Sistema
 
 ### Monitoramento Contínuo
+
 - ✅ **Health Checks**: Verificações automáticas de saúde do sistema
 - ✅ **Real-time Metrics**: Coleta de métricas em tempo real
 - ✅ **Automated Alerting**: Alertas automáticos via Slack/Email/PagerDuty
@@ -12,6 +14,7 @@ Sistema abrangente de monitoramento de produção para garantir máxima qualidad
 - ✅ **Compliance Monitoring**: Verificação contínua de compliance LGPD/ANVISA
 
 ### Dashboard Interativo
+
 - 📊 **Live Dashboard**: Interface em tempo real com WebSocket
 - 📈 **Metrics Visualization**: Gráficos e charts interativos
 - 🚨 **Alert Management**: Gestão centralizada de alertas
@@ -31,6 +34,7 @@ monitoring/
 ```
 
 ### Stack Tecnológico
+
 - **Backend**: Express.js + Socket.IO + Node-cron
 - **Frontend**: React + Recharts + Tailwind CSS
 - **Database**: Supabase (PostgreSQL)
@@ -40,6 +44,7 @@ monitoring/
 ## 🚀 Instalação e Configuração
 
 ### 1. Pré-requisitos
+
 ```bash
 # Node.js 18+ e PNPM instalados
 node --version  # >= 18.0.0
@@ -53,6 +58,7 @@ EMAIL_ALERTS_ENABLED=true (opcional)
 ```
 
 ### 2. Instalação
+
 ```bash
 # Navegar para o diretório de monitoramento
 cd tools/testing/monitoring
@@ -65,6 +71,7 @@ npm run health:check
 ```
 
 ### 3. Inicialização
+
 ```bash
 # Desenvolvimento (com hot reload)
 npm run monitor:dev
@@ -79,6 +86,7 @@ pm2 start production-monitor.ts --name "neonpro-monitor"
 ## 📊 Sistema de Métricas
 
 ### Métricas Coletadas
+
 - **Coverage**: Cobertura de testes (%)
 - **Performance**: Score de performance (Core Web Vitals)
 - **Security**: Score de segurança (vulnerabilidades)
@@ -86,6 +94,7 @@ pm2 start production-monitor.ts --name "neonpro-monitor"
 - **Usage**: Métricas de uso do sistema (%)
 
 ### Health Checks
+
 - 🗄️ **Database**: Conectividade e latência Supabase
 - 🌐 **API Endpoints**: Disponibilidade e tempo de resposta
 - 📁 **File System**: Acesso a diretórios críticos
@@ -97,12 +106,14 @@ pm2 start production-monitor.ts --name "neonpro-monitor"
 ## 🚨 Sistema de Alertas
 
 ### Níveis de Alerta
+
 - 🔵 **Info**: Informativo (mudanças de estado)
 - 🟡 **Warning**: Atenção necessária (degradação)
 - 🔴 **Error**: Problema identificado (falha parcial)
 - 🚨 **Critical**: Situação crítica (falha total)
 
 ### Thresholds Configurados
+
 ```json
 {
   "healthScore": {
@@ -121,6 +132,7 @@ pm2 start production-monitor.ts --name "neonpro-monitor"
 ```
 
 ### Canais de Notificação
+
 - 📧 **Email**: Alertas críticos para equipe de ops
 - 💬 **Slack**: Notificações em tempo real
 - 📟 **PagerDuty**: Alertas críticos 24/7
@@ -129,6 +141,7 @@ pm2 start production-monitor.ts --name "neonpro-monitor"
 ## 📱 Dashboard Interativo
 
 ### Acesso
+
 ```bash
 # Abrir dashboard no browser
 npm run dashboard:open
@@ -137,12 +150,14 @@ open http://localhost:3003/static
 ```
 
 ### Funcionalidades
+
 - **Overview**: Status geral e métricas principais
 - **Metrics**: Gráficos detalhados de todas as métricas
 - **Alerts**: Lista de alertas ativos e histórico
 - **Health**: Status detalhado de saúde do sistema
 
 ### Real-time Updates
+
 - 📡 **WebSocket**: Atualizações automáticas via Socket.IO
 - 🔄 **Auto-refresh**: Dados atualizados a cada 30 segundos
 - 📊 **Live Charts**: Gráficos com dados em tempo real
@@ -150,6 +165,7 @@ open http://localhost:3003/static
 ## 🛠️ Scripts Disponíveis
 
 ### Monitoramento
+
 ```bash
 npm run monitor:start      # Iniciar monitor
 npm run monitor:dev        # Modo desenvolvimento
@@ -159,12 +175,14 @@ npm run monitor:status     # Status do monitor
 ```
 
 ### Health Checks
+
 ```bash
 npm run health:check       # Check único
 npm run health:watch       # Check contínuo (30s)
 ```
 
 ### Alertas e Métricas
+
 ```bash
 npm run alerts:list        # Listar todos os alertas
 npm run alerts:critical    # Apenas alertas críticos
@@ -173,12 +191,14 @@ npm run metrics:coverage   # Métricas de coverage
 ```
 
 ### Relatórios
+
 ```bash
 npm run reports:generate   # Gerar relatório de produção
 npm run dashboard:open     # Abrir dashboard
 ```
 
 ### Testes
+
 ```bash
 npm run test:monitor       # Testar sistema de monitoramento
 npm run test:health        # Testar health checks
@@ -187,16 +207,19 @@ npm run test:health        # Testar health checks
 ## 📈 Monitoramento de Performance
 
 ### Core Web Vitals
+
 - **LCP** (Largest Contentful Paint): < 2.5s
 - **FID** (First Input Delay): < 100ms
 - **CLS** (Cumulative Layout Shift): < 0.1
 
 ### Backend Performance
+
 - **Response Time**: < 1000ms (warning), < 5000ms (critical)
 - **Memory Usage**: < 80% (warning), < 95% (critical)
 - **Database Latency**: < 100ms (healthy), < 500ms (degraded)
 
 ### Availability Targets
+
 - **Uptime**: 99.9% (8.76h downtime/year)
 - **API Availability**: 99.95%
 - **Database Availability**: 99.99%
@@ -204,6 +227,7 @@ npm run test:health        # Testar health checks
 ## 🔧 Configuração Avançada
 
 ### Environment Variables
+
 ```bash
 # Obrigatórias
 NEXT_PUBLIC_SUPABASE_URL=
@@ -218,6 +242,7 @@ LOG_LEVEL=info              # Nível de log
 ```
 
 ### Personalização de Thresholds
+
 Editar `package.json` seção `monitoring.alertThresholds`:
 
 ```json
@@ -235,6 +260,7 @@ Editar `package.json` seção `monitoring.alertThresholds`:
 ### Integração com Ferramentas Externas
 
 #### Slack Integration
+
 ```bash
 # 1. Criar Slack App com Incoming Webhooks
 # 2. Configurar webhook URL
@@ -244,6 +270,7 @@ export SLACK_WEBHOOK_URL="https://hooks.slack.com/..."
 ```
 
 #### Email Alerts
+
 ```bash
 # Configurar SMTP (implementar em production-monitor.ts)
 export EMAIL_SMTP_HOST="smtp.gmail.com"
@@ -254,18 +281,21 @@ export EMAIL_SMTP_PASS="app_password"
 ## 📋 Compliance e Auditoria
 
 ### LGPD Monitoring
+
 - ✅ **Consent Tracking**: Monitoramento de consentimentos
 - ✅ **Data Access Logs**: Log de acesso a dados pessoais
 - ✅ **Breach Detection**: Detecção de vazamentos
 - ✅ **Retention Compliance**: Verificação de políticas de retenção
 
 ### ANVISA Compliance
+
 - ✅ **Equipment Monitoring**: Status de equipamentos médicos
 - ✅ **Procedure Logs**: Auditoria de procedimentos
 - ✅ **Documentation**: Rastreamento de documentação
 - ✅ **Quality Metrics**: Métricas de qualidade assistencial
 
 ### Audit Trail
+
 - 📝 **All Actions Logged**: Todas as ações são logadas
 - 🔒 **Immutable Logs**: Logs imutáveis para auditoria
 - 📊 **Compliance Reports**: Relatórios automáticos de compliance
@@ -274,6 +304,7 @@ export EMAIL_SMTP_PASS="app_password"
 ## 🚀 Deployment
 
 ### Produção com PM2
+
 ```bash
 # Instalar PM2 globalmente
 npm install -g pm2
@@ -291,6 +322,7 @@ pm2 logs neonpro-monitor
 ```
 
 ### Docker Deployment
+
 ```dockerfile
 # Dockerfile para containerização
 FROM node:18-alpine
@@ -303,6 +335,7 @@ CMD ["npm", "run", "monitor:start"]
 ```
 
 ### Kubernetes Deployment
+
 ```yaml
 # k8s-deployment.yaml
 apiVersion: apps/v1
@@ -320,15 +353,16 @@ spec:
         app: neonpro-monitor
     spec:
       containers:
-      - name: monitor
-        image: neonpro/monitor:latest
-        ports:
-        - containerPort: 3003
+        - name: monitor
+          image: neonpro/monitor:latest
+          ports:
+            - containerPort: 3003
 ```
 
 ## 📞 Suporte e Troubleshooting
 
 ### Logs e Debugging
+
 ```bash
 # Verificar logs do monitor
 pm2 logs neonpro-monitor
@@ -346,6 +380,7 @@ DEBUG=* npm run monitor:dev
 ### Problemas Comuns
 
 #### Monitor não inicia
+
 ```bash
 # Verificar porta em uso
 lsof -i :3003
@@ -358,6 +393,7 @@ npm audit
 ```
 
 #### Dashboard não conecta
+
 ```bash
 # Verificar WebSocket
 curl -I http://localhost:3003/socket.io/
@@ -367,6 +403,7 @@ telnet localhost 3003
 ```
 
 #### Alertas não chegam
+
 ```bash
 # Verificar configuração Slack
 curl -X POST -H 'Content-type: application/json' \
@@ -379,6 +416,7 @@ pm2 logs neonpro-monitor --err
 ## 🔄 Roadmap
 
 ### Próximas Features
+
 - [ ] **Machine Learning**: Predição de falhas
 - [ ] **Auto-scaling**: Scaling automático baseado em métricas
 - [ ] **A/B Testing**: Monitoramento de experimentos
@@ -386,6 +424,7 @@ pm2 logs neonpro-monitor --err
 - [ ] **Security Scanning**: Scanning automático de vulnerabilidades
 
 ### Integrações Planejadas
+
 - [ ] **Grafana**: Dashboards avançados
 - [ ] **Prometheus**: Coleta de métricas
 - [ ] **Datadog**: APM completo
@@ -397,6 +436,7 @@ pm2 logs neonpro-monitor --err
 ## 📚 Documentação Técnica
 
 Para informações técnicas detalhadas, consulte:
+
 - `/docs/architecture.md` - Arquitetura completa
 - `/docs/api-reference.md` - Referência da API
 - `/tools/testing/README.md` - Documentação de testes
@@ -404,6 +444,7 @@ Para informações técnicas detalhadas, consulte:
 ## 🤝 Contribuindo
 
 Para contribuir com melhorias no sistema de monitoramento:
+
 1. Fork do repositório
 2. Criar branch feature
 3. Implementar melhorias

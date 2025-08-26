@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type Mock,
+	vi,
+} from "vitest";
 import { EnhancedAIService } from "../services/enhanced-service-base";
 import type {
 	AIServiceConfig,
@@ -56,23 +64,47 @@ class MockLoggerService implements LoggerService {
 
 class MockMetricsService implements MetricsService {
 	metrics: ServiceMetrics[] = [];
-	counters: Array<{ name: string; value: number; labels?: Record<string, string> }> = [];
-	gauges: Array<{ name: string; value: number; labels?: Record<string, string> }> = [];
-	histograms: Array<{ name: string; value: number; labels?: Record<string, string> }> = [];
+	counters: Array<{
+		name: string;
+		value: number;
+		labels?: Record<string, string>;
+	}> = [];
+	gauges: Array<{
+		name: string;
+		value: number;
+		labels?: Record<string, string>;
+	}> = [];
+	histograms: Array<{
+		name: string;
+		value: number;
+		labels?: Record<string, string>;
+	}> = [];
 
 	async recordMetric(metric: ServiceMetrics): Promise<void> {
 		this.metrics.push(metric);
 	}
 
-	async recordCounter(name: string, value = 1, labels?: Record<string, string>): Promise<void> {
+	async recordCounter(
+		name: string,
+		value = 1,
+		labels?: Record<string, string>,
+	): Promise<void> {
 		this.counters.push({ name, value, labels });
 	}
 
-	async recordGauge(name: string, value: number, labels?: Record<string, string>): Promise<void> {
+	async recordGauge(
+		name: string,
+		value: number,
+		labels?: Record<string, string>,
+	): Promise<void> {
 		this.gauges.push({ name, value, labels });
 	}
 
-	async recordHistogram(name: string, value: number, labels?: Record<string, string>): Promise<void> {
+	async recordHistogram(
+		name: string,
+		value: number,
+		labels?: Record<string, string>,
+	): Promise<void> {
 		this.histograms.push({ name, value, labels });
 	}
 }
@@ -88,7 +120,10 @@ class MockDatabaseService implements Partial<DatabaseService> {
 }
 
 // Test implementation of EnhancedAIService
-class TestAIService extends EnhancedAIService<{ input: string }, { output: string }> {
+class TestAIService extends EnhancedAIService<
+	{ input: string },
+	{ output: string }
+> {
 	protected serviceId = "test-service";
 	protected version = "1.0.0";
 	protected description = "Test AI service";
@@ -149,7 +184,9 @@ describe("EnhancedAIService", () => {
 		});
 
 		it("should handle errors gracefully", async () => {
-			await expect(service.executeWithMetrics({ input: "error" })).rejects.toThrow("Test error");
+			await expect(
+				service.executeWithMetrics({ input: "error" }),
+			).rejects.toThrow("Test error");
 		});
 
 		it("should record metrics for successful execution", async () => {
@@ -237,7 +274,9 @@ describe("EnhancedAIService", () => {
 			expect(infoLogs.length).toBeGreaterThan(0);
 
 			const hasExecutionLog = infoLogs.some(
-				(log) => log.message.includes("Service execution") || log.message.includes("completed")
+				(log) =>
+					log.message.includes("Service execution") ||
+					log.message.includes("completed"),
 			);
 			expect(hasExecutionLog).toBe(true);
 		});
@@ -308,7 +347,9 @@ describe("EnhancedAIService", () => {
 			await rateLimitedService.executeWithMetrics({ input: "test2" });
 
 			// Third request should be rate limited
-			await expect(rateLimitedService.executeWithMetrics({ input: "test3" })).rejects.toThrow(/rate limit/i);
+			await expect(
+				rateLimitedService.executeWithMetrics({ input: "test3" }),
+			).rejects.toThrow(/rate limit/i);
 		});
 	});
 
@@ -352,7 +393,9 @@ describe("EnhancedAIService", () => {
 			const health = await (service as any).checkHealth();
 
 			expect(health.status).toBe("degraded");
-			expect(health.issues).toContainEqual(expect.objectContaining({ type: "cache_error" }));
+			expect(health.issues).toContainEqual(
+				expect.objectContaining({ type: "cache_error" }),
+			);
 		});
 	});
 
@@ -365,7 +408,10 @@ describe("EnhancedAIService", () => {
 			};
 
 			// Execute with all features
-			const result = await service.executeWithMetrics({ input: "complex" }, context);
+			const result = await service.executeWithMetrics(
+				{ input: "complex" },
+				context,
+			);
 
 			// Verify result
 			expect(result).toEqual({ output: "COMPLEX" });
@@ -394,7 +440,13 @@ describe("EnhancedAIService", () => {
 
 			const results = await Promise.all(promises);
 
-			expect(results).toEqual([{ output: "CONCURRENT1" }, { output: "CONCURRENT2" }, { output: "CONCURRENT3" }]);
+			expect(results).toEqual([
+				{ output: "CONCURRENT1" },
+				{ output: "CONCURRENT2" },
+				{
+					output: "CONCURRENT3",
+				},
+			]);
 
 			expect(mockMetrics.metrics).toHaveLength(3);
 		});
@@ -470,11 +522,17 @@ describe("EnhancedAIService utilities", () => {
 			const service = new TestAIService();
 
 			// Valid input
-			expect(() => (service as any).validateInput({ input: "valid" })).not.toThrow();
+			expect(() =>
+				(service as any).validateInput({ input: "valid" }),
+			).not.toThrow();
 
 			// Invalid input
-			expect(() => (service as any).validateInput(null)).toThrow(/invalid input/i);
-			expect(() => (service as any).validateInput({})).toThrow(/missing required/i);
+			expect(() => (service as any).validateInput(null)).toThrow(
+				/invalid input/i,
+			);
+			expect(() => (service as any).validateInput({})).toThrow(
+				/missing required/i,
+			);
 		});
 	});
 });

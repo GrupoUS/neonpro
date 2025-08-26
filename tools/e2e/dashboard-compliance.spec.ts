@@ -13,26 +13,36 @@ test.describe("Dashboard Compliance Page", () => {
 	});
 
 	test.describe("Compliance Overview", () => {
-		test("should display compliance dashboard with key metrics", async ({ page }) => {
+		test("should display compliance dashboard with key metrics", async ({
+			page,
+		}) => {
 			// Check page title and navigation
 			await expect(page).toHaveTitle(/Compliance.*NeonPro/);
 			await expect(page.locator("h1")).toContainText("Compliance Dashboard");
 
 			// Verify compliance metrics cards
-			await expect(page.locator('[data-testid="compliance-score"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="compliance-score"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="anvisa-status"]')).toBeVisible();
-			await expect(page.locator('[data-testid="lgpd-compliance"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="lgpd-compliance"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="audit-alerts"]')).toBeVisible();
 
 			// Check compliance score display
-			const complianceScore = page.locator('[data-testid="compliance-score-value"]');
+			const complianceScore = page.locator(
+				'[data-testid="compliance-score-value"]',
+			);
 			await expect(complianceScore).toBeVisible();
 			await expect(complianceScore).toContainText(/%/);
 		});
 
 		test("should show compliance status indicators", async ({ page }) => {
 			// ANVISA compliance status
-			const anvisaStatus = page.locator('[data-testid="anvisa-status-indicator"]');
+			const anvisaStatus = page.locator(
+				'[data-testid="anvisa-status-indicator"]',
+			);
 			await expect(anvisaStatus).toBeVisible();
 
 			// LGPD compliance status
@@ -40,11 +50,15 @@ test.describe("Dashboard Compliance Page", () => {
 			await expect(lgpdStatus).toBeVisible();
 
 			// Professional licenses status
-			const licensesStatus = page.locator('[data-testid="licenses-status-indicator"]');
+			const licensesStatus = page.locator(
+				'[data-testid="licenses-status-indicator"]',
+			);
 			await expect(licensesStatus).toBeVisible();
 
 			// Data security status
-			const securityStatus = page.locator('[data-testid="security-status-indicator"]');
+			const securityStatus = page.locator(
+				'[data-testid="security-status-indicator"]',
+			);
 			await expect(securityStatus).toBeVisible();
 		});
 
@@ -56,9 +70,15 @@ test.describe("Dashboard Compliance Page", () => {
 			const alertItems = page.locator('[data-testid="alert-item"]');
 			if ((await alertItems.count()) > 0) {
 				await expect(alertItems.first()).toBeVisible();
-				await expect(alertItems.first().locator('[data-testid="alert-severity"]')).toBeVisible();
-				await expect(alertItems.first().locator('[data-testid="alert-message"]')).toBeVisible();
-				await expect(alertItems.first().locator('[data-testid="alert-timestamp"]')).toBeVisible();
+				await expect(
+					alertItems.first().locator('[data-testid="alert-severity"]'),
+				).toBeVisible();
+				await expect(
+					alertItems.first().locator('[data-testid="alert-message"]'),
+				).toBeVisible();
+				await expect(
+					alertItems.first().locator('[data-testid="alert-timestamp"]'),
+				).toBeVisible();
 			}
 		});
 	});
@@ -69,13 +89,19 @@ test.describe("Dashboard Compliance Page", () => {
 			await expect(anvisaSection).toBeVisible();
 
 			// Check ANVISA registration status
-			await expect(page.locator('[data-testid="anvisa-registration"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="anvisa-registration"]'),
+			).toBeVisible();
 
 			// Check adverse events reporting
-			await expect(page.locator('[data-testid="adverse-events-section"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="adverse-events-section"]'),
+			).toBeVisible();
 
 			// Check equipment compliance
-			await expect(page.locator('[data-testid="equipment-compliance"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="equipment-compliance"]'),
+			).toBeVisible();
 		});
 
 		test("should handle adverse events reporting", async ({ page }) => {
@@ -92,17 +118,25 @@ test.describe("Dashboard Compliance Page", () => {
 			// Fill adverse event form
 			await page.fill('[data-testid="patient-id-input"]', "12345678901");
 			await page.selectOption('[data-testid="event-severity"]', "moderate");
-			await page.fill('[data-testid="event-description"]', "Test adverse event description");
-			await page.selectOption('[data-testid="event-category"]', "allergic_reaction");
+			await page.fill(
+				'[data-testid="event-description"]',
+				"Test adverse event description",
+			);
+			await page.selectOption(
+				'[data-testid="event-category"]',
+				"allergic_reaction",
+			);
 
 			// Submit form
 			await page.click('[data-testid="submit-adverse-event"]');
 
 			// Verify success message
-			await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="success-message"]')).toContainText(
-				"Adverse event reported successfully"
-			);
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toContainText("Adverse event reported successfully");
 		});
 
 		test("should validate ANVISA equipment compliance", async ({ page }) => {
@@ -117,10 +151,18 @@ test.describe("Dashboard Compliance Page", () => {
 			const equipmentRows = page.locator('[data-testid="equipment-row"]');
 			if ((await equipmentRows.count()) > 0) {
 				const firstRow = equipmentRows.first();
-				await expect(firstRow.locator('[data-testid="equipment-name"]')).toBeVisible();
-				await expect(firstRow.locator('[data-testid="anvisa-registration"]')).toBeVisible();
-				await expect(firstRow.locator('[data-testid="compliance-status"]')).toBeVisible();
-				await expect(firstRow.locator('[data-testid="last-inspection"]')).toBeVisible();
+				await expect(
+					firstRow.locator('[data-testid="equipment-name"]'),
+				).toBeVisible();
+				await expect(
+					firstRow.locator('[data-testid="anvisa-registration"]'),
+				).toBeVisible();
+				await expect(
+					firstRow.locator('[data-testid="compliance-status"]'),
+				).toBeVisible();
+				await expect(
+					firstRow.locator('[data-testid="last-inspection"]'),
+				).toBeVisible();
 			}
 		});
 	});
@@ -131,17 +173,27 @@ test.describe("Dashboard Compliance Page", () => {
 			await page.click('[data-testid="lgpd-tab"]');
 
 			// Check LGPD metrics
-			await expect(page.locator('[data-testid="data-processing-activities"]')).toBeVisible();
-			await expect(page.locator('[data-testid="consent-status"]')).toBeVisible();
-			await expect(page.locator('[data-testid="data-subject-requests"]')).toBeVisible();
-			await expect(page.locator('[data-testid="data-retention-status"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="data-processing-activities"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="consent-status"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="data-subject-requests"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="data-retention-status"]'),
+			).toBeVisible();
 		});
 
 		test("should handle data subject requests", async ({ page }) => {
 			await page.click('[data-testid="lgpd-tab"]');
 
 			// Check data subject requests section
-			const requestsSection = page.locator('[data-testid="data-subject-requests-section"]');
+			const requestsSection = page.locator(
+				'[data-testid="data-subject-requests-section"]',
+			);
 			await expect(requestsSection).toBeVisible();
 
 			// Test new data request
@@ -150,14 +202,21 @@ test.describe("Dashboard Compliance Page", () => {
 			// Fill request form
 			await page.fill('[data-testid="requester-cpf"]', "12345678901");
 			await page.selectOption('[data-testid="request-type"]', "data_access");
-			await page.fill('[data-testid="request-description"]', "Request for personal data access");
+			await page.fill(
+				'[data-testid="request-description"]',
+				"Request for personal data access",
+			);
 
 			// Submit request
 			await page.click('[data-testid="submit-data-request"]');
 
 			// Verify request created
-			await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="success-message"]')).toContainText("Data subject request created");
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toContainText("Data subject request created");
 		});
 
 		test("should manage consent tracking", async ({ page }) => {
@@ -171,18 +230,29 @@ test.describe("Dashboard Compliance Page", () => {
 			await expect(consentTable).toBeVisible();
 
 			// Check consent statistics
-			await expect(page.locator('[data-testid="active-consents"]')).toBeVisible();
-			await expect(page.locator('[data-testid="expired-consents"]')).toBeVisible();
-			await expect(page.locator('[data-testid="withdrawn-consents"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="active-consents"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="expired-consents"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="withdrawn-consents"]'),
+			).toBeVisible();
 
 			// Test consent filtering
-			await page.selectOption('[data-testid="consent-status-filter"]', "active");
+			await page.selectOption(
+				'[data-testid="consent-status-filter"]',
+				"active",
+			);
 			await page.waitForTimeout(1000); // Wait for filter to apply
 
 			// Verify filtered results
 			const filteredRows = page.locator('[data-testid="consent-row"]');
 			if ((await filteredRows.count()) > 0) {
-				await expect(filteredRows.first().locator('[data-testid="consent-status"]')).toContainText("Active");
+				await expect(
+					filteredRows.first().locator('[data-testid="consent-status"]'),
+				).toContainText("Active");
 			}
 		});
 	});
@@ -197,11 +267,21 @@ test.describe("Dashboard Compliance Page", () => {
 			await expect(auditTable).toBeVisible();
 
 			// Check audit entry columns
-			await expect(page.locator('[data-testid="audit-timestamp-header"]')).toBeVisible();
-			await expect(page.locator('[data-testid="audit-user-header"]')).toBeVisible();
-			await expect(page.locator('[data-testid="audit-action-header"]')).toBeVisible();
-			await expect(page.locator('[data-testid="audit-resource-header"]')).toBeVisible();
-			await expect(page.locator('[data-testid="audit-details-header"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="audit-timestamp-header"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="audit-user-header"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="audit-action-header"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="audit-resource-header"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="audit-details-header"]'),
+			).toBeVisible();
 		});
 
 		test("should filter audit trail by date range", async ({ page }) => {
@@ -211,8 +291,14 @@ test.describe("Dashboard Compliance Page", () => {
 			const today = new Date();
 			const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-			await page.fill('[data-testid="audit-start-date"]', lastWeek.toISOString().split("T")[0]);
-			await page.fill('[data-testid="audit-end-date"]', today.toISOString().split("T")[0]);
+			await page.fill(
+				'[data-testid="audit-start-date"]',
+				lastWeek.toISOString().split("T")[0],
+			);
+			await page.fill(
+				'[data-testid="audit-end-date"]',
+				today.toISOString().split("T")[0],
+			);
 
 			// Apply filter
 			await page.click('[data-testid="apply-audit-filter"]');
@@ -231,7 +317,10 @@ test.describe("Dashboard Compliance Page", () => {
 			await page.click('[data-testid="audit-trail-tab"]');
 
 			// Filter by action type
-			await page.selectOption('[data-testid="audit-action-filter"]', "patient_access");
+			await page.selectOption(
+				'[data-testid="audit-action-filter"]',
+				"patient_access",
+			);
 
 			// Filter by user (if available)
 			const userFilter = page.locator('[data-testid="audit-user-filter"]');
@@ -248,7 +337,9 @@ test.describe("Dashboard Compliance Page", () => {
 			// Verify filtered results show correct action type
 			const auditEntries = page.locator('[data-testid="audit-entry"]');
 			if ((await auditEntries.count()) > 0) {
-				await expect(auditEntries.first().locator('[data-testid="audit-action"]')).toContainText("patient_access");
+				await expect(
+					auditEntries.first().locator('[data-testid="audit-action"]'),
+				).toContainText("patient_access");
 			}
 		});
 
@@ -275,9 +366,15 @@ test.describe("Dashboard Compliance Page", () => {
 			await expect(licensesTable).toBeVisible();
 
 			// Check license status indicators
-			await expect(page.locator('[data-testid="active-licenses-count"]')).toBeVisible();
-			await expect(page.locator('[data-testid="expiring-licenses-count"]')).toBeVisible();
-			await expect(page.locator('[data-testid="expired-licenses-count"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="active-licenses-count"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="expiring-licenses-count"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="expired-licenses-count"]'),
+			).toBeVisible();
 		});
 
 		test("should handle license renewal alerts", async ({ page }) => {
@@ -290,9 +387,15 @@ test.describe("Dashboard Compliance Page", () => {
 				await expiringLicenses.first().click();
 
 				// Check renewal options
-				await expect(page.locator('[data-testid="renewal-options"]')).toBeVisible();
-				await expect(page.locator('[data-testid="renewal-deadline"]')).toBeVisible();
-				await expect(page.locator('[data-testid="renewal-requirements"]')).toBeVisible();
+				await expect(
+					page.locator('[data-testid="renewal-options"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="renewal-deadline"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="renewal-requirements"]'),
+				).toBeVisible();
 			}
 		});
 
@@ -303,7 +406,10 @@ test.describe("Dashboard Compliance Page", () => {
 			await page.click('[data-testid="add-license"]');
 
 			// Fill license form
-			await page.fill('[data-testid="professional-name"]', "Dr. Test Professional");
+			await page.fill(
+				'[data-testid="professional-name"]',
+				"Dr. Test Professional",
+			);
 			await page.fill('[data-testid="cfm-number"]', "12345/SP");
 			await page.selectOption('[data-testid="license-type"]', "dermatologist");
 
@@ -311,7 +417,9 @@ test.describe("Dashboard Compliance Page", () => {
 			await page.blur('[data-testid="cfm-number"]');
 
 			// Should show validation status
-			await expect(page.locator('[data-testid="cfm-validation-status"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="cfm-validation-status"]'),
+			).toBeVisible();
 		});
 	});
 
@@ -321,10 +429,18 @@ test.describe("Dashboard Compliance Page", () => {
 			await page.click('[data-testid="compliance-reports-tab"]');
 
 			// Check available report types
-			await expect(page.locator('[data-testid="anvisa-report-option"]')).toBeVisible();
-			await expect(page.locator('[data-testid="lgpd-report-option"]')).toBeVisible();
-			await expect(page.locator('[data-testid="audit-report-option"]')).toBeVisible();
-			await expect(page.locator('[data-testid="licenses-report-option"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="anvisa-report-option"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="lgpd-report-option"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="audit-report-option"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="licenses-report-option"]'),
+			).toBeVisible();
 		});
 
 		test("should generate ANVISA compliance report", async ({ page }) => {
@@ -336,8 +452,14 @@ test.describe("Dashboard Compliance Page", () => {
 			// Configure report parameters
 			const startDate = new Date();
 			startDate.setMonth(startDate.getMonth() - 1);
-			await page.fill('[data-testid="report-start-date"]', startDate.toISOString().split("T")[0]);
-			await page.fill('[data-testid="report-end-date"]', new Date().toISOString().split("T")[0]);
+			await page.fill(
+				'[data-testid="report-start-date"]',
+				startDate.toISOString().split("T")[0],
+			);
+			await page.fill(
+				'[data-testid="report-end-date"]',
+				new Date().toISOString().split("T")[0],
+			);
 
 			// Generate report
 			const downloadPromise = page.waitForEvent("download");
@@ -345,7 +467,9 @@ test.describe("Dashboard Compliance Page", () => {
 
 			// Verify download
 			const download = await downloadPromise;
-			expect(download.suggestedFilename()).toMatch(/anvisa.*report.*\.(pdf|xlsx)$/);
+			expect(download.suggestedFilename()).toMatch(
+				/anvisa.*report.*\.(pdf|xlsx)$/,
+			);
 		});
 
 		test("should schedule automated compliance reports", async ({ page }) => {
@@ -358,22 +482,37 @@ test.describe("Dashboard Compliance Page", () => {
 			await page.click('[data-testid="create-scheduled-report"]');
 
 			// Configure schedule
-			await page.fill('[data-testid="report-name"]', "Monthly ANVISA Compliance Report");
-			await page.selectOption('[data-testid="report-type"]', "anvisa_compliance");
+			await page.fill(
+				'[data-testid="report-name"]',
+				"Monthly ANVISA Compliance Report",
+			);
+			await page.selectOption(
+				'[data-testid="report-type"]',
+				"anvisa_compliance",
+			);
 			await page.selectOption('[data-testid="report-frequency"]', "monthly");
-			await page.fill('[data-testid="recipient-emails"]', "compliance@neonpro.com");
+			await page.fill(
+				'[data-testid="recipient-emails"]',
+				"compliance@neonpro.com",
+			);
 
 			// Save schedule
 			await page.click('[data-testid="save-schedule"]');
 
 			// Verify success
-			await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="success-message"]')).toContainText("Scheduled report created");
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toContainText("Scheduled report created");
 		});
 	});
 
 	test.describe("Performance and Accessibility", () => {
-		test("should load compliance dashboard within performance thresholds", async ({ page }) => {
+		test("should load compliance dashboard within performance thresholds", async ({
+			page,
+		}) => {
 			const startTime = Date.now();
 			await page.goto("/dashboard/compliance");
 			await page.waitForLoadState("networkidle");
@@ -401,11 +540,19 @@ test.describe("Dashboard Compliance Page", () => {
 			await expect(focusedElement).toBeVisible();
 		});
 
-		test("should have proper ARIA labels for compliance data", async ({ page }) => {
+		test("should have proper ARIA labels for compliance data", async ({
+			page,
+		}) => {
 			// Check ARIA labels on compliance metrics
-			await expect(page.locator('[data-testid="compliance-score"][aria-label]')).toBeVisible();
-			await expect(page.locator('[data-testid="anvisa-status"][aria-label]')).toBeVisible();
-			await expect(page.locator('[data-testid="lgpd-compliance"][aria-label]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="compliance-score"][aria-label]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="anvisa-status"][aria-label]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="lgpd-compliance"][aria-label]'),
+			).toBeVisible();
 
 			// Check table accessibility
 			const tables = page.locator("table");
@@ -435,7 +582,9 @@ test.describe("Dashboard Compliance Page", () => {
 
 		test("should support screen readers", async ({ page }) => {
 			// Check for screen reader announcements
-			const announcements = page.locator('[aria-live="polite"], [aria-live="assertive"]');
+			const announcements = page.locator(
+				'[aria-live="polite"], [aria-live="assertive"]',
+			);
 			if ((await announcements.count()) > 0) {
 				await expect(announcements.first()).toBeVisible();
 			}

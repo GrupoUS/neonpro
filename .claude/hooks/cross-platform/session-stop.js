@@ -14,7 +14,11 @@ async function sessionStop() {
 		const env = utils.setHookEnvironment("session_stop");
 
 		// Log hook execution start
-		utils.log("INFO", "SESSION_STOP", `Session stop hook executing for session: ${env.sessionId}`);
+		utils.log(
+			"INFO",
+			"SESSION_STOP",
+			`Session stop hook executing for session: ${env.sessionId}`,
+		);
 
 		// Generate final session report
 		await generateFinalReport(env);
@@ -29,13 +33,21 @@ async function sessionStop() {
 		await performSystemMaintenance(env);
 
 		// Log successful completion
-		utils.log("SUCCESS", "SESSION_STOP", "Session stop hook completed successfully");
+		utils.log(
+			"SUCCESS",
+			"SESSION_STOP",
+			"Session stop hook completed successfully",
+		);
 
 		// Exit successfully
 		process.exit(0);
 	} catch (error) {
 		// Log error but don't fail the hook
-		utils.log("ERROR", "SESSION_STOP", `Session stop hook error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"SESSION_STOP",
+			`Session stop hook error: ${error.message}`,
+		);
 
 		// Exit with success to not block Claude
 		process.exit(0);
@@ -87,10 +99,16 @@ async function generateFinalReport(env) {
 		utils.log(
 			"INFO",
 			"SESSION_STOP",
-			`Final report generated: ${metrics.totalTools} tools, ${Math.round(metrics.totalDuration / 1000)}s duration`
+			`Final report generated: ${metrics.totalTools} tools, ${Math.round(
+				metrics.totalDuration / 1000,
+			)}s duration`,
 		);
 	} catch (error) {
-		utils.log("ERROR", "SESSION_STOP", `Final report generation error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"SESSION_STOP",
+			`Final report generation error: ${error.message}`,
+		);
 	}
 }
 
@@ -116,7 +134,7 @@ async function gatherSessionData(_env) {
 				line.includes("[POST_TOOL_HOOK]") ||
 				line.includes("[SESSION_HOOK]") ||
 				line.includes("[ERROR]") ||
-				line.includes("[WARN]")
+				line.includes("[WARN]"),
 		);
 
 		const tools = [];
@@ -130,7 +148,10 @@ async function gatherSessionData(_env) {
 			const timestamp = timestampMatch ? timestampMatch[1] : null;
 
 			// Parse tool usage
-			if (line.includes("PRE_TOOL_HOOK") && line.includes("executing for tool:")) {
+			if (
+				line.includes("PRE_TOOL_HOOK") &&
+				line.includes("executing for tool:")
+			) {
 				const toolMatch = line.match(/executing for tool: ([^\s]+)/);
 				if (toolMatch) {
 					tools.push({
@@ -141,11 +162,16 @@ async function gatherSessionData(_env) {
 				}
 			}
 
-			if (line.includes("POST_TOOL_HOOK") && line.includes("completed successfully")) {
+			if (
+				line.includes("POST_TOOL_HOOK") &&
+				line.includes("completed successfully")
+			) {
 				const toolMatch = line.match(/completed successfully for ([^\s]+)/);
 				if (toolMatch) {
 					// Find matching pre-tool entry
-					const matchingPre = tools.find((t) => t.name === toolMatch[1] && t.phase === "pre" && !t.completed);
+					const matchingPre = tools.find(
+						(t) => t.name === toolMatch[1] && t.phase === "pre" && !t.completed,
+					);
 					if (matchingPre) {
 						matchingPre.completed = true;
 						matchingPre.completedTimestamp = timestamp;
@@ -189,7 +215,11 @@ async function gatherSessionData(_env) {
 			activities,
 		};
 	} catch (error) {
-		utils.log("ERROR", "SESSION_STOP", `Session data gathering error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"SESSION_STOP",
+			`Session data gathering error: ${error.message}`,
+		);
 		return {
 			tools: [],
 			errors: [],
@@ -222,7 +252,8 @@ async function calculateSessionMetrics(sessionData) {
 
 		// Calculate success rate
 		const completedTools = tools.filter((t) => t.completed).length;
-		const successRate = totalTools > 0 ? (completedTools / totalTools) * 100 : 100;
+		const successRate =
+			totalTools > 0 ? (completedTools / totalTools) * 100 : 100;
 
 		// Tool usage frequency
 		const toolUsage = {};
@@ -258,9 +289,12 @@ async function calculateSessionMetrics(sessionData) {
 
 		if (performance.toolDurations.length > 0) {
 			const durations = performance.toolDurations.map((t) => t.duration);
-			performance.avgToolDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+			performance.avgToolDuration =
+				durations.reduce((a, b) => a + b, 0) / durations.length;
 
-			const sorted = performance.toolDurations.sort((a, b) => a.duration - b.duration);
+			const sorted = performance.toolDurations.sort(
+				(a, b) => a.duration - b.duration,
+			);
 			performance.fastestTool = sorted[0];
 			performance.slowestTool = sorted.at(-1);
 		}
@@ -280,7 +314,11 @@ async function calculateSessionMetrics(sessionData) {
 			patterns,
 		};
 	} catch (error) {
-		utils.log("ERROR", "SESSION_STOP", `Metrics calculation error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"SESSION_STOP",
+			`Metrics calculation error: ${error.message}`,
+		);
 		return {
 			totalDuration: 0,
 			totalTools: 0,
@@ -316,7 +354,9 @@ async function analyzeUsagePatterns(tools, _sessionData) {
 		if (Object.keys(toolCounts).length > 0) {
 			const maxCount = Math.max(...Object.values(toolCounts));
 			patterns.mostUsedTool = {
-				tool: Object.keys(toolCounts).find((key) => toolCounts[key] === maxCount),
+				tool: Object.keys(toolCounts).find(
+					(key) => toolCounts[key] === maxCount,
+				),
 				count: maxCount,
 			};
 		}
@@ -325,7 +365,9 @@ async function analyzeUsagePatterns(tools, _sessionData) {
 		const toolNames = tools.map((t) => t.name);
 		const sequences = [];
 		for (let i = 0; i < toolNames.length - 2; i++) {
-			sequences.push(`${toolNames[i]} → ${toolNames[i + 1]} → ${toolNames[i + 2]}`);
+			sequences.push(
+				`${toolNames[i]} → ${toolNames[i + 1]} → ${toolNames[i + 2]}`,
+			);
 		}
 
 		const sequenceFreq = {};
@@ -352,7 +394,11 @@ async function analyzeUsagePatterns(tools, _sessionData) {
 
 		return patterns;
 	} catch (error) {
-		utils.log("ERROR", "SESSION_STOP", `Pattern analysis error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"SESSION_STOP",
+			`Pattern analysis error: ${error.message}`,
+		);
 		return {};
 	}
 }
@@ -379,7 +425,9 @@ async function generateSummaryText(report) {
 	];
 
 	if (report.patterns.mostUsedTool) {
-		lines.push(`Most Used Tool: ${report.patterns.mostUsedTool.tool} (${report.patterns.mostUsedTool.count} times)`);
+		lines.push(
+			`Most Used Tool: ${report.patterns.mostUsedTool.tool} (${report.patterns.mostUsedTool.count} times)`,
+		);
 	}
 
 	if (report.patterns.workflowTypes.length > 0) {
@@ -426,7 +474,9 @@ async function clearSessionTempData(env) {
 		}
 
 		const files = fs.readdirSync(utils.cacheDir);
-		const tempFiles = files.filter((f) => f.includes(env.sessionId) && f.includes("temp"));
+		const tempFiles = files.filter(
+			(f) => f.includes(env.sessionId) && f.includes("temp"),
+		);
 
 		let removedCount = 0;
 		tempFiles.forEach((file) => {
@@ -440,10 +490,18 @@ async function clearSessionTempData(env) {
 		});
 
 		if (removedCount > 0) {
-			utils.log("INFO", "SESSION_STOP", `Cleaned up ${removedCount} temporary files`);
+			utils.log(
+				"INFO",
+				"SESSION_STOP",
+				`Cleaned up ${removedCount} temporary files`,
+			);
 		}
 	} catch (error) {
-		utils.log("WARN", "SESSION_STOP", `Temp data cleanup error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"SESSION_STOP",
+			`Temp data cleanup error: ${error.message}`,
+		);
 	}
 }
 
@@ -478,10 +536,18 @@ async function optimizeCache() {
 		});
 
 		if (optimizedCount > 0) {
-			utils.log("INFO", "SESSION_STOP", `Optimized cache: removed ${optimizedCount} old files`);
+			utils.log(
+				"INFO",
+				"SESSION_STOP",
+				`Optimized cache: removed ${optimizedCount} old files`,
+			);
 		}
 	} catch (error) {
-		utils.log("WARN", "SESSION_STOP", `Cache optimization error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"SESSION_STOP",
+			`Cache optimization error: ${error.message}`,
+		);
 	}
 }
 
@@ -500,7 +566,10 @@ async function archiveSessionData(env) {
 		}
 
 		// Archive important files
-		const filesToArchive = [`final-report-${env.sessionId}.json`, `session-summary-${env.sessionId}.txt`];
+		const filesToArchive = [
+			`final-report-${env.sessionId}.json`,
+			`session-summary-${env.sessionId}.txt`,
+		];
 
 		let archivedCount = 0;
 		filesToArchive.forEach((file) => {
@@ -518,10 +587,18 @@ async function archiveSessionData(env) {
 		});
 
 		if (archivedCount > 0) {
-			utils.log("INFO", "SESSION_STOP", `Archived ${archivedCount} session files`);
+			utils.log(
+				"INFO",
+				"SESSION_STOP",
+				`Archived ${archivedCount} session files`,
+			);
 		}
 	} catch (error) {
-		utils.log("WARN", "SESSION_STOP", `Session archiving error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"SESSION_STOP",
+			`Session archiving error: ${error.message}`,
+		);
 	}
 }
 
@@ -540,7 +617,11 @@ async function performSystemMaintenance(env) {
 
 		utils.log("INFO", "SESSION_STOP", "System maintenance completed");
 	} catch (error) {
-		utils.log("ERROR", "SESSION_STOP", `System maintenance error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"SESSION_STOP",
+			`System maintenance error: ${error.message}`,
+		);
 	}
 }
 
@@ -569,7 +650,11 @@ async function updateSystemStats(env) {
 
 		utils.safeWriteFile(statsFile, JSON.stringify(stats, null, 2));
 	} catch (error) {
-		utils.log("WARN", "SESSION_STOP", `System stats update error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"SESSION_STOP",
+			`System stats update error: ${error.message}`,
+		);
 	}
 }
 
@@ -581,17 +666,28 @@ async function checkSystemHealth() {
 		const systemInfo = utils.getSystemInfo();
 
 		// Check available memory
-		const memUsagePercent = ((systemInfo.totalMemory - systemInfo.freeMemory) / systemInfo.totalMemory) * 100;
+		const memUsagePercent =
+			((systemInfo.totalMemory - systemInfo.freeMemory) /
+				systemInfo.totalMemory) *
+			100;
 
 		if (memUsagePercent > 90) {
-			utils.log("WARN", "SESSION_STOP", `High memory usage detected: ${memUsagePercent.toFixed(1)}%`);
+			utils.log(
+				"WARN",
+				"SESSION_STOP",
+				`High memory usage detected: ${memUsagePercent.toFixed(1)}%`,
+			);
 		}
 
 		// Check disk space for cache directory
 		// This is a basic check - could be expanded
 		utils.log("DEBUG", "SESSION_STOP", "System health check completed");
 	} catch (error) {
-		utils.log("WARN", "SESSION_STOP", `System health check error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"SESSION_STOP",
+			`System health check error: ${error.message}`,
+		);
 	}
 }
 

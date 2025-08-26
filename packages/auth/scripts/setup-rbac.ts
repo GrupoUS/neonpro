@@ -11,10 +11,10 @@
  * - Verification tests
  */
 
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 // Load environment variables
 config({ path: ".env.local" });

@@ -1,4 +1,9 @@
-import { type MetricCollector, MetricType, MetricUnit, type PerformanceMetric } from "../types";
+import {
+	type MetricCollector,
+	MetricType,
+	MetricUnit,
+	type PerformanceMetric,
+} from "../types";
 
 export class SystemMetricsCollector implements MetricCollector {
 	private enabled = true;
@@ -23,14 +28,19 @@ export class SystemMetricsCollector implements MetricCollector {
 				unit: MetricUnit.COUNT,
 				tags: { component: "system", error: "collection_failed" },
 				source: "system-metrics-collector",
-				context: { error: error instanceof Error ? error.message : String(error) },
+				context: {
+					error: error instanceof Error ? error.message : String(error),
+				},
 			});
 		}
 
 		return metrics;
 	}
 
-	private async collectCPUMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
+	private async collectCPUMetrics(
+		metrics: PerformanceMetric[],
+		timestamp: number,
+	): Promise<void> {
 		// Mock CPU usage - in real implementation, would use Node.js os module or system APIs
 		const cpuUsage = this.getMockCPUUsage();
 
@@ -45,7 +55,10 @@ export class SystemMetricsCollector implements MetricCollector {
 		});
 	}
 
-	private async collectMemoryMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
+	private async collectMemoryMetrics(
+		metrics: PerformanceMetric[],
+		timestamp: number,
+	): Promise<void> {
 		// Mock memory usage - in real implementation, would use process.memoryUsage()
 		const memoryInfo = this.getMockMemoryUsage();
 
@@ -64,7 +77,10 @@ export class SystemMetricsCollector implements MetricCollector {
 			},
 		});
 	}
-	private async collectDatabaseMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
+	private async collectDatabaseMetrics(
+		metrics: PerformanceMetric[],
+		timestamp: number,
+	): Promise<void> {
 		// Mock database connection and query metrics
 		const dbConnectionCount = this.getMockDatabaseConnections();
 		const avgQueryTime = this.getMockDatabaseQueryTime();
@@ -110,7 +126,12 @@ export class SystemMetricsCollector implements MetricCollector {
 		return Math.floor(Math.random() * 70) + 10;
 	}
 
-	private getMockMemoryUsage(): { used: number; total: number; free: number; percentage: number } {
+	private getMockMemoryUsage(): {
+		used: number;
+		total: number;
+		free: number;
+		percentage: number;
+	} {
 		const total = 8 * 1024 * 1024 * 1024; // 8GB in bytes
 		const used = Math.floor(Math.random() * (total * 0.7)) + total * 0.2; // 20-90% used
 		const free = total - used;

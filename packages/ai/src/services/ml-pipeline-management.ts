@@ -20,19 +20,35 @@ import type {
 	MLPipelineStatus,
 	ModelVersion,
 } from "@neonpro/types";
-import type { AIServiceConfig, AIServiceMetrics, CacheService } from "./enhanced-service-base";
+import type {
+	AIServiceConfig,
+	AIServiceMetrics,
+	CacheService,
+} from "./enhanced-service-base";
 import { EnhancedAIService } from "./enhanced-service-base";
 
 // Supabase MCP Integration
 declare global {
-	function mcp__supabase_mcp__execute_sql(projectId: string, query: string): Promise<any>;
-	function mcp__supabase_mcp__apply_migration(projectId: string, name: string, query: string): Promise<any>;
+	function mcp__supabase_mcp__execute_sql(
+		projectId: string,
+		query: string,
+	): Promise<any>;
+	function mcp__supabase_mcp__apply_migration(
+		projectId: string,
+		name: string,
+		query: string,
+	): Promise<any>;
 }
 
 export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 	private readonly SUPABASE_PROJECT_ID = "ownkoxryswokcdanrdgj";
 
-	constructor(cache: CacheService, logger: LoggerService, metrics: MetricsService, config?: AIServiceConfig) {
+	constructor(
+		cache: CacheService,
+		logger: LoggerService,
+		metrics: MetricsService,
+		config?: AIServiceConfig,
+	) {
 		super(cache, logger, metrics, {
 			enableCaching: true,
 			cacheTTL: 300, // 5 minutes for ML data
@@ -83,7 +99,9 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 	/**
 	 * Create a new model version with full audit trail
 	 */
-	async createModelVersion(request: CreateModelVersionRequest): Promise<ModelVersion> {
+	async createModelVersion(
+		request: CreateModelVersionRequest,
+	): Promise<ModelVersion> {
 		const operationId = `ml-create-version-${Date.now()}`;
 		const startTime = Date.now();
 
@@ -106,7 +124,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         ) RETURNING *;
       `;
 
-			const result = await mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, insertQuery);
+			const result = await mcp__supabase_mcp__execute_sql(
+				this.SUPABASE_PROJECT_ID,
+				insertQuery,
+			);
 
 			// Record metrics
 			await this.recordSuccessMetrics({
@@ -133,7 +154,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 	/**
 	 * Deploy a model version to production
 	 */
-	async deployModelVersion(modelId: string, clinicId: string): Promise<ModelVersion> {
+	async deployModelVersion(
+		modelId: string,
+		clinicId: string,
+	): Promise<ModelVersion> {
 		const operationId = `ml-deploy-${Date.now()}`;
 		const startTime = Date.now();
 
@@ -142,7 +166,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 			await mcp__supabase_mcp__execute_sql(
 				this.SUPABASE_PROJECT_ID,
 				`UPDATE ai_models SET status = 'retired', retired_date = NOW() 
-         WHERE clinic_id = '${clinicId}' AND status = 'active'`
+         WHERE clinic_id = '${clinicId}' AND status = 'active'`,
 			);
 
 			// Activate the new model
@@ -155,7 +179,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         RETURNING *;
       `;
 
-			const result = await mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, updateQuery);
+			const result = await mcp__supabase_mcp__execute_sql(
+				this.SUPABASE_PROJECT_ID,
+				updateQuery,
+			);
 
 			await this.recordSuccessMetrics({
 				operationId,
@@ -203,7 +230,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         ) RETURNING *;
       `;
 
-			const result = await mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, insertQuery);
+			const result = await mcp__supabase_mcp__execute_sql(
+				this.SUPABASE_PROJECT_ID,
+				insertQuery,
+			);
 
 			await this.recordSuccessMetrics({
 				operationId,
@@ -229,7 +259,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 	/**
 	 * Get A/B test results with statistical analysis
 	 */
-	async getABTestResults(testId: string, clinicId: string): Promise<ABTestResult[]> {
+	async getABTestResults(
+		testId: string,
+		clinicId: string,
+	): Promise<ABTestResult[]> {
 		const cacheKey = `ab-test-results:${testId}:${clinicId}`;
 
 		// Check cache first
@@ -250,7 +283,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         ORDER BY evaluation_date DESC;
       `;
 
-			const result = await mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, query);
+			const result = await mcp__supabase_mcp__execute_sql(
+				this.SUPABASE_PROJECT_ID,
+				query,
+			);
 			const results = result.data as ABTestResult[];
 
 			// Cache results
@@ -283,7 +319,9 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 	/**
 	 * Detect data/prediction drift
 	 */
-	async detectDrift(request: DriftDetectionRequest): Promise<DriftDetectionResult> {
+	async detectDrift(
+		request: DriftDetectionRequest,
+	): Promise<DriftDetectionResult> {
 		const operationId = `ml-drift-detect-${Date.now()}`;
 		const startTime = Date.now();
 
@@ -318,7 +356,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
           );
         `;
 
-				await mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, insertQuery);
+				await mcp__supabase_mcp__execute_sql(
+					this.SUPABASE_PROJECT_ID,
+					insertQuery,
+				);
 			}
 
 			const result: DriftDetectionResult = {
@@ -377,9 +418,18 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 			const driftDetectionsQuery = `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
 
 			const [activeModels, runningTests, driftDetections] = await Promise.all([
-				mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, activeModelsQuery),
-				mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, runningTestsQuery),
-				mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, driftDetectionsQuery),
+				mcp__supabase_mcp__execute_sql(
+					this.SUPABASE_PROJECT_ID,
+					activeModelsQuery,
+				),
+				mcp__supabase_mcp__execute_sql(
+					this.SUPABASE_PROJECT_ID,
+					runningTestsQuery,
+				),
+				mcp__supabase_mcp__execute_sql(
+					this.SUPABASE_PROJECT_ID,
+					driftDetectionsQuery,
+				),
 			]);
 
 			const status: MLPipelineStatus = {
@@ -388,7 +438,8 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 				detected_drifts: driftDetections.data[0].count,
 				models_needing_retrain: 0, // Would be calculated based on performance metrics
 				last_evaluation_date: new Date().toISOString(),
-				overall_health: driftDetections.data[0].count > 0 ? "warning" : "healthy",
+				overall_health:
+					driftDetections.data[0].count > 0 ? "warning" : "healthy",
 			};
 
 			if (this.config.enableCaching) {
@@ -441,7 +492,10 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         LIMIT 50;
       `;
 
-			const result = await mcp__supabase_mcp__execute_sql(this.SUPABASE_PROJECT_ID, query);
+			const result = await mcp__supabase_mcp__execute_sql(
+				this.SUPABASE_PROJECT_ID,
+				query,
+			);
 			const versions = result.data as ModelVersion[];
 
 			if (this.config.enableCaching) {

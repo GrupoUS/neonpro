@@ -10,6 +10,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
 
+// Constants
+const MIN_NODE_VERSION = 14;
+
 class HookInstaller {
 	constructor() {
 		this.platform = os.platform();
@@ -22,7 +25,10 @@ class HookInstaller {
 		this.crossPlatformDir = __dirname;
 
 		this.settingsFile = path.join(this.rootDir, "settings.local.json");
-		this.crossPlatformSettingsFile = path.join(this.rootDir, "settings.cross-platform.json");
+		this.crossPlatformSettingsFile = path.join(
+			this.rootDir,
+			"settings.cross-platform.json",
+		);
 		this.backupDir = path.join(this.hooksDir, `backup-${Date.now()}`);
 	}
 
@@ -32,10 +38,10 @@ class HookInstaller {
 	async install() {
 		try {
 			// Step 1: Check prerequisites
-			await this.checkPrerequisites();
+			this.checkPrerequisites();
 
 			// Step 2: Backup existing configuration
-			await this.backupExistingConfig();
+			this.backupExistingConfig();
 
 			// Step 3: Install cross-platform configuration
 			await this.installCrossPlatformConfig();
@@ -48,8 +54,7 @@ class HookInstaller {
 
 			// Step 6: Show completion message
 			this.showCompletionMessage();
-		} catch (error) {
-			console.error("❌ Installation failed:", error.message);
+		} catch (_error) {
 			process.exit(1);
 		}
 	}
@@ -57,24 +62,28 @@ class HookInstaller {
 	/**
 	 * Check if all prerequisites are met
 	 */
-	async checkPrerequisites() {
+	checkPrerequisites() {
 		// Check Node.js
 		try {
 			const nodeVersion = process.version;
 
 			// Check if version is compatible (Node 14+)
-			const majorVersion = Number.parseInt(nodeVersion.substring(1).split(".")[0], 10);
-			if (majorVersion < 14) {
-				throw new Error("Node.js 14 or higher is required");
+			const majorVersion = Number.parseInt(
+				nodeVersion.substring(1).split(".")[0],
+				10,
+			);
+			if (majorVersion < MIN_NODE_VERSION) {
+				throw new Error(`Node.js ${MIN_NODE_VERSION} or higher is required`);
 			}
-		} catch (error) {
-			console.error("❌ Node.js version check failed:", error.message);
+		} catch (_error) {
 			throw new Error("Node.js is not available or version is too old");
 		}
 
 		// Check if we're in the right directory
 		if (!fs.existsSync(this.crossPlatformSettingsFile)) {
-			throw new Error("Cross-platform settings file not found. Make sure you're in the correct directory.");
+			throw new Error(
+				"Cross-platform settings file not found. Make sure you're in the correct directory.",
+			);
 		}
 
 		// Check write permissions
@@ -82,8 +91,7 @@ class HookInstaller {
 			const testFile = path.join(this.rootDir, "test-write-permissions.tmp");
 			fs.writeFileSync(testFile, "test");
 			fs.unlinkSync(testFile);
-		} catch (error) {
-			console.error("❌ Write permission check failed:", error.message);
+		} catch (_error) {
 			throw new Error("No write permissions in the configuration directory");
 		}
 	}
@@ -91,7 +99,7 @@ class HookInstaller {
 	/**
 	 * Backup existing configuration
 	 */
-	async backupExistingConfig() {
+	backupExistingConfig() {
 		try {
 			// Create backup directory
 			if (!fs.existsSync(this.backupDir)) {
@@ -100,7 +108,10 @@ class HookInstaller {
 
 			// Backup existing settings file if it exists
 			if (fs.existsSync(this.settingsFile)) {
-				const backupSettingsFile = path.join(this.backupDir, "settings.local.json");
+				const backupSettingsFile = path.join(
+					this.backupDir,
+					"settings.local.json",
+				);
 				fs.copyFileSync(this.settingsFile, backupSettingsFile);
 			}
 
@@ -131,9 +142,7 @@ class HookInstaller {
 				const backupUbuntuDir = path.join(this.backupDir, "ubuntu");
 				this.copyDirectoryRecursive(ubuntuHooksDir, backupUbuntuDir);
 			}
-		} catch (error) {
-			console.error("❌ Backup failed:", error.message);
-		}
+		} catch (_error) {}
 	}
 
 	/**
@@ -142,7 +151,10 @@ class HookInstaller {
 	async installCrossPlatformConfig() {
 		try {
 			// Copy cross-platform settings to local settings
-			const crossPlatformConfig = fs.readFileSync(this.crossPlatformSettingsFile, "utf8");
+			const crossPlatformConfig = fs.readFileSync(
+				this.crossPlatformSettingsFile,
+				"utf8",
+			);
 			fs.writeFileSync(this.settingsFile, crossPlatformConfig);
 		} catch (error) {
 			throw new Error(`Failed to install configuration: ${error.message}`);
@@ -174,9 +186,7 @@ class HookInstaller {
 					await this.executeCommand(`chmod +x "${filePath}"`);
 				}
 			}
-		} catch (error) {
-			console.error("❌ Failed to set executable permissions:", error.message);
-		}
+		} catch (_error) {}
 	}
 
 	/**
@@ -229,7 +239,9 @@ class HookInstaller {
 		return new Promise((resolve, reject) => {
 			const { spawn } = require("node:child_process");
 			const shell = this.isWindows ? "powershell.exe" : "/bin/bash";
-			const args = this.isWindows ? ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command] : ["-c", command];
+			const args = this.isWindows
+				? ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command]
+				: ["-c", command];
 
 			const child = spawn(shell, args, {
 				stdio: ["pipe", "pipe", "pipe"],
@@ -250,7 +262,9 @@ class HookInstaller {
 				if (code === 0) {
 					resolve(stdout.trim());
 				} else {
-					reject(new Error(stderr.trim() || `Command failed with code ${code}`));
+					reject(
+						new Error(stderr.trim() || `Command failed with code ${code}`),
+					);
 				}
 			});
 		});
@@ -281,8 +295,7 @@ class HookInstaller {
 // Run installer if called directly
 if (require.main === module) {
 	const installer = new HookInstaller();
-	installer.install().catch((error) => {
-		console.error("❌ Installation failed:", error.message);
+	installer.install().catch((_error) => {
 		process.exit(1);
 	});
 }

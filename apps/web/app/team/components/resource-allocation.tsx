@@ -1,27 +1,5 @@
 "use client";
 
-import {
-	Activity,
-	AlertTriangle,
-	Calendar,
-	CheckCircle,
-	Clock,
-	Edit,
-	Filter,
-	Heart,
-	MapPin,
-	MoreVertical,
-	Package,
-	Plus,
-	Search,
-	Settings,
-	Shield,
-	Wrench as Tool,
-	Users,
-	Wrench,
-	XCircle,
-} from "lucide-react";
-import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +16,28 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+	Activity,
+	AlertTriangle,
+	Calendar,
+	CheckCircle,
+	Clock,
+	Edit,
+	Filter,
+	Heart,
+	MapPin,
+	MoreVertical,
+	Package,
+	Plus,
+	Search,
+	Settings,
+	Shield,
+	Users,
+	Wrench,
+	Wrench as Tool,
+	XCircle,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 import type { EquipmentStatus, FacilityRoom, MedicalEquipment } from "@/types/team-coordination"; // Mock medical equipment data with ANVISA compliance
 

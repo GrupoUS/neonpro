@@ -30,7 +30,10 @@ const mockPatientValidation = {
 
 		return {
 			valid: true,
-			formatted: `${cleanCPF.slice(0, 3)}.${cleanCPF.slice(3, 6)}.${cleanCPF.slice(6, 9)}-${cleanCPF.slice(9, 11)}`,
+			formatted: `${cleanCPF.slice(0, 3)}.${cleanCPF.slice(3, 6)}.${cleanCPF.slice(6, 9)}-${cleanCPF.slice(
+				9,
+				11,
+			)}`,
 		};
 	},
 

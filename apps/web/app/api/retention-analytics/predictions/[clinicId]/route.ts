@@ -4,11 +4,11 @@
 // API endpoints for churn prediction generation and management
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -287,7 +287,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		// Check permissions for generating predictions
 		const allowedRoles = ["admin", "manager", "analyst", "professional"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json({ error: "Insufficient permissions to generate predictions" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions to generate predictions" },
+				{
+					status: 403,
+				}
+			);
 		}
 
 		// Prepare patient IDs for processing

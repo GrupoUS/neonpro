@@ -20,18 +20,26 @@ test.describe("Pricing Page - Plan Display", () => {
 
 	test("should display all subscription plans", async ({ page }) => {
 		// Check for main pricing plans
-		await expect(page.locator("h1, .pricing-title")).toContainText(/Planos|Preços|Pricing/);
+		await expect(page.locator("h1, .pricing-title")).toContainText(
+			/Planos|Preços|Pricing/,
+		);
 
 		// Should display Basic plan
-		const basicPlan = page.locator('[data-testid="plan-basic"]').or(page.locator("text=Básico"));
+		const basicPlan = page
+			.locator('[data-testid="plan-basic"]')
+			.or(page.locator("text=Básico"));
 		await expect(basicPlan).toBeVisible();
 
 		// Should display Professional plan
-		const proPlan = page.locator('[data-testid="plan-professional"]').or(page.locator("text=Profissional"));
+		const proPlan = page
+			.locator('[data-testid="plan-professional"]')
+			.or(page.locator("text=Profissional"));
 		await expect(proPlan).toBeVisible();
 
 		// Should display Enterprise plan
-		const enterprisePlan = page.locator('[data-testid="plan-enterprise"]').or(page.locator("text=Enterprise"));
+		const enterprisePlan = page
+			.locator('[data-testid="plan-enterprise"]')
+			.or(page.locator("text=Enterprise"));
 		await expect(enterprisePlan).toBeVisible();
 	});
 
@@ -44,7 +52,9 @@ test.describe("Pricing Page - Plan Display", () => {
 		await expect(page.locator("text=//mês|mensal/")).toBeVisible();
 
 		// Should display annual pricing option
-		const annualToggle = page.locator('[data-testid="annual-toggle"]').or(page.locator("text=Anual"));
+		const annualToggle = page
+			.locator('[data-testid="annual-toggle"]')
+			.or(page.locator("text=Anual"));
 		if (await annualToggle.isVisible()) {
 			await expect(annualToggle).toBeVisible();
 		}
@@ -63,7 +73,10 @@ test.describe("Pricing Page - Plan Display", () => {
 			// Should have visual distinction
 			const hasHighlight = await recommendedPlan.evaluate((el) => {
 				const style = window.getComputedStyle(el);
-				return style.border !== "none" || style.backgroundColor !== "rgba(0, 0, 0, 0)";
+				return (
+					style.border !== "none" ||
+					style.backgroundColor !== "rgba(0, 0, 0, 0)"
+				);
 			});
 			expect(hasHighlight).toBeTruthy();
 		}
@@ -71,16 +84,28 @@ test.describe("Pricing Page - Plan Display", () => {
 
 	test("should display healthcare-specific features", async ({ page }) => {
 		// Check for ANVISA compliance features
-		await expect(page.locator("text=ANVISA").or(page.locator("text=Vigilância Sanitária"))).toBeVisible();
+		await expect(
+			page.locator("text=ANVISA").or(page.locator("text=Vigilância Sanitária")),
+		).toBeVisible();
 
 		// Check for CFM compliance features
-		await expect(page.locator("text=CFM").or(page.locator("text=Conselho Federal de Medicina"))).toBeVisible();
+		await expect(
+			page
+				.locator("text=CFM")
+				.or(page.locator("text=Conselho Federal de Medicina")),
+		).toBeVisible();
 
 		// Check for LGPD compliance
-		await expect(page.locator("text=LGPD").or(page.locator("text=Lei Geral de Proteção de Dados"))).toBeVisible();
+		await expect(
+			page
+				.locator("text=LGPD")
+				.or(page.locator("text=Lei Geral de Proteção de Dados")),
+		).toBeVisible();
 
 		// Check for medical record features
-		await expect(page.locator("text=Prontuário").or(page.locator("text=Medical Records"))).toBeVisible();
+		await expect(
+			page.locator("text=Prontuário").or(page.locator("text=Medical Records")),
+		).toBeVisible();
 	});
 });
 
@@ -92,13 +117,17 @@ test.describe("Pricing Page - Feature Comparison", () => {
 
 	test("should display feature comparison table", async ({ page }) => {
 		// Look for comparison table or feature list
-		const comparisonTable = page.locator('[data-testid="feature-comparison"]').or(page.locator(".comparison-table"));
+		const comparisonTable = page
+			.locator('[data-testid="feature-comparison"]')
+			.or(page.locator(".comparison-table"));
 
 		if (await comparisonTable.isVisible()) {
 			await expect(comparisonTable).toBeVisible();
 
 			// Should show feature rows
-			const featureRows = page.locator("tr").filter({ hasText: /✓|✗|Incluído|Não incluído/ });
+			const featureRows = page
+				.locator("tr")
+				.filter({ hasText: /✓|✗|Incluído|Não incluído/ });
 			if ((await featureRows.count()) > 0) {
 				await expect(featureRows.first()).toBeVisible();
 			}
@@ -121,7 +150,9 @@ test.describe("Pricing Page - Feature Comparison", () => {
 
 	test("should display API access tiers", async ({ page }) => {
 		// Check for API access information
-		const apiFeatures = page.locator("text=API").or(page.locator("text=Integração"));
+		const apiFeatures = page
+			.locator("text=API")
+			.or(page.locator("text=Integração"));
 		if (await apiFeatures.isVisible()) {
 			await expect(apiFeatures).toBeVisible();
 
@@ -174,11 +205,15 @@ test.describe("Pricing Page - Subscription Flow", () => {
 			await expect(page).toHaveURL(/.*\/(signup|checkout|subscribe)/);
 
 			// Should display plan selection confirmation
-			await expect(page.locator("text=Básico").or(page.locator("text=Basic"))).toBeVisible();
+			await expect(
+				page.locator("text=Básico").or(page.locator("text=Basic")),
+			).toBeVisible();
 		}
 	});
 
-	test("should initiate subscription for Professional plan", async ({ page }) => {
+	test("should initiate subscription for Professional plan", async ({
+		page,
+	}) => {
 		// Click on Professional plan subscribe button
 		const proSubscribe = page
 			.locator('[data-testid="subscribe-professional"]')
@@ -192,7 +227,9 @@ test.describe("Pricing Page - Subscription Flow", () => {
 			await expect(page).toHaveURL(/.*\/(signup|checkout|subscribe)/);
 
 			// Should display plan selection confirmation
-			await expect(page.locator("text=Profissional").or(page.locator("text=Professional"))).toBeVisible();
+			await expect(
+				page.locator("text=Profissional").or(page.locator("text=Professional")),
+			).toBeVisible();
 		}
 	});
 
@@ -207,7 +244,9 @@ test.describe("Pricing Page - Subscription Flow", () => {
 			await enterpriseButton.click();
 
 			// Should show contact form or redirect to contact page
-			const contactForm = page.locator('[data-testid="contact-form"]').or(page.locator(".contact-form"));
+			const contactForm = page
+				.locator('[data-testid="contact-form"]')
+				.or(page.locator(".contact-form"));
 			const contactPage = page.url().includes("/contact");
 
 			expect((await contactForm.isVisible()) || contactPage).toBeTruthy();
@@ -223,18 +262,26 @@ test.describe("Pricing Page - Subscription Flow", () => {
 
 		if (await annualToggle.isVisible()) {
 			// Get initial price
-			const initialPrice = await page.locator("text=/R$s*d+/").first().textContent();
+			const initialPrice = await page
+				.locator("text=/R$s*d+/")
+				.first()
+				.textContent();
 
 			// Toggle to annual
 			await annualToggle.click();
 			await page.waitForTimeout(500);
 
 			// Price should change
-			const newPrice = await page.locator("text=/R$s*d+/").first().textContent();
+			const newPrice = await page
+				.locator("text=/R$s*d+/")
+				.first()
+				.textContent();
 			expect(newPrice).not.toBe(initialPrice);
 
 			// Should show annual discount
-			await expect(page.locator("text=desconto").or(page.locator("text=economia"))).toBeVisible();
+			await expect(
+				page.locator("text=desconto").or(page.locator("text=economia")),
+			).toBeVisible();
 		}
 	});
 });
@@ -247,7 +294,10 @@ test.describe("Pricing Page - Trial and Free Options", () => {
 
 	test("should display free trial information", async ({ page }) => {
 		// Look for free trial offers
-		const freeTrialText = page.locator("text=gratuito").or(page.locator("text=trial")).or(page.locator("text=teste"));
+		const freeTrialText = page
+			.locator("text=gratuito")
+			.or(page.locator("text=trial"))
+			.or(page.locator("text=teste"));
 
 		if (await freeTrialText.isVisible()) {
 			await expect(freeTrialText).toBeVisible();
@@ -271,13 +321,17 @@ test.describe("Pricing Page - Trial and Free Options", () => {
 			await expect(page).toHaveURL(/.*\/signup/);
 
 			// Should indicate trial signup
-			await expect(page.locator("text=trial").or(page.locator("text=gratuito"))).toBeVisible();
+			await expect(
+				page.locator("text=trial").or(page.locator("text=gratuito")),
+			).toBeVisible();
 		}
 	});
 
 	test("should display money-back guarantee", async ({ page }) => {
 		// Look for guarantee information
-		const guaranteeText = page.locator("text=garantia").or(page.locator("text=dinheiro de volta"));
+		const guaranteeText = page
+			.locator("text=garantia")
+			.or(page.locator("text=dinheiro de volta"));
 
 		if (await guaranteeText.isVisible()) {
 			await expect(guaranteeText).toBeVisible();
@@ -296,7 +350,9 @@ test.describe("Pricing Page - Payment Security", () => {
 
 	test("should display payment security badges", async ({ page }) => {
 		// Look for security certifications
-		const securityBadges = page.locator('img[alt*="SSL"]').or(page.locator('img[alt*="seguro"]'));
+		const securityBadges = page
+			.locator('img[alt*="SSL"]')
+			.or(page.locator('img[alt*="seguro"]'));
 
 		if ((await securityBadges.count()) > 0) {
 			await expect(securityBadges.first()).toBeVisible();
@@ -327,19 +383,26 @@ test.describe("Pricing Page - Payment Security", () => {
 		}
 
 		// Should support credit cards
-		await expect(page.locator("text=cartão").or(page.locator("text=crédito"))).toBeVisible();
+		await expect(
+			page.locator("text=cartão").or(page.locator("text=crédito")),
+		).toBeVisible();
 	});
 
 	test("should display tax information for Brazil", async ({ page }) => {
 		// Should mention Brazilian taxes
-		const taxInfo = page.locator("text=impostos").or(page.locator("text=tributos")).or(page.locator("text=ICMS"));
+		const taxInfo = page
+			.locator("text=impostos")
+			.or(page.locator("text=tributos"))
+			.or(page.locator("text=ICMS"));
 
 		if (await taxInfo.isVisible()) {
 			await expect(taxInfo).toBeVisible();
 		}
 
 		// Should display prices including taxes
-		const taxIncluded = page.locator("text=impostos inclusos").or(page.locator("text=tributos incluídos"));
+		const taxIncluded = page
+			.locator("text=impostos inclusos")
+			.or(page.locator("text=tributos incluídos"));
 
 		if (await taxIncluded.isVisible()) {
 			await expect(taxIncluded).toBeVisible();
@@ -382,7 +445,9 @@ test.describe("Pricing Page - Accessibility & Performance", () => {
 		expect(headingCount).toBeGreaterThan(0);
 
 		// Check for accessible price information
-		const priceElements = page.locator('[aria-label*="preço"]').or(page.locator('[aria-label*="price"]'));
+		const priceElements = page
+			.locator('[aria-label*="preço"]')
+			.or(page.locator('[aria-label*="price"]'));
 		if ((await priceElements.count()) > 0) {
 			await expect(priceElements.first()).toBeVisible();
 		}
@@ -400,7 +465,11 @@ test.describe("Pricing Page - Accessibility & Performance", () => {
 		expect(loadTime).toBeLessThan(3000);
 
 		// Should display all pricing plans
-		await expect(page.locator('[data-testid="plan-basic"]').or(page.locator("text=Básico"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="plan-basic"]')
+				.or(page.locator("text=Básico")),
+		).toBeVisible();
 	});
 
 	test("should be responsive on mobile devices", async ({ page }) => {
@@ -438,11 +507,17 @@ test.describe("Pricing Page - Healthcare Compliance", () => {
 			await expect(anvisaFeatures).toBeVisible();
 
 			// Should be in Professional or Enterprise plans
-			const professionalPlan = page.locator('[data-testid="plan-professional"]');
+			const professionalPlan = page.locator(
+				'[data-testid="plan-professional"]',
+			);
 			const enterprisePlan = page.locator('[data-testid="plan-enterprise"]');
 
-			const anvisaInPro = await professionalPlan.locator("text=ANVISA").isVisible();
-			const anvisaInEnterprise = await enterprisePlan.locator("text=ANVISA").isVisible();
+			const anvisaInPro = await professionalPlan
+				.locator("text=ANVISA")
+				.isVisible();
+			const anvisaInEnterprise = await enterprisePlan
+				.locator("text=ANVISA")
+				.isVisible();
 
 			expect(anvisaInPro || anvisaInEnterprise).toBeTruthy();
 		}
@@ -457,7 +532,9 @@ test.describe("Pricing Page - Healthcare Compliance", () => {
 			await expect(cfmFeatures).toBeVisible();
 
 			// Should include telemedicine features
-			await expect(page.locator("text=telemedicina").or(page.locator("text=teleconsulta"))).toBeVisible();
+			await expect(
+				page.locator("text=telemedicina").or(page.locator("text=teleconsulta")),
+			).toBeVisible();
 		}
 	});
 
@@ -465,7 +542,9 @@ test.describe("Pricing Page - Healthcare Compliance", () => {
 		await page.goto("/pricing");
 
 		// Should mention Brazilian data centers
-		const dataResidency = page.locator("text=Brasil").or(page.locator("text=dados no Brasil"));
+		const dataResidency = page
+			.locator("text=Brasil")
+			.or(page.locator("text=dados no Brasil"));
 		if (await dataResidency.isVisible()) {
 			await expect(dataResidency).toBeVisible();
 		}

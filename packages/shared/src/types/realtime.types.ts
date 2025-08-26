@@ -7,7 +7,10 @@
  */
 
 import type { Database } from "@neonpro/db";
-import type { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import type {
+	RealtimeChannel,
+	RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 
 // Healthcare database tables for real-time subscriptions
 export type Tables = Database["public"]["Tables"];
@@ -17,7 +20,9 @@ export type ProfessionalRow = Tables["healthcare_professionals"]["Row"];
 export type AuditLogRow = Tables["healthcare_audit_logs"]["Row"];
 
 // Real-time payload types - Using Record constraint to satisfy TypeScript
-export type RealtimePayload<T extends Record<string, any> = Record<string, any>> = RealtimePostgresChangesPayload<T>;
+export type RealtimePayload<
+	T extends Record<string, any> = Record<string, any>,
+> = RealtimePostgresChangesPayload<T>;
 
 // Healthcare-specific event types - Using type alias instead of interface to avoid extension issues
 export type PatientRealtimePayload = RealtimePayload<PatientRow> & {
@@ -78,7 +83,8 @@ export interface PatientSubscriptionConfig extends RealtimeSubscriptionConfig {
 	lgpdConfig?: LGPDRealtimeConfig;
 }
 
-export interface AppointmentSubscriptionConfig extends RealtimeSubscriptionConfig {
+export interface AppointmentSubscriptionConfig
+	extends RealtimeSubscriptionConfig {
 	table: "appointments";
 	appointmentId?: string;
 	patientId?: string;
@@ -90,7 +96,8 @@ export interface AppointmentSubscriptionConfig extends RealtimeSubscriptionConfi
 	};
 }
 
-export interface ProfessionalSubscriptionConfig extends RealtimeSubscriptionConfig {
+export interface ProfessionalSubscriptionConfig
+	extends RealtimeSubscriptionConfig {
 	table: "professionals";
 	professionalId?: string;
 	clinicId?: string;
@@ -107,9 +114,9 @@ export type RealtimeChannelManager = {
 };
 
 // Real-time event handlers - Using Record constraint for generic type
-export type RealtimeEventHandler<T extends Record<string, any> = Record<string, any>> = (
-	payload: RealtimePayload<T>
-) => void;
+export type RealtimeEventHandler<
+	T extends Record<string, any> = Record<string, any>,
+> = (payload: RealtimePayload<T>) => void;
 
 export type RealtimeEventHandlers = {
 	onInsert?: RealtimeEventHandler;
@@ -131,7 +138,9 @@ export type RealtimeHealthCheck = {
 };
 
 // Real-time hooks configuration
-export type UseRealtimeConfig<T extends Record<string, any> = Record<string, any>> = {
+export type UseRealtimeConfig<
+	T extends Record<string, any> = Record<string, any>,
+> = {
 	table: string;
 	filter?: string;
 	event?: "INSERT" | "UPDATE" | "DELETE" | "*";
@@ -154,8 +163,9 @@ export type RealtimeQueryOptions = {
 };
 
 // TanStack Query integration types - Using Record constraint
-export interface UseRealtimeQueryConfig<T extends Record<string, any> = Record<string, any>>
-	extends UseRealtimeConfig<T> {
+export interface UseRealtimeQueryConfig<
+	T extends Record<string, any> = Record<string, any>,
+> extends UseRealtimeConfig<T> {
 	queryKey: string[];
 	queryOptions?: RealtimeQueryOptions;
 }

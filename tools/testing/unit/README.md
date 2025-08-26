@@ -1,9 +1,12 @@
 # Unit Testing Guidelines - NeonPro Healthcare
 
 ## Overview
-Unit testing infrastructure for NeonPro healthcare components with focus on isolated component testing, healthcare compliance validation, and comprehensive coverage.
+
+Unit testing infrastructure for NeonPro healthcare components with focus on isolated component
+testing, healthcare compliance validation, and comprehensive coverage.
 
 ## Directory Structure
+
 ```
 unit/
 ├── setup/              # Test setup configurations
@@ -18,11 +21,13 @@ unit/
 ## Testing Standards
 
 ### Coverage Requirements
+
 - **Minimum**: 90% statement coverage
 - **Healthcare Components**: 95% coverage required
 - **Critical Healthcare Functions**: 100% coverage required
 
 ### Test Organization
+
 - One test file per source file
 - Use descriptive test names
 - Group related tests using `describe` blocks
@@ -31,12 +36,13 @@ unit/
 ## Healthcare-Specific Testing
 
 ### LGPD Compliance Unit Tests
+
 ```typescript
 describe('Patient Data Privacy', () => {
   it('should encrypt patient data before storage', () => {
     // Test data encryption compliance
   });
-  
+
   it('should validate consent before data processing', () => {
     // Test consent validation
   });
@@ -44,6 +50,7 @@ describe('Patient Data Privacy', () => {
 ```
 
 ### ANVISA Compliance Unit Tests
+
 ```typescript
 describe('Medical Device Validation', () => {
   it('should validate device registration status', () => {
@@ -53,6 +60,7 @@ describe('Medical Device Validation', () => {
 ```
 
 ### CFM Standards Unit Tests
+
 ```typescript
 describe('Medical Professional Standards', () => {
   it('should validate professional licensing', () => {

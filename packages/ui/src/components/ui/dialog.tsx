@@ -1,6 +1,14 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
-import { AlertTriangle, CheckCircle, FileText, Heart, Info, Shield, X } from "lucide-react";
+import {
+	AlertTriangle,
+	CheckCircle,
+	FileText,
+	Heart,
+	Info,
+	Shield,
+	X,
+} from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
@@ -17,7 +25,7 @@ const DialogOverlay = React.forwardRef<
 	<DialogPrimitive.Overlay
 		className={cn(
 			"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-gradient-to-br from-black/60 via-black/80 to-black/60 backdrop-blur-md transition-all duration-500 data-[state=closed]:animate-out data-[state=open]:animate-in",
-			className
+			className,
 		)}
 		ref={ref}
 		{...props}
@@ -54,16 +62,21 @@ const dialogContentVariants = cva(
 			variant: "default",
 			size: "default",
 		},
-	}
+	},
 );
 
 const DialogContent = React.forwardRef<
 	React.ElementRef<typeof DialogPrimitive.Content>,
-	React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & VariantProps<typeof dialogContentVariants>
+	React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> &
+		VariantProps<typeof dialogContentVariants>
 >(({ className, children, variant, size, ...props }, ref) => (
 	<DialogPortal>
 		<DialogOverlay />
-		<DialogPrimitive.Content className={cn(dialogContentVariants({ variant, size }), className)} ref={ref} {...props}>
+		<DialogPrimitive.Content
+			className={cn(dialogContentVariants({ variant, size }), className)}
+			ref={ref}
+			{...props}
+		>
 			{children}
 			<DialogPrimitive.Close className="absolute top-4 right-4 rounded-md p-2 opacity-70 ring-offset-background transition-all duration-200 hover:bg-muted/80 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
 				<X className="h-4 w-4" />
@@ -73,13 +86,31 @@ const DialogContent = React.forwardRef<
 	</DialogPortal>
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
-const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-	<div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
+const DialogHeader = ({
+	className,
+	...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+	<div
+		className={cn(
+			"flex flex-col space-y-1.5 text-center sm:text-left",
+			className,
+		)}
+		{...props}
+	/>
 );
 DialogHeader.displayName = "DialogHeader";
 
-const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-	<div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)} {...props} />
+const DialogFooter = ({
+	className,
+	...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+	<div
+		className={cn(
+			"flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+			className,
+		)}
+		{...props}
+	/>
 );
 DialogFooter.displayName = "DialogFooter";
 
@@ -88,7 +119,10 @@ const DialogTitle = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
 	<DialogPrimitive.Title
-		className={cn("font-semibold text-foreground text-lg leading-none tracking-tight", className)}
+		className={cn(
+			"font-semibold text-foreground text-lg leading-none tracking-tight",
+			className,
+		)}
 		ref={ref}
 		{...props}
 	/>
@@ -119,10 +153,18 @@ interface HealthcareDialogProps
 	cancelText?: string;
 	isDestructive?: boolean;
 	lgpdRequired?: boolean;
-	medicalContext?: "appointment" | "patient-data" | "treatment" | "emergency" | "consent";
+	medicalContext?:
+		| "appointment"
+		| "patient-data"
+		| "treatment"
+		| "emergency"
+		| "consent";
 }
 
-const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, HealthcareDialogProps>(
+const ConfirmationDialog = React.forwardRef<
+	React.ElementRef<typeof DialogPrimitive.Content>,
+	HealthcareDialogProps
+>(
 	(
 		{
 			title = "Confirmar Ação",
@@ -140,7 +182,7 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 			children,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const getDefaultIcon = () => {
 			if (icon) {
@@ -151,7 +193,9 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 			}
 
 			if (isDestructive) {
-				return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+				return (
+					<AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
+				);
 			}
 
 			switch (medicalContext) {
@@ -162,7 +206,9 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 				case "treatment":
 					return <Heart className="h-6 w-6 animate-pulse text-destructive" />;
 				case "emergency":
-					return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+					return (
+						<AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
+					);
 				case "consent":
 					return <FileText className="h-6 w-6 text-primary" />;
 				default:
@@ -209,7 +255,8 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 					<div className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-success/15 via-success/10 to-success/5 p-3 text-sm shadow-healthcare-sm backdrop-blur-sm">
 						<Shield className="h-4 w-4 text-success" />
 						<span className="text-success">
-							Esta ação está em conformidade com a LGPD e os dados serão processados de forma segura.
+							Esta ação está em conformidade com a LGPD e os dados serão
+							processados de forma segura.
 						</span>
 					</div>
 				)}
@@ -229,7 +276,7 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 							"inline-flex h-10 items-center justify-center rounded-md px-4 py-2 font-medium text-sm shadow-healthcare-md transition-all duration-300 hover:scale-105 hover:shadow-healthcare-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
 							isDestructive
 								? "bg-gradient-to-br from-destructive via-destructive/90 to-destructive text-destructive-foreground hover:from-destructive/90 hover:to-destructive/80"
-								: "bg-gradient-primary text-primary-foreground hover:shadow-primary/30"
+								: "bg-gradient-primary text-primary-foreground hover:shadow-primary/30",
 						)}
 						onClick={onConfirm}
 						type="button"
@@ -239,7 +286,7 @@ const ConfirmationDialog = React.forwardRef<React.ElementRef<typeof DialogPrimit
 				</DialogFooter>
 			</DialogContent>
 		);
-	}
+	},
 );
 ConfirmationDialog.displayName = "ConfirmationDialog"; // NEONPROV1 Healthcare-specific specialized dialogs
 type LGPDConsentDialogProps = {
@@ -257,7 +304,11 @@ const LGPDConsentDialog = ({
 	onClose,
 	onAccept,
 	onReject,
-	dataTypes = ["Dados pessoais básicos", "Informações de contato", "Histórico médico"],
+	dataTypes = [
+		"Dados pessoais básicos",
+		"Informações de contato",
+		"Histórico médico",
+	],
 	purpose = "Prestação de serviços de saúde e acompanhamento médico",
 	retentionPeriod = "5 anos ou conforme legislação vigente",
 }: LGPDConsentDialogProps) => {
@@ -267,17 +318,21 @@ const LGPDConsentDialog = ({
 				<DialogHeader>
 					<div className="mb-2 flex items-center gap-3">
 						<Shield className="h-6 w-6 animate-pulse text-success" />
-						<DialogTitle className="text-gradient">Consentimento LGPD</DialogTitle>
+						<DialogTitle className="text-gradient">
+							Consentimento LGPD
+						</DialogTitle>
 					</div>
 					<DialogDescription>
-						Precisamos do seu consentimento para processar seus dados pessoais de acordo com a Lei Geral de Proteção de
-						Dados (LGPD).
+						Precisamos do seu consentimento para processar seus dados pessoais
+						de acordo com a Lei Geral de Proteção de Dados (LGPD).
 					</DialogDescription>
 				</DialogHeader>
 
 				<div className="space-y-4 py-4">
 					<div className="rounded-lg bg-gradient-to-br from-muted/60 via-muted/40 to-muted/20 p-4 backdrop-blur-sm">
-						<h4 className="mb-2 font-semibold text-foreground">Dados que serão coletados:</h4>
+						<h4 className="mb-2 font-semibold text-foreground">
+							Dados que serão coletados:
+						</h4>
 						<ul className="list-disc space-y-1 pl-4 text-muted-foreground text-sm">
 							{dataTypes.map((type, index) => (
 								<li key={index}>{type}</li>
@@ -286,19 +341,25 @@ const LGPDConsentDialog = ({
 					</div>
 
 					<div className="rounded-lg bg-gradient-to-br from-muted/60 via-muted/40 to-muted/20 p-4 backdrop-blur-sm">
-						<h4 className="mb-2 font-semibold text-foreground">Finalidade do tratamento:</h4>
+						<h4 className="mb-2 font-semibold text-foreground">
+							Finalidade do tratamento:
+						</h4>
 						<p className="text-muted-foreground text-sm">{purpose}</p>
 					</div>
 
 					<div className="rounded-lg bg-gradient-to-br from-muted/60 via-muted/40 to-muted/20 p-4 backdrop-blur-sm">
-						<h4 className="mb-2 font-semibold text-foreground">Período de retenção:</h4>
+						<h4 className="mb-2 font-semibold text-foreground">
+							Período de retenção:
+						</h4>
 						<p className="text-muted-foreground text-sm">{retentionPeriod}</p>
 					</div>
 
 					<div className="rounded-lg bg-gradient-to-br from-success/15 via-success/10 to-success/5 p-4 shadow-healthcare-sm ring-1 ring-success/20 backdrop-blur-sm">
 						<p className="font-medium text-success text-xs leading-relaxed">
-							Seus dados serão protegidos com medidas de segurança adequadas e você poderá exercer seus direitos
-							(acesso, correção, exclusão, portabilidade) a qualquer momento através do nosso canal de atendimento.
+							Seus dados serão protegidos com medidas de segurança adequadas e
+							você poderá exercer seus direitos (acesso, correção, exclusão,
+							portabilidade) a qualquer momento através do nosso canal de
+							atendimento.
 						</p>
 					</div>
 				</div>
@@ -348,7 +409,9 @@ const MedicalAlertDialog = ({
 	const getAlertIcon = () => {
 		switch (alertType) {
 			case "critical":
-				return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
+				return (
+					<AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
+				);
 			case "urgent":
 				return <AlertTriangle className="h-6 w-6 text-warning" />;
 			case "info":
@@ -374,16 +437,27 @@ const MedicalAlertDialog = ({
 				<DialogHeader>
 					<div className="mb-2 flex items-center gap-3">
 						{getAlertIcon()}
-						<DialogTitle className={alertType === "critical" ? "animate-pulse text-destructive" : "text-gradient"}>
+						<DialogTitle
+							className={
+								alertType === "critical"
+									? "animate-pulse text-destructive"
+									: "text-gradient"
+							}
+						>
 							{title}
 						</DialogTitle>
 					</div>
 					{patientName && (
 						<div className="rounded-md bg-gradient-to-br from-muted/40 via-muted/20 to-muted/10 p-2 font-medium text-foreground text-sm backdrop-blur-sm">
-							Paciente: <span className="font-semibold text-primary">{patientName}</span>
+							Paciente:{" "}
+							<span className="font-semibold text-primary">{patientName}</span>
 						</div>
 					)}
-					{timestamp && <div className="text-muted-foreground text-xs">{timestamp.toLocaleString("pt-BR")}</div>}
+					{timestamp && (
+						<div className="text-muted-foreground text-xs">
+							{timestamp.toLocaleString("pt-BR")}
+						</div>
+					)}
 				</DialogHeader>
 
 				<div className="py-4">
@@ -422,22 +496,22 @@ const MedicalAlertDialog = ({
 };
 
 export {
-	Dialog,
-	DialogPortal,
-	DialogOverlay,
-	DialogTrigger,
-	DialogClose,
-	DialogContent,
-	DialogHeader,
-	DialogFooter,
-	DialogTitle,
-	DialogDescription,
 	// NEONPROV1 Healthcare-specific exports
 	ConfirmationDialog,
-	LGPDConsentDialog,
-	MedicalAlertDialog,
+	Dialog,
+	DialogClose,
+	DialogContent,
 	dialogContentVariants,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogOverlay,
+	DialogPortal,
+	DialogTitle,
+	DialogTrigger,
 	type HealthcareDialogProps,
+	LGPDConsentDialog,
 	type LGPDConsentDialogProps,
+	MedicalAlertDialog,
 	type MedicalAlertDialogProps,
 };

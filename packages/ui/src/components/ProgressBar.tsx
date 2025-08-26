@@ -10,7 +10,18 @@ export interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
-	({ value, max = 100, variant = "default", size = "md", showText = false, className, ...props }, ref) => {
+	(
+		{
+			value,
+			max = 100,
+			variant = "default",
+			size = "md",
+			showText = false,
+			className,
+			...props
+		},
+		ref,
+	) => {
 		const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
 		return (
@@ -22,7 +33,7 @@ const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
 						"h-2": size === "md",
 						"h-3": size === "lg",
 					},
-					className
+					className,
 				)}
 				ref={ref}
 				{...props}
@@ -41,12 +52,14 @@ const ProgressBar = React.forwardRef<HTMLDivElement, ProgressBarProps>(
 
 				{showText && (
 					<div className="absolute inset-0 flex items-center justify-center">
-						<span className="font-medium text-white text-xs">{Math.round(percentage)}%</span>
+						<span className="font-medium text-white text-xs">
+							{Math.round(percentage)}%
+						</span>
 					</div>
 				)}
 			</div>
 		);
-	}
+	},
 );
 
 ProgressBar.displayName = "ProgressBar";

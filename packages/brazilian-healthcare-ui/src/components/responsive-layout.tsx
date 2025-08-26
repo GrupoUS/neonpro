@@ -18,7 +18,9 @@ export function ResponsiveLayout({
 	emergencyMode = false,
 	className = "",
 }: ResponsiveLayoutProps) {
-	const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">("desktop");
+	const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">(
+		"desktop",
+	);
 	const [isLowBandwidth, setIsLowBandwidth] = useState(false);
 	const [connectionSpeed, setConnectionSpeed] = useState<string>("unknown");
 
@@ -55,13 +57,17 @@ export function ResponsiveLayout({
 			const connection = (navigator as any).connection;
 			const updateConnectionInfo = () => {
 				setConnectionSpeed(connection.effectiveType || "unknown");
-				setIsLowBandwidth(connection.effectiveType === "slow-2g" || connection.effectiveType === "2g");
+				setIsLowBandwidth(
+					connection.effectiveType === "slow-2g" ||
+						connection.effectiveType === "2g",
+				);
 			};
 
 			updateConnectionInfo();
 			connection.addEventListener("change", updateConnectionInfo);
 
-			return () => connection.removeEventListener("change", updateConnectionInfo);
+			return () =>
+				connection.removeEventListener("change", updateConnectionInfo);
 		}
 	}, [connectivity]);
 
@@ -106,7 +112,9 @@ export function ResponsiveLayout({
 
 	return (
 		<div
-			className={`responsive-layout min-h-screen ${emergencyMode ? "emergency-mode" : ""} ${className}`}
+			className={`responsive-layout min-h-screen ${
+				emergencyMode ? "emergency-mode" : ""
+			} ${className}`}
 			data-connectivity={connectionSpeed}
 			data-viewport={viewport}
 			style={
@@ -131,32 +139,53 @@ export function ResponsiveLayout({
 						</span>
 					</div>
 
-					{isLowBandwidth && <div className="rounded bg-yellow-100 px-2 py-1 text-xs">MODO ECONOMIA</div>}
+					{isLowBandwidth && (
+						<div className="rounded bg-yellow-100 px-2 py-1 text-xs">
+							MODO ECONOMIA
+						</div>
+					)}
 
 					{emergencyMode && (
-						<div className="animate-pulse rounded bg-red-500 px-2 py-1 text-white text-xs">EMERGÊNCIA</div>
+						<div className="animate-pulse rounded bg-red-500 px-2 py-1 text-white text-xs">
+							EMERGÊNCIA
+						</div>
 					)}
 				</div>
 			</div>
 
 			{/* Main Layout */}
 			<div
-				className={`layout-container ${viewport === "mobile" ? "mobile-layout" : viewport === "tablet" ? "tablet-layout" : "desktop-layout"}`}
+				className={`layout-container ${
+					viewport === "mobile"
+						? "mobile-layout"
+						: viewport === "tablet"
+							? "tablet-layout"
+							: "desktop-layout"
+				}`}
 			>
 				{viewport === "mobile" && (
-					<MobileLayout isLowBandwidth={isLowBandwidth} optimizations={optimizations}>
+					<MobileLayout
+						isLowBandwidth={isLowBandwidth}
+						optimizations={optimizations}
+					>
 						{children}
 					</MobileLayout>
 				)}
 
 				{viewport === "tablet" && (
-					<TabletLayout isLowBandwidth={isLowBandwidth} optimizations={optimizations}>
+					<TabletLayout
+						isLowBandwidth={isLowBandwidth}
+						optimizations={optimizations}
+					>
 						{children}
 					</TabletLayout>
 				)}
 
 				{viewport === "desktop" && (
-					<DesktopLayout isLowBandwidth={isLowBandwidth} optimizations={optimizations}>
+					<DesktopLayout
+						isLowBandwidth={isLowBandwidth}
+						optimizations={optimizations}
+					>
 						{children}
 					</DesktopLayout>
 				)}
@@ -228,7 +257,10 @@ function MobileLayout({
 			</div>
 
 			{/* Fixed bottom navigation */}
-			<nav className="fixed right-0 bottom-0 left-0 border-gray-200 border-t bg-white p-2" id="navigation">
+			<nav
+				className="fixed right-0 bottom-0 left-0 border-gray-200 border-t bg-white p-2"
+				id="navigation"
+			>
 				<div className="flex justify-around">
 					<button className="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
 						<span className="mb-1 text-xl">🏥</span>
@@ -261,7 +293,10 @@ function TabletLayout({
 	return (
 		<div className="tablet-layout flex h-screen">
 			{/* Side navigation */}
-			<nav className="w-64 border-gray-200 border-r bg-white p-4" id="navigation">
+			<nav
+				className="w-64 border-gray-200 border-r bg-white p-4"
+				id="navigation"
+			>
 				<div className="space-y-2">
 					<button className="flex w-full items-center rounded-lg p-3 text-left hover:bg-gray-100">
 						<span className="mr-3 text-xl">🏥</span>
@@ -303,19 +338,31 @@ function DesktopLayout({
 				<div className="p-4">
 					<h1 className="mb-6 font-bold text-gray-900 text-xl">NeonPro</h1>
 					<nav className="space-y-2" id="navigation">
-						<a className="flex items-center rounded-lg p-3 hover:bg-gray-100" href="#">
+						<a
+							className="flex items-center rounded-lg p-3 hover:bg-gray-100"
+							href="#"
+						>
 							<span className="mr-3 text-xl">📊</span>
 							<span>Dashboard</span>
 						</a>
-						<a className="flex items-center rounded-lg p-3 hover:bg-gray-100" href="#">
+						<a
+							className="flex items-center rounded-lg p-3 hover:bg-gray-100"
+							href="#"
+						>
 							<span className="mr-3 text-xl">🏥</span>
 							<span>Pacientes</span>
 						</a>
-						<a className="flex items-center rounded-lg p-3 hover:bg-gray-100" href="#">
+						<a
+							className="flex items-center rounded-lg p-3 hover:bg-gray-100"
+							href="#"
+						>
 							<span className="mr-3 text-xl">📅</span>
 							<span>Agenda</span>
 						</a>
-						<a className="flex items-center rounded-lg bg-red-50 p-3 text-red-700" href="#">
+						<a
+							className="flex items-center rounded-lg bg-red-50 p-3 text-red-700"
+							href="#"
+						>
 							<span className="mr-3 text-xl">🚨</span>
 							<span>Emergência</span>
 						</a>
@@ -328,9 +375,13 @@ function DesktopLayout({
 				{/* Header */}
 				<header className="border-gray-200 border-b bg-white p-4">
 					<div className="flex items-center justify-between">
-						<h2 className="font-semibold text-gray-900 text-lg">Sistema de Saúde</h2>
+						<h2 className="font-semibold text-gray-900 text-lg">
+							Sistema de Saúde
+						</h2>
 						<div className="flex items-center space-x-4">
-							<div className="text-gray-600 text-sm">Dr. João Silva • CRM 12345</div>
+							<div className="text-gray-600 text-sm">
+								Dr. João Silva • CRM 12345
+							</div>
 							<div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm text-white">
 								JS
 							</div>
@@ -339,7 +390,10 @@ function DesktopLayout({
 				</header>
 
 				{/* Content */}
-				<main className="flex-1 overflow-y-auto bg-gray-50 p-6" id="main-content">
+				<main
+					className="flex-1 overflow-y-auto bg-gray-50 p-6"
+					id="main-content"
+				>
 					{children}
 				</main>
 			</div>

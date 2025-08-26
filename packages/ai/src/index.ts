@@ -110,10 +110,14 @@ export async function initializeAIServices(_config: AIServiceConfiguration) {
 
 		// Verify all services are healthy
 		const healthChecks = await AIServiceHealthChecker.checkAllServices();
-		const unhealthyServices = healthChecks.filter((check) => check.status !== "healthy");
+		const unhealthyServices = healthChecks.filter(
+			(check) => check.status !== "healthy",
+		);
 
 		if (unhealthyServices.length > 0) {
-			throw new Error(`Unhealthy services detected: ${unhealthyServices.map((s) => s.service).join(", ")}`);
+			throw new Error(
+				`Unhealthy services detected: ${unhealthyServices.map((s) => s.service).join(", ")}`,
+			);
 		}
 
 		return {
@@ -138,7 +142,8 @@ export async function initializeAIServices(_config: AIServiceConfiguration) {
 export const packageInfo = {
 	name: "@neonpro/ai",
 	version: AI_SERVICE_VERSION,
-	description: "AI-First Healthcare Platform - Enhanced Service Layer for NeonPro",
+	description:
+		"AI-First Healthcare Platform - Enhanced Service Layer for NeonPro",
 	author: "NeonPro Development Team",
 	license: "Proprietary",
 	features: [

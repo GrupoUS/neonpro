@@ -1,6 +1,9 @@
 import { format, parseISO } from "date-fns";
 
-export function formatDate(date: string | Date, pattern = "dd/MM/yyyy"): string {
+export function formatDate(
+	date: string | Date,
+	pattern = "dd/MM/yyyy",
+): string {
 	const dateObj = typeof date === "string" ? parseISO(date) : date;
 	return format(dateObj, pattern);
 }

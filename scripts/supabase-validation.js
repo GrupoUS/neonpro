@@ -85,7 +85,9 @@ async function validateHealthcareTables() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		// Required healthcare tables
 		const requiredTables = [
@@ -125,18 +127,24 @@ async function validateHealthcareTables() {
 			logSuccess(`Healthcare table found: ${table}`);
 		});
 
-		const missingTables = requiredTables.filter((table) => !foundTables.has(table));
+		const missingTables = requiredTables.filter(
+			(table) => !foundTables.has(table),
+		);
 		missingTables.forEach((table) => {
 			logError(`Missing healthcare table: ${table}`);
 		});
 
 		if (foundCount >= Math.ceil(requiredTables.length * 0.8)) {
 			// 80% threshold
-			logSuccess(`${foundCount}/${requiredTables.length} required healthcare tables found`);
+			logSuccess(
+				`${foundCount}/${requiredTables.length} required healthcare tables found`,
+			);
 			return true;
 		}
 
-		logError(`Only ${foundCount}/${requiredTables.length} required healthcare tables found`);
+		logError(
+			`Only ${foundCount}/${requiredTables.length} required healthcare tables found`,
+		);
 		return false;
 	} catch (error) {
 		logError(`Error validating healthcare tables: ${error.message}`);
@@ -149,7 +157,9 @@ async function validateRLSPolicies() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		let hasRLSEnable = false;
 		let policyCount = 0;
@@ -184,11 +194,15 @@ async function validateRLSPolicies() {
 
 		if (policyCount < 10) {
 			// Minimum expected policies for healthcare compliance
-			logError(`Only ${policyCount} RLS policies found, expected at least 10 for healthcare compliance`);
+			logError(
+				`Only ${policyCount} RLS policies found, expected at least 10 for healthcare compliance`,
+			);
 			return false;
 		}
 
-		logSuccess(`${policyCount} RLS policies found - adequate for healthcare compliance`);
+		logSuccess(
+			`${policyCount} RLS policies found - adequate for healthcare compliance`,
+		);
 		return true;
 	} catch (error) {
 		logError(`Error validating RLS policies: ${error.message}`);
@@ -201,7 +215,9 @@ async function validateHealthcareCompliance() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		const complianceFeatures = {
 			anvisa_license: false,
@@ -222,16 +238,26 @@ async function validateHealthcareCompliance() {
 			if (content.includes("cfm_registration")) {
 				complianceFeatures.cfm_registration = true;
 			}
-			if (content.includes("consent_records") || content.includes("lgpd_consent")) {
+			if (
+				content.includes("consent_records") ||
+				content.includes("lgpd_consent")
+			) {
 				complianceFeatures.lgpd_consent = true;
 			}
 			if (content.includes("activity_logs") || content.includes("audit")) {
 				complianceFeatures.audit_trail = true;
 			}
-			if (content.includes("data_retention_policies") || content.includes("retention_period")) {
+			if (
+				content.includes("data_retention_policies") ||
+				content.includes("retention_period")
+			) {
 				complianceFeatures.data_retention = true;
 			}
-			if (content.includes("encrypted") || content.includes("hash") || content.includes("pgp_sym_encrypt")) {
+			if (
+				content.includes("encrypted") ||
+				content.includes("hash") ||
+				content.includes("pgp_sym_encrypt")
+			) {
 				complianceFeatures.encryption_fields = true;
 			}
 		}
@@ -266,7 +292,9 @@ async function validateIndexes() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		let indexCount = 0;
 		const foundIndexes = [];
@@ -275,7 +303,9 @@ async function validateIndexes() {
 		for (const file of migrationFiles) {
 			const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
-			const indexMatches = content.match(/CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)/gi);
+			const indexMatches = content.match(
+				/CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)/gi,
+			);
 			if (indexMatches) {
 				indexCount += indexMatches.length;
 				indexMatches.forEach((match) => {
@@ -286,7 +316,9 @@ async function validateIndexes() {
 		}
 
 		if (indexCount < 5) {
-			logWarning(`Only ${indexCount} indexes found - consider adding more for performance`);
+			logWarning(
+				`Only ${indexCount} indexes found - consider adding more for performance`,
+			);
 			return true; // Don't fail, just warn
 		}
 
@@ -303,7 +335,9 @@ async function validateTriggers() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		let triggerCount = 0;
 		const foundTriggers = [];
@@ -326,7 +360,10 @@ async function validateTriggers() {
 		let hasUpdatedAtTriggers = false;
 		for (const file of migrationFiles) {
 			const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
-			if (content.includes("update_updated_at_column") || content.includes("updated_at")) {
+			if (
+				content.includes("update_updated_at_column") ||
+				content.includes("updated_at")
+			) {
 				hasUpdatedAtTriggers = true;
 				break;
 			}
@@ -335,7 +372,9 @@ async function validateTriggers() {
 		if (hasUpdatedAtTriggers) {
 			logSuccess("Updated_at triggers found - good for audit trails");
 		} else {
-			logWarning("No updated_at triggers found - consider adding for audit trails");
+			logWarning(
+				"No updated_at triggers found - consider adding for audit trails",
+			);
 		}
 
 		logSuccess(`${triggerCount} database triggers found`);
@@ -351,7 +390,9 @@ async function validateForeignKeys() {
 
 	try {
 		const migrationsPath = path.resolve(process.cwd(), "supabase/migrations");
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		let foreignKeyCount = 0;
 
@@ -370,11 +411,15 @@ async function validateForeignKeys() {
 		}
 
 		if (foreignKeyCount < 5) {
-			logWarning(`Only ${foreignKeyCount} foreign key constraints found - consider adding more for data integrity`);
+			logWarning(
+				`Only ${foreignKeyCount} foreign key constraints found - consider adding more for data integrity`,
+			);
 			return true; // Don't fail, just warn
 		}
 
-		logSuccess(`${foreignKeyCount} foreign key constraints found - good for data integrity`);
+		logSuccess(
+			`${foreignKeyCount} foreign key constraints found - good for data integrity`,
+		);
 		return true;
 	} catch (error) {
 		logError(`Error validating foreign keys: ${error.message}`);
@@ -387,7 +432,11 @@ async function validateSupabaseConfig() {
 
 	try {
 		// Check for Supabase config files
-		const configFiles = ["supabase/config.toml", ".env.local.example", ".env.example"];
+		const configFiles = [
+			"supabase/config.toml",
+			".env.local.example",
+			".env.example",
+		];
 
 		let foundConfigs = 0;
 
@@ -438,7 +487,11 @@ async function validateSupabaseConfig() {
 async function validateEnvironmentVariables() {
 	logHeader("Environment Variables Validation");
 
-	const requiredEnvVars = ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "NEXT_PUBLIC_SUPABASE_ANON_KEY"];
+	const requiredEnvVars = [
+		"NEXT_PUBLIC_SUPABASE_URL",
+		"SUPABASE_SERVICE_ROLE_KEY",
+		"NEXT_PUBLIC_SUPABASE_ANON_KEY",
+	];
 
 	const allValid = true;
 
@@ -486,7 +539,11 @@ async function runSupabaseValidation() {
 			}
 		} catch (error) {
 			logError(`${validation.name} validation error: ${error.message}`);
-			results.push({ name: validation.name, passed: false, error: error.message });
+			results.push({
+				name: validation.name,
+				passed: false,
+				error: error.message,
+			});
 			allPassed = false;
 		}
 	}
@@ -498,15 +555,21 @@ async function runSupabaseValidation() {
 		if (result.passed) {
 			logSuccess(`${result.name}: PASSED`);
 		} else {
-			logError(`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`);
+			logError(
+				`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
+			);
 		}
 	});
 
 	if (allPassed) {
-		log(`\n${colors.bold}${colors.green}🎉 All Supabase database validations passed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.green}🎉 All Supabase database validations passed!${colors.reset}`,
+		);
 		process.exit(0);
 	} else {
-		log(`\n${colors.bold}${colors.red}💥 Some Supabase database validations failed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.red}💥 Some Supabase database validations failed!${colors.reset}`,
+		);
 		process.exit(1);
 	}
 }

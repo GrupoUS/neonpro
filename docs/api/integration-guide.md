@@ -1,6 +1,7 @@
 # NeonPro Healthcare AI Services Integration Guide
 
-This comprehensive guide provides examples and best practices for integrating with the NeonPro Healthcare AI Services API.
+This comprehensive guide provides examples and best practices for integrating with the NeonPro
+Healthcare AI Services API.
 
 ## Table of Contents
 
@@ -32,6 +33,7 @@ curl -X POST "https://api.neonpro.healthcare/auth/login" \
 ```
 
 Response:
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -61,7 +63,7 @@ import { NeonProHealthcareAI } from '@neonpro/healthcare-ai-sdk';
 const client = new NeonProHealthcareAI({
   apiKey: 'your-api-key',
   baseURL: 'https://api.neonpro.healthcare',
-  timeout: 30000
+  timeout: 30000,
 });
 
 // Create a chat session
@@ -72,13 +74,13 @@ async function createChatSession(userId: string) {
       language: 'pt-BR',
       context: {
         specialty: 'cardiology',
-        clinic_id: 'clinic-001'
+        clinic_id: 'clinic-001',
       },
       consent: {
         data_processing_consent: true,
         ai_interaction_consent: true,
-        anonymized_analytics_consent: true
-      }
+        anonymized_analytics_consent: true,
+      },
     });
 
     console.log('Session created:', session.data.session_id);
@@ -96,12 +98,12 @@ async function sendMessage(sessionId: string, message: string) {
       session_id: sessionId,
       message: message,
       context: {
-        urgency_level: 'medium'
-      }
+        urgency_level: 'medium',
+      },
     });
 
     console.log('AI Response:', response.data.ai_response);
-    
+
     // Check for emergency escalation
     if (response.data.analysis.emergency_escalation) {
       console.warn('EMERGENCY: Escalation required!');
@@ -126,8 +128,8 @@ async function predictNoShow(patientId: string, appointmentDetails: any) {
         no_shows: 1,
         cancellations: 0,
         last_appointment_date: '2024-01-10',
-        days_since_last_visit: 15
-      }
+        days_since_last_visit: 15,
+      },
     });
 
     console.log(`No-show probability: ${prediction.data.no_show_probability}`);
@@ -156,8 +158,8 @@ async function validateLGPDCompliance(serviceOperation: any) {
         data_minimization_applied: true,
         purpose_limitation_respected: true,
         retention_period_defined: true,
-        cross_border_transfer: false
-      }
+        cross_border_transfer: false,
+      },
     });
 
     if (!validation.data.compliance_status.lgpd_compliant) {
@@ -176,10 +178,10 @@ async function validateLGPDCompliance(serviceOperation: any) {
 async function monitorServiceHealth() {
   try {
     const healthStatus = await client.monitoring.getServicesHealth();
-    
+
     healthStatus.data.forEach(service => {
       console.log(`${service.service}: ${service.status} (${service.uptime_percentage}% uptime)`);
-      
+
       if (service.status !== 'healthy') {
         console.warn(`Service ${service.service} is ${service.status}`);
         // Implement alerting logic
@@ -204,8 +206,8 @@ async function checkFeatureFlag(flagName: string, userId: string) {
     context: {
       user_id: userId,
       user_role: 'patient',
-      clinic_id: 'clinic-001'
-    }
+      clinic_id: 'clinic-001',
+    },
   });
 
   return flagResult.data.enabled;
@@ -218,15 +220,15 @@ async function optimizeAppointments(requests: any[]) {
     optimization_goals: {
       maximize_utilization: 0.4,
       minimize_wait_times: 0.3,
-      maximize_satisfaction: 0.3
+      maximize_satisfaction: 0.3,
     },
     constraints: {
       available_providers: ['provider-123', 'provider-456'],
       business_hours: {
         start_time: '08:00',
-        end_time: '18:00'
-      }
-    }
+        end_time: '18:00',
+      },
+    },
   });
 
   console.log(`Scheduled ${optimization.data.optimized_appointments.length} appointments`);
@@ -837,16 +839,17 @@ namespace Healthcare.Example
 
 ### LGPD (Lei Geral de Proteção de Dados) Compliance
 
-The NeonPro Healthcare AI Services are designed to be fully compliant with Brazil's LGPD. Here are key considerations:
+The NeonPro Healthcare AI Services are designed to be fully compliant with Brazil's LGPD. Here are
+key considerations:
 
 #### Data Processing Consent
 
 ```typescript
 // Always verify consent before processing personal data
 const consentData = {
-  data_processing_consent: true,        // Required for LGPD
-  ai_interaction_consent: true,         // Required for AI processing
-  anonymized_analytics_consent: false   // Optional for analytics
+  data_processing_consent: true, // Required for LGPD
+  ai_interaction_consent: true, // Required for AI processing
+  anonymized_analytics_consent: false, // Optional for analytics
 };
 
 // Include consent in all API calls
@@ -862,8 +865,8 @@ const session = await client.universalChat.createSession({
 ```typescript
 // Only collect and process necessary data
 const context = {
-  specialty: 'cardiology',     // Necessary for AI context
-  clinic_id: 'clinic-001',     // Necessary for routing
+  specialty: 'cardiology', // Necessary for AI context
+  clinic_id: 'clinic-001', // Necessary for routing
   // Do NOT include unnecessary personal identifiers
 };
 ```
@@ -874,7 +877,7 @@ const context = {
 // All API calls automatically generate audit trails
 const response = await client.universalChat.sendMessage({
   session_id: sessionId,
-  message: message
+  message: message,
 });
 
 // Access audit information
@@ -889,11 +892,11 @@ For medical device and software compliance:
 // Validate AI recommendations don't constitute medical diagnosis
 const response = await client.universalChat.sendMessage({
   session_id: sessionId,
-  message: "Estou sentindo dores no peito",
+  message: 'Estou sentindo dores no peito',
   context: {
-    medical_advice_disclaimer: true,  // Ensures proper disclaimers
-    professional_oversight_required: true
-  }
+    medical_advice_disclaimer: true, // Ensures proper disclaimers
+    professional_oversight_required: true,
+  },
 });
 
 // Check compliance status
@@ -908,9 +911,9 @@ if (!response.data.compliance_check.medical_advice_disclaimer) {
 // Ensure telemedicine guidelines are followed
 const validation = await client.compliance.validateCFM({
   interaction_type: 'ai_assistance',
-  healthcare_professional_present: true,  // Required for CFM compliance
+  healthcare_professional_present: true, // Required for CFM compliance
   patient_identification_verified: true,
-  medical_records_access: 'read_only'
+  medical_records_access: 'read_only',
 });
 ```
 
@@ -945,9 +948,9 @@ async function robustAPICall() {
   try {
     const response = await client.universalChat.sendMessage({
       session_id: sessionId,
-      message: message
+      message: message,
     });
-    
+
     return response.data;
   } catch (error) {
     if (error.code === 'RATE_LIMIT_EXCEEDED') {
@@ -955,18 +958,18 @@ async function robustAPICall() {
       await new Promise(resolve => setTimeout(resolve, error.details.retry_after_seconds * 1000));
       return robustAPICall(); // Retry
     }
-    
+
     if (error.code === 'COMPLIANCE_VIOLATION') {
       // Handle compliance issues immediately
       await handleComplianceViolation(error);
       throw error; // Don't retry compliance violations
     }
-    
+
     if (error.code === 'SERVICE_UNAVAILABLE') {
       // Implement circuit breaker pattern
       throw new ServiceUnavailableError('AI service temporarily unavailable');
     }
-    
+
     // Log and re-throw unexpected errors
     console.error('Unexpected API error:', error);
     throw error;
@@ -993,7 +996,7 @@ X-RateLimit-Window: 60
 class RateLimitedClient {
   private requestQueue: Array<() => Promise<any>> = [];
   private processing = false;
-  
+
   async makeRequest(requestFn: () => Promise<any>) {
     return new Promise((resolve, reject) => {
       this.requestQueue.push(async () => {
@@ -1005,31 +1008,31 @@ class RateLimitedClient {
             // Wait for the specified time
             const waitTime = error.details.retry_after_seconds * 1000;
             await new Promise(resolve => setTimeout(resolve, waitTime));
-            
+
             // Retry the request
             return this.makeRequest(requestFn);
           }
           reject(error);
         }
       });
-      
+
       this.processQueue();
     });
   }
-  
+
   private async processQueue() {
     if (this.processing || this.requestQueue.length === 0) return;
-    
+
     this.processing = true;
-    
+
     while (this.requestQueue.length > 0) {
       const request = this.requestQueue.shift()!;
       await request();
-      
+
       // Add small delay between requests to respect rate limits
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    
+
     this.processing = false;
   }
 }
@@ -1051,8 +1054,8 @@ const client = new NeonProHealthcareAI({
   pool: {
     maxConnections: 10,
     keepAlive: true,
-    keepAliveMsecs: 30000
-  }
+    keepAliveMsecs: 30000,
+  },
 });
 ```
 
@@ -1064,24 +1067,24 @@ const flagCache = new Map();
 
 async function getCachedFeatureFlag(flagName: string, context: any) {
   const cacheKey = `${flagName}-${JSON.stringify(context)}`;
-  
+
   if (flagCache.has(cacheKey)) {
     const cached = flagCache.get(cacheKey);
     if (Date.now() - cached.timestamp < 300000) { // 5 minutes
       return cached.value;
     }
   }
-  
+
   const result = await client.featureManagement.evaluateFlag({
     flag_name: flagName,
-    context: context
+    context: context,
   });
-  
+
   flagCache.set(cacheKey, {
     value: result.data.enabled,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
-  
+
   return result.data.enabled;
 }
 ```
@@ -1092,12 +1095,12 @@ async function getCachedFeatureFlag(flagName: string, context: any) {
 // Regular health checks
 class HealthMonitor {
   private healthCheckInterval: NodeJS.Timeout;
-  
+
   start() {
     this.healthCheckInterval = setInterval(async () => {
       try {
         const health = await client.monitoring.getServicesHealth();
-        
+
         health.data.forEach(service => {
           if (service.status !== 'healthy') {
             console.warn(`Service ${service.service} is ${service.status}`);
@@ -1109,7 +1112,7 @@ class HealthMonitor {
       }
     }, 30000); // Check every 30 seconds
   }
-  
+
   stop() {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
@@ -1126,28 +1129,28 @@ class TokenManager {
   private accessToken: string;
   private refreshToken: string;
   private expiresAt: number;
-  
+
   async getValidToken(): Promise<string> {
     if (this.accessToken && Date.now() < this.expiresAt - 300000) { // 5 minutes buffer
       return this.accessToken;
     }
-    
+
     // Refresh token if needed
     await this.refreshAccessToken();
     return this.accessToken;
   }
-  
+
   private async refreshAccessToken() {
     const response = await fetch('https://api.neonpro.healthcare/auth/refresh', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.refreshToken}`
-      }
+        'Authorization': `Bearer ${this.refreshToken}`,
+      },
     });
-    
+
     const data = await response.json();
-    
+
     this.accessToken = data.access_token;
     this.refreshToken = data.refresh_token;
     this.expiresAt = Date.now() + (data.expires_in * 1000);
@@ -1166,16 +1169,16 @@ const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.json()
+    winston.format.json(),
   ),
   defaultMeta: { service: 'healthcare-ai-client' },
   transports: [
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
     new winston.transports.File({ filename: 'audit.log' }),
     new winston.transports.Console({
-      format: winston.format.simple()
-    })
-  ]
+      format: winston.format.simple(),
+    }),
+  ],
 });
 
 // Log all API interactions for compliance
@@ -1185,7 +1188,7 @@ client.on('request', (requestData) => {
     url: requestData.url,
     user_id: requestData.userId,
     request_id: requestData.requestId,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -1195,11 +1198,12 @@ client.on('response', (responseData) => {
     request_id: responseData.requestId,
     response_time_ms: responseData.responseTime,
     compliance_validated: responseData.complianceValidated,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 ```
 
 ---
 
-For more examples and detailed API documentation, visit [https://docs.neonpro.healthcare](https://docs.neonpro.healthcare)
+For more examples and detailed API documentation, visit
+[https://docs.neonpro.healthcare](https://docs.neonpro.healthcare)

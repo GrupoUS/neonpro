@@ -12,10 +12,7 @@ export {
 	AuditOutcome,
 	AuditSeverity,
 } from "./audit/audit-service";
-export type {
-	MfaConfig,
-	MfaVerificationResult,
-} from "./auth/mfa-service";
+export type { MfaConfig, MfaVerificationResult } from "./auth/mfa-service";
 export * from "./auth/mfa-service";
 export { MfaMethod } from "./auth/mfa-service";
 export * from "./middleware/input-validation";

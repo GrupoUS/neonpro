@@ -10,18 +10,24 @@
 
 ## Primary Method: Automatic with markdown-tree
 
-[[LLM: First, check if markdownExploder is set to true in .bmad-core/core-config.yaml. If it is, attempt to run the command: `md-tree explode {input file} {output path}`.
+[[LLM: First, check if markdownExploder is set to true in .bmad-core/core-config.yaml. If it is,
+attempt to run the command: `md-tree explode {input file} {output path}`.
 
-If the command succeeds, inform the user that the document has been sharded successfully and STOP - do not proceed further.
+If the command succeeds, inform the user that the document has been sharded successfully and STOP -
+do not proceed further.
 
-If the command fails (especially with an error indicating the command is not found or not available), inform the user: "The markdownExploder setting is enabled but the md-tree command is not available. Please either:
+If the command fails (especially with an error indicating the command is not found or not
+available), inform the user: "The markdownExploder setting is enabled but the md-tree command is not
+available. Please either:
 
 1. Install @kayvan/markdown-tree-parser globally with: `npm install -g @kayvan/markdown-tree-parser`
 2. Or set markdownExploder to false in .bmad-core/core-config.yaml
 
-**IMPORTANT: STOP HERE - do not proceed with manual sharding until one of the above actions is taken.**"
+**IMPORTANT: STOP HERE - do not proceed with manual sharding until one of the above actions is
+taken.**"
 
-If markdownExploder is set to false, inform the user: "The markdownExploder setting is currently false. For better performance and reliability, you should:
+If markdownExploder is set to false, inform the user: "The markdownExploder setting is currently
+false. For better performance and reliability, you should:
 
 1. Set markdownExploder to true in .bmad-core/core-config.yaml
 2. Install @kayvan/markdown-tree-parser globally with: `npm install -g @kayvan/markdown-tree-parser`
@@ -81,12 +87,14 @@ CRITICAL AEGNT SHARDING RULES:
    - Extract the section heading and ALL content until the next level 2 section
    - Include all subsections, code blocks, diagrams, lists, tables, etc.
    - Be extremely careful with:
-     - Fenced code blocks (```) - ensure you capture the full block including closing backticks and account for potential misleading level 2's that are actually part of a fenced section example
+     - Fenced code blocks (```) - ensure you capture the full block including closing backticks and
+       account for potential misleading level 2's that are actually part of a fenced section example
      - Mermaid diagrams - preserve the complete diagram syntax
      - Nested markdown elements
      - Multi-line content that might contain ## inside code blocks
 
-CRITICAL: Use proper parsing that understands markdown context. A ## inside a code block is NOT a section header.]]
+CRITICAL: Use proper parsing that understands markdown context. A ## inside a code block is NOT a
+section header.]]
 
 ### 3. Create Individual Files
 
@@ -102,10 +110,10 @@ For each extracted section:
    - All subsection levels decrease by 1:
 
    ```txt
-     - ### → ##
-     - #### → ###
-     - ##### → ####
-     - etc.
+   - ### → ##
+   - #### → ###
+   - ##### → ####
+   - etc.
    ```
 
 3. **Write content**: Save the adjusted content to the new file
@@ -126,8 +134,7 @@ Create an `index.md` file in the sharded folder that:
 
 - [Section Name 1](./section-name-1.md)
 - [Section Name 2](./section-name-2.md)
-- [Section Name 3](./section-name-3.md)
-  ...
+- [Section Name 3](./section-name-3.md) ...
 ```
 
 ### 5. Preserve Special Content

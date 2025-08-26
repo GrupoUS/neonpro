@@ -17,7 +17,7 @@ async function preToolIntelligence() {
 		utils.log(
 			"INFO",
 			"PRE_TOOL_HOOK",
-			`Pre-tool intelligence hook executing for tool: ${env.toolName} on ${env.platform}`
+			`Pre-tool intelligence hook executing for tool: ${env.toolName} on ${env.platform}`,
 		);
 
 		// Get system information for context
@@ -25,20 +25,28 @@ async function preToolIntelligence() {
 		utils.log(
 			"DEBUG",
 			"PRE_TOOL_HOOK",
-			`System: ${systemInfo.platform} ${systemInfo.arch}, Node: ${systemInfo.nodeVersion}`
+			`System: ${systemInfo.platform} ${systemInfo.arch}, Node: ${systemInfo.nodeVersion}`,
 		);
 
 		// Tool-specific intelligence
 		await handleToolSpecificLogic(env.toolName, env);
 
 		// Log successful completion
-		utils.log("SUCCESS", "PRE_TOOL_HOOK", `Pre-tool intelligence hook completed successfully for ${env.toolName}`);
+		utils.log(
+			"SUCCESS",
+			"PRE_TOOL_HOOK",
+			`Pre-tool intelligence hook completed successfully for ${env.toolName}`,
+		);
 
 		// Exit successfully
 		process.exit(0);
 	} catch (error) {
 		// Log error but don't fail the hook
-		utils.log("ERROR", "PRE_TOOL_HOOK", `Pre-tool hook error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"PRE_TOOL_HOOK",
+			`Pre-tool hook error: ${error.message}`,
+		);
 
 		// Exit with success to not block Claude
 		process.exit(0);
@@ -71,11 +79,19 @@ async function handleToolSpecificLogic(toolName, env) {
 
 			default:
 				// Generic tool handling
-				utils.log("DEBUG", "PRE_TOOL_HOOK", `Generic pre-processing for tool: ${toolName}`);
+				utils.log(
+					"DEBUG",
+					"PRE_TOOL_HOOK",
+					`Generic pre-processing for tool: ${toolName}`,
+				);
 				break;
 		}
 	} catch (error) {
-		utils.log("WARN", "PRE_TOOL_HOOK", `Tool-specific logic error for ${toolName}: ${error.message}`);
+		utils.log(
+			"WARN",
+			"PRE_TOOL_HOOK",
+			`Tool-specific logic error for ${toolName}: ${error.message}`,
+		);
 	}
 }
 
@@ -83,11 +99,19 @@ async function handleToolSpecificLogic(toolName, env) {
  * Handle Bash tool pre-processing
  */
 async function handleBashTool(env) {
-	utils.log("INFO", "PRE_TOOL_HOOK", `Bash command preparation on ${env.platform}`);
+	utils.log(
+		"INFO",
+		"PRE_TOOL_HOOK",
+		`Bash command preparation on ${env.platform}`,
+	);
 
 	// Platform-specific bash handling
 	if (utils.isWindows) {
-		utils.log("DEBUG", "PRE_TOOL_HOOK", "Windows PowerShell environment detected");
+		utils.log(
+			"DEBUG",
+			"PRE_TOOL_HOOK",
+			"Windows PowerShell environment detected",
+		);
 	} else if (utils.isLinux) {
 		utils.log("DEBUG", "PRE_TOOL_HOOK", "Linux bash environment detected");
 	}
@@ -139,9 +163,12 @@ async function checkBashPrerequisites() {
 
 		for (const tool of checks) {
 			try {
-				const result = await utils.executeCommand(utils.isWindows ? `Get-Command ${tool}` : `which ${tool}`, {
-					timeout: 5000,
-				});
+				const result = await utils.executeCommand(
+					utils.isWindows ? `Get-Command ${tool}` : `which ${tool}`,
+					{
+						timeout: 5000,
+					},
+				);
 
 				if (result.success) {
 					utils.log("DEBUG", "PRE_TOOL_HOOK", `Tool available: ${tool}`);
@@ -149,11 +176,19 @@ async function checkBashPrerequisites() {
 					utils.log("WARN", "PRE_TOOL_HOOK", `Tool not found: ${tool}`);
 				}
 			} catch (error) {
-				utils.log("WARN", "PRE_TOOL_HOOK", `Could not check tool ${tool}: ${error.message}`);
+				utils.log(
+					"WARN",
+					"PRE_TOOL_HOOK",
+					`Could not check tool ${tool}: ${error.message}`,
+				);
 			}
 		}
 	} catch (error) {
-		utils.log("ERROR", "PRE_TOOL_HOOK", `Prerequisite check failed: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"PRE_TOOL_HOOK",
+			`Prerequisite check failed: ${error.message}`,
+		);
 	}
 }
 

@@ -48,6 +48,5 @@ export default defineConfig({
 			use: { ...devices["Desktop Chrome"] },
 		},
 	],
-
 	// No webServer - test against external endpoint
 });

@@ -186,15 +186,22 @@ export class PerformanceOptimizationIntegration {
 	 * Generate comprehensive integration report
 	 */
 	async generateIntegrationReport(): Promise<PerformanceIntegrationReport> {
-		const performanceReport = await this.performanceService.generatePerformanceReport();
+		const performanceReport =
+			await this.performanceService.generatePerformanceReport();
 		const cacheHealth = await this.cacheManager.performHealthCheck();
 
 		// Determine optimization status for each system
 		const optimizationStatus = {
-			caching: cacheHealth.healthy ? ("optimized" as const) : ("needs_attention" as const),
+			caching: cacheHealth.healthy
+				? ("optimized" as const)
+				: ("needs_attention" as const),
 			aiInference:
-				performanceReport.currentMetrics.aiInferenceTime <= 200 ? ("optimized" as const) : ("needs_attention" as const),
-			monitoring: this.config.enableRealTimeMonitoring ? ("active" as const) : ("inactive" as const),
+				performanceReport.currentMetrics.aiInferenceTime <= 200
+					? ("optimized" as const)
+					: ("needs_attention" as const),
+			monitoring: this.config.enableRealTimeMonitoring
+				? ("active" as const)
+				: ("inactive" as const),
 			database:
 				performanceReport.currentMetrics.databaseQueryTime <= 100
 					? ("optimized" as const)
@@ -209,7 +216,8 @@ export class PerformanceOptimizationIntegration {
 			dashboardLoadTime: performanceReport.currentMetrics.dashboardLoadTime,
 		};
 
-		const constitutionalScore = this.calculateConstitutionalScore(performanceReport);
+		const constitutionalScore =
+			this.calculateConstitutionalScore(performanceReport);
 
 		return {
 			optimizationStatus,
@@ -219,10 +227,18 @@ export class PerformanceOptimizationIntegration {
 				score: constitutionalScore,
 				details: [
 					`🏥 Healthcare Performance: ${metrics.overallScore}% compliance`,
-					`📦 Caching System: ${optimizationStatus.caching === "optimized" ? "✅" : "❌"} Optimized`,
-					`🤖 AI Inference: ${optimizationStatus.aiInference === "optimized" ? "✅" : "❌"} <200ms target`,
-					`📊 Real-time Monitoring: ${optimizationStatus.monitoring === "active" ? "✅" : "❌"} Active`,
-					`🗄️ Database Performance: ${optimizationStatus.database === "optimized" ? "✅" : "❌"} <100ms target`,
+					`📦 Caching System: ${
+						optimizationStatus.caching === "optimized" ? "✅" : "❌"
+					} Optimized`,
+					`🤖 AI Inference: ${
+						optimizationStatus.aiInference === "optimized" ? "✅" : "❌"
+					} <200ms target`,
+					`📊 Real-time Monitoring: ${
+						optimizationStatus.monitoring === "active" ? "✅" : "❌"
+					} Active`,
+					`🗄️ Database Performance: ${
+						optimizationStatus.database === "optimized" ? "✅" : "❌"
+					} <100ms target`,
 					`📈 Auto-scaling: ${this.config.enableAutoScaling ? "✅" : "❌"} Configured`,
 					`🎯 Constitutional Score: ${constitutionalScore}%`,
 				],
@@ -233,7 +249,10 @@ export class PerformanceOptimizationIntegration {
 	/**
 	 * Test AI inference performance
 	 */
-	private async testAIInferencePerformance(): Promise<{ avgResponseTime: number; successRate: number }> {
+	private async testAIInferencePerformance(): Promise<{
+		avgResponseTime: number;
+		successRate: number;
+	}> {
 		// Simulate AI inference performance test
 		const testRequests = 10;
 		const responseTimes: number[] = [];
@@ -243,14 +262,18 @@ export class PerformanceOptimizationIntegration {
 			try {
 				const startTime = Date.now();
 				// Simulate AI inference call
-				await new Promise((resolve) => setTimeout(resolve, 150 + Math.random() * 100));
+				await new Promise((resolve) =>
+					setTimeout(resolve, 150 + Math.random() * 100),
+				);
 				const responseTime = Date.now() - startTime;
 				responseTimes.push(responseTime);
 				successCount++;
 			} catch (_error) {}
 		}
 
-		const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length || 0;
+		const avgResponseTime =
+			responseTimes.reduce((sum, time) => sum + time, 0) /
+				responseTimes.length || 0;
 		const successRate = (successCount / testRequests) * 100;
 
 		return { avgResponseTime, successRate };
@@ -259,12 +282,18 @@ export class PerformanceOptimizationIntegration {
 	/**
 	 * Test database performance
 	 */
-	private async testDatabasePerformance(): Promise<{ avgQueryTime: number; connectionHealth: string }> {
+	private async testDatabasePerformance(): Promise<{
+		avgQueryTime: number;
+		connectionHealth: string;
+	}> {
 		try {
 			const startTime = Date.now();
 
 			// Test basic query performance
-			const { data, error } = await this.supabaseClient.from("health_metrics").select("id").limit(1);
+			const { data, error } = await this.supabaseClient
+				.from("health_metrics")
+				.select("id")
+				.limit(1);
 
 			const queryTime = Date.now() - startTime;
 

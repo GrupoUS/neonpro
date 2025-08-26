@@ -6,6 +6,9 @@
 
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
 	Activity,
 	BarChart3,
@@ -23,9 +26,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 
 interface PerformanceMetrics {
 	systemPerformance: {
@@ -231,7 +231,14 @@ export function PerformanceMetricsDashboard() {
 						<div className="space-y-2">
 							<div
 								className={`text-2xl font-bold ${getStatusColor(
-									getPerformanceStatus(metrics.systemPerformance.cpuUsage, { good: 70, warning: 85 }, true)
+									getPerformanceStatus(
+										metrics.systemPerformance.cpuUsage,
+										{
+											good: 70,
+											warning: 85,
+										},
+										true
+									)
 								)}`}
 							>
 								{metrics.systemPerformance.cpuUsage}%
@@ -264,7 +271,14 @@ export function PerformanceMetricsDashboard() {
 						<div className="space-y-2">
 							<div
 								className={`text-2xl font-bold ${getStatusColor(
-									getPerformanceStatus(metrics.systemPerformance.memoryUsage, { good: 80, warning: 90 }, true)
+									getPerformanceStatus(
+										metrics.systemPerformance.memoryUsage,
+										{
+											good: 80,
+											warning: 90,
+										},
+										true
+									)
 								)}`}
 							>
 								{metrics.systemPerformance.memoryUsage}%
@@ -290,7 +304,10 @@ export function PerformanceMetricsDashboard() {
 						<div className="space-y-2">
 							<div
 								className={`text-2xl font-bold ${getStatusColor(
-									getPerformanceStatus(300 - metrics.applicationMetrics.responseTime, { good: 150, warning: 100 })
+									getPerformanceStatus(300 - metrics.applicationMetrics.responseTime, {
+										good: 150,
+										warning: 100,
+									})
 								)}`}
 							>
 								{metrics.applicationMetrics.responseTime}ms

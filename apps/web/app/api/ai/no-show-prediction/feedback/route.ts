@@ -33,13 +33,23 @@ export async function POST(request: NextRequest) {
 
 		// Validate required fields
 		if (!(feedback.appointmentId && feedback.actualOutcome)) {
-			return NextResponse.json({ error: "appointmentId and actualOutcome are required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "appointmentId and actualOutcome are required" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// Validate actualOutcome
 		const validOutcomes = ["attended", "no_show", "cancelled"];
 		if (!validOutcomes.includes(feedback.actualOutcome)) {
-			return NextResponse.json({ error: "actualOutcome must be attended, no_show, or cancelled" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "actualOutcome must be attended, no_show, or cancelled" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// Update prediction with actual outcome
@@ -50,7 +60,12 @@ export async function POST(request: NextRequest) {
 			.single();
 
 		if (fetchError || !existingPrediction) {
-			return NextResponse.json({ error: "Prediction not found for this appointment" }, { status: 404 });
+			return NextResponse.json(
+				{ error: "Prediction not found for this appointment" },
+				{
+					status: 404,
+				}
+			);
 		}
 
 		// Update prediction with actual outcome

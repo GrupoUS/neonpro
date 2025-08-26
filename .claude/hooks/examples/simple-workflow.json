@@ -1,166 +1,166 @@
 {
-  "$schema": "https://json-schema.org/draft-07/schema#",
-  "title": "Simple Workflow Configuration",
-  "description": "Basic proactive hook configuration for simple workflows: just lint and test on completion",
-  "version": "1.0.0",
-  "workflowType": "simple",
+	"$schema": "https://json-schema.org/draft-07/schema#",
+	"title": "Simple Workflow Configuration",
+	"description": "Basic proactive hook configuration for simple workflows: just lint and test on completion",
+	"version": "1.0.0",
+	"workflowType": "simple",
 
-  "taskCompletionCommands": {
-    "description": "Simple commands executed when a task completes",
-    "always": [
-      {
-        "command": "echo",
-        "args": ["Task completed! Running basic checks..."],
-        "timeout": 5,
-        "continueOnFailure": true,
-        "description": "Simple task completion message"
-      }
-    ],
-    "onSuccess": [
-      {
-        "command": "npm",
-        "args": ["run", "lint"],
-        "timeout": 30,
-        "continueOnFailure": true,
-        "description": "Quick Biome code quality check",
-        "conditions": {
-          "fileExists": "package.json",
-          "scriptExists": "lint"
-        }
-      }
-    ],
-    "onFailure": [
-      {
-        "command": "echo",
-        "args": ["Task had some issues - check the logs when you have time"],
-        "timeout": 5,
-        "continueOnFailure": true,
-        "description": "Gentle failure notification"
-      }
-    ]
-  },
+	"taskCompletionCommands": {
+		"description": "Simple commands executed when a task completes",
+		"always": [
+			{
+				"command": "echo",
+				"args": ["Task completed! Running basic checks..."],
+				"timeout": 5,
+				"continueOnFailure": true,
+				"description": "Simple task completion message"
+			}
+		],
+		"onSuccess": [
+			{
+				"command": "npm",
+				"args": ["run", "lint"],
+				"timeout": 30,
+				"continueOnFailure": true,
+				"description": "Quick Biome code quality check",
+				"conditions": {
+					"fileExists": "package.json",
+					"scriptExists": "lint"
+				}
+			}
+		],
+		"onFailure": [
+			{
+				"command": "echo",
+				"args": ["Task had some issues - check the logs when you have time"],
+				"timeout": 5,
+				"continueOnFailure": true,
+				"description": "Gentle failure notification"
+			}
+		]
+	},
 
-  "planCompletionCommands": {
-    "description": "Simple commands executed when the plan completes",
-    "always": [
-      {
-        "command": "echo",
-        "args": ["All done! Your changes are ready."],
-        "timeout": 5,
-        "continueOnFailure": true,
-        "description": "Simple plan completion message"
-      }
-    ],
-    "onSuccess": [
-      {
-        "command": "npm",
-        "args": ["run", "test"],
-        "timeout": 60,
-        "continueOnFailure": true,
-        "description": "Run Vitest tests to make sure everything works",
-        "conditions": {
-          "fileExists": "package.json",
-          "scriptExists": "test"
-        }
-      },
-      {
-        "command": "echo",
-        "args": ["✨ Great work! Everything looks good to go."],
-        "timeout": 5,
-        "continueOnFailure": true,
-        "description": "Encouraging success message"
-      }
-    ],
-    "onFailure": [
-      {
-        "command": "echo",
-        "args": [
-          "Most of your work is done, but there might be a few things to clean up"
-        ],
-        "timeout": 5,
-        "continueOnFailure": true,
-        "description": "Encouraging failure message"
-      }
-    ]
-  },
+	"planCompletionCommands": {
+		"description": "Simple commands executed when the plan completes",
+		"always": [
+			{
+				"command": "echo",
+				"args": ["All done! Your changes are ready."],
+				"timeout": 5,
+				"continueOnFailure": true,
+				"description": "Simple plan completion message"
+			}
+		],
+		"onSuccess": [
+			{
+				"command": "npm",
+				"args": ["run", "test"],
+				"timeout": 60,
+				"continueOnFailure": true,
+				"description": "Run Vitest tests to make sure everything works",
+				"conditions": {
+					"fileExists": "package.json",
+					"scriptExists": "test"
+				}
+			},
+			{
+				"command": "echo",
+				"args": ["✨ Great work! Everything looks good to go."],
+				"timeout": 5,
+				"continueOnFailure": true,
+				"description": "Encouraging success message"
+			}
+		],
+		"onFailure": [
+			{
+				"command": "echo",
+				"args": [
+					"Most of your work is done, but there might be a few things to clean up"
+				],
+				"timeout": 5,
+				"continueOnFailure": true,
+				"description": "Encouraging failure message"
+			}
+		]
+	},
 
-  "settings": {
-    "description": "Simple workflow settings - easy to understand and modify",
-    "enableLogging": true,
-    "logLevel": "info",
-    "maxRetries": 1,
-    "defaultTimeout": 30,
-    "enableNotifications": true,
-    "parallelExecution": false,
-    "errorHandling": {
-      "stopOnFirstFailure": false,
-      "notifyOnFailure": false
-    }
-  },
+	"settings": {
+		"description": "Simple workflow settings - easy to understand and modify",
+		"enableLogging": true,
+		"logLevel": "info",
+		"maxRetries": 1,
+		"defaultTimeout": 30,
+		"enableNotifications": true,
+		"parallelExecution": false,
+		"errorHandling": {
+			"stopOnFirstFailure": false,
+			"notifyOnFailure": false
+		}
+	},
 
-  "examples": {
-    "description": "Simple usage examples",
-    "basicProject": {
-      "description": "Any project with package.json",
-      "setup": "Just make sure you have 'lint' and 'test' scripts in your package.json",
-      "workflow": [
-        "1. Work on your code",
-        "2. When a task completes, linting runs automatically",
-        "3. When your plan is done, tests run automatically",
-        "4. Get a nice completion message!"
-      ]
-    },
-    "personalProject": {
-      "description": "Perfect for personal or learning projects",
-      "benefits": [
-        "Keeps your code clean with automatic linting",
-        "Makes sure tests still pass",
-        "Gives you encouraging feedback",
-        "No complex configuration needed"
-      ]
-    }
-  },
+	"examples": {
+		"description": "Simple usage examples",
+		"basicProject": {
+			"description": "Any project with package.json",
+			"setup": "Just make sure you have 'lint' and 'test' scripts in your package.json",
+			"workflow": [
+				"1. Work on your code",
+				"2. When a task completes, linting runs automatically",
+				"3. When your plan is done, tests run automatically",
+				"4. Get a nice completion message!"
+			]
+		},
+		"personalProject": {
+			"description": "Perfect for personal or learning projects",
+			"benefits": [
+				"Keeps your code clean with automatic linting",
+				"Makes sure tests still pass",
+				"Gives you encouraging feedback",
+				"No complex configuration needed"
+			]
+		}
+	},
 
-  "quickStart": {
-    "description": "How to get started with simple workflow",
-    "steps": [
-      "1. Copy this file to .claude/hooks/hook-config.json",
-      "2. Make sure you have 'lint' and 'test' scripts in package.json",
-      "3. Start working with Claude Code - hooks will run automatically!",
-      "4. Check .claude/hooks/claude-hooks.log to see what happened"
-    ],
-    "tipForBeginners": "If you don't have lint/test scripts yet, that's okay! The hooks will skip them gracefully and just show the completion messages."
-  },
+	"quickStart": {
+		"description": "How to get started with simple workflow",
+		"steps": [
+			"1. Copy this file to .claude/hooks/hook-config.json",
+			"2. Make sure you have 'lint' and 'test' scripts in package.json",
+			"3. Start working with Claude Code - hooks will run automatically!",
+			"4. Check .claude/hooks/claude-hooks.log to see what happened"
+		],
+		"tipForBeginners": "If you don't have lint/test scripts yet, that's okay! The hooks will skip them gracefully and just show the completion messages."
+	},
 
-  "customization": {
-    "description": "Easy ways to customize this simple workflow",
-    "addYourOwnCommands": {
-      "example": "Add 'npm run format' to automatically format your code",
-      "howTo": "Add it to the 'onSuccess' array in taskCompletionCommands"
-    },
-    "changeMessages": {
-      "tip": "Edit the 'args' in echo commands to personalize your completion messages",
-      "example": "Change 'Task completed!' to 'Nice work on that task!'"
-    },
-    "adjustTimeouts": {
-      "tip": "If your tests are slow, increase the timeout from 60 to 120 seconds",
-      "location": "Change 'timeout' value in the test command"
-    }
-  },
+	"customization": {
+		"description": "Easy ways to customize this simple workflow",
+		"addYourOwnCommands": {
+			"example": "Add 'npm run format' to automatically format your code",
+			"howTo": "Add it to the 'onSuccess' array in taskCompletionCommands"
+		},
+		"changeMessages": {
+			"tip": "Edit the 'args' in echo commands to personalize your completion messages",
+			"example": "Change 'Task completed!' to 'Nice work on that task!'"
+		},
+		"adjustTimeouts": {
+			"tip": "If your tests are slow, increase the timeout from 60 to 120 seconds",
+			"location": "Change 'timeout' value in the test command"
+		}
+	},
 
-  "troubleshooting": {
-    "description": "Simple solutions to common issues",
-    "nothingHappens": {
-      "problem": "Hooks don't seem to run",
-      "solution": "Check that the hook files exist and look at claude-hooks.log for any errors"
-    },
-    "commandFails": {
-      "problem": "npm run lint or npm run test fails",
-      "solution": "That's okay! The workflow will continue. Fix the issue when convenient."
-    },
-    "tooSlow": {
-      "problem": "Hooks take too long to run",
-      "solution": "Increase the timeout values or set continueOnFailure to true"
-    }
-  }
+	"troubleshooting": {
+		"description": "Simple solutions to common issues",
+		"nothingHappens": {
+			"problem": "Hooks don't seem to run",
+			"solution": "Check that the hook files exist and look at claude-hooks.log for any errors"
+		},
+		"commandFails": {
+			"problem": "npm run lint or npm run test fails",
+			"solution": "That's okay! The workflow will continue. Fix the issue when convenient."
+		},
+		"tooSlow": {
+			"problem": "Hooks take too long to run",
+			"solution": "Increase the timeout values or set continueOnFailure to true"
+		}
+	}
 }

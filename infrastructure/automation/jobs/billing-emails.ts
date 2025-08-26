@@ -1,6 +1,6 @@
+import { createClient } from "@/app/utils/supabase/server";
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { Resend } from "resend";
-import { createClient } from "@/app/utils/supabase/server";
 import { type InvoiceJobPayload, JOB_IDS } from "../client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -50,7 +50,7 @@ export const invoiceEmailDelivery = task({
             unit_price,
             total_price
           )
-        `
+        `,
 				)
 				.eq("id", payload.invoiceId)
 				.single();
@@ -61,9 +61,14 @@ export const invoiceEmailDelivery = task({
 
 			// Calcular informações da fatura
 			const services = invoice.billing_services || [];
-			const _subtotal = services.reduce((sum, service) => sum + service.total_price, 0);
+			const _subtotal = services.reduce(
+				(sum, service) => sum + service.total_price,
+				0,
+			);
 			const dueDate = new Date(invoice.due_date).toLocaleDateString("pt-BR");
-			const invoiceDate = new Date(invoice.created_at).toLocaleDateString("pt-BR");
+			const invoiceDate = new Date(invoice.created_at).toLocaleDateString(
+				"pt-BR",
+			);
 
 			// Template de email profissional para fatura
 			const invoiceHtml = `
@@ -113,17 +118,23 @@ export const invoiceEmailDelivery = task({
                       <tr>
                         <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">${service.service_name}</td>
                         <td style="padding: 12px; text-align: center; border-bottom: 1px solid #f0f0f0;">${service.quantity}</td>
-                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.unit_price.toFixed(2)}</td>
-                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.total_price.toFixed(2)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.unit_price.toFixed(
+													2,
+												)}</td>
+                        <td style="padding: 12px; text-align: right; border-bottom: 1px solid #f0f0f0;">R$ ${service.total_price.toFixed(
+													2,
+												)}</td>
                       </tr>
-                    `
+                    `,
 											)
 											.join("")}
                   </tbody>
                   <tfoot>
                     <tr style="background: #f8fafc; font-weight: bold;">
                       <td colspan="3" style="padding: 15px; text-align: right; border-top: 2px solid #e0e0e0;">Total a Pagar:</td>
-                      <td style="padding: 15px; text-align: right; border-top: 2px solid #e0e0e0; color: #059669; font-size: 18px;">R$ ${payload.amount.toFixed(2)}</td>
+                      <td style="padding: 15px; text-align: right; border-top: 2px solid #e0e0e0; color: #059669; font-size: 18px;">R$ ${payload.amount.toFixed(
+												2,
+											)}</td>
                     </tr>
                   </tfoot>
                 </table>
@@ -193,7 +204,9 @@ export const invoiceEmailDelivery = task({
 			const emailResult = await resend.emails.send({
 				from: `${payload.clinicName} Financeiro <billing@neonpro.app>`,
 				to: [payload.recipientEmail],
-				subject: `💰 Fatura #${invoice.invoice_number} - R$ ${payload.amount.toFixed(2)} - Venc: ${dueDate}`,
+				subject: `💰 Fatura #${invoice.invoice_number} - R$ ${payload.amount.toFixed(
+					2,
+				)} - Venc: ${dueDate}`,
 				html: invoiceHtml,
 				headers: {
 					"X-Invoice-ID": payload.invoiceId,
@@ -287,7 +300,9 @@ export const paymentReminderEmail = task({
 			// Calcular dias em atraso
 			const dueDate = new Date(invoice?.due_date || payload.dueDate);
 			const today = new Date();
-			const daysOverdue = Math.ceil((today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+			const daysOverdue = Math.ceil(
+				(today.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24),
+			);
 
 			// Template de lembrete amigável mas firme
 			const reminderHtml = `
@@ -322,7 +337,9 @@ export const paymentReminderEmail = task({
 							}
               
               <div style="background: white; padding: 20px; border-radius: 6px; border-left: 4px solid #f59e0b; text-align: left; margin: 20px 0;">
-                <p style="margin: 5px 0;"><strong>💰 Valor:</strong> R$ ${payload.amount.toFixed(2)}</p>
+                <p style="margin: 5px 0;"><strong>💰 Valor:</strong> R$ ${payload.amount.toFixed(
+									2,
+								)}</p>
                 <p style="margin: 5px 0;"><strong>📅 Vencimento:</strong> ${payload.dueDate}</p>
                 <p style="margin: 5px 0;"><strong>🧾 Fatura:</strong> Para ${payload.recipientName}</p>
               </div>
@@ -365,7 +382,9 @@ export const paymentReminderEmail = task({
 				to: [payload.recipientEmail],
 				subject:
 					daysOverdue > 0
-						? `⚠️ Pagamento em Atraso - R$ ${payload.amount.toFixed(2)} (${daysOverdue} dia${daysOverdue > 1 ? "s" : ""})`
+						? `⚠️ Pagamento em Atraso - R$ ${payload.amount.toFixed(2)} (${daysOverdue} dia${
+								daysOverdue > 1 ? "s" : ""
+							})`
 						: `💰 Lembrete: Fatura vence hoje - R$ ${payload.amount.toFixed(2)}`,
 				html: reminderHtml,
 				headers: {

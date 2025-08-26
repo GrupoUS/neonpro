@@ -1,8 +1,8 @@
 // Story 3.2: API Endpoint - Risk Assessment
 
-import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
+import { type NextRequest, NextResponse } from "next/server";
 
 const patientInsights = new PatientInsightsIntegration();
 
@@ -72,6 +72,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			},
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive risk assessment" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate comprehensive risk assessment" },
+			{
+				status: 500,
+			}
+		);
 	}
 }

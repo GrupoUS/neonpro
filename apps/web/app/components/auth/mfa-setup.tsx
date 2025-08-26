@@ -1,9 +1,9 @@
 "use client";
 
-import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
 import { useMFA } from "@/packages/domain/src/hooks/auth/use-mfa";
 import { MfaMethod } from "@/packages/security/src/auth/mfa-service";
+import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
 
 type MfaSetupProps = {
 	onComplete?: () => void;

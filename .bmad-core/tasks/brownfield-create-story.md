@@ -4,7 +4,9 @@
 
 ## Purpose
 
-Create a single user story for very small brownfield enhancements that can be completed in one focused development session. This task is for minimal additions or bug fixes that require existing system integration awareness.
+Create a single user story for very small brownfield enhancements that can be completed in one
+focused development session. This task is for minimal additions or bug fixes that require existing
+system integration awareness.
 
 ## When to Use This Task
 
@@ -57,9 +59,7 @@ Create a single focused story following this structure:
 
 #### User Story
 
-As a {{user type}},
-I want {{specific action/capability}},
-So that {{clear benefit/value}}.
+As a {{user type}}, I want {{specific action/capability}}, So that {{clear benefit/value}}.
 
 #### Story Context
 
@@ -78,9 +78,12 @@ So that {{clear benefit/value}}.
 2. {{Secondary functional requirement (if any)}}
 3. {{Integration requirement}}
 
-**Integration Requirements:** 4. Existing {{relevant functionality}} continues to work unchanged 5. New functionality follows existing {{pattern}} pattern 6. Integration with {{system/component}} maintains current behavior
+**Integration Requirements:** 4. Existing {{relevant functionality}} continues to work unchanged 5.
+New functionality follows existing {{pattern}} pattern 6. Integration with {{system/component}}
+maintains current behavior
 
-**Quality Requirements:** 7. Change is covered by appropriate tests 8. Documentation is updated if needed 9. No regression in existing functionality verified
+**Quality Requirements:** 7. Change is covered by appropriate tests 8. Documentation is updated if
+needed 9. No regression in existing functionality verified
 
 #### Technical Notes
 

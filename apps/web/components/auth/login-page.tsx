@@ -8,9 +8,9 @@
 
 "use client";
 
+import { LoginForm } from "@/app/login/login-form";
 import { useSearch } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
-import { LoginForm } from "@/app/login/login-form";
 
 export function LoginPage() {
 	const search = useSearch({ from: "/login" });

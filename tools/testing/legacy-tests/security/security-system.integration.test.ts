@@ -3,8 +3,8 @@
  * Story 3.3: Security Hardening & Audit
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SecurityAPI } from "@/lib/security";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock Supabase client
 const _mockSupabase = {
@@ -58,7 +58,9 @@ describe("Security System Integration Tests", () => {
 				error: null,
 			};
 
-			(SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.createSecurityEvent(mockEvent);
 
@@ -89,7 +91,9 @@ describe("Security System Integration Tests", () => {
 				count: 2,
 			};
 
-			(SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.getSecurityEvents({
 				severity: "high",
@@ -117,7 +121,9 @@ describe("Security System Integration Tests", () => {
 				error: { message: "Invalid event type" },
 			};
 
-			(SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.createSecurityEvent(mockEvent);
 
@@ -143,7 +149,9 @@ describe("Security System Integration Tests", () => {
 				error: null,
 			};
 
-			(SecurityAPI.createSecurityAlert as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.createSecurityAlert as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.createSecurityAlert(mockAlert);
 
@@ -283,7 +291,9 @@ describe("Security System Integration Tests", () => {
 				count: 2,
 			};
 
-			(SecurityAPI.getActiveSessions as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.getActiveSessions as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.getActiveSessions();
 
@@ -328,7 +338,9 @@ describe("Security System Integration Tests", () => {
 				error: null,
 			};
 
-			(SecurityAPI.getSecurityMetrics as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.getSecurityMetrics as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.getSecurityMetrics();
 
@@ -350,7 +362,9 @@ describe("Security System Integration Tests", () => {
 				error: null,
 			};
 
-			(SecurityAPI.getSecurityMetrics as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.getSecurityMetrics as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.getSecurityMetrics();
 
@@ -378,7 +392,9 @@ describe("Security System Integration Tests", () => {
 				error: null,
 			};
 
-			(SecurityAPI.createComplianceAudit as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.createComplianceAudit as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.createComplianceAudit(mockAudit);
 
@@ -412,7 +428,9 @@ describe("Security System Integration Tests", () => {
 				count: 1,
 			};
 
-			(SecurityAPI.getComplianceAudits as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.getComplianceAudits as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const result = await SecurityAPI.getComplianceAudits(filters);
 
@@ -471,7 +489,9 @@ describe("Security System Integration Tests", () => {
 				count: 1000,
 			};
 
-			(SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.getSecurityEvents as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const startTime = Date.now();
 			const result = await SecurityAPI.getSecurityEvents({ limit: 1000 });
@@ -487,13 +507,15 @@ describe("Security System Integration Tests", () => {
 				error: null,
 			};
 
-			(SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(mockResponse);
+			(SecurityAPI.createSecurityEvent as vi.Mock).mockResolvedValue(
+				mockResponse,
+			);
 
 			const concurrentRequests = Array.from({ length: 10 }, () =>
 				SecurityAPI.createSecurityEvent({
 					event_type: "authentication",
 					severity: "low",
-				})
+				}),
 			);
 
 			const results = await Promise.all(concurrentRequests);

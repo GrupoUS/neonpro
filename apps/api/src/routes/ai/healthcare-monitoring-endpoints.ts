@@ -2,7 +2,11 @@
 // RESTful API for comprehensive healthcare platform monitoring
 
 import { zValidator } from "@hono/zod-validator";
-import type { CacheService, LoggerService, MetricsService } from "@neonpro/core-services";
+import type {
+	CacheService,
+	LoggerService,
+	MetricsService,
+} from "@neonpro/core-services";
 import { Hono } from "hono";
 import { z } from "zod";
 import { HealthcareMonitoringService } from "../../../../../packages/ai/src/services/healthcare-monitoring-service";
@@ -10,7 +14,16 @@ import { HealthcareMonitoringService } from "../../../../../packages/ai/src/serv
 // Validation Schemas
 const AlertFiltersSchema = z.object({
 	severity: z.enum(["critical", "high", "medium", "low", "info"]).optional(),
-	category: z.enum(["patient_safety", "ai_performance", "business", "system", "compliance", "security"]).optional(),
+	category: z
+		.enum([
+			"patient_safety",
+			"ai_performance",
+			"business",
+			"system",
+			"compliance",
+			"security",
+		])
+		.optional(),
 	limit: z.number().min(1).max(100).default(20),
 });
 
@@ -56,7 +69,11 @@ const mockMetrics: MetricsService = {
 };
 
 // Initialize Healthcare Monitoring Service
-const healthcareMonitoringService = new HealthcareMonitoringService(mockCache, mockLogger, mockMetrics);
+const healthcareMonitoringService = new HealthcareMonitoringService(
+	mockCache,
+	mockLogger,
+	mockMetrics,
+);
 
 // Create Hono app for healthcare monitoring endpoints
 export const healthcareMonitoringRoutes = new Hono();
@@ -120,10 +137,13 @@ healthcareMonitoringRoutes.get("/metrics/current", async (c) => {
 		return c.json(
 			{
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to get current metrics",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to get current metrics",
 				processing_time_ms: Math.round(processingTime),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -147,53 +167,61 @@ healthcareMonitoringRoutes.get("/dashboard", async (c) => {
 		return c.json(
 			{
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to get dashboard data",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to get dashboard data",
 				processing_time_ms: Math.round(processingTime),
 			},
-			500
+			500,
 		);
 	}
 });
 
 // Get active alerts with filtering
-healthcareMonitoringRoutes.get("/alerts", zValidator("query", AlertFiltersSchema), async (c) => {
-	const startTime = performance.now();
+healthcareMonitoringRoutes.get(
+	"/alerts",
+	zValidator("query", AlertFiltersSchema),
+	async (c) => {
+		const startTime = performance.now();
 
-	try {
-		const query = c.req.valid("query");
+		try {
+			const query = c.req.valid("query");
 
-		const alerts = await healthcareMonitoringService.getActiveAlerts({
-			severity: query.severity,
-			category: query.category,
-			limit: query.limit,
-		});
-
-		const processingTime = performance.now() - startTime;
-
-		return c.json({
-			success: true,
-			alerts,
-			count: alerts.length,
-			filters_applied: {
+			const alerts = await healthcareMonitoringService.getActiveAlerts({
 				severity: query.severity,
 				category: query.category,
 				limit: query.limit,
-			},
-			processing_time_ms: Math.round(processingTime),
-		});
-	} catch (error) {
-		const processingTime = performance.now() - startTime;
+			});
 
-		return c.json(
-			{
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to get alerts",
+			const processingTime = performance.now() - startTime;
+
+			return c.json({
+				success: true,
+				alerts,
+				count: alerts.length,
+				filters_applied: {
+					severity: query.severity,
+					category: query.category,
+					limit: query.limit,
+				},
 				processing_time_ms: Math.round(processingTime),
-			},
-			500
-		);
-	}
-});
+			});
+		} catch (error) {
+			const processingTime = performance.now() - startTime;
+
+			return c.json(
+				{
+					success: false,
+					error:
+						error instanceof Error ? error.message : "Failed to get alerts",
+					processing_time_ms: Math.round(processingTime),
+				},
+				500,
+			);
+		}
+	},
+);
 
 // Get specific alert by ID
 healthcareMonitoringRoutes.get("/alerts/:alertId", async (c) => {
@@ -208,12 +236,14 @@ healthcareMonitoringRoutes.get("/alerts/:alertId", async (c) => {
 					success: false,
 					error: "Alert ID is required",
 				},
-				400
+				400,
 			);
 		}
 
 		// Get all alerts and find the specific one
-		const allAlerts = await healthcareMonitoringService.getActiveAlerts({ limit: 1000 });
+		const allAlerts = await healthcareMonitoringService.getActiveAlerts({
+			limit: 1000,
+		});
 		const alert = allAlerts.find((a) => a.id === alertId);
 
 		if (!alert) {
@@ -222,7 +252,7 @@ healthcareMonitoringRoutes.get("/alerts/:alertId", async (c) => {
 					success: false,
 					error: "Alert not found",
 				},
-				404
+				404,
 			);
 		}
 
@@ -242,83 +272,101 @@ healthcareMonitoringRoutes.get("/alerts/:alertId", async (c) => {
 				error: error instanceof Error ? error.message : "Failed to get alert",
 				processing_time_ms: Math.round(processingTime),
 			},
-			500
+			500,
 		);
 	}
 });
 
 // Acknowledge or resolve an alert
-healthcareMonitoringRoutes.post("/alerts/:alertId/action", zValidator("json", AlertActionSchema), async (c) => {
-	const startTime = performance.now();
+healthcareMonitoringRoutes.post(
+	"/alerts/:alertId/action",
+	zValidator("json", AlertActionSchema),
+	async (c) => {
+		const startTime = performance.now();
 
-	try {
-		const alertId = c.req.param("alertId");
-		const body = c.req.valid("json");
+		try {
+			const alertId = c.req.param("alertId");
+			const body = c.req.valid("json");
 
-		if (!alertId) {
-			return c.json(
-				{
-					success: false,
-					error: "Alert ID is required",
-				},
-				400
-			);
-		}
-
-		let result: boolean;
-		let message: string;
-
-		if (body.action === "acknowledge") {
-			result = await healthcareMonitoringService.acknowledgeAlert(alertId, body.performed_by);
-			message = result ? "Alert acknowledged successfully" : "Failed to acknowledge alert or alert not found";
-		} else if (body.action === "resolve") {
-			if (!body.resolution) {
+			if (!alertId) {
 				return c.json(
 					{
 						success: false,
-						error: "Resolution description is required for resolve action",
+						error: "Alert ID is required",
 					},
-					400
+					400,
 				);
 			}
-			result = await healthcareMonitoringService.resolveAlert(alertId, body.performed_by, body.resolution);
-			message = result ? "Alert resolved successfully" : "Failed to resolve alert or alert not found";
-		} else {
+
+			let result: boolean;
+			let message: string;
+
+			if (body.action === "acknowledge") {
+				result = await healthcareMonitoringService.acknowledgeAlert(
+					alertId,
+					body.performed_by,
+				);
+				message = result
+					? "Alert acknowledged successfully"
+					: "Failed to acknowledge alert or alert not found";
+			} else if (body.action === "resolve") {
+				if (!body.resolution) {
+					return c.json(
+						{
+							success: false,
+							error: "Resolution description is required for resolve action",
+						},
+						400,
+					);
+				}
+				result = await healthcareMonitoringService.resolveAlert(
+					alertId,
+					body.performed_by,
+					body.resolution,
+				);
+				message = result
+					? "Alert resolved successfully"
+					: "Failed to resolve alert or alert not found";
+			} else {
+				return c.json(
+					{
+						success: false,
+						error: 'Invalid action. Must be "acknowledge" or "resolve"',
+					},
+					400,
+				);
+			}
+
+			const processingTime = performance.now() - startTime;
+
+			return c.json(
+				{
+					success: result,
+					message,
+					alert_id: alertId,
+					action: body.action,
+					performed_by: body.performed_by,
+					processing_time_ms: Math.round(processingTime),
+				},
+				result ? 200 : 404,
+			);
+		} catch (error) {
+			const processingTime = performance.now() - startTime;
+
 			return c.json(
 				{
 					success: false,
-					error: 'Invalid action. Must be "acknowledge" or "resolve"',
+					error:
+						error instanceof Error
+							? error.message
+							: "Failed to perform alert action",
+					processing_time_ms: Math.round(processingTime),
 				},
-				400
+				500,
 			);
 		}
-
-		const processingTime = performance.now() - startTime;
-
-		return c.json(
-			{
-				success: result,
-				message,
-				alert_id: alertId,
-				action: body.action,
-				performed_by: body.performed_by,
-				processing_time_ms: Math.round(processingTime),
-			},
-			result ? 200 : 404
-		);
-	} catch (error) {
-		const processingTime = performance.now() - startTime;
-
-		return c.json(
-			{
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to perform alert action",
-				processing_time_ms: Math.round(processingTime),
-			},
-			500
-		);
-	}
-});
+	},
+);
 
 // Get system status summary
 healthcareMonitoringRoutes.get("/status", async (c) => {
@@ -331,21 +379,35 @@ healthcareMonitoringRoutes.get("/status", async (c) => {
 			system_status: dashboardData.system_status,
 			overall_health_score: dashboardData.overall_health_score,
 			last_updated: dashboardData.last_updated,
-			critical_alerts: dashboardData.active_alerts.filter((a) => a.severity === "critical").length,
-			high_alerts: dashboardData.active_alerts.filter((a) => a.severity === "high").length,
+			critical_alerts: dashboardData.active_alerts.filter(
+				(a) => a.severity === "critical",
+			).length,
+			high_alerts: dashboardData.active_alerts.filter(
+				(a) => a.severity === "high",
+			).length,
 			total_active_alerts: dashboardData.active_alerts.length,
 			sla_status: dashboardData.sla_status,
 			key_metrics: {
 				patient_safety_score: Math.round(
-					(dashboardData.current_metrics.patient_safety.critical_data_availability_percentage / 100) * 100
+					(dashboardData.current_metrics.patient_safety
+						.critical_data_availability_percentage /
+						100) *
+						100,
 				),
-				ai_accuracy: Math.round(dashboardData.current_metrics.ai_performance.ai_accuracy_percentage),
-				api_response_time: Math.round(dashboardData.current_metrics.system_performance.api_response_time_ms),
+				ai_accuracy: Math.round(
+					dashboardData.current_metrics.ai_performance.ai_accuracy_percentage,
+				),
+				api_response_time: Math.round(
+					dashboardData.current_metrics.system_performance.api_response_time_ms,
+				),
 				compliance_score: Math.round(
-					(dashboardData.current_metrics.compliance_status.lgpd_compliance_score +
-						dashboardData.current_metrics.compliance_status.anvisa_compliance_score +
-						dashboardData.current_metrics.compliance_status.cfm_compliance_score) /
-						3
+					(dashboardData.current_metrics.compliance_status
+						.lgpd_compliance_score +
+						dashboardData.current_metrics.compliance_status
+							.anvisa_compliance_score +
+						dashboardData.current_metrics.compliance_status
+							.cfm_compliance_score) /
+						3,
 				),
 			},
 		};
@@ -363,91 +425,106 @@ healthcareMonitoringRoutes.get("/status", async (c) => {
 		return c.json(
 			{
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to get system status",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to get system status",
 				processing_time_ms: Math.round(processingTime),
 			},
-			500
+			500,
 		);
 	}
 });
 
 // Get historical metrics data
-healthcareMonitoringRoutes.get("/metrics/history", zValidator("query", MetricsQuerySchema), async (c) => {
-	const startTime = performance.now();
+healthcareMonitoringRoutes.get(
+	"/metrics/history",
+	zValidator("query", MetricsQuerySchema),
+	async (c) => {
+		const startTime = performance.now();
 
-	try {
-		const query = c.req.valid("query");
+		try {
+			const query = c.req.valid("query");
 
-		// In production, this would query stored historical data
-		// For now, return simulated historical data
-		const endTime = query.end_date ? new Date(query.end_date).getTime() : Date.now();
-		const startTimeQuery = query.start_date ? new Date(query.start_date).getTime() : endTime - 24 * 60 * 60 * 1000; // 24h ago
+			// In production, this would query stored historical data
+			// For now, return simulated historical data
+			const endTime = query.end_date
+				? new Date(query.end_date).getTime()
+				: Date.now();
+			const startTimeQuery = query.start_date
+				? new Date(query.start_date).getTime()
+				: endTime - 24 * 60 * 60 * 1000; // 24h ago
 
-		const historicalData = {
-			time_range: {
-				start: new Date(startTimeQuery).toISOString(),
-				end: new Date(endTime).toISOString(),
-				granularity: query.granularity,
-			},
-			metrics: {
-				"patient_safety.emergency_access_response_time_ms": generateHistoricalMetric(
-					startTimeQuery,
-					endTime,
-					query.granularity,
-					2000,
-					3500
-				),
-				"ai_performance.ai_accuracy_percentage": generateHistoricalMetric(
-					startTimeQuery,
-					endTime,
-					query.granularity,
-					96,
-					99
-				),
-				"system_performance.api_response_time_ms": generateHistoricalMetric(
-					startTimeQuery,
-					endTime,
-					query.granularity,
-					150,
-					400
-				),
-				"compliance_status.lgpd_compliance_score": generateHistoricalMetric(
-					startTimeQuery,
-					endTime,
-					query.granularity,
-					95,
-					99
-				),
-				"business_metrics.roi_monthly": generateHistoricalMetric(
-					startTimeQuery,
-					endTime,
-					query.granularity,
-					60_000,
-					120_000
-				),
-			},
-		};
+			const historicalData = {
+				time_range: {
+					start: new Date(startTimeQuery).toISOString(),
+					end: new Date(endTime).toISOString(),
+					granularity: query.granularity,
+				},
+				metrics: {
+					"patient_safety.emergency_access_response_time_ms":
+						generateHistoricalMetric(
+							startTimeQuery,
+							endTime,
+							query.granularity,
+							2000,
+							3500,
+						),
+					"ai_performance.ai_accuracy_percentage": generateHistoricalMetric(
+						startTimeQuery,
+						endTime,
+						query.granularity,
+						96,
+						99,
+					),
+					"system_performance.api_response_time_ms": generateHistoricalMetric(
+						startTimeQuery,
+						endTime,
+						query.granularity,
+						150,
+						400,
+					),
+					"compliance_status.lgpd_compliance_score": generateHistoricalMetric(
+						startTimeQuery,
+						endTime,
+						query.granularity,
+						95,
+						99,
+					),
+					"business_metrics.roi_monthly": generateHistoricalMetric(
+						startTimeQuery,
+						endTime,
+						query.granularity,
+						60_000,
+						120_000,
+					),
+				},
+			};
 
-		const processingTime = performance.now() - startTime;
+			const processingTime = performance.now() - startTime;
 
-		return c.json({
-			success: true,
-			historical_data: historicalData,
-			processing_time_ms: Math.round(processingTime),
-		});
-	} catch (error) {
-		const processingTime = performance.now() - startTime;
-
-		return c.json(
-			{
-				success: false,
-				error: error instanceof Error ? error.message : "Failed to get historical metrics",
+			return c.json({
+				success: true,
+				historical_data: historicalData,
 				processing_time_ms: Math.round(processingTime),
-			},
-			500
-		);
-	}
-});
+			});
+		} catch (error) {
+			const processingTime = performance.now() - startTime;
+
+			return c.json(
+				{
+					success: false,
+					error:
+						error instanceof Error
+							? error.message
+							: "Failed to get historical metrics",
+					processing_time_ms: Math.round(processingTime),
+				},
+				500,
+			);
+		}
+	},
+);
 
 // Get compliance report
 healthcareMonitoringRoutes.get("/compliance/report", async (c) => {
@@ -466,20 +543,30 @@ healthcareMonitoringRoutes.get("/compliance/report", async (c) => {
 			compliance_scores: {
 				lgpd: {
 					score: metrics.compliance_status.lgpd_compliance_score,
-					status: metrics.compliance_status.lgpd_compliance_score >= 95 ? "compliant" : "non_compliant",
+					status:
+						metrics.compliance_status.lgpd_compliance_score >= 95
+							? "compliant"
+							: "non_compliant",
 					violations:
-						metrics.compliance_status.data_retention_violations + metrics.compliance_status.access_control_violations,
+						metrics.compliance_status.data_retention_violations +
+						metrics.compliance_status.access_control_violations,
 					last_audit: "2024-01-15T10:00:00Z", // Simulated
 				},
 				anvisa: {
 					score: metrics.compliance_status.anvisa_compliance_score,
-					status: metrics.compliance_status.anvisa_compliance_score >= 95 ? "compliant" : "non_compliant",
+					status:
+						metrics.compliance_status.anvisa_compliance_score >= 95
+							? "compliant"
+							: "non_compliant",
 					medical_data_protection: "compliant",
 					last_inspection: "2024-02-01T14:00:00Z", // Simulated
 				},
 				cfm: {
 					score: metrics.compliance_status.cfm_compliance_score,
-					status: metrics.compliance_status.cfm_compliance_score >= 95 ? "compliant" : "non_compliant",
+					status:
+						metrics.compliance_status.cfm_compliance_score >= 95
+							? "compliant"
+							: "non_compliant",
 					professional_standards: "compliant",
 					last_review: "2024-01-20T16:00:00Z", // Simulated
 				},
@@ -489,13 +576,22 @@ healthcareMonitoringRoutes.get("/compliance/report", async (c) => {
 			audit_log_completeness: metrics.compliance_status.audit_log_completeness,
 			data_retention_status: {
 				violations: metrics.compliance_status.data_retention_violations,
-				policy_adherence: metrics.compliance_status.data_retention_violations === 0 ? "compliant" : "issues_detected",
+				policy_adherence:
+					metrics.compliance_status.data_retention_violations === 0
+						? "compliant"
+						: "issues_detected",
 			},
 			access_control_status: {
 				violations: metrics.compliance_status.access_control_violations,
-				policy_adherence: metrics.compliance_status.access_control_violations === 0 ? "compliant" : "issues_detected",
+				policy_adherence:
+					metrics.compliance_status.access_control_violations === 0
+						? "compliant"
+						: "issues_detected",
 			},
-			recommendations: generateComplianceRecommendations(metrics.compliance_status, alerts),
+			recommendations: generateComplianceRecommendations(
+				metrics.compliance_status,
+				alerts,
+			),
 		};
 
 		const processingTime = performance.now() - startTime;
@@ -511,10 +607,13 @@ healthcareMonitoringRoutes.get("/compliance/report", async (c) => {
 		return c.json(
 			{
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to generate compliance report",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to generate compliance report",
 				processing_time_ms: Math.round(processingTime),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -535,33 +634,51 @@ healthcareMonitoringRoutes.get("/analytics/performance", async (c) => {
 			response_times: {
 				api_current: metrics.system_performance.api_response_time_ms,
 				api_target: 500,
-				api_status: metrics.system_performance.api_response_time_ms <= 500 ? "meeting_target" : "below_target",
+				api_status:
+					metrics.system_performance.api_response_time_ms <= 500
+						? "meeting_target"
+						: "below_target",
 
 				database_current: metrics.system_performance.database_query_time_ms,
 				database_target: 100,
-				database_status: metrics.system_performance.database_query_time_ms <= 100 ? "meeting_target" : "below_target",
+				database_status:
+					metrics.system_performance.database_query_time_ms <= 100
+						? "meeting_target"
+						: "below_target",
 
-				emergency_access_current: metrics.patient_safety.emergency_access_response_time_ms,
+				emergency_access_current:
+					metrics.patient_safety.emergency_access_response_time_ms,
 				emergency_access_target: 5000,
 				emergency_access_status:
-					metrics.patient_safety.emergency_access_response_time_ms <= 5000 ? "meeting_target" : "critical",
+					metrics.patient_safety.emergency_access_response_time_ms <= 5000
+						? "meeting_target"
+						: "critical",
 			},
 
 			resource_utilization: {
 				memory: {
 					current: metrics.system_performance.memory_usage_percentage,
 					threshold: 80,
-					status: metrics.system_performance.memory_usage_percentage <= 80 ? "normal" : "high",
+					status:
+						metrics.system_performance.memory_usage_percentage <= 80
+							? "normal"
+							: "high",
 				},
 				cpu: {
 					current: metrics.system_performance.cpu_usage_percentage,
 					threshold: 70,
-					status: metrics.system_performance.cpu_usage_percentage <= 70 ? "normal" : "high",
+					status:
+						metrics.system_performance.cpu_usage_percentage <= 70
+							? "normal"
+							: "high",
 				},
 				cache_efficiency: {
 					hit_rate: metrics.system_performance.cache_hit_rate_percentage,
 					target: 85,
-					status: metrics.system_performance.cache_hit_rate_percentage >= 85 ? "good" : "needs_improvement",
+					status:
+						metrics.system_performance.cache_hit_rate_percentage >= 85
+							? "good"
+							: "needs_improvement",
 				},
 			},
 
@@ -575,7 +692,10 @@ healthcareMonitoringRoutes.get("/analytics/performance", async (c) => {
 
 			trends: dashboardData.trends,
 
-			recommendations: generatePerformanceRecommendations(metrics, dashboardData.active_alerts),
+			recommendations: generatePerformanceRecommendations(
+				metrics,
+				dashboardData.active_alerts,
+			),
 		};
 
 		const processingTime = performance.now() - startTime;
@@ -591,10 +711,13 @@ healthcareMonitoringRoutes.get("/analytics/performance", async (c) => {
 		return c.json(
 			{
 				success: false,
-				error: error instanceof Error ? error.message : "Failed to generate performance analytics",
+				error:
+					error instanceof Error
+						? error.message
+						: "Failed to generate performance analytics",
 				processing_time_ms: Math.round(processingTime),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -606,7 +729,7 @@ function generateHistoricalMetric(
 	endTime: number,
 	granularity: "minute" | "hour" | "day",
 	minValue: number,
-	maxValue: number
+	maxValue: number,
 ): Array<{ timestamp: string; value: number }> {
 	const data: Array<{ timestamp: string; value: number }> = [];
 	const intervals = {
@@ -629,57 +752,85 @@ function generateHistoricalMetric(
 	return data;
 }
 
-function generateComplianceRecommendations(complianceStatus: any, alerts: any[]): string[] {
+function generateComplianceRecommendations(
+	complianceStatus: any,
+	alerts: any[],
+): string[] {
 	const recommendations: string[] = [];
 
 	if (complianceStatus.lgpd_compliance_score < 95) {
-		recommendations.push("Review LGPD data processing policies and ensure proper consent management");
+		recommendations.push(
+			"Review LGPD data processing policies and ensure proper consent management",
+		);
 	}
 
 	if (complianceStatus.anvisa_compliance_score < 95) {
-		recommendations.push("Update ANVISA compliance documentation and medical data handling procedures");
+		recommendations.push(
+			"Update ANVISA compliance documentation and medical data handling procedures",
+		);
 	}
 
 	if (complianceStatus.cfm_compliance_score < 95) {
-		recommendations.push("Ensure CFM professional standards are met for all healthcare-related AI features");
+		recommendations.push(
+			"Ensure CFM professional standards are met for all healthcare-related AI features",
+		);
 	}
 
 	if (complianceStatus.data_retention_violations > 0) {
-		recommendations.push("Implement automated data retention policies to prevent future violations");
+		recommendations.push(
+			"Implement automated data retention policies to prevent future violations",
+		);
 	}
 
 	if (complianceStatus.access_control_violations > 0) {
-		recommendations.push("Strengthen access control policies and implement additional security measures");
+		recommendations.push(
+			"Strengthen access control policies and implement additional security measures",
+		);
 	}
 
 	if (alerts.length > 5) {
-		recommendations.push("Address active compliance alerts to maintain regulatory standing");
+		recommendations.push(
+			"Address active compliance alerts to maintain regulatory standing",
+		);
 	}
 
 	return recommendations;
 }
 
-function generatePerformanceRecommendations(metrics: any, _alerts: any[]): string[] {
+function generatePerformanceRecommendations(
+	metrics: any,
+	_alerts: any[],
+): string[] {
 	const recommendations: string[] = [];
 
 	if (metrics.system_performance.memory_usage_percentage > 75) {
-		recommendations.push("Consider scaling resources or optimizing memory usage to prevent performance issues");
+		recommendations.push(
+			"Consider scaling resources or optimizing memory usage to prevent performance issues",
+		);
 	}
 
 	if (metrics.system_performance.api_response_time_ms > 400) {
-		recommendations.push("Optimize API endpoints and consider implementing additional caching strategies");
+		recommendations.push(
+			"Optimize API endpoints and consider implementing additional caching strategies",
+		);
 	}
 
 	if (metrics.ai_performance.error_rate_percentage > 1.5) {
-		recommendations.push("Review AI model performance and consider retraining or model updates");
+		recommendations.push(
+			"Review AI model performance and consider retraining or model updates",
+		);
 	}
 
 	if (metrics.system_performance.cache_hit_rate_percentage < 85) {
-		recommendations.push("Review caching strategies and consider cache warming for frequently accessed data");
+		recommendations.push(
+			"Review caching strategies and consider cache warming for frequently accessed data",
+		);
 	}
 
 	if (metrics.patient_safety.emergency_access_response_time_ms > 4000) {
-		recommendations.push("Critical: Optimize emergency access systems to ensure patient safety compliance");
+		recommendations.push(
+			"Critical: Optimize emergency access systems to ensure patient safety compliance",
+		);
 	}
 
 	return recommendations;

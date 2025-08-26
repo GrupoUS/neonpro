@@ -254,7 +254,9 @@ export class HealthcarePDFGenerator {
 			},
 			{
 				label: "Cartão de Crédito",
-				value: `${formatCurrency(data.paymentMethods.creditCard.amount)} (${data.paymentMethods.creditCard.percentage}%)`,
+				value: `${formatCurrency(
+					data.paymentMethods.creditCard.amount
+				)} (${data.paymentMethods.creditCard.percentage}%)`,
 			},
 			{
 				label: "Cartão de Débito",

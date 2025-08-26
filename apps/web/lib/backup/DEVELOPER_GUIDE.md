@@ -2,7 +2,8 @@
 
 ## Story 1.8: Sistema de Backup e Recovery
 
-This guide provides comprehensive information for developers working with the NeonPro Backup & Recovery System.
+This guide provides comprehensive information for developers working with the NeonPro Backup &
+Recovery System.
 
 ## 📋 Table of Contents
 
@@ -149,8 +150,8 @@ validateRecoveryPoint(backupId: string): Promise<ValidationResult>
 ### React Component Integration
 
 ```typescript
-import { useBackupSystem } from '@/hooks/use-backup-system';
 import { BackupDashboard } from '@/components/backup/backup-dashboard';
+import { useBackupSystem } from '@/hooks/use-backup-system';
 
 function MyBackupPage() {
   const {
@@ -158,7 +159,7 @@ function MyBackupPage() {
     backups,
     metrics,
     createConfig,
-    runManualBackup
+    runManualBackup,
   } = useBackupSystem();
 
   const handleCreateBackup = async () => {
@@ -167,7 +168,7 @@ function MyBackupPage() {
       type: 'INCREMENTAL',
       source_type: 'FILES',
       source_config: { paths: ['/app/data'] },
-      storage_provider: 'LOCAL'
+      storage_provider: 'LOCAL',
     });
 
     await runManualBackup(config.id);
@@ -361,7 +362,7 @@ CMD ["npm", "start"]
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 services:
   backup-system:
     build: .
@@ -398,7 +399,7 @@ spec:
           image: neonpro/backup-system:latest
           env:
             - name: NODE_ENV
-              value: 'production'
+              value: "production"
             - name: SUPABASE_URL
               valueFrom:
                 secretKeyRef:

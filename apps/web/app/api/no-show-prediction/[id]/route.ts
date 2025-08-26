@@ -1,10 +1,10 @@
 // Story 11.2: Individual No-Show Prediction API Routes
 // CRUD operations for specific predictions
 
-import { type NextRequest, NextResponse } from "next/server";
 import { noShowPredictionEngine } from "@/app/lib/services/no-show-prediction";
 import { UpdatePredictionInputSchema } from "@/app/lib/validations/no-show-prediction";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 type RouteParams = {
 	params: Promise<{
@@ -120,7 +120,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 		});
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("validation")) {
-			return NextResponse.json({ error: "Invalid input data", details: error.message }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Invalid input data", details: error.message },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		return NextResponse.json({ error: "Failed to update prediction" }, { status: 500 });

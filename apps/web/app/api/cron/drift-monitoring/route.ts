@@ -7,9 +7,9 @@
  * Schedule: 0 star/6 star star star star (every 6 hours)
  */
 
-import { type NextRequest, NextResponse } from "next/server";
 import { driftDetector } from "@/lib/ai/drift-detection";
 import { createClient } from "@/lib/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
 	try {

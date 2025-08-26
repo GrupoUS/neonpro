@@ -6,6 +6,10 @@
 
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
 	Activity,
 	AlertTriangle,
@@ -19,10 +23,6 @@ import {
 	Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 
 interface HealthMetrics {
 	systemUptime: number;
@@ -251,7 +251,9 @@ export function HealthMonitoringDashboard() {
 									getHealthStatus(300 - metrics.apiResponseTime, { good: 150, warning: 100 })
 								)}`}
 								role="status"
-								aria-label={`Status: ${metrics.apiResponseTime < 200 ? "Excelente" : metrics.apiResponseTime < 300 ? "Bom" : "Atenção"}`}
+								aria-label={`Status: ${
+									metrics.apiResponseTime < 200 ? "Excelente" : metrics.apiResponseTime < 300 ? "Bom" : "Atenção"
+								}`}
 							>
 								{metrics.apiResponseTime < 200 ? "Excelente" : metrics.apiResponseTime < 300 ? "Bom" : "Atenção"}
 							</div>

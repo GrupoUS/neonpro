@@ -77,7 +77,7 @@ type UsePatientSearchReturn = {
  */
 export const usePatientSearch = (
 	patients: Patient[],
-	options: UsePatientSearchOptions = {}
+	options: UsePatientSearchOptions = {},
 ): UsePatientSearchReturn => {
 	const {
 		debounceMs = 300,
@@ -134,7 +134,9 @@ export const usePatientSearch = (
 	 * Levenshtein distance for fuzzy matching
 	 */
 	const levenshteinDistance = useCallback((a: string, b: string): number => {
-		const matrix = new Array(b.length + 1).fill(null).map(() => new Array(a.length + 1).fill(null));
+		const matrix = new Array(b.length + 1)
+			.fill(null)
+			.map(() => new Array(a.length + 1).fill(null));
 
 		for (let i = 0; i <= a.length; i++) {
 			matrix[0][i] = i;
@@ -149,7 +151,7 @@ export const usePatientSearch = (
 				matrix[j][i] = Math.min(
 					matrix[j][i - 1] + 1, // deletion
 					matrix[j - 1][i] + 1, // insertion
-					matrix[j - 1][i - 1] + indicator // substitution
+					matrix[j - 1][i - 1] + indicator, // substitution
 				);
 			}
 		}
@@ -163,7 +165,9 @@ export const usePatientSearch = (
 	const fuzzyMatch = useCallback(
 		(text: string, searchTerm: string): boolean => {
 			if (!enableFuzzySearch) {
-				return caseSensitive ? text.includes(searchTerm) : text.toLowerCase().includes(searchTerm.toLowerCase());
+				return caseSensitive
+					? text.includes(searchTerm)
+					: text.toLowerCase().includes(searchTerm.toLowerCase());
 			}
 
 			const textToSearch = caseSensitive ? text : text.toLowerCase();
@@ -184,7 +188,7 @@ export const usePatientSearch = (
 
 			return false;
 		},
-		[enableFuzzySearch, caseSensitive, levenshteinDistance]
+		[enableFuzzySearch, caseSensitive, levenshteinDistance],
 	);
 
 	/**
@@ -201,10 +205,18 @@ export const usePatientSearch = (
 		const filtered = patients
 			.filter((patient) => {
 				// Basic patient information search
-				const basicFields = [patient.name, patient.email, patient.phone, patient.cpf, patient.health_plan || ""];
+				const basicFields = [
+					patient.name,
+					patient.email,
+					patient.phone,
+					patient.cpf,
+					patient.health_plan || "",
+				];
 
 				// Check basic fields
-				const basicMatch = basicFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+				const basicMatch = basicFields.some((field) =>
+					fuzzyMatch(field, debouncedSearchTerm),
+				);
 
 				if (basicMatch) {
 					return true;
@@ -217,7 +229,9 @@ export const usePatientSearch = (
 					...(patient.medications || []),
 				];
 
-				const medicalMatch = medicalFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+				const medicalMatch = medicalFields.some((field) =>
+					fuzzyMatch(field, debouncedSearchTerm),
+				);
 
 				return medicalMatch;
 			})
@@ -249,7 +263,7 @@ export const usePatientSearch = (
 			filteredCount: filteredPatients.length,
 			searchTime,
 		}),
-		[patients.length, filteredPatients.length, searchTime]
+		[patients.length, filteredPatients.length, searchTime],
 	);
 
 	return {

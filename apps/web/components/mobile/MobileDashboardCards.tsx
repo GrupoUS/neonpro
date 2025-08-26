@@ -7,6 +7,11 @@
 
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import {
 	AlertTriangle,
 	BarChart3,
@@ -21,11 +26,6 @@ import {
 	WifiOff,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
 
 // FASE 3: PWA and offline capabilities
 interface OfflineCapable {
@@ -234,7 +234,9 @@ export function MobileDashboardCard({
 		const offlineStatus = !onlineStatus ? ". Dados offline" : "";
 		const criticalStatus = criticalData ? ". Dados críticos de saúde" : "";
 		const trendStatus = trend
-			? `. Tendência: ${trend.direction === "up" ? "subindo" : trend.direction === "down" ? "descendo" : "estável"} ${trend.value}%`
+			? `. Tendência: ${
+					trend.direction === "up" ? "subindo" : trend.direction === "down" ? "descendo" : "estável"
+				} ${trend.value}%`
 			: "";
 
 		return `${baseLabel}${offlineStatus}${criticalStatus}${trendStatus}`;

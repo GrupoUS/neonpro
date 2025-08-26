@@ -4,7 +4,8 @@
 
 ## Purpose
 
-Provide a user-friendly interface to the BMad knowledge base without overwhelming users with information upfront.
+Provide a user-friendly interface to the BMad knowledge base without overwhelming users with
+information upfront.
 
 ## Instructions
 
@@ -57,7 +58,8 @@ When user is done or wants to exit KB mode:
 
 **User**: \*kb-mode
 
-**Assistant**: I've entered KB mode and have access to the full BMad knowledge base. I can help you with detailed information about any aspect of BMad-Method.
+**Assistant**: I've entered KB mode and have access to the full BMad knowledge base. I can help you
+with detailed information about any aspect of BMad-Method.
 
 **What would you like to know more about?**
 
@@ -74,4 +76,5 @@ Or ask me about anything else related to BMad-Method!
 
 **User**: Tell me about workflows
 
-**Assistant**: [Provides focused information about workflows from the KB, then offers to explore specific workflow types or related topics]
+**Assistant**: [Provides focused information about workflows from the KB, then offers to explore
+specific workflow types or related topics]

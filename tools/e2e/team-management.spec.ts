@@ -27,13 +27,25 @@ test.describe("Team Management - Staff Operations", () => {
 	test("should display team overview dashboard", async ({ page }) => {
 		// Check main team statistics
 		await expect(
-			page.locator('[data-testid="total-staff"]').or(page.locator("text=Total de Funcionários"))
+			page
+				.locator('[data-testid="total-staff"]')
+				.or(page.locator("text=Total de Funcionários")),
 		).toBeVisible();
-		await expect(page.locator('[data-testid="active-staff"]').or(page.locator("text=Ativos"))).toBeVisible();
-		await expect(page.locator('[data-testid="emergency-available"]').or(page.locator("text=Emergência"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="active-staff"]')
+				.or(page.locator("text=Ativos")),
+		).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="emergency-available"]')
+				.or(page.locator("text=Emergência")),
+		).toBeVisible();
 
 		// Verify team stats are displayed
-		const statsCards = page.locator('[data-testid="team-stats"] .card, .team-stats .card');
+		const statsCards = page.locator(
+			'[data-testid="team-stats"] .card, .team-stats .card',
+		);
 		await expect(statsCards.first()).toBeVisible();
 	});
 
@@ -42,7 +54,11 @@ test.describe("Team Management - Staff Operations", () => {
 		await page.click('button:has-text("Funcionários")');
 
 		// Should display staff list
-		await expect(page.locator('[data-testid="staff-list"]').or(page.locator(".staff-list"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="staff-list"]')
+				.or(page.locator(".staff-list")),
+		).toBeVisible();
 
 		// Test adding new staff member
 		const addButton = page.locator('button:has-text("Adicionar")');
@@ -59,17 +75,24 @@ test.describe("Team Management - Staff Operations", () => {
 			await page.click('button:has-text("Salvar")');
 
 			// Should show success message
-			await expect(page.locator("text=sucesso").or(page.locator(".success"))).toBeVisible();
+			await expect(
+				page.locator("text=sucesso").or(page.locator(".success")),
+			).toBeVisible();
 		}
 	});
 
 	test("should monitor compliance alerts", async ({ page }) => {
 		// Check for compliance alerts section
-		const alertsSection = page.locator('[data-testid="compliance-alerts"]').or(page.locator(".compliance-alerts"));
+		const alertsSection = page
+			.locator('[data-testid="compliance-alerts"]')
+			.or(page.locator(".compliance-alerts"));
 
 		if (await alertsSection.isVisible()) {
 			// Should display license expiration warnings
-			const licenseAlert = page.locator("text=CFM").or(page.locator("text=CRM")).or(page.locator("text=licen"));
+			const licenseAlert = page
+				.locator("text=CFM")
+				.or(page.locator("text=CRM"))
+				.or(page.locator("text=licen"));
 
 			if ((await licenseAlert.count()) > 0) {
 				await expect(licenseAlert.first()).toBeVisible();
@@ -77,7 +100,9 @@ test.describe("Team Management - Staff Operations", () => {
 		}
 
 		// Check for emergency alerts
-		const emergencyAlert = page.locator('[data-testid="emergency-alert"]').or(page.locator("text=Emergência"));
+		const emergencyAlert = page
+			.locator('[data-testid="emergency-alert"]')
+			.or(page.locator("text=Emergência"));
 		if (await emergencyAlert.isVisible()) {
 			await expect(emergencyAlert).toBeVisible();
 		}
@@ -89,11 +114,15 @@ test.describe("Team Management - Staff Operations", () => {
 
 		// Should display scheduling interface
 		await expect(
-			page.locator('[data-testid="scheduling-system"]').or(page.locator(".scheduling-system"))
+			page
+				.locator('[data-testid="scheduling-system"]')
+				.or(page.locator(".scheduling-system")),
 		).toBeVisible();
 
 		// Check for current shifts display
-		const shiftsSection = page.locator('[data-testid="current-shifts"]').or(page.locator("text=Turnos"));
+		const shiftsSection = page
+			.locator('[data-testid="current-shifts"]')
+			.or(page.locator("text=Turnos"));
 		if (await shiftsSection.isVisible()) {
 			await expect(shiftsSection).toBeVisible();
 		}
@@ -105,7 +134,9 @@ test.describe("Team Management - Staff Operations", () => {
 
 		// Should display performance metrics
 		await expect(
-			page.locator('[data-testid="performance-analytics"]').or(page.locator(".performance-analytics"))
+			page
+				.locator('[data-testid="performance-analytics"]')
+				.or(page.locator(".performance-analytics")),
 		).toBeVisible();
 
 		// Check for key performance indicators
@@ -127,7 +158,9 @@ test.describe("Team Management - Staff Operations", () => {
 			await expect(resourceSection).toBeVisible();
 
 			// Check for equipment and room management
-			const equipmentSection = page.locator("text=Equipamento").or(page.locator("text=Sala"));
+			const equipmentSection = page
+				.locator("text=Equipamento")
+				.or(page.locator("text=Sala"));
 			if ((await equipmentSection.count()) > 0) {
 				await expect(equipmentSection.first()).toBeVisible();
 			}
@@ -139,7 +172,9 @@ test.describe("Team Management - Staff Operations", () => {
 		await page.click('button:has-text("Comunicação")');
 
 		// Should display communication interface
-		const commSection = page.locator('[data-testid="communication-hub"]').or(page.locator(".communication-hub"));
+		const commSection = page
+			.locator('[data-testid="communication-hub"]')
+			.or(page.locator(".communication-hub"));
 		if (await commSection.isVisible()) {
 			await expect(commSection).toBeVisible();
 
@@ -150,7 +185,9 @@ test.describe("Team Management - Staff Operations", () => {
 				await page.click('button:has-text("Enviar")');
 
 				// Should show message sent confirmation
-				await expect(page.locator("text=enviada").or(page.locator(".success"))).toBeVisible();
+				await expect(
+					page.locator("text=enviada").or(page.locator(".success")),
+				).toBeVisible();
 			}
 		}
 	});
@@ -178,7 +215,11 @@ test.describe("Team Management - Emergency Protocols", () => {
 			await emergencyButton.click();
 
 			// Should show emergency activation confirmation
-			await expect(page.locator("text=emergência ativada").or(page.locator(".emergency-active"))).toBeVisible();
+			await expect(
+				page
+					.locator("text=emergência ativada")
+					.or(page.locator(".emergency-active")),
+			).toBeVisible();
 
 			// Should display available emergency staff
 			const emergencyStaff = page.locator('[data-testid="emergency-staff"]');
@@ -190,7 +231,9 @@ test.describe("Team Management - Emergency Protocols", () => {
 
 	test("should handle critical alerts", async ({ page }) => {
 		// Check for critical alert handling
-		const criticalAlert = page.locator('[data-testid="critical-alert"]').or(page.locator(".alert-critical"));
+		const criticalAlert = page
+			.locator('[data-testid="critical-alert"]')
+			.or(page.locator(".alert-critical"));
 
 		if (await criticalAlert.isVisible()) {
 			await expect(criticalAlert).toBeVisible();
@@ -201,7 +244,9 @@ test.describe("Team Management - Emergency Protocols", () => {
 				await ackButton.click();
 
 				// Should update alert status
-				await expect(page.locator("text=reconhecido").or(page.locator(".acknowledged"))).toBeVisible();
+				await expect(
+					page.locator("text=reconhecido").or(page.locator(".acknowledged")),
+				).toBeVisible();
 			}
 		}
 	});
@@ -217,13 +262,19 @@ test.describe("Team Management - Compliance Monitoring", () => {
 		await page.goto("/team");
 
 		// Check compliance dashboard
-		const complianceSection = page.locator('[data-testid="compliance-dashboard"]');
+		const complianceSection = page.locator(
+			'[data-testid="compliance-dashboard"]',
+		);
 		if (await complianceSection.isVisible()) {
 			// Should show license status
-			await expect(page.locator("text=CFM").or(page.locator("text=CRM"))).toBeVisible();
+			await expect(
+				page.locator("text=CFM").or(page.locator("text=CRM")),
+			).toBeVisible();
 
 			// Should show expiration warnings
-			const expirationWarning = page.locator(".warning").or(page.locator('[data-testid="license-warning"]'));
+			const expirationWarning = page
+				.locator(".warning")
+				.or(page.locator('[data-testid="license-warning"]'));
 			if ((await expirationWarning.count()) > 0) {
 				await expect(expirationWarning.first()).toBeVisible();
 			}
@@ -244,7 +295,11 @@ test.describe("Team Management - Compliance Monitoring", () => {
 			await reportsButton.click();
 
 			// Should show report options
-			await expect(page.locator('[data-testid="report-options"]').or(page.locator(".report-options"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="report-options"]')
+					.or(page.locator(".report-options")),
+			).toBeVisible();
 		}
 	});
 });
@@ -290,7 +345,9 @@ test.describe("Team Management - Accessibility", () => {
 
 		for (let i = 0; i < Math.min(buttonCount, 5); i++) {
 			const button = buttons.nth(i);
-			const hasLabel = (await button.getAttribute("aria-label")) || (await button.textContent());
+			const hasLabel =
+				(await button.getAttribute("aria-label")) ||
+				(await button.textContent());
 			expect(hasLabel).toBeTruthy();
 		}
 	});

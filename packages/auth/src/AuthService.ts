@@ -5,7 +5,7 @@
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import QRCode from "qrcode";
 import speakeasy from "speakeasy";
@@ -226,6 +226,7 @@ export class AuthService extends EnhancedServiceBase {
 	} /**
 	 * Verify and refresh access token
 	 */
+
 	async refreshToken(refreshToken: string): Promise<LoginResult> {
 		try {
 			const payload = jwt.verify(refreshToken, this.config.jwtSecret) as TokenPayload;

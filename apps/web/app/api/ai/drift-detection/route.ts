@@ -5,10 +5,10 @@
  * Target: <24h drift detection with automated alerts
  */
 
+import { driftDetector } from "@/lib/ai/drift-detection";
 import { createServerClient } from "@neonpro/db";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { driftDetector } from "@/lib/ai/drift-detection";
 
 export async function GET(request: NextRequest) {
 	try {
@@ -120,7 +120,12 @@ export async function GET(request: NextRequest) {
 
 			case "model-status": {
 				if (!modelId) {
-					return NextResponse.json({ error: "Model ID required for status check" }, { status: 400 });
+					return NextResponse.json(
+						{ error: "Model ID required for status check" },
+						{
+							status: 400,
+						}
+					);
 				}
 
 				// Get latest drift status for specific model
@@ -210,7 +215,10 @@ export async function GET(request: NextRequest) {
 	} catch (error) {
 		console.error("Drift detection API error:", error);
 		return NextResponse.json(
-			{ error: "Internal server error", details: error instanceof Error ? error.message : String(error) },
+			{
+				error: "Internal server error",
+				details: error instanceof Error ? error.message : String(error),
+			},
 			{ status: 500 }
 		);
 	}
@@ -293,7 +301,12 @@ export async function POST(request: NextRequest) {
 				const { modelId, config } = body;
 
 				if (!modelId || !config) {
-					return NextResponse.json({ error: "Model ID and configuration required" }, { status: 400 });
+					return NextResponse.json(
+						{ error: "Model ID and configuration required" },
+						{
+							status: 400,
+						}
+					);
 				}
 
 				// Update model drift detection configuration
@@ -321,7 +334,10 @@ export async function POST(request: NextRequest) {
 	} catch (error) {
 		console.error("Drift detection POST error:", error);
 		return NextResponse.json(
-			{ error: "Internal server error", details: error instanceof Error ? error.message : String(error) },
+			{
+				error: "Internal server error",
+				details: error instanceof Error ? error.message : String(error),
+			},
 			{ status: 500 }
 		);
 	}

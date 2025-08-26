@@ -62,15 +62,26 @@ export async function GET(request: NextRequest, { params }: { params: { tenantId
 		});
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			return NextResponse.json({ success: false, error: "Invalid query parameters" }, { status: 400 });
+			return NextResponse.json(
+				{ success: false, error: "Invalid query parameters" },
+				{
+					status: 400,
+				}
+			);
 		}
 
-		return NextResponse.json({ success: false, error: "Failed to fetch analytics" }, { status: 500 });
+		return NextResponse.json(
+			{ success: false, error: "Failed to fetch analytics" },
+			{
+				status: 500,
+			}
+		);
 	}
 } /**
  * Record scheduling analytics data
  * POST /api/scheduling/analytics/[tenantId]/record
  */
+
 export async function POST(request: NextRequest, { params }: { params: { tenantId: string } }) {
 	try {
 		const { tenantId } = params;
@@ -84,7 +95,12 @@ export async function POST(request: NextRequest, { params }: { params: { tenantI
 			message: "Analytics recorded successfully",
 		});
 	} catch (_error) {
-		return NextResponse.json({ success: false, error: "Failed to record analytics" }, { status: 500 });
+		return NextResponse.json(
+			{ success: false, error: "Failed to record analytics" },
+			{
+				status: 500,
+			}
+		);
 	}
 }
 

@@ -45,7 +45,9 @@ export default function HealthcareDesignSystem() {
 	return (
 		<div className="rounded-lg border p-4">
 			<h3 className="font-semibold text-lg">Healthcare Design System</h3>
-			<p className="text-gray-600">Design system components will be implemented in a future version.</p>
+			<p className="text-gray-600">
+				Design system components will be implemented in a future version.
+			</p>
 		</div>
 	);
 }

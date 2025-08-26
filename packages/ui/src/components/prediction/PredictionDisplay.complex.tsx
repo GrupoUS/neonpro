@@ -6,10 +6,25 @@
 
 "use client";
 
-import { Activity, AlertTriangle, Brain, CheckCircle, Clock, Target, TrendingDown, TrendingUp } from "lucide-react";
+import {
+	Activity,
+	AlertTriangle,
+	Brain,
+	CheckCircle,
+	Clock,
+	Target,
+	TrendingDown,
+	TrendingUp,
+} from "lucide-react";
 import { useEffect, useId, useState } from "react";
 import { Badge } from "../Badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../Card";
 import { Progress } from "../Progress";
 
 // Types for prediction data
@@ -112,7 +127,9 @@ function PredictionCard({
 		<Card
 			aria-describedby={`${cardId}-details`}
 			aria-labelledby={titleId}
-			className={`cursor-pointer transition-all hover:shadow-md ${onClick ? "hover:scale-[1.02]" : ""}`}
+			className={`cursor-pointer transition-all hover:shadow-md ${
+				onClick ? "hover:scale-[1.02]" : ""
+			}`}
 			onClick={() => onClick?.(prediction)}
 			onKeyDown={(e) => {
 				if (e.key === "Enter" || e.key === " ") {
@@ -131,14 +148,18 @@ function PredictionCard({
 							{prediction.title}
 						</CardTitle>
 					</div>
-					<Badge className="flex items-center gap-1" variant={getSeverityColor(prediction.severity)}>
+					<Badge
+						className="flex items-center gap-1"
+						variant={getSeverityColor(prediction.severity)}
+					>
 						{getSeverityIcon(prediction.severity)}
 						{prediction.severity}
 					</Badge>
 				</div>
 				{!compact && (
 					<CardDescription>
-						Previsão gerada por IA • {prediction.timeframe} • {prediction.source}
+						Previsão gerada por IA • {prediction.timeframe} •{" "}
+						{prediction.source}
 					</CardDescription>
 				)}
 			</CardHeader>
@@ -146,7 +167,9 @@ function PredictionCard({
 			<CardContent className="space-y-4">
 				{/* Main prediction */}
 				<div id={`${cardId}-details`}>
-					<p className="mb-2 font-medium text-foreground">{prediction.prediction}</p>
+					<p className="mb-2 font-medium text-foreground">
+						{prediction.prediction}
+					</p>
 					{!compact &&
 						prediction.details.map((detail, index) => (
 							<p className="mb-1 text-muted-foreground text-sm" key={index}>
@@ -176,34 +199,49 @@ function PredictionCard({
 						{prediction.dataPoints.slice(0, 4).map((dataPoint, index) => (
 							<div className="rounded bg-muted/50 p-2 text-center" key={index}>
 								<div className="flex items-center justify-center gap-1 font-medium text-sm">
-									{dataPoint.trend === "up" && <TrendingUp className="h-3 w-3 text-green-500" />}
-									{dataPoint.trend === "down" && <TrendingDown className="h-3 w-3 text-red-500" />}
+									{dataPoint.trend === "up" && (
+										<TrendingUp className="h-3 w-3 text-green-500" />
+									)}
+									{dataPoint.trend === "down" && (
+										<TrendingDown className="h-3 w-3 text-red-500" />
+									)}
 									{dataPoint.value}
-									{dataPoint.unit && <span className="text-muted-foreground">{dataPoint.unit}</span>}
+									{dataPoint.unit && (
+										<span className="text-muted-foreground">
+											{dataPoint.unit}
+										</span>
+									)}
 								</div>
-								<div className="mt-1 text-muted-foreground text-xs">{dataPoint.label}</div>
+								<div className="mt-1 text-muted-foreground text-xs">
+									{dataPoint.label}
+								</div>
 							</div>
 						))}
 					</div>
 				)}
 
 				{/* Recommendations */}
-				{showRecommendations && !compact && prediction.recommendations.length > 0 && (
-					<div className="border-t pt-3">
-						<h4 className="mb-2 flex items-center gap-2 font-medium text-sm">
-							<Target className="h-4 w-4" />
-							Recomendações
-						</h4>
-						<ul className="space-y-1">
-							{prediction.recommendations.slice(0, 3).map((rec, index) => (
-								<li className="flex items-start gap-2 text-muted-foreground text-sm" key={index}>
-									<CheckCircle className="mt-1 h-3 w-3 flex-shrink-0 text-green-500" />
-									{rec}
-								</li>
-							))}
-						</ul>
-					</div>
-				)}
+				{showRecommendations &&
+					!compact &&
+					prediction.recommendations.length > 0 && (
+						<div className="border-t pt-3">
+							<h4 className="mb-2 flex items-center gap-2 font-medium text-sm">
+								<Target className="h-4 w-4" />
+								Recomendações
+							</h4>
+							<ul className="space-y-1">
+								{prediction.recommendations.slice(0, 3).map((rec, index) => (
+									<li
+										className="flex items-start gap-2 text-muted-foreground text-sm"
+										key={index}
+									>
+										<CheckCircle className="mt-1 h-3 w-3 flex-shrink-0 text-green-500" />
+										{rec}
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
 
 				{/* Metadata */}
 				<div className="flex items-center justify-between border-t pt-2 text-muted-foreground text-xs">
@@ -251,7 +289,9 @@ export function PredictionDisplay({
 	}, [predictions, selectedType, selectedSeverity]);
 
 	const predictionTypes = Array.from(new Set(predictions.map((p) => p.type)));
-	const severityLevels = Array.from(new Set(predictions.map((p) => p.severity)));
+	const severityLevels = Array.from(
+		new Set(predictions.map((p) => p.severity)),
+	);
 
 	if (loading) {
 		return (
@@ -280,7 +320,11 @@ export function PredictionDisplay({
 	}
 
 	return (
-		<div aria-label="Previsões de IA" className={`space-y-4 ${className}`} role="region">
+		<div
+			aria-label="Previsões de IA"
+			className={`space-y-4 ${className}`}
+			role="region"
+		>
 			{/* Filter controls */}
 			{predictions.length > 0 && !compactView && (
 				<div className="flex flex-wrap gap-2">
@@ -297,7 +341,9 @@ export function PredictionDisplay({
 							<option value="all">Todos</option>
 							{predictionTypes.map((type) => (
 								<option key={type} value={type}>
-									{type.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+									{type
+										.replace("_", " ")
+										.replace(/\b\w/g, (l) => l.toUpperCase())}
 								</option>
 							))}
 						</select>

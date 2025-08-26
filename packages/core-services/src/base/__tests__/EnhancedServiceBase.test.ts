@@ -5,7 +5,10 @@
  */
 
 import type { ServiceContext } from "../../types";
-import { EnhancedServiceBase, type ServiceConfig } from "../EnhancedServiceBase";
+import {
+	EnhancedServiceBase,
+	type ServiceConfig,
+} from "../EnhancedServiceBase";
 
 // Mock implementation for testing
 class TestEnhancedService extends EnhancedServiceBase {
@@ -36,7 +39,7 @@ class TestEnhancedService extends EnhancedServiceBase {
 	async testExecuteOperation<T>(
 		operationName: string,
 		operation: () => Promise<T>,
-		context?: ServiceContext
+		context?: ServiceContext,
 	): Promise<T> {
 		return this.executeOperation(operationName, operation, context);
 	}

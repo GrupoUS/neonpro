@@ -71,7 +71,12 @@ export async function GET(request: NextRequest) {
 		// Validate time range
 		const validRanges = ["24h", "7d", "30d"];
 		if (!validRanges.includes(timeRange)) {
-			return NextResponse.json({ error: "Invalid time range. Must be 24h, 7d, or 30d" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Invalid time range. Must be 24h, 7d, or 30d" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// In production, this would query actual database metrics

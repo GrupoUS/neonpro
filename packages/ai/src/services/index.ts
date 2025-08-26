@@ -19,7 +19,10 @@ export class AIServiceFactory {
 
 	static getPredictionService(): NoShowPredictionService {
 		if (!AIServiceFactory.instances.has("prediction")) {
-			AIServiceFactory.instances.set("prediction", new NoShowPredictionService());
+			AIServiceFactory.instances.set(
+				"prediction",
+				new NoShowPredictionService(),
+			);
 		}
 		return AIServiceFactory.instances.get("prediction");
 	}
@@ -44,7 +47,8 @@ export class AIServiceHealthChecker {
 
 		for (const [name, service] of Object.entries(services)) {
 			try {
-				const isHealthy = await AIServiceHealthChecker.checkServiceHealth(service);
+				const isHealthy =
+					await AIServiceHealthChecker.checkServiceHealth(service);
 				results.push({
 					service: name,
 					status: isHealthy ? "healthy" : "unhealthy",
@@ -65,7 +69,10 @@ export class AIServiceHealthChecker {
 
 	private static async checkServiceHealth(service: any): Promise<boolean> {
 		// Basic health check - verify service can be instantiated and has required methods
-		return typeof service.execute === "function" && typeof service.executeWithMetrics === "function";
+		return (
+			typeof service.execute === "function" &&
+			typeof service.executeWithMetrics === "function"
+		);
 	}
 }
 

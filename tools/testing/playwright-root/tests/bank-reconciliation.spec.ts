@@ -16,7 +16,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 		await expect(page.getByTestId("reconciliation-dashboard")).toBeVisible();
 	});
 
-	test("should load reconciliation dashboard with all components", async ({ page }) => {
+	test("should load reconciliation dashboard with all components", async ({
+		page,
+	}) => {
 		// Verify main dashboard components
 		await expect(page.getByTestId("reconciliation-dashboard")).toBeVisible();
 		await expect(page.getByTestId("import-statement-button")).toBeVisible();
@@ -37,7 +39,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 
 		// Upload CSV file
 		const fileInput = page.getByTestId("file-upload-input");
-		await fileInput.setInputFiles("playwright/fixtures/bank-statement-sample.csv");
+		await fileInput.setInputFiles(
+			"playwright/fixtures/bank-statement-sample.csv",
+		);
 
 		// Configure import settings
 		await page.getByLabel("Date Format").selectOption("DD/MM/YYYY");
@@ -54,17 +58,23 @@ test.describe("Bank Reconciliation System E2E", () => {
 		});
 
 		// Verify imported transactions appear
-		await expect(page.getByTestId("transactions-list")).toContainText("Imported");
+		await expect(page.getByTestId("transactions-list")).toContainText(
+			"Imported",
+		);
 
 		// Check summary updated
-		const totalTransactions = await page.getByTestId("total-transactions-count").textContent();
+		const totalTransactions = await page
+			.getByTestId("total-transactions-count")
+			.textContent();
 		expect(Number(totalTransactions)).toBeGreaterThan(0);
 	});
 
 	test("should perform intelligent transaction matching", async ({ page }) => {
 		// First import sample data
 		await page.getByTestId("import-statement-button").click();
-		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/bank-statement-sample.csv");
+		await page
+			.getByTestId("file-upload-input")
+			.setInputFiles("playwright/fixtures/bank-statement-sample.csv");
 		await page.getByTestId("start-import-button").click();
 		await expect(page.getByText("Import completed successfully")).toBeVisible({
 			timeout: 30_000,
@@ -88,11 +98,15 @@ test.describe("Bank Reconciliation System E2E", () => {
 		});
 
 		// Verify matching results
-		const matchedCount = await page.getByTestId("matched-transactions-count").textContent();
+		const matchedCount = await page
+			.getByTestId("matched-transactions-count")
+			.textContent();
 		expect(Number(matchedCount)).toBeGreaterThan(0);
 
 		// Check accuracy rate
-		const accuracyRate = await page.getByTestId("accuracy-rate-value").textContent();
+		const accuracyRate = await page
+			.getByTestId("accuracy-rate-value")
+			.textContent();
 		expect(Number(accuracyRate.replace("%", ""))).toBeGreaterThan(70);
 	});
 
@@ -116,17 +130,23 @@ test.describe("Bank Reconciliation System E2E", () => {
 		await page.getByTestId("confirm-match-button").click();
 
 		// Verify success
-		await expect(page.getByText("Transaction matched successfully")).toBeVisible();
+		await expect(
+			page.getByText("Transaction matched successfully"),
+		).toBeVisible();
 
 		// Check match appears in matched transactions
 		await page.getByTestId("matched-transactions-tab").click();
-		await expect(page.getByTestId("matched-transactions-list")).toContainText("Manually Matched");
+		await expect(page.getByTestId("matched-transactions-list")).toContainText(
+			"Manually Matched",
+		);
 	});
 
 	test("should export reconciliation report", async ({ page }) => {
 		// Setup: ensure we have some data
 		await page.getByTestId("import-statement-button").click();
-		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/bank-statement-sample.csv");
+		await page
+			.getByTestId("file-upload-input")
+			.setInputFiles("playwright/fixtures/bank-statement-sample.csv");
 		await page.getByTestId("start-import-button").click();
 		await expect(page.getByText("Import completed successfully")).toBeVisible({
 			timeout: 30_000,
@@ -162,7 +182,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 	test("should handle large dataset performance", async ({ page }) => {
 		// Import large dataset
 		await page.getByTestId("import-statement-button").click();
-		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/large-bank-statement.csv");
+		await page
+			.getByTestId("file-upload-input")
+			.setInputFiles("playwright/fixtures/large-bank-statement.csv");
 
 		// Start timer
 		const startTime = Date.now();
@@ -178,7 +200,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 		expect(importTime).toBeLessThan(60_000); // Should complete within 60 seconds
 
 		// Verify all transactions imported
-		const totalCount = await page.getByTestId("total-transactions-count").textContent();
+		const totalCount = await page
+			.getByTestId("total-transactions-count")
+			.textContent();
 		expect(Number(totalCount)).toBeGreaterThan(1000);
 
 		// Test matching performance
@@ -196,7 +220,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 	test("should maintain audit trail", async ({ page }) => {
 		// Perform some operations
 		await page.getByTestId("import-statement-button").click();
-		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/bank-statement-sample.csv");
+		await page
+			.getByTestId("file-upload-input")
+			.setInputFiles("playwright/fixtures/bank-statement-sample.csv");
 		await page.getByTestId("start-import-button").click();
 		await expect(page.getByText("Import completed successfully")).toBeVisible({
 			timeout: 30_000,
@@ -213,30 +239,40 @@ test.describe("Bank Reconciliation System E2E", () => {
 		const firstEntry = page.getByTestId("audit-entry").first();
 		await expect(firstEntry).toContainText("Bank statement imported");
 		await expect(firstEntry).toContainText("admin@neonpro.com");
-		await expect(firstEntry).toContainText(new Date().toISOString().split("T")[0]); // Today's date
+		await expect(firstEntry).toContainText(
+			new Date().toISOString().split("T")[0],
+		); // Today's date
 
 		// Verify detailed audit information
 		await firstEntry.click();
 		await expect(page.getByTestId("audit-details-modal")).toBeVisible();
-		await expect(page.getByText("Operation: Import Bank Statement")).toBeVisible();
+		await expect(
+			page.getByText("Operation: Import Bank Statement"),
+		).toBeVisible();
 		await expect(page.getByText("Status: Success")).toBeVisible();
 	});
 
 	test("should handle errors gracefully", async ({ page }) => {
 		// Test file format error
 		await page.getByTestId("import-statement-button").click();
-		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/invalid-format.txt");
+		await page
+			.getByTestId("file-upload-input")
+			.setInputFiles("playwright/fixtures/invalid-format.txt");
 		await page.getByTestId("start-import-button").click();
 
 		await expect(page.getByText("Invalid file format")).toBeVisible();
-		await expect(page.getByTestId("error-message")).toContainText("Please upload a valid CSV or Excel file");
+		await expect(page.getByTestId("error-message")).toContainText(
+			"Please upload a valid CSV or Excel file",
+		);
 
 		// Test network error simulation
 		await page.route("**/api/payments/reconciliation/import", (route) => {
 			route.abort("failed");
 		});
 
-		await page.getByTestId("file-upload-input").setInputFiles("playwright/fixtures/bank-statement-sample.csv");
+		await page
+			.getByTestId("file-upload-input")
+			.setInputFiles("playwright/fixtures/bank-statement-sample.csv");
 		await page.getByTestId("start-import-button").click();
 
 		await expect(page.getByText("Network error")).toBeVisible();
@@ -275,7 +311,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 		await page.getByTestId("withdraw-consent-button").click();
 		await page.getByTestId("confirm-withdrawal-button").click();
 
-		await expect(page.getByText("Consent withdrawn successfully")).toBeVisible();
+		await expect(
+			page.getByText("Consent withdrawn successfully"),
+		).toBeVisible();
 	});
 
 	test("should handle mobile responsive design", async ({ page }) => {
@@ -283,7 +321,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 		await page.setViewportSize({ width: 375, height: 667 });
 
 		// Verify mobile-responsive elements
-		await expect(page.getByTestId("mobile-reconciliation-header")).toBeVisible();
+		await expect(
+			page.getByTestId("mobile-reconciliation-header"),
+		).toBeVisible();
 		await expect(page.getByTestId("mobile-menu-toggle")).toBeVisible();
 
 		// Test mobile navigation
@@ -299,7 +339,9 @@ test.describe("Bank Reconciliation System E2E", () => {
 		await expect(page.getByTestId("transaction-actions")).toBeVisible();
 	});
 
-	test("should maintain security throughout reconciliation process", async ({ page }) => {
+	test("should maintain security throughout reconciliation process", async ({
+		page,
+	}) => {
 		// Verify secure headers are present
 		await page.goto("/dashboard/financial/reconciliation");
 

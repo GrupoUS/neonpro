@@ -5,8 +5,8 @@
  * Based on 2025 performance monitoring best practices
  */
 
-import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Performance metric interface
 type PerformanceMetric = {

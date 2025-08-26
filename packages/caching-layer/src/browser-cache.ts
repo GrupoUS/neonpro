@@ -17,7 +17,7 @@ export class BrowserCacheLayer implements CacheOperation {
 			defaultTTL: 5 * 60 * 1000, // 5 minutes
 			maxTTL: 15 * 60 * 1000, // 15 minutes
 			lgpdCompliant: true,
-		}
+		},
 	) {}
 
 	async get<T>(key: string): Promise<T | null> {
@@ -55,19 +55,29 @@ export class BrowserCacheLayer implements CacheOperation {
 		return entry.value;
 	}
 
-	async set<T>(key: string, value: T, ttl?: number, policy?: HealthcareDataPolicy): Promise<void> {
+	async set<T>(
+		key: string,
+		value: T,
+		ttl?: number,
+		policy?: HealthcareDataPolicy,
+	): Promise<void> {
 		// Evict if cache is full
 		if (this.cache.size >= this.config.maxSize) {
 			this.evictLRU();
 		}
 
-		const effectiveTTL = Math.min(ttl || this.config.defaultTTL, this.config.maxTTL);
+		const effectiveTTL = Math.min(
+			ttl || this.config.defaultTTL,
+			this.config.maxTTL,
+		);
 
 		const entry = {
 			value,
 			timestamp: Date.now(),
 			ttl: effectiveTTL,
-			sensitive: policy?.dataClassification === "RESTRICTED" || policy?.dataClassification === "CONFIDENTIAL",
+			sensitive:
+				policy?.dataClassification === "RESTRICTED" ||
+				policy?.dataClassification === "CONFIDENTIAL",
 			lgpdConsent: policy?.requiresConsent ? this.checkLGPDConsent(key) : true,
 			lastAccessed: Date.now(),
 		};
@@ -85,7 +95,10 @@ export class BrowserCacheLayer implements CacheOperation {
 	}
 
 	async getStats(): Promise<CacheStats> {
-		this.stats.hitRate = this.stats.totalRequests > 0 ? (this.stats.hits / this.stats.totalRequests) * 100 : 0;
+		this.stats.hitRate =
+			this.stats.totalRequests > 0
+				? (this.stats.hits / this.stats.totalRequests) * 100
+				: 0;
 		return { ...this.stats };
 	}
 
@@ -128,11 +141,18 @@ export class BrowserCacheLayer implements CacheOperation {
 		}
 
 		this.stats.averageResponseTime =
-			this.responseTimeBuffer.reduce((a, b) => a + b, 0) / this.responseTimeBuffer.length;
+			this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+			this.responseTimeBuffer.length;
 	}
 
 	private resetStats(): void {
-		this.stats = { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 };
+		this.stats = {
+			hits: 0,
+			misses: 0,
+			hitRate: 0,
+			totalRequests: 0,
+			averageResponseTime: 0,
+		};
 		this.responseTimeBuffer = [];
 	}
 }

@@ -246,7 +246,12 @@ export type PerformanceMetrics = {
 export type HealthcareOperation = {
 	operationId: string;
 	operationType: "READ" | "WRITE" | "DELETE" | "UPDATE";
-	resourceType: "PATIENT" | "APPOINTMENT" | "MEDICAL_RECORD" | "BILLING" | "INVENTORY";
+	resourceType:
+		| "PATIENT"
+		| "APPOINTMENT"
+		| "MEDICAL_RECORD"
+		| "BILLING"
+		| "INVENTORY";
 	dataClassification: "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED";
 	requiresConsent: boolean;
 	retentionPolicy?: string;

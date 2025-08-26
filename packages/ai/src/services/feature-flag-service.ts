@@ -2,7 +2,11 @@
 // Dynamic feature control, A/B testing, and gradual rollout management
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
+import {
+	type AIServiceInput,
+	type AIServiceOutput,
+	EnhancedAIService,
+} from "./enhanced-service-base";
 
 // Feature Flag Types
 export type FeatureFlag = {
@@ -89,7 +93,10 @@ export type FeatureFlagEvaluationMetadata = {
 };
 
 // Feature Flag Service Implementation
-export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, FeatureFlagOutput> {
+export class FeatureFlagService extends EnhancedAIService<
+	FeatureFlagInput,
+	FeatureFlagOutput
+> {
 	private readonly supabase: SupabaseClient;
 	private readonly flagCache: Map<string, FeatureFlag> = new Map();
 	private readonly cacheExpiry: Map<string, number> = new Map();
@@ -99,13 +106,18 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 	constructor() {
 		super("feature_flag_service");
 
-		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		this.supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Initialize flag cache refresh
 		this.startCacheRefreshInterval();
 	}
 
-	protected async executeCore(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
+	protected async executeCore(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
 		const startTime = performance.now();
 
 		try {
@@ -135,7 +147,9 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		}
 	}
 
-	private async checkFeatureFlag(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
+	private async checkFeatureFlag(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
 		if (!input.flag_name) {
 			throw new Error("flag_name is required for check action");
 		}
@@ -158,7 +172,10 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 			};
 		}
 
-		const evaluation = await this.evaluateFeatureFlag(flag, input.context || {});
+		const evaluation = await this.evaluateFeatureFlag(
+			flag,
+			input.context || {},
+		);
 
 		return {
 			success: true,
@@ -176,7 +193,9 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		};
 	}
 
-	private async bulkCheckFeatureFlags(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
+	private async bulkCheckFeatureFlags(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
 		if (!input.flag_names || input.flag_names.length === 0) {
 			throw new Error("flag_names is required for bulk_check action");
 		}
@@ -203,8 +222,15 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		};
 	}
 
-	private async listFeatureFlags(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
-		let query = this.supabase.from("ai_feature_flags").select("*").order("created_at", { ascending: false });
+	private async listFeatureFlags(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
+		let query = this.supabase
+			.from("ai_feature_flags")
+			.select("*")
+			.order("created_at", {
+				ascending: false,
+			});
 
 		// Apply filters
 		if (input.filters) {
@@ -213,11 +239,15 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 			}
 
 			if (input.filters.category) {
-				query = query.contains("metadata", { category: input.filters.category });
+				query = query.contains("metadata", {
+					category: input.filters.category,
+				});
 			}
 
 			if (input.filters.environment) {
-				query = query.contains("metadata", { environment: input.filters.environment });
+				query = query.contains("metadata", {
+					environment: input.filters.environment,
+				});
 			}
 
 			if (input.filters.owner) {
@@ -237,14 +267,18 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		};
 	}
 
-	private async createFeatureFlag(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
+	private async createFeatureFlag(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
 		if (!input.flag_data) {
 			throw new Error("flag_data is required for create action");
 		}
 
 		const flagData = {
 			...input.flag_data,
-			id: input.flag_data.id || `ff_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+			id:
+				input.flag_data.id ||
+				`ff_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
 			created_at: new Date().toISOString(),
 			updated_at: new Date().toISOString(),
 			metadata: {
@@ -255,7 +289,11 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 			},
 		};
 
-		const { data, error } = await this.supabase.from("ai_feature_flags").insert(flagData).select().single();
+		const { data, error } = await this.supabase
+			.from("ai_feature_flags")
+			.insert(flagData)
+			.select()
+			.single();
 
 		if (error) {
 			throw new Error(`Failed to create feature flag: ${error.message}`);
@@ -282,7 +320,9 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		};
 	}
 
-	private async updateFeatureFlag(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
+	private async updateFeatureFlag(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
 		if (!(input.flag_name && input.flag_data)) {
 			throw new Error("flag_name and flag_data are required for update action");
 		}
@@ -324,12 +364,17 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		};
 	}
 
-	private async deleteFeatureFlag(input: FeatureFlagInput): Promise<FeatureFlagOutput> {
+	private async deleteFeatureFlag(
+		input: FeatureFlagInput,
+	): Promise<FeatureFlagOutput> {
 		if (!input.flag_name) {
 			throw new Error("flag_name is required for delete action");
 		}
 
-		const { error } = await this.supabase.from("ai_feature_flags").delete().eq("name", input.flag_name);
+		const { error } = await this.supabase
+			.from("ai_feature_flags")
+			.delete()
+			.eq("name", input.flag_name);
 
 		if (error) {
 			throw new Error(`Failed to delete feature flag: ${error.message}`);
@@ -362,7 +407,11 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		}
 
 		// Fetch from database
-		const { data, error } = await this.supabase.from("ai_feature_flags").select("*").eq("name", flagName).single();
+		const { data, error } = await this.supabase
+			.from("ai_feature_flags")
+			.select("*")
+			.eq("name", flagName)
+			.single();
 
 		if (error || !data) {
 			return null;
@@ -377,7 +426,7 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 
 	private async evaluateFeatureFlag(
 		flag: FeatureFlag,
-		context: FeatureFlagContext
+		context: FeatureFlagContext,
 	): Promise<{
 		enabled: boolean;
 		reason: string;
@@ -428,7 +477,9 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 				};
 			}
 
-			const hasRequiredRole = flag.conditions.user_roles.some((role) => context.user_roles?.includes(role));
+			const hasRequiredRole = flag.conditions.user_roles.some((role) =>
+				context.user_roles?.includes(role),
+			);
 
 			if (!hasRequiredRole) {
 				return {
@@ -445,7 +496,9 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		if (flag.conditions.user_ids && flag.conditions.user_ids.length > 0) {
 			conditionsChecked.push("user_ids");
 
-			if (!(context.user_id && flag.conditions.user_ids.includes(context.user_id))) {
+			if (
+				!(context.user_id && flag.conditions.user_ids.includes(context.user_id))
+			) {
 				return {
 					enabled: false,
 					reason: "User ID not in whitelist",
@@ -460,7 +513,12 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		if (flag.conditions.clinic_ids && flag.conditions.clinic_ids.length > 0) {
 			conditionsChecked.push("clinic_ids");
 
-			if (!(context.clinic_id && flag.conditions.clinic_ids.includes(context.clinic_id))) {
+			if (
+				!(
+					context.clinic_id &&
+					flag.conditions.clinic_ids.includes(context.clinic_id)
+				)
+			) {
 				return {
 					enabled: false,
 					reason: "Clinic ID not in allowed list",
@@ -472,24 +530,32 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		}
 
 		// Check time restrictions
-		if (flag.conditions.time_restrictions && flag.conditions.time_restrictions.length > 0) {
+		if (
+			flag.conditions.time_restrictions &&
+			flag.conditions.time_restrictions.length > 0
+		) {
 			conditionsChecked.push("time_restrictions");
 
 			const now = new Date();
-			const isTimeAllowed = flag.conditions.time_restrictions.some((restriction) => {
-				const startTime = new Date(restriction.start_time);
-				const endTime = new Date(restriction.end_time);
+			const isTimeAllowed = flag.conditions.time_restrictions.some(
+				(restriction) => {
+					const startTime = new Date(restriction.start_time);
+					const endTime = new Date(restriction.end_time);
 
-				// Check if current time is within the time window
-				if (now >= startTime && now <= endTime) {
-					// If days of week are specified, check current day
-					if (restriction.days_of_week && restriction.days_of_week.length > 0) {
-						return restriction.days_of_week.includes(now.getDay());
+					// Check if current time is within the time window
+					if (now >= startTime && now <= endTime) {
+						// If days of week are specified, check current day
+						if (
+							restriction.days_of_week &&
+							restriction.days_of_week.length > 0
+						) {
+							return restriction.days_of_week.includes(now.getDay());
+						}
+						return true;
 					}
-					return true;
-				}
-				return false;
-			});
+					return false;
+				},
+			);
 
 			if (!isTimeAllowed) {
 				return {
@@ -503,7 +569,10 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		}
 
 		// Check percentage rollout
-		if (flag.conditions.percentage_rollout !== undefined && flag.conditions.percentage_rollout < 100) {
+		if (
+			flag.conditions.percentage_rollout !== undefined &&
+			flag.conditions.percentage_rollout < 100
+		) {
 			conditionsChecked.push("percentage_rollout");
 
 			// Use user ID for consistent bucketing, fallback to random
@@ -557,7 +626,10 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 	}
 
 	private async refreshCache(): Promise<void> {
-		const { data, error } = await this.supabase.from("ai_feature_flags").select("*").eq("enabled", true);
+		const { data, error } = await this.supabase
+			.from("ai_feature_flags")
+			.select("*")
+			.eq("enabled", true);
 
 		if (error) {
 			return;
@@ -582,7 +654,10 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 	}
 
 	// Helper methods for common feature flag patterns
-	public async isFeatureEnabled(flagName: string, context?: FeatureFlagContext): Promise<boolean> {
+	public async isFeatureEnabled(
+		flagName: string,
+		context?: FeatureFlagContext,
+	): Promise<boolean> {
 		const result = await this.execute({
 			action: "check",
 			flag_name: flagName,
@@ -592,7 +667,10 @@ export class FeatureFlagService extends EnhancedAIService<FeatureFlagInput, Feat
 		return result.flag_enabled;
 	}
 
-	public async getEnabledFeatures(flagNames: string[], context?: FeatureFlagContext): Promise<string[]> {
+	public async getEnabledFeatures(
+		flagNames: string[],
+		context?: FeatureFlagContext,
+	): Promise<string[]> {
 		const result = await this.execute({
 			action: "bulk_check",
 			flag_names: flagNames,

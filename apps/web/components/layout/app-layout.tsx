@@ -1,9 +1,5 @@
 "use client";
 
-import { BarChart3, Bell, Calendar, FileText, Home, LogOut, Settings, User, Users } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Sidebar,
@@ -16,6 +12,10 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { BarChart3, Bell, Calendar, FileText, Home, LogOut, Settings, User, Users } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type * as React from "react";
 
 type LayoutProps = {
 	children: React.ReactNode;

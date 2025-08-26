@@ -2,7 +2,11 @@
 // Machine learning-powered prediction system to reduce appointment no-shows
 
 import type { LoggerService, MetricsService } from "@neonpro/core-services";
-import type { ABTestResult, DriftDetectionResult, ModelVersion } from "@neonpro/types";
+import type {
+	ABTestResult,
+	DriftDetectionResult,
+	ModelVersion,
+} from "@neonpro/types";
 import type { AIServiceConfig, CacheService } from "./enhanced-service-base";
 import { EnhancedAIService } from "./enhanced-service-base";
 import { MLPipelineManagementService } from "./ml-pipeline-management";
@@ -14,7 +18,12 @@ export type PatientProfile = {
 	gender: "male" | "female" | "other";
 	location_distance_km: number;
 	insurance_type: "private" | "public" | "self_pay" | "mixed";
-	employment_status: "employed" | "unemployed" | "retired" | "student" | "unknown";
+	employment_status:
+		| "employed"
+		| "unemployed"
+		| "retired"
+		| "student"
+		| "unknown";
 	chronic_conditions: string[];
 	medication_adherence_score: number; // 0-100
 	communication_preferences: ("email" | "sms" | "phone" | "app")[];
@@ -26,7 +35,12 @@ export type AppointmentContext = {
 	patient_id: string;
 	doctor_id: string;
 	clinic_id: string;
-	appointment_type: "consultation" | "follow_up" | "exam" | "procedure" | "emergency";
+	appointment_type:
+		| "consultation"
+		| "follow_up"
+		| "exam"
+		| "procedure"
+		| "emergency";
 	specialty: string;
 	scheduled_datetime: string;
 	duration_minutes: number;
@@ -173,7 +187,12 @@ export interface PredictionOutput extends AIServiceOutput {
 }
 
 export type RecommendedAction = {
-	action_type: "reminder" | "scheduling" | "incentive" | "support" | "escalation";
+	action_type:
+		| "reminder"
+		| "scheduling"
+		| "incentive"
+		| "support"
+		| "escalation";
 	priority: "low" | "medium" | "high" | "urgent";
 	description: string;
 	estimated_impact: number; // Expected reduction in no-show probability
@@ -215,7 +234,12 @@ export type InterventionScenario = {
 	changes: {
 		reminder_strategy?: "none" | "email" | "sms" | "phone" | "multi_channel";
 		reminder_timing_hours?: number[];
-		incentives?: ("discount" | "priority_booking" | "gift_card" | "loyalty_points")[];
+		incentives?: (
+			| "discount"
+			| "priority_booking"
+			| "gift_card"
+			| "loyalty_points"
+		)[];
 		scheduling_flexibility?: "strict" | "flexible" | "very_flexible";
 		preparation_support?: "none" | "basic" | "comprehensive";
 	};
@@ -232,12 +256,20 @@ export type FactorContribution = {
 };
 
 // No-Show Prediction Service Implementation with Supabase MCP Integration
-export class NoShowPredictionService extends EnhancedAIService<PredictionInput, PredictionOutput> {
+export class NoShowPredictionService extends EnhancedAIService<
+	PredictionInput,
+	PredictionOutput
+> {
 	private modelVersion = "v1.2.0";
 	private featureWeights: Map<string, number> = new Map();
 	private readonly activeABTests: Map<string, ABTestResult> = new Map();
 
-	constructor(cache: CacheService, logger: LoggerService, metrics: MetricsService, config?: AIServiceConfig) {
+	constructor(
+		cache: CacheService,
+		logger: LoggerService,
+		metrics: MetricsService,
+		config?: AIServiceConfig,
+	) {
 		super(cache, logger, metrics, {
 			enableCaching: true,
 			cacheTTL: 3600, // 1 hour for predictions
@@ -249,7 +281,12 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		});
 
 		// Initialize ML Pipeline Management Service
-		this.mlPipelineService = new MLPipelineManagementService(cache, logger, metrics, config);
+		this.mlPipelineService = new MLPipelineManagementService(
+			cache,
+			logger,
+			metrics,
+			config,
+		);
 
 		// Initialize prediction model
 		this.initializePredictionModel();
@@ -268,7 +305,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		} catch (_error) {}
 	}
 
-	protected async executeCore(input: PredictionInput): Promise<PredictionOutput> {
+	protected async executeCore(
+		input: PredictionInput,
+	): Promise<PredictionOutput> {
 		const startTime = performance.now();
 
 		try {
@@ -314,7 +353,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		}
 	}
 
-	private async bulkPredictNoShow(input: PredictionInput): Promise<PredictionOutput> {
+	private async bulkPredictNoShow(
+		input: PredictionInput,
+	): Promise<PredictionOutput> {
 		if (!input.prediction_requests || input.prediction_requests.length === 0) {
 			throw new Error("prediction_requests is required for bulk prediction");
 		}
@@ -325,7 +366,7 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 					const features = await this.extractFeatures(
 						request.patient_profile,
 						request.appointment_context,
-						request.external_factors
+						request.external_factors,
 					);
 
 					const prediction = await this.runPredictionModel(features);
@@ -344,7 +385,7 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 						confidence_score: 0.0,
 					};
 				}
-			})
+			}),
 		);
 
 		return {
@@ -356,29 +397,39 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 	private async extractFeatures(
 		patientProfile: PatientProfile,
 		appointmentContext: AppointmentContext,
-		externalFactors?: ExternalFactors
+		externalFactors?: ExternalFactors,
 	): Promise<Record<string, number>> {
 		const features: Record<string, number> = {};
 
 		// Patient features
 		features.patient_age = patientProfile.age;
 		features.patient_distance_km = patientProfile.location_distance_km;
-		features.chronic_conditions_count = patientProfile.chronic_conditions.length;
-		features.medication_adherence_score = patientProfile.medication_adherence_score;
-		features.communication_channels_count = patientProfile.communication_preferences.length;
+		features.chronic_conditions_count =
+			patientProfile.chronic_conditions.length;
+		features.medication_adherence_score =
+			patientProfile.medication_adherence_score;
+		features.communication_channels_count =
+			patientProfile.communication_preferences.length;
 
 		// Categorical patient features (one-hot encoded)
 		features.gender_male = patientProfile.gender === "male" ? 1 : 0;
 		features.gender_female = patientProfile.gender === "female" ? 1 : 0;
-		features.insurance_private = patientProfile.insurance_type === "private" ? 1 : 0;
-		features.insurance_public = patientProfile.insurance_type === "public" ? 1 : 0;
-		features.employment_employed = patientProfile.employment_status === "employed" ? 1 : 0;
+		features.insurance_private =
+			patientProfile.insurance_type === "private" ? 1 : 0;
+		features.insurance_public =
+			patientProfile.insurance_type === "public" ? 1 : 0;
+		features.employment_employed =
+			patientProfile.employment_status === "employed" ? 1 : 0;
 
 		// Appointment features
-		features.is_first_appointment = appointmentContext.is_first_appointment ? 1 : 0;
+		features.is_first_appointment = appointmentContext.is_first_appointment
+			? 1
+			: 0;
 		features.appointment_duration_minutes = appointmentContext.duration_minutes;
 		features.cost_estimate = appointmentContext.cost_estimate;
-		features.requires_preparation = appointmentContext.requires_preparation ? 1 : 0;
+		features.requires_preparation = appointmentContext.requires_preparation
+			? 1
+			: 0;
 
 		// Urgency level (ordinal encoding)
 		const urgencyMap = { low: 1, medium: 2, high: 3, urgent: 4 };
@@ -386,13 +437,18 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 
 		// Preparation complexity (ordinal encoding)
 		const complexityMap = { none: 0, simple: 1, moderate: 2, complex: 3 };
-		features.preparation_complexity = complexityMap[appointmentContext.preparation_complexity];
+		features.preparation_complexity =
+			complexityMap[appointmentContext.preparation_complexity];
 
 		// Appointment type (one-hot encoded)
-		features.appt_type_consultation = appointmentContext.appointment_type === "consultation" ? 1 : 0;
-		features.appt_type_followup = appointmentContext.appointment_type === "follow_up" ? 1 : 0;
-		features.appt_type_exam = appointmentContext.appointment_type === "exam" ? 1 : 0;
-		features.appt_type_procedure = appointmentContext.appointment_type === "procedure" ? 1 : 0;
+		features.appt_type_consultation =
+			appointmentContext.appointment_type === "consultation" ? 1 : 0;
+		features.appt_type_followup =
+			appointmentContext.appointment_type === "follow_up" ? 1 : 0;
+		features.appt_type_exam =
+			appointmentContext.appointment_type === "exam" ? 1 : 0;
+		features.appt_type_procedure =
+			appointmentContext.appointment_type === "procedure" ? 1 : 0;
 
 		// Time-based features
 		const appointmentDate = new Date(appointmentContext.scheduled_datetime);
@@ -400,14 +456,17 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		features.day_of_week = appointmentDate.getDay();
 		features.day_of_month = appointmentDate.getDate();
 		features.month = appointmentDate.getMonth() + 1;
-		features.is_weekend = appointmentDate.getDay() === 0 || appointmentDate.getDay() === 6 ? 1 : 0;
+		features.is_weekend =
+			appointmentDate.getDay() === 0 || appointmentDate.getDay() === 6 ? 1 : 0;
 		features.is_monday = appointmentDate.getDay() === 1 ? 1 : 0;
 		features.is_friday = appointmentDate.getDay() === 5 ? 1 : 0;
 
 		// Days until appointment
 		const daysUntilAppointment = Math.max(
 			0,
-			Math.floor((appointmentDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+			Math.floor(
+				(appointmentDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+			),
 		);
 		features.days_until_appointment = daysUntilAppointment;
 
@@ -416,14 +475,19 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 			patientProfile.patient_id,
 			appointmentContext.clinic_id,
 			appointmentContext.doctor_id,
-			appointmentContext.specialty
+			appointmentContext.specialty,
 		);
 
-		features.patient_historical_no_show_rate = historicalData.patient_no_show_rate;
-		features.clinic_historical_no_show_rate = historicalData.clinic_no_show_rate;
-		features.doctor_historical_no_show_rate = historicalData.doctor_no_show_rate;
-		features.specialty_historical_no_show_rate = historicalData.specialty_no_show_rate;
-		features.timeslot_historical_no_show_rate = historicalData.time_slot_no_show_rate;
+		features.patient_historical_no_show_rate =
+			historicalData.patient_no_show_rate;
+		features.clinic_historical_no_show_rate =
+			historicalData.clinic_no_show_rate;
+		features.doctor_historical_no_show_rate =
+			historicalData.doctor_no_show_rate;
+		features.specialty_historical_no_show_rate =
+			historicalData.specialty_no_show_rate;
+		features.timeslot_historical_no_show_rate =
+			historicalData.time_slot_no_show_rate;
 
 		// External factors
 		if (externalFactors) {
@@ -435,18 +499,27 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 					: 0;
 
 			features.traffic_heavy =
-				externalFactors.traffic_conditions === "heavy" || externalFactors.traffic_conditions === "severe" ? 1 : 0;
-
-			features.transport_disrupted =
-				externalFactors.public_transport_status === "disrupted" || externalFactors.public_transport_status === "strike"
+				externalFactors.traffic_conditions === "heavy" ||
+				externalFactors.traffic_conditions === "severe"
 					? 1
 					: 0;
 
-			features.holiday_proximity = Math.max(0, 7 - (externalFactors.holiday_proximity_days || 7));
+			features.transport_disrupted =
+				externalFactors.public_transport_status === "disrupted" ||
+				externalFactors.public_transport_status === "strike"
+					? 1
+					: 0;
+
+			features.holiday_proximity = Math.max(
+				0,
+				7 - (externalFactors.holiday_proximity_days || 7),
+			);
 
 			if (externalFactors.economic_indicators) {
-				features.local_unemployment_rate = externalFactors.economic_indicators.local_unemployment_rate;
-				features.healthcare_access_index = externalFactors.economic_indicators.healthcare_access_index;
+				features.local_unemployment_rate =
+					externalFactors.economic_indicators.local_unemployment_rate;
+				features.healthcare_access_index =
+					externalFactors.economic_indicators.healthcare_access_index;
 			}
 		}
 
@@ -484,7 +557,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		}
 
 		// Calculate confidence based on feature completeness and historical accuracy
-		const featureCompleteness = Object.values(features).filter((v) => v !== 0).length / Object.keys(features).length;
+		const featureCompleteness =
+			Object.values(features).filter((v) => v !== 0).length /
+			Object.keys(features).length;
 		const baseConfidence = 0.7; // Base confidence of the model
 		const confidence = Math.min(0.95, baseConfidence * featureCompleteness);
 
@@ -499,7 +574,7 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		patientId: string,
 		clinicId: string,
 		doctorId: string,
-		_specialty: string
+		_specialty: string,
 	): Promise<HistoricalPatternData> {
 		// In production, this would query actual historical data
 		// For now, return simulated patterns
@@ -520,9 +595,27 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		const doctorHash = this.simpleHash(doctorId) % 100;
 
 		return {
-			patient_no_show_rate: Math.max(0, Math.min(1, basePatterns.patient_no_show_rate + (patientHash - 50) * 0.002)),
-			clinic_no_show_rate: Math.max(0, Math.min(1, basePatterns.clinic_no_show_rate + (clinicHash - 50) * 0.001)),
-			doctor_no_show_rate: Math.max(0, Math.min(1, basePatterns.doctor_no_show_rate + (doctorHash - 50) * 0.001)),
+			patient_no_show_rate: Math.max(
+				0,
+				Math.min(
+					1,
+					basePatterns.patient_no_show_rate + (patientHash - 50) * 0.002,
+				),
+			),
+			clinic_no_show_rate: Math.max(
+				0,
+				Math.min(
+					1,
+					basePatterns.clinic_no_show_rate + (clinicHash - 50) * 0.001,
+				),
+			),
+			doctor_no_show_rate: Math.max(
+				0,
+				Math.min(
+					1,
+					basePatterns.doctor_no_show_rate + (doctorHash - 50) * 0.001,
+				),
+			),
 			specialty_no_show_rate: basePatterns.specialty_no_show_rate,
 			time_slot_no_show_rate: basePatterns.time_slot_no_show_rate,
 			day_of_week_no_show_rate: basePatterns.day_of_week_no_show_rate,
@@ -604,7 +697,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 
 		return {
 			success: true,
-			model_performance: await this.getModelPerformance().then((r) => r.model_performance),
+			model_performance: await this.getModelPerformance().then(
+				(r) => r.model_performance,
+			),
 		};
 	}
 
@@ -660,7 +755,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		};
 	}
 
-	private async simulateInterventions(input: PredictionInput): Promise<PredictionOutput> {
+	private async simulateInterventions(
+		input: PredictionInput,
+	): Promise<PredictionOutput> {
 		if (!input.intervention_scenarios) {
 			throw new Error("intervention_scenarios is required for simulation");
 		}
@@ -677,7 +774,10 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 				implementationCost += 2; // $2 per appointment
 			}
 
-			if (scenario.changes.incentives && scenario.changes.incentives.length > 0) {
+			if (
+				scenario.changes.incentives &&
+				scenario.changes.incentives.length > 0
+			) {
 				impactReduction += 0.12; // 12% reduction
 				implementationCost += 5; // $5 per appointment
 			}
@@ -687,15 +787,23 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 				implementationCost += 3; // $3 per appointment
 			}
 
-			const costPerAppointment = scenario.estimated_cost_per_appointment || implementationCost;
+			const costPerAppointment =
+				scenario.estimated_cost_per_appointment || implementationCost;
 			const estimatedSavings = 15; // Average cost of no-show
-			const roi = ((estimatedSavings * impactReduction - costPerAppointment) / costPerAppointment) * 100;
+			const roi =
+				((estimatedSavings * impactReduction - costPerAppointment) /
+					costPerAppointment) *
+				100;
 
 			analyses.push({
 				scenario_name: scenario.name,
 				predicted_no_show_reduction: Math.min(0.8, impactReduction), // Cap at 80% reduction
-				cost_benefit_ratio: roi > 0 ? (estimatedSavings * impactReduction) / costPerAppointment : 0,
-				implementation_difficulty: this.assessImplementationDifficulty(scenario),
+				cost_benefit_ratio:
+					roi > 0
+						? (estimatedSavings * impactReduction) / costPerAppointment
+						: 0,
+				implementation_difficulty:
+					this.assessImplementationDifficulty(scenario),
 				expected_roi_percent: roi,
 				risk_factors: this.identifyRiskFactors(scenario),
 				success_prerequisites: this.identifyPrerequisites(scenario),
@@ -739,7 +847,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		// For now, using defaults
 	}
 
-	private async updateFeatureWeights(selectedFeatures: string[]): Promise<void> {
+	private async updateFeatureWeights(
+		selectedFeatures: string[],
+	): Promise<void> {
 		// Update weights based on feature selection
 		const newWeights = new Map<string, number>();
 
@@ -761,7 +871,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 		return Math.abs(hash);
 	}
 
-	private assessImplementationDifficulty(scenario: InterventionScenario): "easy" | "moderate" | "hard" | "very_hard" {
+	private assessImplementationDifficulty(
+		scenario: InterventionScenario,
+	): "easy" | "moderate" | "hard" | "very_hard" {
 		let difficultyScore = 0;
 
 		if (scenario.changes.reminder_strategy === "multi_channel") {
@@ -818,7 +930,7 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 	public async predictAppointmentNoShow(
 		patientProfile: PatientProfile,
 		appointmentContext: AppointmentContext,
-		externalFactors?: ExternalFactors
+		externalFactors?: ExternalFactors,
 	): Promise<{
 		probability: number;
 		riskLevel: string;
@@ -853,10 +965,18 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 	 */
 	public async createAndDeployModel(
 		config: ModelConfiguration,
-		environment: "staging" | "production" = "staging"
-	): Promise<{ success: boolean; model_version: string; deployment_status: string }> {
+		environment: "staging" | "production" = "staging",
+	): Promise<{
+		success: boolean;
+		model_version: string;
+		deployment_status: string;
+	}> {
 		try {
-			const modelVersion = await mlPipelineManagementService.createAndDeployModel(config, environment);
+			const modelVersion =
+				await mlPipelineManagementService.createAndDeployModel(
+					config,
+					environment,
+				);
 
 			// Update local model version reference
 			this.modelVersion = modelVersion.version_number;
@@ -881,10 +1001,18 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 	public async startABTest(
 		modelAVersion: string,
 		modelBVersion: string,
-		durationDays = 14
-	): Promise<{ success: boolean; test_id: string; ab_test_result: ABTestResult }> {
+		durationDays = 14,
+	): Promise<{
+		success: boolean;
+		test_id: string;
+		ab_test_result: ABTestResult;
+	}> {
 		try {
-			const abTestResult = await mlPipelineManagementService.runABTest(modelAVersion, modelBVersion, durationDays);
+			const abTestResult = await mlPipelineManagementService.runABTest(
+				modelAVersion,
+				modelBVersion,
+				durationDays,
+			);
 
 			// Store A/B test reference locally
 			this.activeABTests.set(abTestResult.test_id, abTestResult);
@@ -917,7 +1045,8 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 
 			const requiresRetraining =
 				driftResult.drift_detected &&
-				(driftResult.drift_severity === "high" || driftResult.drift_severity === "critical");
+				(driftResult.drift_severity === "high" ||
+					driftResult.drift_severity === "critical");
 
 			if (requiresRetraining) {
 			}
@@ -951,7 +1080,9 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 				action: "get_model_versions",
 			});
 
-			const productionVersion = result.model_versions?.find((v: any) => v.deployment_status === "production");
+			const productionVersion = result.model_versions?.find(
+				(v: any) => v.deployment_status === "production",
+			);
 
 			return {
 				success: true,
@@ -1015,7 +1146,11 @@ export class NoShowPredictionService extends EnhancedAIService<PredictionInput, 
 			const testResult = result.ab_test_result;
 
 			// Determine recommendation based on results
-			let recommendation: "continue" | "stop_use_a" | "stop_use_b" | "extend_test" = "continue";
+			let recommendation:
+				| "continue"
+				| "stop_use_a"
+				| "stop_use_b"
+				| "extend_test" = "continue";
 
 			if (testResult.statistical_significance) {
 				if (testResult.winner === "model_a") {

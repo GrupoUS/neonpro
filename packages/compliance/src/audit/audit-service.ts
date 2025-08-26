@@ -35,14 +35,17 @@ export class AuditService {
 	 */
 	async logEvent(
 		tenantId: string,
-		event: AuditEvent
+		event: AuditEvent,
 	): Promise<{ success: boolean; auditLogId?: string; error?: string }> {
 		try {
 			// Validate event data
 			const validatedEvent = AuditEventSchema.parse(event);
 
 			// Calculate compliance score based on event type and severity
-			const complianceScore = this.calculateComplianceScore(event.eventType, event.severity);
+			const complianceScore = this.calculateComplianceScore(
+				event.eventType,
+				event.severity,
+			);
 
 			const auditLog: Omit<AuditLog, "id"> = {
 				tenantId,
@@ -62,7 +65,11 @@ export class AuditService {
 				complianceScore,
 			};
 
-			const { data, error } = await this.supabaseClient.from("audit_logs").insert([auditLog]).select("id").single();
+			const { data, error } = await this.supabaseClient
+				.from("audit_logs")
+				.insert([auditLog])
+				.select("id")
+				.single();
 
 			if (error) {
 				return { success: false, error: error.message };
@@ -85,23 +92,36 @@ export class AuditService {
 	/**
 	 * Query audit logs with filters
 	 */
-	async queryLogs(filters: AuditFilters): Promise<{ success: boolean; logs?: AuditLog[]; error?: string }> {
+	async queryLogs(
+		filters: AuditFilters,
+	): Promise<{ success: boolean; logs?: AuditLog[]; error?: string }> {
 		try {
 			// Validate filters
 			const validatedFilters = AuditFiltersSchema.parse(filters);
 
-			let query = this.supabaseClient.from("audit_logs").select("*").order("timestamp", { ascending: false });
+			let query = this.supabaseClient
+				.from("audit_logs")
+				.select("*")
+				.order("timestamp", {
+					ascending: false,
+				});
 
 			// Apply filters
 			if (validatedFilters.tenantId) {
 				query = query.eq("tenant_id", validatedFilters.tenantId);
 			}
 
-			if (validatedFilters.eventTypes && validatedFilters.eventTypes.length > 0) {
+			if (
+				validatedFilters.eventTypes &&
+				validatedFilters.eventTypes.length > 0
+			) {
 				query = query.in("event_type", validatedFilters.eventTypes);
 			}
 
-			if (validatedFilters.severities && validatedFilters.severities.length > 0) {
+			if (
+				validatedFilters.severities &&
+				validatedFilters.severities.length > 0
+			) {
 				query = query.in("severity", validatedFilters.severities);
 			}
 
@@ -118,7 +138,10 @@ export class AuditService {
 			}
 
 			if (validatedFilters.startDate) {
-				query = query.gte("timestamp", validatedFilters.startDate.toISOString());
+				query = query.gte(
+					"timestamp",
+					validatedFilters.startDate.toISOString(),
+				);
 			}
 
 			if (validatedFilters.endDate) {
@@ -130,7 +153,10 @@ export class AuditService {
 			}
 
 			if (validatedFilters.minComplianceScore !== undefined) {
-				query = query.gte("compliance_score", validatedFilters.minComplianceScore);
+				query = query.gte(
+					"compliance_score",
+					validatedFilters.minComplianceScore,
+				);
 			}
 
 			if (validatedFilters.limit) {
@@ -138,7 +164,10 @@ export class AuditService {
 			}
 
 			if (validatedFilters.offset) {
-				query = query.range(validatedFilters.offset, validatedFilters.offset + (validatedFilters.limit || 100) - 1);
+				query = query.range(
+					validatedFilters.offset,
+					validatedFilters.offset + (validatedFilters.limit || 100) - 1,
+				);
 			}
 
 			const { data, error } = await query;
@@ -201,7 +230,8 @@ export class AuditService {
 			// Check for gaps in audit trail (periods without any logs)
 			if (logs.length > 0) {
 				const sortedLogs = logs.sort(
-					(a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+					(a: any, b: any) =>
+						new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
 				);
 
 				for (let i = 1; i < sortedLogs.length; i++) {
@@ -211,14 +241,18 @@ export class AuditService {
 
 					// Flag gaps longer than 24 hours
 					if (gap > 24 * 60 * 60 * 1000) {
-						violations.push(`Audit trail gap detected: ${new Date(prevTime)} to ${new Date(currTime)}`);
+						violations.push(
+							`Audit trail gap detected: ${new Date(prevTime)} to ${new Date(currTime)}`,
+						);
 						integrityScore -= 0.5;
 					}
 				}
 			}
 
 			// Check for suspicious patterns
-			const criticalEvents = logs.filter((log: any) => log.severity === AuditSeverity.CRITICAL);
+			const criticalEvents = logs.filter(
+				(log: any) => log.severity === AuditSeverity.CRITICAL,
+			);
 			if (criticalEvents.length > 10) {
 				violations.push("High number of critical events detected");
 				recommendations.push("Review security measures and access controls");
@@ -227,11 +261,15 @@ export class AuditService {
 
 			// Generate recommendations
 			if (missingEvents.length > 0) {
-				recommendations.push("Ensure all required healthcare operations are properly logged");
+				recommendations.push(
+					"Ensure all required healthcare operations are properly logged",
+				);
 			}
 
 			if (violations.length === 0) {
-				recommendations.push("Audit trail integrity is maintained - continue current practices");
+				recommendations.push(
+					"Audit trail integrity is maintained - continue current practices",
+				);
 			}
 
 			return {
@@ -249,7 +287,9 @@ export class AuditService {
 				integrityScore: 0 as ComplianceScore,
 				lastValidation: new Date(),
 				violations: ["Audit trail validation system failure"],
-				recommendations: ["Contact system administrator to resolve audit validation issues"],
+				recommendations: [
+					"Contact system administrator to resolve audit validation issues",
+				],
 			};
 		}
 	}
@@ -257,7 +297,9 @@ export class AuditService {
 	/**
 	 * Configure audit settings
 	 */
-	async configureAudit(config: AuditConfig): Promise<{ success: boolean; error?: string }> {
+	async configureAudit(
+		config: AuditConfig,
+	): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Validate configuration
 			const validatedConfig = AuditConfigSchema.parse(config);
@@ -282,7 +324,10 @@ export class AuditService {
 	/**
 	 * Calculate compliance score based on event type and severity
 	 */
-	private calculateComplianceScore(eventType: AuditEventType, severity: AuditSeverity): ComplianceScore {
+	private calculateComplianceScore(
+		eventType: AuditEventType,
+		severity: AuditSeverity,
+	): ComplianceScore {
 		let baseScore = 10;
 
 		// Reduce score based on severity
@@ -316,7 +361,10 @@ export class AuditService {
 	/**
 	 * Trigger real-time alert for critical events
 	 */
-	private async triggerRealTimeAlert(_tenantId: string, _auditLog: Omit<AuditLog, "id">): Promise<void> {
+	private async triggerRealTimeAlert(
+		_tenantId: string,
+		_auditLog: Omit<AuditLog, "id">,
+	): Promise<void> {
 		try {
 			// In a real implementation, you would:
 			// 1. Send notifications to administrators

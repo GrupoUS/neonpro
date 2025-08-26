@@ -36,7 +36,10 @@ type ComplianceAlert = {
 };
 
 class MonitoringService {
-	private static supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+	private static supabase = createClient(
+		process.env.SUPABASE_URL!,
+		process.env.SUPABASE_SERVICE_ROLE_KEY!,
+	);
 
 	private static AI_SERVICES = [
 		"universal-chat",
@@ -54,14 +57,17 @@ class MonitoringService {
 		for (const service of MonitoringService.AI_SERVICES) {
 			try {
 				// Make health check request to each service
-				const response = await fetch(`${process.env.API_BASE_URL}/api/ai/${service}/health`, {
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${process.env.HEALTH_CHECK_TOKEN}`,
-						"User-Agent": "NeonPro-Monitoring/1.0",
+				const response = await fetch(
+					`${process.env.API_BASE_URL}/api/ai/${service}/health`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${process.env.HEALTH_CHECK_TOKEN}`,
+							"User-Agent": "NeonPro-Monitoring/1.0",
+						},
+						timeout: 5000,
 					},
-					timeout: 5000,
-				});
+				);
 
 				if (response.ok) {
 					const healthData = await response.json();
@@ -72,7 +78,8 @@ class MonitoringService {
 						response_time_ms: healthData.response_time_ms || 0,
 						last_updated: new Date().toISOString(),
 						error_rate: healthData.metrics?.error_rate_percent || 0,
-						uptime_percentage: MonitoringService.calculateUptimePercentage(service),
+						uptime_percentage:
+							MonitoringService.calculateUptimePercentage(service),
 						details: healthData.details || {},
 					});
 				} else {
@@ -104,9 +111,13 @@ class MonitoringService {
 		return healthChecks;
 	}
 
-	private static async calculateUptimePercentage(service: string): Promise<number> {
+	private static async calculateUptimePercentage(
+		service: string,
+	): Promise<number> {
 		try {
-			const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+			const last24Hours = new Date(
+				Date.now() - 24 * 60 * 60 * 1000,
+			).toISOString();
 
 			const { data: healthChecks, error } = await MonitoringService.supabase
 				.from("ai_service_health_logs")
@@ -118,14 +129,18 @@ class MonitoringService {
 				return 95; // Default assumption
 			}
 
-			const healthyChecks = healthChecks.filter((check) => check.healthy).length;
+			const healthyChecks = healthChecks.filter(
+				(check) => check.healthy,
+			).length;
 			return (healthyChecks / healthChecks.length) * 100;
 		} catch (_error) {
 			return 95; // Default assumption
 		}
 	}
 
-	static async getServiceMetrics(timeRange = "1h"): Promise<ServiceMetricsData[]> {
+	static async getServiceMetrics(
+		timeRange = "1h",
+	): Promise<ServiceMetricsData[]> {
 		try {
 			const timeRangeMap: { [key: string]: number } = {
 				"1h": 60,
@@ -135,7 +150,9 @@ class MonitoringService {
 			};
 
 			const minutes = timeRangeMap[timeRange] || 60;
-			const startTime = new Date(Date.now() - minutes * 60 * 1000).toISOString();
+			const startTime = new Date(
+				Date.now() - minutes * 60 * 1000,
+			).toISOString();
 
 			const { data: metricsData, error } = await MonitoringService.supabase
 				.from("ai_service_metrics")
@@ -148,7 +165,8 @@ class MonitoringService {
 			}
 
 			// Group and aggregate metrics by service and time intervals
-			const aggregatedMetrics = MonitoringService.aggregateMetricsByTimeInterval(metricsData, minutes);
+			const aggregatedMetrics =
+				MonitoringService.aggregateMetricsByTimeInterval(metricsData, minutes);
 
 			return aggregatedMetrics;
 		} catch (_error) {
@@ -156,7 +174,10 @@ class MonitoringService {
 		}
 	}
 
-	private static aggregateMetricsByTimeInterval(metricsData: any[], totalMinutes: number): ServiceMetricsData[] {
+	private static aggregateMetricsByTimeInterval(
+		metricsData: any[],
+		totalMinutes: number,
+	): ServiceMetricsData[] {
 		// Group metrics by 5-minute intervals for better visualization
 		const intervalMinutes = Math.max(5, Math.floor(totalMinutes / 50));
 		const intervals: { [key: string]: any[] } = {};
@@ -164,7 +185,8 @@ class MonitoringService {
 		metricsData.forEach((metric) => {
 			const timestamp = new Date(metric.timestamp);
 			const intervalKey = new Date(
-				Math.floor(timestamp.getTime() / (intervalMinutes * 60 * 1000)) * (intervalMinutes * 60 * 1000)
+				Math.floor(timestamp.getTime() / (intervalMinutes * 60 * 1000)) *
+					(intervalMinutes * 60 * 1000),
 			).toISOString();
 
 			if (!intervals[intervalKey]) {
@@ -210,18 +232,33 @@ class MonitoringService {
 			return {
 				service: primaryService,
 				timestamp,
-				requests_per_minute: serviceData.request_counts.reduce((a: number, b: number) => a + b, 0) / intervalMinutes,
+				requests_per_minute:
+					serviceData.request_counts.reduce(
+						(a: number, b: number) => a + b,
+						0,
+					) / intervalMinutes,
 				avg_response_time:
-					serviceData.response_times.reduce((a: number, b: number) => a + b, 0) / serviceData.response_times.length,
-				error_count: serviceData.error_counts.reduce((a: number, b: number) => a + b, 0),
-				success_count: serviceData.success_counts.reduce((a: number, b: number) => a + b, 0),
+					serviceData.response_times.reduce(
+						(a: number, b: number) => a + b,
+						0,
+					) / serviceData.response_times.length,
+				error_count: serviceData.error_counts.reduce(
+					(a: number, b: number) => a + b,
+					0,
+				),
+				success_count: serviceData.success_counts.reduce(
+					(a: number, b: number) => a + b,
+					0,
+				),
 				cpu_usage: Math.random() * 30 + 20, // Placeholder - would come from actual monitoring
 				memory_usage: Math.random() * 40 + 30, // Placeholder - would come from actual monitoring
 			};
 		});
 	}
 
-	static async getComplianceAlerts(activeOnly = true): Promise<ComplianceAlert[]> {
+	static async getComplianceAlerts(
+		activeOnly = true,
+	): Promise<ComplianceAlert[]> {
 		try {
 			let query = MonitoringService.supabase
 				.from("ai_compliance_alerts")
@@ -260,17 +297,26 @@ class MonitoringService {
 			]);
 
 			// Calculate system overview metrics
-			const totalRequests = metrics.reduce((sum, m) => sum + m.requests_per_minute * 60, 0);
-			const avgResponseTime = metrics.reduce((sum, m) => sum + m.avg_response_time, 0) / metrics.length || 0;
-			const errorRate =
-				metrics.reduce((sum, m) => sum + (m.error_count / (m.error_count + m.success_count)) * 100, 0) /
+			const totalRequests = metrics.reduce(
+				(sum, m) => sum + m.requests_per_minute * 60,
+				0,
+			);
+			const avgResponseTime =
+				metrics.reduce((sum, m) => sum + m.avg_response_time, 0) /
 					metrics.length || 0;
+			const errorRate =
+				metrics.reduce(
+					(sum, m) =>
+						sum + (m.error_count / (m.error_count + m.success_count)) * 100,
+					0,
+				) / metrics.length || 0;
 
 			// Get active chat sessions
-			const { data: activeSessions, error: sessionsError } = await MonitoringService.supabase
-				.from("ai_chat_sessions")
-				.select("count")
-				.eq("status", "active");
+			const { data: activeSessions, error: sessionsError } =
+				await MonitoringService.supabase
+					.from("ai_chat_sessions")
+					.select("count")
+					.eq("status", "active");
 
 			const activeSessionsCount = activeSessions?.[0]?.count || 0;
 
@@ -286,8 +332,11 @@ class MonitoringService {
 				compliance_score: Number(complianceScore.toFixed(1)),
 				healthy_services: servicesHealth.filter((s) => s.healthy).length,
 				total_services: servicesHealth.length,
-				degraded_services: servicesHealth.filter((s) => s.status === "degraded").length,
-				unhealthy_services: servicesHealth.filter((s) => s.status === "unhealthy").length,
+				degraded_services: servicesHealth.filter((s) => s.status === "degraded")
+					.length,
+				unhealthy_services: servicesHealth.filter(
+					(s) => s.status === "unhealthy",
+				).length,
 			};
 		} catch (_error) {
 			return {
@@ -304,7 +353,11 @@ class MonitoringService {
 		}
 	}
 
-	static async logHealthCheck(service: string, healthy: boolean, details: any = {}): Promise<void> {
+	static async logHealthCheck(
+		service: string,
+		healthy: boolean,
+		details: any = {},
+	): Promise<void> {
 		try {
 			await MonitoringService.supabase.from("ai_service_health_logs").insert({
 				service,
@@ -333,7 +386,7 @@ monitoring.get("/services-health", async (c) => {
 				error: error.message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -357,7 +410,7 @@ monitoring.get("/metrics", async (c) => {
 				error: error.message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -379,7 +432,7 @@ monitoring.get("/overview", async (c) => {
 				error: error.message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -395,7 +448,9 @@ monitoring.post("/service-metrics", async (c) => {
 		}
 
 		const timeRangeMinutes = time_range_minutes || 60;
-		const startTime = new Date(Date.now() - timeRangeMinutes * 60 * 1000).toISOString();
+		const startTime = new Date(
+			Date.now() - timeRangeMinutes * 60 * 1000,
+		).toISOString();
 
 		const { data: metricsData, error } = await MonitoringService.supabase
 			.from("ai_service_metrics")
@@ -411,7 +466,9 @@ monitoring.post("/service-metrics", async (c) => {
 		const responseTimeSum = metricsData
 			.filter((m) => m.metric_name === "response_time")
 			.reduce((sum, m) => sum + m.metric_value, 0);
-		const responseTimeCount = metricsData.filter((m) => m.metric_name === "response_time").length;
+		const responseTimeCount = metricsData.filter(
+			(m) => m.metric_name === "response_time",
+		).length;
 
 		const errorCount = metricsData
 			.filter((m) => m.metric_name === "error_count")
@@ -422,8 +479,12 @@ monitoring.post("/service-metrics", async (c) => {
 			.reduce((sum, m) => sum + m.metric_value, 0);
 
 		const aggregatedMetrics = {
-			avg_response_time: responseTimeCount > 0 ? responseTimeSum / responseTimeCount : 0,
-			error_rate: errorCount + successCount > 0 ? (errorCount / (errorCount + successCount)) * 100 : 0,
+			avg_response_time:
+				responseTimeCount > 0 ? responseTimeSum / responseTimeCount : 0,
+			error_rate:
+				errorCount + successCount > 0
+					? (errorCount / (errorCount + successCount)) * 100
+					: 0,
 			total_requests: errorCount + successCount,
 			error_count: errorCount,
 			success_count: successCount,
@@ -443,7 +504,7 @@ monitoring.post("/service-metrics", async (c) => {
 				error: error.message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -460,7 +521,7 @@ monitoring.post("/log-health-check", async (c) => {
 					success: false,
 					error: "Service name and healthy status required",
 				},
-				400
+				400,
 			);
 		}
 
@@ -478,7 +539,7 @@ monitoring.post("/log-health-check", async (c) => {
 				error: error.message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });

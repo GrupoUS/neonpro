@@ -6,27 +6,27 @@ on:
   push:
     branches: [main, develop]
     paths-ignore:
-      - '**.md'
-      - '.gitignore'
-      - 'LICENSE'
-      - 'docs/**'
+      - "**.md"
+      - ".gitignore"
+      - "LICENSE"
+      - "docs/**"
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened]
   schedule:
     # Run security audits weekly on Sundays at 2 AM UTC
-    - cron: '0 2 * * 0'
+    - cron: "0 2 * * 0"
   workflow_dispatch:
     inputs:
       skip_tests:
-        description: 'Skip test execution'
+        description: "Skip test execution"
         required: false
         default: false
         type: boolean
       environment:
-        description: 'Target environment'
+        description: "Target environment"
         required: false
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
           - staging
@@ -34,22 +34,22 @@ on:
 
 # Explicit permission scoping for security
 permissions:
-  contents: read          # Read repository contents
-  actions: read          # Read workflow status
+  contents: read # Read repository contents
+  actions: read # Read workflow status
   security-events: write # Write security scan results
-  checks: write          # Write check results
-  pull-requests: write   # Comment on PRs
-  issues: write          # Create/update issues
+  checks: write # Write check results
+  pull-requests: write # Comment on PRs
+  issues: write # Create/update issues
 
 env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '8'  # Align with Turborepo recommendation
-  PLAYWRIGHT_BROWSERS_PATH: '0'
+  NODE_VERSION: "20"
+  PNPM_VERSION: "8" # Align with Turborepo recommendation
+  PLAYWRIGHT_BROWSERS_PATH: "0"
   # Healthcare compliance settings
-  HEALTHCARE_COMPLIANCE_MODE: 'strict'
-  LGPD_AUDIT_ENABLED: 'true'
-  ANVISA_VALIDATION: 'true'
-  CFM_COMPLIANCE: 'true'
+  HEALTHCARE_COMPLIANCE_MODE: "strict"
+  LGPD_AUDIT_ENABLED: "true"
+  ANVISA_VALIDATION: "true"
+  CFM_COMPLIANCE: "true"
 
 # Limit concurrent workflow runs
 concurrency:
@@ -63,29 +63,29 @@ jobs:
   build-and-test:
     name: 🏗️ Build and Test
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # Turborepo recommendation
+    timeout-minutes: 15 # Turborepo recommendation
     # Turborepo Remote Caching Configuration
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-    
+
     steps:
       - name: 📥 Check out code
-        uses: actions/checkout@v4  # Turborepo recommendation
+        uses: actions/checkout@v4 # Turborepo recommendation
         with:
-          fetch-depth: 2  # Turborepo requirement for comparisons
+          fetch-depth: 2 # Turborepo requirement for comparisons
           persist-credentials: false
 
       - name: 📦 Setup PNPM
-        uses: pnpm/action-setup@v3  # Turborepo recommendation
+        uses: pnpm/action-setup@v3 # Turborepo recommendation
         with:
-          version: 8  # Turborepo recommendation
+          version: 8 # Turborepo recommendation
 
       - name: 🟢 Setup Node.js environment
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
           cache-dependency-path: |
             pnpm-lock.yaml
             apps/*/package.json
@@ -109,46 +109,46 @@ jobs:
       - name: 🏥 Healthcare Compliance Check
         run: |
           echo "🏥 Running Healthcare Compliance Validation..."
-          
+
           # ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
           echo "🏥 ANVISA Compliance Check..."
           if [ -f "scripts/anvisa-validation.js" ]; then
             node scripts/anvisa-validation.js || echo "⚠️ ANVISA validation warnings (non-blocking)"
           fi
-          
+
           # CFM (Conselho Federal de Medicina) Compliance
           echo "👨‍⚕️ CFM Compliance Check..."
           if [ -f "scripts/cfm-compliance.js" ]; then
             node scripts/cfm-compliance.js || echo "⚠️ CFM validation warnings (non-blocking)"
           fi
-          
+
           echo "✅ Healthcare compliance validation completed"
 
       # ============================================================================
       # 🎯 QUALITY ASSURANCE - Turborepo Pipeline
       # ============================================================================
       - name: 🔍 Lint
-        run: pnpm lint  # Standard Turborepo script
-        continue-on-error: true  # Allow warnings
+        run: pnpm lint # Standard Turborepo script
+        continue-on-error: true # Allow warnings
 
-      - name: 🎨 Format Check  
-        run: pnpm run ci-check  # Custom but necessary for project
-        continue-on-error: true  # Allow warnings
+      - name: 🎨 Format Check
+        run: pnpm run ci-check # Custom but necessary for project
+        continue-on-error: true # Allow warnings
 
       - name: 🔤 Type Check
-        run: pnpm type-check  # Standard Turborepo script
+        run: pnpm type-check # Standard Turborepo script
 
       # ============================================================================
       # 🏗️ BUILD - Turborepo Pipeline
       # ============================================================================
       - name: 🏗️ Build
-        run: pnpm build  # Standard Turborepo script
+        run: pnpm build # Standard Turborepo script
 
       # ============================================================================
       # 🧪 TEST SUITE - Turborepo Pipeline
       # ============================================================================
       - name: 🧪 Test
-        run: pnpm test  # Standard Turborepo script
+        run: pnpm test # Standard Turborepo script
         if: ${{ github.event.inputs.skip_tests != 'true' }}
 
       - name: 🧪 Safe Test Suite (Healthcare Focus)
@@ -191,12 +191,12 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-    
+
     steps:
       - name: 📥 Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Turborepo consistency
+          fetch-depth: 2 # Turborepo consistency
           persist-credentials: false
 
       - name: 📦 Setup PNPM
@@ -208,7 +208,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 🗄️ Cache Turborepo
         uses: actions/cache@v4
@@ -256,12 +256,12 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-    
+
     steps:
       - name: 📥 Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Turborepo consistency
+          fetch-depth: 2 # Turborepo consistency
           persist-credentials: false
 
       - name: 📦 Setup PNPM
@@ -273,7 +273,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 🗄️ Cache Turborepo
         uses: actions/cache@v4

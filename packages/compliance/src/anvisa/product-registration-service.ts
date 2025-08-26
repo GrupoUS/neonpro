@@ -24,7 +24,11 @@ export type ProductRegistration = {
 	/** Current registration status with ANVISA */
 	registration_status: "active" | "suspended" | "cancelled" | "pending";
 	/** Product category for regulatory classification */
-	product_category: "medical_device" | "cosmetic" | "pharmaceutical" | "aesthetic_equipment";
+	product_category:
+		| "medical_device"
+		| "cosmetic"
+		| "pharmaceutical"
+		| "aesthetic_equipment";
 	/** Registration expiry date (constitutional monitoring) */
 	registration_expiry: Date;
 	/** Constitutional compliance requirements */
@@ -43,6 +47,7 @@ export type ProductRegistration = {
  * Product Registration Audit Trail
  * Constitutional audit requirements for product registration changes
  */
+
 export type ProductRegistrationAudit = {
 	/** Audit entry unique identifier */
 	audit_id: string;
@@ -86,6 +91,7 @@ export type ProductRegistrationFilters = {
  * ANVISA Product Registration Service Implementation
  * Constitutional healthcare compliance with ≥9.9/10 quality standards
  */
+
 export class ProductRegistrationService {
 	private readonly supabase: ReturnType<typeof createClient<Database>>;
 
@@ -98,12 +104,16 @@ export class ProductRegistrationService {
 	 * Constitutional healthcare validation with audit trail
 	 */
 	async registerProduct(
-		productData: Omit<ProductRegistration, "product_id" | "created_at" | "updated_at" | "audit_trail">,
-		userId: string
+		productData: Omit<
+			ProductRegistration,
+			"product_id" | "created_at" | "updated_at" | "audit_trail"
+		>,
+		userId: string,
 	): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
 		try {
 			// Constitutional validation
-			const validationResult = await this.validateProductRegistration(productData);
+			const validationResult =
+				await this.validateProductRegistration(productData);
 			if (!validationResult.valid) {
 				return { success: false, error: validationResult.error };
 			}
@@ -158,16 +168,20 @@ export class ProductRegistrationService {
 	 * Get product registrations with constitutional filtering
 	 * LGPD compliant with tenant isolation
 	 */
+
 	async getProductRegistrations(
 		tenantId: string,
-		filters?: ProductRegistrationFilters
+		filters?: ProductRegistrationFilters,
 	): Promise<{
 		success: boolean;
 		data?: ProductRegistration[];
 		error?: string;
 	}> {
 		try {
-			let query = this.supabase.from("anvisa_product_registrations").select("*").eq("tenant_id", tenantId); // Constitutional tenant isolation
+			let query = this.supabase
+				.from("anvisa_product_registrations")
+				.select("*")
+				.eq("tenant_id", tenantId); // Constitutional tenant isolation
 
 			// Apply constitutional filters
 			if (filters?.status) {
@@ -178,8 +192,14 @@ export class ProductRegistrationService {
 			}
 			if (filters?.expiry_date_range) {
 				query = query
-					.gte("registration_expiry", filters.expiry_date_range.start.toISOString())
-					.lte("registration_expiry", filters.expiry_date_range.end.toISOString());
+					.gte(
+						"registration_expiry",
+						filters.expiry_date_range.start.toISOString(),
+					)
+					.lte(
+						"registration_expiry",
+						filters.expiry_date_range.end.toISOString(),
+					);
 			}
 			if (filters?.monitoring_alerts !== undefined) {
 				query = query.eq("monitoring_alerts", filters.monitoring_alerts);
@@ -207,11 +227,12 @@ export class ProductRegistrationService {
 	 * Update product registration with constitutional audit trail
 	 * ANVISA compliance with change tracking
 	 */
+
 	async updateProductRegistration(
 		productId: string,
 		updates: Partial<ProductRegistration>,
 		userId: string,
-		reason: string
+		reason: string,
 	): Promise<{ success: boolean; data?: ProductRegistration; error?: string }> {
 		try {
 			// Get current product data for audit trail
@@ -279,15 +300,17 @@ export class ProductRegistrationService {
 	 * Constitutional validation for product registration
 	 * ANVISA compliance with healthcare standards ≥9.9/10
 	 */
+
 	private async validateProductRegistration(
-		productData: Partial<ProductRegistration>
+		productData: Partial<ProductRegistration>,
 	): Promise<{ valid: boolean; error?: string }> {
 		try {
 			// Constitutional validation rules
 			if (!productData.anvisa_registration_number) {
 				return {
 					valid: false,
-					error: "ANVISA registration number is mandatory for constitutional compliance",
+					error:
+						"ANVISA registration number is mandatory for constitutional compliance",
 				};
 			}
 
@@ -304,7 +327,8 @@ export class ProductRegistrationService {
 			if (!productData.registration_expiry) {
 				return {
 					valid: false,
-					error: "Registration expiry date is required for constitutional monitoring",
+					error:
+						"Registration expiry date is required for constitutional monitoring",
 				};
 			}
 
@@ -315,13 +339,24 @@ export class ProductRegistrationService {
 			if (expiryDate < currentDate) {
 				return {
 					valid: false,
-					error: "Registration has expired - renewal required for constitutional compliance",
+					error:
+						"Registration has expired - renewal required for constitutional compliance",
 				};
 			}
 
 			// Constitutional category validation
-			const validCategories = ["medical_device", "cosmetic", "pharmaceutical", "aesthetic_equipment"];
-			if (!(productData.product_category && validCategories.includes(productData.product_category))) {
+			const validCategories = [
+				"medical_device",
+				"cosmetic",
+				"pharmaceutical",
+				"aesthetic_equipment",
+			];
+			if (
+				!(
+					productData.product_category &&
+					validCategories.includes(productData.product_category)
+				)
+			) {
 				return {
 					valid: false,
 					error: "Valid product category required for ANVISA classification",
@@ -336,6 +371,7 @@ export class ProductRegistrationService {
 	 * Schedule constitutional expiry alerts for product registration
 	 * ANVISA compliance monitoring with proactive notifications
 	 */
+
 	private async scheduleExpiryAlerts(productId: string): Promise<void> {
 		try {
 			// Get product registration details
@@ -370,8 +406,13 @@ export class ProductRegistrationService {
 						tenant_id: product.tenant_id,
 						scheduled_date: alertDate.toISOString(),
 						alert_status: "scheduled",
-						priority: alertDate.getTime() === expiryDate.getTime() ? "critical" : "warning",
-						message: `ANVISA product registration expires on ${expiryDate.toLocaleDateString("pt-BR")}`,
+						priority:
+							alertDate.getTime() === expiryDate.getTime()
+								? "critical"
+								: "warning",
+						message: `ANVISA product registration expires on ${expiryDate.toLocaleDateString(
+							"pt-BR",
+						)}`,
 						constitutional_compliance: true,
 					});
 				}
@@ -381,9 +422,10 @@ export class ProductRegistrationService {
 	 * Get products expiring soon for constitutional monitoring
 	 * ANVISA compliance dashboard integration
 	 */
+
 	async getExpiringProducts(
 		tenantId: string,
-		daysThreshold = 30
+		daysThreshold = 30,
 	): Promise<{
 		success: boolean;
 		data?: ProductRegistration[];
@@ -421,7 +463,9 @@ export class ProductRegistrationService {
 	 * Generate constitutional compliance report for ANVISA products
 	 * Healthcare audit requirements ≥9.9/10
 	 */
-	async generateComplianceReport(tenantId: string): Promise<{ success: boolean; data?: any; error?: string }> {
+	async generateComplianceReport(
+		tenantId: string,
+	): Promise<{ success: boolean; data?: any; error?: string }> {
 		try {
 			const { data: products, error } = await this.supabase
 				.from("anvisa_product_registrations")
@@ -437,7 +481,9 @@ export class ProductRegistrationService {
 
 			const report = {
 				total_products: products?.length || 0,
-				active_registrations: products?.filter((p) => p.registration_status === "active").length || 0,
+				active_registrations:
+					products?.filter((p) => p.registration_status === "active").length ||
+					0,
 				expiring_soon:
 					products?.filter((p) => {
 						const expiry = new Date(p.registration_expiry);

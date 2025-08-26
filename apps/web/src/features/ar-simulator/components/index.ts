@@ -6,7 +6,11 @@
 // =============================================================================
 
 // Re-export hooks for convenience
-export { useARSimulator, useSimulationComparison, useSimulationMetrics } from "../hooks/useARSimulator";
+export {
+	useARSimulator,
+	useSimulationComparison,
+	useSimulationMetrics,
+} from "../hooks/useARSimulator";
 export type { SimulationData } from "./ARResultsSimulator";
 export { default as ARResultsSimulator } from "./ARResultsSimulator";
 export { default as WebARViewer } from "./WebARViewer";

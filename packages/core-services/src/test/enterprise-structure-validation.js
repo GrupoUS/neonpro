@@ -4,7 +4,10 @@ async function validateEnterpriseStructure() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const cacheServicePath = path.join(__dirname, "../enterprise/cache/EnterpriseCacheService.ts");
+		const cacheServicePath = path.join(
+			__dirname,
+			"../enterprise/cache/EnterpriseCacheService.ts",
+		);
 		if (fs.existsSync(cacheServicePath)) {
 			const content = fs.readFileSync(cacheServicePath, "utf8");
 			if (
@@ -27,7 +30,10 @@ async function validateEnterpriseStructure() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const analyticsPath = path.join(__dirname, "../enterprise/analytics/EnterpriseAnalyticsService.ts");
+		const analyticsPath = path.join(
+			__dirname,
+			"../enterprise/analytics/EnterpriseAnalyticsService.ts",
+		);
 		if (fs.existsSync(analyticsPath)) {
 			const content = fs.readFileSync(analyticsPath, "utf8");
 			if (
@@ -50,7 +56,10 @@ async function validateEnterpriseStructure() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const securityPath = path.join(__dirname, "../enterprise/security/EnterpriseSecurityService.ts");
+		const securityPath = path.join(
+			__dirname,
+			"../enterprise/security/EnterpriseSecurityService.ts",
+		);
 		if (fs.existsSync(securityPath)) {
 			const content = fs.readFileSync(securityPath, "utf8");
 			if (
@@ -73,7 +82,10 @@ async function validateEnterpriseStructure() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const auditPath = path.join(__dirname, "../enterprise/audit/EnterpriseAuditService.ts");
+		const auditPath = path.join(
+			__dirname,
+			"../enterprise/audit/EnterpriseAuditService.ts",
+		);
 		if (fs.existsSync(auditPath)) {
 			const content = fs.readFileSync(auditPath, "utf8");
 			if (
@@ -96,7 +108,10 @@ async function validateEnterpriseStructure() {
 		const fs = require("node:fs");
 		const path = require("node:path");
 
-		const healthPath = path.join(__dirname, "../health/EnterpriseHealthCheckService.ts");
+		const healthPath = path.join(
+			__dirname,
+			"../health/EnterpriseHealthCheckService.ts",
+		);
 		if (fs.existsSync(healthPath)) {
 			const content = fs.readFileSync(healthPath, "utf8");
 			if (
@@ -122,11 +137,16 @@ async function validateEnterpriseStructure() {
 		if (fs.existsSync(basePath)) {
 			const content = fs.readFileSync(basePath, "utf8");
 			if (
-				(content.includes("enterpriseCache") || content.includes("EnterpriseCacheService")) &&
-				(content.includes("enterpriseAnalytics") || content.includes("EnterpriseAnalyticsService")) &&
-				(content.includes("enterpriseSecurity") || content.includes("EnterpriseSecurityService")) &&
-				(content.includes("enterpriseAudit") || content.includes("EnterpriseAuditService")) &&
-				(content.includes("enterpriseHealth") || content.includes("EnterpriseHealthCheckService"))
+				(content.includes("enterpriseCache") ||
+					content.includes("EnterpriseCacheService")) &&
+				(content.includes("enterpriseAnalytics") ||
+					content.includes("EnterpriseAnalyticsService")) &&
+				(content.includes("enterpriseSecurity") ||
+					content.includes("EnterpriseSecurityService")) &&
+				(content.includes("enterpriseAudit") ||
+					content.includes("EnterpriseAuditService")) &&
+				(content.includes("enterpriseHealth") ||
+					content.includes("EnterpriseHealthCheckService"))
 			) {
 				results.push({ service: "base_integration", status: "valid" });
 			} else {

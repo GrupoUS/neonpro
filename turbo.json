@@ -1,85 +1,85 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "globalPassThroughEnv": ["NODE_ENV", "VERCEL_ENV", "CI"],
-  "globalDependencies": [
-    "**/.env.*local",
-    "**/package.json",
-    "**/tsconfig.json",
-    "biome.jsonc",
-    "pnpm-workspace.yaml"
-  ],
-  "globalEnv": [
-    "NODE_ENV",
-    "VERCEL_ENV",
-    "CI",
-    "TURBO_TOKEN",
-    "TURBO_TEAM",
-    "SUPABASE_URL",
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY"
-  ],
-  "remoteCache": {
-    "signature": true
-  },
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "src/**/*.{ts,tsx,js,jsx}",
-        "styles/**/*.{css,scss}",
-        "public/**/*",
-        "package.json",
-        "tsconfig.json",
-        "next.config.*",
-        "tailwind.config.*",
-        "!**/__tests__/**",
-        "!**/*.test.*",
-        "!**/*.spec.*"
-      ],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
-    },
-    "@neonpro/core-services#build": {
-      "cache": false,
-      "inputs": [],
-      "outputs": []
-    },
-    "lint": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"]
-    },
-    "type-check": {
-      "dependsOn": ["^build"],
-      "outputs": ["**/*.tsbuildinfo"]
-    },
-    "test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**", "tools/testing/reports/**"]
-    },
-    "test:unit": {
-      "dependsOn": ["build"],
-      "inputs": ["**/*.test.*", "**/*.spec.*", "vitest.config.*"],
-      "outputs": ["coverage/**"]
-    },
-    "test:e2e": {
-      "dependsOn": ["build"],
-      "inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
-      "outputs": ["playwright-report/**", "test-results/**"]
-    },
-    "test:e2e:install": {
-      "cache": false,
-      "outputs": []
-    },
-    "ci-check": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "clean": {
-      "cache": false
-    },
-    "format": {
-      "inputs": ["**/*.{ts,tsx,js,jsx,json,md}", "biome.jsonc"]
-    }
-  }
+	"$schema": "https://turbo.build/schema.json",
+	"globalPassThroughEnv": ["NODE_ENV", "VERCEL_ENV", "CI"],
+	"globalDependencies": [
+		"**/.env.*local",
+		"**/package.json",
+		"**/tsconfig.json",
+		"biome.jsonc",
+		"pnpm-workspace.yaml"
+	],
+	"globalEnv": [
+		"NODE_ENV",
+		"VERCEL_ENV",
+		"CI",
+		"TURBO_TOKEN",
+		"TURBO_TEAM",
+		"SUPABASE_URL",
+		"SUPABASE_ANON_KEY",
+		"SUPABASE_SERVICE_ROLE_KEY"
+	],
+	"remoteCache": {
+		"signature": true
+	},
+	"pipeline": {
+		"build": {
+			"dependsOn": ["^build"],
+			"inputs": [
+				"src/**/*.{ts,tsx,js,jsx}",
+				"styles/**/*.{css,scss}",
+				"public/**/*",
+				"package.json",
+				"tsconfig.json",
+				"next.config.*",
+				"tailwind.config.*",
+				"!**/__tests__/**",
+				"!**/*.test.*",
+				"!**/*.spec.*"
+			],
+			"outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
+		},
+		"@neonpro/core-services#build": {
+			"cache": false,
+			"inputs": [],
+			"outputs": []
+		},
+		"lint": {
+			"inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"]
+		},
+		"type-check": {
+			"dependsOn": ["^build"],
+			"outputs": ["**/*.tsbuildinfo"]
+		},
+		"test": {
+			"dependsOn": ["build"],
+			"outputs": ["coverage/**", "tools/testing/reports/**"]
+		},
+		"test:unit": {
+			"dependsOn": ["build"],
+			"inputs": ["**/*.test.*", "**/*.spec.*", "vitest.config.*"],
+			"outputs": ["coverage/**"]
+		},
+		"test:e2e": {
+			"dependsOn": ["build"],
+			"inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
+			"outputs": ["playwright-report/**", "test-results/**"]
+		},
+		"test:e2e:install": {
+			"cache": false,
+			"outputs": []
+		},
+		"ci-check": {
+			"inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"clean": {
+			"cache": false
+		},
+		"format": {
+			"inputs": ["**/*.{ts,tsx,js,jsx,json,md}", "biome.jsonc"]
+		}
+	}
 }

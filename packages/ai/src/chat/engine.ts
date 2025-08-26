@@ -78,9 +78,15 @@ const IntentAnalysisSchema = z.object({
 		z.object({
 			intent: z.string(),
 			confidence: z.number().min(0).max(1),
-		})
+		}),
 	),
-	intent_category: z.enum(["appointment", "medical_query", "information", "emergency", "administrative"]),
+	intent_category: z.enum([
+		"appointment",
+		"medical_query",
+		"information",
+		"emergency",
+		"administrative",
+	]),
 	requires_human: z.boolean().optional(),
 });
 
@@ -91,7 +97,7 @@ const MedicalAnalysisSchema = z.object({
 		z.object({
 			symptom: z.string(),
 			severity: z.enum(["mild", "moderate", "severe"]),
-		})
+		}),
 	),
 	urgency_assessment: z.enum(["routine", "urgent", "emergency"]),
 	specialty_recommendation: z.string().optional(),
@@ -115,14 +121,20 @@ export class HealthcareAIEngine {
 
 	constructor(
 		private readonly interfaceType: "external" | "internal" = "external",
-		readonly _clinicContext?: any
+		readonly _clinicContext?: any,
 	) {}
 
 	/**
 	 * Stream chat responses with healthcare optimizations
 	 */
-	async streamResponse(messages: ChatMessage[], sessionContext: any): Promise<any> {
-		const systemPrompt = this.interfaceType === "external" ? HEALTHCARE_SYSTEM_PROMPT : INTERNAL_SYSTEM_PROMPT;
+	async streamResponse(
+		messages: ChatMessage[],
+		sessionContext: any,
+	): Promise<any> {
+		const systemPrompt =
+			this.interfaceType === "external"
+				? HEALTHCARE_SYSTEM_PROMPT
+				: INTERNAL_SYSTEM_PROMPT;
 
 		const contextualPrompt = this.buildContextualPrompt(sessionContext);
 
@@ -149,8 +161,14 @@ export class HealthcareAIEngine {
 	/**
 	 * Generate single response for non-streaming scenarios
 	 */
-	async generateResponse(messages: ChatMessage[], sessionContext: any): Promise<string> {
-		const systemPrompt = this.interfaceType === "external" ? HEALTHCARE_SYSTEM_PROMPT : INTERNAL_SYSTEM_PROMPT;
+	async generateResponse(
+		messages: ChatMessage[],
+		sessionContext: any,
+	): Promise<string> {
+		const systemPrompt =
+			this.interfaceType === "external"
+				? HEALTHCARE_SYSTEM_PROMPT
+				: INTERNAL_SYSTEM_PROMPT;
 
 		const contextualPrompt = this.buildContextualPrompt(sessionContext);
 
@@ -210,7 +228,9 @@ export class HealthcareAIEngine {
 	/**
 	 * Perform medical context analysis
 	 */
-	async analyzeMedicalContext(message: string): Promise<MedicalAnalysis | null> {
+	async analyzeMedicalContext(
+		message: string,
+	): Promise<MedicalAnalysis | null> {
 		// Only analyze if medical terms detected
 		const medicalKeywords = [
 			"dor",
@@ -226,7 +246,9 @@ export class HealthcareAIEngine {
 			"exame",
 		];
 
-		const hasmedicalContent = medicalKeywords.some((keyword) => message.toLowerCase().includes(keyword));
+		const hasmedicalContent = medicalKeywords.some((keyword) =>
+			message.toLowerCase().includes(keyword),
+		);
 
 		if (!hasmedicalContent) {
 			return null;
@@ -257,10 +279,20 @@ export class HealthcareAIEngine {
 	/**
 	 * Analyze appointment requirements
 	 */
-	async analyzeAppointmentContext(message: string): Promise<AppointmentContext | null> {
-		const appointmentKeywords = ["agendar", "consulta", "horário", "marcação", "agendamento"];
+	async analyzeAppointmentContext(
+		message: string,
+	): Promise<AppointmentContext | null> {
+		const appointmentKeywords = [
+			"agendar",
+			"consulta",
+			"horário",
+			"marcação",
+			"agendamento",
+		];
 
-		const hasAppointmentContent = appointmentKeywords.some((keyword) => message.toLowerCase().includes(keyword));
+		const hasAppointmentContent = appointmentKeywords.some((keyword) =>
+			message.toLowerCase().includes(keyword),
+		);
 
 		if (!hasAppointmentContent) {
 			return null;
@@ -290,7 +322,10 @@ export class HealthcareAIEngine {
 	/**
 	 * Generate comprehensive AI insights for the session
 	 */
-	async generateInsights(messages: ChatMessage[], _sessionContext: any): Promise<ChatAIInsights> {
+	async generateInsights(
+		messages: ChatMessage[],
+		_sessionContext: any,
+	): Promise<ChatAIInsights> {
 		const lastMessage = messages.at(-1);
 
 		if (!lastMessage || lastMessage.role !== "user") {
@@ -320,7 +355,8 @@ export class HealthcareAIEngine {
 				next_actions: [
 					{
 						action: "schedule_appointment",
-						priority: intentAnalysis.intent_category === "appointment" ? "high" : "low",
+						priority:
+							intentAnalysis.intent_category === "appointment" ? "high" : "low",
 					},
 				],
 			},
@@ -340,8 +376,13 @@ export class HealthcareAIEngine {
 		if (this.interfaceType === "external") {
 			prompt += "CONTEXTO DO PACIENTE:\n";
 			if (sessionContext?.patient_context) {
-				prompt += `- Faixa etária: ${sessionContext.patient_context.age_group || "não informado"}\n`;
-				prompt += `- Histórico: ${sessionContext.patient_context.medical_history_summary || "não disponível"}\n`;
+				prompt += `- Faixa etária: ${
+					sessionContext.patient_context.age_group || "não informado"
+				}\n`;
+				prompt += `- Histórico: ${
+					sessionContext.patient_context.medical_history_summary ||
+					"não disponível"
+				}\n`;
 			}
 		} else {
 			prompt += "CONTEXTO INTERNO:\n";
@@ -364,13 +405,25 @@ export class HealthcareAIEngine {
 	 * Simple sentiment analysis for healthcare context
 	 */
 	private analyzeSentiment(message: string): SentimentAnalysis {
-		const urgentWords = ["urgente", "emergência", "dor forte", "não aguento", "socorro"];
+		const urgentWords = [
+			"urgente",
+			"emergência",
+			"dor forte",
+			"não aguento",
+			"socorro",
+		];
 		const negativeWords = ["mal", "dor", "ruim", "preocupado", "ansioso"];
 		const positiveWords = ["obrigado", "ajuda", "melhor", "ótimo", "bom"];
 
-		const hasUrgent = urgentWords.some((word) => message.toLowerCase().includes(word));
-		const hasNegative = negativeWords.some((word) => message.toLowerCase().includes(word));
-		const hasPositive = positiveWords.some((word) => message.toLowerCase().includes(word));
+		const hasUrgent = urgentWords.some((word) =>
+			message.toLowerCase().includes(word),
+		);
+		const hasNegative = negativeWords.some((word) =>
+			message.toLowerCase().includes(word),
+		);
+		const hasPositive = positiveWords.some((word) =>
+			message.toLowerCase().includes(word),
+		);
 
 		let sentiment: "positive" | "neutral" | "negative" | "urgent" = "neutral";
 		let confidence = 0.6;
@@ -414,7 +467,9 @@ export class HealthcareAIEngine {
 			"acidente",
 		];
 
-		return emergencyKeywords.some((keyword) => message.toLowerCase().includes(keyword));
+		return emergencyKeywords.some((keyword) =>
+			message.toLowerCase().includes(keyword),
+		);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
+
+import path from "node:path";
 import { defineConfig } from "vitest/config";
-import path from "path";
 
 /**
  * 📊 NeonPro - Configuração Avançada de Cobertura de Código
@@ -169,7 +170,7 @@ export default defineConfig({
 		reporter: ["verbose", "json", "html"],
 
 		// ⏱️ Timeout para testes
-		testTimeout: 10000,
+		testTimeout: 10_000,
 
 		// 🔄 Watch configurações
 		watch: false,

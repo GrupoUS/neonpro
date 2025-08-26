@@ -1,10 +1,10 @@
 // NFe Cancellation API Endpoint
 // Story 5.5: Cancel authorized NFe documents
 
-import { NextResponse } from "next/server";
-import { z } from "zod";
 import { createClient } from "@/app/utils/supabase/server";
 import { nfeService } from "@/lib/services/tax/nfe-service";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 
 const cancelRequestSchema = z.object({
 	reason: z.string().min(15, "Reason must be at least 15 characters").max(255, "Reason must be at most 255 characters"),
@@ -54,7 +54,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
 		// Check if NFe can be cancelled
 		if (nfeDocument.status !== "authorized") {
-			return NextResponse.json({ error: "Only authorized NFe documents can be cancelled" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Only authorized NFe documents can be cancelled" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// Check cancellation window (usually 24 hours)
@@ -110,7 +115,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 		});
 	} catch (error) {
 		if (error instanceof Error && error.name === "ZodError") {
-			return NextResponse.json({ error: "Invalid request data", details: error.message }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Invalid request data", details: error.message },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });

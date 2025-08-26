@@ -42,7 +42,8 @@
 
 **Status**: ✅ CORRIGIDO
 
-- **Variável adicionada**: `DATABASE_URL="postgresql://postgres:password@localhost:5432/neonpro?schema=public"`
+- **Variável adicionada**:
+  `DATABASE_URL="postgresql://postgres:password@localhost:5432/neonpro?schema=public"`
 - **Localização**: Primeira seção do arquivo .env.local
 - **Configuração**: PostgreSQL local para desenvolvimento
 - **Compatibilidade**: Totalmente compatível com Prisma
@@ -168,7 +169,8 @@ npm run dev
 
 **A migração do NeonPro foi corrigida com sucesso!**
 
-Todos os arquivos essenciais estão presentes e configurados corretamente. O projeto está pronto para:
+Todos os arquivos essenciais estão presentes e configurados corretamente. O projeto está pronto
+para:
 
 - Execução das migrações do banco de dados
 - Geração do cliente Prisma

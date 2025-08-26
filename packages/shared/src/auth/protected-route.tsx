@@ -38,7 +38,9 @@ function DefaultUnauthorizedFallback() {
 		<div className="flex min-h-screen items-center justify-center">
 			<div className="text-center">
 				<h1 className="mb-2 font-bold text-2xl text-gray-900">Acesso Negado</h1>
-				<p className="text-gray-600">Você não tem permissão para acessar esta página.</p>
+				<p className="text-gray-600">
+					Você não tem permissão para acessar esta página.
+				</p>
 			</div>
 		</div>
 	);
@@ -104,7 +106,7 @@ export function ProtectedRoute({
  */
 export function withAuth<P extends object>(
 	Component: React.ComponentType<P>,
-	options?: Omit<ProtectedRouteProps, "children">
+	options?: Omit<ProtectedRouteProps, "children">,
 ) {
 	const WrappedComponent = (props: P) => {
 		return (

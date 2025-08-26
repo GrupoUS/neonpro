@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/contexts/auth-context";
 import {
 	Alert,
 	AlertDescription,
@@ -39,7 +40,6 @@ import {
 } from "@neonpro/ui";
 import { Calendar, Edit, Heart, Mail, Phone, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "@/contexts/auth-context";
 
 type Patient = {
 	id: string;

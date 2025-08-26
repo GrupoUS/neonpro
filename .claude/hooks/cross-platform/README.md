@@ -1,6 +1,7 @@
 # 🌍 Claude Code Cross-Platform Hooks
 
-Uma solução unificada para executar hooks do Claude Code tanto no **Windows (PowerShell)** quanto no **Ubuntu (terminal)** usando Node.js.
+Uma solução unificada para executar hooks do Claude Code tanto no **Windows (PowerShell)** quanto no
+**Ubuntu (terminal)** usando Node.js.
 
 ## ✨ Características
 
@@ -58,14 +59,14 @@ Use `settings.cross-platform.json` que já está configurado para ambas as plata
   "hooks": {
     "PreToolUse": [{
       "matcher": "*",
-      "hooks": [{ 
+      "hooks": [{
         "type": "command",
         "command": "node .claude/hooks/cross-platform/pre-tool-intelligence.js",
         "timeout": 45
       }]
     }],
     "PostToolUse": [{
-      "matcher": "*", 
+      "matcher": "*",
       "hooks": [{
         "type": "command",
         "command": "node .claude/hooks/cross-platform/post-tool-intelligence.js",
@@ -81,7 +82,7 @@ Use `settings.cross-platform.json` que já está configurado para ambas as plata
     }],
     "Stop": [{
       "hooks": [{
-        "type": "command", 
+        "type": "command",
         "command": "node .claude/hooks/cross-platform/session-stop.js",
         "timeout": 90
       }]
@@ -95,6 +96,7 @@ Use `settings.cross-platform.json` que já está configurado para ambas as plata
 Se preferir manter configurações separadas:
 
 **Windows (`settings.local.windows.json`):**
+
 ```json
 {
   "hooks": {
@@ -110,7 +112,8 @@ Se preferir manter configurações separadas:
 }
 ```
 
-**Ubuntu (`settings.local.ubuntu.json`):**  
+**Ubuntu (`settings.local.ubuntu.json`):**
+
 ```json
 {
   "hooks": {
@@ -129,6 +132,7 @@ Se preferir manter configurações separadas:
 ## 📊 Funcionalidades dos Hooks
 
 ### 🔍 Pre-Tool Hook (`pre-tool-intelligence.js`)
+
 Executado **antes** de cada uso de tool:
 
 - ✅ Detecção de plataforma e ambiente
@@ -137,6 +141,7 @@ Executado **antes** de cada uso de tool:
 - ✅ Logging inteligente por contexto
 
 ### 📈 Post-Tool Hook (`post-tool-intelligence.js`)
+
 Executado **após** cada uso de tool:
 
 - ✅ Análise de resultados de comandos bash
@@ -146,7 +151,8 @@ Executado **após** cada uso de tool:
 - ✅ Monitoramento de status do Git
 - ✅ Health check do sistema
 
-### 🧠 Session Intelligence (`session-intelligence.js`)  
+### 🧠 Session Intelligence (`session-intelligence.js`)
+
 Executado quando um **subagent para**:
 
 - ✅ Análise completa de padrões de uso
@@ -157,6 +163,7 @@ Executado quando um **subagent para**:
 - ✅ Rotação de logs grandes
 
 ### 🏁 Session Stop (`session-stop.js`)
+
 Executado quando a **sessão principal termina**:
 
 - ✅ Relatório final completo da sessão
@@ -169,6 +176,7 @@ Executado quando a **sessão principal termina**:
 ## 🔧 Sistema de Utilitários (`utils.js`)
 
 ### Funcionalidades Cross-Platform:
+
 - ✅ **Detecção automática** de plataforma (Windows/Linux/macOS)
 - ✅ **Logging seguro** que nunca falha
 - ✅ **Operações de arquivo** com fallback gracioso
@@ -180,9 +188,9 @@ Executado quando a **sessão principal termina**:
 
 ```javascript
 // Detecção de plataforma
-utils.isWindows    // true no Windows
-utils.isLinux      // true no Linux
-utils.isDarwin     // true no macOS
+utils.isWindows; // true no Windows
+utils.isLinux; // true no Linux
+utils.isDarwin; // true no macOS
 
 // Logging seguro
 utils.log('INFO', 'COMPONENT', 'message');
@@ -204,6 +212,7 @@ const gitInfo = await utils.getGitInfo();
 ## 📝 Sistema de Logging
 
 ### Localização dos Logs:
+
 ```bash
 .claude/hooks/claude-hooks.log    # Log principal
 .cache/session-*-summary.json     # Resumos de sessão  
@@ -212,13 +221,15 @@ const gitInfo = await utils.getGitInfo();
 ```
 
 ### Níveis de Log:
+
 - `DEBUG`: Informações detalhadas de desenvolvimento
-- `INFO`: Informações gerais de operação  
+- `INFO`: Informações gerais de operação
 - `WARN`: Avisos que não impedem execução
 - `ERROR`: Erros que foram tratados
 - `SUCCESS`: Operações concluídas com sucesso
 
 ### Exemplo de Saída:
+
 ```
 [2024-01-15T10:30:45.123Z] [INFO] [PRE_TOOL_HOOK] Pre-tool intelligence hook executing for tool: bash on win32
 [2024-01-15T10:30:45.125Z] [DEBUG] [PRE_TOOL_HOOK] System: win32 x64, Node: v18.17.0
@@ -228,6 +239,7 @@ const gitInfo = await utils.getGitInfo();
 ## 🐛 Troubleshooting
 
 ### ❌ Hook não executa
+
 ```bash
 # Verifique se Node.js está disponível
 node --version
@@ -241,12 +253,13 @@ chmod +x .claude/hooks/cross-platform/*.js
 ```
 
 ### ❌ Erros de timeout
+
 ```json
 {
   "hooks": {
     "PreToolUse": [{
       "hooks": [{
-        "timeout": 120  // Aumente o timeout se necessário
+        "timeout": 120 // Aumente o timeout se necessário
       }]
     }]
   }
@@ -254,12 +267,14 @@ chmod +x .claude/hooks/cross-platform/*.js
 ```
 
 ### ❌ Problemas de path
+
 ```bash
 # Use paths absolutos se necessário
 "command": "node /full/path/to/.claude/hooks/cross-platform/pre-tool-intelligence.js"
 ```
 
 ### ❌ Debug Mode
+
 ```bash
 # Ative debug para mais informações
 export CLAUDE_DEBUG=true     # Linux
@@ -269,6 +284,7 @@ $env:CLAUDE_DEBUG="true"     # Windows PowerShell
 ## 🔍 Monitoramento e Análise
 
 ### Verificar Atividade dos Hooks:
+
 ```bash
 # Últimas 50 entradas do log
 tail -50 .claude/hooks/claude-hooks.log     # Linux  
@@ -280,6 +296,7 @@ Select-String "PRE_TOOL_HOOK" .claude\hooks\claude-hooks.log  # Windows
 ```
 
 ### Relatórios de Sessão:
+
 ```bash
 # Ver resumos de sessão
 ls -la .cache/session-*-summary.txt    # Linux
@@ -295,12 +312,14 @@ Get-Content .cache\final-report-*.json  # Windows
 ### Personalização de Hooks:
 
 Edite os arquivos JavaScript diretamente para:
+
 - Adicionar lógica específica por tipo de tool
 - Modificar critérios de análise
 - Adicionar integrações customizadas
 - Alterar estratégias de cleanup
 
 ### Variables de Ambiente Disponíveis:
+
 ```bash
 CLAUDE_TOOL_NAME        # Nome do tool sendo executado
 CLAUDE_TOOL_ARGS        # Argumentos do tool
@@ -316,12 +335,14 @@ CLAUDE_DEBUG            # Modo debug (true/false)
 ### Do sistema BAT/SH anterior:
 
 1. **Backup** dos hooks existentes:
+
 ```bash
 cp -r .claude/hooks .claude/hooks.backup    # Linux
-xcopy .claude\hooks .claude\hooks.backup /E /I  # Windows  
+xcopy .claude\hooks .claude\hooks.backup /E /I  # Windows
 ```
 
 2. **Teste** a nova configuração:
+
 ```bash
 # Modifique temporariamente settings.local.json
 # Execute alguns comandos para testar
@@ -329,6 +350,7 @@ xcopy .claude\hooks .claude\hooks.backup /E /I  # Windows
 ```
 
 3. **Ativação completa**:
+
 ```bash
 # Use settings.cross-platform.json como base
 # Remova hooks antigos se funcionando corretamente
@@ -338,7 +360,7 @@ xcopy .claude\hooks .claude\hooks.backup /E /I  # Windows
 
 - [ ] Node.js instalado e acessível via `node` command
 - [ ] Arquivos hook copiados para `.claude/hooks/cross-platform/`
-- [ ] Configuração atualizada em `settings.local.json`  
+- [ ] Configuração atualizada em `settings.local.json`
 - [ ] Permissões de execução definidas (Linux)
 - [ ] Teste executado com comando simples
 - [ ] Logs verificados em `.claude/hooks/claude-hooks.log`
@@ -347,21 +369,25 @@ xcopy .claude\hooks .claude\hooks.backup /E /I  # Windows
 ## 🎯 Benefícios da Solução Cross-Platform
 
 ### ✅ **Compatibilidade Universal**
+
 - Mesmo código funciona no Windows e Linux
 - Sem necessidade de manter scripts separados
 - Detecção automática de ambiente
 
-### ✅ **Manutenção Simplificada**  
+### ✅ **Manutenção Simplificada**
+
 - Um só ponto de atualização
 - Lógica centralizada no JavaScript
 - Menos arquivos para gerenciar
 
 ### ✅ **Analytics Avançados**
+
 - Relatórios detalhados de uso
 - Detecção de padrões de workflow
 - Métricas de performance
 
 ### ✅ **Robustez**
+
 - Tratamento gracioso de erros
 - Operações que nunca bloqueiam Claude
 - Fallbacks seguros
@@ -388,4 +414,5 @@ Se encontrar problemas:
 
 ---
 
-**🎉 Pronto!** Seus hooks cross-platform estão configurados e funcionando tanto no Windows quanto no Ubuntu!
+**🎉 Pronto!** Seus hooks cross-platform estão configurados e funcionando tanto no Windows quanto no
+Ubuntu!

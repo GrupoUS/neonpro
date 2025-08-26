@@ -5,10 +5,10 @@
  * and cost optimization for NeonPro's ML pipeline.
  */
 
+import { modelManager } from "@/lib/ai/model-management";
 import { createServerClient } from "@neonpro/db";
 import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { modelManager } from "@/lib/ai/model-management";
 
 // Get model management status and active models
 export async function GET(request: NextRequest) {
@@ -128,7 +128,10 @@ export async function GET(request: NextRequest) {
 	} catch (error) {
 		console.error("Model management API error:", error);
 		return NextResponse.json(
-			{ error: "Internal server error", details: error instanceof Error ? error.message : String(error) },
+			{
+				error: "Internal server error",
+				details: error instanceof Error ? error.message : String(error),
+			},
 			{ status: 500 }
 		);
 	}
@@ -216,7 +219,12 @@ export async function POST(request: NextRequest) {
 				const { modelId: driftModelId, driftConfig } = body;
 
 				if (!driftModelId || !driftConfig) {
-					return NextResponse.json({ error: "Model ID and drift configuration required" }, { status: 400 });
+					return NextResponse.json(
+						{ error: "Model ID and drift configuration required" },
+						{
+							status: 400,
+						}
+					);
 				}
 
 				await modelManager.setupDriftMonitoring(driftModelId, driftConfig);
@@ -230,7 +238,12 @@ export async function POST(request: NextRequest) {
 				const { testName, modelAId, modelBId, trafficSplit, successMetric, duration } = body;
 
 				if (!testName || !modelAId || !modelBId || !successMetric) {
-					return NextResponse.json({ error: "Missing required fields for A/B test" }, { status: 400 });
+					return NextResponse.json(
+						{ error: "Missing required fields for A/B test" },
+						{
+							status: 400,
+						}
+					);
 				}
 
 				const abTest = await modelManager.createABTest({
@@ -254,7 +267,10 @@ export async function POST(request: NextRequest) {
 	} catch (error) {
 		console.error("Model management POST error:", error);
 		return NextResponse.json(
-			{ error: "Internal server error", details: error instanceof Error ? error.message : String(error) },
+			{
+				error: "Internal server error",
+				details: error instanceof Error ? error.message : String(error),
+			},
 			{ status: 500 }
 		);
 	}

@@ -20,13 +20,21 @@ test.describe("Patient Portal - Authentication & Access", () => {
 
 	test("should display patient portal landing page", async ({ page }) => {
 		// Check portal branding and information
-		await expect(page.locator("h1, .portal-title")).toContainText(/Portal|Paciente/);
+		await expect(page.locator("h1, .portal-title")).toContainText(
+			/Portal|Paciente/,
+		);
 
 		// Should have login section
-		await expect(page.locator('[data-testid="patient-login"]').or(page.locator(".patient-login"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="patient-login"]')
+				.or(page.locator(".patient-login")),
+		).toBeVisible();
 
 		// Should display LGPD compliance notice
-		const lgpdNotice = page.locator("text=LGPD").or(page.locator("text=privacidade"));
+		const lgpdNotice = page
+			.locator("text=LGPD")
+			.or(page.locator("text=privacidade"));
 		await expect(lgpdNotice).toBeVisible();
 	});
 
@@ -42,7 +50,11 @@ test.describe("Patient Portal - Authentication & Access", () => {
 		await expect(page).toHaveURL(/.*\/patient-portal\/dashboard/);
 
 		// Should display patient name
-		await expect(page.locator('[data-testid="patient-name"]').or(page.locator(".patient-name"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="patient-name"]')
+				.or(page.locator(".patient-name")),
+		).toBeVisible();
 	});
 
 	test("should handle invalid patient credentials", async ({ page }) => {
@@ -54,7 +66,9 @@ test.describe("Patient Portal - Authentication & Access", () => {
 		await page.click('[data-testid="patient-login-button"]');
 
 		// Should show error message
-		await expect(page.locator(".error").or(page.locator('[data-testid="login-error"]'))).toBeVisible();
+		await expect(
+			page.locator(".error").or(page.locator('[data-testid="login-error"]')),
+		).toBeVisible();
 
 		// Should remain on login page
 		await expect(page).toHaveURL(/.*\/patient-portal/);
@@ -76,7 +90,11 @@ test.describe("Patient Portal - Medical Records", () => {
 
 	test("should display medical records list", async ({ page }) => {
 		// Should show medical records table
-		await expect(page.locator('[data-testid="medical-records"]').or(page.locator(".medical-records"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="medical-records"]')
+				.or(page.locator(".medical-records")),
+		).toBeVisible();
 
 		// Should display record entries
 		const recordRows = page.locator("tr").filter({ hasText: /Dr\.|Dra\./ });
@@ -95,10 +113,16 @@ test.describe("Patient Portal - Medical Records", () => {
 			await firstRecord.click();
 
 			// Should display detailed view
-			await expect(page.locator('[data-testid="record-details"]').or(page.locator(".record-details"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="record-details"]')
+					.or(page.locator(".record-details")),
+			).toBeVisible();
 
 			// Should show diagnosis and prescription
-			await expect(page.locator("text=Diagnóstico").or(page.locator("text=Prescrição"))).toBeVisible();
+			await expect(
+				page.locator("text=Diagnóstico").or(page.locator("text=Prescrição")),
+			).toBeVisible();
 		}
 	});
 
@@ -122,13 +146,17 @@ test.describe("Patient Portal - Medical Records", () => {
 
 	test("should respect LGPD data access controls", async ({ page }) => {
 		// Should display data usage consent
-		const consentSection = page.locator('[data-testid="data-consent"]').or(page.locator("text=consentimento"));
+		const consentSection = page
+			.locator('[data-testid="data-consent"]')
+			.or(page.locator("text=consentimento"));
 		if (await consentSection.isVisible()) {
 			await expect(consentSection).toBeVisible();
 		}
 
 		// Should show data access log
-		const accessLog = page.locator('[data-testid="access-log"]').or(page.locator("text=histórico de acesso"));
+		const accessLog = page
+			.locator('[data-testid="access-log"]')
+			.or(page.locator("text=histórico de acesso"));
 		if (await accessLog.isVisible()) {
 			await expect(accessLog).toBeVisible();
 		}
@@ -151,7 +179,9 @@ test.describe("Patient Portal - Appointments", () => {
 	test("should display upcoming appointments", async ({ page }) => {
 		// Should show appointments list
 		await expect(
-			page.locator('[data-testid="appointments-list"]').or(page.locator(".appointments-list"))
+			page
+				.locator('[data-testid="appointments-list"]')
+				.or(page.locator(".appointments-list")),
 		).toBeVisible();
 
 		// Should display appointment details
@@ -173,7 +203,9 @@ test.describe("Patient Portal - Appointments", () => {
 
 			// Should show scheduling form
 			await expect(
-				page.locator('[data-testid="appointment-form"]').or(page.locator(".appointment-form"))
+				page
+					.locator('[data-testid="appointment-form"]')
+					.or(page.locator(".appointment-form")),
 			).toBeVisible();
 
 			// Fill appointment details
@@ -188,26 +220,34 @@ test.describe("Patient Portal - Appointments", () => {
 			await page.click('button:has-text("Confirmar")');
 
 			// Should show success message
-			await expect(page.locator(".success").or(page.locator("text=agendada"))).toBeVisible();
+			await expect(
+				page.locator(".success").or(page.locator("text=agendada")),
+			).toBeVisible();
 		}
 	});
 
 	test("should cancel appointment", async ({ page }) => {
 		// Look for cancel button on first appointment
-		const cancelButton = page.locator('[data-testid="cancel-appointment"]').first();
+		const cancelButton = page
+			.locator('[data-testid="cancel-appointment"]')
+			.first();
 		if (await cancelButton.isVisible()) {
 			await cancelButton.click();
 
 			// Should show confirmation dialog
 			await expect(
-				page.locator('[data-testid="cancel-confirmation"]').or(page.locator(".confirmation-dialog"))
+				page
+					.locator('[data-testid="cancel-confirmation"]')
+					.or(page.locator(".confirmation-dialog")),
 			).toBeVisible();
 
 			// Confirm cancellation
 			await page.click('button:has-text("Confirmar")');
 
 			// Should show cancellation success
-			await expect(page.locator("text=cancelada").or(page.locator(".success"))).toBeVisible();
+			await expect(
+				page.locator("text=cancelada").or(page.locator(".success")),
+			).toBeVisible();
 		}
 	});
 
@@ -216,7 +256,9 @@ test.describe("Patient Portal - Appointments", () => {
 		await page.click('button:has-text("Histórico")');
 
 		// Should show past appointments
-		const historySection = page.locator('[data-testid="appointment-history"]').or(page.locator(".appointment-history"));
+		const historySection = page
+			.locator('[data-testid="appointment-history"]')
+			.or(page.locator(".appointment-history"));
 		if (await historySection.isVisible()) {
 			await expect(historySection).toBeVisible();
 
@@ -244,7 +286,11 @@ test.describe("Patient Portal - Test Results", () => {
 
 	test("should display test results list", async ({ page }) => {
 		// Should show test results table
-		await expect(page.locator('[data-testid="test-results"]').or(page.locator(".test-results"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="test-results"]')
+				.or(page.locator(".test-results")),
+		).toBeVisible();
 
 		// Should display test entries
 		const testRows = page.locator("tr").filter({ hasText: /Exame|Teste/ });
@@ -260,10 +306,16 @@ test.describe("Patient Portal - Test Results", () => {
 			await firstTest.click();
 
 			// Should display detailed view
-			await expect(page.locator('[data-testid="test-details"]').or(page.locator(".test-details"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="test-details"]')
+					.or(page.locator(".test-details")),
+			).toBeVisible();
 
 			// Should show test values and reference ranges
-			await expect(page.locator("text=Resultado").or(page.locator("text=Referência"))).toBeVisible();
+			await expect(
+				page.locator("text=Resultado").or(page.locator("text=Referência")),
+			).toBeVisible();
 		}
 	});
 
@@ -287,7 +339,9 @@ test.describe("Patient Portal - Test Results", () => {
 
 	test("should highlight abnormal results", async ({ page }) => {
 		// Look for abnormal result indicators
-		const abnormalResults = page.locator(".abnormal").or(page.locator('[data-testid="abnormal-result"]'));
+		const abnormalResults = page
+			.locator(".abnormal")
+			.or(page.locator('[data-testid="abnormal-result"]'));
 
 		if ((await abnormalResults.count()) > 0) {
 			await expect(abnormalResults.first()).toBeVisible();
@@ -295,7 +349,10 @@ test.describe("Patient Portal - Test Results", () => {
 			// Should have visual indicator (color, icon, etc.)
 			const hasIndicator = await abnormalResults.first().evaluate((el) => {
 				const style = window.getComputedStyle(el);
-				return style.color !== "rgb(0, 0, 0)" || style.backgroundColor !== "rgba(0, 0, 0, 0)";
+				return (
+					style.color !== "rgb(0, 0, 0)" ||
+					style.backgroundColor !== "rgba(0, 0, 0, 0)"
+				);
 			});
 			expect(hasIndicator).toBeTruthy();
 		}
@@ -314,7 +371,9 @@ test.describe("Patient Portal - Security & Privacy", () => {
 		await page.waitForTimeout(5000);
 
 		// Check if session is still active
-		const sessionActive = await page.locator('[data-testid="patient-name"]').isVisible();
+		const sessionActive = await page
+			.locator('[data-testid="patient-name"]')
+			.isVisible();
 
 		// If session timeout is implemented, should redirect to login
 		if (!sessionActive) {
@@ -337,7 +396,8 @@ test.describe("Patient Portal - Security & Privacy", () => {
 
 		if (headers) {
 			// Should have security headers in production
-			const hasSecurityHeaders = headers["x-frame-options"] || headers["x-content-type-options"];
+			const hasSecurityHeaders =
+				headers["x-frame-options"] || headers["x-content-type-options"];
 			if (url.includes("production")) {
 				expect(hasSecurityHeaders).toBeTruthy();
 			}
@@ -352,12 +412,16 @@ test.describe("Patient Portal - Security & Privacy", () => {
 		await page.click('[data-testid="patient-login-button"]');
 
 		// Navigate to privacy settings
-		const privacyLink = page.locator('a:has-text("Privacidade")').or(page.locator('[data-testid="privacy-settings"]'));
+		const privacyLink = page
+			.locator('a:has-text("Privacidade")')
+			.or(page.locator('[data-testid="privacy-settings"]'));
 		if (await privacyLink.isVisible()) {
 			await privacyLink.click();
 
 			// Should show LGPD options
-			await expect(page.locator("text=LGPD").or(page.locator("text=dados pessoais"))).toBeVisible();
+			await expect(
+				page.locator("text=LGPD").or(page.locator("text=dados pessoais")),
+			).toBeVisible();
 
 			// Should have data export option
 			const exportButton = page.locator('button:has-text("Exportar")');
@@ -390,7 +454,9 @@ test.describe("Patient Portal - Accessibility", () => {
 		await page.keyboard.press("Tab");
 
 		// Should be able to navigate to login button
-		const loginButton = page.locator('[data-testid="patient-login-button"]:focus');
+		const loginButton = page.locator(
+			'[data-testid="patient-login-button"]:focus',
+		);
 		if (await loginButton.isVisible()) {
 			await expect(loginButton).toBeVisible();
 		}
@@ -421,7 +487,9 @@ test.describe("Patient Portal - Accessibility", () => {
 		}
 	});
 
-	test("should support screen readers for medical information", async ({ page }) => {
+	test("should support screen readers for medical information", async ({
+		page,
+	}) => {
 		// Login as patient
 		await page.goto("/patient-portal");
 		await page.fill('[data-testid="patient-cpf"]', "123.456.789-00");

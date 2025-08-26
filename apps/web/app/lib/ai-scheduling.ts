@@ -238,6 +238,7 @@ export class AISchedulingEngine {
 	 * AI-powered scheduling decision making with confidence scoring
 	 * Provides reasoning and alternative options
 	 */
+
 	private async makeSchedulingDecision(
 		optimizedSlots: AppointmentSlot[],
 		request: SchedulingRequest,

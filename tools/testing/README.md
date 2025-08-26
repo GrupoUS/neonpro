@@ -1,7 +1,10 @@
 # NeonPro Healthcare Testing Infrastructure
 
 ## Overview
-Unified testing infrastructure for the NeonPro healthcare monorepo, designed to provide comprehensive test coverage, efficient execution, and clear reporting while maintaining LGPD+ANVISA+CFM compliance.
+
+Unified testing infrastructure for the NeonPro healthcare monorepo, designed to provide
+comprehensive test coverage, efficient execution, and clear reporting while maintaining
+LGPD+ANVISA+CFM compliance.
 
 ## Directory Structure
 
@@ -38,6 +41,7 @@ tools/testing/
 ## Testing Commands
 
 ### Unified Test Execution
+
 ```bash
 # Run all tests across the monorepo
 pnpm test
@@ -59,18 +63,21 @@ pnpm test:watch
 ## Healthcare Compliance Testing
 
 ### LGPD Compliance Tests
+
 - Data privacy validation
 - Consent management testing
 - Data subject rights verification
 - Privacy impact assessment tests
 
 ### ANVISA Compliance Tests
+
 - Medical device validation scenarios
 - Product registration testing
 - Adverse event reporting tests
 - Procedure classification validation
 
 ### CFM Standards Tests
+
 - Medical professional standards compliance
 - Professional licensing validation
 - Digital signature verification
@@ -80,6 +87,7 @@ pnpm test:watch
 ## Test Configuration
 
 ### Framework Stack
+
 - **Vitest**: Primary test runner for unit and integration tests
 - **Playwright**: End-to-end testing framework
 - **Jest**: Legacy compatibility where needed
@@ -87,6 +95,7 @@ pnpm test:watch
 - **Biome**: Exclusive linting and formatting (ESLint and Prettier fully migrated)
 
 ### Quality Standards
+
 - **Minimum Coverage**: 90% across all packages
 - **Healthcare Quality**: ≥9.9/10 quality standards
 - **Performance**: Optimized test execution with Turborepo caching
@@ -95,6 +104,7 @@ pnpm test:watch
 ## CI/CD Integration
 
 Tests are automatically executed in the CI/CD pipeline with:
+
 - Parallel execution for performance optimization
 - Test result aggregation and reporting
 - Automatic retries for flaky tests
@@ -104,6 +114,7 @@ Tests are automatically executed in the CI/CD pipeline with:
 ## Contributing
 
 When adding new tests:
+
 1. Follow the established directory structure
 2. Use appropriate test frameworks for the test type
 3. Include healthcare compliance validation where applicable
@@ -113,6 +124,7 @@ When adding new tests:
 ## Healthcare Data Protection
 
 All test data must comply with:
+
 - LGPD requirements for data privacy
 - ANVISA regulations for medical device testing
 - CFM standards for medical professional validation

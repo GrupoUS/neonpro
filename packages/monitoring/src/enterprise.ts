@@ -583,4 +583,4 @@ export function initEnhancedPerformanceMonitoring(
 }
 
 // Export original for backward compatibility
-export { PerformanceMonitor, initPerformanceMonitoring, getPerformanceMonitor };
+export { getPerformanceMonitor, initPerformanceMonitoring, PerformanceMonitor };

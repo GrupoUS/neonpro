@@ -19,12 +19,22 @@ const AuditLogQuerySchema = z.object({
 	startDate: z.string().optional(),
 	endDate: z.string().optional(),
 	userId: z.string().optional(),
-	action: z.enum(["create", "read", "update", "delete", "login", "logout", "export"]).optional(),
-	resourceType: z.enum(["patient", "appointment", "professional", "service", "user"]).optional(),
+	action: z
+		.enum(["create", "read", "update", "delete", "login", "logout", "export"])
+		.optional(),
+	resourceType: z
+		.enum(["patient", "appointment", "professional", "service", "user"])
+		.optional(),
 });
 
 const LGPDRequestSchema = z.object({
-	type: z.enum(["access", "portability", "deletion", "rectification", "objection"]),
+	type: z.enum([
+		"access",
+		"portability",
+		"deletion",
+		"rectification",
+		"objection",
+	]),
 	patientId: z.string(),
 	requesterName: z.string(),
 	requesterEmail: z.string().email(),
@@ -33,7 +43,12 @@ const LGPDRequestSchema = z.object({
 });
 
 const AnvisaReportSchema = z.object({
-	reportType: z.enum(["monthly_procedures", "adverse_events", "product_tracking", "facility_inspection"]),
+	reportType: z.enum([
+		"monthly_procedures",
+		"adverse_events",
+		"product_tracking",
+		"facility_inspection",
+	]),
 	period: z.object({
 		startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 		endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -52,16 +67,17 @@ const ConsentUpdateSchema = z.object({
 
 // Create compliance router
 export const complianceRoutes = new Hono()
-
 	// Authentication middleware
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
 		if (!auth?.startsWith("Bearer ")) {
-			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
+			return c.json(
+				{ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
+				401,
+			);
 		}
 		await next();
 	})
-
 	// 📋 LGPD Overview
 	.get("/lgpd/overview", async (c) => {
 		try {
@@ -85,7 +101,8 @@ export const complianceRoutes = new Hono()
 					{
 						id: "act_1",
 						type: "consent_granted",
-						description: "Paciente Maria Silva concedeu consentimento para fotos",
+						description:
+							"Paciente Maria Silva concedeu consentimento para fotos",
 						timestamp: new Date(Date.now() - 3_600_000).toISOString(),
 					},
 					{
@@ -128,11 +145,10 @@ export const complianceRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar visão geral LGPD",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// 📊 Audit logs
 	.get("/audit/logs", zValidator("query", AuditLogQuerySchema), async (c) => {
 		const {
@@ -151,12 +167,19 @@ export const complianceRoutes = new Hono()
 				id: `log_${i + 1}`,
 				timestamp: new Date(Date.now() - i * 3_600_000).toISOString(),
 				userId: `user_${Math.floor(Math.random() * 5) + 1}`,
-				userName: ["Ana Silva", "João Santos", "Maria Costa"][Math.floor(Math.random() * 3)],
-				action: ["create", "read", "update", "delete"][Math.floor(Math.random() * 4)],
-				resourceType: ["patient", "appointment", "professional"][Math.floor(Math.random() * 3)],
+				userName: ["Ana Silva", "João Santos", "Maria Costa"][
+					Math.floor(Math.random() * 3)
+				],
+				action: ["create", "read", "update", "delete"][
+					Math.floor(Math.random() * 4)
+				],
+				resourceType: ["patient", "appointment", "professional"][
+					Math.floor(Math.random() * 3)
+				],
 				resourceId: `res_${Math.floor(Math.random() * 100)}`,
 				ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
-				userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+				userAgent:
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
 				details: {
 					endpoint: "/api/v1/patients",
 					method: "POST",
@@ -201,11 +224,10 @@ export const complianceRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar logs de auditoria",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// ✉️ LGPD requests management
 	.get("/lgpd/requests", async (c) => {
 		try {
@@ -271,9 +293,14 @@ export const complianceRoutes = new Hono()
 					summary: {
 						total: mockRequests.length,
 						pending: mockRequests.filter((r) => r.status === "pending").length,
-						inProgress: mockRequests.filter((r) => r.status === "in_progress").length,
-						completed: mockRequests.filter((r) => r.status === "completed").length,
-						overdue: mockRequests.filter((r) => r.status !== "completed" && new Date(r.dueDate) < new Date()).length,
+						inProgress: mockRequests.filter((r) => r.status === "in_progress")
+							.length,
+						completed: mockRequests.filter((r) => r.status === "completed")
+							.length,
+						overdue: mockRequests.filter(
+							(r) =>
+								r.status !== "completed" && new Date(r.dueDate) < new Date(),
+						).length,
 					},
 				},
 				message: "Solicitações LGPD carregadas",
@@ -287,11 +314,10 @@ export const complianceRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar solicitações LGPD",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// ➕ Create LGPD request
 	.post("/lgpd/requests", zValidator("json", LGPDRequestSchema), async (c) => {
 		const requestData = c.req.valid("json");
@@ -322,11 +348,10 @@ export const complianceRoutes = new Hono()
 					error: "VALIDATION_ERROR",
 					message: "Erro ao criar solicitação LGPD",
 				},
-				400
+				400,
 			);
 		}
 	})
-
 	// 🏥 ANVISA compliance overview
 	.get("/anvisa/overview", async (c) => {
 		try {
@@ -413,81 +438,83 @@ export const complianceRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar visão geral ANVISA",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// 📋 Generate ANVISA report
-	.post("/anvisa/reports", zValidator("json", AnvisaReportSchema), async (c) => {
-		const { reportType, period, includeDetails } = c.req.valid("json");
+	.post(
+		"/anvisa/reports",
+		zValidator("json", AnvisaReportSchema),
+		async (c) => {
+			const { reportType, period, includeDetails } = c.req.valid("json");
 
-		try {
-			// TODO: Implement actual ANVISA report generation
-			const mockReport = {
-				reportId: `anvisa_${Date.now()}`,
-				type: reportType,
-				period,
-				generatedAt: new Date().toISOString(),
+			try {
+				// TODO: Implement actual ANVISA report generation
+				const mockReport = {
+					reportId: `anvisa_${Date.now()}`,
+					type: reportType,
+					period,
+					generatedAt: new Date().toISOString(),
 
-				summary: {
-					totalProcedures: 156,
-					uniquePatients: 89,
-					productsUsed: 23,
-					adverseEvents: 0,
-					complianceScore: 98.5,
-				},
-
-				procedures: includeDetails
-					? [
-							{
-								date: "2024-01-20",
-								patientId: "pat_123_anonymized",
-								procedure: "Aplicação de Botox",
-								product: "Botox Allergan 100UI",
-								batchNumber: "BT20240115",
-								professionalId: "prof_1",
-								duration: 30,
-								outcome: "success",
-							},
-							// ... more procedures
-						]
-					: [],
-
-				products: [
-					{
-						name: "Botox Allergan",
-						anvisaCode: "ALS123456",
-						batchesUsed: ["BT20240115", "BT20240118"],
-						totalUnits: 450,
-						expirationTracking: "compliant",
+					summary: {
+						totalProcedures: 156,
+						uniquePatients: 89,
+						productsUsed: 23,
+						adverseEvents: 0,
+						complianceScore: 98.5,
 					},
-					// ... more products
-				],
 
-				downloadUrl: `/api/v1/compliance/anvisa/reports/anvisa_${Date.now()}/download`,
-				submissionDeadline: "2024-02-15T23:59:59Z",
-			};
+					procedures: includeDetails
+						? [
+								{
+									date: "2024-01-20",
+									patientId: "pat_123_anonymized",
+									procedure: "Aplicação de Botox",
+									product: "Botox Allergan 100UI",
+									batchNumber: "BT20240115",
+									professionalId: "prof_1",
+									duration: 30,
+									outcome: "success",
+								},
+								// ... more procedures
+							]
+						: [],
 
-			const response: ApiResponse<typeof mockReport> = {
-				success: true,
-				data: mockReport,
-				message: "Relatório ANVISA gerado com sucesso",
-			};
+					products: [
+						{
+							name: "Botox Allergan",
+							anvisaCode: "ALS123456",
+							batchesUsed: ["BT20240115", "BT20240118"],
+							totalUnits: 450,
+							expirationTracking: "compliant",
+						},
+						// ... more products
+					],
 
-			return c.json(response, HTTP_STATUS.CREATED);
-		} catch (_error) {
-			return c.json(
-				{
-					success: false,
-					error: "INTERNAL_ERROR",
-					message: "Erro ao gerar relatório ANVISA",
-				},
-				500
-			);
-		}
-	})
+					downloadUrl: `/api/v1/compliance/anvisa/reports/anvisa_${Date.now()}/download`,
+					submissionDeadline: "2024-02-15T23:59:59Z",
+				};
 
+				const response: ApiResponse<typeof mockReport> = {
+					success: true,
+					data: mockReport,
+					message: "Relatório ANVISA gerado com sucesso",
+				};
+
+				return c.json(response, HTTP_STATUS.CREATED);
+			} catch (_error) {
+				return c.json(
+					{
+						success: false,
+						error: "INTERNAL_ERROR",
+						message: "Erro ao gerar relatório ANVISA",
+					},
+					500,
+				);
+			}
+		},
+	)
 	// 🔐 Update patient consent
 	.put("/lgpd/consent", zValidator("json", ConsentUpdateSchema), async (c) => {
 		const consentData = c.req.valid("json");
@@ -516,11 +543,10 @@ export const complianceRoutes = new Hono()
 					error: "VALIDATION_ERROR",
 					message: "Erro ao atualizar consentimento",
 				},
-				400
+				400,
 			);
 		}
 	})
-
 	// 📊 Compliance dashboard export
 	.get("/export/dashboard", async (c) => {
 		try {
@@ -558,7 +584,7 @@ export const complianceRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao exportar dashboard",
 				},
-				500
+				500,
 			);
 		}
 	});

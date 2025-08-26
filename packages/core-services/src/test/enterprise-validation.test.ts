@@ -45,7 +45,7 @@ class TestEnterpriseService extends EnhancedServiceBase<TestRepo> {
 				const result = await this.repository.findData(id);
 				return { ...result, processed: true };
 			},
-			context
+			context,
 		);
 	}
 
@@ -57,7 +57,7 @@ class TestEnterpriseService extends EnhancedServiceBase<TestRepo> {
 				return { ...result, cached: true };
 			},
 			context,
-			{ useCache: true, cacheKey: `test-${id}`, cacheTTL: 300 }
+			{ useCache: true, cacheKey: `test-${id}`, cacheTTL: 300 },
 		);
 	}
 }
@@ -107,7 +107,10 @@ async function testEnterpriseServices() {
 
 		const _result1 = await testService.testOperation("test-id-1", context);
 
-		const _result2 = await testService.testCachedOperation("test-id-2", context);
+		const _result2 = await testService.testCachedOperation(
+			"test-id-2",
+			context,
+		);
 
 		return true;
 	} catch (_error) {
@@ -116,7 +119,7 @@ async function testEnterpriseServices() {
 }
 
 // Export for testing
-export { testEnterpriseServices, TestEnterpriseService };
+export { TestEnterpriseService, testEnterpriseServices };
 
 // Run test if this file is executed directly
 if (require.main === module) {

@@ -92,7 +92,9 @@ async function simulateRequest(requestType) {
 }
 
 async function runConcurrentUsers(userCount, durationSeconds) {
-	logInfo(`Testing with ${userCount} concurrent users for ${durationSeconds}s...`);
+	logInfo(
+		`Testing with ${userCount} concurrent users for ${durationSeconds}s...`,
+	);
 
 	const results = [];
 	const startTime = performance.now();
@@ -177,7 +179,9 @@ function analyzeResults(results, userCount) {
 	const errorRate = errorCount / requestCount;
 
 	const responseTimes = results.filter((r) => !r.error).map((r) => r.duration);
-	const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length || 0;
+	const avgResponseTime =
+		responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length ||
+		0;
 	const p95ResponseTime = calculatePercentile(responseTimes, 95);
 
 	const durationSeconds = config.duration_seconds;
@@ -210,7 +214,10 @@ async function runLoadTests() {
 		let allPassed = true;
 
 		for (const userCount of config.concurrent_users) {
-			const results = await runConcurrentUsers(userCount, config.duration_seconds);
+			const results = await runConcurrentUsers(
+				userCount,
+				config.duration_seconds,
+			);
 			const analysis = analyzeResults(results, userCount);
 
 			testResults.push(analysis);
@@ -223,24 +230,26 @@ async function runLoadTests() {
 				analysis.p95ResponseTime,
 				config.targets.response_time_95th,
 				"ms",
-				analysis.breakdown.p95Pass
+				analysis.breakdown.p95Pass,
 			);
 			logResult(
 				"Error Rate",
 				(analysis.errorRate * 100).toFixed(1),
 				config.targets.error_rate * 100,
 				"%",
-				analysis.breakdown.errorPass
+				analysis.breakdown.errorPass,
 			);
 			logResult(
 				"Throughput",
 				analysis.throughput,
 				config.targets.throughput_min,
 				" req/s",
-				analysis.breakdown.throughputPass
+				analysis.breakdown.throughputPass,
 			);
 
-			logInfo(`Total requests: ${analysis.requestCount}, Avg response: ${analysis.avgResponseTime}ms`);
+			logInfo(
+				`Total requests: ${analysis.requestCount}, Avg response: ${analysis.avgResponseTime}ms`,
+			);
 
 			// Brief pause between test scenarios
 			await sleep(2000);

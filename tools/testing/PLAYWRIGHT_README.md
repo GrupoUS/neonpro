@@ -81,10 +81,12 @@ tools/testing/
 ## 📝 Testes disponíveis
 
 ### 1. example.spec.ts
+
 - ✅ Verifica título da página do Playwright
 - ✅ Testa navegação e cliques
 
-### 2. neonpro.spec.ts  
+### 2. neonpro.spec.ts
+
 - 🔄 Homepage (skipped - aguarda servidor local)
 - 🔄 Login page (skipped - aguarda servidor local)
 - ✅ Teste externo funcionando

@@ -68,7 +68,10 @@ async function validateLGPDModules() {
 
 	try {
 		// Check if we can load the LGPD compliance modules
-		const lgpdPath = path.resolve(process.cwd(), "packages/compliance/src/lgpd");
+		const lgpdPath = path.resolve(
+			process.cwd(),
+			"packages/compliance/src/lgpd",
+		);
 
 		if (!fs.existsSync(lgpdPath)) {
 			logError("LGPD compliance modules not found");
@@ -121,7 +124,9 @@ async function validateDatabaseSchema() {
 			return false;
 		}
 
-		const migrationFiles = fs.readdirSync(migrationsPath).filter((file) => file.endsWith(".sql"));
+		const migrationFiles = fs
+			.readdirSync(migrationsPath)
+			.filter((file) => file.endsWith(".sql"));
 
 		// Check for LGPD-required tables and columns
 		const requiredTables = [
@@ -138,7 +143,10 @@ async function validateDatabaseSchema() {
 			const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
 
 			for (const table of requiredTables) {
-				if (content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) || content.includes(`CREATE TABLE ${table}`)) {
+				if (
+					content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) ||
+					content.includes(`CREATE TABLE ${table}`)
+				) {
 					logSuccess(`LGPD table found in migration: ${table}`);
 					foundTables++;
 					break;
@@ -150,7 +158,10 @@ async function validateDatabaseSchema() {
 		let hasRLS = false;
 		for (const file of migrationFiles) {
 			const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
-			if (content.includes("ENABLE ROW LEVEL SECURITY") || content.includes("CREATE POLICY")) {
+			if (
+				content.includes("ENABLE ROW LEVEL SECURITY") ||
+				content.includes("CREATE POLICY")
+			) {
 				hasRLS = true;
 				logSuccess("Row Level Security (RLS) found in migrations");
 				break;
@@ -158,12 +169,16 @@ async function validateDatabaseSchema() {
 		}
 
 		if (!hasRLS) {
-			logError("Row Level Security (RLS) not found - required for LGPD compliance");
+			logError(
+				"Row Level Security (RLS) not found - required for LGPD compliance",
+			);
 			return false;
 		}
 
 		if (foundTables >= 3) {
-			logSuccess(`${foundTables}/${requiredTables.length} LGPD-required tables found`);
+			logSuccess(
+				`${foundTables}/${requiredTables.length} LGPD-required tables found`,
+			);
 			return true;
 		}
 
@@ -182,7 +197,11 @@ async function validateConsentManagement() {
 		// Test consent validation patterns
 		const testConsents = [
 			{ type: "data_processing", status: "given", legal_basis: "consent" },
-			{ type: "marketing", status: "withdrawn", legal_basis: "legitimate_interest" },
+			{
+				type: "marketing",
+				status: "withdrawn",
+				legal_basis: "legitimate_interest",
+			},
 			{ type: "analytics", status: "given", legal_basis: "consent" },
 			{ type: "cookies", status: "pending", legal_basis: "consent" },
 		];
@@ -204,7 +223,11 @@ async function validateConsentManagement() {
 			const basisValid = validLegalBases.includes(consent.legal_basis);
 
 			if (statusValid && basisValid) {
-				logSuccess(`Consent ${index + 1}: Valid format (${consent.type}, ${consent.status}, ${consent.legal_basis})`);
+				logSuccess(
+					`Consent ${
+						index + 1
+					}: Valid format (${consent.type}, ${consent.status}, ${consent.legal_basis})`,
+				);
 				validConsents++;
 			} else {
 				logError(`Consent ${index + 1}: Invalid format`);
@@ -238,8 +261,22 @@ async function validateDataSubjectRights() {
 			{ type: "objection", status: "rejected", timeline: 30 },
 		];
 
-		const validTypes = ["access", "rectification", "erasure", "portability", "restriction", "objection"];
-		const validStatuses = ["submitted", "under_review", "in_progress", "completed", "rejected", "cancelled"];
+		const validTypes = [
+			"access",
+			"rectification",
+			"erasure",
+			"portability",
+			"restriction",
+			"objection",
+		];
+		const validStatuses = [
+			"submitted",
+			"under_review",
+			"in_progress",
+			"completed",
+			"rejected",
+			"cancelled",
+		];
 		const maxTimelineDays = 30; // LGPD requires response within 30 days
 
 		let validRequests = 0;
@@ -250,10 +287,18 @@ async function validateDataSubjectRights() {
 			const timelineValid = request.timeline <= maxTimelineDays;
 
 			if (typeValid && statusValid && timelineValid) {
-				logSuccess(`Request ${index + 1}: Valid (${request.type}, ${request.status}, ${request.timeline} days)`);
+				logSuccess(
+					`Request ${
+						index + 1
+					}: Valid (${request.type}, ${request.status}, ${request.timeline} days)`,
+				);
 				validRequests++;
 			} else {
-				logError(`Request ${index + 1}: Invalid - type:${typeValid}, status:${statusValid}, timeline:${timelineValid}`);
+				logError(
+					`Request ${
+						index + 1
+					}: Invalid - type:${typeValid}, status:${statusValid}, timeline:${timelineValid}`,
+				);
 			}
 		});
 
@@ -277,13 +322,35 @@ async function validateDataRetention() {
 	try {
 		// Test data retention policy validation
 		const testPolicies = [
-			{ category: "medical_records", retention: "20 years", legal_basis: "legal_obligation" },
-			{ category: "patient_contacts", retention: "5 years", legal_basis: "legitimate_interest" },
-			{ category: "marketing_data", retention: "2 years", legal_basis: "consent" },
-			{ category: "audit_logs", retention: "7 years", legal_basis: "legal_obligation" },
+			{
+				category: "medical_records",
+				retention: "20 years",
+				legal_basis: "legal_obligation",
+			},
+			{
+				category: "patient_contacts",
+				retention: "5 years",
+				legal_basis: "legitimate_interest",
+			},
+			{
+				category: "marketing_data",
+				retention: "2 years",
+				legal_basis: "consent",
+			},
+			{
+				category: "audit_logs",
+				retention: "7 years",
+				legal_basis: "legal_obligation",
+			},
 		];
 
-		const validCategories = ["medical_records", "patient_contacts", "marketing_data", "audit_logs", "financial_data"];
+		const validCategories = [
+			"medical_records",
+			"patient_contacts",
+			"marketing_data",
+			"audit_logs",
+			"financial_data",
+		];
 		const validLegalBases = [
 			"consent",
 			"legitimate_interest",
@@ -298,14 +365,21 @@ async function validateDataRetention() {
 		testPolicies.forEach((policy, index) => {
 			const categoryValid = validCategories.includes(policy.category);
 			const basisValid = validLegalBases.includes(policy.legal_basis);
-			const retentionValid = policy.retention.includes("year") || policy.retention.includes("month");
+			const retentionValid =
+				policy.retention.includes("year") || policy.retention.includes("month");
 
 			if (categoryValid && basisValid && retentionValid) {
-				logSuccess(`Policy ${index + 1}: Valid (${policy.category}, ${policy.retention}, ${policy.legal_basis})`);
+				logSuccess(
+					`Policy ${
+						index + 1
+					}: Valid (${policy.category}, ${policy.retention}, ${policy.legal_basis})`,
+				);
 				validPolicies++;
 			} else {
 				logError(
-					`Policy ${index + 1}: Invalid - category:${categoryValid}, basis:${basisValid}, retention:${retentionValid}`
+					`Policy ${
+						index + 1
+					}: Invalid - category:${categoryValid}, basis:${basisValid}, retention:${retentionValid}`,
 				);
 			}
 		});
@@ -334,8 +408,16 @@ async function validatePrivacyByDesign() {
 				pattern: /privacy.?policy|data.?protection|lgpd.?compliance/i,
 				description: "Privacy policy references",
 			},
-			{ file: "packages", pattern: /encrypt|hash|anonymize|pseudonymize/i, description: "Data protection mechanisms" },
-			{ file: "supabase", pattern: /row.?level.?security|rls|policy/i, description: "Database security policies" },
+			{
+				file: "packages",
+				pattern: /encrypt|hash|anonymize|pseudonymize/i,
+				description: "Data protection mechanisms",
+			},
+			{
+				file: "supabase",
+				pattern: /row.?level.?security|rls|policy/i,
+				description: "Database security policies",
+			},
 		];
 
 		let passedChecks = 0;
@@ -345,10 +427,14 @@ async function validatePrivacyByDesign() {
 				const searchPath = path.resolve(process.cwd(), check.file);
 				if (fs.existsSync(searchPath)) {
 					// Simplified check - in real implementation, would recursively search files
-					logSuccess(`${check.description}: Directory structure found (${check.file})`);
+					logSuccess(
+						`${check.description}: Directory structure found (${check.file})`,
+					);
 					passedChecks++;
 				} else {
-					logWarning(`${check.description}: Directory not found (${check.file})`);
+					logWarning(
+						`${check.description}: Directory not found (${check.file})`,
+					);
 				}
 			} catch (error) {
 				logWarning(`${check.description}: Check failed - ${error.message}`);
@@ -396,7 +482,10 @@ async function validateLGPDConfiguration() {
 
 	try {
 		// Check package.json for LGPD-related dependencies
-		const webPackageJsonPath = path.resolve(process.cwd(), "apps/web/package.json");
+		const webPackageJsonPath = path.resolve(
+			process.cwd(),
+			"apps/web/package.json",
+		);
 		const rootPackageJsonPath = path.resolve(process.cwd(), "package.json");
 
 		let packageJsonPath = webPackageJsonPath;
@@ -413,12 +502,17 @@ async function validateLGPDConfiguration() {
 
 		// Check for required dependencies
 		const hasSupabase =
-			packageJson.dependencies?.["@supabase/supabase-js"] || packageJson.devDependencies?.["@supabase/supabase-js"];
+			packageJson.dependencies?.["@supabase/supabase-js"] ||
+			packageJson.devDependencies?.["@supabase/supabase-js"];
 
 		const hasCrypto = true; // crypto is a Node.js built-in module
 
 		if (hasSupabase) {
-			logSuccess(`Supabase client dependency found in ${packageJsonPath.includes("apps/web") ? "apps/web" : "root"}`);
+			logSuccess(
+				`Supabase client dependency found in ${
+					packageJsonPath.includes("apps/web") ? "apps/web" : "root"
+				}`,
+			);
 		} else {
 			logError("Supabase client dependency missing");
 			return false;
@@ -475,7 +569,11 @@ async function runLGPDValidation() {
 			}
 		} catch (error) {
 			logError(`${validation.name} validation error: ${error.message}`);
-			results.push({ name: validation.name, passed: false, error: error.message });
+			results.push({
+				name: validation.name,
+				passed: false,
+				error: error.message,
+			});
 			allPassed = false;
 		}
 	}
@@ -487,15 +585,21 @@ async function runLGPDValidation() {
 		if (result.passed) {
 			logSuccess(`${result.name}: PASSED`);
 		} else {
-			logError(`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`);
+			logError(
+				`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
+			);
 		}
 	});
 
 	if (allPassed) {
-		log(`\n${colors.bold}${colors.green}🎉 All LGPD compliance validations passed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.green}🎉 All LGPD compliance validations passed!${colors.reset}`,
+		);
 		process.exit(0);
 	} else {
-		log(`\n${colors.bold}${colors.red}💥 Some LGPD compliance validations failed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.red}💥 Some LGPD compliance validations failed!${colors.reset}`,
+		);
 		process.exit(1);
 	}
 }

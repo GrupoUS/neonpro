@@ -6,7 +6,8 @@ Enables BMad orchestrator to manage and execute team workflows.
 
 ## Dynamic Workflow Loading
 
-Read available workflows from current team configuration's `workflows` field. Each team bundle defines its own supported workflows.
+Read available workflows from current team configuration's `workflows` field. Each team bundle
+defines its own supported workflows.
 
 **Key Commands**:
 
@@ -37,7 +38,8 @@ Shows next recommended agent and action.
 
 ## Execution Flow
 
-1. **Starting**: Load definition → Identify first stage → Transition to agent → Guide artifact creation
+1. **Starting**: Load definition → Identify first stage → Transition to agent → Guide artifact
+   creation
 
 2. **Stage Transitions**: Mark complete → Check conditions → Load next agent → Pass artifacts
 
@@ -68,4 +70,5 @@ Handle conditional paths by asking clarifying questions when needed.
 
 ## Agent Integration
 
-Agents should be workflow-aware: know active workflow, their role, access artifacts, understand expected outputs.
+Agents should be workflow-aware: know active workflow, their role, access artifacts, understand
+expected outputs.

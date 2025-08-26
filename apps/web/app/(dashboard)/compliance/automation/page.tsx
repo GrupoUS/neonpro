@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import {
 	Activity,
@@ -23,7 +24,6 @@ import {
 	Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 
 // Healthcare compliance types
 type ComplianceMetric = {
@@ -107,7 +107,9 @@ const CosmicGlowButton = ({
 
 	return (
 		<motion.button
-			className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${sizes[size]} ${className}`}
+			className={`inline-flex items-center gap-2 rounded-lg font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 ${
+				variants[variant]
+			} ${sizes[size]} ${className}`}
 			disabled={disabled}
 			onClick={onClick}
 			whileHover={{ scale: disabled ? 1 : 1.02 }}
@@ -711,7 +713,13 @@ function ActionItemsSection() {
 								<div className="flex items-center space-x-2">
 									{getPriorityIcon(item.priority)}
 									<Badge
-										className={`${item.category === "LGPD" ? "bg-blue-500" : item.category === "ANVISA" ? "bg-green-500" : "bg-purple-500"} text-white text-xs`}
+										className={`${
+											item.category === "LGPD"
+												? "bg-blue-500"
+												: item.category === "ANVISA"
+													? "bg-green-500"
+													: "bg-purple-500"
+										} text-white text-xs`}
 									>
 										{item.category}
 									</Badge>
@@ -853,7 +861,9 @@ function RegulatoryCalendar() {
 								</div>
 								<div className="text-right">
 									<div
-										className={`font-medium text-sm ${daysUntil <= 7 ? "text-red-400" : daysUntil <= 30 ? "text-yellow-400" : "text-green-400"}`}
+										className={`font-medium text-sm ${
+											daysUntil <= 7 ? "text-red-400" : daysUntil <= 30 ? "text-yellow-400" : "text-green-400"
+										}`}
 									>
 										{daysUntil < 0 ? "Vencido" : daysUntil === 0 ? "Hoje" : `${daysUntil} dias`}
 									</div>

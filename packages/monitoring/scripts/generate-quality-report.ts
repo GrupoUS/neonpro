@@ -341,7 +341,9 @@ class QualityReportGenerator {
         <div>Functions: ${coverage.functions}%</div>
         <div>Lines: ${coverage.lines}%</div>
         <div class="progress-bar">
-            <div class="progress-fill ${statusClass}" style="width: ${overallScore}%; background-color: ${statusClass === "pass" ? "#4CAF50" : statusClass === "warn" ? "#FF9800" : "#F44336"};"></div>
+            <div class="progress-fill ${statusClass}" style="width: ${overallScore}%; background-color: ${
+							statusClass === "pass" ? "#4CAF50" : statusClass === "warn" ? "#FF9800" : "#F44336"
+						};"></div>
         </div>
     </div>`;
 	}
@@ -513,7 +515,13 @@ class QualityReportGenerator {
 		const _duration = (Date.now() - this.startTime) / 1000;
 		// biome-ignore lint/suspicious/noConsole: Required for quality report output
 		console.log(
-			`   • Coverage: ${Math.round((this.metrics.coverage?.statements + this.metrics.coverage?.branches + this.metrics.coverage?.functions + this.metrics.coverage?.lines) / 4)}%`,
+			`   • Coverage: ${Math.round(
+				(this.metrics.coverage?.statements +
+					this.metrics.coverage?.branches +
+					this.metrics.coverage?.functions +
+					this.metrics.coverage?.lines) /
+					4,
+			)}%`,
 		);
 		// biome-ignore lint/suspicious/noConsole: Required for quality report output
 		console.log(`   • Security Score: ${this.metrics.security?.securityScore.toFixed(1)}/10`);

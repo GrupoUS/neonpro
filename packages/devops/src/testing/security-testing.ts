@@ -45,29 +45,49 @@ export class SecurityTester {
 
 	private async validateEncryption(): Promise<boolean> {
 		// Check data encryption at rest and in transit
-		const checks = [this.checkDatabaseEncryption(), this.checkTransmissionEncryption(), this.checkKeyManagement()];
+		const checks = [
+			this.checkDatabaseEncryption(),
+			this.checkTransmissionEncryption(),
+			this.checkKeyManagement(),
+		];
 
 		return (await Promise.all(checks)).every(Boolean);
 	}
 
 	private async validateAuthentication(): Promise<boolean> {
 		// Check authentication mechanisms
-		return this.checkMultiFactorAuth() && this.checkPasswordPolicies() && this.checkSessionManagement();
+		return (
+			this.checkMultiFactorAuth() &&
+			this.checkPasswordPolicies() &&
+			this.checkSessionManagement()
+		);
 	}
 
 	private async validateAuthorization(): Promise<boolean> {
 		// Check role-based access control
-		return this.checkRoleBasedAccess() && this.checkPermissionGranularity() && this.checkPrivilegeEscalation();
+		return (
+			this.checkRoleBasedAccess() &&
+			this.checkPermissionGranularity() &&
+			this.checkPrivilegeEscalation()
+		);
 	}
 
 	private async validateDataIntegrity(): Promise<boolean> {
 		// Check data integrity mechanisms
-		return this.checkDataValidation() && this.checkIntegrityChecking() && this.checkBackupIntegrity();
+		return (
+			this.checkDataValidation() &&
+			this.checkIntegrityChecking() &&
+			this.checkBackupIntegrity()
+		);
 	}
 
 	private async validateAuditLogging(): Promise<boolean> {
 		// Check comprehensive audit logging
-		return this.checkAuditCoverage() && this.checkLogIntegrity() && this.checkLogRetention();
+		return (
+			this.checkAuditCoverage() &&
+			this.checkLogIntegrity() &&
+			this.checkLogRetention()
+		);
 	}
 
 	private async runVulnerabilityAssessment(): Promise<boolean> {
@@ -174,7 +194,10 @@ export class SecurityTester {
 	}
 }
 
-export function createSecurityTestSuite(testName: string, testFn: () => void | Promise<void>) {
+export function createSecurityTestSuite(
+	testName: string,
+	testFn: () => void | Promise<void>,
+) {
 	return describe(`Security: ${testName}`, () => {
 		let securityTester: SecurityTester;
 

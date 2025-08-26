@@ -26,7 +26,10 @@ requiredFiles.forEach((file) => {
 const envFile = ".env.local";
 if (fs.existsSync(envFile)) {
 	const envContent = fs.readFileSync(envFile, "utf8");
-	const requiredVars = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"];
+	const requiredVars = [
+		"NEXT_PUBLIC_SUPABASE_URL",
+		"NEXT_PUBLIC_SUPABASE_ANON_KEY",
+	];
 
 	requiredVars.forEach((varName) => {
 		if (envContent.includes(varName)) {
@@ -53,7 +56,10 @@ if (fs.existsSync("vercel.json")) {
 	} catch (_error) {}
 } else {
 }
-const authRoutes = ["app/auth/popup-callback/route.ts", "app/auth/callback/route.ts"];
+const authRoutes = [
+	"app/auth/popup-callback/route.ts",
+	"app/auth/callback/route.ts",
+];
 
 authRoutes.forEach((route) => {
 	if (fs.existsSync(route)) {

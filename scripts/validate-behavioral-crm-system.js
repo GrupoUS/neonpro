@@ -54,14 +54,17 @@ class BehavioralCrmValidator {
 	async testPatientBehaviorAnalysis() {
 		const testPatientId = "test_patient_12345";
 
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/analyze-patient-behavior`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				patientId: testPatientId,
-				includeInsights: true,
-			}),
-		});
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/analyze-patient-behavior`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					patientId: testPatientId,
+					includeInsights: true,
+				}),
+			},
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -133,11 +136,14 @@ class BehavioralCrmValidator {
 			churn_risk_threshold: 0.3,
 		};
 
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/segment-patients`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(segmentationCriteria),
-		});
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/segment-patients`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(segmentationCriteria),
+			},
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -166,7 +172,10 @@ class BehavioralCrmValidator {
 
 		// Verify sorting (highest scores first)
 		for (let i = 1; i < data.segmented_patients.length; i++) {
-			if (data.segmented_patients[i].segment_score > data.segmented_patients[i - 1].segment_score) {
+			if (
+				data.segmented_patients[i].segment_score >
+				data.segmented_patients[i - 1].segment_score
+			) {
 				throw new Error("Segments not properly sorted by score");
 			}
 		}
@@ -174,8 +183,14 @@ class BehavioralCrmValidator {
 		return {
 			total_segments: data.total_segments,
 			criteria_applied: Object.keys(segmentationCriteria).length,
-			highest_score: data.segmented_patients.length > 0 ? data.segmented_patients[0].segment_score : 0,
-			lowest_score: data.segmented_patients.length > 0 ? data.segmented_patients.at(-1).segment_score : 0,
+			highest_score:
+				data.segmented_patients.length > 0
+					? data.segmented_patients[0].segment_score
+					: 0,
+			lowest_score:
+				data.segmented_patients.length > 0
+					? data.segmented_patients.at(-1).segment_score
+					: 0,
 		};
 	}
 
@@ -186,18 +201,21 @@ class BehavioralCrmValidator {
 		const messageTemplate =
 			"Hello {patient_name}, your {loyalty_level} status gives you priority booking at {preferred_time}. You last visited us {last_visit}.";
 
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/generate-personalized-message`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				patientId: testPatientId,
-				messageTemplate,
-				context: {
-					appointment_type: "consultation",
-					urgency: "medium",
-				},
-			}),
-		});
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/generate-personalized-message`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					patientId: testPatientId,
+					messageTemplate,
+					context: {
+						appointment_type: "consultation",
+						urgency: "medium",
+					},
+				}),
+			},
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -206,13 +224,20 @@ class BehavioralCrmValidator {
 		const data = await response.json();
 
 		if (!data.success) {
-			throw new Error(`Personalization failed: ${data.error || "Unknown error"}`);
+			throw new Error(
+				`Personalization failed: ${data.error || "Unknown error"}`,
+			);
 		}
 
 		const personalizedMessage = data.personalized_message;
 
 		// Validate required fields
-		const requiredFields = ["personalized_content", "optimal_channel", "send_time", "personalization_score"];
+		const requiredFields = [
+			"personalized_content",
+			"optimal_channel",
+			"send_time",
+			"personalization_score",
+		];
 		for (const field of requiredFields) {
 			if (personalizedMessage[field] === undefined) {
 				throw new Error(`Missing required field: ${field}`);
@@ -220,13 +245,19 @@ class BehavioralCrmValidator {
 		}
 
 		// Validate personalization score range
-		if (personalizedMessage.personalization_score < 0 || personalizedMessage.personalization_score > 1) {
-			throw new Error(`Personalization score out of range: ${personalizedMessage.personalization_score}`);
+		if (
+			personalizedMessage.personalization_score < 0 ||
+			personalizedMessage.personalization_score > 1
+		) {
+			throw new Error(
+				`Personalization score out of range: ${personalizedMessage.personalization_score}`,
+			);
 		}
 
 		// Check that personalization variables were replaced
 		const hasUnreplacedVariables =
-			personalizedMessage.personalized_content.includes("{") && personalizedMessage.personalized_content.includes("}");
+			personalizedMessage.personalized_content.includes("{") &&
+			personalizedMessage.personalized_content.includes("}");
 		if (hasUnreplacedVariables) {
 		}
 
@@ -281,11 +312,14 @@ class BehavioralCrmValidator {
 			status: "active",
 		};
 
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/create-personalization-rule`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(testRule),
-		});
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/create-personalization-rule`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(testRule),
+			},
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -343,7 +377,8 @@ class BehavioralCrmValidator {
 				{
 					template_id: "template_001",
 					channel: "sms",
-					content: "We miss you! Let's schedule your next appointment with a 15% discount.",
+					content:
+						"We miss you! Let's schedule your next appointment with a 15% discount.",
 					personalization_variables: ["patient_name", "preferred_time"],
 					call_to_action: {
 						text: "Book Now",
@@ -377,11 +412,14 @@ class BehavioralCrmValidator {
 			created_by: "validator_system",
 		};
 
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/create-behavioral-campaign`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(testCampaign),
-		});
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/create-behavioral-campaign`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(testCampaign),
+			},
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -390,7 +428,9 @@ class BehavioralCrmValidator {
 		const data = await response.json();
 
 		if (!data.success) {
-			throw new Error(`Campaign creation failed: ${data.error || "Unknown error"}`);
+			throw new Error(
+				`Campaign creation failed: ${data.error || "Unknown error"}`,
+			);
 		}
 
 		if (!data.campaign_id) {
@@ -417,15 +457,18 @@ class BehavioralCrmValidator {
 		const campaignResult = await this.testBehavioralCampaignCreation();
 		const testPatientId = "test_patient_campaign_exec";
 
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/execute-campaign-step`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				campaignId: campaignResult.campaign_id,
-				stepId: "step_001",
-				patientId: testPatientId,
-			}),
-		});
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/execute-campaign-step`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					campaignId: campaignResult.campaign_id,
+					stepId: "step_001",
+					patientId: testPatientId,
+				}),
+			},
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -434,7 +477,9 @@ class BehavioralCrmValidator {
 		const data = await response.json();
 
 		if (!data.success) {
-			throw new Error(`Campaign step execution failed: ${data.error || "Unknown error"}`);
+			throw new Error(
+				`Campaign step execution failed: ${data.error || "Unknown error"}`,
+			);
 		}
 
 		if (typeof data.executed !== "boolean") {
@@ -452,7 +497,9 @@ class BehavioralCrmValidator {
 	// Dashboard Analytics Tests
 
 	async testDashboardDataRetrieval() {
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/dashboard-data`);
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/dashboard-data`,
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -461,13 +508,20 @@ class BehavioralCrmValidator {
 		const data = await response.json();
 
 		if (!data.success) {
-			throw new Error(`Dashboard data fetch failed: ${data.error || "Unknown error"}`);
+			throw new Error(
+				`Dashboard data fetch failed: ${data.error || "Unknown error"}`,
+			);
 		}
 
 		const dashboardData = data.dashboard_data;
 
 		// Validate overview metrics
-		const requiredMetrics = ["total_patients", "active_patients", "new_patients_this_month", "churn_risk_patients"];
+		const requiredMetrics = [
+			"total_patients",
+			"active_patients",
+			"new_patients_this_month",
+			"churn_risk_patients",
+		];
 		for (const metric of requiredMetrics) {
 			if (typeof dashboardData.overview_metrics[metric] !== "number") {
 				throw new Error(`Missing or invalid metric: ${metric}`);
@@ -494,13 +548,17 @@ class BehavioralCrmValidator {
 			active_patients: dashboardData.overview_metrics.active_patients,
 			behavioral_segments: dashboardData.behavioral_segments.length,
 			active_campaigns: dashboardData.campaign_performance.length,
-			churn_predictions: dashboardData.predictive_analytics.churn_predictions.length,
-			revenue_forecast_30d: dashboardData.predictive_analytics.revenue_forecast.next_30_days,
+			churn_predictions:
+				dashboardData.predictive_analytics.churn_predictions.length,
+			revenue_forecast_30d:
+				dashboardData.predictive_analytics.revenue_forecast.next_30_days,
 		};
 	}
 
 	async testBehavioralInsights() {
-		const response = await fetch(`${this.apiBaseUrl}/behavioral-crm/behavioral-insights`);
+		const response = await fetch(
+			`${this.apiBaseUrl}/behavioral-crm/behavioral-insights`,
+		);
 
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -509,7 +567,9 @@ class BehavioralCrmValidator {
 		const data = await response.json();
 
 		if (!data.success) {
-			throw new Error(`Insights generation failed: ${data.error || "Unknown error"}`);
+			throw new Error(
+				`Insights generation failed: ${data.error || "Unknown error"}`,
+			);
 		}
 
 		if (!Array.isArray(data.insights)) {
@@ -533,7 +593,12 @@ class BehavioralCrmValidator {
 			}
 
 			// Validate insight types
-			const validTypes = ["pattern_discovery", "anomaly_detection", "conversion_optimization", "churn_prediction"];
+			const validTypes = [
+				"pattern_discovery",
+				"anomaly_detection",
+				"conversion_optimization",
+				"churn_prediction",
+			];
 			if (!validTypes.includes(insight.insight_type)) {
 				throw new Error(`Invalid insight type: ${insight.insight_type}`);
 			}
@@ -542,9 +607,14 @@ class BehavioralCrmValidator {
 		return {
 			insights_count: data.insights.length,
 			insight_types: data.insights.map((i) => i.insight_type),
-			avg_findings_per_insight: data.insights.reduce((sum, i) => sum + i.key_findings.length, 0) / data.insights.length,
+			avg_findings_per_insight:
+				data.insights.reduce((sum, i) => sum + i.key_findings.length, 0) /
+				data.insights.length,
 			avg_recommendations_per_insight:
-				data.insights.reduce((sum, i) => sum + i.actionable_recommendations.length, 0) / data.insights.length,
+				data.insights.reduce(
+					(sum, i) => sum + i.actionable_recommendations.length,
+					0,
+				) / data.insights.length,
 		};
 	}
 
@@ -574,7 +644,9 @@ class BehavioralCrmValidator {
 
 		for (const endpoint of requiredEndpoints) {
 			if (endpoints[endpoint] !== "operational") {
-				throw new Error(`Endpoint ${endpoint} is not operational: ${endpoints[endpoint]}`);
+				throw new Error(
+					`Endpoint ${endpoint} is not operational: ${endpoints[endpoint]}`,
+				);
 			}
 		}
 
@@ -582,7 +654,9 @@ class BehavioralCrmValidator {
 			status: data.status,
 			service: data.service,
 			version: data.version,
-			operational_endpoints: Object.keys(endpoints).filter((k) => endpoints[k] === "operational").length,
+			operational_endpoints: Object.keys(endpoints).filter(
+				(k) => endpoints[k] === "operational",
+			).length,
 		};
 	}
 
@@ -602,7 +676,13 @@ class BehavioralCrmValidator {
 		const metrics = data.metrics;
 
 		// Validate metrics structure
-		if (!(metrics.api_requests && metrics.performance_metrics && metrics.business_metrics)) {
+		if (
+			!(
+				metrics.api_requests &&
+				metrics.performance_metrics &&
+				metrics.business_metrics
+			)
+		) {
 			throw new Error("Missing required metrics categories");
 		}
 
@@ -619,8 +699,16 @@ class BehavioralCrmValidator {
 	async testResponseTimePerformance() {
 		const endpoints = [
 			{ url: "/behavioral-crm/health", method: "GET", expectedMaxTime: 100 },
-			{ url: "/behavioral-crm/dashboard-data", method: "GET", expectedMaxTime: 500 },
-			{ url: "/behavioral-crm/behavioral-insights", method: "GET", expectedMaxTime: 1000 },
+			{
+				url: "/behavioral-crm/dashboard-data",
+				method: "GET",
+				expectedMaxTime: 500,
+			},
+			{
+				url: "/behavioral-crm/behavioral-insights",
+				method: "GET",
+				expectedMaxTime: 1000,
+			},
 		];
 
 		const results = [];
@@ -647,7 +735,9 @@ class BehavioralCrmValidator {
 			});
 		}
 
-		const avgResponseTime = Math.round(results.reduce((sum, r) => sum + r.response_time_ms, 0) / results.length);
+		const avgResponseTime = Math.round(
+			results.reduce((sum, r) => sum + r.response_time_ms, 0) / results.length,
+		);
 		const allWithinLimits = results.every((r) => r.performance_ok);
 
 		if (!allWithinLimits) {
@@ -664,29 +754,61 @@ class BehavioralCrmValidator {
 	// Main validation runner
 
 	async runAllValidations() {
-		await this.runTest("Patient Behavior Analysis", () => this.testPatientBehaviorAnalysis(), "behavioral_analytics");
-		await this.runTest("Patient Segmentation", () => this.testPatientSegmentation(), "behavioral_analytics");
+		await this.runTest(
+			"Patient Behavior Analysis",
+			() => this.testPatientBehaviorAnalysis(),
+			"behavioral_analytics",
+		);
+		await this.runTest(
+			"Patient Segmentation",
+			() => this.testPatientSegmentation(),
+			"behavioral_analytics",
+		);
 		await this.runTest(
 			"Personalized Message Generation",
 			() => this.testPersonalizedMessageGeneration(),
-			"personalization_engine"
+			"personalization_engine",
 		);
 		await this.runTest(
 			"Personalization Rule Creation",
 			() => this.testPersonalizationRuleCreation(),
-			"personalization_engine"
+			"personalization_engine",
 		);
 		await this.runTest(
 			"Behavioral Campaign Creation",
 			() => this.testBehavioralCampaignCreation(),
-			"campaign_automation"
+			"campaign_automation",
 		);
-		await this.runTest("Campaign Step Execution", () => this.testCampaignStepExecution(), "campaign_automation");
-		await this.runTest("Dashboard Data Retrieval", () => this.testDashboardDataRetrieval(), "dashboard_analytics");
-		await this.runTest("Behavioral Insights Generation", () => this.testBehavioralInsights(), "dashboard_analytics");
-		await this.runTest("API Health Check", () => this.testApiHealth(), "api_endpoints");
-		await this.runTest("API Metrics", () => this.testApiMetrics(), "api_endpoints");
-		await this.runTest("Response Time Performance", () => this.testResponseTimePerformance(), "api_endpoints");
+		await this.runTest(
+			"Campaign Step Execution",
+			() => this.testCampaignStepExecution(),
+			"campaign_automation",
+		);
+		await this.runTest(
+			"Dashboard Data Retrieval",
+			() => this.testDashboardDataRetrieval(),
+			"dashboard_analytics",
+		);
+		await this.runTest(
+			"Behavioral Insights Generation",
+			() => this.testBehavioralInsights(),
+			"dashboard_analytics",
+		);
+		await this.runTest(
+			"API Health Check",
+			() => this.testApiHealth(),
+			"api_endpoints",
+		);
+		await this.runTest(
+			"API Metrics",
+			() => this.testApiMetrics(),
+			"api_endpoints",
+		);
+		await this.runTest(
+			"Response Time Performance",
+			() => this.testResponseTimePerformance(),
+			"api_endpoints",
+		);
 
 		// Generate final report
 		this.generateValidationReport();
@@ -701,18 +823,24 @@ class BehavioralCrmValidator {
 
 		for (const [_category, results] of Object.entries(this.testResults)) {
 			const categoryTotal = results.passed + results.failed;
-			const _successRate = categoryTotal > 0 ? Math.round((results.passed / categoryTotal) * 100) : 0;
+			const _successRate =
+				categoryTotal > 0
+					? Math.round((results.passed / categoryTotal) * 100)
+					: 0;
 
 			totalPassed += results.passed;
 			totalFailed += results.failed;
 
 			if (results.failed > 0) {
-				results.tests.filter((t) => t.status === "FAILED").forEach((_test) => {});
+				results.tests
+					.filter((t) => t.status === "FAILED")
+					.forEach((_test) => {});
 			}
 		}
 
 		const overallTotal = totalPassed + totalFailed;
-		const overallSuccessRate = overallTotal > 0 ? Math.round((totalPassed / overallTotal) * 100) : 0;
+		const overallSuccessRate =
+			overallTotal > 0 ? Math.round((totalPassed / overallTotal) * 100) : 0;
 
 		if (overallSuccessRate >= 90) {
 		} else if (overallSuccessRate >= 70) {

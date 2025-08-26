@@ -1,13 +1,12 @@
 # 🎯 CATÁLOGO DE ALVOS PARA REMOÇÃO - NeonPro Cleanup
 
-**Data:** 2025-08-22
-**FASE 2:** Identificação completa de alvos por categoria de risco
+**Data:** 2025-08-22 **FASE 2:** Identificação completa de alvos por categoria de risco
 
 ## 📋 CATEGORIAS DE LIMPEZA
 
 ### **1. TEMPORÁRIOS (RISCO: BAIXO) ⭐**
-**Descrição:** Arquivos/diretórios temporários seguros para remoção
-**Tempo estimado:** 15-30min
+
+**Descrição:** Arquivos/diretórios temporários seguros para remoção **Tempo estimado:** 15-30min
 
 ```bash
 # Diretórios de Cache
@@ -27,8 +26,8 @@ temp_read_certification.bat
 ```
 
 ### **2. LOGS E REPORTS (RISCO: BAIXO) ⭐**
-**Descrição:** Logs e relatórios de testes/builds anteriores
-**Tempo estimado:** 10-20min
+
+**Descrição:** Logs e relatórios de testes/builds anteriores **Tempo estimado:** 10-20min
 
 ```bash
 # Diretórios de Reports (se existirem)
@@ -47,8 +46,8 @@ logs/*.log               # Diretório logs está vazio
 ```
 
 ### **3. BACKUPS (RISCO: MÉDIO) ⭐⭐**
-**Descrição:** Arquivos de backup antigos e desnecessários
-**Tempo estimado:** 30-60min
+
+**Descrição:** Arquivos de backup antigos e desnecessários **Tempo estimado:** 30-60min
 
 ```bash
 # Arquivos .backup identificados
@@ -67,8 +66,9 @@ backups/                                    # Todo o diretório pode ser removid
 ```
 
 ### **4. ARQUIVOS DE TESTE TEMPORÁRIOS (RISCO: MÉDIO-ALTO) ⭐⭐⭐**
-**Descrição:** Scripts de teste/validação não integrados ao suite principal
-**Tempo estimado:** 20-40min
+
+**Descrição:** Scripts de teste/validação não integrados ao suite principal **Tempo estimado:**
+20-40min
 
 ```bash
 # Scripts de teste temporários
@@ -85,8 +85,8 @@ backend-hono.txt
 ```
 
 ### **5. ARQUIVOS DESABILITADOS (RISCO: BAIXO) ⭐**
-**Descrição:** Arquivos explicitamente desabilitados
-**Tempo estimado:** 5-10min
+
+**Descrição:** Arquivos explicitamente desabilitados **Tempo estimado:** 5-10min
 
 ```bash
 # Arquivos .disabled
@@ -96,8 +96,9 @@ packages/ui/vitest.config.mjs.disabled
 ```
 
 ### **6. ARQUIVOS COMPILADOS ÓRFÃOS (RISCO: ALTO) ⭐⭐⭐⭐**
-**Descrição:** Arquivos .js/.d.ts em projetos TypeScript (VALIDAÇÃO CRÍTICA)
-**Tempo estimado:** 45-90min
+
+**Descrição:** Arquivos .js/.d.ts em projetos TypeScript (VALIDAÇÃO CRÍTICA) **Tempo estimado:**
+45-90min
 
 ```bash
 # ATENÇÃO: Verificar se são artefatos de build ou código fonte!
@@ -115,15 +116,15 @@ packages/types/src/**/*.d.ts
 
 ## 📊 ESTATÍSTICAS ESTIMADAS
 
-| Categoria | Arquivos | Tamanho Est. | Risco | Tempo |
-|-----------|----------|--------------|-------|-------|
-| Temporários | ~50 | 100-500MB | Baixo | 30min |
-| Logs/Reports | ~20 | 50-200MB | Baixo | 20min |
-| Backups | ~15 + dir | 500MB-2GB | Médio | 60min |
-| Testes Temp | ~10 | 1-10MB | Médio-Alto | 40min |
-| Desabilitados | ~5 | <1MB | Baixo | 10min |
-| Compilados | ~100+ | 10-50MB | Alto | 90min |
-| **TOTAL** | **~200+** | **1-3GB** | **Variado** | **4-5h** |
+| Categoria     | Arquivos  | Tamanho Est. | Risco       | Tempo    |
+| ------------- | --------- | ------------ | ----------- | -------- |
+| Temporários   | ~50       | 100-500MB    | Baixo       | 30min    |
+| Logs/Reports  | ~20       | 50-200MB     | Baixo       | 20min    |
+| Backups       | ~15 + dir | 500MB-2GB    | Médio       | 60min    |
+| Testes Temp   | ~10       | 1-10MB       | Médio-Alto  | 40min    |
+| Desabilitados | ~5        | <1MB         | Baixo       | 10min    |
+| Compilados    | ~100+     | 10-50MB      | Alto        | 90min    |
+| **TOTAL**     | **~200+** | **1-3GB**    | **Variado** | **4-5h** |
 
 ## 🚀 ORDEM DE EXECUÇÃO RECOMENDADA
 

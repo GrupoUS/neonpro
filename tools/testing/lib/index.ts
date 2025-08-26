@@ -14,28 +14,28 @@ export * from "./auth/webauthn-client";
 export * from "./auth/webauthn-service";
 // Re-export specific instances for compatibility
 export {
-	mockWebAuthnService as webAuthnService,
 	mockWebAuthnService,
 	mockWebAuthnService as WebAuthnService,
+	mockWebAuthnService as webAuthnService,
 } from "./auth/webauthn-service";
 
 // Cache Services
 export * from "./cache/cache-service";
 export {
-	mockCacheService as cacheService,
 	mockCacheService,
+	mockCacheService as cacheService,
 } from "./cache/cache-service";
 // Monitoring Services
 export * from "./monitoring/monitoring-service";
 export { mockMonitoringService as MonitoringService } from "./monitoring/monitoring-service";
 export * from "./monitoring/performance/performance-service";
 export {
-	mockPerformanceService as performanceService,
 	mockPerformanceService,
+	mockPerformanceService as performanceService,
 } from "./monitoring/performance/performance-service";
 // Notification Services
 export * from "./notifications/notification-service";
 export {
-	mockNotificationService as notificationService,
 	mockNotificationService,
+	mockNotificationService as notificationService,
 } from "./notifications/notification-service";

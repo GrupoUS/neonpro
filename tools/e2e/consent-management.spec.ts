@@ -28,23 +28,37 @@ test.describe("Consent Management - LGPD Data Consent", () => {
 
 	test("should display consent management interface", async ({ page }) => {
 		// Check consent page title
-		await expect(page.locator("h1, .consent-title")).toContainText(/Consentimento|Consent|Termos/);
+		await expect(page.locator("h1, .consent-title")).toContainText(
+			/Consentimento|Consent|Termos/,
+		);
 
 		// Should display LGPD information
-		await expect(page.locator("text=LGPD").or(page.locator("text=Lei Geral de Proteção de Dados"))).toBeVisible();
+		await expect(
+			page
+				.locator("text=LGPD")
+				.or(page.locator("text=Lei Geral de Proteção de Dados")),
+		).toBeVisible();
 
 		// Should show consent categories
 		await expect(
-			page.locator('[data-testid="consent-categories"]').or(page.locator(".consent-categories"))
+			page
+				.locator('[data-testid="consent-categories"]')
+				.or(page.locator(".consent-categories")),
 		).toBeVisible();
 
 		// Should display patient selection
-		await expect(page.locator('[data-testid="patient-selector"]').or(page.locator(".patient-selector"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="patient-selector"]')
+				.or(page.locator(".patient-selector")),
+		).toBeVisible();
 	});
 
 	test("should create data processing consent", async ({ page }) => {
 		// Select patient
-		const patientSelect = page.locator('[data-testid="patient-select"]').or(page.locator('select[name="patient"]'));
+		const patientSelect = page
+			.locator('[data-testid="patient-select"]')
+			.or(page.locator('select[name="patient"]'));
 		if (await patientSelect.isVisible()) {
 			await patientSelect.selectOption({ index: 1 });
 		}
@@ -57,19 +71,25 @@ test.describe("Consent Management - LGPD Data Consent", () => {
 		await createConsentButton.click();
 
 		// Select data processing consent type
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("data-processing");
 
 		// Should display LGPD data processing form
 		await expect(
-			page.locator('[data-testid="data-processing-form"]').or(page.locator(".data-processing-form"))
+			page
+				.locator('[data-testid="data-processing-form"]')
+				.or(page.locator(".data-processing-form")),
 		).toBeVisible();
 
 		// Fill consent details
 		const purposeField = page
 			.locator('[data-testid="processing-purpose"]')
 			.or(page.locator('textarea[name="purpose"]'));
-		await purposeField.fill("Processamento de dados para prestação de serviços médicos e acompanhamento de tratamento");
+		await purposeField.fill(
+			"Processamento de dados para prestação de serviços médicos e acompanhamento de tratamento",
+		);
 
 		// Select data categories
 		const dataCategories = page
@@ -91,32 +111,48 @@ test.describe("Consent Management - LGPD Data Consent", () => {
 		await page.click('[data-testid="save-consent"]');
 
 		// Should show success message
-		await expect(page.locator("text=criado").or(page.locator(".success"))).toBeVisible();
+		await expect(
+			page.locator("text=criado").or(page.locator(".success")),
+		).toBeVisible();
 	});
 
 	test("should display data subject rights", async ({ page }) => {
 		// Should show LGPD rights information
-		const rightsSection = page.locator('[data-testid="data-rights"]').or(page.locator("text=Direitos do Titular"));
+		const rightsSection = page
+			.locator('[data-testid="data-rights"]')
+			.or(page.locator("text=Direitos do Titular"));
 		if (await rightsSection.isVisible()) {
 			await expect(rightsSection).toBeVisible();
 
 			// Should list specific rights
 			await expect(
-				page.locator("text=acesso").or(page.locator("text=correção")).or(page.locator("text=exclusão"))
+				page
+					.locator("text=acesso")
+					.or(page.locator("text=correção"))
+					.or(page.locator("text=exclusão")),
 			).toBeVisible();
-			await expect(page.locator("text=portabilidade").or(page.locator("text=oposição"))).toBeVisible();
+			await expect(
+				page.locator("text=portabilidade").or(page.locator("text=oposição")),
+			).toBeVisible();
 		}
 	});
 
 	test("should manage consent withdrawal", async ({ page }) => {
 		// Look for existing consent
-		const existingConsent = page.locator('[data-testid="consent-item"]').or(page.locator(".consent-item")).first();
+		const existingConsent = page
+			.locator('[data-testid="consent-item"]')
+			.or(page.locator(".consent-item"))
+			.first();
 
 		if (await existingConsent.isVisible()) {
 			await existingConsent.click();
 
 			// Should show consent details
-			await expect(page.locator('[data-testid="consent-details"]').or(page.locator(".consent-details"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="consent-details"]')
+					.or(page.locator(".consent-details")),
+			).toBeVisible();
 
 			// Should have withdraw option
 			const withdrawButton = page
@@ -128,7 +164,9 @@ test.describe("Consent Management - LGPD Data Consent", () => {
 
 				// Should show withdrawal confirmation
 				await expect(
-					page.locator('[data-testid="withdraw-confirmation"]').or(page.locator(".withdraw-confirmation"))
+					page
+						.locator('[data-testid="withdraw-confirmation"]')
+						.or(page.locator(".withdraw-confirmation")),
 				).toBeVisible();
 
 				// Confirm withdrawal
@@ -139,14 +177,18 @@ test.describe("Consent Management - LGPD Data Consent", () => {
 				await confirmWithdraw.click();
 
 				// Should show withdrawal success
-				await expect(page.locator("text=revogado").or(page.locator("text=retirado"))).toBeVisible();
+				await expect(
+					page.locator("text=revogado").or(page.locator("text=retirado")),
+				).toBeVisible();
 			}
 		}
 	});
 
 	test("should validate consent expiration", async ({ page }) => {
 		// Look for expired consent
-		const expiredConsent = page.locator('[data-testid="expired-consent"]').or(page.locator(".expired-consent"));
+		const expiredConsent = page
+			.locator('[data-testid="expired-consent"]')
+			.or(page.locator(".expired-consent"));
 
 		if (await expiredConsent.isVisible()) {
 			await expect(expiredConsent).toBeVisible();
@@ -179,7 +221,9 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 
 	test("should create medical procedure consent", async ({ page }) => {
 		// Select patient
-		const patientSelect = page.locator('[data-testid="patient-select"]').or(page.locator('select[name="patient"]'));
+		const patientSelect = page
+			.locator('[data-testid="patient-select"]')
+			.or(page.locator('select[name="patient"]'));
 		if (await patientSelect.isVisible()) {
 			await patientSelect.selectOption({ index: 1 });
 		}
@@ -192,12 +236,16 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 		await createConsentButton.click();
 
 		// Select medical procedure consent
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("medical-procedure");
 
 		// Should display medical procedure form
 		await expect(
-			page.locator('[data-testid="medical-procedure-form"]').or(page.locator(".medical-procedure-form"))
+			page
+				.locator('[data-testid="medical-procedure-form"]')
+				.or(page.locator(".medical-procedure-form")),
 		).toBeVisible();
 
 		// Fill procedure details
@@ -211,19 +259,23 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 			.locator('[data-testid="procedure-description"]')
 			.or(page.locator('textarea[name="procedureDescription"]'));
 		await procedureDescription.fill(
-			"Procedimento estético para preenchimento facial com ácido hialurônico para redução de rugas e linhas de expressão."
+			"Procedimento estético para preenchimento facial com ácido hialurônico para redução de rugas e linhas de expressão.",
 		);
 
 		// Add risks and complications
-		const risksField = page.locator('[data-testid="procedure-risks"]').or(page.locator('textarea[name="risks"]'));
-		await risksField.fill("Possíveis riscos incluem: edema, hematoma, reações alérgicas, assimetria temporária.");
+		const risksField = page
+			.locator('[data-testid="procedure-risks"]')
+			.or(page.locator('textarea[name="risks"]'));
+		await risksField.fill(
+			"Possíveis riscos incluem: edema, hematoma, reações alérgicas, assimetria temporária.",
+		);
 
 		// Add expected results
 		const expectedResults = page
 			.locator('[data-testid="expected-results"]')
 			.or(page.locator('textarea[name="expectedResults"]'));
 		await expectedResults.fill(
-			"Redução visível de rugas e linhas de expressão, com resultados durando de 6 a 12 meses."
+			"Redução visível de rugas e linhas de expressão, com resultados durando de 6 a 12 meses.",
 		);
 
 		// Set procedure date
@@ -238,7 +290,9 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 		await page.click('[data-testid="save-consent"]');
 
 		// Should show success message
-		await expect(page.locator("text=criado").or(page.locator(".success"))).toBeVisible();
+		await expect(
+			page.locator("text=criado").or(page.locator(".success")),
+		).toBeVisible();
 	});
 
 	test("should require informed consent elements", async ({ page }) => {
@@ -249,7 +303,9 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 			.first();
 		await createConsentButton.click();
 
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("medical-procedure");
 
 		// Should require all informed consent elements
@@ -264,10 +320,14 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 		await page.click('[data-testid="save-consent"]');
 
 		// Should show validation errors
-		await expect(page.locator(".error").or(page.locator("text=obrigatório"))).toBeVisible();
+		await expect(
+			page.locator(".error").or(page.locator("text=obrigatório")),
+		).toBeVisible();
 	});
 
-	test("should include ANVISA compliance for aesthetic procedures", async ({ page }) => {
+	test("should include ANVISA compliance for aesthetic procedures", async ({
+		page,
+	}) => {
 		// Create aesthetic procedure consent
 		const createConsentButton = page
 			.locator('[data-testid="create-consent"]')
@@ -275,7 +335,9 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 			.first();
 		await createConsentButton.click();
 
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("aesthetic-procedure");
 
 		// Should display ANVISA compliance information
@@ -314,12 +376,16 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
 			await existingConsent.click();
 
 			// Should show version history
-			const versionHistory = page.locator('[data-testid="version-history"]').or(page.locator(".version-history"));
+			const versionHistory = page
+				.locator('[data-testid="version-history"]')
+				.or(page.locator(".version-history"));
 			if (await versionHistory.isVisible()) {
 				await expect(versionHistory).toBeVisible();
 
 				// Should display version numbers
-				await expect(page.locator("text=Versão").or(page.locator("text=Version"))).toBeVisible();
+				await expect(
+					page.locator("text=Versão").or(page.locator("text=Version")),
+				).toBeVisible();
 			}
 
 			// Should have option to create new version
@@ -354,7 +420,9 @@ test.describe("Consent Management - Digital Signatures", () => {
 		await createConsentButton.click();
 
 		// Fill basic consent information
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("medical-procedure");
 
 		const procedureName = page
@@ -363,12 +431,16 @@ test.describe("Consent Management - Digital Signatures", () => {
 		await procedureName.fill("Consulta Médica");
 
 		// Navigate to signature section
-		const signatureSection = page.locator('[data-testid="signature-section"]').or(page.locator(".signature-section"));
+		const signatureSection = page
+			.locator('[data-testid="signature-section"]')
+			.or(page.locator(".signature-section"));
 		if (await signatureSection.isVisible()) {
 			await expect(signatureSection).toBeVisible();
 
 			// Should have signature canvas
-			const signatureCanvas = page.locator('[data-testid="signature-canvas"]').or(page.locator("canvas"));
+			const signatureCanvas = page
+				.locator('[data-testid="signature-canvas"]')
+				.or(page.locator("canvas"));
 			if (await signatureCanvas.isVisible()) {
 				await expect(signatureCanvas).toBeVisible();
 
@@ -401,7 +473,9 @@ test.describe("Consent Management - Digital Signatures", () => {
 			.first();
 		await createConsentButton.click();
 
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("medical-procedure");
 
 		// Fill required fields but skip signature
@@ -414,13 +488,17 @@ test.describe("Consent Management - Digital Signatures", () => {
 		await page.click('[data-testid="save-consent"]');
 
 		// Should show signature validation error
-		const signatureError = page.locator("text=assinatura").or(page.locator("text=signature required"));
+		const signatureError = page
+			.locator("text=assinatura")
+			.or(page.locator("text=signature required"));
 		if (await signatureError.isVisible()) {
 			await expect(signatureError).toBeVisible();
 		}
 	});
 
-	test("should capture witness signature for critical procedures", async ({ page }) => {
+	test("should capture witness signature for critical procedures", async ({
+		page,
+	}) => {
 		// Create high-risk procedure consent
 		const createConsentButton = page
 			.locator('[data-testid="create-consent"]')
@@ -428,22 +506,30 @@ test.describe("Consent Management - Digital Signatures", () => {
 			.first();
 		await createConsentButton.click();
 
-		const consentType = page.locator('[data-testid="consent-type"]').or(page.locator('select[name="consentType"]'));
+		const consentType = page
+			.locator('[data-testid="consent-type"]')
+			.or(page.locator('select[name="consentType"]'));
 		await consentType.selectOption("high-risk-procedure");
 
 		// Should show witness signature section
-		const witnessSection = page.locator('[data-testid="witness-signature"]').or(page.locator(".witness-signature"));
+		const witnessSection = page
+			.locator('[data-testid="witness-signature"]')
+			.or(page.locator(".witness-signature"));
 		if (await witnessSection.isVisible()) {
 			await expect(witnessSection).toBeVisible();
 
 			// Should have witness information fields
-			const witnessName = page.locator('[data-testid="witness-name"]').or(page.locator('input[name="witnessName"]'));
+			const witnessName = page
+				.locator('[data-testid="witness-name"]')
+				.or(page.locator('input[name="witnessName"]'));
 			if (await witnessName.isVisible()) {
 				await witnessName.fill("Dr. João Santos");
 			}
 
 			// Should have witness signature canvas
-			const witnessCanvas = page.locator('[data-testid="witness-signature-canvas"]');
+			const witnessCanvas = page.locator(
+				'[data-testid="witness-signature-canvas"]',
+			);
 			if (await witnessCanvas.isVisible()) {
 				await expect(witnessCanvas).toBeVisible();
 			}
@@ -452,7 +538,10 @@ test.describe("Consent Management - Digital Signatures", () => {
 
 	test("should generate signed consent document", async ({ page }) => {
 		// Look for completed consent with signature
-		const signedConsent = page.locator('[data-testid="signed-consent"]').or(page.locator(".signed-consent")).first();
+		const signedConsent = page
+			.locator('[data-testid="signed-consent"]')
+			.or(page.locator(".signed-consent"))
+			.first();
 
 		if (await signedConsent.isVisible()) {
 			await signedConsent.click();
@@ -477,7 +566,9 @@ test.describe("Consent Management - Digital Signatures", () => {
 			}
 
 			// Should show signature validation status
-			const signatureStatus = page.locator('[data-testid="signature-status"]').or(page.locator(".signature-status"));
+			const signatureStatus = page
+				.locator('[data-testid="signature-status"]')
+				.or(page.locator(".signature-status"));
 			if (await signatureStatus.isVisible()) {
 				await expect(signatureStatus).toBeVisible();
 				await expect(signatureStatus).toContainText(/válida|valid/);
@@ -496,7 +587,10 @@ test.describe("Consent Management - Audit & Compliance", () => {
 		await page.goto("/consent");
 
 		// Navigate to audit section
-		const auditTab = page.locator('[data-testid="audit-tab"]').or(page.locator('button:has-text("Auditoria")')).first();
+		const auditTab = page
+			.locator('[data-testid="audit-tab"]')
+			.or(page.locator('button:has-text("Auditoria")'))
+			.first();
 		if (await auditTab.isVisible()) {
 			await auditTab.click();
 		}
@@ -506,12 +600,16 @@ test.describe("Consent Management - Audit & Compliance", () => {
 
 	test("should display consent audit trail", async ({ page }) => {
 		// Should show audit log
-		const auditLog = page.locator('[data-testid="audit-log"]').or(page.locator(".audit-log"));
+		const auditLog = page
+			.locator('[data-testid="audit-log"]')
+			.or(page.locator(".audit-log"));
 		if (await auditLog.isVisible()) {
 			await expect(auditLog).toBeVisible();
 
 			// Should display audit entries
-			const auditEntries = page.locator('[data-testid="audit-entry"]').or(page.locator(".audit-entry"));
+			const auditEntries = page
+				.locator('[data-testid="audit-entry"]')
+				.or(page.locator(".audit-entry"));
 			if ((await auditEntries.count()) > 0) {
 				await expect(auditEntries.first()).toBeVisible();
 
@@ -539,7 +637,9 @@ test.describe("Consent Management - Audit & Compliance", () => {
 				await expect(modificationHistory).toBeVisible();
 
 				// Should show what was changed
-				await expect(page.locator("text=alterado").or(page.locator("text=modificado"))).toBeVisible();
+				await expect(
+					page.locator("text=alterado").or(page.locator("text=modificado")),
+				).toBeVisible();
 			}
 		}
 	});
@@ -555,12 +655,16 @@ test.describe("Consent Management - Audit & Compliance", () => {
 			await generateReportButton.click();
 
 			// Should show report options
-			const reportOptions = page.locator('[data-testid="report-options"]').or(page.locator(".report-options"));
+			const reportOptions = page
+				.locator('[data-testid="report-options"]')
+				.or(page.locator(".report-options"));
 			if (await reportOptions.isVisible()) {
 				await expect(reportOptions).toBeVisible();
 
 				// Should have date range selection
-				const dateRange = page.locator('[data-testid="date-range"]').or(page.locator(".date-range"));
+				const dateRange = page
+					.locator('[data-testid="date-range"]')
+					.or(page.locator(".date-range"));
 				if (await dateRange.isVisible()) {
 					await expect(dateRange).toBeVisible();
 				}
@@ -586,12 +690,16 @@ test.describe("Consent Management - Audit & Compliance", () => {
 		}
 
 		// Should identify consents nearing expiration
-		const expiringConsents = page.locator('[data-testid="expiring-consents"]').or(page.locator(".expiring-consents"));
+		const expiringConsents = page
+			.locator('[data-testid="expiring-consents"]')
+			.or(page.locator(".expiring-consents"));
 		if (await expiringConsents.isVisible()) {
 			await expect(expiringConsents).toBeVisible();
 
 			// Should show warning for expiring consents
-			await expect(page.locator("text=expira").or(page.locator("text=vencimento"))).toBeVisible();
+			await expect(
+				page.locator("text=expira").or(page.locator("text=vencimento")),
+			).toBeVisible();
 		}
 	});
 });
@@ -630,7 +738,9 @@ test.describe("Consent Management - Accessibility & Performance", () => {
 		await page.goto("/consent");
 
 		// Check for form accessibility
-		const consentForm = page.locator('[data-testid="consent-form"]').or(page.locator(".consent-form"));
+		const consentForm = page
+			.locator('[data-testid="consent-form"]')
+			.or(page.locator(".consent-form"));
 		if (await consentForm.isVisible()) {
 			// Should have proper form structure
 			const formFields = page.locator("input, select, textarea");
@@ -640,7 +750,11 @@ test.describe("Consent Management - Accessibility & Performance", () => {
 				// Check first field has proper labeling
 				const firstField = formFields.first();
 				const hasLabel = await firstField.evaluate((el) => {
-					return el.labels?.length > 0 || el.getAttribute("aria-label") || el.getAttribute("aria-labelledby");
+					return (
+						el.labels?.length > 0 ||
+						el.getAttribute("aria-label") ||
+						el.getAttribute("aria-labelledby")
+					);
 				});
 				expect(hasLabel).toBeTruthy();
 			}
@@ -663,7 +777,9 @@ test.describe("Consent Management - Accessibility & Performance", () => {
 
 		// Critical elements should be visible
 		await expect(
-			page.locator('[data-testid="consent-categories"]').or(page.locator(".consent-categories"))
+			page
+				.locator('[data-testid="consent-categories"]')
+				.or(page.locator(".consent-categories")),
 		).toBeVisible();
 	});
 
@@ -679,7 +795,9 @@ test.describe("Consent Management - Accessibility & Performance", () => {
 
 		// Should be responsive
 		await expect(
-			page.locator('[data-testid="consent-categories"]').or(page.locator(".consent-categories"))
+			page
+				.locator('[data-testid="consent-categories"]')
+				.or(page.locator(".consent-categories")),
 		).toBeVisible();
 
 		// Touch targets should be appropriate size

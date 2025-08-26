@@ -81,18 +81,18 @@ sections:
         template: "{{sitemap_diagram}}"
         examples:
           - |
-            graph TD
-                A[Homepage] --> B[Dashboard]
-                A --> C[Products]
-                A --> D[Account]
-                B --> B1[Analytics]
-                B --> B2[Recent Activity]
-                C --> C1[Browse]
-                C --> C2[Search]
-                C --> C3[Product Details]
-                D --> D1[Profile]
-                D --> D2[Settings]
-                D --> D3[Billing]
+              graph TD
+                  A[Homepage] --> B[Dashboard]
+                  A --> C[Products]
+                  A --> D[Account]
+                  B --> B1[Analytics]
+                  B --> B2[Recent Activity]
+                  C --> C1[Browse]
+                  C --> C2[Search]
+                  C --> C3[Product Details]
+                  D --> D1[Profile]
+                  D --> D2[Settings]
+                  D --> D3[Billing]
       - id: navigation-structure
         title: Navigation Structure
         template: |

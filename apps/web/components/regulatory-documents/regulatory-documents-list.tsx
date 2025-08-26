@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
+import { useState } from "react";
 
 export function RegulatoryDocumentsList() {
 	const { documents, loading, error, deleteDocument } = useRegulatoryDocuments();

@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, jest, test, vi } from "vitest";
 import { securityAuditFramework } from "@/lib/auth/security-audit-framework";
 import { sessionManager } from "@/lib/auth/session-manager";
+import { beforeEach, describe, expect, jest, test, vi } from "vitest";
 
 // Mock Supabase client
 vi.mock("@/app/utils/supabase/server", () => ({
@@ -71,15 +71,19 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 
 	describe("Advanced Session Management", () => {
 		test("should extend session when within threshold", async () => {
-			const result = await sessionManager.extendSessionIfNeeded("test-session-id");
+			const result =
+				await sessionManager.extendSessionIfNeeded("test-session-id");
 			expect(typeof result).toBe("boolean");
 		});
 
 		test("should validate session security and detect risks", async () => {
-			const validation = await sessionManager.validateSessionSecurity("test-session-id", {
-				userAgent: "test-agent",
-				ip: "127.0.0.1",
-			});
+			const validation = await sessionManager.validateSessionSecurity(
+				"test-session-id",
+				{
+					userAgent: "test-agent",
+					ip: "127.0.0.1",
+				},
+			);
 
 			expect(validation).toHaveProperty("isValid");
 			expect(validation).toHaveProperty("riskLevel");
@@ -88,12 +92,18 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 
 		test("should manage concurrent sessions", async () => {
 			await expect(
-				sessionManager.manageConcurrentSessions("test-user-id", "current-session-id")
+				sessionManager.manageConcurrentSessions(
+					"test-user-id",
+					"current-session-id",
+				),
 			).resolves.not.toThrow();
 		});
 
 		test("should check reauth requirements for sensitive operations", async () => {
-			const requiresReauth = await sessionManager.requiresReauth("test-session-id", "change_password");
+			const requiresReauth = await sessionManager.requiresReauth(
+				"test-session-id",
+				"change_password",
+			);
 			expect(typeof requiresReauth).toBe("boolean");
 		});
 
@@ -103,7 +113,7 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 					action: "page_view",
 					resource: "/dashboard",
 					metadata: { page: "home" },
-				})
+				}),
 			).resolves.not.toThrow();
 		});
 	});
@@ -122,7 +132,7 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 					metadata: { test: true },
 					ipAddress: "127.0.0.1",
 					userAgent: "test-agent",
-				})
+				}),
 			).resolves.not.toThrow();
 		});
 
@@ -132,7 +142,8 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 				end: new Date(),
 			};
 
-			const report = await securityAuditFramework.generateComplianceReport(period);
+			const report =
+				await securityAuditFramework.generateComplianceReport(period);
 
 			expect(report).toHaveProperty("period");
 			expect(report).toHaveProperty("lgpdCompliance");
@@ -152,7 +163,13 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 		});
 
 		test("should handle different security event types", async () => {
-			const eventTypes = ["authentication", "authorization", "data_access", "configuration", "security_violation"];
+			const eventTypes = [
+				"authentication",
+				"authorization",
+				"data_access",
+				"configuration",
+				"security_violation",
+			];
 			const severities = ["low", "medium", "high", "critical"];
 			const outcomes = ["success", "failure", "blocked"];
 
@@ -170,7 +187,7 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 								metadata: { eventType, severity, outcome },
 								ipAddress: "127.0.0.1",
 								userAgent: "test-agent",
-							})
+							}),
 						).resolves.not.toThrow();
 					}
 				}
@@ -181,10 +198,13 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 	describe("Integration Between Session Management and Security Audit", () => {
 		test("should integrate session validation with security logging", async () => {
 			// Test session validation
-			const validation = await sessionManager.validateSessionSecurity("test-session-id", {
-				userAgent: "suspicious-agent",
-				ip: "192.168.1.100",
-			});
+			const validation = await sessionManager.validateSessionSecurity(
+				"test-session-id",
+				{
+					userAgent: "suspicious-agent",
+					ip: "192.168.1.100",
+				},
+			);
 
 			// Validate that security event would be logged appropriately
 			expect(validation).toHaveProperty("isValid");
@@ -203,13 +223,14 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 					metadata: { riskLevel: validation.riskLevel },
 					ipAddress: "192.168.1.100",
 					userAgent: "suspicious-agent",
-				})
+				}),
 			).resolves.not.toThrow();
 		});
 
 		test("should integrate session extension with audit logging", async () => {
 			// Test session extension
-			const extended = await sessionManager.extendSessionIfNeeded("test-session-id");
+			const extended =
+				await sessionManager.extendSessionIfNeeded("test-session-id");
 
 			// Test corresponding audit log
 			await expect(
@@ -224,7 +245,7 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 					metadata: { extended },
 					ipAddress: "127.0.0.1",
 					userAgent: "test-agent",
-				})
+				}),
 			).resolves.not.toThrow();
 		});
 	});
@@ -264,16 +285,21 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 
 		test("should handle error scenarios gracefully", async () => {
 			// Test with invalid session ID
-			const validation = await sessionManager.validateSessionSecurity("invalid-session", {
-				userAgent: "test-agent",
-				ip: "127.0.0.1",
-			});
+			const validation = await sessionManager.validateSessionSecurity(
+				"invalid-session",
+				{
+					userAgent: "test-agent",
+					ip: "127.0.0.1",
+				},
+			);
 
 			expect(validation.isValid).toBe(false);
 			expect(validation.riskLevel).toBe("high");
 
 			// Test with missing data
-			await expect(sessionManager.extendSessionIfNeeded("")).resolves.toBe(false);
+			await expect(sessionManager.extendSessionIfNeeded("")).resolves.toBe(
+				false,
+			);
 		});
 	});
 
@@ -295,7 +321,7 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 					},
 					ipAddress: "127.0.0.1",
 					userAgent: "test-agent",
-				})
+				}),
 			).resolves.not.toThrow();
 
 			// Test data export request
@@ -314,7 +340,7 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 					},
 					ipAddress: "127.0.0.1",
 					userAgent: "test-agent",
-				})
+				}),
 			).resolves.not.toThrow();
 		});
 
@@ -324,7 +350,8 @@ describe("TASK-002 Final Integration Tests - Advanced Authentication Features", 
 				end: new Date(),
 			};
 
-			const report = await securityAuditFramework.generateComplianceReport(period);
+			const report =
+				await securityAuditFramework.generateComplianceReport(period);
 
 			expect(report.lgpdCompliance).toBeDefined();
 			expect(typeof report.lgpdCompliance.dataAccessRequests).toBe("number");
@@ -355,12 +382,16 @@ describe("TASK-002 Completion Validation", () => {
 		expect(typeof sessionManager.updateSessionActivity).toBe("function");
 
 		expect(typeof securityAuditFramework.logSecurityEvent).toBe("function");
-		expect(typeof securityAuditFramework.generateComplianceReport).toBe("function");
+		expect(typeof securityAuditFramework.generateComplianceReport).toBe(
+			"function",
+		);
 	});
 
 	test("should validate TASK-002 quality standards", async () => {
 		// Test error handling
-		await expect(sessionManager.validateSessionSecurity("", { userAgent: "", ip: "" })).resolves.toMatchObject({
+		await expect(
+			sessionManager.validateSessionSecurity("", { userAgent: "", ip: "" }),
+		).resolves.toMatchObject({
 			isValid: false,
 			riskLevel: "high",
 		});
@@ -371,7 +402,8 @@ describe("TASK-002 Completion Validation", () => {
 			end: new Date("2025-01-24"),
 		};
 
-		const report = await securityAuditFramework.generateComplianceReport(period);
+		const report =
+			await securityAuditFramework.generateComplianceReport(period);
 		expect(report.period.start).toEqual(period.start);
 		expect(report.period.end).toEqual(period.end);
 	});

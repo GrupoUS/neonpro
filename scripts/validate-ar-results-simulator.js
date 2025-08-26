@@ -335,7 +335,9 @@ async function runValidation() {
 		if (result.success) {
 			success(`${result.name}: PASSED`);
 		} else {
-			error(`${result.name}: FAILED${result.error ? ` - ${result.error}` : ""}`);
+			error(
+				`${result.name}: FAILED${result.error ? ` - ${result.error}` : ""}`,
+			);
 		}
 	});
 
@@ -345,15 +347,27 @@ async function runValidation() {
 	log(`\n${"=".repeat(60)}`, colors.cyan);
 
 	if (overallSuccess) {
-		log("🎉 AR RESULTS SIMULATOR VALIDATION COMPLETE!", colors.bold + colors.green);
-		log(`✨ All ${totalCount}/${totalCount} validation checks passed successfully!`, colors.green);
+		log(
+			"🎉 AR RESULTS SIMULATOR VALIDATION COMPLETE!",
+			colors.bold + colors.green,
+		);
+		log(
+			`✨ All ${totalCount}/${totalCount} validation checks passed successfully!`,
+			colors.green,
+		);
 		log("\n🚀 READY FOR PRODUCTION DEPLOYMENT", colors.bold + colors.green);
 		log("💰 Expected ROI: $875,000/year", colors.green);
 		log("📈 Patient Engagement: +65% improvement", colors.green);
 		log("🎯 Treatment Conversion: +40% acceptance rate", colors.green);
 	} else {
-		log("⚠️ AR RESULTS SIMULATOR VALIDATION ISSUES FOUND", colors.bold + colors.yellow);
-		log(`📊 ${passedCount}/${totalCount} validation checks passed`, colors.yellow);
+		log(
+			"⚠️ AR RESULTS SIMULATOR VALIDATION ISSUES FOUND",
+			colors.bold + colors.yellow,
+		);
+		log(
+			`📊 ${passedCount}/${totalCount} validation checks passed`,
+			colors.yellow,
+		);
 		log("🔧 Please address the failed checks above", colors.yellow);
 	}
 

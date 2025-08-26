@@ -37,7 +37,9 @@ export class DataAnonymizer {
 	/**
 	 * Anonymize patient data for LGPD compliance
 	 */
-	async anonymizePatientData(data: Record<string, any>): Promise<Record<string, any>> {
+	async anonymizePatientData(
+		data: Record<string, any>,
+	): Promise<Record<string, any>> {
 		const anonymized = { ...data };
 
 		// Anonymize personal identifiers

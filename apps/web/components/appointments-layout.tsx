@@ -8,12 +8,12 @@
 
 "use client";
 
-import { Outlet } from "@tanstack/react-router";
-import { Calendar, Clock, Filter, Plus } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { MainNavigation } from "@/components/main-navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Outlet } from "@tanstack/react-router";
+import { Calendar, Clock, Filter, Plus } from "lucide-react";
 
 export function AppointmentsLayout() {
 	const today = new Date();

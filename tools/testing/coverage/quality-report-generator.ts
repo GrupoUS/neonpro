@@ -14,29 +14,29 @@
  * - Compliance reporting (LGPD/ANVISA)
  */
 
-import fs from "fs/promises";
-import path from "path";
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
 
-interface QualityMetrics {
+type QualityMetrics = {
 	timestamp: string;
 	coverage: CoverageMetrics;
 	performance: PerformanceMetrics;
 	security: SecurityMetrics;
 	compliance: ComplianceMetrics;
 	overall: OverallMetrics;
-}
+};
 
-interface CoverageMetrics {
+type CoverageMetrics = {
 	lines: number;
 	branches: number;
 	functions: number;
 	statements: number;
 	files: number;
 	uncoveredLines: number;
-}
+};
 
-interface PerformanceMetrics {
+type PerformanceMetrics = {
 	lcp: number;
 	fid: number;
 	cls: number;
@@ -44,9 +44,9 @@ interface PerformanceMetrics {
 	fcp: number;
 	apiResponseTime: number;
 	throughput: number;
-}
+};
 
-interface SecurityMetrics {
+type SecurityMetrics = {
 	vulnerabilities: {
 		critical: number;
 		high: number;
@@ -56,9 +56,9 @@ interface SecurityMetrics {
 	authCoverage: number;
 	encryptionCoverage: number;
 	complianceScore: number;
-}
+};
 
-interface ComplianceMetrics {
+type ComplianceMetrics = {
 	lgpd: {
 		score: number;
 		consent: number;
@@ -71,19 +71,18 @@ interface ComplianceMetrics {
 		equipment: number;
 		documentation: number;
 	};
-}
+};
 
-interface OverallMetrics {
+type OverallMetrics = {
 	healthScore: number;
 	qualityGate: "PASS" | "FAIL";
 	recommendations: string[];
 	criticalIssues: string[];
-}
+};
 
 class QualityReportGenerator {
 	private readonly outputDir = "./reports/quality";
 	private readonly coverageDir = "./coverage";
-	private readonly testResultsDir = "./test-results";
 
 	constructor() {
 		this.ensureDirectories();
@@ -114,8 +113,6 @@ class QualityReportGenerator {
 	 */
 	private async collectCoverageMetrics(): Promise<CoverageMetrics> {
 		try {
-			// Executar testes com coverage
-			console.log("🧪 Coletando métricas de cobertura...");
 			execSync("pnpm test:coverage", { stdio: "inherit" });
 
 			// Ler relatório de coverage JSON
@@ -131,8 +128,7 @@ class QualityReportGenerator {
 				uncoveredLines:
 					coverageData.total.lines.total - coverageData.total.lines.covered,
 			};
-		} catch (error) {
-			console.warn("⚠️ Erro ao coletar métricas de cobertura:", error);
+		} catch (_error) {
 			return {
 				lines: 0,
 				branches: 0,
@@ -149,8 +145,6 @@ class QualityReportGenerator {
 	 */
 	private async collectPerformanceMetrics(): Promise<PerformanceMetrics> {
 		try {
-			console.log("⚡ Coletando métricas de performance...");
-
 			// Executar testes de performance
 			execSync("pnpm test:performance", { stdio: "inherit" });
 
@@ -162,10 +156,9 @@ class QualityReportGenerator {
 				ttfb: 380, // Time to First Byte (ms)
 				fcp: 0.9, // First Contentful Paint (segundos)
 				apiResponseTime: 125, // API response time médio (ms)
-				throughput: 52847, // Requests per second
+				throughput: 52_847, // Requests per second
 			};
-		} catch (error) {
-			console.warn("⚠️ Erro ao coletar métricas de performance:", error);
+		} catch (_error) {
 			return {
 				lcp: 0,
 				fid: 0,
@@ -183,8 +176,6 @@ class QualityReportGenerator {
 	 */
 	private async collectSecurityMetrics(): Promise<SecurityMetrics> {
 		try {
-			console.log("🛡️ Coletando métricas de segurança...");
-
 			// Executar testes de segurança
 			execSync("pnpm test:security", { stdio: "inherit" });
 
@@ -200,8 +191,7 @@ class QualityReportGenerator {
 				encryptionCoverage: 95,
 				complianceScore: 94.7,
 			};
-		} catch (error) {
-			console.warn("⚠️ Erro ao coletar métricas de segurança:", error);
+		} catch (_error) {
 			return {
 				vulnerabilities: { critical: 999, high: 999, medium: 999, low: 999 },
 				authCoverage: 0,
@@ -216,8 +206,6 @@ class QualityReportGenerator {
 	 */
 	private async collectComplianceMetrics(): Promise<ComplianceMetrics> {
 		try {
-			console.log("📋 Coletando métricas de compliance...");
-
 			// Executar testes de compliance
 			execSync("pnpm test:compliance", { stdio: "inherit" });
 
@@ -235,8 +223,7 @@ class QualityReportGenerator {
 					documentation: 95,
 				},
 			};
-		} catch (error) {
-			console.warn("⚠️ Erro ao coletar métricas de compliance:", error);
+		} catch (_error) {
 			return {
 				lgpd: { score: 0, consent: 0, audit: 0, dataProtection: 0 },
 				anvisa: { score: 0, products: 0, equipment: 0, documentation: 0 },
@@ -315,8 +302,6 @@ class QualityReportGenerator {
 	 * 📊 Gerar relatório completo
 	 */
 	public async generateReport(): Promise<QualityMetrics> {
-		console.log("🚀 Iniciando geração de relatório de qualidade...\n");
-
 		const timestamp = new Date().toISOString();
 
 		// Coletar todas as métricas
@@ -344,8 +329,6 @@ class QualityReportGenerator {
 		await this.generateJSONReport(metrics);
 		await this.generateHTMLReport(metrics);
 		await this.generateSummaryReport(metrics);
-
-		console.log("✅ Relatório de qualidade gerado com sucesso!");
 		return metrics;
 	}
 
@@ -357,7 +340,6 @@ class QualityReportGenerator {
 		const filepath = path.join(this.outputDir, "json", filename);
 
 		await fs.writeFile(filepath, JSON.stringify(metrics, null, 2));
-		console.log(`📄 Relatório JSON: ${filepath}`);
 	}
 
 	/**
@@ -448,7 +430,6 @@ class QualityReportGenerator {
 		const filepath = path.join(this.outputDir, "html", filename);
 
 		await fs.writeFile(filepath, template);
-		console.log(`🌐 Relatório HTML: ${filepath}`);
 	}
 
 	/**
@@ -511,7 +492,6 @@ ${metrics.overall.recommendations.map((rec) => `- ${rec}`).join("\n")}
 		const filepath = path.join(this.outputDir, filename);
 
 		await fs.writeFile(filepath, summary);
-		console.log(`📋 Relatório Resumo: ${filepath}`);
 	}
 
 	/**
@@ -519,15 +499,7 @@ ${metrics.overall.recommendations.map((rec) => `- ${rec}`).join("\n")}
 	 */
 	public async sendNotifications(metrics: QualityMetrics): Promise<void> {
 		if (metrics.overall.qualityGate === "FAIL") {
-			console.log("🚨 Quality Gate FAILED - Enviando notificações...");
-
-			// Em produção, integrar com Slack/Email APIs
-			console.log("📧 Notificação enviada para equipe de qualidade");
-			console.log("💬 Mensagem postada no Slack #neonpro-quality");
 		} else {
-			console.log(
-				"✅ Quality Gate PASSED - Sistema operando dentro dos padrões",
-			);
 		}
 	}
 }
@@ -541,8 +513,7 @@ async function main() {
 
 		// Saída para CI/CD
 		process.exit(metrics.overall.qualityGate === "PASS" ? 0 : 1);
-	} catch (error) {
-		console.error("❌ Erro na geração do relatório:", error);
+	} catch (_error) {
 		process.exit(1);
 	}
 }

@@ -15,7 +15,10 @@ import type {
  * Target: 85%+ accuracy with enterprise-grade reliability
  */
 export class AestheticInferenceAPI {
-	private readonly cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+	private readonly cache = new Map<
+		string,
+		{ data: any; timestamp: number; ttl: number }
+	>();
 	private readonly isInitialized = false;
 	private requestCount = 0;
 	private totalResponseTime = 0;
@@ -44,21 +47,35 @@ export class AestheticInferenceAPI {
 	async predictTreatmentOutcome(
 		patientId: string,
 		patient: PatientProfile,
-		treatment: TreatmentRequest
+		treatment: TreatmentRequest,
 	): Promise<PredictionResponse<TreatmentOutcomePrediction>> {
 		const requestId = this.generateRequestId();
 		const startTime = performance.now();
 
 		try {
 			// Check cache first
-			const cacheKey = this.generateCacheKey("treatment-outcome", patientId, treatment);
+			const cacheKey = this.generateCacheKey(
+				"treatment-outcome",
+				patientId,
+				treatment,
+			);
 			const cached = this.getFromCache(cacheKey);
 			if (cached) {
-				return this.createSuccessResponse(cached, requestId, startTime, "2.1.0", 0.87);
+				return this.createSuccessResponse(
+					cached,
+					requestId,
+					startTime,
+					"2.1.0",
+					0.87,
+				);
 			}
 
 			// Make prediction
-			const prediction = await aestheticPredictionEngine.predictTreatmentOutcome(patient, treatment);
+			const prediction =
+				await aestheticPredictionEngine.predictTreatmentOutcome(
+					patient,
+					treatment,
+				);
 
 			// Cache result for 1 hour
 			this.setCache(cacheKey, prediction, 3_600_000);
@@ -66,22 +83,29 @@ export class AestheticInferenceAPI {
 			// Track performance
 			this.trackPerformance(startTime);
 
-			return this.createSuccessResponse(prediction, requestId, startTime, "2.1.0", 0.87);
+			return this.createSuccessResponse(
+				prediction,
+				requestId,
+				startTime,
+				"2.1.0",
+				0.87,
+			);
 		} catch (error) {
 			return this.createErrorResponse(
 				"Prediction failed",
 				requestId,
 				startTime,
-				error instanceof Error ? error.message : "Unknown error"
+				error instanceof Error ? error.message : "Unknown error",
 			);
 		}
 	} /**
 	 * Get comprehensive prediction combining all models
 	 */
+
 	async getComprehensivePrediction(
 		patientId: string,
 		patient: PatientProfile,
-		treatment: TreatmentRequest
+		treatment: TreatmentRequest,
 	): Promise<
 		PredictionResponse<{
 			outcome: TreatmentOutcomePrediction;
@@ -94,24 +118,44 @@ export class AestheticInferenceAPI {
 		const startTime = performance.now();
 
 		try {
-			const cacheKey = this.generateCacheKey("comprehensive", patientId, treatment);
+			const cacheKey = this.generateCacheKey(
+				"comprehensive",
+				patientId,
+				treatment,
+			);
 			const cached = this.getFromCache(cacheKey);
 			if (cached) {
-				return this.createSuccessResponse(cached, requestId, startTime, "multi-model", 0.89);
+				return this.createSuccessResponse(
+					cached,
+					requestId,
+					startTime,
+					"multi-model",
+					0.89,
+				);
 			}
 
-			const prediction = await aestheticPredictionEngine.getComprehensivePrediction(patient, treatment);
+			const prediction =
+				await aestheticPredictionEngine.getComprehensivePrediction(
+					patient,
+					treatment,
+				);
 
 			this.setCache(cacheKey, prediction, 1_800_000); // Cache for 30 minutes
 			this.trackPerformance(startTime);
 
-			return this.createSuccessResponse(prediction, requestId, startTime, "multi-model", 0.89);
+			return this.createSuccessResponse(
+				prediction,
+				requestId,
+				startTime,
+				"multi-model",
+				0.89,
+			);
 		} catch (error) {
 			return this.createErrorResponse(
 				"Comprehensive prediction failed",
 				requestId,
 				startTime,
-				error instanceof Error ? error.message : "Unknown error"
+				error instanceof Error ? error.message : "Unknown error",
 			);
 		}
 	}
@@ -135,7 +179,10 @@ export class AestheticInferenceAPI {
 			};
 
 			return {
-				status: this.isInitialized && engineHealth.status === "healthy" ? "healthy" : engineHealth.status,
+				status:
+					this.isInitialized && engineHealth.status === "healthy"
+						? "healthy"
+						: engineHealth.status,
 				details: apiDetails,
 			};
 		} catch (error) {
@@ -189,7 +236,11 @@ export class AestheticInferenceAPI {
 		return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 	}
 
-	private generateCacheKey(modelType: string, patientId: string, params: any): string {
+	private generateCacheKey(
+		modelType: string,
+		patientId: string,
+		params: any,
+	): string {
 		const paramsHash = this.hashObject(params);
 		return `${modelType}_${patientId}_${paramsHash}`;
 	}
@@ -247,7 +298,9 @@ export class AestheticInferenceAPI {
 	}
 
 	private getAverageResponseTime(): number {
-		return this.requestCount > 0 ? this.totalResponseTime / this.requestCount : 0;
+		return this.requestCount > 0
+			? this.totalResponseTime / this.requestCount
+			: 0;
 	}
 
 	private calculateCacheHitRate(): number {
@@ -261,7 +314,7 @@ export class AestheticInferenceAPI {
 		requestId: string,
 		startTime: number,
 		modelVersion: string,
-		accuracyScore: number
+		accuracyScore: number,
 	): PredictionResponse<T> {
 		return {
 			success: true,
@@ -280,7 +333,7 @@ export class AestheticInferenceAPI {
 		message: string,
 		requestId: string,
 		startTime: number,
-		_error?: string
+		_error?: string,
 	): PredictionResponse<never> {
 		return {
 			success: false,

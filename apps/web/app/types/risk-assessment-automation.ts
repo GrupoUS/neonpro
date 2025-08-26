@@ -93,6 +93,7 @@ export type MedicalHistoryRiskFactors = {
  * Current Health Status Assessment
  * Real-time monitoring with vital signs integration
  */
+
 export type CurrentConditionRiskFactors = {
 	vitalSigns: {
 		bloodPressure: {
@@ -131,6 +132,7 @@ export type CurrentConditionRiskFactors = {
  * Procedure-Specific Risk Factors
  * Treatment complexity assessment with ANVISA compliance
  */
+
 export type ProcedureSpecificRiskFactors = {
 	plannedProcedure: {
 		name: string;
@@ -180,6 +182,7 @@ export type EnvironmentalRiskFactors = {
  * Comprehensive Risk Assessment Input
  * Complete patient risk profile for ML analysis
  */
+
 export type RiskAssessmentInput = {
 	patientId: string;
 	tenantId: string;
@@ -228,6 +231,7 @@ export type RiskScoreBreakdown = {
  * Professional Oversight Requirements
  * CFM compliance for medical professional review
  */
+
 export type ProfessionalOversight = {
 	requiredReview: boolean;
 	reviewLevel: "NURSE" | "PHYSICIAN" | "SPECIALIST" | "SENIOR_PHYSICIAN";
@@ -308,6 +312,7 @@ export type RiskAssessmentResult = {
  * Audit Trail Entry
  * Constitutional healthcare compliance with LGPD requirements
  */
+
 export type AuditTrailEntry = {
 	id: string;
 	patientId: string;

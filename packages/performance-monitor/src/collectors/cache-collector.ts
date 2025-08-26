@@ -1,4 +1,9 @@
-import { type MetricCollector, MetricType, MetricUnit, type PerformanceMetric } from "../types";
+import {
+	type MetricCollector,
+	MetricType,
+	MetricUnit,
+	type PerformanceMetric,
+} from "../types";
 
 export class CacheMetricsCollector implements MetricCollector {
 	private enabled = true;

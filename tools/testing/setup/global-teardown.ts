@@ -13,9 +13,9 @@
  * - Database cleanup for healthcare scenarios
  */
 
+import type { FullConfig } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
-import type { FullConfig } from "@playwright/test";
 
 /**
  * Global teardown function for Playwright healthcare testing
@@ -71,7 +71,10 @@ async function generateComplianceReports() {
 			data_retention: "test-cleanup-applied",
 		};
 
-		fs.writeFileSync(path.join(reportsDir, `lgpd-compliance-${Date.now()}.json`), JSON.stringify(lgpdReport, null, 2));
+		fs.writeFileSync(
+			path.join(reportsDir, `lgpd-compliance-${Date.now()}.json`),
+			JSON.stringify(lgpdReport, null, 2),
+		);
 
 		// Generate ANVISA compliance report
 		const anvisaReport = {
@@ -84,7 +87,7 @@ async function generateComplianceReports() {
 
 		fs.writeFileSync(
 			path.join(reportsDir, `anvisa-compliance-${Date.now()}.json`),
-			JSON.stringify(anvisaReport, null, 2)
+			JSON.stringify(anvisaReport, null, 2),
 		);
 	} catch (_error) {}
 }
@@ -116,7 +119,10 @@ async function archiveTestArtifacts() {
 				purpose: "regulatory-compliance-audit",
 			};
 
-			fs.writeFileSync(path.join(archiveDir, `archive-metadata-${timestamp}.json`), JSON.stringify(metadata, null, 2));
+			fs.writeFileSync(
+				path.join(archiveDir, `archive-metadata-${timestamp}.json`),
+				JSON.stringify(metadata, null, 2),
+			);
 		}
 	} catch (_error) {}
 }
@@ -129,7 +135,9 @@ async function cleanupAuthStates() {
 		const authDir = path.join(__dirname, "auth");
 
 		if (fs.existsSync(authDir)) {
-			const authFiles = fs.readdirSync(authDir).filter((file) => file.endsWith(".json"));
+			const authFiles = fs
+				.readdirSync(authDir)
+				.filter((file) => file.endsWith(".json"));
 
 			for (const file of authFiles) {
 				const filePath = path.join(authDir, file);
@@ -146,7 +154,12 @@ async function cleanupAuthStates() {
 async function performSecurityCleanup() {
 	try {
 		// Clear sensitive environment variables
-		const sensitiveVars = ["TEST_DATABASE_URL", "SUPABASE_TEST_KEY", "TEST_JWT_SECRET", "HEALTHCARE_ADMIN_TOKEN"];
+		const sensitiveVars = [
+			"TEST_DATABASE_URL",
+			"SUPABASE_TEST_KEY",
+			"TEST_JWT_SECRET",
+			"HEALTHCARE_ADMIN_TOKEN",
+		];
 
 		sensitiveVars.forEach((varName) => {
 			if (process.env[varName]) {
@@ -171,7 +184,7 @@ async function performSecurityCleanup() {
 
 		fs.writeFileSync(
 			path.join(reportsDir, `security-cleanup-${Date.now()}.json`),
-			JSON.stringify(securityReport, null, 2)
+			JSON.stringify(securityReport, null, 2),
 		);
 	} catch (_error) {}
 }

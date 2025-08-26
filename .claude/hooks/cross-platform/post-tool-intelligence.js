@@ -8,6 +8,12 @@
 
 const utils = require("./utils.js");
 
+// Constants for memory calculations
+const BYTES_TO_MB = 1024 * 1024;
+const _MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
+const _MAX_HOOKS_PER_HOUR = 100;
+const _HOURS_TO_KEEP = 24;
+
 async function postToolIntelligence() {
 	try {
 		// Set up hook environment
@@ -17,7 +23,7 @@ async function postToolIntelligence() {
 		utils.log(
 			"INFO",
 			"POST_TOOL_HOOK",
-			`Post-tool intelligence hook executing for tool: ${env.toolName} (result: ${env.toolResult})`
+			`Post-tool intelligence hook executing for tool: ${env.toolName} (result: ${env.toolResult})`,
 		);
 
 		// Tool-specific post-processing
@@ -27,13 +33,21 @@ async function postToolIntelligence() {
 		await performGeneralAnalysis(env);
 
 		// Log successful completion
-		utils.log("SUCCESS", "POST_TOOL_HOOK", `Post-tool intelligence hook completed successfully for ${env.toolName}`);
+		utils.log(
+			"SUCCESS",
+			"POST_TOOL_HOOK",
+			`Post-tool intelligence hook completed successfully for ${env.toolName}`,
+		);
 
 		// Exit successfully
 		process.exit(0);
 	} catch (error) {
 		// Log error but don't fail the hook
-		utils.log("ERROR", "POST_TOOL_HOOK", `Post-tool hook error: ${error.message}`);
+		utils.log(
+			"ERROR",
+			"POST_TOOL_HOOK",
+			`Post-tool hook error: ${error.message}`,
+		);
 
 		// Exit with success to not block Claude
 		process.exit(0);
@@ -76,11 +90,19 @@ async function handleToolSpecificAnalysis(toolName, env) {
 
 			default:
 				// Generic tool analysis
-				utils.log("DEBUG", "POST_TOOL_HOOK", `Generic post-processing analysis for tool: ${toolName}`);
+				utils.log(
+					"DEBUG",
+					"POST_TOOL_HOOK",
+					`Generic post-processing analysis for tool: ${toolName}`,
+				);
 				break;
 		}
 	} catch (error) {
-		utils.log("WARN", "POST_TOOL_HOOK", `Tool-specific analysis error for ${toolName}: ${error.message}`);
+		utils.log(
+			"WARN",
+			"POST_TOOL_HOOK",
+			`Tool-specific analysis error for ${toolName}: ${error.message}`,
+		);
 	}
 }
 
@@ -88,7 +110,11 @@ async function handleToolSpecificAnalysis(toolName, env) {
  * Analyze bash command execution
  */
 async function analyzeBashExecution(env) {
-	utils.log("INFO", "POST_TOOL_HOOK", `Analyzing bash execution result: ${env.toolResult}`);
+	utils.log(
+		"INFO",
+		"POST_TOOL_HOOK",
+		`Analyzing bash execution result: ${env.toolResult}`,
+	);
 
 	// Check if this was a build/test command
 	const toolArgs = env.toolArgs.toLowerCase();
@@ -130,7 +156,7 @@ async function analyzeFileOperation(toolName, env) {
 /**
  * Analyze task execution
  */
-async function analyzeTaskExecution(env) {
+function analyzeTaskExecution(env) {
 	utils.log("INFO", "POST_TOOL_HOOK", "Analyzing task delegation result");
 
 	// Track task execution patterns
@@ -140,9 +166,17 @@ async function analyzeTaskExecution(env) {
 			tool: env.toolName,
 			session: env.sessionId,
 		};
-		utils.log("DEBUG", "POST_TOOL_HOOK", `Task tracked: ${JSON.stringify(taskLog)}`);
+		utils.log(
+			"DEBUG",
+			"POST_TOOL_HOOK",
+			`Task tracked: ${JSON.stringify(taskLog)}`,
+		);
 	} catch (error) {
-		utils.log("WARN", "POST_TOOL_HOOK", `Task analysis error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"POST_TOOL_HOOK",
+			`Task analysis error: ${error.message}`,
+		);
 	}
 }
 
@@ -160,7 +194,11 @@ async function analyzeTodoUpdate(env) {
  * Analyze file modifications via Desktop Commander
  */
 async function analyzeFileModification(env) {
-	utils.log("INFO", "POST_TOOL_HOOK", "Analyzing Desktop Commander file modification");
+	utils.log(
+		"INFO",
+		"POST_TOOL_HOOK",
+		"Analyzing Desktop Commander file modification",
+	);
 
 	// Check for code quality issues
 	await checkCodeQuality(env);
@@ -170,7 +208,11 @@ async function analyzeFileModification(env) {
  * Analyze Archon task activities
  */
 async function analyzeArchonTaskActivity(env) {
-	utils.log("INFO", "POST_TOOL_HOOK", "Analyzing Archon task management activity");
+	utils.log(
+		"INFO",
+		"POST_TOOL_HOOK",
+		"Analyzing Archon task management activity",
+	);
 
 	// Track task management patterns
 	await trackTaskManagementPatterns(env);
@@ -185,7 +227,11 @@ async function performGeneralAnalysis(env) {
 		const gitInfo = await utils.getGitInfo();
 
 		if (gitInfo.hasChanges) {
-			utils.log("INFO", "POST_TOOL_HOOK", `Git changes detected in branch: ${gitInfo.branch}`);
+			utils.log(
+				"INFO",
+				"POST_TOOL_HOOK",
+				`Git changes detected in branch: ${gitInfo.branch}`,
+			);
 		}
 
 		// Log system resource usage
@@ -193,13 +239,19 @@ async function performGeneralAnalysis(env) {
 		utils.log(
 			"DEBUG",
 			"POST_TOOL_HOOK",
-			`Memory usage: ${Math.round((systemInfo.totalMemory - systemInfo.freeMemory) / 1024 / 1024)}MB used`
+			`Memory usage: ${Math.round(
+				(systemInfo.totalMemory - systemInfo.freeMemory) / BYTES_TO_MB,
+			)}MB used`,
 		);
 
 		// Check for potential issues
 		await performHealthCheck(env);
 	} catch (error) {
-		utils.log("WARN", "POST_TOOL_HOOK", `General analysis error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"POST_TOOL_HOOK",
+			`General analysis error: ${error.message}`,
+		);
 	}
 }
 
@@ -209,19 +261,34 @@ async function performGeneralAnalysis(env) {
 async function analyzeBuildResults(env) {
 	try {
 		// Check for common build artifacts or outputs
-		const commonPaths = ["dist", "build", ".next", "out", "node_modules/.cache", "coverage"];
+		const commonPaths = [
+			"dist",
+			"build",
+			".next",
+			"out",
+			"node_modules/.cache",
+			"coverage",
+		];
 
 		utils.log("DEBUG", "POST_TOOL_HOOK", "Checking build artifacts");
-		
+
 		// Track build activity
 		const buildLog = {
 			timestamp: utils.getTimestamp(),
 			tool: env.toolName,
 			paths: commonPaths,
 		};
-		utils.log("DEBUG", "POST_TOOL_HOOK", `Build tracked: ${JSON.stringify(buildLog)}`);
+		utils.log(
+			"DEBUG",
+			"POST_TOOL_HOOK",
+			`Build tracked: ${JSON.stringify(buildLog)}`,
+		);
 	} catch (error) {
-		utils.log("WARN", "POST_TOOL_HOOK", `Build analysis error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"POST_TOOL_HOOK",
+			`Build analysis error: ${error.message}`,
+		);
 	}
 }
 
@@ -235,9 +302,9 @@ async function analyzeGitCommand(env) {
 		utils.log(
 			"INFO",
 			"POST_TOOL_HOOK",
-			`Git status: branch=${gitInfo.branch}, commit=${gitInfo.commit}, hasChanges=${gitInfo.hasChanges}`
+			`Git status: branch=${gitInfo.branch}, commit=${gitInfo.commit}, hasChanges=${gitInfo.hasChanges}`,
 		);
-		
+
 		// Track git activity
 		const gitLog = {
 			timestamp: utils.getTimestamp(),
@@ -245,7 +312,11 @@ async function analyzeGitCommand(env) {
 			session: env.sessionId,
 			branch: gitInfo.branch,
 		};
-		utils.log("DEBUG", "POST_TOOL_HOOK", `Git activity tracked: ${JSON.stringify(gitLog)}`);
+		utils.log(
+			"DEBUG",
+			"POST_TOOL_HOOK",
+			`Git activity tracked: ${JSON.stringify(gitLog)}`,
+		);
 	} catch (error) {
 		utils.log("WARN", "POST_TOOL_HOOK", `Git analysis error: ${error.message}`);
 	}
@@ -264,9 +335,17 @@ async function trackFileChanges(env) {
 		};
 
 		// Log change for potential backup
-		utils.log("DEBUG", "POST_TOOL_HOOK", `File change tracked: ${JSON.stringify(changeLog)}`);
+		utils.log(
+			"DEBUG",
+			"POST_TOOL_HOOK",
+			`File change tracked: ${JSON.stringify(changeLog)}`,
+		);
 	} catch (error) {
-		utils.log("WARN", "POST_TOOL_HOOK", `File change tracking error: ${error.message}`);
+		utils.log(
+			"WARN",
+			"POST_TOOL_HOOK",
+			`File change tracking error: ${error.message}`,
+		);
 	}
 }
 
@@ -275,17 +354,31 @@ async function trackFileChanges(env) {
  */
 async function checkCriticalFileChanges(env) {
 	// Check for modifications to important config files
-	const criticalFiles = ["package.json", "tsconfig.json", "biome.jsonc", ".github/workflows", ".claude/settings"];
+	const criticalFiles = [
+		"package.json",
+		"tsconfig.json",
+		"biome.jsonc",
+		".github/workflows",
+		".claude/settings",
+	];
 
-	utils.log("DEBUG", "POST_TOOL_HOOK", "Checking for critical file modifications");
-	
+	utils.log(
+		"DEBUG",
+		"POST_TOOL_HOOK",
+		"Checking for critical file modifications",
+	);
+
 	// Track critical file monitoring
 	const fileLog = {
 		timestamp: utils.getTimestamp(),
 		tool: env.toolName,
 		files: criticalFiles,
 	};
-	utils.log("DEBUG", "POST_TOOL_HOOK", `Critical files tracked: ${JSON.stringify(fileLog)}`);
+	utils.log(
+		"DEBUG",
+		"POST_TOOL_HOOK",
+		`Critical files tracked: ${JSON.stringify(fileLog)}`,
+	);
 }
 
 /**
@@ -293,14 +386,18 @@ async function checkCriticalFileChanges(env) {
  */
 async function trackTodoPatterns(env) {
 	utils.log("DEBUG", "POST_TOOL_HOOK", "Tracking todo completion patterns");
-	
+
 	// Track todo activity
 	const todoLog = {
 		timestamp: utils.getTimestamp(),
 		tool: env.toolName,
 		session: env.sessionId,
 	};
-	utils.log("DEBUG", "POST_TOOL_HOOK", `Todo patterns tracked: ${JSON.stringify(todoLog)}`);
+	utils.log(
+		"DEBUG",
+		"POST_TOOL_HOOK",
+		`Todo patterns tracked: ${JSON.stringify(todoLog)}`,
+	);
 }
 
 /**
@@ -308,29 +405,41 @@ async function trackTodoPatterns(env) {
  */
 async function checkCodeQuality(env) {
 	utils.log("DEBUG", "POST_TOOL_HOOK", "Checking code quality metrics");
-	
+
 	// Track quality checks
 	const qualityLog = {
 		timestamp: utils.getTimestamp(),
 		tool: env.toolName,
 		session: env.sessionId,
 	};
-	utils.log("DEBUG", "POST_TOOL_HOOK", `Quality check tracked: ${JSON.stringify(qualityLog)}`);
+	utils.log(
+		"DEBUG",
+		"POST_TOOL_HOOK",
+		`Quality check tracked: ${JSON.stringify(qualityLog)}`,
+	);
 }
 
 /**
  * Track task management patterns
  */
 async function trackTaskManagementPatterns(env) {
-	utils.log("DEBUG", "POST_TOOL_HOOK", "Tracking Archon task management patterns");
-	
+	utils.log(
+		"DEBUG",
+		"POST_TOOL_HOOK",
+		"Tracking Archon task management patterns",
+	);
+
 	// Track task management activity
 	const taskMgmtLog = {
 		timestamp: utils.getTimestamp(),
 		tool: env.toolName,
 		session: env.sessionId,
 	};
-	utils.log("DEBUG", "POST_TOOL_HOOK", `Task management tracked: ${JSON.stringify(taskMgmtLog)}`);
+	utils.log(
+		"DEBUG",
+		"POST_TOOL_HOOK",
+		`Task management tracked: ${JSON.stringify(taskMgmtLog)}`,
+	);
 }
 
 /**
@@ -370,17 +479,21 @@ async function performHealthCheck(env) {
 			utils.log(
 				"WARN",
 				"POST_TOOL_HOOK",
-				`High hook frequency detected: ${frequencyData[hourKey]} executions this hour`
+				`High hook frequency detected: ${frequencyData[hourKey]} executions this hour`,
 			);
 		}
-		
+
 		// Track health check
 		const healthLog = {
 			timestamp: utils.getTimestamp(),
 			tool: env.toolName,
 			frequency: frequencyData[hourKey],
 		};
-		utils.log("DEBUG", "POST_TOOL_HOOK", `Health check tracked: ${JSON.stringify(healthLog)}`);
+		utils.log(
+			"DEBUG",
+			"POST_TOOL_HOOK",
+			`Health check tracked: ${JSON.stringify(healthLog)}`,
+		);
 	} catch (error) {
 		utils.log("WARN", "POST_TOOL_HOOK", `Health check error: ${error.message}`);
 	}

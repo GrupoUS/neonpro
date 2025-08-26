@@ -113,7 +113,7 @@ mlPipeline.get("/models", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -137,7 +137,7 @@ mlPipeline.post("/models", async (c) => {
 					success: false,
 					error: "Missing required fields: model_name, version, clinic_id",
 				},
-				400
+				400,
 			);
 		}
 
@@ -165,7 +165,7 @@ mlPipeline.post("/models", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -200,7 +200,7 @@ mlPipeline.post("/models/:modelId/deploy", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -233,7 +233,7 @@ mlPipeline.get("/models/:modelId/deployment-status", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -252,7 +252,9 @@ mlPipeline.get("/models/:modelId/metrics", async (c) => {
 		const metrics: ModelPerformanceMetrics = {
 			model_id: modelId,
 			model_version: "1.2.3",
-			period_start: new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString(),
+			period_start: new Date(
+				Date.now() - days * 24 * 60 * 60 * 1000,
+			).toISOString(),
 			period_end: new Date().toISOString(),
 			total_predictions: 1250,
 			accuracy: 0.87,
@@ -276,7 +278,7 @@ mlPipeline.get("/models/:modelId/metrics", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -323,7 +325,7 @@ mlPipeline.get("/ab-tests", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -365,7 +367,7 @@ mlPipeline.post("/ab-tests", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -393,7 +395,7 @@ mlPipeline.post("/ab-tests/:testId/start", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -441,7 +443,7 @@ mlPipeline.get("/ab-tests/:testId/results", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -494,7 +496,7 @@ mlPipeline.get("/drift-alerts", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -535,7 +537,7 @@ mlPipeline.post("/drift-detection", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -574,7 +576,7 @@ mlPipeline.get("/status", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -609,7 +611,7 @@ mlPipeline.get("/config", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });
@@ -639,7 +641,7 @@ mlPipeline.put("/config", async (c) => {
 				error: (error as Error).message,
 				timestamp: new Date().toISOString(),
 			},
-			500
+			500,
 		);
 	}
 });

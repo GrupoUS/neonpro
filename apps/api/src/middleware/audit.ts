@@ -174,7 +174,9 @@ class AuditStore {
 		}
 
 		return this.logs.filter((log) => {
-			return Object.entries(filter).every(([key, value]) => log[key as keyof AuditLog] === value);
+			return Object.entries(filter).every(
+				([key, value]) => log[key as keyof AuditLog] === value,
+			);
 		});
 	}
 
@@ -222,7 +224,10 @@ const extractUserContext = (c: Context) => {
 const extractClientContext = (c: Context) => {
 	return {
 		clientIP:
-			c.req.header("CF-Connecting-IP") || c.req.header("X-Forwarded-For") || c.req.header("X-Real-IP") || "unknown",
+			c.req.header("CF-Connecting-IP") ||
+			c.req.header("X-Forwarded-For") ||
+			c.req.header("X-Real-IP") ||
+			"unknown",
 		userAgent: c.req.header("User-Agent") || "unknown",
 		country: c.req.header("CF-IPCountry") || "unknown",
 		region: c.req.header("CF-Region") || "unknown",
@@ -265,7 +270,9 @@ export const auditMiddleware = (): MiddlewareHandler => {
 		const auditId = `audit_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
 		// Generate request ID if not exists
-		const requestId = c.req.header("X-Request-ID") || `req_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+		const requestId =
+			c.req.header("X-Request-ID") ||
+			`req_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
 		// Set audit headers
 		c.res.headers.set("X-Audit-ID", auditId);
@@ -283,7 +290,9 @@ export const auditMiddleware = (): MiddlewareHandler => {
 			let operationConfig = LGPD_SENSITIVE_OPERATIONS[operationKey];
 			if (!operationConfig) {
 				// Find by pattern matching
-				for (const [pattern, config] of Object.entries(LGPD_SENSITIVE_OPERATIONS)) {
+				for (const [pattern, config] of Object.entries(
+					LGPD_SENSITIVE_OPERATIONS,
+				)) {
 					const regex = createRouteRegex(pattern);
 					if (regex.test(operationKey)) {
 						operationConfig = config;
@@ -294,7 +303,10 @@ export const auditMiddleware = (): MiddlewareHandler => {
 
 			// Extract resource ID from path (for parameterized routes)
 			const resourceIdMatch = extractResourceIds(path);
-			const resourceId = resourceIdMatch?.[resourceIdMatch.length - 1]?.replace(/\//g, "");
+			const resourceId = resourceIdMatch?.[resourceIdMatch.length - 1]?.replace(
+				/\//g,
+				"",
+			);
 
 			// Create audit log entry
 			const auditLog: AuditLog = {
@@ -303,7 +315,8 @@ export const auditMiddleware = (): MiddlewareHandler => {
 				level: operationConfig?.level || AuditLevel.INFO,
 				category: operationConfig?.category || "general",
 				operation: operationKey,
-				description: operationConfig?.description || `${method} operation on ${path}`,
+				description:
+					operationConfig?.description || `${method} operation on ${path}`,
 
 				// User context
 				...userContext,
@@ -316,8 +329,12 @@ export const auditMiddleware = (): MiddlewareHandler => {
 
 				// LGPD flags
 				lgpdRelevant: true,
-				personalDataAccessed: ["data_access", "data_modification"].includes(operationConfig?.category || ""),
-				consentRequired: ["data_export", "marketing"].includes(operationConfig?.category || ""),
+				personalDataAccessed: ["data_access", "data_modification"].includes(
+					operationConfig?.category || "",
+				),
+				consentRequired: ["data_export", "marketing"].includes(
+					operationConfig?.category || "",
+				),
 
 				// Request tracking
 				requestId,
@@ -411,7 +428,12 @@ export const lgpdAudit = {
 	},
 
 	// Log consent changes
-	logConsentChange: (patientId: string, consentType: string, granted: boolean, userId?: string) => {
+	logConsentChange: (
+		patientId: string,
+		consentType: string,
+		granted: boolean,
+		userId?: string,
+	) => {
 		const auditLog: AuditLog = {
 			auditId: `consent_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
 			timestamp: new Date().toISOString(),

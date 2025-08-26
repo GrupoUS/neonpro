@@ -28,7 +28,13 @@ import {
 import { useEffect, useId, useState } from "react";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "../Card";
 
 // Healthcare Design System Color Palette
 export const HEALTHCARE_COLORS = {
@@ -299,7 +305,9 @@ export function HealthcareCard({
 
 			<CardContent>
 				{children}
-				{actions && <div className="mt-4 flex gap-2 border-t pt-4">{actions}</div>}
+				{actions && (
+					<div className="mt-4 flex gap-2 border-t pt-4">{actions}</div>
+				)}
 			</CardContent>
 		</Card>
 	);
@@ -359,7 +367,11 @@ export function HealthcareProgress({
 	};
 
 	return (
-		<div aria-labelledby={progressId} className={`space-y-2 ${className}`} role="progressbar">
+		<div
+			aria-labelledby={progressId}
+			className={`space-y-2 ${className}`}
+			role="progressbar"
+		>
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					{getTypeIcon()}
@@ -368,7 +380,9 @@ export function HealthcareProgress({
 					</label>
 				</div>
 				<div className="font-medium text-sm">
-					{showPercentage ? `${percentage}%` : `${value}${unit ? ` ${unit}` : ""}`}
+					{showPercentage
+						? `${percentage}%`
+						: `${value}${unit ? ` ${unit}` : ""}`}
 				</div>
 			</div>
 			<div className="h-2 w-full rounded-full bg-gray-200">
@@ -467,11 +481,18 @@ type HealthcareDesignSystemProps = {
 	className?: string;
 };
 
-export function HealthcareDesignSystem({ children, theme = "light", className }: HealthcareDesignSystemProps) {
+export function HealthcareDesignSystem({
+	children,
+	theme = "light",
+	className,
+}: HealthcareDesignSystemProps) {
 	const [currentTheme, _setCurrentTheme] = useState(theme);
 
 	useEffect(() => {
-		document.documentElement.setAttribute("data-healthcare-theme", currentTheme);
+		document.documentElement.setAttribute(
+			"data-healthcare-theme",
+			currentTheme,
+		);
 	}, [currentTheme]);
 
 	const getThemeClasses = () => {
@@ -498,6 +519,12 @@ export function HealthcareDesignSystem({ children, theme = "light", className }:
 }
 
 // Export all design system components and utilities
-export { HEALTHCARE_COLORS, HEALTHCARE_TYPOGRAPHY, HEALTHCARE_SPACING, HEALTHCARE_ANIMATIONS, HEALTHCARE_ICONS };
+export {
+	HEALTHCARE_ANIMATIONS,
+	HEALTHCARE_COLORS,
+	HEALTHCARE_ICONS,
+	HEALTHCARE_SPACING,
+	HEALTHCARE_TYPOGRAPHY,
+};
 
 export default HealthcareDesignSystem;

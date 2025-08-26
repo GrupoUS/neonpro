@@ -226,8 +226,12 @@ describe("LGPD Compliance Final Validation", () => {
 				productionReadiness: true,
 			};
 
-			expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(65);
-			expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(complianceMetrics.targetComplianceScore);
+			expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(
+				65,
+			);
+			expect(complianceMetrics.currentComplianceScore).toBeGreaterThanOrEqual(
+				complianceMetrics.targetComplianceScore,
+			);
 			expect(complianceMetrics.improvementFromPrevious).toBeGreaterThan(0);
 			expect(complianceMetrics.productionReadiness).toBe(true);
 		});

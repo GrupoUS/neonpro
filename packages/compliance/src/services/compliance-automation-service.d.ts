@@ -46,7 +46,11 @@ export type ComplianceAutomationConfig = {
  */
 export type ComplianceAutomationResponse = {
 	/** Overall compliance status */
-	overall_status: "compliant" | "warning" | "critical" | "constitutional_violation";
+	overall_status:
+		| "compliant"
+		| "warning"
+		| "critical"
+		| "constitutional_violation";
 	/** Overall compliance score ≥9.9 */
 	overall_score: number;
 	/** LGPD compliance results */
@@ -94,7 +98,10 @@ export declare class BrazilianComplianceAutomationService {
 	private readonly cfmServices;
 	private readonly realTimeMonitor;
 	private readonly config;
-	constructor(supabaseClient: ReturnType<typeof createClient<Database>>, config: ComplianceAutomationConfig);
+	constructor(
+		supabaseClient: ReturnType<typeof createClient<Database>>,
+		config: ComplianceAutomationConfig,
+	);
 	/**
 	 * Execute comprehensive compliance automation
 	 * Constitutional compliance automation with all Brazilian healthcare requirements
@@ -141,10 +148,13 @@ export declare class BrazilianComplianceAutomationService {
  */
 export declare function createBrazilianComplianceAutomationService(
 	supabaseClient: ReturnType<typeof createClient<Database>>,
-	config: ComplianceAutomationConfig
+	config: ComplianceAutomationConfig,
 ): BrazilianComplianceAutomationService;
 /**
  * Default compliance automation configuration
  * Constitutional configuration with Brazilian healthcare standards
  */
-export declare const DEFAULT_COMPLIANCE_CONFIG: Omit<ComplianceAutomationConfig, "tenant_id">;
+export declare const DEFAULT_COMPLIANCE_CONFIG: Omit<
+	ComplianceAutomationConfig,
+	"tenant_id"
+>;

@@ -79,7 +79,8 @@ export const typography = {
 	fontFamily: {
 		primary: 'Inter, "Helvetica Neue", Helvetica, Arial, sans-serif',
 		secondary: "Source Sans Pro, Arial, sans-serif",
-		monospace: 'JetBrains Mono, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+		monospace:
+			'JetBrains Mono, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
 	},
 
 	// Font sizes with Brazilian accessibility standards

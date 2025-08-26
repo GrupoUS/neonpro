@@ -28,9 +28,13 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 	});
 
 	test.describe("🚪 Login/Logout Complete Flow", () => {
-		test("should complete full login flow with valid credentials", async ({ page }) => {
+		test("should complete full login flow with valid credentials", async ({
+			page,
+		}) => {
 			// Navigate to login page using multiple selector strategies
-			const loginButton = page.locator('[data-testid="login-button"], button:has-text("Entrar"), a:has-text("Login")');
+			const loginButton = page.locator(
+				'[data-testid="login-button"], button:has-text("Entrar"), a:has-text("Login")',
+			);
 			if ((await loginButton.count()) > 0) {
 				await loginButton.click();
 			} else {
@@ -40,21 +44,35 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.waitForLoadState("networkidle");
 
 			// Fill login form with valid credentials
-			await page.fill('[data-testid="email"], input[type="email"]', "admin@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "AdminSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"admin@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"AdminSecure123!",
+			);
 
 			// Submit login
-			await page.click('[data-testid="login-submit"], button[type="submit"], button:has-text("Entrar")');
+			await page.click(
+				'[data-testid="login-submit"], button[type="submit"], button:has-text("Entrar")',
+			);
 
 			// Wait for navigation and verify successful login
 			await page.waitForURL("**/dashboard", { timeout: 10_000 });
 
 			// Verify dashboard elements are visible
-			await expect(page.locator('[data-testid="dashboard"], [data-testid="user-menu"]')).toBeVisible();
-			await expect(page.locator('[data-testid="logout"], button:has-text("Sair")')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="dashboard"], [data-testid="user-menu"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="logout"], button:has-text("Sair")'),
+			).toBeVisible();
 
 			// Verify user session is established
-			const userInfo = page.locator('[data-testid="user-info"], [data-testid="user-name"]');
+			const userInfo = page.locator(
+				'[data-testid="user-info"], [data-testid="user-name"]',
+			);
 			await expect(userInfo).toBeVisible();
 		});
 
@@ -62,47 +80,71 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			// Login first using robust authentication
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
-			await page.fill('[data-testid="email"], input[type="email"]', "admin@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "AdminSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"admin@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"AdminSecure123!",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 			await page.waitForURL("**/dashboard");
 
 			// Perform logout using multiple selector strategies
 			const logoutButton = page.locator(
-				'[data-testid="logout"], button:has-text("Sair"), [data-testid="user-menu"] >> text=Sair'
+				'[data-testid="logout"], button:has-text("Sair"), [data-testid="user-menu"] >> text=Sair',
 			);
 			await logoutButton.click();
 
 			// Verify redirect to login page and session clearing
 			await page.waitForURL("**/login", { timeout: 10_000 });
-			await expect(page.locator('[data-testid="login-form"], form')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="login-form"], form'),
+			).toBeVisible();
 
 			// Verify session is completely cleared
-			const sessionData = await page.evaluate(() => localStorage.getItem("session"));
+			const sessionData = await page.evaluate(() =>
+				localStorage.getItem("session"),
+			);
 			expect(sessionData).toBeNull();
 		});
 
-		test("should reject invalid credentials with proper error handling", async ({ page }) => {
+		test("should reject invalid credentials with proper error handling", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
 			// Attempt login with invalid credentials
-			await page.fill('[data-testid="email"], input[type="email"]', "invalid@email.com");
-			await page.fill('[data-testid="password"], input[type="password"]', "wrongpassword");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"invalid@email.com",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"wrongpassword",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 
 			// Verify error message appears with healthcare context
 			await expect(
-				page.locator('[data-testid="error-message"], .error-message, text=Credenciais inválidas')
+				page.locator(
+					'[data-testid="error-message"], .error-message, text=Credenciais inválidas',
+				),
 			).toBeVisible();
 
 			// Ensure user remains on login page
-			await expect(page.locator('[data-testid="login-form"], form')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="login-form"], form'),
+			).toBeVisible();
 		});
 	});
 
 	test.describe("🏥 Healthcare Professional Authentication", () => {
-		test("should display healthcare-specific login elements", async ({ page }) => {
+		test("should display healthcare-specific login elements", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -119,7 +161,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			}
 		});
 
-		test("should validate professional credentials format", async ({ page }) => {
+		test("should validate professional credentials format", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -128,7 +172,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.click('button[type="submit"]');
 
 			// Check for validation messages
-			const emailError = page.locator("text=Formato de email inválido, text=Email inválido");
+			const emailError = page.locator(
+				"text=Formato de email inválido, text=Email inválido",
+			);
 			if ((await emailError.count()) > 0) {
 				await expect(emailError).toBeVisible();
 			}
@@ -146,7 +192,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			}
 		});
 
-		test("should authenticate healthcare professional with CRM validation", async ({ page }) => {
+		test("should authenticate healthcare professional with CRM validation", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -164,10 +212,14 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 
 			// Wait for successful authentication
 			await page.waitForURL("**/dashboard", { timeout: 10_000 });
-			await expect(page.locator('[data-testid="dashboard"], [data-testid="user-menu"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="dashboard"], [data-testid="user-menu"]'),
+			).toBeVisible();
 		});
 
-		test("should handle expired professional license scenario", async ({ page }) => {
+		test("should handle expired professional license scenario", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -183,7 +235,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.click('button[type="submit"]');
 
 			// Check for license expiration warning
-			const licenseWarning = page.locator("text=Licença profissional expirada, text=CRM expirado");
+			const licenseWarning = page.locator(
+				"text=Licença profissional expirada, text=CRM expirado",
+			);
 			if ((await licenseWarning.count()) > 0) {
 				await expect(licenseWarning).toBeVisible();
 			}
@@ -195,8 +249,14 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			// Login first
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
-			await page.fill('[data-testid="email"], input[type="email"]', "admin@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "AdminSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"admin@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"AdminSecure123!",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 			await page.waitForURL("**/dashboard");
 
@@ -205,15 +265,23 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.waitForLoadState("networkidle");
 
 			// Verify user is still authenticated
-			await expect(page.locator('[data-testid="dashboard"], [data-testid="user-menu"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="dashboard"], [data-testid="user-menu"]'),
+			).toBeVisible();
 		});
 
 		test("should handle session timeout gracefully", async ({ page }) => {
 			// Login first
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
-			await page.fill('[data-testid="email"], input[type="email"]', "admin@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "AdminSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"admin@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"AdminSecure123!",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 			await page.waitForURL("**/dashboard");
 
@@ -228,10 +296,14 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 
 			// Should redirect to login
 			await page.waitForURL("**/login", { timeout: 10_000 });
-			await expect(page.locator('[data-testid="login-form"], form')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="login-form"], form'),
+			).toBeVisible();
 		});
 
-		test("should enforce password policy for healthcare professionals", async ({ page }) => {
+		test("should enforce password policy for healthcare professionals", async ({
+			page,
+		}) => {
 			await page.goto("/register");
 			await page.waitForLoadState("networkidle");
 
@@ -244,13 +316,17 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.click('button[type="submit"]');
 
 			// Should show password policy error
-			const passwordError = page.locator("text=Senha deve conter, text=Password must contain");
+			const passwordError = page.locator(
+				"text=Senha deve conter, text=Password must contain",
+			);
 			if ((await passwordError.count()) > 0) {
 				await expect(passwordError).toBeVisible();
 			}
 		});
 
-		test("should implement audit logging for authentication events", async ({ page }) => {
+		test("should implement audit logging for authentication events", async ({
+			page,
+		}) => {
 			// This test verifies audit logging exists (admin access required)
 			await page.goto("/admin/audit-logs");
 
@@ -262,7 +338,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			}
 
 			// Check if audit logs page exists (feature detection)
-			const auditLogs = page.locator('[data-testid="audit-logs"], text=Logs de Auditoria');
+			const auditLogs = page.locator(
+				'[data-testid="audit-logs"], text=Logs de Auditoria',
+			);
 			if ((await auditLogs.count()) > 0) {
 				await expect(auditLogs).toBeVisible();
 			}
@@ -275,13 +353,21 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.waitForLoadState("networkidle");
 
 			// Login as admin
-			await page.fill('[data-testid="email"], input[type="email"]', "admin@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "AdminSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"admin@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"AdminSecure123!",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 			await page.waitForURL("**/dashboard");
 
 			// Test access to admin areas
-			const adminMenu = page.locator('[data-testid="admin-menu"], text=Administração');
+			const adminMenu = page.locator(
+				'[data-testid="admin-menu"], text=Administração',
+			);
 			if ((await adminMenu.count()) > 0) {
 				await expect(adminMenu).toBeVisible();
 				await adminMenu.click();
@@ -294,41 +380,63 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			}
 		});
 
-		test("should restrict professional access appropriately", async ({ page }) => {
+		test("should restrict professional access appropriately", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
 			// Login as healthcare professional
-			await page.fill('[data-testid="email"], input[type="email"]', "dr.silva@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "DoctorSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"dr.silva@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"DoctorSecure123!",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 			await page.waitForURL("**/dashboard");
 
 			// Should have access to patient areas
-			const patientsMenu = page.locator('[data-testid="patients-menu"], text=Pacientes');
+			const patientsMenu = page.locator(
+				'[data-testid="patients-menu"], text=Pacientes',
+			);
 			if ((await patientsMenu.count()) > 0) {
 				await expect(patientsMenu).toBeVisible();
 			}
 
 			// Should NOT have access to admin areas
-			const adminMenu = page.locator('[data-testid="admin-menu"], text=Administração');
+			const adminMenu = page.locator(
+				'[data-testid="admin-menu"], text=Administração',
+			);
 			if ((await adminMenu.count()) > 0) {
 				await expect(adminMenu).not.toBeVisible();
 			}
 		});
 
-		test("should restrict staff access to basic functions", async ({ page }) => {
+		test("should restrict staff access to basic functions", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
 			// Login as staff member
-			await page.fill('[data-testid="email"], input[type="email"]', "staff@neonpro.com.br");
-			await page.fill('[data-testid="password"], input[type="password"]', "StaffSecure123!");
+			await page.fill(
+				'[data-testid="email"], input[type="email"]',
+				"staff@neonpro.com.br",
+			);
+			await page.fill(
+				'[data-testid="password"], input[type="password"]',
+				"StaffSecure123!",
+			);
 			await page.click('[data-testid="login-submit"], button[type="submit"]');
 			await page.waitForURL("**/dashboard");
 
 			// Should have limited access
-			const scheduleMenu = page.locator('[data-testid="schedule-menu"], text=Agendamento');
+			const scheduleMenu = page.locator(
+				'[data-testid="schedule-menu"], text=Agendamento',
+			);
 			if ((await scheduleMenu.count()) > 0) {
 				await expect(scheduleMenu).toBeVisible();
 			}
@@ -342,7 +450,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 	});
 
 	test.describe("🔐 Security Validations & Compliance", () => {
-		test("should validate form inputs and prevent injection", async ({ page }) => {
+		test("should validate form inputs and prevent injection", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -356,7 +466,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await expect(alert).not.toBeVisible();
 		});
 
-		test("should enforce rate limiting on failed attempts", async ({ page }) => {
+		test("should enforce rate limiting on failed attempts", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -369,14 +481,18 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			}
 
 			// Should show rate limiting message
-			const rateLimitMessage = page.locator("text=Muitas tentativas, text=Rate limit");
+			const rateLimitMessage = page.locator(
+				"text=Muitas tentativas, text=Rate limit",
+			);
 			if ((await rateLimitMessage.count()) > 0) {
 				await expect(rateLimitMessage).toBeVisible();
 			}
 		});
 
 		test("should handle password requirements validation", async ({ page }) => {
-			const registerPage = page.locator('[data-testid="register-link"], text=Cadastrar');
+			const registerPage = page.locator(
+				'[data-testid="register-link"], text=Cadastrar',
+			);
 			if ((await registerPage.count()) > 0) {
 				await registerPage.click();
 			} else {
@@ -410,13 +526,17 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await page.click('button[type="submit"]');
 
 			// Should show network error message
-			const networkError = page.locator("text=Erro de conexão, text=Network error");
+			const networkError = page.locator(
+				"text=Erro de conexão, text=Network error",
+			);
 			if ((await networkError.count()) > 0) {
 				await expect(networkError).toBeVisible();
 			}
 		});
 
-		test("should show proper loading states during authentication", async ({ page }) => {
+		test("should show proper loading states during authentication", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -426,7 +546,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			// Click submit and immediately check for loading state
 			await page.click('button[type="submit"]');
 
-			const loadingIndicator = page.locator('[data-testid="loading"], .loading, text=Carregando');
+			const loadingIndicator = page.locator(
+				'[data-testid="loading"], .loading, text=Carregando',
+			);
 			if ((await loadingIndicator.count()) > 0) {
 				await expect(loadingIndicator).toBeVisible();
 			}
@@ -434,7 +556,9 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 	});
 
 	test.describe("♿ Accessibility & Performance", () => {
-		test("should be accessible for healthcare professionals with disabilities", async ({ page }) => {
+		test("should be accessible for healthcare professionals with disabilities", async ({
+			page,
+		}) => {
 			await page.goto("/login");
 			await page.waitForLoadState("networkidle");
 
@@ -449,11 +573,17 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
 			await expect(page.locator('button[type="submit"]:focus')).toBeVisible();
 
 			// Test screen reader support
-			await expect(page.locator('label[for*="email"], input[aria-label*="email"]')).toBeVisible();
-			await expect(page.locator('label[for*="password"], input[aria-label*="password"]')).toBeVisible();
+			await expect(
+				page.locator('label[for*="email"], input[aria-label*="email"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('label[for*="password"], input[aria-label*="password"]'),
+			).toBeVisible();
 		});
 
-		test("should load within performance budget for healthcare environment", async ({ page }) => {
+		test("should load within performance budget for healthcare environment", async ({
+			page,
+		}) => {
 			const startTime = Date.now();
 
 			await page.goto("/login");

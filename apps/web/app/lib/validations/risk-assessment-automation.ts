@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { EscalationPriority, RiskFactorCategory, RiskLevel } from "@/app/types/risk-assessment-automation";
+import { z } from "zod";
 
 // ============================================================================
 // HEALTHCARE VALIDATION SCHEMAS - CONSTITUTIONAL COMPLIANCE
@@ -71,6 +71,7 @@ const demographicRiskFactorsSchema = z.object({
  * Medical History Validation
  * Constitutional healthcare data with audit trail requirements
  */
+
 const medicalHistorySchema = z.object({
 	chronicConditions: z.array(z.string().min(1)),
 
@@ -120,6 +121,7 @@ const medicalHistorySchema = z.object({
  * Current Condition Risk Factors Validation
  * Real-time monitoring with medical accuracy
  */
+
 const currentConditionSchema = z.object({
 	vitalSigns: vitalSignsSchema,
 
@@ -184,6 +186,7 @@ const procedureSpecificSchema = z
  * Environmental Risk Factors Validation
  * Social determinants of health assessment
  */
+
 const environmentalSchema = z.object({
 	supportSystem: z.object({
 		hasCaregiver: z.boolean(),
@@ -221,6 +224,7 @@ const lgpdConsentSchema = z.object({
  * Risk Assessment Input Validation
  * Complete patient risk profile validation
  */
+
 export const riskAssessmentInputSchema = z.object({
 	patientId: z.string().uuid("ID do paciente deve ser um UUID válido"),
 	tenantId: z.string().uuid("ID do tenant deve ser um UUID válido"),
@@ -290,6 +294,7 @@ export const emergencyEscalationSchema = z.object({
  * Risk Assessment Result Validation
  * Complete assessment output with professional oversight
  */
+
 export const riskAssessmentResultSchema = z.object({
 	id: z.string().uuid("ID da avaliação deve ser um UUID válido"),
 	patientId: z.string().uuid("ID do paciente deve ser um UUID válido"),
@@ -369,6 +374,7 @@ export const riskAssessmentResultSchema = z.object({
  * Audit Trail Validation
  * Constitutional healthcare compliance with LGPD requirements
  */
+
 export const auditTrailEntrySchema = z.object({
 	id: z.string().uuid("ID da auditoria deve ser um UUID válido"),
 	patientId: z.string().uuid("ID do paciente deve ser um UUID válido"),
@@ -462,11 +468,11 @@ export const riskAssessmentConfigSchema = z.object({
 export {
 	cpfSchema,
 	crmSchema,
-	vitalSignsSchema,
-	demographicRiskFactorsSchema,
-	medicalHistorySchema,
 	currentConditionSchema,
-	procedureSpecificSchema,
+	demographicRiskFactorsSchema,
 	environmentalSchema,
 	lgpdConsentSchema,
+	medicalHistorySchema,
+	procedureSpecificSchema,
+	vitalSignsSchema,
 };

@@ -52,7 +52,13 @@ export type ScheduledIntervention = {
 	channel_type: string;
 	template_id: string;
 	scheduled_time: string;
-	status: "scheduled" | "sent" | "delivered" | "failed" | "responded" | "cancelled";
+	status:
+		| "scheduled"
+		| "sent"
+		| "delivered"
+		| "failed"
+		| "responded"
+		| "cancelled";
 	priority: number;
 	retry_count: number;
 	max_retries: number;
@@ -187,12 +193,23 @@ export interface InterventionOutput extends AIServiceOutput {
 }
 
 // Automated Intervention Service Implementation
-export class AutomatedInterventionService extends EnhancedAIService<InterventionInput, InterventionOutput> {
-	private readonly activeCampaigns: Map<string, InterventionCampaign> = new Map();
-	private readonly interventionChannels: Map<string, InterventionChannel> = new Map();
-	private readonly interventionTemplates: Map<string, InterventionTemplate> = new Map();
+export class AutomatedInterventionService extends EnhancedAIService<
+	InterventionInput,
+	InterventionOutput
+> {
+	private readonly activeCampaigns: Map<string, InterventionCampaign> =
+		new Map();
+	private readonly interventionChannels: Map<string, InterventionChannel> =
+		new Map();
+	private readonly interventionTemplates: Map<string, InterventionTemplate> =
+		new Map();
 
-	constructor(cache: CacheService, logger: LoggerService, metrics: MetricsService, config?: AIServiceConfig) {
+	constructor(
+		cache: CacheService,
+		logger: LoggerService,
+		metrics: MetricsService,
+		config?: AIServiceConfig,
+	) {
 		super(cache, logger, metrics, {
 			enableCaching: true,
 			cacheTTL: 1800, // 30 minutes for intervention data
@@ -220,7 +237,9 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		} catch (_error) {}
 	}
 
-	protected async executeCore(input: InterventionInput): Promise<InterventionOutput> {
+	protected async executeCore(
+		input: InterventionInput,
+	): Promise<InterventionOutput> {
 		const startTime = performance.now();
 
 		try {
@@ -255,9 +274,19 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		}
 	}
 
-	private async scheduleIntervention(input: InterventionInput): Promise<InterventionOutput> {
-		if (!(input.appointment_context && input.patient_profile && input.prediction_data)) {
-			throw new Error("appointment_context, patient_profile, and prediction_data are required");
+	private async scheduleIntervention(
+		input: InterventionInput,
+	): Promise<InterventionOutput> {
+		if (
+			!(
+				input.appointment_context &&
+				input.patient_profile &&
+				input.prediction_data
+			)
+		) {
+			throw new Error(
+				"appointment_context, patient_profile, and prediction_data are required",
+			);
 		}
 
 		const campaignId = `campaign_${Date.now()}_${Math.random().toString(36).substring(7)}`;
@@ -267,7 +296,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 			input.prediction_data,
 			input.patient_profile,
 			input.appointment_context,
-			input.strategy_config
+			input.strategy_config,
 		);
 
 		// Create intervention campaign
@@ -276,11 +305,12 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 			input.patient_profile,
 			input.appointment_context,
 			input.prediction_data,
-			strategy
+			strategy,
 		);
 
 		// Schedule individual interventions
-		const scheduledInterventions = await this.scheduleIndividualInterventions(campaign);
+		const scheduledInterventions =
+			await this.scheduleIndividualInterventions(campaign);
 
 		// Store campaign
 		this.activeCampaigns.set(campaignId, campaign);
@@ -300,7 +330,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		predictionData: EnsemblePredictionResult,
 		patientProfile: PatientProfile,
 		_appointmentContext: AppointmentContext,
-		_strategyConfig?: any
+		_strategyConfig?: any,
 	): Promise<InterventionStrategy> {
 		const probability = predictionData.calibrated_probability;
 
@@ -395,7 +425,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		patientProfile: PatientProfile,
 		appointmentContext: AppointmentContext,
 		predictionData: EnsemblePredictionResult,
-		strategy: InterventionStrategy
+		strategy: InterventionStrategy,
 	): Promise<InterventionCampaign> {
 		return {
 			campaign_id: campaignId,
@@ -419,17 +449,24 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		};
 	}
 
-	private async scheduleIndividualInterventions(campaign: InterventionCampaign): Promise<ScheduledIntervention[]> {
+	private async scheduleIndividualInterventions(
+		campaign: InterventionCampaign,
+	): Promise<ScheduledIntervention[]> {
 		const scheduledInterventions: ScheduledIntervention[] = [];
-		const appointmentTime = new Date(campaign.appointment_context.scheduled_datetime);
+		const appointmentTime = new Date(
+			campaign.appointment_context.scheduled_datetime,
+		);
 
 		// Schedule interventions based on strategy
 		for (let i = 0; i < campaign.selected_strategy.channels.length; i++) {
 			const channel = campaign.selected_strategy.channels[i];
 			const timingHours =
-				campaign.selected_strategy.timing_hours_before[i] || campaign.selected_strategy.timing_hours_before[0];
+				campaign.selected_strategy.timing_hours_before[i] ||
+				campaign.selected_strategy.timing_hours_before[0];
 
-			const scheduledTime = new Date(appointmentTime.getTime() - timingHours * 60 * 60 * 1000);
+			const scheduledTime = new Date(
+				appointmentTime.getTime() - timingHours * 60 * 60 * 1000,
+			);
 
 			// Don't schedule interventions in the past
 			if (scheduledTime > new Date()) {
@@ -437,7 +474,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 					channel,
 					campaign.prediction_data.calibrated_probability,
 					campaign.patient_profile.language_preference,
-					campaign.selected_strategy.personalization_level
+					campaign.selected_strategy.personalization_level,
 				);
 
 				const intervention: ScheduledIntervention = {
@@ -457,7 +494,8 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 					outcome_metrics: {
 						patient_responded: false,
 						cost_incurred:
-							campaign.selected_strategy.cost_per_intervention / campaign.selected_strategy.channels.length,
+							campaign.selected_strategy.cost_per_intervention /
+							campaign.selected_strategy.channels.length,
 						roi_contribution: 0,
 					},
 				};
@@ -468,7 +506,8 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 
 		// Update campaign with scheduled interventions
 		campaign.interventions = scheduledInterventions;
-		campaign.performance_metrics.total_interventions = scheduledInterventions.length;
+		campaign.performance_metrics.total_interventions =
+			scheduledInterventions.length;
 
 		return scheduledInterventions;
 	}
@@ -477,7 +516,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		channel: string,
 		riskProbability: number,
 		language: string,
-		personalizationLevel: string
+		personalizationLevel: string,
 	): Promise<InterventionTemplate> {
 		const riskCategory = this.calculateRiskCategory(riskProbability);
 
@@ -489,7 +528,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 					template.language === language &&
 					template.risk_category === riskCategory &&
 					template.personalization_level === personalizationLevel &&
-					template.compliance_approved
+					template.compliance_approved,
 			)
 			.sort((a, b) => b.effectiveness_score - a.effectiveness_score);
 
@@ -501,7 +540,9 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		return this.getDefaultTemplate(channel, riskCategory, language);
 	}
 
-	private calculateRiskCategory(probability: number): "low" | "medium" | "high" | "very_high" {
+	private calculateRiskCategory(
+		probability: number,
+	): "low" | "medium" | "high" | "very_high" {
 		if (probability < 0.15) {
 			return "low";
 		}
@@ -514,7 +555,11 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		return "very_high";
 	}
 
-	private getDefaultTemplate(channel: string, riskCategory: string, language: string): InterventionTemplate {
+	private getDefaultTemplate(
+		channel: string,
+		riskCategory: string,
+		language: string,
+	): InterventionTemplate {
 		const templates = {
 			sms: {
 				"pt-BR": {
@@ -529,9 +574,11 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 			email: {
 				"pt-BR": {
 					low: "Prezado(a) {{patient_name}}, confirmamos sua consulta de {{appointment_type}} em {{appointment_date}} às {{appointment_time}}...",
-					medium: "Olá {{patient_name}}, sua consulta está próxima. {{appointment_date}} às {{appointment_time}}...",
+					medium:
+						"Olá {{patient_name}}, sua consulta está próxima. {{appointment_date}} às {{appointment_time}}...",
 					high: "Importante: Consulta agendada para {{appointment_date}} às {{appointment_time}}...",
-					very_high: "Consulta hoje - Não perca! {{patient_name}}, sua consulta é hoje...",
+					very_high:
+						"Consulta hoje - Não perca! {{patient_name}}, sua consulta é hoje...",
 				},
 			},
 		};
@@ -564,9 +611,15 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 
 	private async personalizeContent(
 		template: InterventionTemplate,
-		campaign: InterventionCampaign
-	): Promise<{ subject?: string; body: string; personalized_variables: Record<string, string> }> {
-		const appointmentDate = new Date(campaign.appointment_context.scheduled_datetime);
+		campaign: InterventionCampaign,
+	): Promise<{
+		subject?: string;
+		body: string;
+		personalized_variables: Record<string, string>;
+	}> {
+		const appointmentDate = new Date(
+			campaign.appointment_context.scheduled_datetime,
+		);
 		const formattedDate = appointmentDate.toLocaleDateString("pt-BR");
 		const formattedTime = appointmentDate.toLocaleTimeString("pt-BR", {
 			hour: "2-digit",
@@ -574,10 +627,13 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 		});
 
 		const variables = {
-			patient_name: campaign.patient_profile.patient_id.split("_")[0] || "Paciente", // Simplified
+			patient_name:
+				campaign.patient_profile.patient_id.split("_")[0] || "Paciente", // Simplified
 			appointment_date: formattedDate,
 			appointment_time: formattedTime,
-			appointment_type: this.translateAppointmentType(campaign.appointment_context.appointment_type),
+			appointment_type: this.translateAppointmentType(
+				campaign.appointment_context.appointment_type,
+			),
 			clinic_phone: "(11) 9999-9999", // Would be dynamic in production
 			confirmation_link: `https://neonpro.app/confirm/${campaign.appointment_id}`,
 			doctor_name: `Dr(a). ${campaign.appointment_context.doctor_id.substring(0, 8)}`,
@@ -628,7 +684,11 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 				typical_response_rate: 0.85,
 				optimal_timing_hours: [24, 4],
 				character_limits: { body: 160 },
-				template_variables: ["patient_name", "appointment_date", "appointment_time"],
+				template_variables: [
+					"patient_name",
+					"appointment_date",
+					"appointment_time",
+				],
 				compliance_requirements: ["LGPD_CONSENT", "ANVISA_MEDICAL_COMM"],
 			},
 			{
@@ -641,7 +701,11 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 				typical_response_rate: 0.65,
 				optimal_timing_hours: [48, 24],
 				character_limits: { subject: 50, body: 2000 },
-				template_variables: ["patient_name", "appointment_details", "clinic_info"],
+				template_variables: [
+					"patient_name",
+					"appointment_details",
+					"clinic_info",
+				],
 				compliance_requirements: ["LGPD_CONSENT", "CAN_SPAM"],
 			},
 			{
@@ -667,7 +731,9 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 
 	private async loadActiveCampaigns(): Promise<void> {}
 
-	private async storeCampaignToDatabase(campaign: InterventionCampaign): Promise<void> {
+	private async storeCampaignToDatabase(
+		campaign: InterventionCampaign,
+	): Promise<void> {
 		// Store campaign using Supabase MCP
 		try {
 			await this.recordMetric("campaign_created", {
@@ -680,35 +746,51 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 	}
 
 	// Additional placeholder methods
-	private async sendImmediateIntervention(_input: InterventionInput): Promise<InterventionOutput> {
+	private async sendImmediateIntervention(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async updateCampaign(_input: InterventionInput): Promise<InterventionOutput> {
+	private async updateCampaign(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async cancelIntervention(_input: InterventionInput): Promise<InterventionOutput> {
+	private async cancelIntervention(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async getCampaignStatus(_input: InterventionInput): Promise<InterventionOutput> {
+	private async getCampaignStatus(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async optimizeTemplates(_input: InterventionInput): Promise<InterventionOutput> {
+	private async optimizeTemplates(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async getInterventionAnalytics(_input: InterventionInput): Promise<InterventionOutput> {
+	private async getInterventionAnalytics(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async testIntervention(_input: InterventionInput): Promise<InterventionOutput> {
+	private async testIntervention(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
-	private async bulkScheduleInterventions(_input: InterventionInput): Promise<InterventionOutput> {
+	private async bulkScheduleInterventions(
+		_input: InterventionInput,
+	): Promise<InterventionOutput> {
 		return { success: true };
 	}
 
@@ -716,7 +798,7 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 	public async scheduleInterventionForAppointment(
 		patientProfile: PatientProfile,
 		appointmentContext: AppointmentContext,
-		predictionData: EnsemblePredictionResult
+		predictionData: EnsemblePredictionResult,
 	): Promise<{ campaign_id: string; interventions_scheduled: number }> {
 		const result = await this.execute({
 			action: "schedule_intervention",
@@ -739,7 +821,9 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 	}> {
 		// Calculate ROI analytics from active campaigns
 		const campaigns = Array.from(this.activeCampaigns.values());
-		const completedCampaigns = campaigns.filter((c) => c.campaign_status === "completed");
+		const completedCampaigns = campaigns.filter(
+			(c) => c.campaign_status === "completed",
+		);
 
 		if (completedCampaigns.length === 0) {
 			return {
@@ -750,10 +834,16 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 			};
 		}
 
-		const totalROI = completedCampaigns.reduce((sum, c) => sum + c.performance_metrics.roi_actual, 0);
-		const totalCost = completedCampaigns.reduce((sum, c) => sum + c.performance_metrics.total_cost, 0);
+		const totalROI = completedCampaigns.reduce(
+			(sum, c) => sum + c.performance_metrics.roi_actual,
+			0,
+		);
+		const totalCost = completedCampaigns.reduce(
+			(sum, c) => sum + c.performance_metrics.total_cost,
+			0,
+		);
 		const successfulCampaigns = completedCampaigns.filter(
-			(c) => c.performance_metrics.appointment_outcome === "attended"
+			(c) => c.performance_metrics.appointment_outcome === "attended",
 		);
 
 		return {
@@ -769,5 +859,5 @@ export class AutomatedInterventionService extends EnhancedAIService<Intervention
 export const automatedInterventionService = new AutomatedInterventionService(
 	{} as CacheService,
 	{} as LoggerService,
-	{} as MetricsService
+	{} as MetricsService,
 );

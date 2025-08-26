@@ -6,7 +6,11 @@
 "use client";
 
 import { createContext, type ReactNode, useContext } from "react";
-import { type AuthUser, type LoginCredentials, useAuthToken } from "./use-auth-token";
+import {
+	type AuthUser,
+	type LoginCredentials,
+	useAuthToken,
+} from "./use-auth-token";
 
 type AuthContextType = {
 	// Estado
@@ -16,7 +20,9 @@ type AuthContextType = {
 	error: string | null;
 
 	// Ações
-	login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
+	login: (
+		credentials: LoginCredentials,
+	) => Promise<{ success: boolean; error?: string }>;
 	logout: () => Promise<void>;
 
 	// Utilidades
@@ -64,7 +70,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		timeUntilExpiration: authHook.timeUntilExpiration,
 	};
 
-	return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+	return (
+		<AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+	);
 }
 
 /**

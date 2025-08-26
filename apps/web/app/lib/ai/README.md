@@ -2,7 +2,8 @@
 
 ## Overview
 
-Esta pasta contém toda a implementação do sistema de IA universal do NeonPro, integrando os Épicos 1, 2, 3 e 4.
+Esta pasta contém toda a implementação do sistema de IA universal do NeonPro, integrando os Épicos
+1, 2, 3 e 4.
 
 ## Structure
 

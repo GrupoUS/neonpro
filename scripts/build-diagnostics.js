@@ -68,12 +68,16 @@ async function checkPrerequisites() {
 
 		// Check if we're in the right directory
 		if (!fs.existsSync("package.json")) {
-			throw new Error("package.json not found. Run this script from the root directory.");
+			throw new Error(
+				"package.json not found. Run this script from the root directory.",
+			);
 		}
 
 		const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 		if (packageJson.name !== "neonpro") {
-			throw new Error("This script must be run from the NeonPro root directory.");
+			throw new Error(
+				"This script must be run from the NeonPro root directory.",
+			);
 		}
 
 		logSuccess("Directory structure validated");
@@ -159,7 +163,12 @@ async function testWorkspacePackages() {
 		logSuccess(`Found ${workspaceData.length || 0} workspace packages`);
 
 		// Check if @neonpro packages are available
-		const requiredPackages = ["@neonpro/ui", "@neonpro/utils", "@neonpro/domain", "@neonpro/db"];
+		const requiredPackages = [
+			"@neonpro/ui",
+			"@neonpro/utils",
+			"@neonpro/domain",
+			"@neonpro/db",
+		];
 
 		for (const pkg of requiredPackages) {
 			try {
@@ -292,17 +301,29 @@ async function generateDiagnosticReport() {
 	};
 
 	try {
-		report.nodeVersion = execSync("node --version", { encoding: "utf8" }).trim();
-		report.pnpmVersion = execSync("pnpm --version", { encoding: "utf8" }).trim();
+		report.nodeVersion = execSync("node --version", {
+			encoding: "utf8",
+		}).trim();
+		report.pnpmVersion = execSync("pnpm --version", {
+			encoding: "utf8",
+		}).trim();
 	} catch (_error) {
 		report.errors.push("Failed to get version information");
 	}
 
 	// Add recommendations based on common issues
-	report.recommendations.push("Consider using Node.js 18.x or 20.x for better compatibility");
-	report.recommendations.push("Ensure all @neonpro/* packages are properly built before web app");
-	report.recommendations.push("Check if TypeScript errors are blocking the build");
-	report.recommendations.push("Verify Vercel environment variables are properly set");
+	report.recommendations.push(
+		"Consider using Node.js 18.x or 20.x for better compatibility",
+	);
+	report.recommendations.push(
+		"Ensure all @neonpro/* packages are properly built before web app",
+	);
+	report.recommendations.push(
+		"Check if TypeScript errors are blocking the build",
+	);
+	report.recommendations.push(
+		"Verify Vercel environment variables are properly set",
+	);
 
 	const reportPath = "build-diagnostic-report.json";
 	fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
@@ -351,11 +372,13 @@ async function runDiagnostics() {
 	const allPassed = Object.values(results).every((result) => result);
 
 	if (allPassed) {
-		log(`\n${colors.bold}${colors.green}🎉 All diagnostics passed! Build should work on Vercel.${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.green}🎉 All diagnostics passed! Build should work on Vercel.${colors.reset}`,
+		);
 		process.exit(0);
 	} else {
 		log(
-			`\n${colors.bold}${colors.red}💥 Some diagnostics failed. Check the issues above and the diagnostic report.${colors.reset}`
+			`\n${colors.bold}${colors.red}💥 Some diagnostics failed. Check the issues above and the diagnostic report.${colors.reset}`,
 		);
 		process.exit(1);
 	}

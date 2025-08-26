@@ -1,7 +1,7 @@
 // Migrated from src/services/auth.ts
 
-import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import type { Session, User } from "@supabase/supabase-js";
 
 export interface AuthUser extends User {
 	tenant_id?: string;

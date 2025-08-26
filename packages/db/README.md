@@ -2,11 +2,13 @@
 
 ## Overview
 
-Database package for NeonPro Healthcare management system containing Supabase configurations, migrations, Edge Functions, and TypeScript type definitions.
+Database package for NeonPro Healthcare management system containing Supabase configurations,
+migrations, Edge Functions, and TypeScript type definitions.
 
 ## 🏥 Healthcare Compliance
 
 This package maintains:
+
 - **LGPD Compliance**: Brazilian data protection law compliance
 - **ANVISA Regulations**: Medical device and procedure tracking
 - **CFM Standards**: Medical professional standards and ethics
@@ -33,6 +35,7 @@ packages/db/
 ## 🚀 Commands
 
 ### Database Management
+
 ```bash
 # Start local Supabase
 pnpm --filter @neonpro/db db:start
@@ -48,6 +51,7 @@ pnpm --filter @neonpro/db db:reset
 ```
 
 ### Migrations
+
 ```bash
 # Create new migration
 pnpm --filter @neonpro/db db:migration:new "migration_name"
@@ -60,6 +64,7 @@ pnpm --filter @neonpro/db db:migration:squash
 ```
 
 ### Edge Functions
+
 ```bash
 # Deploy all functions
 pnpm --filter @neonpro/db db:functions:deploy
@@ -72,6 +77,7 @@ supabase functions deploy stock-alerts-processor
 ```
 
 ### Type Generation
+
 ```bash
 # Generate TypeScript types
 pnpm --filter @neonpro/db db:generate:types
@@ -87,6 +93,7 @@ pnpm --filter @neonpro/db db:generate:types
 ## 🏥 Healthcare Schemas
 
 ### Core Healthcare Tables
+
 - `patients`: Patient management with LGPD compliance
 - `appointments`: Scheduling with conflict resolution
 - `treatments`: Treatment tracking and protocols
@@ -94,12 +101,14 @@ pnpm --filter @neonpro/db db:generate:types
 - `professionals`: CFM-compliant professional management
 
 ### Compliance Tables
+
 - `lgpd_consent`: Granular consent management
 - `audit_logs`: Comprehensive audit trails
 - `anvisa_tracking`: Medical device/procedure compliance
 - `cfm_validation`: Professional standards compliance
 
 ### AI & Analytics
+
 - `treatment_predictions`: AI-driven treatment recommendations
 - `patient_analytics`: Wellness intelligence and insights
 - `demand_forecasting`: Predictive analytics for operations
@@ -107,6 +116,7 @@ pnpm --filter @neonpro/db db:generate:types
 ## 🌐 Multi-tenant Architecture
 
 All tables implement tenant isolation through:
+
 - `tenant_id` columns with RLS policies
 - Automatic tenant context injection
 - Cross-tenant data prevention
@@ -122,6 +132,7 @@ All tables implement tenant isolation through:
 ## 🔄 Migration Strategy
 
 Migrations are organized chronologically with healthcare-specific groupings:
+
 - `001-003`: Core subscription and RLS foundation
 - `20240115*`: LGPD compliance system
 - `20240125*`: Brazilian tax and regulatory systems
@@ -132,6 +143,7 @@ Migrations are organized chronologically with healthcare-specific groupings:
 ## 🎯 Usage in Monorepo
 
 This package is used by:
+
 - `apps/web`: Main healthcare application
 - `apps/api`: Healthcare API services
 - `packages/types`: Shared type definitions

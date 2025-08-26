@@ -193,7 +193,7 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 							success: false,
 							error: "Credenciais inválidas",
 						},
-						401
+						401,
 					);
 				}
 
@@ -243,14 +243,15 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 				});
 
 				if (user && user.role === "DOCTOR") {
-					const validation = await mockAuthService.validateHealthcareProfessional(user);
+					const validation =
+						await mockAuthService.validateHealthcareProfessional(user);
 					if (!validation.isValid) {
 						return c.json(
 							{
 								success: false,
 								error: "Licença profissional requerida para médicos",
 							},
-							403
+							403,
 						);
 					}
 				}
@@ -260,7 +261,9 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 
 			await loginHandler(mockContext);
 
-			expect(mockAuthService.validateHealthcareProfessional).toHaveBeenCalledWith(userWithoutLicense);
+			expect(
+				mockAuthService.validateHealthcareProfessional,
+			).toHaveBeenCalledWith(userWithoutLicense);
 		});
 	});
 	describe("POST /auth/refresh - Token Refresh", () => {
@@ -338,7 +341,9 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 
 			expect(mockJWT.verify).toHaveBeenCalledWith(mockRefreshToken);
 			expect(mockPrisma.session.findUnique).toHaveBeenCalled();
-			expect(mockAuthService.refreshToken).toHaveBeenCalledWith(mockRefreshToken);
+			expect(mockAuthService.refreshToken).toHaveBeenCalledWith(
+				mockRefreshToken,
+			);
 		});
 		it("should reject expired refresh token", async () => {
 			const expiredRefreshToken = "expired-refresh-token";
@@ -379,7 +384,7 @@ describe("Authentication API Endpoints - NeonPro Healthcare", () => {
 							success: false,
 							error: "Token de refresh expirado",
 						},
-						401
+						401,
 					);
 				}
 

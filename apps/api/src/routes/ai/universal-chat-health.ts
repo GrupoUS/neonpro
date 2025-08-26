@@ -31,9 +31,15 @@ type ChatServiceHealthCheck = {
 class UniversalChatHealthService {
 	private static async checkDatabaseConnectivity(): Promise<"ok" | "error"> {
 		try {
-			const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+			const supabase = createClient(
+				process.env.SUPABASE_URL!,
+				process.env.SUPABASE_SERVICE_ROLE_KEY!,
+			);
 
-			const { error } = await supabase.from("ai_chat_sessions").select("count").limit(1);
+			const { error } = await supabase
+				.from("ai_chat_sessions")
+				.select("count")
+				.limit(1);
 
 			return error ? "error" : "ok";
 		} catch (_error) {
@@ -41,7 +47,9 @@ class UniversalChatHealthService {
 		}
 	}
 
-	private static async checkAIModelAvailability(): Promise<"ok" | "error" | "degraded"> {
+	private static async checkAIModelAvailability(): Promise<
+		"ok" | "error" | "degraded"
+	> {
 		try {
 			// Test OpenAI API connectivity with a minimal request
 			const response = await fetch("https://api.openai.com/v1/models", {
@@ -64,24 +72,32 @@ class UniversalChatHealthService {
 
 	private static async checkSessionManagement(): Promise<"ok" | "error"> {
 		try {
-			const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+			const supabase = createClient(
+				process.env.SUPABASE_URL!,
+				process.env.SUPABASE_SERVICE_ROLE_KEY!,
+			);
 
 			// Test session creation and retrieval
 			const testSessionId = `health-check-${Date.now()}`;
-			const { error: insertError } = await supabase.from("ai_chat_sessions").insert({
-				session_id: testSessionId,
-				user_id: "health-check-user",
-				language: "pt-BR",
-				status: "active",
-				created_at: new Date().toISOString(),
-			});
+			const { error: insertError } = await supabase
+				.from("ai_chat_sessions")
+				.insert({
+					session_id: testSessionId,
+					user_id: "health-check-user",
+					language: "pt-BR",
+					status: "active",
+					created_at: new Date().toISOString(),
+				});
 
 			if (insertError) {
 				return "error";
 			}
 
 			// Clean up test session
-			await supabase.from("ai_chat_sessions").delete().eq("session_id", testSessionId);
+			await supabase
+				.from("ai_chat_sessions")
+				.delete()
+				.eq("session_id", testSessionId);
 
 			return "ok";
 		} catch (_error) {
@@ -91,12 +107,18 @@ class UniversalChatHealthService {
 
 	private static async getServiceMetrics(): Promise<any> {
 		try {
-			const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+			const supabase = createClient(
+				process.env.SUPABASE_URL!,
+				process.env.SUPABASE_SERVICE_ROLE_KEY!,
+			);
 
 			const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
 			// Get active sessions count
-			const { data: activeSessions } = await supabase.from("ai_chat_sessions").select("count").eq("status", "active");
+			const { data: activeSessions } = await supabase
+				.from("ai_chat_sessions")
+				.select("count")
+				.eq("status", "active");
 
 			// Get messages processed in last hour
 			const { data: recentMessages } = await supabase
@@ -124,12 +146,13 @@ class UniversalChatHealthService {
 		const startTime = Date.now();
 
 		try {
-			const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] = await Promise.all([
-				UniversalChatHealthService.checkDatabaseConnectivity(),
-				UniversalChatHealthService.checkAIModelAvailability(),
-				UniversalChatHealthService.checkSessionManagement(),
-				UniversalChatHealthService.getServiceMetrics(),
-			]);
+			const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] =
+				await Promise.all([
+					UniversalChatHealthService.checkDatabaseConnectivity(),
+					UniversalChatHealthService.checkAIModelAvailability(),
+					UniversalChatHealthService.checkSessionManagement(),
+					UniversalChatHealthService.getServiceMetrics(),
+				]);
 
 			const details = {
 				database_connectivity: dbConnectivity,
@@ -142,8 +165,12 @@ class UniversalChatHealthService {
 			};
 
 			// Determine overall health status
-			const errorCount = Object.values(details).filter((v) => v === "error").length;
-			const degradedCount = Object.values(details).filter((v) => v === "degraded").length;
+			const errorCount = Object.values(details).filter(
+				(v) => v === "error",
+			).length;
+			const degradedCount = Object.values(details).filter(
+				(v) => v === "degraded",
+			).length;
 
 			let status: "healthy" | "degraded" | "unhealthy";
 			if (errorCount > 0) {

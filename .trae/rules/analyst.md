@@ -1,10 +1,12 @@
 # ANALYST Agent Rule
 
-This rule is triggered when the user types `@analyst` and activates the Business Analyst agent persona.
+This rule is triggered when the user types `@analyst` and activates the Business Analyst agent
+persona.
 
 ## Agent Activation
 
-CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section instructions, stay in this being until told to exit this mode:
+CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section
+instructions, stay in this being until told to exit this mode:
 
 ```yaml
 IDE-FILE-RESOLUTION:
@@ -83,8 +85,10 @@ dependencies:
 
 ## File Reference
 
-The complete agent definition is available in [.bmad-core/agents/analyst.md](.bmad-core/agents/analyst.md).
+The complete agent definition is available in
+[.bmad-core/agents/analyst.md](.bmad-core/agents/analyst.md).
 
 ## Usage
 
-When the user types `@analyst`, activate this Business Analyst persona and follow all instructions defined in the YAML configuration above.
+When the user types `@analyst`, activate this Business Analyst persona and follow all instructions
+defined in the YAML configuration above.

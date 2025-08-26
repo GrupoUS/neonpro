@@ -90,7 +90,9 @@ const _defaultPreferences: AccessibilityPreferences = {
 	enhancedTooltips: false,
 };
 
-const getWCAGComplianceLevel = (preferences: AccessibilityPreferences): "AA" | "AAA" => {
+const getWCAGComplianceLevel = (
+	preferences: AccessibilityPreferences,
+): "AA" | "AAA" => {
 	// AAA level criteria
 	const aaaFeatures = [
 		preferences.highContrast,
@@ -103,7 +105,10 @@ const getWCAGComplianceLevel = (preferences: AccessibilityPreferences): "AA" | "
 	return activeAAAFeatures >= 2 ? "AAA" : "AA";
 };
 
-export const AccessibilityControls = React.forwardRef<HTMLDivElement, AccessibilityControlsProps>(
+export const AccessibilityControls = React.forwardRef<
+	HTMLDivElement,
+	AccessibilityControlsProps
+>(
 	(
 		{
 			preferences,
@@ -115,7 +120,7 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 			className,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		// Generate unique IDs for accessibility
 		const panelId = useId();
@@ -140,7 +145,10 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 		const focusIndicatorsId = useId();
 		const focusIndicatorsDescId = useId();
 
-		const updatePreference = <K extends keyof AccessibilityPreferences>(key: K, value: AccessibilityPreferences[K]) => {
+		const updatePreference = <K extends keyof AccessibilityPreferences>(
+			key: K,
+			value: AccessibilityPreferences[K],
+		) => {
 			onPreferencesChange({
 				...preferences,
 				[key]: value,
@@ -148,7 +156,10 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 		};
 
 		const handleFontSizeChange = (delta: number) => {
-			const newSize = Math.max(0.8, Math.min(2.0, preferences.fontSize + delta));
+			const newSize = Math.max(
+				0.8,
+				Math.min(2.0, preferences.fontSize + delta),
+			);
 			updatePreference("fontSize", Number(newSize.toFixed(1)));
 		};
 
@@ -160,7 +171,7 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 				<div
 					className={cn(
 						"fixed right-4 bottom-4 z-50 rounded-full bg-primary p-3 text-primary-foreground shadow-lg transition-all hover:shadow-xl",
-						className
+						className,
 					)}
 					ref={ref}
 					{...props}
@@ -184,7 +195,7 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 			<div
 				className={cn(
 					"fixed right-4 bottom-4 z-50 w-80 rounded-lg border bg-card p-6 text-card-foreground shadow-xl",
-					className
+					className,
 				)}
 				id={panelId}
 				ref={ref}
@@ -206,7 +217,10 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 
 					<div className="flex items-center gap-2">
 						{showComplianceStatus && (
-							<Badge size="sm" variant={complianceLevel === "AAA" ? "confirmed" : "medium"}>
+							<Badge
+								size="sm"
+								variant={complianceLevel === "AAA" ? "confirmed" : "medium"}
+							>
 								WCAG {complianceLevel}
 							</Badge>
 						)}
@@ -242,7 +256,9 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 								<Minus className="h-4 w-4" />
 							</Button>
 
-							<span className="font-medium text-sm">{Math.round(preferences.fontSize * 100)}%</span>
+							<span className="font-medium text-sm">
+								{Math.round(preferences.fontSize * 100)}%
+							</span>
 
 							<Button
 								aria-label="Aumentar tamanho da fonte"
@@ -290,46 +306,72 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 							Acessibilidade Visual
 						</h4>
 						<div className="space-y-2">
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={highContrastId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={highContrastId}
+							>
 								<Checkbox
 									aria-describedby={highContrastDescId}
 									checked={preferences.highContrast}
 									id={highContrastId}
-									onCheckedChange={(checked) => updatePreference("highContrast", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("highContrast", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
 									<span className="font-medium text-sm">Alto Contraste</span>
-									<p className="text-muted-foreground text-xs" id={highContrastDescId}>
+									<p
+										className="text-muted-foreground text-xs"
+										id={highContrastDescId}
+									>
 										Melhora a visibilidade para baixa visão
 									</p>
 								</div>
 							</label>
 
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={colorBlindId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={colorBlindId}
+							>
 								<Checkbox
 									aria-describedby={colorBlindDescId}
 									checked={preferences.colorBlindFriendly}
 									id={colorBlindId}
-									onCheckedChange={(checked) => updatePreference("colorBlindFriendly", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("colorBlindFriendly", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
 									<span className="font-medium text-sm">Cores Acessíveis</span>
-									<p className="text-muted-foreground text-xs" id={colorBlindDescId}>
+									<p
+										className="text-muted-foreground text-xs"
+										id={colorBlindDescId}
+									>
 										Paleta otimizada para daltonismo
 									</p>
 								</div>
 							</label>
 
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={dyslexiaFontId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={dyslexiaFontId}
+							>
 								<Checkbox
 									aria-describedby={dyslexiaFontDescId}
 									checked={preferences.dyslexiaFont}
 									id={dyslexiaFontId}
-									onCheckedChange={(checked) => updatePreference("dyslexiaFont", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("dyslexiaFont", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
-									<span className="font-medium text-sm">Fonte para Dislexia</span>
-									<p className="text-muted-foreground text-xs" id={dyslexiaFontDescId}>
+									<span className="font-medium text-sm">
+										Fonte para Dislexia
+									</span>
+									<p
+										className="text-muted-foreground text-xs"
+										id={dyslexiaFontDescId}
+									>
 										Fonte otimizada para leitura
 									</p>
 								</div>
@@ -344,46 +386,72 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 							Navegação e Cognição
 						</h4>
 						<div className="space-y-2">
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={reducedMotionId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={reducedMotionId}
+							>
 								<Checkbox
 									aria-describedby={reducedMotionDescId}
 									checked={preferences.reducedMotion}
 									id={reducedMotionId}
-									onCheckedChange={(checked) => updatePreference("reducedMotion", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("reducedMotion", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
 									<span className="font-medium text-sm">Reduzir Animações</span>
-									<p className="text-muted-foreground text-xs" id={reducedMotionDescId}>
+									<p
+										className="text-muted-foreground text-xs"
+										id={reducedMotionDescId}
+									>
 										Minimiza movimento para sensibilidade vestibular
 									</p>
 								</div>
 							</label>
 
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={simplifiedInterfaceId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={simplifiedInterfaceId}
+							>
 								<Checkbox
 									aria-describedby={simplifiedInterfaceDescId}
 									checked={preferences.simplifiedInterface}
 									id={simplifiedInterfaceId}
-									onCheckedChange={(checked) => updatePreference("simplifiedInterface", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("simplifiedInterface", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
-									<span className="font-medium text-sm">Interface Simplificada</span>
-									<p className="text-muted-foreground text-xs" id={simplifiedInterfaceDescId}>
+									<span className="font-medium text-sm">
+										Interface Simplificada
+									</span>
+									<p
+										className="text-muted-foreground text-xs"
+										id={simplifiedInterfaceDescId}
+									>
 										Remove elementos complexos desnecessários
 									</p>
 								</div>
 							</label>
 
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={enhancedTooltipsId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={enhancedTooltipsId}
+							>
 								<Checkbox
 									aria-describedby={enhancedTooltipsDescId}
 									checked={preferences.enhancedTooltips}
 									id={enhancedTooltipsId}
-									onCheckedChange={(checked) => updatePreference("enhancedTooltips", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("enhancedTooltips", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
 									<span className="font-medium text-sm">Dicas Detalhadas</span>
-									<p className="text-muted-foreground text-xs" id={enhancedTooltipsDescId}>
+									<p
+										className="text-muted-foreground text-xs"
+										id={enhancedTooltipsDescId}
+									>
 										Explicações adicionais para reduzir ansiedade
 									</p>
 								</div>
@@ -398,46 +466,74 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 							Áudio e Leitores de Tela
 						</h4>
 						<div className="space-y-2">
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={screenReaderId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={screenReaderId}
+							>
 								<Checkbox
 									aria-describedby={screenReaderDescId}
 									checked={preferences.screenReader}
 									id={screenReaderId}
-									onCheckedChange={(checked) => updatePreference("screenReader", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("screenReader", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
-									<span className="font-medium text-sm">Otimizar para Leitor de Tela</span>
-									<p className="text-muted-foreground text-xs" id={screenReaderDescId}>
+									<span className="font-medium text-sm">
+										Otimizar para Leitor de Tela
+									</span>
+									<p
+										className="text-muted-foreground text-xs"
+										id={screenReaderDescId}
+									>
 										Melhora compatibilidade com NVDA, JAWS, etc.
 									</p>
 								</div>
 							</label>
 
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={audioFeedbackId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={audioFeedbackId}
+							>
 								<Checkbox
 									aria-describedby={audioFeedbackDescId}
 									checked={preferences.audioFeedback}
 									id={audioFeedbackId}
-									onCheckedChange={(checked) => updatePreference("audioFeedback", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("audioFeedback", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
 									<span className="font-medium text-sm">Feedback Sonoro</span>
-									<p className="text-muted-foreground text-xs" id={audioFeedbackDescId}>
+									<p
+										className="text-muted-foreground text-xs"
+										id={audioFeedbackDescId}
+									>
 										Sons para confirmação de ações
 									</p>
 								</div>
 							</label>
 
-							<label className="flex cursor-pointer items-center space-x-3" htmlFor={focusIndicatorsId}>
+							<label
+								className="flex cursor-pointer items-center space-x-3"
+								htmlFor={focusIndicatorsId}
+							>
 								<Checkbox
 									aria-describedby={focusIndicatorsDescId}
 									checked={preferences.focusIndicators}
 									id={focusIndicatorsId}
-									onCheckedChange={(checked) => updatePreference("focusIndicators", Boolean(checked))}
+									onCheckedChange={(checked) =>
+										updatePreference("focusIndicators", Boolean(checked))
+									}
 								/>
 								<div className="flex-1">
-									<span className="font-medium text-sm">Indicadores de Foco</span>
-									<p className="text-muted-foreground text-xs" id={focusIndicatorsDescId}>
+									<span className="font-medium text-sm">
+										Indicadores de Foco
+									</span>
+									<p
+										className="text-muted-foreground text-xs"
+										id={focusIndicatorsDescId}
+									>
 										Destaque visual para navegação por teclado
 									</p>
 								</div>
@@ -449,7 +545,8 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 					<div className="space-y-3 border-t pt-4">
 						<div className="flex items-center justify-between text-sm">
 							<span className="text-muted-foreground">
-								{activeFeatures} de {Object.keys(preferences).length} recursos ativos
+								{activeFeatures} de {Object.keys(preferences).length} recursos
+								ativos
 							</span>
 							<Badge size="sm" variant="outline">
 								WCAG {complianceLevel}
@@ -472,7 +569,7 @@ export const AccessibilityControls = React.forwardRef<HTMLDivElement, Accessibil
 				</div>
 			</div>
 		);
-	}
+	},
 );
 
 AccessibilityControls.displayName = "AccessibilityControls";

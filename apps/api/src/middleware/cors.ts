@@ -190,7 +190,10 @@ const validateClinicOrigin = (origin: string): boolean => {
 /**
  * Helper function to check static origins
  */
-const isStaticOriginAllowed = (origin: string, allowedOrigins: unknown): boolean => {
+const isStaticOriginAllowed = (
+	origin: string,
+	allowedOrigins: unknown,
+): boolean => {
 	if (!Array.isArray(allowedOrigins)) {
 		return false;
 	}
@@ -262,7 +265,10 @@ export const optimizedPreflight = (): MiddlewareHandler => {
 		if (c.req.method === "OPTIONS") {
 			// Add caching for preflight requests
 			c.res.headers.set("Vary", "Origin");
-			c.res.headers.set("Cache-Control", `public, max-age=${CACHE_DURATION.PREFLIGHT}`);
+			c.res.headers.set(
+				"Cache-Control",
+				`public, max-age=${CACHE_DURATION.PREFLIGHT}`,
+			);
 
 			// Add timing header for monitoring
 			c.res.headers.set("X-Preflight-Time", Date.now().toString());
@@ -307,7 +313,9 @@ export const corsUtils = {
 	// Validate request headers
 	validateHeaders: (headers: string[]): boolean => {
 		const corsPolicy = getCorsPolicyByEnvironment();
-		return headers.every((header) => corsPolicy.allowedHeaders.includes(header));
+		return headers.every((header) =>
+			corsPolicy.allowedHeaders.includes(header),
+		);
 	},
 
 	// Set custom CORS headers for specific routes

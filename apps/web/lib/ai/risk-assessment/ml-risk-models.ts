@@ -104,6 +104,7 @@ const RISK_THRESHOLDS = {
  * Demographic Risk Scoring Algorithm
  * Age, BMI, and lifestyle factors analysis
  */
+
 export function calculateDemographicRisk(demographic: RiskAssessmentInput["demographicFactors"]): {
 	score: number;
 	factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -266,6 +267,7 @@ export function calculateDemographicRisk(demographic: RiskAssessmentInput["demog
  * Medical History Risk Scoring Algorithm
  * Comprehensive analysis of patient medical background
  */
+
 export function calculateMedicalHistoryRisk(medicalHistory: RiskAssessmentInput["medicalHistory"]): {
 	score: number;
 	factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -475,6 +477,7 @@ export function calculateMedicalHistoryRisk(medicalHistory: RiskAssessmentInput[
  * Current Condition Risk Scoring Algorithm
  * Real-time assessment of patient's current health status
  */
+
 export function calculateCurrentConditionRisk(currentCondition: RiskAssessmentInput["currentCondition"]): {
 	score: number;
 	factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -714,6 +717,7 @@ export function calculateCurrentConditionRisk(currentCondition: RiskAssessmentIn
  * Procedure-Specific Risk Scoring Algorithm
  * ANVISA compliance for medical device and procedure assessment
  */
+
 export function calculateProcedureSpecificRisk(procedureSpecific?: RiskAssessmentInput["procedureSpecific"]): {
 	score: number;
 	factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -937,6 +941,7 @@ export function calculateProcedureSpecificRisk(procedureSpecific?: RiskAssessmen
  * Environmental and Psychosocial Risk Scoring Algorithm
  * Social determinants of health and support system assessment
  */
+
 export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["environmental"]): {
 	score: number;
 	factors: Array<{ factor: string; impact: number; explanation: string }>;
@@ -1121,6 +1126,7 @@ export function calculateEnvironmentalRisk(environmental: RiskAssessmentInput["e
  * Comprehensive Risk Assessment Function
  * Main function that combines all risk factors with constitutional healthcare compliance
  */
+
 export function calculateComprehensiveRiskAssessment(
 	input: RiskAssessmentInput,
 	customWeights?: Partial<Record<keyof typeof DEFAULT_RISK_WEIGHTS, number>>
@@ -1422,4 +1428,4 @@ export function validateModelAccuracy(): {
 }
 
 // Export utility functions and constants
-export { RISK_THRESHOLDS, DEFAULT_RISK_WEIGHTS, type RiskFactorWeights };
+export { DEFAULT_RISK_WEIGHTS, RISK_THRESHOLDS, type RiskFactorWeights };

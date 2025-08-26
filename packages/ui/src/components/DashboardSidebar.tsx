@@ -1,4 +1,14 @@
-import { Bell, ChevronDown, ChevronRight, Heart, LogOut, Menu, Settings, Users, X } from "lucide-react";
+import {
+	Bell,
+	ChevronDown,
+	ChevronRight,
+	Heart,
+	LogOut,
+	Menu,
+	Settings,
+	Users,
+	X,
+} from "lucide-react";
 import * as React from "react";
 import { cn } from "../utils/cn";
 import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
@@ -37,9 +47,26 @@ type DashboardSidebarProps = {
 	className?: string;
 };
 
-export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSidebarProps>(
-	({ user, items, collapsed = false, onToggle, onItemSelect, onUserMenuSelect, notifications = 0, className }, ref) => {
-		const [expandedItems, setExpandedItems] = React.useState<Set<string>>(new Set());
+export const DashboardSidebar = React.forwardRef<
+	HTMLDivElement,
+	DashboardSidebarProps
+>(
+	(
+		{
+			user,
+			items,
+			collapsed = false,
+			onToggle,
+			onItemSelect,
+			onUserMenuSelect,
+			notifications = 0,
+			className,
+		},
+		ref,
+	) => {
+		const [expandedItems, setExpandedItems] = React.useState<Set<string>>(
+			new Set(),
+		);
 		const [showUserMenu, setShowUserMenu] = React.useState(false);
 
 		const getInitials = (name: string) => {
@@ -83,7 +110,7 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 						className={cn(
 							"h-10 w-full justify-start px-3",
 							level > 0 && "ml-4 w-[calc(100%-1rem)]",
-							collapsed && level === 0 && "justify-center px-2"
+							collapsed && level === 0 && "justify-center px-2",
 						)}
 						onClick={() => handleItemClick(item)}
 						variant={item.active ? "default" : "ghost"}
@@ -98,13 +125,21 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 									</Badge>
 								)}
 								{hasChildren &&
-									(isExpanded ? <ChevronDown className="ml-1 h-4 w-4" /> : <ChevronRight className="ml-1 h-4 w-4" />)}
+									(isExpanded ? (
+										<ChevronDown className="ml-1 h-4 w-4" />
+									) : (
+										<ChevronRight className="ml-1 h-4 w-4" />
+									))}
 							</>
 						)}
 					</Button>
 
 					{hasChildren && !collapsed && isExpanded && (
-						<div className="mt-1 space-y-1">{item.children?.map((child) => renderSidebarItem(child, level + 1))}</div>
+						<div className="mt-1 space-y-1">
+							{item.children?.map((child) =>
+								renderSidebarItem(child, level + 1),
+							)}
+						</div>
 					)}
 				</div>
 			);
@@ -114,7 +149,7 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 				className={cn(
 					"flex flex-col border-r bg-background transition-all duration-300",
 					collapsed ? "w-16" : "w-64",
-					className
+					className,
 				)}
 				ref={ref}
 			>
@@ -128,13 +163,24 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 							<span className="font-semibold text-lg">NeonPro</span>
 						</div>
 					)}
-					<Button className={cn("p-2", collapsed && "mx-auto")} onClick={onToggle} size="sm" variant="ghost">
-						{collapsed ? <Menu className="h-4 w-4" /> : <X className="h-4 w-4" />}
+					<Button
+						className={cn("p-2", collapsed && "mx-auto")}
+						onClick={onToggle}
+						size="sm"
+						variant="ghost"
+					>
+						{collapsed ? (
+							<Menu className="h-4 w-4" />
+						) : (
+							<X className="h-4 w-4" />
+						)}
 					</Button>
 				</div>
 
 				{/* Navigation */}
-				<nav className="flex-1 space-y-2 overflow-y-auto p-4">{items.map((item) => renderSidebarItem(item))}</nav>
+				<nav className="flex-1 space-y-2 overflow-y-auto p-4">
+					{items.map((item) => renderSidebarItem(item))}
+				</nav>
 
 				{/* Notifications */}
 				{notifications > 0 && (
@@ -142,7 +188,7 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 						<button
 							className={cn(
 								"flex w-full items-center gap-2 rounded-lg bg-muted/50 p-2 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-								collapsed && "justify-center"
+								collapsed && "justify-center",
 							)}
 							onClick={() =>
 								onItemSelect?.({
@@ -171,7 +217,7 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 					<button
 						className={cn(
 							"flex w-full items-center gap-3 rounded-lg p-2 transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-							collapsed && "justify-center"
+							collapsed && "justify-center",
 						)}
 						onClick={() => setShowUserMenu(!showUserMenu)}
 						type="button"
@@ -183,10 +229,19 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 						{!collapsed && (
 							<>
 								<div className="min-w-0 flex-1">
-									<div className="truncate font-medium text-sm">{user.name}</div>
-									<div className="truncate text-muted-foreground text-xs">{user.role}</div>
+									<div className="truncate font-medium text-sm">
+										{user.name}
+									</div>
+									<div className="truncate text-muted-foreground text-xs">
+										{user.role}
+									</div>
 								</div>
-								<ChevronDown className={cn("h-4 w-4 transition-transform", showUserMenu && "rotate-180")} />
+								<ChevronDown
+									className={cn(
+										"h-4 w-4 transition-transform",
+										showUserMenu && "rotate-180",
+									)}
+								/>
 							</>
 						)}
 					</button>
@@ -235,7 +290,7 @@ export const DashboardSidebar = React.forwardRef<HTMLDivElement, DashboardSideba
 				</div>
 			</div>
 		);
-	}
+	},
 );
 
 DashboardSidebar.displayName = "DashboardSidebar";

@@ -1,5 +1,10 @@
 "use client";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	Activity,
 	AlertTriangle,
@@ -30,11 +35,6 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ServiceHealth {
 	service: string;
@@ -458,7 +458,10 @@ const AIServicesDashboard: React.FC = () => {
 											cx="50%"
 											cy="50%"
 											data={[
-												{ name: "Healthy", value: dashboardData.services.filter((s) => s.status === "healthy").length },
+												{
+													name: "Healthy",
+													value: dashboardData.services.filter((s) => s.status === "healthy").length,
+												},
 												{
 													name: "Degraded",
 													value: dashboardData.services.filter((s) => s.status === "degraded").length,
@@ -474,7 +477,10 @@ const AIServicesDashboard: React.FC = () => {
 											outerRadius={80}
 										>
 											{[
-												{ name: "Healthy", value: dashboardData.services.filter((s) => s.status === "healthy").length },
+												{
+													name: "Healthy",
+													value: dashboardData.services.filter((s) => s.status === "healthy").length,
+												},
 												{
 													name: "Degraded",
 													value: dashboardData.services.filter((s) => s.status === "degraded").length,

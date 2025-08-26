@@ -7,7 +7,9 @@ import type { Database } from "@neonpro/types";
 import { z } from "zod";
 export declare const LGPDReportConfigSchema: z.ZodObject<
 	{
-		report_type: z.ZodEnum<["compliance_audit", "data_mapping", "consent_status", "breach_report"]>;
+		report_type: z.ZodEnum<
+			["compliance_audit", "data_mapping", "consent_status", "breach_report"]
+		>;
 		date_range: z.ZodObject<
 			{
 				start_date: z.ZodString;
@@ -25,7 +27,9 @@ export declare const LGPDReportConfigSchema: z.ZodObject<
 			}
 		>;
 		include_personal_data: z.ZodDefault<z.ZodBoolean>;
-		anonymization_level: z.ZodDefault<z.ZodEnum<["basic", "advanced", "k_anonymity"]>>;
+		anonymization_level: z.ZodDefault<
+			z.ZodEnum<["basic", "advanced", "k_anonymity"]>
+		>;
 		constitutional_validation: z.ZodDefault<z.ZodBoolean>;
 		audit_trail: z.ZodDefault<z.ZodBoolean>;
 	},
@@ -35,7 +39,11 @@ export declare const LGPDReportConfigSchema: z.ZodObject<
 		audit_trail: boolean;
 		constitutional_validation: boolean;
 		anonymization_level: "basic" | "advanced" | "k_anonymity";
-		report_type: "compliance_audit" | "data_mapping" | "consent_status" | "breach_report";
+		report_type:
+			| "compliance_audit"
+			| "data_mapping"
+			| "consent_status"
+			| "breach_report";
 		date_range: {
 			start_date: string;
 			end_date: string;
@@ -43,7 +51,11 @@ export declare const LGPDReportConfigSchema: z.ZodObject<
 		include_personal_data: boolean;
 	},
 	{
-		report_type: "compliance_audit" | "data_mapping" | "consent_status" | "breach_report";
+		report_type:
+			| "compliance_audit"
+			| "data_mapping"
+			| "consent_status"
+			| "breach_report";
 		date_range: {
 			start_date: string;
 			end_date: string;
@@ -265,7 +277,10 @@ export declare class LGPDReportGenerator {
 	/**
 	 * Export report to different formats
 	 */
-	exportReport(report: LGPDReport, format: "json" | "pdf" | "csv"): Promise<string>;
+	exportReport(
+		report: LGPDReport,
+		format: "json" | "pdf" | "csv",
+	): Promise<string>;
 	/**
 	 * Generate PDF report
 	 */
@@ -282,11 +297,16 @@ export declare class LGPDReportGenerator {
 /**
  * Create LGPD Report Generator service
  */
-export declare function createLGPDReportGenerator(config: LGPDReportConfig, db: Database): LGPDReportGenerator;
+export declare function createLGPDReportGenerator(
+	config: LGPDReportConfig,
+	db: Database,
+): LGPDReportGenerator;
 /**
  * Validate LGPD report configuration
  */
-export declare function validateLGPDReportConfig(config: LGPDReportConfig): Promise<{
+export declare function validateLGPDReportConfig(
+	config: LGPDReportConfig,
+): Promise<{
 	valid: boolean;
 	violations: string[];
 }>;

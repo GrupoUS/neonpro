@@ -17,10 +17,10 @@ export * from "./enterprise";
 export * from "./lgpd";
 export {
 	BrazilianComplianceAutomationService,
-	createBrazilianComplianceAutomationService,
-	DEFAULT_COMPLIANCE_CONFIG,
 	type ComplianceAutomationConfig,
 	type ComplianceAutomationResponse,
+	createBrazilianComplianceAutomationService,
+	DEFAULT_COMPLIANCE_CONFIG,
 } from "./services/compliance-automation-service";
 export {
 	AdverseEventType,

@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from "next/server";
 import { PredictiveAnalyticsService } from "@/app/lib/services/predictive-analytics";
+import { type NextRequest, NextResponse } from "next/server";
 
 const service = new PredictiveAnalyticsService();
 
@@ -21,7 +21,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		const { data } = body;
 
 		if (!Array.isArray(data)) {
-			return NextResponse.json({ error: "Dados de treinamento devem ser um array" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Dados de treinamento devem ser um array" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		const _result = await service.trainModel(resolvedParams.id, data);

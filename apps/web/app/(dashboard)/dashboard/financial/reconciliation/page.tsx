@@ -1,10 +1,10 @@
 "use client";
 
+import { useAuth } from "@/hooks/useAuth";
+import { usePermissions } from "@/hooks/usePermissions";
 import { Alert, AlertDescription, LoadingSpinner } from "@neonpro/ui";
 import { AlertTriangle, Shield } from "lucide-react";
 import { Suspense } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { usePermissions } from "@/hooks/usePermissions";
 
 // Mock components for undefined imports
 function ImportStatementButton({ canImport, ...props }: { canImport: boolean; [key: string]: any }) {

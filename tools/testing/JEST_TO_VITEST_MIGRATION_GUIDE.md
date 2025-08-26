@@ -2,22 +2,28 @@
 
 ## Overview
 
-This guide outlines the migration of existing Jest tests to Vitest in the NeonPro monorepo. The migration will modernize our testing infrastructure and provide better performance and developer experience.
+This guide outlines the migration of existing Jest tests to Vitest in the NeonPro monorepo. The
+migration will modernize our testing infrastructure and provide better performance and developer
+experience.
 
 ## Current Status
 
 ### ✅ Completed
+
 - Vitest configuration created at `tools/testing/vitest.config.ts`
 - Test environment set up with jsdom
 - Sample tests working in `tools/testing/unit/`
 - Coverage reporting configured
 - HTML and JSON reports enabled
 
-### 🚧 In Progress  
+### 🚧 In Progress
+
 - Migration of existing Jest tests to Vitest structure
 
 ### ❌ Temporarily Disabled
+
 The following Jest-based test files have been temporarily excluded from Vitest runs:
+
 - `apps/web/**/__tests__/**`
 - `apps/web/**/*.test.{js,ts,jsx,tsx}`
 - `apps/web/**/*.spec.{js,ts,jsx,tsx}`
@@ -29,23 +35,26 @@ The following Jest-based test files have been temporarily excluded from Vitest r
 ### 1. Import Changes
 
 **Before (Jest):**
+
 ```typescript
-import { jest } from "@jest/globals";
-import { describe, it, expect } from "@jest/globals";
+import { jest } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 ```
 
 **After (Vitest):**
+
 ```typescript
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from 'vitest';
 // Note: globals are enabled, so these imports are optional
 ```
 
 ### 2. Mock Syntax Changes
 
 **Before (Jest):**
+
 ```typescript
-jest.mock("@/app/utils/supabase/client", () => ({
-  createClient: jest.fn()
+jest.mock('@/app/utils/supabase/client', () => ({
+  createClient: jest.fn(),
 }));
 
 const mockFn = jest.fn();
@@ -53,9 +62,10 @@ jest.spyOn(object, 'method');
 ```
 
 **After (Vitest):**
+
 ```typescript
-vi.mock("@/app/utils/supabase/client", () => ({
-  createClient: vi.fn()
+vi.mock('@/app/utils/supabase/client', () => ({
+  createClient: vi.fn(),
 }));
 
 const mockFn = vi.fn();
@@ -65,14 +75,16 @@ vi.spyOn(object, 'method');
 ### 3. Path Resolution
 
 The new Vitest config includes proper path aliases:
+
 - `@` → Project root
-- `@/apps` → apps directory  
+- `@/apps` → apps directory
 - `@/packages` → packages directory
 - `@/tools` → tools directory
 
 ### 4. Test File Organization
 
 **New Structure:**
+
 ```
 tools/testing/
 ├── unit/                    # Unit tests
@@ -89,17 +101,20 @@ tools/testing/
 ## Migration Priority
 
 ### High Priority (Core functionality)
+
 1. Authentication and authorization tests
 2. LGPD compliance tests
 3. Medical records tests
 4. Stock management tests
 
 ### Medium Priority (Services)
+
 1. Consent service tests
 2. Stock alert service tests
 3. Connection pool tests
 
 ### Low Priority (Components)
+
 1. UI component tests
 2. Integration tests
 
@@ -113,7 +128,7 @@ tools/testing/
    ```typescript
    // Remove Jest imports
    - import { jest } from "@jest/globals";
-   
+
    // Add Vitest imports (if not using globals)
    + import { vi } from "vitest";
    ```
@@ -123,7 +138,7 @@ tools/testing/
    // Replace jest with vi
    - jest.mock(...)
    + vi.mock(...)
-   
+
    - jest.fn()
    + vi.fn()
    ```
@@ -167,9 +182,9 @@ pnpm exec vitest run tools/testing/unit/auth/auth.test.ts
    ```typescript
    include: [
      'tools/testing/unit/**/*.{test,spec}.{js,ts,jsx,tsx}',
-     'apps/**/*.{test,spec}.{js,ts,jsx,tsx}',     // Re-enable
-     'packages/**/*.{test,spec}.{js,ts,jsx,tsx}' // Re-enable  
-   ]
+     'apps/**/*.{test,spec}.{js,ts,jsx,tsx}', // Re-enable
+     'packages/**/*.{test,spec}.{js,ts,jsx,tsx}', // Re-enable
+   ];
    ```
 
 2. **Remove Jest dependencies** from package.json
@@ -179,6 +194,7 @@ pnpm exec vitest run tools/testing/unit/auth/auth.test.ts
 ## Support
 
 For migration help:
+
 1. Check this guide
 2. Review working examples in `tools/testing/unit/`
 3. Consult [Vitest documentation](https://vitest.dev/)

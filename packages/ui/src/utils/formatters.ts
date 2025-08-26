@@ -40,7 +40,8 @@ export const formatters = {
 	 * Format date to Brazilian standard
 	 */
 	date: (dateInput: Date | string): string => {
-		const dateObj = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+		const dateObj =
+			typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 		return format(dateObj, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 	},
 
@@ -48,7 +49,8 @@ export const formatters = {
 	 * Format date to short Brazilian standard
 	 */
 	shortDate: (dateInput: Date | string): string => {
-		const dateObj = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+		const dateObj =
+			typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 		return format(dateObj, "dd/MM/yyyy", { locale: ptBR });
 	},
 
@@ -56,7 +58,8 @@ export const formatters = {
 	 * Format relative time (e.g., "há 2 dias")
 	 */
 	relativeTime: (dateInput: Date | string): string => {
-		const dateObj = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+		const dateObj =
+			typeof dateInput === "string" ? new Date(dateInput) : dateInput;
 		return formatDistanceToNow(dateObj, {
 			addSuffix: true,
 			locale: ptBR,
@@ -67,12 +70,16 @@ export const formatters = {
 	 * Calculate age from birth date
 	 */
 	age: (birthDate: Date | string): number => {
-		const birth = typeof birthDate === "string" ? new Date(birthDate) : birthDate;
+		const birth =
+			typeof birthDate === "string" ? new Date(birthDate) : birthDate;
 		const today = new Date();
 		let age = today.getFullYear() - birth.getFullYear();
 		const monthDiff = today.getMonth() - birth.getMonth();
 
-		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+		if (
+			monthDiff < 0 ||
+			(monthDiff === 0 && today.getDate() < birth.getDate())
+		) {
 			age--;
 		}
 

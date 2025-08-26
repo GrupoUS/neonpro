@@ -4,7 +4,8 @@
 
 **MIGRAÇÃO CONCLUÍDA COM SUCESSO!** ✅
 
-Todos os arquivos do projeto incorreto (`e:\vscode\neonpro`) foram migrados para o projeto principal (`e:\neonpro\apps\web`).
+Todos os arquivos do projeto incorreto (`e:\vscode\neonpro`) foram migrados para o projeto principal
+(`e:\neonpro\apps\web`).
 
 ### 📁 Arquivos Migrados:
 

@@ -3,7 +3,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type RenderOptions, render, renderHook } from "@testing-library/react";
+import { render, renderHook, type RenderOptions } from "@testing-library/react";
 import type React from "react";
 
 /**
@@ -32,7 +32,7 @@ export const renderWithClient = (
 	options?: {
 		client?: QueryClient;
 		renderOptions?: Omit<RenderOptions, "wrapper">;
-	}
+	},
 ) => {
 	const { client = createTestQueryClient(), renderOptions } = options || {};
 
@@ -54,7 +54,7 @@ export const renderHookWithClient = <TResult, TProps>(
 	options?: {
 		client?: QueryClient;
 		initialProps?: TProps;
-	}
+	},
 ) => {
 	const { client = createTestQueryClient(), initialProps } = options || {};
 
@@ -74,7 +74,9 @@ export const renderHookWithClient = <TResult, TProps>(
 export const getGlobalMocks = () => ({
 	supabaseClient: (globalThis as any).mockSupabaseClient,
 	notificationService: (globalThis as any).mockNotificationService,
-	lgpdService: (globalThis as any).mockLGPDService || (globalThis as any).mockLgpdService,
+	lgpdService:
+		(globalThis as any).mockLGPDService || (globalThis as any).mockLgpdService,
 	cpfValidator: (globalThis as any).mockCpfValidator,
-	queryClient: (globalThis as any).testQueryClient || (globalThis as any).queryClient,
+	queryClient:
+		(globalThis as any).testQueryClient || (globalThis as any).queryClient,
 });

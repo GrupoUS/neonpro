@@ -6,7 +6,12 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
 // Simple schema definitions for testing (mimicking our main schemas)
-const alertTypeSchema = z.enum(["low_stock", "expiring", "expired", "overstock"]);
+const alertTypeSchema = z.enum([
+	"low_stock",
+	"expiring",
+	"expired",
+	"overstock",
+]);
 const severityLevelSchema = z.enum(["low", "medium", "high", "critical"]);
 const uuidSchema = z.string().uuid();
 
@@ -18,7 +23,9 @@ const testAlertConfigSchema = z.object({
 	thresholdValue: z.number().positive(),
 	severityLevel: severityLevelSchema,
 	isActive: z.boolean(),
-	notificationChannels: z.array(z.enum(["in_app", "email", "whatsapp", "sms"])).min(1),
+	notificationChannels: z
+		.array(z.enum(["in_app", "email", "whatsapp", "sms"]))
+		.min(1),
 });
 
 const testCreateAlertConfigSchema = testAlertConfigSchema.omit({

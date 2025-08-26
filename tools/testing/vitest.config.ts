@@ -9,10 +9,21 @@ export default defineConfig({
 		globals: true,
 		setupFiles: ["./healthcare-setup.ts"],
 		include: ["**/*.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
-		exclude: ["**/node_modules/**", "**/dist/**", "**/e2e/**", "**/playwright/**"],
+		exclude: [
+			"**/node_modules/**",
+			"**/dist/**",
+			"**/e2e/**",
+			"**/playwright/**",
+		],
 		coverage: {
 			reporter: ["text", "json", "html"],
-			exclude: ["**/node_modules/**", "**/dist/**", "**/*.config.*", "**/*.setup.*", "**/mocks/**"],
+			exclude: [
+				"**/node_modules/**",
+				"**/dist/**",
+				"**/*.config.*",
+				"**/*.setup.*",
+				"**/mocks/**",
+			],
 		},
 	},
 	resolve: {

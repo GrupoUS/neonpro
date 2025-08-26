@@ -1,12 +1,12 @@
 "use client";
 
-import { Activity, Globe, Lock, MessageSquare, Shield, Zap } from "lucide-react";
-import { useState } from "react";
 import { UniversalAIChat } from "@/app/components/chat/universal-ai-chat";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
+import { Activity, Globe, Lock, MessageSquare, Shield, Zap } from "lucide-react";
+import { useState } from "react";
 
 interface ChatPageProps {
 	searchParams?: {

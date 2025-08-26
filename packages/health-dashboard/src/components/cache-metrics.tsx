@@ -17,7 +17,10 @@ type CacheMetricsProps = {
 	refreshInterval?: number;
 };
 
-export function CacheMetrics({ cacheManager, refreshInterval = 30_000 }: CacheMetricsProps) {
+export function CacheMetrics({
+	cacheManager,
+	refreshInterval = 30_000,
+}: CacheMetricsProps) {
 	const [layerStats, setLayerStats] = useState<CacheLayerStats[]>([]);
 	const [overallStats, setOverallStats] = useState({
 		hitRate: 0,
@@ -87,18 +90,31 @@ export function CacheMetrics({ cacheManager, refreshInterval = 30_000 }: CacheMe
 	return (
 		<div className="space-y-6">
 			<div>
-				<h2 className="mb-4 font-semibold text-gray-900 text-xl">Cache Performance</h2>
+				<h2 className="mb-4 font-semibold text-gray-900 text-xl">
+					Cache Performance
+				</h2>
 
 				{/* Overall Performance */}
 				<MetricWidget
-					color={overallStats.hitRate >= 85 ? "green" : overallStats.hitRate >= 70 ? "yellow" : "red"}
+					color={
+						overallStats.hitRate >= 85
+							? "green"
+							: overallStats.hitRate >= 70
+								? "yellow"
+								: "red"
+					}
 					description="Target: 85% hit rate across all cache layers"
 					title="Overall Cache Hit Rate"
 					value={{
 						current: overallStats.hitRate,
 						target: 85, // 85% target
 						unit: "%",
-						trend: overallStats.hitRate >= 85 ? "up" : overallStats.hitRate >= 70 ? "stable" : "down",
+						trend:
+							overallStats.hitRate >= 85
+								? "up"
+								: overallStats.hitRate >= 70
+									? "stable"
+									: "down",
 					}}
 				/>
 			</div>
@@ -107,16 +123,22 @@ export function CacheMetrics({ cacheManager, refreshInterval = 30_000 }: CacheMe
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				{layerStats.map((layer) => (
 					<div className="rounded-lg bg-white p-4 shadow" key={layer.layer}>
-						<h3 className="mb-3 font-medium text-gray-900 capitalize">{layer.layer} Cache</h3>
+						<h3 className="mb-3 font-medium text-gray-900 capitalize">
+							{layer.layer} Cache
+						</h3>
 
 						<div className="space-y-3">
 							<div>
-								<div className="font-bold text-blue-600 text-lg">{layer.hitRate.toFixed(1)}%</div>
+								<div className="font-bold text-blue-600 text-lg">
+									{layer.hitRate.toFixed(1)}%
+								</div>
 								<div className="text-gray-600 text-xs">Hit Rate</div>
 							</div>
 
 							<div>
-								<div className="font-bold text-green-600 text-lg">{layer.responseTime.toFixed(0)}ms</div>
+								<div className="font-bold text-green-600 text-lg">
+									{layer.responseTime.toFixed(0)}ms
+								</div>
 								<div className="text-gray-600 text-xs">Avg Response</div>
 							</div>
 

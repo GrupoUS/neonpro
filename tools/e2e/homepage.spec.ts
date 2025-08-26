@@ -19,7 +19,9 @@ test.describe("Homepage - Landing Page", () => {
 		await page.waitForLoadState("networkidle");
 	});
 
-	test("should load homepage within performance thresholds", async ({ page }) => {
+	test("should load homepage within performance thresholds", async ({
+		page,
+	}) => {
 		const startTime = Date.now();
 
 		// Wait for main content to be visible
@@ -32,15 +34,21 @@ test.describe("Homepage - Landing Page", () => {
 	test("should display main navigation and branding", async ({ page }) => {
 		// Check logo and branding
 		await expect(
-			page.locator('[data-testid="logo"]').or(page.locator('h1:has-text("NeonPro Healthcare")'))
+			page
+				.locator('[data-testid="logo"]')
+				.or(page.locator('h1:has-text("NeonPro Healthcare")')),
 		).toBeVisible();
 
 		// Check main CTA button
-		await expect(page.locator('button:has-text("Acessar Sistema")')).toBeVisible();
+		await expect(
+			page.locator('button:has-text("Acessar Sistema")'),
+		).toBeVisible();
 
 		// Verify hero content
 		await expect(page.locator("text=Revolução Digital")).toBeVisible();
-		await expect(page.locator("text=Clínicas Estéticas Brasileiras")).toBeVisible();
+		await expect(
+			page.locator("text=Clínicas Estéticas Brasileiras"),
+		).toBeVisible();
 	});
 
 	test("should navigate to login page", async ({ page }) => {
@@ -51,7 +59,9 @@ test.describe("Homepage - Landing Page", () => {
 		await expect(page).toHaveURL(/.*\/login/);
 	});
 
-	test("should display dashboard metrics for authenticated users", async ({ page }) => {
+	test("should display dashboard metrics for authenticated users", async ({
+		page,
+	}) => {
 		// This test assumes user might be logged in
 		const metricsSection = page.locator('[data-testid="dashboard-metrics"]');
 
@@ -78,11 +88,16 @@ test.describe("Homepage - Landing Page", () => {
 
 	test("should display healthcare compliance badges", async ({ page }) => {
 		// Look for LGPD compliance indicators
-		const lgpdIndicator = page.locator("text=LGPD").or(page.locator('[data-testid="lgpd-badge"]'));
-		const anvisaIndicator = page.locator("text=ANVISA").or(page.locator('[data-testid="anvisa-badge"]'));
+		const lgpdIndicator = page
+			.locator("text=LGPD")
+			.or(page.locator('[data-testid="lgpd-badge"]'));
+		const anvisaIndicator = page
+			.locator("text=ANVISA")
+			.or(page.locator('[data-testid="anvisa-badge"]'));
 
 		// At least one compliance indicator should be visible
-		const hasCompliance = (await lgpdIndicator.isVisible()) || (await anvisaIndicator.isVisible());
+		const hasCompliance =
+			(await lgpdIndicator.isVisible()) || (await anvisaIndicator.isVisible());
 		expect(hasCompliance).toBeTruthy();
 	});
 
@@ -91,18 +106,30 @@ test.describe("Homepage - Landing Page", () => {
 		await page.setViewportSize({ width: 375, height: 667 });
 
 		// Main content should still be visible
-		await expect(page.locator('h1:has-text("NeonPro Healthcare")')).toBeVisible();
-		await expect(page.locator('button:has-text("Acessar Sistema")')).toBeVisible();
+		await expect(
+			page.locator('h1:has-text("NeonPro Healthcare")'),
+		).toBeVisible();
+		await expect(
+			page.locator('button:has-text("Acessar Sistema")'),
+		).toBeVisible();
 
 		// Test tablet viewport
 		await page.setViewportSize({ width: 768, height: 1024 });
-		await expect(page.locator('h1:has-text("NeonPro Healthcare")')).toBeVisible();
+		await expect(
+			page.locator('h1:has-text("NeonPro Healthcare")'),
+		).toBeVisible();
 	});
 
-	test("should display recent patients and appointments for authenticated users", async ({ page }) => {
+	test("should display recent patients and appointments for authenticated users", async ({
+		page,
+	}) => {
 		// Check if user is authenticated by looking for dashboard content
-		const recentPatientsSection = page.locator('[data-testid="recent-patients"]');
-		const appointmentsSection = page.locator('[data-testid="todays-appointments"]');
+		const recentPatientsSection = page.locator(
+			'[data-testid="recent-patients"]',
+		);
+		const appointmentsSection = page.locator(
+			'[data-testid="todays-appointments"]',
+		);
 
 		if (await recentPatientsSection.isVisible()) {
 			// Verify recent patients display

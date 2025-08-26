@@ -35,7 +35,12 @@ export type PatientBehaviorProfile = {
 
 export type BehavioralEvent = {
 	patientId: string;
-	eventType: "appointment" | "communication" | "treatment" | "payment" | "referral";
+	eventType:
+		| "appointment"
+		| "communication"
+		| "treatment"
+		| "payment"
+		| "referral";
 	eventSubtype: string;
 	timestamp: Date;
 	outcome: "positive" | "neutral" | "negative";
@@ -76,7 +81,9 @@ export class BehavioralAnalysisService {
 	 * Comprehensive behavioral analysis for a patient
 	 * Combines historical data, patterns, and ML predictions
 	 */
-	async analyzePatientBehavior(patientId: string): Promise<PatientBehaviorProfile> {
+	async analyzePatientBehavior(
+		patientId: string,
+	): Promise<PatientBehaviorProfile> {
 		try {
 			// 1. Collect behavioral data
 			const events = await this.collectBehavioralEvents(patientId);
@@ -87,14 +94,23 @@ export class BehavioralAnalysisService {
 			const scores = await this.calculateBehavioralScores(patientId, events);
 
 			// 3. Detect behavioral patterns
-			const patterns = await this.detectBehavioralPatterns(events, interactions);
+			const patterns = await this.detectBehavioralPatterns(
+				events,
+				interactions,
+			);
 
 			// 4. Determine personality type
-			const personalityType = await this.analyzePersonalityType(events, interactions);
+			const personalityType = await this.analyzePersonalityType(
+				events,
+				interactions,
+			);
 
 			// 5. Calculate segment and LTV
 			const segment = await this.determinePatientSegment(scores, patterns);
-			const lifetimeValue = await this.calculateLifetimeValue(patientId, segment);
+			const lifetimeValue = await this.calculateLifetimeValue(
+				patientId,
+				segment,
+			);
 
 			const profile: PatientBehaviorProfile = {
 				patientId,
@@ -119,7 +135,9 @@ export class BehavioralAnalysisService {
 	 * Batch analysis for multiple patients
 	 * Optimized for large-scale processing
 	 */
-	async batchAnalyzePatients(patientIds: string[]): Promise<PatientBehaviorProfile[]> {
+	async batchAnalyzePatients(
+		patientIds: string[],
+	): Promise<PatientBehaviorProfile[]> {
 		const results: PatientBehaviorProfile[] = [];
 
 		// Process in chunks to avoid overwhelming the system
@@ -148,7 +166,7 @@ export class BehavioralAnalysisService {
 
 	private async calculateBehavioralScores(
 		_patientId: string,
-		events: BehavioralEvent[]
+		events: BehavioralEvent[],
 	): Promise<PatientBehaviorProfile["scores"]> {
 		// Base scores
 		let engagementScore = 50;
@@ -158,25 +176,46 @@ export class BehavioralAnalysisService {
 		let complianceScore = 50;
 
 		// Analyze last 90 days of events
-		const recentEvents = events.filter((e) => e.timestamp >= new Date(Date.now() - 90 * 24 * 60 * 60 * 1000));
+		const recentEvents = events.filter(
+			(e) => e.timestamp >= new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+		);
 
 		// Engagement Analysis
-		const communicationEvents = recentEvents.filter((e) => e.eventType === "communication");
+		const communicationEvents = recentEvents.filter(
+			(e) => e.eventType === "communication",
+		);
 		const responseRate = this.calculateResponseRate(communicationEvents);
-		const proactiveInteractions = communicationEvents.filter((e) => e.metadata?.initiatedBy === "patient").length;
+		const proactiveInteractions = communicationEvents.filter(
+			(e) => e.metadata?.initiatedBy === "patient",
+		).length;
 
-		engagementScore = Math.min(100, responseRate * 0.6 + proactiveInteractions * 5 * 0.4);
+		engagementScore = Math.min(
+			100,
+			responseRate * 0.6 + proactiveInteractions * 5 * 0.4,
+		);
 
 		// Loyalty Analysis
-		const appointmentEvents = recentEvents.filter((e) => e.eventType === "appointment");
-		const consistentAttendance = this.calculateAttendanceConsistency(appointmentEvents);
-		const referrals = recentEvents.filter((e) => e.eventType === "referral").length;
+		const appointmentEvents = recentEvents.filter(
+			(e) => e.eventType === "appointment",
+		);
+		const consistentAttendance =
+			this.calculateAttendanceConsistency(appointmentEvents);
+		const referrals = recentEvents.filter(
+			(e) => e.eventType === "referral",
+		).length;
 
-		loyaltyScore = Math.min(100, consistentAttendance * 0.7 + referrals * 10 * 0.3);
+		loyaltyScore = Math.min(
+			100,
+			consistentAttendance * 0.7 + referrals * 10 * 0.3,
+		);
 
 		// Satisfaction Analysis
-		const positiveOutcomes = recentEvents.filter((e) => e.outcome === "positive").length;
-		const negativeOutcomes = recentEvents.filter((e) => e.outcome === "negative").length;
+		const positiveOutcomes = recentEvents.filter(
+			(e) => e.outcome === "positive",
+		).length;
+		const negativeOutcomes = recentEvents.filter(
+			(e) => e.outcome === "negative",
+		).length;
 		const totalOutcomes = positiveOutcomes + negativeOutcomes;
 
 		if (totalOutcomes > 0) {
@@ -184,15 +223,28 @@ export class BehavioralAnalysisService {
 		}
 
 		// Risk Analysis (inverse relationship - higher risk = lower score)
-		const noShows = appointmentEvents.filter((e) => e.eventSubtype === "no_show").length;
-		const latePayments = recentEvents.filter((e) => e.eventType === "payment" && e.outcome === "negative").length;
-		const complaints = recentEvents.filter((e) => e.eventSubtype === "complaint").length;
+		const noShows = appointmentEvents.filter(
+			(e) => e.eventSubtype === "no_show",
+		).length;
+		const latePayments = recentEvents.filter(
+			(e) => e.eventType === "payment" && e.outcome === "negative",
+		).length;
+		const complaints = recentEvents.filter(
+			(e) => e.eventSubtype === "complaint",
+		).length;
 
-		riskScore = Math.max(0, 100 - (noShows * 20 + latePayments * 15 + complaints * 25));
+		riskScore = Math.max(
+			0,
+			100 - (noShows * 20 + latePayments * 15 + complaints * 25),
+		);
 
 		// Compliance Analysis
-		const treatmentEvents = recentEvents.filter((e) => e.eventType === "treatment");
-		const completedTreatments = treatmentEvents.filter((e) => e.outcome === "positive").length;
+		const treatmentEvents = recentEvents.filter(
+			(e) => e.eventType === "treatment",
+		);
+		const completedTreatments = treatmentEvents.filter(
+			(e) => e.outcome === "positive",
+		).length;
 
 		if (treatmentEvents.length > 0) {
 			complianceScore = (completedTreatments / treatmentEvents.length) * 100;
@@ -213,7 +265,7 @@ export class BehavioralAnalysisService {
 
 	private async detectBehavioralPatterns(
 		events: BehavioralEvent[],
-		interactions: any[]
+		interactions: any[],
 	): Promise<PatientBehaviorProfile["patterns"]> {
 		// Communication Style Analysis
 		const communicationStyle = this.analyzeCommunicationStyle(interactions);
@@ -239,12 +291,16 @@ export class BehavioralAnalysisService {
 		};
 	}
 
-	private analyzeCommunicationStyle(interactions: any[]): PatientBehaviorProfile["patterns"]["communicationStyle"] {
+	private analyzeCommunicationStyle(
+		interactions: any[],
+	): PatientBehaviorProfile["patterns"]["communicationStyle"] {
 		// Analyze language patterns, message length, formality
-		const avgMessageLength = interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0) / interactions.length;
+		const avgMessageLength =
+			interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0) /
+			interactions.length;
 
 		const formalWords = interactions.filter(
-			(i) => i.message?.includes("Senhor") || i.message?.includes("Senhora")
+			(i) => i.message?.includes("Senhor") || i.message?.includes("Senhora"),
 		).length;
 
 		if (avgMessageLength > 100 && formalWords > interactions.length * 0.3) {
@@ -259,14 +315,19 @@ export class BehavioralAnalysisService {
 		return "casual";
 	}
 
-	private analyzeResponseTime(interactions: any[]): PatientBehaviorProfile["patterns"]["responseTime"] {
-		const responseTimes = interactions.map((i) => i.responseTimeHours).filter((t) => t !== undefined);
+	private analyzeResponseTime(
+		interactions: any[],
+	): PatientBehaviorProfile["patterns"]["responseTime"] {
+		const responseTimes = interactions
+			.map((i) => i.responseTimeHours)
+			.filter((t) => t !== undefined);
 
 		if (responseTimes.length === 0) {
 			return "delayed";
 		}
 
-		const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+		const avgResponseTime =
+			responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
 
 		if (avgResponseTime < 1) {
 			return "immediate";
@@ -280,7 +341,9 @@ export class BehavioralAnalysisService {
 		return "delayed";
 	}
 
-	private analyzePreferredChannel(events: BehavioralEvent[]): PatientBehaviorProfile["patterns"]["preferredChannel"] {
+	private analyzePreferredChannel(
+		events: BehavioralEvent[],
+	): PatientBehaviorProfile["patterns"]["preferredChannel"] {
 		const channelCounts = events
 			.filter((e) => e.eventType === "communication")
 			.reduce(
@@ -289,25 +352,35 @@ export class BehavioralAnalysisService {
 					acc[channel] = (acc[channel] || 0) + 1;
 					return acc;
 				},
-				{} as Record<string, number>
+				{} as Record<string, number>,
 			);
 
 		return (
 			(Object.keys(channelCounts).reduce((a, b) =>
-				channelCounts[a] > channelCounts[b] ? a : b
+				channelCounts[a] > channelCounts[b] ? a : b,
 			) as PatientBehaviorProfile["patterns"]["preferredChannel"]) || "whatsapp"
 		);
 	}
 
 	private analyzeAppointmentBehavior(
-		events: BehavioralEvent[]
+		events: BehavioralEvent[],
 	): PatientBehaviorProfile["patterns"]["appointmentBehavior"] {
-		const appointmentEvents = events.filter((e) => e.eventType === "appointment");
+		const appointmentEvents = events.filter(
+			(e) => e.eventType === "appointment",
+		);
 
-		const punctualCount = appointmentEvents.filter((e) => e.eventSubtype === "attended_on_time").length;
-		const earlyCount = appointmentEvents.filter((e) => e.eventSubtype === "attended_early").length;
-		const _lateCount = appointmentEvents.filter((e) => e.eventSubtype === "attended_late").length;
-		const rescheduleCount = appointmentEvents.filter((e) => e.eventSubtype === "rescheduled").length;
+		const punctualCount = appointmentEvents.filter(
+			(e) => e.eventSubtype === "attended_on_time",
+		).length;
+		const earlyCount = appointmentEvents.filter(
+			(e) => e.eventSubtype === "attended_early",
+		).length;
+		const _lateCount = appointmentEvents.filter(
+			(e) => e.eventSubtype === "attended_late",
+		).length;
+		const rescheduleCount = appointmentEvents.filter(
+			(e) => e.eventSubtype === "rescheduled",
+		).length;
 
 		if (rescheduleCount > appointmentEvents.length * 0.3) {
 			return "reschedules";
@@ -331,15 +404,29 @@ export class BehavioralAnalysisService {
 				acc[month] = (acc[month] || 0) + 1;
 				return acc;
 			},
-			{} as Record<number, number>
+			{} as Record<number, number>,
 		);
 
 		// Identify peak months
-		const avgActivity = Object.values(monthlyActivity).reduce((a, b) => a + b, 0) / 12;
+		const avgActivity =
+			Object.values(monthlyActivity).reduce((a, b) => a + b, 0) / 12;
 		const peakMonths = Object.entries(monthlyActivity)
 			.filter(([_, count]) => count > avgActivity * 1.3)
 			.map(([month, _]) => {
-				const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+				const monthNames = [
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"May",
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec",
+				];
 				return monthNames[Number.parseInt(month, 10)];
 			});
 
@@ -348,8 +435,14 @@ export class BehavioralAnalysisService {
 		}
 
 		// Summer/Winter patterns
-		const summerActivity = [11, 0, 1].reduce((sum, m) => sum + (monthlyActivity[m] || 0), 0);
-		const winterActivity = [5, 6, 7].reduce((sum, m) => sum + (monthlyActivity[m] || 0), 0);
+		const summerActivity = [11, 0, 1].reduce(
+			(sum, m) => sum + (monthlyActivity[m] || 0),
+			0,
+		);
+		const winterActivity = [5, 6, 7].reduce(
+			(sum, m) => sum + (monthlyActivity[m] || 0),
+			0,
+		);
 
 		if (summerActivity > winterActivity * 1.5) {
 			trends.push("Prefere procedimentos no verão");
@@ -366,7 +459,7 @@ export class BehavioralAnalysisService {
 
 	private async analyzePersonalityType(
 		events: BehavioralEvent[],
-		interactions: any[]
+		interactions: any[],
 	): Promise<PatientBehaviorProfile["personalityType"]> {
 		let analyticalScore = 0;
 		let expressiveScore = 0;
@@ -374,7 +467,9 @@ export class BehavioralAnalysisService {
 		let amiableScore = 0;
 
 		// Decision-making speed (Driver vs Amiable)
-		const quickDecisions = events.filter((e) => e.metadata?.decisionTime && e.metadata.decisionTime < 24).length;
+		const quickDecisions = events.filter(
+			(e) => e.metadata?.decisionTime && e.metadata.decisionTime < 24,
+		).length;
 		if (quickDecisions > events.length * 0.6) {
 			driverScore += 2;
 		} else {
@@ -382,14 +477,18 @@ export class BehavioralAnalysisService {
 		}
 
 		// Information seeking behavior (Analytical)
-		const questionsAsked = interactions.filter((i) => i.message?.includes("?")).length;
+		const questionsAsked = interactions.filter((i) =>
+			i.message?.includes("?"),
+		).length;
 		if (questionsAsked > interactions.length * 0.4) {
 			analyticalScore += 2;
 		}
 
 		// Social interaction level (Expressive vs Analytical)
 		const socialReferences = interactions.filter(
-			(i) => i.message?.toLowerCase().includes("família") || i.message?.toLowerCase().includes("amigo")
+			(i) =>
+				i.message?.toLowerCase().includes("família") ||
+				i.message?.toLowerCase().includes("amigo"),
 		).length;
 		if (socialReferences > interactions.length * 0.2) {
 			expressiveScore += 2;
@@ -398,7 +497,9 @@ export class BehavioralAnalysisService {
 		}
 
 		// Communication style preference
-		const casualTone = interactions.filter((i) => i.message?.includes("😊") || i.message?.includes("rs")).length;
+		const casualTone = interactions.filter(
+			(i) => i.message?.includes("😊") || i.message?.includes("rs"),
+		).length;
 		if (casualTone > interactions.length * 0.3) {
 			expressiveScore += 1;
 			amiableScore += 1;
@@ -413,7 +514,9 @@ export class BehavioralAnalysisService {
 		};
 
 		return Object.keys(scores).reduce((a, b) =>
-			scores[a as keyof typeof scores] > scores[b as keyof typeof scores] ? a : b
+			scores[a as keyof typeof scores] > scores[b as keyof typeof scores]
+				? a
+				: b,
 		) as PatientBehaviorProfile["personalityType"];
 	}
 
@@ -423,9 +526,10 @@ export class BehavioralAnalysisService {
 
 	private async determinePatientSegment(
 		scores: PatientBehaviorProfile["scores"],
-		_patterns: PatientBehaviorProfile["patterns"]
+		_patterns: PatientBehaviorProfile["patterns"],
 	): Promise<PatientBehaviorProfile["segment"]> {
-		const avgScore = (scores.engagement + scores.loyalty + scores.satisfaction) / 3;
+		const avgScore =
+			(scores.engagement + scores.loyalty + scores.satisfaction) / 3;
 
 		// VIP: High value, high loyalty, low risk
 		if (avgScore > 85 && scores.risk < 20 && scores.loyalty > 90) {
@@ -460,7 +564,10 @@ export class BehavioralAnalysisService {
 	// LIFETIME VALUE CALCULATION
 	// =============================================================================
 
-	private async calculateLifetimeValue(patientId: string, segment: string): Promise<number> {
+	private async calculateLifetimeValue(
+		patientId: string,
+		segment: string,
+	): Promise<number> {
 		try {
 			// Get historical financial data
 			const { data: payments, error } = await supabase
@@ -483,7 +590,10 @@ export class BehavioralAnalysisService {
 				const lastPayment = new Date(payments.at(-1).created_at);
 				monthsActive = Math.max(
 					1,
-					Math.ceil((lastPayment.getTime() - firstPayment.getTime()) / (1000 * 60 * 60 * 24 * 30))
+					Math.ceil(
+						(lastPayment.getTime() - firstPayment.getTime()) /
+							(1000 * 60 * 60 * 24 * 30),
+					),
 				);
 			}
 
@@ -509,13 +619,18 @@ export class BehavioralAnalysisService {
 	// DATA COLLECTION METHODS
 	// =============================================================================
 
-	private async collectBehavioralEvents(patientId: string): Promise<BehavioralEvent[]> {
+	private async collectBehavioralEvents(
+		patientId: string,
+	): Promise<BehavioralEvent[]> {
 		try {
 			// This would integrate with various data sources
 			const events: BehavioralEvent[] = [];
 
 			// Collect appointment events
-			const { data: appointments } = await supabase.from("appointments").select("*").eq("patient_id", patientId);
+			const { data: appointments } = await supabase
+				.from("appointments")
+				.select("*")
+				.eq("patient_id", patientId);
 
 			appointments?.forEach((apt) => {
 				events.push({
@@ -523,9 +638,19 @@ export class BehavioralAnalysisService {
 					eventType: "appointment",
 					eventSubtype: apt.status,
 					timestamp: new Date(apt.scheduled_at),
-					outcome: apt.status === "completed" ? "positive" : apt.status === "no_show" ? "negative" : "neutral",
+					outcome:
+						apt.status === "completed"
+							? "positive"
+							: apt.status === "no_show"
+								? "negative"
+								: "neutral",
 					metadata: { appointmentId: apt.id },
-					impact: apt.status === "completed" ? 10 : apt.status === "no_show" ? -20 : 0,
+					impact:
+						apt.status === "completed"
+							? 10
+							: apt.status === "no_show"
+								? -20
+								: 0,
 				});
 			});
 
@@ -566,17 +691,21 @@ export class BehavioralAnalysisService {
 	// STORAGE METHODS
 	// =============================================================================
 
-	private async storeBehavioralProfile(profile: PatientBehaviorProfile): Promise<void> {
-		const { error } = await supabase.from("patient_behavioral_profiles").upsert({
-			patient_id: profile.patientId,
-			scores: profile.scores,
-			patterns: profile.patterns,
-			personality_type: profile.personalityType,
-			segment: profile.segment,
-			lifetime_value: profile.lifetimeValue,
-			last_analyzed: profile.lastAnalyzed,
-			updated_at: new Date(),
-		});
+	private async storeBehavioralProfile(
+		profile: PatientBehaviorProfile,
+	): Promise<void> {
+		const { error } = await supabase
+			.from("patient_behavioral_profiles")
+			.upsert({
+				patient_id: profile.patientId,
+				scores: profile.scores,
+				patterns: profile.patterns,
+				personality_type: profile.personalityType,
+				segment: profile.segment,
+				lifetime_value: profile.lifetimeValue,
+				last_analyzed: profile.lastAnalyzed,
+				updated_at: new Date(),
+			});
 
 		if (error) {
 			throw error;
@@ -587,17 +716,29 @@ export class BehavioralAnalysisService {
 	// UTILITY METHODS
 	// =============================================================================
 
-	private calculateResponseRate(communicationEvents: BehavioralEvent[]): number {
-		const sentMessages = communicationEvents.filter((e) => e.metadata?.direction === "outbound").length;
-		const responses = communicationEvents.filter((e) => e.metadata?.direction === "inbound").length;
+	private calculateResponseRate(
+		communicationEvents: BehavioralEvent[],
+	): number {
+		const sentMessages = communicationEvents.filter(
+			(e) => e.metadata?.direction === "outbound",
+		).length;
+		const responses = communicationEvents.filter(
+			(e) => e.metadata?.direction === "inbound",
+		).length;
 
 		return sentMessages > 0 ? (responses / sentMessages) * 100 : 0;
 	}
 
-	private calculateAttendanceConsistency(appointmentEvents: BehavioralEvent[]): number {
-		const completed = appointmentEvents.filter((e) => e.outcome === "positive").length;
+	private calculateAttendanceConsistency(
+		appointmentEvents: BehavioralEvent[],
+	): number {
+		const completed = appointmentEvents.filter(
+			(e) => e.outcome === "positive",
+		).length;
 
-		return appointmentEvents.length > 0 ? (completed / appointmentEvents.length) * 100 : 0;
+		return appointmentEvents.length > 0
+			? (completed / appointmentEvents.length) * 100
+			: 0;
 	}
 }
 

@@ -6,7 +6,6 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
 import {
 	AccessibilityPanel,
 	KeyboardHelper,
@@ -15,6 +14,7 @@ import {
 } from "@/components/accessibility/AccessibilityComponents";
 import { MobileBottomNavigation, MobileNavigation } from "@/components/mobile/MobileNavigation";
 import { Toaster } from "@/components/ui/toaster";
+import { useEffect, useState } from "react";
 
 interface MainLayoutProps {
 	children: React.ReactNode;

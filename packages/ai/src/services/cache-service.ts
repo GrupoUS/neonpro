@@ -45,7 +45,11 @@ export class RedisCacheService implements CacheService {
 	};
 	private responseTimes: number[] = [];
 
-	constructor(config: CacheConfig, logger: LoggerService, metrics: MetricsService) {
+	constructor(
+		config: CacheConfig,
+		logger: LoggerService,
+		metrics: MetricsService,
+	) {
 		this.config = config;
 		this.logger = logger;
 		this.metrics = metrics;
@@ -83,7 +87,14 @@ export class RedisCacheService implements CacheService {
 
 				if (this.config.enableMetrics) {
 					await this.metrics.recordCounter("cache_misses", 1, { key });
-					await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "get", result: "miss" });
+					await this.metrics.recordHistogram(
+						"cache_response_time",
+						responseTime,
+						{
+							operation: "get",
+							result: "miss",
+						},
+					);
 				}
 
 				return null;
@@ -105,7 +116,14 @@ export class RedisCacheService implements CacheService {
 
 			if (this.config.enableMetrics) {
 				await this.metrics.recordCounter("cache_hits", 1, { key });
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "get", result: "hit" });
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "get",
+						result: "hit",
+					},
+				);
 			}
 
 			return parsedValue;
@@ -122,7 +140,10 @@ export class RedisCacheService implements CacheService {
 			});
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordCounter("cache_errors", 1, { operation: "get", key });
+				await this.metrics.recordCounter("cache_errors", 1, {
+					operation: "get",
+					key,
+				});
 			}
 
 			return null;
@@ -163,8 +184,16 @@ export class RedisCacheService implements CacheService {
 
 			if (this.config.enableMetrics) {
 				await this.metrics.recordCounter("cache_sets", 1, { key });
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "set" });
-				await this.metrics.recordGauge("cache_value_size", finalValue.length, { key });
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "set",
+					},
+				);
+				await this.metrics.recordGauge("cache_value_size", finalValue.length, {
+					key,
+				});
 			}
 		} catch (error) {
 			const responseTime = Date.now() - startTime;
@@ -179,7 +208,10 @@ export class RedisCacheService implements CacheService {
 			});
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordCounter("cache_errors", 1, { operation: "set", key });
+				await this.metrics.recordCounter("cache_errors", 1, {
+					operation: "set",
+					key,
+				});
 			}
 
 			throw error;
@@ -205,7 +237,13 @@ export class RedisCacheService implements CacheService {
 
 			if (this.config.enableMetrics) {
 				await this.metrics.recordCounter("cache_deletes", 1, { key });
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "delete" });
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "delete",
+					},
+				);
 			}
 		} catch (error) {
 			const responseTime = Date.now() - startTime;
@@ -220,7 +258,10 @@ export class RedisCacheService implements CacheService {
 			});
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordCounter("cache_errors", 1, { operation: "delete", key });
+				await this.metrics.recordCounter("cache_errors", 1, {
+					operation: "delete",
+					key,
+				});
 			}
 
 			throw error;
@@ -244,7 +285,13 @@ export class RedisCacheService implements CacheService {
 			});
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "exists" });
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "exists",
+					},
+				);
 			}
 
 			return exists === 1;
@@ -261,7 +308,10 @@ export class RedisCacheService implements CacheService {
 			});
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordCounter("cache_errors", 1, { operation: "exists", key });
+				await this.metrics.recordCounter("cache_errors", 1, {
+					operation: "exists",
+					key,
+				});
 			}
 
 			return false;
@@ -314,8 +364,16 @@ export class RedisCacheService implements CacheService {
 			this.operationMetrics.totalOperations++;
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordCounter("cache_clears", 1, { pattern: pattern || "all" });
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "clear" });
+				await this.metrics.recordCounter("cache_clears", 1, {
+					pattern: pattern || "all",
+				});
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "clear",
+					},
+				);
 			}
 		} catch (error) {
 			const responseTime = Date.now() - startTime;
@@ -330,7 +388,10 @@ export class RedisCacheService implements CacheService {
 			});
 
 			if (this.config.enableMetrics) {
-				await this.metrics.recordCounter("cache_errors", 1, { operation: "clear", pattern });
+				await this.metrics.recordCounter("cache_errors", 1, {
+					operation: "clear",
+					pattern,
+				});
 			}
 
 			throw error;
@@ -376,7 +437,13 @@ export class RedisCacheService implements CacheService {
 
 			if (this.config.enableMetrics) {
 				await this.metrics.recordCounter("cache_mget_operations", 1);
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "mget" });
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "mget",
+					},
+				);
 			}
 
 			return parsedValues;
@@ -396,7 +463,9 @@ export class RedisCacheService implements CacheService {
 		}
 	}
 
-	async mset<T>(keyValuePairs: Array<{ key: string; value: T; ttl?: number }>): Promise<void> {
+	async mset<T>(
+		keyValuePairs: Array<{ key: string; value: T; ttl?: number }>,
+	): Promise<void> {
 		const startTime = Date.now();
 
 		try {
@@ -427,7 +496,13 @@ export class RedisCacheService implements CacheService {
 
 			if (this.config.enableMetrics) {
 				await this.metrics.recordCounter("cache_mset_operations", 1);
-				await this.metrics.recordHistogram("cache_response_time", responseTime, { operation: "mset" });
+				await this.metrics.recordHistogram(
+					"cache_response_time",
+					responseTime,
+					{
+						operation: "mset",
+					},
+				);
 			}
 		} catch (error) {
 			const responseTime = Date.now() - startTime;
@@ -554,13 +629,17 @@ export class RedisCacheService implements CacheService {
 
 		// Update average response time
 		this.operationMetrics.avgResponseTime =
-			this.responseTimes.reduce((sum, time) => sum + time, 0) / this.responseTimes.length;
+			this.responseTimes.reduce((sum, time) => sum + time, 0) /
+			this.responseTimes.length;
 	}
 
 	private updateHitRate(): void {
-		const totalHitsAndMisses = this.operationMetrics.hits + this.operationMetrics.misses;
+		const totalHitsAndMisses =
+			this.operationMetrics.hits + this.operationMetrics.misses;
 		this.operationMetrics.hitRate =
-			totalHitsAndMisses > 0 ? (this.operationMetrics.hits / totalHitsAndMisses) * 100 : 0;
+			totalHitsAndMisses > 0
+				? (this.operationMetrics.hits / totalHitsAndMisses) * 100
+				: 0;
 	}
 
 	private startMetricsReporting(): void {
@@ -573,8 +652,14 @@ export class RedisCacheService implements CacheService {
 			const metrics = this.getMetrics();
 
 			await this.metrics.recordGauge("cache_hit_rate", metrics.hitRate);
-			await this.metrics.recordGauge("cache_avg_response_time", metrics.avgResponseTime);
-			await this.metrics.recordGauge("cache_total_operations", metrics.totalOperations);
+			await this.metrics.recordGauge(
+				"cache_avg_response_time",
+				metrics.avgResponseTime,
+			);
+			await this.metrics.recordGauge(
+				"cache_total_operations",
+				metrics.totalOperations,
+			);
 			await this.metrics.recordGauge("cache_errors", metrics.errors);
 
 			await this.logger.info("Cache metrics report", metrics);
@@ -587,7 +672,9 @@ export class RedisCacheService implements CacheService {
 			await this.redis.quit();
 			await this.logger.info("Redis cache disconnected cleanly");
 		} catch (error) {
-			await this.logger.error("Error disconnecting Redis cache", { error: error.message });
+			await this.logger.error("Error disconnecting Redis cache", {
+				error: error.message,
+			});
 		}
 	}
 }
@@ -596,23 +683,35 @@ export class RedisCacheService implements CacheService {
 export class CacheServiceFactory {
 	private static instance: CacheService;
 
-	public static createCacheService(config: CacheConfig, logger: LoggerService, metrics: MetricsService): CacheService {
+	public static createCacheService(
+		config: CacheConfig,
+		logger: LoggerService,
+		metrics: MetricsService,
+	): CacheService {
 		if (!CacheServiceFactory.instance) {
-			CacheServiceFactory.instance = new RedisCacheService(config, logger, metrics);
+			CacheServiceFactory.instance = new RedisCacheService(
+				config,
+				logger,
+				metrics,
+			);
 		}
 		return CacheServiceFactory.instance;
 	}
 
 	public static getInstance(): CacheService {
 		if (!CacheServiceFactory.instance) {
-			throw new Error("Cache service not initialized. Call createCacheService first.");
+			throw new Error(
+				"Cache service not initialized. Call createCacheService first.",
+			);
 		}
 		return CacheServiceFactory.instance;
 	}
 }
 
 // Cache configuration helper
-export const createCacheConfig = (overrides: Partial<CacheConfig> = {}): CacheConfig => {
+export const createCacheConfig = (
+	overrides: Partial<CacheConfig> = {},
+): CacheConfig => {
 	return {
 		redis: {
 			host: process.env.REDIS_HOST || "localhost",

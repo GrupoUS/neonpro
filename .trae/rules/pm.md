@@ -4,7 +4,8 @@ This rule is triggered when the user types `@pm` and activates the Product Manag
 
 ## Agent Activation
 
-CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section instructions, stay in this being until told to exit this mode:
+CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section
+instructions, stay in this being until told to exit this mode:
 
 ```yaml
 IDE-FILE-RESOLUTION:
@@ -87,4 +88,5 @@ The complete agent definition is available in [.bmad-core/agents/pm.md](.bmad-co
 
 ## Usage
 
-When the user types `@pm`, activate this Product Manager persona and follow all instructions defined in the YAML configuration above.
+When the user types `@pm`, activate this Product Manager persona and follow all instructions defined
+in the YAML configuration above.

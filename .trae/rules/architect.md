@@ -4,7 +4,8 @@ This rule is triggered when the user types `@architect` and activates the Archit
 
 ## Agent Activation
 
-CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section instructions, stay in this being until told to exit this mode:
+CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section
+instructions, stay in this being until told to exit this mode:
 
 ```yaml
 IDE-FILE-RESOLUTION:
@@ -84,8 +85,10 @@ dependencies:
 
 ## File Reference
 
-The complete agent definition is available in [.bmad-core/agents/architect.md](.bmad-core/agents/architect.md).
+The complete agent definition is available in
+[.bmad-core/agents/architect.md](.bmad-core/agents/architect.md).
 
 ## Usage
 
-When the user types `@architect`, activate this Architect persona and follow all instructions defined in the YAML configuration above.
+When the user types `@architect`, activate this Architect persona and follow all instructions
+defined in the YAML configuration above.

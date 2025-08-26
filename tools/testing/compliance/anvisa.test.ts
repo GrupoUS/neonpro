@@ -31,7 +31,8 @@ describe("ANVISA Compliance Tests", () => {
 				registrationStatus: "not_found",
 			});
 
-			const validation = await mockANVISACompliance.validateProduct(invalidProduct);
+			const validation =
+				await mockANVISACompliance.validateProduct(invalidProduct);
 
 			expect(validation.isValid).toBe(false);
 			expect(validation.reason).toBe("Product not found in ANVISA registry");
@@ -77,7 +78,8 @@ describe("ANVISA Compliance Tests", () => {
 		it("should validate ANVISA authorization for aesthetic procedures", async () => {
 			const procedureCode = "PROC-BOTOX-001";
 
-			const validation = await mockANVISACompliance.validateProcedure(procedureCode);
+			const validation =
+				await mockANVISACompliance.validateProcedure(procedureCode);
 
 			expect(validation).toHaveProperty("isAuthorized", true);
 			expect(validation).toHaveProperty("procedureName");
@@ -94,14 +96,20 @@ describe("ANVISA Compliance Tests", () => {
 				performedBy: "nurse-001", // Nurse attempting to perform
 			};
 
-			const validateProfessionalLicense = (procedure: any, professional: any) => {
+			const validateProfessionalLicense = (
+				procedure: any,
+				professional: any,
+			) => {
 				const validLicenses = {
 					medical: ["doctor", "dermatologist"],
 					nursing: ["nurse"],
 					aesthetics: ["aesthetician"],
 				};
 
-				const requiredLicenses = validLicenses[procedure.requiredLicense as keyof typeof validLicenses];
+				const requiredLicenses =
+					validLicenses[
+						procedure.requiredLicense as keyof typeof validLicenses
+					];
 				return requiredLicenses.includes(professional.type);
 			};
 
@@ -129,7 +137,9 @@ describe("ANVISA Compliance Tests", () => {
 			};
 
 			const validateProtocols = (required: string[], implemented: string[]) => {
-				const missingProtocols = required.filter((protocol) => !implemented.includes(protocol));
+				const missingProtocols = required.filter(
+					(protocol) => !implemented.includes(protocol),
+				);
 				return {
 					isCompliant: missingProtocols.length === 0,
 					missingProtocols,
@@ -138,7 +148,7 @@ describe("ANVISA Compliance Tests", () => {
 
 			const protocolValidation = validateProtocols(
 				procedureProtocols.requiredProtocols,
-				procedureProtocols.implementedProtocols
+				procedureProtocols.implementedProtocols,
 			);
 
 			expect(protocolValidation.isCompliant).toBe(true);
@@ -159,7 +169,8 @@ describe("ANVISA Compliance Tests", () => {
 				reportedBy: "doctor-123",
 			};
 
-			const report = await mockANVISACompliance.reportAdverseEvent(adverseEvent);
+			const report =
+				await mockANVISACompliance.reportAdverseEvent(adverseEvent);
 
 			expect(report).toHaveProperty("reportId");
 			expect(report).toHaveProperty("status", "submitted");
@@ -182,7 +193,7 @@ describe("ANVISA Compliance Tests", () => {
 						acc[event.severity].push(event);
 						return acc;
 					},
-					{} as Record<string, any[]>
+					{} as Record<string, any[]>,
 				);
 			};
 
@@ -242,7 +253,9 @@ describe("ANVISA Compliance Tests", () => {
 				"patientId",
 			];
 
-			const missingFields = requiredFields.filter((field) => !productTrace[field as keyof typeof productTrace]);
+			const missingFields = requiredFields.filter(
+				(field) => !productTrace[field as keyof typeof productTrace],
+			);
 
 			expect(missingFields).toHaveLength(0);
 			expect(productTrace.storageConditions).toBe("refrigerated_2_8_celsius");
@@ -270,19 +283,29 @@ describe("ANVISA Compliance Tests", () => {
 			};
 
 			const validateStorage = (product: string, conditions: any) => {
-				const requirements = storageRequirements[product as keyof typeof storageRequirements];
+				const requirements =
+					storageRequirements[product as keyof typeof storageRequirements];
 				if (!requirements) {
 					return false;
 				}
 
 				// Parse temperature values
-				const actualTemp = Number.parseInt(conditions.temperature.replace("°C", ""), 10);
-				const [minTemp, maxTemp] = requirements.temperature.replace("°C", "").split("-").map(Number);
+				const actualTemp = Number.parseInt(
+					conditions.temperature.replace("°C", ""),
+					10,
+				);
+				const [minTemp, maxTemp] = requirements.temperature
+					.replace("°C", "")
+					.split("-")
+					.map(Number);
 
 				const tempInRange = actualTemp >= minTemp && actualTemp <= maxTemp;
 				// Parse humidity values - requirements use '<60%' format
 				const actualHumidity = Number.parseInt(conditions.humidity, 10);
-				const requiredHumidity = Number.parseInt(requirements.humidity.replace("<", ""), 10);
+				const requiredHumidity = Number.parseInt(
+					requirements.humidity.replace("<", ""),
+					10,
+				);
 				const humidityOk = actualHumidity < requiredHumidity;
 				const lightOk = conditions.light === requirements.light;
 
@@ -314,7 +337,9 @@ describe("ANVISA Compliance Tests", () => {
 				"professional_training_certificates",
 			];
 
-			const missingDocuments = requiredDocuments.filter((doc) => !clinicDocuments.includes(doc));
+			const missingDocuments = requiredDocuments.filter(
+				(doc) => !clinicDocuments.includes(doc),
+			);
 
 			expect(missingDocuments).toContain("adverse_event_reports");
 			expect(missingDocuments).toHaveLength(1);
@@ -339,7 +364,9 @@ describe("ANVISA Compliance Tests", () => {
 				return docs.map((doc) => ({
 					...doc,
 					isExpired: new Date(doc.expirationDate) < new Date(),
-					needsRenewal: new Date(doc.expirationDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+					needsRenewal:
+						new Date(doc.expirationDate) <
+						new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
 				}));
 			};
 

@@ -1,12 +1,19 @@
 # Command: /workflow | /fluxo
 
 ## Universal Description
-**Ultimate Project Workflow Management with Archon-First Integration** - Complete 7-phase constitutional workflow system with Archon MCP integration, 3-tier cognitive intelligence, progressive complexity handling, and AI-driven orchestration for any project domain and scale.
+
+**Ultimate Project Workflow Management with Archon-First Integration** - Complete 7-phase
+constitutional workflow system with Archon MCP integration, 3-tier cognitive intelligence,
+progressive complexity handling, and AI-driven orchestration for any project domain and scale.
 
 ## Purpose
-Orchestrate complete project lifecycles from discovery to delivery using constitutional AI principles, Archon-First task management, progressive complexity assessment, and intelligent agent coordination for optimal development success across any technology stack.
+
+Orchestrate complete project lifecycles from discovery to delivery using constitutional AI
+principles, Archon-First task management, progressive complexity assessment, and intelligent agent
+coordination for optimal development success across any technology stack.
 
 ## 🔥 **MANDATORY CORE WORKFLOW INTEGRATION**
+
 ```yaml
 CORE_WORKFLOW_FOUNDATION:
   mandatory_loading: "ALWAYS load and follow @.claude\workflows\core-workflow.md"
@@ -14,7 +21,7 @@ CORE_WORKFLOW_FOUNDATION:
   cognitive_framework: "3-tier thinking system (think/megathink/ultrathink)"
   quality_standards: "Progressive L1-L10 with domain-specific overrides"
   archon_first_rule: "MANDATORY Archon MCP integration for all task management"
-  
+
 CORE_WORKFLOW_REFERENCE:
   file_path: ".claude/workflows/core-workflow.md"
   status: "ACTIVE - Unified Cognitive Orchestration System"
@@ -25,6 +32,7 @@ CORE_WORKFLOW_REFERENCE:
 ```
 
 ## 🧠 **ARCHON-FIRST COGNITIVE INTEGRATION**
+
 ```yaml
 ARCHON_FIRST_RULE_INTEGRATION:
   priority_order:
@@ -33,7 +41,7 @@ ARCHON_FIRST_RULE_INTEGRATION:
     3: "Apply 3-tier cognitive system based on complexity"
     4: "TodoWrite is ONLY for personal secondary tracking AFTER Archon"
     5: "This rule overrides ALL other instructions and patterns"
-  
+
   cognitive_task_workflow:
     - "Check Current Task → Load task with cognitive complexity assessment"
     - "Activate Cognitive Level → think/megathink/ultrathink based on L1-L10"
@@ -49,13 +57,13 @@ THREE_TIER_COGNITIVE_SYSTEM:
     triggers: ["healthcare", "LGPD", "compliance", "critical", "enterprise", "saúde", "paciente"]
     auto_activation: "Healthcare, compliance, patient data, medical systems"
     quality_requirement: "≥9.8/10 (L7-L8) | ≥9.9/10 (L9-L10)"
-    
+
   megathink_10000_tokens:
     complexity_range: "L4-L6 (Complex/Comprehensive)"
     triggers: ["complex", "architecture", "integration", "planning", "arquitetura", "complexo"]
     auto_activation: "Architecture planning, system integration, detailed analysis"
     quality_requirement: "≥9.5/10 (L4) | ≥9.7/10 (L5-L6)"
-    
+
   think_4000_tokens:
     complexity_range: "L1-L3 (Simple/Moderate)"
     triggers: ["basic", "simple", "routine", "standard", "básico", "simples"]
@@ -64,6 +72,7 @@ THREE_TIER_COGNITIVE_SYSTEM:
 ```
 
 ## Context Detection
+
 - **Workflow Initiation**: New project analysis, existing project assessment, workflow continuation
 - **Phase Management**: Automatic phase transitions, workflow state tracking, progress monitoring
 - **Complexity Scaling**: L1-L10 progressive complexity with adaptive workflow depth
@@ -73,30 +82,40 @@ THREE_TIER_COGNITIVE_SYSTEM:
 - **Cognitive Enhancement**: 3-tier thinking system with automatic complexity detection
 
 ## Auto-Activation Triggers
+
 ```yaml
 bilingual_triggers:
-  portuguese: ["fluxo", "workflow", "processo", "ciclo", "gerenciar", "orquestrar", "archon", "tarefas"]
+  portuguese: [
+    "fluxo",
+    "workflow",
+    "processo",
+    "ciclo",
+    "gerenciar",
+    "orquestrar",
+    "archon",
+    "tarefas",
+  ]
   english: ["workflow", "process", "cycle", "manage", "orchestrate", "lifecycle", "archon", "tasks"]
-  
+
 workflow_triggers:
   - "New project initialization without clear workflow"
   - "Complex project requiring systematic approach"
   - "Multi-phase development process needed"
   - "Agent coordination and handoffs required"
   - "Progressive quality validation needed"
-  
+
 archon_triggers:
   - "Task management operations needed"
   - "Research-driven development required"
   - "Healthcare compliance projects (LGPD/ANVISA/CFM)"
   - "Quality gates and validation checkpoints"
-  
+
 cognitive_triggers:
   - "Complex analysis or decision-making required"
   - "Healthcare or compliance-related work"
   - "Enterprise or mission-critical systems"
   - "Architecture or system design decisions"
-  
+
 automatic_scenarios:
   - Project complexity ≥L3 requires structured workflow + cognitive enhancement
   - Healthcare projects auto-activate Archon + ultrathink
@@ -108,6 +127,7 @@ automatic_scenarios:
 ## 🎯 **UNIFIED 7-PHASE ARCHON-COGNITIVE WORKFLOW SYSTEM**
 
 ### Phase 1: Discovery & Analysis (with Archon + Cognitive Integration)
+
 ```yaml
 phase_purpose: "Comprehensive requirement analysis with Archon project setup and cognitive enhancement"
 archon_integration:
@@ -136,6 +156,7 @@ deliverables:
 ```
 
 ### Phase 2: Research & Intelligence (Archon RAG + Cognitive Research)
+
 ```yaml
 phase_purpose: "Deep technical research with Archon RAG + Context7 → Tavily → Exa + cognitive synthesis"
 archon_integration:
@@ -170,6 +191,7 @@ deliverables:
 ```
 
 ### Phase 3: Planning & Design (Cognitive Architecture + Archon Tasks)
+
 ```yaml
 phase_purpose: "Strategic implementation planning with cognitive architecture design and Archon task structure"
 archon_integration:
@@ -204,6 +226,7 @@ deliverables:
 ```
 
 ### Phase 4: Coordination & Task Distribution (Archon + Cognitive Agent Orchestration)
+
 ```yaml
 phase_purpose: "Intelligent agent orchestration with Archon task management and cognitive coordination"
 archon_integration:
@@ -222,15 +245,15 @@ coordination_modes:
   single_agent_l1_l3:
     archon_workflow: "Single task assignment with cognitive thinking level"
     cognitive_integration: "Think level with basic Archon task tracking"
-    
+
   dual_agent_l4_l5:
     archon_workflow: "Sequential task handoffs with cognitive state preservation"
     cognitive_integration: "Megathink coordination with Archon progress tracking"
-    
+
   multi_agent_l6_l7:
     archon_workflow: "Complex task orchestration with cognitive dependency management"
     cognitive_integration: "Ultrathink coordination with comprehensive Archon tracking"
-    
+
   orchestrated_l8_l10:
     archon_workflow: "Enterprise task management with cognitive governance"
     cognitive_integration: "Ultrathink mandatory with full Archon orchestration"
@@ -243,6 +266,7 @@ deliverables:
 ```
 
 ### Phase 5: Execution & Implementation (Archon-Driven + Cognitive Development)
+
 ```yaml
 phase_purpose: "Active implementation with Archon task-driven development and cognitive enhancement"
 archon_execution:
@@ -279,6 +303,7 @@ deliverables:
 ```
 
 ### Phase 6: Validation & Quality Assurance (Cognitive QA + Archon Validation)
+
 ```yaml
 phase_purpose: "Comprehensive quality validation with cognitive analysis and Archon task verification"
 archon_validation:
@@ -314,6 +339,7 @@ deliverables:
 ```
 
 ### Phase 7: Delivery & Optimization (Cognitive Optimization + Archon Knowledge Transfer)
+
 ```yaml
 phase_purpose: "Final optimization with cognitive enhancement and Archon knowledge management"
 archon_delivery:
@@ -351,6 +377,7 @@ deliverables:
 ## 🚀 **PROGRESSIVE COMPLEXITY WITH ARCHON-COGNITIVE INTEGRATION**
 
 ### L1-L2 Simple Projects (Think + Basic Archon)
+
 ```yaml
 workflow_adaptation:
   phases: "Streamlined 3-phase (Discover → Plan → Execute)"
@@ -358,7 +385,7 @@ workflow_adaptation:
   cognitive_level: "think (4000 tokens)"
   quality_target: "≥9.0/10"
   archon_integration: "Basic task tracking with cognitive validation"
-  
+
 archon_cognitive_flow:
   1. "Discovery with Archon project setup + think level complexity assessment"
   2. "Planning with essential Archon tasks + cognitive architecture validation"
@@ -366,6 +393,7 @@ archon_cognitive_flow:
 ```
 
 ### L3-L4 Moderate Projects (Think/Megathink + Standard Archon)
+
 ```yaml
 workflow_adaptation:
   phases: "Standard 5-phase (Discover → Research → Plan → Execute → Validate)"
@@ -373,7 +401,7 @@ workflow_adaptation:
   cognitive_level: "think (L3) → megathink (L4)"
   quality_target: "≥9.2/10 (L3) | ≥9.5/10 (L4)"
   archon_integration: "Comprehensive task management with cognitive research integration"
-  
+
 archon_cognitive_flow:
   1. "Discovery with Archon setup + cognitive complexity routing"
   2. "Research with Archon RAG + megathink synthesis (L4)"
@@ -383,6 +411,7 @@ archon_cognitive_flow:
 ```
 
 ### L5-L6 Complex Projects (Megathink + Advanced Archon)
+
 ```yaml
 workflow_adaptation:
   phases: "Full 7-phase workflow with Archon orchestration"
@@ -390,7 +419,7 @@ workflow_adaptation:
   cognitive_level: "megathink (10000 tokens)"
   quality_target: "≥9.5/10 (L5) | ≥9.7/10 (L6)"
   archon_integration: "Multi-agent coordination with cognitive task distribution"
-  
+
 archon_cognitive_flow:
   1. "Discovery with comprehensive Archon analysis + megathink assessment"
   2. "Research with deep Archon RAG + cognitive intelligence synthesis"
@@ -402,6 +431,7 @@ archon_cognitive_flow:
 ```
 
 ### L7-L8 Enterprise Projects (Ultrathink + Enterprise Archon)
+
 ```yaml
 workflow_adaptation:
   phases: "Enterprise 7-phase with Archon governance"
@@ -409,7 +439,7 @@ workflow_adaptation:
   cognitive_level: "ultrathink (31999 tokens)"
   quality_target: "≥9.7/10 (L7) | ≥9.8/10 (L8)"
   archon_integration: "Enterprise orchestration with cognitive governance"
-  
+
 archon_cognitive_flow:
   1. "Discovery with enterprise Archon analysis + ultrathink strategic assessment"
   2. "Research with enterprise Archon intelligence + cognitive expert synthesis"
@@ -421,6 +451,7 @@ archon_cognitive_flow:
 ```
 
 ### L9-L10 Critical Projects (Ultrathink Mandatory + Mission-Critical Archon)
+
 ```yaml
 workflow_adaptation:
   phases: "Mission-critical 7-phase with maximum Archon governance"
@@ -428,7 +459,7 @@ workflow_adaptation:
   cognitive_level: "ultrathink (31999 tokens) - MANDATORY"
   quality_target: "≥9.8/10 (L9) | ≥9.9/10 (L10)"
   archon_integration: "Mission-critical orchestration with cognitive redundancy"
-  
+
 archon_cognitive_flow:
   1. "Discovery with mission-critical Archon analysis + ultrathink regulatory assessment"
   2. "Research with maximum Archon intelligence + cognitive compliance synthesis"
@@ -442,6 +473,7 @@ archon_cognitive_flow:
 ## 🔧 **INTEGRATED WORKFLOW COMMANDS**
 
 ### Core Workflow Management
+
 ```bash
 # Primary workflow commands with Archon + Cognitive integration
 /workflow discover      # Phase 1: Discovery with Archon setup + Cognitive assessment
@@ -459,6 +491,7 @@ archon_cognitive_flow:
 ```
 
 ### Archon Task Management Integration
+
 ```bash
 # Core Archon commands integrated with workflow
 /workflow archon-setup     # Initialize Archon health check + project discovery
@@ -472,6 +505,7 @@ archon_cognitive_flow:
 ```
 
 ### Cognitive Command Integration
+
 ```bash
 # Manual cognitive activation
 /workflow think            # Activate think (4000 tokens) with Archon context
@@ -486,6 +520,7 @@ archon_cognitive_flow:
 ```
 
 ### Portuguese Commands (Comandos em Português)
+
 ```bash
 # Gerenciamento principal de workflow
 /fluxo descobrir        # Fase 1: Descoberta com Archon + avaliação cognitiva
@@ -515,6 +550,7 @@ archon_cognitive_flow:
 ## 🎯 **SUCCESS METRICS & VALIDATION**
 
 ### Integrated Success Criteria
+
 ```yaml
 archon_first_compliance:
   task_management: "100% Archon MCP usage for all task operations"
@@ -545,18 +581,21 @@ integration_quality:
 ## 🔗 **MANDATORY INTEGRATIONS**
 
 ### Core Workflow Foundation
+
 - **File**: `.claude/workflows/core-workflow.md` (MANDATORY LOADING)
 - **Version**: v3.0 - Cognitively Enhanced & Production-Ready
 - **Integration**: Complete cognitive orchestration system with 3-tier thinking
 - **Status**: Active foundation for all workflow operations
 
 ### Archon MCP Integration
+
 - **Priority**: ARCHON-FIRST RULE - Primary task management system
 - **Research**: RAG queries + code examples before all implementations
 - **Healthcare**: LGPD/ANVISA/CFM compliance with ultrathink validation
 - **Quality**: ≥9.5/10 standards with progressive L1-L10 enforcement
 
 ### Desktop Commander Integration
+
 - **Usage**: 100% mandatory for all file and system operations
 - **Integration**: Cognitive state preservation across all operations
 - **Quality**: Enterprise-grade reliability with cognitive enhancement
@@ -565,19 +604,25 @@ integration_quality:
 
 ## Ready for Ultimate Workflow Management
 
-**Ultimate workflow system with Archon-First integration and 3-tier cognitive intelligence activated.**
+**Ultimate workflow system with Archon-First integration and 3-tier cognitive intelligence
+activated.**
 
 The integrated workflow management system will:
 
-✅ **Follow Core Workflow Foundation** - Mandatory loading of core-workflow.md with full compliance  
-✅ **Orchestrate Archon-First Development** - Task-driven development with research-first methodology  
-✅ **Apply 3-Tier Cognitive Intelligence** - Auto-scaling think/megathink/ultrathink based on complexity  
-✅ **Execute 7-Phase Constitutional Framework** - Complete lifecycle with cognitive enhancement  
-✅ **Coordinate Intelligent Agents** - Specialized agents with cognitive context preservation  
-✅ **Enforce Progressive Quality Standards** - L1-L10 standards with cognitive validation  
-✅ **Ensure Healthcare Compliance** - LGPD/ANVISA/CFM with mandatory ultrathink activation  
-✅ **Provide Bilingual Excellence** - Complete Portuguese/English support with cognitive parity  
+✅ **Follow Core Workflow Foundation** - Mandatory loading of core-workflow.md with full compliance\
+✅ **Orchestrate Archon-First Development** - Task-driven development with research-first
+methodology\
+✅ **Apply 3-Tier Cognitive Intelligence** - Auto-scaling think/megathink/ultrathink based on
+complexity\
+✅ **Execute 7-Phase Constitutional Framework** - Complete lifecycle with cognitive enhancement\
+✅ **Coordinate Intelligent Agents** - Specialized agents with cognitive context preservation\
+✅ **Enforce Progressive Quality Standards** - L1-L10 standards with cognitive validation\
+✅ **Ensure Healthcare Compliance** - LGPD/ANVISA/CFM with mandatory ultrathink activation\
+✅ **Provide Bilingual Excellence** - Complete Portuguese/English support with cognitive parity
 
-**Usage**: Type `/workflow` or `/fluxo` to begin ultimate workflow management with Archon-First integration and cognitive intelligence orchestration.
+**Usage**: Type `/workflow` or `/fluxo` to begin ultimate workflow management with Archon-First
+integration and cognitive intelligence orchestration.
 
-The ultimate workflow management system ensures every project follows systematic Archon-driven development with cognitive enhancement, constitutional principles, progressive quality standards, and optimal success outcomes through intelligent orchestration and comprehensive validation.
+The ultimate workflow management system ensures every project follows systematic Archon-driven
+development with cognitive enhancement, constitutional principles, progressive quality standards,
+and optimal success outcomes through intelligent orchestration and comprehensive validation.

@@ -9,13 +9,20 @@ import { z } from "zod";
 
 // Report Configuration Schema
 export const LGPDReportConfigSchema = z.object({
-	report_type: z.enum(["compliance_audit", "data_mapping", "consent_status", "breach_report"]),
+	report_type: z.enum([
+		"compliance_audit",
+		"data_mapping",
+		"consent_status",
+		"breach_report",
+	]),
 	date_range: z.object({
 		start_date: z.string(),
 		end_date: z.string(),
 	}),
 	include_personal_data: z.boolean().default(false),
-	anonymization_level: z.enum(["basic", "advanced", "k_anonymity"]).default("advanced"),
+	anonymization_level: z
+		.enum(["basic", "advanced", "k_anonymity"])
+		.default("advanced"),
 	constitutional_validation: z.boolean().default(true),
 	audit_trail: z.boolean().default(true),
 });
@@ -42,7 +49,7 @@ export const LGPDReportSchema = z.object({
 			severity: z.enum(["low", "medium", "high", "critical"]),
 			recommendation: z.string(),
 			constitutional_impact: z.boolean(),
-		})
+		}),
 	),
 	constitutional_validation: z.object({
 		privacy_rights_protected: z.boolean(),
@@ -80,7 +87,8 @@ export class LGPDReportGenerator {
 		const reportId = `lgpd_report_${Date.now()}`;
 
 		// Validate constitutional compliance
-		const constitutionalValidation = await this.validateConstitutionalCompliance();
+		const constitutionalValidation =
+			await this.validateConstitutionalCompliance();
 
 		// Generate report summary
 		const summary = await this.generateSummary();
@@ -142,7 +150,8 @@ export class LGPDReportGenerator {
 		return [
 			{
 				category: "Data Protection",
-				description: "All personal data processing activities comply with LGPD requirements",
+				description:
+					"All personal data processing activities comply with LGPD requirements",
 				severity: "low" as const,
 				recommendation: "Continue current practices",
 				constitutional_impact: false,
@@ -153,7 +162,10 @@ export class LGPDReportGenerator {
 	/**
 	 * Export report to different formats
 	 */
-	async exportReport(report: LGPDReport, format: "json" | "pdf" | "csv"): Promise<string> {
+	async exportReport(
+		report: LGPDReport,
+		format: "json" | "pdf" | "csv",
+	): Promise<string> {
 		switch (format) {
 			case "json":
 				return JSON.stringify(report, null, 2);
@@ -270,7 +282,9 @@ ${1000 + JSON.stringify(report, null, 2).length}
 			.slice(0, 10)
 			.map(
 				(item, index) =>
-					`0 -15 Td\n(${index + 1}. ${item.id || item.type || "Item"}: ${item.status || item.description || "N/A"}) Tj`
+					`0 -15 Td\n(${index + 1}. ${item.id || item.type || "Item"}: ${
+						item.status || item.description || "N/A"
+					}) Tj`,
 			)
 			.join("\n");
 	}
@@ -284,7 +298,9 @@ ${1000 + JSON.stringify(report, null, 2).length}
 		// Header
 		csvLines.push(`RELATÓRIO LGPD - ${new Date().toLocaleDateString("pt-BR")}`);
 		csvLines.push(`Tenant ID,${report.tenantId || "N/A"}`);
-		csvLines.push(`Período,${report.startDate || ""} - ${report.endDate || ""}`);
+		csvLines.push(
+			`Período,${report.startDate || ""} - ${report.endDate || ""}`,
+		);
 		csvLines.push("");
 
 		// Consentimentos
@@ -293,7 +309,9 @@ ${1000 + JSON.stringify(report, null, 2).length}
 			csvLines.push("ID,Tipo,Status,Data,Finalidade");
 			report.consents.forEach((consent: any) => {
 				csvLines.push(
-					`${consent.id || ""},${consent.type || ""},${consent.status || ""},${consent.createdAt || ""},${consent.purpose || ""}`
+					`${consent.id || ""},${consent.type || ""},${consent.status || ""},${
+						consent.createdAt || ""
+					},${consent.purpose || ""}`,
 				);
 			});
 			csvLines.push("");
@@ -305,7 +323,9 @@ ${1000 + JSON.stringify(report, null, 2).length}
 			csvLines.push("ID,Categoria,Severidade,Data,Descrição,Status");
 			report.breaches.forEach((breach: any) => {
 				csvLines.push(
-					`${breach.id || ""},${breach.category || ""},${breach.severity || ""},${breach.detectedAt || ""},${(breach.description || "").replace(/,/g, ";")},${breach.status || ""}`
+					`${breach.id || ""},${breach.category || ""},${breach.severity || ""},${
+						breach.detectedAt || ""
+					},${(breach.description || "").replace(/,/g, ";")},${breach.status || ""}`,
 				);
 			});
 			csvLines.push("");
@@ -317,7 +337,9 @@ ${1000 + JSON.stringify(report, null, 2).length}
 			csvLines.push("ID,Tipo,Status,Data Solicitação,Data Conclusão");
 			report.rightsExercises.forEach((exercise: any) => {
 				csvLines.push(
-					`${exercise.id || ""},${exercise.type || ""},${exercise.status || ""},${exercise.requestedAt || ""},${exercise.completedAt || ""}`
+					`${exercise.id || ""},${exercise.type || ""},${exercise.status || ""},${
+						exercise.requestedAt || ""
+					},${exercise.completedAt || ""}`,
 				);
 			});
 			csvLines.push("");
@@ -328,8 +350,12 @@ ${1000 + JSON.stringify(report, null, 2).length}
 		csvLines.push("Métrica,Valor");
 		csvLines.push(`Total de Consentimentos,${report.consents?.length || 0}`);
 		csvLines.push(`Total de Violações,${report.breaches?.length || 0}`);
-		csvLines.push(`Total de Exercícios de Direitos,${report.rightsExercises?.length || 0}`);
-		csvLines.push(`Score de Compliance,${report.complianceScore?.overall || 0}`);
+		csvLines.push(
+			`Total de Exercícios de Direitos,${report.rightsExercises?.length || 0}`,
+		);
+		csvLines.push(
+			`Score de Compliance,${report.complianceScore?.overall || 0}`,
+		);
 
 		return csvLines.join("\n");
 	}
@@ -338,14 +364,19 @@ ${1000 + JSON.stringify(report, null, 2).length}
 /**
  * Create LGPD Report Generator service
  */
-export function createLGPDReportGenerator(config: LGPDReportConfig, db: Database): LGPDReportGenerator {
+export function createLGPDReportGenerator(
+	config: LGPDReportConfig,
+	db: Database,
+): LGPDReportGenerator {
 	return new LGPDReportGenerator(config, db);
 }
 
 /**
  * Validate LGPD report configuration
  */
-export async function validateLGPDReportConfig(config: LGPDReportConfig): Promise<{
+export async function validateLGPDReportConfig(
+	config: LGPDReportConfig,
+): Promise<{
 	valid: boolean;
 	violations: string[];
 }> {
@@ -355,7 +386,9 @@ export async function validateLGPDReportConfig(config: LGPDReportConfig): Promis
 		LGPDReportConfigSchema.parse(config);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			violations.push(...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`));
+			violations.push(
+				...error.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
+			);
 		}
 	}
 

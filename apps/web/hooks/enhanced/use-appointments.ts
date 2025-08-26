@@ -7,7 +7,7 @@
  */
 
 // Import our enhanced API client
-import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers, type ApiResponse } from "@neonpro/shared/api-client";
 // Import validation schemas and types
 import {
 	// Types
@@ -17,9 +17,9 @@ import {
 	AppointmentQuerySchema,
 	type AppointmentResponse,
 	AppointmentResponseSchema,
+	AppointmentsListResponseSchema,
 	AppointmentStatsSchema,
 	type AppointmentStatus,
-	AppointmentsListResponseSchema,
 	AvailabilitySlotSchema,
 	type BulkUpdateAppointments,
 	BulkUpdateAppointmentsSchema,
@@ -920,19 +920,19 @@ export function useAppointmentManagement(): AppointmentManagementContext {
 // Export all hooks for individual use
 export {
 	useAppointment,
+	useAppointmentManagement,
 	useAppointments,
-	useCreateAppointment,
-	useUpdateAppointment,
-	useCancelAppointment,
-	useDeleteAppointment,
-	useCheckInAppointment,
-	useCompleteAppointment,
-	useRescheduleAppointment,
 	useAppointmentStats,
-	useDailySchedule,
-	useWeeklySchedule,
+	useAppointmentUtils,
 	useAvailableSlots,
 	useBulkUpdateAppointments,
-	useAppointmentUtils,
-	useAppointmentManagement,
+	useCancelAppointment,
+	useCheckInAppointment,
+	useCompleteAppointment,
+	useCreateAppointment,
+	useDailySchedule,
+	useDeleteAppointment,
+	useRescheduleAppointment,
+	useUpdateAppointment,
+	useWeeklySchedule,
 };

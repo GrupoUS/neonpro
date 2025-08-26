@@ -81,7 +81,7 @@ app.use(
 				}
 			: false,
 		crossOriginEmbedderPolicy: false, // Required for Vercel Edge Functions
-	})
+	}),
 );
 
 // CORS configuration - Simple configuration for development
@@ -107,7 +107,10 @@ app.use("*", async (c, next) => {
 		c.set("dbClient", "supabase");
 		await next();
 	} catch (_error) {
-		return c.json({ error: RESPONSE_MESSAGES.DATABASE_ERROR }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+		return c.json(
+			{ error: RESPONSE_MESSAGES.DATABASE_ERROR },
+			HTTP_STATUS.INTERNAL_SERVER_ERROR,
+		);
 	}
 });
 
@@ -116,7 +119,8 @@ app.get("/", (c) => {
 	return c.json({
 		name: "NeonPro API",
 		version: "1.0.0",
-		description: "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
+		description:
+			"Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
 		status: "healthy",
 		environment: ENVIRONMENT,
 		framework: "Hono.dev",
@@ -165,9 +169,13 @@ app.get("/health", async (c) => {
 			memory: process.memoryUsage(),
 		};
 
-		const isHealthy = healthStatus.services.database && healthStatus.services.supabase;
+		const isHealthy =
+			healthStatus.services.database && healthStatus.services.supabase;
 
-		return c.json(healthStatus, isHealthy ? HTTP_STATUS.OK : HTTP_STATUS.SERVICE_UNAVAILABLE);
+		return c.json(
+			healthStatus,
+			isHealthy ? HTTP_STATUS.OK : HTTP_STATUS.SERVICE_UNAVAILABLE,
+		);
 	} catch (error) {
 		return c.json(
 			{
@@ -176,7 +184,7 @@ app.get("/health", async (c) => {
 				details: error.message,
 				timestamp: new Date().toISOString(),
 			},
-			HTTP_STATUS.SERVICE_UNAVAILABLE
+			HTTP_STATUS.SERVICE_UNAVAILABLE,
 		);
 	}
 });
@@ -210,7 +218,7 @@ app.notFound((c) => {
 			method: c.req.method,
 			timestamp: new Date().toISOString(),
 		},
-		HTTP_STATUS_NOT_FOUND
+		HTTP_STATUS_NOT_FOUND,
 	);
 });
 

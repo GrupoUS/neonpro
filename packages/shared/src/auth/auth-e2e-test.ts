@@ -30,7 +30,10 @@ export type E2ETestResult = {
 /**
  * Executa teste completo de autenticação end-to-end
  */
-export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = ""): Promise<E2ETestResult> {
+export async function runAuthE2ETest(
+	credentials: TestCredentials,
+	baseUrl = "",
+): Promise<E2ETestResult> {
 	const result: E2ETestResult = {
 		success: false,
 		steps: {
@@ -98,7 +101,9 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 		});
 
 		if (!protectedResponse.ok) {
-			result.errors.push(`Protected route access failed: ${protectedResponse.status}`);
+			result.errors.push(
+				`Protected route access failed: ${protectedResponse.status}`,
+			);
 			return result;
 		}
 
@@ -172,7 +177,8 @@ export async function runAuthE2ETest(credentials: TestCredentials, baseUrl = "")
 
 		return result;
 	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : "Unknown error";
+		const errorMessage =
+			error instanceof Error ? error.message : "Unknown error";
 		result.errors.push(`Test execution error: ${errorMessage}`);
 
 		// Limpar estado em caso de erro
@@ -224,7 +230,7 @@ export async function testSessionPersistence(): Promise<boolean> {
  */
 export async function runAllAuthTests(
 	credentials: TestCredentials,
-	baseUrl = ""
+	baseUrl = "",
 ): Promise<{
 	e2eTest: E2ETestResult;
 	persistenceTest: boolean;

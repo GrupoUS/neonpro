@@ -48,6 +48,7 @@ export class AuthTokenManager {
 	} /**
 	 * Singleton pattern - ensure only one instance
 	 */
+
 	static getInstance(): AuthTokenManager {
 		if (!AuthTokenManager.instance) {
 			AuthTokenManager.instance = new AuthTokenManager();
@@ -60,10 +61,18 @@ export class AuthTokenManager {
 	 */
 	private loadFromStorage(): void {
 		try {
-			const accessToken = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN);
-			const refreshToken = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN);
-			const expiresAt = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT);
-			const tokenType = localStorage.getItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE);
+			const accessToken = localStorage.getItem(
+				AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN,
+			);
+			const refreshToken = localStorage.getItem(
+				AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN,
+			);
+			const expiresAt = localStorage.getItem(
+				AuthTokenManager.STORAGE_KEYS.EXPIRES_AT,
+			);
+			const tokenType = localStorage.getItem(
+				AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE,
+			);
 
 			if (accessToken && refreshToken && expiresAt) {
 				this.accessToken = accessToken;
@@ -82,6 +91,7 @@ export class AuthTokenManager {
 	} /**
 	 * Save tokens to localStorage with error handling
 	 */
+
 	private saveToStorage(): void {
 		if (typeof window === "undefined") {
 			return;
@@ -89,10 +99,22 @@ export class AuthTokenManager {
 
 		try {
 			if (this.accessToken && this.refreshToken && this.expiresAt) {
-				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN, this.accessToken);
-				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN, this.refreshToken);
-				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.EXPIRES_AT, this.expiresAt.toString());
-				localStorage.setItem(AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE, this.tokenType);
+				localStorage.setItem(
+					AuthTokenManager.STORAGE_KEYS.ACCESS_TOKEN,
+					this.accessToken,
+				);
+				localStorage.setItem(
+					AuthTokenManager.STORAGE_KEYS.REFRESH_TOKEN,
+					this.refreshToken,
+				);
+				localStorage.setItem(
+					AuthTokenManager.STORAGE_KEYS.EXPIRES_AT,
+					this.expiresAt.toString(),
+				);
+				localStorage.setItem(
+					AuthTokenManager.STORAGE_KEYS.TOKEN_TYPE,
+					this.tokenType,
+				);
 			}
 		} catch (_error) {
 			// Clear tokens if storage fails to prevent inconsistent state
@@ -116,6 +138,7 @@ export class AuthTokenManager {
 	} /**
 	 * Set authentication tokens
 	 */
+
 	setTokens(tokens: AuthTokens): void {
 		this.accessToken = tokens.accessToken;
 		this.refreshToken = tokens.refreshToken;
@@ -168,6 +191,7 @@ export class AuthTokenManager {
 	} /**
 	 * Check if user has valid tokens
 	 */
+
 	hasValidTokens(): boolean {
 		return !!(this.accessToken && this.refreshToken && !this.isTokenExpired());
 	}
@@ -320,6 +344,7 @@ export class AuthTokenManager {
 	} /**
 	 * Get authorization header for API requests with automatic refresh
 	 */
+
 	async getAuthorizationHeaderWithRefresh(): Promise<string | null> {
 		const token = await this.getValidToken();
 		if (!token) {

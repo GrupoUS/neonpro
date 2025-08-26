@@ -7,10 +7,10 @@ global:
   scrape_timeout: 10s
   evaluation_interval: 15s
   external_labels:
-    cluster: 'neonpro-production'
-    env: 'production'
-    region: 'sa-east-1'
-    service: 'ai-healthcare-platform'
+    cluster: "neonpro-production"
+    env: "production"
+    region: "sa-east-1"
+    service: "ai-healthcare-platform"
 
 # Rule files for alerting
 rule_files:
@@ -22,7 +22,7 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-          - alertmanager:9093
+            - alertmanager:9093
       timeout: 10s
       api_version: v2
 
@@ -31,149 +31,149 @@ scrape_configs:
   # =============================================================================
   # PROMETHEUS SELF-MONITORING
   # =============================================================================
-  - job_name: 'prometheus'
+  - job_name: "prometheus"
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ["localhost:9090"]
     scrape_interval: 30s
     metrics_path: /metrics
     labels:
-      service: 'prometheus'
-      component: 'monitoring'
+      service: "prometheus"
+      component: "monitoring"
 
   # =============================================================================
   # NEONPRO WEB APPLICATION METRICS
   # =============================================================================
-  - job_name: 'neonpro-web'
+  - job_name: "neonpro-web"
     static_configs:
-      - targets: ['web:3000']
+      - targets: ["web:3000"]
     scrape_interval: 15s
     metrics_path: /api/metrics
     labels:
-      service: 'neonpro-web'
-      component: 'application'
+      service: "neonpro-web"
+      component: "application"
     metric_relabel_configs:
       # Add custom labels for AI service metrics
       - source_labels: [__name__]
-        regex: 'ai_(.+)'
-        target_label: 'ai_service'
-        replacement: '${1}'
+        regex: "ai_(.+)"
+        target_label: "ai_service"
+        replacement: "${1}"
       # Label HTTP metrics by endpoint
       - source_labels: [__name__, endpoint]
-        regex: 'http_(.+);(.+)'
-        target_label: 'http_endpoint'
-        replacement: '${2}'
+        regex: "http_(.+);(.+)"
+        target_label: "http_endpoint"
+        replacement: "${2}"
 
   # =============================================================================
   # AI SERVICES METRICS
   # =============================================================================
-  - job_name: 'ai-universal-chat'
+  - job_name: "ai-universal-chat"
     static_configs:
-      - targets: ['web:3000']
+      - targets: ["web:3000"]
     scrape_interval: 10s
     metrics_path: /api/ai/universal-chat/metrics
     labels:
-      service: 'universal-chat'
-      component: 'ai-service'
-      compliance: 'lgpd-anvisa-cfm'
+      service: "universal-chat"
+      component: "ai-service"
+      compliance: "lgpd-anvisa-cfm"
 
-  - job_name: 'ai-compliance-automation'
+  - job_name: "ai-compliance-automation"
     static_configs:
-      - targets: ['web:3000']
+      - targets: ["web:3000"]
     scrape_interval: 30s
     metrics_path: /api/ai/compliance/metrics
     labels:
-      service: 'compliance-automation'
-      component: 'ai-service'
-      compliance: 'lgpd-anvisa-cfm'
+      service: "compliance-automation"
+      component: "ai-service"
+      compliance: "lgpd-anvisa-cfm"
 
-  - job_name: 'ai-conversation-management'
+  - job_name: "ai-conversation-management"
     static_configs:
-      - targets: ['web:3000']
+      - targets: ["web:3000"]
     scrape_interval: 30s
     metrics_path: /api/ai/conversation/metrics
     labels:
-      service: 'conversation-management'
-      component: 'ai-service'
+      service: "conversation-management"
+      component: "ai-service"
 
-  - job_name: 'ai-feature-flags'
+  - job_name: "ai-feature-flags"
     static_configs:
-      - targets: ['web:3000']
+      - targets: ["web:3000"]
     scrape_interval: 60s
     metrics_path: /api/ai/feature-flags/metrics
     labels:
-      service: 'feature-flags'
-      component: 'ai-service'
+      service: "feature-flags"
+      component: "ai-service"
 
   # =============================================================================
   # INFRASTRUCTURE METRICS
   # =============================================================================
-  - job_name: 'redis'
+  - job_name: "redis"
     static_configs:
-      - targets: ['redis:6379']
+      - targets: ["redis:6379"]
     scrape_interval: 15s
     metrics_path: /metrics
     labels:
-      service: 'redis'
-      component: 'cache'
+      service: "redis"
+      component: "cache"
 
-  - job_name: 'docker'
+  - job_name: "docker"
     static_configs:
-      - targets: ['docker-exporter:9323']
+      - targets: ["docker-exporter:9323"]
     scrape_interval: 30s
     labels:
-      service: 'docker'
-      component: 'container-runtime'
+      service: "docker"
+      component: "container-runtime"
 
   # =============================================================================
   # SYSTEM METRICS (Node Exporter)
   # =============================================================================
-  - job_name: 'node-exporter'
+  - job_name: "node-exporter"
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets: ["node-exporter:9100"]
     scrape_interval: 30s
     labels:
-      service: 'node-exporter'
-      component: 'system-metrics'
+      service: "node-exporter"
+      component: "system-metrics"
     metric_relabel_configs:
       # Drop unnecessary filesystem metrics
       - source_labels: [__name__, fstype]
-        regex: 'node_filesystem_.+;(tmpfs|devtmpfs|overlay)'
+        regex: "node_filesystem_.+;(tmpfs|devtmpfs|overlay)"
         action: drop
 
   # =============================================================================
   # CADVISOR (Container Metrics)
   # =============================================================================
-  - job_name: 'cadvisor'
+  - job_name: "cadvisor"
     static_configs:
-      - targets: ['cadvisor:8080']
+      - targets: ["cadvisor:8080"]
     scrape_interval: 30s
     metrics_path: /metrics
     labels:
-      service: 'cadvisor'
-      component: 'container-metrics'
+      service: "cadvisor"
+      component: "container-metrics"
     metric_relabel_configs:
       # Only collect metrics for our containers
       - source_labels: [name]
-        regex: '^/neonpro-.*'
+        regex: "^/neonpro-.*"
         action: keep
       # Simplify container names
       - source_labels: [name]
-        regex: '^/neonpro-(.+)-prod$'
-        target_label: 'container_service'
-        replacement: '${1}'
+        regex: "^/neonpro-(.+)-prod$"
+        target_label: "container_service"
+        replacement: "${1}"
 
   # =============================================================================
   # BLACKBOX MONITORING (Synthetic Tests)
   # =============================================================================
-  - job_name: 'blackbox-http'
+  - job_name: "blackbox-http"
     metrics_path: /probe
     params:
       module: [http_2xx]
     static_configs:
       - targets:
-        - https://app.neonpro.com.br/api/health
-        - https://app.neonpro.com.br/api/ai/universal-chat
-        - https://grafana.neonpro.com.br/api/health
+          - https://app.neonpro.com.br/api/health
+          - https://app.neonpro.com.br/api/ai/universal-chat
+          - https://grafana.neonpro.com.br/api/health
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -182,32 +182,32 @@ scrape_configs:
       - target_label: __address__
         replacement: blackbox-exporter:9115
     labels:
-      service: 'blackbox-exporter'
-      component: 'synthetic-monitoring'
+      service: "blackbox-exporter"
+      component: "synthetic-monitoring"
 
   # =============================================================================
   # DATABASE METRICS (PostgreSQL via Supabase)
   # =============================================================================
-  - job_name: 'postgres-exporter'
+  - job_name: "postgres-exporter"
     static_configs:
-      - targets: ['postgres-exporter:9187']
+      - targets: ["postgres-exporter:9187"]
     scrape_interval: 30s
     labels:
-      service: 'postgres-exporter'
-      component: 'database-metrics'
-      database: 'supabase-postgres'
+      service: "postgres-exporter"
+      component: "database-metrics"
+      database: "supabase-postgres"
 
   # =============================================================================
   # THIRD-PARTY INTEGRATIONS MONITORING
   # =============================================================================
-  - job_name: 'external-apis'
+  - job_name: "external-apis"
     metrics_path: /probe
     params:
       module: [http_2xx]
     static_configs:
       - targets:
-        - https://api.openai.com/v1/models
-        - https://supabase.com/api/health
+          - https://api.openai.com/v1/models
+          - https://supabase.com/api/health
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -217,8 +217,8 @@ scrape_configs:
         replacement: blackbox-exporter:9115
     scrape_interval: 60s
     labels:
-      service: 'external-apis'
-      component: 'third-party-monitoring'
+      service: "external-apis"
+      component: "third-party-monitoring"
 
 # =============================================================================
 # REMOTE STORAGE (for long-term retention)
@@ -238,11 +238,11 @@ remote_write:
     write_relabel_configs:
       # Only send critical metrics for long-term storage
       - source_labels: [__name__]
-        regex: '(ai_service_response_time|ai_compliance_violations|http_requests_total|redis_connected_clients|node_memory_MemAvailable_bytes|container_cpu_usage_seconds_total)'
+        regex: "(ai_service_response_time|ai_compliance_violations|http_requests_total|redis_connected_clients|node_memory_MemAvailable_bytes|container_cpu_usage_seconds_total)"
         action: keep
       # Add retention labels
-      - target_label: 'retention'
-        replacement: '1y'
+      - target_label: "retention"
+        replacement: "1y"
 
 # =============================================================================
 # STORAGE CONFIGURATION
@@ -284,27 +284,27 @@ tracing:
 metric_relabel_configs:
   # Add business context labels
   - source_labels: [job]
-    regex: 'neonpro-(.+)'
-    target_label: 'business_service'
-    replacement: '${1}'
-  
+    regex: "neonpro-(.+)"
+    target_label: "business_service"
+    replacement: "${1}"
+
   # Add compliance context
   - source_labels: [__name__]
-    regex: '.*compliance.*'
-    target_label: 'compliance_metric'
-    replacement: 'true'
-  
+    regex: ".*compliance.*"
+    target_label: "compliance_metric"
+    replacement: "true"
+
   # Add AI context
   - source_labels: [__name__]
-    regex: 'ai_(.+)'
-    target_label: 'ai_metric'
-    replacement: 'true'
-  
+    regex: "ai_(.+)"
+    target_label: "ai_metric"
+    replacement: "true"
+
   # Healthcare specific labeling
   - source_labels: [__name__]
-    regex: '.*(patient|medical|health|clinical).*'
-    target_label: 'healthcare_metric'
-    replacement: 'true'
+    regex: ".*(patient|medical|health|clinical).*"
+    target_label: "healthcare_metric"
+    replacement: "true"
 
 # =============================================================================
 # QUERY OPTIMIZATION

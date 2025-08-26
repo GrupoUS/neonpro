@@ -8,11 +8,11 @@
 
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { router } from "@/lib/router";
 import { RouterProvider } from "@/providers/router-provider";
+import { useQueryClient } from "@tanstack/react-query";
+import React from "react";
 
 type RouterIntegrationProps = {
 	children?: React.ReactNode;

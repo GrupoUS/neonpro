@@ -234,13 +234,22 @@ export class HealthcarePerformanceOptimizationService {
 		const currentMetrics = await this.collectPerformanceMetrics();
 
 		const targetsAchieved = {
-			cacheHitRate: currentMetrics.cacheHitRate >= this.performanceTargets.cacheHitRate,
-			aiInferenceTime: currentMetrics.aiInferenceTime <= this.performanceTargets.aiInferenceTime,
-			dashboardLoadTime: currentMetrics.dashboardLoadTime <= this.performanceTargets.dashboardLoadTime,
+			cacheHitRate:
+				currentMetrics.cacheHitRate >= this.performanceTargets.cacheHitRate,
+			aiInferenceTime:
+				currentMetrics.aiInferenceTime <=
+				this.performanceTargets.aiInferenceTime,
+			dashboardLoadTime:
+				currentMetrics.dashboardLoadTime <=
+				this.performanceTargets.dashboardLoadTime,
 			websocketConnectionTime:
-				currentMetrics.websocketConnectionTime <= this.performanceTargets.websocketConnectionTime,
-			databaseQueryTime: currentMetrics.databaseQueryTime <= this.performanceTargets.databaseQueryTime,
-			pageSpeedScore: currentMetrics.pageSpeedScore >= this.performanceTargets.pageSpeedScore,
+				currentMetrics.websocketConnectionTime <=
+				this.performanceTargets.websocketConnectionTime,
+			databaseQueryTime:
+				currentMetrics.databaseQueryTime <=
+				this.performanceTargets.databaseQueryTime,
+			pageSpeedScore:
+				currentMetrics.pageSpeedScore >= this.performanceTargets.pageSpeedScore,
 		};
 
 		const recommendations: string[] = [];
@@ -250,7 +259,9 @@ export class HealthcarePerformanceOptimizationService {
 		}
 
 		if (!targetsAchieved.aiInferenceTime) {
-			recommendations.push("🤖 Implement AI model optimization and edge deployment");
+			recommendations.push(
+				"🤖 Implement AI model optimization and edge deployment",
+			);
 		}
 
 		if (!targetsAchieved.dashboardLoadTime) {
@@ -258,15 +269,21 @@ export class HealthcarePerformanceOptimizationService {
 		}
 
 		if (!targetsAchieved.websocketConnectionTime) {
-			recommendations.push("🔌 Optimize WebSocket connection and real-time features");
+			recommendations.push(
+				"🔌 Optimize WebSocket connection and real-time features",
+			);
 		}
 
 		if (!targetsAchieved.databaseQueryTime) {
-			recommendations.push("🗄️ Optimize database queries and implement better indexing");
+			recommendations.push(
+				"🗄️ Optimize database queries and implement better indexing",
+			);
 		}
 
 		if (!targetsAchieved.pageSpeedScore) {
-			recommendations.push("⚡ Improve overall page performance with code splitting and optimization");
+			recommendations.push(
+				"⚡ Improve overall page performance with code splitting and optimization",
+			);
 		}
 
 		const achievedCount = Object.values(targetsAchieved).filter(Boolean).length;
@@ -295,10 +312,18 @@ export class HealthcarePerformanceOptimizationService {
 
 	private calculateOverallCacheHitRate(cacheStats: any): number {
 		const layers = Object.values(cacheStats);
-		const totalHits = layers.reduce((sum, layer: any) => sum + (layer?.hits || 0), 0);
-		const totalRequests = layers.reduce((sum, layer: any) => sum + (layer?.totalRequests || 0), 0);
+		const totalHits = layers.reduce(
+			(sum, layer: any) => sum + (layer?.hits || 0),
+			0,
+		);
+		const totalRequests = layers.reduce(
+			(sum, layer: any) => sum + (layer?.totalRequests || 0),
+			0,
+		);
 
-		return totalRequests > 0 ? Math.round((totalHits / totalRequests) * 100) : 0;
+		return totalRequests > 0
+			? Math.round((totalHits / totalRequests) * 100)
+			: 0;
 	}
 
 	private async measureAIInferenceTime(): Promise<number> {
@@ -406,11 +431,17 @@ export class HealthcarePerformanceOptimizationService {
 		const currentMetrics = await this.collectPerformanceMetrics();
 
 		// Trigger scaling based on performance metrics
-		if (currentMetrics.databaseQueryTime > this.performanceTargets.databaseQueryTime * 1.5) {
+		if (
+			currentMetrics.databaseQueryTime >
+			this.performanceTargets.databaseQueryTime * 1.5
+		) {
 			// Implementation for database scaling
 		}
 
-		if (currentMetrics.aiInferenceTime > this.performanceTargets.aiInferenceTime * 1.5) {
+		if (
+			currentMetrics.aiInferenceTime >
+			this.performanceTargets.aiInferenceTime * 1.5
+		) {
 			// Implementation for AI inference scaling
 		}
 	}

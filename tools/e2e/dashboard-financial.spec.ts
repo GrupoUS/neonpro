@@ -13,15 +13,21 @@ test.describe("Dashboard Financial Page", () => {
 	});
 
 	test.describe("Financial Overview", () => {
-		test("should display financial dashboard with key metrics", async ({ page }) => {
+		test("should display financial dashboard with key metrics", async ({
+			page,
+		}) => {
 			// Check page title and navigation
 			await expect(page).toHaveTitle(/Financial.*NeonPro/);
 			await expect(page.locator("h1")).toContainText("Financial Dashboard");
 
 			// Verify financial metrics cards
 			await expect(page.locator('[data-testid="total-revenue"]')).toBeVisible();
-			await expect(page.locator('[data-testid="monthly-revenue"]')).toBeVisible();
-			await expect(page.locator('[data-testid="outstanding-payments"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="monthly-revenue"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="outstanding-payments"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="profit-margin"]')).toBeVisible();
 
 			// Check revenue growth indicator
@@ -32,7 +38,9 @@ test.describe("Dashboard Financial Page", () => {
 
 		test("should show revenue trends chart", async ({ page }) => {
 			// Check revenue trends visualization
-			await expect(page.locator('[data-testid="revenue-trends-chart"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="revenue-trends-chart"]'),
+			).toBeVisible();
 
 			// Check time period filters
 			await expect(page.locator('[data-testid="period-filter"]')).toBeVisible();
@@ -42,19 +50,32 @@ test.describe("Dashboard Financial Page", () => {
 			for (const period of periods) {
 				await page.click(`[data-testid="period-${period}"]`);
 				await page.waitForTimeout(1000);
-				await expect(page.locator('[data-testid="revenue-trends-chart"]')).toBeVisible();
+				await expect(
+					page.locator('[data-testid="revenue-trends-chart"]'),
+				).toBeVisible();
 			}
 		});
 
 		test("should display payment methods distribution", async ({ page }) => {
 			// Check payment methods chart
-			await expect(page.locator('[data-testid="payment-methods-chart"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="payment-methods-chart"]'),
+			).toBeVisible();
 
 			// Verify Brazilian payment methods
-			const paymentMethods = ["pix", "credit-card", "debit-card", "boleto", "cash", "insurance"];
+			const paymentMethods = [
+				"pix",
+				"credit-card",
+				"debit-card",
+				"boleto",
+				"cash",
+				"insurance",
+			];
 
 			for (const method of paymentMethods) {
-				const methodElement = page.locator(`[data-testid="payment-method-${method}"]`);
+				const methodElement = page.locator(
+					`[data-testid="payment-method-${method}"]`,
+				);
 				if (await methodElement.isVisible()) {
 					await expect(methodElement).toBeVisible();
 				}
@@ -62,16 +83,24 @@ test.describe("Dashboard Financial Page", () => {
 		});
 
 		test("should show top revenue sources", async ({ page }) => {
-			const revenueSourcesSection = page.locator('[data-testid="revenue-sources"]');
+			const revenueSourcesSection = page.locator(
+				'[data-testid="revenue-sources"]',
+			);
 			await expect(revenueSourcesSection).toBeVisible();
 
 			// Check for revenue source items
 			const sourceItems = page.locator('[data-testid="revenue-source-item"]');
 			if ((await sourceItems.count()) > 0) {
 				await expect(sourceItems.first()).toBeVisible();
-				await expect(sourceItems.first().locator('[data-testid="source-name"]')).toBeVisible();
-				await expect(sourceItems.first().locator('[data-testid="source-revenue"]')).toBeVisible();
-				await expect(sourceItems.first().locator('[data-testid="source-percentage"]')).toBeVisible();
+				await expect(
+					sourceItems.first().locator('[data-testid="source-name"]'),
+				).toBeVisible();
+				await expect(
+					sourceItems.first().locator('[data-testid="source-revenue"]'),
+				).toBeVisible();
+				await expect(
+					sourceItems.first().locator('[data-testid="source-percentage"]'),
+				).toBeVisible();
 			}
 		});
 	});
@@ -82,13 +111,19 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="revenue-analytics-tab"]');
 
 			// Check revenue breakdown by service
-			await expect(page.locator('[data-testid="revenue-by-service"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="revenue-by-service"]'),
+			).toBeVisible();
 
 			// Check revenue by practitioner
-			await expect(page.locator('[data-testid="revenue-by-practitioner"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="revenue-by-practitioner"]'),
+			).toBeVisible();
 
 			// Check revenue by location (if multi-location)
-			const locationRevenue = page.locator('[data-testid="revenue-by-location"]');
+			const locationRevenue = page.locator(
+				'[data-testid="revenue-by-location"]',
+			);
 			if (await locationRevenue.isVisible()) {
 				await expect(locationRevenue).toBeVisible();
 			}
@@ -98,14 +133,24 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="revenue-analytics-tab"]');
 
 			// Check treatment revenue breakdown
-			const treatmentTypes = ["botox", "dermal-fillers", "laser-therapy", "chemical-peels", "consultations"];
+			const treatmentTypes = [
+				"botox",
+				"dermal-fillers",
+				"laser-therapy",
+				"chemical-peels",
+				"consultations",
+			];
 
 			for (const type of treatmentTypes) {
 				const revenueCard = page.locator(`[data-testid="revenue-${type}"]`);
 				if (await revenueCard.isVisible()) {
 					await expect(revenueCard).toBeVisible();
-					await expect(revenueCard.locator('[data-testid="revenue-amount"]')).toBeVisible();
-					await expect(revenueCard.locator('[data-testid="revenue-percentage"]')).toBeVisible();
+					await expect(
+						revenueCard.locator('[data-testid="revenue-amount"]'),
+					).toBeVisible();
+					await expect(
+						revenueCard.locator('[data-testid="revenue-percentage"]'),
+					).toBeVisible();
 				}
 			}
 		});
@@ -118,7 +163,9 @@ test.describe("Dashboard Financial Page", () => {
 
 			// Check monthly/quarterly goals
 			await expect(page.locator('[data-testid="monthly-goal"]')).toBeVisible();
-			await expect(page.locator('[data-testid="quarterly-goal"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="quarterly-goal"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="annual-goal"]')).toBeVisible();
 
 			// Check goal progress indicators
@@ -132,18 +179,26 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="revenue-forecast-tab"]');
 
 			// Check forecast chart
-			await expect(page.locator('[data-testid="forecast-chart"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="forecast-chart"]'),
+			).toBeVisible();
 
 			// Check forecast parameters
-			await expect(page.locator('[data-testid="forecast-period"]')).toBeVisible();
-			await expect(page.locator('[data-testid="forecast-confidence"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="forecast-period"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="forecast-confidence"]'),
+			).toBeVisible();
 
 			// Test forecast generation
 			await page.selectOption('[data-testid="forecast-period"]', "6months");
 			await page.click('[data-testid="generate-forecast"]');
 
 			// Verify forecast results
-			await expect(page.locator('[data-testid="forecast-results"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="forecast-results"]'),
+			).toBeVisible();
 		});
 	});
 
@@ -153,10 +208,16 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="billing-tab"]');
 
 			// Check billing metrics
-			await expect(page.locator('[data-testid="total-invoiced"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="total-invoiced"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="paid-invoices"]')).toBeVisible();
-			await expect(page.locator('[data-testid="pending-invoices"]')).toBeVisible();
-			await expect(page.locator('[data-testid="overdue-invoices"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="pending-invoices"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="overdue-invoices"]'),
+			).toBeVisible();
 
 			// Check billing table
 			const billingTable = page.locator('[data-testid="billing-table"]');
@@ -176,13 +237,19 @@ test.describe("Dashboard Financial Page", () => {
 
 			// Add invoice items
 			await page.click('[data-testid="add-invoice-item"]');
-			await page.selectOption('[data-testid="service-select"]', "botox-consultation");
+			await page.selectOption(
+				'[data-testid="service-select"]',
+				"botox-consultation",
+			);
 			await page.fill('[data-testid="item-quantity"]', "1");
 			await page.fill('[data-testid="item-price"]', "800.00");
 
 			// Add another item
 			await page.click('[data-testid="add-invoice-item"]');
-			await page.selectOption('[data-testid="service-select"]', "botox-treatment");
+			await page.selectOption(
+				'[data-testid="service-select"]',
+				"botox-treatment",
+			);
 			await page.fill('[data-testid="item-quantity"]', "1");
 			await page.fill('[data-testid="item-price"]', "1200.00");
 
@@ -190,14 +257,21 @@ test.describe("Dashboard Financial Page", () => {
 			await page.selectOption('[data-testid="payment-terms"]', "30-days");
 
 			// Add notes
-			await page.fill('[data-testid="invoice-notes"]', "Botox treatment package - forehead and crow's feet");
+			await page.fill(
+				'[data-testid="invoice-notes"]',
+				"Botox treatment package - forehead and crow's feet",
+			);
 
 			// Submit invoice
 			await page.click('[data-testid="submit-invoice"]');
 
 			// Verify success
-			await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="success-message"]')).toContainText("Invoice created successfully");
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toContainText("Invoice created successfully");
 		});
 
 		test("should process invoice payments", async ({ page }) => {
@@ -217,17 +291,27 @@ test.describe("Dashboard Financial Page", () => {
 				await page.selectOption('[data-testid="payment-method"]', "pix");
 
 				// Set payment date
-				await page.fill('[data-testid="payment-date"]', new Date().toISOString().split("T")[0]);
+				await page.fill(
+					'[data-testid="payment-date"]',
+					new Date().toISOString().split("T")[0],
+				);
 
 				// Add payment reference
-				await page.fill('[data-testid="payment-reference"]', `PIX-${Date.now()}`);
+				await page.fill(
+					'[data-testid="payment-reference"]',
+					`PIX-${Date.now()}`,
+				);
 
 				// Submit payment
 				await page.click('[data-testid="submit-payment"]');
 
 				// Verify success
-				await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-				await expect(page.locator('[data-testid="success-message"]')).toContainText("Payment recorded");
+				await expect(
+					page.locator('[data-testid="success-message"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="success-message"]'),
+				).toContainText("Payment recorded");
 			}
 		});
 
@@ -235,18 +319,26 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="billing-tab"]');
 
 			// Filter overdue invoices
-			await page.selectOption('[data-testid="invoice-status-filter"]', "overdue");
+			await page.selectOption(
+				'[data-testid="invoice-status-filter"]',
+				"overdue",
+			);
 			await page.waitForTimeout(1000);
 
 			// Send reminder for first overdue invoice
-			const overdueInvoices = page.locator('[data-testid="invoice-row"][data-status="overdue"]');
+			const overdueInvoices = page.locator(
+				'[data-testid="invoice-row"][data-status="overdue"]',
+			);
 			if ((await overdueInvoices.count()) > 0) {
-				await overdueInvoices.first().locator('[data-testid="send-reminder"]').click();
+				await overdueInvoices
+					.first()
+					.locator('[data-testid="send-reminder"]')
+					.click();
 
 				// Customize reminder message
 				await page.fill(
 					'[data-testid="reminder-message"]',
-					"Gentle reminder: Your invoice is now overdue. Please process payment at your earliest convenience."
+					"Gentle reminder: Your invoice is now overdue. Please process payment at your earliest convenience.",
 				);
 
 				// Select reminder method
@@ -257,8 +349,12 @@ test.describe("Dashboard Financial Page", () => {
 				await page.click('[data-testid="send-reminder-button"]');
 
 				// Verify success
-				await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-				await expect(page.locator('[data-testid="success-message"]')).toContainText("Reminder sent");
+				await expect(
+					page.locator('[data-testid="success-message"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="success-message"]'),
+				).toContainText("Reminder sent");
 			}
 		});
 
@@ -271,8 +367,14 @@ test.describe("Dashboard Financial Page", () => {
 			// Configure report parameters
 			const startDate = new Date();
 			startDate.setMonth(startDate.getMonth() - 1);
-			await page.fill('[data-testid="report-start-date"]', startDate.toISOString().split("T")[0]);
-			await page.fill('[data-testid="report-end-date"]', new Date().toISOString().split("T")[0]);
+			await page.fill(
+				'[data-testid="report-start-date"]',
+				startDate.toISOString().split("T")[0],
+			);
+			await page.fill(
+				'[data-testid="report-end-date"]',
+				new Date().toISOString().split("T")[0],
+			);
 
 			// Select report type
 			await page.selectOption('[data-testid="report-type"]', "aging-report");
@@ -283,7 +385,9 @@ test.describe("Dashboard Financial Page", () => {
 
 			// Verify download
 			const download = await downloadPromise;
-			expect(download.suggestedFilename()).toMatch(/billing.*report.*\.(pdf|xlsx)$/);
+			expect(download.suggestedFilename()).toMatch(
+				/billing.*report.*\.(pdf|xlsx)$/,
+			);
 		});
 	});
 
@@ -293,10 +397,18 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="payments-tab"]');
 
 			// Check payment metrics
-			await expect(page.locator('[data-testid="total-payments"]')).toBeVisible();
-			await expect(page.locator('[data-testid="successful-payments"]')).toBeVisible();
-			await expect(page.locator('[data-testid="failed-payments"]')).toBeVisible();
-			await expect(page.locator('[data-testid="refunded-payments"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="total-payments"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="successful-payments"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="failed-payments"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="refunded-payments"]'),
+			).toBeVisible();
 
 			// Check payment success rate
 			const successRate = page.locator('[data-testid="payment-success-rate"]');
@@ -312,17 +424,24 @@ test.describe("Dashboard Financial Page", () => {
 
 			// Fill PIX payment form
 			await page.fill('[data-testid="pix-amount"]', "1500.00");
-			await page.fill('[data-testid="pix-description"]', "Botox treatment payment");
+			await page.fill(
+				'[data-testid="pix-description"]',
+				"Botox treatment payment",
+			);
 
 			// Generate PIX QR code
 			await page.click('[data-testid="generate-pix-qr"]');
 
 			// Verify QR code generation
 			await expect(page.locator('[data-testid="pix-qr-code"]')).toBeVisible();
-			await expect(page.locator('[data-testid="pix-code-string"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="pix-code-string"]'),
+			).toBeVisible();
 
 			// Check payment status monitoring
-			await expect(page.locator('[data-testid="pix-status-monitor"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="pix-status-monitor"]'),
+			).toBeVisible();
 		});
 
 		test("should handle credit card payments", async ({ page }) => {
@@ -345,7 +464,9 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="process-card-payment-button"]');
 
 			// Verify payment processing
-			await expect(page.locator('[data-testid="payment-processing"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="payment-processing"]'),
+			).toBeVisible();
 		});
 
 		test("should manage payment refunds", async ({ page }) => {
@@ -358,19 +479,29 @@ test.describe("Dashboard Financial Page", () => {
 			const paymentRows = page.locator('[data-testid="payment-row"]');
 			if ((await paymentRows.count()) > 0) {
 				// Click refund button
-				await paymentRows.first().locator('[data-testid="refund-payment"]').click();
+				await paymentRows
+					.first()
+					.locator('[data-testid="refund-payment"]')
+					.click();
 
 				// Fill refund form
 				await page.selectOption('[data-testid="refund-type"]', "partial");
 				await page.fill('[data-testid="refund-amount"]', "500.00");
-				await page.fill('[data-testid="refund-reason"]', "Treatment cancelled by patient");
+				await page.fill(
+					'[data-testid="refund-reason"]',
+					"Treatment cancelled by patient",
+				);
 
 				// Process refund
 				await page.click('[data-testid="process-refund"]');
 
 				// Verify success
-				await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-				await expect(page.locator('[data-testid="success-message"]')).toContainText("Refund processed");
+				await expect(
+					page.locator('[data-testid="success-message"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="success-message"]'),
+				).toContainText("Refund processed");
 			}
 		});
 
@@ -381,8 +512,12 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="disputes-tab"]');
 
 			// Check disputes overview
-			await expect(page.locator('[data-testid="active-disputes"]')).toBeVisible();
-			await expect(page.locator('[data-testid="resolved-disputes"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="active-disputes"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="resolved-disputes"]'),
+			).toBeVisible();
 
 			// Check dispute details if any exist
 			const disputeRows = page.locator('[data-testid="dispute-row"]');
@@ -390,9 +525,15 @@ test.describe("Dashboard Financial Page", () => {
 				await disputeRows.first().click();
 
 				// Check dispute information
-				await expect(page.locator('[data-testid="dispute-details"]')).toBeVisible();
-				await expect(page.locator('[data-testid="dispute-status"]')).toBeVisible();
-				await expect(page.locator('[data-testid="dispute-amount"]')).toBeVisible();
+				await expect(
+					page.locator('[data-testid="dispute-details"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="dispute-status"]'),
+				).toBeVisible();
+				await expect(
+					page.locator('[data-testid="dispute-amount"]'),
+				).toBeVisible();
 			}
 		});
 	});
@@ -403,15 +544,23 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="tax-tab"]');
 
 			// Check tax metrics
-			await expect(page.locator('[data-testid="total-tax-collected"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="total-tax-collected"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="tax-rate"]')).toBeVisible();
-			await expect(page.locator('[data-testid="tax-exemptions"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="tax-exemptions"]'),
+			).toBeVisible();
 
 			// Check tax breakdown by service
-			await expect(page.locator('[data-testid="tax-by-service"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="tax-by-service"]'),
+			).toBeVisible();
 		});
 
-		test("should generate tax reports for Brazilian compliance", async ({ page }) => {
+		test("should generate tax reports for Brazilian compliance", async ({
+			page,
+		}) => {
 			await page.click('[data-testid="tax-tab"]');
 
 			// Navigate to tax reports
@@ -420,11 +569,20 @@ test.describe("Dashboard Financial Page", () => {
 			// Configure tax report parameters
 			const startDate = new Date();
 			startDate.setMonth(startDate.getMonth() - 1);
-			await page.fill('[data-testid="tax-report-start-date"]', startDate.toISOString().split("T")[0]);
-			await page.fill('[data-testid="tax-report-end-date"]', new Date().toISOString().split("T")[0]);
+			await page.fill(
+				'[data-testid="tax-report-start-date"]',
+				startDate.toISOString().split("T")[0],
+			);
+			await page.fill(
+				'[data-testid="tax-report-end-date"]',
+				new Date().toISOString().split("T")[0],
+			);
 
 			// Select report type (Brazilian tax requirements)
-			await page.selectOption('[data-testid="tax-report-type"]', "simples-nacional");
+			await page.selectOption(
+				'[data-testid="tax-report-type"]',
+				"simples-nacional",
+			);
 
 			// Generate tax report
 			const downloadPromise = page.waitForEvent("download");
@@ -432,7 +590,9 @@ test.describe("Dashboard Financial Page", () => {
 
 			// Verify download
 			const download = await downloadPromise;
-			expect(download.suggestedFilename()).toMatch(/tax.*report.*\.(pdf|xlsx)$/);
+			expect(download.suggestedFilename()).toMatch(
+				/tax.*report.*\.(pdf|xlsx)$/,
+			);
 		});
 
 		test("should track ISS (Service Tax) compliance", async ({ page }) => {
@@ -444,16 +604,24 @@ test.describe("Dashboard Financial Page", () => {
 			// Check ISS metrics
 			await expect(page.locator('[data-testid="iss-collected"]')).toBeVisible();
 			await expect(page.locator('[data-testid="iss-rate"]')).toBeVisible();
-			await expect(page.locator('[data-testid="iss-municipality"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="iss-municipality"]'),
+			).toBeVisible();
 
 			// Check ISS calculation by service
-			const serviceTypes = ["consultation", "aesthetic-procedure", "dermatological-treatment"];
+			const serviceTypes = [
+				"consultation",
+				"aesthetic-procedure",
+				"dermatological-treatment",
+			];
 
 			for (const service of serviceTypes) {
 				const issCard = page.locator(`[data-testid="iss-${service}"]`);
 				if (await issCard.isVisible()) {
 					await expect(issCard).toBeVisible();
-					await expect(issCard.locator('[data-testid="iss-amount"]')).toBeVisible();
+					await expect(
+						issCard.locator('[data-testid="iss-amount"]'),
+					).toBeVisible();
 				}
 			}
 		});
@@ -465,7 +633,9 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="federal-taxes-tab"]');
 
 			// Check COFINS metrics
-			await expect(page.locator('[data-testid="cofins-collected"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="cofins-collected"]'),
+			).toBeVisible();
 			await expect(page.locator('[data-testid="cofins-rate"]')).toBeVisible();
 
 			// Check PIS metrics
@@ -478,15 +648,25 @@ test.describe("Dashboard Financial Page", () => {
 	});
 
 	test.describe("Financial Reports", () => {
-		test("should generate comprehensive financial reports", async ({ page }) => {
+		test("should generate comprehensive financial reports", async ({
+			page,
+		}) => {
 			// Navigate to reports section
 			await page.click('[data-testid="reports-tab"]');
 
 			// Check available report types
-			await expect(page.locator('[data-testid="profit-loss-report"]')).toBeVisible();
-			await expect(page.locator('[data-testid="cash-flow-report"]')).toBeVisible();
-			await expect(page.locator('[data-testid="revenue-analysis-report"]')).toBeVisible();
-			await expect(page.locator('[data-testid="tax-summary-report"]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="profit-loss-report"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="cash-flow-report"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="revenue-analysis-report"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="tax-summary-report"]'),
+			).toBeVisible();
 		});
 
 		test("should export financial data", async ({ page }) => {
@@ -495,8 +675,14 @@ test.describe("Dashboard Financial Page", () => {
 			// Configure export parameters
 			const startDate = new Date();
 			startDate.setMonth(startDate.getMonth() - 3);
-			await page.fill('[data-testid="export-start-date"]', startDate.toISOString().split("T")[0]);
-			await page.fill('[data-testid="export-end-date"]', new Date().toISOString().split("T")[0]);
+			await page.fill(
+				'[data-testid="export-start-date"]',
+				startDate.toISOString().split("T")[0],
+			);
+			await page.fill(
+				'[data-testid="export-end-date"]',
+				new Date().toISOString().split("T")[0],
+			);
 
 			// Select data to export
 			await page.check('[data-testid="export-revenue"]');
@@ -531,7 +717,10 @@ test.describe("Dashboard Financial Page", () => {
 			await page.selectOption('[data-testid="report-frequency"]', "monthly");
 
 			// Set recipients
-			await page.fill('[data-testid="report-recipients"]', "admin@neonpro.com.br, finance@neonpro.com.br");
+			await page.fill(
+				'[data-testid="report-recipients"]',
+				"admin@neonpro.com.br, finance@neonpro.com.br",
+			);
 
 			// Set delivery day
 			await page.selectOption('[data-testid="delivery-day"]', "1");
@@ -540,13 +729,19 @@ test.describe("Dashboard Financial Page", () => {
 			await page.click('[data-testid="save-automated-report"]');
 
 			// Verify success
-			await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
-			await expect(page.locator('[data-testid="success-message"]')).toContainText("Automated report created");
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="success-message"]'),
+			).toContainText("Automated report created");
 		});
 	});
 
 	test.describe("Performance and Accessibility", () => {
-		test("should load financial dashboard within performance thresholds", async ({ page }) => {
+		test("should load financial dashboard within performance thresholds", async ({
+			page,
+		}) => {
 			const startTime = Date.now();
 			await page.goto("/dashboard/financial");
 			await page.waitForLoadState("networkidle");
@@ -574,10 +769,16 @@ test.describe("Dashboard Financial Page", () => {
 			await expect(focusedElement).toBeVisible();
 		});
 
-		test("should have proper ARIA labels for financial data", async ({ page }) => {
+		test("should have proper ARIA labels for financial data", async ({
+			page,
+		}) => {
 			// Check ARIA labels on financial metrics
-			await expect(page.locator('[data-testid="total-revenue"][aria-label]')).toBeVisible();
-			await expect(page.locator('[data-testid="profit-margin"][aria-label]')).toBeVisible();
+			await expect(
+				page.locator('[data-testid="total-revenue"][aria-label]'),
+			).toBeVisible();
+			await expect(
+				page.locator('[data-testid="profit-margin"][aria-label]'),
+			).toBeVisible();
 
 			// Check table accessibility
 			const tables = page.locator("table");
@@ -605,9 +806,13 @@ test.describe("Dashboard Financial Page", () => {
 			}
 		});
 
-		test("should support screen readers for financial information", async ({ page }) => {
+		test("should support screen readers for financial information", async ({
+			page,
+		}) => {
 			// Check for screen reader announcements
-			const announcements = page.locator('[aria-live="polite"], [aria-live="assertive"]');
+			const announcements = page.locator(
+				'[aria-live="polite"], [aria-live="assertive"]',
+			);
 			if ((await announcements.count()) > 0) {
 				await expect(announcements.first()).toBeVisible();
 			}
@@ -619,7 +824,9 @@ test.describe("Dashboard Financial Page", () => {
 			}
 
 			// Check currency announcements
-			const currencyElements = page.locator('[data-testid*="currency"][aria-label]');
+			const currencyElements = page.locator(
+				'[data-testid*="currency"][aria-label]',
+			);
 			if ((await currencyElements.count()) > 0) {
 				await expect(currencyElements.first()).toBeVisible();
 			}
@@ -627,7 +834,9 @@ test.describe("Dashboard Financial Page", () => {
 
 		test("should handle real-time financial data updates", async ({ page }) => {
 			// Check for real-time update indicators
-			const updateIndicators = page.locator('[data-testid="real-time-indicator"]');
+			const updateIndicators = page.locator(
+				'[data-testid="real-time-indicator"]',
+			);
 			if (await updateIndicators.isVisible()) {
 				await expect(updateIndicators).toBeVisible();
 			}

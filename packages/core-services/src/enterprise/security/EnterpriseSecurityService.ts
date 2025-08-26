@@ -119,7 +119,10 @@ export class EnterpriseSecurityService {
 	/**
 	 * Validate access to resource/operation
 	 */
-	async validateAccess(operation: string, context: ServiceContext): Promise<boolean> {
+	async validateAccess(
+		operation: string,
+		context: ServiceContext,
+	): Promise<boolean> {
 		try {
 			// 1. Validate session
 			const session = await this.validateSession(context.sessionId);
@@ -143,7 +146,11 @@ export class EnterpriseSecurityService {
 			}
 
 			// 3. Apply security rules
-			const hasAccess = await this.checkSecurityRules(operation, session, context);
+			const hasAccess = await this.checkSecurityRules(
+				operation,
+				session,
+				context,
+			);
 			if (!hasAccess) {
 				await this.logSecurityEvent("ACCESS_DENIED_INSUFFICIENT_PERMISSIONS", {
 					operation,
@@ -188,7 +195,7 @@ export class EnterpriseSecurityService {
 			ipAddress?: string;
 			userAgent?: string;
 			mfaToken?: string;
-		}
+		},
 	): Promise<UserSession> {
 		const sessionId = this.generateSecureId();
 		const now = Date.now();
@@ -213,7 +220,10 @@ export class EnterpriseSecurityService {
 			securityFlags: {
 				suspiciousActivity: false,
 				multipleDevices: await this.detectMultipleDevices(userId),
-				locationChange: await this.detectLocationChange(userId, credentials.ipAddress),
+				locationChange: await this.detectLocationChange(
+					userId,
+					credentials.ipAddress,
+				),
 			},
 		};
 
@@ -284,7 +294,9 @@ export class EnterpriseSecurityService {
 	async encryptSensitiveData<T>(data: T): Promise<string> {
 		try {
 			const plaintext = JSON.stringify(data);
-			const salt = crypto.randomBytes(this.encryptionConfig.keyDerivation.saltSize);
+			const salt = crypto.randomBytes(
+				this.encryptionConfig.keyDerivation.saltSize,
+			);
 			const iv = crypto.randomBytes(this.encryptionConfig.ivSize);
 
 			// Derive key from master key and salt
@@ -293,7 +305,7 @@ export class EnterpriseSecurityService {
 				salt,
 				this.encryptionConfig.keyDerivation.iterations,
 				this.encryptionConfig.keySize,
-				this.encryptionConfig.keyDerivation.hashFunction
+				this.encryptionConfig.keyDerivation.hashFunction,
 			);
 
 			// Encrypt data
@@ -305,7 +317,11 @@ export class EnterpriseSecurityService {
 			encrypted += cipher.final("hex");
 
 			// Combine salt, iv, and encrypted data (no auth tag for legacy cipher)
-			const result = Buffer.concat([salt, iv, Buffer.from(encrypted, "hex")]).toString("base64");
+			const result = Buffer.concat([
+				salt,
+				iv,
+				Buffer.from(encrypted, "hex"),
+			]).toString("base64");
 
 			await this.logSecurityEvent("DATA_ENCRYPTED", {
 				dataSize: plaintext.length,
@@ -329,12 +345,19 @@ export class EnterpriseSecurityService {
 			const combined = Buffer.from(encryptedData, "base64");
 
 			// Extract components (no auth tag for legacy cipher)
-			const salt = combined.subarray(0, this.encryptionConfig.keyDerivation.saltSize);
+			const salt = combined.subarray(
+				0,
+				this.encryptionConfig.keyDerivation.saltSize,
+			);
 			const _iv = combined.subarray(
 				this.encryptionConfig.keyDerivation.saltSize,
-				this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize
+				this.encryptionConfig.keyDerivation.saltSize +
+					this.encryptionConfig.ivSize,
 			);
-			const encrypted = combined.subarray(this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize);
+			const encrypted = combined.subarray(
+				this.encryptionConfig.keyDerivation.saltSize +
+					this.encryptionConfig.ivSize,
+			);
 
 			// Derive key
 			const key = crypto.pbkdf2Sync(
@@ -342,11 +365,14 @@ export class EnterpriseSecurityService {
 				salt,
 				this.encryptionConfig.keyDerivation.iterations,
 				this.encryptionConfig.keySize,
-				this.encryptionConfig.keyDerivation.hashFunction
+				this.encryptionConfig.keyDerivation.hashFunction,
 			);
 
 			// Decrypt data
-			const decipher = crypto.createDecipher(this.encryptionConfig.algorithm, key);
+			const decipher = crypto.createDecipher(
+				this.encryptionConfig.algorithm,
+				key,
+			);
 			// Note: GCM mode not supported with legacy createDecipher
 
 			let decrypted = decipher.update(encrypted, undefined, "utf8");
@@ -383,7 +409,11 @@ export class EnterpriseSecurityService {
 	/**
 	 * Check security rules for operation
 	 */
-	private async checkSecurityRules(operation: string, session: UserSession, context: ServiceContext): Promise<boolean> {
+	private async checkSecurityRules(
+		operation: string,
+		session: UserSession,
+		context: ServiceContext,
+	): Promise<boolean> {
 		const applicableRules = this.securityRules
 			.filter((rule) => rule.enabled)
 			.filter((rule) => this.matchesResource(rule.resource, operation))
@@ -402,7 +432,11 @@ export class EnterpriseSecurityService {
 	/**
 	 * Evaluate individual security rule
 	 */
-	private async evaluateRule(rule: SecurityRule, session: UserSession, _context: ServiceContext): Promise<boolean> {
+	private async evaluateRule(
+		rule: SecurityRule,
+		session: UserSession,
+		_context: ServiceContext,
+	): Promise<boolean> {
 		const conditions = rule.conditions;
 		if (!conditions) {
 			return true;
@@ -410,7 +444,9 @@ export class EnterpriseSecurityService {
 
 		// Check roles
 		if (conditions.roles && conditions.roles.length > 0) {
-			const hasRole = conditions.roles.some((role) => session.roles.includes(role));
+			const hasRole = conditions.roles.some((role) =>
+				session.roles.includes(role),
+			);
 			if (!hasRole) {
 				return false;
 			}
@@ -418,7 +454,9 @@ export class EnterpriseSecurityService {
 
 		// Check permissions
 		if (conditions.permissions && conditions.permissions.length > 0) {
-			const hasPermission = conditions.permissions.some((perm) => session.permissions.includes(perm));
+			const hasPermission = conditions.permissions.some((perm) =>
+				session.permissions.includes(perm),
+			);
 			if (!hasPermission) {
 				return false;
 			}
@@ -433,7 +471,10 @@ export class EnterpriseSecurityService {
 		if (
 			conditions.ipRestrictions &&
 			conditions.ipRestrictions.length > 0 &&
-			!(session.ipAddress && conditions.ipRestrictions.includes(session.ipAddress))
+			!(
+				session.ipAddress &&
+				conditions.ipRestrictions.includes(session.ipAddress)
+			)
 		) {
 			return false;
 		}
@@ -442,7 +483,9 @@ export class EnterpriseSecurityService {
 		if (conditions.timeWindows && conditions.timeWindows.length > 0) {
 			const currentHour = new Date().getHours();
 			const inTimeWindow = conditions.timeWindows.some((window) => {
-				const [start, end] = window.split("-").map((h) => Number.parseInt(h, 10));
+				const [start, end] = window
+					.split("-")
+					.map((h) => Number.parseInt(h, 10));
 				return currentHour >= (start ?? 0) && currentHour <= (end ?? 23);
 			});
 			if (!inTimeWindow) {
@@ -456,7 +499,10 @@ export class EnterpriseSecurityService {
 	/**
 	 * Security threat detection
 	 */
-	async detectThreat(type: string, details: Record<string, any>): Promise<void> {
+	async detectThreat(
+		type: string,
+		details: Record<string, any>,
+	): Promise<void> {
 		const threat: SecurityThreat = {
 			id: this.generateSecureId(),
 			type,
@@ -562,17 +608,22 @@ export class EnterpriseSecurityService {
 	}
 
 	private async detectMultipleDevices(userId: string): Promise<boolean> {
-		const userSessions = Array.from(this.sessions.values()).filter((s) => s.userId === userId);
+		const userSessions = Array.from(this.sessions.values()).filter(
+			(s) => s.userId === userId,
+		);
 		return userSessions.length > 1;
 	}
 
-	private async detectLocationChange(userId: string, ipAddress?: string): Promise<boolean> {
+	private async detectLocationChange(
+		userId: string,
+		ipAddress?: string,
+	): Promise<boolean> {
 		if (!ipAddress) {
 			return false;
 		}
 
 		const recentSessions = Array.from(this.sessions.values()).filter(
-			(s) => s.userId === userId && s.ipAddress !== ipAddress
+			(s) => s.userId === userId && s.ipAddress !== ipAddress,
 		);
 		return recentSessions.length > 0;
 	}
@@ -582,7 +633,10 @@ export class EnterpriseSecurityService {
 		return regex.test(resource);
 	}
 
-	private categorizeThreatSeverity(type: string, details: any): "low" | "medium" | "high" | "critical" {
+	private categorizeThreatSeverity(
+		type: string,
+		details: any,
+	): "low" | "medium" | "high" | "critical" {
 		switch (type) {
 			case "multiple_failed_logins":
 				return details.attemptCount > 10 ? "high" : "medium";
@@ -615,7 +669,9 @@ export class EnterpriseSecurityService {
 	}
 
 	private async terminateAllUserSessions(userId: string): Promise<void> {
-		const userSessions = Array.from(this.sessions.entries()).filter(([_, session]) => session.userId === userId);
+		const userSessions = Array.from(this.sessions.entries()).filter(
+			([_, session]) => session.userId === userId,
+		);
 
 		for (const [sessionId, _] of userSessions) {
 			await this.destroySession(sessionId);
@@ -634,7 +690,7 @@ export class EnterpriseSecurityService {
 			() => {
 				this.cleanupExpiredSessions();
 			},
-			5 * 60 * 1000
+			5 * 60 * 1000,
 		); // Every 5 minutes
 	}
 
@@ -653,9 +709,18 @@ export class EnterpriseSecurityService {
 		}
 	}
 
-	private async logSecurityEvent(eventType: string, _details: any): Promise<void> {
+	private async logSecurityEvent(
+		eventType: string,
+		_details: any,
+	): Promise<void> {
 		// Store critical events for analysis
-		if (["AUTHENTICATION_FAILED", "SUSPICIOUS_ACTIVITY", "UNAUTHORIZED_ACCESS"].includes(eventType)) {
+		if (
+			[
+				"AUTHENTICATION_FAILED",
+				"SUSPICIOUS_ACTIVITY",
+				"UNAUTHORIZED_ACCESS",
+			].includes(eventType)
+		) {
 		}
 	}
 
@@ -664,7 +729,9 @@ export class EnterpriseSecurityService {
 	 */
 	async getSecurityStats(): Promise<any> {
 		const activeSessions = this.sessions.size;
-		const recentThreats = this.threats.filter((t) => t.timestamp > Date.now() - 24 * 60 * 60 * 1000);
+		const recentThreats = this.threats.filter(
+			(t) => t.timestamp > Date.now() - 24 * 60 * 60 * 1000,
+		);
 
 		return {
 			sessions: {
@@ -675,7 +742,8 @@ export class EnterpriseSecurityService {
 				recent: recentThreats.length,
 				unresolved: this.threats.filter((t) => !t.resolved).length,
 				bySeverity: {
-					critical: recentThreats.filter((t) => t.severity === "critical").length,
+					critical: recentThreats.filter((t) => t.severity === "critical")
+						.length,
 					high: recentThreats.filter((t) => t.severity === "high").length,
 					medium: recentThreats.filter((t) => t.severity === "medium").length,
 					low: recentThreats.filter((t) => t.severity === "low").length,
@@ -716,7 +784,10 @@ export class EnterpriseSecurityService {
 	/**
 	 * Validate permission for health checks
 	 */
-	async validatePermission(userId: string, permission: string): Promise<boolean> {
+	async validatePermission(
+		userId: string,
+		permission: string,
+	): Promise<boolean> {
 		// Simple implementation for health checks
 		return userId === "health_check_user" && permission === "read";
 	}

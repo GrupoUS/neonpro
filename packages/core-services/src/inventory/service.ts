@@ -11,7 +11,13 @@ import type {
 	StockMovement,
 	Supplier,
 } from "./types";
-import { AlertSeverity, AlertType, MovementType, OrderStatus, type ProductCategory } from "./types";
+import {
+	AlertSeverity,
+	AlertType,
+	MovementType,
+	OrderStatus,
+	type ProductCategory,
+} from "./types";
 
 export type InventoryRepository = {
 	// Product operations
@@ -28,7 +34,9 @@ export type InventoryRepository = {
 	getStockItems(productId?: string): Promise<StockItem[]>;
 
 	// Stock movements
-	createStockMovement(data: Omit<StockMovement, "id" | "createdAt" | "updatedAt">): Promise<StockMovement>;
+	createStockMovement(
+		data: Omit<StockMovement, "id" | "createdAt" | "updatedAt">,
+	): Promise<StockMovement>;
 	getStockMovements(stockItemId: string): Promise<StockMovement[]>;
 
 	// Suppliers
@@ -38,13 +46,20 @@ export type InventoryRepository = {
 	getSuppliers(): Promise<Supplier[]>;
 
 	// Purchase orders
-	createPurchaseOrder(data: Omit<PurchaseOrder, "id" | "createdAt" | "updatedAt">): Promise<PurchaseOrder>;
-	updatePurchaseOrder(id: string, data: Partial<PurchaseOrder>): Promise<PurchaseOrder>;
+	createPurchaseOrder(
+		data: Omit<PurchaseOrder, "id" | "createdAt" | "updatedAt">,
+	): Promise<PurchaseOrder>;
+	updatePurchaseOrder(
+		id: string,
+		data: Partial<PurchaseOrder>,
+	): Promise<PurchaseOrder>;
 	getPurchaseOrder(id: string): Promise<PurchaseOrder | null>;
 	getPurchaseOrders(filters?: PurchaseOrderFilters): Promise<PurchaseOrder[]>;
 
 	// Alerts
-	createAlert(data: Omit<InventoryAlert, "id" | "createdAt">): Promise<InventoryAlert>;
+	createAlert(
+		data: Omit<InventoryAlert, "id" | "createdAt">,
+	): Promise<InventoryAlert>;
 	getAlerts(filters?: AlertFilters): Promise<InventoryAlert[]>;
 	acknowledgeAlert(id: string, acknowledgedBy: string): Promise<void>;
 };
@@ -139,25 +154,39 @@ export class InventoryService {
 
 		return stockItem;
 	}
-	async useStock(productId: string, quantity: number, reason: string, reference?: string): Promise<StockMovement[]> {
+	async useStock(
+		productId: string,
+		quantity: number,
+		reason: string,
+		reference?: string,
+	): Promise<StockMovement[]> {
 		const stockItems = await this.repository.getStockItems(productId);
-		const availableStock = stockItems.filter((item) => item.status === InventoryStatus.IN_STOCK && item.quantity > 0);
+		const availableStock = stockItems.filter(
+			(item) => item.status === InventoryStatus.IN_STOCK && item.quantity > 0,
+		);
 
 		if (availableStock.length === 0) {
 			throw new Error("No stock available for this product");
 		}
 
 		// Calculate total available quantity
-		const totalAvailable = availableStock.reduce((sum, item) => sum + item.quantity, 0);
+		const totalAvailable = availableStock.reduce(
+			(sum, item) => sum + item.quantity,
+			0,
+		);
 		if (totalAvailable < quantity) {
-			throw new Error(`Insufficient stock. Available: ${totalAvailable}, Required: ${quantity}`);
+			throw new Error(
+				`Insufficient stock. Available: ${totalAvailable}, Required: ${quantity}`,
+			);
 		}
 
 		const movements: StockMovement[] = [];
 		let remainingQuantity = quantity;
 
 		// Use FIFO (First In, First Out) approach
-		const sortedStock = availableStock.sort((a, b) => a.receivedDate.getTime() - b.receivedDate.getTime());
+		const sortedStock = availableStock.sort(
+			(a, b) => a.receivedDate.getTime() - b.receivedDate.getTime(),
+		);
 
 		for (const stockItem of sortedStock) {
 			if (remainingQuantity <= 0) {
@@ -170,7 +199,8 @@ export class InventoryService {
 			// Update stock item
 			await this.repository.updateStockItem(stockItem.id, {
 				quantity: newQuantity,
-				status: newQuantity === 0 ? InventoryStatus.OUT_OF_STOCK : stockItem.status,
+				status:
+					newQuantity === 0 ? InventoryStatus.OUT_OF_STOCK : stockItem.status,
 			});
 
 			// Record movement
@@ -196,7 +226,9 @@ export class InventoryService {
 	} // Alert management
 	async checkLowStock(productId?: string): Promise<InventoryAlert[]> {
 		const products = productId
-			? ([await this.repository.getProduct(productId)].filter(Boolean) as Product[])
+			? ([await this.repository.getProduct(productId)].filter(
+					Boolean,
+				) as Product[])
 			: await this.repository.getProducts({ isActive: true });
 
 		const alerts: InventoryAlert[] = [];
@@ -264,8 +296,11 @@ export class InventoryService {
 					type: AlertType.EXPIRING_SOON,
 					productId: item.productId,
 					stockItemId: item.id,
-					message: `Stock item expires in ${daysUntilExpiry} days (Batch: ${item.batchNumber || "N/A"})`,
-					severity: daysUntilExpiry <= 7 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
+					message: `Stock item expires in ${daysUntilExpiry} days (Batch: ${
+						item.batchNumber || "N/A"
+					})`,
+					severity:
+						daysUntilExpiry <= 7 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
 					isRead: false,
 				});
 				alerts.push(alert);
@@ -324,15 +359,26 @@ export class InventoryService {
 		let outOfStockCount = 0;
 		let expiringCount = 0;
 
-		const categoryStats = new Map<ProductCategory, { count: number; value: number }>();
+		const categoryStats = new Map<
+			ProductCategory,
+			{ count: number; value: number }
+		>();
 
 		for (const product of activeProducts) {
 			const productStockItems = stockItems.filter(
-				(item) => item.productId === product.id && item.status === InventoryStatus.IN_STOCK
+				(item) =>
+					item.productId === product.id &&
+					item.status === InventoryStatus.IN_STOCK,
 			);
 
-			const totalStock = productStockItems.reduce((sum, item) => sum + item.quantity, 0);
-			const stockValue = productStockItems.reduce((sum, item) => sum + item.quantity * item.unitCost, 0);
+			const totalStock = productStockItems.reduce(
+				(sum, item) => sum + item.quantity,
+				0,
+			);
+			const stockValue = productStockItems.reduce(
+				(sum, item) => sum + item.quantity * item.unitCost,
+				0,
+			);
 
 			totalValue += stockValue;
 
@@ -345,7 +391,8 @@ export class InventoryService {
 			// Check for expiring items
 			const today = new Date();
 			const expiringItems = productStockItems.filter(
-				(item) => item.expiryDate && differenceInDays(item.expiryDate, today) <= 30
+				(item) =>
+					item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
 			);
 			expiringCount += expiringItems.length;
 
@@ -387,14 +434,23 @@ export class InventoryService {
 	}> {
 		const stockItems = await this.repository.getStockItems(productId);
 
-		const availableItems = stockItems.filter((item) => item.status === InventoryStatus.IN_STOCK);
-		const totalStock = availableItems.reduce((sum, item) => sum + item.quantity, 0);
+		const availableItems = stockItems.filter(
+			(item) => item.status === InventoryStatus.IN_STOCK,
+		);
+		const totalStock = availableItems.reduce(
+			(sum, item) => sum + item.quantity,
+			0,
+		);
 
 		const today = new Date();
 		const expiringItems = availableItems.filter(
-			(item) => item.expiryDate && differenceInDays(item.expiryDate, today) <= 30
+			(item) =>
+				item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
 		);
-		const expiringStock = expiringItems.reduce((sum, item) => sum + item.quantity, 0);
+		const expiringStock = expiringItems.reduce(
+			(sum, item) => sum + item.quantity,
+			0,
+		);
 
 		return {
 			totalStock,

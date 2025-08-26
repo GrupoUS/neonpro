@@ -4,11 +4,11 @@
 // Comprehensive dashboard data aggregation endpoint
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // =====================================================================================
 // VALIDATION SCHEMAS

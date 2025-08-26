@@ -1,9 +1,9 @@
 // Story 3.2: API Endpoint - Comprehensive Patient Insights
 
-import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
 import type { PatientInsightRequest } from "@/lib/ai/patient-insights/types";
+import { type NextRequest, NextResponse } from "next/server";
 
 const patientInsights = new PatientInsightsIntegration();
 
@@ -50,7 +50,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			data: comprehensiveInsights,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive insights" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate comprehensive insights" },
+			{
+				status: 500,
+			}
+		);
 	}
 }
 
@@ -90,6 +95,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			requestId: insightRequest.requestId,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive insights" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate comprehensive insights" },
+			{
+				status: 500,
+			}
+		);
 	}
 }

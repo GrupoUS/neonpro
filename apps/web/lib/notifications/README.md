@@ -2,7 +2,8 @@
 
 **Story 1.7: Sistema de Notificações**
 
-Sistema completo de notificações multi-canal para o NeonPro, suportando Email, SMS, Push e In-App notifications com automação, templates e analytics.
+Sistema completo de notificações multi-canal para o NeonPro, suportando Email, SMS, Push e In-App
+notifications com automação, templates e analytics.
 
 ## 📋 Índice
 
@@ -432,7 +433,7 @@ const rule = await automationEngine.createRule({
 import { NotificationDashboard } from '@/components/notifications';
 
 // Componente React
-<NotificationDashboard />
+<NotificationDashboard />;
 ```
 
 ### Métricas Programáticas
@@ -468,18 +469,18 @@ class NotificationManager {
 
   // Enviar com template
   async sendFromTemplate(
-    request: TemplateNotificationRequest
+    request: TemplateNotificationRequest,
   ): Promise<NotificationDelivery>;
 
   // Enviar multi-canal
   async sendMultiChannel(
-    request: MultiChannelRequest
+    request: MultiChannelRequest,
   ): Promise<NotificationDelivery[]>;
 
   // Agendar notificação
   async schedule(
     notification: NotificationRequest,
-    scheduledFor: Date
+    scheduledFor: Date,
   ): Promise<string>;
 
   // Cancelar notificação
@@ -496,13 +497,13 @@ class NotificationManager {
 class TemplateEngine {
   // Criar template
   async createTemplate(
-    template: NotificationTemplate
+    template: NotificationTemplate,
   ): Promise<NotificationTemplate>;
 
   // Renderizar template
   async render(
     templateId: string,
-    variables: Record<string, any>
+    variables: Record<string, any>,
   ): Promise<RenderedTemplate>;
 
   // Listar templates
@@ -511,7 +512,7 @@ class TemplateEngine {
   // Atualizar template
   async updateTemplate(
     id: string,
-    updates: Partial<NotificationTemplate>
+    updates: Partial<NotificationTemplate>,
   ): Promise<NotificationTemplate>;
 }
 ```
@@ -521,11 +522,7 @@ class TemplateEngine {
 ### Exemplo Completo: Sistema de Lembretes
 
 ```typescript
-import {
-  notificationManager,
-  templateEngine,
-  automationEngine,
-} from '@/lib/notifications';
+import { automationEngine, notificationManager, templateEngine } from '@/lib/notifications';
 
 // 1. Criar template
 const reminderTemplate = await templateEngine.createTemplate({

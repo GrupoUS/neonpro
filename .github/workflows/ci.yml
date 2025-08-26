@@ -102,7 +102,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -155,7 +155,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -193,7 +193,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -237,7 +237,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -275,13 +275,13 @@ jobs:
     timeout-minutes: 15
     needs: [preflight, security-audit, quality-gate, build, test]
     if: >
-      always() && 
+      always() &&
       needs.preflight.outputs.should-deploy == 'true' &&
       (needs.security-audit.result == 'success' || needs.security-audit.result == 'skipped') &&
       (needs.quality-gate.result == 'success' || needs.quality-gate.result == 'skipped') &&
       (needs.build.result == 'success' || needs.build.result == 'skipped') &&
       (needs.test.result == 'success' || needs.test.result == 'skipped' || github.event.inputs.skip_tests == 'true')
-    environment: 
+    environment:
       name: ${{ github.event.inputs.environment || (github.ref_name == 'main' && 'production' || 'staging') }}
       url: ${{ steps.deploy.outputs.url }}
     steps:
@@ -297,7 +297,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
@@ -349,10 +349,10 @@ jobs:
         run: |
           DEPLOYMENT_URL="${{ needs.deploy.outputs.url }}"
           echo "🌐 Checking health of: $DEPLOYMENT_URL"
-          
+
           # Wait for deployment to be ready
           sleep 30
-          
+
           # Check if site is responsive
           if curl -f -s --max-time 30 "$DEPLOYMENT_URL" > /dev/null; then
             echo "✅ Health check passed: Site is responsive"
@@ -364,7 +364,7 @@ jobs:
       - name: 🔍 Advanced health check
         run: |
           DEPLOYMENT_URL="${{ needs.deploy.outputs.url }}"
-          
+
           # Check if API endpoints are working (if applicable)
           if curl -f -s --max-time 30 "$DEPLOYMENT_URL/api/health" > /dev/null; then
             echo "✅ API health check passed"
@@ -375,11 +375,11 @@ jobs:
       - name: 📊 Performance check
         run: |
           DEPLOYMENT_URL="${{ needs.deploy.outputs.url }}"
-          
+
           # Basic performance check
           RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}' "$DEPLOYMENT_URL")
           echo "⏱️ Response time: ${RESPONSE_TIME}s"
-          
+
           if (( $(echo "$RESPONSE_TIME < 3.0" | bc -l) )); then
             echo "✅ Performance check passed"
           else
@@ -408,7 +408,7 @@ jobs:
           echo "| Deploy | ${{ needs.deploy.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "| Health Check | ${{ needs.health-check.result }} | - |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ needs.deploy.result }}" == "success" ]]; then
             echo "### 🌐 Deployment Information" >> $GITHUB_STEP_SUMMARY
             echo "- **Environment**: ${{ github.ref_name == 'main' && 'Production' || 'Staging' }}" >> $GITHUB_STEP_SUMMARY
@@ -416,7 +416,7 @@ jobs:
             echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
             echo "- **Actor**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### ✅ Compliance Validations" >> $GITHUB_STEP_SUMMARY
           echo "- ANVISA Healthcare Compliance" >> $GITHUB_STEP_SUMMARY
@@ -436,7 +436,7 @@ jobs:
         run: |
           echo "🎉 Pipeline completed successfully!"
           echo "✅ All compliance checks passed"
-          echo "✅ Quality gates satisfied" 
+          echo "✅ Quality gates satisfied"
           echo "✅ Deployment healthy"
 
       - name: 💥 Failure notification

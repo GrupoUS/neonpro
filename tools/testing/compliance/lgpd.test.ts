@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockAuditLogger, mockLGPDConsent, mockPatientData } from "../healthcare-setup";
+import {
+	mockAuditLogger,
+	mockLGPDConsent,
+	mockPatientData,
+} from "../healthcare-setup";
 
 describe("LGPD Compliance Tests", () => {
 	beforeEach(() => {
@@ -20,7 +24,9 @@ describe("LGPD Compliance Tests", () => {
 				return true;
 			};
 
-			expect(() => processData()).toThrow("LGPD consent is required for data processing");
+			expect(() => processData()).toThrow(
+				"LGPD consent is required for data processing",
+			);
 		});
 
 		it("should record consent with all required information", async () => {
@@ -151,7 +157,11 @@ describe("LGPD Compliance Tests", () => {
 		it("should provide clear information about data processing", async () => {
 			const processingInfo = {
 				controller: "NeonPro Estética",
-				purposes: ["medical-treatment", "appointment-scheduling", "communication"],
+				purposes: [
+					"medical-treatment",
+					"appointment-scheduling",
+					"communication",
+				],
 				legalBasis: "consent",
 				retentionPeriod: "10 years (medical records)",
 				thirdParties: ["laboratory-partners", "insurance-providers"],
@@ -179,12 +189,16 @@ describe("LGPD Compliance Tests", () => {
 				userAgent: "Mozilla/5.0...",
 			};
 
-			await mockAuditLogger.logAccess(accessEvent.action, accessEvent.resource, accessEvent.userId);
+			await mockAuditLogger.logAccess(
+				accessEvent.action,
+				accessEvent.resource,
+				accessEvent.userId,
+			);
 
 			expect(mockAuditLogger.logAccess).toHaveBeenCalledWith(
 				accessEvent.action,
 				accessEvent.resource,
-				accessEvent.userId
+				accessEvent.userId,
 			);
 		});
 	});
@@ -218,7 +232,9 @@ describe("LGPD Compliance Tests", () => {
 					"allergies",
 				];
 				const providedFields = Object.keys(data);
-				const unnecessaryFields = providedFields.filter((field) => !allowedFields.includes(field));
+				const unnecessaryFields = providedFields.filter(
+					(field) => !allowedFields.includes(field),
+				);
 
 				return {
 					isMinimal: unnecessaryFields.length === 0,
@@ -231,8 +247,12 @@ describe("LGPD Compliance Tests", () => {
 
 			expect(minimumValidation.isMinimal).toBe(true);
 			expect(excessiveValidation.isMinimal).toBe(false);
-			expect(excessiveValidation.unnecessaryFields).toContain("socialSecurityNumber");
-			expect(excessiveValidation.unnecessaryFields).toContain("politicalAffiliation");
+			expect(excessiveValidation.unnecessaryFields).toContain(
+				"socialSecurityNumber",
+			);
+			expect(excessiveValidation.unnecessaryFields).toContain(
+				"politicalAffiliation",
+			);
 		});
 	});
 
@@ -257,7 +277,10 @@ describe("LGPD Compliance Tests", () => {
 
 			// Check if breach requires subject notification
 			const requiresSubjectNotification = (breach: typeof breachEvent) => {
-				return breach.dataTypes.includes("medical_records") || breach.severityLevel === "high";
+				return (
+					breach.dataTypes.includes("medical_records") ||
+					breach.severityLevel === "high"
+				);
 			};
 
 			expect(requiresAuthorityNotification(breachEvent)).toBe(true);

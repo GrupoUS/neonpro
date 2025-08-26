@@ -1,8 +1,5 @@
 "use client";
 
-import { AlertCircle, Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { toastHelpers } from "@/lib/toast-helpers";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function LoginForm() {
 	const [email, setEmail] = useState("");
@@ -165,7 +165,7 @@ export function LoginForm() {
 
 				<div className="space-y-4 text-center">
 					<div className="text-sm">
-						<span className="text-muted-foreground">Não tem uma conta? </span>
+						<span className="text-muted-foreground">Não tem uma conta?</span>
 						<Button
 							className="h-auto p-0 font-semibold text-primary hover:text-primary/80"
 							disabled={loading || isSubmitting}

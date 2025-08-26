@@ -1,35 +1,36 @@
 const __vite__mapDeps = (
 	i,
 	m = __vite__mapDeps,
-	d = m.f || (m.f = ["./assets/xtermModule-BoAIEibi.js", "./xtermModule.Beg8tuEN.css"])
+	d = m.f ||
+		(m.f = ["./assets/xtermModule-BoAIEibi.js", "./xtermModule.Beg8tuEN.css"]),
 ) => i.map((i) => d[i]);
 
 import {
-	l as $t,
-	g as At,
-	h as at,
-	M as bt,
-	e as Dt,
-	R as d,
-	T as F,
 	_ as Ft,
 	a as Ht,
-	d as Jt,
-	r as K,
 	b as Kt,
-	u as Mt,
-	f as Ot,
-	j as o,
-	D as Qt,
-	W as qt,
-	E as Ut,
-	m as Vt,
-	s as vt,
-	i as Wt,
 	c as Xt,
+	D as Qt,
+	d as Jt,
+	E as Ut,
+	e as Dt,
+	f as Ot,
+	g as At,
+	h as at,
+	i as Wt,
+	j as o,
 	k as Y,
+	l as $t,
+	M as bt,
+	m as Vt,
+	R as d,
+	r as K,
 	S as Yt,
+	s as vt,
+	T as F,
 	t as zt,
+	u as Mt,
+	W as qt,
 } from "./assets/defaultSettingsView-CUd-tHFm.js";
 
 const Zt = {};
@@ -100,8 +101,11 @@ class ot {
 			(s = (e = this._reporter).onConfigure) == null || s.call(e, this._config);
 	}
 	_onProject(t) {
-		let e = this._options.mergeProjects ? this._rootSuite.suites.find((s) => s.project().name === t.name) : void 0;
-		e || ((e = new Q(t.name, "project")), this._rootSuite._addSuite(e)), (e._project = this._parseProject(t));
+		let e = this._options.mergeProjects
+			? this._rootSuite.suites.find((s) => s.project().name === t.name)
+			: void 0;
+		e || ((e = new Q(t.name, "project")), this._rootSuite._addSuite(e)),
+			(e._project = this._parseProject(t));
 		for (const s of t.suites) {
 			this._mergeSuiteInto(s, e);
 		}
@@ -168,8 +172,11 @@ class ot {
 					name: n.name,
 					contentType: n.contentType,
 					path: n.path,
-					body: n.base64 && globalThis.Buffer ? Buffer.from(n.base64, "base64") : void 0,
-				}))
+					body:
+						n.base64 && globalThis.Buffer
+							? Buffer.from(n.base64, "base64")
+							: void 0,
+				})),
 			);
 	}
 	_onError(t) {
@@ -182,14 +189,20 @@ class ot {
 			g = e ? this._tests.get(e) : void 0,
 			l = g && s ? g.results.find((u) => u._id === s) : void 0;
 		t === "stdout"
-			? (l == null || l.stdout.push(n), (a = (_ = this._reporter).onStdOut) == null || a.call(_, n, g, l))
-			: (l == null || l.stderr.push(n), (v = (h = this._reporter).onStdErr) == null || v.call(h, n, g, l));
+			? (l == null || l.stdout.push(n),
+				(a = (_ = this._reporter).onStdOut) == null || a.call(_, n, g, l))
+			: (l == null || l.stderr.push(n),
+				(v = (h = this._reporter).onStdErr) == null || v.call(h, n, g, l));
 	}
 	async _onEnd(t) {
 		let e, s;
 		await ((s = (e = this._reporter).onEnd) == null
 			? void 0
-			: s.call(e, { status: t.status, startTime: new Date(t.startTime), duration: t.duration }));
+			: s.call(e, {
+					status: t.status,
+					startTime: new Date(t.startTime),
+					duration: t.duration,
+				}));
 	}
 	_onExit() {
 		let t, e;
@@ -226,11 +239,19 @@ class ot {
 		};
 	}
 	_parseAttachments(t) {
-		return t.map((e) => ({ ...e, body: e.base64 && globalThis.Buffer ? Buffer.from(e.base64, "base64") : void 0 }));
+		return t.map((e) => ({
+			...e,
+			body:
+				e.base64 && globalThis.Buffer
+					? Buffer.from(e.base64, "base64")
+					: void 0,
+		}));
 	}
 	_mergeSuiteInto(t, e) {
 		let s = e.suites.find((i) => i.title === t.title);
-		s || ((s = new Q(t.title, e.type === "project" ? "file" : "describe")), e._addSuite(s)),
+		s ||
+			((s = new Q(t.title, e.type === "project" ? "file" : "describe")),
+			e._addSuite(s)),
 			(s.location = this._absoluteLocation(t.location)),
 			t.entries.forEach((i) => {
 				"testId" in i ? this._mergeTestInto(i, s) : this._mergeSuiteInto(i, s);
@@ -238,10 +259,17 @@ class ot {
 	}
 	_mergeTestInto(t, e) {
 		let s = this._options.mergeTestCases
-			? e.tests.find((i) => i.title === t.title && i.repeatEachIndex === t.repeatEachIndex)
+			? e.tests.find(
+					(i) => i.title === t.title && i.repeatEachIndex === t.repeatEachIndex,
+				)
 			: void 0;
 		s ||
-			((s = new Gt(t.testId, t.title, this._absoluteLocation(t.location), t.repeatEachIndex)),
+			((s = new Gt(
+				t.testId,
+				t.title,
+				this._absoluteLocation(t.location),
+				t.repeatEachIndex,
+			)),
 			e._addTest(s),
 			this._tests.set(s.id, s)),
 			this._updateTest(t, s);
@@ -267,13 +295,19 @@ class ot {
 	}
 	_absolutePath(t) {
 		if (t !== void 0) {
-			return this._options.resolvePath ? this._options.resolvePath(this._rootDir, t) : `${this._rootDir}/${t}`;
+			return this._options.resolvePath
+				? this._options.resolvePath(this._rootDir, t)
+				: `${this._rootDir}/${t}`;
 		}
 	}
 }
 class Q {
 	constructor(t, e) {
-		(this._entries = []), (this._requireFile = ""), (this._parallelMode = "none"), (this.title = t), (this._type = e);
+		(this._entries = []),
+			(this._requireFile = ""),
+			(this._parallelMode = "none"),
+			(this.title = t),
+			(this._type = e);
 	}
 	get type() {
 		return this._type;
@@ -357,7 +391,10 @@ class te {
 	}
 	titlePath() {
 		let e;
-		return [...(((e = this.parent) == null ? void 0 : e.titlePath()) || []), this.title];
+		return [
+			...(((e = this.parent) == null ? void 0 : e.titlePath()) || []),
+			this.title,
+		];
 	}
 	get startTime() {
 		return new Date(this._startTime);
@@ -430,7 +467,9 @@ const se = {
 	webServer: null,
 };
 function st(r) {
-	return r.map((t) => (t.s !== void 0 ? t.s : new RegExp(t.r.source, t.r.flags)));
+	return r.map((t) =>
+		t.s !== void 0 ? t.s : new RegExp(t.r.source, t.r.flags),
+	);
 }
 function ie(r) {
 	let t = 0,
@@ -440,9 +479,16 @@ function ie(r) {
 		i.status === "interrupted" ||
 			(i.status === "skipped" && r.expectedStatus === "skipped"
 				? ++t
-				: i.status === "skipped" || (i.status === r.expectedStatus ? ++e : ++s));
+				: i.status === "skipped" ||
+					(i.status === r.expectedStatus ? ++e : ++s));
 	}
-	return e === 0 && s === 0 ? "skipped" : s === 0 ? "expected" : e === 0 && t === 0 ? "unexpected" : "flaky";
+	return e === 0 && s === 0
+		? "skipped"
+		: s === 0
+			? "expected"
+			: e === 0 && t === 0
+				? "unexpected"
+				: "flaky";
 }
 class nt {
 	constructor(t, e, s, i, c) {
@@ -468,7 +514,9 @@ class nt {
 					g(l, h, a);
 					continue;
 				}
-				let v = a.children.find((u) => u.kind === "group" && u.title === h.title);
+				let v = a.children.find(
+					(u) => u.kind === "group" && u.title === h.title,
+				);
 				v ||
 					((v = {
 						kind: "group",
@@ -558,9 +606,17 @@ class nt {
 		const i = t.trim().toLowerCase().split(" "),
 			c = [...e.values()].some(Boolean),
 			n = (l) => {
-				const _ = [...l.tests[0].titlePath(), ...l.tests[0].tags].join(" ").toLowerCase();
-				return i.every((a) => _.includes(a)) || l.tests.some((a) => (s == null ? void 0 : s.has(a.id)))
-					? ((l.children = l.children.filter((a) => !c || (s == null ? void 0 : s.has(a.test.id)) || e.get(a.status))),
+				const _ = [...l.tests[0].titlePath(), ...l.tests[0].tags]
+					.join(" ")
+					.toLowerCase();
+				return i.every((a) => _.includes(a)) ||
+					l.tests.some((a) => (s == null ? void 0 : s.has(a.id)))
+					? ((l.children = l.children.filter(
+							(a) =>
+								!c ||
+								(s == null ? void 0 : s.has(a.test.id)) ||
+								e.get(a.status),
+						)),
 						(l.tests = l.children.map((a) => a.test)),
 						!!l.children.length)
 					: !1;
@@ -568,7 +624,9 @@ class nt {
 			g = (l) => {
 				const _ = [];
 				for (const a of l.children) {
-					a.kind === "case" ? n(a) && _.push(a) : (g(a), (a.children.length || a.hasLoadErrors) && _.push(a));
+					a.kind === "case"
+						? n(a) && _.push(a)
+						: (g(a), (a.children.length || a.hasLoadErrors) && _.push(a));
 				}
 				l.children = _;
 			};
@@ -614,7 +672,11 @@ class nt {
 	}
 	shortenRoot() {
 		let t = this.rootItem;
-		while (t.children.length === 1 && t.children[0].kind === "group" && t.children[0].subKind === "folder") {
+		while (
+			t.children.length === 1 &&
+			t.children[0].kind === "group" &&
+			t.children[0].subKind === "folder"
+		) {
 			t = t.children[0];
 		}
 		(t.location = this.rootItem.location), (this.rootItem = t);
@@ -622,14 +684,17 @@ class nt {
 	testIds() {
 		const t = new Set(),
 			e = (s) => {
-				s.kind === "case" && s.tests.forEach((i) => t.add(i.id)), s.children.forEach(e);
+				s.kind === "case" && s.tests.forEach((i) => t.add(i.id)),
+					s.children.forEach(e);
 			};
 		return e(this.rootItem), t;
 	}
 	fileNames() {
 		const t = new Set(),
 			e = (s) => {
-				s.kind === "group" && s.subKind === "file" ? t.add(s.id) : s.children.forEach(e);
+				s.kind === "group" && s.subKind === "file"
+					? t.add(s.id)
+					: s.children.forEach(e);
 			};
 		return e(this.rootItem), [...t];
 	}
@@ -652,7 +717,11 @@ function St(r) {
 		St(n);
 	}
 	r.kind === "group" &&
-		r.children.sort((n, g) => n.location.file.localeCompare(g.location.file) || n.location.line - g.location.line);
+		r.children.sort(
+			(n, g) =>
+				n.location.file.localeCompare(g.location.file) ||
+				n.location.line - g.location.line,
+		);
 	let t = r.children.length > 0,
 		e = r.children.length > 0,
 		s = !1,
@@ -710,17 +779,27 @@ class oe {
 						{
 							version: () => "v2",
 							onBegin: (e) => {
-								(this._lastRunTestCount = e.allTests().length), (this._lastRunReceiver = void 0);
+								(this._lastRunTestCount = e.allTests().length),
+									(this._lastRunReceiver = void 0);
 							},
 						},
-						{ mergeProjects: !0, mergeTestCases: !1, resolvePath: (e, s) => e + this._options.pathSeparator + s }
+						{
+							mergeProjects: !0,
+							mergeTestCases: !1,
+							resolvePath: (e, s) => e + this._options.pathSeparator + s,
+						},
 					));
 			},
 			onBegin: (t) => {
 				let e;
-				if ((this.rootSuite || (this.rootSuite = t), this._testResultsSnapshot)) {
+				if (
+					(this.rootSuite || (this.rootSuite = t), this._testResultsSnapshot)
+				) {
 					for (const s of this.rootSuite.allTests()) {
-						s.results = ((e = this._testResultsSnapshot) == null ? void 0 : e.get(s.id)) || s.results;
+						s.results =
+							((e = this._testResultsSnapshot) == null
+								? void 0
+								: e.get(s.id)) || s.results;
 					}
 					this._testResultsSnapshot = void 0;
 				}
@@ -764,19 +843,23 @@ class oe {
 	processListReport(t) {
 		let s;
 		const e = ((s = this.rootSuite) == null ? void 0 : s.allTests()) || [];
-		(this._testResultsSnapshot = new Map(e.map((i) => [i.id, i.results]))), this._receiver.reset();
+		(this._testResultsSnapshot = new Map(e.map((i) => [i.id, i.results]))),
+			this._receiver.reset();
 		for (const i of t) {
 			this._receiver.dispatch(i);
 		}
 	}
 	processTestReportEvent(t) {
 		let e, s, i;
-		(s = (e = this._lastRunReceiver) == null ? void 0 : e.dispatch(t)) == null || s.catch(() => {}),
+		(s = (e = this._lastRunReceiver) == null ? void 0 : e.dispatch(t)) ==
+			null || s.catch(() => {}),
 			(i = this._receiver.dispatch(t)) == null || i.catch(() => {});
 	}
 	_handleOnError(t) {
 		let e, s;
-		this.loadErrors.push(t), (s = (e = this._options).onError) == null || s.call(e, t), this._options.onUpdate();
+		this.loadErrors.push(t),
+			(s = (e = this._options).onError) == null || s.call(e, t),
+			this._options.onUpdate();
 	}
 	asModel() {
 		return {
@@ -791,9 +874,11 @@ const ne = ({ source: r }) => {
 		const [t, e] = Mt(),
 			[s, i] = K.useState(Dt()),
 			[c] = K.useState(
-				Ft(() => import("./assets/xtermModule-BoAIEibi.js"), __vite__mapDeps([0, 1]), import.meta.url).then(
-					(g) => g.default
-				)
+				Ft(
+					() => import("./assets/xtermModule-BoAIEibi.js"),
+					__vite__mapDeps([0, 1]),
+					import.meta.url,
+				).then((g) => g.default),
 			),
 			n = K.useRef(null);
 		return (
@@ -842,10 +927,17 @@ const ne = ({ source: r }) => {
 			}, [c, n, e, r, s]),
 			K.useEffect(() => {
 				setTimeout(() => {
-					n.current && (n.current.fitAddon.fit(), r.resize(n.current.terminal.cols, n.current.terminal.rows));
+					n.current &&
+						(n.current.fitAddon.fit(),
+						r.resize(n.current.terminal.cols, n.current.terminal.rows));
 				}, 250);
 			}, [t, r]),
-			o.jsx("div", { "data-testid": "output", className: "xterm-wrapper", style: { flex: "auto" }, ref: e })
+			o.jsx("div", {
+				"data-testid": "output",
+				className: "xterm-wrapper",
+				style: { flex: "auto" },
+				ref: e,
+			})
 		);
 	},
 	ae = {
@@ -987,8 +1079,8 @@ Projects: ` +
 												],
 											}),
 										},
-										u
-									)
+										u,
+									),
 								),
 							}),
 							o.jsx("div", {
@@ -1010,11 +1102,16 @@ Projects: ` +
 															let C;
 															const S = new Map(i);
 															S.set(u, !S.get(u)), c(S);
-															const B = (C = n == null ? void 0 : n.config) == null ? void 0 : C.configFile;
+															const B =
+																(C = n == null ? void 0 : n.config) == null
+																	? void 0
+																	: C.configFile;
 															B &&
 																vt.setObject(
 																	`${B}:projects`,
-																	[...S.entries()].filter(([_T, L]) => L).map(([T]) => T)
+																	[...S.entries()]
+																		.filter(([_T, L]) => L)
+																		.map(([T]) => T),
 																);
 														},
 													}),
@@ -1022,8 +1119,8 @@ Projects: ` +
 												],
 											}),
 										},
-										u
-									)
+										u,
+									),
 								),
 							}),
 						],
@@ -1095,7 +1192,8 @@ const he = Wt,
 					!f &&
 						x.status === "failed" &&
 						((x.kind === "test" && c.testIds.has(x.test.id)) ||
-							(x.kind === "case" && c.testIds.has((M = x.tests[0]) == null ? void 0 : M.id))) &&
+							(x.kind === "case" &&
+								c.testIds.has((M = x.tests[0]) == null ? void 0 : M.id))) &&
 						(f = x);
 			};
 			E(s.rootItem), f && T(f.id);
@@ -1113,7 +1211,9 @@ const he = Wt,
 			let E;
 			(R == null ? void 0 : R.kind) === "test"
 				? (E = R.test)
-				: (R == null ? void 0 : R.kind) === "case" && R.tests.length === 1 && (E = R.tests[0]),
+				: (R == null ? void 0 : R.kind) === "case" &&
+					R.tests.length === 1 &&
+					(E = R.tests[0]),
 				a({ treeItem: R, testCase: E, testFile: f });
 		}, [t, R, a]),
 			d.useEffect(() => {
@@ -1142,7 +1242,7 @@ const he = Wt,
 								x
 									.filter((M) => M !== E)
 									.join(" ")
-									.trim()
+									.trim(),
 							)
 						: u(`${r} ${E}`.trim());
 				} else {
@@ -1154,7 +1254,7 @@ const he = Wt,
 								.join(" ") +
 							" " +
 							E
-						).trim()
+						).trim(),
 					);
 				}
 			};
@@ -1178,30 +1278,51 @@ const he = Wt,
 							children: [
 								o.jsx("span", { children: f.title }),
 								f.kind === "case"
-									? f.tags.map((q) => o.jsx(ue, { tag: q.slice(1), onClick: (Z) => H(Z, q) }, q))
+									? f.tags.map((q) =>
+											o.jsx(
+												ue,
+												{ tag: q.slice(1), onClick: (Z) => H(Z, q) },
+												q,
+											),
+										)
 									: null,
 							],
 						}),
 						!!f.duration &&
 							f.status !== "skipped" &&
-							o.jsx("div", { id: M, className: "ui-mode-tree-item-time", children: Vt(f.duration) }),
+							o.jsx("div", {
+								id: M,
+								className: "ui-mode-tree-item-time",
+								children: Vt(f.duration),
+							}),
 						o.jsxs(Y, {
 							noMinHeight: !0,
 							noShadow: !0,
 							children: [
-								o.jsx(F, { icon: "play", title: "Run", onClick: () => J(f), disabled: !!c && !c.completed }),
+								o.jsx(F, {
+									icon: "play",
+									title: "Run",
+									onClick: () => J(f),
+									disabled: !!c && !c.completed,
+								}),
 								o.jsx(F, {
 									icon: "go-to-file",
 									title: "Show source",
 									onClick: b,
-									style: f.kind === "group" && f.subKind === "folder" ? { visibility: "hidden" } : {},
+									style:
+										f.kind === "group" && f.subKind === "folder"
+											? { visibility: "hidden" }
+											: {},
 								}),
 								!n &&
 									o.jsx(F, {
 										icon: "eye",
 										title: "Watch",
 										onClick: () => {
-											g.value.has(f.id) ? g.value.delete(f.id) : g.value.add(f.id), l({ ...g });
+											g.value.has(f.id)
+												? g.value.delete(f.id)
+												: g.value.add(f.id),
+												l({ ...g });
 										},
 										toggled: g.value.has(f.id),
 									}),
@@ -1232,7 +1353,9 @@ function pe(r, t) {
 				errors: t.loadErrors
 					.filter((e) => {
 						let s;
-						return ((s = e.location) == null ? void 0 : s.file) === r.location.file;
+						return (
+							((s = e.location) == null ? void 0 : s.file) === r.location.file
+						);
 					})
 					.map((e) => ({ line: e.location.line, message: e.message })),
 				content: void 0,
@@ -1243,12 +1366,21 @@ function pe(r, t) {
 function ge(r) {
 	return `.playwright-artifacts-${r}`;
 }
-const me = ({ item: r, rootDir: t, onOpenExternally: e, revealSource: s, pathSeparator: i }) => {
+const me = ({
+		item: r,
+		rootDir: t,
+		onOpenExternally: e,
+		revealSource: s,
+		pathSeparator: i,
+	}) => {
 		let h, v;
 		const [c, n] = d.useState(void 0),
 			[g, l] = d.useState(0),
 			_ = d.useRef(null),
-			{ outputDir: a } = d.useMemo(() => ({ outputDir: r.testCase ? _e(r.testCase) : void 0 }), [r]);
+			{ outputDir: a } = d.useMemo(
+				() => ({ outputDir: r.testCase ? _e(r.testCase) : void 0 }),
+				[r],
+			);
 		return (
 			d.useEffect(() => {
 				let B, C;
@@ -1258,7 +1390,8 @@ const me = ({ item: r, rootDir: t, onOpenExternally: e, revealSource: s, pathSep
 					n(void 0);
 					return;
 				}
-				const b = u && u.duration >= 0 && u.attachments.find((T) => T.name === "trace");
+				const b =
+					u && u.duration >= 0 && u.attachments.find((T) => T.name === "trace");
 				if (b?.path) {
 					mt(b.path).then((T) => n({ model: T, isLive: !1 }));
 					return;
@@ -1267,7 +1400,12 @@ const me = ({ item: r, rootDir: t, onOpenExternally: e, revealSource: s, pathSep
 					n(void 0);
 					return;
 				}
-				const S = [a, ge(u.workerIndex), "traces", `${((C = r.testCase)) == null ? void 0 : C.id}.json`].join(i);
+				const S = [
+					a,
+					ge(u.workerIndex),
+					"traces",
+					`${((C = r.testCase)) == null ? void 0 : C.id}.json`,
+				].join(i);
 				return (
 					(_.current = setTimeout(async () => {
 						try {
@@ -1275,7 +1413,11 @@ const me = ({ item: r, rootDir: t, onOpenExternally: e, revealSource: s, pathSep
 							n({ model: T, isLive: !0 });
 						} catch {
 							const T = new bt([]);
-							T.errorDescriptors.push(...u.errors.flatMap((L) => (L.message ? [{ message: L.message }] : []))),
+							T.errorDescriptors.push(
+								...u.errors.flatMap((L) =>
+									L.message ? [{ message: L.message }] : [],
+								),
+							),
 								n({ model: T, isLive: !1 });
 						} finally {
 							l(g + 1);
@@ -1295,11 +1437,12 @@ const me = ({ item: r, rootDir: t, onOpenExternally: e, revealSource: s, pathSep
 					fallbackLocation: r.testFile,
 					isLive: c == null ? void 0 : c.isLive,
 					status: (h = r.treeItem) == null ? void 0 : h.status,
-					annotations: ((v = r.testCase) == null ? void 0 : v.annotations) ?? [],
+					annotations:
+						((v = r.testCase) == null ? void 0 : v.annotations) ?? [],
 					onOpenExternally: e,
 					revealSource: s,
 				},
-				"workbench"
+				"workbench",
 			)
 		);
 	},
@@ -1318,7 +1461,12 @@ async function mt(r) {
 	return new bt(s);
 }
 let _t = { cols: 80 };
-const z = { pending: [], clear: () => {}, write: (r) => z.pending.push(r), resize: () => {} },
+const z = {
+		pending: [],
+		clear: () => {},
+		write: (r) => z.pending.push(r),
+		resize: () => {},
+	},
 	A = new URLSearchParams(window.location.search),
 	we = new URL(A.get("server") ?? "../", window.location.href),
 	lt = new URL(A.get("ws"), we);
@@ -1334,7 +1482,9 @@ const I = {
 	reporters: A.has("reporter") ? A.getAll("reporter") : void 0,
 	pathSeparator: A.get("pathSeparator") || "/",
 };
-I.updateSnapshots && !["all", "none", "missing"].includes(I.updateSnapshots) && (I.updateSnapshots = void 0);
+I.updateSnapshots &&
+	!["all", "none", "missing"].includes(I.updateSnapshots) &&
+	(I.updateSnapshots = void 0);
 const wt = navigator.platform === "MacIntel",
 	ve = ({}) => {
 		let gt;
@@ -1346,7 +1496,7 @@ const wt = navigator.platform === "MacIntel",
 					["passed", !1],
 					["failed", !1],
 					["skipped", !1],
-				])
+				]),
 			),
 			[l, _] = d.useState(new Map()),
 			[a, h] = d.useState(),
@@ -1400,7 +1550,8 @@ const wt = navigator.platform === "MacIntel",
 				];
 				return (
 					(z.resize = (m, k) => {
-						(_t = { cols: m, rows: k }), w.resizeTerminalNoReply({ cols: m, rows: k });
+						(_t = { cols: m, rows: k }),
+							w.resizeTerminalNoReply({ cols: m, rows: k });
 					}),
 					() => {
 						for (const m of p) {
@@ -1429,7 +1580,7 @@ const wt = navigator.platform === "MacIntel",
 						z.write(
 							(k.stack || k.value || "") +
 								`
-`
+`,
 						),
 							c(!0);
 					},
@@ -1473,7 +1624,9 @@ const wt = navigator.platform === "MacIntel",
 					return;
 				}
 				const { config: p, rootSuite: m } = a,
-					k = p.configFile ? vt.getObject(`${p.configFile}:projects`, void 0) : void 0,
+					k = p.configFile
+						? vt.getObject(`${p.configFile}:projects`, void 0)
+						: void 0,
 					y = new Map(l);
 				for (const P of y.keys()) {
 					m.suites.find((U) => U.title === P) || y.delete(P);
@@ -1481,15 +1634,21 @@ const wt = navigator.platform === "MacIntel",
 				for (const P of m.suites) {
 					y.has(P.title) || y.set(P.title, !!k?.includes(P.title));
 				}
-				!k && y.size && ![...y.values()].includes(!0) && y.set(y.entries().next().value[0], !0),
-					(l.size !== y.size || [...l].some(([P, U]) => y.get(P) !== U)) && _(y);
+				!k &&
+					y.size &&
+					![...y.values()].includes(!0) &&
+					y.set(y.entries().next().value[0], !0),
+					(l.size !== y.size || [...l].some(([P, U]) => y.get(P) !== U)) &&
+						_(y);
 			}, [l, a]),
 			d.useEffect(() => {
 				N && a != null && a.progress ? u(a.progress) : a || u(void 0);
 			}, [a, N]);
 		const { testTree: Pt } = d.useMemo(() => {
 				if (!a) {
-					return { testTree: new nt("", new Q("", "root"), [], l, I.pathSeparator) };
+					return {
+						testTree: new nt("", new Q("", "root"), [], l, I.pathSeparator),
+					};
 				}
 				const p = new nt("", a.rootSuite, a.loadErrors, l, I.pathSeparator);
 				return (
@@ -1512,7 +1671,9 @@ const wt = navigator.platform === "MacIntel",
 							if (((x.current = new Set()), !k.size)) {
 								return;
 							}
-							for (const j of ((P = a.rootSuite) == null ? void 0 : P.allTests()) || []) {
+							for (const j of ((P = a.rootSuite) == null
+								? void 0
+								: P.allTests()) || []) {
 								if (k.has(j.id)) {
 									j.results = [];
 									const W = j._createTestResult("pending");
@@ -1521,7 +1682,9 @@ const wt = navigator.platform === "MacIntel",
 							}
 							h({ ...a });
 							const y = `  [${new Date().toLocaleTimeString()}]`;
-							z.write(`${"\x1B[2m—".repeat(Math.max(0, _t.cols - y.length)) + y}\x1B[22m`),
+							z.write(
+								`${"\x1B[2m—".repeat(Math.max(0, _t.cols - y.length)) + y}\x1B[22m`,
+							),
 								u({ total: 0, passed: 0, failed: 0, skipped: 0 }),
 								$({ testIds: k }),
 								await w.runTests({
@@ -1536,13 +1699,16 @@ const wt = navigator.platform === "MacIntel",
 									reporters: I.reporters,
 									trace: "on",
 								});
-							for (const j of ((U = a.rootSuite) == null ? void 0 : U.allTests()) || []) {
-								((D = j.results[0]) == null ? void 0 : D.duration) === -1 && (j.results = []);
+							for (const j of ((U = a.rootSuite) == null
+								? void 0
+								: U.allTests()) || []) {
+								((D = j.results[0]) == null ? void 0 : D.duration) === -1 &&
+									(j.results = []);
 							}
 							h({ ...a }), $((j) => (j ? { ...j, completed: !0 } : void 0));
 						})));
 				},
-				[l, N, a, w, ht, ft, pt]
+				[l, N, a, w, ht, ft, pt],
 			);
 		d.useEffect(() => {
 			if (!(w && G)) {
@@ -1578,7 +1744,9 @@ const wt = navigator.platform === "MacIntel",
 					const D = (j) => {
 						const W = j.location.file;
 						W && U.has(W) && P.push(...y.collectTestIds(j)),
-							j.kind === "group" && j.subKind === "folder" && j.children.forEach(D);
+							j.kind === "group" &&
+								j.subKind === "folder" &&
+								j.children.forEach(D);
 					};
 					D(y.rootItem);
 				} else {
@@ -1613,11 +1781,15 @@ const wt = navigator.platform === "MacIntel",
 		const it = d.useRef(null),
 			Nt = d.useCallback((p) => {
 				let m;
-				p.preventDefault(), p.stopPropagation(), (m = it.current) == null || m.showModal();
+				p.preventDefault(),
+					p.stopPropagation(),
+					(m = it.current) == null || m.showModal();
 			}, []),
 			rt = d.useCallback((p) => {
 				let m;
-				p.preventDefault(), p.stopPropagation(), (m = it.current) == null || m.close();
+				p.preventDefault(),
+					p.stopPropagation(),
+					(m = it.current) == null || m.close();
 			}, []),
 			Lt = d.useCallback(
 				(p) => {
@@ -1626,11 +1798,13 @@ const wt = navigator.platform === "MacIntel",
 						w == null ||
 							w.installBrowsers({}).then(async () => {
 								s(!1);
-								const { hasBrowsers: m } = await (w == null ? void 0 : w.checkBrowsers({}));
+								const { hasBrowsers: m } = await (w == null
+									? void 0
+									: w.checkBrowsers({}));
 								ut(m);
 							});
 				},
-				[rt, w]
+				[rt, w],
 			);
 		return o.jsxs("div", {
 			className: "vbox ui-mode",
@@ -1641,7 +1815,10 @@ const wt = navigator.platform === "MacIntel",
 						children: [
 							o.jsxs("div", {
 								className: "title",
-								children: [o.jsx("span", { className: "codicon codicon-lightbulb" }), "Install browsers"],
+								children: [
+									o.jsx("span", { className: "codicon codicon-lightbulb" }),
+									"Install browsers",
+								],
 							}),
 							o.jsxs("div", {
 								className: "body",
@@ -1650,8 +1827,16 @@ const wt = navigator.platform === "MacIntel",
 									o.jsx("br", {}),
 									"Would you like to run `playwright install`?",
 									o.jsx("br", {}),
-									o.jsx("button", { className: "button", onClick: Lt, children: "Install" }),
-									o.jsx("button", { className: "button secondary", onClick: rt, children: "Dismiss" }),
+									o.jsx("button", {
+										className: "button",
+										onClick: Lt,
+										children: "Install",
+									}),
+									o.jsx("button", {
+										className: "button secondary",
+										onClick: rt,
+										children: "Dismiss",
+									}),
 								],
 							}),
 						],
@@ -1660,10 +1845,17 @@ const wt = navigator.platform === "MacIntel",
 					o.jsxs("div", {
 						className: "disconnected",
 						children: [
-							o.jsx("div", { className: "title", children: "UI Mode disconnected" }),
+							o.jsx("div", {
+								className: "title",
+								children: "UI Mode disconnected",
+							}),
 							o.jsxs("div", {
 								children: [
-									o.jsx("a", { href: "#", onClick: () => (window.location.href = "/"), children: "Reload the page" }),
+									o.jsx("a", {
+										href: "#",
+										onClick: () => (window.location.href = "/"),
+										children: "Reload the page",
+									}),
 									" to reconnect",
 								],
 							}),
@@ -1683,7 +1875,11 @@ const wt = navigator.platform === "MacIntel",
 								children: [
 									o.jsxs(Y, {
 										children: [
-											o.jsx("div", { className: "section-title", style: { flex: "none" }, children: "Output" }),
+											o.jsx("div", {
+												className: "section-title",
+												style: { flex: "none" },
+												children: "Output",
+											}),
 											o.jsx(F, {
 												icon: "circle-slash",
 												title: "Clear output",
@@ -1692,7 +1888,11 @@ const wt = navigator.platform === "MacIntel",
 												},
 											}),
 											o.jsx("div", { className: "spacer" }),
-											o.jsx(F, { icon: "close", title: "Close", onClick: () => s(!1) }),
+											o.jsx(F, {
+												icon: "close",
+												title: "Close",
+												onClick: () => s(!1),
+											}),
 										],
 									}),
 									o.jsx(ne, { source: z }),
@@ -1703,10 +1903,21 @@ const wt = navigator.platform === "MacIntel",
 								children: o.jsx(me, {
 									pathSeparator: I.pathSeparator,
 									item: b,
-									rootDir: (gt = a == null ? void 0 : a.config) == null ? void 0 : gt.rootDir,
+									rootDir:
+										(gt = a == null ? void 0 : a.config) == null
+											? void 0
+											: gt.rootDir,
 									revealSource: It,
 									onOpenExternally: (p) =>
-										w == null ? void 0 : w.openNoReply({ location: { file: p.file, line: p.line, column: p.column } }),
+										w == null
+											? void 0
+											: w.openNoReply({
+													location: {
+														file: p.file,
+														line: p.line,
+														column: p.column,
+													},
+												}),
 								}),
 							}),
 						],
@@ -1718,9 +1929,20 @@ const wt = navigator.platform === "MacIntel",
 								noShadow: !0,
 								noMinHeight: !0,
 								children: [
-									o.jsx("img", { src: "playwright-logo.svg", alt: "Playwright logo" }),
-									o.jsx("div", { className: "section-title", children: "Playwright" }),
-									o.jsx(F, { icon: "refresh", title: "Reload", onClick: () => et(), disabled: N || T }),
+									o.jsx("img", {
+										src: "playwright-logo.svg",
+										alt: "Playwright logo",
+									}),
+									o.jsx("div", {
+										className: "section-title",
+										children: "Playwright",
+									}),
+									o.jsx(F, {
+										icon: "refresh",
+										title: "Reload",
+										onClick: () => et(),
+										disabled: N || T,
+									}),
 									o.jsxs("div", {
 										style: { position: "relative" },
 										children: [
@@ -1742,7 +1964,8 @@ const wt = navigator.platform === "MacIntel",
 														width: 7,
 														height: 7,
 														borderRadius: "50%",
-														backgroundColor: "var(--vscode-notificationsErrorIcon-foreground)",
+														backgroundColor:
+															"var(--vscode-notificationsErrorIcon-foreground)",
 													},
 												}),
 										],
@@ -1769,14 +1992,25 @@ const wt = navigator.platform === "MacIntel",
 							o.jsxs(Y, {
 								noMinHeight: !0,
 								children: [
-									!(N || v) && o.jsx("div", { className: "section-title", children: "Tests" }),
+									!(N || v) &&
+										o.jsx("div", {
+											className: "section-title",
+											children: "Tests",
+										}),
 									!N &&
 										v &&
 										o.jsx("div", {
 											"data-testid": "status-line",
 											className: "status-line",
 											children: o.jsxs("div", {
-												children: [v.passed, "/", v.total, " passed (", ((v.passed / v.total) * 100) | 0, "%)"],
+												children: [
+													v.passed,
+													"/",
+													v.total,
+													" passed (",
+													((v.passed / v.total) * 100) | 0,
+													"%)",
+												],
 											}),
 										}),
 									N &&
@@ -1861,7 +2095,10 @@ const wt = navigator.platform === "MacIntel",
 										style: { marginLeft: 5 },
 										title: tt ? "Hide Settings" : "Show Settings",
 									}),
-									o.jsx("div", { className: "section-title", children: "Settings" }),
+									o.jsx("div", {
+										className: "section-title",
+										children: "Settings",
+									}),
 								],
 							}),
 							tt && o.jsx(Qt, {}),
@@ -1874,7 +2111,8 @@ const wt = navigator.platform === "MacIntel",
 (async () => {
 	if ((Xt(), window.location.protocol !== "file:")) {
 		if (
-			(window.location.href.includes("isUnderTest=true") && (await new Promise((r) => setTimeout(r, 1e3))),
+			(window.location.href.includes("isUnderTest=true") &&
+				(await new Promise((r) => setTimeout(r, 1e3))),
 			!navigator.serviceWorker)
 		) {
 			throw new Error(`Service workers are not supported.

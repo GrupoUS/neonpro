@@ -2,7 +2,11 @@
 // Real-time metrics collection, alerting, and performance analysis
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
+import {
+	type AIServiceInput,
+	type AIServiceOutput,
+	EnhancedAIService,
+} from "./enhanced-service-base";
 
 // Monitoring Types and Interfaces
 export type MonitoringMetric = {
@@ -132,7 +136,11 @@ export interface MonitoringOutput extends AIServiceOutput {
 	alert?: Alert;
 	alerts?: Alert[];
 	service_health?: ServiceHealthStatus;
-	bulk_results?: Array<{ success: boolean; metric_id?: string; error?: string }>;
+	bulk_results?: Array<{
+		success: boolean;
+		metric_id?: string;
+		error?: string;
+	}>;
 	metrics_recorded?: number;
 }
 
@@ -170,7 +178,10 @@ export type ServiceHealthStatus = {
 };
 
 // Monitoring Service Implementation
-export class MonitoringService extends EnhancedAIService<MonitoringInput, MonitoringOutput> {
+export class MonitoringService extends EnhancedAIService<
+	MonitoringInput,
+	MonitoringOutput
+> {
 	private readonly supabase: SupabaseClient;
 	private readonly alertRules: Map<string, AlertRule> = new Map();
 	private readonly activeAlerts: Map<string, Alert> = new Map();
@@ -182,7 +193,10 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	constructor() {
 		super("monitoring_service");
 
-		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		this.supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Initialize monitoring
 		this.initializeMonitoring();
@@ -197,7 +211,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		this.startAlertEvaluationInterval();
 	}
 
-	protected async executeCore(input: MonitoringInput): Promise<MonitoringOutput> {
+	protected async executeCore(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		const startTime = performance.now();
 
 		try {
@@ -236,8 +252,13 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		}
 	}
 
-	private async recordMetric(input: MonitoringInput): Promise<MonitoringOutput> {
-		if (!(input.service && input.metric_name) || input.metric_value === undefined) {
+	private async recordMetric(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
+		if (
+			!(input.service && input.metric_name) ||
+			input.metric_value === undefined
+		) {
 			throw new Error("service, metric_name, and metric_value are required");
 		}
 
@@ -272,17 +293,26 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async bulkRecordMetrics(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async bulkRecordMetrics(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!input.bulk_metrics || input.bulk_metrics.length === 0) {
 			throw new Error("bulk_metrics is required for bulk recording");
 		}
 
-		const results: Array<{ success: boolean; metric_id?: string; error?: string }> = [];
+		const results: Array<{
+			success: boolean;
+			metric_id?: string;
+			error?: string;
+		}> = [];
 		const metrics: MonitoringMetric[] = [];
 
 		for (const metricData of input.bulk_metrics) {
 			try {
-				if (!(metricData.service && metricData.metric_name) || metricData.metric_value === undefined) {
+				if (
+					!(metricData.service && metricData.metric_name) ||
+					metricData.metric_value === undefined
+				) {
 					results.push({
 						success: false,
 						error: "service, metric_name, and metric_value are required",
@@ -330,11 +360,18 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	}
 
 	private async getMetrics(input: MonitoringInput): Promise<MonitoringOutput> {
-		let query = this.supabase.from("ai_monitoring_metrics").select("*").order("timestamp", { ascending: false });
+		let query = this.supabase
+			.from("ai_monitoring_metrics")
+			.select("*")
+			.order("timestamp", {
+				ascending: false,
+			});
 
 		// Apply time range filter
 		if (input.time_range) {
-			query = query.gte("timestamp", input.time_range.start).lte("timestamp", input.time_range.end);
+			query = query
+				.gte("timestamp", input.time_range.start)
+				.lte("timestamp", input.time_range.end);
 		}
 
 		// Apply service filter
@@ -392,7 +429,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async createAlertRule(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async createAlertRule(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!input.alert_rule) {
 			throw new Error("alert_rule is required");
 		}
@@ -407,7 +446,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			threshold_value: input.alert_rule.threshold_value!,
 			severity: input.alert_rule.severity || "medium",
 			enabled: input.alert_rule.enabled !== false,
-			notification_channels: input.alert_rule.notification_channels || ["email"],
+			notification_channels: input.alert_rule.notification_channels || [
+				"email",
+			],
 			cooldown_minutes: input.alert_rule.cooldown_minutes || 15,
 			metadata: {
 				category: "custom",
@@ -418,7 +459,11 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			updated_at: new Date().toISOString(),
 		};
 
-		const { data, error } = await this.supabase.from("ai_alert_rules").insert(alertRule).select().single();
+		const { data, error } = await this.supabase
+			.from("ai_alert_rules")
+			.insert(alertRule)
+			.select()
+			.single();
 
 		if (error) {
 			throw new Error(`Failed to create alert rule: ${error.message}`);
@@ -444,7 +489,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async updateAlertRule(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async updateAlertRule(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!(input.rule_id && input.alert_rule)) {
 			throw new Error("rule_id and alert_rule are required");
 		}
@@ -474,12 +521,17 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async deleteAlertRule(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async deleteAlertRule(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!input.rule_id) {
 			throw new Error("rule_id is required");
 		}
 
-		const { error } = await this.supabase.from("ai_alert_rules").delete().eq("id", input.rule_id);
+		const { error } = await this.supabase
+			.from("ai_alert_rules")
+			.delete()
+			.eq("id", input.rule_id);
 
 		if (error) {
 			throw new Error(`Failed to delete alert rule: ${error.message}`);
@@ -493,8 +545,15 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async listAlertRules(input: MonitoringInput): Promise<MonitoringOutput> {
-		let query = this.supabase.from("ai_alert_rules").select("*").order("created_at", { ascending: false });
+	private async listAlertRules(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
+		let query = this.supabase
+			.from("ai_alert_rules")
+			.select("*")
+			.order("created_at", {
+				ascending: false,
+			});
 
 		if (input.filters?.services && input.filters.services.length > 0) {
 			query = query.in("service", input.filters.services);
@@ -513,11 +572,18 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	}
 
 	private async getAlerts(input: MonitoringInput): Promise<MonitoringOutput> {
-		let query = this.supabase.from("ai_alerts").select("*").order("triggered_at", { ascending: false });
+		let query = this.supabase
+			.from("ai_alerts")
+			.select("*")
+			.order("triggered_at", {
+				ascending: false,
+			});
 
 		// Apply time range filter
 		if (input.time_range) {
-			query = query.gte("triggered_at", input.time_range.start).lte("triggered_at", input.time_range.end);
+			query = query
+				.gte("triggered_at", input.time_range.start)
+				.lte("triggered_at", input.time_range.end);
 		}
 
 		// Apply service filter
@@ -537,7 +603,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async acknowledgeAlert(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async acknowledgeAlert(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!input.alert_id) {
 			throw new Error("alert_id is required");
 		}
@@ -563,7 +631,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async resolveAlert(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async resolveAlert(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!input.alert_id) {
 			throw new Error("alert_id is required");
 		}
@@ -591,7 +661,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private async getServiceHealth(input: MonitoringInput): Promise<MonitoringOutput> {
+	private async getServiceHealth(
+		input: MonitoringInput,
+	): Promise<MonitoringOutput> {
 		if (!input.service) {
 			throw new Error("service is required");
 		}
@@ -609,7 +681,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			.order("timestamp", { ascending: false });
 
 		if (metricsError) {
-			throw new Error(`Failed to retrieve service metrics: ${metricsError.message}`);
+			throw new Error(
+				`Failed to retrieve service metrics: ${metricsError.message}`,
+			);
 		}
 
 		// Get active alerts for the service
@@ -621,21 +695,40 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			.order("triggered_at", { ascending: false });
 
 		if (alertsError) {
-			throw new Error(`Failed to retrieve service alerts: ${alertsError.message}`);
+			throw new Error(
+				`Failed to retrieve service alerts: ${alertsError.message}`,
+			);
 		}
 
 		// Calculate health metrics
-		const responseTimeMetrics = (metrics || []).filter((m) => m.metric_name === "response_time_ms");
-		const errorRateMetrics = (metrics || []).filter((m) => m.metric_name === "error_rate_percent");
-		const throughputMetrics = (metrics || []).filter((m) => m.metric_name === "throughput_rps");
+		const responseTimeMetrics = (metrics || []).filter(
+			(m) => m.metric_name === "response_time_ms",
+		);
+		const errorRateMetrics = (metrics || []).filter(
+			(m) => m.metric_name === "error_rate_percent",
+		);
+		const throughputMetrics = (metrics || []).filter(
+			(m) => m.metric_name === "throughput_rps",
+		);
 
-		const responseTimeStats = this.calculateMetricStatistics(responseTimeMetrics.map((m) => m.metric_value));
-		const errorRateStats = this.calculateMetricStatistics(errorRateMetrics.map((m) => m.metric_value));
-		const throughputStats = this.calculateMetricStatistics(throughputMetrics.map((m) => m.metric_value));
+		const responseTimeStats = this.calculateMetricStatistics(
+			responseTimeMetrics.map((m) => m.metric_value),
+		);
+		const errorRateStats = this.calculateMetricStatistics(
+			errorRateMetrics.map((m) => m.metric_value),
+		);
+		const throughputStats = this.calculateMetricStatistics(
+			throughputMetrics.map((m) => m.metric_value),
+		);
 
 		// Determine overall health
-		let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" = "unknown";
-		if (responseTimeStats.avg_value > 0 || errorRateStats.avg_value >= 0 || throughputStats.avg_value > 0) {
+		let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" =
+			"unknown";
+		if (
+			responseTimeStats.avg_value > 0 ||
+			errorRateStats.avg_value >= 0 ||
+			throughputStats.avg_value > 0
+		) {
 			if ((alerts?.length || 0) === 0 && errorRateStats.avg_value < 5) {
 				overallHealth = "healthy";
 			} else if (errorRateStats.avg_value < 15 && (alerts?.length || 0) < 5) {
@@ -708,7 +801,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		};
 	}
 
-	private calculateTrend(values: number[]): "increasing" | "decreasing" | "stable" {
+	private calculateTrend(
+		values: number[],
+	): "increasing" | "decreasing" | "stable" {
 		if (values.length < 2) {
 			return "stable";
 		}
@@ -739,7 +834,9 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		this.metricBuffer = [];
 
 		try {
-			const { error } = await this.supabase.from("ai_monitoring_metrics").insert(metricsToFlush);
+			const { error } = await this.supabase
+				.from("ai_monitoring_metrics")
+				.insert(metricsToFlush);
 
 			if (error) {
 				// Put metrics back in buffer for retry
@@ -751,7 +848,10 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	}
 
 	private async loadAlertRules(): Promise<void> {
-		const { data, error } = await this.supabase.from("ai_alert_rules").select("*").eq("enabled", true);
+		const { data, error } = await this.supabase
+			.from("ai_alert_rules")
+			.select("*")
+			.eq("enabled", true);
 
 		if (error) {
 			return;
@@ -763,10 +863,14 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		}
 	}
 
-	private async evaluateAlertsForMetric(metric: MonitoringMetric): Promise<void> {
+	private async evaluateAlertsForMetric(
+		metric: MonitoringMetric,
+	): Promise<void> {
 		const relevantRules = Array.from(this.alertRules.values()).filter(
 			(rule) =>
-				rule.enabled && rule.metric_name === metric.metric_name && (!rule.service || rule.service === metric.service)
+				rule.enabled &&
+				rule.metric_name === metric.metric_name &&
+				(!rule.service || rule.service === metric.service),
 		);
 
 		for (const rule of relevantRules) {
@@ -778,7 +882,10 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		}
 	}
 
-	private evaluateAlertCondition(metric: MonitoringMetric, rule: AlertRule): boolean {
+	private evaluateAlertCondition(
+		metric: MonitoringMetric,
+		rule: AlertRule,
+	): boolean {
 		const { operator, threshold_value } = rule;
 		const value = metric.metric_value;
 
@@ -805,13 +912,17 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 			(alert) =>
 				alert.rule_id === rule.id &&
 				alert.status === "active" &&
-				Date.now() - new Date(alert.triggered_at).getTime() < rule.cooldown_minutes * 60 * 1000
+				Date.now() - new Date(alert.triggered_at).getTime() <
+					rule.cooldown_minutes * 60 * 1000,
 		);
 
 		return !!existingAlert;
 	}
 
-	private async triggerAlert(metric: MonitoringMetric, rule: AlertRule): Promise<void> {
+	private async triggerAlert(
+		metric: MonitoringMetric,
+		rule: AlertRule,
+	): Promise<void> {
 		const alert: Alert = {
 			id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
 			rule_id: rule.id,
@@ -844,12 +955,19 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		await this.sendAlertNotification(alert, rule);
 	}
 
-	private async sendAlertNotification(_alert: Alert, _rule: AlertRule): Promise<void> {
+	private async sendAlertNotification(
+		_alert: Alert,
+		_rule: AlertRule,
+	): Promise<void> {
 		// In a real implementation, this would send emails, Slack messages, etc.
 		// based on rule.notification_channels
 	}
 
-	private recordInternalMetric(metricName: string, value: number, tags: Record<string, string> = {}): void {
+	private recordInternalMetric(
+		metricName: string,
+		value: number,
+		tags: Record<string, string> = {},
+	): void {
 		// Use setTimeout to avoid blocking the main execution
 		setTimeout(() => {
 			this.recordMetric({
@@ -881,7 +999,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 		service: string,
 		operation: string,
 		durationMs: number,
-		tags: Record<string, string> = {}
+		tags: Record<string, string> = {},
 	): Promise<boolean> {
 		const result = await this.execute({
 			action: "record_metric",
@@ -897,7 +1015,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	public async recordErrorRate(
 		service: string,
 		errorRate: number,
-		tags: Record<string, string> = {}
+		tags: Record<string, string> = {},
 	): Promise<boolean> {
 		const result = await this.execute({
 			action: "record_metric",
@@ -913,7 +1031,7 @@ export class MonitoringService extends EnhancedAIService<MonitoringInput, Monito
 	public async recordThroughput(
 		service: string,
 		requestsPerSecond: number,
-		tags: Record<string, string> = {}
+		tags: Record<string, string> = {},
 	): Promise<boolean> {
 		const result = await this.execute({
 			action: "record_metric",

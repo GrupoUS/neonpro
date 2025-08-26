@@ -7,8 +7,15 @@
  * @since 2025-01-25
  */
 
-import { createAnvisaServices, validateAnvisaCompliance } from "../anvisa/index.js";
-import { createCfmServices, validateCfmCompliance, validateCfmResolutions } from "../cfm/index.js";
+import {
+	createAnvisaServices,
+	validateAnvisaCompliance,
+} from "../anvisa/index.js";
+import {
+	createCfmServices,
+	validateCfmCompliance,
+	validateCfmResolutions,
+} from "../cfm/index.js";
 import { RealTimeComplianceMonitor } from "../enterprise/audit/real-time-monitor.js";
 import { LGPDValidator } from "../lgpd/validator.js";
 /**
@@ -65,7 +72,11 @@ export class BrazilianComplianceAutomationService {
 				automatedActions.monitoring_actions.push(...monitoringResults.actions);
 			}
 			// Calculate overall compliance score
-			const overallScore = this.calculateOverallScore(lgpdResults.score, anvisaResults.score, cfmResults.score);
+			const overallScore = this.calculateOverallScore(
+				lgpdResults.score,
+				anvisaResults.score,
+				cfmResults.score,
+			);
 			// Determine overall status
 			const overallStatus = this.determineOverallStatus(overallScore);
 			const automationResponse = {
@@ -116,12 +127,13 @@ export class BrazilianComplianceAutomationService {
 		try {
 			const actions = [];
 			// Validate data processing activities
-			const dataProcessingValidation = await this.lgpdValidator.validateDataProcessing({
-				legal_basis: "legitimate_interest",
-				purpose: ["healthcare_treatment", "patient_management"],
-				data_minimization_applied: true,
-				transparent_processing: true,
-			});
+			const dataProcessingValidation =
+				await this.lgpdValidator.validateDataProcessing({
+					legal_basis: "legitimate_interest",
+					purpose: ["healthcare_treatment", "patient_management"],
+					data_minimization_applied: true,
+					transparent_processing: true,
+				});
 			// Validate consent management
 			const consentValidation = await this.lgpdValidator.validateConsent({
 				specific_purpose: true,
@@ -131,7 +143,9 @@ export class BrazilianComplianceAutomationService {
 			});
 			// Automated remediation actions
 			if (!dataProcessingValidation.valid) {
-				actions.push("Automated LGPD data processing compliance remediation initiated");
+				actions.push(
+					"Automated LGPD data processing compliance remediation initiated",
+				);
 				await this.remediateLgpdDataProcessing(dataProcessingValidation);
 			}
 			if (!consentValidation.valid) {
@@ -139,8 +153,12 @@ export class BrazilianComplianceAutomationService {
 				await this.remediateLgpdConsent(consentValidation);
 			}
 			// Calculate LGPD compliance score
-			const lgpdScore = Math.min(dataProcessingValidation.compliance_score, consentValidation.compliance_score);
-			const overallCompliant = dataProcessingValidation.valid && consentValidation.valid;
+			const lgpdScore = Math.min(
+				dataProcessingValidation.compliance_score,
+				consentValidation.compliance_score,
+			);
+			const overallCompliant =
+				dataProcessingValidation.valid && consentValidation.valid;
 			// Collect all violations and recommendations
 			const allViolations = [
 				...dataProcessingValidation.violations.map((v) => v.description),
@@ -174,15 +192,24 @@ export class BrazilianComplianceAutomationService {
 		try {
 			const actions = [];
 			// Validate ANVISA compliance
-			const anvisaValidation = await validateAnvisaCompliance(this.config.tenant_id, this.anvisaServices);
+			const anvisaValidation = await validateAnvisaCompliance(
+				this.config.tenant_id,
+				this.anvisaServices,
+			);
 			// Automated remediation for expiring products
 			if (anvisaValidation.issues.some((issue) => issue.includes("expiring"))) {
 				actions.push("Automated ANVISA product renewal notifications sent");
 				await this.notifyExpiringAnvisaProducts();
 			}
 			// Automated remediation for missing registrations
-			if (anvisaValidation.issues.some((issue) => issue.includes("No registered products"))) {
-				actions.push("Automated ANVISA product registration workflow initiated");
+			if (
+				anvisaValidation.issues.some((issue) =>
+					issue.includes("No registered products"),
+				)
+			) {
+				actions.push(
+					"Automated ANVISA product registration workflow initiated",
+				);
 				await this.initiateAnvisaProductRegistration();
 			}
 			return {
@@ -209,23 +236,40 @@ export class BrazilianComplianceAutomationService {
 		try {
 			const actions = [];
 			// Validate CFM compliance
-			const cfmValidation = await validateCfmCompliance(this.config.tenant_id, this.cfmServices);
+			const cfmValidation = await validateCfmCompliance(
+				this.config.tenant_id,
+				this.cfmServices,
+			);
 			// Validate CFM resolutions
-			const resolutionValidation = await validateCfmResolutions(this.config.tenant_id, this.cfmServices);
+			const resolutionValidation = await validateCfmResolutions(
+				this.config.tenant_id,
+				this.cfmServices,
+			);
 			// Automated remediation for expiring licenses
 			if (cfmValidation.issues.some((issue) => issue.includes("expiring"))) {
 				actions.push("Automated CFM license renewal notifications sent");
 				await this.notifyExpiringCfmLicenses();
 			}
 			// Automated remediation for missing licenses
-			if (cfmValidation.issues.some((issue) => issue.includes("No CFM professional licenses"))) {
+			if (
+				cfmValidation.issues.some((issue) =>
+					issue.includes("No CFM professional licenses"),
+				)
+			) {
 				actions.push("Automated CFM license registration workflow initiated");
 				await this.initiateCfmLicenseRegistration();
 			}
 			// Combine results
-			const combinedCompliant = cfmValidation.compliant && resolutionValidation.compliant;
-			const combinedIssues = [...cfmValidation.issues, ...resolutionValidation.issues];
-			const combinedRecommendations = [...cfmValidation.recommendations, ...resolutionValidation.recommendations];
+			const combinedCompliant =
+				cfmValidation.compliant && resolutionValidation.compliant;
+			const combinedIssues = [
+				...cfmValidation.issues,
+				...resolutionValidation.issues,
+			];
+			const combinedRecommendations = [
+				...cfmValidation.recommendations,
+				...resolutionValidation.recommendations,
+			];
 			return {
 				compliant: combinedCompliant,
 				score: Math.max(cfmValidation.score, 9.9), // Constitutional minimum
@@ -255,9 +299,15 @@ export class BrazilianComplianceAutomationService {
 			if (this.config.monitoring_config.enabled) {
 				const monitoringParams = {
 					tenant_id: this.config.tenant_id,
-					compliance_areas: ["lgpd", "anvisa", "cfm", "constitutional_healthcare"],
+					compliance_areas: [
+						"lgpd",
+						"anvisa",
+						"cfm",
+						"constitutional_healthcare",
+					],
 					config: {
-						monitoring_interval_minutes: this.config.monitoring_config.interval_minutes,
+						monitoring_interval_minutes:
+							this.config.monitoring_config.interval_minutes,
 						score_thresholds: {
 							...this.config.monitoring_config.alert_thresholds,
 							target: 10.0, // Add required target score
@@ -287,11 +337,16 @@ export class BrazilianComplianceAutomationService {
 						"Constitutional Healthcare Rights",
 					],
 				};
-				const monitoringResult = await this.realTimeMonitor.startMonitoring(monitoringParams, userId);
+				const monitoringResult = await this.realTimeMonitor.startMonitoring(
+					monitoringParams,
+					userId,
+				);
 				if (monitoringResult.success && monitoringResult.data) {
 					actions.push("Real-time compliance monitoring activated");
 					// Get current monitoring status
-					const statusResult = await this.realTimeMonitor.getMonitoringStatus(monitoringResult.data.monitor_id);
+					const statusResult = await this.realTimeMonitor.getMonitoringStatus(
+						monitoringResult.data.monitor_id,
+					);
 					if (statusResult.success && statusResult.data) {
 						return {
 							monitoring_status: statusResult.data,
@@ -360,7 +415,9 @@ export class BrazilianComplianceAutomationService {
 				compliance_area: "lgpd",
 				remediation_type: "data_processing",
 				validation_id: validation.validation_id,
-				remediation_actions: validation.recommendations.map((r) => r.description),
+				remediation_actions: validation.recommendations.map(
+					(r) => r.description,
+				),
 				initiated_at: new Date().toISOString(),
 			});
 		} catch (_error) {}
@@ -373,7 +430,9 @@ export class BrazilianComplianceAutomationService {
 				compliance_area: "lgpd",
 				remediation_type: "consent_management",
 				validation_id: validation.validation_id,
-				remediation_actions: validation.recommendations.map((r) => r.description),
+				remediation_actions: validation.recommendations.map(
+					(r) => r.description,
+				),
 				initiated_at: new Date().toISOString(),
 			});
 		} catch (_error) {}
@@ -384,7 +443,8 @@ export class BrazilianComplianceAutomationService {
 			await this.supabase.from("compliance_notifications").insert({
 				tenant_id: this.config.tenant_id,
 				notification_type: "anvisa_expiring_products",
-				message: "ANVISA product registrations expiring soon - renewal required",
+				message:
+					"ANVISA product registrations expiring soon - renewal required",
 				priority: "high",
 				sent_at: new Date().toISOString(),
 			});
@@ -431,7 +491,10 @@ export class BrazilianComplianceAutomationService {
 			anvisa: 0.3, // 30% - Regulatory compliance is critical
 			cfm: 0.35, // 35% - Professional standards are essential
 		};
-		const weightedScore = lgpdScore * weights.lgpd + anvisaScore * weights.anvisa + cfmScore * weights.cfm;
+		const weightedScore =
+			lgpdScore * weights.lgpd +
+			anvisaScore * weights.anvisa +
+			cfmScore * weights.cfm;
 		// Ensure constitutional minimum
 		return Math.max(weightedScore, 9.9);
 	}
@@ -473,7 +536,10 @@ export class BrazilianComplianceAutomationService {
  * Create Brazilian Compliance Automation Service
  * Factory function for constitutional compliance automation
  */
-export function createBrazilianComplianceAutomationService(supabaseClient, config) {
+export function createBrazilianComplianceAutomationService(
+	supabaseClient,
+	config,
+) {
 	return new BrazilianComplianceAutomationService(supabaseClient, config);
 }
 /**

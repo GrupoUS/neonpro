@@ -1,10 +1,10 @@
 "use client";
 
-import { AlertTriangle, BarChart3, Check, FileText, Info, Settings, Shield, Users, X } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AlertTriangle, BarChart3, Check, FileText, Info, Settings, Shield, Users, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type ConsentOption = {
 	id: string;

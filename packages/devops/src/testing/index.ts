@@ -78,8 +78,8 @@ export {
 	createQualityGatesTest,
 	DEFAULT_HEALTHCARE_CONFIG,
 	HealthcareTestFramework,
-	type HealthcareTestFrameworkConfig,
 	healthcareTestFramework,
+	type HealthcareTestFrameworkConfig,
 	healthcareTestUtils,
 } from "./testing-framework";
 
@@ -130,14 +130,18 @@ export const DEFAULT_HEALTHCARE_TEST_CONFIG: HealthcareTestConfig = {
 };
 
 // Test Suite Factory
-export function createHealthcareTestSuite(config: Partial<HealthcareTestConfig> = {}) {
+export function createHealthcareTestSuite(
+	config: Partial<HealthcareTestConfig> = {},
+) {
 	const finalConfig = { ...DEFAULT_HEALTHCARE_TEST_CONFIG, ...config };
 
 	return {
 		lgpd: finalConfig.enableLGPDTests ? createLGPDTest : null,
 		anvisa: finalConfig.enableANVISATests ? createANVISATest : null,
 		cfm: finalConfig.enableCFMTests ? createCFMTest : null,
-		qualityGates: finalConfig.enablePerformanceTests ? createQualityGatesTest : null,
+		qualityGates: finalConfig.enablePerformanceTests
+			? createQualityGatesTest
+			: null,
 		e2e: finalConfig.enableE2ETests ? createHealthcareE2ETest : null,
 		framework: healthcareTestFramework,
 		config: finalConfig,
@@ -207,7 +211,9 @@ export class HealthcareTestRunner {
 				compliance: this.generateComplianceReport(results),
 			};
 		} catch (error) {
-			throw new Error(`Healthcare test suite failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Healthcare test suite failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	}
 
@@ -246,7 +252,9 @@ export class HealthcareTestRunner {
 		return scores.reduce((sum, score) => sum + score, 0) / scores.length;
 	}
 
-	private generateComplianceReport(results: Map<string, TestResult>): ComplianceReport {
+	private generateComplianceReport(
+		results: Map<string, TestResult>,
+	): ComplianceReport {
 		return {
 			lgpd: results.get("lgpd")?.passed,
 			anvisa: results.get("anvisa")?.passed,

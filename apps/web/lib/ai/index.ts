@@ -11,8 +11,8 @@
 export {
 	type DriftAlert,
 	DriftDetectionSystem,
-	type DriftMetrics,
 	driftDetector,
+	type DriftMetrics,
 } from "./drift-detection";
 // Model Management System
 export {
@@ -20,15 +20,15 @@ export {
 	type DriftDetectionConfig,
 	type ModelConfig,
 	ModelManagementSystem,
-	type ModelPerformanceMetrics,
 	modelManager,
+	type ModelPerformanceMetrics,
 } from "./model-management";
 // Engine Anti-No-Show - Highest ROI Component
 export {
 	type AppointmentFeatures,
 	NoShowEngine,
-	type NoShowPrediction,
 	noShowEngine,
+	type NoShowPrediction,
 	type PatientProfile,
 } from "./no-show-engine";
 

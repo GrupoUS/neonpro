@@ -5,7 +5,7 @@
  */
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
-import { HealthcareCacheManager, healthcareCache } from "./index";
+import { healthcareCache, HealthcareCacheManager } from "./index";
 
 /**
  * Enhanced cache service with enterprise features
@@ -41,7 +41,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 			encrypt?: boolean;
 			auditLog?: boolean;
 			analytics?: boolean;
-		} = {}
+		} = {},
 	): Promise<void> {
 		const startTime = this.startTiming("cache_set_enhanced");
 
@@ -95,7 +95,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 			useMultiLayer?: boolean;
 			analytics?: boolean;
 			auditLog?: boolean;
-		} = {}
+		} = {},
 	): Promise<T | null> {
 		const startTime = this.startTiming("cache_get_enhanced");
 
@@ -149,7 +149,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 		options: {
 			auditUserId?: string;
 			purpose?: string;
-		} = {}
+		} = {},
 	): Promise<void> {
 		const startTime = this.startTiming("cache_set_sensitive");
 
@@ -201,7 +201,7 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 		options: {
 			purpose?: string;
 			emergencyAccess?: boolean;
-		} = {}
+		} = {},
 	): Promise<T | null> {
 		const startTime = this.startTiming("cache_get_sensitive");
 
@@ -269,9 +269,18 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 				health: healthStatus,
 				timestamp: new Date().toISOString(),
 				performance: {
-					avgSetTime: await this.analytics.getMetric("cache_set_enhanced", "avg_duration"),
-					avgGetTime: await this.analytics.getMetric("cache_get_enhanced", "avg_duration"),
-					hitRate: await this.analytics.getMetric("cache_get_enhanced", "hit_rate"),
+					avgSetTime: await this.analytics.getMetric(
+						"cache_set_enhanced",
+						"avg_duration",
+					),
+					avgGetTime: await this.analytics.getMetric(
+						"cache_get_enhanced",
+						"avg_duration",
+					),
+					hitRate: await this.analytics.getMetric(
+						"cache_get_enhanced",
+						"hit_rate",
+					),
 				},
 			};
 		} catch (_error) {
@@ -285,7 +294,10 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 	/**
 	 * LGPD compliance: Clear patient data
 	 */
-	async clearPatientDataLGPD(patientId: string, auditUserId: string): Promise<void> {
+	async clearPatientDataLGPD(
+		patientId: string,
+		auditUserId: string,
+	): Promise<void> {
 		try {
 			// Use original healthcare cache method
 			this.healthcareCache.invalidatePatientData(patientId);
@@ -322,7 +334,10 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 	/**
 	 * ANVISA compliance: Audit clearance
 	 */
-	async anvisaAuditClearance(auditId: string, auditUserId: string): Promise<void> {
+	async anvisaAuditClearance(
+		auditId: string,
+		auditUserId: string,
+	): Promise<void> {
 		try {
 			// Use original healthcare cache method
 			this.healthcareCache.auditClearance();
@@ -374,7 +389,12 @@ export class CacheServiceFactory extends EnhancedServiceBase {
 		return this.healthcareCache.get<T>(key);
 	}
 
-	setSensitive<T>(key: string, value: T, patientConsent = false, ttl = 300_000): void {
+	setSensitive<T>(
+		key: string,
+		value: T,
+		patientConsent = false,
+		ttl = 300_000,
+	): void {
 		this.healthcareCache.setSensitive(key, value, patientConsent, ttl);
 	}
 

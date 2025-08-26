@@ -155,7 +155,11 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Track custom event
 	 */
-	async track(eventName: string, properties: Record<string, any>, userId?: string): Promise<void> {
+	async track(
+		eventName: string,
+		properties: Record<string, any>,
+		userId?: string,
+	): Promise<void> {
 		const event: AnalyticsEvent = {
 			id: this.generateEventId(),
 			type: "custom",
@@ -190,7 +194,11 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Record performance metrics
 	 */
-	async recordPerformance(operation: string, duration: number, success = true): Promise<void> {
+	async recordPerformance(
+		operation: string,
+		duration: number,
+		success = true,
+	): Promise<void> {
 		this.metrics.totalRequests++;
 
 		if (!this.metrics.serviceMetrics[operation]) {
@@ -206,7 +214,8 @@ export class EnterpriseAnalyticsService {
 
 		// Update average duration
 		serviceMetric.avgDuration =
-			(serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration) / serviceMetric.calls;
+			(serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration) /
+			serviceMetric.calls;
 
 		if (!success) {
 			serviceMetric.errorCount++;
@@ -215,7 +224,9 @@ export class EnterpriseAnalyticsService {
 
 		// Update overall average
 		this.metrics.avgResponseTime =
-			(this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) + duration) / this.metrics.totalRequests;
+			(this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) +
+				duration) /
+			this.metrics.totalRequests;
 
 		// Track performance event
 		await this.track("performance.operation", {
@@ -251,7 +262,11 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Record healthcare-specific metrics
 	 */
-	async recordHealthcareEvent(category: string, action: string, value = 1): Promise<void> {
+	async recordHealthcareEvent(
+		category: string,
+		action: string,
+		value = 1,
+	): Promise<void> {
 		switch (category) {
 			case "appointment":
 				if (action === "scheduled") {
@@ -276,7 +291,8 @@ export class EnterpriseAnalyticsService {
 					this.healthcareMetrics.patients.returning += value;
 				}
 				this.healthcareMetrics.patients.total =
-					this.healthcareMetrics.patients.new + this.healthcareMetrics.patients.returning;
+					this.healthcareMetrics.patients.new +
+					this.healthcareMetrics.patients.returning;
 				break;
 
 			case "treatment":
@@ -310,7 +326,11 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Update cache metrics
 	 */
-	async updateCacheMetrics(hits: number, misses: number, evictions = 0): Promise<void> {
+	async updateCacheMetrics(
+		hits: number,
+		misses: number,
+		evictions = 0,
+	): Promise<void> {
 		this.metrics.cacheHits += hits;
 		this.metrics.cacheMisses += misses;
 		this.metrics.cacheMetrics.evictions += evictions;
@@ -325,7 +345,11 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Update system metrics
 	 */
-	async updateSystemMetrics(memory: number, cpu: number, disk: number): Promise<void> {
+	async updateSystemMetrics(
+		memory: number,
+		cpu: number,
+		disk: number,
+	): Promise<void> {
 		this.metrics.systemMetrics.memoryUsage = memory;
 		this.metrics.systemMetrics.cpuUsage = cpu;
 		this.metrics.systemMetrics.diskUsage = disk;
@@ -374,7 +398,8 @@ export class EnterpriseAnalyticsService {
 				severity: "warning",
 				message: "Average response time is above 1 second",
 				value: this.metrics.avgResponseTime,
-				recommendation: "Consider optimizing slow operations or scaling resources",
+				recommendation:
+					"Consider optimizing slow operations or scaling resources",
 			});
 		}
 
@@ -392,7 +417,8 @@ export class EnterpriseAnalyticsService {
 		// Healthcare insights
 		const noShowRate =
 			this.healthcareMetrics.appointments.scheduled > 0
-				? this.healthcareMetrics.appointments.noShows / this.healthcareMetrics.appointments.scheduled
+				? this.healthcareMetrics.appointments.noShows /
+					this.healthcareMetrics.appointments.scheduled
 				: 0;
 
 		if (noShowRate > 0.15) {
@@ -401,7 +427,8 @@ export class EnterpriseAnalyticsService {
 				severity: "warning",
 				message: "No-show rate is above 15%",
 				value: noShowRate,
-				recommendation: "Implement reminder systems or appointment confirmation",
+				recommendation:
+					"Implement reminder systems or appointment confirmation",
 			});
 		}
 
@@ -438,7 +465,10 @@ export class EnterpriseAnalyticsService {
 	 */
 	private async processEvent(event: AnalyticsEvent): Promise<void> {
 		// Real-time processing
-		if (event.category === "error" && event.properties.severity === "critical") {
+		if (
+			event.category === "error" &&
+			event.properties.severity === "critical"
+		) {
 			await this.sendAlert(event);
 		}
 
@@ -519,7 +549,10 @@ export class EnterpriseAnalyticsService {
 		if (this.metrics.totalRequests === 0) {
 			return 0;
 		}
-		const totalErrors = Object.values(this.metrics.serviceMetrics).reduce((sum, metric) => sum + metric.errorCount, 0);
+		const totalErrors = Object.values(this.metrics.serviceMetrics).reduce(
+			(sum, metric) => sum + metric.errorCount,
+			0,
+		);
 		return totalErrors / this.metrics.totalRequests;
 	}
 
@@ -557,23 +590,27 @@ export class EnterpriseAnalyticsService {
 		}
 	}
 
-	private groupEventsByCategory(events: AnalyticsEvent[]): Record<string, number> {
+	private groupEventsByCategory(
+		events: AnalyticsEvent[],
+	): Record<string, number> {
 		return events.reduce(
 			(acc, event) => {
 				acc[event.category] = (acc[event.category] || 0) + 1;
 				return acc;
 			},
-			{} as Record<string, number>
+			{} as Record<string, number>,
 		);
 	}
 
-	private groupEventsByAction(events: AnalyticsEvent[]): Record<string, number> {
+	private groupEventsByAction(
+		events: AnalyticsEvent[],
+	): Record<string, number> {
 		return events.reduce(
 			(acc, event) => {
 				acc[event.action] = (acc[event.action] || 0) + 1;
 				return acc;
 			},
-			{} as Record<string, number>
+			{} as Record<string, number>,
 		);
 	}
 
@@ -595,7 +632,11 @@ export class EnterpriseAnalyticsService {
 	/**
 	 * Record a metric for monitoring
 	 */
-	async recordMetric(_metric: { name: string; value: number; tags?: Record<string, string> }): Promise<void> {}
+	async recordMetric(_metric: {
+		name: string;
+		value: number;
+		tags?: Record<string, string>;
+	}): Promise<void> {}
 
 	/**
 	 * Get health metrics for monitoring

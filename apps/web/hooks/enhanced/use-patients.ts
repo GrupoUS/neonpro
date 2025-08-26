@@ -7,7 +7,7 @@
  */
 
 // Import our enhanced API client
-import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers, type ApiResponse } from "@neonpro/shared/api-client";
 // Import validation schemas and types
 import {
 	type Address,
@@ -25,8 +25,8 @@ import {
 	PatientQuerySchema,
 	type PatientResponse,
 	PatientResponseSchema,
-	PatientStatsSchema,
 	PatientsListResponseSchema,
+	PatientStatsSchema,
 	type UpdatePatient,
 	UpdatePatientSchema,
 } from "@neonpro/shared/schemas";

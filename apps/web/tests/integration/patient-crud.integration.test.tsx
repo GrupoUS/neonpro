@@ -307,7 +307,14 @@ describe("Patient CRUD Integration Tests", () => {
 		});
 
 		it("should search patients with filters and pagination", async () => {
-			const searchResults = [createdPatient, { ...createdPatient, id: "patient-124", name: "Maria Silva Santos" }];
+			const searchResults = [
+				createdPatient,
+				{
+					...createdPatient,
+					id: "patient-124",
+					name: "Maria Silva Santos",
+				},
+			];
 
 			mockSupabaseClient.from.mockReturnValue({
 				select: vi.fn(() => ({

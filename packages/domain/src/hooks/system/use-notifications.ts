@@ -56,8 +56,12 @@ type UseNotificationsReturn = {
 	markAsRead: (notificationId: string) => Promise<void>;
 	markAllAsRead: () => Promise<void>;
 	deleteNotification: (notificationId: string) => Promise<void>;
-	updatePreferences: (preferences: Partial<NotificationPreferences>) => Promise<void>;
-	sendNotification: (notification: Omit<Notification, "id" | "created_at">) => Promise<void>;
+	updatePreferences: (
+		preferences: Partial<NotificationPreferences>,
+	) => Promise<void>;
+	sendNotification: (
+		notification: Omit<Notification, "id" | "created_at">,
+	) => Promise<void>;
 	refreshNotifications: () => Promise<void>;
 };
 
@@ -69,12 +73,18 @@ export function useNotifications({
 	realtime = true,
 }: UseNotificationsOptions): UseNotificationsReturn {
 	const [notifications, setNotifications] = useState<Notification[]>([]);
-	const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
+	const [preferences, setPreferences] =
+		useState<NotificationPreferences | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [subscription, setSubscription] = useState<RealtimeChannel | null>(null);
+	const [subscription, setSubscription] = useState<RealtimeChannel | null>(
+		null,
+	);
 
-	const supabase = createClient("https://placeholder.supabase.co", "placeholder-key");
+	const supabase = createClient(
+		"https://placeholder.supabase.co",
+		"placeholder-key",
+	);
 
 	// Load initial data
 	const loadNotifications = useCallback(async () => {
@@ -96,9 +106,12 @@ export function useNotifications({
 			}
 
 			// Filter out expired notifications
-			query = query.or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`);
+			query = query.or(
+				`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`,
+			);
 
-			const { data: notificationsData, error: notificationsError } = await query;
+			const { data: notificationsData, error: notificationsError } =
+				await query;
 
 			if (notificationsError) {
 				throw notificationsError;
@@ -148,15 +161,21 @@ export function useNotifications({
 				.eq("user_id", userId);
 
 			if (error) {
-				throw new Error(`Failed to mark notification as read: ${error.message}`);
+				throw new Error(
+					`Failed to mark notification as read: ${error.message}`,
+				);
 			}
 
 			// Update local state
 			setNotifications((prev) =>
-				prev.map((notif) => (notif.id === notificationId ? { ...notif, read_at: new Date().toISOString() } : notif))
+				prev.map((notif) =>
+					notif.id === notificationId
+						? { ...notif, read_at: new Date().toISOString() }
+						: notif,
+				),
 			);
 		},
-		[userId, supabase]
+		[userId, supabase],
 	);
 
 	// Setup real-time subscription
@@ -178,7 +197,10 @@ export function useNotifications({
 				(payload) => {
 					if (payload.eventType === "INSERT") {
 						const newNotification = payload.new as Notification;
-						setNotifications((prev) => [newNotification, ...prev.slice(0, limit - 1)]);
+						setNotifications((prev) => [
+							newNotification,
+							...prev.slice(0, limit - 1),
+						]);
 
 						// Auto-mark as read if enabled
 						if (autoMarkAsRead) {
@@ -191,22 +213,38 @@ export function useNotifications({
 					} else if (payload.eventType === "UPDATE") {
 						const updatedNotification = payload.new as Notification;
 						setNotifications((prev) =>
-							prev.map((notif) => (notif.id === updatedNotification.id ? updatedNotification : notif))
+							prev.map((notif) =>
+								notif.id === updatedNotification.id
+									? updatedNotification
+									: notif,
+							),
 						);
 					} else if (payload.eventType === "DELETE") {
 						const deletedId = payload.old.id;
-						setNotifications((prev) => prev.filter((notif) => notif.id !== deletedId));
+						setNotifications((prev) =>
+							prev.filter((notif) => notif.id !== deletedId),
+						);
 					}
-				}
+				},
 			)
 			.subscribe();
 
 		setSubscription(channel);
-	}, [userId, realtime, subscription, supabase, autoMarkAsRead, limit, markAsRead]);
+	}, [
+		userId,
+		realtime,
+		subscription,
+		supabase,
+		autoMarkAsRead,
+		limit,
+		markAsRead,
+	]);
 
 	// Mark all notifications as read
 	const markAllAsRead = useCallback(async () => {
-		const unreadIds = notifications.filter((notif) => !notif.read_at).map((notif) => notif.id);
+		const unreadIds = notifications
+			.filter((notif) => !notif.read_at)
+			.map((notif) => notif.id);
 
 		if (unreadIds.length === 0) {
 			return;
@@ -225,23 +263,31 @@ export function useNotifications({
 		// Update local state
 		const now = new Date().toISOString();
 		setNotifications((prev) =>
-			prev.map((notif) => (unreadIds.includes(notif.id) ? { ...notif, read_at: now } : notif))
+			prev.map((notif) =>
+				unreadIds.includes(notif.id) ? { ...notif, read_at: now } : notif,
+			),
 		);
 	}, [notifications, userId, supabase]);
 
 	// Delete notification
 	const deleteNotification = useCallback(
 		async (notificationId: string) => {
-			const { error } = await supabase.from("notifications").delete().eq("id", notificationId).eq("user_id", userId);
+			const { error } = await supabase
+				.from("notifications")
+				.delete()
+				.eq("id", notificationId)
+				.eq("user_id", userId);
 
 			if (error) {
 				throw new Error(`Failed to delete notification: ${error.message}`);
 			}
 
 			// Update local state
-			setNotifications((prev) => prev.filter((notif) => notif.id !== notificationId));
+			setNotifications((prev) =>
+				prev.filter((notif) => notif.id !== notificationId),
+			);
 		},
-		[userId, supabase]
+		[userId, supabase],
 	);
 
 	// Update notification preferences
@@ -254,7 +300,7 @@ export function useNotifications({
 					...newPreferences,
 					updated_at: new Date().toISOString(),
 				},
-				{ onConflict: "user_id" }
+				{ onConflict: "user_id" },
 			);
 
 			if (error) {
@@ -266,10 +312,10 @@ export function useNotifications({
 					({
 						...(prev || { user_id: userId }),
 						...newPreferences,
-					}) as NotificationPreferences
+					}) as NotificationPreferences,
 			);
 		},
-		[userId, supabase, preferences]
+		[userId, supabase, preferences],
 	);
 
 	// Send notification
@@ -284,7 +330,7 @@ export function useNotifications({
 				throw new Error(`Failed to send notification: ${error.message}`);
 			}
 		},
-		[supabase]
+		[supabase],
 	);
 
 	// Refresh notifications

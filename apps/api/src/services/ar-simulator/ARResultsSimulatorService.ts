@@ -76,7 +76,12 @@ export type PatientPreferences = {
 };
 
 export type TreatmentParameters = {
-	treatmentType: "botox" | "filler" | "facial_harmonization" | "thread_lift" | "peeling";
+	treatmentType:
+		| "botox"
+		| "filler"
+		| "facial_harmonization"
+		| "thread_lift"
+		| "peeling";
 	areas: TreatmentArea[];
 	technique: string;
 	expectedUnits?: number;
@@ -270,10 +275,13 @@ export class ARResultsSimulatorService {
 	async createSimulation(request: SimulationRequest): Promise<ARSimulation> {
 		try {
 			// Validate input photos
-			const validatedPhotos = await this.validateAndProcessPhotos(request.photos);
+			const validatedPhotos = await this.validateAndProcessPhotos(
+				request.photos,
+			);
 
 			// Extract facial measurements from photos
-			const measurements = await this.extractFacialMeasurements(validatedPhotos);
+			const measurements =
+				await this.extractFacialMeasurements(validatedPhotos);
 
 			// Create simulation record
 			const simulation: ARSimulation = {
@@ -326,37 +334,42 @@ export class ARResultsSimulatorService {
 			const startTime = Date.now();
 
 			// 1. Create 3D models
-			const beforeModel = await this.create3DModel(simulation.inputData.photos, simulation.inputData.measurements);
+			const beforeModel = await this.create3DModel(
+				simulation.inputData.photos,
+				simulation.inputData.measurements,
+			);
 
 			// 2. Apply treatment simulation
 			const afterModel = await this.applyTreatmentSimulation(
 				beforeModel,
 				simulation.inputData.treatmentParameters,
-				simulation.inputData.preferences
+				simulation.inputData.preferences,
 			);
 
 			// 3. Generate animation frames
 			const animationFrames = await this.generateTransitionAnimation(
 				beforeModel,
 				afterModel,
-				simulation.inputData.treatmentParameters
+				simulation.inputData.treatmentParameters,
 			);
 
 			// 4. Calculate outcome metrics
 			const estimatedOutcome = await this.calculateOutcomeMetrics(
 				beforeModel,
 				afterModel,
-				simulation.inputData.treatmentParameters
+				simulation.inputData.treatmentParameters,
 			);
 
 			// 5. Generate recovery timeline
-			const recoveryTimeline = await this.generateRecoveryTimeline(simulation.inputData.treatmentParameters);
+			const recoveryTimeline = await this.generateRecoveryTimeline(
+				simulation.inputData.treatmentParameters,
+			);
 
 			// 6. Calculate confidence score
 			const confidenceScore = await this.calculateConfidenceScore(
 				simulation.inputData.photos,
 				simulation.inputData.measurements,
-				simulation.inputData.treatmentParameters
+				simulation.inputData.treatmentParameters,
 			);
 
 			const processingTime = Date.now() - startTime;
@@ -368,7 +381,9 @@ export class ARResultsSimulatorService {
 				animationFrames,
 				confidenceScore,
 				estimatedOutcome,
-				timeToResults: this.calculateTimeToResults(simulation.inputData.treatmentParameters),
+				timeToResults: this.calculateTimeToResults(
+					simulation.inputData.treatmentParameters,
+				),
 				recoveryTimeline,
 			};
 
@@ -393,7 +408,11 @@ export class ARResultsSimulatorService {
 	 */
 	async getSimulation(simulationId: string): Promise<ARSimulation | null> {
 		try {
-			const { data, error } = await supabase.from("ar_simulations").select("*").eq("id", simulationId).single();
+			const { data, error } = await supabase
+				.from("ar_simulations")
+				.select("*")
+				.eq("id", simulationId)
+				.single();
 
 			if (error) {
 				throw error;
@@ -434,18 +453,28 @@ export class ARResultsSimulatorService {
 	 */
 	async compareSimulations(
 		simulationIds: string[],
-		comparisonType: SimulationComparison["comparisonType"]
+		comparisonType: SimulationComparison["comparisonType"],
 	): Promise<SimulationComparison> {
-		const simulations = await Promise.all(simulationIds.map((id) => this.getSimulation(id)));
+		const simulations = await Promise.all(
+			simulationIds.map((id) => this.getSimulation(id)),
+		);
 
-		const validSimulations = simulations.filter((s) => s !== null) as ARSimulation[];
+		const validSimulations = simulations.filter(
+			(s) => s !== null,
+		) as ARSimulation[];
 
 		if (validSimulations.length < 2) {
 			throw new Error("At least 2 valid simulations required for comparison");
 		}
 
-		const metrics = await this.calculateComparisonMetrics(validSimulations, comparisonType);
-		const recommendation = await this.generateRecommendation(validSimulations, metrics);
+		const metrics = await this.calculateComparisonMetrics(
+			validSimulations,
+			comparisonType,
+		);
+		const recommendation = await this.generateRecommendation(
+			validSimulations,
+			metrics,
+		);
 
 		const comparison: SimulationComparison = {
 			simulationIds,
@@ -461,7 +490,9 @@ export class ARResultsSimulatorService {
 	// 3D MODELING METHODS
 	// =============================================================================
 
-	private async validateAndProcessPhotos(photos: File[]): Promise<PhotoInput[]> {
+	private async validateAndProcessPhotos(
+		photos: File[],
+	): Promise<PhotoInput[]> {
 		const processedPhotos: PhotoInput[] = [];
 
 		for (let i = 0; i < photos.length; i++) {
@@ -488,7 +519,9 @@ export class ARResultsSimulatorService {
 		return processedPhotos;
 	}
 
-	private async extractFacialMeasurements(photos: PhotoInput[]): Promise<FacialMeasurements> {
+	private async extractFacialMeasurements(
+		photos: PhotoInput[],
+	): Promise<FacialMeasurements> {
 		// Use the front-facing photo for primary measurements
 		const frontPhoto = photos.find((p) => p.type === "front");
 		if (!frontPhoto) {
@@ -515,7 +548,10 @@ export class ARResultsSimulatorService {
 		return measurements;
 	}
 
-	private async create3DModel(_photos: PhotoInput[], _measurements: FacialMeasurements): Promise<Model3D> {
+	private async create3DModel(
+		_photos: PhotoInput[],
+		_measurements: FacialMeasurements,
+	): Promise<Model3D> {
 		// This would integrate with 3D reconstruction library (e.g., Face3D, MediaPipe, etc.)
 		// For now, we'll create a mock model structure
 
@@ -564,7 +600,7 @@ export class ARResultsSimulatorService {
 	private async applyTreatmentSimulation(
 		baseModel: Model3D,
 		treatmentParams: TreatmentParameters,
-		preferences: PatientPreferences
+		preferences: PatientPreferences,
 	): Promise<Model3D> {
 		// Clone the base model
 		const treatedModel: Model3D = {
@@ -583,7 +619,10 @@ export class ARResultsSimulatorService {
 				await this.applyFillerEffects(treatedModel, treatmentParams.areas);
 				break;
 			case "facial_harmonization":
-				await this.applyHarmonizationEffects(treatedModel, treatmentParams.areas);
+				await this.applyHarmonizationEffects(
+					treatedModel,
+					treatmentParams.areas,
+				);
 				break;
 			case "thread_lift":
 				await this.applyThreadLiftEffects(treatedModel, treatmentParams.areas);
@@ -602,7 +641,7 @@ export class ARResultsSimulatorService {
 	private async generateTransitionAnimation(
 		beforeModel: Model3D,
 		afterModel: Model3D,
-		_treatmentParams: TreatmentParameters
+		_treatmentParams: TreatmentParameters,
 	): Promise<AnimationFrame[]> {
 		const frames: AnimationFrame[] = [];
 		const frameCount = 60; // 2 seconds at 30fps
@@ -613,7 +652,11 @@ export class ARResultsSimulatorService {
 			const timestamp = progress * duration;
 
 			// Generate interpolated transformations
-			const transformations = await this.interpolateModels(beforeModel, afterModel, progress);
+			const transformations = await this.interpolateModels(
+				beforeModel,
+				afterModel,
+				progress,
+			);
 
 			frames.push({
 				timestamp,
@@ -638,17 +681,33 @@ export class ARResultsSimulatorService {
 	private async calculateOutcomeMetrics(
 		beforeModel: Model3D,
 		afterModel: Model3D,
-		treatmentParams: TreatmentParameters
+		treatmentParams: TreatmentParameters,
 	): Promise<OutcomeMetrics> {
 		// Calculate various metrics based on model differences
-		const satisfactionPrediction = await this.predictSatisfaction(beforeModel, afterModel, treatmentParams);
+		const satisfactionPrediction = await this.predictSatisfaction(
+			beforeModel,
+			afterModel,
+			treatmentParams,
+		);
 
-		const naturalness = await this.assessNaturalness(afterModel, treatmentParams);
-		const symmetryImprovement = await this.measureSymmetryImprovement(beforeModel, afterModel);
-		const ageReduction = await this.estimateAgeReduction(beforeModel, afterModel);
-		const confidenceBoost = await this.predictConfidenceBoost(satisfactionPrediction);
+		const naturalness = await this.assessNaturalness(
+			afterModel,
+			treatmentParams,
+		);
+		const symmetryImprovement = await this.measureSymmetryImprovement(
+			beforeModel,
+			afterModel,
+		);
+		const ageReduction = await this.estimateAgeReduction(
+			beforeModel,
+			afterModel,
+		);
+		const confidenceBoost = await this.predictConfidenceBoost(
+			satisfactionPrediction,
+		);
 
-		const maintenanceRequired = await this.calculateMaintenanceSchedule(treatmentParams);
+		const maintenanceRequired =
+			await this.calculateMaintenanceSchedule(treatmentParams);
 		const riskFactors = await this.assessRiskFactors(treatmentParams);
 
 		return {
@@ -662,7 +721,9 @@ export class ARResultsSimulatorService {
 		};
 	}
 
-	private async generateRecoveryTimeline(treatmentParams: TreatmentParameters): Promise<RecoveryStage[]> {
+	private async generateRecoveryTimeline(
+		treatmentParams: TreatmentParameters,
+	): Promise<RecoveryStage[]> {
 		const timeline: RecoveryStage[] = [];
 
 		// Treatment-specific recovery patterns
@@ -686,12 +747,13 @@ export class ARResultsSimulatorService {
 	private async calculateConfidenceScore(
 		photos: PhotoInput[],
 		measurements: FacialMeasurements,
-		treatmentParams: TreatmentParameters
+		treatmentParams: TreatmentParameters,
 	): Promise<number> {
 		let confidence = 85; // Base confidence
 
 		// Adjust based on photo quality
-		const avgPhotoQuality = photos.reduce((sum, p) => sum + p.quality, 0) / photos.length;
+		const avgPhotoQuality =
+			photos.reduce((sum, p) => sum + p.quality, 0) / photos.length;
 		confidence *= avgPhotoQuality / 100;
 
 		// Adjust based on facial symmetry (better symmetry = more predictable results)
@@ -741,9 +803,19 @@ export class ARResultsSimulatorService {
 						phase: "immediate",
 						description: "Imediatamente após o procedimento",
 						appearance: "Pequenos pontos vermelhos nos locais de aplicação",
-						restrictions: ["Não deitar por 4 horas", "Evitar exercícios intensos"],
+						restrictions: [
+							"Não deitar por 4 horas",
+							"Evitar exercícios intensos",
+						],
 						care: ["Aplicar gelo se necessário", "Não massagear a área"],
-						changes: [{ area: "pontos de aplicação", description: "vermelhidão leve", severity: 2, duration: 1 }],
+						changes: [
+							{
+								area: "pontos de aplicação",
+								description: "vermelhidão leve",
+								severity: 2,
+								duration: 1,
+							},
+						],
 					},
 					{
 						day: 3,
@@ -752,7 +824,14 @@ export class ARResultsSimulatorService {
 						appearance: "Redução gradual das linhas de expressão",
 						restrictions: ["Evitar saunas e calor excessivo"],
 						care: ["Manter hidratação da pele"],
-						changes: [{ area: "músculos tratados", description: "relaxamento inicial", severity: 3, duration: 7 }],
+						changes: [
+							{
+								area: "músculos tratados",
+								description: "relaxamento inicial",
+								severity: 3,
+								duration: 7,
+							},
+						],
 					},
 					{
 						day: 14,
@@ -762,7 +841,12 @@ export class ARResultsSimulatorService {
 						restrictions: [],
 						care: ["Cuidados normais de skincare"],
 						changes: [
-							{ area: "linhas de expressão", description: "redução significativa", severity: 8, duration: 120 },
+							{
+								area: "linhas de expressão",
+								description: "redução significativa",
+								severity: 8,
+								duration: 120,
+							},
 						],
 					},
 				],
@@ -776,7 +860,14 @@ export class ARResultsSimulatorService {
 						appearance: "Inchaço e vermelhidão nos locais tratados",
 						restrictions: ["Não massagear", "Evitar maquiagem por 24h"],
 						care: ["Aplicar gelo", "Dormir com a cabeça elevada"],
-						changes: [{ area: "área tratada", description: "inchaço moderado", severity: 5, duration: 3 }],
+						changes: [
+							{
+								area: "área tratada",
+								description: "inchaço moderado",
+								severity: 5,
+								duration: 3,
+							},
+						],
 					},
 					{
 						day: 7,
@@ -785,7 +876,14 @@ export class ARResultsSimulatorService {
 						appearance: "Resultado mais próximo do final",
 						restrictions: ["Evitar exercícios intensos"],
 						care: ["Hidratação adequada"],
-						changes: [{ area: "área tratada", description: "forma definitiva", severity: 2, duration: 7 }],
+						changes: [
+							{
+								area: "área tratada",
+								description: "forma definitiva",
+								severity: 2,
+								duration: 7,
+							},
+						],
 					},
 					{
 						day: 14,
@@ -794,7 +892,14 @@ export class ARResultsSimulatorService {
 						appearance: "Aparência natural e harmônica",
 						restrictions: [],
 						care: ["Manutenção regular"],
-						changes: [{ area: "área tratada", description: "resultado final", severity: 9, duration: 365 }],
+						changes: [
+							{
+								area: "área tratada",
+								description: "resultado final",
+								severity: 9,
+								duration: 365,
+							},
+						],
 					},
 				],
 			},
@@ -812,15 +917,39 @@ export class ARResultsSimulatorService {
 	private async detectFacialLandmarks(_photo: File): Promise<FacialLandmark[]> {
 		// Mock landmark detection
 		return [
-			{ id: "nose_tip", coordinates: { x: 0, y: -0.1, z: 0.1 }, confidence: 0.95, type: "nose" },
-			{ id: "left_eye", coordinates: { x: -0.3, y: 0.2, z: 0 }, confidence: 0.92, type: "eye" },
-			{ id: "right_eye", coordinates: { x: 0.3, y: 0.2, z: 0 }, confidence: 0.93, type: "eye" },
+			{
+				id: "nose_tip",
+				coordinates: { x: 0, y: -0.1, z: 0.1 },
+				confidence: 0.95,
+				type: "nose",
+			},
+			{
+				id: "left_eye",
+				coordinates: { x: -0.3, y: 0.2, z: 0 },
+				confidence: 0.92,
+				type: "eye",
+			},
+			{
+				id: "right_eye",
+				coordinates: { x: 0.3, y: 0.2, z: 0 },
+				confidence: 0.93,
+				type: "eye",
+			},
 		];
 	}
 
-	private determinePhotoType(_photo: File, _landmarks: FacialLandmark[]): PhotoInput["type"] {
+	private determinePhotoType(
+		_photo: File,
+		_landmarks: FacialLandmark[],
+	): PhotoInput["type"] {
 		// Mock photo type determination
-		const types: PhotoInput["type"][] = ["front", "profile_left", "profile_right", "smile", "closeup"];
+		const types: PhotoInput["type"][] = [
+			"front",
+			"profile_left",
+			"profile_right",
+			"smile",
+			"closeup",
+		];
 		return types[Math.floor(Math.random() * types.length)];
 	}
 
@@ -835,7 +964,9 @@ export class ARResultsSimulatorService {
 		return options[Math.floor(Math.random() * options.length)];
 	}
 
-	private async getPhotoResolution(_photo: File): Promise<{ width: number; height: number }> {
+	private async getPhotoResolution(
+		_photo: File,
+	): Promise<{ width: number; height: number }> {
 		// Mock resolution detection
 		return { width: 1920, height: 1080 };
 	}
@@ -887,33 +1018,55 @@ export class ARResultsSimulatorService {
 	}
 
 	// Treatment application methods (mocked)
-	private async applyBotoxEffects(_model: Model3D, _areas: TreatmentArea[]): Promise<void> {
+	private async applyBotoxEffects(
+		_model: Model3D,
+		_areas: TreatmentArea[],
+	): Promise<void> {
 		// Mock implementation - would modify mesh data
 	}
 
-	private async applyFillerEffects(_model: Model3D, _areas: TreatmentArea[]): Promise<void> {
+	private async applyFillerEffects(
+		_model: Model3D,
+		_areas: TreatmentArea[],
+	): Promise<void> {
 		// Mock implementation
 	}
 
-	private async applyHarmonizationEffects(_model: Model3D, _areas: TreatmentArea[]): Promise<void> {
+	private async applyHarmonizationEffects(
+		_model: Model3D,
+		_areas: TreatmentArea[],
+	): Promise<void> {
 		// Mock implementation
 	}
 
-	private async applyThreadLiftEffects(_model: Model3D, _areas: TreatmentArea[]): Promise<void> {
+	private async applyThreadLiftEffects(
+		_model: Model3D,
+		_areas: TreatmentArea[],
+	): Promise<void> {
 		// Mock implementation
 	}
 
-	private async applyPeelingEffects(_model: Model3D, _areas: TreatmentArea[]): Promise<void> {
+	private async applyPeelingEffects(
+		_model: Model3D,
+		_areas: TreatmentArea[],
+	): Promise<void> {
 		// Mock implementation
 	}
 
-	private async adjustIntensity(_model: Model3D, intensity: PatientPreferences["intensityLevel"]): Promise<void> {
+	private async adjustIntensity(
+		_model: Model3D,
+		intensity: PatientPreferences["intensityLevel"],
+	): Promise<void> {
 		const intensityMultipliers = { subtle: 0.6, moderate: 0.8, dramatic: 1.0 };
 		const _multiplier = intensityMultipliers[intensity];
 		// Mock implementation
 	}
 
-	private async interpolateModels(_model1: Model3D, _model2: Model3D, progress: number): Promise<Transformation[]> {
+	private async interpolateModels(
+		_model1: Model3D,
+		_model2: Model3D,
+		progress: number,
+	): Promise<Transformation[]> {
 		// Mock interpolation
 		return [
 			{
@@ -929,28 +1082,41 @@ export class ARResultsSimulatorService {
 	private async predictSatisfaction(
 		_before: Model3D,
 		_after: Model3D,
-		_treatment: TreatmentParameters
+		_treatment: TreatmentParameters,
 	): Promise<number> {
 		return Math.random() * 30 + 70; // 70-100
 	}
 
-	private async assessNaturalness(_model: Model3D, _treatment: TreatmentParameters): Promise<number> {
+	private async assessNaturalness(
+		_model: Model3D,
+		_treatment: TreatmentParameters,
+	): Promise<number> {
 		return Math.random() * 25 + 75; // 75-100
 	}
 
-	private async measureSymmetryImprovement(_before: Model3D, _after: Model3D): Promise<number> {
+	private async measureSymmetryImprovement(
+		_before: Model3D,
+		_after: Model3D,
+	): Promise<number> {
 		return Math.random() * 40 + 10; // 10-50
 	}
 
-	private async estimateAgeReduction(_before: Model3D, _after: Model3D): Promise<number> {
+	private async estimateAgeReduction(
+		_before: Model3D,
+		_after: Model3D,
+	): Promise<number> {
 		return Math.random() * 8 + 2; // 2-10 years
 	}
 
-	private async predictConfidenceBoost(satisfactionScore: number): Promise<number> {
+	private async predictConfidenceBoost(
+		satisfactionScore: number,
+	): Promise<number> {
 		return Math.min(100, satisfactionScore * 1.2);
 	}
 
-	private async calculateMaintenanceSchedule(treatment: TreatmentParameters): Promise<MaintenanceSchedule> {
+	private async calculateMaintenanceSchedule(
+		treatment: TreatmentParameters,
+	): Promise<MaintenanceSchedule> {
 		const schedules = {
 			botox: { touchUp: 4, fullRefresh: 6, cost: 1200 },
 			filler: { touchUp: 8, fullRefresh: 12, cost: 2400 },
@@ -969,7 +1135,9 @@ export class ARResultsSimulatorService {
 		};
 	}
 
-	private async assessRiskFactors(treatment: TreatmentParameters): Promise<RiskFactor[]> {
+	private async assessRiskFactors(
+		treatment: TreatmentParameters,
+	): Promise<RiskFactor[]> {
 		const risksByTreatment = {
 			botox: [
 				{
@@ -978,7 +1146,12 @@ export class ARResultsSimulatorService {
 					severity: "low" as const,
 					mitigation: "Apply ice, avoid blood thinners",
 				},
-				{ factor: "Asymmetry", probability: 5, severity: "medium" as const, mitigation: "Touch-up session if needed" },
+				{
+					factor: "Asymmetry",
+					probability: 5,
+					severity: "medium" as const,
+					mitigation: "Touch-up session if needed",
+				},
 			],
 			filler: [
 				{
@@ -1001,7 +1174,7 @@ export class ARResultsSimulatorService {
 
 	private async calculateComparisonMetrics(
 		simulations: ARSimulation[],
-		_comparisonType: SimulationComparison["comparisonType"]
+		_comparisonType: SimulationComparison["comparisonType"],
 	): Promise<ComparisonMetric[]> {
 		const metrics: ComparisonMetric[] = [];
 
@@ -1024,7 +1197,9 @@ export class ARResultsSimulatorService {
 				name: "Naturalness Score",
 				value1: sim1.outputData.estimatedOutcome.naturalness,
 				value2: sim2.outputData.estimatedOutcome.naturalness,
-				difference: sim2.outputData.estimatedOutcome.naturalness - sim1.outputData.estimatedOutcome.naturalness,
+				difference:
+					sim2.outputData.estimatedOutcome.naturalness -
+					sim1.outputData.estimatedOutcome.naturalness,
 				unit: "%",
 				interpretation: "Higher indicates more natural result",
 			});
@@ -1035,7 +1210,7 @@ export class ARResultsSimulatorService {
 
 	private async generateRecommendation(
 		simulations: ARSimulation[],
-		metrics: ComparisonMetric[]
+		metrics: ComparisonMetric[],
 	): Promise<{ recommendation: string; reasoning: string }> {
 		// Simple recommendation logic
 		if (metrics.length === 0) {
@@ -1049,7 +1224,7 @@ export class ARResultsSimulatorService {
 			current.outputData.estimatedOutcome.satisfactionPrediction >
 			best.outputData.estimatedOutcome.satisfactionPrediction
 				? current
-				: best
+				: best,
 		);
 
 		return {
@@ -1107,7 +1282,9 @@ export class ARResultsSimulatorService {
 
 	async incrementViewCount(simulationId: string): Promise<void> {
 		try {
-			const { error } = await supabase.rpc("increment_simulation_views", { simulation_id: simulationId });
+			const { error } = await supabase.rpc("increment_simulation_views", {
+				simulation_id: simulationId,
+			});
 
 			if (error) {
 				throw error;
@@ -1116,14 +1293,19 @@ export class ARResultsSimulatorService {
 	}
 
 	async deleteSimulation(simulationId: string): Promise<void> {
-		const { error } = await supabase.from("ar_simulations").delete().eq("id", simulationId);
+		const { error } = await supabase
+			.from("ar_simulations")
+			.delete()
+			.eq("id", simulationId);
 
 		if (error) {
 			throw error;
 		}
 	}
 
-	async getSimulationsByStatus(status: ARSimulation["status"]): Promise<ARSimulation[]> {
+	async getSimulationsByStatus(
+		status: ARSimulation["status"],
+	): Promise<ARSimulation[]> {
 		try {
 			const { data, error } = await supabase
 				.from("ar_simulations")

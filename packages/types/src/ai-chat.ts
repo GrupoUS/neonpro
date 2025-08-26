@@ -6,7 +6,13 @@
 
 export type ChatRole = "user" | "assistant" | "system";
 export type ChatInterface = "external" | "internal";
-export type MessageType = "text" | "image" | "document" | "voice" | "appointment_request" | "medical_query";
+export type MessageType =
+	| "text"
+	| "image"
+	| "document"
+	| "voice"
+	| "appointment_request"
+	| "medical_query";
 export type MessageStatus = "sending" | "sent" | "delivered" | "read" | "error";
 export type ChatStatus = "active" | "waiting" | "ended" | "escalated";
 
@@ -125,7 +131,12 @@ export type IntentAnalysis = {
 	primary_intent: string;
 	confidence: number;
 	secondary_intents: Array<{ intent: string; confidence: number }>;
-	intent_category: "appointment" | "medical_query" | "information" | "emergency" | "administrative";
+	intent_category:
+		| "appointment"
+		| "medical_query"
+		| "information"
+		| "emergency"
+		| "administrative";
 	requires_human?: boolean;
 };
 
@@ -139,7 +150,10 @@ export type SentimentAnalysis = {
 
 export type MedicalAnalysis = {
 	medical_terms_detected: string[];
-	symptom_analysis: Array<{ symptom: string; severity: "mild" | "moderate" | "severe" }>;
+	symptom_analysis: Array<{
+		symptom: string;
+		severity: "mild" | "moderate" | "severe";
+	}>;
 	urgency_assessment: "routine" | "urgent" | "emergency";
 	specialty_recommendation?: string;
 	triage_level?: 1 | 2 | 3 | 4 | 5;
@@ -147,7 +161,11 @@ export type MedicalAnalysis = {
 };
 
 export type RecommendationEngine = {
-	suggested_responses: Array<{ text: string; confidence: number; priority: number }>;
+	suggested_responses: Array<{
+		text: string;
+		confidence: number;
+		priority: number;
+	}>;
 	next_actions: Array<{ action: string; priority: "low" | "medium" | "high" }>;
 	appointment_recommendations?: AppointmentRecommendation[];
 	escalation_suggestions?: EscalationSuggestion[];
@@ -165,14 +183,21 @@ export type AppointmentRecommendation = {
 
 export type EscalationSuggestion = {
 	reason: string;
-	escalation_type: "human_agent" | "medical_professional" | "emergency_services";
+	escalation_type:
+		| "human_agent"
+		| "medical_professional"
+		| "emergency_services";
 	urgency: "low" | "medium" | "high" | "critical";
 	estimated_wait_time?: number;
 	escalation_context?: Record<string, any>;
 };
 
 export type FollowUpAction = {
-	action_type: "schedule_appointment" | "send_information" | "medical_follow_up" | "reminder";
+	action_type:
+		| "schedule_appointment"
+		| "send_information"
+		| "medical_follow_up"
+		| "reminder";
 	scheduled_time?: Date;
 	description: string;
 	responsible_party: "ai" | "staff" | "patient";
@@ -228,29 +253,63 @@ export type ChatState = {
 export type ChatAction =
 	| { type: "START_SESSION"; payload: { session: ChatSession } }
 	| { type: "END_SESSION"; payload: { session_id: string } }
-	| { type: "SEND_MESSAGE"; payload: { session_id: string; message: ChatMessage } }
-	| { type: "RECEIVE_MESSAGE"; payload: { session_id: string; message: ChatMessage } }
-	| { type: "UPDATE_MESSAGE"; payload: { session_id: string; message_id: string; updates: Partial<ChatMessage> } }
-	| { type: "START_STREAMING"; payload: { session_id: string; message_id: string } }
-	| { type: "STREAM_CHUNK"; payload: { session_id: string; message_id: string; chunk: string } }
-	| { type: "END_STREAMING"; payload: { session_id: string; message_id: string } }
+	| {
+			type: "SEND_MESSAGE";
+			payload: { session_id: string; message: ChatMessage };
+	  }
+	| {
+			type: "RECEIVE_MESSAGE";
+			payload: { session_id: string; message: ChatMessage };
+	  }
+	| {
+			type: "UPDATE_MESSAGE";
+			payload: {
+				session_id: string;
+				message_id: string;
+				updates: Partial<ChatMessage>;
+			};
+	  }
+	| {
+			type: "START_STREAMING";
+			payload: { session_id: string; message_id: string };
+	  }
+	| {
+			type: "STREAM_CHUNK";
+			payload: { session_id: string; message_id: string; chunk: string };
+	  }
+	| {
+			type: "END_STREAMING";
+			payload: { session_id: string; message_id: string };
+	  }
 	| { type: "SET_LOADING"; payload: boolean }
 	| { type: "SET_ERROR"; payload: string | null }
-	| { type: "UPDATE_CONNECTION_STATUS"; payload: "connected" | "connecting" | "disconnected" | "error" }
+	| {
+			type: "UPDATE_CONNECTION_STATUS";
+			payload: "connected" | "connecting" | "disconnected" | "error";
+	  }
 	| { type: "UPDATE_CONFIG"; payload: Partial<ChatConfig> }
 	| { type: "UPDATE_INSIGHTS"; payload: ChatAIInsights }
 	| { type: "UPDATE_METRICS"; payload: PerformanceMetrics }
-	| { type: "ESCALATE_SESSION"; payload: { session_id: string; escalation: EscalationSuggestion } };
+	| {
+			type: "ESCALATE_SESSION";
+			payload: { session_id: string; escalation: EscalationSuggestion };
+	  };
 
 // API Types
 export type ChatAPI = {
 	sendMessage: (sessionId: string, message: ChatMessage) => Promise<void>;
-	streamMessage: (sessionId: string, message: ChatMessage) => AsyncIterable<string>;
+	streamMessage: (
+		sessionId: string,
+		message: ChatMessage,
+	) => AsyncIterable<string>;
 	createSession: (config: Partial<ChatConfig>) => Promise<ChatSession>;
 	endSession: (sessionId: string) => Promise<void>;
 	getSessionHistory: (sessionId: string) => Promise<ChatMessage[]>;
 	escalateToHuman: (sessionId: string, reason: string) => Promise<void>;
-	updateSessionContext: (sessionId: string, context: Partial<ChatSessionContext>) => Promise<void>;
+	updateSessionContext: (
+		sessionId: string,
+		context: Partial<ChatSessionContext>,
+	) => Promise<void>;
 };
 
 // External Client Interface Types (24/7 Public Support)

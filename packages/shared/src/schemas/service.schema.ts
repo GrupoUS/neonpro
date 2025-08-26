@@ -232,7 +232,10 @@ export const ServiceBaseSchema = z.object({
 		.string()
 		.min(10, "Descrição deve ter pelo menos 10 caracteres")
 		.max(2000, "Descrição deve ter no máximo 2000 caracteres"),
-	short_description: z.string().max(300, "Descrição curta deve ter no máximo 300 caracteres").optional(),
+	short_description: z
+		.string()
+		.max(300, "Descrição curta deve ter no máximo 300 caracteres")
+		.optional(),
 
 	// Categorization
 	category: ServiceCategorySchema,
@@ -273,14 +276,23 @@ export const ServiceBaseSchema = z.object({
 	accepts_insurance: z.boolean().default(false),
 	insurance_coverage_percentage: z.number().min(0).max(100).optional(),
 	payment_methods: z
-		.array(z.enum(["cash", "credit_card", "debit_card", "pix", "bank_transfer", "insurance"]))
+		.array(
+			z.enum([
+				"cash",
+				"credit_card",
+				"debit_card",
+				"pix",
+				"bank_transfer",
+				"insurance",
+			]),
+		)
 		.default(["cash", "credit_card"]),
 	installment_options: z
 		.array(
 			z.object({
 				installments: z.number().min(1).max(24),
 				interest_rate: z.number().min(0).max(50).default(0),
-			})
+			}),
 		)
 		.default([]),
 
@@ -381,7 +393,15 @@ export const ServiceQuerySchema = z.object({
 
 	// Sorting
 	sort_by: z
-		.enum(["name", "created_at", "base_price", "duration_minutes", "total_bookings", "average_rating", "display_order"])
+		.enum([
+			"name",
+			"created_at",
+			"base_price",
+			"duration_minutes",
+			"total_bookings",
+			"average_rating",
+			"display_order",
+		])
 		.default("display_order"),
 	sort_order: z.enum(["asc", "desc"]).default("asc"),
 });
@@ -578,14 +598,14 @@ export const ServiceStatsSchema = z.object({
 			service_id: z.string().uuid(),
 			service_name: z.string(),
 			booking_count: z.number(),
-		})
+		}),
 	),
 	highest_rated: z.array(
 		z.object({
 			service_id: z.string().uuid(),
 			service_name: z.string(),
 			average_rating: z.number(),
-		})
+		}),
 	),
 });
 
@@ -604,7 +624,9 @@ export const BulkUpdateServicesSchema = z.object({
 export type ServiceCategory = z.infer<typeof ServiceCategorySchema>;
 export type ServiceType = z.infer<typeof ServiceTypeSchema>;
 export type ServiceStatus = z.infer<typeof ServiceStatusSchema>;
-export type AnvisaRiskClassification = z.infer<typeof AnvisaRiskClassificationSchema>;
+export type AnvisaRiskClassification = z.infer<
+	typeof AnvisaRiskClassificationSchema
+>;
 export type AgeRestriction = z.infer<typeof AgeRestrictionSchema>;
 export type Contraindication = z.infer<typeof ContraindicationSchema>;
 export type PreCareInstruction = z.infer<typeof PreCareInstructionSchema>;

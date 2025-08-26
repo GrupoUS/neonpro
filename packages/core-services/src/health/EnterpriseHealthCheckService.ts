@@ -96,7 +96,7 @@ export class EnterpriseHealthCheckService {
 					autoExpiry: true,
 					auditAccess: false,
 				},
-			})
+			}),
 		);
 
 		this.services.set("analytics", new EnterpriseAnalyticsService());
@@ -111,7 +111,7 @@ export class EnterpriseHealthCheckService {
 				auditRetentionDays: 1,
 				requireSecureChannel: false,
 				allowedOrigins: ["*"],
-			})
+			}),
 		);
 
 		this.services.set("audit", new EnterpriseAuditService());
@@ -191,7 +191,10 @@ export class EnterpriseHealthCheckService {
 			// Determine overall status
 			if (result.details.errors.length > 0) {
 				result.status = "unhealthy";
-			} else if (result.details.warnings.length > 0 || result.details.performance === "slow") {
+			} else if (
+				result.details.warnings.length > 0 ||
+				result.details.performance === "slow"
+			) {
 				result.status = "degraded";
 			} else {
 				result.status = "healthy";
@@ -214,15 +217,24 @@ export class EnterpriseHealthCheckService {
 	 */
 	async performFullHealthCheck(): Promise<SystemHealthReport> {
 		const serviceChecks = await Promise.all(
-			Array.from(this.services.keys()).map((serviceName) => this.checkServiceHealth(serviceName))
+			Array.from(this.services.keys()).map((serviceName) =>
+				this.checkServiceHealth(serviceName),
+			),
 		);
 
-		const healthyServices = serviceChecks.filter((check) => check.status === "healthy").length;
-		const degradedServices = serviceChecks.filter((check) => check.status === "degraded").length;
-		const unhealthyServices = serviceChecks.filter((check) => check.status === "unhealthy").length;
+		const healthyServices = serviceChecks.filter(
+			(check) => check.status === "healthy",
+		).length;
+		const degradedServices = serviceChecks.filter(
+			(check) => check.status === "degraded",
+		).length;
+		const unhealthyServices = serviceChecks.filter(
+			(check) => check.status === "unhealthy",
+		).length;
 
 		const averageResponseTime =
-			serviceChecks.reduce((sum, check) => sum + check.responseTime, 0) / serviceChecks.length;
+			serviceChecks.reduce((sum, check) => sum + check.responseTime, 0) /
+			serviceChecks.length;
 
 		let overall: "healthy" | "degraded" | "unhealthy" = "healthy";
 		if (unhealthyServices >= this.alertThresholds.unhealthyThreshold) {
@@ -254,7 +266,10 @@ export class EnterpriseHealthCheckService {
 	/**
 	 * Test cache service health
 	 */
-	private async testCacheService(cacheService: EnterpriseCacheService, result: HealthCheckResult): Promise<void> {
+	private async testCacheService(
+		cacheService: EnterpriseCacheService,
+		result: HealthCheckResult,
+	): Promise<void> {
 		// Test basic cache operations
 		const testKey = `health_check_${Date.now()}`;
 		const testValue = { test: true, timestamp: Date.now() };
@@ -272,7 +287,9 @@ export class EnterpriseHealthCheckService {
 		await cacheService.delete(testKey);
 		const afterDelete = await cacheService.get(testKey);
 		if (afterDelete !== null) {
-			result.details.warnings.push("Cache delete operation may not have worked correctly");
+			result.details.warnings.push(
+				"Cache delete operation may not have worked correctly",
+			);
 		}
 
 		// Get metrics
@@ -291,7 +308,7 @@ export class EnterpriseHealthCheckService {
 	 */
 	private async testAnalyticsService(
 		analyticsService: EnterpriseAnalyticsService,
-		result: HealthCheckResult
+		result: HealthCheckResult,
 	): Promise<void> {
 		// Test event tracking
 		await analyticsService.trackEvent({
@@ -330,7 +347,7 @@ export class EnterpriseHealthCheckService {
 	 */
 	private async testSecurityService(
 		securityService: EnterpriseSecurityService,
-		result: HealthCheckResult
+		result: HealthCheckResult,
 	): Promise<void> {
 		// Test encryption/decryption
 		const testData = "health check test data";
@@ -342,7 +359,10 @@ export class EnterpriseHealthCheckService {
 		}
 
 		// Test permission validation (mock)
-		const _hasPermission = await securityService.validatePermission("health_check_user", "read");
+		const _hasPermission = await securityService.validatePermission(
+			"health_check_user",
+			"read",
+		);
 		// For health check, we expect this to work (even if it returns false for unknown user)
 
 		// Get health metrics
@@ -359,7 +379,10 @@ export class EnterpriseHealthCheckService {
 	/**
 	 * Test audit service health
 	 */
-	private async testAuditService(auditService: EnterpriseAuditService, result: HealthCheckResult): Promise<void> {
+	private async testAuditService(
+		auditService: EnterpriseAuditService,
+		result: HealthCheckResult,
+	): Promise<void> {
 		// Test audit logging
 		await auditService.logEvent({
 			id: `health_check_${Date.now()}`,
@@ -373,7 +396,9 @@ export class EnterpriseHealthCheckService {
 		// Test chain integrity
 		const integrity = await auditService.verifyChainIntegrity();
 		if (!integrity.valid) {
-			result.details.errors.push(`Audit chain integrity compromised: ${integrity.brokenLinks.length} broken links`);
+			result.details.errors.push(
+				`Audit chain integrity compromised: ${integrity.brokenLinks.length} broken links`,
+			);
 		}
 
 		// Get audit stats
@@ -383,14 +408,18 @@ export class EnterpriseHealthCheckService {
 		// Check audit volume
 		const stats = result.details.metrics;
 		if (stats.total && stats.total > 1_000_000) {
-			result.details.warnings.push("Large audit trail detected - consider archiving");
+			result.details.warnings.push(
+				"Large audit trail detected - consider archiving",
+			);
 		}
 	}
 
 	/**
 	 * Assess performance based on response time
 	 */
-	private assessPerformance(responseTime: number): "excellent" | "good" | "slow" | "critical" {
+	private assessPerformance(
+		responseTime: number,
+	): "excellent" | "good" | "slow" | "critical" {
 		if (responseTime < 100) {
 			return "excellent";
 		}
@@ -406,7 +435,10 @@ export class EnterpriseHealthCheckService {
 	/**
 	 * Store health check result in history
 	 */
-	private storeHealthHistory(serviceName: string, result: HealthCheckResult): void {
+	private storeHealthHistory(
+		serviceName: string,
+		result: HealthCheckResult,
+	): void {
 		const history = this.healthHistory.get(serviceName) || [];
 		history.push(result);
 
@@ -436,7 +468,9 @@ export class EnterpriseHealthCheckService {
 			if (service.status === "unhealthy") {
 				alerts.push(`CRITICAL: ${service.service} service is unhealthy`);
 			} else if (service.responseTime > this.alertThresholds.responseTime) {
-				alerts.push(`WARNING: ${service.service} service response time is high (${service.responseTime}ms)`);
+				alerts.push(
+					`WARNING: ${service.service} service response time is high (${service.responseTime}ms)`,
+				);
 			}
 		}
 
@@ -452,7 +486,7 @@ export class EnterpriseHealthCheckService {
 	 */
 	getHealthTrends(
 		serviceName: string,
-		hours = 24
+		hours = 24,
 	): {
 		service: string;
 		period: string;
@@ -466,7 +500,9 @@ export class EnterpriseHealthCheckService {
 		const history = this.healthHistory.get(serviceName) || [];
 		const cutoffTime = Date.now() - hours * 60 * 60 * 1000;
 
-		const recentHistory = history.filter((result) => new Date(result.timestamp).getTime() > cutoffTime);
+		const recentHistory = history.filter(
+			(result) => new Date(result.timestamp).getTime() > cutoffTime,
+		);
 
 		if (recentHistory.length === 0) {
 			return {
@@ -481,12 +517,18 @@ export class EnterpriseHealthCheckService {
 			};
 		}
 
-		const healthyChecks = recentHistory.filter((r) => r.status === "healthy").length;
+		const healthyChecks = recentHistory.filter(
+			(r) => r.status === "healthy",
+		).length;
 		const availability = (healthyChecks / recentHistory.length) * 100;
 
-		const avgResponseTime = recentHistory.reduce((sum, r) => sum + r.responseTime, 0) / recentHistory.length;
+		const avgResponseTime =
+			recentHistory.reduce((sum, r) => sum + r.responseTime, 0) /
+			recentHistory.length;
 
-		const errorsCount = recentHistory.filter((r) => r.details.errors.length > 0).length;
+		const errorsCount = recentHistory.filter(
+			(r) => r.details.errors.length > 0,
+		).length;
 		const errorRate = (errorsCount / recentHistory.length) * 100;
 
 		const performanceDistribution: Record<string, number> = {};
@@ -518,7 +560,7 @@ export class EnterpriseHealthCheckService {
 					await this.performFullHealthCheck();
 				} catch (_error) {}
 			},
-			5 * 60 * 1000
+			5 * 60 * 1000,
 		);
 	}
 

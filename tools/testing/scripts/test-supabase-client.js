@@ -25,11 +25,20 @@ async function testSupabaseClient() {
 		} else {
 		}
 
-		const tablesToTest = ["tenants", "profiles", "products", "appointments", "patients"];
+		const tablesToTest = [
+			"tenants",
+			"profiles",
+			"products",
+			"appointments",
+			"patients",
+		];
 
 		for (const tableName of tablesToTest) {
 			try {
-				const { count, error } = await supabase.from(tableName).select("*", { count: "exact", head: true });
+				const { count, error } = await supabase.from(tableName).select("*", {
+					count: "exact",
+					head: true,
+				});
 
 				if (error) {
 				} else {

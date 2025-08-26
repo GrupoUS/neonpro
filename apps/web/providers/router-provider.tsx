@@ -8,12 +8,12 @@
 
 "use client";
 
+import { useAuth } from "@/contexts/auth-context";
+import { router } from "@/lib/router";
 import { useQueryClient } from "@tanstack/react-query";
 import { RouterProvider as TanStackRouterProvider } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import React from "react";
-import { useAuth } from "@/contexts/auth-context";
-import { router } from "@/lib/router";
 
 type RouterProviderProps = {
 	children?: React.ReactNode;
@@ -52,12 +52,7 @@ export function RouterProvider({ children }: RouterProviderProps) {
 }
 
 // Router navigation hooks for use throughout the app
-export {
-	useLocation,
-	useNavigate,
-	useParams,
-	useSearch,
-} from "@tanstack/react-router";
+export { useLocation, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 
 // Healthcare-specific navigation utilities
 export function useHealthcareNavigation() {

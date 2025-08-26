@@ -10,7 +10,10 @@ import type { ModelMetadata, ModelType, PredictionConfig } from "../types";
 export class AIModelManager {
 	private readonly models = new Map<string, GraphModel | LayersModel>();
 	private readonly modelMetadata = new Map<string, ModelMetadata>();
-	private readonly loadingPromises = new Map<string, Promise<GraphModel | LayersModel>>();
+	private readonly loadingPromises = new Map<
+		string,
+		Promise<GraphModel | LayersModel>
+	>();
 	private readonly isInitialized = false;
 
 	// Model configuration for aesthetic treatments
@@ -87,9 +90,15 @@ export class AIModelManager {
 			}
 
 			// Preload critical models for immediate availability
-			const criticalModels: ModelType[] = ["treatment-outcome", "risk-assessment", "success-probability"];
+			const criticalModels: ModelType[] = [
+				"treatment-outcome",
+				"risk-assessment",
+				"success-probability",
+			];
 
-			await Promise.all(criticalModels.map((modelType) => this.preloadModel(modelType)));
+			await Promise.all(
+				criticalModels.map((modelType) => this.preloadModel(modelType)),
+			);
 
 			this.isInitialized = true;
 		} catch (error) {
@@ -139,14 +148,18 @@ export class AIModelManager {
 	} /**
 	 * Perform actual model loading with comprehensive error handling
 	 */
-	private async performModelLoad(modelType: ModelType, config: PredictionConfig): Promise<GraphModel | LayersModel> {
+
+	private async performModelLoad(
+		modelType: ModelType,
+		config: PredictionConfig,
+	): Promise<GraphModel | LayersModel> {
 		const startTime = performance.now();
 
 		try {
 			// Load model with timeout protection
 			const modelPromise = tf.loadLayersModel(config.modelPath);
 			const timeoutPromise = new Promise<never>((_, reject) =>
-				setTimeout(() => reject(new Error("Model loading timeout")), 30_000)
+				setTimeout(() => reject(new Error("Model loading timeout")), 30_000),
 			);
 
 			const model = await Promise.race([modelPromise, timeoutPromise]);
@@ -165,13 +178,18 @@ export class AIModelManager {
 	/**
 	 * Validate model structure matches expected configuration
 	 */
-	private validateModelStructure(model: GraphModel | LayersModel, config: PredictionConfig): void {
+	private validateModelStructure(
+		model: GraphModel | LayersModel,
+		config: PredictionConfig,
+	): void {
 		if ("inputs" in model && model.inputs) {
 			const inputShape = model.inputs[0].shape;
 			const expectedInput = config.inputShape;
 
 			if (inputShape && !this.shapesMatch(inputShape, expectedInput)) {
-				throw new Error(`Model input shape mismatch. Expected: ${expectedInput}, Got: ${inputShape}`);
+				throw new Error(
+					`Model input shape mismatch. Expected: ${expectedInput}, Got: ${inputShape}`,
+				);
 			}
 		}
 	}
@@ -184,7 +202,10 @@ export class AIModelManager {
 			return false;
 		}
 
-		return actual.every((dim, index) => dim === expected[index] || dim === null || expected[index] === null);
+		return actual.every(
+			(dim, index) =>
+				dim === expected[index] || dim === null || expected[index] === null,
+		);
 	}
 
 	/**

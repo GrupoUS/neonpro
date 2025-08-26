@@ -52,4 +52,4 @@ vi.mock("next/cache", () => ({
 // Import the singleton mock from the dedicated setup file
 import { mockSupabaseClient } from "./supabase-mock";
 
-export { mockSupabaseClient, mockAsyncLocalStorage };
+export { mockAsyncLocalStorage, mockSupabaseClient };

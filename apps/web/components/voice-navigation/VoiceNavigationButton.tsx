@@ -1,12 +1,12 @@
 "use client";
 
-import { Activity, Command, Mic, MicOff, Volume2 } from "lucide-react";
-import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useVoiceNavigation } from "@/hooks/use-voice-navigation";
 import { cn } from "@/lib/utils";
+import { Activity, Command, Mic, MicOff, Volume2 } from "lucide-react";
+import { useState } from "react";
 
 interface VoiceNavigationButtonProps {
 	className?: string;

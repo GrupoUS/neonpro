@@ -140,7 +140,14 @@ export type FacialRegion =
 	| "jawline"
 	| "neck";
 
-export type BodyRegion = "abdomen" | "thighs" | "arms" | "back" | "chest" | "flanks" | "buttocks";
+export type BodyRegion =
+	| "abdomen"
+	| "thighs"
+	| "arms"
+	| "back"
+	| "chest"
+	| "flanks"
+	| "buttocks";
 
 export type AestheticConcern =
 	| "wrinkles"
@@ -164,7 +171,11 @@ export type TreatmentGoals = {
 
 export type ExpectationLevel = "subtle" | "moderate" | "dramatic";
 
-export type TimeframePreference = "immediate" | "within-month" | "within-quarter" | "flexible";
+export type TimeframePreference =
+	| "immediate"
+	| "within-month"
+	| "within-quarter"
+	| "flexible";
 
 export type TreatmentHistory = {
 	treatmentType: TreatmentType;

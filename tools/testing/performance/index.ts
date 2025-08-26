@@ -21,9 +21,9 @@ export {
 	CacheInvalidation,
 	CacheKeyGenerator,
 	CacheManager,
+	cacheManager,
 	CachePerformanceMonitor,
 	CDNOptimization,
-	cacheManager,
 	withCache,
 } from "./caching";
 // Production Deployment

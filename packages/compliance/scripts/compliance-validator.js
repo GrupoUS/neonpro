@@ -145,7 +145,11 @@ class ComplianceValidator {
 		this.log("=== SECURITY COMPLIANCE VALIDATION ===");
 
 		// Check for authentication and authorization
-		const authFiles = ["lib/auth/supabase.ts", "middleware.ts", "lib/auth/rbac.ts"];
+		const authFiles = [
+			"lib/auth/supabase.ts",
+			"middleware.ts",
+			"lib/auth/rbac.ts",
+		];
 
 		authFiles.forEach((file) => {
 			const filePath = path.join(this.rootDir, file);
@@ -192,7 +196,10 @@ class ComplianceValidator {
 		});
 
 		// Check for audit tables
-		const auditFiles = ["database/tables/audit_logs.sql", "database/triggers/audit_triggers.sql"];
+		const auditFiles = [
+			"database/tables/audit_logs.sql",
+			"database/triggers/audit_triggers.sql",
+		];
 
 		auditFiles.forEach((file) => {
 			const filePath = path.join(this.rootDir, file);
@@ -229,16 +236,25 @@ class ComplianceValidator {
 		};
 
 		// Save report
-		fs.writeFileSync(path.join(this.rootDir, "compliance-validation-report.json"), JSON.stringify(report, null, 2));
+		fs.writeFileSync(
+			path.join(this.rootDir, "compliance-validation-report.json"),
+			JSON.stringify(report, null, 2),
+		);
 
 		this.log("Compliance report saved to: compliance-validation-report.json");
 
 		if (complianceScore >= 80) {
 			this.log(`✅ COMPLIANCE READY FOR PRODUCTION (${complianceScore}%)`);
 		} else if (complianceScore >= 60) {
-			this.log(`⚠️ COMPLIANCE NEEDS IMPROVEMENT (${complianceScore}%)`, "warning");
+			this.log(
+				`⚠️ COMPLIANCE NEEDS IMPROVEMENT (${complianceScore}%)`,
+				"warning",
+			);
 		} else {
-			this.log(`❌ COMPLIANCE NOT READY FOR PRODUCTION (${complianceScore}%)`, "error");
+			this.log(
+				`❌ COMPLIANCE NOT READY FOR PRODUCTION (${complianceScore}%)`,
+				"error",
+			);
 		}
 
 		return report;
@@ -248,23 +264,33 @@ class ComplianceValidator {
 		const recommendations = [];
 
 		if (this.issues.length > 0) {
-			recommendations.push("Resolve all critical compliance issues before production deployment");
+			recommendations.push(
+				"Resolve all critical compliance issues before production deployment",
+			);
 		}
 
 		if (this.issues.some((issue) => issue.includes("LGPD"))) {
-			recommendations.push("Implement complete LGPD compliance framework (consent, data rights, privacy)");
+			recommendations.push(
+				"Implement complete LGPD compliance framework (consent, data rights, privacy)",
+			);
 		}
 
 		if (this.issues.some((issue) => issue.includes("Security"))) {
-			recommendations.push("Complete security implementation (auth, encryption, audit logging)");
+			recommendations.push(
+				"Complete security implementation (auth, encryption, audit logging)",
+			);
 		}
 
 		if (this.issues.some((issue) => issue.includes("RLS"))) {
-			recommendations.push("Implement Row Level Security policies for all sensitive tables");
+			recommendations.push(
+				"Implement Row Level Security policies for all sensitive tables",
+			);
 		}
 
 		recommendations.push("Conduct comprehensive security audit before go-live");
-		recommendations.push("Setup monitoring and alerting for compliance violations");
+		recommendations.push(
+			"Setup monitoring and alerting for compliance violations",
+		);
 		recommendations.push("Schedule regular compliance reviews and updates");
 
 		return recommendations;

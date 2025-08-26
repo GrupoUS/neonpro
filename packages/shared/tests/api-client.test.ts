@@ -37,7 +37,11 @@ import { ApiHelpers } from "../src/api-client";
 // Helper to create mock Response objects
 function createMockResponse(
 	data: any,
-	options: { ok?: boolean; status?: number; headers?: Record<string, string> } = {}
+	options: {
+		ok?: boolean;
+		status?: number;
+		headers?: Record<string, string>;
+	} = {},
 ) {
 	const { ok = true, status = 200, headers = {} } = options;
 
@@ -77,7 +81,9 @@ describe("API Client - Error Handling", () => {
 
 		it("should handle null and undefined errors", () => {
 			expect(ApiHelpers.formatError(null)).toBe("An unexpected error occurred");
-			expect(ApiHelpers.formatError(undefined)).toBe("An unexpected error occurred");
+			expect(ApiHelpers.formatError(undefined)).toBe(
+				"An unexpected error occurred",
+			);
 		});
 
 		it("should handle API errors with message property", () => {
@@ -96,7 +102,9 @@ describe("API Client - Error Handling", () => {
 				},
 			};
 			const result = ApiHelpers.formatError(error);
-			expect(result).toBe("email: Invalid email format, age: Must be a positive number");
+			expect(result).toBe(
+				"email: Invalid email format, age: Must be a positive number",
+			);
 		});
 	});
 
@@ -142,13 +150,24 @@ describe("API Client - Error Handling", () => {
 		});
 
 		it("should create query key with user ID", () => {
-			const result = ApiHelpers.createQueryKey("patients", undefined, "user123");
+			const result = ApiHelpers.createQueryKey(
+				"patients",
+				undefined,
+				"user123",
+			);
 			expect(result).toEqual(["api", "patients", "user", "user123"]);
 		});
 
 		it("should create query key with parameters", () => {
-			const result = ApiHelpers.createQueryKey("patients", { status: "active", limit: 10 });
-			expect(result).toEqual(["api", "patients", JSON.stringify({ status: "active", limit: 10 })]);
+			const result = ApiHelpers.createQueryKey("patients", {
+				status: "active",
+				limit: 10,
+			});
+			expect(result).toEqual([
+				"api",
+				"patients",
+				JSON.stringify({ status: "active", limit: 10 }),
+			]);
 		});
 	});
 });
@@ -202,7 +221,9 @@ describe("API Client - Network Detection", () => {
 		});
 
 		it("should detect validation_errors array", () => {
-			const error = { error: { validation_errors: [{ field: "email", message: "Invalid" }] } };
+			const error = {
+				error: { validation_errors: [{ field: "email", message: "Invalid" }] },
+			};
 			const result = ApiHelpers.isValidationError(error);
 			expect(result).toBe(true);
 		});

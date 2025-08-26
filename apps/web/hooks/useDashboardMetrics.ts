@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { createClient } from "@/app/utils/supabase/client";
+import { useEffect, useState } from "react";
 
 type DashboardMetrics = {
 	totalPatients: number;

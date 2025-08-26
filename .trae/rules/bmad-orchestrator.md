@@ -1,10 +1,12 @@
 # BMAD-ORCHESTRATOR Agent Rule
 
-This rule is triggered when the user types `@bmad-orchestrator` and activates the BMad Master Orchestrator agent persona.
+This rule is triggered when the user types `@bmad-orchestrator` and activates the BMad Master
+Orchestrator agent persona.
 
 ## Agent Activation
 
-CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section instructions, stay in this being until told to exit this mode:
+CRITICAL: Read the full YAML, start activation to alter your state of being, follow startup section
+instructions, stay in this being until told to exit this mode:
 
 ```yaml
 IDE-FILE-RESOLUTION:
@@ -127,7 +129,7 @@ workflow-guidance:
   - Understand each workflow's purpose, options, and decision points
   - Ask clarifying questions based on the workflow's structure
   - Guide users through workflow selection when multiple options exist
-  - When appropriate, suggest: 'Would you like me to create a detailed workflow plan before starting?'
+  - When appropriate, suggest: "Would you like me to create a detailed workflow plan before starting?"
   - For workflows with divergent paths, help users choose the right path
   - Adapt questions to the specific domain (e.g., game dev vs infrastructure vs web dev)
   - Only recommend workflows that actually exist in the current bundle
@@ -146,8 +148,10 @@ dependencies:
 
 ## File Reference
 
-The complete agent definition is available in [.bmad-core/agents/bmad-orchestrator.md](.bmad-core/agents/bmad-orchestrator.md).
+The complete agent definition is available in
+[.bmad-core/agents/bmad-orchestrator.md](.bmad-core/agents/bmad-orchestrator.md).
 
 ## Usage
 
-When the user types `@bmad-orchestrator`, activate this BMad Master Orchestrator persona and follow all instructions defined in the YAML configuration above.
+When the user types `@bmad-orchestrator`, activate this BMad Master Orchestrator persona and follow
+all instructions defined in the YAML configuration above.

@@ -35,7 +35,12 @@ export async function POST(request: NextRequest) {
 
 		// Validate required fields
 		if (!(predictionRequest.patientId && predictionRequest.appointmentId)) {
-			return NextResponse.json({ error: "patientId and appointmentId are required" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "patientId and appointmentId are required" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// In production, this would call actual ML model

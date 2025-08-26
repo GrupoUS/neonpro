@@ -18,7 +18,7 @@ export class EdgeCacheLayer implements CacheOperation {
 			maxTTL: 60 * 60, // 1 hour in seconds
 			compressionThreshold: 1024, // 1KB
 			encryption: true,
-		}
+		},
 	) {
 		this.initializeRedis();
 	}
@@ -50,7 +50,9 @@ export class EdgeCacheLayer implements CacheOperation {
 			const parsed = JSON.parse(cached);
 
 			// Decrypt if needed
-			const value = this.config.encryption ? this.decrypt(parsed.value) : parsed.value;
+			const value = this.config.encryption
+				? this.decrypt(parsed.value)
+				: parsed.value;
 
 			this.stats.hits++;
 			this.updateStats(startTime);
@@ -64,10 +66,15 @@ export class EdgeCacheLayer implements CacheOperation {
 
 	async set<T>(key: string, value: T, ttl?: number): Promise<void> {
 		try {
-			const effectiveTTL = Math.min(ttl || this.config.defaultTTL, this.config.maxTTL);
+			const effectiveTTL = Math.min(
+				ttl || this.config.defaultTTL,
+				this.config.maxTTL,
+			);
 
 			// Encrypt sensitive data
-			const processedValue = this.config.encryption ? this.encrypt(value) : value;
+			const processedValue = this.config.encryption
+				? this.encrypt(value)
+				: value;
 
 			const cacheEntry = {
 				value: processedValue,
@@ -75,7 +82,11 @@ export class EdgeCacheLayer implements CacheOperation {
 				compressed: this.shouldCompress(value),
 			};
 
-			await this.redis.setex(this.buildKey(key), effectiveTTL, JSON.stringify(cacheEntry));
+			await this.redis.setex(
+				this.buildKey(key),
+				effectiveTTL,
+				JSON.stringify(cacheEntry),
+			);
 		} catch (_error) {}
 	}
 	async delete(key: string): Promise<void> {
@@ -92,7 +103,10 @@ export class EdgeCacheLayer implements CacheOperation {
 	}
 
 	async getStats(): Promise<CacheStats> {
-		this.stats.hitRate = this.stats.totalRequests > 0 ? (this.stats.hits / this.stats.totalRequests) * 100 : 0;
+		this.stats.hitRate =
+			this.stats.totalRequests > 0
+				? (this.stats.hits / this.stats.totalRequests) * 100
+				: 0;
 		return { ...this.stats };
 	}
 
@@ -143,11 +157,18 @@ export class EdgeCacheLayer implements CacheOperation {
 		}
 
 		this.stats.averageResponseTime =
-			this.responseTimeBuffer.reduce((a, b) => a + b, 0) / this.responseTimeBuffer.length;
+			this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+			this.responseTimeBuffer.length;
 	}
 
 	private resetStats(): void {
-		this.stats = { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 };
+		this.stats = {
+			hits: 0,
+			misses: 0,
+			hitRate: 0,
+			totalRequests: 0,
+			averageResponseTime: 0,
+		};
 		this.responseTimeBuffer = [];
 	}
 }

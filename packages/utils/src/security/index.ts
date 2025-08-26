@@ -114,7 +114,10 @@ export class SecurityAPI {
 		return { data: [], count: 0 };
 	}
 
-	async updateSecurityAlert(_alertId: string, _updates: Partial<SecurityAlert>): Promise<SecurityAlert | null> {
+	async updateSecurityAlert(
+		_alertId: string,
+		_updates: Partial<SecurityAlert>,
+	): Promise<SecurityAlert | null> {
 		// Placeholder - replace with actual database update
 		return null;
 	}

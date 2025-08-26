@@ -60,7 +60,9 @@ export type UseRealtimeNotificationsReturn = {
  * MANDATORY Real-time Notification Hook
  * Sistema crítico para notificações healthcare com audio alerts
  */
-export function useRealtimeNotifications(options: UseRealtimeNotificationsOptions): UseRealtimeNotificationsReturn {
+export function useRealtimeNotifications(
+	options: UseRealtimeNotificationsOptions,
+): UseRealtimeNotificationsReturn {
 	const {
 		tenantId,
 		userId,
@@ -77,7 +79,8 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 	const [isConnected, setIsConnected] = useState(false);
 	const [connectionHealth, setConnectionHealth] = useState(0);
 	const [unreadCount, setUnreadCount] = useState(0);
-	const [lastNotification, setLastNotification] = useState<NotificationRow | null>(null);
+	const [lastNotification, setLastNotification] =
+		useState<NotificationRow | null>(null);
 	const [emergencyCount, setEmergencyCount] = useState(0);
 	const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(null);
 	const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -114,7 +117,10 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 				if (playPromise !== undefined) {
 					playPromise.catch((_error) => {
 						// Fallback to system notification sound
-						if ("Notification" in window && Notification.permission === "granted") {
+						if (
+							"Notification" in window &&
+							Notification.permission === "granted"
+						) {
 							new Notification("NeonPro Healthcare", {
 								body: "Nova notificação recebida",
 								icon: "/icons/healthcare-notification.png",
@@ -125,7 +131,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 				}
 			} catch (_error) {}
 		},
-		[enableAudio]
+		[enableAudio],
 	);
 
 	/**
@@ -137,7 +143,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 				return;
 			}
 		},
-		[enableToast]
+		[enableToast],
 	);
 
 	/**
@@ -148,39 +154,48 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 			const { eventType, new: newData, old: oldData } = payload;
 
 			// Update notifications cache
-			queryClient.setQueryData(["notifications", tenantId, userId], (oldCache: NotificationRow[] | undefined) => {
-				if (!oldCache) {
-					return oldCache;
-				}
-
-				switch (eventType) {
-					case "INSERT":
-						if (newData && newData.user_id === userId) {
-							return [newData, ...oldCache].slice(0, 500); // Keep manageable
-						}
+			queryClient.setQueryData(
+				["notifications", tenantId, userId],
+				(oldCache: NotificationRow[] | undefined) => {
+					if (!oldCache) {
 						return oldCache;
+					}
 
-					case "UPDATE":
-						if (newData) {
-							return oldCache.map((notification) => (notification.id === newData.id ? newData : notification));
-						}
-						return oldCache;
+					switch (eventType) {
+						case "INSERT":
+							if (newData && newData.user_id === userId) {
+								return [newData, ...oldCache].slice(0, 500); // Keep manageable
+							}
+							return oldCache;
 
-					case "DELETE":
-						if (oldData) {
-							return oldCache.filter((notification) => notification.id !== oldData.id);
-						}
-						return oldCache;
+						case "UPDATE":
+							if (newData) {
+								return oldCache.map((notification) =>
+									notification.id === newData.id ? newData : notification,
+								);
+							}
+							return oldCache;
 
-					default:
-						return oldCache;
-				}
-			});
+						case "DELETE":
+							if (oldData) {
+								return oldCache.filter(
+									(notification) => notification.id !== oldData.id,
+								);
+							}
+							return oldCache;
+
+						default:
+							return oldCache;
+					}
+				},
+			);
 
 			// Update unread count
-			queryClient.invalidateQueries({ queryKey: ["notifications-unread", tenantId, userId] });
+			queryClient.invalidateQueries({
+				queryKey: ["notifications-unread", tenantId, userId],
+			});
 		},
-		[queryClient, tenantId, userId]
+		[queryClient, tenantId, userId],
 	);
 
 	/**
@@ -243,7 +258,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 			playNotificationSound,
 			showToastNotification,
 			updateNotificationCache,
-		]
+		],
 	);
 
 	/**
@@ -270,13 +285,20 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 				table: "notifications",
 				filter,
 			},
-			handleNotificationChange
+			handleNotificationChange,
 		);
 
 		setUnsubscribeFn(() => unsubscribe);
 		setIsConnected(true);
 		setConnectionHealth(100);
-	}, [enabled, tenantId, userId, priority, unsubscribeFn, handleNotificationChange]);
+	}, [
+		enabled,
+		tenantId,
+		userId,
+		priority,
+		unsubscribeFn,
+		handleNotificationChange,
+	]);
 
 	/**
 	 * Unsubscribe from realtime notifications

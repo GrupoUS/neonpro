@@ -1,10 +1,10 @@
 // Story 10.2: Progress Tracking through Computer Vision - Individual Progress Tracking API
 // API endpoint for individual progress tracking operations
 
-import { type NextRequest, NextResponse } from "next/server";
 import { progressTrackingService } from "@/app/lib/services/progress-tracking";
 import { updateProgressTrackingSchema } from "@/app/lib/validations/progress-tracking";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
@@ -61,7 +61,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 		return NextResponse.json(tracking);
 	} catch (error: any) {
 		if (error.name === "ZodError") {
-			return NextResponse.json({ error: "Invalid request data", details: error.errors }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Invalid request data", details: error.errors },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		return NextResponse.json({ error: "Failed to update progress tracking" }, { status: 500 });

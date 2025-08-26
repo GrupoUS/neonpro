@@ -145,7 +145,11 @@ class CrossPlatformUtils {
 			fs.writeFileSync(filePath, content, { encoding: "utf8" });
 			return true;
 		} catch (error) {
-			this.log("ERROR", "FILE_WRITE", `Failed to write file ${filePath}: ${error.message}`);
+			this.log(
+				"ERROR",
+				"FILE_WRITE",
+				`Failed to write file ${filePath}: ${error.message}`,
+			);
 			return false;
 		}
 	}
@@ -157,7 +161,11 @@ class CrossPlatformUtils {
 			}
 			return null;
 		} catch (error) {
-			this.log("ERROR", "FILE_READ", `Failed to read file ${filePath}: ${error.message}`);
+			this.log(
+				"ERROR",
+				"FILE_READ",
+				`Failed to read file ${filePath}: ${error.message}`,
+			);
 			return null;
 		}
 	}
@@ -175,7 +183,13 @@ class CrossPlatformUtils {
 			// Determine shell based on platform
 			if (this.isWindows) {
 				shell = "powershell.exe";
-				args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command];
+				args = [
+					"-NoProfile",
+					"-ExecutionPolicy",
+					"Bypass",
+					"-Command",
+					command,
+				];
 			} else {
 				shell = "/bin/bash";
 				args = ["-c", command];
@@ -224,7 +238,9 @@ class CrossPlatformUtils {
 	 */
 	async getGitInfo() {
 		try {
-			const branch = await this.executeCommand("git rev-parse --abbrev-ref HEAD");
+			const branch = await this.executeCommand(
+				"git rev-parse --abbrev-ref HEAD",
+			);
 			const commit = await this.executeCommand("git rev-parse --short HEAD");
 			const status = await this.executeCommand("git status --porcelain");
 

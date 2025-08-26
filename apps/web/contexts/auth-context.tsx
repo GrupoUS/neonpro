@@ -2,9 +2,9 @@
 
 "use client";
 
+import { createClient } from "@/app/utils/supabase/client";
 import type { AuthError, Session, User } from "@supabase/supabase-js";
 import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
-import { createClient } from "@/app/utils/supabase/client";
 
 // Types
 type AuthContextType = {
@@ -321,4 +321,4 @@ export function useAuth() {
 }
 
 // Export types for use in other files
-export type { AuthContextType, User, Session, AuthError };
+export type { AuthContextType, AuthError, Session, User };

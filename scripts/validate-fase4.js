@@ -48,7 +48,10 @@ function validateComponent(filePath, componentName) {
 		if (filePath.endsWith(".tsx")) {
 			requiredPatterns.push(
 				{ pattern: /interface\s+\w+/, description: "TypeScript interfaces" },
-				{ pattern: /export\s+(function|const)/, description: "Export statements" }
+				{
+					pattern: /export\s+(function|const)/,
+					description: "Export statements",
+				},
 			);
 		}
 
@@ -61,9 +64,16 @@ function validateComponent(filePath, componentName) {
 		}
 
 		// Check for accessibility patterns
-		const accessibilityPatterns = [/aria-label/, /aria-describedby/, /role=/, /tabIndex/];
+		const accessibilityPatterns = [
+			/aria-label/,
+			/aria-describedby/,
+			/role=/,
+			/tabIndex/,
+		];
 
-		const hasAccessibility = accessibilityPatterns.some((pattern) => pattern.test(content));
+		const hasAccessibility = accessibilityPatterns.some((pattern) =>
+			pattern.test(content),
+		);
 		if (!(hasAccessibility || componentName.includes("index"))) {
 			errors.push(`⚠️  ${componentName}: Limited accessibility attributes`);
 		}
@@ -71,7 +81,9 @@ function validateComponent(filePath, componentName) {
 		// Check for mobile responsiveness
 		const mobilePatterns = [/md:/, /lg:/, /sm:/, /grid-cols-/, /flex-col/];
 
-		const hasMobileSupport = mobilePatterns.some((pattern) => pattern.test(content));
+		const hasMobileSupport = mobilePatterns.some((pattern) =>
+			pattern.test(content),
+		);
 		if (!(hasMobileSupport || componentName.includes("index"))) {
 			errors.push(`⚠️  ${componentName}: Limited mobile responsiveness`);
 		}
@@ -104,8 +116,20 @@ for (const [dirPath, files] of Object.entries(expectedComponents)) {
 const mainIndexPath = path.join(componentsDir, "index.ts");
 _totalComponents++;
 validateComponent(mainIndexPath, "components/index.ts");
-const dashboardPagesDir = path.join(__dirname, "..", "apps", "web", "app", "dashboard");
-const expectedPages = ["page.tsx", "analytics/page.tsx", "compliance/page.tsx", "health/page.tsx"];
+const dashboardPagesDir = path.join(
+	__dirname,
+	"..",
+	"apps",
+	"web",
+	"app",
+	"dashboard",
+);
+const expectedPages = [
+	"page.tsx",
+	"analytics/page.tsx",
+	"compliance/page.tsx",
+	"health/page.tsx",
+];
 
 for (const page of expectedPages) {
 	const pagePath = path.join(dashboardPagesDir, page);
@@ -128,7 +152,10 @@ if (fs.existsSync(packageJsonPath)) {
 		"recharts",
 	];
 
-	const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+	const allDeps = {
+		...packageJson.dependencies,
+		...packageJson.devDependencies,
+	};
 	const missingDeps = requiredDeps.filter((dep) => !allDeps[dep]);
 
 	if (missingDeps.length > 0) {

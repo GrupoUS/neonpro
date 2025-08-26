@@ -313,7 +313,11 @@ export type ClinicalMetric = {
 
 export type HealthcareAlert = {
 	id: string;
-	type: "patient_safety" | "data_breach" | "system_error" | "compliance_violation";
+	type:
+		| "patient_safety"
+		| "data_breach"
+		| "system_error"
+		| "compliance_violation";
 	severity: "low" | "medium" | "high" | "critical";
 	title: string;
 	description: string;
@@ -452,7 +456,13 @@ export type EnterpriseReport = {
 };
 
 export type ReportSchedule = {
-	frequency: "daily" | "weekly" | "monthly" | "quarterly" | "annually" | "on_demand";
+	frequency:
+		| "daily"
+		| "weekly"
+		| "monthly"
+		| "quarterly"
+		| "annually"
+		| "on_demand";
 	time?: string; // HH:MM
 	dayOfWeek?: number; // 0-6
 	dayOfMonth?: number; // 1-31
@@ -495,7 +505,29 @@ export type EnterpriseConfiguration = {
 };
 
 // Export utility types
-export type EnterpriseServiceType = "cache" | "analytics" | "security" | "audit" | "health";
-export type ComplianceFramework = "lgpd" | "anvisa" | "hipaa" | "iso27001" | "cfm";
-export type HealthcareRole = "doctor" | "nurse" | "admin" | "patient" | "receptionist" | "manager" | "auditor";
-export type DataSensitivityLevel = "public" | "internal" | "confidential" | "restricted" | "patient_data";
+export type EnterpriseServiceType =
+	| "cache"
+	| "analytics"
+	| "security"
+	| "audit"
+	| "health";
+export type ComplianceFramework =
+	| "lgpd"
+	| "anvisa"
+	| "hipaa"
+	| "iso27001"
+	| "cfm";
+export type HealthcareRole =
+	| "doctor"
+	| "nurse"
+	| "admin"
+	| "patient"
+	| "receptionist"
+	| "manager"
+	| "auditor";
+export type DataSensitivityLevel =
+	| "public"
+	| "internal"
+	| "confidential"
+	| "restricted"
+	| "patient_data";

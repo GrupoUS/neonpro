@@ -3,7 +3,11 @@
  * Analyzes webpack bundles for healthcare-specific optimizations
  */
 
-import type { BundleAnalysisResult, BundleChunk, BundleRecommendation } from "../types";
+import type {
+	BundleAnalysisResult,
+	BundleChunk,
+	BundleRecommendation,
+} from "../types";
 
 type WebpackStats = {
 	chunks: Array<{
@@ -117,15 +121,17 @@ export class HealthcareBundleAnalyzer {
 	private isHealthcareCritical(chunk: any): boolean {
 		return chunk.modules.some((module: any) =>
 			Array.from(this.healthcareModules).some((healthcareModule: string) =>
-				module.name.toLowerCase().includes(healthcareModule)
-			)
+				module.name.toLowerCase().includes(healthcareModule),
+			),
 		);
 	}
 
 	/**
 	 * Generate optimization recommendations
 	 */
-	private generateRecommendations(chunks: BundleChunk[]): BundleRecommendation[] {
+	private generateRecommendations(
+		chunks: BundleChunk[],
+	): BundleRecommendation[] {
 		const recommendations: BundleRecommendation[] = [];
 
 		// Check for large chunks
@@ -134,13 +140,19 @@ export class HealthcareBundleAnalyzer {
 				// 500KB
 				recommendations.push({
 					type: "code-splitting",
-					description: `Chunk "${chunk.name}" is large (${Math.round(chunk.size / 1024)}KB). Consider splitting into smaller chunks.`,
+					description: `Chunk "${chunk.name}" is large (${Math.round(
+						chunk.size / 1024,
+					)}KB). Consider splitting into smaller chunks.`,
 					potentialSavings: Math.round(chunk.size * 0.5),
 					priority: chunk.healthcareCritical ? "high" : "medium",
 				});
 			}
 
-			if (chunk.size > 200_000 && chunk.isInitial && !chunk.healthcareCritical) {
+			if (
+				chunk.size > 200_000 &&
+				chunk.isInitial &&
+				!chunk.healthcareCritical
+			) {
 				recommendations.push({
 					type: "lazy-loading",
 					description: `Chunk "${chunk.name}" could be lazy-loaded to improve initial bundle size.`,
@@ -166,7 +178,9 @@ export class HealthcareBundleAnalyzer {
 				const moduleName = module.split("/").pop() || module;
 				recommendations.push({
 					type: "tree-shaking",
-					description: `Module "${moduleName}" appears in multiple chunks: ${chunkNames.join(", ")}. Consider extracting to a shared chunk.`,
+					description: `Module "${moduleName}" appears in multiple chunks: ${chunkNames.join(
+						", ",
+					)}. Consider extracting to a shared chunk.`,
 					potentialSavings: 50_000, // Estimated
 					priority: "medium",
 				});
@@ -185,13 +199,21 @@ export class HealthcareBundleAnalyzer {
 	/**
 	 * Add healthcare-specific recommendations
 	 */
-	private addHealthcareRecommendations(chunks: BundleChunk[], recommendations: BundleRecommendation[]): void {
+	private addHealthcareRecommendations(
+		chunks: BundleChunk[],
+		recommendations: BundleRecommendation[],
+	): void {
 		// Healthcare modules should be prioritized in critical chunks
 		const healthcareChunks = chunks.filter((chunk) => chunk.healthcareCritical);
-		const nonHealthcareChunks = chunks.filter((chunk) => !chunk.healthcareCritical && chunk.isInitial);
+		const nonHealthcareChunks = chunks.filter(
+			(chunk) => !chunk.healthcareCritical && chunk.isInitial,
+		);
 
 		if (nonHealthcareChunks.length > 0 && healthcareChunks.length > 0) {
-			const nonHealthcareSize = nonHealthcareChunks.reduce((sum, chunk) => sum + chunk.size, 0);
+			const nonHealthcareSize = nonHealthcareChunks.reduce(
+				(sum, chunk) => sum + chunk.size,
+				0,
+			);
 			if (nonHealthcareSize > 300_000) {
 				// 300KB
 				recommendations.push({
@@ -206,13 +228,19 @@ export class HealthcareBundleAnalyzer {
 
 		// Medical form components should be preloaded
 		const hasFormComponents = chunks.some((chunk) =>
-			chunk.modules.some((module) => module.includes("form") || module.includes("input") || module.includes("medical"))
+			chunk.modules.some(
+				(module) =>
+					module.includes("form") ||
+					module.includes("input") ||
+					module.includes("medical"),
+			),
 		);
 
 		if (hasFormComponents) {
 			recommendations.push({
 				type: "code-splitting",
-				description: "Medical form components should be in a separate preloadable chunk for faster form rendering.",
+				description:
+					"Medical form components should be in a separate preloadable chunk for faster form rendering.",
 				potentialSavings: 100_000, // Estimated
 				priority: "high",
 			});
@@ -224,7 +252,10 @@ export class HealthcareBundleAnalyzer {
 	 */
 	private assessHealthcareOptimization(chunks: BundleChunk[]): boolean {
 		const healthcareChunks = chunks.filter((chunk) => chunk.healthcareCritical);
-		const totalHealthcareSize = healthcareChunks.reduce((sum, chunk) => sum + chunk.size, 0);
+		const totalHealthcareSize = healthcareChunks.reduce(
+			(sum, chunk) => sum + chunk.size,
+			0,
+		);
 		const totalSize = chunks.reduce((sum, chunk) => sum + chunk.size, 0);
 
 		// Healthcare modules should not dominate the initial bundle
@@ -313,9 +344,11 @@ ${analysis.recommendations.map((rec) => `// - ${rec.description}`).join("\n")}
 ${analysis.chunks
 	.map(
 		(chunk) => `
-- ${chunk.name}: ${formatSize(chunk.size)} (${chunk.healthcareCritical ? "🏥 Healthcare Critical" : "📦 General"})
+- ${chunk.name}: ${formatSize(chunk.size)} (${
+			chunk.healthcareCritical ? "🏥 Healthcare Critical" : "📦 General"
+		})
   ${chunk.isInitial ? "⚡ Initial Load" : "🔄 Async Load"}
-`
+`,
 	)
 	.join("")}
 
@@ -326,7 +359,7 @@ ${analysis.recommendations
 ${index + 1}. [${rec.priority.toUpperCase()}] ${rec.description}
    💾 Potential Savings: ${formatSize(rec.potentialSavings)}
    🔧 Type: ${rec.type}
-`
+`,
 	)
 	.join("")}
 

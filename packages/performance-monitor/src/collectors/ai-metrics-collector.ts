@@ -1,4 +1,9 @@
-import { type MetricCollector, MetricType, MetricUnit, type PerformanceMetric } from "../types";
+import {
+	type MetricCollector,
+	MetricType,
+	MetricUnit,
+	type PerformanceMetric,
+} from "../types";
 
 export class AIMetricsCollector implements MetricCollector {
 	private enabled = true;
@@ -34,14 +39,19 @@ export class AIMetricsCollector implements MetricCollector {
 				unit: MetricUnit.COUNT,
 				tags: { component: "ai", error: "collection_failed" },
 				source: "ai-metrics-collector",
-				context: { error: error instanceof Error ? error.message : String(error) },
+				context: {
+					error: error instanceof Error ? error.message : String(error),
+				},
 			});
 		}
 
 		return metrics;
 	}
 
-	private async collectAPIMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
+	private async collectAPIMetrics(
+		metrics: PerformanceMetric[],
+		timestamp: number,
+	): Promise<void> {
 		// Mock AI API metrics - will be replaced with actual service integration
 		const totalAPICalls = await this.getTotalAPICalls();
 		const successfulCalls = await this.getSuccessfulAPICalls();
@@ -60,7 +70,8 @@ export class AIMetricsCollector implements MetricCollector {
 		});
 
 		// Error rate
-		const errorRate = totalAPICalls > 0 ? (failedCalls / totalAPICalls) * 100 : 0;
+		const errorRate =
+			totalAPICalls > 0 ? (failedCalls / totalAPICalls) * 100 : 0;
 		metrics.push({
 			id: `ai_error_rate_${timestamp}`,
 			timestamp,
@@ -72,7 +83,10 @@ export class AIMetricsCollector implements MetricCollector {
 			context: { total: totalAPICalls, failed: failedCalls },
 		});
 	}
-	private async collectCostMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
+	private async collectCostMetrics(
+		metrics: PerformanceMetric[],
+		timestamp: number,
+	): Promise<void> {
 		if (!this.costTracker) {
 			return;
 		}
@@ -120,7 +134,10 @@ export class AIMetricsCollector implements MetricCollector {
 		} catch (_error) {}
 	}
 
-	private async collectPerformanceMetrics(metrics: PerformanceMetric[], timestamp: number): Promise<void> {
+	private async collectPerformanceMetrics(
+		metrics: PerformanceMetric[],
+		timestamp: number,
+	): Promise<void> {
 		// Mock performance metrics - will be replaced with actual service integration
 		const averageResponseTime = await this.getAverageResponseTime();
 		const p95ResponseTime = await this.getP95ResponseTime();

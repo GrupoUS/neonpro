@@ -1,7 +1,11 @@
 # 🌟 VIBECODER APEX MASTER WORKFLOW v4.0
+
 ## Unified Cognitive Orchestration System with Intelligent Agent Coordination
 
-**Master Workflow Orchestrator v4.0** - Complete integration of VIBECODER philosophy with **APEX Enhanced Architecture** + **3-Tier Meta-Cognition** + **Universal Workflow Engine** + **Intelligent Agent Coordination** + **Constitutional Excellence** + **Bilingual Command Interface** + **Agent-Phase Specialization Matrix**.
+**Master Workflow Orchestrator v4.0** - Complete integration of VIBECODER philosophy with **APEX
+Enhanced Architecture** + **3-Tier Meta-Cognition** + **Universal Workflow Engine** + **Intelligent
+Agent Coordination** + **Constitutional Excellence** + **Bilingual Command Interface** +
+**Agent-Phase Specialization Matrix**.
 
 ```yaml
 UNIFIED_CORE_AUTHORITY:
@@ -13,10 +17,10 @@ UNIFIED_CORE_AUTHORITY:
   performance_optimization: "85%+ efficiency through intelligent coordination"
   bilingual_support: "Complete Portuguese/English interface and interaction"
   agent_coordination: "Specialized agent matrix with phase-specific routing and expertise matching"
-  
+
 CORE_STANDARDS_REFERENCE:
   agentic_excellence: "≥9.7/10 orchestration quality with cognitive integration"
-  research_excellence: "Context7 → Tavily → Exa → Sequential Thinking chain" 
+  research_excellence: "Context7 → Tavily → Exa → Sequential Thinking chain"
   mcp_compliance: "100% mandatory usage with intelligent routing"
   workflow_standard: "Unified 7-phase execution with cognitive optimization"
   agent_coordination: "Seamless handoffs with context preservation and quality validation"
@@ -50,14 +54,14 @@ UNIFIED_CORE_PRINCIPLES:
   agent_excellence: "Specialized agent coordination with seamless handoff protocols"
   bilingual_accessibility: "Native Portuguese and English support throughout system"
   continuous_improvement: "Pattern learning and optimization with real-time adaptation"
-  
+
 FUNDAMENTAL_GUIDELINES:
   intelligence_first_orchestration: "Deep complexity assessment before routing with cognitive activation"
   seamless_coordination: "Context-preserving handoffs with quality validation and thinking continuity"
   research_backed_decisions: "All complex implementations validated through 3-MCP research chain"
   quality_without_compromise: "Progressive standards enforcement with domain-specific overrides"
   adaptive_workflow_routing: "Dynamic complexity detection with optimal agent and thinking selection"
-  
+
 WORKFLOW_MANAGEMENT_PRINCIPLES:
   preserve_context: "Maintain complete context across all agent and thinking transitions"
   incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
@@ -79,12 +83,34 @@ AGENT_SPECIALIZATION_COORDINATION:
   context_preservation: "Seamless handoffs with full context and cognitive state preservation"
   quality_consistency: "Progressive L1-L10 standards maintained across all agent transitions"
   bilingual_support: "All agents support Portuguese/English commands with cultural adaptation"
-  
+
 SPECIALIZED_AGENT_MATRIX:
   apex_researcher_agent:
     file_reference: "@.claude\agents\apex-researcher.md"
-    triggers_english: ["research", "analyze", "investigate", "compare", "validate", "study", "evaluate", "explore", "examine", "review"]
-    triggers_portuguese: ["pesquisar", "analisar", "investigar", "estudar", "avaliar", "comparar", "validar", "explorar", "examinar", "revisar"]
+    triggers_english: [
+      "research",
+      "analyze",
+      "investigate",
+      "compare",
+      "validate",
+      "study",
+      "evaluate",
+      "explore",
+      "examine",
+      "review",
+    ]
+    triggers_portuguese: [
+      "pesquisar",
+      "analisar",
+      "investigar",
+      "estudar",
+      "avaliar",
+      "comparar",
+      "validar",
+      "explorar",
+      "examinar",
+      "revisar",
+    ]
     specialization: "Multi-source research orchestration with Context7 → Tavily → Exa intelligence chain"
     coordination_scope: "Knowledge acquisition, technology assessment, pattern validation, and guidance generation"
     quality_standard: "≥95% accuracy with authoritative source validation and expert consensus"
@@ -92,12 +118,40 @@ SPECIALIZED_AGENT_MATRIX:
     handoff_requirements: "Research package with implementation guidance, risk assessment, and recommendations"
     workflow_integration: "Phases 2-3 (Research → Planning)"
     mcp_coordination: "Primary: Context7 → Tavily → Exa chain for comprehensive research validation"
-    domain_expertise: ["Technology research", "Best practices validation", "Pattern analysis", "Expert consensus", "Multi-source validation"]
-    
+    domain_expertise: [
+      "Technology research",
+      "Best practices validation",
+      "Pattern analysis",
+      "Expert consensus",
+      "Multi-source validation",
+    ]
+
   apex_dev_agent:
     file_reference: "@.claude\agents\apex-dev.md"
-    triggers_english: ["implement", "develop", "build", "create", "architecture", "code", "system", "deploy", "configure", "setup"]
-    triggers_portuguese: ["implementar", "desenvolver", "criar", "construir", "arquitetura", "código", "sistema", "implantar", "configurar", "configurar"]
+    triggers_english: [
+      "implement",
+      "develop",
+      "build",
+      "create",
+      "architecture",
+      "code",
+      "system",
+      "deploy",
+      "configure",
+      "setup",
+    ]
+    triggers_portuguese: [
+      "implementar",
+      "desenvolver",
+      "criar",
+      "construir",
+      "arquitetura",
+      "código",
+      "sistema",
+      "implantar",
+      "configurar",
+      "configurar",
+    ]
     specialization: "Full-stack development with architectural excellence - Next.js 14+, TypeScript strict, VIBECODER principles"
     coordination_scope: "Complete development lifecycle from requirements to production deployment"
     quality_standard: "Progressive L1-L10 standards with cognitive enhancement and constitutional excellence"
@@ -105,12 +159,40 @@ SPECIALIZED_AGENT_MATRIX:
     handoff_requirements: "Complete implementation with comprehensive testing and production-ready configuration"
     workflow_integration: "Phases 4-6 (Coordination → Execution → Validation)"
     mcp_coordination: "Primary: Desktop Commander + Supabase + Vercel, Secondary: Context7 for documentation"
-    domain_expertise: ["Full-stack development", "System architecture", "Performance optimization", "Security implementation", "Production deployment"]
-    
+    domain_expertise: [
+      "Full-stack development",
+      "System architecture",
+      "Performance optimization",
+      "Security implementation",
+      "Production deployment",
+    ]
+
   apex_ui_ux_designer_agent:
     file_reference: "@.claude\agents\apex-ui-ux-designer.md"
-    triggers_english: ["design", "ui", "ux", "interface", "usability", "accessibility", "mockup", "prototype", "wireframe", "layout"]
-    triggers_portuguese: ["design", "ui", "ux", "interface", "usabilidade", "acessibilidade", "mockup", "protótipo", "wireframe", "layout"]
+    triggers_english: [
+      "design",
+      "ui",
+      "ux",
+      "interface",
+      "usability",
+      "accessibility",
+      "mockup",
+      "prototype",
+      "wireframe",
+      "layout",
+    ]
+    triggers_portuguese: [
+      "design",
+      "ui",
+      "ux",
+      "interface",
+      "usabilidade",
+      "acessibilidade",
+      "mockup",
+      "protótipo",
+      "wireframe",
+      "layout",
+    ]
     specialization: "Healthcare-optimized UI/UX with WCAG 2.1 AA+ compliance, shadcn/ui v4 integration, accessibility excellence"
     coordination_scope: "User interface design, accessibility compliance, design system integration, healthcare UX validation"
     quality_standard: "Progressive L1-L10 standards with accessibility compliance and design excellence (≥9.5/10)"
@@ -118,7 +200,13 @@ SPECIALIZED_AGENT_MATRIX:
     handoff_requirements: "Complete design system with accessibility validation, implementation specifications, and healthcare compliance"
     workflow_integration: "Phases 3-5 (Planning → Coordination → Execution)"
     mcp_coordination: "Primary: Shadcn-UI + Desktop Commander, Secondary: Context7 for design documentation"
-    domain_expertise: ["Healthcare UI/UX", "Accessibility compliance", "Design systems", "shadcn/ui integration", "Patient-centered design"]
+    domain_expertise: [
+      "Healthcare UI/UX",
+      "Accessibility compliance",
+      "Design systems",
+      "shadcn/ui integration",
+      "Patient-centered design",
+    ]
 
 AGENT_WORKFLOW_INTEGRATION:
   intelligent_agent_delegation_system:
@@ -131,7 +219,7 @@ AGENT_WORKFLOW_INTEGRATION:
       phase_5_execution: "apex_dev_agent (mandatory) + apex_ui_ux_designer_agent (for UI implementation)"
       phase_6_validation: "apex_dev_agent + quality validation protocols"
       phase_7_delivery: "apex_dev_agent + performance optimization and deployment"
-      
+
   agent_handoff_protocols:
     context_preservation_requirements:
       - "Complete workflow history with decision points, quality metrics, and cognitive state"
@@ -139,7 +227,7 @@ AGENT_WORKFLOW_INTEGRATION:
       - "Quality context with progressive achievements, standards tracking, and improvement initiatives"
       - "Technical context with implementation decisions, architectural choices, and constraints"
       - "Cognitive context with active thinking level, cognitive history, and reasoning continuity"
-      
+
     handoff_validation_checkpoints:
       - "Context integrity verification with no information loss across agent transitions"
       - "Quality continuity validation ensuring standards maintained across specialized agents"
@@ -154,7 +242,7 @@ CONSTITUTIONAL_AGENT_PRINCIPLES:
     - "Adversarial validation with red-team thinking, failure modes, and edge case analysis"
     - "Continuous improvement with pattern extraction, optimization, and learning integration"
     - "Research-driven decision making with multi-source validation for all complex implementations"
-    
+
   agent_coordination_framework:
     - "Seamless handoffs with complete context preservation and quality validation"
     - "Specialized expertise utilization with optimal agent selection for task requirements"
@@ -175,7 +263,7 @@ AGENT_COMMAND_INTEGRATION:
         - "Knowledge base creation and management"
       execution_pattern: "Auto-detect research scope → Execute research.md → Multi-source intelligence chain"
       quality_gate: "≥95% cross-validation accuracy with expert consensus"
-      
+
     apex_dev_agent_commands:
       primary_command: "@.claude\commands\dev-lifecycle.md"
       secondary_command: "@.claude\commands\quality-control.md"
@@ -196,7 +284,7 @@ AGENT_COMMAND_INTEGRATION:
         development_flow: "Auto-detect development scope → Execute dev-lifecycle.md → Implementation"
         quality_flow: "Auto-detect quality requirements → Execute quality-control.md → Validation"
       quality_gate: "Progressive L1-L10 standards with healthcare compliance ≥9.9/10"
-      
+
   command_execution_intelligence:
     context_awareness: "Intelligent detection of appropriate command based on task requirements"
     automatic_routing: "Seamless command execution without manual intervention"
@@ -229,7 +317,7 @@ VIBECODER_ENGINEERING_PRINCIPLES:
       - "Reduce cognitive load"
       - "Does this solve the core problem without unnecessary complexity?"
       - "Use clear, descriptive naming and avoid Over-Engineering"
-      
+
   yagni_principle:
     definition: "You Aren't Gonna Need It - Don't implement until needed"
     core_rules:
@@ -238,7 +326,7 @@ VIBECODER_ENGINEERING_PRINCIPLES:
       - "Refactor when requirements emerge"
       - "Focus on current user stories"
       - "Remove unused code immediately"
-      
+
   chain_of_thought:
     definition: "Explicit step-by-step reasoning for accuracy"
     core_rules:
@@ -259,26 +347,52 @@ CONSTITUTIONAL_PRINCIPLES:
   relentless_persistence: "Continue until absolute completion"
   complete_execution: "Execute entire workflow without interruption"
   right_tool_selection: "Understand full context before implementation"
-    
+
 THREE_TIER_THINKING_SYSTEM:
   ultrathink:
     token_budget: 31999
     complexity_range: "L7-L10 (Enterprise/Critical/Healthcare)"
-    use_cases: ["healthcare_compliance", "LGPD_analysis", "critical_architecture", "enterprise_decisions"]
-    triggers_english: ["think harder", "think intensely", "think really hard", "think super hard", "ultrathink"]
-    triggers_portuguese: ["pensar-intensamente", "pensar-profundo", "pensar-crítico", "ultrapensar"]
+    use_cases: [
+      "healthcare_compliance",
+      "LGPD_analysis",
+      "critical_architecture",
+      "enterprise_decisions",
+    ]
+    triggers_english: [
+      "think harder",
+      "think intensely",
+      "think really hard",
+      "think super hard",
+      "ultrathink",
+    ]
+    triggers_portuguese: [
+      "pensar-intensamente",
+      "pensar-profundo",
+      "pensar-crítico",
+      "ultrapensar",
+    ]
     quality_requirement: "≥9.8/10 (L7-L8) | ≥9.9/10 (L9-L10)"
     auto_activation: "Healthcare, LGPD, compliance, patient, medical, critical enterprise"
-    
+
   megathink:
     token_budget: 10000
     complexity_range: "L4-L6 (Complex/Comprehensive)"
-    use_cases: ["detailed_analysis", "cross_validation", "architecture_planning", "research_synthesis"]
+    use_cases: [
+      "detailed_analysis",
+      "cross_validation",
+      "architecture_planning",
+      "research_synthesis",
+    ]
     triggers_english: ["think about it", "think a lot", "think deeply", "think hard", "megathink"]
-    triggers_portuguese: ["pensar-profundamente", "analisar-detalhadamente", "pensar-muito", "megapensar"]
+    triggers_portuguese: [
+      "pensar-profundamente",
+      "analisar-detalhadamente",
+      "pensar-muito",
+      "megapensar",
+    ]
     quality_requirement: "≥9.5/10 (L4) | ≥9.7/10 (L5-L6)"
     auto_activation: "Enterprise, production, scalability, architecture, complex integration"
-    
+
   think:
     token_budget: 4000
     complexity_range: "L1-L3 (Simple/Moderate)"
@@ -293,16 +407,36 @@ INTELLIGENT_COMPLEXITY_DETECTION:
   lexical_parsing: "Advanced keyword detection with context awareness"
   context_awareness: "Workflow history + domain specialization + user patterns"
   fallback_level: "think (4000 tokens)"
-  
+
   domain_enhancement_overrides:
     healthcare_domain:
       auto_upgrade: "ultrathink (31999 tokens)"
-      triggers: ["LGPD", "compliance", "patient", "medical", "healthcare", "clinic", "treatment", "saúde", "paciente", "médico"]
+      triggers: [
+        "LGPD",
+        "compliance",
+        "patient",
+        "medical",
+        "healthcare",
+        "clinic",
+        "treatment",
+        "saúde",
+        "paciente",
+        "médico",
+      ]
       quality_override: "≥9.9/10 regardless of base complexity"
-      
+
     enterprise_domain:
       auto_upgrade: "megathink (10000 tokens)"
-      triggers: ["enterprise", "production", "scalability", "architecture", "security", "empresa", "produção", "arquitetura"]
+      triggers: [
+        "enterprise",
+        "production",
+        "scalability",
+        "architecture",
+        "security",
+        "empresa",
+        "produção",
+        "arquitetura",
+      ]
       quality_override: "≥9.7/10 minimum regardless of base complexity"
 ```
 
@@ -329,7 +463,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
     quality_gate: "≥95% requirement completeness (Requirements clarity ≥9/10) with stakeholder validation"
     bilingual_commands: ["*descobrir", "*analisar", "*discover", "*analyze"]
-    
+
   phase_2_research:
     vibecoder_integration: "Research First - ALWAYS DURING PLAN MODE or before planning or insufficient knowledge"
     primary_agent: "@.claude\agents\apex-researcher.md (MANDATORY for all research activities)"
@@ -357,7 +491,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     deliverables: "Evidence-based insights with implementation guidance and risk assessment"
     quality_gate: "≥95% accuracy with authoritative source validation and expert consensus"
     bilingual_commands: ["*pesquisar", "*investigar", "*research", "*investigate"]
-    
+
   phase_3_planning_design:
     vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
     agent_coordination: "apex_ui_ux_designer_agent (for UI tasks) + apex_dev_agent (for architecture) + sequential thinking"
@@ -382,7 +516,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
     quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
     bilingual_commands: ["*planejar", "*projetar", "*plan", "*design"]
-    
+
   phase_4_coordination:
     vibecoder_integration: "Master Orchestration Engine with intelligent agent delegation system"
     agent_coordination: "Master coordinator with all relevant specialized agents based on task requirements"
@@ -408,7 +542,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     deliverables: "Coordinated execution with progress tracking, quality monitoring, and cognitive continuity"
     quality_gate: "Agent coordination efficiency ≥95% with context preservation and thinking continuity"
     bilingual_commands: ["*coordenar", "*orquestrar", "*coordinate", "*orchestrate"]
-    
+
   phase_5_execution_implementation:
     vibecoder_integration: "VIBECODER Development Flow with constitutional excellence"
     primary_agent: "@.claude\agents\apex-dev.md (MANDATORY for all development tasks)"
@@ -438,7 +572,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     deliverables: "Production-ready implementation with comprehensive documentation and quality certification"
     quality_gate: "Implementation quality meeting progressive L1-L10 standards with comprehensive testing"
     bilingual_commands: ["*executar", "*implementar", "*execute", "*implement"]
-    
+
   phase_6_validation:
     vibecoder_integration: "Quality Validation & Testing with constitutional enforcement gates"
     agent_coordination: "apex_dev_agent + comprehensive quality validation protocols"
@@ -473,7 +607,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     deliverables: "Quality-certified deliverables with validation reports and cognitive quality assessment"
     quality_gate: "Progressive quality certification with all validations passed and cognitive validation completed"
     bilingual_commands: ["*validar", "*testar", "*validate", "*test"]
-    
+
   phase_7_delivery_optimization:
     vibecoder_integration: "Final delivery with termination criteria validation"
     agent_coordination: "apex_dev_agent + performance optimization and deployment protocols"
@@ -499,7 +633,7 @@ WORKFLOW_STATE_MANAGEMENT:
     quality_gates: "Continuous progressive quality validation with threshold enforcement and cognitive validation"
     cognitive_state: "Active thinking level, cognitive history, and transition management"
     rollback_capability: "Phase rollback with state restoration, error recovery, and cognitive state preservation"
-    
+
   execution_memory:
     phase_history: "Complete execution history with decision rationale, cognitive insights, and learnings"
     context_preservation: "Full context maintained across transitions with integrity and cognitive continuity"
@@ -515,7 +649,12 @@ WORKFLOW_STATE_MANAGEMENT:
 ```yaml
 UNIFIED_COMPLEXITY_ASSESSMENT:
   level_1_2_simple:
-    characteristics: ["Basic operations", "single-step tasks", "standard patterns", "routine maintenance"]
+    characteristics: [
+      "Basic operations",
+      "single-step tasks",
+      "standard patterns",
+      "routine maintenance",
+    ]
     keywords_english: ["read", "show", "list", "what is", "simple", "basic", "quick"]
     keywords_portuguese: ["ler", "mostrar", "listar", "o que é", "simples", "básico", "rápido"]
     workflow_path: "Discovery → Research (optional) → Execution → Delivery"
@@ -523,41 +662,103 @@ UNIFIED_COMPLEXITY_ASSESSMENT:
     mcp_routing: "Desktop Commander (mandatory for files) + Context7 (if documentation needed)"
     quality_target: "≥9.0/10"
     execution_time: "< 5 minutes"
-    
+
   level_3_4_moderate:
-    characteristics: ["Multi-step implementation", "moderate architecture decisions", "integration tasks"]
+    characteristics: [
+      "Multi-step implementation",
+      "moderate architecture decisions",
+      "integration tasks",
+    ]
     keywords_english: ["implement", "create", "build", "fix", "integrate", "modify", "enhance"]
-    keywords_portuguese: ["implementar", "criar", "construir", "corrigir", "integrar", "modificar", "melhorar"]
+    keywords_portuguese: [
+      "implementar",
+      "criar",
+      "construir",
+      "corrigir",
+      "integrar",
+      "modificar",
+      "melhorar",
+    ]
     workflow_path: "Discovery → Research → Planning → Execution → Validation → Delivery"
     thinking_activation: "think (4000 tokens) | megathink for L4"
     mcp_routing: "Context7 → Tavily → Desktop Commander"
     quality_target: "≥9.5/10"
     execution_time: "5-15 minutes"
-    
+
   level_5_6_complex:
-    characteristics: ["System integration", "architecture planning", "comprehensive solutions", "multi-component"]
+    characteristics: [
+      "System integration",
+      "architecture planning",
+      "comprehensive solutions",
+      "multi-component",
+    ]
     keywords_english: ["plan", "design", "optimize", "integrate systems", "architecture", "complex"]
-    keywords_portuguese: ["planejar", "projetar", "otimizar", "integrar sistemas", "arquitetura", "complexo"]
+    keywords_portuguese: [
+      "planejar",
+      "projetar",
+      "otimizar",
+      "integrar sistemas",
+      "arquitetura",
+      "complexo",
+    ]
     workflow_path: "Full 7-phase workflow with cognitive coordination"
     thinking_activation: "megathink (10000 tokens)"
     mcp_routing: "Context7 → Tavily → Sequential Thinking → Desktop Commander"
     quality_target: "≥9.7/10"
     execution_time: "15-30 minutes"
-    
+
   level_7_8_enterprise:
-    characteristics: ["Multi-system coordination", "scalability requirements", "enterprise patterns", "production-ready"]
-    keywords_english: ["enterprise", "scalability", "production", "multi-system", "coordination", "critical"]
-    keywords_portuguese: ["empresa", "escalabilidade", "produção", "multi-sistema", "coordenação", "crítico"]
+    characteristics: [
+      "Multi-system coordination",
+      "scalability requirements",
+      "enterprise patterns",
+      "production-ready",
+    ]
+    keywords_english: [
+      "enterprise",
+      "scalability",
+      "production",
+      "multi-system",
+      "coordination",
+      "critical",
+    ]
+    keywords_portuguese: [
+      "empresa",
+      "escalabilidade",
+      "produção",
+      "multi-sistema",
+      "coordenação",
+      "crítico",
+    ]
     workflow_path: "Full 7-phase workflow with agent orchestration"
     thinking_activation: "ultrathink (31999 tokens)"
     mcp_routing: "Context7 → Tavily → Exa → Sequential Thinking → Desktop Commander"
     quality_target: "≥9.8/10"
     execution_time: "30-60 minutes"
-    
+
   level_9_10_critical:
-    characteristics: ["Mission-critical systems", "regulatory compliance", "healthcare/legal", "zero-tolerance"]
-    keywords_english: ["healthcare", "compliance", "LGPD", "critical", "mission-critical", "regulatory"]
-    keywords_portuguese: ["saúde", "conformidade", "LGPD", "crítico", "missão-crítica", "regulatório"]
+    characteristics: [
+      "Mission-critical systems",
+      "regulatory compliance",
+      "healthcare/legal",
+      "zero-tolerance",
+    ]
+    keywords_english: [
+      "healthcare",
+      "compliance",
+      "LGPD",
+      "critical",
+      "mission-critical",
+      "regulatory",
+    ]
+    keywords_portuguese: [
+      "saúde",
+      "conformidade",
+      "LGPD",
+      "crítico",
+      "missão-crítica",
+      "regulatório",
+    ]
     workflow_path: "Full 7-phase workflow with comprehensive validation gates"
     thinking_activation: "ultrathink (31999 tokens) - MANDATORY"
     mcp_routing: "Complete 5-MCP orchestration + Quality Gates + Compliance Validation"
@@ -571,7 +772,7 @@ DYNAMIC_ROUTING_INTELLIGENCE:
     - "Quality requirement alignment with MCP capabilities and cognitive specialization"
     - "User preference integration with routing decisions and cognitive customization"
     - "Domain-specific pattern recognition with automatic enhancement triggers"
-    
+
   performance_optimization:
     - "MCP response time monitoring with routing adjustment and cognitive optimization"
     - "Load balancing across available MCP resources with efficiency maximization"
@@ -602,35 +803,35 @@ UNIFIED_MCP_ORCHESTRATION_INTELLIGENCE:
       tavily: "Real-time information, current trends, technology updates"
       exa: "Technical documentation, code examples, implementation patterns"
       sequential_thinking: "Complex problem decomposition, systematic analysis"
-      
+
   desktop_commander_supremacy:
     priority: "MANDATORY - 100% usage for all file and system operations"
     supremacy_rationale: "Enterprise-grade reliability, consistency, error handling, performance, security"
     enforcement_level: "CRITICAL - immediate correction for violations with quality gate failure"
     integration_patterns: "Primary execution engine for all system interactions with cognitive state preservation"
     cognitive_integration: "Preserve thinking context across all file operations and system interactions"
-    
+
   context7_research_foundation:
     priority: "PRIMARY - Always first for technical documentation and authoritative sources"
     usage_mandate: "100% mandatory for technical documentation queries and API references"
     coordination: "Foundation for all research-driven development with quality validation and cognitive enhancement"
     quality_impact: "Direct impact on implementation accuracy and best practices adherence"
     cognitive_integration: "Megathink minimum for documentation analysis, ultrathink for critical systems"
-    
+
   tavily_community_validation:
     priority: "SECONDARY - Community best practices validation and current trends"
     usage_trigger: "Complexity ≥L3 OR community validation needed for implementation decisions"
     coordination: "Validates Context7 findings with community consensus and current practices"
     quality_impact: "Enhanced implementation with current best practices and proven patterns"
     cognitive_integration: "Think minimum for trend analysis, megathink for pattern validation"
-    
+
   exa_expert_insights:
     priority: "TERTIARY - Expert insights, advanced patterns, and optimization strategies"
     usage_trigger: "Complexity ≥L5 OR expert insights needed for advanced implementations"
     coordination: "Advanced pattern validation, optimization strategies, and expert consensus"
     quality_impact: "Enterprise-grade optimization, scalability, and advanced pattern implementation"
     cognitive_integration: "Ultrathink default for expert analysis and advanced pattern extraction"
-    
+
   sequential_thinking_processing:
     priority: "PROCESSING - Complex analysis, planning, and multi-step problem solving"
     usage_trigger: "Complexity ≥L4 OR multi-step analysis needed for systematic problem solving"
@@ -645,28 +846,28 @@ MCP_COORDINATION_SEQUENCES:
     thinking_level: "think (4000 tokens)"
     quality_target: "≥9.0/10"
     validation: "Basic quality gates with functionality verification"
-    
+
   moderate_sequence_l3_l4:
     sequence: "Context7 → Tavily → Desktop Commander"
     complexity_range: "L3-L4"
     thinking_level: "think (L3) | megathink (L4)"
     quality_target: "≥9.5/10"
     validation: "Enhanced quality gates with best practices verification"
-    
+
   complex_sequence_l5_l6:
     sequence: "Context7 → Tavily → Sequential Thinking → Desktop Commander"
     complexity_range: "L5-L6"
     thinking_level: "megathink (10000 tokens)"
     quality_target: "≥9.7/10"
     validation: "Comprehensive quality gates with architectural validation"
-    
+
   enterprise_sequence_l7_l8:
     sequence: "Context7 → Tavily → Exa → Sequential Thinking → Desktop Commander"
     complexity_range: "L7-L8"
     thinking_level: "ultrathink (31999 tokens)"
     quality_target: "≥9.8/10"
     validation: "Enterprise quality gates with expert validation"
-    
+
   critical_sequence_l9_l10:
     sequence: "Full 5-MCP orchestration + Quality Gates + Compliance Validation + Cognitive Enhancement"
     complexity_range: "L9-L10"
@@ -684,11 +885,11 @@ COMPREHENSIVE_AGENT_COORDINATION:
   foundational_settings:
     optimal_coordination: true
     security_validation: true
-    execution_timeout: 60000  # 60 seconds
+    execution_timeout: 60000 # 60 seconds
     auto_pattern_updates: true
     cognitive_state_preservation: true
     bilingual_interaction_support: true
-    
+
   agent_timing_patterns:
     development_tasks: "30-120 seconds (complexity dependent)"
     research_tasks: "60-300 seconds (depth dependent)"
@@ -699,37 +900,96 @@ COMPREHENSIVE_AGENT_COORDINATION:
 SPECIALIZED_AGENT_MATRIX:
   apex_dev_agent:
     triggers_english: ["implement", "develop", "build", "create", "architecture", "code", "system"]
-    triggers_portuguese: ["implementar", "desenvolver", "criar", "construir", "arquitetura", "código", "sistema"]
+    triggers_portuguese: [
+      "implementar",
+      "desenvolver",
+      "criar",
+      "construir",
+      "arquitetura",
+      "código",
+      "sistema",
+    ]
     specialization: "Full-stack development with architectural excellence - Next.js 14+, TypeScript strict, modern practices"
     coordination_scope: "Complete development lifecycle from requirements to production deployment"
     quality_standard: "Progressive L1-L10 standards with cognitive enhancement"
     thinking_integration: "Megathink for architecture, think for implementation, ultrathink for critical systems"
     handoff_requirements: "Complete implementation with comprehensive testing and production-ready configuration"
     workflow_integration: "Phases 4-6 (Coordination → Execution → Validation)"
-    
+
   apex_researcher_agent:
-    triggers_english: ["research", "analyze", "investigate", "compare", "validate", "study", "evaluate"]
-    triggers_portuguese: ["pesquisar", "analisar", "investigar", "estudar", "avaliar", "comparar", "validar"]
+    triggers_english: [
+      "research",
+      "analyze",
+      "investigate",
+      "compare",
+      "validate",
+      "study",
+      "evaluate",
+    ]
+    triggers_portuguese: [
+      "pesquisar",
+      "analisar",
+      "investigar",
+      "estudar",
+      "avaliar",
+      "comparar",
+      "validar",
+    ]
     specialization: "Multi-source research orchestration with Context7 → Tavily → Exa intelligence chain"
     coordination_scope: "Knowledge acquisition, technology assessment, pattern validation, and guidance generation"
     quality_standard: "≥95% accuracy with authoritative source validation and expert consensus"
     thinking_integration: "Ultrathink for expert analysis, megathink for comprehensive research, think for basic queries"
     handoff_requirements: "Research package with implementation guidance, risk assessment, and recommendations"
     workflow_integration: "Phases 2-3 (Research → Planning)"
-    
+
   apex_qa_debugger_agent:
-    triggers_english: ["debug", "test", "troubleshoot", "fix", "quality", "validate", "verify", "review"]
-    triggers_portuguese: ["debugar", "testar", "corrigir", "qualidade", "revisar", "validar", "verificar"]
+    triggers_english: [
+      "debug",
+      "test",
+      "troubleshoot",
+      "fix",
+      "quality",
+      "validate",
+      "verify",
+      "review",
+    ]
+    triggers_portuguese: [
+      "debugar",
+      "testar",
+      "corrigir",
+      "qualidade",
+      "revisar",
+      "validar",
+      "verificar",
+    ]
     specialization: "Advanced debugging methodology, quality gates enforcement, comprehensive testing protocols"
     coordination_scope: "Quality validation, issue resolution, performance optimization, and readiness certification"
     quality_standard: "Progressive L1-L10 standards with comprehensive testing validation"
     thinking_integration: "Ultrathink for critical quality analysis, megathink for comprehensive testing"
     handoff_requirements: "Quality-certified implementation with comprehensive test coverage and validation"
     workflow_integration: "Phases 6-7 (Validation → Delivery)"
-    
+
   apex_ui_ux_designer_agent:
-    triggers_english: ["design", "ui", "ux", "interface", "usability", "accessibility", "mockup", "prototype"]
-    triggers_portuguese: ["design", "ui", "ux", "interface", "usabilidade", "acessibilidade", "mockup", "protótipo"]
+    triggers_english: [
+      "design",
+      "ui",
+      "ux",
+      "interface",
+      "usability",
+      "accessibility",
+      "mockup",
+      "prototype",
+    ]
+    triggers_portuguese: [
+      "design",
+      "ui",
+      "ux",
+      "interface",
+      "usabilidade",
+      "acessibilidade",
+      "mockup",
+      "protótipo",
+    ]
     specialization: "UI mockups, UX patterns, enterprise design systems, WCAG 2.1 AA+ compliance"
     coordination_scope: "User interface design, accessibility compliance, design system integration, UX validation"
     quality_standard: "Progressive L1-L10 standards with accessibility compliance and design excellence"
@@ -743,13 +1003,13 @@ AGENT_HANDOFF_PROTOCOLS:
     cognitive_context: "Active thinking level, cognitive history, and reasoning continuity"
     quality_context: "Progressive quality achievements, standards tracking, and improvement initiatives"
     technical_context: "Implementation decisions, architectural choices, and technical constraints"
-    
+
   handoff_validation:
     context_integrity_check: "Validate complete context transfer with no information loss"
     quality_continuity_verification: "Ensure quality standards maintained across agent transitions"
     cognitive_state_preservation: "Maintain thinking level and cognitive context across handoffs"
     domain_knowledge_transfer: "Transfer specialized domain knowledge and constraints"
-    
+
   coordination_authority:
     master_coordinator_activation: "Complexity ≥L7 OR multi-agent requirements detected"
     coordination_scope: "Complete project lifecycle coordination with enterprise standards"
@@ -768,22 +1028,22 @@ UNIFIED_QUALITY_FRAMEWORK:
       threshold: "≥9.0/10"
       validation: "Basic functionality and code standards compliance"
       requirements: ["Working implementation", "Basic error handling", "Code readability"]
-      
+
     level_3_4_moderate:
       threshold: "≥9.5/10"
       validation: "Enhanced quality with best practices and testing"
       requirements: ["Comprehensive testing", "Best practices compliance", "Documentation"]
-      
+
     level_5_6_complex:
       threshold: "≥9.7/10"
       validation: "Comprehensive quality with architectural validation"
       requirements: ["Architecture review", "Performance validation", "Security compliance"]
-      
+
     level_7_8_enterprise:
       threshold: "≥9.8/10"
       validation: "Enterprise-grade with scalability and security"
       requirements: ["Scalability validation", "Security audit", "Production readiness"]
-      
+
     level_9_10_critical:
       threshold: "≥9.9/10"
       validation: "Mission-critical with regulatory compliance"
@@ -794,12 +1054,12 @@ UNIFIED_QUALITY_FRAMEWORK:
       override_threshold: "≥9.9/10 regardless of base complexity"
       triggers: ["LGPD", "patient", "medical", "healthcare", "clinic", "treatment"]
       requirements: ["LGPD compliance", "Patient data protection", "Medical regulations"]
-      
+
     enterprise_production:
       override_threshold: "≥9.8/10 minimum regardless of base complexity"
       triggers: ["enterprise", "production", "scalability", "critical business"]
       requirements: ["Scalability validation", "Business continuity", "Enterprise security"]
-      
+
     research_accuracy:
       override_threshold: "≥9.7/10 for accuracy requirements"
       triggers: ["research", "analysis", "data processing", "decision support"]
@@ -811,40 +1071,40 @@ COMPREHENSIVE_VALIDATION_GATES:
       threshold: "≥95% requirement coverage with stakeholder validation"
       validation_method: "Stakeholder approval and technical feasibility assessment"
       cognitive_requirement: "Think minimum, megathink for complex requirements"
-      
+
     complexity_assessment_accuracy:
       threshold: "Accurate L1-L10 complexity scoring with routing validation"
       validation_method: "Resource allocation and timeline validation with cognitive alignment"
       cognitive_requirement: "Appropriate thinking level activation based on complexity"
-      
+
   planning_phase_gates:
     architecture_quality:
       threshold: "≥9.5/10 architecture quality score with cognitive validation"
       validation_method: "Scalability, security, and performance validation with thinking analysis"
       cognitive_requirement: "Megathink minimum for architecture, ultrathink for enterprise/critical"
-      
+
     security_validation:
       threshold: "Zero high/critical security vulnerabilities with comprehensive assessment"
       validation_method: "Security audit, compliance check, and threat modeling"
       cognitive_requirement: "Ultrathink for security-critical systems and compliance requirements"
-      
+
   execution_phase_gates:
     code_quality:
       threshold: "Progressive L1-L10 quality standards with cognitive enhancement"
       validation_method: "TypeScript strict, ESLint zero errors, comprehensive testing, cognitive validation"
       cognitive_requirement: "Appropriate thinking level for implementation complexity"
-      
+
     test_coverage:
       threshold: "≥90% test coverage with critical path validation and cognitive test analysis"
       validation_method: "Unit, integration, and E2E test validation with cognitive quality assessment"
       cognitive_requirement: "Megathink for test strategy, ultrathink for critical system testing"
-      
+
   delivery_phase_gates:
     production_readiness:
       threshold: "100% production readiness checklist completion with cognitive validation"
       validation_method: "Deployment, monitoring, operational readiness, and cognitive assessment"
       cognitive_requirement: "Ultrathink for production-critical systems and enterprise deployment"
-      
+
     performance_validation:
       threshold: "Performance benchmarks met with monitoring setup and cognitive optimization"
       validation_method: "Load testing, performance monitoring, optimization, and cognitive analysis"
@@ -865,7 +1125,7 @@ COMPREHENSIVE_BILINGUAL_SUPPORT:
       "*meta-cognição": "unicode_thinking_protocol_activation"
       "*validar-qualidade": "quality_gate_check_with_cognitive_analysis"
       "*otimizar-performance": "performance_analysis_with_cognitive_enhancement"
-      
+
     english_commands:
       "*think-harder": "ultrathink_activation (31999 tokens)"
       "*think-deep": "megathink_activation (10000 tokens)"
@@ -883,7 +1143,7 @@ COMPREHENSIVE_BILINGUAL_SUPPORT:
       "*executar": "phase_5_execution_implementation_activation"
       "*validar": "phase_6_validation_activation"
       "*entregar": "phase_7_delivery_optimization_activation"
-      
+
     english_workflow:
       "*discover": "phase_1_discovery_analysis_activation"
       "*research": "phase_2_research_activation"
@@ -899,7 +1159,7 @@ COMPREHENSIVE_BILINGUAL_SUPPORT:
       "*pensar-empresa": "enterprise_megathink_mode_with_scalability_focus"
       "*pensar-arquitetura": "architecture_ultrathink_mode_with_system_design"
       "*coordenar-agentes": "multi_agent_coordination_with_cognitive_management"
-      
+
     english_context:
       "*think-healthcare": "healthcare_ultrathink_mode_with_LGPD_compliance"
       "*think-enterprise": "enterprise_megathink_mode_with_scalability_focus"
@@ -908,13 +1168,39 @@ COMPREHENSIVE_BILINGUAL_SUPPORT:
 
   auto_trigger_detection:
     portuguese_triggers:
-      ultrathink: ["pensar-intensamente", "pensar-profundo", "pensar-crítico", "ultrapensar", "análise-crítica"]
-      megathink: ["pensar-profundamente", "analisar-detalhadamente", "pensar-muito", "megapensar", "análise-detalhada"]
+      ultrathink: [
+        "pensar-intensamente",
+        "pensar-profundo",
+        "pensar-crítico",
+        "ultrapensar",
+        "análise-crítica",
+      ]
+      megathink: [
+        "pensar-profundamente",
+        "analisar-detalhadamente",
+        "pensar-muito",
+        "megapensar",
+        "análise-detalhada",
+      ]
       think: ["pensar", "analisar", "considerar", "raciocinar", "avaliar"]
-      
+
     english_triggers:
-      ultrathink: ["think harder", "think intensely", "think really hard", "think super hard", "ultrathink", "critical analysis"]
-      megathink: ["think about it", "think a lot", "think deeply", "think hard", "megathink", "detailed analysis"]
+      ultrathink: [
+        "think harder",
+        "think intensely",
+        "think really hard",
+        "think super hard",
+        "ultrathink",
+        "critical analysis",
+      ]
+      megathink: [
+        "think about it",
+        "think a lot",
+        "think deeply",
+        "think hard",
+        "megathink",
+        "detailed analysis",
+      ]
       think: ["think", "analyze", "consider", "reasoning", "evaluate"]
 
 UNICODE_COGNITIVE_PROTOCOL:
@@ -940,14 +1226,14 @@ INTELLIGENT_PERFORMANCE_OPTIMIZATION:
     complex_tasks_l5_l6: "<30 seconds with enterprise-grade quality and cognitive coordination"
     enterprise_tasks_l7_l8: "<45 seconds with full orchestration and cognitive optimization"
     critical_tasks_l9_l10: "<90 seconds with regulatory compliance and cognitive excellence"
-    
+
   quality_metrics:
     cognitive_efficiency: "80%+ of tasks completed with optimal thinking level activation"
     agent_coordination: "95%+ successful handoffs with context preservation and cognitive continuity"
     progressive_quality: "Progressive L1-L10 standards achieved with cognitive enhancement"
     mcp_orchestration: "100% mandatory MCP usage with intelligent routing and cognitive integration"
     bilingual_accessibility: "100% command availability in Portuguese and English with cognitive parity"
-    
+
   productivity_metrics:
     context_assembly: "<5s for simple workflows, <30s for enterprise workflows with cognitive optimization"
     session_consistency: ">95% drift prevention with cognitive state preservation"
@@ -962,20 +1248,20 @@ AUTONOMOUS_LEARNING_SYSTEM:
       - "Performance optimization technique extraction with cognitive enhancement validation"
       - "Architecture pattern effectiveness analysis with cognitive decision quality assessment"
       - "Quality improvement methodology validation with cognitive process optimization"
-      
+
     cognitive_pattern_analysis:
       - "Thinking level effectiveness correlation with task complexity and quality outcomes"
       - "Cognitive state transition optimization for workflow efficiency and quality maintenance"
       - "Bilingual command usage patterns with cognitive preference learning and adaptation"
       - "Agent coordination success patterns with cognitive state preservation effectiveness"
-      
+
   adaptive_workflow_optimization:
     dynamic_enhancement:
       - "Workflow path optimization with cognitive performance analysis and historical correlation"
       - "Resource allocation efficiency improvement with cognitive state optimization and cost management"
       - "Quality gate optimization without compromise with cognitive enhancement integration"
       - "Agent coordination protocol enhancement with cognitive continuity and success rate improvement"
-      
+
     continuous_improvement_integration:
       - "Progressive quality standard continuous elevation with cognitive enhancement validation"
       - "Testing strategy optimization with cognitive test analysis and coverage enhancement"
@@ -988,7 +1274,7 @@ AUTONOMOUS_LEARNING_SYSTEM:
       - "Identify potential cognitive bottlenecks before execution with thinking level optimization"
       - "Suggest optimal agent and cognitive combinations with success rate correlation analysis"
       - "Anticipate resource requirements with cognitive capacity planning and optimization"
-      
+
     proactive_cognitive_optimization:
       - "Pre-optimize workflows based on cognitive complexity assessment and historical patterns"
       - "Suggest cognitive improvements before implementation with thinking pattern matching"
@@ -1008,38 +1294,38 @@ COMPREHENSIVE_ERROR_HANDLING:
       - "Security validation failures with compliance impact and cognitive threat assessment"
       - "Cognitive state corruption with thinking level disruption and context loss"
       - "Agent coordination failures with workflow disruption and cognitive continuity loss"
-      
+
     recoverable_errors:
       - "MCP timeout or connection issues with retry procedures and cognitive state preservation"
       - "Thinking level suboptimal activation with automatic cognitive escalation protocols"
       - "Quality score below optimal with cognitive quality improvement procedures"
       - "Agent handoff issues with cognitive context restoration and transition retry"
-      
+
     warning_conditions:
       - "Performance degradation with cognitive optimization recommendations and efficiency analysis"
       - "Cognitive inefficiency detected with thinking level optimization suggestions"
       - "Progressive quality threshold approaching with cognitive enhancement recommendations"
-      
+
   recovery_strategy_implementation:
     automatic_recovery:
       - "MCP connection retry with exponential backoff, alternative routing, and cognitive state preservation"
       - "Cognitive level escalation with automatic ultrathink activation for critical failures"
       - "Quality optimization with cognitive pattern-based improvement and validation suggestions"
       - "Context restoration from checkpoints with cognitive state integrity validation"
-      
+
     manual_intervention_protocols:
       - "Critical security violations requiring cognitive threat analysis and incident response"
       - "Architecture decision conflicts requiring cognitive multi-perspective analysis and stakeholder consultation"
       - "Business logic validation failures requiring cognitive expert review and domain analysis"
       - "Cognitive state irrecoverable corruption requiring manual thinking level reset and context reconstruction"
-      
+
   monitoring_and_alerting_integration:
     performance_monitoring:
       - "Real-time workflow execution metrics with cognitive efficiency analysis and trend identification"
       - "Progressive quality score tracking with cognitive enhancement opportunity identification"
       - "Cognitive state health monitoring with thinking level effectiveness and optimization tracking"
       - "Agent coordination health with cognitive continuity measurement and efficiency optimization"
-      
+
     cognitive_alerting_system:
       - "Critical cognitive errors with immediate escalation to ultrathink and expert intervention"
       - "Progressive quality threshold breach alerts with cognitive improvement recommendations"
@@ -1056,21 +1342,31 @@ AUTOMATIC_COMMAND_EXECUTION_MATRIX:
   research_phase:
     agent: "apex-researcher.md"
     command: "@.claude\commands\research.md"
-    triggers: ["Research requests", "Technology evaluation", "Best practices research", "Healthcare compliance"]
+    triggers: [
+      "Research requests",
+      "Technology evaluation",
+      "Best practices research",
+      "Healthcare compliance",
+    ]
     execution: "Auto-executed during Phase 2 (Research)"
     quality_gate: "≥95% cross-validation accuracy"
-    
+
   development_phase:
     agent: "apex-dev.md"
     primary_command: "@.claude\commands\dev-lifecycle.md"
     triggers: ["Implementation requests", "Project setup", "Feature development", "Deployment"]
     execution: "Auto-executed during Phase 4 (Coordination - init) and Phase 5 (Execution - dev)"
     quality_gate: "Progressive L1-L10 standards"
-    
+
   validation_phase:
     agent: "apex-dev.md"
     command: "@.claude\commands\quality-control.md"
-    triggers: ["Quality validation", "Healthcare compliance", "Security scanning", "Performance optimization"]
+    triggers: [
+      "Quality validation",
+      "Healthcare compliance",
+      "Security scanning",
+      "Performance optimization",
+    ]
     execution: "Auto-executed during Phase 6 (Validation) - MANDATORY"
     quality_gate: "≥9.9/10 for healthcare compliance"
 
@@ -1087,35 +1383,59 @@ COMMAND_INTELLIGENCE_FEATURES:
 
 ## 🎯 VIBECODER APEX MASTER WORKFLOW STATUS
 
-**Status**: 🔥 **ACTIVE** - VIBECODER Integration + Unified Cognitive Orchestration + 3-Tier Meta-Cognition + Agent Specialization Matrix + Constitutional Excellence  
-**Performance**: 85%+ optimization | Quality: Progressive L1-L10 standards | Coordination: Multi-Agent + Cognitive Excellence + VIBECODER Philosophy  
-**Excellence**: Research-First + Constitutional Principles + Agent Coordination + Bilingual Accessibility + One-Shot Resolution + Continuous Learning
+**Status**: 🔥 **ACTIVE** - VIBECODER Integration + Unified Cognitive Orchestration + 3-Tier
+Meta-Cognition + Agent Specialization Matrix + Constitutional Excellence\
+**Performance**: 85%+ optimization | Quality: Progressive L1-L10 standards | Coordination:
+Multi-Agent + Cognitive Excellence + VIBECODER Philosophy\
+**Excellence**: Research-First + Constitutional Principles + Agent Coordination + Bilingual
+Accessibility + One-Shot Resolution + Continuous Learning
 
 **AS VIBECODER APEX MASTER WORKFLOW V4.0:**
 
-✅ **VIBECODER CONSTITUTIONAL INTEGRATION** - Complete integration of VIBECODER philosophy with constitutional excellence and one-shot resolution  
-✅ **AGENT SPECIALIZATION MATRIX** - Comprehensive agent coordination with proper file citations (@.claude\agents\) and phase-specific routing  
-✅ **AUTOMATIC COMMAND EXECUTION** - Integrated command execution (@.claude\commands\) with intelligent triggering and parameter optimization  
-✅ **COGNITIVE INTEGRATION EXCELLENCE** - 3-tier thinking system seamlessly integrated with workflow routing and quality standards  
-✅ **PROGRESSIVE QUALITY FRAMEWORK** - L1-L10 unified standards with domain-specific overrides and cognitive enhancement  
-✅ **RESEARCH-DRIVEN COORDINATION** - archon → context7 → tavily → exa intelligence chain with cognitive optimization  
-✅ **INTELLIGENT COMPLEXITY ROUTING** - Dynamic L1-L10 assessment with automatic cognitive and agent activation  
-✅ **COMPREHENSIVE AGENT ORCHESTRATION** - Specialized agent matrix with cognitive state preservation and bilingual coordination  
-✅ **BILINGUAL ACCESSIBILITY EXCELLENCE** - Complete Portuguese/English interface with cognitive parity and cultural adaptation  
-✅ **ENTERPRISE SCALABILITY** - Production-ready with monitoring, cognitive optimization, and business integration  
-✅ **CONSTITUTIONAL EXCELLENCE** - KISS, YAGNI, Chain of Thought principles with adversarial validation and multi-perspective analysis  
-✅ **ONE-SHOT RESOLUTION** - Complete problem solving with relentless persistence and constitutional quality gates  
-✅ **CONTINUOUS COGNITIVE EXCELLENCE** - Real-time learning, thinking optimization, and quality improvement protocols
+✅ **VIBECODER CONSTITUTIONAL INTEGRATION** - Complete integration of VIBECODER philosophy with
+constitutional excellence and one-shot resolution\
+✅ **AGENT SPECIALIZATION MATRIX** - Comprehensive agent coordination with proper file citations
+(@.claude\agents\) and phase-specific routing\
+✅ **AUTOMATIC COMMAND EXECUTION** - Integrated command execution (@.claude\commands\) with
+intelligent triggering and parameter optimization\
+✅ **COGNITIVE INTEGRATION EXCELLENCE** - 3-tier thinking system seamlessly integrated with workflow
+routing and quality standards\
+✅ **PROGRESSIVE QUALITY FRAMEWORK** - L1-L10 unified standards with domain-specific overrides and
+cognitive enhancement\
+✅ **RESEARCH-DRIVEN COORDINATION** - archon → context7 → tavily → exa intelligence chain with
+cognitive optimization\
+✅ **INTELLIGENT COMPLEXITY ROUTING** - Dynamic L1-L10 assessment with automatic cognitive and agent
+activation\
+✅ **COMPREHENSIVE AGENT ORCHESTRATION** - Specialized agent matrix with cognitive state
+preservation and bilingual coordination\
+✅ **BILINGUAL ACCESSIBILITY EXCELLENCE** - Complete Portuguese/English interface with cognitive
+parity and cultural adaptation\
+✅ **ENTERPRISE SCALABILITY** - Production-ready with monitoring, cognitive optimization, and
+business integration\
+✅ **CONSTITUTIONAL EXCELLENCE** - KISS, YAGNI, Chain of Thought principles with adversarial
+validation and multi-perspective analysis\
+✅ **ONE-SHOT RESOLUTION** - Complete problem solving with relentless persistence and constitutional
+quality gates\
+✅ **CONTINUOUS COGNITIVE EXCELLENCE** - Real-time learning, thinking optimization, and quality
+improvement protocols
 
-**VIBECODER Apex Master Workflow Status**: 🚀 **V4.0 - CONSTITUTIONALLY ENHANCED, AGENT-SPECIALIZED & COMMAND-INTEGRATED**
+**VIBECODER Apex Master Workflow Status**: 🚀 **V4.0 - CONSTITUTIONALLY ENHANCED, AGENT-SPECIALIZED
+& COMMAND-INTEGRATED**
 
-**Agent Integration Excellence**: ⭐ **COMPLETE** - All agents properly referenced with @.claude\agents\ citations and workflow phase specialization  
-**Command Integration Excellence**: 🎯 **COMPLETE** - All consolidated commands (@.claude\commands\) integrated with automatic execution and intelligent parameter optimization
+**Agent Integration Excellence**: ⭐ **COMPLETE** - All agents properly referenced with
+@.claude\agents\ citations and workflow phase specialization\
+**Command Integration Excellence**: 🎯 **COMPLETE** - All consolidated commands (@.claude\commands\)
+integrated with automatic execution and intelligent parameter optimization
 
 ---
 
-*Master workflow orchestrator with complete VIBECODER integration, agent specialization matrix, automatic command execution, cognitive intelligence, progressive quality standards, constitutional excellence, and bilingual accessibility - Ultimate single source of truth for all project execution with intelligent command automation*
+_Master workflow orchestrator with complete VIBECODER integration, agent specialization matrix,
+automatic command execution, cognitive intelligence, progressive quality standards, constitutional
+excellence, and bilingual accessibility - Ultimate single source of truth for all project execution
+with intelligent command automation_
 
 ---
 
-*Single source of truth for all workflow orchestration, cognitive intelligence, progressive quality standards, agent coordination, and bilingual accessibility - Zero redundancy achieved with comprehensive functionality preservation*
+_Single source of truth for all workflow orchestration, cognitive intelligence, progressive quality
+standards, agent coordination, and bilingual accessibility - Zero redundancy achieved with
+comprehensive functionality preservation_

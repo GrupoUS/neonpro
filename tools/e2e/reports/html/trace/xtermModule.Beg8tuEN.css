@@ -29,7 +29,8 @@
  *   The original design remains. The terminal itself
  *   has been extended to include xterm CSI codes, among
  *   other features.
- */ .xterm {
+ */
+.xterm {
 	cursor: text;
 	position: relative;
 	user-select: none;

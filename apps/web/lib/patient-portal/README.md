@@ -1,6 +1,7 @@
 # NeonPro Patient Portal
 
-A comprehensive patient portal system for NeonPro that provides secure patient access to healthcare services, appointment management, document handling, and communication features.
+A comprehensive patient portal system for NeonPro that provides secure patient access to healthcare
+services, appointment management, document handling, and communication features.
 
 ## Features
 
@@ -47,10 +48,7 @@ A comprehensive patient portal system for NeonPro that provides secure patient a
 ## Installation
 
 ```typescript
-import {
-  PatientPortal,
-  createDefaultPortalConfig,
-} from '@neonpro/patient-portal';
+import { createDefaultPortalConfig, PatientPortal } from '@neonpro/patient-portal';
 
 // Initialize with default configuration
 const config = createDefaultPortalConfig();
@@ -60,7 +58,7 @@ const portal = new PatientPortal(
   lgpdManager,
   encryptionService,
   notificationService,
-  config
+  config,
 );
 
 // Initialize the portal
@@ -98,7 +96,7 @@ if (sessionResult.success) {
 // Get patient dashboard data
 const dashboardData = await portal.dashboard.getDashboardData(
   'patient-123',
-  sessionToken
+  sessionToken,
 );
 
 console.log('Patient Info:', dashboardData.patientInfo);
@@ -115,7 +113,7 @@ const slots = await portal.appointments.getAvailableSlots(
   sessionToken,
   'service-456',
   new Date('2024-02-01'),
-  new Date('2024-02-07')
+  new Date('2024-02-07'),
 );
 
 // Book an appointment
@@ -129,7 +127,7 @@ const bookingResult = await portal.appointments.bookAppointment(
     notes: 'Follow-up consultation',
     isUrgent: false,
   },
-  sessionToken
+  sessionToken,
 );
 ```
 
@@ -146,7 +144,7 @@ const uploadResult = await portal.uploads.uploadFiles(
     isPrivate: true,
     tags: ['lab-results', 'external'],
   },
-  sessionToken
+  sessionToken,
 );
 
 if (uploadResult.success) {
@@ -168,7 +166,7 @@ const messageResult = await portal.communication.sendMessage(
     messageType: 'general_inquiry',
     priority: 'normal',
   },
-  sessionToken
+  sessionToken,
 );
 ```
 
@@ -300,4 +298,5 @@ Proprietary - NeonPro Healthcare Solutions
 
 ---
 
-**Note**: This patient portal system is designed for healthcare environments and includes features specifically for LGPD compliance and Brazilian healthcare regulations.
+**Note**: This patient portal system is designed for healthcare environments and includes features
+specifically for LGPD compliance and Brazilian healthcare regulations.

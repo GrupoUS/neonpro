@@ -7,6 +7,12 @@
 
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import {
 	Accessibility,
 	Activity,
@@ -26,12 +32,6 @@ import {
 	VolumeX,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 
 // FASE 3: Healthcare-specific skip navigation with medical context
 export function SkipToContentLink() {
@@ -83,7 +83,9 @@ export function MedicalTermReader({
 }) {
 	return (
 		<span
-			aria-label={`Termo médico: ${term}. ${pronunciation ? `Pronúncia: ${pronunciation}. ` : ""}${definition ? `Definição: ${definition}` : ""}`}
+			aria-label={`Termo médico: ${term}. ${pronunciation ? `Pronúncia: ${pronunciation}. ` : ""}${
+				definition ? `Definição: ${definition}` : ""
+			}`}
 			role="term"
 			className="medical-term relative cursor-help border-b border-dotted border-blue-400 hover:border-solid focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
 		>

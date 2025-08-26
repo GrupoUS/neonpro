@@ -7,7 +7,7 @@
  */
 
 // Import our enhanced API client and schemas
-import { ApiHelpers, type ApiResponse, apiClient } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers, type ApiResponse } from "@neonpro/shared/api-client";
 import {
 	type ChangePasswordRequest,
 	ChangePasswordRequestSchema,

@@ -17,7 +17,11 @@ import type {
 export type BatchPredictionJob = {
 	id: string;
 	status: "queued" | "processing" | "completed" | "failed" | "cancelled";
-	type: "daily_predictions" | "weekly_forecast" | "intervention_planning" | "risk_assessment";
+	type:
+		| "daily_predictions"
+		| "weekly_forecast"
+		| "intervention_planning"
+		| "risk_assessment";
 	parameters: {
 		date_range: {
 			start_date: string;
@@ -111,7 +115,12 @@ export type AppointmentPrediction = {
 	};
 	intervention_analysis: InterventionAnalysis;
 	recommended_actions: Array<{
-		action_type: "sms_reminder" | "email_reminder" | "phone_call" | "reschedule_offer" | "priority_confirmation";
+		action_type:
+			| "sms_reminder"
+			| "email_reminder"
+			| "phone_call"
+			| "reschedule_offer"
+			| "priority_confirmation";
 		priority: number;
 		timing: string;
 		message_template: string;
@@ -164,11 +173,12 @@ export class BatchPredictionService extends EnhancedAIService {
 		cache: CacheService,
 		logger: LoggerService,
 		metrics: MetricsService,
-		config?: AIServiceConfig & { batchConfig?: BatchScheduleConfig }
+		config?: AIServiceConfig & { batchConfig?: BatchScheduleConfig },
 	) {
 		super(cache, logger, metrics, config);
 		this.predictionService = predictionService;
-		this.scheduleConfig = config?.batchConfig || this.getDefaultScheduleConfig();
+		this.scheduleConfig =
+			config?.batchConfig || this.getDefaultScheduleConfig();
 
 		// Initialize batch processing system
 		this.initializeBatchProcessor();
@@ -228,7 +238,7 @@ export class BatchPredictionService extends EnhancedAIService {
 	async createBatchJob(
 		type: BatchPredictionJob["type"],
 		parameters: BatchPredictionJob["parameters"],
-		createdBy = "system"
+		createdBy = "system",
 	): Promise<string> {
 		const startTime = performance.now();
 		const jobId = `batch_${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -251,14 +261,17 @@ export class BatchPredictionService extends EnhancedAIService {
 			};
 
 			// Estimate total appointments based on parameters
-			job.progress.total_appointments = await this.estimateAppointmentCount(parameters);
+			job.progress.total_appointments =
+				await this.estimateAppointmentCount(parameters);
 
 			// Calculate estimated completion time
 			const estimatedProcessingTime = this.calculateEstimatedTime(
 				job.progress.total_appointments,
-				parameters.batch_size
+				parameters.batch_size,
 			);
-			job.estimated_completion_time = new Date(Date.now() + estimatedProcessingTime).toISOString();
+			job.estimated_completion_time = new Date(
+				Date.now() + estimatedProcessingTime,
+			).toISOString();
 
 			// Add to queue
 			this.jobQueue.set(jobId, job);
@@ -287,7 +300,9 @@ export class BatchPredictionService extends EnhancedAIService {
 				parameters,
 				created_by: createdBy,
 			});
-			throw new Error(`Failed to create batch job: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Failed to create batch job: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	}
 
@@ -295,7 +310,9 @@ export class BatchPredictionService extends EnhancedAIService {
 		return this.jobQueue.get(jobId) || null;
 	}
 
-	async getBatchJobResults(jobId: string): Promise<BatchPredictionResults | null> {
+	async getBatchJobResults(
+		jobId: string,
+	): Promise<BatchPredictionResults | null> {
 		const job = this.jobQueue.get(jobId);
 		return job?.results || null;
 	}
@@ -323,7 +340,10 @@ export class BatchPredictionService extends EnhancedAIService {
 			}
 		}
 
-		return jobs.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+		return jobs.sort(
+			(a, b) =>
+				new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+		);
 	}
 
 	async cancelBatchJob(jobId: string): Promise<boolean> {
@@ -411,10 +431,15 @@ export class BatchPredictionService extends EnhancedAIService {
 
 				// Update progress
 				job.progress.processed_appointments = i + batch.length;
-				job.progress.successful_predictions = results.filter((r) => r.prediction_result.prediction_accuracy > 0).length;
-				job.progress.failed_predictions = results.length - job.progress.successful_predictions;
+				job.progress.successful_predictions = results.filter(
+					(r) => r.prediction_result.prediction_accuracy > 0,
+				).length;
+				job.progress.failed_predictions =
+					results.length - job.progress.successful_predictions;
 				job.progress.percentage_complete = Math.round(
-					(job.progress.processed_appointments / job.progress.total_appointments) * 100
+					(job.progress.processed_appointments /
+						job.progress.total_appointments) *
+						100,
 				);
 
 				// Small delay to prevent overwhelming the system
@@ -436,7 +461,8 @@ export class BatchPredictionService extends EnhancedAIService {
 			}
 		} catch (error) {
 			job.status = "failed";
-			job.error = error instanceof Error ? error.message : "Unknown processing error";
+			job.error =
+				error instanceof Error ? error.message : "Unknown processing error";
 			job.completed_at = new Date().toISOString();
 
 			this.logger?.error("Batch job processing failed", {
@@ -449,37 +475,45 @@ export class BatchPredictionService extends EnhancedAIService {
 		}
 	} // Core Processing Methods
 
-	private async processBatch(appointments: any[], job: BatchPredictionJob): Promise<AppointmentPrediction[]> {
+	private async processBatch(
+		appointments: any[],
+		job: BatchPredictionJob,
+	): Promise<AppointmentPrediction[]> {
 		const results: AppointmentPrediction[] = [];
 		const batchStartTime = performance.now();
 
 		for (const appointment of appointments) {
 			try {
 				// Extract prediction input data
-				const patientProfile: PatientProfile = await this.extractPatientProfile(appointment);
-				const appointmentContext: AppointmentContext = await this.extractAppointmentContext(appointment);
-				const externalFactors: ExternalFactors = await this.extractExternalFactors(appointment);
+				const patientProfile: PatientProfile =
+					await this.extractPatientProfile(appointment);
+				const appointmentContext: AppointmentContext =
+					await this.extractAppointmentContext(appointment);
+				const externalFactors: ExternalFactors =
+					await this.extractExternalFactors(appointment);
 
 				// Get prediction from enhanced service
-				const predictionResult = await this.predictionService.getEnhancedPredictionWithROI({
-					patient_profile: patientProfile,
-					appointment_context: appointmentContext,
-					external_factors: externalFactors,
-				});
+				const predictionResult =
+					await this.predictionService.getEnhancedPredictionWithROI({
+						patient_profile: patientProfile,
+						appointment_context: appointmentContext,
+						external_factors: externalFactors,
+					});
 
 				// Generate intervention analysis
-				const interventionAnalysis = await this.predictionService.generateInterventionRecommendations(
-					predictionResult,
-					patientProfile,
-					appointmentContext
-				);
+				const interventionAnalysis =
+					await this.predictionService.generateInterventionRecommendations(
+						predictionResult,
+						patientProfile,
+						appointmentContext,
+					);
 
 				// Create recommended actions based on risk level
 				const recommendedActions = await this.generateRecommendedActions(
 					predictionResult,
 					patientProfile,
 					appointmentContext,
-					interventionAnalysis
+					interventionAnalysis,
 				);
 
 				const appointmentPrediction: AppointmentPrediction = {
@@ -513,7 +547,9 @@ export class BatchPredictionService extends EnhancedAIService {
 			batch_size: appointments.length,
 			successful_predictions: results.length,
 			processing_time_ms: batchProcessingTime,
-			predictions_per_second: Math.round((results.length / batchProcessingTime) * 1000),
+			predictions_per_second: Math.round(
+				(results.length / batchProcessingTime) * 1000,
+			),
 		});
 
 		return results;
@@ -523,19 +559,21 @@ export class BatchPredictionService extends EnhancedAIService {
 		predictionResult: any,
 		_patientProfile: PatientProfile,
 		appointmentContext: AppointmentContext,
-		interventionAnalysis: InterventionAnalysis
+		interventionAnalysis: InterventionAnalysis,
 	): Promise<AppointmentPrediction["recommended_actions"]> {
 		const actions: AppointmentPrediction["recommended_actions"] = [];
 		const riskScore = predictionResult.no_show_probability;
 		const appointmentDate = new Date(appointmentContext.appointment_date);
-		const hoursUntilAppointment = (appointmentDate.getTime() - Date.now()) / (1000 * 60 * 60);
+		const hoursUntilAppointment =
+			(appointmentDate.getTime() - Date.now()) / (1000 * 60 * 60);
 
 		// High risk (>0.7) - aggressive intervention
 		if (riskScore > 0.7) {
 			actions.push({
 				action_type: "phone_call",
 				priority: 1,
-				timing: hoursUntilAppointment > 48 ? "48 hours before" : "24 hours before",
+				timing:
+					hoursUntilAppointment > 48 ? "48 hours before" : "24 hours before",
 				message_template: "personal_confirmation_high_risk",
 				estimated_effectiveness: 0.75,
 			});
@@ -543,7 +581,8 @@ export class BatchPredictionService extends EnhancedAIService {
 			actions.push({
 				action_type: "sms_reminder",
 				priority: 2,
-				timing: hoursUntilAppointment > 24 ? "24 hours before" : "6 hours before",
+				timing:
+					hoursUntilAppointment > 24 ? "24 hours before" : "6 hours before",
 				message_template: "urgent_reminder_with_incentive",
 				estimated_effectiveness: 0.65,
 			});
@@ -557,14 +596,13 @@ export class BatchPredictionService extends EnhancedAIService {
 					estimated_effectiveness: 0.55,
 				});
 			}
-		}
-
-		// Medium risk (0.4-0.7) - standard intervention
+		} // Medium risk (0.4-0.7) - standard intervention
 		else if (riskScore > 0.4) {
 			actions.push({
 				action_type: "sms_reminder",
 				priority: 1,
-				timing: hoursUntilAppointment > 24 ? "24 hours before" : "4 hours before",
+				timing:
+					hoursUntilAppointment > 24 ? "24 hours before" : "4 hours before",
 				message_template: "standard_reminder_with_benefits",
 				estimated_effectiveness: 0.6,
 			});
@@ -572,29 +610,28 @@ export class BatchPredictionService extends EnhancedAIService {
 			actions.push({
 				action_type: "email_reminder",
 				priority: 2,
-				timing: hoursUntilAppointment > 48 ? "48 hours before" : "12 hours before",
+				timing:
+					hoursUntilAppointment > 48 ? "48 hours before" : "12 hours before",
 				message_template: "detailed_appointment_info",
 				estimated_effectiveness: 0.45,
 			});
-		}
-
-		// Low risk (0.2-0.4) - minimal intervention
+		} // Low risk (0.2-0.4) - minimal intervention
 		else if (riskScore > 0.2) {
 			actions.push({
 				action_type: "sms_reminder",
 				priority: 1,
-				timing: hoursUntilAppointment > 24 ? "24 hours before" : "2 hours before",
+				timing:
+					hoursUntilAppointment > 24 ? "24 hours before" : "2 hours before",
 				message_template: "gentle_reminder",
 				estimated_effectiveness: 0.5,
 			});
-		}
-
-		// Very low risk (<0.2) - confirmation only
+		} // Very low risk (<0.2) - confirmation only
 		else {
 			actions.push({
 				action_type: "priority_confirmation",
 				priority: 1,
-				timing: hoursUntilAppointment > 48 ? "72 hours before" : "24 hours before",
+				timing:
+					hoursUntilAppointment > 48 ? "72 hours before" : "24 hours before",
 				message_template: "simple_confirmation",
 				estimated_effectiveness: 0.4,
 			});
@@ -605,24 +642,33 @@ export class BatchPredictionService extends EnhancedAIService {
 
 	private async generateBatchResults(
 		job: BatchPredictionJob,
-		predictions: AppointmentPrediction[]
+		predictions: AppointmentPrediction[],
 	): Promise<BatchPredictionResults> {
 		const processingTime =
 			job.completed_at && job.started_at
-				? new Date(job.completed_at).getTime() - new Date(job.started_at).getTime()
+				? new Date(job.completed_at).getTime() -
+					new Date(job.started_at).getTime()
 				: 0;
 
 		// Calculate risk distribution
 		const riskDistribution: BatchPredictionResults["risk_distribution"] = {};
 		const riskBuckets = {
-			very_low: predictions.filter((p) => p.prediction_result.no_show_probability < 0.2),
+			very_low: predictions.filter(
+				(p) => p.prediction_result.no_show_probability < 0.2,
+			),
 			low: predictions.filter(
-				(p) => p.prediction_result.no_show_probability >= 0.2 && p.prediction_result.no_show_probability < 0.4
+				(p) =>
+					p.prediction_result.no_show_probability >= 0.2 &&
+					p.prediction_result.no_show_probability < 0.4,
 			),
 			medium: predictions.filter(
-				(p) => p.prediction_result.no_show_probability >= 0.4 && p.prediction_result.no_show_probability < 0.7
+				(p) =>
+					p.prediction_result.no_show_probability >= 0.4 &&
+					p.prediction_result.no_show_probability < 0.7,
 			),
-			high: predictions.filter((p) => p.prediction_result.no_show_probability >= 0.7),
+			high: predictions.filter(
+				(p) => p.prediction_result.no_show_probability >= 0.7,
+			),
 		};
 
 		for (const [level, preds] of Object.entries(riskBuckets)) {
@@ -632,7 +678,12 @@ export class BatchPredictionService extends EnhancedAIService {
 				avg_confidence:
 					preds.length > 0
 						? Math.round(
-								(preds.reduce((sum, p) => sum + p.prediction_result.confidence_score, 0) / preds.length) * 100
+								(preds.reduce(
+									(sum, p) => sum + p.prediction_result.confidence_score,
+									0,
+								) /
+									preds.length) *
+									100,
 							) / 100
 						: 0,
 			};
@@ -661,29 +712,56 @@ export class BatchPredictionService extends EnhancedAIService {
 				low_risk_appointments: lowRisk.length,
 				avg_prediction_confidence:
 					Math.round(
-						(predictions.reduce((sum, p) => sum + p.prediction_result.confidence_score, 0) / predictions.length) * 100
+						(predictions.reduce(
+							(sum, p) => sum + p.prediction_result.confidence_score,
+							0,
+						) /
+							predictions.length) *
+							100,
 					) / 100,
 				processing_time_ms: processingTime,
-				predictions_per_second: processingTime > 0 ? Math.round((predictions.length / processingTime) * 1000) : 0,
+				predictions_per_second:
+					processingTime > 0
+						? Math.round((predictions.length / processingTime) * 1000)
+						: 0,
 			},
 			risk_distribution: riskDistribution,
 			intervention_recommendations: {
 				immediate_action_required: highRisk
-					.sort((a, b) => b.prediction_result.no_show_probability - a.prediction_result.no_show_probability)
+					.sort(
+						(a, b) =>
+							b.prediction_result.no_show_probability -
+							a.prediction_result.no_show_probability,
+					)
 					.slice(0, 20),
 				schedule_reminders: mediumRisk
-					.sort((a, b) => b.prediction_result.no_show_probability - a.prediction_result.no_show_probability)
+					.sort(
+						(a, b) =>
+							b.prediction_result.no_show_probability -
+							a.prediction_result.no_show_probability,
+					)
 					.slice(0, 50),
 				monitor_closely: [...highRisk, ...mediumRisk]
-					.sort((a, b) => b.prediction_result.no_show_probability - a.prediction_result.no_show_probability)
+					.sort(
+						(a, b) =>
+							b.prediction_result.no_show_probability -
+							a.prediction_result.no_show_probability,
+					)
 					.slice(0, 100),
 			},
 			performance_metrics: {
 				batch_processing_time: processingTime,
-				avg_prediction_time_ms: predictions.length > 0 ? Math.round(processingTime / predictions.length) : 0,
+				avg_prediction_time_ms:
+					predictions.length > 0
+						? Math.round(processingTime / predictions.length)
+						: 0,
 				throughput_predictions_per_minute:
-					processingTime > 0 ? Math.round((predictions.length / processingTime) * 60_000) : 0,
-				memory_usage_mb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+					processingTime > 0
+						? Math.round((predictions.length / processingTime) * 60_000)
+						: 0,
+				memory_usage_mb: Math.round(
+					process.memoryUsage().heapUsed / 1024 / 1024,
+				),
 				cpu_utilization_percent: Math.round(Math.random() * 30 + 40), // Simulated CPU usage
 			},
 			data_insights: {
@@ -699,9 +777,12 @@ export class BatchPredictionService extends EnhancedAIService {
 	// Data Analysis Methods
 
 	private analyzeTopRiskFactors(
-		predictions: AppointmentPrediction[]
+		predictions: AppointmentPrediction[],
 	): Array<{ factor: string; impact_score: number; frequency: number }> {
-		const factorAnalysis = new Map<string, { total_impact: number; count: number }>();
+		const factorAnalysis = new Map<
+			string,
+			{ total_impact: number; count: number }
+		>();
 
 		// Simulated risk factor analysis based on prediction patterns
 		const riskFactors = [
@@ -718,7 +799,9 @@ export class BatchPredictionService extends EnhancedAIService {
 		// Simulate factor analysis
 		riskFactors.forEach((factor) => {
 			const impact = 0.1 + Math.random() * 0.3; // Random impact between 0.1-0.4
-			const frequency = Math.floor(predictions.length * (0.2 + Math.random() * 0.6)); // 20-80% frequency
+			const frequency = Math.floor(
+				predictions.length * (0.2 + Math.random() * 0.6),
+			); // 20-80% frequency
 			factorAnalysis.set(factor, { total_impact: impact, count: frequency });
 		});
 
@@ -733,19 +816,31 @@ export class BatchPredictionService extends EnhancedAIService {
 	}
 
 	private analyzeTemporalPatterns(
-		predictions: AppointmentPrediction[]
-	): Array<{ time_period: string; risk_level: number; appointment_count: number }> {
-		const patterns: Array<{ time_period: string; risk_level: number; appointment_count: number }> = [];
+		predictions: AppointmentPrediction[],
+	): Array<{
+		time_period: string;
+		risk_level: number;
+		appointment_count: number;
+	}> {
+		const patterns: Array<{
+			time_period: string;
+			risk_level: number;
+			appointment_count: number;
+		}> = [];
 
 		// Group by time periods
 		const timeGroups = {
 			"Monday 8-10 AM": predictions.filter((p) => {
 				const date = new Date(p.appointment_datetime);
-				return date.getDay() === 1 && date.getHours() >= 8 && date.getHours() < 10;
+				return (
+					date.getDay() === 1 && date.getHours() >= 8 && date.getHours() < 10
+				);
 			}),
 			"Friday 4-6 PM": predictions.filter((p) => {
 				const date = new Date(p.appointment_datetime);
-				return date.getDay() === 5 && date.getHours() >= 16 && date.getHours() < 18;
+				return (
+					date.getDay() === 5 && date.getHours() >= 16 && date.getHours() < 18
+				);
 			}),
 			Weekend: predictions.filter((p) => {
 				const date = new Date(p.appointment_datetime);
@@ -759,7 +854,11 @@ export class BatchPredictionService extends EnhancedAIService {
 
 		for (const [period, preds] of Object.entries(timeGroups)) {
 			if (preds.length > 0) {
-				const avgRisk = preds.reduce((sum, p) => sum + p.prediction_result.no_show_probability, 0) / preds.length;
+				const avgRisk =
+					preds.reduce(
+						(sum, p) => sum + p.prediction_result.no_show_probability,
+						0,
+					) / preds.length;
 				patterns.push({
 					time_period: period,
 					risk_level: Math.round(avgRisk * 100) / 100,
@@ -772,8 +871,13 @@ export class BatchPredictionService extends EnhancedAIService {
 	}
 
 	private analyzeClinicRisk(
-		predictions: AppointmentPrediction[]
-	): Array<{ clinic_id: string; clinic_name: string; high_risk_count: number; avg_risk_score: number }> {
+		predictions: AppointmentPrediction[],
+	): Array<{
+		clinic_id: string;
+		clinic_name: string;
+		high_risk_count: number;
+		avg_risk_score: number;
+	}> {
 		const clinicGroups = new Map<string, AppointmentPrediction[]>();
 
 		// Group by clinic
@@ -792,8 +896,14 @@ export class BatchPredictionService extends EnhancedAIService {
 		}> = [];
 
 		for (const [clinicId, preds] of clinicGroups) {
-			const highRiskCount = preds.filter((p) => p.prediction_result.no_show_probability >= 0.7).length;
-			const avgRisk = preds.reduce((sum, p) => sum + p.prediction_result.no_show_probability, 0) / preds.length;
+			const highRiskCount = preds.filter(
+				(p) => p.prediction_result.no_show_probability >= 0.7,
+			).length;
+			const avgRisk =
+				preds.reduce(
+					(sum, p) => sum + p.prediction_result.no_show_probability,
+					0,
+				) / preds.length;
 
 			clinicAnalysis.push({
 				clinic_id: clinicId,
@@ -808,32 +918,45 @@ export class BatchPredictionService extends EnhancedAIService {
 
 	// Utility Methods
 
-	private async estimateAppointmentCount(parameters: BatchPredictionJob["parameters"]): Promise<number> {
+	private async estimateAppointmentCount(
+		parameters: BatchPredictionJob["parameters"],
+	): Promise<number> {
 		// In production, query Supabase to get actual count
 		// For now, simulate based on date range and filters
 		const startDate = new Date(parameters.date_range.start_date);
 		const endDate = new Date(parameters.date_range.end_date);
-		const daysDiff = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+		const daysDiff = Math.ceil(
+			(endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+		);
 
 		// Estimate ~150 appointments per day on average
 		let estimatedCount = daysDiff * 150;
 
 		// Apply filters
 		if (parameters.filters?.clinic_ids?.length) {
-			estimatedCount = Math.round(estimatedCount * (parameters.filters.clinic_ids.length / 10)); // Assume 10 clinics total
+			estimatedCount = Math.round(
+				estimatedCount * (parameters.filters.clinic_ids.length / 10),
+			); // Assume 10 clinics total
 		}
 
 		return Math.max(1, estimatedCount);
 	}
 
-	private calculateEstimatedTime(totalAppointments: number, _batchSize: number): number {
+	private calculateEstimatedTime(
+		totalAppointments: number,
+		_batchSize: number,
+	): number {
 		// Estimate ~50ms per prediction + batch overhead
 		const predictionsPerSecond = 20;
-		const estimatedSeconds = Math.ceil(totalAppointments / predictionsPerSecond);
+		const estimatedSeconds = Math.ceil(
+			totalAppointments / predictionsPerSecond,
+		);
 		return estimatedSeconds * 1000; // Return milliseconds
 	}
 
-	private async fetchAppointments(parameters: BatchPredictionJob["parameters"]): Promise<any[]> {
+	private async fetchAppointments(
+		parameters: BatchPredictionJob["parameters"],
+	): Promise<any[]> {
 		// In production, query Supabase with filters
 		// For now, simulate appointment data
 		const appointments: any[] = [];
@@ -842,30 +965,42 @@ export class BatchPredictionService extends EnhancedAIService {
 		for (let i = 0; i < Math.min(count, 1000); i++) {
 			// Cap at 1000 for simulation
 			const appointmentDate = new Date(parameters.date_range.start_date);
-			appointmentDate.setDate(appointmentDate.getDate() + Math.floor(Math.random() * 7));
+			appointmentDate.setDate(
+				appointmentDate.getDate() + Math.floor(Math.random() * 7),
+			);
 			appointmentDate.setHours(8 + Math.floor(Math.random() * 10)); // 8 AM to 6 PM
 
 			appointments.push({
 				id: `apt_${i.toString().padStart(6, "0")}`,
 				patient_id: `patient_${Math.floor(Math.random() * 10_000)}`,
 				doctor_id: `doctor_${Math.floor(Math.random() * 50)}`,
-				clinic_id: parameters.filters?.clinic_ids?.[0] || `clinic_${Math.floor(Math.random() * 10)}`,
+				clinic_id:
+					parameters.filters?.clinic_ids?.[0] ||
+					`clinic_${Math.floor(Math.random() * 10)}`,
 				appointment_datetime: appointmentDate.toISOString(),
-				appointment_type: ["routine", "followup", "consultation", "procedure"][Math.floor(Math.random() * 4)],
-				urgency_level: ["low", "medium", "high", "urgent"][Math.floor(Math.random() * 4)],
+				appointment_type: ["routine", "followup", "consultation", "procedure"][
+					Math.floor(Math.random() * 4)
+				],
+				urgency_level: ["low", "medium", "high", "urgent"][
+					Math.floor(Math.random() * 4)
+				],
 			});
 		}
 
 		return appointments;
 	}
 
-	private async extractPatientProfile(appointment: any): Promise<PatientProfile> {
+	private async extractPatientProfile(
+		appointment: any,
+	): Promise<PatientProfile> {
 		// In production, fetch from Supabase
 		return {
 			patient_id: appointment.patient_id,
 			age: 25 + Math.floor(Math.random() * 50),
 			gender: Math.random() > 0.5 ? "M" : "F",
-			insurance_type: ["private", "public", "self_pay"][Math.floor(Math.random() * 3)],
+			insurance_type: ["private", "public", "self_pay"][
+				Math.floor(Math.random() * 3)
+			],
 			no_show_history: Math.random() * 0.3, // 0-30% historical no-show rate
 			avg_reschedule_time: 24 + Math.floor(Math.random() * 48), // 24-72 hours
 			communication_preferences: {
@@ -877,13 +1012,17 @@ export class BatchPredictionService extends EnhancedAIService {
 		};
 	}
 
-	private async extractAppointmentContext(appointment: any): Promise<AppointmentContext> {
+	private async extractAppointmentContext(
+		appointment: any,
+	): Promise<AppointmentContext> {
 		return {
 			appointment_id: appointment.id,
 			doctor_id: appointment.doctor_id,
 			clinic_id: appointment.clinic_id,
 			appointment_date: appointment.appointment_datetime.split("T")[0],
-			appointment_time: appointment.appointment_datetime.split("T")[1]?.split(".")[0] || "10:00:00",
+			appointment_time:
+				appointment.appointment_datetime.split("T")[1]?.split(".")[0] ||
+				"10:00:00",
 			appointment_type: appointment.appointment_type,
 			urgency_level: appointment.urgency_level,
 			estimated_duration_minutes: 30 + Math.floor(Math.random() * 60), // 30-90 minutes
@@ -892,21 +1031,38 @@ export class BatchPredictionService extends EnhancedAIService {
 		};
 	}
 
-	private async extractExternalFactors(appointment: any): Promise<ExternalFactors> {
+	private async extractExternalFactors(
+		appointment: any,
+	): Promise<ExternalFactors> {
 		const appointmentDate = new Date(appointment.appointment_datetime);
 
 		return {
-			weather_condition: ["sunny", "rainy", "cloudy", "stormy"][Math.floor(Math.random() * 4)],
+			weather_condition: ["sunny", "rainy", "cloudy", "stormy"][
+				Math.floor(Math.random() * 4)
+			],
 			temperature_celsius: 18 + Math.floor(Math.random() * 15), // 18-33°C
 			is_holiday_period: false, // Simplified
-			traffic_conditions: ["light", "moderate", "heavy"][Math.floor(Math.random() * 3)],
-			public_transport_status: ["normal", "delayed", "disrupted"][Math.floor(Math.random() * 3)],
+			traffic_conditions: ["light", "moderate", "heavy"][
+				Math.floor(Math.random() * 3)
+			],
+			public_transport_status: ["normal", "delayed", "disrupted"][
+				Math.floor(Math.random() * 3)
+			],
 			local_events:
-				Math.random() > 0.8 ? ["festival", "conference", "sports_event"][Math.floor(Math.random() * 3)] : "none",
+				Math.random() > 0.8
+					? ["festival", "conference", "sports_event"][
+							Math.floor(Math.random() * 3)
+						]
+					: "none",
 			day_of_week: appointmentDate.getDay(),
-			is_weekend: appointmentDate.getDay() === 0 || appointmentDate.getDay() === 6,
+			is_weekend:
+				appointmentDate.getDay() === 0 || appointmentDate.getDay() === 6,
 			time_of_day:
-				appointmentDate.getHours() < 12 ? "morning" : appointmentDate.getHours() < 17 ? "afternoon" : "evening",
+				appointmentDate.getHours() < 12
+					? "morning"
+					: appointmentDate.getHours() < 17
+						? "afternoon"
+						: "evening",
 		};
 	}
 
@@ -929,7 +1085,7 @@ export class BatchPredictionService extends EnhancedAIService {
 				async () => {
 					await this.createScheduledJob("daily_predictions");
 				},
-				24 * 60 * 60 * 1000
+				24 * 60 * 60 * 1000,
 			); // Daily
 		}
 
@@ -939,7 +1095,7 @@ export class BatchPredictionService extends EnhancedAIService {
 				async () => {
 					await this.createScheduledJob("intervention_planning");
 				},
-				30 * 60 * 1000
+				30 * 60 * 1000,
 			); // 30 minutes
 		}
 
@@ -949,12 +1105,14 @@ export class BatchPredictionService extends EnhancedAIService {
 				async () => {
 					await this.createScheduledJob("weekly_forecast");
 				},
-				7 * 24 * 60 * 60 * 1000
+				7 * 24 * 60 * 60 * 1000,
 			); // Weekly
 		}
 	}
 
-	private async createScheduledJob(type: BatchPredictionJob["type"]): Promise<void> {
+	private async createScheduledJob(
+		type: BatchPredictionJob["type"],
+	): Promise<void> {
 		const config = this.scheduleConfig[type as keyof BatchScheduleConfig];
 		if (!config?.enabled) {
 			return;
@@ -964,7 +1122,9 @@ export class BatchPredictionService extends EnhancedAIService {
 		const parameters: BatchPredictionJob["parameters"] = {
 			date_range: {
 				start_date: now.toISOString().split("T")[0],
-				end_date: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0], // 7 days ahead
+				end_date: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+					.toISOString()
+					.split("T")[0], // 7 days ahead
 			},
 			batch_size: config.batch_size,
 			priority: config.priority,

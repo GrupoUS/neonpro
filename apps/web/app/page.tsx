@@ -2,6 +2,14 @@
 
 "use client";
 
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAppointments } from "@/hooks/useAppointments";
+import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
+import { usePatients } from "@/hooks/usePatients";
 import {
 	Activity,
 	ArrowRight,
@@ -17,14 +25,6 @@ import {
 	Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAppointments } from "@/hooks/useAppointments";
-import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
-import { usePatients } from "@/hooks/usePatients";
 
 export default function HomePage() {
 	const router = useRouter();

@@ -28,6 +28,7 @@ git status
 ## 🔍 Verificação Rápida
 
 ### Verifique se está funcionando:
+
 ```bash
 # Veja os logs dos hooks
 cat .claude/hooks/claude-hooks.log          # Linux
@@ -35,6 +36,7 @@ Get-Content .claude/hooks/claude-hooks.log  # Windows
 ```
 
 ### Deve aparecer algo como:
+
 ```
 [2024-01-15T10:30:45.123Z] [INFO] [PRE_TOOL_HOOK] Pre-tool intelligence hook executing for tool: bash on win32
 [2024-01-15T10:30:45.130Z] [SUCCESS] [PRE_TOOL_HOOK] Pre-tool intelligence hook completed successfully
@@ -58,6 +60,7 @@ Se o instalador automático não funcionar:
 ## ❌ Problemas Comuns
 
 ### Node.js não encontrado
+
 ```bash
 # Verifique se Node.js está instalado
 node --version
@@ -68,6 +71,7 @@ node --version
 ```
 
 ### Hooks não executam
+
 ```bash
 # Verifique o arquivo de configuração
 cat .claude/settings.local.json | grep -A5 "hooks"
@@ -77,13 +81,15 @@ ls -la .claude/hooks/cross-platform/
 ```
 
 ### Timeouts
+
 Se os hooks demoram muito, aumente o timeout em `.claude/settings.local.json`:
+
 ```json
 {
   "hooks": {
     "PreToolUse": [{
       "hooks": [{
-        "timeout": 120  // Aumentar de 45 para 120
+        "timeout": 120 // Aumentar de 45 para 120
       }]
     }]
   }
@@ -92,12 +98,12 @@ Se os hooks demoram muito, aumente o timeout em `.claude/settings.local.json`:
 
 ## 📊 Recursos Habilitados
 
-✅ **Logging inteligente** por tipo de comando  
-✅ **Análise de sessões** com métricas detalhadas  
-✅ **Detecção automática** de plataforma  
-✅ **Relatórios finais** de cada sessão  
-✅ **Limpeza automática** de cache  
-✅ **Monitoramento** de builds e testes  
+✅ **Logging inteligente** por tipo de comando\
+✅ **Análise de sessões** com métricas detalhadas\
+✅ **Detecção automática** de plataforma\
+✅ **Relatórios finais** de cada sessão\
+✅ **Limpeza automática** de cache\
+✅ **Monitoramento** de builds e testes
 
 ## 🔧 Debug Mode
 
@@ -116,6 +122,7 @@ $env:CLAUDE_DEBUG="true"
 ## 📁 Estrutura Final
 
 Após a instalação:
+
 ```
 .claude/
 ├── settings.local.json              # ← Configuração ativa
@@ -137,13 +144,14 @@ Após a instalação:
 ## 🎯 O Que Acontece Agora
 
 1. **Antes de cada comando:** Hook analisa tipo e contexto
-2. **Depois de cada comando:** Hook registra resultado e métricas  
+2. **Depois de cada comando:** Hook registra resultado e métricas
 3. **Fim de subagents:** Hook faz análise da sessão
 4. **Fim da sessão:** Hook gera relatório final completo
 
 ## 📈 Relatórios e Análises
 
 Os relatórios são salvos em `.cache/`:
+
 - `session-*-summary.txt` - Resumo legível
 - `final-report-*.json` - Dados completos
 - `archive/` - Histórico arquivado

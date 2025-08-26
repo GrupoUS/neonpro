@@ -1,5 +1,13 @@
 "use client";
 
+import { getDashboardStats, getPredictions } from "@/app/lib/services/no-show-prediction";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	Activity,
@@ -25,14 +33,6 @@ import {
 	Zap,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { getDashboardStats, getPredictions } from "@/app/lib/services/no-show-prediction";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
 
 interface PatientRiskData {
 	patientId: string;
@@ -469,7 +469,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 	// Filter patients based on selection
 	const filteredPatients = highRiskPatients.filter((patient) => {
 		if (selectedFilter === "all") return true;
-		if (selectedFilter === "high") return patient.riskCategory === "high" || patient.riskCategory === "very_high";
+		if (selectedFilter === "high") {
+			return patient.riskCategory === "high" || patient.riskCategory === "very_high";
+		}
 		if (selectedFilter === "medium") return patient.riskCategory === "medium";
 		if (selectedFilter === "low") return patient.riskCategory === "low";
 		return true;

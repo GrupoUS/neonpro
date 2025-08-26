@@ -28,21 +28,29 @@ test.describe("Reports Center - Analytics Reports", () => {
 
 	test("should display reports center dashboard", async ({ page }) => {
 		// Check reports center title
-		await expect(page.locator("h1, .reports-title")).toContainText(/Relatórios|Reports|Centro de Relatórios/);
+		await expect(page.locator("h1, .reports-title")).toContainText(
+			/Relatórios|Reports|Centro de Relatórios/,
+		);
 
 		// Should display report categories
 		await expect(
-			page.locator('[data-testid="report-categories"]').or(page.locator(".report-categories"))
+			page
+				.locator('[data-testid="report-categories"]')
+				.or(page.locator(".report-categories")),
 		).toBeVisible();
 
 		// Should show quick stats
-		const quickStats = page.locator('[data-testid="quick-stats"]').or(page.locator(".quick-stats"));
+		const quickStats = page
+			.locator('[data-testid="quick-stats"]')
+			.or(page.locator(".quick-stats"));
 		if (await quickStats.isVisible()) {
 			await expect(quickStats).toBeVisible();
 		}
 
 		// Should display recent reports
-		const recentReports = page.locator('[data-testid="recent-reports"]').or(page.locator(".recent-reports"));
+		const recentReports = page
+			.locator('[data-testid="recent-reports"]')
+			.or(page.locator(".recent-reports"));
 		if (await recentReports.isVisible()) {
 			await expect(recentReports).toBeVisible();
 		}
@@ -64,34 +72,56 @@ test.describe("Reports Center - Analytics Reports", () => {
 		await patientAnalytics.click();
 
 		// Should display analytics form
-		await expect(page.locator('[data-testid="analytics-form"]').or(page.locator(".analytics-form"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="analytics-form"]')
+				.or(page.locator(".analytics-form")),
+		).toBeVisible();
 
 		// Set date range
-		const startDate = page.locator('[data-testid="start-date"]').or(page.locator('input[name="startDate"]'));
+		const startDate = page
+			.locator('[data-testid="start-date"]')
+			.or(page.locator('input[name="startDate"]'));
 		await startDate.fill("2024-01-01");
 
-		const endDate = page.locator('[data-testid="end-date"]').or(page.locator('input[name="endDate"]'));
+		const endDate = page
+			.locator('[data-testid="end-date"]')
+			.or(page.locator('input[name="endDate"]'));
 		await endDate.fill("2024-01-31");
 
 		// Select metrics
-		const metricsSelect = page.locator('[data-testid="metrics-select"]').or(page.locator('select[name="metrics"]'));
+		const metricsSelect = page
+			.locator('[data-testid="metrics-select"]')
+			.or(page.locator('select[name="metrics"]'));
 		if (await metricsSelect.isVisible()) {
-			await metricsSelect.selectOption(["new-patients", "appointments", "treatments"]);
+			await metricsSelect.selectOption([
+				"new-patients",
+				"appointments",
+				"treatments",
+			]);
 		}
 
 		// Generate report
 		await page.click('[data-testid="generate-report"]');
 
 		// Should show loading state
-		await expect(page.locator('[data-testid="loading"]').or(page.locator(".loading"))).toBeVisible();
+		await expect(
+			page.locator('[data-testid="loading"]').or(page.locator(".loading")),
+		).toBeVisible();
 
 		// Should display results
-		await expect(page.locator('[data-testid="report-results"]').or(page.locator(".report-results"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="report-results"]')
+				.or(page.locator(".report-results")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
 		// Should show charts and metrics
-		const charts = page.locator('[data-testid="analytics-chart"]').or(page.locator(".chart"));
+		const charts = page
+			.locator('[data-testid="analytics-chart"]')
+			.or(page.locator(".chart"));
 		if ((await charts.count()) > 0) {
 			await expect(charts.first()).toBeVisible();
 		}
@@ -121,7 +151,9 @@ test.describe("Reports Center - Analytics Reports", () => {
 
 			// Should update results
 			await expect(
-				page.locator('[data-testid="filtered-results"]').or(page.locator(".filtered-results"))
+				page
+					.locator('[data-testid="filtered-results"]')
+					.or(page.locator(".filtered-results")),
 			).toBeVisible();
 		}
 	});
@@ -143,7 +175,11 @@ test.describe("Reports Center - Analytics Reports", () => {
 		await page.click('[data-testid="generate-report"]');
 
 		// Wait for results
-		await expect(page.locator('[data-testid="report-results"]').or(page.locator(".report-results"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="report-results"]')
+				.or(page.locator(".report-results")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
@@ -156,27 +192,37 @@ test.describe("Reports Center - Analytics Reports", () => {
 			await exportButton.click();
 
 			// Should show export formats
-			const exportFormats = page.locator('[data-testid="export-formats"]').or(page.locator(".export-formats"));
+			const exportFormats = page
+				.locator('[data-testid="export-formats"]')
+				.or(page.locator(".export-formats"));
 			if (await exportFormats.isVisible()) {
 				await expect(exportFormats).toBeVisible();
 
 				// Should have PDF and Excel options
-				await expect(page.locator("text=PDF").or(page.locator("text=Excel"))).toBeVisible();
+				await expect(
+					page.locator("text=PDF").or(page.locator("text=Excel")),
+				).toBeVisible();
 			}
 		}
 	});
 
 	test("should display real-time metrics", async ({ page }) => {
 		// Look for real-time dashboard
-		const realTimeMetrics = page.locator('[data-testid="real-time-metrics"]').or(page.locator(".real-time-metrics"));
+		const realTimeMetrics = page
+			.locator('[data-testid="real-time-metrics"]')
+			.or(page.locator(".real-time-metrics"));
 		if (await realTimeMetrics.isVisible()) {
 			await expect(realTimeMetrics).toBeVisible();
 
 			// Should show current day stats
-			await expect(page.locator("text=hoje").or(page.locator("text=today"))).toBeVisible();
+			await expect(
+				page.locator("text=hoje").or(page.locator("text=today")),
+			).toBeVisible();
 
 			// Should have auto-refresh indicator
-			const autoRefresh = page.locator('[data-testid="auto-refresh"]').or(page.locator(".auto-refresh"));
+			const autoRefresh = page
+				.locator('[data-testid="auto-refresh"]')
+				.or(page.locator(".auto-refresh"));
 			if (await autoRefresh.isVisible()) {
 				await expect(autoRefresh).toBeVisible();
 			}
@@ -211,7 +257,11 @@ test.describe("Reports Center - Compliance Reports", () => {
 		await anvisaReport.click();
 
 		// Should display ANVISA compliance form
-		await expect(page.locator('[data-testid="anvisa-form"]').or(page.locator(".anvisa-form"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="anvisa-form"]')
+				.or(page.locator(".anvisa-form")),
+		).toBeVisible();
 
 		// Set reporting period
 		const reportingPeriod = page
@@ -233,7 +283,11 @@ test.describe("Reports Center - Compliance Reports", () => {
 		await page.click('[data-testid="generate-compliance-report"]');
 
 		// Should show compliance status
-		await expect(page.locator('[data-testid="compliance-status"]').or(page.locator(".compliance-status"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="compliance-status"]')
+				.or(page.locator(".compliance-status")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
@@ -255,11 +309,16 @@ test.describe("Reports Center - Compliance Reports", () => {
 		await complianceCategory.click();
 
 		// Select LGPD report
-		const lgpdReport = page.locator('[data-testid="lgpd-report"]').or(page.locator('button:has-text("LGPD")')).first();
+		const lgpdReport = page
+			.locator('[data-testid="lgpd-report"]')
+			.or(page.locator('button:has-text("LGPD")'))
+			.first();
 		await lgpdReport.click();
 
 		// Should display LGPD compliance form
-		await expect(page.locator('[data-testid="lgpd-form"]').or(page.locator(".lgpd-form"))).toBeVisible();
+		await expect(
+			page.locator('[data-testid="lgpd-form"]').or(page.locator(".lgpd-form")),
+		).toBeVisible();
 
 		// Set data processing period
 		const processingPeriod = page
@@ -282,11 +341,15 @@ test.describe("Reports Center - Compliance Reports", () => {
 
 		// Should show data processing summary
 		await expect(
-			page.locator('[data-testid="data-processing-summary"]').or(page.locator(".data-processing-summary"))
+			page
+				.locator('[data-testid="data-processing-summary"]')
+				.or(page.locator(".data-processing-summary")),
 		).toBeVisible({ timeout: 10_000 });
 
 		// Should display consent status
-		const consentStatus = page.locator('[data-testid="consent-status"]').or(page.locator(".consent-status"));
+		const consentStatus = page
+			.locator('[data-testid="consent-status"]')
+			.or(page.locator(".consent-status"));
 		if (await consentStatus.isVisible()) {
 			await expect(consentStatus).toBeVisible();
 		}
@@ -307,10 +370,16 @@ test.describe("Reports Center - Compliance Reports", () => {
 		await auditReport.click();
 
 		// Should display audit trail
-		await expect(page.locator('[data-testid="audit-trail"]').or(page.locator(".audit-trail"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="audit-trail"]')
+				.or(page.locator(".audit-trail")),
+		).toBeVisible();
 
 		// Should show user actions
-		const userActions = page.locator('[data-testid="user-actions"]').or(page.locator(".user-actions"));
+		const userActions = page
+			.locator('[data-testid="user-actions"]')
+			.or(page.locator(".user-actions"));
 		if (await userActions.isVisible()) {
 			await expect(userActions).toBeVisible();
 
@@ -319,16 +388,22 @@ test.describe("Reports Center - Compliance Reports", () => {
 		}
 
 		// Should have search and filter options
-		const auditSearch = page.locator('[data-testid="audit-search"]').or(page.locator('input[name="auditSearch"]'));
+		const auditSearch = page
+			.locator('[data-testid="audit-search"]')
+			.or(page.locator('input[name="auditSearch"]'));
 		if (await auditSearch.isVisible()) {
 			await auditSearch.fill("login");
 
 			// Should filter results
-			await expect(page.locator("text=login").or(page.locator("text=acesso"))).toBeVisible();
+			await expect(
+				page.locator("text=login").or(page.locator("text=acesso")),
+			).toBeVisible();
 		}
 	});
 
-	test("should generate professional license compliance report", async ({ page }) => {
+	test("should generate professional license compliance report", async ({
+		page,
+	}) => {
 		// Navigate to professional compliance
 		const complianceCategory = page
 			.locator('[data-testid="compliance-reports"]')
@@ -344,16 +419,24 @@ test.describe("Reports Center - Compliance Reports", () => {
 			await licenseReport.click();
 
 			// Should display license status
-			await expect(page.locator('[data-testid="license-status"]').or(page.locator(".license-status"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="license-status"]')
+					.or(page.locator(".license-status")),
+			).toBeVisible();
 
 			// Should show expiring licenses
-			const expiringLicenses = page.locator('[data-testid="expiring-licenses"]').or(page.locator(".expiring-licenses"));
+			const expiringLicenses = page
+				.locator('[data-testid="expiring-licenses"]')
+				.or(page.locator(".expiring-licenses"));
 			if (await expiringLicenses.isVisible()) {
 				await expect(expiringLicenses).toBeVisible();
 			}
 
 			// Should display CRM/CFM compliance
-			const crmCompliance = page.locator("text=CRM").or(page.locator("text=CFM"));
+			const crmCompliance = page
+				.locator("text=CRM")
+				.or(page.locator("text=CFM"));
 			if (await crmCompliance.isVisible()) {
 				await expect(crmCompliance).toBeVisible();
 			}
@@ -388,7 +471,11 @@ test.describe("Reports Center - Financial Reports", () => {
 		await revenueReport.click();
 
 		// Should display financial form
-		await expect(page.locator('[data-testid="financial-form"]').or(page.locator(".financial-form"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="financial-form"]')
+				.or(page.locator(".financial-form")),
+		).toBeVisible();
 
 		// Set financial period
 		const financialPeriod = page
@@ -410,12 +497,18 @@ test.describe("Reports Center - Financial Reports", () => {
 		await page.click('[data-testid="generate-financial-report"]');
 
 		// Should show revenue metrics
-		await expect(page.locator('[data-testid="revenue-metrics"]').or(page.locator(".revenue-metrics"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="revenue-metrics"]')
+				.or(page.locator(".revenue-metrics")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
 		// Should display financial charts
-		const financialCharts = page.locator('[data-testid="financial-chart"]').or(page.locator(".financial-chart"));
+		const financialCharts = page
+			.locator('[data-testid="financial-chart"]')
+			.or(page.locator(".financial-chart"));
 		if ((await financialCharts.count()) > 0) {
 			await expect(financialCharts.first()).toBeVisible();
 		}
@@ -436,25 +529,37 @@ test.describe("Reports Center - Financial Reports", () => {
 		await billingReport.click();
 
 		// Should display billing summary
-		await expect(page.locator('[data-testid="billing-summary"]').or(page.locator(".billing-summary"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="billing-summary"]')
+				.or(page.locator(".billing-summary")),
+		).toBeVisible();
 
 		// Should show payment status
-		const paymentStatus = page.locator('[data-testid="payment-status"]').or(page.locator(".payment-status"));
+		const paymentStatus = page
+			.locator('[data-testid="payment-status"]')
+			.or(page.locator(".payment-status"));
 		if (await paymentStatus.isVisible()) {
 			await expect(paymentStatus).toBeVisible();
 
 			// Should display pending payments
-			await expect(page.locator("text=pendente").or(page.locator("text=pending"))).toBeVisible();
+			await expect(
+				page.locator("text=pendente").or(page.locator("text=pending")),
+			).toBeVisible();
 		}
 
 		// Should show insurance claims
-		const insuranceClaims = page.locator('[data-testid="insurance-claims"]').or(page.locator(".insurance-claims"));
+		const insuranceClaims = page
+			.locator('[data-testid="insurance-claims"]')
+			.or(page.locator(".insurance-claims"));
 		if (await insuranceClaims.isVisible()) {
 			await expect(insuranceClaims).toBeVisible();
 		}
 	});
 
-	test("should track payment methods and PIX transactions", async ({ page }) => {
+	test("should track payment methods and PIX transactions", async ({
+		page,
+	}) => {
 		// Navigate to payment reports
 		const financialCategory = page
 			.locator('[data-testid="financial-reports"]')
@@ -470,16 +575,24 @@ test.describe("Reports Center - Financial Reports", () => {
 			await paymentReport.click();
 
 			// Should display payment methods breakdown
-			await expect(page.locator('[data-testid="payment-methods"]').or(page.locator(".payment-methods"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="payment-methods"]')
+					.or(page.locator(".payment-methods")),
+			).toBeVisible();
 
 			// Should show PIX transactions
-			const pixTransactions = page.locator("text=PIX").or(page.locator('[data-testid="pix-transactions"]'));
+			const pixTransactions = page
+				.locator("text=PIX")
+				.or(page.locator('[data-testid="pix-transactions"]'));
 			if (await pixTransactions.isVisible()) {
 				await expect(pixTransactions).toBeVisible();
 			}
 
 			// Should display credit card transactions
-			const cardTransactions = page.locator("text=cartão").or(page.locator("text=card"));
+			const cardTransactions = page
+				.locator("text=cartão")
+				.or(page.locator("text=card"));
 			if (await cardTransactions.isVisible()) {
 				await expect(cardTransactions).toBeVisible();
 			}
@@ -502,16 +615,24 @@ test.describe("Reports Center - Financial Reports", () => {
 			await taxReport.click();
 
 			// Should display tax summary
-			await expect(page.locator('[data-testid="tax-summary"]').or(page.locator(".tax-summary"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="tax-summary"]')
+					.or(page.locator(".tax-summary")),
+			).toBeVisible();
 
 			// Should show ISS calculations
-			const issCalculations = page.locator("text=ISS").or(page.locator('[data-testid="iss-calculations"]'));
+			const issCalculations = page
+				.locator("text=ISS")
+				.or(page.locator('[data-testid="iss-calculations"]'));
 			if (await issCalculations.isVisible()) {
 				await expect(issCalculations).toBeVisible();
 			}
 
 			// Should display IRPF information
-			const irpfInfo = page.locator("text=IRPF").or(page.locator('[data-testid="irpf-info"]'));
+			const irpfInfo = page
+				.locator("text=IRPF")
+				.or(page.locator('[data-testid="irpf-info"]'));
 			if (await irpfInfo.isVisible()) {
 				await expect(irpfInfo).toBeVisible();
 			}
@@ -546,7 +667,11 @@ test.describe("Reports Center - Patient Outcome Reports", () => {
 		await outcomeReport.click();
 
 		// Should display outcome form
-		await expect(page.locator('[data-testid="outcome-form"]').or(page.locator(".outcome-form"))).toBeVisible();
+		await expect(
+			page
+				.locator('[data-testid="outcome-form"]')
+				.or(page.locator(".outcome-form")),
+		).toBeVisible();
 
 		// Select treatment type
 		const treatmentType = page
@@ -568,12 +693,18 @@ test.describe("Reports Center - Patient Outcome Reports", () => {
 		await page.click('[data-testid="generate-outcome-report"]');
 
 		// Should show treatment results
-		await expect(page.locator('[data-testid="treatment-results"]').or(page.locator(".treatment-results"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="treatment-results"]')
+				.or(page.locator(".treatment-results")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
 		// Should display success rates
-		const successRates = page.locator('[data-testid="success-rates"]').or(page.locator(".success-rates"));
+		const successRates = page
+			.locator('[data-testid="success-rates"]')
+			.or(page.locator(".success-rates"));
 		if (await successRates.isVisible()) {
 			await expect(successRates).toBeVisible();
 		}
@@ -596,17 +727,23 @@ test.describe("Reports Center - Patient Outcome Reports", () => {
 
 			// Should display satisfaction metrics
 			await expect(
-				page.locator('[data-testid="satisfaction-metrics"]').or(page.locator(".satisfaction-metrics"))
+				page
+					.locator('[data-testid="satisfaction-metrics"]')
+					.or(page.locator(".satisfaction-metrics")),
 			).toBeVisible();
 
 			// Should show NPS scores
-			const npsScores = page.locator("text=NPS").or(page.locator('[data-testid="nps-scores"]'));
+			const npsScores = page
+				.locator("text=NPS")
+				.or(page.locator('[data-testid="nps-scores"]'));
 			if (await npsScores.isVisible()) {
 				await expect(npsScores).toBeVisible();
 			}
 
 			// Should display feedback summary
-			const feedbackSummary = page.locator('[data-testid="feedback-summary"]').or(page.locator(".feedback-summary"));
+			const feedbackSummary = page
+				.locator('[data-testid="feedback-summary"]')
+				.or(page.locator(".feedback-summary"));
 			if (await feedbackSummary.isVisible()) {
 				await expect(feedbackSummary).toBeVisible();
 			}
@@ -630,7 +767,9 @@ test.describe("Reports Center - Patient Outcome Reports", () => {
 
 			// Should display adverse events summary
 			await expect(
-				page.locator('[data-testid="adverse-events-summary"]').or(page.locator(".adverse-events-summary"))
+				page
+					.locator('[data-testid="adverse-events-summary"]')
+					.or(page.locator(".adverse-events-summary")),
 			).toBeVisible();
 
 			// Should show severity classification
@@ -642,7 +781,9 @@ test.describe("Reports Center - Patient Outcome Reports", () => {
 			}
 
 			// Should display ANVISA reporting status
-			const anvisaReporting = page.locator("text=ANVISA").or(page.locator('[data-testid="anvisa-reporting"]'));
+			const anvisaReporting = page
+				.locator("text=ANVISA")
+				.or(page.locator('[data-testid="anvisa-reporting"]'));
 			if (await anvisaReporting.isVisible()) {
 				await expect(anvisaReporting).toBeVisible();
 			}
@@ -666,17 +807,23 @@ test.describe("Reports Center - Patient Outcome Reports", () => {
 
 			// Should display demographic breakdown
 			await expect(
-				page.locator('[data-testid="demographic-breakdown"]').or(page.locator(".demographic-breakdown"))
+				page
+					.locator('[data-testid="demographic-breakdown"]')
+					.or(page.locator(".demographic-breakdown")),
 			).toBeVisible();
 
 			// Should show age distribution
-			const ageDistribution = page.locator('[data-testid="age-distribution"]').or(page.locator(".age-distribution"));
+			const ageDistribution = page
+				.locator('[data-testid="age-distribution"]')
+				.or(page.locator(".age-distribution"));
 			if (await ageDistribution.isVisible()) {
 				await expect(ageDistribution).toBeVisible();
 			}
 
 			// Should display geographic distribution
-			const geoDistribution = page.locator('[data-testid="geo-distribution"]').or(page.locator(".geo-distribution"));
+			const geoDistribution = page
+				.locator('[data-testid="geo-distribution"]')
+				.or(page.locator(".geo-distribution"));
 			if (await geoDistribution.isVisible()) {
 				await expect(geoDistribution).toBeVisible();
 			}
@@ -712,7 +859,11 @@ test.describe("Reports Center - Export & Sharing", () => {
 		await page.click('[data-testid="generate-report"]');
 
 		// Wait for results
-		await expect(page.locator('[data-testid="report-results"]').or(page.locator(".report-results"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="report-results"]')
+				.or(page.locator(".report-results")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
@@ -753,10 +904,16 @@ test.describe("Reports Center - Export & Sharing", () => {
 			await scheduleReports.click();
 
 			// Should display scheduling form
-			await expect(page.locator('[data-testid="scheduling-form"]').or(page.locator(".scheduling-form"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="scheduling-form"]')
+					.or(page.locator(".scheduling-form")),
+			).toBeVisible();
 
 			// Should have frequency options
-			const frequency = page.locator('[data-testid="report-frequency"]').or(page.locator('select[name="frequency"]'));
+			const frequency = page
+				.locator('[data-testid="report-frequency"]')
+				.or(page.locator('select[name="frequency"]'));
 			if (await frequency.isVisible()) {
 				await frequency.selectOption("weekly");
 			}
@@ -778,7 +935,9 @@ test.describe("Reports Center - Export & Sharing", () => {
 				await saveSchedule.click();
 
 				// Should show confirmation
-				await expect(page.locator("text=agendado").or(page.locator("text=scheduled"))).toBeVisible();
+				await expect(
+					page.locator("text=agendado").or(page.locator("text=scheduled")),
+				).toBeVisible();
 			}
 		}
 	});
@@ -800,7 +959,11 @@ test.describe("Reports Center - Export & Sharing", () => {
 		await page.click('[data-testid="generate-report"]');
 
 		// Wait for results
-		await expect(page.locator('[data-testid="report-results"]').or(page.locator(".report-results"))).toBeVisible({
+		await expect(
+			page
+				.locator('[data-testid="report-results"]')
+				.or(page.locator(".report-results")),
+		).toBeVisible({
 			timeout: 10_000,
 		});
 
@@ -813,10 +976,16 @@ test.describe("Reports Center - Export & Sharing", () => {
 			await shareButton.click();
 
 			// Should display sharing options
-			await expect(page.locator('[data-testid="sharing-options"]').or(page.locator(".sharing-options"))).toBeVisible();
+			await expect(
+				page
+					.locator('[data-testid="sharing-options"]')
+					.or(page.locator(".sharing-options")),
+			).toBeVisible();
 
 			// Should have team member selection
-			const teamMembers = page.locator('[data-testid="team-members"]').or(page.locator('input[name="teamMembers"]'));
+			const teamMembers = page
+				.locator('[data-testid="team-members"]')
+				.or(page.locator('input[name="teamMembers"]'));
 			if ((await teamMembers.count()) > 0) {
 				await teamMembers.first().check();
 			}
@@ -842,11 +1011,15 @@ test.describe("Reports Center - Export & Sharing", () => {
 
 			// Should display historical reports
 			await expect(
-				page.locator('[data-testid="historical-reports"]').or(page.locator(".historical-reports"))
+				page
+					.locator('[data-testid="historical-reports"]')
+					.or(page.locator(".historical-reports")),
 			).toBeVisible();
 
 			// Should show report versions
-			const reportVersions = page.locator('[data-testid="report-versions"]').or(page.locator(".report-versions"));
+			const reportVersions = page
+				.locator('[data-testid="report-versions"]')
+				.or(page.locator(".report-versions"));
 			if (await reportVersions.isVisible()) {
 				await expect(reportVersions).toBeVisible();
 
@@ -883,7 +1056,9 @@ test.describe("Reports Center - Performance & Accessibility", () => {
 
 		// Critical elements should be visible
 		await expect(
-			page.locator('[data-testid="report-categories"]').or(page.locator(".report-categories"))
+			page
+				.locator('[data-testid="report-categories"]')
+				.or(page.locator(".report-categories")),
 		).toBeVisible();
 	});
 
@@ -912,7 +1087,9 @@ test.describe("Reports Center - Performance & Accessibility", () => {
 		}
 	});
 
-	test("should have proper ARIA labels for charts and data", async ({ page }) => {
+	test("should have proper ARIA labels for charts and data", async ({
+		page,
+	}) => {
 		await page.goto("/login");
 		await page.fill('[data-testid="email"]', "dr.silva@clinic.com");
 		await page.fill('[data-testid="password"]', "healthcare123");
@@ -936,16 +1113,26 @@ test.describe("Reports Center - Performance & Accessibility", () => {
 			await page.click('[data-testid="generate-report"]');
 
 			// Wait for charts to load
-			await expect(page.locator('[data-testid="report-results"]').or(page.locator(".report-results"))).toBeVisible({
+			await expect(
+				page
+					.locator('[data-testid="report-results"]')
+					.or(page.locator(".report-results")),
+			).toBeVisible({
 				timeout: 10_000,
 			});
 
 			// Check for chart accessibility
-			const charts = page.locator('[data-testid="analytics-chart"]').or(page.locator(".chart"));
+			const charts = page
+				.locator('[data-testid="analytics-chart"]')
+				.or(page.locator(".chart"));
 			if ((await charts.count()) > 0) {
 				const firstChart = charts.first();
 				const hasAriaLabel = await firstChart.evaluate((el) => {
-					return el.getAttribute("aria-label") || el.getAttribute("aria-labelledby") || el.getAttribute("role");
+					return (
+						el.getAttribute("aria-label") ||
+						el.getAttribute("aria-labelledby") ||
+						el.getAttribute("role")
+					);
 				});
 				expect(hasAriaLabel).toBeTruthy();
 			}
@@ -964,7 +1151,9 @@ test.describe("Reports Center - Performance & Accessibility", () => {
 
 		// Should be responsive
 		await expect(
-			page.locator('[data-testid="report-categories"]').or(page.locator(".report-categories"))
+			page
+				.locator('[data-testid="report-categories"]')
+				.or(page.locator(".report-categories")),
 		).toBeVisible();
 
 		// Touch targets should be appropriate size

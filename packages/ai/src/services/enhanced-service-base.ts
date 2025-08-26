@@ -59,7 +59,12 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	protected metrics: MetricsService;
 	protected config: AIServiceConfig;
 
-	constructor(cache: CacheService, logger: LoggerService, metrics: MetricsService, config?: Partial<AIServiceConfig>) {
+	constructor(
+		cache: CacheService,
+		logger: LoggerService,
+		metrics: MetricsService,
+		config?: Partial<AIServiceConfig>,
+	) {
 		this.cache = cache;
 		this.logger = logger;
 		this.metrics = metrics;
@@ -89,13 +94,19 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	/**
 	 * Execute with comprehensive monitoring, caching, and error handling
 	 */
-	async executeWithMetrics(input: TInput, context?: { userId?: string; clinicId?: string }): Promise<TOutput> {
+	async executeWithMetrics(
+		input: TInput,
+		context?: { userId?: string; clinicId?: string },
+	): Promise<TOutput> {
 		const startTime = Date.now();
 		const operationId = this.generateOperationId();
 
 		// Create audit trail entry
 		if (this.config.enableAuditTrail) {
-			await this.createAuditTrailEntry(operationId, "started", { input, context });
+			await this.createAuditTrailEntry(operationId, "started", {
+				input,
+				context,
+			});
 		}
 
 		try {
@@ -221,7 +232,10 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	/**
 	 * Execute with retry logic for transient failures
 	 */
-	private async executeWithRetry(input: TInput, retryCount = 0): Promise<TOutput> {
+	private async executeWithRetry(
+		input: TInput,
+		retryCount = 0,
+	): Promise<TOutput> {
 		try {
 			return await this.execute(input);
 		} catch (error) {
@@ -265,14 +279,21 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	 */
 	protected hashInput(input: TInput): string {
 		const inputString = JSON.stringify(input, Object.keys(input).sort());
-		return Buffer.from(inputString).toString("base64").replace(/[+/=]/g, "").substr(0, 32);
+		return Buffer.from(inputString)
+			.toString("base64")
+			.replace(/[+/=]/g, "")
+			.substr(0, 32);
 	}
 
 	/**
 	 * Extract confidence score from result (override in subclasses)
 	 */
 	protected extractConfidence(result: TOutput): number | undefined {
-		if (typeof result === "object" && result !== null && "confidence" in result) {
+		if (
+			typeof result === "object" &&
+			result !== null &&
+			"confidence" in result
+		) {
 			return (result as any).confidence;
 		}
 		return;
@@ -312,14 +333,18 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 		];
 
 		return retryableErrors.some(
-			(errorType) => error.name?.includes(errorType) || error.message?.includes(errorType.toLowerCase())
+			(errorType) =>
+				error.name?.includes(errorType) ||
+				error.message?.includes(errorType.toLowerCase()),
 		);
 	}
 
 	/**
 	 * Record success metrics
 	 */
-	protected async recordSuccessMetrics(metrics: AIServiceMetrics): Promise<void> {
+	protected async recordSuccessMetrics(
+		metrics: AIServiceMetrics,
+	): Promise<void> {
 		try {
 			await this.metrics.record("ai_operation_success", {
 				value: metrics.duration,
@@ -349,7 +374,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 				});
 			}
 		} catch (error) {
-			this.logger.error("Failed to record success metrics", { error: error.message });
+			this.logger.error("Failed to record success metrics", {
+				error: error.message,
+			});
 		}
 	}
 
@@ -372,7 +399,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 				},
 			});
 		} catch (error) {
-			this.logger.error("Failed to record error metrics", { error: error.message });
+			this.logger.error("Failed to record error metrics", {
+				error: error.message,
+			});
 		}
 	}
 
@@ -382,7 +411,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	protected async createAuditTrailEntry(
 		operationId: string,
 		status: "started" | "completed" | "failed",
-		data: any
+		data: any,
 	): Promise<void> {
 		try {
 			// This would integrate with your existing audit system
@@ -397,7 +426,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 			// Store in audit log (implementation depends on your audit system)
 			this.logger.info("Audit trail entry", auditEntry);
 		} catch (error) {
-			this.logger.error("Failed to create audit trail entry", { error: error.message });
+			this.logger.error("Failed to create audit trail entry", {
+				error: error.message,
+			});
 		}
 	}
 
@@ -411,7 +442,11 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	/**
 	 * Performance monitoring helper
 	 */
-	protected async recordPerformanceMetric(type: string, value: number, metadata?: any): Promise<void> {
+	protected async recordPerformanceMetric(
+		type: string,
+		value: number,
+		metadata?: any,
+	): Promise<void> {
 		if (!this.config.enableMetrics) {
 			return;
 		}
@@ -489,6 +524,10 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 	 * Validate service configuration
 	 */
 	private validateConfiguration(): boolean {
-		return this.config.cacheTTL > 0 && this.config.performanceThreshold > 0 && this.config.errorRetryCount >= 0;
+		return (
+			this.config.cacheTTL > 0 &&
+			this.config.performanceThreshold > 0 &&
+			this.config.errorRetryCount >= 0
+		);
 	}
 }

@@ -68,7 +68,12 @@ export async function POST(request: NextRequest) {
 
 		// Validate required fields
 		if (!(messages && Array.isArray(messages)) || messages.length === 0) {
-			return NextResponse.json({ error: "Messages are required and must be a non-empty array" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Messages are required and must be a non-empty array" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// Get user context (from auth or session)
@@ -95,7 +100,12 @@ export async function POST(request: NextRequest) {
 
 		if (!complianceCheck.compliant) {
 			console.error("Compliance violations detected:", complianceCheck.violations);
-			return NextResponse.json({ error: "Request blocked due to compliance requirements" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Request blocked due to compliance requirements" },
+				{
+					status: 403,
+				}
+			);
 		}
 
 		// Get or create chat session

@@ -217,12 +217,20 @@ export interface ROIAnalyticsOutput extends AIServiceOutput {
 }
 
 // ROI Analytics Service Implementation
-export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, ROIAnalyticsOutput> {
+export class ROIAnalyticsService extends EnhancedAIService<
+	ROIAnalyticsInput,
+	ROIAnalyticsOutput
+> {
 	private readonly ANNUAL_ROI_TARGET = 150_000; // $150,000 target
 	private readonly AVG_COST_PER_NO_SHOW = 150; // Average cost of a no-show
 	private readonly dashboardCache: Map<string, ROIDashboardData> = new Map();
 
-	constructor(cache: CacheService, logger: LoggerService, metrics: MetricsService, config?: AIServiceConfig) {
+	constructor(
+		cache: CacheService,
+		logger: LoggerService,
+		metrics: MetricsService,
+		config?: AIServiceConfig,
+	) {
 		super(cache, logger, metrics, {
 			enableCaching: true,
 			cacheTTL: 900, // 15 minutes for analytics data
@@ -247,7 +255,9 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 		} catch (_error) {}
 	}
 
-	protected async executeCore(input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	protected async executeCore(
+		input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		const startTime = performance.now();
 
 		try {
@@ -280,8 +290,14 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 		}
 	}
 
-	private async getROIDashboard(input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
-		const cacheKey = this.generateCacheKey("dashboard", input.period, input.filters);
+	private async getROIDashboard(
+		input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
+		const cacheKey = this.generateCacheKey(
+			"dashboard",
+			input.period,
+			input.filters,
+		);
 
 		// Check cache first
 		if (this.dashboardCache.has(cacheKey)) {
@@ -297,7 +313,10 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 			end_date: new Date().toISOString(),
 		};
 
-		const dashboardData = await this.buildDashboardData(currentPeriod, input.filters);
+		const dashboardData = await this.buildDashboardData(
+			currentPeriod,
+			input.filters,
+		);
 
 		// Cache the dashboard data
 		this.dashboardCache.set(cacheKey, dashboardData);
@@ -314,28 +333,40 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async buildDashboardData(
 		period: { start_date: string; end_date: string },
-		filters?: any
+		filters?: any,
 	): Promise<ROIDashboardData> {
 		// Get overview metrics
 		const overview = await this.calculateOverviewMetrics(period, filters);
 
 		// Get performance trends
-		const performanceTrends = await this.calculatePerformanceTrends(period, filters);
+		const performanceTrends = await this.calculatePerformanceTrends(
+			period,
+			filters,
+		);
 
 		// Get model performance data
 		const modelPerformance = await this.calculateModelPerformance(period);
 
 		// Get intervention analytics
-		const interventionAnalytics = await this.calculateInterventionAnalytics(period, filters);
+		const interventionAnalytics = await this.calculateInterventionAnalytics(
+			period,
+			filters,
+		);
 
 		// Get patient segmentation analysis
-		const patientSegmentation = await this.calculatePatientSegmentation(period, filters);
+		const patientSegmentation = await this.calculatePatientSegmentation(
+			period,
+			filters,
+		);
 
 		// Get cost analysis
 		const costAnalysis = await this.calculateCostAnalysis(period, filters);
 
 		// Get predictive insights
-		const predictiveInsights = await this.calculatePredictiveInsights(period, filters);
+		const predictiveInsights = await this.calculatePredictiveInsights(
+			period,
+			filters,
+		);
 
 		return {
 			overview,
@@ -350,33 +381,41 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async calculateOverviewMetrics(
 		period: { start_date: string; end_date: string },
-		_filters?: any
+		_filters?: any,
 	): Promise<ROIDashboardData["overview"]> {
 		// Simulate comprehensive metrics calculation
 		// In production, would query actual data from Supabase
 
 		const daysInPeriod = Math.floor(
-			(new Date(period.end_date).getTime() - new Date(period.start_date).getTime()) / (1000 * 60 * 60 * 24)
+			(new Date(period.end_date).getTime() -
+				new Date(period.start_date).getTime()) /
+				(1000 * 60 * 60 * 24),
 		);
 
 		const estimatedAppointments = daysInPeriod * 25; // ~25 appointments per day
 		const baselineNoShowRate = 0.18; // 18% baseline
 		const currentNoShowRate = 0.135; // 13.5% with intervention (25% reduction)
-		const noShowsAvoided = Math.floor(estimatedAppointments * (baselineNoShowRate - currentNoShowRate));
+		const noShowsAvoided = Math.floor(
+			estimatedAppointments * (baselineNoShowRate - currentNoShowRate),
+		);
 		const currentMonthROI = noShowsAvoided * this.AVG_COST_PER_NO_SHOW * 0.7; // 70% net savings
 
 		// Project annual ROI based on current performance
 		const projectedAnnualROI = Math.min(
 			this.ANNUAL_ROI_TARGET * 1.2, // Cap at 120% of target
-			(currentMonthROI / daysInPeriod) * 365
+			(currentMonthROI / daysInPeriod) * 365,
 		);
 
 		return {
 			current_month_roi: Math.round(currentMonthROI),
 			ytd_roi: Math.round(projectedAnnualROI * 0.75), // 75% of year passed
 			projected_annual_roi: Math.round(projectedAnnualROI),
-			target_achievement_percentage: Math.round((projectedAnnualROI / this.ANNUAL_ROI_TARGET) * 100),
-			no_show_reduction: Math.round(((baselineNoShowRate - currentNoShowRate) / baselineNoShowRate) * 100),
+			target_achievement_percentage: Math.round(
+				(projectedAnnualROI / this.ANNUAL_ROI_TARGET) * 100,
+			),
+			no_show_reduction: Math.round(
+				((baselineNoShowRate - currentNoShowRate) / baselineNoShowRate) * 100,
+			),
 			total_appointments_managed: estimatedAppointments,
 			active_campaigns: Math.floor(estimatedAppointments * 0.4), // 40% get interventions
 		};
@@ -384,7 +423,7 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async calculatePerformanceTrends(
 		period: { start_date: string; end_date: string },
-		_filters?: any
+		_filters?: any,
 	): Promise<ROIDashboardData["performance_trends"]> {
 		// Generate monthly ROI trends
 		const monthlyROI = [];
@@ -392,12 +431,19 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 		const endDate = new Date(period.end_date);
 
 		for (let month = 0; month < 12; month++) {
-			const monthDate = new Date(startDate.getFullYear(), startDate.getMonth() - month, 1);
+			const monthDate = new Date(
+				startDate.getFullYear(),
+				startDate.getMonth() - month,
+				1,
+			);
 			if (monthDate > endDate) {
 				continue;
 			}
 
-			const monthName = monthDate.toLocaleDateString("pt-BR", { month: "short", year: "numeric" });
+			const monthName = monthDate.toLocaleDateString("pt-BR", {
+				month: "short",
+				year: "numeric",
+			});
 			const appointments = 600 + month * 25; // Growing appointment volume
 			const roi = 12_000 + month * 800; // Improving ROI over time
 			const target = this.ANNUAL_ROI_TARGET / 12;
@@ -440,7 +486,10 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 		// Generate accuracy trend data
 		const accuracyTrend = [];
 		const startDate = new Date(period.start_date);
-		const days = Math.min(30, Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+		const days = Math.min(
+			30,
+			Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24)),
+		);
 
 		for (let day = 0; day < days; day++) {
 			const date = new Date(Date.now() - day * 24 * 60 * 60 * 1000);
@@ -467,7 +516,7 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async calculateInterventionAnalytics(
 		_period: { start_date: string; end_date: string },
-		_filters?: any
+		_filters?: any,
 	): Promise<ROIDashboardData["intervention_analytics"]> {
 		return {
 			channel_performance: {
@@ -540,7 +589,7 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async calculatePatientSegmentation(
 		_period: { start_date: string; end_date: string },
-		_filters?: any
+		_filters?: any,
 	): Promise<ROIDashboardData["patient_segmentation"]> {
 		return {
 			risk_distribution: {
@@ -594,7 +643,7 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async calculateCostAnalysis(
 		_period: { start_date: string; end_date: string },
-		_filters?: any
+		_filters?: any,
 	): Promise<ROIDashboardData["cost_analysis"]> {
 		const totalProgramCost = 18_750; // Monthly program cost
 		const appointmentsManaged = 2800;
@@ -608,8 +657,12 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 				staff_time: 4500, // 24% - Monitoring and management
 				system_maintenance: 1500, // 8% - System upkeep
 			},
-			cost_per_appointment: Number.parseFloat((totalProgramCost / appointmentsManaged).toFixed(2)),
-			cost_per_prevented_no_show: Number.parseFloat((totalProgramCost / noShowsPrevented).toFixed(2)),
+			cost_per_appointment: Number.parseFloat(
+				(totalProgramCost / appointmentsManaged).toFixed(2),
+			),
+			cost_per_prevented_no_show: Number.parseFloat(
+				(totalProgramCost / noShowsPrevented).toFixed(2),
+			),
 			break_even_analysis: {
 				break_even_point_days: 85, // Days to break even
 				current_day: 120, // Current operational day
@@ -620,7 +673,7 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async calculatePredictiveInsights(
 		_period: { start_date: string; end_date: string },
-		_filters?: any
+		_filters?: any,
 	): Promise<ROIDashboardData["predictive_insights"]> {
 		const nextMonthEstimatedAppointments = 950;
 		const predictedNoShowRate = 0.132; // Continuing improvement trend
@@ -683,44 +736,75 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 		// Key insights based on data
 		if (dashboardData.overview.target_achievement_percentage >= 100) {
 			insights.push(
-				`ROI target exceeded: ${dashboardData.overview.target_achievement_percentage}% of $150k annual target achieved`
+				`ROI target exceeded: ${dashboardData.overview.target_achievement_percentage}% of $150k annual target achieved`,
 			);
 		} else {
 			insights.push(
-				`ROI progress: ${dashboardData.overview.target_achievement_percentage}% of $150k annual target (${dashboardData.overview.projected_annual_roi.toLocaleString("pt-BR", { style: "currency", currency: "USD" })} projected)`
+				`ROI progress: ${dashboardData.overview.target_achievement_percentage}% of $150k annual target (${dashboardData.overview.projected_annual_roi.toLocaleString(
+					"pt-BR",
+					{
+						style: "currency",
+						currency: "USD",
+					},
+				)} projected)`,
 			);
 		}
 
-		insights.push(`No-show reduction: ${dashboardData.overview.no_show_reduction}% achieved (target: 25%)`);
 		insights.push(
-			`Model accuracy: ${(dashboardData.model_performance.ensemble_breakdown.xgboost.accuracy * 100).toFixed(1)}% (target: >95%)`
+			`No-show reduction: ${dashboardData.overview.no_show_reduction}% achieved (target: 25%)`,
+		);
+		insights.push(
+			`Model accuracy: ${(
+				dashboardData.model_performance.ensemble_breakdown.xgboost.accuracy *
+					100
+			).toFixed(1)}% (target: >95%)`,
 		);
 
 		// Recommendations based on optimization opportunities
-		const topOpportunity = dashboardData.predictive_insights.optimization_opportunities.sort(
-			(a, b) => b.estimated_impact - a.estimated_impact
-		)[0];
+		const topOpportunity =
+			dashboardData.predictive_insights.optimization_opportunities.sort(
+				(a, b) => b.estimated_impact - a.estimated_impact,
+			)[0];
 
 		if (topOpportunity) {
 			recommendations.push(
-				`Priority optimization: ${topOpportunity.area} - potential ${topOpportunity.estimated_impact.toLocaleString("pt-BR", { style: "currency", currency: "USD" })} additional ROI`
+				`Priority optimization: ${topOpportunity.area} - potential ${topOpportunity.estimated_impact.toLocaleString(
+					"pt-BR",
+					{
+						style: "currency",
+						currency: "USD",
+					},
+				)} additional ROI`,
 			);
 		}
 
-		recommendations.push(...dashboardData.predictive_insights.next_month_projection.recommended_actions.slice(0, 2));
+		recommendations.push(
+			...dashboardData.predictive_insights.next_month_projection.recommended_actions.slice(
+				0,
+				2,
+			),
+		);
 
 		// Performance alerts
 		if (dashboardData.model_performance.calibration_quality < 0.9) {
-			alerts.push("Model calibration quality below 90% - consider recalibration");
+			alerts.push(
+				"Model calibration quality below 90% - consider recalibration",
+			);
 		}
 
 		if (dashboardData.cost_analysis.cost_per_prevented_no_show > 200) {
-			alerts.push("Cost per prevented no-show above $200 - review intervention efficiency");
+			alerts.push(
+				"Cost per prevented no-show above $200 - review intervention efficiency",
+			);
 		}
 
-		const smsEffectiveness = dashboardData.intervention_analytics.channel_performance.sms?.effectiveness || 0;
+		const smsEffectiveness =
+			dashboardData.intervention_analytics.channel_performance.sms
+				?.effectiveness || 0;
 		if (smsEffectiveness < 0.7) {
-			alerts.push("SMS channel effectiveness below 70% - review message templates");
+			alerts.push(
+				"SMS channel effectiveness below 70% - review message templates",
+			);
 		}
 
 		return {
@@ -731,7 +815,9 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 	}
 
 	private generateCacheKey(type: string, period?: any, filters?: any): string {
-		const periodStr = period ? `${period.start_date}_${period.end_date}` : "default";
+		const periodStr = period
+			? `${period.start_date}_${period.end_date}`
+			: "default";
 		const filtersStr = filters ? JSON.stringify(filters) : "no-filters";
 		return `${type}_${periodStr}_${filtersStr}`;
 	}
@@ -741,31 +827,45 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 
 	private async establishBaselineMetrics(): Promise<void> {}
 
-	private async getDetailedMetrics(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async getDetailedMetrics(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
-	private async calculatePeriodROI(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async calculatePeriodROI(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
-	private async analyzeInterventionPerformance(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async analyzeInterventionPerformance(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
-	private async getPredictiveInsights(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async getPredictiveInsights(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
-	private async exportAnalyticsReport(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async exportAnalyticsReport(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
-	private async updateTargets(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async updateTargets(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
-	private async getCostAnalysis(_input: ROIAnalyticsInput): Promise<ROIAnalyticsOutput> {
+	private async getCostAnalysis(
+		_input: ROIAnalyticsInput,
+	): Promise<ROIAnalyticsOutput> {
 		return { success: true };
 	}
 
@@ -786,7 +886,8 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 			annual_target: this.ANNUAL_ROI_TARGET,
 			ytd_achieved: dashboardData.overview.ytd_roi,
 			projected_annual: dashboardData.overview.projected_annual_roi,
-			on_track: dashboardData.overview.projected_annual_roi >= this.ANNUAL_ROI_TARGET,
+			on_track:
+				dashboardData.overview.projected_annual_roi >= this.ANNUAL_ROI_TARGET,
 			no_show_reduction: dashboardData.overview.no_show_reduction,
 		};
 	}
@@ -799,20 +900,31 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 	}> {
 		// Analyze ROI trends from dashboard data
 		const trends = await this.calculatePerformanceTrends({
-			start_date: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString(),
+			start_date: new Date(
+				Date.now() - 6 * 30 * 24 * 60 * 60 * 1000,
+			).toISOString(),
 			end_date: new Date().toISOString(),
 		});
 
 		const recentMonths = trends.monthly_roi.slice(-3);
 		const growthRates = recentMonths
 			.slice(1)
-			.map((month, index) => (month.roi - recentMonths[index].roi) / recentMonths[index].roi);
+			.map(
+				(month, index) =>
+					(month.roi - recentMonths[index].roi) / recentMonths[index].roi,
+			);
 
-		const avgGrowthRate = growthRates.reduce((sum, rate) => sum + rate, 0) / growthRates.length;
+		const avgGrowthRate =
+			growthRates.reduce((sum, rate) => sum + rate, 0) / growthRates.length;
 		const latestROI = recentMonths.at(-1)?.roi || 0;
 
 		return {
-			trend: avgGrowthRate > 0.02 ? "improving" : avgGrowthRate < -0.02 ? "declining" : "stable",
+			trend:
+				avgGrowthRate > 0.02
+					? "improving"
+					: avgGrowthRate < -0.02
+						? "declining"
+						: "stable",
 			monthly_growth_rate: Math.round(avgGrowthRate * 100) / 100,
 			confidence: 0.85, // Analysis confidence
 			next_month_prediction: Math.round(latestROI * (1 + avgGrowthRate)),
@@ -824,5 +936,5 @@ export class ROIAnalyticsService extends EnhancedAIService<ROIAnalyticsInput, RO
 export const roiAnalyticsService = new ROIAnalyticsService(
 	{} as CacheService,
 	{} as LoggerService,
-	{} as MetricsService
+	{} as MetricsService,
 );

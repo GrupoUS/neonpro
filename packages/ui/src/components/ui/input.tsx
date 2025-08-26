@@ -9,7 +9,8 @@ const inputVariants = cva(
 	{
 		variants: {
 			variant: {
-				default: "border-input bg-background/80 shadow-healthcare-sm hover:bg-background focus-visible:bg-background",
+				default:
+					"border-input bg-background/80 shadow-healthcare-sm hover:bg-background focus-visible:bg-background",
 				medical:
 					"border-primary/30 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent shadow-healthcare-sm backdrop-blur-sm hover:from-primary/8 hover:via-primary/5 focus-visible:border-primary/50 focus-visible:ring-primary/40",
 				sensitive:
@@ -39,7 +40,7 @@ const inputVariants = cva(
 			inputSize: "default",
 			validation: "none",
 		},
-	}
+	},
 );
 
 // Healthcare-specific input masks and validators
@@ -53,7 +54,9 @@ const healthcareMasks = {
 			.replace(/(-\d{2})\d+?$/, "$1");
 	},
 	cns: (value: string) => {
-		return value.replace(/\D/g, "").replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, "$1 $2 $3 $4");
+		return value
+			.replace(/\D/g, "")
+			.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, "$1 $2 $3 $4");
 	},
 	phone: (value: string) => {
 		return value
@@ -107,7 +110,17 @@ export interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
 		VariantProps<typeof inputVariants> {
 	// Healthcare-specific props
-	medicalType?: "cpf" | "cns" | "phone" | "cep" | "date" | "time" | "weight" | "height" | "temperature" | "pressure";
+	medicalType?:
+		| "cpf"
+		| "cns"
+		| "phone"
+		| "cep"
+		| "date"
+		| "time"
+		| "weight"
+		| "height"
+		| "temperature"
+		| "pressure";
 	sensitiveData?: boolean;
 	lgpdCompliant?: boolean;
 	showValidation?: boolean;
@@ -139,7 +152,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 			value,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const [showPassword, setShowPassword] = useState(false);
 		const [internalValue, setInternalValue] = useState(value || "");
@@ -167,7 +180,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				};
 
 				if (medicalType && validationPatterns[medicalType]) {
-					return validationPatterns[medicalType].test(val) ? "valid" : "invalid";
+					return validationPatterns[medicalType].test(val)
+						? "valid"
+						: "invalid";
 				}
 
 				if (type === "email") {
@@ -176,7 +191,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 				return val.length > 0 ? "valid" : "invalid";
 			},
-			[medicalType, type, showValidation]
+			[medicalType, type, showValidation],
 		);
 
 		const handleChange = useCallback(
@@ -203,14 +218,27 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				};
 				onChange?.(syntheticEvent);
 			},
-			[medicalType, showValidation, onValidation, validationMessage, getValidationState, onChange]
+			[
+				medicalType,
+				showValidation,
+				onValidation,
+				validationMessage,
+				getValidationState,
+				onChange,
+			],
 		);
 
 		// Determine final validation state
-		const finalValidation = showValidation ? getValidationState(String(value || internalValue)) : validation;
+		const finalValidation = showValidation
+			? getValidationState(String(value || internalValue))
+			: validation;
 
 		// Auto-set variant based on medical type
-		const finalVariant = medicalType ? (sensitiveData ? "sensitive" : "medical") : variant;
+		const finalVariant = medicalType
+			? sensitiveData
+				? "sensitive"
+				: "medical"
+			: variant;
 
 		const isPassword = type === "password";
 		const inputType = isPassword && showPassword ? "text" : type;
@@ -228,7 +256,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				case "invalid":
 					return <X className="h-4 w-4 text-destructive drop-shadow-sm" />;
 				case "warning":
-					return <AlertCircle className="h-4 w-4 text-warning drop-shadow-sm" />;
+					return (
+						<AlertCircle className="h-4 w-4 text-warning drop-shadow-sm" />
+					);
 				default:
 					return null;
 			}
@@ -236,10 +266,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
 		return (
 			<div className="relative w-full">
-				{leftIcon && <div className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground">{leftIcon}</div>}
+				{leftIcon && (
+					<div className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground">
+						{leftIcon}
+					</div>
+				)}
 
 				<input
-					aria-describedby={validationMessage ? `${props.id}-validation` : undefined}
+					aria-describedby={
+						validationMessage ? `${props.id}-validation` : undefined
+					}
 					aria-invalid={finalValidation === "invalid"}
 					className={cn(
 						inputVariants({
@@ -251,7 +287,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 						(rightIcon || isPassword || showValidation) && "pr-10",
 						sensitiveData && "font-mono tracking-wider",
 						lgpdCompliant && "data-[lgpd=true]:bg-green-50/20",
-						className
+						className,
 					)}
 					data-lgpd={lgpdCompliant}
 					data-medical-type={medicalType}
@@ -274,15 +310,25 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 							onClick={() => setShowPassword(!showPassword)}
 							type="button"
 						>
-							{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+							{showPassword ? (
+								<EyeOff className="h-4 w-4" />
+							) : (
+								<Eye className="h-4 w-4" />
+							)}
 						</button>
 					)}
 
-					{rightIcon && !isPassword && !showValidation && <div className="text-muted-foreground">{rightIcon}</div>}
+					{rightIcon && !isPassword && !showValidation && (
+						<div className="text-muted-foreground">{rightIcon}</div>
+					)}
 				</div>
 
 				{validationMessage && finalValidation === "invalid" && (
-					<p className="mt-1 flex items-center gap-1 text-red-500 text-sm" id={`${props.id}-validation`} role="alert">
+					<p
+						className="mt-1 flex items-center gap-1 text-red-500 text-sm"
+						id={`${props.id}-validation`}
+						role="alert"
+					>
 						<AlertCircle className="h-3 w-3" />
 						{validationMessage}
 					</p>
@@ -296,9 +342,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				)}
 			</div>
 		);
-	}
+	},
 );
 
 Input.displayName = "Input";
 
-export { Input, inputVariants, healthcareMasks };
+export { healthcareMasks, Input, inputVariants };

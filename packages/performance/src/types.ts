@@ -9,7 +9,13 @@ export type WebVitalsMetric = {
 	delta: number;
 	rating: "good" | "needs-improvement" | "poor";
 	id: string;
-	navigationType: "navigate" | "reload" | "back-forward" | "back-forward-cache" | "prerender" | "restore";
+	navigationType:
+		| "navigate"
+		| "reload"
+		| "back-forward"
+		| "back-forward-cache"
+		| "prerender"
+		| "restore";
 	timestamp: number;
 	url: string;
 	userAgent: string;
@@ -58,7 +64,14 @@ export type PerformanceReport = {
 
 export type PerformanceRecommendation = {
 	type: "critical" | "important" | "suggestion";
-	category: "bundle" | "images" | "fonts" | "javascript" | "css" | "network" | "caching";
+	category:
+		| "bundle"
+		| "images"
+		| "fonts"
+		| "javascript"
+		| "css"
+		| "network"
+		| "caching";
 	description: string;
 	impact: "high" | "medium" | "low";
 	effort: "high" | "medium" | "low";
@@ -107,7 +120,12 @@ export type DatabasePerformanceMetric = {
 	queryPlan: string;
 	timestamp: number;
 	isSlowQuery: boolean;
-	healthcareDataType?: "patient" | "medical-record" | "appointment" | "billing" | "audit";
+	healthcareDataType?:
+		| "patient"
+		| "medical-record"
+		| "appointment"
+		| "billing"
+		| "audit";
 };
 
 export type DatabaseOptimizationSuggestion = {

@@ -1,5 +1,6 @@
 "use client";
 
+import { AISchedulingEngine } from "@/lib/ai-scheduling";
 import type {
 	AppointmentSlot,
 	Conflict,
@@ -13,7 +14,6 @@ import type {
 } from "@neonpro/core-services/scheduling";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AISchedulingEngine } from "@/lib/ai-scheduling";
 
 type IntelligentSchedulerProps = {
 	tenantId: string;

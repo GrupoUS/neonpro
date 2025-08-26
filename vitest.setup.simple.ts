@@ -7,9 +7,12 @@
 
 // CRITICAL: Polyfill HTMLFormElement.requestSubmit BEFORE any DOM setup
 // This must happen before jsdom loads to prevent the "Not implemented" error
-(globalThis as any).HTMLFormElement = (globalThis as any).HTMLFormElement || class {};
+(globalThis as any).HTMLFormElement =
+	(globalThis as any).HTMLFormElement || class {};
 if (!(globalThis as any).HTMLFormElement.prototype.requestSubmit) {
-	(globalThis as any).HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement) {
+	(globalThis as any).HTMLFormElement.prototype.requestSubmit = function (
+		submitter?: HTMLElement,
+	) {
 		// Create and dispatch submit event
 		const event = new Event("submit", { bubbles: true, cancelable: true });
 
@@ -79,7 +82,9 @@ vi.mock("@neonpro/shared/api-client", () => ({
 			if (typeof error === "object" && error && "error" in error) {
 				const apiError = error as any;
 				if (apiError.error?.validation_errors?.length > 0) {
-					return apiError.error.validation_errors.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
+					return apiError.error.validation_errors
+						.map((ve: any) => `${ve.field}: ${ve.message}`)
+						.join(", ");
 				}
 				return apiError.message || "API error occurred";
 			}
@@ -163,16 +168,23 @@ vi.mock("@neonpro/shared/api-client", () => ({
 		isAuthError: vi.fn((error: any) => {
 			if (typeof error === "object" && error && "error" in error) {
 				const errorCode = error.error?.code;
-				return ["UNAUTHORIZED", "FORBIDDEN", "TOKEN_EXPIRED", "INVALID_CREDENTIALS", "SESSION_EXPIRED"].includes(
-					errorCode
-				);
+				return [
+					"UNAUTHORIZED",
+					"FORBIDDEN",
+					"TOKEN_EXPIRED",
+					"INVALID_CREDENTIALS",
+					"SESSION_EXPIRED",
+				].includes(errorCode);
 			}
 			return false;
 		}),
 		isValidationError: vi.fn((error: any) => {
 			if (typeof error === "object" && error && "error" in error) {
 				const apiError = error as any;
-				return apiError.error?.code === "VALIDATION_ERROR" || apiError.error?.validation_errors?.length > 0;
+				return (
+					apiError.error?.code === "VALIDATION_ERROR" ||
+					apiError.error?.validation_errors?.length > 0
+				);
 			}
 			return false;
 		}),
@@ -212,7 +224,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
 						Promise.resolve({
 							success: true,
 							data: { id: "patient-1", name: "Test Patient" },
-						})
+						}),
 					),
 					$get: vi.fn(() => Promise.resolve({ success: true, data: [] })),
 				},
@@ -248,7 +260,7 @@ Object.defineProperty(global, "fetch", {
 			status: 200,
 			json: () => Promise.resolve({}),
 			text: () => Promise.resolve(""),
-		})
+		}),
 	),
 });
 
@@ -290,16 +302,24 @@ Object.defineProperty(window, "alert", {
 if (typeof HTMLFormElement !== "undefined") {
 	// Polyfill requestSubmit method
 	if (!HTMLFormElement.prototype.requestSubmit) {
-		HTMLFormElement.prototype.requestSubmit = function (submitter?: HTMLElement) {
+		HTMLFormElement.prototype.requestSubmit = function (
+			submitter?: HTMLElement,
+		) {
 			// Validate submitter if provided
 			if (submitter) {
 				if (submitter.form !== this) {
-					throw new DOMException("The specified element is not a form-associated element.", "NotFoundError");
+					throw new DOMException(
+						"The specified element is not a form-associated element.",
+						"NotFoundError",
+					);
 				}
 				if (submitter.type === "submit" || submitter.type === "image") {
 					// Valid submitter types
 				} else {
-					throw new DOMException("The specified element is not a submit button.", "InvalidStateError");
+					throw new DOMException(
+						"The specified element is not a submit button.",
+						"InvalidStateError",
+					);
 				}
 			}
 
@@ -334,7 +354,10 @@ if (typeof HTMLFormElement !== "undefined") {
 			let allValid = true;
 
 			for (const control of formControls) {
-				const element = control as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+				const element = control as
+					| HTMLInputElement
+					| HTMLSelectElement
+					| HTMLTextAreaElement;
 				if (element.checkValidity && !element.checkValidity()) {
 					allValid = false;
 				}
@@ -352,7 +375,10 @@ if (typeof HTMLFormElement !== "undefined") {
 }
 
 // Also polyfill form elements if needed
-if (typeof HTMLInputElement !== "undefined" && !HTMLInputElement.prototype.checkValidity) {
+if (
+	typeof HTMLInputElement !== "undefined" &&
+	!HTMLInputElement.prototype.checkValidity
+) {
 	HTMLInputElement.prototype.checkValidity = function () {
 		// Basic validation for required fields
 		if (this.required && !this.value.trim()) {
@@ -423,7 +449,9 @@ const mockSupabaseClient = {
 			data: { session: null, user: null },
 			error: null,
 		}),
-		updateUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+		updateUser: vi
+			.fn()
+			.mockResolvedValue({ data: { user: null }, error: null }),
 		resetPasswordForEmail: vi.fn().mockResolvedValue({ data: {}, error: null }),
 		exchangeCodeForSession: vi.fn().mockResolvedValue({
 			data: { session: null, user: null },

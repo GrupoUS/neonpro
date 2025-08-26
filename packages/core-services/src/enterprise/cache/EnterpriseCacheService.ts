@@ -338,7 +338,8 @@ export class EnterpriseCacheService {
 					this.extendedMetrics.cacheHits++;
 					this.metrics.cacheHitRate =
 						this.extendedMetrics.totalRequests > 0
-							? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+							? this.extendedMetrics.cacheHits /
+								this.extendedMetrics.totalRequests
 							: 0;
 					this.updateResponseTime(startTime);
 
@@ -420,8 +421,14 @@ export class EnterpriseCacheService {
 	/**
 	 * Populate upper cache layers with data from lower layers
 	 */
-	private async populateUpperLayers<T>(key: string, value: T, sourceLayer: CacheLayer): Promise<void> {
-		const upperLayers = this.layers.filter((layer) => layer.priority < sourceLayer.priority);
+	private async populateUpperLayers<T>(
+		key: string,
+		value: T,
+		sourceLayer: CacheLayer,
+	): Promise<void> {
+		const upperLayers = this.layers.filter(
+			(layer) => layer.priority < sourceLayer.priority,
+		);
 
 		for (const layer of upperLayers) {
 			try {
@@ -434,11 +441,15 @@ export class EnterpriseCacheService {
 	 * Get cache statistics from all layers
 	 */
 	async getStats(): Promise<any> {
-		const layerStats = await Promise.allSettled(this.layers.map((layer) => layer.stats()));
+		const layerStats = await Promise.allSettled(
+			this.layers.map((layer) => layer.stats()),
+		);
 
 		const stats = layerStats.map((result, index) => ({
 			layer: this.layers[index]?.name || `layer-${index}`,
-			...(result.status === "fulfilled" ? result.value : { error: result.reason }),
+			...(result.status === "fulfilled"
+				? result.value
+				: { error: result.reason }),
 		}));
 
 		return {
@@ -446,11 +457,14 @@ export class EnterpriseCacheService {
 				totalRequests: this.extendedMetrics.totalRequests,
 				cacheHitRate:
 					this.extendedMetrics.totalRequests > 0
-						? this.extendedMetrics.cacheHits / this.extendedMetrics.totalRequests
+						? this.extendedMetrics.cacheHits /
+							this.extendedMetrics.totalRequests
 						: 0,
 				avgResponseTime: this.extendedMetrics.avgResponseTime,
 				errorRate:
-					this.extendedMetrics.totalRequests > 0 ? this.metrics.errorRate / this.extendedMetrics.totalRequests : 0,
+					this.extendedMetrics.totalRequests > 0
+						? this.metrics.errorRate / this.extendedMetrics.totalRequests
+						: 0,
 			},
 			layers: stats,
 			config: {
@@ -491,12 +505,18 @@ export class EnterpriseCacheService {
 						canRead: false,
 					};
 				}
-			})
+			}),
 		);
 
 		return {
-			overall: health.every((h) => h.status === "fulfilled" && h.value.status === "healthy") ? "healthy" : "degraded",
-			layers: health.map((h) => (h.status === "fulfilled" ? h.value : h.reason)),
+			overall: health.every(
+				(h) => h.status === "fulfilled" && h.value.status === "healthy",
+			)
+				? "healthy"
+				: "degraded",
+			layers: health.map((h) =>
+				h.status === "fulfilled" ? h.value : h.reason,
+			),
 			timestamp: new Date().toISOString(),
 		};
 	}
@@ -535,7 +555,9 @@ export class EnterpriseCacheService {
 	private updateResponseTime(startTime: number): void {
 		const duration = performance.now() - startTime;
 		this.extendedMetrics.avgResponseTime =
-			(this.extendedMetrics.avgResponseTime * (this.extendedMetrics.totalRequests - 1) + duration) /
+			(this.extendedMetrics.avgResponseTime *
+				(this.extendedMetrics.totalRequests - 1) +
+				duration) /
 			this.extendedMetrics.totalRequests;
 		this.metrics.averageResponseTime = this.extendedMetrics.avgResponseTime;
 	}

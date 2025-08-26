@@ -76,6 +76,7 @@ type SchedulingRecommendation = {
  * AISchedulingEngine - Core scheduling optimization class
  * Implements machine learning-inspired algorithms for optimal appointment scheduling
  */
+
 export class AISchedulingEngine {
 	private readonly professionals: Map<string, HealthcareProfessional> = new Map();
 	private readonly treatments: Map<string, AestheticTreatment> = new Map();
@@ -224,6 +225,7 @@ export class AISchedulingEngine {
 	 * Generate optimized recommendations using AI algorithms
 	 * @private
 	 */
+
 	private async generateOptimizedRecommendations(
 		request: z.infer<typeof AppointmentRequestSchema>,
 		availableSlots: TimeSlot[]
@@ -352,6 +354,7 @@ export class AISchedulingEngine {
 	 * Helper calculation methods
 	 * @private
 	 */
+
 	private calculateTimePreferenceScore(slot: TimeSlot, request: z.infer<typeof AppointmentRequestSchema>): number {
 		const preferredStart = request.preferred_date_range.start;
 		const slotTime = slot.start;

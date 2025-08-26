@@ -2,7 +2,7 @@
  * 🔧 Simple Authentication Test - Mock Validation
  */
 
-import { ApiHelpers, apiClient } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
 import { describe, expect, it } from "vitest";
 
 describe("Mock Validation", () => {

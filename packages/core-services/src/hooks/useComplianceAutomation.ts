@@ -46,7 +46,12 @@ type DataClassificationRequest = {
 };
 
 type DataSubjectRequest = {
-	requestType: "access" | "rectification" | "erasure" | "portability" | "objection";
+	requestType:
+		| "access"
+		| "rectification"
+		| "erasure"
+		| "portability"
+		| "objection";
 	dataSubjectId: string;
 	clinicId: string;
 	identityVerificationData: {
@@ -88,7 +93,10 @@ export const useComplianceStatus = (clinicId?: string, autoRefresh = true) => {
 			setLoading(true);
 			setError(null);
 
-			const url = new URL("/api/compliance/monitor/status", window.location.origin);
+			const url = new URL(
+				"/api/compliance/monitor/status",
+				window.location.origin,
+			);
 			if (clinicId) {
 				url.searchParams.set("clinicId", clinicId);
 			}
@@ -142,34 +150,41 @@ export const useDataClassification = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const classifyData = useCallback(async (request: DataClassificationRequest) => {
-		try {
-			setLoading(true);
-			setError(null);
+	const classifyData = useCallback(
+		async (request: DataClassificationRequest) => {
+			try {
+				setLoading(true);
+				setError(null);
 
-			const response = await fetch("/api/compliance/lgpd/data-classification", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(request),
-			});
+				const response = await fetch(
+					"/api/compliance/lgpd/data-classification",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(request),
+					},
+				);
 
-			const data = await response.json();
+				const data = await response.json();
 
-			if (!response.ok) {
-				throw new Error(data.error || "Failed to classify data");
+				if (!response.ok) {
+					throw new Error(data.error || "Failed to classify data");
+				}
+
+				return data;
+			} catch (err) {
+				const errorMessage =
+					err instanceof Error ? err.message : "Unknown error occurred";
+				setError(errorMessage);
+				throw err;
+			} finally {
+				setLoading(false);
 			}
-
-			return data;
-		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-			setError(errorMessage);
-			throw err;
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+		},
+		[],
+	);
 
 	return {
 		classifyData,
@@ -187,13 +202,16 @@ export const useDataSubjectRequests = () => {
 			setLoading(true);
 			setError(null);
 
-			const response = await fetch("/api/compliance/lgpd/data-subject-request", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			const response = await fetch(
+				"/api/compliance/lgpd/data-subject-request",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(request),
 				},
-				body: JSON.stringify(request),
-			});
+			);
 
 			const data = await response.json();
 
@@ -203,7 +221,8 @@ export const useDataSubjectRequests = () => {
 
 			return data;
 		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+			const errorMessage =
+				err instanceof Error ? err.message : "Unknown error occurred";
 			setError(errorMessage);
 			throw err;
 		} finally {
@@ -228,7 +247,9 @@ export const useConsentStatus = (dataSubjectId: string) => {
 			setLoading(true);
 			setError(null);
 
-			const response = await fetch(`/api/compliance/lgpd/consent/${dataSubjectId}`);
+			const response = await fetch(
+				`/api/compliance/lgpd/consent/${dataSubjectId}`,
+			);
 			const data = await response.json();
 
 			if (!response.ok) {
@@ -265,34 +286,41 @@ export const useSoftwareValidation = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const validateSoftware = useCallback(async (request: SoftwareValidationRequest) => {
-		try {
-			setLoading(true);
-			setError(null);
+	const validateSoftware = useCallback(
+		async (request: SoftwareValidationRequest) => {
+			try {
+				setLoading(true);
+				setError(null);
 
-			const response = await fetch("/api/compliance/anvisa/software-validation", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(request),
-			});
+				const response = await fetch(
+					"/api/compliance/anvisa/software-validation",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(request),
+					},
+				);
 
-			const data = await response.json();
+				const data = await response.json();
 
-			if (!response.ok) {
-				throw new Error(data.error || "Failed to validate software");
+				if (!response.ok) {
+					throw new Error(data.error || "Failed to validate software");
+				}
+
+				return data;
+			} catch (err) {
+				const errorMessage =
+					err instanceof Error ? err.message : "Unknown error occurred";
+				setError(errorMessage);
+				throw err;
+			} finally {
+				setLoading(false);
 			}
-
-			return data;
-		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-			setError(errorMessage);
-			throw err;
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+		},
+		[],
+	);
 
 	return {
 		validateSoftware,
@@ -311,7 +339,9 @@ export const useSoftwareLifecycle = (itemName: string) => {
 			setLoading(true);
 			setError(null);
 
-			const response = await fetch(`/api/compliance/anvisa/software-lifecycle/${encodeURIComponent(itemName)}`);
+			const response = await fetch(
+				`/api/compliance/anvisa/software-lifecycle/${encodeURIComponent(itemName)}`,
+			);
 			const data = await response.json();
 
 			if (!response.ok) {
@@ -348,34 +378,41 @@ export const useProfessionalValidation = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const validateProfessional = useCallback(async (request: ProfessionalValidationRequest) => {
-		try {
-			setLoading(true);
-			setError(null);
+	const validateProfessional = useCallback(
+		async (request: ProfessionalValidationRequest) => {
+			try {
+				setLoading(true);
+				setError(null);
 
-			const response = await fetch("/api/compliance/cfm/professional-validation", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(request),
-			});
+				const response = await fetch(
+					"/api/compliance/cfm/professional-validation",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(request),
+					},
+				);
 
-			const data = await response.json();
+				const data = await response.json();
 
-			if (!response.ok) {
-				throw new Error(data.error || "Failed to validate professional");
+				if (!response.ok) {
+					throw new Error(data.error || "Failed to validate professional");
+				}
+
+				return data;
+			} catch (err) {
+				const errorMessage =
+					err instanceof Error ? err.message : "Unknown error occurred";
+				setError(errorMessage);
+				throw err;
+			} finally {
+				setLoading(false);
 			}
-
-			return data;
-		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-			setError(errorMessage);
-			throw err;
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+		},
+		[],
+	);
 
 	return {
 		validateProfessional,
@@ -394,7 +431,9 @@ export const useProfessionalStatus = (professionalId: string) => {
 			setLoading(true);
 			setError(null);
 
-			const response = await fetch(`/api/compliance/cfm/professional-status/${professionalId}`);
+			const response = await fetch(
+				`/api/compliance/cfm/professional-status/${professionalId}`,
+			);
 			const data = await response.json();
 
 			if (!response.ok) {
@@ -460,14 +499,15 @@ export const useComplianceAlerts = () => {
 
 				return data;
 			} catch (err) {
-				const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+				const errorMessage =
+					err instanceof Error ? err.message : "Unknown error occurred";
 				setError(errorMessage);
 				throw err;
 			} finally {
 				setLoading(false);
 			}
 		},
-		[]
+		[],
 	);
 
 	return {
@@ -485,43 +525,53 @@ export const useComplianceReport = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const generateReport = useCallback(async (type: "lgpd" | "anvisa" | "cfm" | "comprehensive", clinicId?: string) => {
-		try {
-			setLoading(true);
-			setError(null);
+	const generateReport = useCallback(
+		async (
+			type: "lgpd" | "anvisa" | "cfm" | "comprehensive",
+			clinicId?: string,
+		) => {
+			try {
+				setLoading(true);
+				setError(null);
 
-			const url = new URL(`/api/compliance/reports/${type}`, window.location.origin);
-			if (clinicId) {
-				url.searchParams.set("clinicId", clinicId);
+				const url = new URL(
+					`/api/compliance/reports/${type}`,
+					window.location.origin,
+				);
+				if (clinicId) {
+					url.searchParams.set("clinicId", clinicId);
+				}
+
+				const response = await fetch(url.toString());
+
+				if (!response.ok) {
+					const data = await response.json();
+					throw new Error(data.error || "Failed to generate report");
+				}
+
+				// Handle file download
+				const blob = await response.blob();
+				const downloadUrl = window.URL.createObjectURL(blob);
+				const link = document.createElement("a");
+				link.href = downloadUrl;
+				link.download = `compliance-report-${type}-${new Date().toISOString().split("T")[0]}.pdf`;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				window.URL.revokeObjectURL(downloadUrl);
+
+				return { success: true };
+			} catch (err) {
+				const errorMessage =
+					err instanceof Error ? err.message : "Unknown error occurred";
+				setError(errorMessage);
+				throw err;
+			} finally {
+				setLoading(false);
 			}
-
-			const response = await fetch(url.toString());
-
-			if (!response.ok) {
-				const data = await response.json();
-				throw new Error(data.error || "Failed to generate report");
-			}
-
-			// Handle file download
-			const blob = await response.blob();
-			const downloadUrl = window.URL.createObjectURL(blob);
-			const link = document.createElement("a");
-			link.href = downloadUrl;
-			link.download = `compliance-report-${type}-${new Date().toISOString().split("T")[0]}.pdf`;
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
-			window.URL.revokeObjectURL(downloadUrl);
-
-			return { success: true };
-		} catch (err) {
-			const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-			setError(errorMessage);
-			throw err;
-		} finally {
-			setLoading(false);
-		}
-	}, []);
+		},
+		[],
+	);
 
 	return {
 		generateReport,

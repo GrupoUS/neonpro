@@ -8,13 +8,13 @@
 
 "use client";
 
-import { Link, useLocation } from "@tanstack/react-router";
-import { BarChart3, Calendar, Heart, Home, Menu, Settings, Shield, Stethoscope, Users } from "lucide-react";
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
+import { Link, useLocation } from "@tanstack/react-router";
+import { BarChart3, Calendar, Heart, Home, Menu, Settings, Shield, Stethoscope, Users } from "lucide-react";
+import React from "react";
 
 type NavigationItem = {
 	label: string;

@@ -8,7 +8,13 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { emailSchema, phoneSchema, validateEmail, validatePhone, z } from "../src/validation";
+import {
+	emailSchema,
+	phoneSchema,
+	validateEmail,
+	validatePhone,
+	z,
+} from "../src/validation";
 
 describe("Validation Utils - Email", () => {
 	describe("emailSchema", () => {
@@ -64,9 +70,11 @@ describe("Validation Utils - Email", () => {
 
 		it("should handle edge cases", () => {
 			expect(validateEmail("a@b.co")).toBe(true); // Mínimo válido
-			expect(validateEmail("very.long.email.address.that.should.still.work@very.long.domain.name.example.com")).toBe(
-				true
-			);
+			expect(
+				validateEmail(
+					"very.long.email.address.that.should.still.work@very.long.domain.name.example.com",
+				),
+			).toBe(true);
 		});
 	});
 });

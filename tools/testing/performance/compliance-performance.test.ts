@@ -63,17 +63,24 @@ class PerformanceMonitor {
 	}
 
 	getAverageResponseTime(): number {
-		return this.metrics.reduce((sum, m) => sum + m.responseTime, 0) / this.metrics.length;
+		return (
+			this.metrics.reduce((sum, m) => sum + m.responseTime, 0) /
+			this.metrics.length
+		);
 	}
 
 	getP95ResponseTime(): number {
-		const sorted = this.metrics.map((m) => m.responseTime).sort((a, b) => a - b);
+		const sorted = this.metrics
+			.map((m) => m.responseTime)
+			.sort((a, b) => a - b);
 		const index = Math.floor(sorted.length * 0.95);
 		return sorted[index];
 	}
 
 	getP99ResponseTime(): number {
-		const sorted = this.metrics.map((m) => m.responseTime).sort((a, b) => a - b);
+		const sorted = this.metrics
+			.map((m) => m.responseTime)
+			.sort((a, b) => a - b);
 		const index = Math.floor(sorted.length * 0.99);
 		return sorted[index];
 	}
@@ -144,11 +151,17 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 			const p95ResponseTime = performanceMonitor.getP95ResponseTime();
 			const p99ResponseTime = performanceMonitor.getP99ResponseTime();
 
-			expect(p95ResponseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_P95);
-			expect(p99ResponseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_P99);
+			expect(p95ResponseTime).toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_P95,
+			);
+			expect(p99ResponseTime).toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_P99,
+			);
 
 			// Verify success rate
-			const successfulRequests = results.filter((r) => r.response.status === 200);
+			const successfulRequests = results.filter(
+				(r) => r.response.status === 200,
+			);
 			const successRate = successfulRequests.length / results.length;
 			expect(successRate).toBeGreaterThan(0.99); // 99% success rate
 		});
@@ -185,8 +198,12 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 			const avgResponseTime = performanceMonitor.getAverageResponseTime();
 			const memoryUsage = performanceMonitor.getTotalMemoryUsage();
 
-			expect(avgResponseTime).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_P95);
-			expect(memoryUsage).toBeLessThan(PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD * 1024 * 1024);
+			expect(avgResponseTime).toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_P95,
+			);
+			expect(memoryUsage).toBeLessThan(
+				PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD * 1024 * 1024,
+			);
 		});
 	});
 	describe("⚖️ LGPD Compliance Overhead Analysis", () => {
@@ -264,7 +281,12 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 		});
 
 		it("should test consent validation performance", async () => {
-			const consentTypes = ["DATA_PROCESSING", "MARKETING", "ANALYTICS", "RESEARCH"];
+			const consentTypes = [
+				"DATA_PROCESSING",
+				"MARKETING",
+				"ANALYTICS",
+				"RESEARCH",
+			];
 			const patientIds = Array.from({ length: 1000 }, (_, i) => `pat_${i}`);
 
 			const consentValidationResults = [];
@@ -274,14 +296,19 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 					performanceMonitor.start();
 
 					// Simulate consent validation
-					const hasConsent = await validatePatientConsent(patientId, consentType);
+					const hasConsent = await validatePatientConsent(
+						patientId,
+						consentType,
+					);
 
-					const metrics = performanceMonitor.recordMetrics("consent_validation");
+					const metrics =
+						performanceMonitor.recordMetrics("consent_validation");
 					consentValidationResults.push({ hasConsent, metrics });
 				}
 			}
 
-			const avgConsentValidationTime = performanceMonitor.getAverageResponseTime();
+			const avgConsentValidationTime =
+				performanceMonitor.getAverageResponseTime();
 			expect(avgConsentValidationTime).toBeLessThan(5); // Should be very fast
 		});
 	});
@@ -336,20 +363,25 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 				const _connectionResults = [];
 
 				// Simulate concurrent database operations
-				const promises = Array.from({ length: test.operations }, async (_, i) => {
-					performanceMonitor.start();
+				const promises = Array.from(
+					{ length: test.operations },
+					async (_, i) => {
+						performanceMonitor.start();
 
-					const connection = await simulateDBConnectionAcquisition();
-					await simulateDatabaseOperation(connection, `operation_${i}`);
-					await simulateDBConnectionRelease(connection);
+						const connection = await simulateDBConnectionAcquisition();
+						await simulateDatabaseOperation(connection, `operation_${i}`);
+						await simulateDBConnectionRelease(connection);
 
-					return performanceMonitor.recordMetrics("db_connection_operation");
-				});
+						return performanceMonitor.recordMetrics("db_connection_operation");
+					},
+				);
 
 				const _results = await Promise.all(promises);
 				const avgConnectionTime = performanceMonitor.getAverageResponseTime();
 
-				expect(avgConnectionTime).toBeLessThan(PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX);
+				expect(avgConnectionTime).toBeLessThan(
+					PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX,
+				);
 
 				performanceMonitor.reset();
 			}
@@ -365,8 +397,14 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 			for (let batch = 0; batch < operationBatches; batch++) {
 				// Perform batch of LGPD compliance operations
 				for (let i = 0; i < operationsPerBatch; i++) {
-					await simulateLGPDOperation("consent_validation", `pat_${batch}_${i}`);
-					await simulateLGPDOperation("audit_logging", `operation_${batch}_${i}`);
+					await simulateLGPDOperation(
+						"consent_validation",
+						`pat_${batch}_${i}`,
+					);
+					await simulateLGPDOperation(
+						"audit_logging",
+						`operation_${batch}_${i}`,
+					);
 					await simulateLGPDOperation("data_minimization", {
 						patientData: `data_${i}`,
 					});
@@ -385,12 +423,14 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 			// Analyze memory growth pattern
 			const finalMemoryIncrease = memoryMeasurements.at(-1);
 			const expectedMaxIncrease =
-				((operationBatches * operationsPerBatch) / 1000) * PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD;
+				((operationBatches * operationsPerBatch) / 1000) *
+				PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD;
 
 			expect(finalMemoryIncrease).toBeLessThan(expectedMaxIncrease);
 
 			// Check for consistent memory growth (potential leak)
-			const growthRate = (finalMemoryIncrease - memoryMeasurements[0]) / operationBatches;
+			const growthRate =
+				(finalMemoryIncrease - memoryMeasurements[0]) / operationBatches;
 			expect(growthRate).toBeLessThan(5); // Less than 5MB growth per batch
 		});
 
@@ -441,7 +481,9 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 					responseTimes.push(responseTime);
 				}
 
-				const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+				const avgResponseTime =
+					responseTimes.reduce((sum, time) => sum + time, 0) /
+					responseTimes.length;
 				const maxResponseTime = Math.max(...responseTimes);
 
 				expect(avgResponseTime).toBeLessThan(scenario.maxResponseTime);
@@ -491,12 +533,20 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 				operationStats[result.type].count++;
 			});
 
-			Object.entries(operationStats).forEach(([_type, stats]: [string, any]) => {
-				const _avgTime = stats.times.reduce((sum: number, time: number) => sum + time, 0) / stats.times.length;
-				const p95Time = stats.times.sort((a: number, b: number) => a - b)[Math.floor(stats.times.length * 0.95)];
+			Object.entries(operationStats).forEach(
+				([_type, stats]: [string, any]) => {
+					const _avgTime =
+						stats.times.reduce((sum: number, time: number) => sum + time, 0) /
+						stats.times.length;
+					const p95Time = stats.times.sort((a: number, b: number) => a - b)[
+						Math.floor(stats.times.length * 0.95)
+					];
 
-				expect(p95Time).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_P95 * 2); // Allow 2x for concurrent load
-			});
+					expect(p95Time).toBeLessThan(
+						PERFORMANCE_THRESHOLDS.API_RESPONSE_P95 * 2,
+					); // Allow 2x for concurrent load
+				},
+			);
 		});
 	});
 
@@ -551,10 +601,12 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 			const overallAvgResponse =
 				Object.values(performanceReport.apiEndpoints).reduce(
 					(sum: number, endpoint: any) => sum + endpoint.averageResponseTime,
-					0
+					0,
 				) / criticalEndpoints.length;
 
-			expect(overallAvgResponse).toBeLessThan(PERFORMANCE_THRESHOLDS.API_RESPONSE_P95);
+			expect(overallAvgResponse).toBeLessThan(
+				PERFORMANCE_THRESHOLDS.API_RESPONSE_P95,
+			);
 
 			// Save report to file for analysis
 			const _reportPath = "performance-benchmark-report.json";
@@ -570,18 +622,33 @@ async function simulateDirectAPICall(_endpoint: string): Promise<void> {
 	await new Promise((resolve) => setTimeout(resolve, Math.random() * 10 + 5));
 }
 
-async function simulateAuditedOperation(_operation: string, _resourceId: string): Promise<void> {
+async function simulateAuditedOperation(
+	_operation: string,
+	_resourceId: string,
+): Promise<void> {
 	await new Promise((resolve) => setTimeout(resolve, Math.random() * 5 + 2));
 }
 
-async function validatePatientConsent(_patientId: string, _consentType: string): Promise<boolean> {
+async function validatePatientConsent(
+	_patientId: string,
+	_consentType: string,
+): Promise<boolean> {
 	await new Promise((resolve) => setTimeout(resolve, Math.random() * 2 + 1));
 	return Math.random() > 0.2; // 80% have consent
 }
 
-async function simulateDatabaseQuery(queryType: string, _params: any): Promise<any> {
-	const complexity = queryType.includes("COMPLEX") ? 30 : queryType.includes("AUDIT") ? 15 : 10;
-	await new Promise((resolve) => setTimeout(resolve, Math.random() * complexity + 5));
+async function simulateDatabaseQuery(
+	queryType: string,
+	_params: any,
+): Promise<any> {
+	const complexity = queryType.includes("COMPLEX")
+		? 30
+		: queryType.includes("AUDIT")
+			? 15
+			: 10;
+	await new Promise((resolve) =>
+		setTimeout(resolve, Math.random() * complexity + 5),
+	);
 	return { success: true, rows: Math.floor(Math.random() * 100) };
 }
 
@@ -590,7 +657,10 @@ async function simulateDBConnectionAcquisition(): Promise<string> {
 	return `connection_${Math.random().toString(36).substring(7)}`;
 }
 
-async function simulateDatabaseOperation(_connection: string, _operation: string): Promise<void> {
+async function simulateDatabaseOperation(
+	_connection: string,
+	_operation: string,
+): Promise<void> {
 	await new Promise((resolve) => setTimeout(resolve, Math.random() * 20 + 10));
 }
 
@@ -598,7 +668,10 @@ async function simulateDBConnectionRelease(_connection: string): Promise<void> {
 	await new Promise((resolve) => setTimeout(resolve, 1));
 }
 
-async function simulateLGPDOperation(_operation: string, _data: any): Promise<void> {
+async function simulateLGPDOperation(
+	_operation: string,
+	_data: any,
+): Promise<void> {
 	await new Promise((resolve) => setTimeout(resolve, Math.random() * 3 + 1));
 }
 
@@ -606,12 +679,21 @@ async function simulateAuditLogCreation(_logData: any): Promise<void> {
 	await new Promise((resolve) => setTimeout(resolve, Math.random() * 2 + 0.5));
 }
 
-async function simulateEmergencyScenario(type: string, _params: any): Promise<void> {
-	const baseTime = type === "CRITICAL_ALERT" ? 50 : type === "PATIENT_LOOKUP" ? 100 : 200;
-	await new Promise((resolve) => setTimeout(resolve, Math.random() * 50 + baseTime));
+async function simulateEmergencyScenario(
+	type: string,
+	_params: any,
+): Promise<void> {
+	const baseTime =
+		type === "CRITICAL_ALERT" ? 50 : type === "PATIENT_LOOKUP" ? 100 : 200;
+	await new Promise((resolve) =>
+		setTimeout(resolve, Math.random() * 50 + baseTime),
+	);
 }
 
-async function simulateHealthcareOperation(type: string, _params: any): Promise<void> {
+async function simulateHealthcareOperation(
+	type: string,
+	_params: any,
+): Promise<void> {
 	const operationTimes = {
 		PATIENT_REGISTRATION: 150,
 		APPOINTMENT_BOOKING: 100,
@@ -620,10 +702,17 @@ async function simulateHealthcareOperation(type: string, _params: any): Promise<
 	};
 
 	const baseTime = operationTimes[type] || 100;
-	await new Promise((resolve) => setTimeout(resolve, Math.random() * 50 + baseTime));
+	await new Promise((resolve) =>
+		setTimeout(resolve, Math.random() * 50 + baseTime),
+	);
 }
 
-async function simulateAPIRequest(_endpoint: string, options: any): Promise<void> {
+async function simulateAPIRequest(
+	_endpoint: string,
+	options: any,
+): Promise<void> {
 	const baseTime = options.lgpdCompliant ? 20 : 15;
-	await new Promise((resolve) => setTimeout(resolve, Math.random() * 30 + baseTime));
+	await new Promise((resolve) =>
+		setTimeout(resolve, Math.random() * 30 + baseTime),
+	);
 }

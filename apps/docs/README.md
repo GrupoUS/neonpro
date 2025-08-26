@@ -1,6 +1,7 @@
 # 📚 NeonPro Documentation
 
-This is the documentation application for NeonPro, built with [Next.js](https://nextjs.org) and optimized for healthcare documentation and compliance requirements.
+This is the documentation application for NeonPro, built with [Next.js](https://nextjs.org) and
+optimized for healthcare documentation and compliance requirements.
 
 ## Getting Started
 
@@ -42,6 +43,7 @@ docs/
 ## Documentation Standards
 
 All documentation follows:
+
 - **Markdown-first**: Using MDX for enhanced content
 - **Component-driven**: Live examples with code snippets
 - **Version control**: Automatic versioning with git hooks
@@ -56,6 +58,7 @@ All documentation follows:
 ## Deployment
 
 Documentation is automatically deployed on:
+
 - **Staging**: Vercel Preview deployments
 - **Production**: Vercel production deployment
 - **Internal**: Corporate documentation portal

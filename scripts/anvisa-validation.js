@@ -66,7 +66,10 @@ async function validateComplianceModules() {
 
 	try {
 		// Check if we can load the compliance modules
-		const compliancePath = path.resolve(process.cwd(), "packages/compliance/src/anvisa");
+		const compliancePath = path.resolve(
+			process.cwd(),
+			"packages/compliance/src/anvisa",
+		);
 
 		if (!fs.existsSync(compliancePath)) {
 			logError("ANVISA compliance modules not found");
@@ -103,7 +106,10 @@ async function validateComplianceModules() {
 async function validateEnvironmentVariables() {
 	logHeader("Environment Variables Validation");
 
-	const requiredEnvVars = ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"];
+	const requiredEnvVars = [
+		"NEXT_PUBLIC_SUPABASE_URL",
+		"SUPABASE_SERVICE_ROLE_KEY",
+	];
 
 	const allValid = true;
 
@@ -124,7 +130,10 @@ async function validateANVISAConfiguration() {
 
 	try {
 		// Check package.json for ANVISA-related dependencies - look in apps/web first
-		const webPackageJsonPath = path.resolve(process.cwd(), "apps/web/package.json");
+		const webPackageJsonPath = path.resolve(
+			process.cwd(),
+			"apps/web/package.json",
+		);
 		const rootPackageJsonPath = path.resolve(process.cwd(), "package.json");
 
 		let packageJsonPath = webPackageJsonPath;
@@ -141,10 +150,15 @@ async function validateANVISAConfiguration() {
 
 		// Check for Supabase client (required for ANVISA compliance)
 		const hasSupabase =
-			packageJson.dependencies?.["@supabase/supabase-js"] || packageJson.devDependencies?.["@supabase/supabase-js"];
+			packageJson.dependencies?.["@supabase/supabase-js"] ||
+			packageJson.devDependencies?.["@supabase/supabase-js"];
 
 		if (hasSupabase) {
-			logSuccess(`Supabase client dependency found in ${packageJsonPath.includes("apps/web") ? "apps/web" : "root"}`);
+			logSuccess(
+				`Supabase client dependency found in ${
+					packageJsonPath.includes("apps/web") ? "apps/web" : "root"
+				}`,
+			);
 		} else {
 			logError("Supabase client dependency missing");
 			return false;
@@ -184,7 +198,11 @@ async function runANVISAValidation() {
 			}
 		} catch (error) {
 			logError(`${validation.name} validation error: ${error.message}`);
-			results.push({ name: validation.name, passed: false, error: error.message });
+			results.push({
+				name: validation.name,
+				passed: false,
+				error: error.message,
+			});
 			allPassed = false;
 		}
 	}
@@ -196,15 +214,21 @@ async function runANVISAValidation() {
 		if (result.passed) {
 			logSuccess(`${result.name}: PASSED`);
 		} else {
-			logError(`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`);
+			logError(
+				`${result.name}: FAILED${result.error ? ` (${result.error})` : ""}`,
+			);
 		}
 	});
 
 	if (allPassed) {
-		log(`\n${colors.bold}${colors.green}🎉 All ANVISA compliance validations passed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.green}🎉 All ANVISA compliance validations passed!${colors.reset}`,
+		);
 		process.exit(0);
 	} else {
-		log(`\n${colors.bold}${colors.red}💥 Some ANVISA compliance validations failed!${colors.reset}`);
+		log(
+			`\n${colors.bold}${colors.red}💥 Some ANVISA compliance validations failed!${colors.reset}`,
+		);
 		process.exit(1);
 	}
 }

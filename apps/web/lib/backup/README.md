@@ -2,7 +2,8 @@
 
 **Story 1.8: Sistema de Backup e Recovery**
 
-Sistema completo de backup automático e recuperação de dados para o NeonPro, incluindo monitoramento em tempo real, alertas inteligentes e disaster recovery.
+Sistema completo de backup automático e recuperação de dados para o NeonPro, incluindo monitoramento
+em tempo real, alertas inteligentes e disaster recovery.
 
 ## 🚀 Características Principais
 
@@ -111,7 +112,7 @@ if (result.success) {
 ### Configuração de Backup
 
 ```typescript
-import { getBackupSystem, BackupType, BackupFrequency } from './lib/backup';
+import { BackupFrequency, BackupType, getBackupSystem } from './lib/backup';
 
 const backupSystem = getBackupSystem();
 
@@ -123,7 +124,7 @@ const fileBackup = await backupSystem.setupFileBackup(
     frequency: BackupFrequency.DAILY,
     time: '02:00',
     excludePatterns: ['*.tmp', '*.log'],
-  }
+  },
 );
 
 // Backup de banco de dados
@@ -134,7 +135,7 @@ const dbBackup = await backupSystem.setupDatabaseBackup(
     frequency: BackupFrequency.DAILY,
     time: '01:00',
     retention: 30,
-  }
+  },
 );
 ```
 
@@ -181,12 +182,12 @@ const recoveryRequest = await backupSystem.recover.createRecoveryRequest(
     overwrite: true,
     priority: 'HIGH',
   },
-  'user-id'
+  'user-id',
 );
 
 // Acompanhar progresso
 const status = await backupSystem.recover.getRecoveryStatus(
-  recoveryRequest.data.id
+  recoveryRequest.data.id,
 );
 console.log('Progresso:', status.data.progress);
 ```

@@ -36,7 +36,10 @@ export class ComplianceIntegration {
 	/**
 	 * Check if user has required healthcare permissions
 	 */
-	async checkHealthcareAccess(_userId: string, _resource: string): Promise<boolean> {
+	async checkHealthcareAccess(
+		_userId: string,
+		_resource: string,
+	): Promise<boolean> {
 		// Simplified check - would use real RBAC logic
 		return true;
 	}
@@ -44,7 +47,10 @@ export class ComplianceIntegration {
 	/**
 	 * Validate LGPD compliance for operation
 	 */
-	async validateLGPDCompliance(_userId: string, _operation: string): Promise<boolean> {
+	async validateLGPDCompliance(
+		_userId: string,
+		_operation: string,
+	): Promise<boolean> {
 		return true;
 	}
 

@@ -27,6 +27,7 @@ infrastructure/
 ## 🔄 Redirects Necessários
 
 ### Para arquivos de configuração:
+
 ```bash
 # ANTES
 ./supabase/config.toml
@@ -35,6 +36,7 @@ infrastructure/
 ```
 
 ### Para Edge Functions:
+
 ```bash
 # ANTES
 ./supabase/functions/stock-alerts-processor/
@@ -43,6 +45,7 @@ infrastructure/
 ```
 
 ### Para migrations:
+
 ```bash
 # ANTES
 ./supabase/migrations/ (89 arquivos)
@@ -62,6 +65,7 @@ infrastructure/
 ## 🔧 Próximos Passos
 
 Verificar e atualizar referências nos seguintes arquivos de configuração:
+
 - `turbo.json`
 - `pnpm-workspace.yaml`
 - Scripts de deployment

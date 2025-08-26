@@ -4,8 +4,6 @@
 // API endpoints for retention strategy management and execution
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import {
 	type CreateRetentionStrategy,
@@ -13,6 +11,8 @@ import {
 	RetentionStrategyType,
 } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -290,7 +290,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		// Check permissions for creating strategies
 		const allowedRoles = ["admin", "manager", "analyst"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json({ error: "Insufficient permissions to create strategies" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions to create strategies" },
+				{
+					status: 403,
+				}
+			);
 		}
 
 		// Create retention strategy

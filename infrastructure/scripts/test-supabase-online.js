@@ -21,12 +21,18 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 async function testConnection() {
 	try {
 		// Test basic connectivity
-		const { data, error } = await supabase.from("profiles").select("count").limit(1);
+		const { data, error } = await supabase
+			.from("profiles")
+			.select("count")
+			.limit(1);
 
 		if (error) {
 		} else {
 		}
-		const { data: tables, error: tablesError } = await supabase.rpc("get_table_list", {});
+		const { data: tables, error: tablesError } = await supabase.rpc(
+			"get_table_list",
+			{},
+		);
 
 		if (tablesError) {
 			const { data: altCheck, error: altError } = await supabase
@@ -39,11 +45,20 @@ async function testConnection() {
 			}
 		} else {
 		}
-		const apTables = ["vendors", "accounts_payable", "expense_categories", "ap_payments", "ap_documents"];
+		const apTables = [
+			"vendors",
+			"accounts_payable",
+			"expense_categories",
+			"ap_payments",
+			"ap_documents",
+		];
 
 		for (const tableName of apTables) {
 			try {
-				const { data, error } = await supabase.from(tableName).select("count").limit(1);
+				const { data, error } = await supabase
+					.from(tableName)
+					.select("count")
+					.limit(1);
 				if (error) {
 				} else {
 				}

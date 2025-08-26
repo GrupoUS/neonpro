@@ -45,7 +45,9 @@ const ComplianceAutomationConfigSchema = z.object({
 const ComplianceExecutionSchema = z.object({
 	tenant_id: z.string(),
 	user_id: z.string(),
-	compliance_areas: z.array(z.enum(["lgpd", "anvisa", "cfm", "all"])).default(["all"]),
+	compliance_areas: z
+		.array(z.enum(["lgpd", "anvisa", "cfm", "all"]))
+		.default(["all"]),
 	immediate_execution: z.boolean().default(true),
 });
 
@@ -56,75 +58,92 @@ const _MonitoringStatusSchema = z.object({
 
 // Create compliance automation router
 export const complianceAutomationRoutes = new Hono()
-
 	// Authentication middleware
 	.use("*", async (c, next) => {
 		const auth = c.req.header("Authorization");
 		if (!auth?.startsWith("Bearer ")) {
-			return c.json({ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" }, 401);
+			return c.json(
+				{ error: "UNAUTHORIZED", message: "Token de acesso obrigatório" },
+				401,
+			);
 		}
 		await next();
 	})
-
 	// 🚀 Execute Comprehensive Compliance Automation
-	.post("/execute", zValidator("json", ComplianceExecutionSchema), async (c) => {
-		const { tenant_id, user_id, compliance_areas, immediate_execution } = c.req.valid("json");
+	.post(
+		"/execute",
+		zValidator("json", ComplianceExecutionSchema),
+		async (c) => {
+			const { tenant_id, user_id, compliance_areas, immediate_execution } =
+				c.req.valid("json");
 
-		try {
-			// Initialize Supabase client
-			const supabase = createSupabaseClient();
+			try {
+				// Initialize Supabase client
+				const supabase = createSupabaseClient();
 
-			// Create compliance automation configuration
-			const config: ComplianceAutomationConfig = {
-				...DEFAULT_COMPLIANCE_CONFIG,
-				tenant_id,
-				// Override based on compliance_areas selection
-				lgpd_automation: compliance_areas.includes("lgpd") || compliance_areas.includes("all"),
-				anvisa_automation: compliance_areas.includes("anvisa") || compliance_areas.includes("all"),
-				cfm_automation: compliance_areas.includes("cfm") || compliance_areas.includes("all"),
-			};
+				// Create compliance automation configuration
+				const config: ComplianceAutomationConfig = {
+					...DEFAULT_COMPLIANCE_CONFIG,
+					tenant_id,
+					// Override based on compliance_areas selection
+					lgpd_automation:
+						compliance_areas.includes("lgpd") ||
+						compliance_areas.includes("all"),
+					anvisa_automation:
+						compliance_areas.includes("anvisa") ||
+						compliance_areas.includes("all"),
+					cfm_automation:
+						compliance_areas.includes("cfm") ||
+						compliance_areas.includes("all"),
+				};
 
-			// Create compliance automation service
-			const complianceService = createBrazilianComplianceAutomationService(supabase, config);
+				// Create compliance automation service
+				const complianceService = createBrazilianComplianceAutomationService(
+					supabase,
+					config,
+				);
 
-			// Execute compliance automation
-			const automationResult = await complianceService.executeComplianceAutomation(user_id);
+				// Execute compliance automation
+				const automationResult =
+					await complianceService.executeComplianceAutomation(user_id);
 
-			if (!automationResult.success) {
+				if (!automationResult.success) {
+					return c.json(
+						{
+							success: false,
+							error: "COMPLIANCE_AUTOMATION_ERROR",
+							message:
+								automationResult.error || "Erro na automação de compliance",
+						},
+						500,
+					);
+				}
+
+				const response: ApiResponse<ComplianceAutomationResponse> = {
+					success: true,
+					data: automationResult.data!,
+					message: "Automação de compliance executada com sucesso",
+					metadata: {
+						execution_time: new Date().toISOString(),
+						compliance_areas,
+						constitutional_standard_met:
+							automationResult.data?.overall_score >= 9.9,
+					},
+				};
+
+				return c.json(response, HTTP_STATUS.OK);
+			} catch (_error) {
 				return c.json(
 					{
 						success: false,
-						error: "COMPLIANCE_AUTOMATION_ERROR",
-						message: automationResult.error || "Erro na automação de compliance",
+						error: "INTERNAL_ERROR",
+						message: "Erro interno na automação de compliance",
 					},
-					500
+					500,
 				);
 			}
-
-			const response: ApiResponse<ComplianceAutomationResponse> = {
-				success: true,
-				data: automationResult.data!,
-				message: "Automação de compliance executada com sucesso",
-				metadata: {
-					execution_time: new Date().toISOString(),
-					compliance_areas,
-					constitutional_standard_met: automationResult.data?.overall_score >= 9.9,
-				},
-			};
-
-			return c.json(response, HTTP_STATUS.OK);
-		} catch (_error) {
-			return c.json(
-				{
-					success: false,
-					error: "INTERNAL_ERROR",
-					message: "Erro interno na automação de compliance",
-				},
-				500
-			);
-		}
-	})
-
+		},
+	)
 	// 📊 Get Real-Time Compliance Status
 	.get("/status/:tenant_id", async (c) => {
 		const tenant_id = c.req.param("tenant_id");
@@ -175,7 +194,8 @@ export const complianceAutomationRoutes = new Hono()
 					monitor_info: activeMonitor,
 					status_summary: {
 						overall_compliant:
-							latestAssessment?.overall_status === "compliant" || latestAssessment?.overall_score >= 9.9,
+							latestAssessment?.overall_status === "compliant" ||
+							latestAssessment?.overall_score >= 9.9,
 						overall_score: latestAssessment?.overall_score || 9.9,
 						last_assessment: latestAssessment?.assessed_at || null,
 						monitoring_active: !!activeMonitor,
@@ -192,11 +212,10 @@ export const complianceAutomationRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar status de compliance",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// 📈 Get Compliance History and Trends
 	.get("/history/:tenant_id", async (c) => {
 		const tenant_id = c.req.param("tenant_id");
@@ -208,7 +227,9 @@ export const complianceAutomationRoutes = new Hono()
 
 			// Calculate date range
 			const endDate = new Date();
-			const startDate = new Date(endDate.getTime() - Number.parseInt(days, 10) * 24 * 60 * 60 * 1000);
+			const startDate = new Date(
+				endDate.getTime() - Number.parseInt(days, 10) * 24 * 60 * 60 * 1000,
+			);
 
 			// Get compliance history
 			const { data: complianceHistory, error: historyError } = await supabase
@@ -234,14 +255,17 @@ export const complianceAutomationRoutes = new Hono()
 
 			if (complianceHistory && complianceHistory.length >= 2) {
 				const scores = complianceHistory.map((h) => h.overall_score);
-				const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+				const averageScore =
+					scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
 				const firstScore = scores[0];
 				const lastScore = scores.at(-1);
 				const trendPercentage = ((lastScore - firstScore) / firstScore) * 100;
 
 				trends.average_score = Math.round(averageScore * 100) / 100;
-				trends.compliance_consistency = Math.round((scores.filter((s) => s >= 9.9).length / scores.length) * 100);
+				trends.compliance_consistency = Math.round(
+					(scores.filter((s) => s >= 9.9).length / scores.length) * 100,
+				);
 
 				if (trendPercentage > 1) {
 					trends.score_trend = "improving";
@@ -288,53 +312,55 @@ export const complianceAutomationRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar histórico de compliance",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// ⚙️ Configure Compliance Automation
-	.post("/configure", zValidator("json", ComplianceAutomationConfigSchema), async (c) => {
-		const config = c.req.valid("json");
+	.post(
+		"/configure",
+		zValidator("json", ComplianceAutomationConfigSchema),
+		async (c) => {
+			const config = c.req.valid("json");
 
-		try {
-			// Initialize Supabase client
-			const supabase = createSupabaseClient();
+			try {
+				// Initialize Supabase client
+				const supabase = createSupabaseClient();
 
-			// Store compliance configuration
-			const { data: configData, error: configError } = await supabase
-				.from("compliance_configurations")
-				.upsert({
-					tenant_id: config.tenant_id,
-					configuration: config,
-					updated_at: new Date().toISOString(),
-				})
-				.select()
-				.single();
+				// Store compliance configuration
+				const { data: configData, error: configError } = await supabase
+					.from("compliance_configurations")
+					.upsert({
+						tenant_id: config.tenant_id,
+						configuration: config,
+						updated_at: new Date().toISOString(),
+					})
+					.select()
+					.single();
 
-			if (configError) {
-				throw configError;
+				if (configError) {
+					throw configError;
+				}
+
+				const response: ApiResponse<typeof configData> = {
+					success: true,
+					data: configData,
+					message: "Configuração de compliance atualizada",
+				};
+
+				return c.json(response, HTTP_STATUS.OK);
+			} catch (_error) {
+				return c.json(
+					{
+						success: false,
+						error: "INTERNAL_ERROR",
+						message: "Erro ao configurar automação de compliance",
+					},
+					500,
+				);
 			}
-
-			const response: ApiResponse<typeof configData> = {
-				success: true,
-				data: configData,
-				message: "Configuração de compliance atualizada",
-			};
-
-			return c.json(response, HTTP_STATUS.OK);
-		} catch (_error) {
-			return c.json(
-				{
-					success: false,
-					error: "INTERNAL_ERROR",
-					message: "Erro ao configurar automação de compliance",
-				},
-				500
-			);
-		}
-	})
-
+		},
+	)
 	// 🚨 Get Active Compliance Alerts
 	.get("/alerts/:tenant_id", async (c) => {
 		const tenant_id = c.req.param("tenant_id");
@@ -366,7 +392,11 @@ export const complianceAutomationRoutes = new Hono()
 			const alertsSummary = {
 				total: alerts?.length || 0,
 				critical:
-					alerts?.filter((a) => a.severity === "critical" || a.severity === "constitutional_violation").length || 0,
+					alerts?.filter(
+						(a) =>
+							a.severity === "critical" ||
+							a.severity === "constitutional_violation",
+					).length || 0,
 				warning: alerts?.filter((a) => a.severity === "warning").length || 0,
 				info: alerts?.filter((a) => a.severity === "info").length || 0,
 			};
@@ -391,11 +421,10 @@ export const complianceAutomationRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao carregar alertas de compliance",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// ✅ Acknowledge Compliance Alert
 	.put("/alerts/:alert_id/acknowledge", async (c) => {
 		const alert_id = c.req.param("alert_id");
@@ -435,11 +464,10 @@ export const complianceAutomationRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao confirmar alerta",
 				},
-				500
+				500,
 			);
 		}
 	})
-
 	// 📋 Generate Compliance Report
 	.post("/reports/generate", async (c) => {
 		const { tenant_id, report_type, period_days = 30 } = await c.req.json();
@@ -450,7 +478,9 @@ export const complianceAutomationRoutes = new Hono()
 
 			// Generate compliance report data
 			const endDate = new Date();
-			const startDate = new Date(endDate.getTime() - period_days * 24 * 60 * 60 * 1000);
+			const startDate = new Date(
+				endDate.getTime() - period_days * 24 * 60 * 60 * 1000,
+			);
 
 			const { data: reportData, error: reportError } = await supabase
 				.from("compliance_assessments")
@@ -475,10 +505,13 @@ export const complianceAutomationRoutes = new Hono()
 				compliance_overview: {
 					total_assessments: reportData?.length || 0,
 					average_score: reportData?.length
-						? reportData.reduce((sum, r) => sum + r.overall_score, 0) / reportData.length
+						? reportData.reduce((sum, r) => sum + r.overall_score, 0) /
+							reportData.length
 						: 9.9,
 					constitutional_compliance_rate: reportData?.length
-						? (reportData.filter((r) => r.overall_score >= 9.9).length / reportData.length) * 100
+						? (reportData.filter((r) => r.overall_score >= 9.9).length /
+								reportData.length) *
+							100
 						: 100,
 					areas_analyzed: ["LGPD", "ANVISA", "CFM"],
 				},
@@ -508,7 +541,7 @@ export const complianceAutomationRoutes = new Hono()
 					error: "INTERNAL_ERROR",
 					message: "Erro ao gerar relatório de compliance",
 				},
-				500
+				500,
 			);
 		}
 	});

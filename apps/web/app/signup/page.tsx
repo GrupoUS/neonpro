@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { SignupForm } from "@/components/auth/signup-form";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
 	title: "Cadastro - NeonPro Healthcare",

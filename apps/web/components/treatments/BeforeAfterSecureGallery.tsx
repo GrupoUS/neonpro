@@ -1,25 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-import {
-	Calendar,
-	Camera,
-	Download,
-	Eye,
-	EyeOff,
-	Grid,
-	Image as ImageIcon,
-	Lock,
-	MoreHorizontal,
-	Search,
-	Share,
-	Shield,
-	Trash2,
-	Upload,
-	Zap,
-	ZoomIn,
-} from "lucide-react";
-import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,6 +21,26 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { LGPDPhotoConsentStatus, TreatmentPhoto, TreatmentSession } from "@/types/treatments";
+import { motion } from "framer-motion";
+import {
+	Calendar,
+	Camera,
+	Download,
+	Eye,
+	EyeOff,
+	Grid,
+	Image as ImageIcon,
+	Lock,
+	MoreHorizontal,
+	Search,
+	Share,
+	Shield,
+	Trash2,
+	Upload,
+	Zap,
+	ZoomIn,
+} from "lucide-react";
+import { useState } from "react";
 
 // Visual components maintaining NeonPro design
 type NeonGradientCardProps = {

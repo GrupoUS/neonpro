@@ -1,62 +1,61 @@
 {
-  "name": "@neonpro/api",
-  "version": "1.0.0",
-  "description": "NeonPro API - Hono.dev backend for aesthetic clinics management",
-  "main": "dist/index.js",
-  "type": "module",
-  "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "build": "tsup src/index.ts --format esm --target esnext --clean",
-    "start": "node dist/index.js",
-    "type-check": "tsc --noEmit",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "lint": "biome check src",
-    "lint:fix": "biome check src --apply",
-    "format": "biome format src --write"
-  },
-  "dependencies": {
-    "@ai-sdk/openai": "^2.0.15",
-    "@hono/node-server": "^1.12.0",
-    "@hono/swagger-ui": "^0.4.0",
-    "@hono/zod-validator": "^0.2.2",
-    "@neonpro/compliance": "workspace:*",
-    "@neonpro/shared": "workspace:*",
-    "@prisma/client": "^5.18.0",
-    "@supabase/supabase-js": "^2.45.1",
-    "ai": "^5.0.23",
-    "bcryptjs": "^2.4.3",
-    "date-fns": "^3.6.0",
-    "dotenv": "^17.2.1",
-    "hono": "^4.5.8",
-    "jose": "^5.6.3",
-    "nanoid": "^5.0.7",
-    "zod": "^3.23.8"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20.14.15",
-    "prisma": "^5.18.0",
-    "tsup": "^8.2.4",
-    "tsx": "^4.17.0",
-    "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
-  },
-  "prisma": {
-    "schema": "../../packages/database/prisma/schema.prisma"
-  },
-  "keywords": [
-    "neonpro",
-    "aesthetic-clinics",
-    "healthcare",
-    "hono",
-    "typescript",
-    "supabase",
-    "prisma",
-    "lgpd",
-    "anvisa"
-  ],
-  "author": "NeonPro Team",
-  "license": "PROPRIETARY"
+	"name": "@neonpro/api",
+	"version": "1.0.0",
+	"description": "NeonPro API - Hono.dev backend for aesthetic clinics management",
+	"main": "dist/index.js",
+	"type": "module",
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"build": "tsup src/index.ts --format esm --target esnext --clean",
+		"start": "node dist/index.js",
+		"type-check": "tsc --noEmit",
+		"test": "vitest",
+		"test:watch": "vitest --watch",
+		"lint": "oxlint src",
+		"lint:fix": "oxlint src --fix",
+		"format": "dprint fmt"
+	},
+	"dependencies": {
+		"@ai-sdk/openai": "^2.0.15",
+		"@hono/node-server": "^1.12.0",
+		"@hono/swagger-ui": "^0.4.0",
+		"@hono/zod-validator": "^0.2.2",
+		"@neonpro/compliance": "workspace:*",
+		"@neonpro/shared": "workspace:*",
+		"@prisma/client": "^5.18.0",
+		"@supabase/supabase-js": "^2.45.1",
+		"ai": "^5.0.23",
+		"bcryptjs": "^2.4.3",
+		"date-fns": "^3.6.0",
+		"dotenv": "^17.2.1",
+		"hono": "^4.5.8",
+		"jose": "^5.6.3",
+		"nanoid": "^5.0.7",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@types/bcryptjs": "^2.4.6",
+		"@types/node": "^20.14.15",
+		"prisma": "^5.18.0",
+		"tsup": "^8.2.4",
+		"tsx": "^4.17.0",
+		"typescript": "^5.5.4",
+		"vitest": "^2.0.5"
+	},
+	"prisma": {
+		"schema": "../../packages/database/prisma/schema.prisma"
+	},
+	"keywords": [
+		"neonpro",
+		"aesthetic-clinics",
+		"healthcare",
+		"hono",
+		"typescript",
+		"supabase",
+		"prisma",
+		"lgpd",
+		"anvisa"
+	],
+	"author": "NeonPro Team",
+	"license": "PROPRIETARY"
 }

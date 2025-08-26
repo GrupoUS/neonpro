@@ -1,7 +1,9 @@
 # NeonPro Healthcare Testing Setup
+
 ## 🏥 Vitest & Playwright Configuration Guide
 
-Este documento detalha a configuração completa dos frameworks de teste Vitest e Playwright para o sistema NeonPro Healthcare, incluindo setup específico para compliance LGPD/ANVISA/CFM.
+Este documento detalha a configuração completa dos frameworks de teste Vitest e Playwright para o
+sistema NeonPro Healthcare, incluindo setup específico para compliance LGPD/ANVISA/CFM.
 
 ---
 
@@ -41,14 +43,18 @@ D:\neonpro\tools\testing\
 ### 🧪 Vitest (Unit & Integration Tests)
 
 #### ✅ Configuração Simplificada (Recomendada)
+
 **Arquivo**: `vitest.simple.config.ts`
+
 - **Evita conflitos** com dependências do Prisma
 - **Ambiente healthcare** pré-configurado
 - **Path aliasing** para módulos NeonPro
 - **Coverage** configurado para V8
 
 #### 🔧 Configuração Completa
+
 **Arquivo**: `vitest.config.ts`
+
 - Workspace completo com todos os packages
 - Integração com Prisma (se disponível)
 - Setup avançado de healthcare
@@ -56,14 +62,18 @@ D:\neonpro\tools\testing\
 ### 🎭 Playwright (E2E Tests)
 
 #### ✅ Configuração Simplificada (Recomendada)
+
 **Arquivo**: `playwright.simple.config.ts`
+
 - **Sem global setup** complexo
 - **Teste sequencial** para consistency de dados healthcare
 - **Screenshots/videos** apenas em falhas
 - **Viewport otimizado** para healthcare apps
 
 #### 🔧 Configuração Completa
+
 **Arquivo**: `playwright.config.ts`
+
 - **Global setup/teardown** para compliance
 - **Multiple browsers** e ambientes
 - **Authentication states** automáticos
@@ -95,6 +105,7 @@ node run-tests.js help
 ### Método 2: Comandos Diretos
 
 #### Vitest
+
 ```bash
 cd tools/testing
 
@@ -109,6 +120,7 @@ npx vitest --config vitest.simple.config.ts
 ```
 
 #### Playwright
+
 ```bash
 cd tools/testing
 
@@ -127,24 +139,32 @@ npx playwright test test-basic.spec.ts --config playwright.simple.config.ts
 ## 🔧 Resolução de Problemas
 
 ### ❌ Erro: Prisma não encontrado
+
 **Solução**: Use a configuração simplificada
+
 ```bash
 npx vitest run --config vitest.simple.config.ts
 ```
 
 ### ❌ Erro: global-setup.ts não encontrado
+
 **Solução**: Use a configuração simplificada do Playwright
+
 ```bash
 npx playwright test --config playwright.simple.config.ts
 ```
 
 ### ❌ Timeout nos testes
+
 **Solução**: Configurações já incluem timeouts otimizados para healthcare
+
 - Vitest: 30s por teste
 - Playwright: 30s navegação, 10s ações
 
 ### ❌ Problemas de workspace
+
 **Solução**: Execute testes diretamente da pasta `tools/testing`
+
 ```bash
 cd tools/testing
 # Execute comandos a partir desta pasta
@@ -155,16 +175,19 @@ cd tools/testing
 ## 🏥 Compliance Healthcare
 
 ### 📋 LGPD (Lei Geral de Proteção de Dados)
+
 - ✅ **Audit logs** automáticos para manipulação de dados
 - ✅ **Data cleanup** após testes
 - ✅ **Privacy controls** ativos durante testes
 
 ### ⚖️ ANVISA (Agência Nacional de Vigilância Sanitária)
+
 - ✅ **Regulatory compliance** em modo teste
 - ✅ **Medical device validation** configurada
 - ✅ **Safety protocols** ativos
 
 ### 👨‍⚕️ CFM (Conselho Federal de Medicina)
+
 - ✅ **Medical ethics validation** configurada
 - ✅ **Standards mode** ativo durante testes
 
@@ -173,10 +196,12 @@ cd tools/testing
 ## 📊 Relatórios Gerados
 
 ### Vitest
+
 - **Coverage HTML**: `tools/testing/coverage/index.html`
 - **JSON Report**: Para integração CI/CD
 
 ### Playwright
+
 - **HTML Report**: `tools/testing/reports/playwright-html/index.html`
 - **JSON Results**: `tools/testing/reports/playwright-results.json`
 - **Compliance Reports**: `tools/testing/reports/compliance/`
@@ -185,14 +210,14 @@ cd tools/testing
 
 ## 🎯 Status dos Testes
 
-| Componente | Status | Configuração | Notas |
-|------------|--------|--------------|-------|
-| ✅ Vitest Simple | ✅ Funcionando | `vitest.simple.config.ts` | Recomendado |
-| ⚠️ Vitest Full | ⚠️ Prisma Issues | `vitest.config.ts` | Dependências |
-| ✅ Playwright Simple | ✅ Funcionando | `playwright.simple.config.ts` | Recomendado |
-| ✅ Playwright Full | ✅ Funcionando | `playwright.config.ts` | Com compliance |
-| ✅ Global Setup | ✅ Criado | `setup/global-setup.ts` | Healthcare ready |
-| ✅ Test Runner | ✅ Funcionando | `run-tests.js` | Utilitário |
+| Componente           | Status          | Configuração                  | Notas            |
+| -------------------- | --------------- | ----------------------------- | ---------------- |
+| ✅ Vitest Simple     | ✅ Funcionando  | `vitest.simple.config.ts`     | Recomendado      |
+| ⚠️ Vitest Full        | ⚠️ Prisma Issues | `vitest.config.ts`            | Dependências     |
+| ✅ Playwright Simple | ✅ Funcionando  | `playwright.simple.config.ts` | Recomendado      |
+| ✅ Playwright Full   | ✅ Funcionando  | `playwright.config.ts`        | Com compliance   |
+| ✅ Global Setup      | ✅ Criado       | `setup/global-setup.ts`       | Healthcare ready |
+| ✅ Test Runner       | ✅ Funcionando  | `run-tests.js`                | Utilitário       |
 
 ---
 

@@ -1,8 +1,8 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsights } from "@/lib/ai/patient-insights";
 import { ProfileManager } from "@/lib/patients/profile-manager";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // Initialize services
 const profileManager = new ProfileManager();
@@ -105,7 +105,12 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 		});
 	} catch (error) {
 		if (error instanceof z.ZodError) {
-			return NextResponse.json({ error: "Invalid data format", details: error.errors }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Invalid data format", details: error.errors },
+				{
+					status: 400,
+				}
+			);
 		}
 		return NextResponse.json({ error: "Internal server error" }, { status: 500 });
 	}

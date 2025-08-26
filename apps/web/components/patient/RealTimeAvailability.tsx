@@ -6,6 +6,11 @@
 // Features: Análise preditiva, segmentação automática, personalização IA
 // =============================================================================
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	Activity,
 	Award,
@@ -20,11 +25,6 @@ import {
 	Zap,
 } from "lucide-react";
 import { useCallback, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // =============================================================================
 // TYPES & INTERFACES
@@ -453,11 +453,11 @@ export default function BehavioralCRM() {
 
 										<div className="mt-3 grid grid-cols-2 gap-2 text-sm">
 											<div>
-												<span className="text-muted-foreground">Engagement: </span>
+												<span className="text-muted-foreground">Engagement:</span>
 												<span className="font-medium">{patient.engagementScore}%</span>
 											</div>
 											<div>
-												<span className="text-muted-foreground">Risk: </span>
+												<span className="text-muted-foreground">Risk:</span>
 												<span className={`font-medium ${patient.riskScore > 50 ? "text-red-500" : "text-green-500"}`}>
 													{patient.riskScore}%
 												</span>
@@ -509,7 +509,9 @@ export default function BehavioralCRM() {
 										</div>
 										<div className="text-center">
 											<div
-												className={`text-2xl font-bold ${selectedPatient.riskScore > 50 ? "text-red-500" : "text-green-500"}`}
+												className={`text-2xl font-bold ${
+													selectedPatient.riskScore > 50 ? "text-red-500" : "text-green-500"
+												}`}
 											>
 												{selectedPatient.riskScore}%
 											</div>

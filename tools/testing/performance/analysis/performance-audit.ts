@@ -4,8 +4,8 @@
  * Comprehensive performance testing and optimization utilities
  */
 
-import { performance } from "node:perf_hooks";
 import lighthouse from "lighthouse";
+import { performance } from "node:perf_hooks";
 import puppeteer from "puppeteer";
 
 export type PerformanceMetrics = {
@@ -75,10 +75,13 @@ export class PerformanceAuditor {
 			seo: Math.round(lhr.categories.seo.score! * 100),
 			metrics: {
 				pageLoadTime: lhr.audits["speed-index"].numericValue || 0,
-				firstContentfulPaint: lhr.audits["first-contentful-paint"].numericValue || 0,
-				largestContentfulPaint: lhr.audits["largest-contentful-paint"].numericValue || 0,
+				firstContentfulPaint:
+					lhr.audits["first-contentful-paint"].numericValue || 0,
+				largestContentfulPaint:
+					lhr.audits["largest-contentful-paint"].numericValue || 0,
 				firstInputDelay: lhr.audits["max-potential-fid"].numericValue || 0,
-				cumulativeLayoutShift: lhr.audits["cumulative-layout-shift"].numericValue || 0,
+				cumulativeLayoutShift:
+					lhr.audits["cumulative-layout-shift"].numericValue || 0,
 				timeToInteractive: lhr.audits.interactive.numericValue || 0,
 				speedIndex: lhr.audits["speed-index"].numericValue || 0,
 			},
@@ -88,7 +91,9 @@ export class PerformanceAuditor {
 	/**
 	 * Test healthcare-specific performance metrics
 	 */
-	async testHealthcareMetrics(baseUrl: string): Promise<HealthcarePerformanceMetrics> {
+	async testHealthcareMetrics(
+		baseUrl: string,
+	): Promise<HealthcarePerformanceMetrics> {
 		if (!this.browser) {
 			throw new Error("Browser not initialized");
 		}

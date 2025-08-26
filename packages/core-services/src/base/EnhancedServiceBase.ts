@@ -16,7 +16,12 @@ import {
 	EnterpriseSecurityService,
 } from "../enterprise";
 import { EnterpriseHealthCheckService } from "../health";
-import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
+import type {
+	AuditEvent,
+	PerformanceMetrics,
+	SecurityConfig,
+	ServiceContext,
+} from "../types";
 
 // Core service interfaces
 type ICacheService = {
@@ -152,7 +157,7 @@ export abstract class EnhancedServiceBase {
 			cacheTTL?: number;
 			requiresAuth?: boolean;
 			sensitiveData?: boolean;
-		}
+		},
 	): Promise<T> {
 		const startTime = performance.now();
 		const operationId = `${this.config.serviceName}.${operationName}.${Date.now()}`;
@@ -160,7 +165,10 @@ export abstract class EnhancedServiceBase {
 		try {
 			// 1. Security validation
 			if (options?.requiresAuth && context) {
-				const hasAccess = await this.security.validateAccess(operationName, context);
+				const hasAccess = await this.security.validateAccess(
+					operationName,
+					context,
+				);
 				if (!hasAccess) {
 					throw new Error(`Access denied for operation: ${operationName}`);
 				}
@@ -170,8 +178,15 @@ export abstract class EnhancedServiceBase {
 			if (options?.cacheKey && this.config.enableCache) {
 				const cached = await this.cache.get<T>(options.cacheKey);
 				if (cached) {
-					await this.recordOperationMetrics(operationName, performance.now() - startTime, true);
-					await this.auditOperation("CACHE_HIT", { operationName, cacheKey: options.cacheKey });
+					await this.recordOperationMetrics(
+						operationName,
+						performance.now() - startTime,
+						true,
+					);
+					await this.auditOperation("CACHE_HIT", {
+						operationName,
+						cacheKey: options.cacheKey,
+					});
 					return cached;
 				}
 			}
@@ -225,7 +240,11 @@ export abstract class EnhancedServiceBase {
 	/**
 	 * Execute with retry and fallback logic
 	 */
-	private async executeWithRetry<T>(operation: () => Promise<T>, operationName: string, maxRetries = 3): Promise<T> {
+	private async executeWithRetry<T>(
+		operation: () => Promise<T>,
+		operationName: string,
+		maxRetries = 3,
+	): Promise<T> {
 		let lastError: Error;
 
 		for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -256,13 +275,25 @@ export abstract class EnhancedServiceBase {
 	/**
 	 * Healthcare-specific caching with LGPD compliance
 	 */
-	protected async cacheHealthcareData<T>(key: string, data: T, patientConsent: boolean, ttl?: number): Promise<void> {
+	protected async cacheHealthcareData<T>(
+		key: string,
+		data: T,
+		patientConsent: boolean,
+		ttl?: number,
+	): Promise<void> {
 		if (!patientConsent) {
-			await this.auditOperation("CACHE_DENIED_NO_CONSENT", { key, patientConsent });
+			await this.auditOperation("CACHE_DENIED_NO_CONSENT", {
+				key,
+				patientConsent,
+			});
 			return;
 		}
 
-		await this.cache.set(key, data, ttl || this.config.cacheOptions?.defaultTTL);
+		await this.cache.set(
+			key,
+			data,
+			ttl || this.config.cacheOptions?.defaultTTL,
+		);
 
 		await this.auditOperation("HEALTHCARE_DATA_CACHED", {
 			key: key.replace(/patient_\d+/, "patient_***"), // Mask patient ID in logs
@@ -274,7 +305,11 @@ export abstract class EnhancedServiceBase {
 	/**
 	 * Record performance metrics
 	 */
-	private async recordOperationMetrics(operation: string, duration: number, fromCache: boolean): Promise<void> {
+	private async recordOperationMetrics(
+		operation: string,
+		duration: number,
+		fromCache: boolean,
+	): Promise<void> {
 		if (!this.config.enableAnalytics) {
 			return;
 		}
@@ -313,7 +348,10 @@ export abstract class EnhancedServiceBase {
 	/**
 	 * Service lifecycle audit
 	 */
-	private async auditServiceLifecycle(event: string, details: any): Promise<void> {
+	private async auditServiceLifecycle(
+		event: string,
+		details: any,
+	): Promise<void> {
 		await this.auditOperation("SERVICE_LIFECYCLE", { event, ...details });
 	}
 
@@ -401,7 +439,10 @@ export abstract class EnhancedServiceBase {
 					},
 				});
 			},
-			async recordPerformance(operation: string, duration: number): Promise<void> {
+			async recordPerformance(
+				operation: string,
+				duration: number,
+			): Promise<void> {
 				await self.enterpriseAnalytics.recordMetric({
 					name: `${operation}_duration`,
 					value: duration,
@@ -438,12 +479,18 @@ export abstract class EnhancedServiceBase {
 	private initializeSecurityService(): ISecurityService {
 		const self = this;
 		return {
-			async validateAccess(operation: string, context: ServiceContext): Promise<boolean> {
+			async validateAccess(
+				operation: string,
+				context: ServiceContext,
+			): Promise<boolean> {
 				if (!context.userId) {
 					return false;
 				}
 
-				return self.enterpriseSecurity.validatePermission(context.userId, operation);
+				return self.enterpriseSecurity.validatePermission(
+					context.userId,
+					operation,
+				);
 			},
 			async auditOperation(event: AuditEvent): Promise<void> {
 				await self.audit.logEvent(event);
@@ -499,7 +546,10 @@ export abstract class EnhancedServiceBase {
 			const analyticsHealth = await this.enterpriseAnalytics.getHealthMetrics();
 			results.analytics = { status: "healthy", ...analyticsHealth };
 		} catch (error) {
-			results.analytics = { status: "unhealthy", error: (error as Error).message };
+			results.analytics = {
+				status: "unhealthy",
+				error: (error as Error).message,
+			};
 			errors.push(`Analytics service error: ${(error as Error).message}`);
 		}
 
@@ -508,7 +558,10 @@ export abstract class EnhancedServiceBase {
 			const securityHealth = await this.enterpriseSecurity.getHealthMetrics();
 			results.security = { ...securityHealth, status: "healthy" };
 		} catch (error) {
-			results.security = { status: "unhealthy", error: (error as Error).message };
+			results.security = {
+				status: "unhealthy",
+				error: (error as Error).message,
+			};
 			errors.push(`Security service error: ${(error as Error).message}`);
 		}
 
@@ -521,7 +574,12 @@ export abstract class EnhancedServiceBase {
 			errors.push(`Audit service error: ${(error as Error).message}`);
 		}
 
-		const status = errors.length === 0 ? "healthy" : errors.length <= 2 ? "degraded" : "unhealthy";
+		const status =
+			errors.length === 0
+				? "healthy"
+				: errors.length <= 2
+					? "degraded"
+					: "unhealthy";
 
 		return { status, services: results, errors };
 	}

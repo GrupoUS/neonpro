@@ -8,10 +8,10 @@
 
 "use client";
 
-import { Link } from "@tanstack/react-router";
-import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
+import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 
 type RouterErrorProps = {
 	error: Error;

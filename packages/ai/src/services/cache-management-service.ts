@@ -3,7 +3,11 @@
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import Redis from "ioredis";
-import { type AIServiceInput, type AIServiceOutput, EnhancedAIService } from "./enhanced-service-base";
+import {
+	type AIServiceInput,
+	type AIServiceOutput,
+	EnhancedAIService,
+} from "./enhanced-service-base";
 
 // Cache Types and Interfaces
 export type CacheEntry = {
@@ -31,7 +35,16 @@ export type CacheMetadata = {
 };
 
 export interface CacheInput extends AIServiceInput {
-	action: "get" | "set" | "delete" | "exists" | "invalidate" | "stats" | "cleanup" | "bulk_get" | "bulk_set";
+	action:
+		| "get"
+		| "set"
+		| "delete"
+		| "exists"
+		| "invalidate"
+		| "stats"
+		| "cleanup"
+		| "bulk_get"
+		| "bulk_set";
 	key?: string;
 	keys?: string[];
 	value?: any;
@@ -41,7 +54,12 @@ export interface CacheInput extends AIServiceInput {
 	metadata?: Partial<CacheMetadata>;
 	invalidation_pattern?: string;
 	cleanup_options?: CacheCleanupOptions;
-	bulk_data?: Array<{ key: string; value: any; ttl_seconds?: number; tags?: string[] }>;
+	bulk_data?: Array<{
+		key: string;
+		value: any;
+		ttl_seconds?: number;
+		tags?: string[];
+	}>;
 }
 
 export interface CacheOutput extends AIServiceOutput {
@@ -88,7 +106,10 @@ export type CacheStats = {
 };
 
 // Cache Management Service Implementation
-export class CacheManagementService extends EnhancedAIService<CacheInput, CacheOutput> {
+export class CacheManagementService extends EnhancedAIService<
+	CacheInput,
+	CacheOutput
+> {
 	private readonly supabase: SupabaseClient;
 	private readonly redis: Redis | null = null;
 	private readonly cacheStats: Map<string, number> = new Map();
@@ -99,7 +120,10 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 	constructor() {
 		super("cache_management_service");
 
-		this.supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+		this.supabase = createClient(
+			process.env.NEXT_PUBLIC_SUPABASE_URL!,
+			process.env.SUPABASE_SERVICE_ROLE_KEY!,
+		);
 
 		// Initialize Redis if available
 		this.initializeRedis();
@@ -224,7 +248,10 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		if (this.redis && data.value) {
 			try {
 				const redisKey = `${this.REDIS_KEY_PREFIX}${fullKey}`;
-				const ttlSeconds = Math.max(0, Math.floor((new Date(data.expires_at).getTime() - Date.now()) / 1000));
+				const ttlSeconds = Math.max(
+					0,
+					Math.floor((new Date(data.expires_at).getTime() - Date.now()) / 1000),
+				);
 
 				await this.redis.setex(redisKey, ttlSeconds, data.value);
 			} catch (_error) {}
@@ -255,7 +282,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 
 		// Check size limit
 		if (sizeBytes > this.MAX_VALUE_SIZE) {
-			throw new Error(`Cache value too large: ${sizeBytes} bytes (max: ${this.MAX_VALUE_SIZE})`);
+			throw new Error(
+				`Cache value too large: ${sizeBytes} bytes (max: ${this.MAX_VALUE_SIZE})`,
+			);
 		}
 
 		const expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
@@ -285,7 +314,11 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			expires_at: expiresAt,
 		};
 
-		const { error } = await this.supabase.from("ai_service_cache").upsert(cacheEntry, { onConflict: "key" });
+		const { error } = await this.supabase
+			.from("ai_service_cache")
+			.upsert(cacheEntry, {
+				onConflict: "key",
+			});
 
 		if (error) {
 			throw new Error(`Failed to store cache entry: ${error.message}`);
@@ -316,7 +349,10 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		}
 
 		// Delete from database
-		const { error } = await this.supabase.from("ai_service_cache").delete().eq("key", fullKey);
+		const { error } = await this.supabase
+			.from("ai_service_cache")
+			.delete()
+			.eq("key", fullKey);
 
 		if (error) {
 			throw new Error(`Failed to delete cache entry: ${error.message}`);
@@ -374,7 +410,11 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			const pattern = input.invalidation_pattern.replace("*", "%");
 
 			// Delete from database
-			const { data, error } = await this.supabase.from("ai_service_cache").delete().like("key", pattern).select("key");
+			const { data, error } = await this.supabase
+				.from("ai_service_cache")
+				.delete()
+				.like("key", pattern)
+				.select("key");
 
 			if (!error && data) {
 				deletedCount = data.length;
@@ -382,20 +422,28 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				// Delete from Redis
 				if (this.redis && data.length > 0) {
 					try {
-						const redisKeys = data.map((item) => `${this.REDIS_KEY_PREFIX}${item.key}`);
+						const redisKeys = data.map(
+							(item) => `${this.REDIS_KEY_PREFIX}${item.key}`,
+						);
 						await this.redis.del(...redisKeys);
 					} catch (_error) {}
 				}
 			}
 		} else if (input.tags && input.tags.length > 0) {
 			// Tag-based invalidation
-			const { data, error } = await this.supabase.from("ai_service_cache").select("key").overlaps("tags", input.tags);
+			const { data, error } = await this.supabase
+				.from("ai_service_cache")
+				.select("key")
+				.overlaps("tags", input.tags);
 
 			if (!error && data) {
 				const keys = data.map((item) => item.key);
 
 				// Delete from database
-				const { error: deleteError } = await this.supabase.from("ai_service_cache").delete().in("key", keys);
+				const { error: deleteError } = await this.supabase
+					.from("ai_service_cache")
+					.delete()
+					.in("key", keys);
 
 				if (!deleteError) {
 					deletedCount = keys.length;
@@ -403,7 +451,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 					// Delete from Redis
 					if (this.redis && keys.length > 0) {
 						try {
-							const redisKeys = keys.map((key) => `${this.REDIS_KEY_PREFIX}${key}`);
+							const redisKeys = keys.map(
+								(key) => `${this.REDIS_KEY_PREFIX}${key}`,
+							);
 							await this.redis.del(...redisKeys);
 						} catch (_error) {}
 					}
@@ -423,7 +473,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				// Delete from Redis
 				if (this.redis && data.length > 0) {
 					try {
-						const redisKeys = data.map((item) => `${this.REDIS_KEY_PREFIX}${item.key}`);
+						const redisKeys = data.map(
+							(item) => `${this.REDIS_KEY_PREFIX}${item.key}`,
+						);
 						await this.redis.del(...redisKeys);
 					} catch (_error) {}
 				}
@@ -440,18 +492,21 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 
 	private async getCacheStats(): Promise<CacheOutput> {
 		// Get database statistics
-		const [totalResult, expiredResult, sizeResult, namespaceResult] = await Promise.all([
-			this.supabase.from("ai_service_cache").select("count", { count: "exact" }),
+		const [totalResult, expiredResult, sizeResult, namespaceResult] =
+			await Promise.all([
+				this.supabase
+					.from("ai_service_cache")
+					.select("count", { count: "exact" }),
 
-			this.supabase
-				.from("ai_service_cache")
-				.select("count", { count: "exact" })
-				.lt("expires_at", new Date().toISOString()),
+				this.supabase
+					.from("ai_service_cache")
+					.select("count", { count: "exact" })
+					.lt("expires_at", new Date().toISOString()),
 
-			this.supabase.from("ai_service_cache").select("metadata"),
+				this.supabase.from("ai_service_cache").select("metadata"),
 
-			this.supabase.from("ai_service_cache").select("namespace"),
-		]);
+				this.supabase.from("ai_service_cache").select("namespace"),
+			]);
 
 		const totalEntries = totalResult.count || 0;
 		const expiredEntries = expiredResult.count || 0;
@@ -469,12 +524,16 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		if (namespaceResult.data) {
 			namespaceResult.data.forEach((entry) => {
 				const namespace = entry.namespace || "unknown";
-				namespaceBreakdown[namespace] = (namespaceBreakdown[namespace] || 0) + 1;
+				namespaceBreakdown[namespace] =
+					(namespaceBreakdown[namespace] || 0) + 1;
 			});
 		}
 
 		// Get runtime statistics
-		const hitCount = this.getStat("cache_hits") + this.getStat("redis_hits") + this.getStat("db_cache_hits");
+		const hitCount =
+			this.getStat("cache_hits") +
+			this.getStat("redis_hits") +
+			this.getStat("db_cache_hits");
 		const missCount = this.getStat("cache_misses");
 		const totalRequests = hitCount + missCount;
 		const hitRate = totalRequests > 0 ? (hitCount / totalRequests) * 100 : 0;
@@ -538,7 +597,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		}
 
 		if (options.older_than_hours) {
-			const cutoffTime = new Date(Date.now() - options.older_than_hours * 60 * 60 * 1000);
+			const cutoffTime = new Date(
+				Date.now() - options.older_than_hours * 60 * 60 * 1000,
+			);
 			query = query.lt("created_at", cutoffTime.toISOString());
 		}
 
@@ -568,7 +629,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			// Clean up Redis entries
 			if (this.redis) {
 				try {
-					const redisKeys = data.map((item) => `${this.REDIS_KEY_PREFIX}${item.key}`);
+					const redisKeys = data.map(
+						(item) => `${this.REDIS_KEY_PREFIX}${item.key}`,
+					);
 					await this.redis.del(...redisKeys);
 				} catch (_error) {}
 			}
@@ -592,7 +655,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		// Try Redis first for all keys
 		if (this.redis) {
 			try {
-				const redisKeys = fullKeys.map((key) => `${this.REDIS_KEY_PREFIX}${key}`);
+				const redisKeys = fullKeys.map(
+					(key) => `${this.REDIS_KEY_PREFIX}${key}`,
+				);
 				const redisValues = await this.redis.mget(...redisKeys);
 
 				redisValues.forEach((value, index) => {
@@ -605,7 +670,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		}
 
 		// Get remaining keys from database
-		const missingKeys = fullKeys.filter((_, index) => !(input.keys?.[index] in values));
+		const missingKeys = fullKeys.filter(
+			(_, index) => !(input.keys?.[index] in values),
+		);
 
 		if (missingKeys.length > 0) {
 			const { data, error } = await this.supabase
@@ -634,7 +701,8 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 		}
 
 		const namespace = input.namespace || "default";
-		const results: Array<{ key: string; success: boolean; error?: string }> = [];
+		const results: Array<{ key: string; success: boolean; error?: string }> =
+			[];
 
 		const cacheEntries: Partial<CacheEntry>[] = [];
 		const redisOperations: [string, string, number][] = [];
@@ -645,7 +713,9 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				const serializedValue = JSON.stringify(item.value);
 				const sizeBytes = Buffer.byteLength(serializedValue, "utf8");
 				const ttlSeconds = item.ttl_seconds || this.DEFAULT_TTL;
-				const expiresAt = new Date(Date.now() + ttlSeconds * 1000).toISOString();
+				const expiresAt = new Date(
+					Date.now() + ttlSeconds * 1000,
+				).toISOString();
 
 				if (sizeBytes > this.MAX_VALUE_SIZE) {
 					results.push({
@@ -672,7 +742,11 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 				});
 
 				if (this.redis) {
-					redisOperations.push([`${this.REDIS_KEY_PREFIX}${fullKey}`, serializedValue, ttlSeconds]);
+					redisOperations.push([
+						`${this.REDIS_KEY_PREFIX}${fullKey}`,
+						serializedValue,
+						ttlSeconds,
+					]);
 				}
 
 				results.push({ key: item.key, success: true });
@@ -687,7 +761,11 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 
 		// Bulk insert to database
 		if (cacheEntries.length > 0) {
-			const { error } = await this.supabase.from("ai_service_cache").upsert(cacheEntries, { onConflict: "key" });
+			const { error } = await this.supabase
+				.from("ai_service_cache")
+				.upsert(cacheEntries, {
+					onConflict: "key",
+				});
 
 			if (error) {
 			}
@@ -747,12 +825,15 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 					});
 				} catch (_error) {}
 			},
-			30 * 60 * 1000
+			30 * 60 * 1000,
 		);
 	}
 
 	// Helper methods for easy cache operations
-	public async get<T = any>(key: string, namespace = "default"): Promise<T | null> {
+	public async get<T = any>(
+		key: string,
+		namespace = "default",
+	): Promise<T | null> {
 		const result = await this.execute({
 			action: "get",
 			key,
@@ -769,7 +850,7 @@ export class CacheManagementService extends EnhancedAIService<CacheInput, CacheO
 			namespace?: string;
 			ttl_seconds?: number;
 			tags?: string[];
-		} = {}
+		} = {},
 	): Promise<boolean> {
 		const result = await this.execute({
 			action: "set",

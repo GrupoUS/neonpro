@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useMFA } from "@/packages/domain/src/hooks/auth/use-mfa";
 import { MfaMethod } from "@/packages/security/src/auth/mfa-service";
+import { useState } from "react";
 
 type MfaStatusProps = {
 	onSetupMfa?: () => void;

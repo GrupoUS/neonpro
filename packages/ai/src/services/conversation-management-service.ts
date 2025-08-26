@@ -60,7 +60,15 @@ export type SentimentAnalysis = {
 };
 
 export type EmotionScore = {
-	emotion: "joy" | "sadness" | "anger" | "fear" | "surprise" | "trust" | "anticipation" | "disgust";
+	emotion:
+		| "joy"
+		| "sadness"
+		| "anger"
+		| "fear"
+		| "surprise"
+		| "trust"
+		| "anticipation"
+		| "disgust";
 	score: number;
 	confidence: number;
 };
@@ -192,7 +200,8 @@ export class ConversationManagementService extends EnhancedAIService<
 > {
 	protected serviceId = "conversation-management";
 	protected version = "1.0.0";
-	protected description = "Comprehensive conversation management and analytics for AI chat sessions";
+	protected description =
+		"Comprehensive conversation management and analytics for AI chat sessions";
 
 	private readonly supabase: SupabaseClient;
 
@@ -201,7 +210,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		this.supabase = supabase;
 	}
 
-	async execute(input: ConversationManagementInput): Promise<ConversationManagementOutput> {
+	async execute(
+		input: ConversationManagementInput,
+	): Promise<ConversationManagementOutput> {
 		try {
 			this.validateInput(input);
 
@@ -229,7 +240,10 @@ export class ConversationManagementService extends EnhancedAIService<
 						analytics = await this.analyzeConversation(input.sessionId!);
 					}
 					if (input.options?.includeRecommendations) {
-						recommendations = await this.generateRecommendations(input.sessionId!, analytics);
+						recommendations = await this.generateRecommendations(
+							input.sessionId!,
+							analytics,
+						);
 					}
 					break;
 
@@ -258,7 +272,9 @@ export class ConversationManagementService extends EnhancedAIService<
 				participantCount: this.calculateParticipantCount(result),
 				interfaceType: input.context?.interfaceType || "external",
 				qualityScore: analytics?.engagementMetrics.userSatisfaction || 0,
-				complianceStatus: analytics?.complianceMetrics.lgpdCompliant ? "compliant" : "review_required",
+				complianceStatus: analytics?.complianceMetrics.lgpdCompliant
+					? "compliant"
+					: "review_required",
 				version: this.version,
 			};
 
@@ -271,16 +287,25 @@ export class ConversationManagementService extends EnhancedAIService<
 				metadata,
 			};
 		} catch (error) {
-			this.logger.error(`Conversation management failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
-				serviceName: this.serviceId,
-				userId: input.userId,
-				clinicId: input.clinicId,
-				action: input.action,
-				sessionId: input.sessionId,
-				error: error instanceof Error ? error.stack : String(error),
-			});
+			this.logger.error(
+				`Conversation management failed: ${
+					error instanceof Error ? error.message : "Unknown error"
+				}`,
+				{
+					serviceName: this.serviceId,
+					userId: input.userId,
+					clinicId: input.clinicId,
+					action: input.action,
+					sessionId: input.sessionId,
+					error: error instanceof Error ? error.stack : String(error),
+				},
+			);
 
-			throw new Error(`Conversation management failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Conversation management failed: ${
+					error instanceof Error ? error.message : "Unknown error"
+				}`,
+			);
 		}
 	}
 
@@ -289,7 +314,13 @@ export class ConversationManagementService extends EnhancedAIService<
 			throw new Error("Missing required fields: userId, clinicId, action");
 		}
 
-		const requiresSessionId = ["update", "archive", "analyze", "summarize", "export"];
+		const requiresSessionId = [
+			"update",
+			"archive",
+			"analyze",
+			"summarize",
+			"export",
+		];
 		if (requiresSessionId.includes(input.action) && !input.sessionId) {
 			throw new Error(`Action '${input.action}' requires sessionId`);
 		}
@@ -299,7 +330,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		}
 	}
 
-	private async createConversation(input: ConversationManagementInput): Promise<ConversationSession> {
+	private async createConversation(
+		input: ConversationManagementInput,
+	): Promise<ConversationSession> {
 		const sessionData = {
 			user_id: input.userId,
 			clinic_id: input.clinicId,
@@ -316,10 +349,16 @@ export class ConversationManagementService extends EnhancedAIService<
 			},
 		};
 
-		const { data, error } = await this.supabase.from("ai_chat_sessions").insert(sessionData).select().single();
+		const { data, error } = await this.supabase
+			.from("ai_chat_sessions")
+			.insert(sessionData)
+			.select()
+			.single();
 
 		if (error) {
-			throw new Error(`Failed to create conversation session: ${error.message}`);
+			throw new Error(
+				`Failed to create conversation session: ${error.message}`,
+			);
 		}
 
 		this.logger.info("Conversation session created successfully", {
@@ -333,7 +372,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		return this.mapSessionData(data);
 	}
 
-	private async updateConversation(input: ConversationManagementInput): Promise<ConversationSession> {
+	private async updateConversation(
+		input: ConversationManagementInput,
+	): Promise<ConversationSession> {
 		const updates: any = {};
 
 		if (input.context) {
@@ -354,7 +395,9 @@ export class ConversationManagementService extends EnhancedAIService<
 			.single();
 
 		if (error) {
-			throw new Error(`Failed to update conversation session: ${error.message}`);
+			throw new Error(
+				`Failed to update conversation session: ${error.message}`,
+			);
 		}
 
 		this.logger.info("Conversation session updated successfully", {
@@ -367,7 +410,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		return this.mapSessionData(data);
 	}
 
-	private async archiveConversation(input: ConversationManagementInput): Promise<ConversationSession> {
+	private async archiveConversation(
+		input: ConversationManagementInput,
+	): Promise<ConversationSession> {
 		// First, get conversation analytics for archival summary
 		const analytics = await this.analyzeConversation(input.sessionId!);
 		const summary = await this.summarizeConversation(input.sessionId!);
@@ -390,7 +435,9 @@ export class ConversationManagementService extends EnhancedAIService<
 			.single();
 
 		if (error) {
-			throw new Error(`Failed to archive conversation session: ${error.message}`);
+			throw new Error(
+				`Failed to archive conversation session: ${error.message}`,
+			);
 		}
 
 		this.logger.info("Conversation session archived successfully", {
@@ -404,7 +451,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		return this.mapSessionData(data);
 	}
 
-	private async getConversation(sessionId: string): Promise<ConversationSession> {
+	private async getConversation(
+		sessionId: string,
+	): Promise<ConversationSession> {
 		const { data: sessionData, error: sessionError } = await this.supabase
 			.from("ai_chat_sessions")
 			.select("*")
@@ -422,7 +471,9 @@ export class ConversationManagementService extends EnhancedAIService<
 			.order("created_at", { ascending: true });
 
 		if (messagesError) {
-			throw new Error(`Failed to load conversation messages: ${messagesError.message}`);
+			throw new Error(
+				`Failed to load conversation messages: ${messagesError.message}`,
+			);
 		}
 
 		const session = this.mapSessionData(sessionData);
@@ -431,15 +482,21 @@ export class ConversationManagementService extends EnhancedAIService<
 		return session;
 	}
 
-	private async analyzeConversation(sessionId: string): Promise<ConversationAnalytics> {
+	private async analyzeConversation(
+		sessionId: string,
+	): Promise<ConversationAnalytics> {
 		const conversation = await this.getConversation(sessionId);
 
 		// Perform comprehensive analysis
-		const sentimentAnalysis = await this.analyzeSentiment(conversation.messages);
+		const sentimentAnalysis = await this.analyzeSentiment(
+			conversation.messages,
+		);
 		const topicDistribution = await this.analyzeTopics(conversation.messages);
-		const engagementMetrics = await this.calculateEngagementMetrics(conversation);
+		const engagementMetrics =
+			await this.calculateEngagementMetrics(conversation);
 		const complianceMetrics = await this.assessCompliance(conversation);
-		const performanceMetrics = await this.calculatePerformanceMetrics(conversation);
+		const performanceMetrics =
+			await this.calculatePerformanceMetrics(conversation);
 
 		return {
 			totalMessages: conversation.messages.length,
@@ -452,22 +509,31 @@ export class ConversationManagementService extends EnhancedAIService<
 		};
 	}
 
-	private async summarizeConversation(sessionId: string): Promise<ConversationSummary> {
+	private async summarizeConversation(
+		sessionId: string,
+	): Promise<ConversationSummary> {
 		const conversation = await this.getConversation(sessionId);
 		const analytics = await this.analyzeConversation(sessionId);
 
 		// Extract key information from messages
 		const userMessages = conversation.messages.filter((m) => m.role === "user");
-		const _assistantMessages = conversation.messages.filter((m) => m.role === "assistant");
+		const _assistantMessages = conversation.messages.filter(
+			(m) => m.role === "assistant",
+		);
 
 		// Generate AI-powered summary
 		const overview = await this.generateOverview(conversation);
-		const keyTopics = analytics.topicDistribution.filter((topic) => topic.relevance > 0.5).map((topic) => topic.topic);
+		const keyTopics = analytics.topicDistribution
+			.filter((topic) => topic.relevance > 0.5)
+			.map((topic) => topic.topic);
 
 		const userGoals = await this.extractUserGoals(userMessages);
 		const outcomes = await this.assessOutcomes(conversation, analytics);
 		const nextSteps = await this.generateNextSteps(conversation, analytics);
-		const aiRecommendations = await this.generateAIRecommendations(conversation, analytics);
+		const aiRecommendations = await this.generateAIRecommendations(
+			conversation,
+			analytics,
+		);
 
 		const safetyAssessment = await this.assessSafety(conversation, analytics);
 
@@ -486,7 +552,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	private async generateRecommendations(
 		sessionId: string,
-		analytics?: ConversationAnalytics
+		analytics?: ConversationAnalytics,
 	): Promise<ConversationRecommendation[]> {
 		if (!analytics) {
 			analytics = await this.analyzeConversation(sessionId);
@@ -501,8 +567,13 @@ export class ConversationManagementService extends EnhancedAIService<
 				priority: "medium",
 				category: "performance",
 				title: "Optimize Response Time",
-				description: "Average response time exceeds target threshold of 2 seconds",
-				actionItems: ["Review AI model optimization", "Check cache configuration", "Analyze query performance"],
+				description:
+					"Average response time exceeds target threshold of 2 seconds",
+				actionItems: [
+					"Review AI model optimization",
+					"Check cache configuration",
+					"Analyze query performance",
+				],
 				expectedOutcome: "Reduce average response time by 30%",
 				implementationSteps: [
 					"Enable response caching for common queries",
@@ -520,7 +591,11 @@ export class ConversationManagementService extends EnhancedAIService<
 				category: "user_experience",
 				title: "Improve User Satisfaction",
 				description: "User satisfaction score is below target threshold",
-				actionItems: ["Analyze conversation patterns", "Review AI response quality", "Implement feedback collection"],
+				actionItems: [
+					"Analyze conversation patterns",
+					"Review AI response quality",
+					"Implement feedback collection",
+				],
 				expectedOutcome: "Increase satisfaction score to >80%",
 				implementationSteps: [
 					"Deploy sentiment analysis improvements",
@@ -537,7 +612,8 @@ export class ConversationManagementService extends EnhancedAIService<
 				priority: "urgent",
 				category: "compliance",
 				title: "Address LGPD Compliance Issues",
-				description: "Conversation contains potential LGPD compliance violations",
+				description:
+					"Conversation contains potential LGPD compliance violations",
 				actionItems: [
 					"Review data handling practices",
 					"Ensure proper consent management",
@@ -560,7 +636,11 @@ export class ConversationManagementService extends EnhancedAIService<
 				category: "patient_safety",
 				title: "Follow Up on Escalated Conversation",
 				description: "Conversation was escalated due to safety concerns",
-				actionItems: ["Contact patient within 24 hours", "Review escalation triggers", "Document follow-up actions"],
+				actionItems: [
+					"Contact patient within 24 hours",
+					"Review escalation triggers",
+					"Document follow-up actions",
+				],
 				expectedOutcome: "Ensure patient safety and satisfaction",
 				implementationSteps: [
 					"Schedule follow-up call",
@@ -573,10 +653,16 @@ export class ConversationManagementService extends EnhancedAIService<
 		return recommendations;
 	}
 
-	private async exportConversation(input: ConversationManagementInput): Promise<any> {
+	private async exportConversation(
+		input: ConversationManagementInput,
+	): Promise<any> {
 		const conversation = await this.getConversation(input.sessionId!);
-		const analytics = input.options?.includeAnalytics ? await this.analyzeConversation(input.sessionId!) : undefined;
-		const summary = input.options?.includeSummary ? await this.summarizeConversation(input.sessionId!) : undefined;
+		const analytics = input.options?.includeAnalytics
+			? await this.analyzeConversation(input.sessionId!)
+			: undefined;
+		const summary = input.options?.includeSummary
+			? await this.summarizeConversation(input.sessionId!)
+			: undefined;
 
 		const exportData = {
 			session: conversation,
@@ -596,7 +682,9 @@ export class ConversationManagementService extends EnhancedAIService<
 	}
 
 	// Helper methods for analysis
-	private async analyzeSentiment(messages: ConversationMessage[]): Promise<SentimentAnalysis> {
+	private async analyzeSentiment(
+		messages: ConversationMessage[],
+	): Promise<SentimentAnalysis> {
 		// Simplified sentiment analysis - in production, use proper NLP library
 		let positiveCount = 0;
 		let negativeCount = 0;
@@ -645,20 +733,50 @@ export class ConversationManagementService extends EnhancedAIService<
 
 		return {
 			overall,
-			confidence: total > 0 ? Math.max(positiveCount, negativeCount, neutralCount) / total : 0,
+			confidence:
+				total > 0
+					? Math.max(positiveCount, negativeCount, neutralCount) / total
+					: 0,
 			emotions: this.extractEmotions(messages),
 			sentimentTimeline,
 		};
 	}
 
-	private async analyzeTopics(messages: ConversationMessage[]): Promise<TopicDistribution[]> {
+	private async analyzeTopics(
+		messages: ConversationMessage[],
+	): Promise<TopicDistribution[]> {
 		const topicCounts = new Map<string, number>();
-		const topicCategories = new Map<string, "medical" | "administrative" | "technical" | "general">();
+		const topicCategories = new Map<
+			string,
+			"medical" | "administrative" | "technical" | "general"
+		>();
 
 		// Medical topics
-		const medicalTopics = ["consulta", "dor", "sintoma", "medicamento", "tratamento", "exame", "diagnóstico"];
-		const adminTopics = ["agendamento", "cancelamento", "horário", "pagamento", "plano", "convênio"];
-		const techTopics = ["sistema", "erro", "problema", "aplicativo", "login", "senha"];
+		const medicalTopics = [
+			"consulta",
+			"dor",
+			"sintoma",
+			"medicamento",
+			"tratamento",
+			"exame",
+			"diagnóstico",
+		];
+		const adminTopics = [
+			"agendamento",
+			"cancelamento",
+			"horário",
+			"pagamento",
+			"plano",
+			"convênio",
+		];
+		const techTopics = [
+			"sistema",
+			"erro",
+			"problema",
+			"aplicativo",
+			"login",
+			"senha",
+		];
 
 		messages.forEach((message) => {
 			const content = message.content.toLowerCase();
@@ -681,7 +799,10 @@ export class ConversationManagementService extends EnhancedAIService<
 			});
 		});
 
-		const totalWords = messages.reduce((sum, m) => sum + m.content.split(/\s+/).length, 0);
+		const totalWords = messages.reduce(
+			(sum, m) => sum + m.content.split(/\s+/).length,
+			0,
+		);
 
 		return Array.from(topicCounts.entries())
 			.map(([topic, frequency]) => ({
@@ -693,13 +814,23 @@ export class ConversationManagementService extends EnhancedAIService<
 			.sort((a, b) => b.relevance - a.relevance);
 	}
 
-	private async calculateEngagementMetrics(conversation: ConversationSession): Promise<EngagementMetrics> {
+	private async calculateEngagementMetrics(
+		conversation: ConversationSession,
+	): Promise<EngagementMetrics> {
 		const userMessages = conversation.messages.filter((m) => m.role === "user");
-		const assistantMessages = conversation.messages.filter((m) => m.role === "assistant");
+		const assistantMessages = conversation.messages.filter(
+			(m) => m.role === "assistant",
+		);
 
-		const responseRate = userMessages.length > 0 ? assistantMessages.length / userMessages.length : 0;
+		const responseRate =
+			userMessages.length > 0
+				? assistantMessages.length / userMessages.length
+				: 0;
 		const averageMessageLength =
-			userMessages.length > 0 ? userMessages.reduce((sum, m) => sum + m.content.length, 0) / userMessages.length : 0;
+			userMessages.length > 0
+				? userMessages.reduce((sum, m) => sum + m.content.length, 0) /
+					userMessages.length
+				: 0;
 
 		const conversationDepth = Math.min(conversation.messages.length / 2, 10); // Normalize to 0-10 scale
 
@@ -707,7 +838,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		const userSatisfaction = this.calculateSatisfactionScore(conversation);
 
 		const escalationTriggered = conversation.messages.some(
-			(m) => m.metadata?.escalation_triggered || m.complianceFlags.includes("emergency_detected")
+			(m) =>
+				m.metadata?.escalation_triggered ||
+				m.complianceFlags.includes("emergency_detected"),
 		);
 
 		const goalAchievement = this.assessGoalAchievement(conversation);
@@ -722,21 +855,31 @@ export class ConversationManagementService extends EnhancedAIService<
 		};
 	}
 
-	private async assessCompliance(conversation: ConversationSession): Promise<ComplianceMetrics> {
+	private async assessCompliance(
+		conversation: ConversationSession,
+	): Promise<ComplianceMetrics> {
 		// Check compliance based on conversation content and metadata
 		const lgpdCompliant = !conversation.messages.some(
-			(m) => m.complianceFlags.includes("LGPD-001") || m.complianceFlags.includes("LGPD-002")
+			(m) =>
+				m.complianceFlags.includes("LGPD-001") ||
+				m.complianceFlags.includes("LGPD-002"),
 		);
 
 		const anvisaCompliant = !conversation.messages.some(
-			(m) => m.complianceFlags.includes("ANVISA-001") || m.complianceFlags.includes("ANVISA-002")
+			(m) =>
+				m.complianceFlags.includes("ANVISA-001") ||
+				m.complianceFlags.includes("ANVISA-002"),
 		);
 
 		const cfmCompliant = !conversation.messages.some(
-			(m) => m.complianceFlags.includes("CFM-001") || m.complianceFlags.includes("CFM-002")
+			(m) =>
+				m.complianceFlags.includes("CFM-001") ||
+				m.complianceFlags.includes("CFM-002"),
 		);
 
-		const auditTrailComplete = conversation.messages.every((m) => m.metadata && m.createdAt);
+		const auditTrailComplete = conversation.messages.every(
+			(m) => m.metadata && m.createdAt,
+		);
 
 		const consentObtained = conversation.context.patientId
 			? await this.checkPatientConsent(conversation.context.patientId)
@@ -754,29 +897,46 @@ export class ConversationManagementService extends EnhancedAIService<
 		};
 	}
 
-	private async calculatePerformanceMetrics(conversation: ConversationSession): Promise<PerformanceMetrics> {
-		const assistantMessages = conversation.messages.filter((m) => m.role === "assistant");
+	private async calculatePerformanceMetrics(
+		conversation: ConversationSession,
+	): Promise<PerformanceMetrics> {
+		const assistantMessages = conversation.messages.filter(
+			(m) => m.role === "assistant",
+		);
 
 		const averageResponseTime =
 			assistantMessages.length > 0
-				? assistantMessages.reduce((sum, m) => sum + m.responseTime, 0) / assistantMessages.length
+				? assistantMessages.reduce((sum, m) => sum + m.responseTime, 0) /
+					assistantMessages.length
 				: 0;
 
 		const systemResponseTime = averageResponseTime; // Simplified - same as AI response time
 
 		const aiConfidenceScore =
 			assistantMessages.length > 0
-				? assistantMessages.reduce((sum, m) => sum + (m.confidence || 0.5), 0) / assistantMessages.length
+				? assistantMessages.reduce((sum, m) => sum + (m.confidence || 0.5), 0) /
+					assistantMessages.length
 				: 0.5;
 
-		const errorMessages = conversation.messages.filter((m) => m.metadata?.error || m.complianceFlags.includes("error"));
-		const errorRate = conversation.messages.length > 0 ? errorMessages.length / conversation.messages.length : 0;
+		const errorMessages = conversation.messages.filter(
+			(m) => m.metadata?.error || m.complianceFlags.includes("error"),
+		);
+		const errorRate =
+			conversation.messages.length > 0
+				? errorMessages.length / conversation.messages.length
+				: 0;
 
 		const successRate = 1 - errorRate;
 
 		const resourceUsage: ResourceUsage = {
-			tokensUsed: conversation.messages.reduce((sum, m) => sum + m.tokensUsed, 0),
-			computeTime: assistantMessages.reduce((sum, m) => sum + m.responseTime, 0),
+			tokensUsed: conversation.messages.reduce(
+				(sum, m) => sum + m.tokensUsed,
+				0,
+			),
+			computeTime: assistantMessages.reduce(
+				(sum, m) => sum + m.responseTime,
+				0,
+			),
 			cacheHits: 0, // Would be tracked separately in production
 			cacheMisses: 0, // Would be tracked separately in production
 			databaseQueries: conversation.messages.length * 2, // Estimate
@@ -794,9 +954,13 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	// Additional helper methods
 	private generateSessionTitle(context: ConversationContext): string {
-		const interface_type = context.interfaceType === "external" ? "Paciente" : "Equipe";
+		const interface_type =
+			context.interfaceType === "external" ? "Paciente" : "Equipe";
 		const date = new Date().toLocaleDateString("pt-BR");
-		const time = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+		const time = new Date().toLocaleTimeString("pt-BR", {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
 
 		return `Chat ${interface_type} - ${date} ${time}`;
 	}
@@ -833,7 +997,10 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	private calculateDuration(result: any): number {
 		if (result.updatedAt && result.createdAt) {
-			return new Date(result.updatedAt).getTime() - new Date(result.createdAt).getTime();
+			return (
+				new Date(result.updatedAt).getTime() -
+				new Date(result.createdAt).getTime()
+			);
 		}
 		return 0;
 	}
@@ -844,12 +1011,29 @@ export class ConversationManagementService extends EnhancedAIService<
 	}
 
 	private containsPositiveKeywords(content: string): boolean {
-		const positiveKeywords = ["obrigado", "obrigada", "excelente", "ótimo", "bom", "satisfeito", "feliz", "ajudou"];
+		const positiveKeywords = [
+			"obrigado",
+			"obrigada",
+			"excelente",
+			"ótimo",
+			"bom",
+			"satisfeito",
+			"feliz",
+			"ajudou",
+		];
 		return positiveKeywords.some((keyword) => content.includes(keyword));
 	}
 
 	private containsNegativeKeywords(content: string): boolean {
-		const negativeKeywords = ["problema", "erro", "ruim", "insatisfeito", "dificuldade", "não funciona", "frustrado"];
+		const negativeKeywords = [
+			"problema",
+			"erro",
+			"ruim",
+			"insatisfeito",
+			"dificuldade",
+			"não funciona",
+			"frustrado",
+		];
 		return negativeKeywords.some((keyword) => content.includes(keyword));
 	}
 
@@ -862,7 +1046,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		];
 	}
 
-	private calculateSatisfactionScore(conversation: ConversationSession): number {
+	private calculateSatisfactionScore(
+		conversation: ConversationSession,
+	): number {
 		// Simplified satisfaction calculation
 		const messageCount = conversation.messages.length;
 		const avgResponseTime = conversation.messages
@@ -895,7 +1081,7 @@ export class ConversationManagementService extends EnhancedAIService<
 			(m) =>
 				m.content.toLowerCase().includes("resolvido") ||
 				m.content.toLowerCase().includes("agendado") ||
-				m.content.toLowerCase().includes("confirmado")
+				m.content.toLowerCase().includes("confirmado"),
 		);
 
 		return hasResolution ? 0.8 : 0.4;
@@ -906,18 +1092,25 @@ export class ConversationManagementService extends EnhancedAIService<
 		return true; // Placeholder
 	}
 
-	private async generateOverview(conversation: ConversationSession): Promise<string> {
+	private async generateOverview(
+		conversation: ConversationSession,
+	): Promise<string> {
 		const messageCount = conversation.messages.length;
 		const duration = this.calculateDuration(conversation);
-		const interface_type = conversation.context.interfaceType === "external" ? "paciente" : "equipe";
+		const interface_type =
+			conversation.context.interfaceType === "external" ? "paciente" : "equipe";
 
 		return (
-			`Conversa de ${interface_type} com ${messageCount} mensagens durante ${Math.round(duration / 1000 / 60)} minutos. ` +
+			`Conversa de ${interface_type} com ${messageCount} mensagens durante ${Math.round(
+				duration / 1000 / 60,
+			)} minutos. ` +
 			`Contexto: ${conversation.context.emergencyContext ? "emergencial" : "rotineiro"}.`
 		);
 	}
 
-	private async extractUserGoals(userMessages: ConversationMessage[]): Promise<string[]> {
+	private async extractUserGoals(
+		userMessages: ConversationMessage[],
+	): Promise<string[]> {
 		// Simplified goal extraction based on common patterns
 		const goals: string[] = [];
 
@@ -942,7 +1135,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	private async assessOutcomes(
 		_conversation: ConversationSession,
-		analytics: ConversationAnalytics
+		analytics: ConversationAnalytics,
 	): Promise<string[]> {
 		const outcomes: string[] = [];
 
@@ -963,7 +1156,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	private async generateNextSteps(
 		_conversation: ConversationSession,
-		analytics: ConversationAnalytics
+		analytics: ConversationAnalytics,
 	): Promise<string[]> {
 		const steps: string[] = [];
 
@@ -984,7 +1177,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	private async generateAIRecommendations(
 		_conversation: ConversationSession,
-		analytics: ConversationAnalytics
+		analytics: ConversationAnalytics,
 	): Promise<string[]> {
 		const recommendations: string[] = [];
 
@@ -1001,11 +1194,17 @@ export class ConversationManagementService extends EnhancedAIService<
 
 	private async assessSafety(
 		conversation: ConversationSession,
-		analytics: ConversationAnalytics
+		analytics: ConversationAnalytics,
 	): Promise<SafetyAssessment> {
-		const emergencyDetected = conversation.messages.some((m) => m.complianceFlags.includes("emergency_detected"));
+		const emergencyDetected = conversation.messages.some((m) =>
+			m.complianceFlags.includes("emergency_detected"),
+		);
 
-		const riskLevel = emergencyDetected ? "high" : analytics.engagementMetrics.escalationTriggered ? "medium" : "low";
+		const riskLevel = emergencyDetected
+			? "high"
+			: analytics.engagementMetrics.escalationTriggered
+				? "medium"
+				: "low";
 
 		const concerns: string[] = [];
 		const recommendations: string[] = [];
@@ -1053,6 +1252,9 @@ export class ConversationManagementService extends EnhancedAIService<
 		return text
 			.replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, "***.***.***-**") // CPF
 			.replace(/\b\d{11}\b/g, "***********") // Phone numbers
-			.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, "***@***.***"); // Email
+			.replace(
+				/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+				"***@***.***",
+			); // Email
 	}
 }

@@ -1,8 +1,8 @@
 "use client";
 
+import { createClient } from "@/lib/supabase/client";
 import type { HealthStatus, SystemComponent, SystemHealthCheck, SystemHealthSummary } from "@neonpro/types/monitoring";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 interface SystemHealthConfig {
 	checkInterval?: number; // milliseconds
@@ -502,9 +502,13 @@ export function useSystemHealth(config: SystemHealthConfig = {}) {
 
 				// Determine overall health
 				let overallHealth: HealthStatus = "healthy";
-				if (downComponents > 0) overallHealth = "down";
-				else if (unhealthyComponents > 0) overallHealth = "unhealthy";
-				else if (degradedComponents > 0) overallHealth = "degraded";
+				if (downComponents > 0) {
+					overallHealth = "down";
+				} else if (unhealthyComponents > 0) {
+					overallHealth = "unhealthy";
+				} else if (degradedComponents > 0) {
+					overallHealth = "degraded";
+				}
 
 				// Find last incident
 				const lastIncident = latestChecksArray

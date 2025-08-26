@@ -14,7 +14,12 @@ type MetricWidgetProps = {
 	color?: "green" | "blue" | "yellow" | "red";
 };
 
-export function MetricWidget({ title, value, description, color = "blue" }: MetricWidgetProps) {
+export function MetricWidget({
+	title,
+	value,
+	description,
+	color = "blue",
+}: MetricWidgetProps) {
 	const isHealthy = value.current >= value.target;
 	const percentage = Math.min((value.current / value.target) * 100, 100);
 
@@ -35,7 +40,9 @@ export function MetricWidget({ title, value, description, color = "blue" }: Metr
 		<div className={`rounded-lg border-l-4 p-4 ${colorClasses[color]}`}>
 			<div className="mb-2 flex items-center justify-between">
 				<h3 className="font-medium">{title}</h3>
-				{value.trend && <span className="text-lg">{trendIcon[value.trend]}</span>}
+				{value.trend && (
+					<span className="text-lg">{trendIcon[value.trend]}</span>
+				)}
 			</div>
 
 			<div className="mb-2">
@@ -75,14 +82,18 @@ export function ROIMetric({ actualROI, targetROI, period }: ROIMetricProps) {
 	return (
 		<div
 			className={`rounded-lg p-6 ${
-				isExceeding ? "border-green-200 bg-green-50" : "border-yellow-200 bg-yellow-50"
+				isExceeding
+					? "border-green-200 bg-green-50"
+					: "border-yellow-200 bg-yellow-50"
 			} border`}
 		>
 			<div className="mb-4 flex items-center justify-between">
 				<h3 className="font-semibold text-gray-900 text-lg">ROI Performance</h3>
 				<span
 					className={`rounded-full px-3 py-1 text-sm ${
-						isExceeding ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+						isExceeding
+							? "bg-green-100 text-green-800"
+							: "bg-yellow-100 text-yellow-800"
 					}`}
 				>
 					{percentageOfTarget.toFixed(1)}% of target
@@ -91,11 +102,15 @@ export function ROIMetric({ actualROI, targetROI, period }: ROIMetricProps) {
 
 			<div className="mb-4 grid grid-cols-2 gap-4">
 				<div>
-					<div className="font-bold text-2xl text-green-600">${actualROI.toLocaleString()}</div>
+					<div className="font-bold text-2xl text-green-600">
+						${actualROI.toLocaleString()}
+					</div>
 					<div className="text-gray-600 text-sm">Actual ROI ({period})</div>
 				</div>
 				<div>
-					<div className="font-bold text-2xl text-gray-700">${targetROI.toLocaleString()}</div>
+					<div className="font-bold text-2xl text-gray-700">
+						${targetROI.toLocaleString()}
+					</div>
 					<div className="text-gray-600 text-sm">Target ROI ({period})</div>
 				</div>
 			</div>

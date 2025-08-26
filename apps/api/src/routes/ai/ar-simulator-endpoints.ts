@@ -5,10 +5,10 @@
 // Features: 3D modeling, treatment simulation, AR visualization, outcome prediction
 // =============================================================================
 
-import { Hono } from "hono";
-import { z } from "zod";
 import { supabase } from "@/lib/supabase";
 import { ARResultsSimulatorService } from "@/services/ar-simulator/ARResultsSimulatorService";
+import { Hono } from "hono";
+import { z } from "zod";
 
 // =============================================================================
 // VALIDATION SCHEMAS
@@ -16,7 +16,13 @@ import { ARResultsSimulatorService } from "@/services/ar-simulator/ARResultsSimu
 
 const CreateSimulationSchema = z.object({
 	patientId: z.string().min(1, "Patient ID is required"),
-	treatmentType: z.enum(["botox", "filler", "facial_harmonization", "thread_lift", "peeling"]),
+	treatmentType: z.enum([
+		"botox",
+		"filler",
+		"facial_harmonization",
+		"thread_lift",
+		"peeling",
+	]),
 	preferences: z.object({
 		intensityLevel: z.enum(["subtle", "moderate", "dramatic"]),
 		concerns: z.array(z.string()),
@@ -25,7 +31,13 @@ const CreateSimulationSchema = z.object({
 		avoidanceList: z.array(z.string()).optional().default([]),
 	}),
 	treatmentParameters: z.object({
-		treatmentType: z.enum(["botox", "filler", "facial_harmonization", "thread_lift", "peeling"]),
+		treatmentType: z.enum([
+			"botox",
+			"filler",
+			"facial_harmonization",
+			"thread_lift",
+			"peeling",
+		]),
 		areas: z.array(
 			z.object({
 				name: z.string(),
@@ -39,11 +51,11 @@ const CreateSimulationSchema = z.object({
 							x: z.number(),
 							y: z.number(),
 							z: z.number(),
-						})
+						}),
 					)
 					.optional()
 					.default([]),
-			})
+			}),
 		),
 		technique: z.string(),
 		expectedUnits: z.number().optional(),
@@ -58,7 +70,11 @@ const CompareSimulationsSchema = z.object({
 		.array(z.string())
 		.min(2, "At least 2 simulations required for comparison")
 		.max(5, "Maximum 5 simulations can be compared"),
-	comparisonType: z.enum(["before_after", "treatment_options", "timeline_progression"]),
+	comparisonType: z.enum([
+		"before_after",
+		"treatment_options",
+		"timeline_progression",
+	]),
 });
 
 // =============================================================================
@@ -90,11 +106,17 @@ arSimulator.post("/simulations", async (c) => {
 					error: "Invalid simulation request data",
 					details: validationResult.error.issues,
 				},
-				400
+				400,
 			);
 		}
 
-		const { patientId, treatmentType, preferences, treatmentParameters, priority } = validationResult.data;
+		const {
+			patientId,
+			treatmentType,
+			preferences,
+			treatmentParameters,
+			priority,
+		} = validationResult.data;
 
 		// Note: In a real implementation, photos would be uploaded via separate endpoint
 		// For now, we'll create a simulation request without actual photo files
@@ -107,7 +129,8 @@ arSimulator.post("/simulations", async (c) => {
 			priority,
 		};
 
-		const simulation = await simulatorService.createSimulation(simulationRequest);
+		const simulation =
+			await simulatorService.createSimulation(simulationRequest);
 		return c.json({
 			success: true,
 			data: simulation,
@@ -119,7 +142,7 @@ arSimulator.post("/simulations", async (c) => {
 				error: "Failed to create AR simulation",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -140,7 +163,7 @@ arSimulator.get("/simulations/:simulationId", async (c) => {
 					success: false,
 					error: "Simulation not found",
 				},
-				404
+				404,
 			);
 		}
 
@@ -157,7 +180,7 @@ arSimulator.get("/simulations/:simulationId", async (c) => {
 				error: "Failed to retrieve AR simulation",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -178,7 +201,7 @@ arSimulator.get("/simulations/:simulationId/status", async (c) => {
 					success: false,
 					error: "Simulation not found",
 				},
-				404
+				404,
 			);
 		}
 
@@ -196,7 +219,7 @@ arSimulator.get("/simulations/:simulationId/status", async (c) => {
 				success: false,
 				error: "Failed to get simulation status",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -224,7 +247,7 @@ arSimulator.get("/patients/:patientId/simulations", async (c) => {
 				success: false,
 				error: "Failed to retrieve patient simulations",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -248,7 +271,7 @@ arSimulator.delete("/simulations/:simulationId", async (c) => {
 				success: false,
 				error: "Failed to delete AR simulation",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -273,13 +296,16 @@ arSimulator.post("/comparisons", async (c) => {
 					error: "Invalid comparison request data",
 					details: validationResult.error.issues,
 				},
-				400
+				400,
 			);
 		}
 
 		const { simulationIds, comparisonType } = validationResult.data;
 
-		const comparison = await simulatorService.compareSimulations(simulationIds, comparisonType);
+		const comparison = await simulatorService.compareSimulations(
+			simulationIds,
+			comparisonType,
+		);
 		return c.json({
 			success: true,
 			data: comparison,
@@ -291,7 +317,7 @@ arSimulator.post("/comparisons", async (c) => {
 				error: "Failed to compare simulations",
 				message: error instanceof Error ? error.message : "Unknown error",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -322,17 +348,26 @@ arSimulator.get("/analytics/overview", async (c) => {
 				if (result.error) {
 					throw result.error;
 				}
-				const distribution = (result.data || []).reduce((acc: Record<string, number>, sim) => {
-					acc[sim.treatment_type] = (acc[sim.treatment_type] || 0) + 1;
-					return acc;
-				}, {});
+				const distribution = (result.data || []).reduce(
+					(acc: Record<string, number>, sim) => {
+						acc[sim.treatment_type] = (acc[sim.treatment_type] || 0) + 1;
+						return acc;
+					},
+					{},
+				);
 				return { data: distribution };
 			});
 
 		// Calculate success metrics
-		const totalSimulations = statusCounts.reduce((sum, sims) => sum + sims.length, 0);
+		const totalSimulations = statusCounts.reduce(
+			(sum, sims) => sum + sims.length,
+			0,
+		);
 		const completedSimulations = statusCounts[3].length; // completed status
-		const successRate = totalSimulations > 0 ? (completedSimulations / totalSimulations) * 100 : 0;
+		const successRate =
+			totalSimulations > 0
+				? (completedSimulations / totalSimulations) * 100
+				: 0;
 
 		// Calculate ROI metrics (estimated based on treatment type)
 		const estimatedMonthlyROI = 72_917; // ~$875k/year ÷ 12
@@ -375,7 +410,7 @@ arSimulator.get("/analytics/overview", async (c) => {
 				success: false,
 				error: "Failed to generate analytics overview",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -388,7 +423,9 @@ arSimulator.get("/analytics/treatments", async (c) => {
 	try {
 		const { treatment_type } = c.req.query();
 
-		let query = supabase.from("ar_simulations").select("treatment_type, status, metadata, output_data");
+		let query = supabase
+			.from("ar_simulations")
+			.select("treatment_type, status, metadata, output_data");
 
 		if (treatment_type) {
 			query = query.eq("treatment_type", treatment_type);
@@ -418,11 +455,14 @@ arSimulator.get("/analytics/treatments", async (c) => {
 			acc[treatmentType].totalSimulations++;
 
 			if (sim.output_data?.confidenceScore) {
-				acc[treatmentType].confidenceScores.push(sim.output_data.confidenceScore);
+				acc[treatmentType].confidenceScores.push(
+					sim.output_data.confidenceScore,
+				);
 			}
 
 			if (sim.output_data?.estimatedOutcome?.satisfactionPrediction) {
-				acc[treatmentType].averageSatisfaction += sim.output_data.estimatedOutcome.satisfactionPrediction;
+				acc[treatmentType].averageSatisfaction +=
+					sim.output_data.estimatedOutcome.satisfactionPrediction;
 			}
 
 			if (sim.metadata?.processingTime) {
@@ -438,16 +478,23 @@ arSimulator.get("/analytics/treatments", async (c) => {
 				analytics.averageConfidence =
 					analytics.confidenceScores.length > 0
 						? Math.round(
-								analytics.confidenceScores.reduce((a: number, b: number) => a + b, 0) /
-									analytics.confidenceScores.length
+								analytics.confidenceScores.reduce(
+									(a: number, b: number) => a + b,
+									0,
+								) / analytics.confidenceScores.length,
 							)
 						: 0;
 
-				analytics.averageSatisfaction = Math.round(analytics.averageSatisfaction / analytics.totalSimulations);
+				analytics.averageSatisfaction = Math.round(
+					analytics.averageSatisfaction / analytics.totalSimulations,
+				);
 				analytics.averageProcessingTime = Math.round(
-					analytics.averageProcessingTime / analytics.totalSimulations / 1000
+					analytics.averageProcessingTime / analytics.totalSimulations / 1000,
 				); // Convert to seconds
-				analytics.successRate = Math.round((analytics.confidenceScores.length / analytics.totalSimulations) * 100);
+				analytics.successRate = Math.round(
+					(analytics.confidenceScores.length / analytics.totalSimulations) *
+						100,
+				);
 			}
 
 			analytics.confidenceScores = undefined; // Remove temporary data
@@ -465,7 +512,7 @@ arSimulator.get("/analytics/treatments", async (c) => {
 				success: false,
 				error: "Failed to get treatment analytics",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -508,7 +555,7 @@ arSimulator.post("/photos/upload", async (c) => {
 				success: false,
 				error: "Failed to upload photo",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -625,7 +672,7 @@ arSimulator.get("/templates/treatments", async (c) => {
 				success: false,
 				error: "Failed to get treatment templates",
 			},
-			500
+			500,
 		);
 	}
 });
@@ -641,16 +688,21 @@ arSimulator.get("/templates/treatments", async (c) => {
 arSimulator.get("/health", async (c) => {
 	try {
 		// Check database connectivity
-		const { data: dbCheck } = await supabase.from("ar_simulations").select("count(*)").single();
+		const { data: dbCheck } = await supabase
+			.from("ar_simulations")
+			.select("count(*)")
+			.single();
 
 		// Check service instance
 		const serviceHealth = !!simulatorService;
 
 		// Get system statistics
 		const systemStats = {
-			activeSimulations: await simulatorService.getSimulationsByStatus("processing"),
+			activeSimulations:
+				await simulatorService.getSimulationsByStatus("processing"),
 			readySimulations: await simulatorService.getSimulationsByStatus("ready"),
-			failedSimulations: await simulatorService.getSimulationsByStatus("failed"),
+			failedSimulations:
+				await simulatorService.getSimulationsByStatus("failed"),
 		};
 
 		const systemStatus = {
@@ -676,7 +728,7 @@ arSimulator.get("/health", async (c) => {
 				error: "System health check failed",
 				timestamp: new Date().toISOString(),
 			},
-			503
+			503,
 		);
 	}
 });
@@ -691,10 +743,13 @@ arSimulator.onError((error, c) => {
 		{
 			success: false,
 			error: "Internal server error",
-			message: process.env.NODE_ENV === "development" ? error.message : "Something went wrong",
+			message:
+				process.env.NODE_ENV === "development"
+					? error.message
+					: "Something went wrong",
 			timestamp: new Date().toISOString(),
 		},
-		500
+		500,
 	);
 });
 

@@ -1,5 +1,5 @@
-import type React from "react";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import type React from "react";
 import { Header } from "../components/header";
 import { HealthcareSidebar } from "../components/healthcare-sidebar";
 

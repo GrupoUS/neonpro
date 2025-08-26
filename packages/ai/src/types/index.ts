@@ -168,11 +168,21 @@ export type RiskFactors = {
 	impact: "low" | "medium" | "high";
 	description: string;
 	weight: number; // contribution to overall risk
-	category?: "temporal" | "behavioral" | "demographic" | "procedural" | "contextual";
+	category?:
+		| "temporal"
+		| "behavioral"
+		| "demographic"
+		| "procedural"
+		| "contextual";
 };
 
 export type PreventionRecommendations = {
-	type: "automated_reminder" | "phone_confirmation" | "flexible_rescheduling" | "incentive" | "mid_point_reminder";
+	type:
+		| "automated_reminder"
+		| "phone_confirmation"
+		| "flexible_rescheduling"
+		| "incentive"
+		| "mid_point_reminder";
 	priority: "low" | "medium" | "high";
 	description: string;
 	estimatedImpact: number; // percentage reduction in no-show probability
@@ -347,9 +357,21 @@ export type LoggerService = {
 // Metrics Service Types
 export type MetricsService = {
 	recordMetric(metric: ServiceMetrics): Promise<void>;
-	recordCounter(name: string, value?: number, labels?: Record<string, string>): Promise<void>;
-	recordGauge(name: string, value: number, labels?: Record<string, string>): Promise<void>;
-	recordHistogram(name: string, value: number, labels?: Record<string, string>): Promise<void>;
+	recordCounter(
+		name: string,
+		value?: number,
+		labels?: Record<string, string>,
+	): Promise<void>;
+	recordGauge(
+		name: string,
+		value: number,
+		labels?: Record<string, string>,
+	): Promise<void>;
+	recordHistogram(
+		name: string,
+		value: number,
+		labels?: Record<string, string>,
+	): Promise<void>;
 };
 
 // Database Types
@@ -531,9 +553,20 @@ export type ServiceStatus = "initializing" | "ready" | "degraded" | "offline";
 export type LogLevel = "debug" | "info" | "warn" | "error";
 export type ComplianceLevel = "basic" | "healthcare" | "enterprise";
 export type Language = "pt-BR" | "en";
-export type UserRole = "patient" | "doctor" | "nurse" | "admin" | "receptionist";
+export type UserRole =
+	| "patient"
+	| "doctor"
+	| "nurse"
+	| "admin"
+	| "receptionist";
 export type ClinicType = "medical" | "dental" | "aesthetic" | "veterinary";
-export type AppointmentStatus = "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show" | "rescheduled";
+export type AppointmentStatus =
+	| "scheduled"
+	| "confirmed"
+	| "completed"
+	| "cancelled"
+	| "no_show"
+	| "rescheduled";
 export type PredictionAccuracy = "low" | "medium" | "high" | "very_high";
 
 // Re-export everything as default

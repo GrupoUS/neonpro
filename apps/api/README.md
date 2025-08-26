@@ -1,9 +1,12 @@
 # Hono.dev API Server
 
 ## Overview
-High-performance TypeScript API server using Hono.dev framework, designed for NeonPro clinic management system.
+
+High-performance TypeScript API server using Hono.dev framework, designed for NeonPro clinic
+management system.
 
 ## Features
+
 - **Ultra-fast**: 402,820 req/sec benchmark performance
 - **TypeScript**: First-class TypeScript support
 - **Vercel Ready**: Native Edge Functions deployment
@@ -16,6 +19,7 @@ High-performance TypeScript API server using Hono.dev framework, designed for Ne
 ## Quick Start
 
 ### Install Dependencies
+
 ```bash
 # From apps/api directory
 pnpm install
@@ -25,7 +29,9 @@ pnpm install
 ```
 
 ### Environment Setup
+
 Create `.env` file:
+
 ```bash
 NODE_ENV=development
 PORT=8000
@@ -47,6 +53,7 @@ REDIS_URL=optional_redis_url
 ```
 
 ### Database Setup
+
 ```bash
 # Generate Prisma client
 pnpm prisma generate
@@ -56,6 +63,7 @@ pnpm prisma migrate dev
 ```
 
 ### Development
+
 ```bash
 # Start development server
 pnpm dev
@@ -70,6 +78,7 @@ pnpm start
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/v1/auth/login` - User login
 - `POST /api/v1/auth/register` - User registration
 - `POST /api/v1/auth/refresh` - Refresh tokens
@@ -77,30 +86,35 @@ pnpm start
 - `GET /api/v1/auth/me` - Get current user
 
 ### Clinics
+
 - `GET /api/v1/clinics` - List clinics
 - `POST /api/v1/clinics` - Create clinic
 - `GET /api/v1/clinics/:id` - Get clinic details
 - `PUT /api/v1/clinics/:id` - Update clinic
 
 ### Patients
+
 - `GET /api/v1/patients` - List/search patients
 - `POST /api/v1/patients` - Create patient
 - `GET /api/v1/patients/:id` - Get patient details
 - `PUT /api/v1/patients/:id` - Update patient
 
 ### Appointments
+
 - `GET /api/v1/appointments` - List/filter appointments
 - `POST /api/v1/appointments` - Create appointment
 - `GET /api/v1/appointments/:id` - Get appointment details
 - `PUT /api/v1/appointments/:id` - Update appointment
 
 ### Utilities
+
 - `GET /health` - Health check
 - `GET /` - API information
 
 ## Architecture
 
 ### Middleware Stack
+
 1. **Timing** - Request timing
 2. **Logger** - Request logging
 3. **Security Headers** - Security headers
@@ -112,6 +126,7 @@ pnpm start
 9. **Database** - Database connection management
 
 ### Error Handling
+
 - Global error handler with structured responses
 - Zod validation errors
 - Database errors
@@ -119,6 +134,7 @@ pnpm start
 - Business logic errors
 
 ### Performance
+
 - **Framework**: Hono.dev (fastest JS web framework)
 - **Runtime**: Node.js with TypeScript
 - **Bundling**: Built-in optimization
@@ -128,6 +144,7 @@ pnpm start
 ## Deployment
 
 ### Vercel
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -137,7 +154,9 @@ vercel --prod
 ```
 
 ### Environment Variables (Vercel)
+
 Set in Vercel dashboard:
+
 - `NODE_ENV=production`
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
@@ -149,6 +168,7 @@ Set in Vercel dashboard:
 ## Compliance Features
 
 ### LGPD (Brazilian Data Protection)
+
 - Data consent tracking
 - Data access rights
 - Data deletion rights
@@ -156,6 +176,7 @@ Set in Vercel dashboard:
 - Privacy by design
 
 ### ANVISA (Brazilian Health Agency)
+
 - Non-medical system compliance
 - Aesthetic clinic regulations
 - Product tracking
@@ -164,6 +185,7 @@ Set in Vercel dashboard:
 ## Development Notes
 
 ### Code Organization
+
 ```
 src/
 ├── index.ts          # Main application
@@ -174,6 +196,7 @@ src/
 ```
 
 ### Best Practices
+
 - Use TypeScript strict mode
 - Validate all inputs with Zod
 - Handle errors gracefully
@@ -183,6 +206,7 @@ src/
 - Use secure headers
 
 ### Testing
+
 ```bash
 # Run tests (when implemented)
 pnpm test
@@ -194,10 +218,12 @@ pnpm test:coverage
 ## Migration Notes
 
 This API server replaces the previous FastAPI Python backend with:
+
 - **Better Performance**: 3x faster than FastAPI
 - **Type Safety**: Full TypeScript integration
 - **Deployment**: Native Vercel support
 - **Maintenance**: Unified TypeScript codebase
 - **Developer Experience**: Better tooling and debugging
 
-All endpoints maintain compatibility with the existing frontend while providing better performance and developer experience.
+All endpoints maintain compatibility with the existing frontend while providing better performance
+and developer experience.

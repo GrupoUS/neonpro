@@ -1,8 +1,5 @@
 "use client";
 
-import { Award, CheckCircle, Download, FileCheck, Printer, RefreshCw, Shield, User } from "lucide-react";
-import type React from "react";
-import { useRef, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Award, CheckCircle, Download, FileCheck, Printer, RefreshCw, Shield, User } from "lucide-react";
+import type React from "react";
+import { useRef, useState } from "react";
 
 // Digital signature interfaces following Brazilian legal requirements
 type DigitalCertificate = {
@@ -332,23 +332,51 @@ export function DigitalSignature({
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-4">
 							<div
-								className={`flex items-center gap-2 ${currentStep === "certificate" ? "text-blue-600" : currentStep !== "certificate" ? "text-green-600" : "text-gray-400"}`}
+								className={`flex items-center gap-2 ${
+									currentStep === "certificate"
+										? "text-blue-600"
+										: currentStep !== "certificate"
+											? "text-green-600"
+											: "text-gray-400"
+								}`}
 							>
 								<div
-									className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${currentStep === "certificate" ? "border-blue-600 bg-blue-50" : currentStep !== "certificate" ? "border-green-600 bg-green-50" : "border-gray-300"}`}
+									className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
+										currentStep === "certificate"
+											? "border-blue-600 bg-blue-50"
+											: currentStep !== "certificate"
+												? "border-green-600 bg-green-50"
+												: "border-gray-300"
+									}`}
 								>
 									{currentStep !== "certificate" ? <CheckCircle className="h-4 w-4" /> : "1"}
 								</div>
 								<span className="font-medium">Certificado</span>
 							</div>
 							<div
-								className={`h-1 w-16 ${currentStep === "signature" || currentStep === "validation" || currentStep === "complete" ? "bg-green-600" : "bg-gray-300"}`}
+								className={`h-1 w-16 ${
+									currentStep === "signature" || currentStep === "validation" || currentStep === "complete"
+										? "bg-green-600"
+										: "bg-gray-300"
+								}`}
 							/>
 							<div
-								className={`flex items-center gap-2 ${currentStep === "signature" ? "text-blue-600" : (currentStep === "validation" || currentStep === "complete") ? "text-green-600" : "text-gray-400"}`}
+								className={`flex items-center gap-2 ${
+									currentStep === "signature"
+										? "text-blue-600"
+										: (currentStep === "validation" || currentStep === "complete")
+											? "text-green-600"
+											: "text-gray-400"
+								}`}
 							>
 								<div
-									className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${currentStep === "signature" ? "border-blue-600 bg-blue-50" : (currentStep === "validation" || currentStep === "complete") ? "border-green-600 bg-green-50" : "border-gray-300"}`}
+									className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
+										currentStep === "signature"
+											? "border-blue-600 bg-blue-50"
+											: (currentStep === "validation" || currentStep === "complete")
+												? "border-green-600 bg-green-50"
+												: "border-gray-300"
+									}`}
 								>
 									{currentStep === "validation" || currentStep === "complete" ? (
 										<CheckCircle className="h-4 w-4" />
@@ -359,13 +387,27 @@ export function DigitalSignature({
 								<span className="font-medium">Assinatura</span>
 							</div>
 							<div
-								className={`h-1 w-16 ${currentStep === "validation" || currentStep === "complete" ? "bg-green-600" : "bg-gray-300"}`}
+								className={`h-1 w-16 ${
+									currentStep === "validation" || currentStep === "complete" ? "bg-green-600" : "bg-gray-300"
+								}`}
 							/>
 							<div
-								className={`flex items-center gap-2 ${currentStep === "validation" ? "text-blue-600" : currentStep === "complete" ? "text-green-600" : "text-gray-400"}`}
+								className={`flex items-center gap-2 ${
+									currentStep === "validation"
+										? "text-blue-600"
+										: currentStep === "complete"
+											? "text-green-600"
+											: "text-gray-400"
+								}`}
 							>
 								<div
-									className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${currentStep === "validation" ? "border-blue-600 bg-blue-50" : currentStep === "complete" ? "border-green-600 bg-green-50" : "border-gray-300"}`}
+									className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
+										currentStep === "validation"
+											? "border-blue-600 bg-blue-50"
+											: currentStep === "complete"
+												? "border-green-600 bg-green-50"
+												: "border-gray-300"
+									}`}
 								>
 									{currentStep === "complete" ? <CheckCircle className="h-4 w-4" /> : "3"}
 								</div>

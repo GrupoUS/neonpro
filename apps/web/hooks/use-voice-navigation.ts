@@ -3,12 +3,12 @@
  * React hook for Portuguese clinical voice commands
  */
 
-import { useCallback, useEffect, useState } from "react";
 import {
 	type VoiceCommand,
-	type VoiceNavigationState,
 	voiceNavigationService,
+	type VoiceNavigationState,
 } from "@/lib/services/voice-navigation-service";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseVoiceNavigationReturn {
 	// State

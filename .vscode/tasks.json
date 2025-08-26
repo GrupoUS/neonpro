@@ -1,421 +1,664 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "🎯 NEONPRO: Format Code",
-      "type": "shell",
-      "command": "npx",
-      "args": ["ultracite", "format"],
-      "group": "build",
-      "detail": "Format all code using Ultracite",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "biome",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": {
-            "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
-            "file": 1,
-            "line": 2,
-            "column": 3,
-            "severity": 4,
-            "message": 5
-          }
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🎯 NEONPRO: Check Code",
-      "type": "shell",
-      "command": "npx",
-      "args": ["ultracite", "lint"],
-      "group": "build",
-      "detail": "Check all code using Ultracite",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "biome",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": {
-            "regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
-            "file": 1,
-            "line": 2,
-            "column": 3,
-            "severity": 4,
-            "message": 5
-          }
-        }
-      ]
-    },
-    {
-      "label": "🧪 NEONPRO: Run All Tests",
-      "type": "shell",
-      "command": "npx",
-      "args": ["vitest", "run", "--reporter=verbose"],
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "detail": "Run all tests using Vitest with verbose output",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "vitest",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*❯\\s+(.+)$",
-              "message": 1
-            },
-            {
-              "regexp": "^\\s+(.*):(\\d+):(\\d+)$",
-              "file": 1,
-              "line": 2,
-              "column": 3
-            }
-          ]
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "clear": true
-      }
-    },
-    {
-      "label": "🧪 NEONPRO: Watch Tests",
-      "type": "shell",
-      "command": "npx",
-      "args": ["vitest", "--watch", "--reporter=verbose"],
-      "group": "test",
-      "detail": "Watch and run tests using Vitest",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "isBackground": true,
-      "problemMatcher": [
-        {
-          "owner": "vitest",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*❯\\s+(.+)$",
-              "message": 1
-            },
-            {
-              "regexp": "^\\s+(.*):(\\d+):(\\d+)$",
-              "file": 1,
-              "line": 2,
-              "column": 3
-            }
-          ],
-          "background": {
-            "activeOnStart": true,
-            "beginsPattern": "^.*DEV.*$",
-            "endsPattern": "^.*waiting for changes.*$"
-          }
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
-        "clear": false
-      }
-    },
-    {
-      "label": "🧪 NEONPRO: Run Current Test File",
-      "type": "shell",
-      "command": "npx",
-      "args": ["vitest", "run", "${relativeFile}", "--reporter=verbose"],
-      "group": "test",
-      "detail": "Run tests in the currently active file",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "vitest",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*❯\\s+(.+)$",
-              "message": 1
-            },
-            {
-              "regexp": "^\\s+(.*):(\\d+):(\\d+)$",
-              "file": 1,
-              "line": 2,
-              "column": 3
-            }
-          ]
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "shared",
-        "clear": true
-      }
-    },
-    {
-      "label": "🧪 NEONPRO: Test Coverage",
-      "type": "shell",
-      "command": "npx",
-      "args": ["vitest", "run", "--coverage"],
-      "group": "test",
-      "detail": "Run tests with coverage report",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "vitest",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*❯\\s+(.+)$",
-              "message": 1
-            },
-            {
-              "regexp": "^\\s+(.*):(\\d+):(\\d+)$",
-              "file": 1,
-              "line": 2,
-              "column": 3
-            }
-          ]
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "clear": true
-      }
-    },
-    {
-      "label": "🎭 NEONPRO: Run All E2E Tests",
-      "type": "shell",
-      "command": "npx",
-      "args": ["playwright", "test", "--reporter=html"],
-      "group": {
-        "kind": "test",
-        "isDefault": false
-      },
-      "detail": "Run all E2E tests using Playwright with HTML report",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "playwright",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
-              "file": 1,
-              "line": 2,
-              "column": 3,
-              "message": 4
-            }
-          ]
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "clear": true
-      }
-    },
-    {
-      "label": "🎭 NEONPRO: E2E Development Mode",
-      "type": "shell",
-      "command": "npx",
-      "args": ["playwright", "test", "${input:e2eMode}"],
-      "group": "test",
-      "detail": "Run E2E tests with development options (headed/debug/UI/current file)",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "playwright",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
-              "file": 1,
-              "line": 2,
-              "column": 3,
-              "message": 4
-            }
-          ]
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "🎭 NEONPRO: E2E Tests (Headed)",
-      "type": "shell",
-      "command": "npx",
-      "args": ["playwright", "test", "--headed"],
-      "group": "test",
-      "detail": "Run E2E tests in headed mode (visible browser)",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [
-        {
-          "owner": "playwright",
-          "fileLocation": ["relative", "${workspaceFolder}"],
-          "pattern": [
-            {
-              "regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
-              "file": 1,
-              "line": 2,
-              "column": 3,
-              "message": 4
-            }
-          ]
-        }
-      ],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared",
-        "clear": true
-      }
-    },
-    {
-      "label": "🎭 NEONPRO: E2E Tests (Debug)",
-      "type": "shell",
-      "command": "npx",
-      "args": ["playwright", "test", "--debug"],
-      "group": "test",
-      "detail": "Run E2E tests in debug mode",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "🎭 NEONPRO: Show Last Test Report",
-      "type": "shell",
-      "command": "npx",
-      "args": ["playwright", "show-report"],
-      "group": "test",
-      "detail": "Show the last Playwright test report",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": true,
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "🔍 NEONPRO: Check Fixes",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["ultracite:lint", "--max-diagnostics=10"],
-      "group": "build"
-    },
-    {
-      "label": "Check Biome Fixes",
-      "type": "shell",
-      "command": "pnpm ultracite:lint"
-    },
-    {
-      "label": "Format Code",
-      "type": "shell",
-      "command": "pnpm ultracite:format"
-    },
-    {
-      "label": "Quick Lint Check",
-      "type": "shell",
-      "command": "pnpm dlx @biomejs/biome check . --max-diagnostics=5"
-    },
-    {
-      "label": "Test Hook Fix",
-      "type": "shell",
-      "command": "pnpm dlx @biomejs/biome check .claude/hooks/cross-platform/pre-tool-intelligence.js"
-    },
-    {
-      "label": "Test Utils Fix",
-      "type": "shell",
-      "command": "pnpm dlx @biomejs/biome check .claude/hooks/cross-platform/utils.js"
-    },
-    {
-      "label": "Test Utils Fix 2",
-      "type": "shell",
-      "command": "pnpm dlx @biomejs/biome check .claude/hooks/cross-platform/utils.js"
-    },
-    {
-      "label": "Apply Unsafe Fixes",
-      "type": "shell",
-      "command": "pnpm dlx @biomejs/biome check --write --unsafe . --max-diagnostics=20"
-    }
-  ],
-  "inputs": [
-    {
-      "id": "e2eMode",
-      "type": "pickString",
-      "description": "Choose E2E test mode:",
-      "options": [
-        {
-          "label": "Headed Mode (visible browser)",
-          "value": "--headed"
-        },
-        {
-          "label": "Debug Mode (step-by-step)",
-          "value": "--debug"
-        },
-        {
-          "label": "UI Mode (interactive)",
-          "value": "--ui"
-        },
-        {
-          "label": "Current File",
-          "value": "${relativeFile}"
-        }
-      ]
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "🎯 NEONPRO: Format Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["format"],
+			"group": "build",
+			"detail": "Format all code using dprint",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "dprint",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^Error\\s+(.*):(\\d+):(\\d+)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"message": 4,
+						"severity": "error"
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🎯 NEONPRO: Check Format",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["format:check"],
+			"group": "build",
+			"detail": "Check code formatting using dprint",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "dprint",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^Error\\s+(.*):(\\d+):(\\d+)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"message": 4,
+						"severity": "error"
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🎯 NEONPRO: Lint Code",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["lint:oxlint"],
+			"group": "build",
+			"detail": "Lint all code using oxlint",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "oxlint",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🎯 NEONPRO: Lint & Fix",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["oxlint:fix"],
+			"group": "build",
+			"detail": "Format with dprint and fix linting issues with oxc",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "oxc",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🎯 NEONPRO: Format & Lint",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci"],
+			"group": "build",
+			"detail": "Format with dprint, lint with oxlint, and type-check",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "oxlint",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*):(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				},
+				{
+					"owner": "typescript",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning|info)\\s+TS(\\d+):\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"code": 5,
+						"message": 6
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🎯 NEONPRO: Type Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["type-check"],
+			"group": "build",
+			"detail": "Run TypeScript type checking",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "typescript",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning|info)\\s+TS(\\d+):\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"code": 5,
+						"message": 6
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🧪 NEONPRO: Run All Tests",
+			"type": "shell",
+			"command": "npx",
+			"args": ["vitest", "run", "--reporter=verbose"],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "Run all tests using Vitest with verbose output",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*❯\\s+(.+)$",
+							"message": 1
+						},
+						{
+							"regexp": "^\\s+(.*):(\\d+):(\\d+)$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"clear": true
+			}
+		},
+		{
+			"label": "🧪 NEONPRO: Watch Tests",
+			"type": "shell",
+			"command": "npx",
+			"args": ["vitest", "--watch", "--reporter=verbose"],
+			"group": "test",
+			"detail": "Watch and run tests using Vitest",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*❯\\s+(.+)$",
+							"message": 1
+						},
+						{
+							"regexp": "^\\s+(.*):(\\d+):(\\d+)$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": "^.*DEV.*$",
+						"endsPattern": "^.*waiting for changes.*$"
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated",
+				"clear": false
+			}
+		},
+		{
+			"label": "🧪 NEONPRO: Run Current Test File",
+			"type": "shell",
+			"command": "npx",
+			"args": ["vitest", "run", "${relativeFile}", "--reporter=verbose"],
+			"group": "test",
+			"detail": "Run tests in the currently active file",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*❯\\s+(.+)$",
+							"message": 1
+						},
+						{
+							"regexp": "^\\s+(.*):(\\d+):(\\d+)$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"clear": true
+			}
+		},
+		{
+			"label": "🧪 NEONPRO: Test Coverage",
+			"type": "shell",
+			"command": "npx",
+			"args": ["vitest", "run", "--coverage"],
+			"group": "test",
+			"detail": "Run tests with coverage report",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*❯\\s+(.+)$",
+							"message": 1
+						},
+						{
+							"regexp": "^\\s+(.*):(\\d+):(\\d+)$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"clear": true
+			}
+		},
+		{
+			"label": "🧪 NEONPRO: Safe Test Suite",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["test:unit:safe"],
+			"group": "test",
+			"detail": "Run safe test suite (core components only)",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*❯\\s+(.+)$",
+							"message": 1
+						},
+						{
+							"regexp": "^\\s+(.*):(\\d+):(\\d+)$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"clear": true
+			}
+		},
+		{
+			"label": "🎭 NEONPRO: Run All E2E Tests",
+			"type": "shell",
+			"command": "npx",
+			"args": ["playwright", "test", "--reporter=html"],
+			"group": {
+				"kind": "test",
+				"isDefault": false
+			},
+			"detail": "Run all E2E tests using Playwright with HTML report",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "playwright",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
+							"file": 1,
+							"line": 2,
+							"column": 3,
+							"message": 4
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"clear": true
+			}
+		},
+		{
+			"label": "🎭 NEONPRO: E2E Development Mode",
+			"type": "shell",
+			"command": "npx",
+			"args": ["playwright", "test", "${input:e2eMode}"],
+			"group": "test",
+			"detail": "Run E2E tests with development options (headed/debug/UI/current file)",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "playwright",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
+							"file": 1,
+							"line": 2,
+							"column": 3,
+							"message": 4
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": true
+			}
+		},
+		{
+			"label": "🎭 NEONPRO: E2E Tests (Headed)",
+			"type": "shell",
+			"command": "npx",
+			"args": ["playwright", "test", "--headed"],
+			"group": "test",
+			"detail": "Run E2E tests in headed mode (visible browser)",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "playwright",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*(.*):(\\d+):(\\d+)\\s+(.*)$",
+							"file": 1,
+							"line": 2,
+							"column": 3,
+							"message": 4
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"clear": true
+			}
+		},
+		{
+			"label": "🎭 NEONPRO: E2E Tests (Debug)",
+			"type": "shell",
+			"command": "npx",
+			"args": ["playwright", "test", "--debug"],
+			"group": "test",
+			"detail": "Run E2E tests in debug mode",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": true
+			}
+		},
+		{
+			"label": "🎭 NEONPRO: Show Last Test Report",
+			"type": "shell",
+			"command": "npx",
+			"args": ["playwright", "show-report"],
+			"group": "test",
+			"detail": "Show the last Playwright test report",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": true
+			}
+		},
+		{
+			"label": "🚀 NEONPRO: CI Check",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci:check"],
+			"group": "build",
+			"detail": "Run complete CI pipeline check (format check + type check)",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "dprint",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^Error\\s+(.*):(\\d+):(\\d+)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"message": 4,
+						"severity": "error"
+					}
+				},
+				{
+					"owner": "typescript",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning|info)\\s+TS(\\d+):\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"code": 5,
+						"message": 6
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🚀 NEONPRO: CI Safe",
+			"type": "shell",
+			"command": "pnpm",
+			"args": ["ci:safe"],
+			"group": "build",
+			"detail": "Run safe CI pipeline (CI check + safe tests)",
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				{
+					"owner": "dprint",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^Error\\s+(.*):(\\d+):(\\d+)\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"message": 4,
+						"severity": "error"
+					}
+				},
+				{
+					"owner": "typescript",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": {
+						"regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s+(error|warning|info)\\s+TS(\\d+):\\s+(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"code": 5,
+						"message": 6
+					}
+				},
+				{
+					"owner": "vitest",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern": [
+						{
+							"regexp": "^\\s*❯\\s+(.+)$",
+							"message": 1
+						},
+						{
+							"regexp": "^\\s+(.*):(\\d+):(\\d+)$",
+							"file": 1,
+							"line": 2,
+							"column": 3
+						}
+					]
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"clear": true
+			}
+		}
+	],
+	"inputs": [
+		{
+			"id": "e2eMode",
+			"type": "pickString",
+			"description": "Choose E2E test mode:",
+			"options": [
+				{
+					"label": "Headed Mode (visible browser)",
+					"value": "--headed"
+				},
+				{
+					"label": "Debug Mode (step-by-step)",
+					"value": "--debug"
+				},
+				{
+					"label": "UI Mode (interactive)",
+					"value": "--ui"
+				},
+				{
+					"label": "Current File",
+					"value": "${relativeFile}"
+				}
+			]
+		}
+	]
 }

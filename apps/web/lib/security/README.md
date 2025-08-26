@@ -2,7 +2,8 @@
 
 ## Visão Geral
 
-Este módulo implementa um sistema completo de segurança de sessão para o NeonPro, incluindo proteção CSRF, anti-hijacking, gerenciamento de timeout e controle de sessões concorrentes.
+Este módulo implementa um sistema completo de segurança de sessão para o NeonPro, incluindo proteção
+CSRF, anti-hijacking, gerenciamento de timeout e controle de sessões concorrentes.
 
 ## 📁 Estrutura do Módulo
 
@@ -38,7 +39,7 @@ const result = await sessionSecurity.initializeSessionSecurity(
     timeoutMinutes: 30,
     enableCSRF: true,
     enableHijackingProtection: true,
-  }
+  },
 );
 ```
 
@@ -59,7 +60,7 @@ if (!result.allowed) {
 ### 3. Uso em Componentes React
 
 ```typescript
-import { useSessionSecurity, useCSRFToken } from '@/lib/security/hooks/useSessionSecurity';
+import { useCSRFToken, useSessionSecurity } from '@/lib/security/hooks/useSessionSecurity';
 
 function MyComponent() {
   const { csrfToken } = useCSRFToken(sessionId);
@@ -71,9 +72,9 @@ function MyComponent() {
       method: 'POST',
       headers: {
         'X-CSRF-Token': csrfToken,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     });
   };
 
@@ -127,14 +128,14 @@ const hijackingProtection = new SessionHijackingProtection();
 const fingerprint = await hijackingProtection.createFingerprint(
   userId,
   sessionId,
-  request
+  request,
 );
 
 // Verificar sessão
 const result = await hijackingProtection.checkSession(
   userId,
   sessionId,
-  request
+  request,
 );
 
 // result.action: 'allow' | 'challenge' | 'block' | 'terminate'
@@ -323,7 +324,7 @@ await removeFromSessionBlacklist(sessionId);
 const token = await csrf.generateToken(
   'session123',
   'Mozilla/5.0...',
-  '192.168.1.1'
+  '192.168.1.1',
 );
 expect(token).toBeDefined();
 expect(token.length).toBe(64); // 32 bytes em hex
@@ -344,7 +345,7 @@ expect(isInvalid).toBe(false);
 const result1 = await hijackingProtection.checkSession(
   userId,
   sessionId,
-  request1
+  request1,
 );
 expect(result1.action).toBe('allow');
 expect(result1.riskScore).toBeLessThan(3);
@@ -354,7 +355,7 @@ const request2 = { ...request1, ip: '10.0.0.1' };
 const result2 = await hijackingProtection.checkSession(
   userId,
   sessionId,
-  request2
+  request2,
 );
 expect(result2.action).toBe('challenge');
 expect(result2.riskScore).toBeGreaterThan(3);
@@ -474,6 +475,6 @@ Para dúvidas ou problemas:
 3. Use o componente de demo em `/security-demo` para testes
 4. Consulte os eventos de segurança para diagnóstico
 
-**Implementado por:** APEX Master Developer  
-**Versão:** 1.0  
+**Implementado por:** APEX Master Developer\
+**Versão:** 1.0\
 **Última atualização:** Janeiro 2025

@@ -15,7 +15,7 @@ export default defineConfig({
 	sourcemap: true,
 	clean: true,
 	minify: false,
-	external: ["react", "react-dom", "@supabase/supabase-js", "@tensorflow/tfjs", "@tensorflow/tfjs-node"],
+	external: ["react", "react-dom", "@supabase/supabase-js", "@tensorflow/tfjs"],
 	esbuildOptions(options) {
 		options.banner = {
 			js: '"use client"',

@@ -5,24 +5,24 @@ name: Performance Testing
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
-      - 'apps/web/**'
-      - 'apps/api/**'
-      - 'packages/**'
+      - "apps/web/**"
+      - "apps/api/**"
+      - "packages/**"
   push:
-    branches: [ main ]
+    branches: [main]
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM
+    - cron: "0 2 * * *" # Daily at 2 AM
 
 env:
-  NODE_VERSION: '18.x'
+  NODE_VERSION: "18.x"
   PERFORMANCE_THRESHOLD: 85
 
 jobs:
   performance-audit:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:15
@@ -35,143 +35,143 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
-        
-    - name: Install pnpm
-      run: npm install -g pnpm
-      
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-      
-    - name: Setup environment variables
-      run: |
-        echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
-        echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
-        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
-        
-    - name: Build applications
-      run: |
-        pnpm build:web
-        pnpm build:api
-        
-    - name: Start services
-      run: |
-        pnpm start:api &
-        pnpm start:web &
-        sleep 30  # Wait for services to start
-        
-    - name: Run performance tests
-      run: |
-        cd tools/testing/performance
-        pnpm ts-node run-performance-tests.ts \
-          --environment=staging \
-          --duration=60 \
-          --users=10 \
-          --outputPath=./reports
-          
-    - name: Upload performance reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: performance-reports
-        path: tools/testing/performance/reports/
-        retention-days: 30
-        
-    - name: Comment PR with results
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          const path = './tools/testing/performance/reports/performance-report.md';
-          
-          if (fs.existsSync(path)) {
-            const report = fs.readFileSync(path, 'utf8');
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `## 🚀 Performance Test Results\n\n${report}`
-            });
-          }
-          
-    - name: Check performance thresholds
-      run: |
-        cd tools/testing/performance
-        node -e "
-          const report = require('./reports/performance-report.json');
-          const score = report.summary.overallScore;
-          console.log('Performance Score:', score);
-          
-          if (score < ${{ env.PERFORMANCE_THRESHOLD }}) {
-            console.log('❌ Performance threshold not met');
-            process.exit(1);
-          } else {
-            console.log('✅ Performance threshold met');
-          }
-        "
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup environment variables
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> $GITHUB_ENV
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+
+      - name: Build applications
+        run: |
+          pnpm build:web
+          pnpm build:api
+
+      - name: Start services
+        run: |
+          pnpm start:api &
+          pnpm start:web &
+          sleep 30  # Wait for services to start
+
+      - name: Run performance tests
+        run: |
+          cd tools/testing/performance
+          pnpm ts-node run-performance-tests.ts \
+            --environment=staging \
+            --duration=60 \
+            --users=10 \
+            --outputPath=./reports
+
+      - name: Upload performance reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-reports
+          path: tools/testing/performance/reports/
+          retention-days: 30
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = './tools/testing/performance/reports/performance-report.md';
+
+            if (fs.existsSync(path)) {
+              const report = fs.readFileSync(path, 'utf8');
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## 🚀 Performance Test Results\n\n${report}`
+              });
+            }
+
+      - name: Check performance thresholds
+        run: |
+          cd tools/testing/performance
+          node -e "
+            const report = require('./reports/performance-report.json');
+            const score = report.summary.overallScore;
+            console.log('Performance Score:', score);
+
+            if (score < ${{ env.PERFORMANCE_THRESHOLD }}) {
+              console.log('❌ Performance threshold not met');
+              process.exit(1);
+            } else {
+              console.log('✅ Performance threshold met');
+            }
+          "
 
   lighthouse-audit:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        
-    - name: Install Lighthouse CI
-      run: npm install -g @lhci/cli@0.12.x
-      
-    - name: Build and start app
-      run: |
-        pnpm install --frozen-lockfile
-        pnpm build:web
-        pnpm start:web &
-        sleep 30
-        
-    - name: Run Lighthouse CI
-      run: lhci autorun
-      env:
-        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Build and start app
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build:web
+          pnpm start:web &
+          sleep 30
+
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
   bundle-analysis:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'pnpm'
-        
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-      
-    - name: Analyze bundle
-      run: |
-        cd apps/web
-        pnpm build
-        npx @next/bundle-analyzer
-        
-    - name: Bundle size check
-      uses: andresz1/size-limit-action@v1.8.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        package_manager: pnpm
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Analyze bundle
+        run: |
+          cd apps/web
+          pnpm build
+          npx @next/bundle-analyzer
+
+      - name: Bundle size check
+        uses: andresz1/size-limit-action@v1.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          package_manager: pnpm

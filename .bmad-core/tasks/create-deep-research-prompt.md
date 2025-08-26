@@ -2,7 +2,9 @@
 
 # Create Deep Research Prompt Task
 
-This task helps create comprehensive research prompts for various types of deep analysis. It can process inputs from brainstorming sessions, project briefs, market research, or specific research questions to generate targeted prompts for deeper investigation.
+This task helps create comprehensive research prompts for various types of deep analysis. It can
+process inputs from brainstorming sessions, project briefs, market research, or specific research
+questions to generate targeted prompts for deeper investigation.
 
 ## Purpose
 
@@ -16,7 +18,8 @@ Generate well-structured research prompts that:
 
 ## Research Type Selection
 
-CRITICAL: First, help the user select the most appropriate research focus based on their needs and any input documents they've provided.
+CRITICAL: First, help the user select the most appropriate research focus based on their needs and
+any input documents they've provided.
 
 ### 1. Research Focus Options
 
@@ -122,7 +125,8 @@ CRITICAL: collaborate with the user to articulate clear, specific objectives for
 
 #### B. Research Questions
 
-CRITICAL: collaborate with the user to develop specific, actionable research questions organized by theme.
+CRITICAL: collaborate with the user to develop specific, actionable research questions organized by
+theme.
 
 **Core Questions:**
 
@@ -186,14 +190,12 @@ CRITICAL: collaborate with the user to develop specific, actionable research que
 ### Primary Questions (Must Answer)
 
 1. [Specific, actionable question]
-2. [Specific, actionable question]
-   ...
+2. [Specific, actionable question] ...
 
 ### Secondary Questions (Nice to Have)
 
 1. [Supporting question]
-2. [Supporting question]
-   ...
+2. [Supporting question] ...
 
 ## Research Methodology
 

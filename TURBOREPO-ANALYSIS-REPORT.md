@@ -6,7 +6,7 @@
 
 1. **Versões das Dependencies**
    - ✅ `actions/checkout@v5` (mais recente que recomendado v4)
-   - ✅ `pnpm/action-setup@v4` (mais recente que recomendado v3)  
+   - ✅ `pnpm/action-setup@v4` (mais recente que recomendado v3)
    - ✅ `actions/setup-node@v4` (conforme recomendado)
    - ✅ PNPM version 9 (mais recente que recomendado v8)
 
@@ -31,6 +31,7 @@
 ### 🚨 **CRÍTICO 1: AUSÊNCIA DE CACHING TURBOREPO**
 
 **Problema**: Nenhum caching específico do Turborepo implementado
+
 ```yaml
 # ATUAL: Sem caching Turbo
 # ❌ Nenhuma configuração de cache .turbo
@@ -38,6 +39,7 @@
 ```
 
 **Recomendado Turborepo**:
+
 ```yaml
 # Remote Caching (PREFERRED)
 env:
@@ -57,6 +59,7 @@ env:
 ### 🚨 **CRÍTICO 2: FETCH-DEPTH INCONSISTENTE**
 
 **Problema**: fetch-depth: 2 apenas no preflight, outros jobs usam default
+
 ```yaml
 # ATUAL
 preflight-validation: fetch-depth: 2  ✅
@@ -69,6 +72,7 @@ build: fetch-depth: [default]         ❌
 ### 🚨 **CRÍTICO 3: ESTRUTURA OVER-ENGINEERED**
 
 **Atual**: Complexo com 6+ jobs especializados
+
 ```yaml
 jobs:
   preflight-validation    # ❌ Desnecessário
@@ -80,6 +84,7 @@ jobs:
 ```
 
 **Recomendado Turborepo**: Job único "Build and Test"
+
 ```yaml
 jobs:
   build:
@@ -91,44 +96,49 @@ jobs:
 ### ⚠️ **MENOR 4: SCRIPTS NÃO-CONVENCIONAIS**
 
 **Atual**: Scripts customizados para CI
+
 ```yaml
-run: pnpm run ci-check           # ❌ Não-padrão
-run: pnpm run format:check:ci    # ❌ Não-padrão
+run: pnpm run ci-check # ❌ Não-padrão
+run: pnpm run format:check:ci # ❌ Não-padrão
 ```
 
 **Recomendado**: Scripts diretos turbo
+
 ```yaml
-run: pnpm build    # ✅ Padrão
-run: pnpm test     # ✅ Padrão
-run: pnpm lint     # ✅ Padrão
+run: pnpm build # ✅ Padrão
+run: pnpm test # ✅ Padrão
+run: pnpm lint # ✅ Padrão
 ```
 
 ## 📋 **MATRIZ DE CONFORMIDADE**
 
-| Aspecto | Atual | Recomendado | Status | Prioridade |
-|---------|-------|-------------|--------|------------|
-| **Actions Versions** | v5/v4 | v4/v3 | ✅ OK | Baixa |
-| **PNPM Version** | 9 | 8 | ✅ OK | Baixa |
-| **Node.js** | 20 + cache | 20 + cache | ✅ OK | - |
-| **fetch-depth** | Inconsistente | 2 everywhere | ❌ FIX | Alta |
-| **Turbo Caching** | AUSENTE | CRÍTICO | ❌ FIX | CRÍTICA |
-| **Job Structure** | 6+ jobs | 1 job | ⚠️ REFACTOR | Média |
-| **Timeout** | Variado | 15min | ⚠️ PADRONIZAR | Baixa |
-| **Scripts** | Custom | Standard | ⚠️ SIMPLIFICAR | Média |
+| Aspecto              | Atual         | Recomendado  | Status        | Prioridade |
+| -------------------- | ------------- | ------------ | ------------- | ---------- |
+| **Actions Versions** | v5/v4         | v4/v3        | ✅ OK         | Baixa      |
+| **PNPM Version**     | 9             | 8            | ✅ OK         | Baixa      |
+| **Node.js**          | 20 + cache    | 20 + cache   | ✅ OK         | -          |
+| **fetch-depth**      | Inconsistente | 2 everywhere | ❌ FIX        | Alta       |
+| **Turbo Caching**    | AUSENTE       | CRÍTICO      | ❌ FIX        | CRÍTICA    |
+| **Job Structure**    | 6+ jobs       | 1 job        | ⚠️ REFACTOR    | Média      |
+| **Timeout**          | Variado       | 15min        | ⚠️ PADRONIZAR  | Baixa      |
+| **Scripts**          | Custom        | Standard     | ⚠️ SIMPLIFICAR | Média      |
 
 ## 🎯 **IMPACTO DA NÃO-CONFORMIDADE**
 
 ### **Performance Impact**
+
 - 🐌 **Builds 3-5x mais lentas** sem Turbo caching
 - 🐌 **Dependências re-instaladas** a cada job
 - 🐌 **Type-checking repetitivo** sem cache
 
-### **Reliability Impact**  
+### **Reliability Impact**
+
 - ❌ **Jobs podem falhar** por timeout sem cache
 - ❌ **Inconsistência** entre environments
 - ❌ **Recursos desperdiçados** no GitHub Actions
 
 ### **Maintenance Impact**
+
 - 🔧 **Complexidade desnecessária** para debug
 - 🔧 **Configuração fragmentada** entre jobs
 - 🔧 **Não segue best practices** da comunidade
@@ -169,11 +179,13 @@ run: pnpm lint     # ✅ Padrão
 ## 📈 **BENEFÍCIOS ESPERADOS PÓS-CORREÇÃO**
 
 - ⚡ **50-70% redução** no tempo de build
-- 💰 **Redução significativa** de custos GitHub Actions  
+- 💰 **Redução significativa** de custos GitHub Actions
 - 🔄 **Builds incrementais** eficientes
 - 📊 **Melhor observabilidade** com Turbo metrics
 - 🛠️ **Manutenção simplificada**
 
 ---
 
-**Conclusão**: A implementação atual está **FUNCIONALMENTE CORRETA** mas **SUBÓTIMA EM PERFORMANCE** devido à ausência de caching Turborepo. Recomenda-se implementação das correções de PRIORIDADE ALTA imediatamente.
+**Conclusão**: A implementação atual está **FUNCIONALMENTE CORRETA** mas **SUBÓTIMA EM PERFORMANCE**
+devido à ausência de caching Turborepo. Recomenda-se implementação das correções de PRIORIDADE ALTA
+imediatamente.

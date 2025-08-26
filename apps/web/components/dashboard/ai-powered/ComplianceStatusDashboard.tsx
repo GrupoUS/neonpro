@@ -6,14 +6,14 @@
 
 "use client";
 
-import { AlertTriangle, CheckCircle, Clock, Download, Eye, FileText, Shield, Stethoscope, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertTriangle, CheckCircle, Clock, Download, Eye, FileText, Shield, Stethoscope, XCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ComplianceFramework {
 	name: "LGPD" | "ANVISA" | "CFM";

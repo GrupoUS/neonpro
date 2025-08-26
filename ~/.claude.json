@@ -1,40 +1,40 @@
 {
-  "numStartups": 1,
-  "installMethod": "native",
-  "autoUpdates": true,
-  "verbose": true,
-  "customApiKeyResponses": {
-    "approved": [],
-    "rejected": []
-  },
-  "tipsHistory": {
-    "new-user-warmup": 0,
-    "memory-command": 0,
-    "theme-command": 0,
-    "status-line": 0,
-    "prompt-queue": 0,
-    "enter-to-steer-in-relatime": 0,
-    "todo-list": 0,
-    "# for memory": 0,
-    "install-github-app": 0,
-    "drag-and-drop-images": 0,
-    "double-esc": 0,
-    "continue": 0,
-    "shift-tab": 0,
-    "custom-agents": 0,
-    "permissions": 0,
-    "custom-commands": 0,
-    "ide-upsell-external-terminal": 0,
-    "git-worktrees": 0
-  },
-  "promptQueueUseCount": 0,
-  "autoConnectIde": true,
-  "firstStartTime": "2025-08-25T00:00:00.000Z",
-  "userID": "3b62475be2fe6d9cc28d55babadd8442e188f5404d1af6146bf4aabfcee6aab5",
-  "projects": {
-    "/mnt/d/neonpro": {
-      "allowedTools": [],
-      "history": []
-    }
-  }
+	"numStartups": 1,
+	"installMethod": "native",
+	"autoUpdates": true,
+	"verbose": true,
+	"customApiKeyResponses": {
+		"approved": [],
+		"rejected": []
+	},
+	"tipsHistory": {
+		"new-user-warmup": 0,
+		"memory-command": 0,
+		"theme-command": 0,
+		"status-line": 0,
+		"prompt-queue": 0,
+		"enter-to-steer-in-relatime": 0,
+		"todo-list": 0,
+		"# for memory": 0,
+		"install-github-app": 0,
+		"drag-and-drop-images": 0,
+		"double-esc": 0,
+		"continue": 0,
+		"shift-tab": 0,
+		"custom-agents": 0,
+		"permissions": 0,
+		"custom-commands": 0,
+		"ide-upsell-external-terminal": 0,
+		"git-worktrees": 0
+	},
+	"promptQueueUseCount": 0,
+	"autoConnectIde": true,
+	"firstStartTime": "2025-08-25T00:00:00.000Z",
+	"userID": "3b62475be2fe6d9cc28d55babadd8442e188f5404d1af6146bf4aabfcee6aab5",
+	"projects": {
+		"/mnt/d/neonpro": {
+			"allowedTools": [],
+			"history": []
+		}
+	}
 }

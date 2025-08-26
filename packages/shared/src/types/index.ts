@@ -8,7 +8,11 @@
 
 // Import Notification from database package
 import type { Notification } from "@neonpro/db";
-import type { ApiResponse, PaginatedResponse, PaginationParams } from "./api.types";
+import type {
+	ApiResponse,
+	PaginatedResponse,
+	PaginationParams,
+} from "./api.types";
 
 // Re-export commonly used types for convenience
 export type {
@@ -54,10 +58,7 @@ export type {
 export type { Notification };
 // API types
 export * from "./api.types";
-export type {
-	Entity,
-	EntityType,
-} from "./entities.types";
+export type { Entity, EntityType } from "./entities.types";
 // Entity types
 export * from "./entities.types";
 // Hono types for RPC client
@@ -128,7 +129,9 @@ export const APPOINTMENT_TYPES = [
 
 // Type utilities for form handling
 export type FormData<T> = {
-	[K in keyof T]: T[K] extends string | number | boolean | null | undefined ? T[K] : string;
+	[K in keyof T]: T[K] extends string | number | boolean | null | undefined
+		? T[K]
+		: string;
 };
 
 export type FormErrors<T> = {
@@ -142,7 +145,11 @@ export type EndpointMethod<T> = T extends `${string}:${infer M}` ? M : "GET";
 export type EndpointPath<T> = T extends `${infer P}:${string}` ? P : T;
 
 // Generic CRUD operations types
-export type CrudOperations<T, TCreate = Omit<T, "id" | "createdAt" | "updatedAt">, TUpdate = Partial<TCreate>> = {
+export type CrudOperations<
+	T,
+	TCreate = Omit<T, "id" | "createdAt" | "updatedAt">,
+	TUpdate = Partial<TCreate>,
+> = {
 	create: (data: TCreate) => Promise<ApiResponse<T>>;
 	read: (id: EntityId) => Promise<ApiResponse<T>>;
 	update: (id: EntityId, data: TUpdate) => Promise<ApiResponse<T>>;
@@ -151,7 +158,17 @@ export type CrudOperations<T, TCreate = Omit<T, "id" | "createdAt" | "updatedAt"
 };
 
 // Filter utilities
-export type FilterOperator = "eq" | "ne" | "gt" | "gte" | "lt" | "lte" | "in" | "nin" | "like" | "ilike";
+export type FilterOperator =
+	| "eq"
+	| "ne"
+	| "gt"
+	| "gte"
+	| "lt"
+	| "lte"
+	| "in"
+	| "nin"
+	| "like"
+	| "ilike";
 
 export type FilterCondition<T = unknown> = {
 	field: string;
@@ -216,7 +233,8 @@ export type EnvironmentConfig = {
 
 // Type guards
 export const isUUID = (value: string): value is UUID => {
-	const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+	const uuidRegex =
+		/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 	return uuidRegex.test(value);
 };
 

@@ -4,10 +4,10 @@
 // API endpoints for clinic-wide retention metrics and analytics
 // =====================================================================================
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -237,7 +237,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 		// Check permissions for bulk calculations
 		const allowedRoles = ["admin", "manager", "analyst"];
 		if (!allowedRoles.includes(userProfile.role)) {
-			return NextResponse.json({ error: "Insufficient permissions for bulk calculations" }, { status: 403 });
+			return NextResponse.json(
+				{ error: "Insufficient permissions for bulk calculations" },
+				{
+					status: 403,
+				}
+			);
 		}
 
 		// Get patients to calculate metrics for
@@ -266,7 +271,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			.in("id", targetPatientIds);
 
 		if (validationError || validPatients.length !== targetPatientIds.length) {
-			return NextResponse.json({ error: "Some patients do not belong to the specified clinic" }, { status: 400 });
+			return NextResponse.json(
+				{ error: "Some patients do not belong to the specified clinic" },
+				{
+					status: 400,
+				}
+			);
 		}
 
 		// Calculate metrics in batches to avoid overwhelming the system

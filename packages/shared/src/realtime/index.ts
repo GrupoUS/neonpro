@@ -79,9 +79,17 @@ export const RealtimeUtils = {
 	 * Determine if event requires immediate medical attention
 	 */
 	isMedicalUrgent: (eventType: string, priority?: string): boolean => {
-		const urgentKeywords = ["emergency", "critical", "urgent", "breach", "violation"];
+		const urgentKeywords = [
+			"emergency",
+			"critical",
+			"urgent",
+			"breach",
+			"violation",
+		];
 		return urgentKeywords.some(
-			(keyword) => eventType.toLowerCase().includes(keyword) || priority?.toLowerCase().includes(keyword)
+			(keyword) =>
+				eventType.toLowerCase().includes(keyword) ||
+				priority?.toLowerCase().includes(keyword),
 		);
 	},
 
@@ -90,13 +98,15 @@ export const RealtimeUtils = {
 	 */
 	formatHealthcareMessage: (type: string, data: any): string => {
 		const formatMap: Record<string, (data: any) => string> = {
-			patient_update: (data) => `Paciente ${data.name || data.id} foi atualizado`,
+			patient_update: (data) =>
+				`Paciente ${data.name || data.id} foi atualizado`,
 			appointment_change: (data) =>
 				`Agendamento ${data.id} foi ${data.status === "cancelled" ? "cancelado" : "alterado"}`,
 			emergency_alert: (data) => `EMERGÊNCIA: ${data.message}`,
 			compliance_violation: (data) => `Violação de compliance: ${data.type}`,
 			lgpd_event: (data) => `Evento LGPD: ${data.action} - ${data.description}`,
-			anvisa_alert: (data) => `Alerta ANVISA: ${data.category} - ${data.message}`,
+			anvisa_alert: (data) =>
+				`Alerta ANVISA: ${data.category} - ${data.message}`,
 		};
 
 		return formatMap[type]?.(data) || `Evento: ${type}`;
@@ -105,7 +115,11 @@ export const RealtimeUtils = {
 	/**
 	 * Calculate healthcare priority score
 	 */
-	calculateHealthcarePriority: (eventType: string, severity: string, patientCritical = false): number => {
+	calculateHealthcarePriority: (
+		eventType: string,
+		severity: string,
+		patientCritical = false,
+	): number => {
 		let score = 0;
 
 		// Base score by severity

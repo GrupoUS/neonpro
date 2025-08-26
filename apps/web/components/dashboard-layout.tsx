@@ -8,10 +8,10 @@
 
 "use client";
 
-import { Outlet } from "@tanstack/react-router";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { MainNavigation } from "@/components/main-navigation";
 import { useAuth } from "@/contexts/auth-context";
+import { Outlet } from "@tanstack/react-router";
 
 export function DashboardLayout() {
 	const { user, loading } = useAuth();

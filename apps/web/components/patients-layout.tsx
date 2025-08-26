@@ -8,11 +8,11 @@
 
 "use client";
 
-import { Outlet } from "@tanstack/react-router";
-import { Filter, Plus, Search } from "lucide-react";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { MainNavigation } from "@/components/main-navigation";
 import { Button } from "@/components/ui/button";
+import { Outlet } from "@tanstack/react-router";
+import { Filter, Plus, Search } from "lucide-react";
 
 export function PatientsLayout() {
 	return (

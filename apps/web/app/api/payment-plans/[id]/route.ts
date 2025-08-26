@@ -2,10 +2,10 @@
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for individual payment plan management
 
-import { type NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { createClient } from "@/app/utils/supabase/server";
 import { getInstallmentManager } from "@/lib/payments/installments/installment-manager";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 // Validation schemas
 const updatePaymentPlanSchema = z.object({
@@ -145,11 +145,21 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 			}
 
 			if (error.message.includes("Cannot modify completed payment plan")) {
-				return NextResponse.json({ error: "Cannot modify completed payment plan" }, { status: 400 });
+				return NextResponse.json(
+					{ error: "Cannot modify completed payment plan" },
+					{
+						status: 400,
+					}
+				);
 			}
 
 			if (error.message.includes("Cannot modify cancelled payment plan")) {
-				return NextResponse.json({ error: "Cannot modify cancelled payment plan" }, { status: 400 });
+				return NextResponse.json(
+					{ error: "Cannot modify cancelled payment plan" },
+					{
+						status: 400,
+					}
+				);
 			}
 		}
 
@@ -222,7 +232,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
 			}
 
 			if (error.message.includes("Cannot cancel completed payment plan")) {
-				return NextResponse.json({ error: "Cannot cancel completed payment plan" }, { status: 400 });
+				return NextResponse.json(
+					{ error: "Cannot cancel completed payment plan" },
+					{
+						status: 400,
+					}
+				);
 			}
 		}
 

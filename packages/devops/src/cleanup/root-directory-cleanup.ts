@@ -212,13 +212,16 @@ export class RootDirectoryCleanup {
 						}
 					}
 				} catch (error) {
-					const errorMsg = `Error processing ${file}: ${error instanceof Error ? error.message : "Unknown error"}`;
+					const errorMsg = `Error processing ${file}: ${
+						error instanceof Error ? error.message : "Unknown error"
+					}`;
 					result.errors.push(errorMsg);
 				}
 			}
 
 			// Calculate summary metrics
-			result.summary.spaceSavedMB = Math.round((result.sizeCleaned / (1024 * 1024)) * 100) / 100;
+			result.summary.spaceSavedMB =
+				Math.round((result.sizeCleaned / (1024 * 1024)) * 100) / 100;
 			result.summary.cleanupScore = this.calculateCleanupScore(result);
 
 			// Generate cleanup report
@@ -226,7 +229,9 @@ export class RootDirectoryCleanup {
 
 			return result;
 		} catch (error) {
-			const errorMsg = `Cleanup failed: ${error instanceof Error ? error.message : "Unknown error"}`;
+			const errorMsg = `Cleanup failed: ${
+				error instanceof Error ? error.message : "Unknown error"
+			}`;
 			result.errors.push(errorMsg);
 			throw new Error(errorMsg);
 		}
@@ -240,7 +245,9 @@ export class RootDirectoryCleanup {
 				.map((entry) => entry.name)
 				.filter((name) => !name.startsWith(".")); // Skip hidden files
 		} catch (error) {
-			throw new Error(`Failed to read directory: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Failed to read directory: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	}
 
@@ -323,7 +330,10 @@ export class RootDirectoryCleanup {
 			return true;
 		}
 
-		if (this.config.preserveDocumentation && this.isDocumentationFile(filename)) {
+		if (
+			this.config.preserveDocumentation &&
+			this.isDocumentationFile(filename)
+		) {
 			return true;
 		}
 
@@ -335,7 +345,16 @@ export class RootDirectoryCleanup {
 	}
 
 	private isConfigFile(filename: string): boolean {
-		const configExtensions = [".json", ".js", ".ts", ".mjs", ".cjs", ".yaml", ".yml", ".toml"];
+		const configExtensions = [
+			".json",
+			".js",
+			".ts",
+			".mjs",
+			".cjs",
+			".yaml",
+			".yml",
+			".toml",
+		];
 		const configNames = [
 			"package.json",
 			"tsconfig.json",
@@ -353,21 +372,42 @@ export class RootDirectoryCleanup {
 
 		return (
 			configNames.some((name) => filename.startsWith(name)) ||
-			(configExtensions.includes(extname(filename)) && filename.includes("config"))
+			(configExtensions.includes(extname(filename)) &&
+				filename.includes("config"))
 		);
 	}
 
 	private isDocumentationFile(filename: string): boolean {
 		const docExtensions = [".md", ".txt", ".rst"];
-		const docPatterns = [/README/i, /CHANGELOG/i, /LICENSE/i, /CLAUDE/i, /API/i];
+		const docPatterns = [
+			/README/i,
+			/CHANGELOG/i,
+			/LICENSE/i,
+			/CLAUDE/i,
+			/API/i,
+		];
 
-		return docExtensions.includes(extname(filename)) || docPatterns.some((pattern) => pattern.test(filename));
+		return (
+			docExtensions.includes(extname(filename)) ||
+			docPatterns.some((pattern) => pattern.test(filename))
+		);
 	}
 
 	private isReportFile(filename: string): boolean {
-		const reportPatterns = [/report/i, /summary/i, /progress/i, /todo/i, /tracking/i, /completion/i, /implementation/i];
+		const reportPatterns = [
+			/report/i,
+			/summary/i,
+			/progress/i,
+			/todo/i,
+			/tracking/i,
+			/completion/i,
+			/implementation/i,
+		];
 
-		return reportPatterns.some((pattern) => pattern.test(filename)) && extname(filename) === ".md";
+		return (
+			reportPatterns.some((pattern) => pattern.test(filename)) &&
+			extname(filename) === ".md"
+		);
 	}
 
 	private async createBackup(): Promise<void> {
@@ -380,7 +420,10 @@ export class RootDirectoryCleanup {
 			const filesToBackup = [];
 
 			for (const file of files) {
-				if ((await this.shouldRemoveFile(file)) && !this.shouldPreserveFile(file)) {
+				if (
+					(await this.shouldRemoveFile(file)) &&
+					!this.shouldPreserveFile(file)
+				) {
 					filesToBackup.push(file);
 				}
 			}
@@ -391,7 +434,9 @@ export class RootDirectoryCleanup {
 				await fs.copyFile(sourcePath, backupFilePath);
 			}
 		} catch (error) {
-			throw new Error(`Failed to create backup: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Failed to create backup: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	}
 
@@ -402,7 +447,8 @@ export class RootDirectoryCleanup {
 		let score = 0;
 
 		// Files cleaned ratio (40% weight)
-		const cleanRatio = summary.temporaryFilesRemoved / summary.totalFilesAnalyzed;
+		const cleanRatio =
+			summary.temporaryFilesRemoved / summary.totalFilesAnalyzed;
 		score += cleanRatio * 40;
 
 		// Space saved factor (30% weight)
@@ -410,7 +456,8 @@ export class RootDirectoryCleanup {
 		score += spaceFactor * 30;
 
 		// Important files preserved (20% weight)
-		const preserveRatio = summary.configFilesPreserved / this.importantFiles.length;
+		const preserveRatio =
+			summary.configFilesPreserved / this.importantFiles.length;
 		score += preserveRatio * 20;
 
 		// Error-free execution (10% weight)
@@ -421,7 +468,10 @@ export class RootDirectoryCleanup {
 	}
 
 	private async generateCleanupReport(result: CleanupResult): Promise<void> {
-		const reportPath = join(this.projectRoot, "root-directory-cleanup-report.json");
+		const reportPath = join(
+			this.projectRoot,
+			"root-directory-cleanup-report.json",
+		);
 
 		const report = {
 			timestamp: new Date().toISOString(),
@@ -439,23 +489,33 @@ export class RootDirectoryCleanup {
 		const recommendations: string[] = [];
 
 		if (result.summary.temporaryFilesRemoved > 20) {
-			recommendations.push("Consider implementing automated cleanup as part of CI/CD pipeline");
+			recommendations.push(
+				"Consider implementing automated cleanup as part of CI/CD pipeline",
+			);
 		}
 
 		if (result.summary.spaceSavedMB > 5) {
-			recommendations.push("Significant space saved - recommend regular cleanup maintenance");
+			recommendations.push(
+				"Significant space saved - recommend regular cleanup maintenance",
+			);
 		}
 
 		if (result.errors.length > 0) {
-			recommendations.push("Review errors and adjust cleanup patterns if needed");
+			recommendations.push(
+				"Review errors and adjust cleanup patterns if needed",
+			);
 		}
 
 		if (result.summary.cleanupScore < 80) {
-			recommendations.push("Consider reviewing file organization and temporary file management practices");
+			recommendations.push(
+				"Consider reviewing file organization and temporary file management practices",
+			);
 		}
 
 		recommendations.push("Add automated file cleanup to development workflow");
-		recommendations.push("Implement git hooks to prevent committing temporary files");
+		recommendations.push(
+			"Implement git hooks to prevent committing temporary files",
+		);
 
 		return recommendations;
 	}
@@ -476,7 +536,10 @@ export class RootDirectoryCleanup {
 			const remainingTempFiles = [];
 
 			for (const file of files) {
-				if ((await this.shouldRemoveFile(file)) && !this.shouldPreserveFile(file)) {
+				if (
+					(await this.shouldRemoveFile(file)) &&
+					!this.shouldPreserveFile(file)
+				) {
 					remainingTempFiles.push(file);
 				}
 			}
@@ -505,14 +568,17 @@ export class RootDirectoryCleanup {
 // Utility function for easy cleanup execution
 export async function cleanupRootDirectory(
 	projectRoot: string,
-	config: Partial<CleanupConfig> = {}
+	config: Partial<CleanupConfig> = {},
 ): Promise<CleanupResult> {
 	const cleanup = new RootDirectoryCleanup(projectRoot, config);
 	return cleanup.performCleanup();
 }
 
 // Utility function for dry run
-export async function previewCleanup(projectRoot: string, config: Partial<CleanupConfig> = {}): Promise<CleanupResult> {
+export async function previewCleanup(
+	projectRoot: string,
+	config: Partial<CleanupConfig> = {},
+): Promise<CleanupResult> {
 	const cleanup = new RootDirectoryCleanup(projectRoot, {
 		...config,
 		dryRun: true,

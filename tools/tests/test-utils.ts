@@ -40,33 +40,45 @@ export const setupSupabaseMockForTable = (tableName: string, mockData: any) => {
 				return {
 					select: vi.fn().mockReturnValue({
 						eq: vi.fn().mockReturnValue({
-							single: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+							single: vi
+								.fn()
+								.mockResolvedValue({ data: mockData, error: null }),
 							order: vi.fn().mockReturnValue({
-								limit: vi.fn().mockResolvedValue({ data: [mockData], error: null }),
+								limit: vi
+									.fn()
+									.mockResolvedValue({ data: [mockData], error: null }),
 							}),
 						}),
 						neq: vi.fn().mockReturnValue({
 							order: vi.fn().mockReturnValue({
-								limit: vi.fn().mockResolvedValue({ data: [mockData], error: null }),
+								limit: vi
+									.fn()
+									.mockResolvedValue({ data: [mockData], error: null }),
 							}),
 						}),
 						ilike: vi.fn().mockReturnValue({
 							eq: vi.fn().mockReturnValue({
 								order: vi.fn().mockReturnValue({
-									limit: vi.fn().mockResolvedValue({ data: [mockData], error: null }),
+									limit: vi
+										.fn()
+										.mockResolvedValue({ data: [mockData], error: null }),
 								}),
 							}),
 						}),
 					}),
 					insert: vi.fn().mockReturnValue({
 						select: vi.fn().mockReturnValue({
-							single: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+							single: vi
+								.fn()
+								.mockResolvedValue({ data: mockData, error: null }),
 						}),
 					}),
 					update: vi.fn().mockReturnValue({
 						eq: vi.fn().mockReturnValue({
 							select: vi.fn().mockReturnValue({
-								single: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+								single: vi
+									.fn()
+									.mockResolvedValue({ data: mockData, error: null }),
 							}),
 						}),
 					}),
@@ -75,7 +87,9 @@ export const setupSupabaseMockForTable = (tableName: string, mockData: any) => {
 					}),
 					upsert: vi.fn().mockReturnValue({
 						select: vi.fn().mockReturnValue({
-							single: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+							single: vi
+								.fn()
+								.mockResolvedValue({ data: mockData, error: null }),
 						}),
 					}),
 				};

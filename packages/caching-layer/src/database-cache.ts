@@ -19,7 +19,7 @@ export class DatabaseCacheLayer implements CacheOperation {
 			maxSize: 500,
 			dedupeConcurrentQueries: true,
 			auditTrail: true,
-		}
+		},
 	) {}
 
 	async get<T>(key: string): Promise<T | null> {
@@ -73,14 +73,17 @@ export class DatabaseCacheLayer implements CacheOperation {
 			healthcareData?: boolean;
 			patientId?: string;
 			auditContext?: string;
-		}
+		},
 	): Promise<void> {
 		// Evict if cache is full
 		if (this.cache.size >= this.config.maxSize) {
 			this.evictLRU();
 		}
 
-		const effectiveTTL = Math.min(ttl || this.config.defaultTTL, this.config.maxTTL);
+		const effectiveTTL = Math.min(
+			ttl || this.config.defaultTTL,
+			this.config.maxTTL,
+		);
 
 		const entry = {
 			value,
@@ -116,7 +119,10 @@ export class DatabaseCacheLayer implements CacheOperation {
 	}
 
 	async getStats(): Promise<CacheStats> {
-		this.stats.hitRate = this.stats.totalRequests > 0 ? (this.stats.hits / this.stats.totalRequests) * 100 : 0;
+		this.stats.hitRate =
+			this.stats.totalRequests > 0
+				? (this.stats.hits / this.stats.totalRequests) * 100
+				: 0;
 		return { ...this.stats };
 	}
 
@@ -129,7 +135,10 @@ export class DatabaseCacheLayer implements CacheOperation {
 	}
 
 	// Query deduplication for database operations
-	async executeWithDedup<T>(key: string, queryFn: () => Promise<T>): Promise<T> {
+	async executeWithDedup<T>(
+		key: string,
+		queryFn: () => Promise<T>,
+	): Promise<T> {
 		if (this.queryBuffer.has(key)) {
 			return await this.queryBuffer.get(key);
 		}
@@ -162,7 +171,11 @@ export class DatabaseCacheLayer implements CacheOperation {
 		}
 	}
 
-	private logHealthcareAccess(_key: string, _operation: string, _context?: string): void {}
+	private logHealthcareAccess(
+		_key: string,
+		_operation: string,
+		_context?: string,
+	): void {}
 
 	private updateStats(startTime: number): void {
 		const responseTime = performance.now() - startTime;
@@ -173,11 +186,18 @@ export class DatabaseCacheLayer implements CacheOperation {
 		}
 
 		this.stats.averageResponseTime =
-			this.responseTimeBuffer.reduce((a, b) => a + b, 0) / this.responseTimeBuffer.length;
+			this.responseTimeBuffer.reduce((a, b) => a + b, 0) /
+			this.responseTimeBuffer.length;
 	}
 
 	private resetStats(): void {
-		this.stats = { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 };
+		this.stats = {
+			hits: 0,
+			misses: 0,
+			hitRate: 0,
+			totalRequests: 0,
+			averageResponseTime: 0,
+		};
 		this.responseTimeBuffer = [];
 	}
 }

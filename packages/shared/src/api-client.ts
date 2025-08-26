@@ -99,7 +99,9 @@ export type ApiResponse<T = unknown> = {
 };
 
 // Default configuration
-const DEFAULT_CONFIG: Required<Omit<ApiClientConfig, "onRequest" | "onResponse" | "onError" | "onAuditLog">> = {
+const DEFAULT_CONFIG: Required<
+	Omit<ApiClientConfig, "onRequest" | "onResponse" | "onError" | "onAuditLog">
+> = {
 	baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
 	timeout: 30_000, // 30 seconds
 	retries: 3,
@@ -122,7 +124,12 @@ class AuthTokenManager {
 	private refreshPromise: Promise<string> | null = null;
 	private tokenExpiry: Date | null = null;
 
-	setTokens(accessToken: string, refreshToken: string, expiresIn?: number, user?: z.infer<typeof UserBaseSchema>) {
+	setTokens(
+		accessToken: string,
+		refreshToken: string,
+		expiresIn?: number,
+		user?: z.infer<typeof UserBaseSchema>,
+	) {
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
 		this.user = user || null;
@@ -146,7 +153,10 @@ class AuthTokenManager {
 				localStorage.setItem("neonpro_user", JSON.stringify(user));
 			}
 			if (this.tokenExpiry) {
-				localStorage.setItem("neonpro_token_expiry", this.tokenExpiry.toISOString());
+				localStorage.setItem(
+					"neonpro_token_expiry",
+					this.tokenExpiry.toISOString(),
+				);
 			}
 		}
 	}
@@ -286,7 +296,7 @@ class AuthTokenManager {
 					this.setTokens(
 						validatedResponse.data.access_token,
 						validatedResponse.data.refresh_token,
-						validatedResponse.data.expires_in
+						validatedResponse.data.expires_in,
 					);
 					return validatedResponse.data.access_token;
 				}
@@ -395,7 +405,9 @@ export const ApiUtils = {
 
 	// Check if running in browser
 	isBrowser: (): boolean => {
-		return typeof window !== "undefined" && typeof window.navigator !== "undefined";
+		return (
+			typeof window !== "undefined" && typeof window.navigator !== "undefined"
+		);
 	},
 
 	// Get user agent
@@ -554,7 +566,10 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 							error_message: response.ok ? "" : `HTTP ${response.status}`,
 							request_duration: duration,
 							request_size: init?.body ? JSON.stringify(init.body).length : 0,
-							response_size: Number.parseInt(response.headers.get("content-length") || "0", 10),
+							response_size: Number.parseInt(
+								response.headers.get("content-length") || "0",
+								10,
+							),
 						});
 					}
 
@@ -592,7 +607,9 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 						},
 						error: lastError,
 						attempt,
-						isRetryable: attempt < finalConfig.retries && !lastError.message.includes("AbortError"),
+						isRetryable:
+							attempt < finalConfig.retries &&
+							!lastError.message.includes("AbortError"),
 					};
 
 					if (config.onError) {
@@ -630,7 +647,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 				accessToken: string,
 				refreshToken: string,
 				expiresIn?: number,
-				user?: z.infer<typeof UserBaseSchema>
+				user?: z.infer<typeof UserBaseSchema>,
 			) => {
 				tokenManager.setTokens(accessToken, refreshToken, expiresIn, user);
 			},
@@ -678,12 +695,22 @@ export type ApiClient = ReturnType<typeof createApiClient>;
 export type { RpcClient };
 
 // Export utilities and classes for advanced usage
-export { tokenManager, auditLogger, RequestValidator, ResponseValidator, AuditLogger, AuthTokenManager };
+export {
+	AuditLogger,
+	auditLogger,
+	AuthTokenManager,
+	RequestValidator,
+	ResponseValidator,
+	tokenManager,
+};
 
 // Helper functions for common patterns
 export const ApiHelpers = {
 	// Handle API response with enhanced error checking and validation
-	handleResponse: async <T>(response: Response, validator?: (data: unknown) => T): Promise<ApiResponse<T>> => {
+	handleResponse: async <T>(
+		response: Response,
+		validator?: (data: unknown) => T,
+	): Promise<ApiResponse<T>> => {
 		try {
 			const data = await response.json();
 
@@ -757,7 +784,11 @@ export const ApiHelpers = {
 	},
 
 	// Create query key for TanStack Query with enhanced structure
-	createQueryKey: (endpoint: string, params?: Record<string, unknown>, userId?: string): string[] => {
+	createQueryKey: (
+		endpoint: string,
+		params?: Record<string, unknown>,
+		userId?: string,
+	): string[] => {
 		const key = ["api", endpoint];
 		if (userId) {
 			key.push("user", userId);
@@ -785,7 +816,9 @@ export const ApiHelpers = {
 		if (typeof error === "object" && error && "error" in error) {
 			const apiError = error as any;
 			if (apiError.error?.validation_errors?.length > 0) {
-				return apiError.error.validation_errors.map((ve: any) => `${ve.field}: ${ve.message}`).join(", ");
+				return apiError.error.validation_errors
+					.map((ve: any) => `${ve.field}: ${ve.message}`)
+					.join(", ");
 			}
 			return apiError.message || "API error occurred";
 		}
@@ -811,9 +844,13 @@ export const ApiHelpers = {
 	isAuthError: (error: unknown): boolean => {
 		if (typeof error === "object" && error && "error" in error) {
 			const errorCode = (error as any).error?.code;
-			return ["UNAUTHORIZED", "FORBIDDEN", "TOKEN_EXPIRED", "INVALID_CREDENTIALS", "SESSION_EXPIRED"].includes(
-				errorCode
-			);
+			return [
+				"UNAUTHORIZED",
+				"FORBIDDEN",
+				"TOKEN_EXPIRED",
+				"INVALID_CREDENTIALS",
+				"SESSION_EXPIRED",
+			].includes(errorCode);
 		}
 		return false;
 	},
@@ -822,7 +859,10 @@ export const ApiHelpers = {
 	isValidationError: (error: unknown): boolean => {
 		if (typeof error === "object" && error && "error" in error) {
 			const apiError = error as any;
-			return apiError.error?.code === "VALIDATION_ERROR" || apiError.error?.validation_errors?.length > 0;
+			return (
+				apiError.error?.code === "VALIDATION_ERROR" ||
+				apiError.error?.validation_errors?.length > 0
+			);
 		}
 		return false;
 	},

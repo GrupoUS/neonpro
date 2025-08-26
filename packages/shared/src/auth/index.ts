@@ -30,8 +30,8 @@ export {
 export {
 	type AuthTokenData,
 	AuthTokenManager,
-	type AuthTokens,
 	authTokenManager,
+	type AuthTokens,
 } from "./auth-token-manager";
 // Route Protection
 export {

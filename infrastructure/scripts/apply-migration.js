@@ -61,7 +61,11 @@ async function checkEnvironment() {
 	}
 
 	const envContent = fs.readFileSync(envPath, "utf8");
-	const requiredVars = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY"];
+	const requiredVars = [
+		"NEXT_PUBLIC_SUPABASE_URL",
+		"NEXT_PUBLIC_SUPABASE_ANON_KEY",
+		"SUPABASE_SERVICE_ROLE_KEY",
+	];
 
 	const missingVars = requiredVars.filter((varName) => {
 		const regex = new RegExp(`^${varName}=(.+)$`, "m");
@@ -70,7 +74,10 @@ async function checkEnvironment() {
 	});
 
 	if (missingVars.length > 0) {
-		log(`❌ Variáveis de ambiente faltando: ${missingVars.join(", ")}`, COLORS.RED);
+		log(
+			`❌ Variáveis de ambiente faltando: ${missingVars.join(", ")}`,
+			COLORS.RED,
+		);
 		return false;
 	}
 
@@ -92,7 +99,10 @@ async function applyMigration() {
 			await execPromise("npx supabase link");
 		} catch (_linkError) {
 			log("❌ Falha ao conectar com Supabase", COLORS.RED);
-			log("💡 Execute manualmente: npx supabase login && npx supabase link", COLORS.YELLOW);
+			log(
+				"💡 Execute manualmente: npx supabase login && npx supabase link",
+				COLORS.YELLOW,
+			);
 			return false;
 		}
 	}
@@ -113,7 +123,7 @@ async function applyMigration() {
 		log("2. Vá para SQL Editor", COLORS.YELLOW);
 		log(
 			"3. Execute o conteúdo do arquivo: infrastructure/database/migrations/20241231000000_create_subscriptions.sql",
-			COLORS.YELLOW
+			COLORS.YELLOW,
 		);
 
 		return false;
@@ -150,11 +160,15 @@ async function showNextSteps() {
 	log("   - STRIPE_WEBHOOK_SECRET=whsec_...");
 	log("3. 🧪 Execute: npm run test:middleware");
 	log("4. 🚀 Execute: npm run setup:subscriptions");
-	log("5. 🌐 Teste o middleware em: http://localhost:3000/dashboard/subscription");
+	log(
+		"5. 🌐 Teste o middleware em: http://localhost:3000/dashboard/subscription",
+	);
 }
 
 async function main() {
-	log(`${COLORS.BOLD}🔄 NeonPro - Aplicar Migration de Subscriptions${COLORS.RESET}`);
+	log(
+		`${COLORS.BOLD}🔄 NeonPro - Aplicar Migration de Subscriptions${COLORS.RESET}`,
+	);
 	log("=".repeat(60));
 
 	try {
@@ -184,7 +198,10 @@ async function main() {
 			log("\n✅ Migration aplicada com sucesso!", COLORS.GREEN);
 			process.exit(0);
 		} else {
-			log("\n⚠️  Migration pode ter falhado, mas sistema pode estar funcional", COLORS.YELLOW);
+			log(
+				"\n⚠️  Migration pode ter falhado, mas sistema pode estar funcional",
+				COLORS.YELLOW,
+			);
 			process.exit(0);
 		}
 	} catch (error) {

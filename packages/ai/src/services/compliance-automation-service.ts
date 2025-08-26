@@ -33,7 +33,11 @@ export type ComplianceViolation = {
 };
 
 export type ComplianceRecommendation = {
-	category: "data_protection" | "consent_management" | "retention_policy" | "access_control";
+	category:
+		| "data_protection"
+		| "consent_management"
+		| "retention_policy"
+		| "access_control";
 	priority: "low" | "medium" | "high";
 	action: string;
 	description: string;
@@ -67,7 +71,13 @@ export type ComplianceRule = {
 
 export type ComplianceCondition = {
 	field: string;
-	operator: "equals" | "contains" | "greater_than" | "less_than" | "in" | "not_in";
+	operator:
+		| "equals"
+		| "contains"
+		| "greater_than"
+		| "less_than"
+		| "in"
+		| "not_in";
 	value: any;
 };
 
@@ -82,7 +92,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 > {
 	protected serviceId = "compliance-automation";
 	protected version = "1.0.0";
-	protected description = "Automated compliance checking and enforcement for AI services";
+	protected description =
+		"Automated compliance checking and enforcement for AI services";
 
 	private readonly supabase: SupabaseClient;
 	private readonly complianceRules: Map<string, ComplianceRule> = new Map();
@@ -93,7 +104,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		this.loadComplianceRules();
 	}
 
-	async execute(input: ComplianceAutomationInput): Promise<ComplianceAutomationOutput> {
+	async execute(
+		input: ComplianceAutomationInput,
+	): Promise<ComplianceAutomationOutput> {
 		try {
 			// Step 1: Validate input data
 			this.validateInput(input);
@@ -111,16 +124,27 @@ export class ComplianceAutomationService extends EnhancedAIService<
 			const retentionPeriod = this.calculateRetentionPeriod(input);
 
 			// Step 6: Generate recommendations
-			const recommendations = await this.generateRecommendations(input, violations);
+			const recommendations = await this.generateRecommendations(
+				input,
+				violations,
+			);
 
 			// Step 7: Create audit trail entry
-			const auditTrail = this.createAuditTrail(input, violations, lawfulBasis, consentRequired, retentionPeriod);
+			const auditTrail = this.createAuditTrail(
+				input,
+				violations,
+				lawfulBasis,
+				consentRequired,
+				retentionPeriod,
+			);
 
 			// Step 8: Log to database
 			await this.logComplianceCheck(auditTrail);
 
 			// Step 9: Check for critical violations that require immediate action
-			const criticalViolations = violations.filter((v) => v.severity === "critical");
+			const criticalViolations = violations.filter(
+				(v) => v.severity === "critical",
+			);
 			if (criticalViolations.length > 0) {
 				await this.handleCriticalViolations(criticalViolations, input);
 			}
@@ -135,23 +159,40 @@ export class ComplianceAutomationService extends EnhancedAIService<
 				retentionPeriod,
 			};
 		} catch (error) {
-			this.logger.error(`Compliance automation failed: ${error instanceof Error ? error.message : "Unknown error"}`, {
-				serviceName: this.serviceId,
-				userId: input.userId,
-				clinicId: input.clinicId,
-				error: error instanceof Error ? error.stack : String(error),
-			});
+			this.logger.error(
+				`Compliance automation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+				{
+					serviceName: this.serviceId,
+					userId: input.userId,
+					clinicId: input.clinicId,
+					error: error instanceof Error ? error.stack : String(error),
+				},
+			);
 
-			throw new Error(`Compliance automation failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+			throw new Error(
+				`Compliance automation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+			);
 		}
 	}
 
 	private validateInput(input: ComplianceAutomationInput): void {
-		if (!(input.userId && input.clinicId && input.serviceName && input.operationType)) {
-			throw new Error("Missing required fields: userId, clinicId, serviceName, operationType");
+		if (
+			!(
+				input.userId &&
+				input.clinicId &&
+				input.serviceName &&
+				input.operationType
+			)
+		) {
+			throw new Error(
+				"Missing required fields: userId, clinicId, serviceName, operationType",
+			);
 		}
 
-		if (!Array.isArray(input.dataCategories) || input.dataCategories.length === 0) {
+		if (
+			!Array.isArray(input.dataCategories) ||
+			input.dataCategories.length === 0
+		) {
 			throw new Error("Data categories must be a non-empty array");
 		}
 
@@ -170,13 +211,19 @@ export class ComplianceAutomationService extends EnhancedAIService<
 			"behavioral_data",
 		];
 
-		const invalidCategories = input.dataCategories.filter((cat) => !validDataCategories.includes(cat));
+		const invalidCategories = input.dataCategories.filter(
+			(cat) => !validDataCategories.includes(cat),
+		);
 		if (invalidCategories.length > 0) {
-			throw new Error(`Invalid data categories: ${invalidCategories.join(", ")}`);
+			throw new Error(
+				`Invalid data categories: ${invalidCategories.join(", ")}`,
+			);
 		}
 	}
 
-	private async evaluateComplianceRules(input: ComplianceAutomationInput): Promise<ComplianceViolation[]> {
+	private async evaluateComplianceRules(
+		input: ComplianceAutomationInput,
+	): Promise<ComplianceViolation[]> {
 		const violations: ComplianceViolation[] = [];
 
 		for (const rule of this.complianceRules.values()) {
@@ -198,10 +245,17 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return violations;
 	}
 
-	private evaluateRuleConditions(conditions: ComplianceCondition[], input: ComplianceAutomationInput): boolean {
+	private evaluateRuleConditions(
+		conditions: ComplianceCondition[],
+		input: ComplianceAutomationInput,
+	): boolean {
 		return conditions.every((condition) => {
 			const fieldValue = this.getFieldValue(input, condition.field);
-			return this.evaluateCondition(fieldValue, condition.operator, condition.value);
+			return this.evaluateCondition(
+				fieldValue,
+				condition.operator,
+				condition.value,
+			);
 		});
 	}
 
@@ -219,7 +273,11 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return fieldMap[field];
 	}
 
-	private evaluateCondition(fieldValue: any, operator: string, expectedValue: any): boolean {
+	private evaluateCondition(
+		fieldValue: any,
+		operator: string,
+		expectedValue: any,
+	): boolean {
 		switch (operator) {
 			case "equals":
 				return fieldValue === expectedValue;
@@ -232,9 +290,13 @@ export class ComplianceAutomationService extends EnhancedAIService<
 			case "less_than":
 				return Number(fieldValue) < Number(expectedValue);
 			case "in":
-				return Array.isArray(expectedValue) && expectedValue.includes(fieldValue);
+				return (
+					Array.isArray(expectedValue) && expectedValue.includes(fieldValue)
+				);
 			case "not_in":
-				return Array.isArray(expectedValue) && !expectedValue.includes(fieldValue);
+				return (
+					Array.isArray(expectedValue) && !expectedValue.includes(fieldValue)
+				);
 			default:
 				return false;
 		}
@@ -242,7 +304,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
 
 	private async checkRuleCompliance(
 		rule: ComplianceRule,
-		input: ComplianceAutomationInput
+		input: ComplianceAutomationInput,
 	): Promise<ComplianceViolation | null> {
 		// Implementation depends on specific rule types
 		switch (rule.type) {
@@ -259,7 +321,10 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		}
 	}
 
-	private checkLGPDCompliance(rule: ComplianceRule, input: ComplianceAutomationInput): ComplianceViolation | null {
+	private checkLGPDCompliance(
+		rule: ComplianceRule,
+		input: ComplianceAutomationInput,
+	): ComplianceViolation | null {
 		// LGPD compliance checks
 		switch (rule.id) {
 			case "lgpd_sensitive_data_consent":
@@ -270,7 +335,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						code: "LGPD-001",
 						description: "Sensitive data processing requires explicit consent",
 						regulation: "Lei Geral de Proteção de Dados - Art. 11",
-						remediation: "Obtain explicit consent before processing sensitive health data",
+						remediation:
+							"Obtain explicit consent before processing sensitive health data",
 					};
 				}
 				break;
@@ -281,9 +347,11 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						type: "LGPD",
 						severity: "high",
 						code: "LGPD-002",
-						description: "Data processing purpose is not clearly defined or legitimate",
+						description:
+							"Data processing purpose is not clearly defined or legitimate",
 						regulation: "Lei Geral de Proteção de Dados - Art. 6, I",
-						remediation: "Define a clear, legitimate purpose for data processing",
+						remediation:
+							"Define a clear, legitimate purpose for data processing",
 					};
 				}
 				break;
@@ -296,14 +364,18 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						code: "LGPD-003",
 						description: "Data collection appears excessive for stated purpose",
 						regulation: "Lei Geral de Proteção de Dados - Art. 6, III",
-						remediation: "Limit data collection to what is necessary for the specified purpose",
+						remediation:
+							"Limit data collection to what is necessary for the specified purpose",
 					};
 				}
 				break;
 
 			case "lgpd_retention_period": {
 				const maxRetention = this.getMaxRetentionPeriod(input.dataCategories);
-				if (input.retentionPeriodDays && input.retentionPeriodDays > maxRetention) {
+				if (
+					input.retentionPeriodDays &&
+					input.retentionPeriodDays > maxRetention
+				) {
 					return {
 						type: "LGPD",
 						severity: "medium",
@@ -320,7 +392,10 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return null;
 	}
 
-	private checkANVISACompliance(rule: ComplianceRule, input: ComplianceAutomationInput): ComplianceViolation | null {
+	private checkANVISACompliance(
+		rule: ComplianceRule,
+		input: ComplianceAutomationInput,
+	): ComplianceViolation | null {
 		// ANVISA compliance checks for healthcare data
 		if (input.dataCategories.includes("health_data")) {
 			switch (rule.id) {
@@ -330,22 +405,29 @@ export class ComplianceAutomationService extends EnhancedAIService<
 							type: "ANVISA",
 							severity: "critical",
 							code: "ANVISA-001",
-							description: "Medical data must be encrypted in transit and at rest",
+							description:
+								"Medical data must be encrypted in transit and at rest",
 							regulation: "ANVISA Resolution RDC 797/2023",
-							remediation: "Implement end-to-end encryption for all medical data",
+							remediation:
+								"Implement end-to-end encryption for all medical data",
 						};
 					}
 					break;
 
 				case "anvisa_professional_authorization":
-					if (input.operationType.includes("diagnosis") && !this.hasHealthcareProfessionalAuth(input)) {
+					if (
+						input.operationType.includes("diagnosis") &&
+						!this.hasHealthcareProfessionalAuth(input)
+					) {
 						return {
 							type: "ANVISA",
 							severity: "critical",
 							code: "ANVISA-002",
-							description: "Medical diagnosis operations require healthcare professional authorization",
+							description:
+								"Medical diagnosis operations require healthcare professional authorization",
 							regulation: "ANVISA Resolution RDC 797/2023",
-							remediation: "Ensure operation is authorized by licensed healthcare professional",
+							remediation:
+								"Ensure operation is authorized by licensed healthcare professional",
 						};
 					}
 					break;
@@ -355,9 +437,15 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return null;
 	}
 
-	private checkCFMCompliance(rule: ComplianceRule, input: ComplianceAutomationInput): ComplianceViolation | null {
+	private checkCFMCompliance(
+		rule: ComplianceRule,
+		input: ComplianceAutomationInput,
+	): ComplianceViolation | null {
 		// CFM (Conselho Federal de Medicina) compliance checks
-		if (input.operationType.includes("medical") || input.operationType.includes("diagnosis")) {
+		if (
+			input.operationType.includes("medical") ||
+			input.operationType.includes("diagnosis")
+		) {
 			switch (rule.id) {
 				case "cfm_telemedicine_requirements":
 					if (!this.meetsTelemedicineRequirements(input)) {
@@ -365,9 +453,11 @@ export class ComplianceAutomationService extends EnhancedAIService<
 							type: "CFM",
 							severity: "high",
 							code: "CFM-001",
-							description: "Telemedicine operations must comply with CFM Resolution 2314/2022",
+							description:
+								"Telemedicine operations must comply with CFM Resolution 2314/2022",
 							regulation: "CFM Resolution 2314/2022",
-							remediation: "Ensure telemedicine consultation meets all CFM requirements",
+							remediation:
+								"Ensure telemedicine consultation meets all CFM requirements",
 						};
 					}
 					break;
@@ -378,9 +468,11 @@ export class ComplianceAutomationService extends EnhancedAIService<
 							type: "CFM",
 							severity: "high",
 							code: "CFM-002",
-							description: "Medical record integrity and authenticity must be guaranteed",
+							description:
+								"Medical record integrity and authenticity must be guaranteed",
 							regulation: "CFM Resolution 1638/2002",
-							remediation: "Implement digital signatures and audit trails for medical records",
+							remediation:
+								"Implement digital signatures and audit trails for medical records",
 						};
 					}
 					break;
@@ -390,18 +482,26 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return null;
 	}
 
-	private checkInternalCompliance(rule: ComplianceRule, input: ComplianceAutomationInput): ComplianceViolation | null {
+	private checkInternalCompliance(
+		rule: ComplianceRule,
+		input: ComplianceAutomationInput,
+	): ComplianceViolation | null {
 		// Internal compliance checks
 		switch (rule.id) {
 			case "internal_ai_transparency":
-				if (input.serviceName.includes("ai") && !this.hasAITransparency(input)) {
+				if (
+					input.serviceName.includes("ai") &&
+					!this.hasAITransparency(input)
+				) {
 					return {
 						type: "INTERNAL",
 						severity: "medium",
 						code: "INT-001",
-						description: "AI operations must provide transparency and explainability",
+						description:
+							"AI operations must provide transparency and explainability",
 						regulation: "Internal AI Ethics Policy",
-						remediation: "Implement AI decision transparency and user notification",
+						remediation:
+							"Implement AI decision transparency and user notification",
 					};
 				}
 				break;
@@ -412,9 +512,11 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						type: "INTERNAL",
 						severity: "medium",
 						code: "INT-002",
-						description: "All operations must maintain comprehensive audit trails",
+						description:
+							"All operations must maintain comprehensive audit trails",
 						regulation: "Internal Audit Policy",
-						remediation: "Enable comprehensive audit logging for all operations",
+						remediation:
+							"Enable comprehensive audit logging for all operations",
 					};
 				}
 				break;
@@ -433,18 +535,27 @@ export class ComplianceAutomationService extends EnhancedAIService<
 			return "protection_of_life"; // Art. 7, IV LGPD
 		}
 
-		if (input.purpose.includes("contract") || input.purpose.includes("service")) {
+		if (
+			input.purpose.includes("contract") ||
+			input.purpose.includes("service")
+		) {
 			return "contract_execution"; // Art. 7, V LGPD
 		}
 
-		if (input.purpose.includes("legal") || input.purpose.includes("compliance")) {
+		if (
+			input.purpose.includes("legal") ||
+			input.purpose.includes("compliance")
+		) {
 			return "legal_obligation"; // Art. 7, II LGPD
 		}
 
 		return "legitimate_interest"; // Art. 7, IX LGPD
 	}
 
-	private isConsentRequired(input: ComplianceAutomationInput, lawfulBasis: string): boolean {
+	private isConsentRequired(
+		input: ComplianceAutomationInput,
+		lawfulBasis: string,
+	): boolean {
 		return (
 			lawfulBasis === "explicit_consent" ||
 			input.sensitiveDataHandled ||
@@ -475,7 +586,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
 
 	private async generateRecommendations(
 		input: ComplianceAutomationInput,
-		violations: ComplianceViolation[]
+		violations: ComplianceViolation[],
 	): Promise<ComplianceRecommendation[]> {
 		const recommendations: ComplianceRecommendation[] = [];
 
@@ -487,7 +598,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						category: "consent_management",
 						priority: "high",
 						action: "Implement consent management system",
-						description: "Deploy automated consent collection and management for sensitive data processing",
+						description:
+							"Deploy automated consent collection and management for sensitive data processing",
 						implementationSteps: [
 							"Create consent collection interface",
 							"Implement consent storage and tracking",
@@ -502,7 +614,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						category: "data_protection",
 						priority: "high",
 						action: "Define clear data processing purposes",
-						description: "Establish clear, documented purposes for all data processing activities",
+						description:
+							"Establish clear, documented purposes for all data processing activities",
 						implementationSteps: [
 							"Document all data processing purposes",
 							"Map data flows to specific purposes",
@@ -517,7 +630,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 						category: "data_protection",
 						priority: "high",
 						action: "Implement medical data encryption",
-						description: "Deploy end-to-end encryption for all medical data processing",
+						description:
+							"Deploy end-to-end encryption for all medical data processing",
 						implementationSteps: [
 							"Enable database encryption at rest",
 							"Implement TLS 1.3 for data in transit",
@@ -535,7 +649,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 				category: "access_control",
 				priority: "medium",
 				action: "Implement AI transparency measures",
-				description: "Add explainability and transparency features for AI decisions",
+				description:
+					"Add explainability and transparency features for AI decisions",
 				implementationSteps: [
 					"Implement decision explanation interfaces",
 					"Add confidence score displays",
@@ -553,7 +668,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		violations: ComplianceViolation[],
 		lawfulBasis: string,
 		consentRequired: boolean,
-		retentionPeriod: number
+		retentionPeriod: number,
 	): ComplianceAuditEntry {
 		return {
 			timestamp: new Date(),
@@ -575,7 +690,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		};
 	}
 
-	private async logComplianceCheck(auditTrail: ComplianceAuditEntry): Promise<void> {
+	private async logComplianceCheck(
+		auditTrail: ComplianceAuditEntry,
+	): Promise<void> {
 		try {
 			await this.supabase.from("ai_compliance_logs").insert({
 				user_id: auditTrail.userId,
@@ -586,7 +703,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 				lawful_basis: auditTrail.lawfulBasis,
 				purpose: "AI service compliance check",
 				retention_period_days: auditTrail.retentionPeriod,
-				sensitive_data_handled: auditTrail.dataCategories.includes("sensitive_data"),
+				sensitive_data_handled:
+					auditTrail.dataCategories.includes("sensitive_data"),
 				consent_obtained: auditTrail.consentObtained,
 				audit_trail: {
 					compliance_status: auditTrail.complianceStatus,
@@ -612,7 +730,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
 
 	private async handleCriticalViolations(
 		violations: ComplianceViolation[],
-		input: ComplianceAutomationInput
+		input: ComplianceAutomationInput,
 	): Promise<void> {
 		for (const violation of violations) {
 			// Log critical violation
@@ -630,12 +748,17 @@ export class ComplianceAutomationService extends EnhancedAIService<
 
 			// Block operation if necessary
 			if (this.shouldBlockOperation(violation)) {
-				throw new Error(`Operation blocked due to critical compliance violation: ${violation.description}`);
+				throw new Error(
+					`Operation blocked due to critical compliance violation: ${violation.description}`,
+				);
 			}
 		}
 	}
 
-	private async createComplianceAlert(violation: ComplianceViolation, input: ComplianceAutomationInput): Promise<void> {
+	private async createComplianceAlert(
+		violation: ComplianceViolation,
+		input: ComplianceAutomationInput,
+	): Promise<void> {
 		try {
 			await this.supabase.from("ai_system_alerts").insert({
 				alert_type: "compliance_violation",
@@ -662,7 +785,10 @@ export class ComplianceAutomationService extends EnhancedAIService<
 	private shouldBlockOperation(violation: ComplianceViolation): boolean {
 		// Block operations for critical violations
 		const blockingCodes = ["LGPD-001", "ANVISA-001", "ANVISA-002"];
-		return violation.severity === "critical" && blockingCodes.includes(violation.code);
+		return (
+			violation.severity === "critical" &&
+			blockingCodes.includes(violation.code)
+		);
 	}
 
 	// Helper methods for compliance checks
@@ -683,13 +809,17 @@ export class ComplianceAutomationService extends EnhancedAIService<
 			"billing_processing",
 		];
 
-		return legitimatePurposes.some((legit) => purpose.toLowerCase().includes(legit));
+		return legitimatePurposes.some((legit) =>
+			purpose.toLowerCase().includes(legit),
+		);
 	}
 
 	private isDataExcessive(dataCategories: string[], purpose: string): boolean {
 		// Simplified logic - in production, this would be more sophisticated
 		const necessaryCategories = this.getNecessaryDataCategories(purpose);
-		return dataCategories.some((category) => !necessaryCategories.includes(category));
+		return dataCategories.some(
+			(category) => !necessaryCategories.includes(category),
+		);
 	}
 
 	private getNecessaryDataCategories(purpose: string): string[] {
@@ -728,17 +858,23 @@ export class ComplianceAutomationService extends EnhancedAIService<
 		return true; // Placeholder - implement actual encryption checking
 	}
 
-	private hasHealthcareProfessionalAuth(_input: ComplianceAutomationInput): boolean {
+	private hasHealthcareProfessionalAuth(
+		_input: ComplianceAutomationInput,
+	): boolean {
 		// Implementation would check professional authorization
 		return false; // Placeholder - implement actual authorization checking
 	}
 
-	private meetsTelemedicineRequirements(_input: ComplianceAutomationInput): boolean {
+	private meetsTelemedicineRequirements(
+		_input: ComplianceAutomationInput,
+	): boolean {
 		// Implementation would check telemedicine compliance
 		return true; // Placeholder - implement actual telemedicine checking
 	}
 
-	private hasValidMedicalRecordIntegrity(_input: ComplianceAutomationInput): boolean {
+	private hasValidMedicalRecordIntegrity(
+		_input: ComplianceAutomationInput,
+	): boolean {
 		// Implementation would check medical record integrity
 		return true; // Placeholder - implement actual integrity checking
 	}
@@ -761,7 +897,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
 				name: "LGPD Sensitive Data Consent",
 				type: "LGPD",
 				category: "consent_management",
-				conditions: [{ field: "sensitiveDataHandled", operator: "equals", value: true }],
+				conditions: [
+					{ field: "sensitiveDataHandled", operator: "equals", value: true },
+				],
 				actions: [{ type: "require_consent", parameters: {} }],
 				severity: "critical",
 				enabled: true,
@@ -771,7 +909,13 @@ export class ComplianceAutomationService extends EnhancedAIService<
 				name: "LGPD Purpose Limitation",
 				type: "LGPD",
 				category: "data_protection",
-				conditions: [{ field: "dataCategories", operator: "contains", value: "personal_data" }],
+				conditions: [
+					{
+						field: "dataCategories",
+						operator: "contains",
+						value: "personal_data",
+					},
+				],
 				actions: [{ type: "log", parameters: {} }],
 				severity: "high",
 				enabled: true,
@@ -781,7 +925,13 @@ export class ComplianceAutomationService extends EnhancedAIService<
 				name: "ANVISA Medical Data Encryption",
 				type: "ANVISA",
 				category: "data_protection",
-				conditions: [{ field: "dataCategories", operator: "contains", value: "health_data" }],
+				conditions: [
+					{
+						field: "dataCategories",
+						operator: "contains",
+						value: "health_data",
+					},
+				],
 				actions: [{ type: "block", parameters: {} }],
 				severity: "critical",
 				enabled: true,

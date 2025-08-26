@@ -7,14 +7,18 @@ type ChatInterfaceProps = {
 	placeholder?: string;
 };
 
-export default function ChatInterface({ interface_type = "external", className, placeholder }: ChatInterfaceProps) {
+export default function ChatInterface({
+	interface_type = "external",
+	className,
+	placeholder,
+}: ChatInterfaceProps) {
 	return (
 		<div className={className}>
 			<div className="rounded-lg border p-4">
 				<h3 className="font-semibold text-lg">Chat Interface</h3>
 				<p className="text-gray-600">
-					{interface_type === "external" ? "External" : "Internal"} chat interface will be implemented in a future
-					version.
+					{interface_type === "external" ? "External" : "Internal"} chat
+					interface will be implemented in a future version.
 				</p>
 				<input
 					className="mt-2 w-full rounded border p-2"

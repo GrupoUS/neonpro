@@ -365,7 +365,7 @@ groups:
           action: "Consider model retraining or updating training data"
 
       - alert: AIModelTrainingRequired
-        expr: time() - ai_model_last_training_timestamp > 2592000  # 30 days
+        expr: time() - ai_model_last_training_timestamp > 2592000 # 30 days
         for: 1h
         labels:
           severity: info

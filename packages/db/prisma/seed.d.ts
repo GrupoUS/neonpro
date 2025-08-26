@@ -7,4 +7,4 @@
  * @compliance LGPD + ANVISA + CFM
  */
 export {};
-//# sourceMappingURL=seed.d.ts.map
+// # sourceMappingURL=seed.d.ts.map

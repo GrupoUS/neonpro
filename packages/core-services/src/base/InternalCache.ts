@@ -32,7 +32,7 @@ export class InternalHealthcareCacheManager {
 			maxItems: 1000,
 			defaultTTL: 900_000, // 15 minutes
 			encryptSensitiveData: true,
-		}
+		},
 	) {}
 
 	/**
@@ -87,7 +87,7 @@ export class InternalHealthcareCacheManager {
 		key: string,
 		value: T,
 		patientConsent = false,
-		ttl = 300_000 // 5 minutes default
+		ttl = 300_000, // 5 minutes default
 	): void {
 		if (!patientConsent) {
 			return;
@@ -136,7 +136,7 @@ export class InternalHealthcareCacheManager {
 		item.auditLog.push(
 			`Sensitive access: ${new Date().toISOString()}`,
 			`User: ${auditUserId || "anonymous"}`,
-			`Consent verified: ${item.patientConsent}`
+			`Consent verified: ${item.patientConsent}`,
 		);
 
 		return item.data as T;

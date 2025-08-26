@@ -113,5 +113,5 @@ import { SearchBox } from '@neonpro/ui/molecules/SearchBox';
 import { PatientTable } from '@neonpro/ui/organisms/PatientTable';
 
 // After (simple):
-import { Button, SearchBox, PatientTable } from '@neonpro/ui';
+import { Button, PatientTable, SearchBox } from '@neonpro/ui';
 ```

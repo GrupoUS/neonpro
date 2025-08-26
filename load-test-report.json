@@ -1,91 +1,91 @@
 {
-  "timestamp": "2025-08-25T16:42:51.207Z",
-  "config": {
-    "concurrent_users": [1, 5, 10, 20, 50],
-    "duration_seconds": 30,
-    "ramp_up_seconds": 5,
-    "targets": {
-      "response_time_95th": 2000,
-      "error_rate": 0.05,
-      "throughput_min": 10
-    }
-  },
-  "results": [
-    {
-      "userCount": 1,
-      "requestCount": 95,
-      "errorRate": 0.02,
-      "avgResponseTime": 417,
-      "p95ResponseTime": 842,
-      "throughput": 3.17,
-      "passed": false,
-      "breakdown": {
-        "p95Pass": true,
-        "errorPass": true,
-        "throughputPass": false
-      }
-    },
-    {
-      "userCount": 5,
-      "requestCount": 432,
-      "errorRate": 0.02,
-      "avgResponseTime": 452,
-      "p95ResponseTime": 858,
-      "throughput": 14.4,
-      "passed": true,
-      "breakdown": {
-        "p95Pass": true,
-        "errorPass": true,
-        "throughputPass": true
-      }
-    },
-    {
-      "userCount": 10,
-      "requestCount": 897,
-      "errorRate": 0.03,
-      "avgResponseTime": 451,
-      "p95ResponseTime": 855,
-      "throughput": 29.9,
-      "passed": true,
-      "breakdown": {
-        "p95Pass": true,
-        "errorPass": true,
-        "throughputPass": true
-      }
-    },
-    {
-      "userCount": 20,
-      "requestCount": 1756,
-      "errorRate": 0.03,
-      "avgResponseTime": 468,
-      "p95ResponseTime": 871,
-      "throughput": 58.53,
-      "passed": true,
-      "breakdown": {
-        "p95Pass": true,
-        "errorPass": true,
-        "throughputPass": true
-      }
-    },
-    {
-      "userCount": 50,
-      "requestCount": 4465,
-      "errorRate": 0.03,
-      "avgResponseTime": 455,
-      "p95ResponseTime": 844,
-      "throughput": 148.83,
-      "passed": true,
-      "breakdown": {
-        "p95Pass": true,
-        "errorPass": true,
-        "throughputPass": true
-      }
-    }
-  ],
-  "summary": {
-    "total_scenarios": 5,
-    "passed_scenarios": 4,
-    "max_concurrent_users": 50,
-    "overall_pass": false
-  }
+	"timestamp": "2025-08-25T16:42:51.207Z",
+	"config": {
+		"concurrent_users": [1, 5, 10, 20, 50],
+		"duration_seconds": 30,
+		"ramp_up_seconds": 5,
+		"targets": {
+			"response_time_95th": 2000,
+			"error_rate": 0.05,
+			"throughput_min": 10
+		}
+	},
+	"results": [
+		{
+			"userCount": 1,
+			"requestCount": 95,
+			"errorRate": 0.02,
+			"avgResponseTime": 417,
+			"p95ResponseTime": 842,
+			"throughput": 3.17,
+			"passed": false,
+			"breakdown": {
+				"p95Pass": true,
+				"errorPass": true,
+				"throughputPass": false
+			}
+		},
+		{
+			"userCount": 5,
+			"requestCount": 432,
+			"errorRate": 0.02,
+			"avgResponseTime": 452,
+			"p95ResponseTime": 858,
+			"throughput": 14.4,
+			"passed": true,
+			"breakdown": {
+				"p95Pass": true,
+				"errorPass": true,
+				"throughputPass": true
+			}
+		},
+		{
+			"userCount": 10,
+			"requestCount": 897,
+			"errorRate": 0.03,
+			"avgResponseTime": 451,
+			"p95ResponseTime": 855,
+			"throughput": 29.9,
+			"passed": true,
+			"breakdown": {
+				"p95Pass": true,
+				"errorPass": true,
+				"throughputPass": true
+			}
+		},
+		{
+			"userCount": 20,
+			"requestCount": 1756,
+			"errorRate": 0.03,
+			"avgResponseTime": 468,
+			"p95ResponseTime": 871,
+			"throughput": 58.53,
+			"passed": true,
+			"breakdown": {
+				"p95Pass": true,
+				"errorPass": true,
+				"throughputPass": true
+			}
+		},
+		{
+			"userCount": 50,
+			"requestCount": 4465,
+			"errorRate": 0.03,
+			"avgResponseTime": 455,
+			"p95ResponseTime": 844,
+			"throughput": 148.83,
+			"passed": true,
+			"breakdown": {
+				"p95Pass": true,
+				"errorPass": true,
+				"throughputPass": true
+			}
+		}
+	],
+	"summary": {
+		"total_scenarios": 5,
+		"passed_scenarios": 4,
+		"max_concurrent_users": 50,
+		"overall_pass": false
+	}
 }

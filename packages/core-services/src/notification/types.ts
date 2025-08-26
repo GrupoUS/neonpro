@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { type BaseEntity, DateSchema, EmailSchema, NotificationType, PhoneSchema, UUIDSchema } from "../types";
+import {
+	type BaseEntity,
+	DateSchema,
+	EmailSchema,
+	NotificationType,
+	PhoneSchema,
+	UUIDSchema,
+} from "../types";
 
 // Notification interfaces for aesthetic clinic communications
 export interface Notification extends BaseEntity {
@@ -259,7 +266,9 @@ export const CreateNotificationSchema = z.object({
 	templateId: UUIDSchema.optional(),
 	templateData: z.record(z.any()).optional(),
 	scheduledAt: DateSchema.optional(),
-	priority: z.nativeEnum(NotificationPriority).default(NotificationPriority.NORMAL),
+	priority: z
+		.nativeEnum(NotificationPriority)
+		.default(NotificationPriority.NORMAL),
 	maxRetries: z.number().min(0).max(5).default(3),
 	metadata: z.record(z.any()).optional(),
 	campaignId: UUIDSchema.optional(),
@@ -328,8 +337,14 @@ export const NotificationPreferenceSchema = z.object({
 	language: z.string().default("pt-BR"),
 });
 
-export type CreateNotificationTemplateData = z.infer<typeof CreateNotificationTemplateSchema>;
+export type CreateNotificationTemplateData = z.infer<
+	typeof CreateNotificationTemplateSchema
+>;
 export type CreateNotificationData = z.infer<typeof CreateNotificationSchema>;
-export type CreateNotificationCampaignData = z.infer<typeof CreateNotificationCampaignSchema>;
-export type NotificationPreferenceData = z.infer<typeof NotificationPreferenceSchema>;
+export type CreateNotificationCampaignData = z.infer<
+	typeof CreateNotificationCampaignSchema
+>;
+export type NotificationPreferenceData = z.infer<
+	typeof NotificationPreferenceSchema
+>;
 export type AudienceFilterData = z.infer<typeof AudienceFilterSchema>;

@@ -4,7 +4,10 @@
  * Migração do PatientService para usar o Enhanced Service Layer Pattern
  */
 
-import { EnhancedServiceBase, type ServiceConfig } from "../base/EnhancedServiceBase";
+import {
+	EnhancedServiceBase,
+	type ServiceConfig,
+} from "../base/EnhancedServiceBase";
 import type { ServiceContext } from "../types";
 
 // Temporary type definitions for build - will be replaced with proper types
@@ -100,12 +103,17 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 	/**
 	 * Create patient with enhanced security and audit
 	 */
-	async createPatient(data: CreatePatientData, context: ServiceContext): Promise<Patient> {
+	async createPatient(
+		data: CreatePatientData,
+		context: ServiceContext,
+	): Promise<Patient> {
 		return this.executeOperation(
 			"createPatient",
 			async () => {
 				// Check if patient already exists
-				const existingPatient = await this.repository.getPatientByEmail(data.email);
+				const existingPatient = await this.repository.getPatientByEmail(
+					data.email,
+				);
 				if (existingPatient) {
 					throw new Error("Patient with this email already exists");
 				}
@@ -113,7 +121,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				// Validate age (must be 18+ for aesthetic treatments)
 				const age = differenceInYears(new Date(), data.dateOfBirth);
 				if (age < 18) {
-					throw new Error("Patient must be 18 years or older for aesthetic treatments");
+					throw new Error(
+						"Patient must be 18 years or older for aesthetic treatments",
+					);
 				}
 
 				const patient = await this.repository.createPatient(data);
@@ -124,14 +134,17 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				requiresAuth: true,
 				sensitiveData: true,
 				cacheTTL: 300_000, // 5 minutes for new patient
-			}
+			},
 		);
 	}
 
 	/**
 	 * Get patient with caching and audit
 	 */
-	async getPatient(id: string, context: ServiceContext): Promise<Patient | null> {
+	async getPatient(
+		id: string,
+		context: ServiceContext,
+	): Promise<Patient | null> {
 		return this.executeOperation(
 			"getPatient",
 			async () => {
@@ -143,14 +156,18 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				cacheTTL: 900_000, // 15 minutes
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Update patient with validation and audit
 	 */
-	async updatePatient(id: string, data: UpdatePatientData, context: ServiceContext): Promise<Patient> {
+	async updatePatient(
+		id: string,
+		data: UpdatePatientData,
+		context: ServiceContext,
+	): Promise<Patient> {
 		return this.executeOperation(
 			"updatePatient",
 			async () => {
@@ -161,7 +178,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 
 				// If email is being updated, check for duplicates
 				if (data.email && data.email !== existingPatient.email) {
-					const emailExists = await this.repository.getPatientByEmail(data.email);
+					const emailExists = await this.repository.getPatientByEmail(
+						data.email,
+					);
 					if (emailExists && emailExists.id !== id) {
 						throw new Error("Another patient with this email already exists");
 					}
@@ -178,15 +197,20 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Get patients with filtering and caching
 	 */
-	async getPatients(filters: PatientFilters | undefined, context: ServiceContext): Promise<Patient[]> {
-		const cacheKey = filters ? `patients_filtered_${JSON.stringify(filters)}` : "patients_all";
+	async getPatients(
+		filters: PatientFilters | undefined,
+		context: ServiceContext,
+	): Promise<Patient[]> {
+		const cacheKey = filters
+			? `patients_filtered_${JSON.stringify(filters)}`
+			: "patients_all";
 
 		return this.executeOperation(
 			"getPatients",
@@ -198,7 +222,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				cacheKey,
 				cacheTTL: 300_000, // 5 minutes for lists
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -209,7 +233,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 		patientId: string,
 		history: MedicalHistory,
 		context: ServiceContext,
-		patientConsent = true
+		patientConsent = true,
 	): Promise<void> {
 		return this.executeOperation(
 			"updateMedicalHistory",
@@ -226,21 +250,24 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 					`medical_history_${patientId}`,
 					history,
 					patientConsent,
-					1_800_000 // 30 minutes
+					1_800_000, // 30 minutes
 				);
 			},
 			context,
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Search patients with enhanced performance
 	 */
-	async searchPatients(query: string, context: ServiceContext): Promise<Patient[]> {
+	async searchPatients(
+		query: string,
+		context: ServiceContext,
+	): Promise<Patient[]> {
 		return this.executeOperation(
 			"searchPatients",
 			async () => {
@@ -251,7 +278,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				cacheKey: `search_patients_${Buffer.from(query).toString("base64")}`,
 				cacheTTL: 600_000, // 10 minutes
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
@@ -269,14 +296,18 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				cacheKey: "patient_stats",
 				cacheTTL: 1_800_000, // 30 minutes
 				requiresAuth: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Consent form management with audit
 	 */
-	async addConsentForm(patientId: string, form: ConsentForm, context: ServiceContext): Promise<void> {
+	async addConsentForm(
+		patientId: string,
+		form: ConsentForm,
+		context: ServiceContext,
+	): Promise<void> {
 		return this.executeOperation(
 			"addConsentForm",
 			async () => {
@@ -294,19 +325,28 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 			{
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Validate consent with caching
 	 */
-	async hasValidConsent(patientId: string, treatmentType: string, context: ServiceContext): Promise<boolean> {
+	async hasValidConsent(
+		patientId: string,
+		treatmentType: string,
+		context: ServiceContext,
+	): Promise<boolean> {
 		return this.executeOperation(
 			"hasValidConsent",
 			async () => {
 				const consentForms = await this.repository.getConsentForms(patientId);
-				return consentForms.some((form) => form.treatmentType === treatmentType && form.isActive && form.signedDate);
+				return consentForms.some(
+					(form) =>
+						form.treatmentType === treatmentType &&
+						form.isActive &&
+						form.signedDate,
+				);
 			},
 			context,
 			{
@@ -314,14 +354,17 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				cacheTTL: 600_000, // 10 minutes
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 
 	/**
 	 * Patient age calculation with caching
 	 */
-	async getPatientAge(patientId: string, context: ServiceContext): Promise<number | null> {
+	async getPatientAge(
+		patientId: string,
+		context: ServiceContext,
+	): Promise<number | null> {
 		return this.executeOperation(
 			"getPatientAge",
 			async () => {
@@ -338,7 +381,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
 				cacheTTL: 86_400_000, // 24 hours (age doesn't change often)
 				requiresAuth: true,
 				sensitiveData: true,
-			}
+			},
 		);
 	}
 

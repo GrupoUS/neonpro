@@ -5,10 +5,10 @@
  * com checks automatizados de todos os componentes críticos.
  */
 
-import fs from "node:fs/promises";
-import { performance } from "node:perf_hooks";
 import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
+import fs from "node:fs/promises";
+import { performance } from "node:perf_hooks";
 
 type HealthCheckResult = {
 	component: string;
@@ -29,7 +29,7 @@ type SystemHealth = {
 export class HealthCheckService {
 	private readonly supabase = createClient(
 		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 	);
 
 	/**
@@ -85,7 +85,10 @@ export class HealthCheckService {
 
 		try {
 			// Test basic connectivity
-			const { data, error } = await this.supabase.from("patients").select("id").limit(1);
+			const { data, error } = await this.supabase
+				.from("patients")
+				.select("id")
+				.limit(1);
 
 			const responseTime = performance.now() - start;
 
@@ -136,11 +139,15 @@ export class HealthCheckService {
 			const endpoints = ["/api/health", "/api/patients", "/api/appointments"];
 
 			const results = await Promise.allSettled(
-				endpoints.map((endpoint) => axios.get(`${baseURL}${endpoint}`, { timeout: 5000 }))
+				endpoints.map((endpoint) =>
+					axios.get(`${baseURL}${endpoint}`, { timeout: 5000 }),
+				),
 			);
 
 			const responseTime = performance.now() - start;
-			const successCount = results.filter((r) => r.status === "fulfilled").length;
+			const successCount = results.filter(
+				(r) => r.status === "fulfilled",
+			).length;
 			const successRate = (successCount / endpoints.length) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
@@ -180,17 +187,24 @@ export class HealthCheckService {
 
 		try {
 			// Verificar diretórios críticos
-			const criticalPaths = ["./uploads", "./reports", "./coverage", "./tools/testing"];
+			const criticalPaths = [
+				"./uploads",
+				"./reports",
+				"./coverage",
+				"./tools/testing",
+			];
 
 			const pathChecks = await Promise.allSettled(
 				criticalPaths.map(async (path) => {
 					const stats = await fs.stat(path);
 					return { path, exists: true, isDirectory: stats.isDirectory() };
-				})
+				}),
 			);
 
 			const responseTime = performance.now() - start;
-			const accessiblePaths = pathChecks.filter((r) => r.status === "fulfilled").length;
+			const accessiblePaths = pathChecks.filter(
+				(r) => r.status === "fulfilled",
+			).length;
 			const successRate = (accessiblePaths / criticalPaths.length) * 100;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
@@ -274,9 +288,15 @@ export class HealthCheckService {
 		const start = performance.now();
 
 		try {
-			const requiredEnvVars = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "NODE_ENV"];
+			const requiredEnvVars = [
+				"NEXT_PUBLIC_SUPABASE_URL",
+				"NEXT_PUBLIC_SUPABASE_ANON_KEY",
+				"NODE_ENV",
+			];
 
-			const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
+			const missingVars = requiredEnvVars.filter(
+				(varName) => !process.env[varName],
+			);
 			const responseTime = performance.now() - start;
 
 			let status: "healthy" | "degraded" | "down" = "healthy";
@@ -289,7 +309,9 @@ export class HealthCheckService {
 				status,
 				responseTime,
 				message:
-					status === "healthy" ? "Environment variables configured" : `Missing variables: ${missingVars.join(", ")}`,
+					status === "healthy"
+						? "Environment variables configured"
+						: `Missing variables: ${missingVars.join(", ")}`,
 				metadata: {
 					required: requiredEnvVars.length,
 					missing: missingVars.length,
@@ -315,7 +337,12 @@ export class HealthCheckService {
 
 		try {
 			// Verificar se módulos críticos estão carregando
-			const criticalModules = ["@supabase/supabase-js", "next", "react", "typescript"];
+			const criticalModules = [
+				"@supabase/supabase-js",
+				"next",
+				"react",
+				"typescript",
+			];
 
 			const moduleChecks = criticalModules.map((moduleName) => {
 				try {
@@ -376,7 +403,8 @@ export class HealthCheckService {
 			};
 
 			const responseTime = performance.now() - start;
-			const passedChecks = Object.values(complianceChecks).filter(Boolean).length;
+			const passedChecks =
+				Object.values(complianceChecks).filter(Boolean).length;
 			const totalChecks = Object.keys(complianceChecks).length;
 			const complianceRate = (passedChecks / totalChecks) * 100;
 
@@ -453,7 +481,9 @@ export class HealthCheckService {
 	/**
 	 * 🎯 Determinar status geral
 	 */
-	private determineOverallStatus(score: number): "healthy" | "degraded" | "down" {
+	private determineOverallStatus(
+		score: number,
+	): "healthy" | "degraded" | "down" {
 		if (score >= 90) {
 			return "healthy";
 		}

@@ -378,4 +378,4 @@ export class ModelManagementSystem {
 export const modelManager = new ModelManagementSystem();
 
 // Export types for use in other modules
-export type { AIModel, ModelPerformanceMetrics, ModelConfig, DriftDetectionConfig };
+export type { AIModel, DriftDetectionConfig, ModelConfig, ModelPerformanceMetrics };

@@ -243,6 +243,7 @@ export function HealthcareDashboard({ initialData, clinicId, professionalId }: H
 } /**
  * MetricCard Component - Healthcare metrics display
  */
+
 type MetricCardProps = {
 	title: string;
 	value: number | string;

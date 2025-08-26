@@ -6,7 +6,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+const supabase = createClient(
+	process.env.NEXT_PUBLIC_SUPABASE_URL!,
+	process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
 
 describe("🔐 NeonPro Security Audit Tests", () => {
 	let testClinicId: string;
@@ -22,10 +25,12 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 			// Test without authentication token
 			const unauthenticatedClient = createClient(
 				process.env.NEXT_PUBLIC_SUPABASE_URL!,
-				process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+				process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 			);
 
-			const { data, error } = await unauthenticatedClient.from("financial_transactions").select("*");
+			const { data, error } = await unauthenticatedClient
+				.from("financial_transactions")
+				.select("*");
 
 			// Should either require authentication or return limited results
 			expect(error).toBeNull();
@@ -34,7 +39,10 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 
 		it("should validate user permissions for clinic data access", async () => {
 			// Test access to clinic data with proper authentication
-			const { data: clinics, error } = await supabase.from("clinics").select("id, name").limit(1);
+			const { data: clinics, error } = await supabase
+				.from("clinics")
+				.select("id, name")
+				.limit(1);
 
 			expect(error).toBeNull();
 			expect(Array.isArray(clinics)).toBe(true);
@@ -79,7 +87,11 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				status: "pending",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(sensitiveData).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(sensitiveData)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data).toBeDefined();
@@ -89,13 +101,16 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 		});
 
 		it("should validate secure transmission (TLS)", async () => {
-			const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/financial_transactions`, {
-				method: "GET",
-				headers: {
-					Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-					apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/financial_transactions`,
+				{
+					method: "GET",
+					headers: {
+						Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+						apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+					},
 				},
-			});
+			);
 
 			// Should use HTTPS
 			expect(response.url.startsWith("https://")).toBe(true);
@@ -114,7 +129,11 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				transaction_type: "debit",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(testRecord).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(testRecord)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data).toBeDefined();
@@ -153,7 +172,10 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				},
 			];
 
-			const { data, error } = await supabase.from("financial_transactions").insert(transactions).select();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(transactions)
+				.select();
 
 			expect(error).toBeNull();
 			expected(Array.isArray(data)).toBe(true);
@@ -178,7 +200,9 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 			expect(Array.isArray(allTransactions)).toBe(true);
 
 			// All returned transactions should belong to authorized clinics only
-			const uniqueClinicIds = [...new Set(allTransactions?.map((t) => t.clinic_id))];
+			const uniqueClinicIds = [
+				...new Set(allTransactions?.map((t) => t.clinic_id)),
+			];
 			expect(uniqueClinicIds).toBeDefined();
 		});
 	});
@@ -227,7 +251,10 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 			expect(auditError).toBeNull();
 
 			// Cleanup
-			await supabase.from("financial_transactions").delete().eq("id", created.id);
+			await supabase
+				.from("financial_transactions")
+				.delete()
+				.eq("id", created.id);
 		});
 
 		it("should validate LGPD compliance data retention", async () => {
@@ -282,7 +309,10 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 			expect(Array.isArray(accessed)).toBe(true);
 
 			// Test right to deletion
-			const { error: deleteError } = await supabase.from("financial_transactions").delete().eq("id", created.id);
+			const { error: deleteError } = await supabase
+				.from("financial_transactions")
+				.delete()
+				.eq("id", created.id);
 
 			expect(deleteError).toBeNull();
 
@@ -325,7 +355,11 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				transaction_type: "credit",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(testData).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(testData)
+				.select()
+				.single();
 
 			if (!error) {
 				// Verify that the description is properly sanitized or stored safely
@@ -333,14 +367,20 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				// In a real system, you'd verify XSS prevention
 
 				// Cleanup
-				await supabase.from("financial_transactions").delete().eq("id", data.id);
+				await supabase
+					.from("financial_transactions")
+					.delete()
+					.eq("id", data.id);
 			}
 		});
 
 		it("should validate rate limiting protection", async () => {
 			// Test rate limiting (this is more of an integration test)
 			const rapidRequests = Array.from({ length: 10 }, () =>
-				supabase.from("financial_transactions").select("count(*)").eq("clinic_id", testClinicId)
+				supabase
+					.from("financial_transactions")
+					.select("count(*)")
+					.eq("clinic_id", testClinicId),
 			);
 
 			const startTime = Date.now();
@@ -373,7 +413,11 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				healthcare_classification: "medical_service",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(healthcareData).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(healthcareData)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data).toBeDefined();
@@ -400,7 +444,11 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				regulatory_compliance: "anvisa_approved",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(anvisaData).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(anvisaData)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data).toBeDefined();
@@ -424,7 +472,11 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 				medical_specialty: "dermatology",
 			};
 
-			const { data, error } = await supabase.from("financial_transactions").insert(cfmData).select().single();
+			const { data, error } = await supabase
+				.from("financial_transactions")
+				.insert(cfmData)
+				.select()
+				.single();
 
 			expect(error).toBeNull();
 			expect(data).toBeDefined();

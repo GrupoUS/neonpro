@@ -1,27 +1,5 @@
 "use client";
 
-import {
-	AlertTriangle,
-	ArrowRight,
-	Bell,
-	CheckCircle2,
-	Clock,
-	FileText,
-	Filter,
-	Heart,
-	MessageCircle,
-	MoreVertical,
-	Phone,
-	Plus,
-	Search,
-	Send,
-	Shield,
-	Star,
-	Stethoscope,
-	User,
-	Users,
-} from "lucide-react";
-import { useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,6 +24,28 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import {
+	AlertTriangle,
+	ArrowRight,
+	Bell,
+	CheckCircle2,
+	Clock,
+	FileText,
+	Filter,
+	Heart,
+	MessageCircle,
+	MoreVertical,
+	Phone,
+	Plus,
+	Search,
+	Send,
+	Shield,
+	Star,
+	Stethoscope,
+	User,
+	Users,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 import type { CommunicationPriority, PatientHandoff, TeamMessage } from "@/types/team-coordination"; // Mock team messages with Brazilian healthcare context
 

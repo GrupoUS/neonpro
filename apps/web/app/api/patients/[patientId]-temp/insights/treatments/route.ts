@@ -1,8 +1,8 @@
 // Story 3.2: API Endpoint - Treatment Recommendations
 
-import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
+import { type NextRequest, NextResponse } from "next/server";
 
 const patientInsights = new PatientInsightsIntegration();
 
@@ -39,7 +39,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 			data: treatmentRecommendations,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate treatment recommendations" }, { status: 500 });
+		return NextResponse.json(
+			{ error: "Failed to generate treatment recommendations" },
+			{
+				status: 500,
+			}
+		);
 	}
 }
 
@@ -84,6 +89,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 			data: response,
 		});
 	} catch (_error) {
-		return NextResponse.json({ error: "Failed to generate comprehensive treatment recommendations" }, { status: 500 });
+		return NextResponse.json(
+			{
+				error: "Failed to generate comprehensive treatment recommendations",
+			},
+			{ status: 500 }
+		);
 	}
 }

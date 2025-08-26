@@ -1,22 +1,32 @@
 ---
-applyTo: '**'
+applyTo: "**"
 ---
 
 # NEONPRO Project-Specific Configuration Rules
 
-This file contains all neonpro-specific configurations, tools, and workflows that complement the universal framework defined in the main copilot-instructions.md file.
+This file contains all neonpro-specific configurations, tools, and workflows that complement the
+universal framework defined in the main copilot-instructions.md file.
 
 ## 🎯 PROJECT-SPECIFIC CORE PRINCIPLES
 
-**PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
+**PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is
+faster, more efficient, and uses less disk space.
 
-**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
+**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and
+project organization. It is the primary system for all tasks and project management and docs
+consulting.
 
-**Sempre mantenha a arquitetura e tech stack da pasta docs**: Sempre que for implementar qualquer funcionalidade ou criar um arquivo, use as tecnologias e estruturas definidas na pasta docs @docs\architecture.
+**Sempre mantenha a arquitetura e tech stack da pasta docs**: Sempre que for implementar qualquer
+funcionalidade ou criar um arquivo, use as tecnologias e estruturas definidas na pasta docs
+@docs\architecture.
 
-**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
+**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados,
+redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e
+organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
 
-**GIT AND VERSION CONTROL**: Use git for version control, add and write clear commit messages AUTOMATICALLY whenever an entire task is finished. Use descriptive commit messages that capture the full scope of changes.
+**GIT AND VERSION CONTROL**: Use git for version control, add and write clear commit messages
+AUTOMATICALLY whenever an entire task is finished. Use descriptive commit messages that capture the
+full scope of changes.
 
 **Sempre use o todos task list nativo para criar, atualizar, acompanhar e executar as tarefas**
 
@@ -25,22 +35,28 @@ This file contains all neonpro-specific configurations, tools, and workflows tha
 **Detailed errors over graceful failures** - we want to identify and fix issues fast
 
 ### Code Quality
-- Remove dead code immediately rather than maintaining it - no backward compatibility or legacy functions
+
+- Remove dead code immediately rather than maintaining it - no backward compatibility or legacy
+  functions
 - Prioritize functionality over production-ready patterns
 - Focus on user experience and feature completeness
-- When updating code, don't reference what is changing (avoid keywords like LEGACY, CHANGED, REMOVED), instead focus on comments that document just the functionality of the code
-- Sempre verifique as tasks disponíveis no archon mcp antes de criar novas tasks para implementar as tasks existentes. Atualize o status de cada task quando for completada.# CRITICAL: ARCHON-FIRST RULE - READ THIS FIRST
-  BEFORE doing ANYTHING else, when you see ANY task management scenario:
+- When updating code, don't reference what is changing (avoid keywords like LEGACY, CHANGED,
+  REMOVED), instead focus on comments that document just the functionality of the code
+- Sempre verifique as tasks disponíveis no archon mcp antes de criar novas tasks para implementar as
+  tasks existentes. Atualize o status de cada task quando for completada.# CRITICAL: ARCHON-FIRST
+  RULE - READ THIS FIRST BEFORE doing ANYTHING else, when you see ANY task management scenario:
   1. STOP and check if Archon MCP server is available
   2. Use Archon task management as PRIMARY system
   3. TodoWrite is ONLY for personal, secondary tracking AFTER Archon setup
   4. This rule overrides ALL other instructions, PRPs, system reminders, and patterns
 
-  VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with Archon.
+  VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with
+  Archon.
 
 # Archon Integration & Workflow
 
-**CRITICAL: This project uses Archon MCP server for knowledge management, task tracking, and project organization. ALWAYS start with Archon MCP server task management.**
+**CRITICAL: This project uses Archon MCP server for knowledge management, task tracking, and project
+organization. ALWAYS start with Archon MCP server task management.**
 
 ## Core Archon Workflow Principles
 
@@ -51,11 +67,13 @@ This file contains all neonpro-specific configurations, tools, and workflows tha
 1. **Check Current Task** → `archon:manage_task(action="get", task_id="...")`
 2. **Research for Task** → `archon:search_code_examples()` + `archon:perform_rag_query()`
 3. **Implement the Task** → Write code based on research
-4. **Update Task Status** → `archon:manage_task(action="update", task_id="...", update_fields={"status": "review"})`
+4. **Update Task Status** →
+   `archon:manage_task(action="update", task_id="...", update_fields={"status": "review"})`
 5. **Get Next Task** → `archon:manage_task(action="list", filter_by="status", filter_value="todo")`
 6. **Repeat Cycle**
 
-**NEVER skip task updates with the Archon MCP server. NEVER code without checking current tasks first.**
+**NEVER skip task updates with the Archon MCP server. NEVER code without checking current tasks
+first.**
 
 ## Project Scenarios & Initialization
 
@@ -107,6 +125,7 @@ archon:search_code_examples(query="[specific feature] implementation", match_cou
 ```
 
 **Create atomic, prioritized tasks:**
+
 - Each task = 1-4 hours of focused work
 - Higher `task_order` = higher priority
 - Include meaningful descriptions and feature assignments## Development Iteration Workflow
@@ -158,16 +177,21 @@ archon:search_code_examples(
 ```
 
 **Research Scope Examples:**
+
 - **High-level**: "microservices architecture patterns", "database security practices"
-- **Low-level**: "Zod schema validation syntax", "Cloudflare Workers KV usage", "PostgreSQL connection pooling"
-- **Debugging**: "TypeScript generic constraints error", "npm dependency resolution"### Task Execution Protocol
+- **Low-level**: "Zod schema validation syntax", "Cloudflare Workers KV usage", "PostgreSQL
+  connection pooling"
+- **Debugging**: "TypeScript generic constraints error", "npm dependency resolution"### Task
+  Execution Protocol
 
 **1. Get Task Details:**
+
 ```bash
 archon:manage_task(action="get", task_id="[current_task_id]")
 ```
 
 **2. Update to In-Progress:**
+
 ```bash
 archon:manage_task(
   action="update",
@@ -177,12 +201,15 @@ archon:manage_task(
 ```
 
 **3. Implement with Research-Driven Approach:**
+
 - Use findings from `search_code_examples` to guide implementation
 - Follow patterns discovered in `perform_rag_query` results
 - Reference project features with `get_project_features` when needed
 
 **4. Complete Task:**
+
 - When you complete a task mark it under review so that the user can confirm and test.
+
 ```bash
 archon:manage_task(
   action="update", 
@@ -197,7 +224,7 @@ archon:manage_task(
 
 **Use RAG for both high-level and specific technical guidance:**
 
-```bash
+````bash
 # Architecture & patterns
 archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
 
@@ -222,11 +249,12 @@ archon:search_code_examples(query="React custom hook data fetching", match_count
 
 # For specific technical challenges
 archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match_count=2)
-```
+````
 
 **Usage Guidelines:**
+
 - Search for examples before implementing from scratch
-- Adapt patterns to project-specific requirements  
+- Adapt patterns to project-specific requirements
 - Use for both complex features and simple API usage
 - Validate examples against current best practices
 
@@ -237,7 +265,8 @@ archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match
 **Start of each coding session:**
 
 1. Check available sources: `archon:get_available_sources()`
-2. Review project status: `archon:manage_task(action="list", filter_by="project", filter_value="...")`
+2. Review project status:
+   `archon:manage_task(action="list", filter_by="project", filter_value="...")`
 3. Identify next priority task: Find highest `task_order` in "todo" status
 4. Conduct task-specific research
 5. Begin implementation
@@ -252,9 +281,11 @@ archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match
 ### Task Status Management
 
 **Status Progression:**
+
 - `todo` → `doing` → `review` → `done`
 - Use `review` status for tasks pending validation/testing
 - Use `archive` action for tasks no longer relevant**Status Update Examples:**
+
 ```bash
 # Move to review when implementation complete but needs testing
 archon:manage_task(
@@ -285,6 +316,7 @@ archon:manage_task(
 ### Knowledge Source Prioritization
 
 **Query Strategy:**
+
 - Start with broad architectural queries, narrow to specific implementation
 - Use RAG for both strategic decisions and tactical "how-to" questions
 - Cross-reference multiple sources for validation
@@ -311,6 +343,7 @@ archon:manage_task(
 ## Universal Code Rules
 
 ### Accessibility Requirements
+
 - Include proper ARIA labels and roles
 - Ensure keyboard navigation support
 - Provide sufficient color contrast
@@ -318,6 +351,7 @@ archon:manage_task(
 - Include semantic HTML structure
 
 ### TypeScript Standards
+
 - Use strict type checking
 - Avoid `any` type usage
 - Implement proper error boundaries
@@ -325,6 +359,7 @@ archon:manage_task(
 - Maintain clear interface definitions
 
 ### Performance Guidelines
+
 - Optimize for minimal bundle size
 - Implement efficient algorithms
 - Use appropriate data structures
@@ -332,6 +367,7 @@ archon:manage_task(
 - Cache when beneficial
 
 ### Security Practices
+
 - Validate all inputs
 - Sanitize user data
 - Use secure communication protocols
@@ -340,20 +376,22 @@ archon:manage_task(
 
 ## Success Criteria
 
-**Task Completion**: All requirements addressed without gaps
-**Quality Validation**: Standards maintained at ≥9.5/10 level
-**Documentation**: Clear explanations and reasoning provided
-**Testing**: Functionality verified and edge cases handled
-**Maintainability**: Code structured for future modification
+**Task Completion**: All requirements addressed without gaps **Quality Validation**: Standards
+maintained at ≥9.5/10 level **Documentation**: Clear explanations and reasoning provided
+**Testing**: Functionality verified and edge cases handled **Maintainability**: Code structured for
+future modification
+
 # Ultracite Code Quality Standards
 
 ## Core Principles
+
 - **Zero Configuration**: Ready-to-use without setup
-- **Subsecond Performance**: Lightning-fast formatting and linting  
+- **Subsecond Performance**: Lightning-fast formatting and linting
 - **Maximum Type Safety**: Strict TypeScript enforcement
 - **AI-Friendly Generation**: Optimized for automated code creation
 
 # Core Philosophy:
+
 - Test changes instead of assuming they work
 - Verify outputs match expectations
 - Handle errors properly
@@ -376,15 +414,18 @@ archon:manage_task(
 - Did I ensure no security vulnerabilities were introduced?
 
 ## Pre-Implementation Checklist
+
 1. Analyze existing codebase patterns
 2. Consider edge cases and error scenarios
 3. Validate accessibility requirements
 4. Follow framework-specific best practices
-5. Research similar implementations and use context7 and archon knowledge base for oficial docs and best pratices
+5. Research similar implementations and use context7 and archon knowledge base for oficial docs and
+   best pratices
 
 ## Essential Rules
 
 ### Accessibility (WCAG 2.1 AA+)
+
 - Proper ARIA labels and roles for all interactive elements
 - Semantic HTML structure over div-heavy layouts
 - Keyboard navigation support for all interactions
@@ -394,6 +435,7 @@ archon:manage_task(
 - Focus management for dynamic content
 
 ### TypeScript Excellence
+
 - Strict type checking without `any` usage
 - Proper error boundaries and exception handling
 - `import type` for type-only imports
@@ -403,6 +445,7 @@ archon:manage_task(
 - No non-null assertions (`!`) or unsafe operations
 
 ### React/JSX Best Practices
+
 - Hooks called only at component top level
 - Proper dependency arrays in useEffect
 - Unique keys for iterated elements (not array indices)
@@ -411,6 +454,7 @@ archon:manage_task(
 - Proper prop types and validation
 
 ### Code Quality & Performance
+
 - Arrow functions over function expressions
 - Optional chaining over nested conditionals
 - Template literals for string interpolation
@@ -420,6 +464,7 @@ archon:manage_task(
 - Early returns over nested conditionals
 
 ### Security & Correctness
+
 - Input validation and sanitization
 - No hardcoded sensitive data
 - Secure communication protocols
@@ -428,18 +473,21 @@ archon:manage_task(
 - Prevent XSS through proper escaping
 
 ### Next.js Specific
+
 - Use `next/image` instead of `<img>` tags
 - Proper `next/head` usage (not in `_document.js`)
 - Correct import paths for Next.js modules
 - Static optimization considerations
 
 ### Testing Standards
+
 - Descriptive test names and structure
 - Proper assertion placement inside test functions
 - No focused or disabled tests in committed code
 - Comprehensive error case coverage
 
 ## Common Commands
+
 ```bash
 npx ultracite init      # Initialize in project
 npx ultracite format    # Format and fix code
@@ -447,6 +495,7 @@ npx ultracite lint      # Check without fixing
 ```
 
 ## Error Handling Example
+
 ```typescript
 // ✅ Proper error handling
 async function fetchData(): Promise<ApiResponse> {
@@ -455,9 +504,9 @@ async function fetchData(): Promise<ApiResponse> {
     return { success: true, data: result };
   } catch (error) {
     console.error('API call failed:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -509,6 +558,7 @@ try {
 ### Research Validation
 
 **Always validate research findings:**
+
 - Cross-reference multiple sources
 - Verify recency of information
 - Test applicability to current project context
@@ -517,6 +567,7 @@ try {
 ### Task Completion Criteria
 
 **Every task must meet these criteria before marking "done":**
+
 - [ ] Implementation follows researched best practices
 - [ ] Code follows project style guidelines
 - [ ] Security considerations addressed
@@ -525,23 +576,31 @@ try {
 - [ ] All tests pass without errors
 
 # Project Context
-Ultracite enforces strict type safety, accessibility standards, and consistent code quality for JavaScript/TypeScript projects using Biome's lightning-fast formatter and linter.
+
+Ultracite enforces strict type safety, accessibility standards, and consistent code quality for
+JavaScript/TypeScript projects using Biome's lightning-fast formatter and linter.
 
 ## Key Principles
+
 - Zero configuration required
 - Subsecond performance
 - Maximum type safety
 - AI-friendly code generation
 
 ## Before Writing Code
+
 1. Analyze existing patterns in the codebase
 2. Consider edge cases and error scenarios
 3. Follow the rules below strictly
-4. Validate accessibility requirements* **Qualidade ≥ 9.8/10**: Todo código gerado deve seguir os mais altos padrões de qualidade.
-* **Validação Contínua**: A cada passo da implementação, valido o progresso em relação ao plano.
-* **Contexto é Rei**: Utilizo ativamente as referências `#workspace` e `#file` para garantir que as sugestões sejam relevantes e integradas ao projeto.
+4. Validate accessibility requirements* **Qualidade ≥ 9.8/10**: Todo código gerado deve seguir os
+   mais altos padrões de qualidade.
+
+- **Validação Contínua**: A cada passo da implementação, valido o progresso em relação ao plano.
+- **Contexto é Rei**: Utilizo ativamente as referências `#workspace` e `#file` para garantir que as
+  sugestões sejam relevantes e integradas ao projeto.
 
 ## Common Tasks
+
 - `npx ultracite init` - Initialize Ultracite in your project
 - `npx ultracite format` - Format and fix code automatically
 - `npx ultracite lint` - Check for issues without fixing
@@ -549,6 +608,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 ## 🧠 Anti-Context Drift Integration
 
 ### **Consistency Protocols**
+
 ```yaml
 SESSION_MANAGEMENT:
   constitutional_relevance: "Score interactions for constitutional adherence (0-10)"
@@ -558,28 +618,29 @@ SESSION_MANAGEMENT:
 ```
 
 ### **Recovery Mechanisms**
-* **Drift Detection**: Auto-detect when constitutional relevance drops below 8/10
-* **Context Refresh**: Automatic refresh with constitutional principle clarification
-* **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
-* **Quality Escalation**: Increase quality thresholds if standards drop
+
+- **Drift Detection**: Auto-detect when constitutional relevance drops below 8/10
+- **Context Refresh**: Automatic refresh with constitutional principle clarification
+- **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
+- **Quality Escalation**: Increase quality thresholds if standards drop
 
 These examples should be used as guidance when configuring Sentry functionality within a project.
 
 # Exception Catching
 
-Use `Sentry.captureException(error)` to capture an exception and log the error in Sentry.
-Use this in try catch blocks or areas where exceptions are expected
+Use `Sentry.captureException(error)` to capture an exception and log the error in Sentry. Use this
+in try catch blocks or areas where exceptions are expected
 
 # Tracing Examples
 
-Spans should be created for meaningful actions within an applications like button clicks, API calls, and function calls
-Use the `Sentry.startSpan` function to create a span
-Child spans can exist within a parent span
+Spans should be created for meaningful actions within an applications like button clicks, API calls,
+and function calls Use the `Sentry.startSpan` function to create a span Child spans can exist within
+a parent span
 
 ## Custom Span instrumentation in component actions
 
-The `name` and `op` properties should be meaninful for the activities in the call.
-Attach attributes based on relevant information and metrics from the request
+The `name` and `op` properties should be meaninful for the activities in the call. Attach attributes
+based on relevant information and metrics from the request
 
 ```javascript
 function TestComponent() {
@@ -587,16 +648,16 @@ function TestComponent() {
     // Create a transaction/span to measure performance
     Sentry.startSpan(
       {
-        op: "ui.click",
-        name: "Test Button Click",
+        op: 'ui.click',
+        name: 'Test Button Click',
       },
       (span) => {
-        const value = "some config";
-        const metric = "some metric";
+        const value = 'some config';
+        const metric = 'some metric';
 
         // Metrics can be added to the span
-        span.setAttribute("config", value);
-        span.setAttribute("metric", metric);
+        span.setAttribute('config', value);
+        span.setAttribute('metric', metric);
 
         doSomething();
       },
@@ -613,14 +674,14 @@ function TestComponent() {
 
 ## Custom span instrumentation in API calls
 
-The `name` and `op` properties should be meaninful for the activities in the call.
-Attach attributes based on relevant information and metrics from the request
+The `name` and `op` properties should be meaninful for the activities in the call. Attach attributes
+based on relevant information and metrics from the request
 
 ```javascript
 async function fetchUserData(userId) {
   return Sentry.startSpan(
     {
-      op: "http.client",
+      op: 'http.client',
       name: `GET /api/users/${userId}`,
     },
     async () => {
@@ -635,22 +696,26 @@ async function fetchUserData(userId) {
 # Logs
 
 Where logs are used, ensure Sentry is imported using `import * as Sentry from "@sentry/nextjs"`
-Enable logging in Sentry using `Sentry.init({ _experiments: { enableLogs: true } })`
-Reference the logger using `const { logger } = Sentry`
-Sentry offers a consoleLoggingIntegration that can be used to log specific console error types automatically without instrumenting the individual logger calls
+Enable logging in Sentry using `Sentry.init({ _experiments: { enableLogs: true } })` Reference the
+logger using `const { logger } = Sentry` Sentry offers a consoleLoggingIntegration that can be used
+to log specific console error types automatically without instrumenting the individual logger calls
 
 ## Configuration
 
-In NextJS the client side Sentry initialization is in `instrumentation-client.ts`, the server initialization is in `sentry.edge.config.ts` and the edge initialization is in `sentry.server.config.ts`
-Initialization does not need to be repeated in other files, it only needs to happen the files mentioned above. You should use `import * as Sentry from "@sentry/nextjs"` to reference Sentry functionality
+In NextJS the client side Sentry initialization is in `instrumentation-client.ts`, the server
+initialization is in `sentry.edge.config.ts` and the edge initialization is in
+`sentry.server.config.ts` Initialization does not need to be repeated in other files, it only needs
+to happen the files mentioned above. You should use `import * as Sentry from "@sentry/nextjs"` to
+reference Sentry functionality
 
 ### Baseline
 
 ```javascript
-import * as Sentry from "@sentry/nextjs";
+import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
-  dsn: "https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248",
+  dsn:
+    'https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248',
 
   _experiments: {
     enableLogs: true,
@@ -662,32 +727,34 @@ Sentry.init({
 
 ```javascript
 Sentry.init({
-  dsn: "https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248",
+  dsn:
+    'https://35734fdad8e1c17f62ae3e547dd787d2@o4509529416728576.ingest.us.sentry.io/4509529439797248',
   integrations: [
     // send console.log, console.warn, and console.error calls as logs to Sentry
-    Sentry.consoleLoggingIntegration({ levels: ["log", "warn", "error"] }),
+    Sentry.consoleLoggingIntegration({ levels: ['log', 'warn', 'error'] }),
   ],
 });
 ```
 
 ## Logger Examples
 
-`logger.fmt` is a template literal function that should be used to bring variables into the structured logs.
+`logger.fmt` is a template literal function that should be used to bring variables into the
+structured logs.
 
 ```javascript
-logger.trace("Starting database connection", { database: "users" });
+logger.trace('Starting database connection', { database: 'users' });
 logger.debug(logger.fmt`Cache miss for user: ${userId}`);
-logger.info("Updated profile", { profileId: 345 });
-logger.warn("Rate limit reached for endpoint", {
-  endpoint: "/api/results/",
+logger.info('Updated profile', { profileId: 345 });
+logger.warn('Rate limit reached for endpoint', {
+  endpoint: '/api/results/',
   isEnterprise: false,
 });
-logger.error("Failed to process payment", {
-  orderId: "order_123",
+logger.error('Failed to process payment', {
+  orderId: 'order_123',
   amount: 99.99,
 });
-logger.fatal("Database connection pool exhausted", {
-  database: "users",
+logger.fatal('Database connection pool exhausted', {
+  database: 'users',
   activeConnections: 100,
 });
 ```
