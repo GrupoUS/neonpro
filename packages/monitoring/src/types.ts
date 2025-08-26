@@ -1,109 +1,84 @@
 /**
  * Performance Monitoring Types
- *
- * TypeScript definitions for performance monitoring
- * and healthcare-specific metrics.
+ * TypeScript definitions for performance monitoring and healthcare-specific metrics.
  */
 
 import type { Metric } from "web-vitals";
 
-/**
- * Web Vitals metric names
- */
-export type WebVitalName = "CLS" | "FCP" | "FID" | "INP" | "LCP" | "TTFB";
+// Core types
+type WebVitalName = "CLS" | "FCP" | "FID" | "INP" | "LCP" | "TTFB";
 
-/**
- * Healthcare-specific performance metric names
- */
-export type HealthcareMetricName =
-  | "patient_search_time"
-  | "form_submission_time"
+type HealthcareMetricName =
+  | "auth_verification_time"
+  | "compliance_check_time"
   | "data_encryption_time"
   | "database_query_time"
+  | "form_submission_time"
   | "image_upload_time"
-  | "report_generation_time"
-  | "auth_verification_time"
-  | "compliance_check_time";
+  | "patient_search_time"
+  | "report_generation_time";
 
-/**
- * Custom metric type
- */
-export interface CustomMetric {
-  name: HealthcareMetricName;
-  value: number;
-  rating: "good" | "needs-improvement" | "poor";
+interface CustomMetric {
+  context?: {
+    environment?: string;
+    feature?: string;
+    patientId?: string;
+    procedureId?: string;
+    sessionId?: string;
+    userId?: string;
+    userRole?: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
+  };
   delta?: number;
   entries?: PerformanceEntry[];
   id?: string;
+  name: HealthcareMetricName;
   navigationType?: string;
+  rating: "good" | "needs-improvement" | "poor";
   timestamp?: number;
-  context?: {
-    userId?: string;
-    sessionId?: string;
-    patientId?: string;
-    procedureId?: string;
-    feature?: string;
-    environment?: string;
-    userRole?: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
-  };
+  value: number;
 }
 
-/**
- * Performance threshold configuration
- */
-export interface PerformanceThresholds {
-  webVitals: {
-    [K in WebVitalName]: {
-      good: number;
-      needsImprovement: number;
-    };
-  };
+interface PerformanceThresholds {
   healthcare: {
     [K in HealthcareMetricName]: {
       good: number;
       needsImprovement: number;
     };
   };
+  webVitals: {
+    [K in WebVitalName]: {
+      good: number;
+      needsImprovement: number;
+    };
+  };
 }
 
-/**
- * Monitoring configuration
- */
-export interface MonitoringConfig {
-  enabled: boolean;
-  thresholds: PerformanceThresholds;
-  sampling: {
-    webVitals: number; // 0-1, percentage of sessions to monitor
-    customMetrics: number;
-    errors: number;
+interface MonitoringConfig {
+  context: {
+    includeEnvironmentInfo: boolean;
+    includePatientInfo: boolean;
+    includeUserInfo: boolean;
   };
+  enabled: boolean;
   endpoints: {
-    metrics: string;
     errors: string;
+    metrics: string;
     vitals: string;
   };
-  context: {
-    includeUserInfo: boolean;
-    includePatientInfo: boolean;
-    includeEnvironmentInfo: boolean;
-  };
   privacy: {
-    hashSensitiveData: boolean;
     excludeFields: string[];
+    hashSensitiveData: boolean;
     retentionDays: number;
   };
+  sampling: {
+    customMetrics: number;
+    errors: number;
+    webVitals: number;
+  };
+  thresholds: PerformanceThresholds;
 }
 
-/**
- * Performance alert configuration
- */
-export interface AlertConfig {
-  enabled: boolean;
-  thresholds: {
-    errorRate: number; // Percentage
-    responseTime: number; // Milliseconds
-    customMetricThreshold: number;
-  };
+interface AlertConfig {
   channels: {
     email?: string[];
     slack?: string;
@@ -111,38 +86,49 @@ export interface AlertConfig {
   };
   conditions: {
     minSampleSize: number;
-    timeWindow: number; // Minutes
+    timeWindow: number;
+  };
+  enabled: boolean;
+  thresholds: {
+    customMetricThreshold: number;
+    errorRate: number;
+    responseTime: number;
   };
 }
 
-/**
- * Healthcare-specific monitoring context
- */
-export interface HealthcareContext {
-  feature:
-    | "patient-management"
-    | "procedures"
-    | "compliance"
-    | "reports"
-    | "auth";
-  sensitivity: "low" | "medium" | "high" | "critical";
+interface HealthcareContext {
   complianceLevel: "basic" | "healthcare" | "anvisa" | "cfm";
+  feature: "patient-management" | "procedures" | "compliance" | "reports" | "auth";
+  sensitivity: "low" | "medium" | "high" | "critical";
   userRole: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
 }
 
-/**
- * Performance report data
- */
-export interface PerformanceReport {
+interface PerformanceReport {
+  alerts: {
+    message: string;
+    resolved: boolean;
+    severity: "low" | "medium" | "high" | "critical";
+    timestamp: Date;
+    type: "error_rate" | "performance" | "availability";
+  }[];
+  customMetrics: {
+    [K in HealthcareMetricName]?: {
+      average: number;
+      median: number;
+      p95: number;
+      samples: number;
+      trend: "improving" | "degrading" | "stable";
+    };
+  };
   period: {
-    start: Date;
     end: Date;
+    start: Date;
   };
   summary: {
-    totalSessions: number;
     averageLoadTime: number;
     errorRate: number;
     topIssues: string[];
+    totalSessions: number;
   };
   webVitals: {
     [K in WebVitalName]: {
@@ -153,154 +139,130 @@ export interface PerformanceReport {
       samples: number;
     };
   };
-  customMetrics: {
-    [K in HealthcareMetricName]?: {
-      average: number;
-      median: number;
-      p95: number;
-      samples: number;
-      trend: "improving" | "degrading" | "stable";
-    };
-  };
-  alerts: {
-    type: "error_rate" | "performance" | "availability";
-    severity: "low" | "medium" | "high" | "critical";
-    message: string;
-    timestamp: Date;
-    resolved: boolean;
-  }[];
 }
 
-/**
- * Raw error information from browser
- */
-export interface ErrorInfo {
-  message: string;
-  filename: string;
-  lineno: number;
+interface ErrorInfo {
   colno: number;
   error?: Error;
+  filename: string;
+  lineno: number;
+  message: string;
 }
 
-/**
- * Error tracking data
- */
-export interface ErrorEvent {
+interface ErrorEvent {
+  context?: HealthcareContext;
+  fingerprint: string;
   id: string;
   message: string;
+  severity: "info" | "warning" | "error" | "fatal";
   stack?: string;
+  tags: Record<string, string>;
   timestamp: Date;
   url: string;
   userAgent: string;
   userId?: string;
-  context?: HealthcareContext;
-  severity: "info" | "warning" | "error" | "fatal";
-  fingerprint: string;
-  tags: Record<string, string>;
 }
 
-/**
- * Resource timing data
- */
-export interface ResourceData {
-  name: string;
-  type: string;
-  size: number;
+interface ResourceData {
   duration: number;
+  name: string;
+  size: number;
   startTime: number;
+  type: string;
 }
 
-/**
- * Compliance report structure
- */
-export interface ComplianceReport {
-  timestamp: string;
-  overall_score: number;
-  security: {
-    mfaAdoption: number;
-    passwordCompliance: number;
-    dataEncryption: number;
-  };
-  privacy: {
-    lgpdCompliance: number;
-    dataMinimization: number;
-    consentTracking: number;
-  };
+interface ComplianceReport {
   healthcare: {
     anvisaCompliance: number;
     cfmCompliance: number;
     hipaaCompliance: number;
-  };
-  performance: {
-    errorRate: number;
-    avgResponseTime: number;
-    uptime: number;
   };
   lgpd: {
     consentRate: number;
     dataMinimization: number;
     rightsRequests: number;
   };
+  overall_score: number;
+  performance: {
+    avgResponseTime: number;
+    errorRate: number;
+    uptime: number;
+  };
+  privacy: {
+    consentTracking: number;
+    dataMinimization: number;
+    lgpdCompliance: number;
+  };
   recommendations: string[];
+  security: {
+    dataEncryption: number;
+    mfaAdoption: number;
+    passwordCompliance: number;
+  };
+  timestamp: string;
 }
 
-/**
- * Dashboard metrics structure
- */
-export interface DashboardMetrics {
-  timestamp: string;
-  healthScore: number;
+interface DashboardMetrics {
   complianceScore: number;
+  healthScore: number;
+  insights: Record<string, string>;
   performanceScore: number;
   securityScore: number;
+  timestamp: string;
   trends: Record<string, number[]>;
-  insights: Record<string, string>;
 }
 
-/**
- * Alert data structure
- */
-export interface AlertData {
-  type: "error_rate" | "performance" | "availability";
-  severity: "low" | "medium" | "high" | "critical";
+interface AlertData {
   message: string;
-  timestamp: Date;
   resolved: boolean;
+  severity: "low" | "medium" | "high" | "critical";
+  timestamp: Date;
+  type: "error_rate" | "performance" | "availability";
 }
 
-/**
- * Compliance status structure
- */
-export interface ComplianceStatus {
-  lgpd: { status: string; lastCheck: Date; score: number };
-  anvisa: { status: string; lastCheck: Date; score: number };
-  cfm: { status: string; lastCheck: Date; score: number };
-  security: { status: string; lastCheck: Date; score: number };
+interface ComplianceStatus {
+  anvisa: { lastCheck: Date; score: number; status: string };
+  cfm: { lastCheck: Date; score: number; status: string };
+  lgpd: { lastCheck: Date; score: number; status: string };
+  security: { lastCheck: Date; score: number; status: string };
 }
 
-/**
- * Compliance metrics structure
- */
-export interface ComplianceMetrics {
-  score: number;
+interface ComplianceMetrics {
   details: {
-    dataProtection: number;
     consentManagement: number;
     dataMinimization: number;
+    dataProtection: number;
     rightsManagement: number;
   };
   lastUpdated: Date;
+  score: number;
 }
 
-/**
- * Performance monitoring hooks configuration
- */
-export interface MonitoringHooks {
-  onMetric?: (metric: Metric | CustomMetric) => void;
-  onError?: (error: ErrorEvent) => void;
-  onAlert?: (alert: Record<string, unknown>) => void;
-  beforeSend?: (
-    data: Record<string, unknown>,
-  ) => Record<string, unknown> | null;
+interface MonitoringHooks {
   afterSend?: (response: Response) => void;
+  beforeSend?: (data: Record<string, unknown>) => Record<string, unknown> | null;
+  onAlert?: (alert: Record<string, unknown>) => void;
+  onError?: (error: ErrorEvent) => void;
+  onMetric?: (metric: Metric | CustomMetric) => void;
 }
+
+// Export all types together
+export type {
+  AlertConfig,
+  AlertData,
+  ComplianceMetrics,
+  ComplianceReport,
+  ComplianceStatus,
+  CustomMetric,
+  DashboardMetrics,
+  ErrorEvent,
+  ErrorInfo,
+  HealthcareContext,
+  HealthcareMetricName,
+  MonitoringConfig,
+  MonitoringHooks,
+  PerformanceReport,
+  PerformanceThresholds,
+  ResourceData,
+  WebVitalName,
+};

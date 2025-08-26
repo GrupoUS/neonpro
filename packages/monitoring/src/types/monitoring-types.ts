@@ -3,105 +3,118 @@
  * Enhanced monitoring for ≥9.9/10 quality standard
  */
 
-export interface MonitoringConfig {
+interface MonitoringConfig {
   alertThresholds: AlertThresholds;
-  reportingConfig: ReportingConfig;
   integrations: IntegrationConfig;
+  reportingConfig: ReportingConfig;
 }
 
-export interface AlertThresholds {
+interface AlertThresholds {
   // System Health Thresholds
+  maxDiskUsage: number;
   maxErrorRate: number;
+  maxMemoryUsage: number;
   maxResponseTime: number;
   minUptime: number;
-  maxMemoryUsage: number;
-  maxDiskUsage: number;
 
   // Performance Thresholds
-  maxLCP: number; // Largest Contentful Paint
-  maxFID: number; // First Input Delay
-  maxCLS: number; // Cumulative Layout Shift
   maxAPIResponseTime: number;
+  maxCLS: number; // Cumulative Layout Shift
+  maxFID: number; // First Input Delay
+  maxLCP: number; // Largest Contentful Paint
   minTestCoverage: number;
 
   // Security Thresholds
   maxFailedLogins: number;
   maxSuspiciousActivities: number;
-  minSecurityScore: number;
   maxVulnerabilities: number;
+  minSecurityScore: number;
 
   // Compliance Thresholds
-  minLGPDScore: number;
   minANVISAScore: number;
   minCFMScore: number;
   minISO27001Score: number;
+  minLGPDScore: number;
 
   // AI Governance Thresholds
-  minEthicsScore: number;
   maxModelDrift: number;
+  minEthicsScore: number;
   minExplainabilityScore: number;
   minFairnessScore: number;
 }
-export interface ReportingConfig {
-  interval: number;
-  retentionDays: number;
-  exportFormats: ("json" | "csv" | "pdf")[];
-  recipients: string[];
+
+interface ReportingConfig {
   dashboardUrl?: string;
+  exportFormats: ("json" | "csv" | "pdf")[];
+  interval: number;
+  recipients: string[];
+  retentionDays: number;
 }
 
-export interface IntegrationConfig {
-  slack?: {
-    webhookUrl: string;
-    channels: string[];
-  };
+interface IntegrationConfig {
   email?: {
     smtp: {
+      auth: {
+        pass: string;
+        user: string;
+      };
       host: string;
       port: number;
       secure: boolean;
-      auth: {
-        user: string;
-        pass: string;
-      };
     };
+  };
+  grafana?: {
+    apiKey: string;
+    url: string;
   };
   pagerDuty?: {
     integrationKey: string;
   };
-  grafana?: {
-    url: string;
-    apiKey: string;
+  slack?: {
+    channels: string[];
+    webhookUrl: string;
   };
 }
 
-export interface Alert {
-  type: AlertType;
+interface Alert {
   category: AlertCategory;
   message: string;
-  timestamp: string;
-  severity?: AlertSeverity;
   metadata?: Record<string, string | number | boolean>;
+  severity?: AlertSeverity;
+  timestamp: string;
+  type: AlertType;
 }
 
-export type AlertType = "CRITICAL" | "WARNING" | "INFO";
-export type AlertCategory =
-  | "SYSTEM_HEALTH"
-  | "PERFORMANCE"
-  | "SECURITY"
-  | "COMPLIANCE"
+type AlertType = "CRITICAL" | "WARNING" | "INFO";
+type AlertCategory =
   | "AI_GOVERNANCE"
-  | "QUALITY";
-export type AlertSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  | "COMPLIANCE"
+  | "PERFORMANCE"
+  | "QUALITY"
+  | "SECURITY"
+  | "SYSTEM_HEALTH";
+type AlertSeverity = "CRITICAL" | "HIGH" | "LOW" | "MEDIUM";
 
-export interface MonitoringReport {
-  timestamp: string;
-  overallHealthScore: number;
-  complianceScore: number;
-  securityScore: number;
-  performanceScore: number;
+interface MonitoringReport {
   aiGovernanceScore: number;
+  complianceScore: number;
+  metrics: Record<string, number | string | boolean>;
+  overallHealthScore: number;
+  performanceScore: number;
   qualityScore: number;
   recommendations: string[];
-  metrics: Record<string, number | string | boolean>;
+  securityScore: number;
+  timestamp: string;
 }
+
+export type {
+  Alert,
+  AlertCategory,
+  AlertSeverity,
+  AlertThresholds,
+  AlertType,
+  IntegrationConfig,
+  MonitoringConfig,
+  MonitoringReport,
+  ReportingConfig,
+};

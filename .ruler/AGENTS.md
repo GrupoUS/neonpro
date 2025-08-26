@@ -1,6 +1,29 @@
-# AGENTS.md
+# AI Agents Configuration
 
-Centralised AI agent instructions. Add coding guidelines, style guides, and project context here.
+**Centralized AI agent instructions with redirection to authoritative sources.**
 
-Ruler concatenates all .md files in this directory (and subdirectories), starting with AGENTS.md (if
-present), then remaining files in sorted order.
+## 🎯 **Primary Reference**
+
+**For complete workflow and guidelines**: See [`core-workflow.md`](../../.claude/workflows/core-workflow.md)
+
+## 🤖 **Agent-Specific Configurations**
+
+Choose your AI assistant configuration:
+
+- **Claude (Anthropic)**: [`agents/claude-config.md`](agents/claude-config.md)
+- **GitHub Copilot**: [`agents/copilot-config.md`](agents/copilot-config.md)  
+- **Cursor/Windsurf**: [`agents/cursor-windsurf-config.md`](agents/cursor-windsurf-config.md)
+
+## 📚 **Essential References**
+
+Instead of duplicating content, refer to these authoritative sources:
+
+- **🌟 Complete Workflow**: [`core-workflow.md`](../../.claude/workflows/core-workflow.md)
+- **🏗️ Architecture**: [`docs/architecture/`](../../docs/architecture/)
+- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../../docs/architecture/tech-stack.md)
+- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
+- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../../docs/architecture/coding-standards.md)
+
+---
+
+> **📝 Note**: This file provides minimal configuration. All detailed rules, workflows, and standards are maintained in the referenced documentation to avoid duplication and ensure consistency.

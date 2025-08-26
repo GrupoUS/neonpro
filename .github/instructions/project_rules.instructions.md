@@ -18,7 +18,7 @@ consulting.
 
 **Sempre mantenha a arquitetura e tech stack da pasta docs**: Sempre que for implementar qualquer
 funcionalidade ou criar um arquivo, use as tecnologias e estruturas definidas na pasta docs
-@docs\architecture.
+#\docs\architecture.
 
 **CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados,
 redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e

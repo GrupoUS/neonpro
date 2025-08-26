@@ -57,7 +57,7 @@
       "jspdf": ["./lib/placeholders/jspdf"],
       "lru-cache": ["./lib/placeholders/lru-cache"]
     },
-    "noEmit": false
+    "noEmit": true
   },
   "include": [
     "**/*.ts",
