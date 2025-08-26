@@ -5,83 +5,89 @@
  * @see LGPD + ANVISA + CFM compliance requirements
  */
 
-export interface RLSPolicy {
-  table: string;
+interface RLSPolicy {
+  condition: string;
   policy: string;
   roles: string[];
-  condition: string;
+  table: string;
 }
 
-export class DatabaseRLS {
+class DatabaseRLS {
   private static instance: DatabaseRLS;
 
   private constructor() {}
 
-  static getInstance(): DatabaseRLS {
+  static getInstance = (): DatabaseRLS => {
     if (!DatabaseRLS.instance) {
       DatabaseRLS.instance = new DatabaseRLS();
     }
     return DatabaseRLS.instance;
-  }
+  };
 
   /**
    * Healthcare RLS policies for patient data protection
+   * @returns {RLSPolicy[]} Array of RLS policies for healthcare tables
    */
-  getHealthcareRLSPolicies(): RLSPolicy[] {
-    return [
-      {
-        table: "patients",
-        policy: "Patient data isolation",
-        roles: ["patient", "doctor", "nurse"],
-        condition: "user_id = auth.uid() OR has_clinic_access(clinic_id)",
-      },
-      {
-        table: "appointments",
-        policy: "Appointment access control",
-        roles: ["patient", "doctor", "receptionist"],
-        condition:
-          "patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
-      },
-      {
-        table: "medical_records",
-        policy: "Medical record confidentiality",
-        roles: ["doctor", "nurse"],
-        condition:
-          "provider_id = auth.uid() OR patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
-      },
-    ];
-  }
+  getHealthcareRLSPolicies = (): RLSPolicy[] => [
+    {
+      condition: "user_id = auth.uid() OR has_clinic_access(clinic_id)",
+      policy: "Patient data isolation",
+      roles: ["patient", "doctor", "nurse"],
+      table: "patients",
+    },
+    {
+      condition:
+        "patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+      policy: "Appointment access control",
+      roles: ["patient", "doctor", "receptionist"],
+      table: "appointments",
+    },
+    {
+      condition:
+        "provider_id = auth.uid() OR patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+      policy: "Medical record confidentiality",
+      roles: ["doctor", "nurse"],
+      table: "medical_records",
+    },
+  ];
 
   /**
    * Generate RLS policy SQL for a table
+   * @param {RLSPolicy} policy - The RLS policy configuration
+   * @returns {string} SQL statement for creating the RLS policy
    */
-  generateRLSPolicySQL(policy: RLSPolicy): string {
-    return `
+  generateRLSPolicySQL = (policy: RLSPolicy): string => `
       CREATE POLICY "${policy.policy}" 
       ON ${policy.table} 
       FOR ALL 
       TO ${policy.roles.join(", ")} 
       USING (${policy.condition});
     `;
-  }
 
   /**
    * Validate user access to resource
+   * @param {string} _userId - User ID to validate
+   * @param {string} _resourceType - Type of resource being accessed
+   * @param {string} _resourceId - ID of the specific resource
+   * @returns {boolean} Whether access is allowed
    */
-  async validateAccess(
+  validateAccess = (
     _userId: string,
     _resourceType: string,
     _resourceId: string,
-  ): Promise<boolean> {
+  ): boolean =>
     // Simplified validation - would check actual RLS policies
-    return true;
-  }
+    true;
 
   /**
    * Check if user has clinic access
+   * @param {string} _userId - User ID to check
+   * @param {string} _clinicId - Clinic ID to check access for
+   * @returns {boolean} Whether user has clinic access
    */
-  async hasClinicAccess(_userId: string, _clinicId: string): Promise<boolean> {
+  hasClinicAccess = (_userId: string, _clinicId: string): boolean =>
     // Would check actual clinic permissions
-    return true;
-  }
+    true;
 }
+
+export { DatabaseRLS, type RLSPolicy };

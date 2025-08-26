@@ -43,8 +43,8 @@ class DataAnonymizer {
 
   /**
    * Anonymize patient data for LGPD compliance
-   * @param data - Patient data to anonymize
-   * @returns Promise with anonymized data
+   * @param {Record<string, unknown>} data - Patient data to anonymize
+   * @returns {Record<string, unknown>} Anonymized data
    */
   anonymizePatientData = (
     data: Record<string, unknown>,
@@ -76,8 +76,8 @@ class DataAnonymizer {
 
   /**
    * Anonymize email addresses
-   * @param _email - Email to anonymize (unused for security)
-   * @returns Anonymized email string
+   * @param {string} _email - Email to anonymize (unused for security)
+   * @returns {string} Anonymized email string
    */
   private anonymizeEmail = (_email: string): string => {
     const timestamp = Date.now();
@@ -86,26 +86,22 @@ class DataAnonymizer {
 
   /**
    * Anonymize phone numbers
-   * @param _phone - Phone to anonymize (unused for security)
-   * @returns Anonymized phone string
+   * @param {string} _phone - Phone to anonymize (unused for security)
+   * @returns {string} Anonymized phone string
    */
-  private anonymizePhone = (_phone: string): string => {
-    return ANONYMOUS_PHONE;
-  };
+  private anonymizePhone = (_phone: string): string => ANONYMOUS_PHONE;
 
   /**
    * Anonymize CPF numbers
-   * @param _cpf - CPF to anonymize (unused for security)
-   * @returns Anonymized CPF string
+   * @param {string} _cpf - CPF to anonymize (unused for security)
+   * @returns {string} Anonymized CPF string
    */
-  private anonymizeCPF = (_cpf: string): string => {
-    return ANONYMOUS_CPF;
-  };
+  private anonymizeCPF = (_cpf: string): string => ANONYMOUS_CPF;
 
   /**
    * Check if data contains sensitive information
-   * @param data - Data to check for sensitive fields
-   * @returns Boolean indicating if sensitive data is present
+   * @param {Record<string, unknown>} data - Data to check for sensitive fields
+   * @returns {boolean} Boolean indicating if sensitive data is present
    */
   containsSensitiveData = (data: Record<string, unknown>): boolean => {
     const sensitiveFields = ["cpf", "email", "phone", "birth_date", "address"];
@@ -114,11 +110,10 @@ class DataAnonymizer {
 
   /**
    * Generate anonymized medical record number
-   * @returns Anonymized MRN string
+   * @returns {string} Anonymized MRN string
    */
-  generateAnonymizedMRN = (): string => {
-    return `ANON_${Date.now()}_${Math.random().toString(RANDOM_BASE).slice(SLICE_START, SLICE_END)}`;
-  };
+  generateAnonymizedMRN = (): string =>
+    `ANON_${Date.now()}_${Math.random().toString(RANDOM_BASE).slice(SLICE_START, SLICE_END)}`;
 }
 
 export { AnonymizationConfig, DataAnonymizer };
