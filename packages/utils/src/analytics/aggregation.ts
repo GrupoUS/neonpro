@@ -31,15 +31,15 @@ const aggregateByPeriod = (
 
     switch (period) {
       case "day": {
-        const [datePart] = date.toISOString().split("T");
-        key = datePart;
+        const datePart = date.toISOString().split("T")[0];
+        key = datePart ?? "";
         break;
       }
       case "week": {
         const weekStart = new Date(date);
         weekStart.setDate(date.getDate() - date.getDay());
-        const [datePart] = weekStart.toISOString().split("T");
-        key = datePart;
+        const datePart = weekStart.toISOString().split("T")[0];
+        key = datePart ?? "";
         break;
       }
       case "month": {

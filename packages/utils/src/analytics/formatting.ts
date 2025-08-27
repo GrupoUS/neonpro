@@ -68,11 +68,24 @@ const parseAnalyticsFilters = (
     return (params[key] as string) || defaultValue;
   };
 
-  return {
-    dateRange: getValue("dateRange"),
-    metric: getValue("metric"),
-    period: getValue("period"),
-  };
+  const result: FilterParams = {};
+
+  const dateRange = getValue("dateRange");
+  if (dateRange) {
+    result.dateRange = dateRange;
+  }
+
+  const metric = getValue("metric");
+  if (metric) {
+    result.metric = metric;
+  }
+
+  const period = getValue("period");
+  if (period) {
+    result.period = period;
+  }
+
+  return result;
 };
 
 /**
@@ -89,7 +102,7 @@ const exportToCSV = (
     return "";
   }
 
-  const headers = Object.keys(data[ZERO]);
+  const headers = Object.keys(data[ZERO] ?? {});
   const csvContent = [
     headers.join(","),
     ...data.map((row) =>

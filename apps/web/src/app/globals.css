@@ -2,63 +2,141 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Variables for Healthcare Theme */
+/* TweakCN NEONPRO Healthcare Theme - Professional Medical Identity */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 210 40% 98%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 98%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 98%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 142 76% 36%;
-    --radius: 0.5rem;
+    /* TweakCN NEONPRO Base Colors */
+    --background: 0 0% 98.8%;              /* #fcfcfc - Clean medical white */
+    --foreground: 0 0% 9.0%;               /* #171717 - Professional dark */
+    --card: 0 0% 98.8%;                    /* #fcfcfc - Card background */
+    --card-foreground: 0 0% 9.0%;          /* #171717 - Card text */
+    --popover: 0 0% 98.8%;                 /* #fcfcfc - Popover background */
+    --popover-foreground: 0 0% 32.2%;      /* #525252 - Popover text */
+    
+    /* TweakCN Primary - Professional Medical Green */
+    --primary: 153 76% 67%;                /* #72e3ad - Medical green professional */
+    --primary-foreground: 153 30% 15%;     /* #1e2723 - Dark green foreground */
+    
+    /* TweakCN Secondary & Accent */
+    --secondary: 0 0% 99.2%;               /* #fdfdfd - Secondary background */
+    --secondary-foreground: 0 0% 9.0%;     /* #171717 - Secondary text */
+    --accent: 0 0% 92.9%;                  /* #ededed - Accent background */
+    --accent-foreground: 0 0% 12.5%;       /* #202020 - Accent text */
+    --muted: 0 0% 92.9%;                   /* #ededed - Muted background */
+    --muted-foreground: 0 0% 12.5%;        /* #202020 - Muted text */
+    
+    /* TweakCN Form & Interaction */
+    --border: 0 0% 87.5%;                  /* #dfdfdf - Border color */
+    --input: 0 0% 96.5%;                   /* #f6f6f6 - Input background */
+    --ring: 153 76% 67%;                   /* #72e3ad - Focus ring */
+    --radius: 0.5rem;                      /* Border radius */
+    
+    /* TweakCN Status & Feedback Colors */
+    --destructive: 14 79% 44%;             /* #ca3214 - Emergency/Critical */
+    --destructive-foreground: 0 0% 99.8%;  /* #fffcfc - Light text on red */
+    
+    /* TweakCN Chart & Visualization Colors */
+    --chart-1: 153 76% 67%;                /* #72e3ad - Primary data */
+    --chart-2: 217 91% 60%;                /* #3b82f6 - Information */
+    --chart-3: 262 83% 68%;                /* #8b5cf6 - Analysis */
+    --chart-4: 32 95% 48%;                 /* #f59e0b - Attention/Warning */
+    --chart-5: 160 84% 39%;                /* #10b981 - Success/Positive */
+    
+    /* TweakCN Sidebar & Navigation */
+    --sidebar-background: 0 0% 98.8%;      /* #fcfcfc - Sidebar background */
+    --sidebar-foreground: 0 0% 43.9%;      /* #707070 - Sidebar text */
+    --sidebar-primary: 153 76% 67%;        /* #72e3ad - Sidebar active */
+    --sidebar-primary-foreground: 153 30% 15%; /* #1e2723 - Sidebar active text */
 
-    /* Healthcare-specific colors */
-    --healthcare-success: 142 76% 36%;
-    --healthcare-warning: 38 92% 50%;
-    --healthcare-error: 0 84.2% 60.2%;
-    --healthcare-info: 199 89% 48%;
-    --healthcare-neutral: 210 40% 98%;
+    /* NEONPRO Healthcare-Specific Extensions */
+    --healthcare-success: 160 84% 39%;     /* #10b981 - Medical success */
+    --healthcare-warning: 32 95% 48%;      /* #f59e0b - Medical warning */
+    --healthcare-error: 14 79% 44%;        /* #ca3214 - Medical emergency */
+    --healthcare-info: 217 91% 60%;        /* #3b82f6 - Medical information */
+    --healthcare-critical: 0 84% 50%;      /* Critical patient alerts */
 
-    /* Aesthetic clinic colors */
-    --aesthetic-primary: 332 76% 36%;
-    --aesthetic-secondary: 199 89% 48%;
-    --aesthetic-accent: 38 92% 50%;
+    /* Brazilian Compliance Color Coding */
+    --lgpd-consent-granted: 160 84% 39%;   /* #10b981 - Active consent */
+    --lgpd-consent-pending: 32 95% 48%;    /* #f59e0b - Pending consent */
+    --lgpd-consent-denied: 14 79% 44%;     /* #ca3214 - Denied consent */
+    --lgpd-consent-expired: 0 0% 61%;      /* #9ca3af - Expired consent */
+    
+    --cfm-license-active: 153 76% 67%;     /* #72e3ad - Active license */
+    --cfm-license-suspended: 32 95% 48%;   /* #f59e0b - Suspended license */
+    --cfm-license-revoked: 14 79% 44%;     /* #ca3214 - Revoked license */
+
+    /* Emergency Interface High-Contrast Mode */
+    --emergency-background: 0 0% 100%;     /* Pure white for emergency */
+    --emergency-foreground: 0 0% 0%;       /* Pure black for emergency */
+    --emergency-critical: 0 100% 50%;      /* Pure red for life-critical */
+    --emergency-contrast-ratio: 21:1;      /* Maximum contrast for emergency */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 142 76% 36%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 142 76% 36%;
+    /* TweakCN NEONPRO Dark Mode - Professional Medical Night Theme */
+    --background: 0 0% 3.9%;               /* #0a0a0a - Deep dark medical */
+    --foreground: 0 0% 98%;                /* #fafafa - Light text */
+    --card: 0 0% 7.8%;                     /* #141414 - Dark cards */
+    --card-foreground: 0 0% 98%;           /* #fafafa - Light card text */
+    --popover: 0 0% 3.9%;                  /* #0a0a0a - Dark popover */
+    --popover-foreground: 0 0% 98%;        /* #fafafa - Light popover text */
+    
+    /* TweakCN Primary - Medical Green (adjusted for dark) */
+    --primary: 153 76% 67%;                /* #72e3ad - Maintained green visibility */
+    --primary-foreground: 0 0% 3.9%;       /* #0a0a0a - Dark foreground */
+    
+    /* TweakCN Secondary & Accent (Dark) */
+    --secondary: 0 0% 14.9%;               /* #262626 - Dark secondary */
+    --secondary-foreground: 0 0% 98%;      /* #fafafa - Light secondary text */
+    --accent: 0 0% 14.9%;                  /* #262626 - Dark accent */
+    --accent-foreground: 0 0% 98%;         /* #fafafa - Light accent text */
+    --muted: 0 0% 14.9%;                   /* #262626 - Dark muted */
+    --muted-foreground: 0 0% 63.9%;        /* #a3a3a3 - Medium muted text */
+    
+    /* TweakCN Form & Interaction (Dark) */
+    --border: 0 0% 14.9%;                  /* #262626 - Dark border */
+    --input: 0 0% 14.9%;                   /* #262626 - Dark input */
+    --ring: 153 76% 67%;                   /* #72e3ad - Green focus ring */
+    
+    /* TweakCN Status & Feedback Colors (Dark adjusted) */
+    --destructive: 14 79% 54%;             /* #ef4444 - Brighter red for dark */
+    --destructive-foreground: 0 0% 98%;    /* #fafafa - Light text on red */
+    
+    /* TweakCN Chart & Visualization Colors (Dark) */
+    --chart-1: 153 76% 67%;                /* #72e3ad - Primary data */
+    --chart-2: 217 91% 70%;                /* #60a5fa - Information (brighter) */
+    --chart-3: 262 83% 78%;                /* #a78bfa - Analysis (brighter) */
+    --chart-4: 32 95% 58%;                 /* #fbbf24 - Warning (brighter) */
+    --chart-5: 160 84% 49%;                /* #34d399 - Success (brighter) */
+    
+    /* TweakCN Sidebar & Navigation (Dark) */
+    --sidebar-background: 0 0% 3.9%;       /* #0a0a0a - Dark sidebar */
+    --sidebar-foreground: 0 0% 63.9%;      /* #a3a3a3 - Medium sidebar text */
+    --sidebar-primary: 153 76% 67%;        /* #72e3ad - Sidebar active */
+    --sidebar-primary-foreground: 0 0% 3.9%; /* #0a0a0a - Dark active text */
+
+    /* NEONPRO Healthcare-Specific Extensions (Dark) */
+    --healthcare-success: 160 84% 49%;     /* #34d399 - Brighter success */
+    --healthcare-warning: 32 95% 58%;      /* #fbbf24 - Brighter warning */
+    --healthcare-error: 14 79% 54%;        /* #ef4444 - Brighter error */
+    --healthcare-info: 217 91% 70%;        /* #60a5fa - Brighter info */
+    --healthcare-critical: 0 100% 60%;     /* Brighter critical alerts */
+
+    /* Brazilian Compliance Color Coding (Dark) */
+    --lgpd-consent-granted: 160 84% 49%;   /* #34d399 - Bright success */
+    --lgpd-consent-pending: 32 95% 58%;    /* #fbbf24 - Bright warning */
+    --lgpd-consent-denied: 14 79% 54%;     /* #ef4444 - Bright error */
+    --lgpd-consent-expired: 0 0% 52%;      /* #858585 - Medium gray */
+    
+    --cfm-license-active: 153 76% 67%;     /* #72e3ad - Active license */
+    --cfm-license-suspended: 32 95% 58%;   /* #fbbf24 - Suspended */
+    --cfm-license-revoked: 14 79% 54%;     /* #ef4444 - Revoked */
+
+    /* Emergency Interface High-Contrast Mode (Dark) */
+    --emergency-background: 0 0% 0%;       /* Pure black for emergency */
+    --emergency-foreground: 0 0% 100%;     /* Pure white for emergency */
+    --emergency-critical: 0 100% 70%;      /* Bright red for dark mode emergency */
+    --emergency-contrast-ratio: 21:1;      /* Maximum contrast maintained */
   }
 }
 
@@ -95,26 +173,115 @@
   }
 }
 
-/* LGPD Compliance Indicators */
+/* TweakCN NEONPRO Healthcare Components */
 @layer components {
+  /* Brazilian LGPD Compliance Indicators with TweakCN Colors */
   .lgpd-consent-indicator {
-    @apply inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full;
+    @apply inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium transition-all;
   }
 
   .lgpd-consent-granted {
-    @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+    background-color: hsl(var(--lgpd-consent-granted) / 0.1);
+    color: hsl(var(--lgpd-consent-granted));
+    border: 1px solid hsl(var(--lgpd-consent-granted) / 0.2);
   }
 
   .lgpd-consent-pending {
-    @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+    background-color: hsl(var(--lgpd-consent-pending) / 0.1);
+    color: hsl(var(--lgpd-consent-pending));
+    border: 1px solid hsl(var(--lgpd-consent-pending) / 0.2);
   }
 
-  .lgpd-consent-revoked {
-    @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+  .lgpd-consent-denied {
+    background-color: hsl(var(--lgpd-consent-denied) / 0.1);
+    color: hsl(var(--lgpd-consent-denied));
+    border: 1px solid hsl(var(--lgpd-consent-denied) / 0.2);
+  }
+
+  .lgpd-consent-expired {
+    background-color: hsl(var(--lgpd-consent-expired) / 0.1);
+    color: hsl(var(--lgpd-consent-expired));
+    border: 1px solid hsl(var(--lgpd-consent-expired) / 0.2);
+  }
+
+  /* CFM Professional License Badges */
+  .cfm-license-badge {
+    @apply inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md font-semibold transition-all;
+  }
+
+  .cfm-license-active {
+    background-color: hsl(var(--cfm-license-active) / 0.1);
+    color: hsl(var(--cfm-license-active));
+    border: 1px solid hsl(var(--cfm-license-active) / 0.2);
+  }
+
+  .cfm-license-suspended {
+    background-color: hsl(var(--cfm-license-suspended) / 0.1);
+    color: hsl(var(--cfm-license-suspended));
+    border: 1px solid hsl(var(--cfm-license-suspended) / 0.2);
+  }
+
+  .cfm-license-revoked {
+    background-color: hsl(var(--cfm-license-revoked) / 0.1);
+    color: hsl(var(--cfm-license-revoked));
+    border: 1px solid hsl(var(--cfm-license-revoked) / 0.2);
+  }
+
+  /* Healthcare Metric Cards - TweakCN Inspired */
+  .healthcare-metric-card {
+    @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all;
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%);
+  }
+
+  .healthcare-metric-value {
+    @apply text-2xl font-bold text-foreground mb-1;
+  }
+
+  .healthcare-metric-change {
+    @apply text-sm font-medium flex items-center gap-1;
+  }
+
+  .healthcare-metric-increase {
+    color: hsl(var(--healthcare-success));
+  }
+
+  .healthcare-metric-decrease {
+    color: hsl(var(--healthcare-error));
+  }
+
+  /* Emergency Alert Banner - High Visibility */
+  .emergency-alert-banner {
+    background-color: hsl(var(--healthcare-critical) / 0.1);
+    border-left: 4px solid hsl(var(--healthcare-critical));
+    @apply p-4 rounded-r-lg text-sm font-medium;
+    color: hsl(var(--healthcare-critical));
+  }
+
+  /* TweakCN Sidebar Styling */
+  .neonpro-sidebar {
+    background-color: hsl(var(--sidebar-background));
+    border-right: 1px solid hsl(var(--border));
+    @apply w-64 h-full flex flex-col;
+  }
+
+  .neonpro-sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg mx-2 transition-all;
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  .neonpro-sidebar-item:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  .neonpro-sidebar-item.active {
+    background-color: hsl(var(--sidebar-primary) / 0.1);
+    color: hsl(var(--sidebar-primary));
+    border: 1px solid hsl(var(--sidebar-primary) / 0.2);
   }
 }
 
-/* Accessibility improvements */
+/* TweakCN NEONPRO Accessibility & Emergency Mode */
 @layer utilities {
   .sr-only {
     position: absolute;
@@ -128,11 +295,94 @@
     border: 0;
   }
 
+  /* Enhanced Focus Ring with TweakCN Colors */
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    --tw-ring-color: hsl(var(--ring));
   }
 
+  /* WCAG 2.1 AA+ Focus Indicators */
+  .healthcare-focus {
+    @apply focus:outline-none focus:ring-4 focus:ring-offset-2;
+    --tw-ring-color: hsl(var(--primary));
+    --tw-ring-offset-width: 2px;
+  }
+
+  /* TweakCN Healthcare Gradient */
   .healthcare-gradient {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--aesthetic-primary)) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--chart-5)) 100%);
+  }
+
+  /* Emergency High-Contrast Mode */
+  .emergency-mode {
+    background-color: hsl(var(--emergency-background));
+    color: hsl(var(--emergency-foreground));
+    @apply font-bold text-lg;
+  }
+
+  .emergency-button {
+    background-color: hsl(var(--emergency-critical));
+    color: hsl(var(--emergency-background));
+    @apply min-h-[56px] min-w-[56px] text-xl font-black border-4 border-white shadow-2xl;
+  }
+
+  /* Mobile-First Healthcare Design */
+  .mobile-emergency-interface {
+    @apply grid grid-cols-1 gap-4 p-4;
+  }
+
+  @media (max-width: 640px) {
+    .mobile-emergency-interface {
+      /* One-thumb navigation for emergency scenarios */
+      --touch-target-size: 56px;
+      --font-size-critical: 18px;
+      gap: 1rem;
+    }
+    
+    .mobile-emergency-button {
+      @apply min-h-[56px] min-w-[56px] text-lg font-bold;
+      touch-action: manipulation;
+    }
+    
+    .mobile-emergency-text {
+      @apply text-lg leading-relaxed;
+      font-size: var(--font-size-critical);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .healthcare-dashboard {
+      @apply grid grid-cols-[280px_1fr] gap-6;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .clinic-workspace {
+      @apply grid grid-cols-[320px_1fr_280px] gap-8;
+    }
+  }
+
+  /* TweakCN Chart Colors Utilities */
+  .chart-primary { color: hsl(var(--chart-1)); }
+  .chart-info { color: hsl(var(--chart-2)); }
+  .chart-analysis { color: hsl(var(--chart-3)); }
+  .chart-warning { color: hsl(var(--chart-4)); }
+  .chart-success { color: hsl(var(--chart-5)); }
+
+  /* Brazilian Healthcare Status Indicators */
+  .status-lgpd-granted { color: hsl(var(--lgpd-consent-granted)); }
+  .status-lgpd-pending { color: hsl(var(--lgpd-consent-pending)); }
+  .status-lgpd-denied { color: hsl(var(--lgpd-consent-denied)); }
+  .status-cfm-active { color: hsl(var(--cfm-license-active)); }
+  .status-cfm-suspended { color: hsl(var(--cfm-license-suspended)); }
+  .status-cfm-revoked { color: hsl(var(--cfm-license-revoked)); }
+
+  /* Smooth Transitions */
+  .healthcare-transition {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  .healthcare-hover-scale {
+    @apply transform hover:scale-105 transition-transform duration-200;
   }
 }

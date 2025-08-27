@@ -104,6 +104,57 @@ const validateHealthcareAccess = async (
 - **Task Management**: Archon MCP (obrigatório)
 - **Package Manager**: PNPM (obrigatório)
 
+### **Frontend Architecture & State Management**
+
+```typescript
+// Zustand para estado global da aplicação
+interface AppState {
+  user: User | null
+  theme: 'light' | 'dark'
+  notifications: Notification[]
+}
+
+// Context API para estado de componentes específicos
+const ChatContext = createContext<ChatContextType>()
+
+// TanStack Query para cache de dados do servidor
+const { data: patients } = useQuery({
+  queryKey: ['patients'],
+  queryFn: fetchPatients
+})
+
+// React Hook Form para formulários
+const form = useForm<PatientFormData>({
+  resolver: zodResolver(patientSchema)
+})
+```
+
+### **Component Architecture**
+
+```typescript
+// Estrutura de componentes reutilizáveis
+components/
+├── ui/              # shadcn/ui base components
+├── forms/           # Formulários específicos
+├── layouts/         # Layouts da aplicação
+└── healthcare/      # Componentes específicos da saúde
+
+// Exemplo de componente healthcare
+export function PatientCard({ patient }: PatientCardProps) {
+  return (
+    <Card className="p-4">
+      <CardHeader>
+        <CardTitle>{patient.name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <PatientInfo patient={patient} />
+        <AppointmentsList patientId={patient.id} />
+      </CardContent>
+    </Card>
+  )
+}
+```
+
 ---
 
 ## 🤖 **ARCHON INTEGRATION & TASK-DRIVEN DEVELOPMENT**
@@ -1222,6 +1273,83 @@ logger.error("ANVISA compliance violation", {
   professional: "professional_id",
   severity: "high",
 });
+```
+
+---
+
+### **Database Patterns & RLS**
+
+```sql
+-- Política RLS para pacientes
+CREATE POLICY "Users can only see their own patients" ON patients
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Política RLS para consultas
+CREATE POLICY "Users can only see their own appointments" ON appointments
+  FOR ALL USING (
+    auth.uid() IN (
+      SELECT user_id FROM patients WHERE id = patient_id
+    )
+  );
+```
+
+### **Schema Validation Patterns**
+
+```typescript
+// Zod schemas para validação
+export const patientSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().regex(/^\+?[1-9]\d{1,14}$/),
+  birth_date: z.date(),
+  cpf: z.string().regex(/^\d{11}$/),
+  lgpd_consent: z.boolean().refine(val => val === true)
+})
+
+export const appointmentSchema = z.object({
+  patient_id: z.string().uuid(),
+  scheduled_at: z.date().min(new Date()),
+  type: z.enum(['consultation', 'exam', 'procedure']),
+  notes: z.string().optional()
+})
+```
+
+### **AI Integration Patterns**
+
+```typescript
+// Hook para chat AI
+export function useChatAI(patientId?: string) {
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  
+  const sendMessage = async (content: string) => {
+    const response = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: content, 
+        patient_id: patientId 
+      })
+    })
+    
+    const aiResponse = await response.json()
+    setMessages(prev => [...prev, aiResponse])
+  }
+  
+  return { messages, sendMessage }
+}
+
+// Predição de faltas
+export async function predictNoShow(
+  appointmentId: string
+): Promise<NoShowPrediction> {
+  const response = await fetch('/api/ai/predict-no-show', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ appointment_id: appointmentId })
+  })
+  
+  return response.json()
+}
 ```
 
 ---

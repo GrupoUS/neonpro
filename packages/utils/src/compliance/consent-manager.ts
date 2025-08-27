@@ -126,7 +126,7 @@ export class LGPDConsentManager {
       .filter((c) => c.purpose === purposeId)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0];
 
-    return latestConsent?.granted;
+    return latestConsent?.granted ?? false;
   }
 
   getConsentPurposes(): ConsentPurpose[] {

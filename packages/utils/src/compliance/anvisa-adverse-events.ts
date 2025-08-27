@@ -7,7 +7,6 @@ import type { AdverseEvent, ComplianceTask } from "./anvisa-types";
 
 const HOURS_TO_MILLISECONDS = 1000;
 const MINUTES_TO_MILLISECONDS = 60;
-const HOURS_IN_DAY = 24;
 const ANVISA_REPORT_DEADLINE_HOURS = 24;
 
 export class ANVISAAdverseEventManager {

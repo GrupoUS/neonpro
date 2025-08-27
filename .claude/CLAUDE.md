@@ -346,7 +346,7 @@ AGENT_DELEGATION_SYSTEM:
 
 ## 🎯 **Primary Reference**
 
-**For complete workflow and guidelines**: See [`core-workflow.md`](core-workflow.md)
+**For complete workflow and guidelines**: See [`core-workflow.md`](../workflows/core-workflow.md)
 
 ## 🎯 MASTER ORCHESTRATION ENGINE
 
@@ -394,9 +394,9 @@ ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
 
 Instead of duplicating content, refer to these authoritative sources:
 
-- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../../docs/architecture/tech-stack.md)
-- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
-- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../../docs/architecture/coding-standards.md)
+- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../docs/architecture/tech-stack.md)
+- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)
+- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../docs/architecture/coding-standards.md)
 
 ---
 

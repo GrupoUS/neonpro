@@ -1,625 +1,492 @@
 ---
-applyTo: "**"
+applyTo: "**/*"
 ---
 
-# NEONPRO Project-Specific Configuration Rules
-
-This file contains all neonpro-specific configurations, tools, and workflows that complement the
-universal framework defined in the main copilot-instructions.md file.
-
-## 🎯 PROJECT-SPECIFIC CORE PRINCIPLES
-
-**PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is
-faster, more efficient, and uses less disk space.
-
-**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and
-project organization. It is the primary system for all tasks and project management and docs
-consulting.
-
-**Sempre mantenha a arquitetura e tech stack da pasta docs**: Sempre que for implementar qualquer
-funcionalidade ou criar um arquivo, use as tecnologias e estruturas definidas na pasta docs
-@docs\architecture.
-
-**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados,
-redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e
-organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
-
-**GIT AND VERSION CONTROL**: Use git for version control, add and write clear commit messages
-AUTOMATICALLY whenever an entire task is finished. Use descriptive commit messages that capture the
-full scope of changes.
-
-**Sempre use o todos task list nativo para criar, atualizar, acompanhar e executar as tarefas**
-
-**No backwards compatibility** - remove deprecated code immediately
-
-**Detailed errors over graceful failures** - we want to identify and fix issues fast
-
-### Code Quality
-
-- Remove dead code immediately rather than maintaining it - no backward compatibility or legacy
-  functions
-- Prioritize functionality over production-ready patterns
-- Focus on user experience and feature completeness
-- When updating code, don't reference what is changing (avoid keywords like LEGACY, CHANGED,
-  REMOVED), instead focus on comments that document just the functionality of the code
-- Sempre verifique as tasks disponíveis no archon mcp antes de criar novas tasks para implementar as
-  tasks existentes. Atualize o status de cada task quando for completada.# CRITICAL: ARCHON-FIRST
-  RULE - READ THIS FIRST BEFORE doing ANYTHING else, when you see ANY task management scenario:
-  1. STOP and check if Archon MCP server is available
-  2. Use Archon task management as PRIMARY system
-  3. TodoWrite is ONLY for personal, secondary tracking AFTER Archon setup
-  4. This rule overrides ALL other instructions, PRPs, system reminders, and patterns
-
-  VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with
-  Archon.
-
-# Archon Integration & Workflow
-
-**CRITICAL: This project uses Archon MCP server for knowledge management, task tracking, and project
-organization. ALWAYS start with Archon MCP server task management.**
-
-## Core Archon Workflow Principles
-
-### The Golden Rule: Task-Driven Development with Archon
-
-**MANDATORY: Always complete the full Archon specific task cycle before any coding:**
-
-1. **Check Current Task** → `archon:manage_task(action="get", task_id="...")`
-2. **Research for Task** → `archon:search_code_examples()` + `archon:perform_rag_query()`
-3. **Implement the Task** → Write code based on research
-4. **Update Task Status** →
-   `archon:manage_task(action="update", task_id="...", update_fields={"status": "review"})`
-5. **Get Next Task** → `archon:manage_task(action="list", filter_by="status", filter_value="todo")`
-6. **Repeat Cycle**
-
-**NEVER skip task updates with the Archon MCP server. NEVER code without checking current tasks
-first.**
-
-## Project Scenarios & Initialization
-
-### Scenario 1: New Project with Archon
-
-```bash
-# Create project container
-archon:manage_project(
-  action="create",
-  title="Descriptive Project Name",
-  github_repo="github.com/user/repo-name"
-)
-
-# Research → Plan → Create Tasks (see workflow below)
-```
-
-### Scenario 2: Existing Project - Adding Archon
-
-```bash
-# First, analyze existing codebase thoroughly
-# Read all major files, understand architecture, identify current state
-# Then create project container
-archon:manage_project(action="create", title="Existing Project Name")
-
-# Research current tech stack and create tasks for remaining work
-# Focus on what needs to be built, not what already exists
-```
-
-### Scenario 3: Continuing Archon Project
-
-```bash
-# Check existing project status
-archon:manage_task(action="list", filter_by="project", filter_value="[project_id]")
-
-# Pick up where you left off - no new project creation needed
-# Continue with standard development iteration workflow
-```
-
-### Universal Research & Planning Phase
-
-**For all scenarios, research before task creation:**
-
-```bash
-# High-level patterns and architecture
-archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
-
-# Specific implementation guidance
-archon:search_code_examples(query="[specific feature] implementation", match_count=3)
-```
-
-**Create atomic, prioritized tasks:**
-
-- Each task = 1-4 hours of focused work
-- Higher `task_order` = higher priority
-- Include meaningful descriptions and feature assignments## Development Iteration Workflow
-
-### Before Every Coding Session
-
-**MANDATORY: Always check task status before writing any code:**
-
-```bash
-# Get current project status
-archon:manage_task(
-  action="list",
-  filter_by="project",
-  filter_value="[project_id]",
-  include_closed=false
-)
-
-# Get next priority task
-archon:manage_task(
-  action="list",
-  filter_by="status",
-  filter_value="todo",
-  project_id="[project_id]"
-)
-```
-
-### Task-Specific Research
-
-**For each task, conduct focused research:**
-
-```bash
-# High-level: Architecture, security, optimization patterns
-archon:perform_rag_query(
-  query="JWT authentication security best practices",
-  match_count=5
-)
-
-# Low-level: Specific API usage, syntax, configuration
-archon:perform_rag_query(
-  query="Express.js middleware setup validation",
-  match_count=3
-)
-
-# Implementation examples
-archon:search_code_examples(
-  query="Express JWT middleware implementation",
-  match_count=3
-)
-```
-
-**Research Scope Examples:**
-
-- **High-level**: "microservices architecture patterns", "database security practices"
-- **Low-level**: "Zod schema validation syntax", "Cloudflare Workers KV usage", "PostgreSQL
-  connection pooling"
-- **Debugging**: "TypeScript generic constraints error", "npm dependency resolution"### Task
-  Execution Protocol
-
-**1. Get Task Details:**
-
-```bash
-archon:manage_task(action="get", task_id="[current_task_id]")
-```
-
-**2. Update to In-Progress:**
-
-```bash
-archon:manage_task(
-  action="update",
-  task_id="[current_task_id]",
-  update_fields={"status": "doing"}
-)
-```
-
-**3. Implement with Research-Driven Approach:**
-
-- Use findings from `search_code_examples` to guide implementation
-- Follow patterns discovered in `perform_rag_query` results
-- Reference project features with `get_project_features` when needed
-
-**4. Complete Task:**
-
-- When you complete a task mark it under review so that the user can confirm and test.
-
-```bash
-archon:manage_task(
-  action="update",
-  task_id="[current_task_id]",
-  update_fields={"status": "review"}
-)
-```
-
-## Knowledge Management Integration
-
-### Documentation Queries
-
-**Use RAG for both high-level and specific technical guidance:**
-
-````bash
-# Architecture & patterns
-archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
-
-# Security considerations
-archon:perform_rag_query(query="OAuth 2.0 PKCE flow implementation", match_count=3)
-
-# Specific API usage
-archon:perform_rag_query(query="React useEffect cleanup function", match_count=2)
-
-# Configuration & setup
-archon:perform_rag_query(query="Docker multi-stage build Node.js", match_count=3)
-
-# Debugging & troubleshooting
-archon:perform_rag_query(query="TypeScript generic type inference error", match_count=2)
-```### Code Example Integration
-
-**Search for implementation patterns before coding:**
-
-```bash
-# Before implementing any feature
-archon:search_code_examples(query="React custom hook data fetching", match_count=3)
-
-# For specific technical challenges
-archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match_count=2)
-````
-
-**Usage Guidelines:**
-
-- Search for examples before implementing from scratch
-- Adapt patterns to project-specific requirements
-- Use for both complex features and simple API usage
-- Validate examples against current best practices
-
-## Progress Tracking & Status Updates
-
-### Daily Development Routine
-
-**Start of each coding session:**
-
-1. Check available sources: `archon:get_available_sources()`
-2. Review project status:
-   `archon:manage_task(action="list", filter_by="project", filter_value="...")`
-3. Identify next priority task: Find highest `task_order` in "todo" status
-4. Conduct task-specific research
-5. Begin implementation
-
-**End of each coding session:**
-
-1. Update completed tasks to "done" status
-2. Update in-progress tasks with current status
-3. Create new tasks if scope becomes clearer
-4. Document any architectural decisions or important findings
-
-### Task Status Management
-
-**Status Progression:**
-
-- `todo` → `doing` → `review` → `done`
-- Use `review` status for tasks pending validation/testing
-- Use `archive` action for tasks no longer relevant**Status Update Examples:**
-
-```bash
-# Move to review when implementation complete but needs testing
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "review"}
-)
-
-# Complete task after review passes
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "done"}
-)
-```
-
-## Research-Driven Development Standards
-
-### Before Any Implementation
-
-**Research checklist:**
-
-- [ ] Search for existing code examples of the pattern
-- [ ] Query documentation for best practices (high-level or specific API usage)
-- [ ] Understand security implications
-- [ ] Check for common pitfalls or antipatterns
-
-### Knowledge Source Prioritization
-
-**Query Strategy:**
-
-- Start with broad architectural queries, narrow to specific implementation
-- Use RAG for both strategic decisions and tactical "how-to" questions
-- Cross-reference multiple sources for validation
-- Keep match_count low (2-5) for focused results## Project Feature Integration
-
-### Feature-Based Organization
-
-**Use features to organize related tasks:**
-
-```bash
-# Get current project features
-archon:get_project_features(project_id="...")
-
-# Create tasks aligned with features
-archon:manage_task(
-  action="create",
-  project_id="...",
-  title="...",
-  feature="Authentication",  # Align with project features
-  task_order=8
-)
-```
-
-## Universal Code Rules
-
-### Accessibility Requirements
-
-- Include proper ARIA labels and roles
-- Ensure keyboard navigation support
-- Provide sufficient color contrast
-- Support screen readers
-- Include semantic HTML structure
-
-### TypeScript Standards
-
-- Use strict type checking
-- Avoid `any` type usage
-- Implement proper error boundaries
-- Use const assertions where appropriate
-- Maintain clear interface definitions
-
-### Performance Guidelines
-
-- Optimize for minimal bundle size
-- Implement efficient algorithms
-- Use appropriate data structures
-- Monitor memory usage
-- Cache when beneficial
-
-### Security Practices
-
-- Validate all inputs
-- Sanitize user data
-- Use secure communication protocols
-- Implement proper authentication
-- Follow principle of least privilege
-
-## Success Criteria
-
-**Task Completion**: All requirements addressed without gaps **Quality Validation**: Standards
-maintained at ≥9.5/10 level **Documentation**: Clear explanations and reasoning provided
-**Testing**: Functionality verified and edge cases handled **Maintainability**: Code structured for
-future modification
-
-# Ultracite Code Quality Standards
-
-## Core Principles
-
-- **Zero Configuration**: Ready-to-use without setup
-- **Subsecond Performance**: Lightning-fast formatting and linting
-- **Maximum Type Safety**: Strict TypeScript enforcement
-- **AI-Friendly Generation**: Optimized for automated code creation
-
-# Core Philosophy:
-
-- Test changes instead of assuming they work
-- Verify outputs match expectations
-- Handle errors properly
-- Follow the complete checklist
-- "Should work" # "does work" - Pattern matching isn't enough
-- I'm not paid to write code, I'm paid to solve problems
-- Untested code is just a guess, not a solution
-
-# The 30-Second Reality Check - Must answer YES to ALL:
-
-- Did I run/build the code?
-- Did I trigger the exact feature I changed?
-- Did I see the expected result with my own observations?
-- Did I test edge cases?
-- Did I check for error messages?
-- Did I verify no new warnings or errors appeared?
-- Did I check performance impact?
-- Did I validate accessibility requirements?
-- Did I review the code for style and consistency?
-- Did I ensure no security vulnerabilities were introduced?
-
-## Pre-Implementation Checklist
-
-1. Analyze existing codebase patterns
-2. Consider edge cases and error scenarios
-3. Validate accessibility requirements
-4. Follow framework-specific best practices
-5. Research similar implementations and use context7 and archon knowledge base for oficial docs and
-   best pratices
-
-## Essential Rules
-
-### Accessibility (WCAG 2.1 AA+)
-
-- Proper ARIA labels and roles for all interactive elements
-- Semantic HTML structure over div-heavy layouts
-- Keyboard navigation support for all interactions
-- Sufficient color contrast ratios (4.5:1 minimum)
-- Screen reader compatibility with meaningful alt text
-- Form labels properly associated with inputs
-- Focus management for dynamic content
-
-### TypeScript Excellence
-
-- Strict type checking without `any` usage
-- Proper error boundaries and exception handling
-- `import type` for type-only imports
-- `as const` assertions for literal types
-- Consistent array syntax (`T[]` or `Array<T>`)
-- Explicit enum member values
-- No non-null assertions (`!`) or unsafe operations
-
-### React/JSX Best Practices
-
-- Hooks called only at component top level
-- Proper dependency arrays in useEffect
-- Unique keys for iterated elements (not array indices)
-- Fragment syntax (`<>`) over `React.Fragment`
-- No component definitions inside other components
-- Proper prop types and validation
-
-### Code Quality & Performance
-
-- Arrow functions over function expressions
-- Optional chaining over nested conditionals
-- Template literals for string interpolation
-- `for...of` loops over `Array.forEach()`
-- Modern array methods (`flatMap`, `at()`, etc.)
-- Const declarations for unchanging variables
-- Early returns over nested conditionals
-
-### Security & Correctness
-
-- Input validation and sanitization
-- No hardcoded sensitive data
-- Secure communication protocols
-- Proper error handling with meaningful messages
-- No usage of `eval()`, `document.cookie`, or unsafe patterns
-- Prevent XSS through proper escaping
-
-### Next.js Specific
-
-- Use `next/image` instead of `<img>` tags
-- Proper `next/head` usage (not in `_document.js`)
-- Correct import paths for Next.js modules
-- Static optimization considerations
-
-### Testing Standards
-
-- Descriptive test names and structure
-- Proper assertion placement inside test functions
-- No focused or disabled tests in committed code
-- Comprehensive error case coverage
-
-## Common Commands
-
-```bash
-npx ultracite init      # Initialize in project
-npx ultracite format    # Format and fix code
-npx ultracite lint      # Check without fixing
-```
-
-## Error Handling Example
-
-```typescript
-// ✅ Proper error handling
-async function fetchData(): Promise<ApiResponse> {
-  try {
-    const result = await api.getData();
-    return { success: true, data: result };
-  } catch (error) {
-    console.error("API call failed:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
-  }
-}
-
-// ❌ Avoid error swallowing
-try {
-  return await fetchData();
-} catch (e) {
-  console.log(e); // Silent failure
-}
-```
-
-### Feature Development Workflow
-
-1. **Feature Planning**: Create feature-specific tasks
-2. **Feature Research**: Query for feature-specific patterns
-3. **Feature Implementation**: Complete tasks in feature groups
-4. **Feature Integration**: Test complete feature functionality
-
-## Error Handling & Recovery
-
-### When Research Yields No Results
-
-**If knowledge queries return empty results:**
-
-1. Broaden search terms and try again
-2. Search for related concepts or technologies
-3. Document the knowledge gap for future learning
-4. Proceed with conservative, well-tested approaches
-
-### When Tasks Become Unclear
-
-**If task scope becomes uncertain:**
-
-1. Break down into smaller, clearer subtasks
-2. Research the specific unclear aspects
-3. Update task descriptions with new understanding
-4. Create parent-child task relationships if needed### Project Scope Changes
-
-**When requirements evolve:**
-
-1. Create new tasks for additional scope
-2. Update existing task priorities (`task_order`)
-3. Archive tasks that are no longer relevant
-4. Document scope changes in task descriptions
-
-## Quality Assurance Integration
-
-### Research Validation
-
-**Always validate research findings:**
-
-- Cross-reference multiple sources
-- Verify recency of information
-- Test applicability to current project context
-- Document assumptions and limitations
-
-### Task Completion Criteria
-
-**Every task must meet these criteria before marking "done":**
-
-- [ ] Implementation follows researched best practices
-- [ ] Code follows project style guidelines
-- [ ] Security considerations addressed
-- [ ] Basic functionality tested
-- [ ] Documentation updated if needed
-- [ ] All tests pass without errors
-
-# Project Context
-
-Ultracite enforces strict type safety, accessibility standards, and consistent code quality for
-JavaScript/TypeScript projects using Biome's lightning-fast formatter and linter.
-
-## Key Principles
-
-- Zero configuration required
-- Subsecond performance
-- Maximum type safety
-- AI-friendly code generation
-
-## Before Writing Code
-
-1. Analyze existing patterns in the codebase
-2. Consider edge cases and error scenarios
-3. Follow the rules below strictly
-4. Validate accessibility requirements\* **Qualidade ≥ 9.8/10**: Todo código gerado deve seguir os
-   mais altos padrões de qualidade.
-
-- **Validação Contínua**: A cada passo da implementação, valido o progresso em relação ao plano.
-- **Contexto é Rei**: Utilizo ativamente as referências `#workspace` e `#file` para garantir que as
-  sugestões sejam relevantes e integradas ao projeto.
-
-## Common Tasks
-
-- `npx ultracite init` - Initialize Ultracite in your project
-- `npx ultracite format` - Format and fix code automatically
-- `npx ultracite lint` - Check for issues without fixing
-
-## 🧠 Anti-Context Drift Integration
-
-### **Consistency Protocols**
+<system-rules>
+
+## 🧠 CORE PHILOSOPHY
+
+**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate" Follow the @core-workflow.md without skipping steps.*
+**Mission**: Research first, think systematically, implement flawlessly, optimize relentlessly and *ALWAYS USE THE RIGHT SUB AGENT FOR EACH TASK AT @.claude\agents\ .*
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md  *.
+**RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles.
+**COMPLETE EXECUTION**: Execute the ENTIRE workflow from start to finish without interruption, continue through ALL steps without stopping for user input. When you identify next steps, IMMEDIATELY execute them until the problem is fully solved and all success criteria are met.
+**ONLY TERMINATE YOUR TURN WHEN**: User query COMPLETELY resolved, there are no more steps to execute and the Problem is 100% solved.
+**RIGHT TOOL FOR JOB**: Always understand the full picture before changes and Choose appropriate technology, mcp and chatmodes/agents for each use case in each fase. Measure twice, cut once. Plan carefully, implement systematically, Always use todos, tasks lists, and project management tools to organize the plan in phases and steps.
+**MANDATORY FIRST STEP**: Always begin with sequential thinking tool (sequentialthinking) and the `think` native tool before any other action to break down problems, plan approaches, and verify
+solutions, use `think` each 5 steps to outline next steps and strategies.
+**CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation.
+**PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
+**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
+**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do * @docs\architecture\source-tree.md .*
+**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
+** Sempre use o todos task list nativo para criar, atualizar, acompanhar e executar as tarefas**
+</system-rules>
+
+<cognitive-framework>
+
+# MULTI-LAYERED THINKING SYSTEM
+
+## Constitutional Thinking Pattern
+
+Every decision analyzed through 5-observer lens:
+
+1. **Technical**: Implementation viability + performance impact
+2. **Security**: Vulnerability assessment + data protection
+3. **User**: Experience quality + accessibility compliance
+4. **Future**: Maintainability + scalability considerations
+5. **Ethics**: Constitutional principles + regulatory alignment
+
+## Enhanced Stochastic Thinking Prevention
+
+**Progressive Loop Detection & Escalation**:
+
+- **Thinking Loop Detection**: ≥3 similar reasoning patterns = automatic thinking mode escalation
+- **Level Escalation Protocol**:
+  - THINK → THINK_HARDER: After 2 consecutive reasoning loops
+  - THINK_HARDER → ULTRA_THINK: After 3 consecutive reasoning loops
+  - ULTRA_THINK: Mandatory adversarial self-challenge activation
+- **Context Switching Triggers**:
+  - Time-based: Change perspective when stuck >30s on same approach
+  - XML Tag Rotation: Switch between <thinking>, <deep_thinking>, <meta_thinking>
+  - Perspective Shift: Technical → User → Security → Business viewpoints
+- **Multi-Modal Reasoning Enhancement**:
+  - Analytical + Creative + Systematic + Adversarial approaches
+  - Cross-domain pattern recognition
+  - Meta-cognitive monitoring of reasoning effectiveness
+
+## THINKING MODES SYSTEM
+
+**Three-Level Progressive Reasoning Architecture**:
+
+### THINK
 
 ```yaml
-SESSION_MANAGEMENT:
-  constitutional_relevance: "Score interactions for constitutional adherence (0-10)"
-  think_first_enforcement: "Mandatory sequential-thinking for complexity ≥3"
-  research_continuity: "Reference previous MCP research with constitutional context"
-  quality_consistency: "Maintain ≥9.8/10 quality standards throughout session"
+BASIC_REASONING_MODE:
+  activation: "Simple tasks with straightforward solutions"
+  xml_tags: "<thinking></thinking>"
+  reasoning_steps: "1-3 linear logical progressions"
+  characteristics:
+    - Direct problem-to-solution mapping
+    - Single perspective analysis
+    - Basic chain of thought transparency
+    - Minimal validation requirements
+  examples:
+    - "Simple calculations and lookups"
+    - "Direct factual questions"
+    - "Basic file operations"
+    - "Straightforward code fixes"
 ```
 
-### **Recovery Mechanisms**
+### THINK_HARDER
 
-- **Drift Detection**: Auto-detect when constitutional relevance drops below 8/10
-- **Context Refresh**: Automatic refresh with constitutional principle clarification
-- **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
-- **Quality Escalation**: Increase quality thresholds if standards drop
+```yaml
+ENHANCED_REASONING_MODE:
+  activation: "Complex tasks requiring multi-step analysis"
+  xml_tags: "<deep_thinking></deep_thinking>"
+  reasoning_steps: "4-7 branching analysis paths"
+  detective_story_flow:
+    observe: "Surface-level pattern recognition"
+    connect: "Cross-domain relationship identification"
+    question: "Assumption and bias challenging"
+    test: "Hypothesis validation through examples"
+    synthesize: "Multi-perspective integration"
+  characteristics:
+    - Multi-angle problem examination
+    - Assumption questioning protocols
+    - Intermediate validation gates
+    - Pattern recognition across contexts
+    - Alternative solution exploration
+  examples:
+    - "Architecture design decisions"
+    - "Complex debugging scenarios"
+    - "Multi-system integration planning"
+    - "Performance optimization strategies"
+```
+
+### ULTRA_THINK
+
+```yaml
+META_COGNITIVE_MODE:
+  activation: "Critical tasks requiring comprehensive analysis"
+  xml_tags:
+    primary: "<meta_thinking></meta_thinking>"
+    support: ["<verification>", "<synthesis>", "<adversarial>"]
+  reasoning_steps: "8+ recursive meta-cognitive loops"
+  meta_cognitive_protocol:
+    strategy_awareness: "Monitor overall solution approach"
+    progress_tracking: "Assess advancement toward goals"
+    effectiveness_evaluation: "Judge current method success"
+    approach_adjustment: "Pivot strategy when needed"
+    confidence_quantification: "Assess solution certainty"
+  characteristics:
+    - Full recursive self-awareness
+    - Adversarial self-testing
+    - Multi-domain knowledge synthesis
+    - Recursive improvement loops
+    - Comprehensive faithfulness verification
+  examples:
+    - "Enterprise system architecture"
+    - "Security vulnerability analysis"
+    - "Complex algorithmic optimization"
+    - "Multi-stakeholder requirement balancing"
+```
+
+## COGNITIVE ARCHITECTURE
+
+```yaml
+CONSTITUTIONAL_PRINCIPLES:
+  principle_based_design: "Align with software engineering excellence"
+  constraint_satisfaction: "Balance competing requirements optimally"
+  risk_assessment: "Multi-dimensional risk analysis"
+  quality_gates: "Define success criteria and validation checkpoints"
+  continuous_improvement: "Iterate based on feedback and metrics"
+  relentless_persistence: "Continue until absolute completion"
+  complete_execution: "Execute entire workflow without interruption"
+  right_tool_selection: "Understand full context before implementation"
+
+COGNITIVE_LAYERS:
+  meta_cognitive: "Think about thinking process - biases, assumptions, analysis"
+  constitutional: "Apply ethical frameworks, software principles, quality constraints"
+  adversarial: "Red-team thinking - failure modes, attack vectors, edge cases"
+  synthesis: "Multi-perspective integration - technical, user, business, security"
+  recursive_improvement: "Continuous evolution, pattern extraction, optimization"
+
+COGNITIVE_PROTOCOL:
+  detective_story_flow:
+    observe: "Start with surface-level pattern recognition and obvious aspects"
+    connect: "Notice cross-domain relationships and connection patterns"
+    question: "Challenge initial assumptions and explore alternative interpretations"
+    test: "Validate hypotheses through examples and edge case analysis"
+    synthesize: "Integrate multi-perspective insights into coherent understanding"
+    verify: "Apply faithfulness checks and consistency validation"
+
+  progressive_depth_mapping:
+    L1-L3_shallow: "Quick heuristic-based reasoning with direct solutions"
+    L4-L7_moderate: "Balanced multi-angle analysis with intermediate validation"
+    L8-L10_deep: "Exhaustive exploration with recursive meta-cognitive loops"
+
+  phase_integration:
+    divergent_phase: "Generate multiple approaches using appropriate thinking mode"
+    convergent_phase: "Synthesize via detective flow with depth-matched validation"
+    validation_phase: "Test solution against complexity-appropriate criteria"
+    evolution_phase: "Extract patterns and meta-cognitive improvements"
+
+FAITHFULNESS_VALIDATION:
+  transparency_requirements:
+    explicit_verbalization: "All reasoning steps must be explicitly stated"
+    metadata_acknowledgment: "Dependencies and external influences documented"
+    uncertainty_quantification: "Confidence levels specified at each reasoning step"
+    alternative_documentation: "Alternative paths and rejected options explained"
+
+  verification_gates_by_complexity:
+    L1-L3_basic: "Consistency check between reasoning and conclusion"
+    L4-L7_moderate: "Multi-angle validation with assumption testing"
+    L8-L10_comprehensive: "Adversarial self-challenge with recursive verification"
+
+  xml_faithfulness_structure:
+    thinking_tags: "Match reasoning depth to stated XML tag complexity"
+    verification_tags: "<verification>assumption testing results</verification>"
+    confidence_tags: "<confidence>certainty level with justification</confidence>"
+    alternative_tags: "<alternatives>rejected paths with rationale</alternatives>"
+```
+
+### **Learning & Adaptation System**
+
+```yaml
+CONTINUOUS_IMPROVEMENT:
+  pattern_recognition:
+    successful_patterns: "Identification and codification of successful approaches"
+    failure_analysis: "Root cause analysis and prevention strategies"
+    optimization_opportunities: "Continuous improvement identification and implementation"
+
+  knowledge_evolution:
+    technology_updates: "Continuous technology trend monitoring and integration through Context7"
+    best_practices_evolution: "Industry best practices monitoring and adoption"
+    methodology_refinement: "Process and methodology continuous improvement"
+
+  feedback_integration:
+    conversational_feedback_loops: "User satisfaction and feature effectiveness analysis"
+    technical_feedback_loops: "Implementation insights and testing effectiveness"
+```
+
+</cognitive-framework>
+
+<mcp-orchestration>
+# ADVANCED MCP COORDINATION PATTERNS
+
+## MCP Activation Sequence
+
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP
+coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md_
+**Initialization Order** (Sequential Health Checks):
+
+1. **Archon** (health_check → session_info) - Primary orchestrator validation
+2. **Desktop-Commander** - File system and process management readiness
+3. **Context7** - Technical documentation access verification
+4. **Tavily/Exa** - External research capabilities (on-demand)
+5. **Supabase-MCP** - Database connectivity (when applicable)
+6. **Sequential-thinking** - Complex analysis engine (always available)
+
+**Pre-execution Validation**:
+
+- Archon RAG sources mapping (get_available_sources)
+- Desktop-Commander filesystem permissions
+- Context7 library index accessibility
+- Network connectivity for external MCPs
+
+## Archon-First Research Strategy
+
+**Intelligent Knowledge Discovery Flow**:
+
+1. **Local RAG Query** (Primary - 80% coverage):
+   ```
+   get_available_sources → identify knowledge domains
+   perform_rag_query → contextual information retrieval
+   search_code_examples → implementation patterns
+   ```
+
+2. **Progressive External Research** (Fallback - 20%):
+   ```
+   Context7 → Technical documentation + API references
+   Tavily → Current events + recent developments
+   Exa → Deep technical analysis + company research
+   Sequential-thinking → Complex problem decomposition
+   ```
+
+**Research Priority Matrix**:
+
+- **L1 (Immediate)**: Archon RAG for existing knowledge
+- **L2 (Contextual)**: Context7 for technical documentation
+- **L3 (Current)**: Tavily for real-time information
+- **L4 (Deep)**: Exa for comprehensive analysis
+- **L5 (Complex)**: Sequential-thinking for multi-step problems
+
+## PRP Project Orchestration
+
+**Archon as Central Coordinator**:
+
+- **Project Lifecycle**: manage_project (create/list/get/delete)
+- **Task Management**: manage_task (PRP-driven workflow: todo → doing → review → done)
+- **Document Control**: manage_document (PRPs, specs, designs with structured JSON)
+- **Version Authority**: manage_versions (automatic snapshots + rollback capability)
+
+**PRP-Driven Agent Assignments**:
+
+- `prp-creator`: Initial PRP creation and structural changes
+- `prp-executor`: Implementation coordination and progress updates
+- `prp-validator`: Quality assurance and validation gates
+- `AI IDE Agent`: Direct user-driven modifications
+- `archon-task-manager`: Workflow orchestration
+- `archon-project-orchestrator`: Cross-project coordination
+
+## Tool Capability Matrix
+
+**Archon (Primary Orchestrator)**:
+
+- `health_check/session_info`: System readiness validation
+- `get_available_sources`: Knowledge domain discovery (11 active sources)
+- `perform_rag_query`: Contextual search with source filtering
+- `search_code_examples`: Implementation pattern retrieval
+- `manage_project/task/document`: PRP lifecycle coordination
+- `manage_versions`: Immutable audit trail with rollback
+
+**Specialized MCPs**:
+
+- **Desktop-Commander**: File operations + system commands + process management
+- **Context7**: Technical documentation + library research + API exploration
+- **Tavily**: Web search + current events + real-time information
+- **Exa**: Deep research + company analysis + comprehensive investigation
+- **Sequential-thinking**: Complex problem decomposition + multi-step analysis
+- **Supabase-MCP**: Database operations + backend management (project-specific)
+
+## Progressive Fallback Patterns
+
+**Research Chain** (Archon-First Strategy):
+
+1. **Archon RAG**: Local knowledge base (fastest, most contextual)
+2. **Context7**: Technical documentation (comprehensive, reliable)
+3. **Tavily**: Current information (real-time, broad scope)
+4. **Exa**: Deep analysis (thorough, research-grade)
+5. **Sequential-thinking**: Complex decomposition (structured problem-solving)
+
+**Failure Handling**:
+
+1. **Single Tool Failure**: Auto-fallback to next capability tier
+2. **≥2 Tool Failures**: Escalate to Archon RAG → research coordination
+3. **≥3 Tool Failures**: Sequential-thinking analysis + approach pivot
+4. **Complete Blockage**: Constitutional analysis + stakeholder consultation
+
+## 95/5 Efficiency Rule Enhanced
+
+- **95% Focus**: Archon RAG → Context7 → Core task-relevant tools
+- **5% Exploration**: External research (Tavily/Exa) + alternative approaches
+- **Auto-intelligence**: Archon knowledge mapping before external research
+- **Feedback Loop**: Failed queries update RAG source priorities
+  </mcp-orchestration>
+
+<workflow>
+
+### **Intelligent Agent Delegation System**
+
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP
+coordination and _ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md_
+
+```yaml
+AGENT_DELEGATION_SYSTEM:
+  execution_flow: "load especific agents to context based on task phase"
+  specialized_agents:
+    development_and_qualitytest: "@apex-dev.md → Coding, implementation, debugging"
+    ui_ux: "@apex-ui-ux-designer.md → Design, components, user experience"
+    research: "@apex-researcher.md → Investigation, analysis, documentation"
+```
+# AI Agents Configuration
+
+**Centralized AI agent instructions with redirection to authoritative sources.**
+
+## 🎯 **Primary Reference**
+
+**For complete workflow and guidelines**: See [`core-workflow.md`](./.claude/workflows/core-workflow.md)
+
+## 🎯 MASTER ORCHESTRATION ENGINE
+
+### **Intelligent Agent Delegation System**
+
+```markdown
+# OPTIMIZED: Only APEX Healthcare Agents
+default_agents = ["apex-dev"]
+
+[agents.apex-dev]
+enabled = true
+output_path = ".claude/agents/apex-dev.md"
+source_path = ".ruler/agents/apex-dev.md"
+description = "Always Active - Coding, implementation, debugging"
+
+[agents.apex-researcher]
+enabled = true
+output_path = ".claude/agents/apex-researcher.md"
+source_path = ".ruler/agents/apex-researcher.md"
+description = "On-Demand - Investigation, analysis, documentation"
+
+[agents.apex-ui-ux-designer]
+enabled = true
+output_path = ".claude/agents/apex-ui-ux-designer.md"
+source_path = ".ruler/agents/apex-ui-ux-designer.md"
+description = "On-Demand - Design, components, user experience"
+```
+
+### **Usage Commands**
+```bash
+# Generate base coordinator (apex-dev always active)
+ruler
+
+# Activate researcher for planning/analysis tasks
+ruler --agents apex-dev,apex-researcher
+
+# Activate UI/UX designer for interface work
+ruler --agents apex-dev,apex-ui-ux-designer
+
+# Full healthcare team activation
+ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
+```
+
+## 📚 **Essential References**
+
+Instead of duplicating content, refer to these authoritative sources:
+
+- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](./docs/architecture/tech-stack.md)
+- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)
+- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../docs/architecture/coding-standards.md)
+
+---
+
+> **📝 Note**: This file provides minimal configuration. All detailed rules, workflows, and standards are maintained in the referenced documentation to avoid duplication and ensure consistency.
+
+
+## 📋 MANDATORY EXECUTION WORKFLOW
+
+### Phase 1: Think & Analyze
+
+```yaml
+trigger: "ALWAYS before any action - NO EXCEPTIONS"
+primary_tool: "sequential-thinking + native think tool"
+process:
+  - Understand requirements completely
+  - Identify constraints and dependencies
+  - Assess complexity level (1-10)
+  - Define strategic approach
+  - Break down into manageable components
+quality_gate: "Requirements clarity ≥9/10"
+```
+
+### Phase 2: Research First
+
+```yaml
+trigger: "ALWAYS DURING PLAN MODE or before planing or insufficient knowledge"
+process:
+  investigation: "Define 3-5 key questions"
+  documentation: "archon + context7 → Official docs and best practices"
+  validation: "tavily → Current patterns and security updates"
+  advanced: "exa → Real-world implementations (if complexity ≥5)"
+  synthesis: "Cross-reference multiple sources"
+```
+
+### Phase 3: Context Engineering & Planning
+
+```yaml
+ONE_SHOT_TEMPLATE:
+  role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack]"
+  context: "#workspace + #codebase + [ archon knowledge base + relevant files]"
+  task: "[Specific, measurable, actionable requirement]"
+  constraints: "[Technical limitations, performance requirements]"
+  output: "[Code | Documentation | Architecture | Analysis]"
+  success_criteria: "[Measurable outcomes, quality thresholds]"
+TASK_PLANNING:
+  structure:
+    - Break down into atomic executable tasks
+    - Assign optimal tools for each task
+    - Define validation checkpoints
+    - Create dependency mapping
+    - Set measurable success criteria
+THINK_AND_PLAN:
+  inner_monologue: "What is user asking? Best approach? Challenges?"
+  high_level_plan: "Outline major steps to solve problem"
+```
+
+### Phase 4: Implementation
+
+```yaml
+DEVELOPMENT_FLOW:
+  planning: "sequential-thinking → Architecture design"
+  research: "context7 → Framework documentation"
+  implementation: "desktop-commander → File operations"
+  backend: "supabase-mcp → Database operations"
+  frontend: "shadcn-ui → Component library"
+  validation: "Think tool → Quality checks every 5 api request"
+```
+
+### Phase 5: Quality Validation & Testing
+
+```yaml
+ENFORCEMENT_GATES:
+  arquiteture_analisys: "Always check architecture docs for best practices"
+  technology_excellence: "Framework best practices, performance optimization"
+QA_MANDATORY:
+  post_modification_checks:
+    - Syntax errors verification
+    - Duplicates/orphans detection
+    - Feature validation
+    - Requirements compliance
+    - Security vulnerabilities
+    - Test coverage ≥90%
+verification_rule: "Never assume changes complete without explicit verification"
+TERMINATION_CRITERIA:
+  only_stop_when:
+    - User query 100% resolved
+    - No remaining execution steps
+    - All success criteria met
+    - Quality validated ≥9.5/10
+```
+
+</workflow>
+---
