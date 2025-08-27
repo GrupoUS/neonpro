@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Performance Test Runner - VIBECODE V1.0
  * Comprehensive performance testing suite for subscription middleware

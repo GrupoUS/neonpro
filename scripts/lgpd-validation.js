@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * LGPD (Lei Geral de Proteção de Dados) Compliance Validation Script

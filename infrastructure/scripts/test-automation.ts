@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 
 /**
  * 🧪 Test Script for NeonPro Background Jobs

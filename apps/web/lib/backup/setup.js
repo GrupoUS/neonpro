@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * NeonPro Backup System Setup Script

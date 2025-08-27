@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script to test Supabase MCP server connection

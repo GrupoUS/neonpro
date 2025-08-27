@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * CFM (Conselho Federal de Medicina) Compliance Validation Script

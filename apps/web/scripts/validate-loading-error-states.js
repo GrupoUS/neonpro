@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script de Validação de Loading & Error States

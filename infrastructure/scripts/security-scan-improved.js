@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * 🛡️ NEONPRO SECURITY SCANNER V2 - INTELLIGENT
  * Detecta API keys expostas com redução de falsos positivos

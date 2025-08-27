@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Healthcare Compliance Verification Script for NeonPro

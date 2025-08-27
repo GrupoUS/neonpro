@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Turborepo Performance Validation Script for NeonPro Aesthetic Clinic SaaS

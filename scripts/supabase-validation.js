@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Supabase Database Schema Validation Script

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * NEONPRO TURBOREPO BUILD OPTIMIZER

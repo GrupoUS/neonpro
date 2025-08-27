@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * NeonPro Healthcare Test Runner

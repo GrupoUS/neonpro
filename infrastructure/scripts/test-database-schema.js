@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script de Teste do Schema do Banco de Dados - Assinaturas

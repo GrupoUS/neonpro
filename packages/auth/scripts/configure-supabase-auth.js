@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script para configurar automaticamente as URLs de redirect no Supabase

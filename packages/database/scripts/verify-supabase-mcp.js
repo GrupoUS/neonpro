@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Supabase MCP Server Verification Script
