@@ -70,8 +70,10 @@ export const useAIScheduling = (
 
   // Core state
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
-  const [lastResult, setLastResult] = useState<SchedulingResult | null>();
+  const [error, setError] = useState<string | null>(undefined);
+  const [lastResult, setLastResult] = useState<SchedulingResult | null>(
+    undefined,
+  );
 
   // Optimization state
   const [optimizationScore, setOptimizationScore] = useState(0.8);
@@ -80,7 +82,9 @@ export const useAIScheduling = (
   >([]);
 
   // Analytics state
-  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>();
+  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>(
+    undefined,
+  );
   const [processingTime, setProcessingTime] = useState(0);
 
   // Refs for AI engine and real-time connections

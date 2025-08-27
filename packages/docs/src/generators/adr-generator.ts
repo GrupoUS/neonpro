@@ -329,7 +329,7 @@ export class ADRGenerator {
   private parseADRMetadata(filename: string): ADRMetadata | null {
     const match = filename.match(/^adr-(\d{3})-(.*)\.md$/);
     if (!match) {
-      return;
+      return null;
     }
 
     const [, numberStr, titleSlug] = match;
@@ -362,7 +362,7 @@ export class ADRGenerator {
         supersededBy: supersededBy || undefined,
       };
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -371,7 +371,7 @@ export class ADRGenerator {
    */
   private extractTitle(content: string): string | null {
     const match = content.match(/^# ADR-\d{3}: (.+)$/m);
-    return match?.[1] ?? undefined;
+    return match?.[1] ?? null;
   }
 
   /**
@@ -387,7 +387,7 @@ export class ADRGenerator {
    */
   private extractDate(content: string): string | null {
     const match = content.match(/\*\*Date\*\*: (.+)$/m);
-    return match?.[1] ? match[1] : undefined;
+    return match?.[1] ? match[1] : null;
   }
 
   /**
@@ -395,7 +395,7 @@ export class ADRGenerator {
    */
   private extractAuthor(content: string): string | null {
     const match = content.match(/\*\*Author\(s\)\*\*: (.+)$/m);
-    return match?.[1] ? match[1] : undefined;
+    return match?.[1] ? match[1] : null;
   }
 
   /**
@@ -436,9 +436,12 @@ export class ADRGenerator {
         "ADR-XXX",
         `ADR-${content.metadata.number.toString().padStart(3, "0")}`,
       )
-      .replaceAll("\\[Short Title of Decision\\]", content.metadata.title)
       .replaceAll(
-        "\\[Proposed \\| Accepted \\| Rejected \\| Deprecated \\| Superseded by ADR-YYY\\]",
+        String.raw`\[Short Title of Decision\]`,
+        content.metadata.title,
+      )
+      .replaceAll(
+        String.raw`\[Proposed \| Accepted \| Rejected \| Deprecated \| Superseded by ADR-YYY\]`,
         content.metadata.status,
       )
       .replaceAll(/\[Describe the forces at play[\s\S]*?\]/g, content.context)
@@ -454,8 +457,8 @@ export class ADRGenerator {
         /\[List the alternative solutions[\s\S]*?\]/g,
         content.alternatives,
       )
-      .replaceAll("\\[YYYY-MM-DD\\]", content.metadata.date)
-      .replaceAll("\\[Names and roles\\]", content.metadata.author);
+      .replaceAll(String.raw`\[YYYY-MM-DD\]`, content.metadata.date)
+      .replaceAll(String.raw`\[Names and roles\]`, content.metadata.author);
 
     // Add optional sections
     if (content.implementation) {

@@ -35,7 +35,7 @@ export function useAvailabilityManager(
 ): UseAvailabilityManagerReturn {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
 
   const refreshSlots = useCallback(async (): Promise<void> => {
     try {

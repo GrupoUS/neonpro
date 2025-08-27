@@ -21,7 +21,7 @@ export interface TrafficStatus {
 }
 
 export class TrafficManager {
-  private currentConfig: TrafficConfig | null = undefined;
+  private currentConfig: TrafficConfig | null = null;
   private readonly trafficHistory: TrafficStatus[] = [];
 
   constructor(private readonly config: { maxHistorySize: number }) {}
@@ -105,7 +105,7 @@ export class TrafficManager {
    * Get current traffic status
    */
   getCurrentStatus(): TrafficStatus | null {
-    return this.trafficHistory.at(-1) || undefined;
+    return this.trafficHistory.at(-1) || null;
   }
 
   /**

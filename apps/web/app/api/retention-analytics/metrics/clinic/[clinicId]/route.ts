@@ -128,10 +128,10 @@ export async function GET(
     );
 
     // Apply additional filters if provided
-    let filteredMetrics = metrics;
+    let filteredMetrics = metrics.metrics;
 
     if (startDate || endDate || riskLevel) {
-      filteredMetrics = metrics.filter((metric) => {
+      filteredMetrics = metrics.metrics.filter((metric: any) => {
         // Filter by date range
         if (
           startDate &&
@@ -162,16 +162,20 @@ export async function GET(
         filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
           filteredMetrics.length || 0,
       average_churn_risk:
-        filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) /
-          filteredMetrics.length || 0,
+        filteredMetrics.reduce(
+          (sum: number, m: any) => sum + m.churn_risk_score,
+          0,
+        ) / filteredMetrics.length || 0,
       risk_distribution: {
-        low: filteredMetrics.filter((m) => m.churn_risk_level === "low").length,
-        medium: filteredMetrics.filter((m) => m.churn_risk_level === "medium")
+        low: filteredMetrics.filter((m: any) => m.churn_risk_level === "low")
           .length,
-        high: filteredMetrics.filter((m) => m.churn_risk_level === "high")
+        medium: filteredMetrics.filter(
+          (m: any) => m.churn_risk_level === "medium",
+        ).length,
+        high: filteredMetrics.filter((m: any) => m.churn_risk_level === "high")
           .length,
         critical: filteredMetrics.filter(
-          (m) => m.churn_risk_level === "critical",
+          (m: any) => m.churn_risk_level === "critical",
         ).length,
       },
       total_lifetime_value: filteredMetrics.reduce(
@@ -323,15 +327,15 @@ export async function POST(
 
     // Calculate metrics in batches to avoid overwhelming the system
     const retentionService = new RetentionAnalyticsService();
-    const results = [];
-    const errors = [];
+    const results: any[] = [];
+    const errors: any[] = [];
 
     const batchSize = 10; // Process 10 patients at a time
 
     for (let i = 0; i < targetPatientIds.length; i += batchSize) {
       const batch = targetPatientIds.slice(i, i + batchSize);
 
-      const batchPromises = batch.map(async (patientId) => {
+      const batchPromises = batch.map(async (patientId: string) => {
         try {
           const metrics =
             await retentionService.calculatePatientRetentionMetrics(

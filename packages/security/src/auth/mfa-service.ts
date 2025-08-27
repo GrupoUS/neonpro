@@ -605,9 +605,9 @@ async function checkLockout(userId: string): Promise<{
 async function getUserTotpSecret(userId: string): Promise<string | null> {
   try {
     const settings = await mfaDb.getMfaSettings(userId);
-    return settings?.totpSecret || null;
+    return settings?.totpSecret || undefined;
   } catch {
-    return null;
+    return;
   }
 }
 

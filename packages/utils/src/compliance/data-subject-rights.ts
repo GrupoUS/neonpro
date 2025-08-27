@@ -165,7 +165,7 @@ export class LGPDDataSubjectRights {
     _requestId: string,
   ): Promise<DataSubjectRequest | null> {
     // Implementation would query database
-    return null;
+    return;
   }
 
   async updateRequestStatus(

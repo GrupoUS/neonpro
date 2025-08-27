@@ -419,11 +419,25 @@ export async function PUT(
     const documentId = id;
     const body = await request.json();
 
+    // Get current document data first
+    const { data: currentDoc, error: fetchError } = await supabase
+      .from("receipts_invoices")
+      .select("data")
+      .eq("id", documentId)
+      .single();
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    // Merge existing data with new data
+    const mergedData = { ...currentDoc.data, ...body };
+
     // Update document data
     const { data, error } = await supabase
       .from("receipts_invoices")
       .update({
-        data: supabase.raw(`data || '${JSON.stringify(body)}'::jsonb`),
+        data: mergedData,
         updated_at: new Date().toISOString(),
       })
       .eq("id", documentId)

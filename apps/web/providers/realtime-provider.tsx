@@ -9,8 +9,8 @@
  */
 
 import {
-  defaultRealtimeConfig,
   RealtimeQueryManager,
+  defaultRealtimeConfig,
 } from "@/lib/query/realtime-query-utils";
 import type { RealtimeQueryConfig } from "@/lib/query/realtime-query-utils";
 import { createClient } from "@/lib/supabase/client";

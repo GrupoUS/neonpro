@@ -50,16 +50,22 @@
       "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
       "@neonpro/compliance": ["../../packages/compliance/src"],
       "@neonpro/compliance/*": ["../../packages/compliance/src/*"],
-      "date-fns": ["./lib/placeholders/date-fns"],
-      "zustand": ["./lib/placeholders/zustand"],
-      "zustand/middleware": ["./lib/placeholders/zustand-middleware"],
-      "zustand/middleware/immer": ["./lib/placeholders/zustand-immer"],
-      "@jest/globals": ["./lib/placeholders/jest-globals"],
-      "xlsx": ["./lib/placeholders/xlsx"],
-      "jspdf": ["./lib/placeholders/jspdf"],
-      "lru-cache": ["./lib/placeholders/lru-cache"]
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
+      "@neonpro/auth": ["../../packages/auth/src"],
+      "@neonpro/auth/*": ["../../packages/auth/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/cache": ["../../packages/cache/src"],
+      "@neonpro/cache/*": ["../../packages/cache/src/*"],
+      "@neonpro/monitoring": ["../../packages/monitoring/src"],
+      "@neonpro/monitoring/*": ["../../packages/monitoring/src/*"],
+      "@neonpro/enterprise": ["../../packages/enterprise/src"],
+      "@neonpro/enterprise/*": ["../../packages/enterprise/src/*"],
+
+      "qrcode.react": ["./lib/placeholders/qrcode-react"]
     },
-    "noEmit": true
+    "emitDeclarationOnly": true
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts"],
   "exclude": [

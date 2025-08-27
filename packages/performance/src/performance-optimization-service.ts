@@ -177,7 +177,8 @@ export class HealthcarePerformanceOptimizationService {
    */
   async optimizeDatabasePerformance(): Promise<void> {
     // Analyze slow queries
-    const slowQueries = await this.databaseProfiler.analyzeSlowQueries();
+    const analysis = this.databaseProfiler.analyzePerformance();
+    const slowQueries = analysis.optimizationSuggestions;
 
     // Optimize query indexes
     await this.optimizeQueryIndexes(slowQueries);
@@ -312,12 +313,12 @@ export class HealthcarePerformanceOptimizationService {
 
   private calculateOverallCacheHitRate(cacheStats: any): number {
     const layers = Object.values(cacheStats);
-    const totalHits = layers.reduce(
-      (sum, layer: any) => sum + (layer?.hits || 0),
+    const totalHits: number = layers.reduce(
+      (sum: number, layer: any) => sum + (layer?.hits || 0),
       0,
     );
-    const totalRequests = layers.reduce(
-      (sum, layer: any) => sum + (layer?.totalRequests || 0),
+    const totalRequests: number = layers.reduce(
+      (sum: number, layer: any) => sum + (layer?.totalRequests || 0),
       0,
     );
 

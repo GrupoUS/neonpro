@@ -103,7 +103,7 @@ export class HealthcareAuth {
     }
 
     // Would implement real Supabase authentication
-    return null;
+    return;
   }
 
   /**

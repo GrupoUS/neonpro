@@ -879,7 +879,7 @@ export class MedicalDeviceService {
     _deviceId: string,
     _tenantId: string,
   ): Promise<MedicalDeviceRegistration | null> {
-    return null; // Would query Supabase database
+    return; // Would query Supabase database
   }
 
   private async validateManufacturerWithANVISA(

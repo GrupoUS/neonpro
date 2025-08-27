@@ -213,11 +213,11 @@ export interface BehavioralInsight {
   visualizations: {
     chart_type: "line" | "bar" | "pie" | "heatmap" | "funnel";
     title: string;
-    data_points: Array<{
+    data_points: {
       label: string;
       value: number;
       metadata?: Record<string, any>;
-    }>;
+    }[];
     insights: string[];
   }[];
 
@@ -1865,9 +1865,9 @@ export class BehavioralCrmService extends EnhancedAIService {
     // Simulate tone adjustment (in production, would use NLP processing)
     const toneModifiers = {
       professional: content.replaceAll("!", "."),
-      friendly: content.replaceAll("\\.", "!"),
+      friendly: content.replaceAll(String.raw`\.`, "!"),
       casual: content.toLowerCase(),
-      urgent: content.toUpperCase().replaceAll("\\.", "!"),
+      urgent: content.toUpperCase().replaceAll(String.raw`\.`, "!"),
     };
 
     return toneModifiers[tone] || content;

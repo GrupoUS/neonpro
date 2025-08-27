@@ -49,7 +49,7 @@ export const useMutation = <T, V>(fn: (variables: V) => Promise<T>) => {
         setIsLoading(true);
         setError(undefined);
         return await fn(variables);
-      } catch {
+      } catch (error) {
         const error =
           error instanceof Error ? error : new Error("Mutation failed");
         setError(error);

@@ -597,7 +597,7 @@ export class CFMService {
     _professionalId: string,
   ): Promise<CFMProfessional | null> {
     // Mock data - would query actual database
-    return null; // In production, would return actual professional data
+    return; // In production, would return actual professional data
   }
 
   private compareProcedureLevel(

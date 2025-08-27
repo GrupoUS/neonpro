@@ -23,8 +23,10 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
+  const planId = id;
+
   try {
-    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -34,8 +36,6 @@ export async function GET(
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const planId = id;
 
     if (!planId) {
       return NextResponse.json(
@@ -84,7 +84,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    logger.error(`Error in GET /api/subscription-plans/${id}:`, error);
+    logger.error(`Error in GET /api/subscription-plans/${planId}:`, error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -97,8 +97,10 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params;
+  const planId = id;
+
   try {
-    const { id } = await params;
     const supabase = await createClient();
     const {
       data: { user },
@@ -182,7 +184,7 @@ export async function PUT(
       message: "Plan updated successfully",
     });
   } catch (error) {
-    logger.error(`Error in PUT /api/subscription-plans/${id}:`, error);
+    logger.error(`Error in PUT /api/subscription-plans/${planId}:`, error);
 
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 });
@@ -226,7 +228,7 @@ export async function DELETE(
       );
     }
 
-    const planId = params.id;
+    const planId = id;
 
     // Check if plan exists
     const { data: existingPlan, error: fetchError } = await supabase

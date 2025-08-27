@@ -1,0 +1,37 @@
+{
+  "extends": "../typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/core/*": ["./src/core/*"],
+      "@/blockchain/*": ["./src/blockchain/*"],
+      "@/compliance/*": ["./src/compliance/*"],
+      "@neonpro/types": ["../types/src"],
+      "@neonpro/constitutional-layer": ["../constitutional-layer/src"],
+      "@neonpro/core-services": ["../core-services/src"],
+      "@neonpro/utils": ["../utils/src"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.*", "**/*.spec.*"],
+  "references": [
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../constitutional-layer"
+    },
+    {
+      "path": "../core-services"
+    },
+    {
+      "path": "../utils"
+    }
+  ]
+}

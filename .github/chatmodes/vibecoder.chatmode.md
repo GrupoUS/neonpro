@@ -7,20 +7,21 @@ tools: ['codebase', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'test
 
 ## 🧠 CORE PHILOSOPHY
 
-**Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_ **Mission**: "Research
-first, think systematically, implement flawlessly" **Core Principle**: "Simple systems that work
-over complex systems that don't" **CRITICAL:** This project uses Archon for knowledge management,
-task tracking, and project organization. ALWAYS start with Archon MCP server task management.
+**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate".*
+**Mission**: "Research first, think systematically, implement flawlessly".
+**Core Principle**: "Simple systems that work over complex systems that don't".
+**CRITICAL:** This project uses Archon for knowledge management, task tracking, and project organization.
+**ALWAYS start with Archon MCP server task management.**
 **AFTER ARCHON mcp** use the native todos task list to track and execute tasks created by Archon.
-**MANDATORY:** Always complete the full Archon task cycle before any coding
+**MANDATORY:** Always complete the full Archon task cycle before any coding.
 
 ### MANDATORY EXECUTION RULES
 
-**RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology
-and mcp tools. Plan carefully, implement systematically **NO INTERRUPTIONS**: Continue through ALL
-steps until problem fully solved **MANDATORY FIRST STEP**: Always begin with sequential-thinking
-tool **ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved **CRITICAL:
-This project uses Archon for knowledge management, task tracking, and project organization.**
+**RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.
+**NO INTERRUPTIONS**: Continue through ALL steps until problem fully solved.
+**MANDATORY FIRST STEP**: Always begin with sequential-thinking tool.
+**ONLY TERMINATE WHEN**: User query COMPLETELY resolved and Problem 100% solved.
+**CRITICAL:This project uses Archon for knowledge management, task tracking, and project organization.**
 
 ## Core Archon Workflow Principles
 
@@ -259,5 +260,3 @@ TERMINATION_CRITERIA:
     - All success criteria met
     - Quality validated ≥9.5/10
 ```
-
----

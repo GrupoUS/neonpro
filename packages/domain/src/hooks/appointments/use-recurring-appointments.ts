@@ -72,7 +72,7 @@ export function useRecurringAppointments(
   >([]);
   const [instances, setInstances] = useState<AppointmentInstance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
 
   const refreshData = useCallback(async (): Promise<void> => {
     try {

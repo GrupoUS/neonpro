@@ -679,9 +679,9 @@ export class AuditTrailGeneratorService {
       "data_modification",
       "system_access",
     ];
-    const presentEventTypes = new Set([
-      ...new Set(entries.map((e) => e.event_type)),
-    ]);
+    const presentEventTypes = new Set(
+      new Set(entries.map((e) => e.event_type)),
+    );
     const missingEventTypes = expectedEventTypes.filter(
       (type) => !presentEventTypes.has(type as any),
     );

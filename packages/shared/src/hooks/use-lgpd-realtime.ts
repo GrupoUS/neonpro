@@ -67,7 +67,7 @@ export function useLGPDConsentStatus(
       if (!result.valid && result.reason) {
         setError(new Error(`Consent denied: ${result.reason}`));
       }
-    } catch {
+    } catch (error) {
       const error =
         error instanceof Error ? error : new Error("Consent validation failed");
       setError(error);
@@ -158,7 +158,7 @@ export function useLGPDRealtime<
         config.onDataProcessed?.(processedPayload);
 
         return processedPayload;
-      } catch {
+      } catch (error) {
         const error =
           error instanceof Error ? error : new Error("Data processing failed");
         setDataProcessingError(error);

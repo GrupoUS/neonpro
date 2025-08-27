@@ -5,9 +5,9 @@
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
 import {
+  PerformanceMonitor,
   getPerformanceMonitor,
   initPerformanceMonitoring,
-  PerformanceMonitor,
 } from "./client";
 import type {
   HealthcareContext,

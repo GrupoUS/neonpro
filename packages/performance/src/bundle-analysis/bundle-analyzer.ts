@@ -14,14 +14,14 @@ interface WebpackStats {
     id: string;
     names: string[];
     size: number;
-    modules: Array<{
+    modules: {
       name: string;
       size: number;
       reasons: Array<{
         moduleName: string;
         type: string;
       }>;
-    }>;
+    }[];
     initial: boolean;
     async: boolean;
   }[];
@@ -34,15 +34,15 @@ interface WebpackStats {
     name: string;
     size: number;
     chunks: string[];
-    reasons: Array<{
+    reasons: {
       moduleName: string;
       type: string;
-    }>;
+    }[];
   }[];
 }
 
 export class HealthcareBundleAnalyzer {
-  private readonly stats: WebpackStats | null = undefined;
+  private stats: WebpackStats | null = null;
   private readonly healthcareModules = new Set([
     "medical-form",
     "patient-data",

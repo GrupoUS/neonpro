@@ -95,8 +95,8 @@ export const ConsentSchema = z.object({
   freely_given: z.boolean().default(true),
   withdrawable: z.boolean().default(true),
   grantedAt: z.date(),
-  withdrawnAt: z.date().nullable().default(null),
-  expiresAt: z.date().nullable().default(null),
+  withdrawnAt: z.date().nullable().default(undefined),
+  expiresAt: z.date().nullable().default(undefined),
   isActive: z.boolean().default(true),
   auditTrail: z.array(
     z.object({
@@ -157,7 +157,7 @@ export const RegulatoryEventSchema = z.object({
   reportedAt: z.date(),
   reportedBy: z.string().uuid(),
   anvisaNotified: z.boolean().default(false),
-  anvisaNotificationDate: z.date().nullable().default(null),
+  anvisaNotificationDate: z.date().nullable().default(undefined),
   anvisaProtocol: z.string().optional(),
   followUpRequired: z.boolean().default(false),
   constitutionalValidation: z.object({

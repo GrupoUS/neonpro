@@ -46,7 +46,7 @@ export class ANVISAAdverseEventManager {
 
       return data;
     } catch {
-      return null;
+      return;
     }
   }
 

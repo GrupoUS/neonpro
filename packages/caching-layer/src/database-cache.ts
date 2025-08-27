@@ -37,14 +37,14 @@ export class DatabaseCacheLayer implements CacheOperation {
         this.queryBuffer.delete(key);
         this.stats.misses++;
         this.updateStats(startTime);
-        return;
+        return null;
       }
     }
     const entry = this.cache.get(key);
     if (!entry) {
       this.stats.misses++;
       this.updateStats(startTime);
-      return;
+      return null;
     }
 
     // Check TTL expiration
@@ -52,7 +52,7 @@ export class DatabaseCacheLayer implements CacheOperation {
       this.cache.delete(key);
       this.stats.misses++;
       this.updateStats(startTime);
-      return;
+      return null;
     }
 
     // Healthcare audit trail

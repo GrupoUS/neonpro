@@ -91,8 +91,8 @@ export const SchedulingAnalyticsDashboard: React.FC<
     timeSlotEfficiency: [
       {
         timeRange: {
-          start: new Date(2024, 0, 1, 9, 0),
-          end: new Date(2024, 0, 1, 12, 0),
+          start: "09:00",
+          end: "12:00",
         },
         utilizationRate: 0.92,
         demandScore: 0.85,
@@ -101,8 +101,8 @@ export const SchedulingAnalyticsDashboard: React.FC<
       },
       {
         timeRange: {
-          start: new Date(2024, 0, 1, 13, 0),
-          end: new Date(2024, 0, 1, 17, 0),
+          start: "13:00",
+          end: "17:00",
         },
         utilizationRate: 0.87,
         demandScore: 0.9,
@@ -111,8 +111,8 @@ export const SchedulingAnalyticsDashboard: React.FC<
       },
       {
         timeRange: {
-          start: new Date(2024, 0, 1, 17, 0),
-          end: new Date(2024, 0, 1, 19, 0),
+          start: "17:00",
+          end: "19:00",
         },
         utilizationRate: 0.73,
         demandScore: 0.65,
@@ -159,7 +159,7 @@ export const SchedulingAnalyticsDashboard: React.FC<
 
     return {
       utilizationByHour: analytics.timeSlotEfficiency.map((slot, _index) => ({
-        hour: `${slot.timeRange.start.getHours()}:00`,
+        hour: slot.timeRange.start,
         utilization: slot.utilizationRate * 100,
         revenue: slot.revenuePerHour,
         efficiency: slot.staffEfficiency * 100,
@@ -192,7 +192,7 @@ export const SchedulingAnalyticsDashboard: React.FC<
       <div className="animate-pulse rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-6 h-8 rounded bg-gray-200" />
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {new Array(4).fill().map((_, i) => (
+          {new Array(4).fill(undefined).map((_, i) => (
             <div className="h-32 rounded-lg bg-gray-200" key={i} />
           ))}
         </div>

@@ -21,7 +21,7 @@ export interface MonitorConfig {
 
 export class DeploymentMonitor {
   private readonly deploymentHistory: DeploymentMetrics[] = [];
-  private currentDeployment: DeploymentMetrics | null = undefined;
+  private currentDeployment: DeploymentMetrics | null = null;
 
   constructor(private readonly config: MonitorConfig) {}
 
@@ -59,7 +59,7 @@ export class DeploymentMonitor {
    */
   completeDeployment(success: boolean): DeploymentMetrics | null {
     if (!this.currentDeployment) {
-      return;
+      return null;
     }
 
     this.currentDeployment.endTime = new Date();
@@ -74,7 +74,7 @@ export class DeploymentMonitor {
     }
 
     const completed = this.currentDeployment;
-    this.currentDeployment = undefined;
+    this.currentDeployment = null;
     return completed;
   }
 

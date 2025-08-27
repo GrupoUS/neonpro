@@ -74,7 +74,7 @@ export function usePermissions(
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [roles, setRoles] = useState<HealthcareRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
 
   const user = { id: options.userId || "user-1" };
 

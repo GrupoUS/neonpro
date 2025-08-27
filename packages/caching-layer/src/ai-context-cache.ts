@@ -9,7 +9,7 @@ export class AIContextCacheLayer implements CacheOperation {
     averageResponseTime: 0,
   };
   private responseTimeBuffer: number[] = [];
-  private readonly redis: any; // Will be replaced with Upstash Redis client
+  private redis: any; // Will be replaced with Upstash Redis client
 
   constructor(
     private readonly config = {
@@ -48,7 +48,7 @@ export class AIContextCacheLayer implements CacheOperation {
       if (!cached) {
         this.stats.misses++;
         this.updateStats(startTime);
-        return;
+        return null;
       }
 
       const parsed = JSON.parse(cached);
@@ -64,7 +64,7 @@ export class AIContextCacheLayer implements CacheOperation {
     } catch {
       this.stats.misses++;
       this.updateStats(startTime);
-      return;
+      return null;
     }
   }
 

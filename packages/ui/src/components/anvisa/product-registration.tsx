@@ -189,7 +189,7 @@ export function ANVISAProductRegistration({
           <div className="h-10 w-32 animate-pulse rounded bg-gray-200" />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {new Array(6).fill(null).map((_, i) => (
+          {new Array(6).fill(undefined).map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader>
                 <div className="h-4 w-32 rounded bg-gray-200" />

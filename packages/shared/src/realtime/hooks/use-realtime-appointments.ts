@@ -61,7 +61,7 @@ export function useRealtimeAppointments(
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>();
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(undefined);
   const [totalUpdates, setTotalUpdates] = useState(0);
   const [urgentUpdates, setUrgentUpdates] = useState(0);
   const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();

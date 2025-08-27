@@ -4,8 +4,8 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
-  ANVISAProduct,
   ANVISAProcedure,
+  ANVISAProduct,
   AdverseEvent,
   ComplianceReport,
   ComplianceTask,
@@ -56,7 +56,7 @@ export class ANVISAComplianceReporter {
         products: this.buildProductsReport(productData, expiringSoon),
       };
     } catch {
-      return null;
+      return;
     }
   }
 

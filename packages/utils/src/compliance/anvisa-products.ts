@@ -34,7 +34,7 @@ export class ANVISAProductManager {
 
       return data;
     } catch {
-      return null;
+      return;
     }
   }
 
@@ -93,9 +93,9 @@ export class ANVISAProductManager {
         .eq("registration_number", registrationNumber)
         .single();
 
-      return data || null;
+      return data || undefined;
     } catch {
-      return null;
+      return;
     }
   }
 

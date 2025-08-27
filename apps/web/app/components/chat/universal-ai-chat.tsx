@@ -263,12 +263,12 @@ export function UniversalAIChat({
                       assistantMessageId = `assistant-${Date.now()}`;
                       // Handle compliance warnings
                       if (
-                        parsedData.compliance?.warnings &&
-                        parsedData.compliance.warnings > 0
+                        parsedData.complianceFlags &&
+                        parsedData.complianceFlags.length > 0
                       ) {
                         toast({
                           title: "Aviso de Conformidade",
-                          description: `${parsedData.compliance.warnings} avisos de conformidade detectados.`,
+                          description: `${parsedData.complianceFlags.length} avisos de conformidade detectados: ${parsedData.complianceFlags.join(", ")}.`,
                           variant: "destructive",
                         });
                       }

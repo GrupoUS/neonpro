@@ -11,7 +11,7 @@ export async function POST(
 ) {
   try {
     const resolvedParams = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Check authentication
     const {
@@ -66,13 +66,16 @@ export async function POST(
     const { data: updatedNfe, error: updateError } = await supabase
       .from("nfe_documents")
       .update({
-        status: authResult.success ? "authorized" : "rejected",
-        authorization_code: authResult.authorizationCode,
-        authorization_date: authResult.success
-          ? new Date().toISOString()
-          : undefined,
-        rejection_reason: authResult.success ? undefined : authResult.error,
-        sefaz_response: authResult.sefazResponse,
+        status: authResult.status === "authorized" ? "authorized" : "rejected",
+        authorization_code: authResult.authorization_key,
+        authorization_date:
+          authResult.status === "authorized"
+            ? authResult.authorized_at || new Date().toISOString()
+            : undefined,
+        rejection_reason:
+          authResult.status === "authorized"
+            ? undefined
+            : "Authorization failed",
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
@@ -91,7 +94,7 @@ export async function POST(
       nfe_document_id: id,
       action: "authorize",
       user_id: session.user.id,
-      result: authResult.success ? "success" : "failure",
+      result: authResult.status === "authorized" ? "success" : "failure",
       details: authResult,
       created_at: new Date().toISOString(),
     });

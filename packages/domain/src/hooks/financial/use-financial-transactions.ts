@@ -65,7 +65,7 @@ export function useFinancialTransactions(): UseFinancialTransactionsReturn {
   const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
   const [paymentMethods, _setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
 
   const refreshData = useCallback(async (): Promise<void> => {
     try {

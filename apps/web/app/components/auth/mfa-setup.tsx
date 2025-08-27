@@ -1,7 +1,7 @@
 "use client";
 
-import { useMFA } from "@/packages/domain/src/hooks/auth/use-mfa";
-import { MfaMethod } from "@/packages/security/src/auth/mfa-service";
+import { useMFA } from "@neonpro/domain/hooks/auth/use-mfa";
+import { MfaMethod } from "@neonpro/security/auth/mfa-service";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
 

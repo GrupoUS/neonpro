@@ -18,7 +18,7 @@ interface LayoutActions {
 export function useLayout(): LayoutState & LayoutActions {
   const [state, setState] = React.useState<LayoutState>({
     sidebarCollapsed: false,
-    activeMenuItem: null,
+    activeMenuItem: undefined,
     breadcrumbs: [],
   });
 

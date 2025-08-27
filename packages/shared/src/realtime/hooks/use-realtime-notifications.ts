@@ -80,9 +80,11 @@ export function useRealtimeNotifications(
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [lastNotification, setLastNotification] =
-    useState<NotificationRow | null>();
+    useState<NotificationRow | null>(undefined);
   const [emergencyCount, setEmergencyCount] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
+    undefined,
+  );
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /**

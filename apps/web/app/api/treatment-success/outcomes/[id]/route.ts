@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const outcome = await treatmentSuccessService.getTreatmentOutcomeById(id);
+    const outcome = await treatmentSuccessService.getTreatmentOutcome(id);
 
     return NextResponse.json({
       success: true,

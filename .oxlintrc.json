@@ -13,7 +13,6 @@
     "jsx-a11y",
     "nextjs",
     "unicorn",
-    "jest",
     "vitest",
     "promise",
     "import",
@@ -23,7 +22,6 @@
     "browser": true,
     "node": true,
     "es2024": true,
-    "jest": true,
     "vitest": true
   },
   "globals": {
@@ -59,9 +57,6 @@
           "./packages/*/tsconfig.json"
         ]
       }
-    },
-    "jest": {
-      "version": "detect"
     }
   },
   "rules": {
@@ -247,6 +242,13 @@
     "**/.tmp/**",
     "**/temp-*/**",
 
+    // IDE and development tool configurations
+    "**/.github/**",
+    "**/.claude/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/.ruler/**",
+
     // System and temporary files
     "**/*.log",
     "**/.tmp.*",
@@ -360,9 +362,8 @@
     },
     {
       "files": ["**/test/**", "**/*.test.*", "**/*.spec.*", "**/__tests__/**"],
-      "plugins": ["jest", "vitest"],
+      "plugins": ["vitest"],
       "env": {
-        "jest": true,
         "vitest": true
       },
       "rules": {
@@ -372,14 +373,12 @@
         "typescript/no-non-null-assertion": "off",
         "import/no-extraneous-dependencies": "off",
 
-        // Jest/Vitest specific
-        "jest/expect-expect": "error",
-        "jest/no-disabled-tests": "warn",
-        "jest/no-focused-tests": "error",
-        "jest/valid-expect": "error",
-        "jest/valid-title": "error",
+        // Vitest specific rules
         "vitest/expect-expect": "error",
-        "vitest/no-conditional-tests": "error"
+        "vitest/no-conditional-tests": "error",
+        "vitest/valid-expect": "error",
+        "vitest/no-disabled-tests": "warn",
+        "vitest/no-focused-tests": "error"
       }
     },
     {

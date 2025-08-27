@@ -17,7 +17,6 @@ const iconVariants = {
     transition: {
       duration: 2,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut",
     },
   },
 };
@@ -29,7 +28,6 @@ const pulseVariants = {
     transition: {
       duration: 1.5,
       repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut",
     },
   },
 };

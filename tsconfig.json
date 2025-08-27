@@ -6,7 +6,6 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -58,6 +57,9 @@
   "references": [
     {
       "path": "./apps/web"
+    },
+    {
+      "path": "./apps/api"
     },
     {
       "path": "./packages/ui"

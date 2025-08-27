@@ -2,7 +2,8 @@
 // Constitutional Healthcare Compliance | LGPD + ANVISA + CFM
 // Enterprise Architecture Scalability - 2025 Patterns
 
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 import { CircuitBreaker } from "./circuit-breaker";
 import { ComplianceValidator } from "./compliance-validator";

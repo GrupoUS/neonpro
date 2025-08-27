@@ -38,7 +38,7 @@ const GeneratePredictionSchema = z
   .object({
     patientId: z.string().uuid("Invalid patient ID format").optional(),
     patientIds: z.array(z.string().uuid()).optional(),
-    modelType: z.nativeEnum(ChurnModelType).default(ChurnModelType.ENSEMBLE),
+    modelType: z.nativeEnum(ChurnModelType).default(ChurnModelType.ML_ENSEMBLE),
     forceRegenerate: z.boolean().default(false),
   })
   .refine(
@@ -142,11 +142,11 @@ export async function GET(
     );
 
     // Apply additional filters and sorting
-    let filteredPredictions = predictions;
+    let filteredPredictions = predictions.predictions;
 
     // Date filtering
     if (startDate || endDate) {
-      filteredPredictions = predictions.filter((prediction) => {
+      filteredPredictions = filteredPredictions.filter((prediction: any) => {
         const predictionDate = new Date(prediction.prediction_date);
         if (startDate && predictionDate < new Date(startDate)) {
           return false;
@@ -174,9 +174,14 @@ export async function GET(
           break;
         }
         case "risk_level": {
-          const riskOrder = { low: 1, medium: 2, high: 3, critical: 4 };
-          valueA = riskOrder[a.risk_level];
-          valueB = riskOrder[b.risk_level];
+          const riskOrder: Record<string, number> = {
+            low: 1,
+            medium: 2,
+            high: 3,
+            critical: 4,
+          };
+          valueA = riskOrder[a.risk_level] || 0;
+          valueB = riskOrder[b.risk_level] || 0;
           break;
         }
         default: {
@@ -377,8 +382,8 @@ export async function POST(
 
     // Generate predictions
     const retentionService = new RetentionAnalyticsService();
-    const results = [];
-    const errors = [];
+    const results: any[] = [];
+    const errors: any[] = [];
 
     // Process in batches for better performance
     const batchSize = 5; // Smaller batch for ML predictions

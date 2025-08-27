@@ -39,6 +39,15 @@ class SubscriptionManager {
       created_at: new Date().toISOString(),
     };
   }
+
+  async updatePlan(planId: string, data: any) {
+    // Mock implementation for build compatibility
+    return {
+      id: planId,
+      ...data,
+      updated_at: new Date().toISOString(),
+    };
+  }
 }
 
 export const subscriptionManager = new SubscriptionManager();

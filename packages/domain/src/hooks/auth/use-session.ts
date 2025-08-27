@@ -118,9 +118,9 @@ export function useSession(options: UseSessionOptions = {}): UseSessionReturn {
     deviceTracking = true,
   } = options;
 
-  const [session, setSession] = useState<UserSession | null>();
+  const [session, setSession] = useState<UserSession | null>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
   const [securityAlerts, setSecurityAlerts] = useState<SecurityAlert[]>([]);
   const [devices, setDevices] = useState<DeviceRegistration[]>([]);
 

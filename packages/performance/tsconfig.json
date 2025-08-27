@@ -20,8 +20,28 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ES2022",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@neonpro/caching-layer": ["../caching-layer/src"],
+      "@neonpro/caching-layer/*": ["../caching-layer/src/*"],
+      "@neonpro/db": ["../db/src"],
+      "@neonpro/db/*": ["../db/src/*"],
+      "@neonpro/monitoring": ["../monitoring/src"],
+      "@neonpro/monitoring/*": ["../monitoring/src/*"]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"],
+  "references": [
+    {
+      "path": "../caching-layer"
+    },
+    {
+      "path": "../db"
+    },
+    {
+      "path": "../monitoring"
+    }
+  ]
 }

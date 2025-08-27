@@ -125,14 +125,14 @@ export default function TreatmentsPage() {
   const handleCategoryFilter = (category: string) => {
     setCategoryFilter(category as AestheticTreatmentCategory | "all");
     filterByCategory(
-      category === "all" ? null : (category as AestheticTreatmentCategory),
+      category === "all" ? undefined : (category as AestheticTreatmentCategory),
     );
   };
 
   // Handle status filter
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status as TreatmentStatus | "all");
-    filterByStatus(status === "all" ? null : (status as TreatmentStatus));
+    filterByStatus(status === "all" ? undefined : (status as TreatmentStatus));
   };
 
   // Mock data for demonstration (in real implementation, this would come from the hook)
@@ -159,8 +159,8 @@ export default function TreatmentsPage() {
     expected_outcomes: {},
     risk_assessment: {},
     total_cost: 3500,
-    payment_plan: null,
-    insurance_coverage: null,
+    payment_plan: undefined,
+    insurance_coverage: undefined,
     start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     estimated_completion_date: new Date(
       Date.now() + 90 * 24 * 60 * 60 * 1000,
@@ -528,7 +528,7 @@ export default function TreatmentsPage() {
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {loading ? (
               // Loading skeleton
-              new Array(4).fill(null).map((_, i) => (
+              new Array(4).fill(undefined).map((_, i) => (
                 <Card key={i}>
                   <CardHeader>
                     <div className="space-y-2">

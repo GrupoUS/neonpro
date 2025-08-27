@@ -51,10 +51,10 @@ export function TranslationProvider({
 }: TranslationProviderProps) {
   const [locale, setLocale] = useState<Locale>(initialLocale);
   const [dictionary, setDictionary] = useState<Dictionary | null>(
-    initialDictionary || null,
+    initialDictionary || undefined,
   );
   const [isLoading, setIsLoading] = useState(!initialDictionary);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(undefined);
 
   // Create translator function
   const translator = dictionary
@@ -68,7 +68,7 @@ export function TranslationProvider({
     }
 
     setIsLoading(true);
-    setError(null);
+    setError(undefined);
 
     getDictionary(locale)
       .then((dict) => {

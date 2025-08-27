@@ -513,7 +513,7 @@ export const AuditTrailViewer = React.forwardRef<
         {/* Events List */}
         {loading ? (
           <div className="space-y-4">
-            {new Array(5).fill(null).map((_, index) => (
+            {new Array(5).fill(undefined).map((_, index) => (
               <div
                 className="animate-pulse rounded-lg border bg-card p-4"
                 key={index}

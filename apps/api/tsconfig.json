@@ -11,12 +11,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
     "lib": ["ESNext"],
     "types": ["node", "vitest/globals"],
     "baseUrl": ".",
@@ -26,10 +26,36 @@
       "@/lib/*": ["./src/lib/*"],
       "@/middleware/*": ["./src/middleware/*"],
       "@/routes/*": ["./src/routes/*"],
+      "@neonpro/ui": ["../../packages/ui/src"],
+      "@neonpro/ui/*": ["../../packages/ui/src/*"],
+      "@neonpro/ai": ["../../packages/ai/src"],
+      "@neonpro/ai/*": ["../../packages/ai/src/*"],
+      "@neonpro/auth": ["../../packages/auth/src"],
+      "@neonpro/auth/*": ["../../packages/auth/src/*"],
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/domain": ["../../packages/domain/src"],
+      "@neonpro/domain/*": ["../../packages/domain/src/*"],
+      "@neonpro/core-services": ["../../packages/core-services/src"],
+      "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
+      "@neonpro/compliance": ["../../packages/compliance/src"],
+      "@neonpro/compliance/*": ["../../packages/compliance/src/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
       "@neonpro/shared": ["../../packages/shared/src"],
       "@neonpro/shared/*": ["../../packages/shared/src/*"],
       "@neonpro/database": ["../../packages/database/src"],
-      "@neonpro/types": ["../../packages/types/src"]
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/db": ["../../packages/db/src"],
+      "@neonpro/db/*": ["../../packages/db/src/*"],
+      "@neonpro/cache": ["../../packages/cache/src"],
+      "@neonpro/cache/*": ["../../packages/cache/src/*"],
+      "@neonpro/monitoring": ["../../packages/monitoring/src"],
+      "@neonpro/monitoring/*": ["../../packages/monitoring/src/*"],
+      "@neonpro/enterprise": ["../../packages/enterprise/src"],
+      "@neonpro/enterprise/*": ["../../packages/enterprise/src/*"]
     }
   },
   "include": [
@@ -38,5 +64,49 @@
     "vitest.config.ts",
     "vitest.setup.ts"
   ],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    {
+      "path": "../../packages/ui"
+    },
+    {
+      "path": "../../packages/ai"
+    },
+    {
+      "path": "../../packages/auth"
+    },
+    {
+      "path": "../../packages/types"
+    },
+    {
+      "path": "../../packages/utils"
+    },
+    {
+      "path": "../../packages/domain"
+    },
+    {
+      "path": "../../packages/core-services"
+    },
+    {
+      "path": "../../packages/compliance"
+    },
+    {
+      "path": "../../packages/security"
+    },
+    {
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/db"
+    },
+    {
+      "path": "../../packages/cache"
+    },
+    {
+      "path": "../../packages/monitoring"
+    },
+    {
+      "path": "../../packages/enterprise"
+    }
+  ]
 }

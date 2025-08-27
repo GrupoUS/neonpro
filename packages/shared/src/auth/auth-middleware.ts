@@ -179,8 +179,9 @@ export const requirePermissions = (permissions: string[]) => {
           return ["admin", "manager"].includes(user.role || "");
         case "write:system":
           return user.role === "admin";
-        default:
+        default: {
           return false;
+        }
       }
     });
 

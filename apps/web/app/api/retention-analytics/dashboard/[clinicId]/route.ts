@@ -160,7 +160,7 @@ export async function GET(
       );
 
       // Filter metrics by date range
-      const filteredMetrics = metrics.filter((metric) => {
+      const filteredMetrics = metrics.metrics.filter((metric: any) => {
         const metricDate = new Date(metric.last_appointment_date);
         return (
           metricDate >= new Date(periodStart) &&
@@ -195,13 +195,15 @@ export async function GET(
       );
 
       // Filter predictions by date range
-      const filteredPredictions = predictions.filter((prediction) => {
-        const predictionDate = new Date(prediction.prediction_date);
-        return (
-          predictionDate >= new Date(periodStart) &&
-          predictionDate <= new Date(periodEnd)
-        );
-      });
+      const filteredPredictions = predictions.predictions.filter(
+        (prediction: any) => {
+          const predictionDate = new Date(prediction.prediction_date);
+          return (
+            predictionDate >= new Date(periodStart) &&
+            predictionDate <= new Date(periodEnd)
+          );
+        },
+      );
 
       additionalData.detailedPredictions = {
         predictions: filteredPredictions,
@@ -236,17 +238,22 @@ export async function GET(
 
       additionalData.strategies = {
         all_strategies: strategies,
-        active_strategies: strategies.filter((s) => s.is_active),
+        active_strategies: strategies.strategies.filter(
+          (s: any) => s.is_active,
+        ),
         summary: {
-          total_strategies: strategies.length,
-          active_count: strategies.filter((s) => s.is_active).length,
-          total_executions: strategies.reduce(
-            (sum, s) => sum + s.execution_count,
+          total_strategies: strategies.strategies.length,
+          active_count: strategies.strategies.filter((s: any) => s.is_active)
+            .length,
+          total_executions: strategies.strategies.reduce(
+            (sum: number, s: any) => sum + s.execution_count,
             0,
           ),
           average_success_rate:
-            strategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) /
-              strategies.length || 0,
+            strategies.strategies.reduce(
+              (sum: number, s: any) => sum + (s.success_rate || 0),
+              0,
+            ) / strategies.strategies.length || 0,
         },
       };
     }
@@ -311,7 +318,7 @@ export async function GET(
         dashboardData.engagement_metrics.low_engagement_count || 0,
       recent_strategy_failures:
         additionalData.strategies?.all_strategies?.filter(
-          (s) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
+          (s: any) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
         ).length || 0,
     };
 

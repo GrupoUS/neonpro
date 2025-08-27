@@ -19,7 +19,7 @@ export async function POST(
 ) {
   try {
     const resolvedParams = await params;
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Check authentication
     const {
@@ -90,13 +90,14 @@ export async function POST(
     const { data: updatedNfe, error: updateError } = await supabase
       .from("nfe_documents")
       .update({
-        status: cancelResult.success ? "cancelled" : "authorized",
-        cancellation_code: cancelResult.cancellationCode,
-        cancellation_date: cancelResult.success
-          ? new Date().toISOString()
-          : undefined,
-        cancellation_reason: reason,
-        cancellation_response: cancelResult.sefazResponse,
+        status:
+          cancelResult.status === "cancelled" ? "cancelled" : "authorized",
+        cancellation_code: cancelResult.id,
+        cancellation_date:
+          cancelResult.status === "cancelled"
+            ? cancelResult.cancelled_at || new Date().toISOString()
+            : undefined,
+        cancellation_reason: cancelResult.cancellation_reason || reason,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
@@ -115,7 +116,7 @@ export async function POST(
       nfe_document_id: id,
       action: "cancel",
       user_id: session.user.id,
-      result: cancelResult.success ? "success" : "failure",
+      result: cancelResult.status === "cancelled" ? "success" : "failure",
       details: { reason, ...cancelResult },
       created_at: new Date().toISOString(),
     });

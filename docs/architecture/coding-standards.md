@@ -1,8 +1,8 @@
-# 🏥 **NEONPRO CODING STANDARDS**
+# 🚀 **NEONPRO CODING STANDARDS**
 
-## Healthcare SaaS Excellence Framework with VIBECODER Integration
+## Aesthetic Health AI Platform - Developer Guide & Standards
 
-> **Versão Enhanced** | Qualidade 9.8/10 | LGPD ✅ ANVISA ✅ CFM ✅ HIPAA ✅ GDPR ✅ | VIBECODER ✅ ARCHON ✅
+> **Tier 1 Implementation** | Qualidade 9.8/10 | LGPD ✅ Estética ✅ | VIBECODER ✅ ARCHON ✅
 
 ---
 
@@ -10,17 +10,13 @@
 
 1. [🎯 Princípios Fundamentais](#-princípios-fundamentais)
 2. [🤖 Archon Integration & Task-Driven Development](#-archon-integration--task-driven-development)
-3. [🛠️ Development Workflow & Tools](#️-development-workflow--tools)
-4. [🛡️ Healthcare Security & Compliance](#️-healthcare-security--compliance)
-5. [⚛️ Next.js 15 Architecture](#️-nextjs-15-architecture)
-6. [⚡ Performance & Accessibility](#-performance--accessibility)
-7. [🗄️ Database & API Security](#️-database--api-security)
-8. [🧪 Quality Gates & Testing](#-quality-gates--testing)
-9. [📊 Code Quality & Validation](#-code-quality--validation)
-10. [🔍 Research-Driven Development](#-research-driven-development)
-11. [🤖 AI Integration](#-ai-integration)
-12. [🧠 Session Management & Anti-Context Drift](#-session-management--anti-context-drift)
-13. [📚 Quick Reference](#-quick-reference)
+3. [🛠️ Environment Setup & Development](#️-environment-setup--development)
+4. [⚛️ Tech Stack & Architecture](#️-tech-stack--architecture)
+5. [🗄️ Database & API Patterns](#️-database--api-patterns)
+6. [🔒 Security & LGPD Compliance](#-security--lgpd-compliance)
+7. [🧪 Quality Gates & Testing](#-quality-gates--testing)
+8. [📊 Integration Examples](#-integration-examples)
+9. [📚 Quick Reference](#-quick-reference)
 
 ---
 
@@ -30,34 +26,33 @@
 
 ```typescript
 // KISS: Keep It Simple, Stupid - Simplicidade mantendo funcionalidade
-const updatePatient = async (id: string, data: PatientData) => {
+const updateClient = async (id: string, data: ClientData) => {
   const encrypted = await encrypt(data);
-  await db.patient.update({ where: { id }, data: encrypted });
-  await auditLog("UPDATE_PATIENT", id);
+  await db.client.update({ where: { id }, data: encrypted });
+  await auditLog("UPDATE_CLIENT", id);
 };
 
 // YAGNI: You Aren't Gonna Need It - Implementar apenas o necessário
-interface PatientData {
+interface ClientData {
   name: string;
-  cpf: string;
+  email: string;
+  phone?: string;
   // Adicionar campos conforme demanda real - não "just in case"
 }
 
 // CoT: Chain of Thought - Raciocínio explícito em decisões críticas
-const validateHealthcareAccess = async (
+const validateClinicAccess = async (
   professionalId: string,
-  patientId: string,
+  clientId: string,
 ) => {
   // 1. Verificar autenticação profissional
   const professional = await validateProfessional(professionalId);
-  // 2. Validar licença ativa (CRM/COREN)
-  const licenseValid = await validateLicense(professional.crm);
-  // 3. Verificar permissões específicas
-  const hasAccess = await checkPatientAccess(professional.id, patientId);
-  // 4. Validar consentimento LGPD
-  const consentValid = await validateLGPDConsent(patientId, "ACCESS");
+  // 2. Verificar permissões específicas
+  const hasAccess = await checkClientAccess(professional.id, clientId);
+  // 3. Validar consentimento LGPD
+  const consentValid = await validateLGPDConsent(clientId, "ACCESS");
 
-  return professional && licenseValid && hasAccess && consentValid;
+  return professional && hasAccess && consentValid;
 };
 ```
 
@@ -158,7 +153,31 @@ archon:manage_task(
 
 ---
 
-## 🛠️ **DEVELOPMENT WORKFLOW & TOOLS**
+## 🛠️ **ENVIRONMENT SETUP & DEVELOPMENT**
+
+### **Prerequisites**
+
+- Node.js 18+
+- Access to NeonPro API credentials
+- Supabase project
+
+### **Essential Environment Variables**
+
+Create a `.env.local` file:
+
+```bash
+# API Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# AI Services
+ANTHROPIC_API_KEY=your-anthropic-key
+OPENAI_API_KEY=your-openai-key
+
+# Application
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
 ### **PNPM Over NPM (Obrigatório)**
 
@@ -195,24 +214,40 @@ Closes: TASK-123"
 # test(scope): description - testes
 ```
 
+### **Development Setup**
+
+1. **Clone repository**
+   ```bash
+   git clone <repository-url>
+   cd neonpro
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Setup environment**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your credentials
+   ```
+
+4. **Run development server**
+   ```bash
+   pnpm dev
+   ```
+
 ### **Clean Up Constantly**
 
 ```typescript
 // ✅ Remover código morto imediatamente
 // ❌ Anti-pattern: Manter código "legacy" comentado
-/*
-// LEGACY CODE - REMOVE THIS
-const oldPatientUpdate = async () => {
-  // ... código antigo
-};
-*/
 
 // ✅ Padrão correto: Remover e documentar na funcionalidade atual
-const updatePatient = async (id: string, data: PatientData) => {
+const updateClient = async (id: string, data: ClientData) => {
   // Updated implementation with LGPD compliance
-  const encrypted = await encrypt(data);
-  await db.patient.update({ where: { id }, data: encrypted });
-  await auditLog("UPDATE_PATIENT", id);
+  await auditLog("UPDATE_CLIENT", id);
 };
 
 // ✅ Verificar e corrigir imports não utilizados
@@ -234,106 +269,167 @@ const implementFeature = async () => {
 
 ---
 
-## 🛡️ **HEALTHCARE SECURITY & COMPLIANCE**
+## ⚛️ **TECH STACK & ARCHITECTURE**
 
-### **Unified Compliance Framework**
+### **Core Technologies**
+
+- **Frontend**: Next.js 15 + React 19 + TypeScript
+- **Backend**: Supabase + PostgreSQL + Auth + Real-time
+- **AI**: @ai-sdk/anthropic + @ai-sdk/openai + TensorFlow.js
+- **UI**: shadcn/ui + Tailwind CSS
+
+### **Authentication & Basic Patterns**
 
 ```typescript
-// LGPD + ANVISA + CFM + HIPAA Integration
-export class HealthcareCompliance {
-  // ✅ LGPD: Consent Management
-  static async validateConsent(patientId: string, operation: string) {
-    const consent = await db.lgpdConsent.findFirst({
-      where: { patientId, operation, valid: true },
-    });
-    return consent && !this.isExpired(consent.expiresAt);
-  }
+import { createClient } from '@supabase/supabase-js'
 
-  // ✅ ANVISA: Medical Device Software (Class IIa)
-  static async auditMedicalOperation(operation: MedicalOperation) {
-    await db.anvisaAudit.create({
-      data: {
-        operation: operation.type,
-        professional_crm: operation.professionalCrm,
-        device_class: "IIA",
-        compliance_level: "ANVISA_RDC_301_2019",
-      },
-    });
-  }
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-  // ✅ CFM: Professional Ethics
-  static async validateProfessionalConduct(professionalId: string) {
-    const professional = await db.healthcareProfessional.findUnique({
-      where: { id: professionalId },
-    });
-    return professional?.ethicsCompliant && professional?.licenseActive;
-  }
+// Sign in
+const { data, error } = await supabase.auth.signInWithPassword({
+  email: 'user@example.com',
+  password: 'password'
+})
 
-  // ✅ HIPAA: US Healthcare Interoperability
-  static async generateHL7FHIR(patientData: PatientData) {
-    return {
-      resourceType: "Patient",
-      identifier: [{ value: await hashCPF(patientData.cpf) }],
-      // FHIR R4 compliant structure
-    };
-  }
-}
-
-// Multi-Factor Authentication (Obrigatório)
-export const healthcareAuthMiddleware = async (req: Request) => {
-  const { mfaToken, professionalToken } = req.headers;
-
-  const professional = await validateJWT(professionalToken);
-  const mfaValid = await validateMFA(professional.id, mfaToken);
-
-  if (!mfaValid) throw new AuthError("MFA required for healthcare access");
-
-  return { professional, authenticated: true, mfaVerified: true };
-};
+// Use session token for API calls
+const token = data.session?.access_token
 ```
 
-### **Encryption & Data Protection**
+### **Server Components for Sensitive Data**
 
 ```typescript
-// AES-256-GCM para PHI (Protected Health Information)
-export class HealthcareEncryption {
-  private static readonly algorithm = "aes-256-gcm";
+// Server Component para dados sensíveis
+export default async function ClientProfile({ clientId }: { clientId: string; }) {
+  // ✅ Validação server-side obrigatória
+  const session = await getSession();
+  if (!session?.user) redirect('/auth');
 
-  static async encryptPHI(data: any): Promise<EncryptedData> {
-    const key = await this.getDerivedKey();
-    const iv = crypto.getRandomValues(new Uint8Array(16));
+  // ✅ Dados criptografados permanecem no servidor
+  const encryptedClient = await getClientSecure(clientId, session.user.id);
+  const client = await decrypt(encryptedClient);
 
-    // ❌ Anti-pattern: Nunca logar dados não criptografados
-    // console.log('Encrypting:', data) // NUNCA!
-
-    const encrypted = await crypto.subtle.encrypt(
-      { name: "AES-GCM", iv },
-      key,
-      new TextEncoder().encode(JSON.stringify(data)),
-    );
-
-    return {
-      encrypted: Array.from(new Uint8Array(encrypted)),
-      iv: Array.from(iv),
-    };
-  }
-
-  // ✅ Auditoria sem exposição de PHI
-  static async auditEncryption(operation: string, dataSize: number) {
-    await AuditLogger.log("ENCRYPTION_OPERATION", {
-      operation,
-      dataSize, // Tamanho, não conteúdo
-      algorithm: this.algorithm,
-      compliance: ["LGPD", "HIPAA", "ANVISA"],
-    });
-  }
+  return (
+    <div className="client-profile">
+      <ClientHeader client={client} />
+      <TreatmentHistory clientId={clientId} />
+    </div>
+  );
 }
 
-// Rate Limiting para Healthcare
-export const healthcareRateLimit = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
+// Server Actions para operações críticas
+export async function updateClientAction(formData: FormData) {
+  'use server';
+
+  const session = await getSession();
+  const data = Object.fromEntries(formData);
+
+  // Validação de esquema com Zod
+  const validatedData = ClientUpdateSchema.parse(data);
+
+  // Transação com auditoria
+  await db.$transaction(async (tx) => {
+    await tx.client.update({
+      where: { id: validatedData.id },
+      data: validatedData,
+    });
+
+    await tx.auditLog.create({
+      data: {
+        action: 'UPDATE_CLIENT',
+        userId: session.user.id,
+        clientId: validatedData.id,
+        timestamp: new Date(),
+      },
+    });
+  });
+
+  revalidatePath(`/clients/${validatedData.id}`);
+}
+```
+
+---
+
+## 🗄️ **DATABASE & API PATTERNS**
+
+### **Database Schema (Tier 1 Implementation)**
+
+Execute this SQL in your Supabase project:
+
+```sql
+-- AI Chat Sessions
+CREATE TABLE ai_chat_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  clinic_id UUID,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'ended')),
+  language TEXT DEFAULT 'pt-BR',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  expires_at TIMESTAMP WITH TIME ZONE DEFAULT (NOW() + INTERVAL '2 hours')
+);
+
+-- AI Chat Messages
+CREATE TABLE ai_chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
+  role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Appointment No-Show Predictions
+CREATE TABLE no_show_predictions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  appointment_id UUID,
+  risk_score INTEGER NOT NULL CHECK (risk_score >= 0 AND risk_score <= 100),
+  risk_level TEXT NOT NULL CHECK (risk_level IN ('low', 'medium', 'high')),
+  confidence FLOAT NOT NULL CHECK (confidence >= 0 AND confidence <= 1),
+  recommended_actions TEXT[],
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Basic Feature Flags
+CREATE TABLE feature_flags (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  flag_name TEXT NOT NULL UNIQUE,
+  enabled BOOLEAN NOT NULL DEFAULT false,
+  description TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Row Level Security
+ALTER TABLE ai_chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE no_show_predictions ENABLE ROW LEVEL SECURITY;
+
+-- Basic policies (authenticated users only)
+CREATE POLICY "authenticated_access" ON ai_chat_sessions FOR ALL TO authenticated USING (true);
+CREATE POLICY "authenticated_access" ON ai_chat_messages FOR ALL TO authenticated USING (true);
+CREATE POLICY "authenticated_access" ON no_show_predictions FOR ALL TO authenticated USING (true);
+
+-- Insert basic feature flags
+INSERT INTO feature_flags (flag_name, description, enabled) VALUES
+('ai_chat', 'AI Chat System', true),
+('no_show_prediction', 'No-show prediction engine', true);
+```
+
+### **API Security Patterns**
+
+```typescript
+// Basic validation schemas
+export const ClientSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  phone: z.string().optional(),
+});
+
+// Basic rate limiting
+export const basicRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // requests per window
-  message: "Too many healthcare requests",
+  message: "Too many requests",
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -341,271 +437,87 @@ export const healthcareRateLimit = rateLimit({
 
 ---
 
-## ⚛️ **NEXT.JS 15 ARCHITECTURE**
+## 🔒 **LGPD COMPLIANCE & SECURITY**
 
-### **Server Components + Healthcare Patterns**
+### **LGPD Core Implementation**
 
 ```typescript
-// Server Component para dados sensíveis
-export default async function PatientProfile({ patientId }: { patientId: string; }) {
-  // ✅ Validação server-side obrigatória
-  const session = await getHealthcareSession();
-  if (!session?.professional) redirect('/auth');
-
-  // ✅ Dados criptografados permanecem no servidor
-  const encryptedPatient = await getPatientSecure(patientId, session.professional.id);
-  const patient = await HealthcareEncryption.decryptPHI(encryptedPatient);
-
-  // ✅ Minimização de dados baseada no papel
-  const sanitizedData = applyDataMinimization(patient, session.professional.role);
-
-  return (
-    <div className="patient-profile">
-      <PatientHeader patient={sanitizedData} />
-      <MedicalHistory patientId={patientId} />
-    </div>
-  );
-}
-
-// Server Actions para operações críticas
-export async function updatePatientAction(formData: FormData) {
-  'use server';
-
-  const session = await getHealthcareSession();
-  const data = Object.fromEntries(formData);
-
-  // Validação de esquema com Zod
-  const validatedData = PatientUpdateSchema.parse(data);
-
-  // Transação com auditoria
-  await db.$transaction(async (tx) => {
-    const encrypted = await HealthcareEncryption.encryptPHI(validatedData);
-
-    await tx.patient.update({
-      where: { id: validatedData.id },
-      data: encrypted,
-    });
-
-    await tx.auditLog.create({
+// LGPD-compliant data handling
+export class LGPDManager {
+  static async requestConsent(clientId: string, purpose: string) {
+    const consent = await db.lgpdConsent.create({
       data: {
-        action: 'UPDATE_PATIENT',
-        professionalId: session.professional.id,
-        patientId: validatedData.id,
-        timestamp: new Date(),
+        clientId,
+        purpose,
+        status: 'pending',
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
       },
     });
+    
+    // Send consent request notification
+    await NotificationService.sendConsentRequest(clientId, consent.id);
+    return consent;
+  }
+
+  static async revokeConsent(clientId: string, consentId: string) {
+    await db.$transaction(async (tx) => {
+      // Mark consent as revoked
+      await tx.lgpdConsent.update({
+        where: { id: consentId },
+        data: { status: 'revoked', revokedAt: new Date() },
+      });
+      
+      // Anonymize related data
+      await tx.clientData.updateMany({
+        where: { clientId },
+        data: { status: 'anonymized' },
+      });
+    });
+  }
+}
+
+// Data encryption patterns
+export const encrypt = (data: string): Promise<string> => {
+  // Use AES-256-GCM for aesthetic client data
+  return crypto.subtle.encrypt(algorithm, key, Buffer.from(data));
+};
+
+export const decrypt = (encryptedData: string): Promise<string> => {
+  return crypto.subtle.decrypt(algorithm, key, Buffer.from(encryptedData));
+};
+```
+
+### **Basic Security Middleware**
+
+```typescript
+// Authentication middleware
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  
+  if (!token) {
+    return res.status(401).json({ error: 'Token required' });
+  }
+  
+  try {
+    const { data: user } = await supabase.auth.getUser(token);
+    req.user = user.user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// Basic audit logging
+export const auditLog = async (action: string, userId: string, data?: any) => {
+  await db.auditLog.create({
+    data: {
+      action,
+      userId,
+      metadata: data,
+      timestamp: new Date(),
+      ipAddress: req.ip,
+    },
   });
-
-  revalidatePath(`/patients/${validatedData.id}`);
-}
-
-// Client Component para interações
-'use client';
-export function PatientForm({ patientId }: { patientId: string; }) {
-  const [optimisticData, addOptimistic] = useOptimistic(
-    initialData,
-    (state, newData) => ({ ...state, ...newData }),
-  );
-
-  // ❌ Anti-pattern: PHI no estado do cliente
-  // const [patientCPF, setPatientCPF] = useState() // NUNCA!
-
-  const handleSubmit = async (formData: FormData) => {
-    addOptimistic({ updating: true });
-    await updatePatientAction(formData);
-  };
-
-  return (
-    <form action={handleSubmit}>
-      {/* Formulário sem PHI no cliente */}
-    </form>
-  );
-}
-```
-
-### **Hono RPC + Healthcare Endpoints**
-
-```typescript
-// Type-safe healthcare API
-const healthcareApi = new Hono()
-  .use("*", healthcareAuthMiddleware)
-  .use("*", healthcareRateLimit)
-  .get("/patients/:id", async (c) => {
-    const patientId = c.req.param("id");
-    const professional = c.get("professional");
-
-    // Validação de acesso
-    const hasAccess = await validatePatientAccess(professional.id, patientId);
-    if (!hasAccess) return c.json({ error: "Access denied" }, 403);
-
-    // Dados com minimização aplicada
-    const patient = await getPatientWithMinimization(
-      patientId,
-      professional.role,
-    );
-
-    return c.json({ patient, accessLevel: professional.role });
-  });
-
-// Client-side com type safety
-const client = hc<typeof healthcareApi>("/api/healthcare");
-const patientData = await client.patients[patientId].$get();
-```
-
----
-
-## ⚡ **PERFORMANCE & ACCESSIBILITY**
-
-### **Performance Thresholds**
-
-```typescript
-// Métricas obrigatórias para healthcare
-export const PERFORMANCE_GATES = {
-  responseTime: 200, // ms - crítico para emergências
-  dbQueryTime: 50, // ms - consultas médicas
-  bundleSize: 1000, // KB - profissionais móveis
-  lighthouseScore: 95, // Mínimo para produção
-  memoryUsage: 100, // MB por sessão
-};
-
-// Otimização de consultas médicas
-export const OptimizedQueries = {
-  // ✅ Paginação para grandes volumes
-  getPatients: (limit = 20, offset = 0) =>
-    db.patient.findMany({
-      take: limit,
-      skip: offset,
-      select: { id: true, name: true, lastVisit: true }, // Apenas essencial
-    }),
-
-  // ✅ Índices para buscas médicas
-  searchBySymptoms: (symptoms: string[]) =>
-    db.patient.findMany({
-      where: { symptoms: { hasSome: symptoms } },
-      // Índice GIN para arrays de sintomas
-    }),
-};
-
-// Code Splitting por módulo médico
-const AppointmentsModule = lazy(() => import("./modules/appointments"));
-const MedicalRecordsModule = lazy(() => import("./modules/medical-records"));
-const PrescriptionsModule = lazy(() => import("./modules/prescriptions"));
-```
-
-### **WCAG 2.1 AA Healthcare Compliance**
-
-```typescript
-// Componentes acessíveis para healthcare
-export function EmergencyButton({ onEmergency }: { onEmergency: () => void; }) {
-  return (
-    <button
-      onClick={onEmergency}
-      className="bg-red-600 text-white p-4 text-lg font-bold
-                 focus:ring-4 focus:ring-red-300
-                 aria-label='Emergency Alert Button'"
-      aria-describedby="emergency-help"
-      // ✅ Contraste mínimo 4.5:1 para emergências
-      style={{ minHeight: '48px' }} // ✅ Target size mínimo
-    >
-      🚨 EMERGÊNCIA
-    </button>
-  );
-}
-
-// Navegação para leitores de tela
-export function HealthcareNavigation() {
-  return (
-    <nav role="navigation" aria-label="Healthcare Navigation">
-      <ul>
-        <li>
-          <a href="/patients" aria-current="page">Pacientes</a>
-        </li>
-        <li>
-          <a href="/appointments">Consultas</a>
-        </li>
-        <li>
-          <a href="/prescriptions">Prescrições</a>
-        </li>
-      </ul>
-    </nav>
-  );
-}
-
-// Multi-idioma para inclusão
-export const healthcareTranslations = {
-  'pt-BR': { emergency: 'Emergência', patient: 'Paciente' },
-  'en-US': { emergency: 'Emergency', patient: 'Patient' },
-  'es-ES': { emergency: 'Emergencia', patient: 'Paciente' },
-};
-```
-
----
-
-## 🗄️ **DATABASE & API SECURITY**
-
-### **Row Level Security (RLS)**
-
-```sql
--- Política LGPD para pacientes
-CREATE POLICY "healthcare_professional_patients" ON patients
-  FOR ALL TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM healthcare_access ha
-      WHERE ha.professional_id = auth.uid()
-      AND ha.patient_id = patients.id
-      AND ha.lgpd_consent = true
-      AND ha.expires_at > NOW()
-    )
-  );
-
--- Auditoria automática
-CREATE OR REPLACE FUNCTION audit_healthcare_access()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO audit_logs (
-    table_name, operation, user_id,
-    patient_id, timestamp, compliance_flags
-  ) VALUES (
-    TG_TABLE_NAME, TG_OP, auth.uid(),
-    COALESCE(NEW.id, OLD.id), NOW(),
-    jsonb_build_object('lgpd', true, 'anvisa', true)
-  );
-  RETURN COALESCE(NEW, OLD);
-END;
-$$ LANGUAGE plpgsql;
-```
-
-### **API Security Patterns**
-
-```typescript
-// Middleware stack completo
-export const secureHealthcareAPI = [
-  cors({ origin: process.env.ALLOWED_ORIGINS }),
-  helmet({ contentSecurityPolicy: HEALTHCARE_CSP }),
-  healthcareRateLimit,
-  healthcareAuthMiddleware,
-  lgpdComplianceMiddleware,
-  auditMiddleware,
-];
-
-// Validação de esquemas com sanitização
-export const PatientSchema = z.object({
-  name: z.string().min(2).max(100).transform(sanitizeName),
-  cpf: z
-    .string()
-    .regex(/^\d{11}$/)
-    .transform(hashCPF),
-  birthDate: z.coerce.date().max(new Date()),
-  // ❌ Anti-pattern: Campos sensíveis sem validação
-  medicalHistory: z.string().max(5000).optional(),
-});
-
-// Rate limiting específico por operação
-export const operationLimits = {
-  patient_read: { windowMs: 60000, max: 100 },
-  patient_write: { windowMs: 60000, max: 20 },
-  emergency_access: { windowMs: 60000, max: 5 },
 };
 ```
 
@@ -693,11 +605,121 @@ test("Emergency patient access workflow", async ({ page }) => {
 
 ### **Quality Metrics**
 
-- **Security**: 100% compliance (LGPD, ANVISA, CFM)
+- **Security**: 100% compliance (LGPD, aesthetic health sector)
 - **Performance**: <200ms response, >95 Lighthouse
 - **Testing**: 95%+ coverage, E2E workflows
 - **Accessibility**: WCAG 2.1 AA compliant
 - **Type Safety**: TypeScript strict mode
+
+---
+
+## 🤖 **AI INTEGRATION**
+
+### **Privacy-Preserving AI**
+
+```typescript
+// Sanitização antes de AI
+export class AestheticAI {
+  static async processClientQuery(query: string, professionalId: string) {
+    // ✅ Remover PII antes de enviar para AI
+    const sanitized = await PIIDetector.sanitize(query);
+
+    const aiResponse = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an aesthetic health AI assistant. Never store or log client data.",
+        },
+        { role: "user", content: sanitized },
+      ],
+    });
+
+    // ✅ Auditoria sem PII
+    await AuditLogger.logAIInteraction("AESTHETIC_AI_QUERY", professionalId, {
+      query_length: sanitized.length,
+      response_length: aiResponse.choices[0].message.content?.length,
+      pii_detected: false,
+    });
+
+    return aiResponse.choices[0].message.content;
+  }
+
+  // Análise de tratamentos com privacy
+  static async analyzeTreatment(treatmentData: string[]) {
+    // Usar apenas dados codificados
+    const codedTreatments = treatmentData.map((t) => TreatmentCodes.encode(t));
+
+    return await this.processClientQuery(
+      `Analyze these treatment patterns: ${codedTreatments.join(", ")}`,
+      "system",
+    );
+  }
+}
+```
+
+---
+
+## 🔍 **RESEARCH-DRIVEN DEVELOPMENT**
+
+### **Before Any Implementation**
+
+**Research checklist:**
+
+- [ ] Search for existing code examples of the pattern
+- [ ] Query documentation for best practices (high-level or specific API usage)
+- [ ] Understand security implications
+- [ ] Check for common pitfalls or antipatterns
+
+```bash
+# High-level: Architecture, security, optimization patterns
+archon:perform_rag_query(
+  query="aesthetic health JWT authentication security best practices",
+  match_count=5
+)
+
+# Low-level: Specific API usage, syntax, configuration
+archon:perform_rag_query(
+  query="Next.js Server Actions LGPD compliance patterns",
+  match_count=3
+)
+
+# Implementation examples
+archon:search_code_examples(
+  query="React aesthetic health form validation Zod",
+  match_count=3
+)
+```
+
+### **Knowledge Source Prioritization**
+
+**Query Strategy:**
+
+- Start with broad architectural queries, narrow to specific implementation
+- Use RAG for both strategic decisions and tactical "how-to" questions
+- Cross-reference multiple sources for validation
+- Keep match_count low (2-5) for focused results
+
+### **Research Validation**
+
+**Always validate research findings:**
+
+- Cross-reference multiple sources
+- Verify recency of information
+- Test applicability to current project context
+- Document assumptions and limitations
+
+### **Task Completion Criteria**
+
+**Every task must meet these criteria before marking "done":**
+
+- [ ] Implementation follows researched best practices
+- [ ] Code follows project style guidelines
+- [ ] Security considerations addressed
+- [ ] Basic functionality tested
+- [ ] Documentation updated if needed
+- [ ] All tests pass without errors
 
 ---
 
@@ -1104,3 +1126,134 @@ logger.error("ANVISA compliance violation", {
 ---
 
 > **🏥 Enhanced Constitutional Healthcare Document**: Coding standards integrados com VIBECODER principles, Archon workflow, e healthcare compliance. Mantém padrões de qualidade ≥9.8/10 com validação contínua e guidance completo para desenvolvimento healthcare-first. Última atualização: Janeiro 2025.
+
+---
+
+## 🧠 **SESSION MANAGEMENT & ANTI-CONTEXT DRIFT**
+
+### **Consistency Protocols**
+
+```yaml
+SESSION_MANAGEMENT:
+  constitutional_relevance: "Score interactions for constitutional adherence (0-10)"
+  think_first_enforcement: "Mandatory sequential-thinking for complexity ≥3"
+  research_continuity: "Reference previous MCP research with constitutional context"
+  quality_consistency: "Maintain ≥9.8/10 quality standards throughout session"
+```
+
+### **Recovery Mechanisms**
+
+- **Drift Detection**: Auto-detect when constitutional relevance drops below 8/10
+- **Context Refresh**: Automatic refresh with constitutional principle clarification
+- **Think-First Reset**: Return to sequential-thinking analysis when complexity increases
+- **Quality Escalation**: Increase quality thresholds if standards drop
+
+### **Quality Validation Patterns**
+
+```typescript
+// Validação contínua durante desenvolvimento
+const validateQuality = async (code: string, context: string) => {
+  const qualityScore = await assessCodeQuality(code);
+  const complianceScore = await assessAestheticCompliance(code);
+  const architectureScore = await assessArchitecturalAlignment(code, context);
+
+  const overallScore = (qualityScore + complianceScore + architectureScore) / 3;
+
+  if (overallScore < 9.5) {
+    throw new QualityGateError(`Quality score ${overallScore} below threshold`);
+  }
+
+  return { score: overallScore, passed: true };
+};
+```
+
+---
+
+## 📚 **QUICK REFERENCE**
+
+### **🚀 Pre-Production Checklist**
+
+- [ ] **Archon**: Tasks completed and marked as "review"
+- [ ] **Security**: Auth active, client data encrypted, audit logs functioning
+- [ ] **Performance**: <200ms response, Lighthouse >95, bundle <1MB
+- [ ] **Compliance**: LGPD consent, aesthetic health compliance validated
+- [ ] **Testing**: 95%+ coverage, E2E workflows, accessibility tested
+- [ ] **Quality**: 30-second reality check passed, code formatted, TypeScript strict
+- [ ] **Documentation**: Architecture docs updated, comments clear
+
+### **⚡ Emergency Commands**
+
+```bash
+# Validação completa pré-produção
+pnpm ci:check      # Full code validation (format + lint + type + test)
+pnpm security:audit # Security audit
+pnpm compliance:lgpd # LGPD validation
+
+# Performance & Quality
+pnpm build && pnpm lighthouse # Build + performance analysis
+pnpm test:coverage # Test coverage
+pnpm format       # Format code automatically
+pnpm lint:fix     # Fix linting issues
+
+# Archon Integration
+archon:get_available_sources() # Check knowledge base
+archon:manage_task(action="list") # List current tasks
+archon:perform_rag_query(query="aesthetic health patterns") # Research
+
+# Ultracite Commands
+npx ultracite init   # Initialize in project
+npx ultracite format # Format and fix code
+npx ultracite lint   # Check without fixing
+```
+
+### **🏥 Aesthetic Health-Specific Patterns**
+
+```typescript
+// Padrão para operações críticas
+const criticalOperation = async (data: CriticalData) => {
+  await validateAuth(); // 1. Authentication
+  await validateConsent(); // 2. LGPD consent
+  await auditStart(); // 3. Iniciar auditoria
+
+  try {
+    const result = await executeOperation(data);
+    await auditSuccess(result); // 4. Log sucesso
+    return result;
+  } catch (error) {
+    await auditFailure(error); // 5. Log falha
+    throw error;
+  }
+};
+
+// Minimização de dados
+const getMinimizedData = (data: ClientData, role: Role) => {
+  const permissions = ROLE_PERMISSIONS[role];
+  return Object.keys(data)
+    .filter((key) => permissions.includes(key))
+    .reduce((obj, key) => ({ ...obj, [key]: data[key] }), {});
+};
+
+// Task-driven development pattern
+const developWithArchon = async (feature: string) => {
+  // 1. Check current tasks
+  const tasks = await archon.listTasks({ status: "todo" });
+
+  // 2. Research before implementation
+  const patterns = await archon.searchCodeExamples(feature);
+  const guidance = await archon.performRAGQuery(
+    `${feature} aesthetic health best practices`,
+  );
+
+  // 3. Implement based on research
+  const implementation = await implement(patterns, guidance);
+
+  // 4. Update task status
+  await archon.updateTask(currentTaskId, { status: "review" });
+
+  return implementation;
+};
+```
+
+---
+
+> **🏥 Enhanced Constitutional Aesthetic Health Document**: Coding standards integrados com VIBECODER principles, Archon workflow, e aesthetic health compliance. Mantém padrões de qualidade ≥9.8/10 com validação contínua e guidance completo para desenvolvimento aesthetic health-first. Última atualização: Janeiro 2025.

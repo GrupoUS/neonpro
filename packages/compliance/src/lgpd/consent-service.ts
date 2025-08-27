@@ -120,7 +120,7 @@ export class ConsentService {
         freely_given: true, // LGPD Art. 8º § 1º
         withdrawable: true, // LGPD Art. 8º § 5º
         grantedAt: new Date(),
-        withdrawnAt: null,
+        withdrawnAt: undefined,
         expiresAt: new Date(
           Date.now() + this.consentExpiryMonths * 30 * 24 * 60 * 60 * 1000,
         ),
@@ -598,7 +598,7 @@ Categorias de Dados: ${request.dataCategories.join(", ")}
     _consentId: string,
     _tenantId: string,
   ): Promise<Consent | null> {
-    return null; // Would query Supabase database
+    return; // Would query Supabase database
   }
 
   private async updateConsentRecord(_consent: Consent): Promise<void> {}

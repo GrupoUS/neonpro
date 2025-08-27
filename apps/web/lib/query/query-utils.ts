@@ -7,7 +7,7 @@
  */
 
 // Import our enhanced API client and schemas
-import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
+import { ApiHelpers, apiClient } from "@neonpro/shared/api-client";
 import type { ApiClient, ApiResponse } from "@neonpro/shared/api-client";
 import {
   useInfiniteQuery,

@@ -1,0 +1,60 @@
+{
+  "name": "@neonpro/audit-trail",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Immutable audit trail system for NeonPro AI Healthcare Platform with blockchain verification",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.mjs",
+      "require": "./dist/core/index.js"
+    },
+    "./blockchain": {
+      "types": "./dist/blockchain/index.d.ts",
+      "import": "./dist/blockchain/index.mjs",
+      "require": "./dist/blockchain/index.js"
+    },
+    "./compliance": {
+      "types": "./dist/compliance/index.d.ts",
+      "import": "./dist/compliance/index.mjs",
+      "require": "./dist/compliance/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "dev": "tsup --watch",
+    "lint": "oxlint src",
+    "lint:fix": "oxlint src --fix",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neonpro/constitutional-layer": "workspace:*",
+    "@neonpro/core-services": "workspace:*",
+    "@neonpro/types": "workspace:*",
+    "@neonpro/utils": "workspace:*",
+    "@supabase/supabase-js": "^2.39.0",
+    "crypto": "^1.0.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@neonpro/typescript-config": "workspace:*",
+    "@types/node": "^20.11.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  }
+}

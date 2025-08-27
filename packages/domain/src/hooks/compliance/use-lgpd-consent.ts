@@ -80,7 +80,7 @@ export function useLGPDConsent(
 ): UseLGPDConsentReturn {
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
 
   // Log functions defined first
   const logDataAccess = useCallback(

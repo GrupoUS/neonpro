@@ -168,6 +168,7 @@ const AIServicesDashboard: React.FC = () => {
       const interval = setInterval(fetchDashboardData, 30_000); // Refresh every 30 seconds
       return () => clearInterval(interval);
     }
+    return;
   }, [autoRefresh, fetchDashboardData]);
 
   const getStatusColor = (status: string): string => {

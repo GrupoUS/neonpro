@@ -84,7 +84,7 @@ interface FormContextValue {
   totalSteps?: number;
 }
 
-const FormContext = createContext<FormContextValue | null>(null);
+const FormContext = createContext<FormContextValue | null>(undefined);
 
 export const useFormContext = () => {
   const context = useContext(FormContext);

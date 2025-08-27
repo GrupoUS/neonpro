@@ -98,7 +98,7 @@ const SubscriptionNotifications: React.FC<SubscriptionNotificationsProps> = ({
     );
   }
 
-  return null;
+  return;
 };
 
 export {

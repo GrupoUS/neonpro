@@ -33,7 +33,7 @@ export const getUser = cache(async (): Promise<User | null> => {
     } = await supabase.auth.getUser();
 
     if (error) {
-      return null;
+      return;
     }
 
     // Healthcare audit logging for user access
@@ -43,7 +43,7 @@ export const getUser = cache(async (): Promise<User | null> => {
 
     return user;
   } catch {
-    return null;
+    return;
   }
 });
 
@@ -69,12 +69,12 @@ export const getSession = cache(async (): Promise<Session | null> => {
     } = await supabase.auth.getSession();
 
     if (error) {
-      return null;
+      return;
     }
 
     return session;
   } catch {
-    return null;
+    return;
   }
 });
 

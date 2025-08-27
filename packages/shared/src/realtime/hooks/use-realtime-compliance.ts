@@ -81,9 +81,11 @@ export function useRealtimeCompliance(
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [totalEvents, setTotalEvents] = useState(0);
   const [criticalEvents, setCriticalEvents] = useState(0);
-  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>();
+  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>(undefined);
   const [complianceScore, setComplianceScore] = useState(100);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
+    undefined,
+  );
 
   /**
    * Determine compliance type based on payload
@@ -180,72 +182,7 @@ export function useRealtimeCompliance(
     [],
   );
 
-  /**
-   * Handle realtime compliance changes
-   */
-  const handleComplianceChange = useCallback(
-    (payload: any) => {
-      try {
-        // Determine compliance type and severity
-        const complianceType = determineComplianceType(payload);
-        const severity = determineSeverity(payload);
-        const requiresAction = severity === "HIGH" || severity === "CRITICAL";
-
-        const realtimePayload: RealtimeCompliancePayload = {
-          eventType: payload.eventType,
-          complianceType,
-          new: payload.new as ComplianceLog,
-          old: payload.old as ComplianceLog,
-          severity,
-          requiresAction,
-        };
-
-        // Update metrics
-        setTotalEvents((prev) => prev + 1);
-        setLastEvent(realtimePayload.new || realtimePayload.old || undefined);
-
-        if (severity === "CRITICAL" || severity === "HIGH") {
-          setCriticalEvents((prev) => prev + 1);
-          if (onCriticalViolation) {
-            onCriticalViolation(realtimePayload);
-          }
-        }
-
-        // Update compliance score
-        updateComplianceScore(realtimePayload);
-
-        // Generate audit log if enabled
-        if (enableAuditLog) {
-          generateAuditEntry(realtimePayload);
-        }
-
-        // Update TanStack Query cache
-        updateComplianceCache(realtimePayload);
-
-        // Call user-provided handler
-        if (onComplianceEvent) {
-          onComplianceEvent(realtimePayload);
-        }
-      } catch (error) {
-        if (onError) {
-          onError(error as Error);
-        }
-      }
-    },
-    [
-      onComplianceEvent,
-      onCriticalViolation,
-      onError,
-      enableAuditLog,
-      determineComplianceType,
-      determineSeverity,
-      generateAuditEntry, // Update TanStack Query cache
-      updateComplianceCache, // Update compliance score
-      updateComplianceScore,
-    ],
-  );
-
-  // Additional helper functions
+  // Helper functions for compliance processing
   const generateAuditEntry = useCallback(
     (payload: RealtimeCompliancePayload): ComplianceLog => {
       return {
@@ -371,6 +308,71 @@ export function useRealtimeCompliance(
       });
     },
     [],
+  );
+
+  /**
+   * Handle realtime compliance changes
+   */
+  const handleComplianceChange = useCallback(
+    (payload: any) => {
+      try {
+        // Determine compliance type and severity
+        const complianceType = determineComplianceType(payload);
+        const severity = determineSeverity(payload);
+        const requiresAction = severity === "HIGH" || severity === "CRITICAL";
+
+        const realtimePayload: RealtimeCompliancePayload = {
+          eventType: payload.eventType,
+          complianceType,
+          new: payload.new as ComplianceLog,
+          old: payload.old as ComplianceLog,
+          severity,
+          requiresAction,
+        };
+
+        // Update metrics
+        setTotalEvents((prev) => prev + 1);
+        setLastEvent(realtimePayload.new || realtimePayload.old || undefined);
+
+        if (severity === "CRITICAL" || severity === "HIGH") {
+          setCriticalEvents((prev) => prev + 1);
+          if (onCriticalViolation) {
+            onCriticalViolation(realtimePayload);
+          }
+        }
+
+        // Update compliance score
+        updateComplianceScore(realtimePayload);
+
+        // Generate audit log if enabled
+        if (enableAuditLog) {
+          generateAuditEntry(realtimePayload);
+        }
+
+        // Update TanStack Query cache
+        updateComplianceCache(realtimePayload);
+
+        // Call user-provided handler
+        if (onComplianceEvent) {
+          onComplianceEvent(realtimePayload);
+        }
+      } catch (error) {
+        if (onError) {
+          onError(error as Error);
+        }
+      }
+    },
+    [
+      onComplianceEvent,
+      onCriticalViolation,
+      onError,
+      enableAuditLog,
+      determineComplianceType,
+      determineSeverity,
+      generateAuditEntry,
+      updateComplianceCache,
+      updateComplianceScore,
+    ],
   );
 
   /**

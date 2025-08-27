@@ -589,7 +589,7 @@ export class LgpdService {
     _id: string,
   ): Promise<ConsentRecord | null> {
     // Implementation depends on database
-    return null;
+    return;
   }
 
   private static async updateConsent(_consent: ConsentRecord): Promise<void> {}
@@ -602,7 +602,7 @@ export class LgpdService {
     _id: string,
   ): Promise<DataSubjectRequest | null> {
     // Implementation depends on database
-    return null;
+    return;
   }
 
   private static async stopDataProcessing(

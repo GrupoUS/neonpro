@@ -11,7 +11,7 @@ import type {
   LCPMetric,
   TTFBMetric,
 } from "web-vitals";
-import { getCLS, getFCP, getFID, getLCP, getTTFB, onINP } from "web-vitals";
+import { onCLS, onFCP, onFID, onLCP, onTTFB, onINP } from "web-vitals";
 import type {
   HealthcareVitalsMetric,
   PerformanceEventHandler,
@@ -82,11 +82,11 @@ class HealthcareWebVitals {
    */
   startMonitoring(): void {
     // Core Web Vitals with type-safe wrappers
-    getCLS(this.handleCLSMetric.bind(this));
-    getFCP(this.handleFCPMetric.bind(this));
-    getFID(this.handleFIDMetric.bind(this));
-    getLCP(this.handleLCPMetric.bind(this));
-    getTTFB(this.handleTTFBMetric.bind(this));
+    onCLS(this.handleCLSMetric.bind(this));
+    onFCP(this.handleFCPMetric.bind(this));
+    onFID(this.handleFIDMetric.bind(this));
+    onLCP(this.handleLCPMetric.bind(this));
+    onTTFB(this.handleTTFBMetric.bind(this));
     onINP(this.handleINPMetric.bind(this));
 
     // Healthcare-specific monitoring

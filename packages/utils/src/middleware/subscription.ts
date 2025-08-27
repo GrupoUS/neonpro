@@ -72,7 +72,7 @@ const subscriptionCaching = {
     if (cached && cached.expires > Date.now()) {
       return cached.data;
     }
-    return null;
+    return;
   },
 
   invalidate: (userId: string): void => {
@@ -89,9 +89,9 @@ const subscriptionCaching = {
 
 const errorHandling = {
   handleInvalidResponse: (_response: unknown): SubscriptionStatus | null =>
-    null,
+    undefined,
 
-  handleNetworkError: (_error: Error): SubscriptionStatus | null => null,
+  handleNetworkError: (_error: Error): SubscriptionStatus | null => undefined,
 };
 
 export {

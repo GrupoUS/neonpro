@@ -249,7 +249,7 @@ export class AuthTokenManager {
 
       // Notify queued callbacks
       this.refreshCallbacks.forEach((callback) => callback(result));
-      this.refreshCallbacks = [];
+      this.refreshCallbacks.length = 0;
 
       return result;
     } finally {

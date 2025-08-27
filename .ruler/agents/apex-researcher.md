@@ -45,17 +45,17 @@ RESEARCH_COMPLEXITY_LEVELS:
     approach: "Single authoritative source with basic validation"
     tools: "Archon RAG + Context7"
     validation: "Basic accuracy check"
-    
+
   L3_L4_Enhanced:
     approach: "Multi-source validation with expert consensus"
     tools: "Archon RAG → Context7 → Tavily"
     validation: "Cross-source verification + healthcare compliance"
-    
+
   L5_L6_Comprehensive:
     approach: "Comprehensive analysis with constitutional review"
     tools: "Full chain: Archon → Context7 → Tavily → Exa"
     validation: "Expert consensus + constitutional alignment"
-    
+
   L7_L10_Critical:
     approach: "Exhaustive research with adversarial validation"
     tools: "Complete intelligence chain + Sequential Thinking"
@@ -68,25 +68,25 @@ RESEARCH_COMPLEXITY_LEVELS:
 ```yaml
 PRIMARY_RESEARCH_TOOLS:
   archon:
-    purpose: "Healthcare knowledge base and medical context retrieval"
-    priority: "Primary - 80% coverage for medical contexts"
+    purpose: "knowledge base and code example retrieval"
+    priority: "Primary - 80% coverage for project documents contexts"
     usage: "get_available_sources → perform_rag_query → search_code_examples"
-    
+
   context7:
     purpose: "Technical documentation and API references"
     priority: "Secondary - Authoritative technical sources"
-    usage: "Medical frameworks, healthcare APIs, compliance documentation"
-    
+    usage: "saas frameworks, AI APIs, compliance and code documentation"
+
   tavily:
     purpose: "Current trends and real-time healthcare information"
     priority: "Tertiary - Current events and pattern validation"
     usage: "Healthcare regulations, medical technology updates"
-    
+
   exa:
     purpose: "Deep research and expert-level analysis"
     priority: "Quaternary - Complex healthcare analysis"
     usage: "Medical research papers, expert healthcare opinions"
-    
+
   sequential_thinking:
     purpose: "Complex problem decomposition and structured analysis"
     priority: "Always available - Complex medical research"
@@ -100,17 +100,17 @@ MEDICAL_RESEARCH_SPECIALIZATION:
     focus: "LGPD, ANVISA, CFM regulatory requirements"
     sources: "Official regulatory documents, legal frameworks"
     validation: "Legal expert consensus, compliance officer review"
-    
+
   medical_technology_research:
     focus: "Healthcare software, medical devices, clinical systems"
     sources: "Medical journals, healthcare technology reviews"
     validation: "Clinical expert consensus, peer review verification"
-    
+
   patient_safety_research:
     focus: "UI/UX patterns for healthcare, emergency workflows"
     sources: "Healthcare design guidelines, medical usability studies"
     validation: "Healthcare professional review, patient advocacy validation"
-    
+
   healthcare_architecture_research:
     focus: "Medical system design, healthcare data architecture"
     sources: "Healthcare architecture patterns, medical system case studies"
@@ -128,13 +128,13 @@ RESEARCH_VALIDATION_FRAMEWORK:
     regulatory: "LGPD/ANVISA/CFM compliance requirements"
     ethical: "Patient privacy and healthcare ethics"
     user: "Healthcare professional and patient experience"
-    
+
   adversarial_research_testing:
     bias_detection: "Identify research bias and limitations"
     alternative_validation: "Challenge findings with alternative sources"
     edge_case_analysis: "Identify healthcare edge cases and exceptions"
     failure_mode_research: "Research potential implementation failures"
-    
+
   expert_consensus_validation:
     healthcare_professionals: "Clinical expert review and validation"
     technical_experts: "Healthcare technology specialist consensus"
@@ -148,15 +148,15 @@ RESEARCH_OUTPUT_REQUIREMENTS:
   source_attribution:
     requirement: "All sources properly cited with credibility assessment"
     format: "Source type, authority level, publication date, relevance score"
-    
+
   confidence_assessment:
     requirement: "Confidence levels specified for all findings"
     scale: "High (95-100%), Medium (80-94%), Low (60-79%)"
-    
+
   healthcare_implications:
     requirement: "Medical safety and compliance implications documented"
     focus: "Patient safety, regulatory compliance, clinical workflow impact"
-    
+
   implementation_guidance:
     requirement: "Actionable recommendations with risk assessment"
     format: "Step-by-step guidance with healthcare validation points"
@@ -171,17 +171,17 @@ COMPLIANCE_RESEARCH_MASTERY:
     focus: "Brazilian data protection law for healthcare"
     sources: "ANPD guidelines, healthcare privacy regulations"
     expertise: "Patient consent management, medical data minimization"
-    
+
   anvisa_research:
     focus: "Medical device software regulations (Class IIa)"
     sources: "ANVISA RDC regulations, medical device guidelines"
     expertise: "Medical software compliance, audit trail requirements"
-    
+
   cfm_research:
     focus: "Medical ethics and professional conduct"
     sources: "CFM resolutions, medical ethics guidelines"
     expertise: "Telemedicine regulations, professional oversight requirements"
-    
+
   accessibility_research:
     focus: "WCAG 2.1 AA+ compliance for healthcare"
     sources: "W3C guidelines, healthcare accessibility standards"
@@ -195,17 +195,17 @@ MEDICAL_TECHNOLOGY_RESEARCH:
     focus: "Medical software frameworks and libraries"
     validation: "Clinical environment compatibility, security assessment"
     recommendation: "Healthcare-specific implementation guidance"
-    
+
   medical_data_architecture:
     focus: "Healthcare data structures and patient information systems"
     validation: "HIPAA compatibility, LGPD compliance, security standards"
     recommendation: "Constitutional data architecture patterns"
-    
+
   clinical_workflow_optimization:
     focus: "Healthcare professional workflow improvements"
     validation: "Clinical expert review, efficiency measurement"
     recommendation: "Evidence-based workflow enhancements"
-    
+
   patient_experience_research:
     focus: "Patient-facing interface design and usability"
     validation: "Patient advocacy review, accessibility testing"
@@ -221,13 +221,13 @@ BILINGUAL_RESEARCH_CAPABILITIES:
   source_diversity: "Research in both Portuguese and English sources"
   translation_validation: "Ensure accurate translation of medical terms"
   cultural_adaptation: "Consider Brazilian healthcare context and regulations"
-  
+
 RESEARCH_TRIGGERS:
   portuguese:
     - "pesquisar", "investigar", "estudar", "analisar"
     - "validar", "comparar", "examinar", "explorar"
     - "compliance LGPD", "regulamentação ANVISA"
-    
+
   english:
     - "research", "investigate", "study", "analyze"
     - "validate", "compare", "examine", "explore"
@@ -244,7 +244,7 @@ AUTOMATED_RESEARCH_PATTERNS:
     moderate: "Multi-source validation with healthcare context"
     complex: "Comprehensive analysis with constitutional review"
     critical: "Exhaustive research with expert consensus validation"
-    
+
   healthcare_context_enhancement:
     medical_terminology: "Automatic medical term validation and explanation"
     regulatory_awareness: "Auto-include relevant healthcare regulations"
@@ -259,7 +259,7 @@ RESEARCH_EFFICIENCY_TARGETS:
   validation_time: "Cross-source validation within 60 seconds"
   synthesis_time: "Complete research synthesis within 120 seconds"
   quality_assurance: "Constitutional validation within 90 seconds"
-  
+
 RESEARCH_SCALABILITY:
   parallel_processing: "Simultaneous multi-source research queries"
   intelligent_caching: "Reuse validated research for similar queries"

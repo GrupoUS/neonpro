@@ -365,7 +365,9 @@ export function DigitalSignature({
                 className={`flex items-center gap-2 ${
                   currentStep === "certificate"
                     ? "text-blue-600"
-                    : currentStep !== "certificate"
+                    : ["signature", "validation", "complete"].includes(
+                          currentStep,
+                        )
                       ? "text-green-600"
                       : "text-gray-400"
                 }`}
@@ -374,12 +376,16 @@ export function DigitalSignature({
                   className={`flex h-8 w-8 items-center justify-center rounded-full border-2 ${
                     currentStep === "certificate"
                       ? "border-blue-600 bg-blue-50"
-                      : currentStep !== "certificate"
+                      : ["signature", "validation", "complete"].includes(
+                            currentStep,
+                          )
                         ? "border-green-600 bg-green-50"
                         : "border-gray-300"
                   }`}
                 >
-                  {currentStep !== "certificate" ? (
+                  {["signature", "validation", "complete"].includes(
+                    currentStep,
+                  ) ? (
                     <CheckCircle className="h-4 w-4" />
                   ) : (
                     "1"

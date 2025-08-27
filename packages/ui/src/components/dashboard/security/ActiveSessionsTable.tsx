@@ -594,7 +594,7 @@ export function ActiveSessionsTable() {
       {/* Summary */}
       <div className="text-muted-foreground text-sm">
         Mostrando {filteredSessions.length} de {sessions.length} sessões ativas
-        {sessions.filter((s) => s.is_suspicious).length > 0 && (
+        {sessions.some((s) => s.is_suspicious).length > 0 && (
           <span className="ml-2 text-red-600">
             • {sessions.filter((s) => s.is_suspicious).length} sessões suspeitas
             detectadas

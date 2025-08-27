@@ -996,7 +996,7 @@ export class MultiClinicManagementService {
    * Get specific tenant details
    */
   getTenant(tenantId: string): TenantManagement | null {
-    return this.tenants.get(tenantId) || null;
+    return this.tenants.get(tenantId) || undefined;
   }
 
   /**

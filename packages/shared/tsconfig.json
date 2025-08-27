@@ -25,7 +25,9 @@
     "useUnknownInCatchVariables": true,
     "forceConsistentCasingInFileNames": true,
     "allowUnreachableCode": false,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "references": [{ "path": "../db" }, { "path": "../types" }],

@@ -3,7 +3,8 @@
  * @description Main audit logger implementation for compliance tracking
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import type { AuditLogEntry, ComplianceEvent } from "./audit-types";
 
 // Constants

@@ -126,7 +126,7 @@ export function SecurityDashboard({ className }: SecurityDashboardProps) {
       <div className={`space-y-6 ${className}`}>
         <div className="animate-pulse">
           <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {new Array(4).fill(null).map((_, i) => (
+            {new Array(4).fill(undefined).map((_, i) => (
               <Card key={i}>
                 <CardHeader className="pb-2">
                   <div className="h-4 w-3/4 rounded bg-gray-200" />

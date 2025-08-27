@@ -73,7 +73,7 @@ export class MultiLayerCacheManager {
       }
     }
 
-    return;
+    return null;
   }
   async set<T>(
     key: string,

@@ -1,7 +1,7 @@
-// Installment Manager - Mock implementation for build compatibility
+﻿// Installment Manager - Mock implementation for build compatibility
 
 class InstallmentManager {
-  async getPaymentPlan(planId: string) {
+  getPaymentPlan(planId: string) {
     // Mock implementation for build compatibility
     return {
       id: planId,
@@ -12,17 +12,17 @@ class InstallmentManager {
     };
   }
 
-  async createPaymentPlan(data: any) {
+  createPaymentPlan(data: unknown) {
     // Mock implementation for build compatibility
     return {
-      id: "plan_" + Math.random().toString(36).substr(2, 9),
+      id: `plan_${Math.random().toString(36).slice(2, 9)}`,
       ...data,
       status: "active",
       created_at: new Date().toISOString(),
     };
   }
 
-  async updatePaymentPlan(planId: string, data: any) {
+  updatePaymentPlan(planId: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: planId,
@@ -31,7 +31,7 @@ class InstallmentManager {
     };
   }
 
-  async deletePaymentPlan(planId: string) {
+  deletePaymentPlan(planId: string) {
     // Mock implementation for build compatibility
     return {
       id: planId,
@@ -40,20 +40,20 @@ class InstallmentManager {
     };
   }
 
-  async getInstallments(planId: string) {
+  getInstallments(planId: string) {
     // Mock implementation for build compatibility
     return [
       {
-        id: 'inst_1',
+        id: "inst_1",
         payment_plan_id: planId,
         amount: 100,
         due_date: new Date().toISOString(),
-        status: 'pending',
+        status: "pending",
       },
     ];
   }
 
-  async getPaymentPlanStats(planId: string) {
+  getPaymentPlanStats(planId: string) {
     // Mock implementation for build compatibility
     return {
       payment_plan_id: planId,
@@ -66,7 +66,7 @@ class InstallmentManager {
     };
   }
 
-  async modifyPaymentPlan(planId: string, data: any) {
+  modifyPaymentPlan(planId: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: planId,
@@ -75,17 +75,60 @@ class InstallmentManager {
     };
   }
 
-  async cancelPaymentPlan(planId: string, reason: string) {
+  cancelPaymentPlan(planId: string, reason: string) {
     // Mock implementation for build compatibility
     return {
       id: planId,
-      status: 'cancelled',
+      status: "cancelled",
       cancelled_at: new Date().toISOString(),
       cancellation_reason: reason,
     };
   }
+
+  regenerateInstallments(planId: string) {
+    // Mock implementation for build compatibility
+    return {
+      payment_plan_id: planId,
+      regenerated_at: new Date().toISOString(),
+      installments_count: 12,
+      success: true,
+    };
+  }
+
+  recalculateInstallmentAmounts(planId: string) {
+    // Mock implementation for build compatibility
+    return {
+      payment_plan_id: planId,
+      recalculated_at: new Date().toISOString(),
+      new_amount_per_installment: 100,
+      success: true,
+    };
+  }
+
+  markAsDefaulted(planId: string, reason: string) {
+    // Mock implementation for build compatibility
+    return {
+      payment_plan_id: planId,
+      status: "defaulted",
+      defaulted_at: new Date().toISOString(),
+      reason: reason,
+      success: true,
+    };
+  }
+
+  reactivatePaymentPlan(planId: string) {
+    // Mock implementation for build compatibility
+    return {
+      payment_plan_id: planId,
+      status: "active",
+      reactivated_at: new Date().toISOString(),
+      success: true,
+    };
+  }
 }
 
-export function getInstallmentManager(): InstallmentManager {
+const getInstallmentManager = function (): InstallmentManager {
   return new InstallmentManager();
-}
+};
+
+export { getInstallmentManager };

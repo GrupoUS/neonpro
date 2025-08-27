@@ -35,7 +35,7 @@ export function useRealtimeAvailability(
 ): UseRealtimeAvailabilityReturn {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
   const [isConnected, setIsConnected] = useState(false);
 
   const _subscriptionRef = useRef<any>(null);

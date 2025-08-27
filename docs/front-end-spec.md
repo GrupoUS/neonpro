@@ -1,28 +1,19 @@
-# NeonPro AI-Enhanced Healthcare UI/UX Specification - 2025
+# NeonPro - Especificação UI/UX para Plataforma de Gestão Estética com IA - 2025
 
 ## Introduction
 
-This document defines the user experience goals, information architecture, user flows, and visual
-design specifications for **NeonPro AI-Enhanced Healthcare Platform**'s user interface. It serves as
-the foundation for visual design and frontend development, ensuring a cohesive and user-centered
-experience optimized for healthcare professionals and patients with revolutionary AI-first
-capabilities.
+Este documento define os objetivos de experiência do usuário, arquitetura de informações, fluxos de usuário e especificações de design visual para a **Plataforma de Gestão Estética Avançada NeonPro com IA**. Serve como base para o design visual e desenvolvimento frontend, garantindo uma experiência coesa e centrada no usuário, otimizada para profissionais da saúde estética e clientes com capacidades revolucionárias IA-first.
 
-**Key Enhancement**: This specification integrates **AI-first design patterns**, **Universal AI Chat
-interfaces**, **Engine Anti-No-Show UI components**, **healthcare-specific UX patterns**, **LGPD
-compliance requirements**, **Brazilian aesthetic medicine specialization**, and **clinical workflow
-optimization** based on comprehensive user research and persona analysis.
+**Key Enhancement**: Esta especificação integra **padrões de design IA-first**, **interfaces de Chat Universal IA**, **componentes UI do Engine Anti-No-Show**, **padrões UX específicos para estética**, **requisitos de compliance LGPD**, **especialização em estética brasileira**, e **otimização de workflow clínico** baseados em pesquisa abrangente de usuários e análise de personas.
 
-**AI-First Design Philosophy**: Every interface component is designed to seamlessly integrate with
-our three-tier AI architecture, providing intelligent assistance without disrupting established
-clinical workflows.
+**AI-First Design Philosophy**: Cada componente de interface é projetado para integrar perfeitamente com nossa arquitetura IA de três níveis, fornecendo assistência inteligente sem interromper fluxos de trabalho estéticos estabelecidos.
 
 ### Change Log
 
-| Date       | Version | Description                                         | Author            |
-| ---------- | ------- | --------------------------------------------------- | ----------------- |
-| 2025-01-21 | 2.0     | Enhanced Brazilian aesthetic medicine specification | Sally (UX Expert) |
-| 2025-07-25 | 1.0     | Initial frontend specification                      | Development Team  |
+| Date       | Version | Description                                                | Author            |
+| ---------- | ------- | ---------------------------------------------------------- | ----------------- |
+| 2025-01-21 | 2.0     | Especificação aprimorada para estética brasileira avançada | Sally (UX Expert) |
+| 2025-07-25 | 1.0     | Especificação inicial frontend                             | Development Team  |
 
 ---
 
@@ -30,18 +21,18 @@ clinical workflows.
 
 ### Target User Personas
 
-#### **Persona 1: Dr. Marina Silva - Healthcare Provider/Practice Owner**
+#### **Persona 1: Marina Silva - Profissional da Estética Avançada/Proprietária de Clínica**
 
 - **Demographics**: 35-45 years, 8-15 years experience, manages R$ 80K-200K/month operations
 - **Tech Comfort**: Moderate (6/10), **low tolerance for workflow disruption**
 - **Critical Pain Points**: 30% treatments below expectation, 15h/week documentation burden, 70%
   decisions based on intuition
 - **Jobs-to-be-Done**: Treatment success 70% → 85%+, administrative time 40% → 15%, regulatory
-  confidence 85% → 99%+
+  confidence 85% → 99%+ (ANVISA, LGPD)
 - **Architecture Requirements**: Zero business interruption, gradual change introduction,
   performance guarantee ≤5% impact
 
-#### **Persona 2: Carla Santos - Administrative Coordinator**
+#### **Persona 2: Carla Santos - Coordenadora Administrativa de Clínica Estética**
 
 - **Demographics**: 25-35 years, high tech comfort (8/10), **high adaptability to enhancements**
 - **Workflow Focus**: 8h/day operations, 20% scheduling conflicts, 15min/patient information search
@@ -50,9 +41,9 @@ clinical workflows.
 - **Architecture Requirements**: Progressive enhancement, feature flag access, training integration,
   performance optimization
 
-#### **Persona 3: Patients (Secondary Users)**
+#### **Persona 3: Pacientes de Estética (Usuários Secundários)**
 
-- **Demographics**: 18-80+ age range, diverse tech abilities, potential healthcare anxiety
+- **Demographics**: 18-80+ age range, diverse tech abilities, potential anxiety about procedures
 - **Primary Needs**: Clear information, easy booking, progress visibility, privacy assurance
 - **Brazilian Context**: Mobile-first usage, data consciousness, family device sharing, cultural
   beauty standards
@@ -264,12 +255,12 @@ graph TD
 
 ---
 
-## Section 3: User Flows (Healthcare-Optimized)
+## Section 3: User Flows (Estética Avançada Otimizada)
 
-### Flow 1: Emergency Patient Access (Life-Critical Priority)
+### Flow 1: Acesso de Emergência a Paciente (Prioridade Crítica)
 
-**User Goal**: Access critical patient information during medical emergency
-**Entry Points**: Emergency button (always visible), voice command, barcode scan, 911 integration
+**User Goal**: Access critical patient information during aesthetic procedure emergency
+**Entry Points**: Emergency button (always visible), voice command, barcode scan, emergency integration
 **Success Criteria**: Critical patient data accessible within 10 seconds, complete audit trail maintained
 
 #### Flow Diagram:
@@ -288,7 +279,7 @@ graph TD
     D --> I[📞 Emergency Contact]
 
     E --> J[Minimal Essential Form]
-    J --> K[📋 Basic Medical Info]
+    J --> K[📋 Basic Aesthetic Info]
     K --> L[Save & Continue Care]
 
     BACKGROUND[🔄 Background Process] --> M[Log Emergency Access]
@@ -303,7 +294,7 @@ graph TD
 - **Power outage**: Emergency battery backup with critical data display
 - **Privacy compliance**: Emergency access automatically logged, supervisor notification within 15 minutes
 
-### Flow 2: Healthcare Financial Processing (Regulatory Compliant)
+### Flow 2: Processamento Financeiro de Estética (Conformidade Regulatória)
 
 **User Goal**: Complete patient financial processing with insurance verification and compliance
 **Entry Points**: Patient checkout, treatment completion, payment request

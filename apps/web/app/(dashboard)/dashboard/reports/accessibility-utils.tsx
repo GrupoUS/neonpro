@@ -116,7 +116,7 @@ export class FocusManager {
 
 // Screen reader announcement utility
 export class ScreenReaderAnnouncer {
-  private static announcer: HTMLElement | null = null;
+  private static announcer: HTMLElement | null = undefined;
 
   static initialize() {
     if (ScreenReaderAnnouncer.announcer) {
@@ -255,7 +255,7 @@ export class ContrastChecker {
           g: Number.parseInt(result[2], 16),
           b: Number.parseInt(result[3], 16),
         }
-      : null;
+      : undefined;
   }
 }
 

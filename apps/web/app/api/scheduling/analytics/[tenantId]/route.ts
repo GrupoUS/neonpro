@@ -144,8 +144,8 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
   return [
     {
       timeRange: {
-        start: new Date(2024, 0, 1, 8, 0),
-        end: new Date(2024, 0, 1, 12, 0),
+        start: "08:00",
+        end: "12:00",
       },
       utilizationRate: 0.92, // 92% utilization in morning
       demandScore: 0.85,
@@ -154,8 +154,8 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
     },
     {
       timeRange: {
-        start: new Date(2024, 0, 1, 12, 0),
-        end: new Date(2024, 0, 1, 17, 0),
+        start: "12:00",
+        end: "17:00",
       },
       utilizationRate: 0.87, // 87% utilization in afternoon
       demandScore: 0.9,
@@ -164,8 +164,8 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
     },
     {
       timeRange: {
-        start: new Date(2024, 0, 1, 17, 0),
-        end: new Date(2024, 0, 1, 20, 0),
+        start: "17:00",
+        end: "20:00",
       },
       utilizationRate: 0.73, // 73% utilization in evening
       demandScore: 0.65,

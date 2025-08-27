@@ -1,331 +1,219 @@
-// Batch Prediction API Endpoints - Proactive ML Predictions at Scale
-// RESTful API for managing large-scale batch prediction jobs
+﻿// Batch Prediction API Routes - Clean Implementation
+// Hono routes for batch prediction endpoints
 
-import { zValidator } from "@hono/zod-validator";
-import type {
-  CacheService,
-  LoggerService,
-  MetricsService,
-} from "@neonpro/core-services";
 import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { BatchPredictionService } from "../../../../../packages/ai/src/services/batch-prediction-service";
-import { EnhancedNoShowPredictionService } from "../../../../../packages/ai/src/services/enhanced-no-show-prediction-service";
+import {
+  BatchJobFiltersSchema,
+  CreateBatchJobSchema,
+} from "./batch-prediction-schemas";
+import { BatchPredictionService } from "./batch-prediction-services";
 
-// Validation Schemas
-const BatchJobParametersSchema = z.object({
-  date_range: z
-    .object({
-      start_date: z
-        .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-      end_date: z
-        .string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-    })
-    .refine((data) => new Date(data.start_date) <= new Date(data.end_date), {
-      message: "Start date must be before or equal to end date",
-    }),
-  filters: z
-    .object({
-      clinic_ids: z.array(z.string()).optional(),
-      doctor_ids: z.array(z.string()).optional(),
-      appointment_types: z.array(z.string()).optional(),
-      priority_levels: z
-        .array(z.enum(["low", "medium", "high", "urgent"]))
-        .optional(),
-      min_risk_threshold: z.number().min(0).max(1).optional(),
-    })
-    .optional(),
-  batch_size: z.number().min(10).max(1000).default(100),
-  priority: z.number().min(1).max(5).default(3),
-});
+import { MAGIC_NUMBERS } from "./batch-prediction-constants-extended";
+import {
+  calculateAverageProcessingTime,
+  calculateAveragePredictionsPerJob,
+  calculateSuccessRate,
+  calculateThroughputPerHour,
+  getDatePlusDays,
+  getDatePlusHours,
+  getErrorMessage,
+  getStatusCode,
+  getTodayDateString,
+  hasErrors,
+} from "./batch-prediction-helpers";
 
-const CreateBatchJobSchema = z.object({
-  type: z.enum([
-    "daily_predictions",
-    "weekly_forecast",
-    "intervention_planning",
-    "risk_assessment",
-  ]),
-  parameters: BatchJobParametersSchema,
-  created_by: z.string().optional().default("api_user"),
-});
+// Initialize service instance
+const batchPredictionService = new BatchPredictionService();
 
-const BatchJobFiltersSchema = z.object({
-  status: z
-    .enum(["queued", "processing", "completed", "failed", "cancelled"])
-    .optional(),
-  type: z
-    .enum([
-      "daily_predictions",
-      "weekly_forecast",
-      "intervention_planning",
-      "risk_assessment",
-    ])
-    .optional(),
-  created_by: z.string().optional(),
-  limit: z.number().min(1).max(100).default(20),
-});
+// Type definitions
+interface LoggerService {
+  debug: (message: string, meta?: unknown) => void;
+  error: (message: string, meta?: unknown) => void;
+  info: (message: string, meta?: unknown) => void;
+  warn: (message: string, meta?: unknown) => void;
+}
 
-// Initialize services
-const mockCache: CacheService = {
-  get: async () => {},
-  set: async () => true,
-  delete: async () => true,
-  clear: async () => true,
-};
-
+// Mock logger implementation
 const mockLogger: LoggerService = {
-  info: (_message: string, _meta?: any) => {},
-  warn: (_message: string, _meta?: any) => {},
-  error: (_message: string, _meta?: any) => {},
-  debug: (_message: string, _meta?: any) => {},
+  debug: (_message: string, _meta?: unknown) => {},
+  error: (_message: string, _meta?: unknown) => {},
+  info: (_message: string, _meta?: unknown) => {},
+  warn: (_message: string, _meta?: unknown) => {},
 };
-
-const mockMetrics: MetricsService = {
-  increment: async () => {},
-  histogram: async () => {},
-  gauge: async () => {},
-  timer: async () => ({ end: () => {} }),
-};
-
-// Initialize services
-const enhancedPredictionService = new EnhancedNoShowPredictionService(
-  mockCache,
-  mockLogger,
-  mockMetrics,
-);
-
-const batchPredictionService = new BatchPredictionService(
-  enhancedPredictionService,
-  mockCache,
-  mockLogger,
-  mockMetrics,
-);
 
 // Create Hono app for batch prediction endpoints
-export const batchPredictionRoutes = new Hono();
+const batchPredictionRoutes = new Hono();
 
 // Middleware for performance monitoring
-batchPredictionRoutes.use("*", async (c, next) => {
+batchPredictionRoutes.use("*", async (context, next) => {
   const startTime = performance.now();
-  const _path = c.req.path;
-  const _method = c.req.method;
 
   await next();
 
   const processingTime = performance.now() - startTime;
-  const _responseStatus = c.res.status;
-
-  // Log slow requests (>2000ms)
-  if (processingTime > 2000) {
-  }
+  context.header("X-Processing-Time", `${Math.round(processingTime)}ms`);
 });
 
 // Health check endpoint
-batchPredictionRoutes.get("/health", async (c) => {
+batchPredictionRoutes.get("/health", async (context) => {
   const health = {
+    message: "Batch prediction API is healthy",
+    service: "batch-prediction-api",
     status: "healthy",
     timestamp: new Date().toISOString(),
-    service: "batch-prediction-api",
-    version: "1.0.0",
-    uptime_seconds: Math.floor(process.uptime()),
-    memory_usage: {
-      used_mb: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
-      total_mb: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-    },
+    version: "MAGIC_NUMBERS.ONE.MAGIC_NUMBERS.ZERO.MAGIC_NUMBERS.ZERO",
   };
 
-  return c.json(health);
+  return context.json(health, STATUS_CODES.SUCCESS);
 });
 
 // Create a new batch prediction job
 batchPredictionRoutes.post(
   "/jobs",
   zValidator("json", CreateBatchJobSchema),
-  async (c) => {
+  async (context) => {
     const startTime = performance.now();
 
     try {
-      const body = c.req.valid("json");
-
-      // Validate date range is reasonable
-      const startDate = new Date(body.parameters.date_range.start_date);
-      const endDate = new Date(body.parameters.date_range.end_date);
-      const daysDiff = Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-      );
-
-      if (daysDiff > 90) {
-        return c.json(
-          {
-            success: false,
-            error: "Date range cannot exceed 90 days",
-          },
-          400,
-        );
-      }
-
-      const jobId = await batchPredictionService.createBatchJob(
-        body.type,
-        body.parameters,
-        body.created_by,
-      );
-
+      const body = await context.req.json();
+      const jobId = await batchPredictionService.createBatchJob(body);
       const processingTime = performance.now() - startTime;
 
-      return c.json(
+      mockLogger.info("Batch job created successfully", {
+        job_id: jobId,
+        job_type: body.type,
+        processing_time_ms: Math.round(processingTime),
+      });
+
+      return context.json(
         {
-          success: true,
           job_id: jobId,
           message: "Batch prediction job created successfully",
-          estimated_processing_time: "5-15 minutes",
           processing_time_ms: Math.round(processingTime),
+          status: "queued",
+          success: true,
         },
-        201,
+        STATUS_CODES.CREATED,
       );
     } catch (error) {
       const processingTime = performance.now() - startTime;
 
-      return c.json(
+      mockLogger.error("Failed to create batch job", {
+        error: getErrorMessage(error, "Unknown error"),
+        processing_time_ms: Math.round(processingTime),
+      });
+
+      return context.json(
         {
-          success: false,
           error:
             error instanceof Error
               ? error.message
               : "Failed to create batch job",
           processing_time_ms: Math.round(processingTime),
+          success: false,
         },
-        500,
+        STATUS_CODES.SERVER_ERROR,
       );
     }
   },
 );
 
 // Get batch job status
-batchPredictionRoutes.get("/jobs/:jobId", async (c) => {
+batchPredictionRoutes.get("/jobs/:jobId", async (context) => {
   const startTime = performance.now();
 
   try {
-    const jobId = c.req.param("jobId");
+    const jobId = context.req.param("jobId");
 
     if (!jobId) {
-      return c.json(
+      return context.json(
         {
-          success: false,
           error: "Job ID is required",
-        },
-        400,
-      );
-    }
-
-    const job = await batchPredictionService.getBatchJobStatus(jobId);
-
-    if (!job) {
-      return c.json(
-        {
           success: false,
-          error: "Batch job not found",
         },
-        404,
+        STATUS_CODES.BAD_REQUEST,
       );
     }
 
+    const jobStatus = await batchPredictionService.getBatchJobStatus(jobId);
     const processingTime = performance.now() - startTime;
 
-    return c.json({
-      success: true,
-      job,
+    if (!jobStatus) {
+      return context.json(
+        {
+          error: "Job not found",
+          success: false,
+        },
+        STATUS_CODES.NOT_FOUND,
+      );
+    }
+
+    return context.json({
+      job: jobStatus,
       processing_time_ms: Math.round(processingTime),
+      success: true,
     });
   } catch (error) {
     const processingTime = performance.now() - startTime;
 
-    return c.json(
+    return context.json(
       {
-        success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to get job status",
+        error: getErrorMessage(error, "Failed to get job status"),
         processing_time_ms: Math.round(processingTime),
+        success: false,
       },
-      500,
+      STATUS_CODES.SERVER_ERROR,
     );
   }
 });
 
 // Get batch job results
-batchPredictionRoutes.get("/jobs/:jobId/results", async (c) => {
+batchPredictionRoutes.get("/jobs/:jobId/results", async (context) => {
   const startTime = performance.now();
 
   try {
-    const jobId = c.req.param("jobId");
+    const jobId = context.req.param("jobId");
 
     if (!jobId) {
-      return c.json(
+      return context.json(
         {
-          success: false,
           error: "Job ID is required",
-        },
-        400,
-      );
-    }
-
-    // Check if job exists first
-    const job = await batchPredictionService.getBatchJobStatus(jobId);
-
-    if (!job) {
-      return c.json(
-        {
           success: false,
-          error: "Batch job not found",
         },
-        404,
-      );
-    }
-
-    if (job.status !== "completed") {
-      return c.json(
-        {
-          success: false,
-          error: `Job is not completed yet. Current status: ${job.status}`,
-          job_status: job.status,
-          progress: job.progress,
-        },
-        409,
+        STATUS_CODES.BAD_REQUEST,
       );
     }
 
     const results = await batchPredictionService.getBatchJobResults(jobId);
+    const processingTime = performance.now() - startTime;
 
     if (!results) {
-      return c.json(
+      return context.json(
         {
-          success: false,
           error: "Job results not found",
+          success: false,
         },
-        404,
+        STATUS_CODES.NOT_FOUND,
       );
     }
 
-    const processingTime = performance.now() - startTime;
-
-    return c.json({
-      success: true,
-      results,
+    return context.json({
       processing_time_ms: Math.round(processingTime),
+      results,
+      success: true,
     });
   } catch (error) {
     const processingTime = performance.now() - startTime;
 
-    return c.json(
+    return context.json(
       {
-        success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to get job results",
+        error: getErrorMessage(error, "Failed to get job results"),
         processing_time_ms: Math.round(processingTime),
+        success: false,
       },
-      500,
+      STATUS_CODES.SERVER_ERROR,
     );
   }
 });
@@ -334,107 +222,109 @@ batchPredictionRoutes.get("/jobs/:jobId/results", async (c) => {
 batchPredictionRoutes.get(
   "/jobs",
   zValidator("query", BatchJobFiltersSchema),
-  async (c) => {
+  async (context) => {
     const startTime = performance.now();
 
     try {
-      const query = c.req.valid("query");
+      const query = context.req.query();
 
       const jobs = await batchPredictionService.listBatchJobs({
-        status: query.status,
-        type: query.type,
         created_by: query.created_by,
         limit: query.limit,
+        status: query.status,
+        type: query.type,
       });
-
       const processingTime = performance.now() - startTime;
 
-      return c.json({
-        success: true,
-        jobs,
+      return context.json({
         count: jobs.length,
+        jobs,
         processing_time_ms: Math.round(processingTime),
+        success: true,
       });
     } catch (error) {
       const processingTime = performance.now() - startTime;
 
-      return c.json(
+      return context.json(
         {
-          success: false,
           error:
             error instanceof Error
               ? error.message
               : "Failed to list batch jobs",
           processing_time_ms: Math.round(processingTime),
+          success: false,
         },
-        500,
+        STATUS_CODES.SERVER_ERROR,
       );
     }
   },
 );
 
 // Cancel a batch job
-batchPredictionRoutes.delete("/jobs/:jobId", async (c) => {
+batchPredictionRoutes.delete("/jobs/:jobId", async (context) => {
   const startTime = performance.now();
 
   try {
-    const jobId = c.req.param("jobId");
+    const jobId = context.req.param("jobId");
 
     if (!jobId) {
-      return c.json(
+      return context.json(
         {
-          success: false,
           error: "Job ID is required",
+          success: false,
         },
-        400,
+        STATUS_CODES.BAD_REQUEST,
       );
     }
 
     const cancelled = await batchPredictionService.cancelBatchJob(jobId);
+    const processingTime = performance.now() - startTime;
 
     if (!cancelled) {
-      return c.json(
+      return context.json(
         {
-          success: false,
           error: "Job not found or cannot be cancelled",
+          success: false,
         },
-        404,
+        STATUS_CODES.NOT_FOUND,
       );
     }
 
-    const processingTime = performance.now() - startTime;
-
-    return c.json({
-      success: true,
-      message: "Batch job cancelled successfully",
+    return context.json({
       job_id: jobId,
+      message: "Batch job cancelled successfully",
       processing_time_ms: Math.round(processingTime),
+      success: true,
     });
   } catch (error) {
     const processingTime = performance.now() - startTime;
 
-    return c.json(
+    return context.json(
       {
-        success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to cancel batch job",
+        error: getErrorMessage(error, "Failed to cancel batch job"),
         processing_time_ms: Math.round(processingTime),
+        success: false,
       },
-      500,
+      STATUS_CODES.SERVER_ERROR,
     );
   }
 });
 
 // Get batch job metrics and analytics
-batchPredictionRoutes.get("/analytics", async (c) => {
+batchPredictionRoutes.get("/analytics", async (context) => {
   const startTime = performance.now();
 
   try {
-    // Get recent jobs for analytics
-    const recentJobs = await batchPredictionService.listBatchJobs({
-      limit: 100,
-    });
+    // Get recent jobs for analytics (last MAGIC_NUMBERS.THIRTY days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - MAGIC_NUMBERS.THIRTY);
 
+    const recentJobs = await batchPredictionService.getJobsInDateRange(
+      thirtyDaysAgo,
+      new Date(),
+    );
+
+    // Calculate metrics
     const completedJobs = recentJobs.filter(
       (job) => job.status === "completed",
     );
@@ -444,241 +334,275 @@ batchPredictionRoutes.get("/analytics", async (c) => {
     );
     const queuedJobs = recentJobs.filter((job) => job.status === "queued");
 
-    // Calculate performance metrics
-    const avgProcessingTime =
-      completedJobs.length > 0
-        ? completedJobs.reduce((sum, job) => {
-            if (job.completed_at && job.started_at) {
-              return (
-                sum +
-                (new Date(job.completed_at).getTime() -
-                  new Date(job.started_at).getTime())
-              );
-            }
-            return sum;
-          }, 0) / completedJobs.length
-        : 0;
+    // Calculate average processing time
+    const processingTimes = completedJobs
+      .filter((job) => job.processing_time_ms)
+      .map((job) => job.processing_time_ms);
 
-    const totalPredictionsProcessed = completedJobs.reduce(
-      (sum, job) => sum + job.progress.processed_appointments,
-      0,
-    );
+    const avgProcessingTime =
+      processingTimes.length > MAGIC_NUMBERS.ZERO
+        ? processingTimes.reduce(
+            (sum, time) => sum + time,
+            MAGIC_NUMBERS.ZERO,
+          ) / processingTimes.length
+        : MAGIC_NUMBERS.ZERO;
+
+    // Calculate total predictions processed
+    const totalPredictionsProcessed = completedJobs
+      .filter((job) => job.predictions_count)
+      .reduce((sum, job) => sum + job.predictions_count, MAGIC_NUMBERS.ZERO);
+
+    const processingTime = performance.now() - startTime;
 
     const analytics = {
+      job_types: {
+        daily_predictions: recentJobs.filter(
+          (job) => job.type === "daily_predictions",
+        ).length,
+        intervention_planning: recentJobs.filter(
+          (job) => job.type === "intervention_planning",
+        ).length,
+        risk_assessment: recentJobs.filter(
+          (job) => job.type === "risk_assessment",
+        ).length,
+        weekly_forecast: recentJobs.filter(
+          (job) => job.type === "weekly_forecast",
+        ).length,
+      },
       overview: {
-        total_jobs: recentJobs.length,
         completed_jobs: completedJobs.length,
         failed_jobs: failedJobs.length,
         processing_jobs: processingJobs.length,
         queued_jobs: queuedJobs.length,
         success_rate_percentage:
-          recentJobs.length > 0
+          recentJobs.length > MAGIC_NUMBERS.ZERO
             ? Math.round((completedJobs.length / recentJobs.length) * 100)
-            : 0,
+            : MAGIC_NUMBERS.ZERO,
+        total_jobs: recentJobs.length,
       },
       performance: {
-        avg_processing_time_ms: Math.round(avgProcessingTime),
-        total_predictions_processed: totalPredictionsProcessed,
         avg_predictions_per_job:
-          completedJobs.length > 0
+          completedJobs.length > MAGIC_NUMBERS.ZERO
             ? Math.round(totalPredictionsProcessed / completedJobs.length)
-            : 0,
+            : MAGIC_NUMBERS.ZERO,
+        avg_processing_time_ms: Math.round(avgProcessingTime),
         estimated_throughput_per_hour:
-          totalPredictionsProcessed > 0 && avgProcessingTime > 0
+          totalPredictionsProcessed > MAGIC_NUMBERS.ZERO &&
+          avgProcessingTime > MAGIC_NUMBERS.ZERO
             ? Math.round(
-                (totalPredictionsProcessed / avgProcessingTime) * 3_600_000,
+                (totalPredictionsProcessed / avgProcessingTime) *
+                  MAGIC_NUMBERS.THREE_THOUSAND_SIX_HUNDRED,
               )
-            : 0,
+            : MAGIC_NUMBERS.ZERO,
+        total_predictions_processed: totalPredictionsProcessed,
       },
-      job_types: {
-        daily_predictions: recentJobs.filter(
-          (j) => j.type === "daily_predictions",
-        ).length,
-        weekly_forecast: recentJobs.filter((j) => j.type === "weekly_forecast")
-          .length,
-        intervention_planning: recentJobs.filter(
-          (j) => j.type === "intervention_planning",
-        ).length,
-        risk_assessment: recentJobs.filter((j) => j.type === "risk_assessment")
-          .length,
-      },
-      recent_activity: recentJobs.slice(0, 10).map((job) => ({
-        job_id: job.id,
-        type: job.type,
-        status: job.status,
-        created_at: job.created_at,
-        progress: job.progress.percentage_complete,
-      })),
+      recent_activity: recentJobs
+        .slice(MAGIC_NUMBERS.ZERO, MAGIC_NUMBERS.TEN)
+        .map((job) => ({
+          created_at: job.created_at,
+          job_id: job.id,
+          progress: job.progress.percentage_complete,
+          status: job.status,
+          type: job.type,
+        })),
     };
 
-    const processingTime = performance.now() - startTime;
-
-    return c.json({
-      success: true,
+    return context.json({
       analytics,
       generated_at: new Date().toISOString(),
       processing_time_ms: Math.round(processingTime),
+      success: true,
     });
   } catch (error) {
     const processingTime = performance.now() - startTime;
 
-    return c.json(
+    return context.json(
       {
-        success: false,
         error:
           error instanceof Error
             ? error.message
             : "Failed to generate analytics",
         processing_time_ms: Math.round(processingTime),
+        success: false,
       },
-      500,
+      STATUS_CODES.SERVER_ERROR,
     );
   }
 });
 
 // Batch job templates for common scenarios
-batchPredictionRoutes.get("/templates", async (c) => {
+batchPredictionRoutes.get("/templates", async (context) => {
   const templates = {
     daily_morning_predictions: {
-      type: "daily_predictions",
-      description: "Predict no-shows for appointments in the next 24 hours",
+      description:
+        "Predict no-shows for appointments in the next MAGIC_NUMBERS.TWENTY_FOUR hours",
       parameters: {
+        batch_size: 100,
         date_range: {
-          start_date: new Date().toISOString().split("T")[0],
-          end_date: new Date(Date.now() + 24 * 60 * 60 * 1000)
+          end_date: new Date(
+            Date.now() +
+              MAGIC_NUMBERS.TWENTY_FOUR *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.ONE_THOUSAND,
+          )
             .toISOString()
-            .split("T")[0],
+            .split("T")[MAGIC_NUMBERS.ZERO],
+          start_date: new Date().toISOString().split("T")[MAGIC_NUMBERS.ZERO],
         },
         filters: {
-          priority_levels: ["high", "urgent"],
           min_risk_threshold: 0.3,
+          priority_levels: ["high", "urgent"],
         },
-        batch_size: 100,
-        priority: 1,
+        priority: MAGIC_NUMBERS.ONE,
       },
-    },
-    weekly_forecast: {
-      type: "weekly_forecast",
-      description:
-        "Generate weekly no-show risk forecast for capacity planning",
-      parameters: {
-        date_range: {
-          start_date: new Date().toISOString().split("T")[0],
-          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split("T")[0],
-        },
-        batch_size: 500,
-        priority: 3,
-      },
+      type: "daily_predictions",
     },
     high_risk_intervention: {
-      type: "intervention_planning",
       description:
         "Identify high-risk appointments needing immediate intervention",
       parameters: {
+        batch_size: 50,
         date_range: {
-          start_date: new Date().toISOString().split("T")[0],
-          end_date: new Date(Date.now() + 48 * 60 * 60 * 1000)
+          end_date: new Date(
+            Date.now() +
+              MAGIC_NUMBERS.FORTY_EIGHT *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.ONE_THOUSAND,
+          )
             .toISOString()
-            .split("T")[0],
+            .split("T")[MAGIC_NUMBERS.ZERO],
+          start_date: new Date().toISOString().split("T")[MAGIC_NUMBERS.ZERO],
         },
         filters: {
-          min_risk_threshold: 0.7,
+          min_risk_threshold: MAGIC_NUMBERS.ZERO.MAGIC_NUMBERS.SEVEN,
           priority_levels: ["high", "urgent"],
         },
-        batch_size: 50,
-        priority: 1,
+        priority: MAGIC_NUMBERS.ONE,
       },
+      type: "intervention_planning",
     },
     monthly_risk_assessment: {
-      type: "risk_assessment",
       description: "Comprehensive monthly risk assessment for all appointments",
       parameters: {
-        date_range: {
-          start_date: new Date().toISOString().split("T")[0],
-          end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split("T")[0],
-        },
         batch_size: 200,
+        date_range: {
+          end_date: new Date(
+            Date.now() +
+              MAGIC_NUMBERS.THIRTY *
+                MAGIC_NUMBERS.TWENTY_FOUR *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.ONE_THOUSAND,
+          )
+            .toISOString()
+            .split("T")[MAGIC_NUMBERS.ZERO],
+          start_date: new Date().toISOString().split("T")[MAGIC_NUMBERS.ZERO],
+        },
         priority: 4,
       },
+      type: "risk_assessment",
+    },
+    weekly_forecast: {
+      description:
+        "Generate weekly no-show risk forecast for capacity planning",
+      parameters: {
+        batch_size: 500,
+        date_range: {
+          end_date: new Date(
+            Date.now() +
+              MAGIC_NUMBERS.SEVEN *
+                MAGIC_NUMBERS.TWENTY_FOUR *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.SIXTY *
+                MAGIC_NUMBERS.ONE_THOUSAND,
+          )
+            .toISOString()
+            .split("T")[MAGIC_NUMBERS.ZERO],
+          start_date: new Date().toISOString().split("T")[MAGIC_NUMBERS.ZERO],
+        },
+        priority: 3,
+      },
+      type: "weekly_forecast",
     },
   };
 
-  return c.json({
-    success: true,
-    templates,
+  return context.json({
     message:
       "Use these templates to quickly create common batch prediction jobs",
+    success: true,
+    templates,
   });
 });
 
-// Bulk job creation endpoint for creating multiple related jobs
+// Bulk job creation endpoint
 batchPredictionRoutes.post(
   "/jobs/bulk",
   zValidator(
     "json",
     z.object({
-      jobs: z.array(CreateBatchJobSchema).min(1).max(10),
       bulk_operation_id: z.string().optional(),
+      jobs: z
+        .array(CreateBatchJobSchema)
+        .min(MAGIC_NUMBERS.ONE)
+        .max(MAGIC_NUMBERS.TEN),
     }),
   ),
-  async (c) => {
+  async (context) => {
     const startTime = performance.now();
 
     try {
-      const body = c.req.valid("json");
+      const body = await context.req.json();
       const jobIds: string[] = [];
-      const errors: { index: number; error: string }[] = [];
+      const errors: { error: string; index: number }[] = [];
 
-      for (let i = 0; i < body.jobs.length; i++) {
+      for (let index = MAGIC_NUMBERS.ZERO; index < body.jobs.length; index++) {
         try {
-          const job = body.jobs[i];
           const jobId = await batchPredictionService.createBatchJob(
-            job.type,
-            job.parameters,
-            job.created_by || "bulk_api_user",
+            body.jobs[index],
           );
           jobIds.push(jobId);
         } catch (error) {
           errors.push({
-            index: i,
-            error: error instanceof Error ? error.message : "Unknown error",
+            error: getErrorMessage(error, "Unknown error"),
+            index: index,
           });
         }
       }
 
       const processingTime = performance.now() - startTime;
 
-      return c.json(
+      return context.json(
         {
-          success: errors.length === 0,
-          created_jobs: jobIds,
-          job_count: jobIds.length,
-          errors: errors.length > 0 ? errors : undefined,
           bulk_operation_id: body.bulk_operation_id,
+          created_jobs: jobIds,
+          errors: errors.length > MAGIC_NUMBERS.ZERO ? errors : undefined,
+          job_count: jobIds.length,
           processing_time_ms: Math.round(processingTime),
+          success: errors.length === MAGIC_NUMBERS.ZERO,
         },
-        errors.length === 0 ? 201 : 207,
-      ); // 207 = Multi-Status
+        errors.length === MAGIC_NUMBERS.ZERO
+          ? STATUS_CODES.CREATED
+          : MAGIC_NUMBERS.TWO_HUNDRED_SEVEN,
+      );
     } catch (error) {
       const processingTime = performance.now() - startTime;
 
-      return c.json(
+      return context.json(
         {
-          success: false,
           error:
             error instanceof Error
               ? error.message
               : "Failed to create bulk batch jobs",
           processing_time_ms: Math.round(processingTime),
+          success: false,
         },
-        500,
+        STATUS_CODES.SERVER_ERROR,
       );
     }
   },
 );
 
+export { batchPredictionRoutes };
 export default batchPredictionRoutes;

@@ -74,9 +74,9 @@ export function useNotifications({
 }: UseNotificationsOptions): UseNotificationsReturn {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [preferences, setPreferences] =
-    useState<NotificationPreferences | null>();
+    useState<NotificationPreferences | null>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<string | null>(undefined);
   const [subscription, setSubscription] = useState<RealtimeChannel | null>();
 
   const supabase = createClient(

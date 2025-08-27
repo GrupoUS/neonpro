@@ -135,8 +135,8 @@ export const usePatientSearch = (
    */
   const levenshteinDistance = useCallback((a: string, b: string): number => {
     const matrix = new Array(b.length + 1)
-      .fill()
-      .map(() => new Array(a.length + 1).fill());
+      .fill(0)
+      .map(() => new Array(a.length + 1).fill(0));
 
     for (let i = 0; i <= a.length; i++) {
       matrix[0][i] = i;

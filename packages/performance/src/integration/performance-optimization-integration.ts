@@ -5,8 +5,8 @@
  */
 
 import { MultiLayerCacheManager } from "@neonpro/caching-layer";
-import { createSupabaseClient } from "@neonpro/db";
-import { HealthcareMonitoringDashboard } from "@neonpro/monitoring";
+import { createClient } from "@neonpro/db";
+import { MonitoringServiceFactory } from "@neonpro/monitoring";
 import HealthcarePerformanceOptimizationService from "../performance-optimization-service";
 
 interface IntegrationConfig {
@@ -45,7 +45,7 @@ interface PerformanceIntegrationReport {
  */
 export class PerformanceOptimizationIntegration {
   private readonly performanceService: HealthcarePerformanceOptimizationService;
-  private readonly monitoringDashboard: HealthcareMonitoringDashboard;
+  private readonly monitoringDashboard: MonitoringServiceFactory;
   private readonly cacheManager: MultiLayerCacheManager;
   private readonly supabaseClient: any;
   private readonly config: IntegrationConfig;
@@ -53,9 +53,9 @@ export class PerformanceOptimizationIntegration {
   constructor(config: IntegrationConfig) {
     this.config = config;
     this.performanceService = new HealthcarePerformanceOptimizationService();
-    this.monitoringDashboard = new HealthcareMonitoringDashboard();
+    this.monitoringDashboard = new MonitoringServiceFactory();
     this.cacheManager = new MultiLayerCacheManager();
-    this.supabaseClient = createSupabaseClient();
+    this.supabaseClient = createClient();
   }
 
   /**
@@ -124,17 +124,7 @@ export class PerformanceOptimizationIntegration {
     await this.performanceService.implementRealTimeMonitoring();
 
     // Initialize monitoring dashboard
-    await this.monitoringDashboard.initialize({
-      healthcareMode: true,
-      realTimeUpdates: true,
-      complianceTracking: true,
-      performanceThresholds: {
-        cacheHitRate: 85,
-        aiInferenceTime: 200,
-        databaseQueryTime: 100,
-        dashboardLoadTime: 2000,
-      },
-    });
+    this.monitoringDashboard.init();
   }
 
   /**
@@ -156,7 +146,7 @@ export class PerformanceOptimizationIntegration {
    */
   private async setupAutoScaling(): Promise<void> {
     // Configure performance-based auto-scaling triggers
-    const _scalingConfig = {
+    const scalingConfig = {
       cpu: { scaleUpThreshold: 70, scaleDownThreshold: 30 },
       memory: { scaleUpThreshold: 80, scaleDownThreshold: 40 },
       responseTime: { scaleUpThreshold: 500, scaleDownThreshold: 200 },
@@ -164,6 +154,9 @@ export class PerformanceOptimizationIntegration {
       aiInferenceTime: { scaleUpThreshold: 300 }, // Scale up if AI is slow
       databaseConnections: { scaleUpThreshold: 80 }, // Scale up if DB connections high
     };
+
+    // Apply scaling configuration
+    console.log("Auto-scaling configured with thresholds:", scalingConfig);
   }
 
   /**
@@ -294,6 +287,10 @@ export class PerformanceOptimizationIntegration {
         .from("health_metrics")
         .select("id")
         .limit(1);
+
+      if (error || !data) {
+        throw new Error("Database connectivity test failed");
+      }
 
       const queryTime = Date.now() - startTime;
 

@@ -45,7 +45,9 @@ export function RealtimeProvider({
   enableHealthcareMode = true,
   customConfig,
 }: RealtimeProviderProps) {
-  const [manager, setManager] = useState<SupabaseRealtimeManager | null>();
+  const [manager, setManager] = useState<SupabaseRealtimeManager | null>(
+    undefined,
+  );
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     isConnected: false,
     connectionId: undefined,

@@ -48,7 +48,7 @@ export function getTokenExpiration(token: string): Date | null {
   try {
     const decoded = jwt.decode(token) as TokenPayload;
     if (!decoded || !decoded.exp) {
-      return null;
+      return;
     }
 
     return new Date(decoded.exp * 1000);
@@ -187,7 +187,7 @@ export function sanitizeInput(input: string): string {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#x27;")
-    .replaceAll("\\/", "&#x2F;");
+    .replaceAll(String.raw`\/`, "&#x2F;");
 }
 
 /**

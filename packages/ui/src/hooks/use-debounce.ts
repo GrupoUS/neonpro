@@ -1,4 +1,4 @@
-/**
+﻿/**
  * useDebounce Hook
  * Story 3.4: Smart Search + NLP Integration
  * Debounces values to prevent excessive API calls
@@ -12,8 +12,11 @@ import { useEffect, useState } from "react";
  * @param delay - The delay in milliseconds
  * @returns The debounced value
  */
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+export const useDebounce = function <ValueType>(
+  value: ValueType,
+  delay: number,
+): ValueType {
+  const [debouncedValue, setDebouncedValue] = useState<ValueType>(value);
 
   useEffect(() => {
     // Set up a timer to update the debounced value after the delay
@@ -28,6 +31,6 @@ export function useDebounce<T>(value: T, delay: number): T {
   }, [value, delay]);
 
   return debouncedValue;
-}
+};
 
 export default useDebounce;

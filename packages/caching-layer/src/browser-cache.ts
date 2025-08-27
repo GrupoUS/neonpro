@@ -28,7 +28,7 @@ export class BrowserCacheLayer implements CacheOperation {
     if (!entry) {
       this.stats.misses++;
       this.updateStats(startTime);
-      return;
+      return null;
     }
 
     // Check TTL expiration
@@ -36,7 +36,7 @@ export class BrowserCacheLayer implements CacheOperation {
       this.cache.delete(key);
       this.stats.misses++;
       this.updateStats(startTime);
-      return;
+      return null;
     }
 
     // LGPD consent validation for sensitive data
@@ -46,7 +46,7 @@ export class BrowserCacheLayer implements CacheOperation {
         this.cache.delete(key);
         this.stats.misses++;
         this.updateStats(startTime);
-        return;
+        return null;
       }
     }
 

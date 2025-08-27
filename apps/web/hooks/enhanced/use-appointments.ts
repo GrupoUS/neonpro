@@ -7,14 +7,14 @@
  */
 
 // Import our enhanced API client
-import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
+import { ApiHelpers, apiClient } from "@neonpro/shared/api-client";
 import type { ApiResponse } from "@neonpro/shared/api-client";
 // Import validation schemas and types
 import {
   AppointmentQuerySchema,
   AppointmentResponseSchema,
-  AppointmentsListResponseSchema,
   AppointmentStatsSchema,
+  AppointmentsListResponseSchema,
   AvailabilitySlotSchema,
   BulkUpdateAppointmentsSchema,
   CheckInAppointmentSchema,

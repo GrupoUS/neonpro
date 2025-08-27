@@ -153,17 +153,17 @@ export async function GET(
     );
 
     // Apply additional filters
-    let filteredStrategies = strategies;
+    let filteredStrategies = strategies.strategies;
 
     if (strategyType) {
       filteredStrategies = filteredStrategies.filter(
-        (s) => s.strategy_type === strategyType,
+        (s: any) => s.strategy_type === strategyType,
       );
     }
 
     if (status) {
       filteredStrategies = filteredStrategies.filter(
-        (s) => s.status === status,
+        (s: any) => s.status === status,
       );
     }
 
@@ -220,14 +220,16 @@ export async function GET(
           .length,
       })),
       average_success_rate:
-        filteredStrategies.reduce((sum, s) => sum + (s.success_rate || 0), 0) /
-          filteredStrategies.length || 0,
+        filteredStrategies.reduce(
+          (sum: number, s: any) => sum + (s.success_rate || 0),
+          0,
+        ) / filteredStrategies.length || 0,
       total_executions: filteredStrategies.reduce(
-        (sum, s) => sum + s.execution_count,
+        (sum: number, s: any) => sum + s.execution_count,
         0,
       ),
       successful_executions: filteredStrategies.reduce(
-        (sum, s) => sum + s.successful_executions,
+        (sum: number, s: any) => sum + s.successful_executions,
         0,
       ),
     };
@@ -352,10 +354,9 @@ export async function POST(
 
     // Create retention strategy
     const retentionService = new RetentionAnalyticsService();
-    const createData: CreateRetentionStrategy = {
+    const createData: any = {
       ...strategyData,
       clinic_id: clinicId,
-      created_by: user.id,
     };
 
     const strategy = await retentionService.createRetentionStrategy(createData);

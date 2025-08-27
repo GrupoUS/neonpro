@@ -305,7 +305,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
       const resourceIdMatch = extractResourceIds(path);
       const resourceId = resourceIdMatch?.[
         resourceIdMatch.length - 1
-      ]?.replaceAll("\\/", "");
+      ]?.replaceAll(String.raw`\/`, "");
 
       // Create audit log entry
       const auditLog: AuditLog = {

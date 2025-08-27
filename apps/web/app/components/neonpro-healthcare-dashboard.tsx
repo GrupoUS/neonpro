@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
+  Label,
   Progress,
   Select,
   SelectContent,
@@ -35,7 +36,7 @@ import {
   TabsContent,
   Textarea,
 } from "@neonpro/ui";
-import { format } from "date-fns/format";
+import format from "date-fns/format";
 import { ptBR } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 

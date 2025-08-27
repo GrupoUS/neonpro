@@ -92,7 +92,7 @@ export function useRealtime<
 
         // Clear any previous errors
         setError(undefined);
-      } catch {
+      } catch (error) {
         const error =
           error instanceof Error ? error : new Error("Realtime event error");
         setError(error);

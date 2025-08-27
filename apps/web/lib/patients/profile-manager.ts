@@ -1,16 +1,16 @@
-// Profile Manager - Mock implementation for build compatibility
+﻿// Profile Manager - Mock implementation for build compatibility
 
-export class ProfileManager {
-  async getProfile(patientId: string) {
+class ProfileManager {
+  getProfile(patientId: string) {
     // Mock implementation for build compatibility
     return {
+      last_updated: new Date().toISOString(),
       patient_id: patientId,
       profile_data: {},
-      last_updated: new Date().toISOString(),
     };
   }
 
-  async updateProfile(patientId: string, profileData: any) {
+  updateProfile(patientId: string, profileData: unknown) {
     // Mock implementation for build compatibility
     return {
       patient_id: patientId,
@@ -19,24 +19,24 @@ export class ProfileManager {
     };
   }
 
-  async validateProfile(profileData: any) {
+  validateProfile(profileData: unknown) {
     // Mock implementation for build compatibility
     return {
-      valid: true,
       errors: [],
+      valid: true,
     };
   }
 
-  async getPatientProfile(patientId: string) {
+  getPatientProfile(patientId: string) {
     // Mock implementation for build compatibility
     return {
+      last_updated: new Date().toISOString(),
       patient_id: patientId,
       profile_data: {},
-      last_updated: new Date().toISOString(),
     };
   }
 
-  async updatePatientProfile(patientId: string, profileData: any) {
+  updatePatientProfile(patientId: string, profileData: unknown) {
     // Mock implementation for build compatibility
     return {
       patient_id: patientId,
@@ -45,12 +45,14 @@ export class ProfileManager {
     };
   }
 
-  async archivePatientProfile(patientId: string) {
+  archivePatientProfile(patientId: string) {
     // Mock implementation for build compatibility
     return {
       patient_id: patientId,
-      archived: true,
       archived_at: new Date().toISOString(),
+      archived: true,
     };
   }
 }
+
+export default ProfileManager;

@@ -17,7 +17,7 @@
     "declaration": true,
     "declarationMap": true,
     "incremental": false,
-    "composite": false
+    "composite": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

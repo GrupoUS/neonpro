@@ -532,7 +532,7 @@ export class ProcedureClassificationService {
     _id: string,
     _tenantId: string,
   ): Promise<ProcedureClassification | null> {
-    return null; // Would query database
+    return; // Would query database
   }
 
   private async performClassificationValidation(

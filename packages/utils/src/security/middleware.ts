@@ -88,7 +88,7 @@ export class SecurityMiddleware {
         await this.logSecurityEvent("api_access", context, "info");
       }
 
-      return null; // Continue to next middleware/handler
+      return; // Continue to next middleware/handler
     } catch {
       await this.logSecurityEvent("middleware_error", context, "error");
       return new NextResponse("Internal Security Error", { status: 500 });
@@ -152,7 +152,7 @@ export class SecurityMiddleware {
 
     return this.config.allowedOrigins.some((allowed) => {
       if (allowed.includes("*")) {
-        const pattern = allowed.replaceAll("\\*", ".*");
+        const pattern = allowed.replaceAll(String.raw`\*`, ".*");
         return new RegExp(pattern).test(origin);
       }
       return allowed === origin;

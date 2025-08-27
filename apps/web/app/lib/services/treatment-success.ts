@@ -23,6 +23,15 @@ export class TreatmentSuccessService {
     };
   }
 
+  async deleteTreatmentOutcome(outcomeId: string) {
+    // Mock implementation for build compatibility
+    return {
+      id: outcomeId,
+      deleted: true,
+      deleted_at: new Date().toISOString(),
+    };
+  }
+
   async analyzeTreatmentSuccess(treatmentId: string) {
     // Mock implementation for build compatibility
     return {

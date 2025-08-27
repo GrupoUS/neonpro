@@ -7,6 +7,27 @@ export interface SchedulingSlot {
   duration: number;
 }
 
+export interface SchedulingAnalytics {
+  utilizationRate: number; // percentage
+  averageBookingTime: number; // seconds
+  noShowRate: number; // percentage
+  cancellationRate: number; // percentage
+  patientSatisfactionScore: number; // 1-5
+  revenueOptimization: number; // percentage above baseline
+  timeSlotEfficiency: TimeSlotEfficiency[];
+}
+
+export interface TimeSlotEfficiency {
+  timeRange: {
+    start: string;
+    end: string;
+  };
+  utilizationRate: number;
+  demandScore: number;
+  staffEfficiency: number;
+  revenuePerHour: number;
+}
+
 export interface AppointmentData {
   patientId: string;
   providerId: string;
@@ -31,5 +52,7 @@ export class AISchedulingEngine {
 }
 
 export const schedulingEngine = new AISchedulingEngine();
+
+export * from "./types";
 
 export default schedulingEngine;
