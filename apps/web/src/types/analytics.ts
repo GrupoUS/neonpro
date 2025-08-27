@@ -104,7 +104,7 @@ export function isArrayOfRetentionStrategies(arr: unknown[]): arr is RetentionSt
 }
 
 // Safe parsing utilities
-export function safeParseNumber(value: unknown, defaultValue: number = 0): number {
+export function safeParseNumber(value: unknown, defaultValue = 0): number {
   if (typeof value === "number" && !isNaN(value)) {
     return value;
   }

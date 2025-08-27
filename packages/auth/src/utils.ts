@@ -134,7 +134,7 @@ export function validatePassword(
 /**
  * Generate secure random password
  */
-export function generateSecurePassword(length: number = 16): string {
+export function generateSecurePassword(length = 16): string {
   const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const lowercase = "abcdefghijklmnopqrstuvwxyz";
   const numbers = "0123456789";
@@ -165,7 +165,7 @@ export function generateSecurePassword(length: number = 16): string {
 /**
  * Generate secure random string
  */
-export function generateSecureRandom(length: number = 32): string {
+export function generateSecureRandom(length = 32): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
 
@@ -404,7 +404,7 @@ export function validateProviderLicense(
 export function canAccessPatientData(
   userRole: string,
   patientConsent: boolean,
-  emergencyAccess: boolean = false,
+  emergencyAccess = false,
 ): boolean {
   // Emergency access overrides consent requirements
   if (emergencyAccess) {
