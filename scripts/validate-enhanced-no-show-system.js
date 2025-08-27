@@ -122,7 +122,8 @@ class ValidationRunner {
           `Response time ${responseTime}ms exceeds target ${this.targets.response_time}ms for ${scenario.name}`,
         );
       }
-    }  }
+    }
+  }
 
   async simulateAPICall(scenario) {
     const startTime = performance.now();
@@ -223,7 +224,8 @@ class ValidationRunner {
       avgResponseTime: 24, // hours
       costPerIntervention: 8.5,
       preventedNoShows: 238,
-    };    const conversionRate = interventionMetrics.successfulInterventions
+    };
+    const conversionRate = interventionMetrics.successfulInterventions
       / interventionMetrics.totalCampaigns;
     const systemEffectiveness = conversionRate;
 
@@ -234,7 +236,7 @@ class ValidationRunner {
       const [_channel, metrics] of Object.entries(
         interventionMetrics.channelPerformance,
       )
-    ) {    }
+    ) {}
 
     const passed = systemEffectiveness >= 0.65; // 65% minimum effectiveness
 

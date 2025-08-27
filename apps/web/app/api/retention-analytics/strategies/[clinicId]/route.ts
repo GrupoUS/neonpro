@@ -10,10 +10,54 @@ import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
+import { 
+  type RetentionStrategy, 
+  type DatabaseRow,
+  safeParseNumber 
+} from "@/src/types/analytics";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
+
+interface StrategyData {
+  id: string;
+  name: string;
+  type: string;
+  strategy_type: string;
+  status: string;
+  target_risk_level: string;
+  effectiveness_score: number;
+  is_active: boolean;
+  execution_count: number;
+  successful_executions: number;
+  success_rate: number;
+  created_at: string;
+  updated_at: string;
+  last_executed: string;
+}
+
+// Type guard for strategy data
+function isStrategyData(obj: unknown): obj is StrategyData {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof (obj as StrategyData).id === 'string' &&
+    typeof (obj as StrategyData).name === 'string' &&
+    typeof (obj as StrategyData).type === 'string' &&
+    typeof (obj as StrategyData).strategy_type === 'string' &&
+    typeof (obj as StrategyData).status === 'string' &&
+    typeof (obj as StrategyData).target_risk_level === 'string' &&
+    typeof (obj as StrategyData).effectiveness_score === 'number' &&
+    typeof (obj as StrategyData).is_active === 'boolean' &&
+    typeof (obj as StrategyData).execution_count === 'number' &&
+    typeof (obj as StrategyData).successful_executions === 'number' &&
+    typeof (obj as StrategyData).success_rate === 'number' &&
+    typeof (obj as StrategyData).created_at === 'string' &&
+    typeof (obj as StrategyData).updated_at === 'string' &&
+    typeof (obj as StrategyData).last_executed === 'string'
+  );
+}
 
 const StrategiesParamsSchema = z.object({
   clinicId: z.string().uuid("Invalid clinic ID format"),
@@ -141,23 +185,23 @@ export async function GET(
     );
 
     // Apply additional filters
-    let filteredStrategies = strategies.strategies;
+    let filteredStrategies = strategies.strategies as StrategyData[];
 
     if (strategyType) {
-      filteredStrategies = filteredStrategies.filter(
-        (s: unknown) => s.strategy_type === strategyType,
+      filteredStrategies = (strategies.strategies as StrategyData[]).filter(
+        (s: StrategyData) => s.strategy_type === strategyType,
       );
     }
 
     if (status) {
       filteredStrategies = filteredStrategies.filter(
-        (s: unknown) => s.status === status,
+        (s: StrategyData) => (s as any).status === status,
       );
     }
 
     // Apply sorting
-    filteredStrategies.sort((a, b) => {
-      let valueA: unknown, valueB: unknown;
+    filteredStrategies.sort((a: StrategyData, b: StrategyData) => {
+      let valueA: any, valueB: any;
 
       switch (sortBy) {
         case "created_at": {
@@ -171,18 +215,18 @@ export async function GET(
           break;
         }
         case "name": {
-          valueA = a.name.toLowerCase();
-          valueB = b.name.toLowerCase();
+          valueA = a.name;
+          valueB = b.name;
           break;
         }
         case "success_rate": {
-          valueA = a.success_rate || 0;
-          valueB = b.success_rate || 0;
+          valueA = safeParseNumber(a.success_rate);
+          valueB = safeParseNumber(b.success_rate);
           break;
         }
         default: {
-          valueA = new Date(a.created_at);
-          valueB = new Date(b.created_at);
+          valueA = a.created_at;
+          valueB = b.created_at;
         }
       }
 
@@ -192,7 +236,7 @@ export async function GET(
       return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
     });
 
-    // Apply pagination
+    // Pagination
     const paginatedStrategies = filteredStrategies.slice(
       offset,
       offset + limit,
@@ -201,22 +245,24 @@ export async function GET(
     // Calculate summary statistics
     const summary = {
       total_strategies: filteredStrategies.length,
-      active_strategies: filteredStrategies.filter((s) => s.is_active).length,
+      active_strategies: filteredStrategies.filter((s: StrategyData) => s.is_active).length,
       strategy_types: Object.values(RetentionStrategyType).map((type) => ({
         type,
-        count: filteredStrategies.filter((s) => s.strategy_type === type)
+        count: filteredStrategies.filter((s: StrategyData) => s.strategy_type === type)
           .length,
       })),
-      average_success_rate: filteredStrategies.reduce(
-            (sum: number, s: unknown) => sum + (s.success_rate || 0),
+      average_success_rate: filteredStrategies.length > 0
+        ? filteredStrategies.reduce(
+            (sum: number, s: StrategyData) => sum + safeParseNumber(s.success_rate, 0),
             0,
-          ) / filteredStrategies.length || 0,
+          ) / filteredStrategies.length
+        : 0,
       total_executions: filteredStrategies.reduce(
-        (sum: number, s: unknown) => sum + s.execution_count,
+        (sum: number, s: StrategyData) => sum + safeParseNumber((s as any).execution_count, 0),
         0,
       ),
       successful_executions: filteredStrategies.reduce(
-        (sum: number, s: unknown) => sum + s.successful_executions,
+        (sum: number, s: StrategyData) => sum + safeParseNumber((s as any).successful_executions, 0),
         0,
       ),
     };

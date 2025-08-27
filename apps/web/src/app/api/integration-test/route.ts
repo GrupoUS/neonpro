@@ -5,22 +5,22 @@ export async function GET(request: NextRequest) {
   try {
     // Test connection to our backend API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3004";
-    
+
     console.log("Testing connection to API:", apiUrl);
-    
+
     const response = await fetch(`${apiUrl}/health`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`API returned ${response.status}: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
-    
+
     return NextResponse.json({
       success: true,
       message: "Frontend-Backend integration working",
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Integration test failed:", error);
-    
+
     return NextResponse.json(
       {
         success: false,
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         apiUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3004",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

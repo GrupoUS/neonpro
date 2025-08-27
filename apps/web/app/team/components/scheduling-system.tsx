@@ -535,7 +535,8 @@ export function SchedulingSystem({
                             / (1000 * 60 * 60);
 
                           return (
-                            <div
+                            <button
+                              type="button"
                               className={`absolute inset-x-1 top-1 cursor-move rounded-md border-2 p-1 transition-shadow hover:shadow-md ${shiftInfo.color}`}
                               draggable
                               key={schedule.id}
@@ -552,8 +553,6 @@ export function SchedulingSystem({
                               }}
                               onDragEnd={handleDragEnd}
                               onDragStart={() => handleDragStart(schedule)}
-                              role="button"
-                              tabIndex={0}
                               style={{
                                 height: `${durationHours * 60 - 8}px`, // 60px per hour minus gaps
                                 zIndex: 10,
@@ -579,7 +578,7 @@ export function SchedulingSystem({
                                   <Shield className="h-3 w-3 text-red-600" />
                                 )}
                               </div>
-                            </div>
+                            </button>
                           );
                         })}
 

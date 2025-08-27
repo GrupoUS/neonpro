@@ -462,15 +462,9 @@ Generated on: ${new Date().toISOString()}
       const report = await this.generateReport();
 
       // console.log("\n✅ Healthcare metrics collection completed successfully!");
-      // console.log(
-        `📊 Total metrics collected: ${this.metrics.summary.total_metrics_collected}`,
-      );
-      // console.log(
-        `🏥 Overall compliance: ${this.metrics.summary.compliance_status}`,
-      );
-      // console.log(
-        `⚡ Performance grade: ${this.metrics.summary.performance_grade}`,
-      );
+      // console.log(`📊 Total metrics collected: ${this.metrics.summary.total_metrics_collected}`);
+      // console.log(`🏥 Overall compliance: ${this.metrics.summary.compliance_status}`);
+      // console.log(`⚡ Performance grade: ${this.metrics.summary.performance_grade}`);
 
       return report;
     } catch (error) {

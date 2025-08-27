@@ -259,9 +259,9 @@ export class ArchonKnowledgeService {
       this.lastHealthCheck = new Date();
 
       // console.log("🔗 Archon MCP Health:", {
-        available: this.isAvailable,
-        timestamp: this.lastHealthCheck.toISOString(),
-      });
+      //   available: this.isAvailable,
+      //   timestamp: this.lastHealthCheck.toISOString(),
+      // });
 
       return this.isAvailable;
     } catch (error) {

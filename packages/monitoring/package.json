@@ -1,6 +1,6 @@
 {
   "name": "@neonpro/monitoring",
-  "version": "1.0.0", 
+  "version": "1.0.0",
   "description": "Consolidated Performance Monitoring and Metrics for NeonPro healthcare - Supabase real-time integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "format": "dprint fmt",
     "type-check": "tsc --noEmit",
     "analyze:bundle": "node scripts/analyze-bundle.js",
-    "analyze:performance": "node scripts/analyze-performance.js", 
+    "analyze:performance": "node scripts/analyze-performance.js",
     "analyze:database": "node scripts/analyze-database.js",
     "optimize:bundles": "node scripts/optimize-bundles.js",
     "optimize:assets": "node scripts/optimize-assets.js",
@@ -26,7 +26,7 @@
     "@neonpro/cache": "workspace:*",
     "@sentry/nextjs": "^8.0.0",
     "web-vitals": "^4.2.4",
-    "lighthouse": "^11.4.0", 
+    "lighthouse": "^11.4.0",
     "webpack-bundle-analyzer": "^4.10.1",
     "@vercel/analytics": "^1.1.1",
     "@supabase/supabase-js": "^2.45.4",
@@ -46,7 +46,7 @@
       "default": "./dist/index.js"
     },
     "./client": {
-      "types": "./dist/client/index.d.ts", 
+      "types": "./dist/client/index.d.ts",
       "default": "./dist/client/index.js"
     },
     "./server": {
@@ -82,7 +82,7 @@
     "monitoring",
     "performance",
     "healthcare",
-    "metrics", 
+    "metrics",
     "web-vitals",
     "sentry",
     "supabase",

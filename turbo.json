@@ -3,19 +3,19 @@
   "globalPassThroughEnv": ["NODE_ENV", "VERCEL_ENV", "CI"],
   "globalDependencies": [
     "**/.env.*local",
-    "**/package.json", 
+    "**/package.json",
     "**/tsconfig.json",
     "biome.jsonc",
     "pnpm-workspace.yaml"
   ],
   "globalEnv": [
     "NODE_ENV",
-    "VERCEL_ENV", 
+    "VERCEL_ENV",
     "CI",
     "TURBO_TOKEN",
     "TURBO_TEAM",
     "SUPABASE_URL",
-    "SUPABASE_ANON_KEY", 
+    "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "DATABASE_URL",
     "DIRECT_URL",
@@ -45,17 +45,17 @@
       ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
     },
-    
+
     // Healthcare Foundation Packages (Build Order Critical)
     "@neonpro/types#build": {
       "inputs": [
         "src/**/*.{ts,js}",
-        "package.json", 
+        "package.json",
         "tsconfig.json"
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/database#build": {
       "dependsOn": ["@neonpro/types#build"],
       "inputs": [
@@ -68,7 +68,7 @@
       ],
       "outputs": ["dist/**", "prisma/generated/**"]
     },
-    
+
     "@neonpro/cache#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
       "inputs": [
@@ -78,7 +78,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/audit-trail#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
       "inputs": [
@@ -88,7 +88,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/compliance#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/audit-trail#build"],
       "inputs": [
@@ -98,9 +98,13 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/constitutional-layer#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/compliance#build", "@neonpro/audit-trail#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/compliance#build",
+        "@neonpro/audit-trail#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
@@ -108,7 +112,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/auth#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
       "inputs": [
@@ -118,7 +122,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/shared#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/auth#build"],
       "inputs": [
@@ -128,7 +132,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/monitoring#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/shared#build"],
       "inputs": [
@@ -138,7 +142,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/devops#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/monitoring#build"],
       "inputs": [
@@ -148,7 +152,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     // UI and Domain Packages
     "@neonpro/ui#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"],
@@ -160,7 +164,7 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/domain#build": {
       "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/shared#build"],
       "inputs": [
@@ -170,9 +174,13 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     "@neonpro/ai#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/cache#build", "@neonpro/constitutional-layer#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/cache#build",
+        "@neonpro/constitutional-layer#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
@@ -180,20 +188,20 @@
       ],
       "outputs": ["dist/**"]
     },
-    
+
     // Skip build for core-services (no build needed)
     "@neonpro/core-services#build": {
       "cache": false,
       "inputs": [],
       "outputs": []
     },
-    
+
     // Quality Tasks
     "lint": {
       "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"],
       "outputs": []
     },
-    
+
     "type-check": {
       "dependsOn": ["^build"],
       "inputs": [
@@ -202,12 +210,12 @@
       ],
       "outputs": ["**/*.tsbuildinfo"]
     },
-    
+
     "format": {
       "inputs": ["**/*.{ts,tsx,js,jsx,json,md}", "biome.jsonc"],
       "outputs": []
     },
-    
+
     // Testing Tasks
     "test": {
       "dependsOn": ["build"],
@@ -218,26 +226,30 @@
       ],
       "outputs": ["coverage/**", "tools/testing/reports/**"]
     },
-    
+
     "test:unit": {
       "dependsOn": ["build"],
       "inputs": ["**/*.test.*", "**/*.spec.*", "vitest.config.*"],
       "outputs": ["coverage/**"]
     },
-    
+
     "test:e2e": {
       "dependsOn": ["build"],
       "inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
       "outputs": ["playwright-report/**", "test-results/**"]
     },
-    
+
     "test:e2e:install": {
       "cache": false,
       "outputs": []
     },
-    
+
     "test:healthcare": {
-      "dependsOn": ["@neonpro/compliance#build", "@neonpro/audit-trail#build", "@neonpro/constitutional-layer#build"],
+      "dependsOn": [
+        "@neonpro/compliance#build",
+        "@neonpro/audit-trail#build",
+        "@neonpro/constitutional-layer#build"
+      ],
       "inputs": [
         "**/healthcare*.test.*",
         "**/compliance*.spec.*",
@@ -246,10 +258,14 @@
       ],
       "outputs": ["coverage/healthcare/**"]
     },
-    
+
     // Healthcare Compliance Tasks
     "compliance:validate": {
-      "dependsOn": ["@neonpro/compliance#build", "@neonpro/audit-trail#build", "@neonpro/constitutional-layer#build"],
+      "dependsOn": [
+        "@neonpro/compliance#build",
+        "@neonpro/audit-trail#build",
+        "@neonpro/constitutional-layer#build"
+      ],
       "inputs": [
         "packages/compliance/src/**/*.{ts,js}",
         "packages/audit-trail/src/**/*.{ts,js}",
@@ -257,26 +273,26 @@
       ],
       "outputs": ["compliance-reports/**"]
     },
-    
+
     "compliance:lgpd": {
       "dependsOn": ["@neonpro/compliance#build"],
       "inputs": ["packages/compliance/src/lgpd/**/*.{ts,js}"],
       "outputs": ["compliance-reports/lgpd/**"]
     },
-    
+
     "compliance:anvisa": {
       "dependsOn": ["@neonpro/compliance#build"],
       "inputs": ["packages/compliance/src/anvisa/**/*.{ts,js}"],
       "outputs": ["compliance-reports/anvisa/**"]
     },
-    
+
     // CI/CD Tasks
     "ci-check": {
       "dependsOn": ["lint", "type-check", "test:healthcare"],
       "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"],
       "outputs": []
     },
-    
+
     // Deployment Tasks (Healthcare-Optimized)
     "deploy:blue-green": {
       "dependsOn": ["@neonpro/devops#build", "build", "test:healthcare", "compliance:validate"],
@@ -287,19 +303,19 @@
       ],
       "outputs": []
     },
-    
+
     "deploy:staging": {
       "dependsOn": ["deploy:blue-green"],
       "cache": false,
       "outputs": []
     },
-    
+
     "deploy:production": {
       "dependsOn": ["deploy:blue-green", "test:healthcare", "compliance:validate"],
       "cache": false,
       "outputs": []
     },
-    
+
     // Monitoring and Health Tasks
     "health:check": {
       "dependsOn": ["@neonpro/devops#build", "@neonpro/monitoring#build"],
@@ -310,19 +326,19 @@
       ],
       "outputs": []
     },
-    
+
     "monitoring:start": {
       "dependsOn": ["@neonpro/monitoring#build"],
       "cache": false,
       "persistent": true
     },
-    
+
     // Development Tasks
     "dev": {
       "cache": false,
       "persistent": true
     },
-    
+
     "clean": {
       "cache": false,
       "outputs": []

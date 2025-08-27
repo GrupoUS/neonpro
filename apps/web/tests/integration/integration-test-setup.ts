@@ -338,7 +338,8 @@ export function setupIntegrationTests() {
   afterAll(async () => {
     await TestDatabaseCleanup.cleanupTestData();
 
-    // Generate performance report  });
+    // Generate performance report
+  });
 
   beforeEach(() => {
     // Reset any global state if needed
@@ -347,7 +348,7 @@ export function setupIntegrationTests() {
   afterEach(() => {
     // Clean up individual test state
   });
-}
+};
 
 // Export all utilities for easy importing in tests
 export default {

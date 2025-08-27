@@ -368,9 +368,9 @@ const EmergencyContacts: React.FC<{
     // TODO: Replace with proper modal confirmation dialog
     // In a real implementation, this would trigger the phone call
     // if (confirm(`Ligar para ${contactName} (${phoneNumber})?`)) {
-      // Attempt to use tel: protocol
-      window.open(`tel:${phoneNumber}`, "_self");
-      console.log(`Attempting to call ${contactName} at ${phoneNumber}`);
+    // Attempt to use tel: protocol
+    window.open(`tel:${phoneNumber}`, "_self");
+    console.log(`Attempting to call ${contactName} at ${phoneNumber}`);
     // }
   }, []);
 
@@ -460,8 +460,8 @@ const CrisisScheduler: React.FC = () => {
     (_doctorId: string, doctorName: string) => {
       // TODO: Replace with proper modal confirmation and success dialog
       // if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
-        // alert(`Agendamento de emergência confirmado com ${doctorName}`);
-        console.log(`Emergency booking confirmed with ${doctorName}`);
+      // alert(`Agendamento de emergência confirmado com ${doctorName}`);
+      console.log(`Emergency booking confirmed with ${doctorName}`);
       // }
     },
     [],

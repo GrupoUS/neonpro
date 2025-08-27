@@ -634,8 +634,9 @@ export function CommunicationHub({
                   const isUnread = message.status !== "read";
 
                   return (
-                    <div
-                      className={`cursor-pointer rounded-lg border p-4 transition-all duration-200 hover:shadow-md ${
+                    <button
+                      type="button"
+                      className={`cursor-pointer rounded-lg border p-4 transition-all duration-200 hover:shadow-md text-left w-full ${
                         isUnread
                           ? "border-blue-200 bg-blue-50"
                           : "border-border bg-background"
@@ -648,8 +649,6 @@ export function CommunicationHub({
                           setSelectedMessage(message);
                         }
                       }}
-                      role="button"
-                      tabIndex={0}
                     >
                       <div className="flex items-start space-x-3">
                         {/* Sender Avatar */}
@@ -784,7 +783,7 @@ export function CommunicationHub({
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
 
@@ -1000,7 +999,7 @@ export function CommunicationHub({
                               Observações
                             </h5>
                             <p className="text-muted-foreground text-sm italic">
-                              "{handoff.notes}"
+                              &quot;{handoff.notes}&quot;
                             </p>
                           </div>
                         )}
@@ -1378,7 +1377,9 @@ export function CommunicationHub({
 
             {/* Subject */}
             <div>
-              <label htmlFor="subject-input" className="mb-2 block font-medium text-sm">Assunto</label>
+              <label htmlFor="subject-input" className="mb-2 block font-medium text-sm">
+                Assunto
+              </label>
               <Input
                 id="subject-input"
                 onChange={(e) =>
@@ -1393,7 +1394,9 @@ export function CommunicationHub({
 
             {/* Content */}
             <div>
-              <label htmlFor="message-textarea" className="mb-2 block font-medium text-sm">Mensagem</label>
+              <label htmlFor="message-textarea" className="mb-2 block font-medium text-sm">
+                Mensagem
+              </label>
               <Textarea
                 id="message-textarea"
                 onChange={(e) =>

@@ -162,7 +162,8 @@ async function checkStripeConfiguration() {
 
 // 6. Executar testes de validação
 async function runValidationTests() {
-  try {  } catch {}
+  try {
+  } catch {}
 }
 
 // 7. Configurar scripts de desenvolvimento

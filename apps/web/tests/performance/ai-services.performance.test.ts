@@ -141,8 +141,8 @@ class PerformanceTestUtils {
   ): Promise<void> {
     // console.log(`Starting load test: ${testName}`);
     // console.log(
-      `Concurrent Users: ${concurrentUsers}, Duration: ${durationMinutes}min, Ramp-up: ${rampUpSeconds}s`,
-    );
+    //   `Concurrent Users: ${concurrentUsers}, Duration: ${durationMinutes}min, Ramp-up: ${rampUpSeconds}s`,
+    // );
 
     const _totalRequests: Promise<void>[] = [];
     const endTime = Date.now() + durationMinutes * 60 * 1000;

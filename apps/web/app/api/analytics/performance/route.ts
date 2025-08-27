@@ -51,7 +51,7 @@ interface DbMetricRecord {
 interface MetricStats {
   count: number;
   values: number[];
-  grades: { good: number; "needs-improvement": number; poor: number };
+  grades: { good: number; "needs-improvement": number; poor: number; };
   min?: number;
   max?: number;
   average?: number;
@@ -283,7 +283,7 @@ function getClientIP(request: NextRequest): string {
   return (
     request.headers.get("x-forwarded-for")?.split(",")[0]
     || request.headers.get("x-real-ip")
-    || (request as { ip?: string }).ip
+    || (request as { ip?: string; }).ip
     || "unknown"
   );
 }
@@ -363,7 +363,10 @@ function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, Me
   return statsByMetric;
 }
 
-async function checkPerformanceAlerts(metrics: PerformanceMetric[], _supabase: Awaited<ReturnType<typeof createClient>>) {
+async function checkPerformanceAlerts(
+  metrics: PerformanceMetric[],
+  _supabase: Awaited<ReturnType<typeof createClient>>,
+) {
   for (const metric of metrics) {
     const threshold = PERFORMANCE_ALERTS[
       metric.name as keyof typeof PERFORMANCE_ALERTS

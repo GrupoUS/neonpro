@@ -83,7 +83,15 @@ export function ANVISAProfessionalManagement({
 
   useEffect(() => {
     fetchProfessionals();
-  }, [fetchProfessionals]);      if (response.ok) {
+  }, [fetchProfessionals]);
+
+  const checkAuthorization = async (professionalId: string) => {
+    try {
+      const response = await fetch(
+        `/api/anvisa/professionals?clinic_id=${clinicId}&action=check_authorization&professional_id=${professionalId}`,
+        { method: "GET" },
+      );
+      if (response.ok) {
         const data = await response.json();
         return data.data.is_authorized;
       }

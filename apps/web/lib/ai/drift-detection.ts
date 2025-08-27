@@ -352,7 +352,9 @@ export class DriftDetectionSystem {
     const timeSlots = this.groupByTimeSlots(recent);
 
     // Calculate variance in predictions across time slots
-    const variances = Object.values(timeSlots).map((slot) => this.calculateVariance(slot as unknown[]));
+    const variances = Object.values(timeSlots).map((slot) =>
+      this.calculateVariance(slot as unknown[])
+    );
     const avgVariance = variances.reduce((sum, v) => sum + v, 0) / variances.length;
 
     return Math.min(1, avgVariance); // Normalize to 0-1

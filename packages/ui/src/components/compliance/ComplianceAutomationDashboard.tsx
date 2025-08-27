@@ -42,7 +42,16 @@ interface StatusCardProps {
 
 // ================================================
 // UTILITY FUNCTIONS
-// ================================================    }
+// ================================================
+
+const getStatusColor = (status: string): string => {
+  switch (status.toLowerCase()) {
+    case "compliant":
+    case "success":
+    case "active":
+    case "validated": {
+      return "bg-green-500";
+    }
     case "warning":
     case "pending": {
       return "bg-yellow-500";

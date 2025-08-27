@@ -107,7 +107,8 @@ const mockMedicalRecordData = {
   updated_at: new Date(),
 };
 
-// Test wrapper component }) => {
+// Test wrapper component
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

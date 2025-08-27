@@ -90,7 +90,7 @@ export class EnterpriseAnalyticsService {
   private events: AnalyticsEvent[] = [];
   private readonly metrics: PerformanceMetricsExtended;
   private readonly healthcareMetrics: HealthcareMetrics;
-  private aggregationInterval: NodeJS.Timeout | null = undefined;
+  private aggregationInterval: NodeJS.Timeout | null = null;
   private readonly retentionPeriod = 30 * 24 * 60 * 60 * 1000; // 30 days
 
   constructor() {
@@ -172,8 +172,8 @@ export class EnterpriseAnalyticsService {
       metadata: {
         source: "enterprise-analytics",
         version: "1.0.0",
-        userAgent: properties.userAgent,
-        ...(properties.ip && { ip: this.hashIP(properties.ip) }),
+        userAgent: properties.userAgent as string,
+        ...(properties.ip ? { ip: this.hashIP(properties.ip as string) } : {}),
       },
     };
 
@@ -239,7 +239,7 @@ export class EnterpriseAnalyticsService {
    * Record error event
    */
   async recordError(error: Error, context: Record<string, unknown>): Promise<void> {
-    const operation = context.operation || "unknown";
+    const operation = (context.operation as string) || "unknown";
 
     if (this.metrics.serviceMetrics[operation]) {
       this.metrics.serviceMetrics[operation].errorCount++;
@@ -478,7 +478,7 @@ export class EnterpriseAnalyticsService {
     }
 
     // Performance monitoring
-    if (event.category === "performance" && event.properties.duration > 5000) {
+    if (event.category === "performance" && (event.properties.duration as number) > 5000) {
       await this.sendAlert({
         ...event,
         type: "performance_alert",
@@ -624,10 +624,12 @@ export class EnterpriseAnalyticsService {
     const headers = ["timestamp", "metric", "value"];
     const rows = [headers.join(",")];
 
+    const typedData = data as { performance: Record<string, unknown>; timestamp: string | number; };
+
     // Add performance data
-    Object.entries(data.performance).forEach(([key, value]) => {
+    Object.entries(typedData.performance).forEach(([key, value]) => {
       if (typeof value === "number") {
-        rows.push([data.timestamp, key, value].join(","));
+        rows.push([typedData.timestamp, key, value].join(","));
       }
     });
 
@@ -656,7 +658,7 @@ export class EnterpriseAnalyticsService {
   async shutdown(): Promise<void> {
     if (this.aggregationInterval) {
       clearInterval(this.aggregationInterval);
-      this.aggregationInterval = undefined;
+      this.aggregationInterval = null;
     }
 
     // Final aggregation before shutdown

@@ -247,7 +247,10 @@ export const AppointmentCalendar = React.forwardRef<
       });
 
       if (!showWeekends) {
-        // Filter out weekends          return dayOfWeek !== 0 && dayOfWeek !== 6; // Sunday = 0, Saturday = 6
+        // Filter out weekends - only show Monday to Friday
+        days = days.filter((day) => {
+          const dayOfWeek = getDay(day);
+          return dayOfWeek !== 0 && dayOfWeek !== 6; // Sunday = 0, Saturday = 6
         });
       }
 

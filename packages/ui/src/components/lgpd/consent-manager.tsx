@@ -114,7 +114,13 @@ export function ConsentManager() {
     } catch {
       toast.error("Erro ao retirar consentimento");
     }
-  };      }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case "essential": {
+        return <Shield className="h-4 w-4 text-green-600" />;
+      }
       case "functional": {
         return <Check className="h-4 w-4 text-blue-600" />;
       }
@@ -128,7 +134,13 @@ export function ConsentManager() {
         return <Shield className="h-4 w-4 text-gray-600" />;
       }
     }
-  };      }
+  };
+
+  const getCategoryColorClass = (category: string): string => {
+    switch (category.toLowerCase()) {
+      case "essential": {
+        return "bg-green-100 text-green-800";
+      }
       case "functional": {
         return "bg-blue-100 text-blue-800";
       }

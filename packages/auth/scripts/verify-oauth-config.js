@@ -43,5 +43,6 @@ const configPath = path.join(
   "config.toml",
 );
 if (fs.existsSync(configPath)) {
-  const configContent = fs.readFileSync(configPath, "utf8");} else {
+  const configContent = fs.readFileSync(configPath, "utf8");
+} else {
 }

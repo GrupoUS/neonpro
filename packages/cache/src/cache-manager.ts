@@ -1,9 +1,17 @@
-import { SupabaseCacheLayer } from "./supabase-cache";
 import { AIContextCacheLayer } from "./ai-context-cache";
-import { EdgeCacheLayer } from "./edge-cache";
 import { BrowserCacheLayer } from "./browser-cache";
+import { EdgeCacheLayer } from "./edge-cache";
+import { SupabaseCacheLayer } from "./supabase-cache";
 import { CacheLayer } from "./types";
-import type { CacheOperation, CacheStats, HealthcareDataPolicy, SupabaseCacheConfig, BrowserCacheConfig, EdgeCacheConfig, AIContextCacheConfig } from "./types";
+import type {
+  AIContextCacheConfig,
+  BrowserCacheConfig,
+  CacheOperation,
+  CacheStats,
+  EdgeCacheConfig,
+  HealthcareDataPolicy,
+  SupabaseCacheConfig,
+} from "./types";
 
 export interface MultiLayerCacheConfig {
   supabase: SupabaseCacheConfig;
@@ -17,7 +25,7 @@ export class MultiLayerCacheManager {
   private readonly edge: EdgeCacheLayer;
   private readonly supabase: SupabaseCacheLayer;
   private readonly aiContext: AIContextCacheLayer;
-  
+
   private readonly auditTrail: Array<{
     timestamp: string;
     operation: string;
@@ -26,12 +34,12 @@ export class MultiLayerCacheManager {
     success: boolean;
     executionTime: number;
   }> = [];
-  
+
   private readonly stats = {
     browser: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
     edge: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
     supabase: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
-    aiContext: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 }
+    aiContext: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
   };
 
   // Hit rate targets for each layer
@@ -48,19 +56,19 @@ export class MultiLayerCacheManager {
       defaultTTL: 5 * 60 * 1000,
       storageQuota: 50 * 1024 * 1024,
       lgpdCompliant: true,
-      compressionEnabled: true
+      compressionEnabled: true,
     };
-    
+
     const defaultEdgeConfig: EdgeCacheConfig = {
-      endpoint: process.env.EDGE_CACHE_ENDPOINT || 'https://edge.neonpro.app',
-      region: process.env.EDGE_CACHE_REGION || 'us-east-1',
+      endpoint: process.env.EDGE_CACHE_ENDPOINT || "https://edge.neonpro.app",
+      region: process.env.EDGE_CACHE_REGION || "us-east-1",
       defaultTTL: 15 * 60 * 1000,
       maxTTL: 24 * 60 * 60 * 1000,
       compressionThreshold: 1024,
       maxSize: 1000,
-      encryption: true
+      encryption: true,
     };
-    
+
     const defaultAIContextConfig: AIContextCacheConfig = {
       maxContextSize: 10000,
       defaultTTL: 24 * 60 * 60 * 1000,
@@ -68,13 +76,21 @@ export class MultiLayerCacheManager {
       compressionEnabled: true,
       targetHitRate: 95,
       contextRetention: true,
-      maxTokensPerContext: 32000
+      maxTokensPerContext: 32000,
     };
-    
-    this.browser = new BrowserCacheLayer(config.browser ? { ...defaultBrowserConfig, ...config.browser } : defaultBrowserConfig);
-    this.edge = new EdgeCacheLayer(config.edge ? { ...defaultEdgeConfig, ...config.edge } : defaultEdgeConfig);
+
+    this.browser = new BrowserCacheLayer(
+      config.browser ? { ...defaultBrowserConfig, ...config.browser } : defaultBrowserConfig,
+    );
+    this.edge = new EdgeCacheLayer(
+      config.edge ? { ...defaultEdgeConfig, ...config.edge } : defaultEdgeConfig,
+    );
     this.supabase = new SupabaseCacheLayer(config.supabase);
-    this.aiContext = new AIContextCacheLayer(config.aiContext ? { ...defaultAIContextConfig, ...config.aiContext } : defaultAIContextConfig);
+    this.aiContext = new AIContextCacheLayer(
+      config.aiContext
+        ? { ...defaultAIContextConfig, ...config.aiContext }
+        : defaultAIContextConfig,
+    );
   }
 
   async get<T>(
@@ -89,7 +105,7 @@ export class MultiLayerCacheManager {
       lgpdCompliant?: boolean;
       policy?: HealthcareDataPolicy;
       tags?: string[];
-    }
+    },
   ): Promise<T | null> {
     // Try each layer in order
     for (const layer of layers) {
@@ -148,7 +164,7 @@ export class MultiLayerCacheManager {
         lastUsed?: Date;
         accessFrequency?: number;
       };
-    }
+    },
   ): Promise<void> {
     const promises = layers.map(async (layer) => {
       try {
@@ -163,7 +179,7 @@ export class MultiLayerCacheManager {
               key,
               value,
               ttl,
-              options.policy
+              options.policy,
             );
           } else {
             await cache.set(key, value, ttl);
@@ -174,7 +190,7 @@ export class MultiLayerCacheManager {
             key,
             value,
             ttl,
-            options.aiContextMetadata
+            options.aiContextMetadata,
           );
         } else {
           // Standard cache set
@@ -210,7 +226,7 @@ export class MultiLayerCacheManager {
 
   async invalidateByTags(
     tags: string[],
-    layers?: CacheLayer[]
+    layers?: CacheLayer[],
   ): Promise<void> {
     const targetLayers = layers || [
       CacheLayer.BROWSER,
@@ -239,7 +255,7 @@ export class MultiLayerCacheManager {
         hitRate: 0,
         totalRequests: 0,
         averageResponseTime: 0,
-      })),
+      }))
     );
 
     const results = await Promise.allSettled(promises);
@@ -298,7 +314,7 @@ export class MultiLayerCacheManager {
     patientId: string,
     dataKey: string,
     value: T,
-    policy: HealthcareDataPolicy
+    policy: HealthcareDataPolicy,
   ): Promise<void> {
     const key = `patient:${patientId}:${dataKey}`;
     const layers = policy.dataClassification === "RESTRICTED"
@@ -315,7 +331,7 @@ export class MultiLayerCacheManager {
   async getHealthcareData<T>(
     patientId: string,
     dataKey: string,
-    policy: HealthcareDataPolicy
+    policy: HealthcareDataPolicy,
   ): Promise<T | null> {
     const key = `patient:${patientId}:${dataKey}`;
     const layers = policy.dataClassification === "RESTRICTED"
@@ -341,7 +357,7 @@ export class MultiLayerCacheManager {
     const stats = await this.getAllStats();
     const avgResponseTime = Object.values(stats).reduce(
       (sum, stat) => sum + stat.averageResponseTime,
-      0
+      0,
     ) / Object.keys(stats).length;
 
     return {
@@ -361,7 +377,7 @@ export class MultiLayerCacheManager {
       importance?: "low" | "medium" | "high" | "critical";
       topic?: string;
       lastUsed?: Date;
-    }
+    },
   ): Promise<void> {
     const key = `ai:conversation:${userId}:${sessionId}`;
     await this.set(key, conversation, [CacheLayer.AI_CONTEXT], {
@@ -379,7 +395,7 @@ export class MultiLayerCacheManager {
 
   async getAIConversation(
     userId: string,
-    sessionId: string
+    sessionId: string,
   ): Promise<any | null> {
     const key = `ai:conversation:${userId}:${sessionId}`;
     return await this.get(key, [CacheLayer.AI_CONTEXT]);
@@ -387,18 +403,16 @@ export class MultiLayerCacheManager {
 
   // Batch operations
   async setBatch<T>(
-    entries: Array<{ key: string; value: T; ttl?: number }>,
-    layers?: CacheLayer[]
+    entries: Array<{ key: string; value: T; ttl?: number; }>,
+    layers?: CacheLayer[],
   ): Promise<void> {
-    const promises = entries.map(({ key, value, ttl }) =>
-      this.set(key, value, layers, { ttl })
-    );
+    const promises = entries.map(({ key, value, ttl }) => this.set(key, value, layers, { ttl }));
     await Promise.allSettled(promises);
   }
 
   async getBatch<T>(
     keys: string[],
-    layers?: CacheLayer[]
+    layers?: CacheLayer[],
   ): Promise<Record<string, T | null>> {
     const promises = keys.map(async (key) => ({
       key,
@@ -421,7 +435,7 @@ export class MultiLayerCacheManager {
     key: string,
     value: T,
     sourceLayer: CacheLayer,
-    layers: CacheLayer[]
+    layers: CacheLayer[],
   ): Promise<void> {
     const sourceIndex = layers.indexOf(sourceLayer);
     if (sourceIndex <= 0) return; // Already at the top layer or not found
@@ -448,7 +462,7 @@ export class MultiLayerCacheManager {
       this.browser.clear(),
       this.edge.clear(),
       this.supabase.clear(),
-      this.aiContext.clear()
+      this.aiContext.clear(),
     ]);
   }
 
@@ -460,14 +474,14 @@ export class MultiLayerCacheManager {
       `patient_${patientId}`,
       `patient_history_${patientId}`,
       `patient_consent_${patientId}`,
-      `lgpd_consent_${patientId}`
+      `lgpd_consent_${patientId}`,
     ];
 
     await Promise.allSettled(
       patientKeys.flatMap(key =>
         [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE, CacheLayer.AI_CONTEXT]
           .map(layer => this.delete(key, [layer]))
-      )
+      ),
     );
   }
 
@@ -477,31 +491,31 @@ export class MultiLayerCacheManager {
   getHealthcareAuditTrail(): any[] {
     // Return audit trail from all layers
     return [
-      ...this.auditTrail.slice(-100) // Last 100 operations
+      ...this.auditTrail.slice(-100), // Last 100 operations
     ];
   }
 
   /**
    * Get comprehensive cache statistics
    */
-  getStats(): { [key: string]: any } {
+  getStats(): { [key: string]: any; } {
     return {
       layers: {
         browser: this.stats.browser,
         edge: this.stats.edge,
         supabase: this.stats.supabase,
-        aiContext: this.stats.aiContext
+        aiContext: this.stats.aiContext,
       },
       overall: {
         totalHits: Object.values(this.stats).reduce((sum, stat) => sum + stat.hits, 0),
         totalMisses: Object.values(this.stats).reduce((sum, stat) => sum + stat.misses, 0),
         averageHitRate: Object.values(this.stats).reduce((sum, stat) => sum + stat.hitRate, 0) / 4,
-        totalOperations: this.auditTrail.length
+        totalOperations: this.auditTrail.length,
       },
       audit: {
         totalEntries: this.auditTrail.length,
-        lastOperation: this.auditTrail[this.auditTrail.length - 1]?.timestamp
-      }
+        lastOperation: this.auditTrail[this.auditTrail.length - 1]?.timestamp,
+      },
     };
   }
 }

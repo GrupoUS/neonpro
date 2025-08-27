@@ -196,7 +196,8 @@ class TestQualityAnalyzer {
       const expectScore = Math.min(
         100,
         (analysis.expectations / expected.expectations) * 100,
-      );    });
+      );
+    });
 
     this.analysisResults.coverageAnalysis = {
       coverageByType,

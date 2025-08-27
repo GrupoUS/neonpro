@@ -54,7 +54,7 @@ export class PreBuildOptimizer {
 
     // Validate environment variables
     await PreBuildOptimizer.validateEnvironment();
-  };
+  }
 
   private static async optimizeImages(): Promise<void> {
     const publicDir = path.join(process.cwd(), "public");
@@ -82,10 +82,11 @@ export class PreBuildOptimizer {
       const fullPath = path.join(process.cwd(), dir);
       try {
         await fs.access(fullPath);
-        // Don't delete, just report size      } catch {
+        // Don't delete, just report size
+      } catch {
         // Directory doesn't exist, skip
       }
-    };
+    }
   }
 
   private static async validateEnvironment(): Promise<void> {
@@ -174,7 +175,8 @@ export class BuildOptimizer {
       await BuildOptimizer.runBuild();
 
       // Post-build analysis
-      await BuildOptimizer.analyzeBuild();    } catch {
+      await BuildOptimizer.analyzeBuild();
+    } catch {
       process.exit(1);
     }
   }

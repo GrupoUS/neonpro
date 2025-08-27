@@ -18,11 +18,14 @@ async function testPrismaSupabaseConnection() {
     // Teste básico de conectividade
     await prisma.$connect();
 
-    try {    } catch {}
+    try {
+    } catch {}
 
-    try {    } catch {}
+    try {
+    } catch {}
 
-    try {    } catch {}
+    try {
+    } catch {}
     try {
       const result = await prisma
         .$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name LIMIT 10`;

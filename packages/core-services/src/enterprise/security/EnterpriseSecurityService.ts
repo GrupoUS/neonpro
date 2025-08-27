@@ -96,7 +96,7 @@ export class EnterpriseSecurityService {
   private readonly threats: SecurityThreat[] = [];
   private readonly encryptionConfig: EncryptionConfig;
   private readonly masterKey: Buffer;
-  private cleanupInterval: NodeJS.Timeout | null = undefined;
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(_config?: Partial<SecurityConfig>) {
     this.encryptionConfig = {
@@ -245,18 +245,18 @@ export class EnterpriseSecurityService {
    */
   async validateSession(sessionId?: string): Promise<UserSession | null> {
     if (!sessionId) {
-      return;
+      return null;
     }
 
     const session = this.sessions.get(sessionId);
     if (!session) {
-      return;
+      return null;
     }
 
     // Check expiration
     if (Date.now() > session.expiresAt) {
       await this.destroySession(sessionId);
-      return;
+      return null;
     }
 
     // Check for suspicious activity
@@ -266,7 +266,7 @@ export class EnterpriseSecurityService {
         sessionId,
         userId: session.userId,
       });
-      return;
+      return null;
     }
 
     return session;
@@ -309,17 +309,19 @@ export class EnterpriseSecurityService {
       );
 
       // Encrypt data
-      const cipher = crypto.createCipher(this.encryptionConfig.algorithm, key);
-      // Note: GCM mode not supported with legacy createCipher
-      // For production, consider using createCipherGCM with proper IV/tag handling
+      const cipher = crypto.createCipheriv(this.encryptionConfig.algorithm, key, iv);
 
       let encrypted = cipher.update(plaintext, "utf8", "hex");
       encrypted += cipher.final("hex");
 
-      // Combine salt, iv, and encrypted data (no auth tag for legacy cipher)
+      // For GCM mode, get the authentication tag
+      const tag = (cipher as any).getAuthTag ? (cipher as any).getAuthTag() : Buffer.alloc(0);
+
+      // Combine salt, iv, tag, and encrypted data
       const result = Buffer.concat([
         salt,
         iv,
+        tag,
         Buffer.from(encrypted, "hex"),
       ]).toString("base64");
 
@@ -344,14 +346,24 @@ export class EnterpriseSecurityService {
     try {
       const combined = Buffer.from(encryptedData, "base64");
 
-      // Extract components (no auth tag for legacy cipher)
+      // Extract components: salt, iv, auth tag, encrypted data
       const salt = combined.subarray(
         0,
         this.encryptionConfig.keyDerivation.saltSize,
       );
+      const iv = combined.subarray(
+        this.encryptionConfig.keyDerivation.saltSize,
+        this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize,
+      );
+      const tag = combined.subarray(
+        this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize,
+        this.encryptionConfig.keyDerivation.saltSize + this.encryptionConfig.ivSize
+          + this.encryptionConfig.tagSize,
+      );
       const encrypted = combined.subarray(
         this.encryptionConfig.keyDerivation.saltSize
-          + this.encryptionConfig.ivSize,
+          + this.encryptionConfig.ivSize
+          + this.encryptionConfig.tagSize,
       );
 
       // Derive key
@@ -364,11 +376,16 @@ export class EnterpriseSecurityService {
       );
 
       // Decrypt data
-      const decipher = crypto.createDecipher(
+      const decipher = crypto.createDecipheriv(
         this.encryptionConfig.algorithm,
         key,
+        iv,
       );
-      // Note: GCM mode not supported with legacy createDecipher
+
+      // Set auth tag for GCM mode
+      if (tag.length > 0) {
+        (decipher as any).setAuthTag(tag);
+      }
 
       let decrypted = decipher.update(encrypted, undefined, "utf8");
       decrypted += decipher.final("utf8");
@@ -501,9 +518,9 @@ export class EnterpriseSecurityService {
       type,
       severity: this.categorizeThreatSeverity(type, details),
       description: `Security threat detected: ${type}`,
-      userId: details.userId,
-      sessionId: details.sessionId,
-      ipAddress: details.ipAddress,
+      userId: details.userId as string | undefined,
+      sessionId: details.sessionId as string | undefined,
+      ipAddress: details.ipAddress as string | undefined,
       timestamp: Date.now(),
       details,
       resolved: false,
@@ -632,7 +649,10 @@ export class EnterpriseSecurityService {
   ): "low" | "medium" | "high" | "critical" {
     switch (type) {
       case "multiple_failed_logins": {
-        return details.attemptCount > 10 ? "high" : "medium";
+        return (details as { attemptCount?: number; }).attemptCount
+            && (details as { attemptCount: number; }).attemptCount > 10
+          ? "high"
+          : "medium";
       }
       case "suspicious_location": {
         return "medium";
@@ -831,7 +851,7 @@ export class EnterpriseSecurityService {
   async shutdown(): Promise<void> {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
-      this.cleanupInterval = undefined;
+      this.cleanupInterval = null;
     }
 
     // Clear all sessions

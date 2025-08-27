@@ -5,7 +5,8 @@
  * Verifica configurações, variáveis de ambiente e rotas
  */
 
-const fs = require("node:fs");const requiredFiles = [
+const fs = require("node:fs");
+const requiredFiles = [
   "app/auth/popup-callback/route.ts",
   "app/auth/callback/route.ts",
   "app/dashboard/page.tsx",

@@ -280,18 +280,18 @@ class AIServicesEcosystemTester {
     // console.log(`Services Tested: ${metrics.services_tested || 0}`);
     // console.log(`Total API Calls: ${metrics.total_api_calls || 0}`);
     // console.log(
-      `Cache Hit Rate: ${
-        (
-          ((metrics.cache_hits || 0) / (metrics.cache_requests || 1))
-          * 100
-        ).toFixed(2)
-      }%`,
-    );
+    //   `Cache Hit Rate: ${
+    //     (
+    //       ((metrics.cache_hits || 0) / (metrics.cache_requests || 1))
+    //       * 100
+    //     ).toFixed(2)
+    //   }%`,
+    // );
     // console.log(
-      `Average Response Time: ${
-        (metrics.total_response_time || 0) / (metrics.total_api_calls || 1)
-      }ms`,
-    );
+    //   `Average Response Time: ${
+    //     (metrics.total_response_time || 0) / (metrics.total_api_calls || 1)
+    //   }ms`,
+    // );
     // console.log("==========================================\n");
   }
 
@@ -796,12 +796,10 @@ class AIServicesEcosystemTester {
     expect(successRate).toBeGreaterThan(95); // At least 95% success rate
     expect(avgResponseTime).toBeLessThan(5000); // Average response time under 5 seconds
 
-    // console.log(
-      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${
-        avgResponseTime.toFixed(
-          2,
-        )
-      }ms avg response time`,
+    console.log(
+      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${avgResponseTime.toFixed(
+        2,
+      )}ms avg response time`,
     );
 
     AIServicesEcosystemTester.context.serviceMetrics.set(

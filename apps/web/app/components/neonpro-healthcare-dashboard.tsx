@@ -69,14 +69,7 @@ import {
   Zap,
 } from "lucide-react";
 import type React from "react";
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
+import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 // Constants for time calculations
 const MILLISECONDS_PER_SECOND = 1000;
@@ -117,7 +110,7 @@ interface Metric {
   change: number;
   trend: "up" | "down" | "stable";
   format: "number" | "percentage" | "currency";
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
 }
 
 interface Task {
@@ -207,13 +200,7 @@ type AIAction =
   | { type: "UPDATE_FEATURE_FLAGS"; payload: Partial<FeatureFlags>; }
   | { type: "SET_LAST_UPDATE"; payload: Date; };
 
-// AI Context
-const AIContext = createContext<
-  {
-    state: AIState;
-    dispatch: React.Dispatch<AIAction>;
-  } | null
->(undefined);
+// AI Context - Removed unused AIContext
 
 // AI Reducer
 const aiReducer = (state: AIState, action: AIAction): AIState => {
@@ -264,14 +251,7 @@ const initialAIState: AIState = {
   },
 };
 
-// AI Hook
-const useAIState = () => {
-  const context = React.useContext(AIContext);
-  if (!context) {
-    throw new Error("useAIState must be used within an AI provider");
-  }
-  return context;
-};
+// AI Hook - Removed unused useAIState function
 
 // Mock AI Data
 const MOCK_AI_INSIGHTS: AIInsight[] = [
@@ -1362,7 +1342,10 @@ export default function NeonProHealthcareDashboard({
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <div className="flex items-center space-x-2">
-                      <label htmlFor="ai-insights-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label
+                        htmlFor="ai-insights-switch"
+                        className="flex items-center space-x-2 text-sm cursor-pointer"
+                      >
                         <Switch
                           id="ai-insights-switch"
                           checked={aiState.featureFlags.aiInsights}
@@ -1376,7 +1359,10 @@ export default function NeonProHealthcareDashboard({
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label htmlFor="predictive-analytics-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label
+                        htmlFor="predictive-analytics-switch"
+                        className="flex items-center space-x-2 text-sm cursor-pointer"
+                      >
                         <Switch
                           id="predictive-analytics-switch"
                           checked={aiState.featureFlags.predictiveAnalytics}
@@ -1390,7 +1376,10 @@ export default function NeonProHealthcareDashboard({
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label htmlFor="realtime-alerts-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label
+                        htmlFor="realtime-alerts-switch"
+                        className="flex items-center space-x-2 text-sm cursor-pointer"
+                      >
                         <Switch
                           id="realtime-alerts-switch"
                           checked={aiState.featureFlags.realTimeAlerts}
@@ -1404,7 +1393,10 @@ export default function NeonProHealthcareDashboard({
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label htmlFor="smart-metrics-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label
+                        htmlFor="smart-metrics-switch"
+                        className="flex items-center space-x-2 text-sm cursor-pointer"
+                      >
                         <Switch
                           id="smart-metrics-switch"
                           checked={aiState.featureFlags.smartMetrics}

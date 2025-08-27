@@ -18,32 +18,32 @@ export * from "./jobs/billing-emails";
 export const HEALTHCARE_AUTOMATION_CONFIG = {
   name: "neonpro-clinic-automation",
   description: "Healthcare deployment automation with constitutional compliance",
-  
+
   // Healthcare compliance requirements
   compliance: {
     lgpd: true,
     anvisa: true,
     cfm: true,
     dataRetention: "7-years",
-    auditTrail: true
+    auditTrail: true,
   },
-  
+
   // Automation categories for healthcare operations
   categories: {
     patient: "Patient communication and engagement",
-    billing: "Financial operations and invoicing", 
+    billing: "Financial operations and invoicing",
     compliance: "Regulatory compliance automation",
     monitoring: "System health and performance",
-    backup: "Data backup and disaster recovery"
+    backup: "Data backup and disaster recovery",
   },
-  
+
   // Performance SLAs for healthcare operations
   sla: {
     criticalJobs: "≤30s",
-    standardJobs: "≤2m", 
+    standardJobs: "≤2m",
     reportJobs: "≤5m",
-    backupJobs: "≤15m"
-  }
+    backupJobs: "≤15m",
+  },
 } as const;
 
 export type HealthcareAutomationConfig = typeof HEALTHCARE_AUTOMATION_CONFIG;

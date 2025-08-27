@@ -5,7 +5,8 @@
  * Applies the corrected subscriptions table migration and validates system
  */
 
-const { execFile, spawn } = require("node:child_process");const fs = require("node:fs");
+const { execFile, spawn } = require("node:child_process");
+const fs = require("node:fs");
 
 const COLORS = {
   GREEN: "\u001B[32m",

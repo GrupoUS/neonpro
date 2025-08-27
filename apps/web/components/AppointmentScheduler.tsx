@@ -100,7 +100,6 @@ export default function AppointmentScheduler() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [_selectedAppointment, _setSelectedAppointment] = useState<Appointment | null>();
   const [formData, setFormData] = useState({
     patientName: "",
     patientEmail: "",

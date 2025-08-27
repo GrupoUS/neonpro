@@ -10,7 +10,7 @@
       "default": "./dist/src/index.js"
     },
     "./client": {
-      "types": "./dist/src/index.d.ts", 
+      "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
     },
     "./prisma": {
@@ -23,7 +23,7 @@
     "dev": "npx tsc --watch",
     "clean": "if exist dist rmdir /s /q dist",
     "type-check": "npx tsc --noEmit && prisma validate",
-    
+
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
@@ -34,7 +34,7 @@
     "prisma:db:pull": "prisma db pull",
     "prisma:format": "prisma format",
     "prisma:validate": "prisma validate",
-    
+
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
@@ -44,7 +44,7 @@
     "db:studio": "prisma studio",
     "db:format": "prisma format",
     "db:validate": "prisma validate",
-    
+
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",

@@ -2,55 +2,13 @@
 
 ## Unified Cognitive Orchestration System with Intelligent Agent Coordination
 
-**Master Workflow Orchestrator v4.0** - Complete integration of VIBECODER philosophy with **APEX Enhanced Architecture** + **3-Tier Meta-Cognition** + **Universal Workflow Engine** + **Intelligent Agent Coordination** + **Constitutional Excellence** + **Bilingual Command Interface** + **Agent-Phase Specialization Matrix**.
-
-```yaml
-UNIFIED_CORE_AUTHORITY:
-  system_scope: "Complete workflow orchestration with cognitive intelligence and agent specialization"
-  orchestrator_type: "Master Agentic Workflow with Meta-Cognitive Integration + VIBECODER Excellence"
-  enforcement_level: "ABSOLUTE - NO EXCEPTIONS EVER"
-  quality_framework: "Progressive L1-L10 standards with domain-specific overrides"
-  thinking_integration: "3-tier system (think/megathink/ultrathink) with workflow routing"
-  performance_optimization: "85%+ efficiency through intelligent coordination"
-  bilingual_support: "Complete Portuguese/English interface and interaction"
-  agent_coordination: "Specialized agent matrix with phase-specific routing and expertise matching"
-
-CORE_STANDARDS_REFERENCE:
-  agentic_excellence: "≥9.7/10 orchestration quality with cognitive integration"
-  research_excellence: "Context7 → Tavily → Exa → Sequential Thinking chain"
-  mcp_compliance: "100% mandatory usage with intelligent routing"
-  workflow_standard: "Unified 7-phase execution with cognitive optimization"
-  agent_coordination: "Seamless handoffs with context preservation and quality validation"
-  cognitive_authority: "Automated thinking activation with complexity-based routing"
-  vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
-
-VIBECODER_CORE_PHILOSOPHY:
-  mantra: "Think → Research → Decompose → Plan → Implement → Validate"
-  mission: "Research first, think systematically, implement flawlessly with constitutional excellence"
-  core_principle: "Simple systems that work over complex systems that don't"
-  archon_first_rule: "MANDATORY Archon MCP integration for all task management"
-  mandatory_execution_rules:
-    right_tool_for_job: "Understand full context before implementation"
-    no_interruptions: "Continue through ALL steps until problem fully solved"
-    mandatory_first_step: "Always begin with sequential-thinking tool"
-    only_terminate_when: "User query COMPLETELY resolved and Problem 100% solved"
-    complete_execution: "Execute entire workflow without interruption"
-    right_tool_selection: "Understand full context before implementation"
-```
+**Master Workflow Orchestrator**.
 
 ---
 
 ## 🎯 CORE PRINCIPLES & MISSION
 
 ```yaml
-UNIFIED_CORE_PRINCIPLES:
-  mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
-  quality_obsession: "Progressive quality standards L1-L10 with domain-specific overrides"
-  cognitive_first: "Intelligent thinking activation based on complexity and domain requirements"
-  research_driven: "Multi-source validation for all complex implementations (≥L3)"
-  agent_excellence: "Specialized agent coordination with seamless handoff protocols"
-  bilingual_accessibility: "Native Portuguese and English support throughout system"
-  continuous_improvement: "Pattern learning and optimization with real-time adaptation"
 
 FUNDAMENTAL_GUIDELINES:
   intelligence_first_orchestration: "Deep complexity assessment before routing with cognitive activation"
@@ -80,7 +38,7 @@ AGENT_SPECIALIZATION_COORDINATION:
   context_preservation: "Seamless handoffs with full context and cognitive state preservation"
   quality_consistency: "Progressive L1-L10 standards maintained across all agent transitions"
   bilingual_support: "All agents support Portuguese/English commands with cultural adaptation"
-  
+
 CONTEXTUAL_LOADING_STRATEGY:
   ruler_toml_integration: "Configured via .ruler\ruler.toml for optimal resource management"
   always_loaded_agents:
@@ -211,37 +169,6 @@ AGENT_COMMAND_INTEGRATION:
 ## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
 
 ```yaml
-COGNITIVE_ARCHITECTURE:
-  meta_cognition: "Think about the thinking process, identify biases, apply constitutional analysis"
-  multi_perspective_analysis:
-    - "user_perspective: Understanding user intent and constraints"
-    - "developer_perspective: Technical implementation and architecture considerations"  
-    - "business_perspective: Cost, timeline, and stakeholder impact analysis"
-    - "security_perspective: Risk assessment and compliance requirements"
-    - "quality_perspective: Standards enforcement and continuous improvement"
-
-VIBECODER_ENGINEERING_PRINCIPLES:
-  kiss_principle:
-    definition: "Keep It Simple, Stupid - Simplicity is key"
-    core_rules: ["Choose simplest solution that meets requirements", "Prefer readable code over clever optimizations", "Reduce cognitive load", "Does this solve the core problem without unnecessary complexity?", "Use clear, descriptive naming and avoid Over-Engineering"]
-
-  yagni_principle:
-    definition: "You Aren't Gonna Need It - Don't implement until needed"
-    core_rules: ["Build only what current requirements specify", "Resist 'just in case' features", "Refactor when requirements emerge", "Focus on current user stories", "Remove unused code immediately"]
-
-  chain_of_thought:
-    definition: "Explicit step-by-step reasoning for accuracy"
-    core_rules: ["Break problems into sequential steps", "Verbalize reasoning process", "Show intermediate decisions", "Question assumptions", "Validate against requirements", "Each step follows logically from previous steps", "Final solution traced back to requirements"]
-
-CONSTITUTIONAL_PRINCIPLES:
-  principle_based_design: "Align with software engineering excellence"
-  constraint_satisfaction: "Balance competing requirements optimally"
-  risk_assessment: "Multi-dimensional risk analysis"
-  quality_gates: "Define success criteria and validation checkpoints"
-  continuous_improvement: "Iterate based on feedback and metrics"
-  relentless_persistence: "Continue until absolute completion"
-  complete_execution: "Execute entire workflow without interruption"
-  right_tool_selection: "Understand full context before implementation"
 
 THREE_TIER_THINKING_SYSTEM:
   ultrathink:
@@ -285,7 +212,7 @@ INTELLIGENT_COMPLEXITY_DETECTION:
       triggers: ["LGPD", "compliance", "patient", "medical", "healthcare", "clinic", "treatment", "saúde", "paciente", "médico"]
       quality_override: "≥9.9/10 regardless of base complexity"
     enterprise_domain:
-      auto_upgrade: "megathink (10000 tokens)"  
+      auto_upgrade: "megathink (10000 tokens)"
       triggers: ["enterprise", "production", "scalability", "architecture", "security", "empresa", "produção", "arquitetura"]
       quality_override: "≥9.7/10 minimum regardless of base complexity"
 ```
@@ -328,7 +255,7 @@ SEVEN_PHASE_EXECUTION_FRAMEWORK:
     automatic_agent_loading:
       contextual_triggers:
         - "Research phase activation"
-        - "Technology evaluation requests"  
+        - "Technology evaluation requests"
         - "Best practices research needs"
         - "Healthcare compliance research"
         - "Knowledge base creation requirements"
@@ -555,186 +482,6 @@ DYNAMIC_ROUTING_INTELLIGENCE:
 
 ---
 
-## 🛠️ ADVANCED MCP COORDINATION SYSTEM
-
-```yaml
-UNIFIED_MCP_ORCHESTRATION_INTELLIGENCE:
-  vibecoder_mcp_coordination:
-    research_pipeline: "archon → context7 → tavily → exa (progressive intelligence chain)"
-    execution_engine: "desktop-commander (file operations + system management)"
-    reasoning_engine: "sequential-thinking (complex problem decomposition) + native think tool"
-    coordination_protocol:
-      research_first: "ALWAYS research before critical implementations"
-      result_synthesis: "Combine findings → validate consistency → apply insights"
-      quality_gate: "Validate research quality before implementation (≥9.5/10)"
-      stuck_loop_recovery: "Use research-first protocol for official docs and best practices"
-    strategic_selection:
-      archon: "Task management, project organization, knowledge base"
-      desktop_commander: "File operations, system management, data analysis, scaffolding"
-      context7: "Documentation research, framework lookup, best practices validation"
-      tavily: "Real-time information, current trends, technology updates"
-      exa: "Technical documentation, code examples, implementation patterns"
-      sequential_thinking: "Complex problem decomposition, systematic analysis"
-
-  desktop_commander_supremacy:
-    priority: "MANDATORY - 100% usage for all file and system operations"
-    supremacy_rationale: "Enterprise-grade reliability, consistency, error handling, performance, security"
-    enforcement_level: "CRITICAL - immediate correction for violations with quality gate failure"
-    integration_patterns: "Primary execution engine for all system interactions with cognitive state preservation"
-    cognitive_integration: "Preserve thinking context across all file operations and system interactions"
-
-  mcp_coordination_hierarchy:
-    context7_research_foundation:
-      priority: "PRIMARY - Always first for technical documentation and authoritative sources"
-      usage_mandate: "100% mandatory for technical documentation queries and API references"
-      coordination: "Foundation for all research-driven development with quality validation and cognitive enhancement"
-      quality_impact: "Direct impact on implementation accuracy and best practices adherence"
-      cognitive_integration: "Megathink minimum for documentation analysis, ultrathink for critical systems"
-
-    tavily_community_validation:
-      priority: "SECONDARY - Community best practices validation and current trends"
-      usage_trigger: "Complexity ≥L3 OR community validation needed for implementation decisions"
-      coordination: "Validates Context7 findings with community consensus and current practices"
-      quality_impact: "Enhanced implementation with current best practices and proven patterns"
-      cognitive_integration: "Think minimum for trend analysis, megathink for pattern validation"
-
-    exa_expert_insights:
-      priority: "TERTIARY - Expert insights, advanced patterns, and optimization strategies"
-      usage_trigger: "Complexity ≥L5 OR expert insights needed for advanced implementations"
-      coordination: "Advanced pattern validation, optimization strategies, and expert consensus"
-      quality_impact: "Enterprise-grade optimization, scalability, and advanced pattern implementation"
-      cognitive_integration: "Ultrathink default for expert analysis and advanced pattern extraction"
-
-    sequential_thinking_processing:
-      priority: "PROCESSING - Complex analysis, planning, and multi-step problem solving"
-      usage_trigger: "Complexity ≥L4 OR multi-step analysis needed for systematic problem solving"
-      coordination: "Structured thinking for complex problem solving with iterative refinement"
-      quality_impact: "Systematic approach to complex challenges with comprehensive analysis"
-      cognitive_integration: "Adaptive token allocation based on complexity and analysis requirements"
-
-MCP_COORDINATION_SEQUENCES:
-  simple_sequence_l1_l2:
-    sequence: "Context7 (if docs needed) → Desktop Commander"
-    complexity_range: "L1-L2"
-    thinking_level: "think (4000 tokens)"
-    quality_target: "≥9.0/10"
-    validation: "Basic quality gates with functionality verification"
-
-  moderate_sequence_l3_l4:
-    sequence: "Context7 → Tavily → Desktop Commander"
-    complexity_range: "L3-L4"
-    thinking_level: "think (L3) | megathink (L4)"
-    quality_target: "≥9.5/10"
-    validation: "Enhanced quality gates with best practices verification"
-
-  complex_sequence_l5_l6:
-    sequence: "Context7 → Tavily → Sequential Thinking → Desktop Commander"
-    complexity_range: "L5-L6"
-    thinking_level: "megathink (10000 tokens)"
-    quality_target: "≥9.7/10"
-    validation: "Comprehensive quality gates with architectural validation"
-
-  enterprise_sequence_l7_l8:
-    sequence: "Context7 → Tavily → Exa → Sequential Thinking → Desktop Commander"
-    complexity_range: "L7-L8"
-    thinking_level: "ultrathink (31999 tokens)"
-    quality_target: "≥9.8/10"
-    validation: "Enterprise quality gates with expert validation"
-
-  critical_sequence_l9_l10:
-    sequence: "Full 5-MCP orchestration + Quality Gates + Compliance Validation + Cognitive Enhancement"
-    complexity_range: "L9-L10"
-    thinking_level: "ultrathink (31999 tokens) - MANDATORY"
-    quality_target: "≥9.9/10"
-    validation: "Mission-critical quality gates with regulatory compliance verification"
-```
-
----
-
-## ✅ PROGRESSIVE QUALITY GATES & VALIDATION
-
-```yaml
-UNIFIED_QUALITY_FRAMEWORK:
-  progressive_standards: &quality_standards
-    level_1_2_simple:
-      threshold: "≥9.0/10"
-      validation: "Basic functionality and code standards compliance"
-      requirements: ["Working implementation", "Basic error handling", "Code readability"]
-    level_3_4_moderate:
-      threshold: "≥9.5/10"
-      validation: "Enhanced quality with best practices and testing"
-      requirements: ["Comprehensive testing", "Best practices compliance", "Documentation"]
-    level_5_6_complex:
-      threshold: "≥9.7/10"
-      validation: "Comprehensive quality with architectural validation"
-      requirements: ["Architecture review", "Performance validation", "Security compliance"]
-    level_7_8_enterprise:
-      threshold: "≥9.8/10"
-      validation: "Enterprise-grade with scalability and security"
-      requirements: ["Scalability validation", "Security audit", "Production readiness"]
-    level_9_10_critical:
-      threshold: "≥9.9/10"
-      validation: "Mission-critical with regulatory compliance"
-      requirements: ["Regulatory compliance", "Audit trails", "Zero-tolerance validation"]
-
-  domain_specific_overrides:
-    healthcare_compliance:
-      override_threshold: "≥9.9/10 regardless of base complexity"
-      triggers: ["LGPD", "patient", "medical", "healthcare", "clinic", "treatment"]
-      requirements: ["LGPD compliance", "Patient data protection", "Medical regulations"]
-    enterprise_production:
-      override_threshold: "≥9.8/10 minimum regardless of base complexity"
-      triggers: ["enterprise", "production", "scalability", "critical business"]
-      requirements: ["Scalability validation", "Business continuity", "Enterprise security"]
-    research_accuracy:
-      override_threshold: "≥9.7/10 for accuracy requirements"
-      triggers: ["research", "analysis", "data processing", "decision support"]
-      requirements: ["Source validation", "Accuracy verification", "Methodology compliance"]
-
-COMPREHENSIVE_VALIDATION_GATES:
-  discovery_phase_gates:
-    requirement_completeness:
-      threshold: "≥95% requirement coverage with stakeholder validation"
-      validation_method: "Stakeholder approval and technical feasibility assessment"
-      cognitive_requirement: "Think minimum, megathink for complex requirements"
-    complexity_assessment_accuracy:
-      threshold: "Accurate L1-L10 complexity scoring with routing validation"
-      validation_method: "Resource allocation and timeline validation with cognitive alignment"
-      cognitive_requirement: "Appropriate thinking level activation based on complexity"
-
-  planning_phase_gates:
-    architecture_quality:
-      threshold: "≥9.5/10 architecture quality score with cognitive validation"
-      validation_method: "Scalability, security, and performance validation with thinking analysis"
-      cognitive_requirement: "Megathink minimum for architecture, ultrathink for enterprise/critical"
-    security_validation:
-      threshold: "Zero high/critical security vulnerabilities with comprehensive assessment"
-      validation_method: "Security audit, compliance check, and threat modeling"
-      cognitive_requirement: "Ultrathink for security-critical systems and compliance requirements"
-
-  execution_phase_gates:
-    code_quality:
-      threshold: "Progressive L1-L10 quality standards with cognitive enhancement"
-      validation_method: "TypeScript strict, ESLint zero errors, comprehensive testing, cognitive validation"
-      cognitive_requirement: "Appropriate thinking level for implementation complexity"
-    test_coverage:
-      threshold: "≥90% test coverage with critical path validation and cognitive test analysis"
-      validation_method: "Unit, integration, and E2E test validation with cognitive quality assessment"
-      cognitive_requirement: "Megathink for test strategy, ultrathink for critical system testing"
-
-  delivery_phase_gates:
-    production_readiness:
-      threshold: "100% production readiness checklist completion with cognitive validation"
-      validation_method: "Deployment, monitoring, operational readiness, and cognitive assessment"
-      cognitive_requirement: "Ultrathink for production-critical systems and enterprise deployment"
-    performance_validation:
-      threshold: "Performance benchmarks met with monitoring setup and cognitive optimization"
-      validation_method: "Load testing, performance monitoring, optimization, and cognitive analysis"
-      cognitive_requirement: "Megathink for performance analysis, ultrathink for critical performance requirements"
-```
-
----
-
 ## 🌐 BILINGUAL COMMAND INTERFACE
 
 ```yaml
@@ -782,66 +529,7 @@ UNICODE_COGNITIVE_PROTOCOL:
   cognitive_enhancement: "Visual thinking categorization with enhanced reasoning clarity"
   quality_impact: "Enhanced reasoning clarity and systematic thought organization"
 ```
-
 ---
-
-## 🚀 PERFORMANCE OPTIMIZATION & ERROR HANDLING
-
-```yaml
-INTELLIGENT_PERFORMANCE_OPTIMIZATION:
-  response_time_targets:
-    simple_tasks_l1_l2: "<5 seconds with 95%+ accuracy and cognitive efficiency"
-    moderate_tasks_l3_l4: "<15 seconds with comprehensive solutions and cognitive validation"
-    complex_tasks_l5_l6: "<30 seconds with enterprise-grade quality and cognitive coordination"
-    enterprise_tasks_l7_l8: "<45 seconds with full orchestration and cognitive optimization"
-    critical_tasks_l9_l10: "<90 seconds with regulatory compliance and cognitive excellence"
-
-  quality_metrics:
-    cognitive_efficiency: "80%+ of tasks completed with optimal thinking level activation"
-    agent_coordination: "95%+ successful handoffs with context preservation and cognitive continuity"
-    progressive_quality: "Progressive L1-L10 standards achieved with cognitive enhancement"
-    mcp_orchestration: "100% mandatory MCP usage with intelligent routing and cognitive integration"
-    bilingual_accessibility: "100% command availability in Portuguese and English with cognitive parity"
-
-  productivity_metrics:
-    context_assembly: "<5s for simple workflows, <30s for enterprise workflows with cognitive optimization"
-    session_consistency: ">95% drift prevention with cognitive state preservation"
-    workflow_efficiency: "85%+ optimization through intelligent routing and cognitive coordination"
-    quality_achievement: ">90% first-time quality targets met with cognitive enhancement"
-    learning_integration: "Continuous pattern improvement with cognitive optimization cycles"
-
-COMPREHENSIVE_ERROR_HANDLING:
-  error_classification_system:
-    critical_errors:
-      - "Quality gate failures with cognitive validation issues (score below progressive standards)"
-      - "Security validation failures with compliance impact and cognitive threat assessment"
-      - "Cognitive state corruption with thinking level disruption and context loss"
-      - "Agent coordination failures with workflow disruption and cognitive continuity loss"
-    recoverable_errors:
-      - "MCP timeout or connection issues with retry procedures and cognitive state preservation"
-      - "Thinking level suboptimal activation with automatic cognitive escalation protocols"
-      - "Quality score below optimal with cognitive quality improvement procedures"
-      - "Agent handoff issues with cognitive context restoration and transition retry"
-    warning_conditions:
-      - "Performance degradation with cognitive optimization recommendations and efficiency analysis"
-      - "Cognitive inefficiency detected with thinking level optimization suggestions"
-      - "Progressive quality threshold approaching with cognitive enhancement recommendations"
-
-  recovery_strategy_implementation:
-    automatic_recovery:
-      - "MCP connection retry with exponential backoff, alternative routing, and cognitive state preservation"
-      - "Cognitive level escalation with automatic ultrathink activation for critical failures"
-      - "Quality optimization with cognitive pattern-based improvement and validation suggestions"
-      - "Context restoration from checkpoints with cognitive state integrity validation"
-    manual_intervention_protocols:
-      - "Critical security violations requiring cognitive threat analysis and incident response"
-      - "Architecture decision conflicts requiring cognitive multi-perspective analysis and stakeholder consultation"
-      - "Business logic validation failures requiring cognitive expert review and domain analysis"
-      - "Cognitive state irrecoverable corruption requiring manual thinking level reset and context reconstruction"
-```
-
----
-
 ## 📋 INTEGRATED COMMAND EXECUTION SUMMARY
 
 ```yaml
@@ -881,40 +569,6 @@ COMMAND_INTELLIGENCE_FEATURES:
 
 ---
 
-## 🎯 VIBECODER APEX MASTER WORKFLOW STATUS
-
-**Status**: 🔥 **ACTIVE** - VIBECODER Integration + Unified Cognitive Orchestration + 3-Tier Meta-Cognition + Agent Specialization Matrix + Constitutional Excellence
-
-**Performance**: 85%+ optimization | Quality: Progressive L1-L10 standards | Coordination: Multi-Agent + Cognitive Excellence + VIBECODER Philosophy
-
-**Excellence**: Research-First + Constitutional Principles + Agent Coordination + Bilingual Accessibility + One-Shot Resolution + Continuous Learning
-
-**AS VIBECODER APEX MASTER WORKFLOW V4.0:**
-
-✅ **VIBECODER CONSTITUTIONAL INTEGRATION** - Complete integration of VIBECODER philosophy with constitutional excellence and one-shot resolution
-✅ **AGENT SPECIALIZATION MATRIX** - Comprehensive agent coordination with contextual loading strategy (.ruler\agents\) and phase-specific routing
-✅ **CONTEXTUAL AGENT LOADING** - Optimized agent loading with apex_dev always available, research and ui-ux loaded on-demand
-✅ **COGNITIVE INTEGRATION EXCELLENCE** - 3-tier thinking system seamlessly integrated with workflow routing and quality standards
-✅ **PROGRESSIVE QUALITY FRAMEWORK** - L1-L10 unified standards with domain-specific overrides and cognitive enhancement
-✅ **RESEARCH-DRIVEN COORDINATION** - archon → context7 → tavily → exa intelligence chain with cognitive optimization
-✅ **INTELLIGENT COMPLEXITY ROUTING** - Dynamic L1-L10 assessment with automatic cognitive and agent activation
-✅ **COMPREHENSIVE AGENT ORCHESTRATION** - Specialized agent matrix with cognitive state preservation and bilingual coordination
-✅ **BILINGUAL ACCESSIBILITY EXCELLENCE** - Complete Portuguese/English interface with cognitive parity and cultural adaptation
-✅ **ENTERPRISE SCALABILITY** - Production-ready with monitoring, cognitive optimization, and business integration
-✅ **CONSTITUTIONAL EXCELLENCE** - KISS, YAGNI, Chain of Thought principles with adversarial validation and multi-perspective analysis
-✅ **ONE-SHOT RESOLUTION** - Complete problem solving with relentless persistence and constitutional quality gates
-✅ **CONTINUOUS COGNITIVE EXCELLENCE** - Real-time learning, thinking optimization, and quality improvement protocols
-
-**VIBECODER Apex Master Workflow Status**: 🚀 **V4.0 - CONSTITUTIONALLY ENHANCED, CONTEXTUALLY OPTIMIZED & AGENT-SPECIALIZED**
-
-**Agent Integration Excellence**: ⭐ **COMPLETE** - All agents properly referenced with .ruler\agents\ citations and contextual loading strategy
-
-**Contextual Loading Excellence**: 🎯 **OPTIMIZED** - apex_dev always available, research and ui-ux loaded on-demand based on triggers
-
----
-
 _Master workflow orchestrator with complete VIBECODER integration, contextual agent specialization matrix, optimized agent loading, cognitive intelligence, progressive quality standards, constitutional excellence, and bilingual accessibility - Ultimate single source of truth for all project execution with intelligent contextual coordination_
 
 ---
-
-_Single source of truth for all workflow orchestration, cognitive intelligence, progressive quality standards, contextual agent coordination, and bilingual accessibility - Zero redundancy achieved with comprehensive functionality preservation and optimal resource management_

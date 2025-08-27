@@ -31,7 +31,7 @@ async function testEmailAutomation() {
     if (
       process.env.NODE_ENV === "development"
       && process.env.ENABLE_TEST_JOBS === "true"
-    ) {    } else {
+    ) {} else {
     }
 
     // Verifica se as variáveis de ambiente estão definidas

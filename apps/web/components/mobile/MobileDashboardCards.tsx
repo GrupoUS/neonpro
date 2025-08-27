@@ -588,25 +588,33 @@ export function MobileQuickActions() {
     {
       label: "Nova Consulta",
       icon: Calendar,
-      action: () => // console.log("Nova consulta"),
+      action: () => {
+        // console.log("Nova consulta")
+      },
       color: "text-blue-600 bg-blue-50",
     },
     {
       label: "Emergência",
       icon: AlertTriangle,
-      action: () => // console.log("Emergência"),
+      action: () => {
+        // console.log("Emergência")
+      },
       color: "text-red-600 bg-red-50",
     },
     {
       label: "Relatórios",
       icon: BarChart3,
-      action: () => // console.log("Relatórios"),
+      action: () => {
+        // console.log("Relatórios");
+      },
       color: "text-green-600 bg-green-50",
     },
     {
       label: "Configurações",
       icon: Gauge,
-      action: () => // console.log("Configurações"),
+      action: () => {
+        // console.log("Configurações");
+      },
       color: "text-purple-600 bg-purple-50",
     },
   ];

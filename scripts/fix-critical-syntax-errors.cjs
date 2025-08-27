@@ -12,152 +12,152 @@ const filesToFix = [
     fixes: [
       {
         search: /(<div\s*\n\s*className="min-h-screen)/,
-        replace: "$1"
-      }
-    ]
+        replace: "$1",
+      },
+    ],
   },
   {
     file: "tools/testing/performance/deployment.ts",
     fixes: [
       {
         search: /(\s+})(\s*$)/m,
-        replace: "$1;$2"
-      }
-    ]
+        replace: "$1;$2",
+      },
+    ],
   },
   {
     file: "apps/web/app/components/intelligent-scheduler.tsx",
     fixes: [
       {
         search: /(\s+)\);(\s*$)/m,
-        replace: "$1);$2"
-      }
-    ]
+        replace: "$1);$2",
+      },
+    ],
   },
   {
     file: "apps/web/app/profile/page.tsx",
     fixes: [
       {
         search: /(\s+})(\s*$)/m,
-        replace: "$1$2"
-      }
-    ]
+        replace: "$1$2",
+      },
+    ],
   },
   {
     file: "apps/web/components/mobile/MobileDashboardCards.tsx",
     fixes: [
       {
         search: /color:\s*"text-blue-600\s+bg-blue-50"/,
-        replace: 'color: "text-blue-600 bg-blue-50"'
-      }
-    ]
+        replace: 'color: "text-blue-600 bg-blue-50"',
+      },
+    ],
   },
   {
     file: "apps/web/lib/ai/index.ts",
     fixes: [
       {
         search: /timestamp:\s*this\.lastHealthCheck\.toISOString\(\)/,
-        replace: "timestamp: this.lastHealthCheck.toISOString(),"
-      }
-    ]
+        replace: "timestamp: this.lastHealthCheck.toISOString(),",
+      },
+    ],
   },
   {
     file: "apps/web/lib/ai/model-management.ts",
     fixes: [
       {
         search: /(\s+)\);(\s*$)/m,
-        replace: "$1);$2"
-      }
-    ]
+        replace: "$1);$2",
+      },
+    ],
   },
   {
     file: "apps/web/lib/ai/drift-detection.ts",
     fixes: [
       {
         search: /(\s+)\);(\s*$)/m,
-        replace: "$1);$2"
-      }
-    ]
+        replace: "$1);$2",
+      },
+    ],
   },
   {
     file: "apps/web/lib/services/api-gateway.ts",
     fixes: [
       {
         search: /(\s+)}\);(\s*$)/m,
-        replace: "$1});$2"
-      }
-    ]
+        replace: "$1});$2",
+      },
+    ],
   },
   {
     file: "apps/web/app/components/neonpro-healthcare-dashboard.tsx",
     fixes: [
       {
         search: /const MINUTES_PER_HOUR = 60;const DEFAULT_TIMEOUT_MS = 1000;/,
-        replace: "const MINUTES_PER_HOUR = 60;\nconst DEFAULT_TIMEOUT_MS = 1000;"
-      }
-    ]
+        replace: "const MINUTES_PER_HOUR = 60;\nconst DEFAULT_TIMEOUT_MS = 1000;",
+      },
+    ],
   },
   {
     file: "apps/web/tests/integration/api-client-integration.test.tsx",
     fixes: [
       {
         search: /(\s+)};(\s*$)/m,
-        replace: "$1};$2"
-      }
-    ]
+        replace: "$1};$2",
+      },
+    ],
   },
   {
     file: "apps/web/tests/integration/ai-services-ecosystem.integration.test.tsx",
     fixes: [
       {
         search: /(\s+)\);(\s*$)/m,
-        replace: "$1);$2"
-      }
-    ]
+        replace: "$1);$2",
+      },
+    ],
   },
   {
     file: "apps/web/tests/integration/auth-flow.integration.test.tsx",
     fixes: [
       {
         search: /(\s+)};};(\s*$)/m,
-        replace: "$1};}$2"
-      }
-    ]
+        replace: "$1};}$2",
+      },
+    ],
   },
   {
     file: "tools/testing/unit/setup/supabase-mock.ts",
     fixes: [
       {
         search: /(\s+})(\s*$)/m,
-        replace: "$1$2"
-      }
-    ]
+        replace: "$1$2",
+      },
+    ],
   },
   {
     file: "packages/security/src/encryption/healthcare-encryption.ts",
     fixes: [
       {
         search: /export default function createHealthcareEncryption\(/,
-        replace: "export default function createHealthcareEncryption("
-      }
-    ]
+        replace: "export default function createHealthcareEncryption(",
+      },
+    ],
   },
   {
     file: "packages/ui/src/components/ui/button.tsx",
     fixes: [
       {
         search: /(\s+)}(\s*onClick=)/,
-        replace: "$1},$2"
-      }
-    ]
-  }
+        replace: "$1},$2",
+      },
+    ],
+  },
 ];
 
 let fixedCount = 0;
 
 filesToFix.forEach(({ file, fixes }) => {
   const fullPath = path.join(process.cwd(), file);
-  
+
   if (!fs.existsSync(fullPath)) {
     console.log(`⚠️  File not found: ${file}`);
     return;
@@ -194,33 +194,33 @@ const patterns = [
   {
     pattern: /(\s+)\);(\s*$)/gm,
     replacement: "$1);$2",
-    description: "Fix hanging closing parentheses"
+    description: "Fix hanging closing parentheses",
   },
   {
     pattern: /(\s+)};(\s*$)/gm,
     replacement: "$1};$2",
-    description: "Fix hanging closing braces"
+    description: "Fix hanging closing braces",
   },
   {
     pattern: /(\s+)}\);(\s*$)/gm,
     replacement: "$1});$2",
-    description: "Fix hanging closing braces with parentheses"
-  }
+    description: "Fix hanging closing braces with parentheses",
+  },
 ];
 
 // Apply generic fixes to all TypeScript/JavaScript files
 const findFiles = (dir, extensions = [".ts", ".tsx", ".js", ".jsx"]) => {
   let files = [];
-  
+
   if (!fs.existsSync(dir)) return files;
-  
+
   try {
     const items = fs.readdirSync(dir);
-    
+
     items.forEach(item => {
       const fullPath = path.join(dir, item);
       const stat = fs.statSync(fullPath);
-      
+
       if (stat.isDirectory() && !item.startsWith(".") && item !== "node_modules") {
         files = files.concat(findFiles(fullPath, extensions));
       } else if (stat.isFile() && extensions.some(ext => item.endsWith(ext))) {
@@ -230,7 +230,7 @@ const findFiles = (dir, extensions = [".ts", ".tsx", ".js", ".jsx"]) => {
   } catch (error) {
     // Skip directories we can't read
   }
-  
+
   return files;
 };
 

@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Comprehensive lint fixes for the most common issues
 function fixFile(filePath) {
@@ -8,13 +8,13 @@ function fixFile(filePath) {
     return;
   }
 
-  let content = fs.readFileSync(filePath, 'utf8');
+  let content = fs.readFileSync(filePath, "utf8");
   let modified = false;
 
   // Fix 1: Replace 'any' types with 'unknown'
   const anyTypePattern = /:\s*any(\s*[,\)\]\};\|&])/g;
   if (anyTypePattern.test(content)) {
-    content = content.replace(anyTypePattern, ': unknown$1');
+    content = content.replace(anyTypePattern, ": unknown$1");
     modified = true;
   }
 
@@ -26,11 +26,14 @@ function fixFile(filePath) {
   ];
 
   // Fix 3: Replace img tags with Next.js Image (simple cases)
-  if (content.includes('<img') && !content.includes('from "next/image"')) {
+  if (content.includes("<img") && !content.includes('from "next/image"')) {
     if (!content.includes('import Image from "next/image"')) {
       const importMatch = content.match(/import\s+.*from\s+["']next\/[^"']*["'];?\n/);
       if (importMatch) {
-        content = content.replace(importMatch[0], importMatch[0] + 'import Image from "next/image";\n');
+        content = content.replace(
+          importMatch[0],
+          importMatch[0] + 'import Image from "next/image";\n',
+        );
         modified = true;
       }
     }
@@ -47,7 +50,7 @@ function fixFile(filePath) {
   // Fix 5: Fix destructuring preferences
   const destructuringPattern = /const\s+(\w+)\s*=\s*(\w+)\.(\w+);/g;
   if (destructuringPattern.test(content)) {
-    content = content.replace(destructuringPattern, 'const { $3: $1 } = $2;');
+    content = content.replace(destructuringPattern, "const { $3: $1 } = $2;");
     modified = true;
   }
 
@@ -59,19 +62,22 @@ function fixFile(filePath) {
 
   unusedImportPatterns.forEach(pattern => {
     if (pattern.test(content)) {
-      content = content.replace(pattern, '');
+      content = content.replace(pattern, "");
       modified = true;
     }
   });
 
   // Fix 7: Fix Promise patterns
-  if (content.includes('Promise.resolve()')) {
-    content = content.replace(/=>\s*Promise\.resolve\(\)/g, '=> Promise.resolve(undefined)');
+  if (content.includes("Promise.resolve()")) {
+    content = content.replace(/=>\s*Promise\.resolve\(\)/g, "=> Promise.resolve(undefined)");
     modified = true;
   }
 
   // Fix 8: Fix role attribute issues
-  content = content.replace(/role="button"/g, '// role="button" - consider using actual button element');
+  content = content.replace(
+    /role="button"/g,
+    '// role="button" - consider using actual button element',
+  );
   if (content.includes('role="button"')) {
     modified = true;
   }
@@ -80,8 +86,8 @@ function fixFile(filePath) {
   const promisePattern = /\.then\(\([^)]*\)\s*=>\s*{[^}]*}\)/g;
   if (promisePattern.test(content)) {
     content = content.replace(promisePattern, (match) => {
-      if (!match.includes('return ') && !match.includes('throw ')) {
-        return match.replace(/{/, '{ return ').replace(/}/, '; }');
+      if (!match.includes("return ") && !match.includes("throw ")) {
+        return match.replace(/{/, "{ return ").replace(/}/, "; }");
       }
       return match;
     });
@@ -92,12 +98,15 @@ function fixFile(filePath) {
   const staticClassPattern = /export\s+class\s+(\w+)\s*{\s*static/g;
   if (staticClassPattern.test(content)) {
     // Add comment about converting to standalone functions
-    content = content.replace(staticClassPattern, '// TODO: Convert to standalone functions\nexport class $1 {\n  static');
+    content = content.replace(
+      staticClassPattern,
+      "// TODO: Convert to standalone functions\nexport class $1 {\n  static",
+    );
     modified = true;
   }
 
   if (modified) {
-    fs.writeFileSync(filePath, content, 'utf8');
+    fs.writeFileSync(filePath, content, "utf8");
     console.log(`Fixed: ${filePath}`);
     return true;
   }
@@ -106,31 +115,31 @@ function fixFile(filePath) {
 }
 
 // Get all TypeScript and JavaScript files
-function getAllFiles(dir, extensions = ['.ts', '.tsx', '.js', '.jsx']) {
+function getAllFiles(dir, extensions = [".ts", ".tsx", ".js", ".jsx"]) {
   const files = [];
-  
+
   if (!fs.existsSync(dir)) {
     return files;
   }
 
   const items = fs.readdirSync(dir);
-  
+
   for (const item of items) {
     const fullPath = path.join(dir, item);
     const stat = fs.statSync(fullPath);
-    
-    if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
+
+    if (stat.isDirectory() && !item.startsWith(".") && item !== "node_modules") {
       files.push(...getAllFiles(fullPath, extensions));
     } else if (stat.isFile() && extensions.some(ext => item.endsWith(ext))) {
       files.push(fullPath);
     }
   }
-  
+
   return files;
 }
 
 // Main execution
-console.log('Starting comprehensive lint fixes...');
+console.log("Starting comprehensive lint fixes...");
 
 const projectRoot = process.cwd();
 const files = getAllFiles(projectRoot);

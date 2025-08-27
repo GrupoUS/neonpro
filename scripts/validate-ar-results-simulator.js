@@ -129,9 +129,11 @@ function validateBuildProcess() {
   header("BUILD PROCESS VALIDATION");
 
   try {
-    info("Building API package...");    success("API build completed successfully");
+    info("Building API package...");
+    success("API build completed successfully");
 
-    info("Type checking web components...");    success("Web type checking completed successfully");
+    info("Type checking web components...");
+    success("Web type checking completed successfully");
 
     return true;
   } catch (error) {
@@ -370,9 +372,10 @@ async function runValidation() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   runValidation()
-    .then((success) => { return 
+    .then((success) => {
+      return;
       process.exit(success ? 0 : 1);
-    ; })
+    })
     .catch((error) => {
       error(`Validation script error: ${error.message}`);
       process.exit(1);

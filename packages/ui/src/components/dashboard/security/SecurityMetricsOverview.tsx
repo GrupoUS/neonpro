@@ -50,7 +50,12 @@ export function SecurityMetricsOverview({
       return "text-orange-600";
     }
     return "text-red-600";
-  };    }
+  };
+
+  const getComplianceBadgeVariant = (score: number) => {
+    if (score >= 95) {
+      return "default";
+    }
     if (score >= 85) {
       return "secondary";
     }

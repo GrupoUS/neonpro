@@ -13,7 +13,7 @@
  * - Health monitoring e auto-healing
  */
 
-import type Redis from "ioredis";
+// import type Redis from "ioredis";
 import { LRUCache } from "lru-cache";
 import type { PerformanceMetrics } from "../../types";
 
@@ -84,7 +84,7 @@ class MemoryCacheLayer implements CacheLayer {
       this.hitCount++;
       return value as T;
     }
-    return;
+    return null;
   }
 
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
@@ -118,9 +118,9 @@ class RedisCacheLayer implements CacheLayer {
   name = "redis";
   priority = 2;
 
-  private readonly redis: Redis | null;
-  private readonly accessCount = 0;
-  private readonly hitCount = 0;
+  private readonly redis: any | null;
+  private accessCount = 0;
+  private hitCount = 0;
   private readonly keyPrefix: string;
 
   constructor(config: EnterpriseCacheConfig["layers"]["redis"]) {
@@ -227,7 +227,7 @@ class DatabaseCacheLayer implements CacheLayer {
 
   async get<T>(_key: string): Promise<T | null> {
     this.accessCount++;
-    return;
+    return null;
   }
 
   async set<T>(_key: string, _value: T, _ttl?: number): Promise<void> {}
@@ -253,7 +253,7 @@ class DatabaseCacheLayer implements CacheLayer {
 export class EnterpriseCacheService {
   private readonly layers: CacheLayer[] = [];
   private readonly config: EnterpriseCacheConfig;
-  private healthCheckInterval: NodeJS.Timeout | null = undefined;
+  private healthCheckInterval: NodeJS.Timeout | null = null;
   private readonly metrics: PerformanceMetrics = {
     service: "cache",
     period: "realtime",
@@ -324,7 +324,7 @@ export class EnterpriseCacheService {
 
     // Initialize Database Layer
     if (this.config.layers.database.enabled) {
-      this.layers.push(new DatabaseCacheLayer(this.config.layers.database));
+      this.layers.push(new DatabaseCacheLayer());
     }
 
     // Sort layers by priority (lower number = higher priority)
@@ -372,7 +372,7 @@ export class EnterpriseCacheService {
       await this.auditAccess("CACHE_MISS", { key });
     }
 
-    return;
+    return null;
   }
 
   /**
@@ -458,7 +458,7 @@ export class EnterpriseCacheService {
     const stats = layerStats.map((result, index) => ({
       layer: this.layers[index]?.name || `layer-${index}`,
       ...(result.status === "fulfilled"
-        ? result.value
+        ? (result.value as Record<string, unknown>)
         : { error: result.reason }),
     }));
 
@@ -548,7 +548,7 @@ export class EnterpriseCacheService {
   async shutdown(): Promise<void> {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
-      this.healthCheckInterval = undefined;
+      this.healthCheckInterval = null;
     }
 
     // Cleanup layers if needed

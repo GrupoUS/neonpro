@@ -268,7 +268,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
               }`}
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as unknown)}
+              onClick={() => setActiveTab(tab.id as "analytics" | "schedule" | "optimization")}
             >
               <span className="mr-2">{tab.icon}</span>
               {tab.label}
@@ -445,7 +445,7 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
                   <div className="rounded-lg bg-green-50 p-3">
                     <div className="font-medium text-green-900 text-sm">
-                      Optimize Dr. Silva's schedule
+                      Optimize Dr. Silva&apos;s schedule
                     </div>
                     <div className="text-green-700 text-xs">
                       Expected improvement: +15% efficiency

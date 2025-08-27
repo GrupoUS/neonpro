@@ -290,4 +290,4 @@ This documentation is part of the NeonPro project and follows the same license t
 
 ---
 
-*Built with ❤️ using Next.js, TypeScript, and MDX*
+_Built with ❤️ using Next.js, TypeScript, and MDX_

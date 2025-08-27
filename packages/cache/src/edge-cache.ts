@@ -13,8 +13,8 @@ export class EdgeCacheLayer implements CacheOperation {
 
   constructor(
     private readonly config = {
-      endpoint: process.env.SUPABASE_EDGE_ENDPOINT || 'https://edge-cache.supabase.co',
-      region: 'sa-east-1', // São Paulo region
+      endpoint: process.env.SUPABASE_EDGE_ENDPOINT || "https://edge-cache.supabase.co",
+      region: "sa-east-1", // São Paulo region
       defaultTTL: 10 * 60, // 10 minutes in seconds
       maxTTL: 60 * 60, // 1 hour in seconds
       compressionThreshold: 1024, // 1KB
@@ -47,15 +47,15 @@ export class EdgeCacheLayer implements CacheOperation {
       this.updateStats(startTime);
 
       // Decompress if needed
-      const value = entry.compressed 
-        ? this.decompress(entry.value) 
+      const value = entry.compressed
+        ? this.decompress(entry.value)
         : entry.value;
 
       return value;
     } catch (error) {
       this.stats.misses++;
       this.updateStats(startTime);
-      console.error('Edge cache get error:', error);
+      console.error("Edge cache get error:", error);
       return null;
     }
   }
@@ -153,22 +153,22 @@ export class EdgeCacheLayer implements CacheOperation {
 
   // Health check for edge nodes
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     latency: number;
     errorRate: number;
     region: string;
   }> {
     const stats = await this.getStats();
-    const errorRate = stats.totalRequests > 0 
+    const errorRate = stats.totalRequests > 0
       ? ((stats.totalRequests - stats.hits) / stats.totalRequests) * 100
       : 0;
 
-    let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
+    let status: "healthy" | "degraded" | "unhealthy" = "healthy";
     if (stats.averageResponseTime > 100 || errorRate > 10) {
-      status = 'degraded';
+      status = "degraded";
     }
     if (stats.averageResponseTime > 500 || errorRate > 25) {
-      status = 'unhealthy';
+      status = "unhealthy";
     }
 
     return {
@@ -201,7 +201,7 @@ export class EdgeCacheLayer implements CacheOperation {
   }
 
   private evictLRU(): void {
-    let oldestKey = '';
+    let oldestKey = "";
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {

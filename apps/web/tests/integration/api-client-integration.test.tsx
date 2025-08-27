@@ -72,7 +72,10 @@ vi.mock<typeof import("../../lib/api/hono-client")>(
   () => ({
     honoClient: mockHonoClient,
   }),
-); // Test wrapper component }) => {
+);
+
+// Test wrapper component
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

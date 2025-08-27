@@ -205,10 +205,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
   }, [loadAvailableSlots]);
 
   // Real-time event handling
-      // Update UI based on recommended actions
+  // Update UI based on recommended actions
   // Removed unused handleOptimizationResults function
 
-  // Generate mock slots for demonstration - memoized to prevent re-render issues  
+  // Generate mock slots for demonstration - memoized to prevent re-render issues
   const generateMockSlots = useCallback((): AppointmentSlot[] => {
     const slots: AppointmentSlot[] = [];
     const now = new Date();
@@ -267,7 +267,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <h3 className="font-semibold text-gray-900">Patient & Treatment</h3>
 
           <div>
-            <label htmlFor="patient-select" className="mb-2 block font-medium text-gray-700 text-sm">
+            <label
+              htmlFor="patient-select"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
               Patient
             </label>
             <select
@@ -287,7 +290,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label htmlFor="treatment-select" className="mb-2 block font-medium text-gray-700 text-sm">
+            <label
+              htmlFor="treatment-select"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
               Treatment Type
             </label>
             <select
@@ -311,7 +317,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <h3 className="font-semibold text-gray-900">Preferences</h3>
 
           <div>
-            <label htmlFor="preferred-date" className="mb-2 block font-medium text-gray-700 text-sm">
+            <label
+              htmlFor="preferred-date"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
               Preferred Date
             </label>
             <input
@@ -324,7 +333,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label htmlFor="urgency-select" className="mb-2 block font-medium text-gray-700 text-sm">
+            <label
+              htmlFor="urgency-select"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
               Urgency Level
             </label>
             <select
@@ -341,7 +353,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label htmlFor="flexibility-range" className="mb-2 block font-medium text-gray-700 text-sm">
+            <label
+              htmlFor="flexibility-range"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
               Flexibility (days)
             </label>
             <input

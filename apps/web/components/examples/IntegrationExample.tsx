@@ -291,10 +291,14 @@ export function IntegrationExample() {
               </h2>
               <div className="space-y-3">
                 <div>
-                  <label className="block font-medium text-gray-700 text-sm">
+                  <label
+                    htmlFor="login-email"
+                    className="block font-medium text-gray-700 text-sm"
+                  >
                     Email
                   </label>
                   <input
+                    id="login-email"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                     onChange={(e) => setLoginData((prev) => ({ ...prev, email: e.target.value }))}
                     type="email"
@@ -303,10 +307,14 @@ export function IntegrationExample() {
                 </div>
 
                 <div>
-                  <label className="block font-medium text-gray-700 text-sm">
+                  <label
+                    htmlFor="login-password"
+                    className="block font-medium text-gray-700 text-sm"
+                  >
                     Senha
                   </label>
                   <input
+                    id="login-password"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                     onChange={(e) =>
                       setLoginData((prev) => ({

@@ -33,7 +33,8 @@ function logResult(test, duration, target, status) {
     overallPass = false;
   }
 
-  results.push({ test, duration, target, passed, status });}
+  results.push({ test, duration, target, passed, status });
+}
 
 function logInfo(_message) {}
 
@@ -242,9 +243,10 @@ async function runPerformanceTests() {
 
 // Run tests if this script is executed directly
 if (require.main === module) {
-  runPerformanceTests().then((success) => { return 
+  runPerformanceTests().then((success) => {
+    return;
     process.exit(success ? 0 : 1);
-  ; });
+  });
 }
 
 module.exports = { runPerformanceTests, config };

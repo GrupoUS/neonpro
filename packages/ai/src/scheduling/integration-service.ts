@@ -674,10 +674,12 @@ export class SchedulingIntegrationService {
     _current: AIAppointment,
     updates: Partial<AIAppointment>,
   ): boolean {
-    return Boolean(updates.scheduledStart
-      || updates.scheduledEnd
-      || updates.staffId
-      || updates.roomId);
+    return Boolean(
+      updates.scheduledStart
+        || updates.scheduledEnd
+        || updates.staffId
+        || updates.roomId,
+    );
   }
 
   private async processIndividualScheduling(

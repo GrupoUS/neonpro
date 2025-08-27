@@ -1,13 +1,13 @@
 /**
  * NeonPro Consolidated Performance Monitoring Package
  * ===================================================
- * 
+ *
  * Healthcare-optimized performance monitoring with Supabase real-time integration
  * Consolidates functionality from packages/performance + packages/performance-monitor
- * 
+ *
  * Features:
  * - Web Vitals monitoring with healthcare-specific thresholds
- * - Real-time metrics streaming via Supabase 
+ * - Real-time metrics streaming via Supabase
  * - Bundle analysis and optimization
  * - Database performance monitoring
  * - AI metrics collection
@@ -21,38 +21,38 @@
 // ============================================================================
 
 // Web Vitals monitoring with healthcare optimization
-export { HealthcareWebVitals, HEALTHCARE_THRESHOLDS } from './web-vitals/core-web-vitals';
+export { HEALTHCARE_THRESHOLDS, HealthcareWebVitals } from "./web-vitals/core-web-vitals";
 
 // Metric collectors for comprehensive monitoring
-export { AIMetricsCollector } from './collectors/ai-metrics-collector';
-export { CacheMetricsCollector } from './collectors/cache-collector';
-export { SystemMetricsCollector } from './collectors/system-collector';
+export { AIMetricsCollector } from "./collectors/ai-metrics-collector";
+export { CacheMetricsCollector } from "./collectors/cache-collector";
+export { SystemMetricsCollector } from "./collectors/system-collector";
 
 // Real-time Supabase integration
-export { SupabaseMetricsStreamer } from './realtime/supabase-metrics-streamer';
-export { RealTimePerformanceDashboard } from './realtime/dashboard';
+export { RealTimePerformanceDashboard } from "./realtime/dashboard";
+export { SupabaseMetricsStreamer } from "./realtime/supabase-metrics-streamer";
 
 // Enterprise monitoring features
-export * from './enterprise';
+export * from "./enterprise";
 
 // Client and server monitoring utilities
-export * from './client';
-export * from './server';
+export * from "./client";
+export * from "./server";
 
 // Type definitions
-export * from './types';
-export * from './utils';
+export * from "./types";
+export * from "./utils";
 
 // ============================================================================
 // CONSOLIDATED MONITORING CLASS - Main entry point
 // ============================================================================
 
-import { HealthcareWebVitals } from './web-vitals/core-web-vitals';
-import { AIMetricsCollector } from './collectors/ai-metrics-collector';
-import { CacheMetricsCollector } from './collectors/cache-collector';
-import { SystemMetricsCollector } from './collectors/system-collector';
-import { SupabaseMetricsStreamer } from './realtime/supabase-metrics-streamer';
-import type { ConsolidatedMonitoringConfig, PerformanceMetric } from './types';
+import { AIMetricsCollector } from "./collectors/ai-metrics-collector";
+import { CacheMetricsCollector } from "./collectors/cache-collector";
+import { SystemMetricsCollector } from "./collectors/system-collector";
+import { SupabaseMetricsStreamer } from "./realtime/supabase-metrics-streamer";
+import type { ConsolidatedMonitoringConfig, PerformanceMetric } from "./types";
+import { HealthcareWebVitals } from "./web-vitals/core-web-vitals";
 
 /**
  * Consolidated Performance Monitor
@@ -77,9 +77,9 @@ export class HealthcarePerformanceMonitor {
       cacheMetricsEnabled: true,
       systemMetricsEnabled: true,
       clinicId: null,
-      supabaseProjectId: 'ownkoxryswokcdanrdgj',
+      supabaseProjectId: "ownkoxryswokcdanrdgj",
       collectInterval: 5000, // 5 seconds
-      ...config
+      ...config,
     };
 
     // Initialize all monitoring components
@@ -89,7 +89,7 @@ export class HealthcarePerformanceMonitor {
     this.systemCollector = new SystemMetricsCollector();
     this.supabaseStreamer = new SupabaseMetricsStreamer({
       projectId: this.config.supabaseProjectId,
-      clinicId: this.config.clinicId
+      clinicId: this.config.clinicId,
     });
 
     this.setupEventHandlers();
@@ -105,35 +105,34 @@ export class HealthcarePerformanceMonitor {
       // Start Web Vitals monitoring
       if (this.config.webVitalsEnabled) {
         this.webVitals.startMonitoring();
-        console.log('✅ Web Vitals monitoring started');
+        console.log("✅ Web Vitals monitoring started");
       }
 
       // Start metric collectors
       if (this.config.aiMetricsEnabled) {
         await this.aiCollector.start();
-        console.log('✅ AI metrics collection started');
+        console.log("✅ AI metrics collection started");
       }
 
       if (this.config.cacheMetricsEnabled) {
         await this.cacheCollector.start();
-        console.log('✅ Cache metrics collection started');
+        console.log("✅ Cache metrics collection started");
       }
 
       if (this.config.systemMetricsEnabled) {
         await this.systemCollector.start();
-        console.log('✅ System metrics collection started');
+        console.log("✅ System metrics collection started");
       }
 
       // Start real-time streaming
       if (this.config.realtimeEnabled) {
         await this.supabaseStreamer.connect();
-        console.log('✅ Supabase real-time streaming connected');
+        console.log("✅ Supabase real-time streaming connected");
       }
 
-      console.log('🚀 Healthcare Performance Monitoring fully initialized');
-
+      console.log("🚀 Healthcare Performance Monitoring fully initialized");
     } catch (error) {
-      console.error('❌ Failed to start monitoring:', error);
+      console.error("❌ Failed to start monitoring:", error);
       throw new Error(`Monitoring initialization failed: ${error}`);
     }
   }
@@ -144,12 +143,12 @@ export class HealthcarePerformanceMonitor {
   async stopMonitoring(): Promise<void> {
     await Promise.all([
       this.aiCollector.stop(),
-      this.cacheCollector.stop(), 
+      this.cacheCollector.stop(),
       this.systemCollector.stop(),
-      this.supabaseStreamer.disconnect()
+      this.supabaseStreamer.disconnect(),
     ]);
 
-    console.log('🛑 Healthcare Performance Monitoring stopped');
+    console.log("🛑 Healthcare Performance Monitoring stopped");
   }
 
   /**
@@ -167,7 +166,7 @@ export class HealthcarePerformanceMonitor {
       aiMetrics: await this.aiCollector.getLatestMetrics(),
       cacheMetrics: await this.cacheCollector.getLatestMetrics(),
       systemMetrics: await this.systemCollector.getLatestMetrics(),
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 

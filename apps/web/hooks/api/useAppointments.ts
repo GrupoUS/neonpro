@@ -367,10 +367,12 @@ export function useAvailability(params: AvailabilitySearch | undefined) {
 
       return result.data as TimeSlot[];
     },
-    enabled: Boolean(params?.professionalId
-      && params?.startDate
-      && params?.endDate
-      && params?.duration),
+    enabled: Boolean(
+      params?.professionalId
+        && params?.startDate
+        && params?.endDate
+        && params?.duration,
+    ),
     staleTime: 1000 * 30, // 30 seconds
     gcTime: 1000 * 60, // 1 minute
   });

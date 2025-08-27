@@ -72,7 +72,7 @@ const MockLoginComponent = () => {
       </button>
     </form>
   );
-};}
+};
 
 // Test wrapper component
 const TestWrapper = ({ children }: { children: React.ReactNode; }) => {

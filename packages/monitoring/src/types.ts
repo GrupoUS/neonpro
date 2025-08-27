@@ -1,7 +1,7 @@
 /**
  * Consolidated Types for NeonPro Healthcare Performance Monitoring
  * =================================================================
- * 
+ *
  * Type definitions for all monitoring functionality including:
  * - Web Vitals with healthcare optimization
  * - Real-time metrics streaming
@@ -18,7 +18,7 @@ export interface PerformanceMetric {
   value: number;
   timestamp: string;
   unit?: string;
-  category: 'web-vitals' | 'ai-metrics' | 'cache-metrics' | 'system-metrics' | 'database-metrics';
+  category: "web-vitals" | "ai-metrics" | "cache-metrics" | "system-metrics" | "database-metrics";
   metadata?: Record<string, unknown>;
 }
 
@@ -26,41 +26,46 @@ export interface HealthcareContext {
   clinicId?: string;
   userId?: string;
   patientId?: string;
-  workflowType?: 'patient-registration' | 'medical-form' | 'procedure-scheduling' | 'medical-history' | 'real-time-update';
-  deviceType?: 'desktop' | 'tablet' | 'mobile';
-  networkConnection?: 'fast' | 'slow' | 'offline';
+  workflowType?:
+    | "patient-registration"
+    | "medical-form"
+    | "procedure-scheduling"
+    | "medical-history"
+    | "real-time-update";
+  deviceType?: "desktop" | "tablet" | "mobile";
+  networkConnection?: "fast" | "slow" | "offline";
 }
 
 // ============================================================================
-// WEB VITALS TYPES  
+// WEB VITALS TYPES
 // ============================================================================
 
 export interface WebVitalsMetric extends PerformanceMetric {
-  category: 'web-vitals';
-  name: 'CLS' | 'FCP' | 'FID' | 'LCP' | 'TTFB' | 'INP';
-  rating: 'good' | 'needs-improvement' | 'poor';
+  category: "web-vitals";
+  name: "CLS" | "FCP" | "FID" | "LCP" | "TTFB" | "INP";
+  rating: "good" | "needs-improvement" | "poor";
   delta: number;
   id: string;
 }
 
 export interface HealthcareVitalsMetric extends WebVitalsMetric, HealthcareContext {
   criticalPath: boolean;
-  complianceCategory?: 'lgpd-sensitive' | 'anvisa-regulated' | 'cfm-controlled';
+  complianceCategory?: "lgpd-sensitive" | "anvisa-regulated" | "cfm-controlled";
 }
 
 export interface PerformanceThresholds {
-  CLS: { good: number; poor: number };
-  FCP: { good: number; poor: number };
-  FID: { good: number; poor: number };
-  LCP: { good: number; poor: number };
-  TTFB: { good: number; poor: number };
-  INP: { good: number; poor: number };
-  
+  CLS: { good: number; poor: number; };
+  FCP: { good: number; poor: number; };
+  FID: { good: number; poor: number; };
+  LCP: { good: number; poor: number; };
+  TTFB: { good: number; poor: number; };
+  INP: { good: number; poor: number; };
+
   // Healthcare-specific thresholds
-  patientLookup: { good: number; poor: number };
-  medicalFormLoad: { good: number; poor: number };
-  procedureScheduling: { good: number; poor: number };
-  realTimeUpdate: { good: number; poor: number };
+  patientLookup: { good: number; poor: number; };
+  medicalFormLoad: { good: number; poor: number; };
+  procedureScheduling: { good: number; poor: number; };
+  realTimeUpdate: { good: number; poor: number; };
 }
 
 export type PerformanceEventHandler = (metric: HealthcareVitalsMetric) => void;
@@ -70,8 +75,13 @@ export type PerformanceEventHandler = (metric: HealthcareVitalsMetric) => void;
 // ============================================================================
 
 export interface AIMetric extends PerformanceMetric {
-  category: 'ai-metrics';
-  name: 'inference-time' | 'model-accuracy' | 'training-loss' | 'prediction-confidence' | 'data-drift';
+  category: "ai-metrics";
+  name:
+    | "inference-time"
+    | "model-accuracy"
+    | "training-loss"
+    | "prediction-confidence"
+    | "data-drift";
   modelId?: string;
   modelVersion?: string;
   inputSize?: number;
@@ -91,9 +101,9 @@ export interface AIPerformanceConfig {
 // ============================================================================
 
 export interface CacheMetric extends PerformanceMetric {
-  category: 'cache-metrics';
-  name: 'hit-rate' | 'miss-rate' | 'eviction-rate' | 'memory-usage' | 'response-time';
-  cacheLayer: 'browser' | 'edge' | 'supabase' | 'ai-context';
+  category: "cache-metrics";
+  name: "hit-rate" | "miss-rate" | "eviction-rate" | "memory-usage" | "response-time";
+  cacheLayer: "browser" | "edge" | "supabase" | "ai-context";
   hitCount?: number;
   missCount?: number;
   totalRequests?: number;
@@ -111,9 +121,9 @@ export interface CachePerformanceConfig {
 // ============================================================================
 
 export interface SystemMetric extends PerformanceMetric {
-  category: 'system-metrics';
-  name: 'cpu-usage' | 'memory-usage' | 'disk-usage' | 'network-latency' | 'error-rate';
-  resourceType: 'cpu' | 'memory' | 'disk' | 'network' | 'application';
+  category: "system-metrics";
+  name: "cpu-usage" | "memory-usage" | "disk-usage" | "network-latency" | "error-rate";
+  resourceType: "cpu" | "memory" | "disk" | "network" | "application";
   usage?: number;
   capacity?: number;
   utilizationPercentage?: number;
@@ -132,9 +142,9 @@ export interface SystemPerformanceConfig {
 // ============================================================================
 
 export interface DatabaseMetric extends PerformanceMetric {
-  category: 'database-metrics';
-  name: 'query-time' | 'connection-count' | 'transaction-rate' | 'cache-hit-rate' | 'row-count';
-  queryType?: 'select' | 'insert' | 'update' | 'delete';
+  category: "database-metrics";
+  name: "query-time" | "connection-count" | "transaction-rate" | "cache-hit-rate" | "row-count";
+  queryType?: "select" | "insert" | "update" | "delete";
   tableId?: string;
   indexUsed?: boolean;
   executionPlan?: string;
@@ -152,10 +162,10 @@ export interface DatabasePerformanceConfig {
 // ============================================================================
 
 export interface RealtimeMetricEvent {
-  type: 'metric-update' | 'alert' | 'threshold-exceeded' | 'system-health';
+  type: "metric-update" | "alert" | "threshold-exceeded" | "system-health";
   metric: PerformanceMetric;
   timestamp: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  severity: "info" | "warning" | "error" | "critical";
   clinicId?: string;
   userId?: string;
 }
@@ -179,19 +189,19 @@ export interface ConsolidatedMonitoringConfig extends HealthcareContext {
   realtimeEnabled: boolean;
   healthcareCompliance: boolean;
   auditTrailEnabled: boolean;
-  
+
   // Feature flags
   webVitalsEnabled: boolean;
   aiMetricsEnabled: boolean;
   cacheMetricsEnabled: boolean;
   systemMetricsEnabled: boolean;
   databaseMetricsEnabled?: boolean;
-  
+
   // Configuration
   supabaseProjectId: string;
   collectInterval: number;
   batchSize?: number;
-  
+
   // Thresholds
   webVitalsThresholds?: Partial<PerformanceThresholds>;
   aiConfig?: Partial<AIPerformanceConfig>;
@@ -206,8 +216,12 @@ export interface ConsolidatedMonitoringConfig extends HealthcareContext {
 
 export interface PerformanceAlert {
   id: string;
-  type: 'threshold-exceeded' | 'system-down' | 'performance-degradation' | 'healthcare-compliance-violation';
-  severity: 'info' | 'warning' | 'error' | 'critical';
+  type:
+    | "threshold-exceeded"
+    | "system-down"
+    | "performance-degradation"
+    | "healthcare-compliance-violation";
+  severity: "info" | "warning" | "error" | "critical";
   message: string;
   metric: PerformanceMetric;
   threshold?: number;
@@ -221,12 +235,12 @@ export interface AlertRule {
   id: string;
   name: string;
   metricName: string;
-  operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
+  operator: "gt" | "lt" | "eq" | "gte" | "lte";
   threshold: number;
-  severity: PerformanceAlert['severity'];
+  severity: PerformanceAlert["severity"];
   enabled: boolean;
   cooldownPeriod?: number; // minutes
-  healthcareCategory?: 'patient-safety' | 'data-privacy' | 'system-availability' | 'compliance';
+  healthcareCategory?: "patient-safety" | "data-privacy" | "system-availability" | "compliance";
 }
 
 // ============================================================================
@@ -252,7 +266,7 @@ export interface PerformanceDashboardData {
   systemMetrics: {
     current: SystemMetric[];
     resourceUsage: { resource: string; usage: number; capacity: number; }[];
-    healthStatus: 'healthy' | 'warning' | 'critical';
+    healthStatus: "healthy" | "warning" | "critical";
   };
   lastUpdated: string;
   clinicId?: string;
@@ -297,10 +311,10 @@ export interface MetricCollector {
 // ============================================================================
 
 export interface HealthcareComplianceMetric extends PerformanceMetric {
-  complianceCategory: 'lgpd-data-access' | 'anvisa-audit-trail' | 'cfm-patient-privacy';
-  sensitivityLevel: 'public' | 'internal' | 'confidential' | 'restricted';
-  accessPattern: 'read' | 'write' | 'update' | 'delete';
-  dataSubject?: 'patient' | 'healthcare-professional' | 'clinic' | 'system';
+  complianceCategory: "lgpd-data-access" | "anvisa-audit-trail" | "cfm-patient-privacy";
+  sensitivityLevel: "public" | "internal" | "confidential" | "restricted";
+  accessPattern: "read" | "write" | "update" | "delete";
+  dataSubject?: "patient" | "healthcare-professional" | "clinic" | "system";
   retentionPeriod?: number; // days
 }
 
@@ -325,10 +339,10 @@ export interface ANVISAComplianceConfig {
 // ============================================================================
 
 export type HealthCheckResult = {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   checks: {
     name: string;
-    status: 'pass' | 'fail' | 'warn';
+    status: "pass" | "fail" | "warn";
     responseTime?: number;
     error?: string;
   }[];
@@ -336,10 +350,10 @@ export type HealthCheckResult = {
 };
 
 export type PerformanceInsight = {
-  type: 'optimization' | 'alert' | 'trend' | 'anomaly';
+  type: "optimization" | "alert" | "trend" | "anomaly";
   title: string;
   description: string;
-  impact: 'low' | 'medium' | 'high' | 'critical';
+  impact: "low" | "medium" | "high" | "critical";
   recommendation: string;
   metrics: PerformanceMetric[];
   timestamp: string;

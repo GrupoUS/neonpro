@@ -328,7 +328,16 @@ export interface Database {
       [_ in never]: never;
     };
     Enums: {
-      user_role: "super_admin" | "medical_director" | "doctor" | "nurse" | "technician" | "receptionist" | "billing" | "auditor" | "patient";
+      user_role:
+        | "super_admin"
+        | "medical_director"
+        | "doctor"
+        | "nurse"
+        | "technician"
+        | "receptionist"
+        | "billing"
+        | "auditor"
+        | "patient";
       appointment_status: "scheduled" | "confirmed" | "completed" | "cancelled" | "no_show";
       appointment_type: "consultation" | "follow_up" | "procedure" | "emergency";
       notification_type: "info" | "warning" | "success" | "error" | "appointment" | "compliance";
@@ -340,9 +349,12 @@ export interface Database {
 }
 
 // Convenience type exports for common tables
-export type HealthcareProfessional = Database["public"]["Tables"]["healthcare_professionals"]["Row"];
-export type HealthcareProfessionalInsert = Database["public"]["Tables"]["healthcare_professionals"]["Insert"];
-export type HealthcareProfessionalUpdate = Database["public"]["Tables"]["healthcare_professionals"]["Update"];
+export type HealthcareProfessional =
+  Database["public"]["Tables"]["healthcare_professionals"]["Row"];
+export type HealthcareProfessionalInsert =
+  Database["public"]["Tables"]["healthcare_professionals"]["Insert"];
+export type HealthcareProfessionalUpdate =
+  Database["public"]["Tables"]["healthcare_professionals"]["Update"];
 
 export type Patient = Database["public"]["Tables"]["patients"]["Row"];
 export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
@@ -357,8 +369,10 @@ export type ClinicInsert = Database["public"]["Tables"]["clinics"]["Insert"];
 export type ClinicUpdate = Database["public"]["Tables"]["clinics"]["Update"];
 
 export type HealthcareAuditLog = Database["public"]["Tables"]["healthcare_audit_logs"]["Row"];
-export type HealthcareAuditLogInsert = Database["public"]["Tables"]["healthcare_audit_logs"]["Insert"];
-export type HealthcareAuditLogUpdate = Database["public"]["Tables"]["healthcare_audit_logs"]["Update"];
+export type HealthcareAuditLogInsert =
+  Database["public"]["Tables"]["healthcare_audit_logs"]["Insert"];
+export type HealthcareAuditLogUpdate =
+  Database["public"]["Tables"]["healthcare_audit_logs"]["Update"];
 
 export type Notification = Database["public"]["Tables"]["notifications"]["Row"];
 export type NotificationInsert = Database["public"]["Tables"]["notifications"]["Insert"];

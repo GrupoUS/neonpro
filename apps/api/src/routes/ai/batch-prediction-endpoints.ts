@@ -8,9 +8,7 @@ import { BatchJobFiltersSchema, CreateBatchJobSchema } from "./batch-prediction-
 import { BatchPredictionService } from "./batch-prediction-services";
 
 import { MAGIC_NUMBERS } from "./batch-prediction-constants-extended";
-import {
-  getErrorMessage,
-} from "./batch-prediction-helpers";
+import { getErrorMessage } from "./batch-prediction-helpers";
 
 // Initialize service instance
 const batchPredictionService = new BatchPredictionService();

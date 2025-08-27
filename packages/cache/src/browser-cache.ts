@@ -1,4 +1,4 @@
-import type { CacheOperation, CacheStats, HealthcareDataPolicy } from './types';
+import type { CacheOperation, CacheStats, HealthcareDataPolicy } from "./types";
 
 export class BrowserCacheLayer implements CacheOperation {
   private cache = new Map<string, any>();
@@ -69,11 +69,11 @@ export class BrowserCacheLayer implements CacheOperation {
     }
 
     const effectiveTTL = ttl || this.config.defaultTTL;
-    const sensitiveData = policy?.dataClassification === 'CONFIDENTIAL' || 
-                         policy?.dataClassification === 'RESTRICTED';
+    const sensitiveData = policy?.dataClassification === "CONFIDENTIAL"
+      || policy?.dataClassification === "RESTRICTED";
 
     // Don't store highly sensitive data in browser cache
-    if (policy?.dataClassification === 'RESTRICTED') {
+    if (policy?.dataClassification === "RESTRICTED") {
       return; // Skip browser caching for restricted data
     }
 
@@ -93,7 +93,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
     // Audit log for healthcare data
     if (policy?.auditRequired) {
-      this.logCacheOperation(key, 'SET', policy);
+      this.logCacheOperation(key, "SET", policy);
     }
   }
 
@@ -103,7 +103,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
     // Audit log if required
     if (entry?.auditRequired) {
-      this.logCacheOperation(key, 'DELETE', {
+      this.logCacheOperation(key, "DELETE", {
         dataClassification: entry.dataClassification,
         auditRequired: true,
       } as HealthcareDataPolicy);
@@ -120,7 +120,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
     // Log mass deletion for audit
     if (auditRequiredEntries.length > 0) {
-      this.logCacheOperation('*', 'CLEAR', {
+      this.logCacheOperation("*", "CLEAR", {
         auditRequired: true,
       } as HealthcareDataPolicy);
     }
@@ -149,7 +149,7 @@ export class BrowserCacheLayer implements CacheOperation {
       this.cache.set(key, entry);
 
       if (entry.auditRequired) {
-        this.logCacheOperation(key, 'CONSENT_GRANTED', {
+        this.logCacheOperation(key, "CONSENT_GRANTED", {
           auditRequired: true,
         } as HealthcareDataPolicy);
       }
@@ -162,7 +162,7 @@ export class BrowserCacheLayer implements CacheOperation {
       // Delete data when consent is revoked
       await this.delete(key);
 
-      this.logCacheOperation(key, 'CONSENT_REVOKED', {
+      this.logCacheOperation(key, "CONSENT_REVOKED", {
         auditRequired: true,
       } as HealthcareDataPolicy);
     }
@@ -176,7 +176,7 @@ export class BrowserCacheLayer implements CacheOperation {
       await this.delete(key);
     }
 
-    this.logCacheOperation(`patient_${patientId}:*`, 'PATIENT_DATA_CLEARED', {
+    this.logCacheOperation(`patient_${patientId}:*`, "PATIENT_DATA_CLEARED", {
       auditRequired: true,
     } as HealthcareDataPolicy);
   }
@@ -222,7 +222,7 @@ export class BrowserCacheLayer implements CacheOperation {
 
   private compress<T>(value: T): T {
     // Simple compression placeholder - in real implementation, use compression library
-    if (typeof value === 'string' && value.length > 1024) {
+    if (typeof value === "string" && value.length > 1024) {
       // Compress large strings
       return value as T;
     }
@@ -235,7 +235,7 @@ export class BrowserCacheLayer implements CacheOperation {
   }
 
   private evictLRU(): void {
-    let oldestKey = '';
+    let oldestKey = "";
     let oldestTime = Date.now();
 
     for (const [key, entry] of this.cache.entries()) {
@@ -265,7 +265,7 @@ export class BrowserCacheLayer implements CacheOperation {
     policy?: HealthcareDataPolicy,
   ): void {
     // In a real implementation, this would send to audit service
-    console.debug('Browser Cache Audit:', {
+    console.debug("Browser Cache Audit:", {
       key,
       operation,
       timestamp: new Date().toISOString(),

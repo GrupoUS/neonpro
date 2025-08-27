@@ -64,13 +64,13 @@ export class AIContextCacheLayer implements CacheOperation {
       this.stats.hits++;
       this.updateStats(startTime);
 
-      return this.config.compressionEnabled 
-        ? this.decompress(entry.value) 
+      return this.config.compressionEnabled
+        ? this.decompress(entry.value)
         : entry.value;
     } catch (error) {
       this.stats.misses++;
       this.updateStats(startTime);
-      console.error('AI context cache get error:', error);
+      console.error("AI context cache get error:", error);
       return null;
     }
   }
@@ -92,7 +92,7 @@ export class AIContextCacheLayer implements CacheOperation {
     );
 
     const serialized = JSON.stringify(value);
-    
+
     // Validate token count
     if (metadata?.tokenCount && metadata.tokenCount > this.config.maxTokensPerContext) {
       console.warn(`Context ${key} exceeds max token count: ${metadata.tokenCount}`);
@@ -105,12 +105,12 @@ export class AIContextCacheLayer implements CacheOperation {
       compressed: this.config.compressionEnabled,
       accessCount: 0,
       lastAccessed: Date.now(),
-      importance: metadata?.importance || 'medium',
-      contextType: metadata?.contextType || 'conversation',
+      importance: metadata?.importance || "medium",
+      contextType: metadata?.contextType || "conversation",
     };
 
     this.cache.set(this.buildKey(key), entry);
-    
+
     if (metadata) {
       this.contextMap.set(key, metadata);
     }
@@ -145,7 +145,7 @@ export class AIContextCacheLayer implements CacheOperation {
   async invalidateByTags(tags: string[]): Promise<void> {
     for (const [key, entry] of this.cache.entries()) {
       if (entry.tags?.some((tag: string) => tags.includes(tag))) {
-        await this.delete(key.replace(this.buildKey(''), ''));
+        await this.delete(key.replace(this.buildKey(""), ""));
       }
     }
   }
@@ -159,7 +159,7 @@ export class AIContextCacheLayer implements CacheOperation {
     const key = `conversation:${conversationId}`;
     await this.set(key, context, undefined, {
       ...metadata,
-      contextType: 'conversation',
+      contextType: "conversation",
     });
   }
 
@@ -175,7 +175,7 @@ export class AIContextCacheLayer implements CacheOperation {
     const key = `knowledge:${knowledgeId}`;
     await this.set(key, knowledge, this.config.maxTTL, { // Longer TTL for knowledge
       ...metadata,
-      contextType: 'knowledge',
+      contextType: "knowledge",
     });
   }
 
@@ -191,7 +191,7 @@ export class AIContextCacheLayer implements CacheOperation {
     const key = `embedding:${embeddingId}`;
     await this.set(key, embedding, this.config.maxTTL, {
       ...metadata,
-      contextType: 'embedding',
+      contextType: "embedding",
     });
   }
 
@@ -244,7 +244,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
   async getContextsByUser(userId: string): Promise<string[]> {
     const userContexts: string[] = [];
-    
+
     for (const [key, metadata] of this.contextMap.entries()) {
       if (metadata.userId === userId) {
         userContexts.push(key);
@@ -256,7 +256,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
   async getContextsBySession(sessionId: string): Promise<string[]> {
     const sessionContexts: string[] = [];
-    
+
     for (const [key, metadata] of this.contextMap.entries()) {
       if (metadata.sessionId === sessionId) {
         sessionContexts.push(key);
@@ -272,7 +272,7 @@ export class AIContextCacheLayer implements CacheOperation {
     byImportance: Record<string, number>;
     averageTokenCount: number;
     hitRate: number;
-    topUsers: { userId: string; contextCount: number }[];
+    topUsers: { userId: string; contextCount: number; }[];
   }> {
     const byType: Record<string, number> = {};
     const byImportance: Record<string, number> = {};
@@ -283,15 +283,15 @@ export class AIContextCacheLayer implements CacheOperation {
     for (const metadata of this.contextMap.values()) {
       // Count by type
       byType[metadata.contextType] = (byType[metadata.contextType] || 0) + 1;
-      
+
       // Count by importance
       byImportance[metadata.importance] = (byImportance[metadata.importance] || 0) + 1;
-      
+
       // Count by user
       if (metadata.userId) {
         userCounts[metadata.userId] = (userCounts[metadata.userId] || 0) + 1;
       }
-      
+
       // Token stats
       if (metadata.tokenCount) {
         totalTokens += metadata.tokenCount;
@@ -346,7 +346,7 @@ export class AIContextCacheLayer implements CacheOperation {
     for (let i = 0; i < evictCount; i++) {
       const entry = entries[i];
       if (entry) {
-        const key = entry.key.replace(this.buildKey(''), '');
+        const key = entry.key.replace(this.buildKey(""), "");
         await this.delete(key);
       }
     }
@@ -360,16 +360,18 @@ export class AIContextCacheLayer implements CacheOperation {
 
     // Importance weights
     const importanceWeights = {
-      'low': 1,
-      'medium': 2,
-      'high': 4,
-      'critical': 8,
+      "low": 1,
+      "medium": 2,
+      "high": 4,
+      "critical": 8,
     };
 
-    const importanceWeight = importanceWeights[entry.importance as keyof typeof importanceWeights] || 2;
+    const importanceWeight = importanceWeights[entry.importance as keyof typeof importanceWeights]
+      || 2;
 
     // Lower score = more likely to be evicted
-    return (age / 1000) + (accessRecency / 1000) - (accessFrequency * 1000) - (importanceWeight * 10000);
+    return (age / 1000) + (accessRecency / 1000) - (accessFrequency * 1000)
+      - (importanceWeight * 10000);
   }
 
   private updateStats(startTime: number): void {

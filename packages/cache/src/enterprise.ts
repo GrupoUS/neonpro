@@ -5,7 +5,7 @@
  */
 
 import { MultiLayerCacheManager } from "./cache-manager";
-import type { CacheStats, CacheLayer } from "./types";
+import type { CacheLayer, CacheStats } from "./types";
 
 /**
  * Enhanced cache service with enterprise features
@@ -21,13 +21,13 @@ export class EnterpriseCacheService {
     executionTime: number;
     metadata?: any;
   }> = [];
-  
+
   private metrics = {
     totalOperations: 0,
     successfulOperations: 0,
     failedOperations: 0,
     averageResponseTime: 0,
-    totalResponseTime: 0
+    totalResponseTime: 0,
   };
 
   constructor(cacheManager: MultiLayerCacheManager) {
@@ -41,17 +41,17 @@ export class EnterpriseCacheService {
     const startTime = Date.now();
     let result: T | null = null;
     let success = false;
-    
+
     try {
       result = await this.cacheManager.get<T>(key, layers);
       success = true;
       return result;
     } catch (error) {
-      this.logError('GET', key, error);
+      this.logError("GET", key, error);
       throw error;
     } finally {
       const executionTime = Date.now() - startTime;
-      this.recordOperation('GET', key, success, executionTime, { layers, found: result !== null });
+      this.recordOperation("GET", key, success, executionTime, { layers, found: result !== null });
     }
   }
 
@@ -61,16 +61,16 @@ export class EnterpriseCacheService {
   async set<T>(key: string, value: T, ttl?: number, layers?: CacheLayer[]): Promise<void> {
     const startTime = Date.now();
     let success = false;
-    
+
     try {
       await this.cacheManager.set(key, value, layers, { ttl });
       success = true;
     } catch (error) {
-      this.logError('SET', key, error);
+      this.logError("SET", key, error);
       throw error;
     } finally {
       const executionTime = Date.now() - startTime;
-      this.recordOperation('SET', key, success, executionTime, { ttl, layers });
+      this.recordOperation("SET", key, success, executionTime, { ttl, layers });
     }
   }
 
@@ -80,16 +80,16 @@ export class EnterpriseCacheService {
   async delete(key: string, layers?: CacheLayer[]): Promise<void> {
     const startTime = Date.now();
     let success = false;
-    
+
     try {
       await this.cacheManager.delete(key, layers);
       success = true;
     } catch (error) {
-      this.logError('DELETE', key, error);
+      this.logError("DELETE", key, error);
       throw error;
     } finally {
       const executionTime = Date.now() - startTime;
-      this.recordOperation('DELETE', key, success, executionTime, { layers });
+      this.recordOperation("DELETE", key, success, executionTime, { layers });
     }
   }
 
@@ -99,16 +99,16 @@ export class EnterpriseCacheService {
   async clearCache(): Promise<void> {
     const startTime = Date.now();
     let success = false;
-    
+
     try {
       await this.cacheManager.clear();
       success = true;
     } catch (error) {
-      this.logError('CLEAR_ALL', '*', error);
+      this.logError("CLEAR_ALL", "*", error);
       throw error;
     } finally {
       const executionTime = Date.now() - startTime;
-      this.recordOperation('CLEAR_ALL', '*', success, executionTime);
+      this.recordOperation("CLEAR_ALL", "*", success, executionTime);
     }
   }
 
@@ -140,21 +140,21 @@ export class EnterpriseCacheService {
     };
   } {
     const cacheStats = this.cacheManager.getStats();
-    const successRate = this.metrics.totalOperations > 0 
-      ? (this.metrics.successfulOperations / this.metrics.totalOperations) * 100 
+    const successRate = this.metrics.totalOperations > 0
+      ? (this.metrics.successfulOperations / this.metrics.totalOperations) * 100
       : 0;
-    
+
     return {
       performance: {
         ...this.metrics,
-        successRate
+        successRate,
       },
       cache: cacheStats,
       audit: {
         totalEntries: this.auditLog.length,
         recentEntries: this.auditLog.slice(-10), // Last 10 entries
-        successRate
-      }
+        successRate,
+      },
     };
   }
 
@@ -164,17 +164,17 @@ export class EnterpriseCacheService {
   async clearPatientData(patientId: string): Promise<void> {
     const startTime = Date.now();
     let success = false;
-    
+
     try {
       await this.cacheManager.clearPatientData(patientId);
       success = true;
     } catch (error) {
-      this.logError('CLEAR_PATIENT_DATA', patientId, error);
+      this.logError("CLEAR_PATIENT_DATA", patientId, error);
       throw error;
     } finally {
       const executionTime = Date.now() - startTime;
-      this.recordOperation('CLEAR_PATIENT_DATA', patientId, success, executionTime, { 
-        reason: 'LGPD_COMPLIANCE' 
+      this.recordOperation("CLEAR_PATIENT_DATA", patientId, success, executionTime, {
+        reason: "LGPD_COMPLIANCE",
       });
     }
   }
@@ -189,15 +189,17 @@ export class EnterpriseCacheService {
   /**
    * Export audit trail for regulatory compliance
    */
-  exportAuditTrail(format: 'json' | 'csv' = 'json'): string {
-    if (format === 'csv') {
-      const headers = 'Timestamp,Operation,Key,Layer,Success,ExecutionTime,Metadata\n';
-      const rows = this.auditLog.map(entry => 
-        `${entry.timestamp},${entry.operation},${entry.key},${entry.layer || 'N/A'},${entry.success},${entry.executionTime},${JSON.stringify(entry.metadata || {})}`
-      ).join('\n');
+  exportAuditTrail(format: "json" | "csv" = "json"): string {
+    if (format === "csv") {
+      const headers = "Timestamp,Operation,Key,Layer,Success,ExecutionTime,Metadata\n";
+      const rows = this.auditLog.map(entry =>
+        `${entry.timestamp},${entry.operation},${entry.key},${
+          entry.layer || "N/A"
+        },${entry.success},${entry.executionTime},${JSON.stringify(entry.metadata || {})}`
+      ).join("\n");
       return headers + rows;
     }
-    
+
     return JSON.stringify(this.auditLog, null, 2);
   }
 
@@ -205,33 +207,33 @@ export class EnterpriseCacheService {
    * Health check for enterprise monitoring
    */
   async healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     metrics: any;
     issues: string[];
   }> {
     const issues: string[] = [];
-    let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-    
+    let status: "healthy" | "degraded" | "unhealthy" = "healthy";
+
     // Check success rate
-    const successRate = this.metrics.totalOperations > 0 
-      ? (this.metrics.successfulOperations / this.metrics.totalOperations) * 100 
+    const successRate = this.metrics.totalOperations > 0
+      ? (this.metrics.successfulOperations / this.metrics.totalOperations) * 100
       : 100;
-    
+
     if (successRate < 95) {
       issues.push(`Low success rate: ${successRate.toFixed(2)}%`);
-      status = successRate < 90 ? 'unhealthy' : 'degraded';
+      status = successRate < 90 ? "unhealthy" : "degraded";
     }
-    
+
     // Check average response time
     if (this.metrics.averageResponseTime > 1000) {
       issues.push(`High average response time: ${this.metrics.averageResponseTime}ms`);
-      status = this.metrics.averageResponseTime > 2000 ? 'unhealthy' : 'degraded';
+      status = this.metrics.averageResponseTime > 2000 ? "unhealthy" : "degraded";
     }
-    
+
     return {
       status,
       metrics: this.getMetrics(),
-      issues
+      issues,
     };
   }
 
@@ -239,11 +241,11 @@ export class EnterpriseCacheService {
    * Record operation for audit and metrics
    */
   private recordOperation(
-    operation: string, 
-    key: string, 
-    success: boolean, 
-    executionTime: number, 
-    metadata?: any
+    operation: string,
+    key: string,
+    success: boolean,
+    executionTime: number,
+    metadata?: any,
   ): void {
     // Update metrics
     this.metrics.totalOperations++;
@@ -252,10 +254,11 @@ export class EnterpriseCacheService {
     } else {
       this.metrics.failedOperations++;
     }
-    
+
     this.metrics.totalResponseTime += executionTime;
-    this.metrics.averageResponseTime = this.metrics.totalResponseTime / this.metrics.totalOperations;
-    
+    this.metrics.averageResponseTime = this.metrics.totalResponseTime
+      / this.metrics.totalOperations;
+
     // Add to audit log
     this.auditLog.push({
       timestamp: new Date().toISOString(),
@@ -263,9 +266,9 @@ export class EnterpriseCacheService {
       key,
       success,
       executionTime,
-      metadata
+      metadata,
     });
-    
+
     // Maintain audit log size (keep last 10000 entries)
     if (this.auditLog.length > 10000) {
       this.auditLog.splice(0, this.auditLog.length - 10000);
@@ -284,7 +287,9 @@ export class EnterpriseCacheService {
  * Factory for creating enterprise cache services
  */
 export class CacheServiceFactory {
-  static createEnterpriseCacheService(cacheManager: MultiLayerCacheManager): EnterpriseCacheService {
+  static createEnterpriseCacheService(
+    cacheManager: MultiLayerCacheManager,
+  ): EnterpriseCacheService {
     return new EnterpriseCacheService(cacheManager);
   }
 }
@@ -292,5 +297,5 @@ export class CacheServiceFactory {
 /**
  * Default enterprise cache instance
  */
-export const createEnterpriseCacheService = (cacheManager: MultiLayerCacheManager) => 
+export const createEnterpriseCacheService = (cacheManager: MultiLayerCacheManager) =>
   new EnterpriseCacheService(cacheManager);

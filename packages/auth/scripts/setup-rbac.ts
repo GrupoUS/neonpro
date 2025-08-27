@@ -251,7 +251,8 @@ class RBACSetup {
     const successCount = results.filter((r) => r.success).length;
     const { length: totalSteps } = results;
 
-    results.forEach((result, _index) => {      if (result.details) {
+    results.forEach((result, _index) => {
+      if (result.details) {
       }
     });
 

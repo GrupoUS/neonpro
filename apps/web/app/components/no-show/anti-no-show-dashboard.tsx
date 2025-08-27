@@ -78,6 +78,30 @@ interface DashboardStats {
   noShowRate: number;
   prevented: number;
   cost_savings: number;
+}
+
+// ML Pipeline interfaces
+interface ModelVersion {
+  id: string;
+  version: string;
+  status: string;
+  accuracy?: number;
+  created_at: string;
+}
+
+interface ABTest {
+  id: string;
+  name: string;
+  status: string;
+  confidence?: number;
+  created_at: string;
+}
+
+interface DriftStatus {
+  status: string;
+  drift_score?: number;
+  last_check: string;
+  alerts?: string[];
   modelAccuracy: number;
 }
 
@@ -170,9 +194,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
   >("all");
 
   // ML Pipeline States
-  const [modelVersions, setModelVersions] = useState<any[]>([]);
-  const [activeABTests, setActiveABTests] = useState<any[]>([]);
-  const [driftStatus, setDriftStatus] = useState<any>();
+  const [modelVersions, setModelVersions] = useState<ModelVersion[]>([]);
+  const [activeABTests, setActiveABTests] = useState<ABTest[]>([]);
+  const [driftStatus, setDriftStatus] = useState<DriftStatus | undefined>();
   const [isRunningMaintenance, setIsRunningMaintenance] = useState(false);
   const [selectedTab, setSelectedTab] = useState("overview");
 
@@ -541,6 +565,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
       }
     }
   };
+
+  const getRiskLevelText = (level: string) => {
+    switch (level) {
       case "high": {
         return "Alto";
       }

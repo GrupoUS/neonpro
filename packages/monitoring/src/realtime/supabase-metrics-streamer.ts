@@ -1,7 +1,7 @@
 /**
  * Supabase Real-time Metrics Streamer for NeonPro Healthcare
  * ==========================================================
- * 
+ *
  * Streams performance metrics to Supabase in real-time for:
  * - Live dashboard updates
  * - Healthcare compliance audit trails
@@ -9,14 +9,14 @@
  * - Alert and threshold monitoring
  */
 
-import { createClient } from '@neonpro/database';
-import type { 
-  PerformanceMetric, 
-  HealthcareContext, 
+import { createClient } from "@neonpro/database";
+import type {
+  HealthcareContext,
+  PerformanceAlert,
+  PerformanceMetric,
   RealtimeMetricEvent,
   SupabaseStreamingConfig,
-  PerformanceAlert 
-} from '../types';
+} from "../types";
 
 export class SupabaseMetricsStreamer {
   private readonly supabase: any;
@@ -28,11 +28,11 @@ export class SupabaseMetricsStreamer {
 
   constructor(config: SupabaseStreamingConfig) {
     this.config = {
-      tableName: 'performance_metrics',
+      tableName: "performance_metrics",
       enableCompression: true,
       batchSize: 50,
       flushInterval: 5000, // 5 seconds
-      ...config
+      ...config,
     };
 
     this.supabase = createClient();
@@ -45,8 +45,8 @@ export class SupabaseMetricsStreamer {
     try {
       // Test connection
       const { data, error } = await this.supabase
-        .from('performance_metrics')
-        .select('count(*)')
+        .from("performance_metrics")
+        .select("count(*)")
         .limit(1);
 
       if (error && !error.message?.includes('relation "performance_metrics" does not exist')) {
@@ -55,15 +55,14 @@ export class SupabaseMetricsStreamer {
 
       // Setup metric buffer flushing
       this.setupPeriodicFlush();
-      
+
       // Subscribe to real-time updates for alerts
       this.setupRealtimeSubscriptions();
 
       this.isConnected = true;
-      console.log('✅ Supabase metrics streamer connected');
-
+      console.log("✅ Supabase metrics streamer connected");
     } catch (error) {
-      console.error('❌ Failed to connect Supabase metrics streamer:', error);
+      console.error("❌ Failed to connect Supabase metrics streamer:", error);
       throw error;
     }
   }
@@ -83,7 +82,7 @@ export class SupabaseMetricsStreamer {
     }
 
     this.isConnected = false;
-    console.log('🛑 Supabase metrics streamer disconnected');
+    console.log("🛑 Supabase metrics streamer disconnected");
   }
 
   /**
@@ -91,7 +90,7 @@ export class SupabaseMetricsStreamer {
    */
   async streamMetric(metric: PerformanceMetric): Promise<void> {
     if (!this.isConnected) {
-      console.warn('⚠️ Metrics streamer not connected, buffering metric');
+      console.warn("⚠️ Metrics streamer not connected, buffering metric");
     }
 
     // Enrich metric with healthcare context
@@ -100,7 +99,7 @@ export class SupabaseMetricsStreamer {
       ...this.healthcareContext,
       streamed_at: new Date().toISOString(),
       clinic_id: this.config.clinicId || this.healthcareContext.clinicId,
-      user_id: this.healthcareContext.userId
+      user_id: this.healthcareContext.userId,
     };
 
     // Add to buffer
@@ -142,33 +141,34 @@ export class SupabaseMetricsStreamer {
     try {
       // Insert event into alerts table for real-time dashboard updates
       const { error } = await this.supabase
-        .from('performance_alerts')
+        .from("performance_alerts")
         .insert({
           type: event.type,
           severity: event.severity,
           metric_name: event.metric.name,
           metric_value: event.metric.value,
           metric_category: event.metric.category,
-          message: `${event.metric.name} ${event.severity}: ${event.metric.value}${event.metric.unit || ''}`,
+          message: `${event.metric.name} ${event.severity}: ${event.metric.value}${
+            event.metric.unit || ""
+          }`,
           metadata: {
             metric: event.metric,
             healthcare_context: this.healthcareContext,
-            event_data: event
+            event_data: event,
           },
           clinic_id: this.config.clinicId || this.healthcareContext.clinicId,
           user_id: this.healthcareContext.userId,
           timestamp: event.timestamp,
-          acknowledged: false
+          acknowledged: false,
         });
 
       if (error) {
-        console.error('❌ Failed to send real-time event:', error);
+        console.error("❌ Failed to send real-time event:", error);
       } else {
         console.log(`📡 Real-time event sent: ${event.type} - ${event.severity}`);
       }
-
     } catch (error) {
-      console.error('❌ Error sending real-time event:', error);
+      console.error("❌ Error sending real-time event:", error);
     }
   }
 
@@ -176,24 +176,24 @@ export class SupabaseMetricsStreamer {
    * Get recent metrics for dashboard
    */
   async getRecentMetrics(
-    category?: PerformanceMetric['category'], 
+    category?: PerformanceMetric["category"],
     limit = 100,
-    timeframe = '1 hour'
+    timeframe = "1 hour",
   ): Promise<PerformanceMetric[]> {
     try {
       let query = this.supabase
-        .from('performance_metrics')
-        .select('*')
-        .gte('timestamp', new Date(Date.now() - this.parseTimeframe(timeframe)).toISOString())
-        .order('timestamp', { ascending: false })
+        .from("performance_metrics")
+        .select("*")
+        .gte("timestamp", new Date(Date.now() - this.parseTimeframe(timeframe)).toISOString())
+        .order("timestamp", { ascending: false })
         .limit(limit);
 
       if (category) {
-        query = query.eq('category', category);
+        query = query.eq("category", category);
       }
 
       if (this.config.clinicId || this.healthcareContext.clinicId) {
-        query = query.eq('clinic_id', this.config.clinicId || this.healthcareContext.clinicId);
+        query = query.eq("clinic_id", this.config.clinicId || this.healthcareContext.clinicId);
       }
 
       const { data, error } = await query;
@@ -201,9 +201,8 @@ export class SupabaseMetricsStreamer {
       if (error) throw error;
 
       return data || [];
-
     } catch (error) {
-      console.error('❌ Failed to get recent metrics:', error);
+      console.error("❌ Failed to get recent metrics:", error);
       return [];
     }
   }
@@ -242,23 +241,22 @@ export class SupabaseMetricsStreamer {
         workflow_type: this.healthcareContext.workflowType || null,
         device_type: this.healthcareContext.deviceType || null,
         network_connection: this.healthcareContext.networkConnection || null,
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       }));
 
       const { error } = await this.supabase
-        .from('performance_metrics')
+        .from("performance_metrics")
         .insert(formattedMetrics);
 
       if (error) {
-        console.error('❌ Failed to flush metrics to Supabase:', error);
+        console.error("❌ Failed to flush metrics to Supabase:", error);
         // Re-add metrics to buffer for retry
         this.metricBuffer.unshift(...metricsToFlush);
       } else {
         console.log(`📊 Flushed ${formattedMetrics.length} metrics to Supabase`);
       }
-
     } catch (error) {
-      console.error('❌ Error flushing metrics:', error);
+      console.error("❌ Error flushing metrics:", error);
       // Re-add metrics to buffer for retry
       this.metricBuffer.unshift(...metricsToFlush);
     }
@@ -270,18 +268,18 @@ export class SupabaseMetricsStreamer {
   private setupRealtimeSubscriptions(): void {
     // Subscribe to performance alerts for real-time dashboard updates
     this.supabase
-      .channel('performance_monitoring')
+      .channel("performance_monitoring")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'performance_alerts'
+          event: "INSERT",
+          schema: "public",
+          table: "performance_alerts",
         },
         (payload: any) => {
-          console.log('📡 Real-time alert received:', payload.new);
+          console.log("📡 Real-time alert received:", payload.new);
           // Could emit to dashboard or notification system
-        }
+        },
       )
       .subscribe();
   }
@@ -291,15 +289,15 @@ export class SupabaseMetricsStreamer {
    */
   private isCriticalMetric(metric: PerformanceMetric): boolean {
     const criticalMetrics = [
-      'system-down',
-      'error-rate',
-      'database-connection-failure',
-      'memory-exhaustion',
-      'security-violation'
+      "system-down",
+      "error-rate",
+      "database-connection-failure",
+      "memory-exhaustion",
+      "security-violation",
     ];
 
-    return criticalMetrics.includes(metric.name) || 
-           (metric.metadata?.severity === 'critical');
+    return criticalMetrics.includes(metric.name)
+      || (metric.metadata?.severity === "critical");
   }
 
   /**
@@ -307,10 +305,10 @@ export class SupabaseMetricsStreamer {
    */
   private parseTimeframe(timeframe: string): number {
     const units = {
-      'minute': 60 * 1000,
-      'hour': 60 * 60 * 1000,
-      'day': 24 * 60 * 60 * 1000,
-      'week': 7 * 24 * 60 * 60 * 1000
+      "minute": 60 * 1000,
+      "hour": 60 * 60 * 1000,
+      "day": 24 * 60 * 60 * 1000,
+      "week": 7 * 24 * 60 * 60 * 1000,
     };
 
     const match = timeframe.match(/(\d+)\s*(minute|hour|day|week)s?/);

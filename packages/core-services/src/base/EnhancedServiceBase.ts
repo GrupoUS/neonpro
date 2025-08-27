@@ -347,7 +347,10 @@ export abstract class EnhancedServiceBase {
     event: string,
     details: unknown,
   ): Promise<void> {
-    await this.auditOperation("SERVICE_LIFECYCLE", { event, ...details });
+    await this.auditOperation("SERVICE_LIFECYCLE", {
+      event,
+      ...(details as Record<string, unknown>),
+    });
   }
 
   /**
@@ -426,7 +429,7 @@ export abstract class EnhancedServiceBase {
           type: event,
           category: "service",
           action: event,
-          properties,
+          properties: properties as Record<string, unknown>,
           timestamp: Date.now(),
           metadata: {
             source: self.config.serviceName,
@@ -562,7 +565,7 @@ export abstract class EnhancedServiceBase {
 
     try {
       // Test audit service
-      const auditStats = await this.audit.getAuditStats();
+      const auditStats = await this.audit.getAuditStats() as Record<string, unknown>;
       results.audit = { status: "healthy", ...auditStats };
     } catch (error) {
       results.audit = { status: "unhealthy", error: (error as Error).message };

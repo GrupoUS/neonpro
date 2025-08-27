@@ -568,8 +568,9 @@ class QualityReportGenerator {
   }
 
   private async generateSummary(): Promise<void> {
-    const summary = this.generateSummaryData();    // biome-ignore lint/suspicious/noConsole: Required for quality report output
-    // console.log(
+    const summary = this.generateSummaryData();
+    // biome-ignore lint/suspicious/noConsole: Required for quality report output
+    console.log(
       `   • Coverage: ${
         Math.round(
           (this.metrics.coverage?.statements
@@ -581,11 +582,11 @@ class QualityReportGenerator {
       }%`,
     );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
-    // console.log(
+    console.log(
       `   • Security Score: ${this.metrics.security?.securityScore.toFixed(1)}/10`,
     );
     // biome-ignore lint/suspicious/noConsole: Required for quality report output
-    // console.log(
+    console.log(
       `   • Bundle Size: ${this.metrics.performance?.bundleSize.toFixed(1)}MB`,
     );
 

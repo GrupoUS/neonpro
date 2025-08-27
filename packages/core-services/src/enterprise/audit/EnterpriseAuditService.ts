@@ -85,8 +85,8 @@ export class EnterpriseAuditService {
   private auditChain: AuditRecord[] = [];
   private retentionPolicies: RetentionPolicy[] = [];
   private readonly encryptionKey: Buffer;
-  private readonly lastHash = "0".repeat(64); // Genesis hash
-  private cleanupInterval: NodeJS.Timeout | null = undefined;
+  private lastHash = "0".repeat(64); // Genesis hash
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor() {
     this.encryptionKey = this.initializeEncryptionKey();
@@ -188,13 +188,13 @@ export class EnterpriseAuditService {
 
     if (query.userId) {
       filteredRecords = filteredRecords.filter(
-        (r) => r.details?.userId === query.userId,
+        (r) => (r.details as Record<string, unknown>)?.userId === query.userId,
       );
     }
 
     if (query.patientId) {
       filteredRecords = filteredRecords.filter(
-        (r) => r.details?.patientId === query.patientId,
+        (r) => (r.details as Record<string, unknown>)?.patientId === query.patientId,
       );
     }
 
@@ -552,17 +552,19 @@ export class EnterpriseAuditService {
       return data;
     }
 
-    const encrypted: unknown = {};
+    const encrypted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(data)) {
       if (this.isSensitiveField(key)) {
-        const cipher = crypto.createCipher("aes-256-gcm", this.encryptionKey);
+        const iv = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv("aes-256-cbc", this.encryptionKey, iv);
         let encryptedValue = cipher.update(
           JSON.stringify(value),
           "utf8",
           "hex",
         );
         encryptedValue += cipher.final("hex");
-        encrypted[key] = `encrypted:${encryptedValue}`;
+        const encryptedData = iv.toString("hex") + ":" + encryptedValue;
+        encrypted[key] = `encrypted:${encryptedData}`;
       } else {
         encrypted[key] = value;
       }
@@ -576,16 +578,23 @@ export class EnterpriseAuditService {
       return data;
     }
 
-    const decrypted: unknown = {};
-    for (const [key, value] of Object.entries(data)) {
+    const decrypted: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
       if (typeof value === "string" && value.startsWith("encrypted:")) {
         try {
           const encryptedData = value.replace("encrypted:", "");
-          const decipher = crypto.createDecipher(
-            "aes-256-gcm",
+          const [ivHex, encryptedValue] = encryptedData.split(":");
+          if (!ivHex || !encryptedValue) {
+            decrypted[key] = "[DECRYPTION_FAILED]";
+            continue;
+          }
+          const iv = Buffer.from(ivHex, "hex");
+          const decipher = crypto.createDecipheriv(
+            "aes-256-cbc",
             this.encryptionKey,
+            iv,
           );
-          let decryptedValue = decipher.update(encryptedData, "hex", "utf8");
+          let decryptedValue = decipher.update(encryptedValue, "hex", "utf8");
           decryptedValue += decipher.final("utf8");
           decrypted[key] = JSON.parse(decryptedValue);
         } catch {
@@ -619,7 +628,7 @@ export class EnterpriseAuditService {
     return (
       event.eventType.toLowerCase().includes("patient")
       || event.eventType.toLowerCase().includes("personal")
-      || event.details?.patientId !== undefined
+      || (event.details as Record<string, unknown>)?.patientId !== undefined
     );
   }
 
@@ -635,7 +644,7 @@ export class EnterpriseAuditService {
     return (
       event.eventType.toLowerCase().includes("doctor")
       || event.eventType.toLowerCase().includes("medical")
-      || event.details?.doctorId !== undefined
+      || (event.details as Record<string, unknown>)?.doctorId !== undefined
     );
   }
 
@@ -654,7 +663,7 @@ export class EnterpriseAuditService {
     // Check for data access without proper authorization
     if (
       record.eventType.includes("PATIENT_DATA_ACCESS")
-      && !record.details?.authorized
+      && !(record.details as Record<string, unknown>)?.authorized
     ) {
       violations.push("Unauthorized patient data access");
     }
@@ -665,7 +674,8 @@ export class EnterpriseAuditService {
         .filter(
           (r) =>
             r.eventType.includes("LOGIN_FAILED")
-            && r.details?.userId === record.details?.userId,
+            && (r.details as Record<string, unknown>)?.userId
+              === (record.details as Record<string, unknown>)?.userId,
         )
         .filter(
           (r) => Date.now() - new Date(r.timestamp).getTime() < 60 * 60 * 1000,
@@ -836,9 +846,10 @@ export class EnterpriseAuditService {
     const recommendations = [];
 
     patterns.forEach((pattern) => {
-      if (pattern.riskLevel === "high" || pattern.riskLevel === "critical") {
+      const typedPattern = pattern as { riskLevel?: string; type?: string; };
+      if (typedPattern.riskLevel === "high" || typedPattern.riskLevel === "critical") {
         recommendations.push(
-          `Investigate ${pattern.type} patterns showing high frequency`,
+          `Investigate ${typedPattern.type} patterns showing high frequency`,
         );
       }
     });
@@ -867,7 +878,7 @@ export class EnterpriseAuditService {
         record.service,
         record.eventType,
         record.timestamp,
-        record.details?.userId || "",
+        (record.details as Record<string, unknown>)?.userId || "",
         JSON.stringify(record.details).replaceAll('"', '""'),
       ];
       rows.push(row.join(","));
@@ -936,7 +947,7 @@ export class EnterpriseAuditService {
   async shutdown(): Promise<void> {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
-      this.cleanupInterval = undefined;
+      this.cleanupInterval = null;
     }
 
     // Final integrity check

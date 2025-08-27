@@ -468,8 +468,9 @@ export function DigitalSignature({
                 <CardContent>
                   <div className="space-y-4">
                     {mockCertificates.map((cert) => (
-                      <div
-                        className={`cursor-pointer rounded-lg border p-4 transition-colors ${
+                      <button
+                        type="button"
+                        className={`cursor-pointer rounded-lg border p-4 transition-colors text-left w-full ${
                           selectedCertificate?.id === cert.id
                             ? "border-blue-500 bg-blue-50"
                             : "border-gray-200 hover:border-gray-300"
@@ -482,8 +483,6 @@ export function DigitalSignature({
                             handleCertificateSelect(cert);
                           }
                         }}
-                        role="button"
-                        tabIndex={0}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -533,7 +532,7 @@ export function DigitalSignature({
                             <CheckCircle className="h-5 w-5 text-blue-600" />
                           )}
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </CardContent>

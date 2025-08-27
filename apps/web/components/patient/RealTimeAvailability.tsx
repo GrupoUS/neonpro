@@ -111,7 +111,7 @@ interface CampaignPerformance {
 
 export default function BehavioralCRM() {
   // Estado principal
-  const [patients, _setPatients] = useState<PatientBehaviorProfile[]>([
+  const [patients] = useState<PatientBehaviorProfile[]>([
     {
       id: "1",
       patientId: "p001",
@@ -232,7 +232,7 @@ export default function BehavioralCRM() {
     },
   ]);
 
-  const [campaigns, _setCampaigns] = useState<CampaignPerformance[]>([
+  const [campaigns] = useState<CampaignPerformance[]>([
     {
       id: "1",
       name: "Preventive Care Reminder",

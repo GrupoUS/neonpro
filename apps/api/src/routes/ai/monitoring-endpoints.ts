@@ -39,12 +39,12 @@ class MonitoringService {
   private static getSupabase() {
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
+
     if (!url || !key) {
       console.warn("Supabase configuration missing, some monitoring features may not work");
       return null;
     }
-    
+
     return createClient(url, key);
   }
 

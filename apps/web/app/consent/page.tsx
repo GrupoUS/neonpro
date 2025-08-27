@@ -947,7 +947,7 @@ export default function ConsentManagementPage() {
                           <TableHead scope="col">Ações</TableHead>
                         </TableRow>
                       </TableHeader>
-                      <TableBody role="rowgroup">
+                      <TableBody>
                         {filteredConsents.map((consent) => (
                           <TableRow
                             aria-describedby={`consent-${consent.id}-description`}

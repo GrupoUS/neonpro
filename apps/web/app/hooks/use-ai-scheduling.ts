@@ -123,18 +123,18 @@ export const useAIScheduling = (
         }/scheduling/${tenantId}`;
         wsConnectionRef.current = new WebSocket(wsUrl);
 
-        wsConnectionRef.current.onopen = () => {};
+        wsConnectionRef.current.addEventListener("open", () => {});
 
-        wsConnectionRef.current.onmessage = (event) => {
+        wsConnectionRef.current.addEventListener("message", (event) => {
           const data = JSON.parse(event.data);
           handleRealtimeUpdate(data);
-        };
+        });
 
-        wsConnectionRef.current.onclose = () => {
+        wsConnectionRef.current.addEventListener("close", () => {
           setTimeout(connectWebSocket, 5000);
-        };
+        });
 
-        wsConnectionRef.current.onerror = (_error) => {};
+        wsConnectionRef.current.addEventListener("error", (_error) => {});
       } catch {}
     };
 

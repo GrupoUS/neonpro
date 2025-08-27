@@ -12,6 +12,41 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 // =====================================================================================
+// TYPE DEFINITIONS
+// =====================================================================================
+
+interface RetentionMetric {
+  last_appointment_date: string;
+  churn_risk_level: ChurnRiskLevel;
+  retention_rate: number;
+  lifetime_value: number;
+}
+
+interface RetentionPrediction {
+  prediction_date: string;
+  risk_level: ChurnRiskLevel;
+  churn_probability: number;
+}
+
+interface RetentionStrategy {
+  is_active: boolean;
+  execution_count: number;
+  success_rate?: number;
+}
+
+interface RetentionMetricsResponse {
+  metrics: RetentionMetric[];
+}
+
+interface RetentionPredictionsResponse {
+  predictions: RetentionPrediction[];
+}
+
+interface RetentionStrategiesResponse {
+  strategies: RetentionStrategy[];
+}
+
+// =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
 
@@ -149,7 +184,7 @@ export async function GET(
     );
 
     // Collect additional detailed data based on parameters
-    const additionalData: unknown = {};
+    const additionalData: Record<string, unknown> = {};
 
     if (includeMetrics) {
       const metrics = await retentionService.getClinicRetentionMetrics(
@@ -159,13 +194,15 @@ export async function GET(
       );
 
       // Filter metrics by date range
-      const filteredMetrics = metrics.metrics.filter((metric: any) => {
-        const metricDate = new Date(metric.last_appointment_date);
-        return (
-          metricDate >= new Date(periodStart)
-          && metricDate <= new Date(periodEnd)
-        );
-      });
+      const filteredMetrics = (metrics as RetentionMetricsResponse).metrics.filter(
+        (metric: RetentionMetric) => {
+          const metricDate = new Date(metric.last_appointment_date);
+          return (
+            metricDate >= new Date(periodStart)
+            && metricDate <= new Date(periodEnd)
+          );
+        },
+      );
 
       additionalData.detailedMetrics = {
         metrics: filteredMetrics,
@@ -193,8 +230,8 @@ export async function GET(
       );
 
       // Filter predictions by date range
-      const filteredPredictions = predictions.predictions.filter(
-        (prediction: unknown) => {
+      const filteredPredictions = (predictions as RetentionPredictionsResponse).predictions.filter(
+        (prediction: RetentionPrediction) => {
           const predictionDate = new Date(prediction.prediction_date);
           return (
             predictionDate >= new Date(periodStart)
@@ -208,19 +245,19 @@ export async function GET(
         summary: {
           total_predictions: filteredPredictions.length,
           critical_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.CRITICAL,
+            (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.CRITICAL,
           ).length,
           high_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.HIGH,
+            (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.HIGH,
           ).length,
           medium_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.MEDIUM,
+            (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.MEDIUM,
           ).length,
           low_risk: filteredPredictions.filter(
-            (p) => p.risk_level === ChurnRiskLevel.LOW,
+            (p: RetentionPrediction) => p.risk_level === ChurnRiskLevel.LOW,
           ).length,
           average_churn_probability: filteredPredictions.reduce(
-                (sum, p) => sum + p.churn_probability,
+                (sum: number, p: RetentionPrediction) => sum + p.churn_probability,
                 0,
               ) / filteredPredictions.length || 0,
         },
@@ -235,21 +272,24 @@ export async function GET(
 
       additionalData.strategies = {
         all_strategies: strategies,
-        active_strategies: strategies.strategies.filter(
-          (s: unknown) => s.is_active,
+        active_strategies: (strategies as RetentionStrategiesResponse).strategies.filter(
+          (s: RetentionStrategy) => s.is_active,
         ),
         summary: {
-          total_strategies: strategies.strategies.length,
-          active_count: strategies.strategies.filter((s: unknown) => s.is_active)
-            .length,
-          total_executions: strategies.strategies.reduce(
-            (sum: number, s: unknown) => sum + s.execution_count,
+          total_strategies: (strategies as RetentionStrategiesResponse).strategies.length,
+          active_count:
+            (strategies as RetentionStrategiesResponse).strategies.filter((s: RetentionStrategy) =>
+              s.is_active
+            )
+              .length,
+          total_executions: (strategies as RetentionStrategiesResponse).strategies.reduce(
+            (sum: number, s: RetentionStrategy) => sum + s.execution_count,
             0,
           ),
-          average_success_rate: strategies.strategies.reduce(
-                (sum: number, s: unknown) => sum + (s.success_rate || 0),
+          average_success_rate: (strategies as RetentionStrategiesResponse).strategies.reduce(
+                (sum: number, s: RetentionStrategy) => sum + (s.success_rate || 0),
                 0,
-              ) / strategies.strategies.length || 0,
+              ) / (strategies as RetentionStrategiesResponse).strategies.length || 0,
         },
       };
     }
@@ -310,9 +350,11 @@ export async function GET(
       critical_risk_patients: dashboardData.churn_risk_distribution.critical || 0,
       high_risk_patients: dashboardData.churn_risk_distribution.high || 0,
       low_engagement_patients: dashboardData.engagement_metrics.low_engagement_count || 0,
-      recent_strategy_failures: additionalData.strategies?.all_strategies?.filter(
-        (s: unknown) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
-      ).length || 0,
+      recent_strategy_failures:
+        (additionalData.strategies as { all_strategies?: RetentionStrategiesResponse; })
+          ?.all_strategies?.strategies?.filter(
+            (s: RetentionStrategy) => s.execution_count > 0 && (s.success_rate || 0) < 0.5,
+          ).length || 0,
     };
 
     // Compile final response

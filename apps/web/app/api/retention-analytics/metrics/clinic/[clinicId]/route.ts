@@ -6,6 +6,7 @@
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { createClient } from "@/app/utils/supabase/server";
+import { type DatabaseRow, type RetentionMetric, safeParseNumber } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -25,6 +26,41 @@ const ClinicMetricsQuerySchema = z.object({
   endDate: z.string().optional(),
   riskLevel: z.enum(["low", "medium", "high", "critical"]).optional(),
 });
+
+// =====================================================================================
+// TYPE DEFINITIONS
+// =====================================================================================
+
+interface ClinicRetentionMetric {
+  patient_id: string;
+  last_appointment_date: string;
+  retention_score: number;
+  retention_rate: number;
+  churn_risk: string;
+  churn_risk_level: "low" | "medium" | "high" | "critical";
+  churn_risk_score: number;
+  total_visits: number;
+  lifetime_value: number;
+}
+
+// Type guard for clinic retention metrics
+function isClinicRetentionMetric(obj: unknown): obj is ClinicRetentionMetric {
+  return (
+    typeof obj === "object"
+    && obj !== null
+    && typeof (obj as ClinicRetentionMetric).patient_id === "string"
+    && typeof (obj as ClinicRetentionMetric).last_appointment_date === "string"
+    && typeof (obj as ClinicRetentionMetric).retention_score === "number"
+    && typeof (obj as ClinicRetentionMetric).retention_rate === "number"
+    && typeof (obj as ClinicRetentionMetric).churn_risk === "string"
+    && ["low", "medium", "high", "critical"].includes(
+      (obj as ClinicRetentionMetric).churn_risk_level,
+    )
+    && typeof (obj as ClinicRetentionMetric).churn_risk_score === "number"
+    && typeof (obj as ClinicRetentionMetric).total_visits === "number"
+    && typeof (obj as ClinicRetentionMetric).lifetime_value === "number"
+  );
+}
 
 // =====================================================================================
 // GET CLINIC RETENTION METRICS
@@ -127,61 +163,72 @@ export async function GET(
     );
 
     // Apply additional filters if provided
-    let filteredMetrics = metrics.metrics;
+    let filteredMetrics = metrics.metrics as ClinicRetentionMetric[];
 
     if (startDate || endDate || riskLevel) {
-      filteredMetrics = metrics.metrics.filter((metric: unknown) => {
-        // Filter by date range
-        if (
-          startDate
-          && new Date(metric.last_appointment_date) < new Date(startDate)
-        ) {
-          return false;
-        }
-        if (
-          endDate
-          && new Date(metric.last_appointment_date) > new Date(endDate)
-        ) {
-          return false;
-        }
+      filteredMetrics = (metrics.metrics as ClinicRetentionMetric[]).filter(
+        (metric: ClinicRetentionMetric) => {
+          // Filter by date range
+          if (
+            startDate
+            && new Date(metric.last_appointment_date) < new Date(startDate)
+          ) {
+            return false;
+          }
+          if (
+            endDate
+            && new Date(metric.last_appointment_date) > new Date(endDate)
+          ) {
+            return false;
+          }
 
-        // Filter by risk level
-        if (riskLevel && metric.churn_risk_level !== riskLevel) {
-          return false;
-        }
+          // Filter by risk level
+          if (riskLevel && metric.churn_risk_level !== riskLevel) {
+            return false;
+          }
 
-        return true;
-      });
+          return true;
+        },
+      );
     }
 
     // Calculate summary statistics
     const summary = {
       total_patients: filteredMetrics.length,
-      average_retention_rate: filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0)
-          / filteredMetrics.length || 0,
-      average_churn_risk: filteredMetrics.reduce(
-            (sum: number, m: unknown) => sum + m.churn_risk_score,
-            0,
-          ) / filteredMetrics.length || 0,
+      average_retention_rate: filteredMetrics.length > 0
+        ? filteredMetrics.reduce(
+          (sum: number, m: ClinicRetentionMetric) => sum + safeParseNumber(m.retention_rate),
+          0,
+        ) / filteredMetrics.length
+        : 0,
+      average_churn_risk: filteredMetrics.length > 0
+        ? filteredMetrics.reduce(
+          (sum: number, m: ClinicRetentionMetric) => sum + safeParseNumber(m.churn_risk_score),
+          0,
+        ) / filteredMetrics.length
+        : 0,
       risk_distribution: {
-        low: filteredMetrics.filter((m: unknown) => m.churn_risk_level === "low")
+        low: filteredMetrics.filter((m: ClinicRetentionMetric) => m.churn_risk_level === "low")
           .length,
-        medium: filteredMetrics.filter(
-          (m: unknown) => m.churn_risk_level === "medium",
-        ).length,
-        high: filteredMetrics.filter((m: unknown) => m.churn_risk_level === "high")
+        medium: filteredMetrics.filter((m: ClinicRetentionMetric) =>
+          m.churn_risk_level === "medium"
+        )
           .length,
-        critical: filteredMetrics.filter(
-          (m: unknown) => m.churn_risk_level === "critical",
-        ).length,
+        high: filteredMetrics.filter((m: ClinicRetentionMetric) => m.churn_risk_level === "high")
+          .length,
+        critical: filteredMetrics.filter((m: ClinicRetentionMetric) =>
+          m.churn_risk_level === "critical"
+        )
+          .length,
       },
       total_lifetime_value: filteredMetrics.reduce(
-        (sum, m) => sum + m.lifetime_value,
+        (sum: number, m: ClinicRetentionMetric) => sum + safeParseNumber(m.lifetime_value),
         0,
       ),
-      patients_at_risk: filteredMetrics.filter((m) =>
-        ["high", "critical"].includes(m.churn_risk_level)
-      ).length,
+      patients_at_risk:
+        filteredMetrics.filter((m: ClinicRetentionMetric) =>
+          ["high", "critical"].includes(m.churn_risk_level)
+        ).length,
     };
 
     return NextResponse.json({
@@ -324,8 +371,8 @@ export async function POST(
 
     // Calculate metrics in batches to avoid overwhelming the system
     const retentionService = new RetentionAnalyticsService();
-    const results: unknown[] = [];
-    const errors: unknown[] = [];
+    const results: DatabaseRow[] = [];
+    const errors: DatabaseRow[] = [];
 
     const batchSize = 10; // Process 10 patients at a time
 
@@ -353,16 +400,16 @@ export async function POST(
       batchResults.forEach((result) => {
         if (result.status === "fulfilled") {
           if (result.value.success) {
-            results.push(result.value);
+            results.push(result.value as DatabaseRow);
           } else {
-            errors.push(result.value);
+            errors.push(result.value as DatabaseRow);
           }
         } else {
           errors.push({
             patientId: "unknown",
             error: result.reason?.message || "Promise rejected",
             success: false,
-          });
+          } as DatabaseRow);
         }
       });
     }
@@ -378,7 +425,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       data: {
-        results: results.map((r) => r.metrics),
+        results: results.map((r: DatabaseRow) => (r as any).metrics),
         summary,
         errors: errors.length > 0 ? errors : undefined,
       },

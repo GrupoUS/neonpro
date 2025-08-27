@@ -48,7 +48,7 @@ export class EnterpriseHealthCheckService {
   private readonly services: Map<string, any> = new Map();
   private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
   private readonly startTime: number = Date.now();
-  private healthCheckInterval: NodeJS.Timeout | null = undefined;
+  private healthCheckInterval: NodeJS.Timeout | null = null;
   private readonly alertThresholds = {
     responseTime: 5000, // 5 seconds
     errorRate: 0.1, // 10%
@@ -295,12 +295,12 @@ export class EnterpriseHealthCheckService {
     }
 
     // Get metrics
-    result.details.metrics = await cacheService.getStats();
+    result.details.metrics = await cacheService.getStats() as Record<string, unknown>;
     result.details.connectivity = true;
 
     // Check memory usage
-    const stats = result.details.metrics;
-    if (stats.memoryUsage && stats.memoryUsage > 0.9) {
+    const stats = result.details.metrics as Record<string, unknown>;
+    if ((stats.memoryUsage as number) && (stats.memoryUsage as number) > 0.9) {
       result.details.warnings.push("High memory usage detected");
     }
   }
@@ -334,12 +334,15 @@ export class EnterpriseHealthCheckService {
     });
 
     // Get health metrics
-    result.details.metrics = await analyticsService.getHealthMetrics();
+    result.details.metrics = await analyticsService.getHealthMetrics() as unknown as Record<
+      string,
+      unknown
+    >;
     result.details.connectivity = true;
 
     // Check for data processing lag
-    const metrics = result.details.metrics;
-    if (metrics.processingLag && metrics.processingLag > 10_000) {
+    const metrics = result.details.metrics as Record<string, unknown>;
+    if ((metrics.processingLag as number) && (metrics.processingLag as number) > 10_000) {
       result.details.warnings.push("High processing lag detected");
     }
   }
@@ -367,8 +370,8 @@ export class EnterpriseHealthCheckService {
     result.details.connectivity = true;
 
     // Check session counts
-    const metrics = result.details.metrics;
-    if (metrics.activeSessions && metrics.activeSessions > 10_000) {
+    const metrics = result.details.metrics as Record<string, unknown>;
+    if ((metrics.activeSessions as number) && (metrics.activeSessions as number) > 10_000) {
       result.details.warnings.push("High number of active sessions");
     }
   }
@@ -399,12 +402,12 @@ export class EnterpriseHealthCheckService {
     }
 
     // Get audit stats
-    result.details.metrics = await auditService.getAuditStats();
+    result.details.metrics = await auditService.getAuditStats() as Record<string, unknown>;
     result.details.connectivity = true;
 
     // Check audit volume
-    const stats = result.details.metrics;
-    if (stats.total && stats.total > 1_000_000) {
+    const stats = result.details.metrics as Record<string, unknown>;
+    if ((stats.total as number) && (stats.total as number) > 1_000_000) {
       result.details.warnings.push(
         "Large audit trail detected - consider archiving",
       );
@@ -566,7 +569,7 @@ export class EnterpriseHealthCheckService {
   async stopHealthMonitoring(): Promise<void> {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
-      this.healthCheckInterval = undefined;
+      this.healthCheckInterval = null;
     }
 
     // Shutdown test services

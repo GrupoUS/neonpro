@@ -75,7 +75,7 @@ async function runWebInterfaceTests() {
   const failed = results.filter((r) => !r.success);
 
   if (successful.length > 0) {
-    successful.forEach((result) => {    });
+    successful.forEach((result) => {});
   }
 
   if (failed.length > 0) {

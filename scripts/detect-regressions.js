@@ -40,12 +40,8 @@ class RegressionDetector {
       const baselineData = await fs.readFile(baselinePath, "utf8");
       return JSON.parse(baselineData);
     } catch (error) {
-      // console.warn(
-        `⚠️ Warning: Could not load baseline metrics from ${this.baselineMetricsFile}`,
-      );
-      // console.warn(
-        "This might be the first run. Creating baseline from current metrics.",
-      );
+      // console.warn(`⚠️ Warning: Could not load baseline metrics from ${this.baselineMetricsFile}`);
+      // console.warn("This might be the first run. Creating baseline from current metrics.");
       return null;
     }
   }
@@ -56,9 +52,7 @@ class RegressionDetector {
       const currentData = await fs.readFile(currentPath, "utf8");
       return JSON.parse(currentData);
     } catch (error) {
-      // console.error(
-        `❌ Error: Could not load current metrics from ${this.currentMetricsFile}`,
-      );
+      // console.error(`❌ Error: Could not load current metrics from ${this.currentMetricsFile}`);
       // console.error("Make sure to run collect-healthcare-metrics.js first");
       throw error;
     }
@@ -539,9 +533,7 @@ Generated on: ${new Date().toISOString()}
       let baseline = await this.loadBaseline();
       if (!baseline) {
         baseline = await this.createBaseline(currentMetrics);
-        // console.log(
-          "ℹ️  New baseline created. Run again after next metrics collection for comparison.",
-        );
+        // console.log("ℹ️  New baseline created. Run again after next metrics collection for comparison.");
         return { status: "BASELINE_CREATED" };
       }
 
@@ -559,9 +551,7 @@ Generated on: ${new Date().toISOString()}
       // Log summary
       // console.log("\n📊 Regression Detection Results:");
       // console.log(`Status: ${report.status}`);
-      // console.log(
-        `Regressions: ${report.summary.total_regressions} (${report.summary.critical_regressions} critical)`,
-      );
+      // console.log(`Regressions: ${report.summary.total_regressions} (${report.summary.critical_regressions} critical)`);
       // console.log(`Improvements: ${report.summary.improvements}`);
 
       if (report.summary.critical_regressions > 0) {

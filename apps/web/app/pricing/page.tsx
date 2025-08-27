@@ -25,7 +25,7 @@ interface PricingPlan {
   maxUsers: number;
   storage: string;
   support: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
 }
 
 const PRICING_PLANS: PricingPlan[] = [
@@ -107,7 +107,7 @@ export default function PricingPage() {
     router.push(`/signup?plan=${planId}`);
   };
 
-  const PlanIcon = ({ icon: Icon }: { icon: React.ComponentType<{ className?: string }>; }) => (
+  const PlanIcon = ({ icon: Icon }: { icon: React.ComponentType<{ className?: string; }>; }) => (
     <Icon className="h-8 w-8" />
   );
 

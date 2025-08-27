@@ -18,11 +18,13 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [setupResult, setSetupResult] = useState<{
-    qrCodeUrl?: string;
-    secret?: string;
-    backupCodes?: string[];
-  } | null>(null);
+  const [setupResult, setSetupResult] = useState<
+    {
+      qrCodeUrl?: string;
+      secret?: string;
+      backupCodes?: string[];
+    } | null
+  >(null);
   const [sessionId] = useState(() => crypto.randomUUID());
 
   const handleMethodSelect = (method: MfaMethod) => {
@@ -43,7 +45,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
     }
 
     try {
-      const options: unknown = {};
+      const options: Record<string, any> = {};
       if (mfaMethod === MfaMethod.SMS) {
         options.phoneNumber = phoneNumber;
       } else if (mfaMethod === MfaMethod.EMAIL) {

@@ -810,9 +810,9 @@ export class BlockchainStorage {
       };
     } catch (error) {
       // console.error(
-        `Failed to verify audit trail integrity for ${blockId}:`,
-        error,
-      );
+      //   `Failed to verify audit trail integrity for ${blockId}:`,
+      //   error,
+      // );
       throw error;
     }
   }
@@ -829,19 +829,19 @@ export class BlockchainStorage {
     // Process remaining queue
     if (this.pendingQueue.length > 0) {
       // console.log(
-        `📋 Processing ${this.pendingQueue.length} remaining verifications...`,
-      );
+      //   `📋 Processing ${this.pendingQueue.length} remaining verifications...`,
+      // );
       await this.processVerificationQueue();
     }
 
     // Final metrics
     const metrics = this.getMetrics();
     // console.log("📊 Final blockchain metrics:", {
-      totalTransactions: metrics.totalTransactions,
-      successRate: `${metrics.verificationRate.toFixed(1)}%`,
-      networkHealth: metrics.networkHealth,
-      avgConfirmationTime: `${metrics.averageConfirmationTime.toFixed(0)}ms`,
-    });
+    //   totalTransactions: metrics.totalTransactions,
+    //   successRate: `${metrics.verificationRate.toFixed(1)}%`,
+    //   networkHealth: metrics.networkHealth,
+    //   avgConfirmationTime: `${metrics.averageConfirmationTime.toFixed(0)}ms`,
+    // });
 
     // console.log("✅ Blockchain Storage shutdown complete");
   }

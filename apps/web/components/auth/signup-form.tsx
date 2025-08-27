@@ -11,6 +11,8 @@ import { toastHelpers } from "@/lib/toast-helpers";
 import { AlertCircle, Check, Eye, EyeOff, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Separator } from "../ui/separator";
+import { GoogleAuthButton } from "./google-auth-button";
 
 // Tipos simplificados
 interface SignupFormData {
@@ -77,9 +79,6 @@ const formatPhone = (value: string): string => {
   }
   return value;
 };
-
-import { Separator } from "../ui/separator";
-import { GoogleAuthButton } from "./google-auth-button";
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);

@@ -3,9 +3,9 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: {
     index: "src/index.ts",
-    core: "src/core/index.ts", 
+    core: "src/core/index.ts",
     blockchain: "src/blockchain/index.ts",
-    compliance: "src/compliance/index.ts"
+    compliance: "src/compliance/index.ts",
   },
   format: ["cjs", "esm"],
   dts: true,
@@ -15,8 +15,8 @@ export default defineConfig({
   target: "node18",
   external: [
     "@neonpro/constitutional-layer",
-    "@neonpro/core-services", 
+    "@neonpro/core-services",
     "@neonpro/types",
-    "@neonpro/utils"
-  ]
+    "@neonpro/utils",
+  ],
 });

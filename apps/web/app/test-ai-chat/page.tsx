@@ -147,16 +147,16 @@ export default function UniversalChatTestPage() {
                 <TabsContent className="space-y-2" value="external">
                   <div className="space-y-2 text-sm">
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Gostaria de agendar uma consulta com cardiologista"
+                      &quot;Gostaria de agendar uma consulta com cardiologista&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Quais são os horários de funcionamento?"
+                      &quot;Quais são os horários de funcionamento?&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Estou com dor de cabeça há 2 dias"
+                      &quot;Estou com dor de cabeça há 2 dias&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Como cancelo minha consulta?"
+                      &quot;Como cancelo minha consulta?&quot;
                     </div>
                   </div>
                 </TabsContent>
@@ -164,16 +164,16 @@ export default function UniversalChatTestPage() {
                 <TabsContent className="space-y-2" value="internal">
                   <div className="space-y-2 text-sm">
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Como está o estoque de materiais hoje?"
+                      &quot;Como está o estoque de materiais hoje?&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Quantos pacientes atendemos esta semana?"
+                      &quot;Quantos pacientes atendemos esta semana?&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Gere um relatório de performance"
+                      &quot;Gere um relatório de performance&quot;
                     </div>
                     <div className="rounded bg-gray-100 p-2 text-gray-700">
-                      "Status dos equipamentos da clínica"
+                      &quot;Status dos equipamentos da clínica&quot;
                     </div>
                   </div>
                 </TabsContent>

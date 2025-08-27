@@ -10,10 +10,38 @@ import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
+import { 
+  type RetentionPrediction, 
+  type DatabaseRow,
+  safeParseNumber 
+} from "@/src/types/analytics";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
 // =====================================================================================
+
+interface ChurnPredictionData {
+  patient_id: string;
+  churn_probability: number;
+  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  days_since_last_visit: number;
+  predicted_churn_date: string;
+  prediction_date: string;
+}
+
+// Type guard for churn prediction data
+function isChurnPredictionData(obj: unknown): obj is ChurnPredictionData {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof (obj as ChurnPredictionData).patient_id === 'string' &&
+    typeof (obj as ChurnPredictionData).churn_probability === 'number' &&
+    ['low', 'medium', 'high', 'critical'].includes((obj as ChurnPredictionData).risk_level) &&
+    typeof (obj as ChurnPredictionData).days_since_last_visit === 'number' &&
+    typeof (obj as ChurnPredictionData).predicted_churn_date === 'string' &&
+    typeof (obj as ChurnPredictionData).prediction_date === 'string'
+  );
+}
 
 const PredictionsParamsSchema = z.object({
   clinicId: z.string().uuid("Invalid clinic ID format"),
@@ -139,11 +167,11 @@ export async function GET(
     );
 
     // Apply additional filters and sorting
-    let filteredPredictions = predictions.predictions;
+    let filteredPredictions = predictions.predictions as ChurnPredictionData[];
 
     // Date filtering
     if (startDate || endDate) {
-      filteredPredictions = filteredPredictions.filter((prediction: unknown) => {
+      filteredPredictions = (predictions.predictions as ChurnPredictionData[]).filter((prediction: ChurnPredictionData) => {
         const predictionDate = new Date(prediction.prediction_date);
         if (startDate && predictionDate < new Date(startDate)) {
           return false;
@@ -156,8 +184,8 @@ export async function GET(
     }
 
     // Sorting
-    filteredPredictions.sort((a, b) => {
-      let valueA: unknown, valueB: unknown;
+    filteredPredictions.sort((a: ChurnPredictionData, b: ChurnPredictionData) => {
+      let valueA: any, valueB: any;
 
       switch (sortBy) {
         case "prediction_date": {
@@ -166,8 +194,8 @@ export async function GET(
           break;
         }
         case "churn_probability": {
-          valueA = a.churn_probability;
-          valueB = b.churn_probability;
+          valueA = safeParseNumber(a.churn_probability);
+          valueB = safeParseNumber(b.churn_probability);
           break;
         }
         case "risk_level": {
@@ -204,25 +232,26 @@ export async function GET(
       total_predictions: filteredPredictions.length,
       risk_distribution: {
         low: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.LOW,
+          (p: ChurnPredictionData) => p.risk_level === ChurnRiskLevel.LOW,
         ).length,
         medium: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.MEDIUM,
+          (p: ChurnPredictionData) => p.risk_level === ChurnRiskLevel.MEDIUM,
         ).length,
         high: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.HIGH,
+          (p: ChurnPredictionData) => p.risk_level === ChurnRiskLevel.HIGH,
         ).length,
         critical: filteredPredictions.filter(
-          (p) => p.risk_level === ChurnRiskLevel.CRITICAL,
+          (p: ChurnPredictionData) => p.risk_level === ChurnRiskLevel.CRITICAL,
         ).length,
       },
-      average_churn_probability: filteredPredictions.reduce((sum, p) =>
-            sum + p.churn_probability, 0)
-          / filteredPredictions.length || 0,
-      high_risk_patients: filteredPredictions.filter((p) =>
+      average_churn_probability: filteredPredictions.length > 0
+        ? filteredPredictions.reduce((sum: number, p: ChurnPredictionData) =>
+            sum + safeParseNumber(p.churn_probability), 0) / filteredPredictions.length
+        : 0,
+      high_risk_patients: filteredPredictions.filter((p: ChurnPredictionData) =>
         ["high", "critical"].includes(p.risk_level)
       ).length,
-      recent_predictions: filteredPredictions.filter((p) => {
+      recent_predictions: filteredPredictions.filter((p: ChurnPredictionData) => {
         const predictionDate = new Date(p.prediction_date);
         const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         return predictionDate > dayAgo;
@@ -378,8 +407,8 @@ export async function POST(
 
     // Generate predictions
     const retentionService = new RetentionAnalyticsService();
-    const results: unknown[] = [];
-    const errors: unknown[] = [];
+    const results: DatabaseRow[] = [];
+    const errors: DatabaseRow[] = [];
 
     // Process in batches for better performance
     const batchSize = 5; // Smaller batch for ML predictions
@@ -409,16 +438,16 @@ export async function POST(
       batchResults.forEach((result) => {
         if (result.status === "fulfilled") {
           if (result.value.success) {
-            results.push(result.value);
+            results.push(result.value as DatabaseRow);
           } else {
-            errors.push(result.value);
+            errors.push(result.value as DatabaseRow);
           }
         } else {
           errors.push({
             patientId: "unknown",
             error: result.reason?.message || "Promise rejected",
             success: false,
-          });
+          } as DatabaseRow);
         }
       });
     }
@@ -430,15 +459,15 @@ export async function POST(
       failed: errors.length,
       success_rate: results.length / targetPatientIds.length,
       model_type: modelType,
-      high_risk_detected: results.filter((r) =>
-        ["high", "critical"].includes(r.prediction.risk_level)
+      high_risk_detected: results.filter((r: DatabaseRow) =>
+        ["high", "critical"].includes((r as any).prediction?.risk_level)
       ).length,
     };
 
     return NextResponse.json({
       success: true,
       data: {
-        predictions: results.map((r) => r.prediction),
+        predictions: results.map((r: DatabaseRow) => (r as any).prediction),
         summary,
         errors: errors.length > 0 ? errors : undefined,
       },

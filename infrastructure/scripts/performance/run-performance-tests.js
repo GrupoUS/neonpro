@@ -79,7 +79,8 @@ const mockRealTimeSync = async () => {
 async function _runPerformanceTests() {
   try {
     // Start performance monitoring
-    performanceMonitor.reset();    const report = performanceMonitor.generateReport();
+    performanceMonitor.reset();
+    const report = performanceMonitor.generateReport();
     Object.entries(report).forEach(([_operation, _metrics]) => {});
     const stressReport = await stressTester.executeStressTest(
       STRESS_SCENARIOS[0],

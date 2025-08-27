@@ -99,12 +99,15 @@ async function testEmailNotificationService() {
       amount: "999.99",
       due_date: "2025-01-30",
       invoice_number: "INV-TEST-001",
-    };  } catch (_error) {}
+    };
+  } catch (_error) {}
 }
 
 // Run tests
 testEmailNotificationService()
-  .then(() => { return ; })
+  .then(() => {
+    return;
+  })
   .catch((_error) => {
     process.exit(1);
   });

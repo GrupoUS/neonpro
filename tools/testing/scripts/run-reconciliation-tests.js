@@ -41,10 +41,12 @@ function runTest(test, testType = "UNIT") {
 
     if (testType === "E2E") {
       // Run Playwright E2E tests
-      const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;    } else {
+      const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;
+    } else {
       // Run Jest tests with isolated configuration
       const command =
-        `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;    }
+        `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
+    }
 
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;

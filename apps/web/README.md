@@ -9,28 +9,33 @@ The NeonPro web application is a modern, responsive frontend built with Next.js 
 ## 🚀 Features
 
 ### ✅ Authentication System
+
 - **Login/Register Pages**: Secure authentication with form validation
 - **Protected Routes**: Middleware-based route protection
 - **Session Management**: Automatic redirect based on authentication status
 
 ### ✅ Dashboard & Navigation
+
 - **Responsive Dashboard**: Clean, intuitive main dashboard
 - **Sidebar Navigation**: Collapsible sidebar with all main sections
 - **Header Component**: Search, notifications, and user dropdown
 
 ### ✅ Patient Management
+
 - **Patient Listing**: Comprehensive patient directory with search
 - **Patient Cards**: Detailed patient information cards
 - **Filter System**: Advanced filtering by status and criteria
 - **Quick Actions**: View, edit, and schedule appointments
 
 ### ✅ Appointment System
+
 - **Appointment Dashboard**: Overview of all appointments
 - **Status Tracking**: Color-coded appointment statuses
 - **Scheduling Interface**: Easy appointment creation and management
 - **Calendar Integration**: Visual appointment scheduling
 
 ### ✅ LGPD Compliance
+
 - **Compliance Dashboard**: Real-time compliance monitoring
 - **Progress Tracking**: Visual progress indicators for compliance tasks
 - **Audit Alerts**: System for tracking compliance issues
@@ -39,6 +44,7 @@ The NeonPro web application is a modern, responsive frontend built with Next.js 
 ## 🏗️ Architecture
 
 ### Application Structure
+
 ```
 src/
 ├── app/                          # Next.js 15 App Router
@@ -87,10 +93,12 @@ src/
 ## 🛠️ Development
 
 ### Prerequisites
+
 - Node.js 18+
 - PNPM package manager
 
 ### Quick Start
+
 ```bash
 # Install dependencies
 pnpm install
@@ -103,6 +111,7 @@ pnpm dev
 ```
 
 ### Available Scripts
+
 ```bash
 # Development
 pnpm dev                    # Start development server
@@ -123,6 +132,7 @@ pnpm test:coverage          # Test coverage report
 ## 🎨 UI Components
 
 ### Implemented Components
+
 - **Button**: Primary, secondary, and destructive variants
 - **Input**: Form inputs with validation states
 - **Card**: Content containers with headers and footers
@@ -136,11 +146,12 @@ pnpm test:coverage          # Test coverage report
 ## 🔐 Authentication Flow
 
 ### Route Protection
+
 ```typescript
 // middleware.ts
 export function middleware(request: NextRequest) {
   // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (request.nextUrl.pathname.startsWith("/dashboard")) {
     // Check authentication status
     // Redirect to login if not authenticated
   }
@@ -148,33 +159,35 @@ export function middleware(request: NextRequest) {
 ```
 
 ### Authentication Context
+
 ```typescript
 // contexts/auth-context.tsx
 const AuthContext = createContext({
   user: null,
-  login: async (credentials) => { /* ... */ },
-  logout: async () => { /* ... */ },
-  register: async (userData) => { /* ... */ }
+  login: async (credentials) => {/* ... */},
+  logout: async () => {/* ... */},
+  register: async (userData) => {/* ... */},
 });
 ```
 
 ## 🌐 API Integration
 
 ### Hono RPC Client
+
 ```typescript
 // lib/api-client.ts
-import { hc } from 'hono/client'
-import type { AppType } from '@neonpro/api'
+import type { AppType } from "@neonpro/api";
+import { hc } from "hono/client";
 
-const client = hc<AppType>('/api')
+const client = hc<AppType>("/api");
 
 export class PatientAPI {
   static async getPatients() {
-    return await client.patients.$get()
+    return await client.patients.$get();
   }
-  
+
   static async createPatient(data: CreatePatientData) {
-    return await client.patients.$post({ json: data })
+    return await client.patients.$post({ json: data });
   }
 }
 ```
@@ -182,11 +195,13 @@ export class PatientAPI {
 ## 📱 Responsive Design
 
 ### Breakpoints
+
 - **Mobile**: < 768px
 - **Tablet**: 768px - 1024px
 - **Desktop**: > 1024px
 
 ### Layout Patterns
+
 - **Sidebar**: Collapsible on mobile, fixed on desktop
 - **Cards**: Responsive grid with flexible columns
 - **Forms**: Single column on mobile, multi-column on desktop
@@ -194,11 +209,13 @@ export class PatientAPI {
 ## 🔍 Code Quality
 
 ### TypeScript Configuration
+
 - Strict mode enabled
 - Path aliases configured (@/ for src/)
 - Absolute imports preferred
 
 ### Linting & Formatting
+
 - ESLint for code quality
 - Prettier for code formatting
 - Tailwind CSS for styling
@@ -206,6 +223,7 @@ export class PatientAPI {
 ## 🚀 Deployment
 
 ### Build Process
+
 ```bash
 # Production build
 pnpm build
@@ -215,6 +233,7 @@ pnpm start
 ```
 
 ### Environment Variables
+
 ```env
 # Required
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -228,6 +247,7 @@ NODE_ENV=production
 ## 📊 Current Status
 
 ### ✅ Completed Features
+
 - Authentication system with login/register
 - Dashboard navigation with responsive sidebar
 - Patient management with search and filters
@@ -237,11 +257,13 @@ NODE_ENV=production
 - UI component library (27 components)
 
 ### 🔄 In Progress
+
 - Advanced appointment scheduling
 - Real-time notifications
 - Enhanced patient forms
 
 ### 📋 Performance Metrics
+
 - **Lighthouse Score**: Target >90
 - **Bundle Size**: ~800KB (compressed)
 - **First Contentful Paint**: <2s
