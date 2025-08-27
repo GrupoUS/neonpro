@@ -392,10 +392,10 @@ export class HealthCheckService {
 
     try {
       const complianceChecks = {
-        lgpdConfig: !!process.env.LGPD_ENABLED,
-        anvisaConfig: !!process.env.ANVISA_COMPLIANCE,
-        encryptionKeys: !!process.env.ENCRYPTION_KEY,
-        auditLogging: !!process.env.AUDIT_LOG_ENABLED,
+        lgpdConfig: Boolean(process.env.LGPD_ENABLED),
+        anvisaConfig: Boolean(process.env.ANVISA_COMPLIANCE),
+        encryptionKeys: Boolean(process.env.ENCRYPTION_KEY),
+        auditLogging: Boolean(process.env.AUDIT_LOG_ENABLED),
         securityHeaders: true, // Simulated check
       };
 

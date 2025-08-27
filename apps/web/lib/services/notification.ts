@@ -178,7 +178,7 @@ export class NotificationService {
       };
 
       const result = await this.sendNotification(notification);
-      return { success: !!result.notification };
+      return { success: Boolean(result.notification) };
     } catch (error) {
       return {
         error: error instanceof Error
@@ -217,7 +217,7 @@ export class NotificationService {
       };
 
       const result = await this.sendNotification(notification);
-      return { success: !!result.notification };
+      return { success: Boolean(result.notification) };
     } catch (error) {
       return {
         error: error instanceof Error

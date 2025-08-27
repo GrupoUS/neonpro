@@ -200,7 +200,7 @@ describe("cFM (Medical Council) Compliance Tests", () => {
       const validateControlledSubstance = (medication: string) => {
         const substance = controlledSubstances[medication as keyof typeof controlledSubstances];
         return {
-          isControlled: !!substance,
+          isControlled: Boolean(substance),
           schedule: substance?.schedule,
           requiresSpecialForm: substance?.requiresSpecialForm,
         };

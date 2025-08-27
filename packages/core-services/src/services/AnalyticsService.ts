@@ -406,7 +406,7 @@ export class AnalyticsService extends EnhancedServiceBase {
       context,
       {
         requiresAuth: false, // Allow anonymous tracking
-        sensitiveData: !!request.patientId,
+        sensitiveData: Boolean(request.patientId),
       },
     );
   }

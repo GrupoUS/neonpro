@@ -1061,7 +1061,7 @@ export class MedicalEthicsService {
           );
 
           // Critical violations significantly impact constitutional compliance
-          penaltyScore -= criticalViolations.length * 1;
+          penaltyScore -= Number(criticalViolations.length);
           penaltyScore -= majorViolations.length * 0.5;
         }
       });

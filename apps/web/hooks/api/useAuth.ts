@@ -266,7 +266,7 @@ export function useAuthStatus() {
   const { data: user, isLoading, error } = useProfile();
 
   return {
-    isAuthenticated: !!user && !error,
+    isAuthenticated: Boolean(user) && !error,
     user,
     isLoading,
     error,
@@ -301,7 +301,7 @@ export function useAuthUtils() {
     },
 
     // Check if token exists (doesn't validate)
-    hasToken: () => !!apiClient.auth.getAccessToken(),
+    hasToken: () => Boolean(apiClient.auth.getAccessToken()),
 
     // Force refresh profile
     refreshProfile: () => {

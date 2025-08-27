@@ -30,7 +30,7 @@ export function RouterIntegration({ children }: RouterIntegrationProps) {
           queryClient,
           auth: {
             user: auth.user,
-            isAuthenticated: !!auth.user && !auth.loading,
+            isAuthenticated: Boolean(auth.user) && !auth.loading,
             hasRole: (roles) => {
               if (!auth.user) {
                 return false;

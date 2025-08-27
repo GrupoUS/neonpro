@@ -189,7 +189,7 @@ export function useAgentChat() {
               ...prev.voiceInput,
               transcript,
               confidence,
-              isProcessing: !!finalTranscript,
+              isProcessing: Boolean(finalTranscript),
             },
           }));
 

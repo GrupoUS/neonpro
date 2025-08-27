@@ -148,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode; }) {
     login,
     logout,
     refreshToken,
-    isAuthenticated: !!user && !!token,
+    isAuthenticated: Boolean(user) && Boolean(token),
   };
 
   return (

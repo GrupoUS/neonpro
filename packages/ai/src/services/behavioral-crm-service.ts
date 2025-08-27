@@ -1545,7 +1545,7 @@ export class BehavioralCrmService extends EnhancedAIService {
       patient_id: patientId,
       channel,
       priority: message.priority,
-      has_subject: !!message.subject,
+      has_subject: Boolean(message.subject),
       content_length: message.content.length,
     });
 

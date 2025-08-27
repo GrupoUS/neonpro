@@ -969,7 +969,7 @@ export function BeforeAfterSecureGallery({
       {/* Photo Detail Dialog */}
       <Dialog
         onOpenChange={() => setSelectedPhoto(undefined)}
-        open={!!selectedPhoto}
+        open={Boolean(selectedPhoto)}
       >
         <DialogContent className="max-w-4xl">
           <DialogHeader>

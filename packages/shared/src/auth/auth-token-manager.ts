@@ -193,7 +193,7 @@ export class AuthTokenManager {
    */
 
   hasValidTokens(): boolean {
-    return !!(this.accessToken && this.refreshToken && !this.isTokenExpired());
+    return Boolean(this.accessToken && this.refreshToken && !this.isTokenExpired());
   }
 
   /**
@@ -210,7 +210,7 @@ export class AuthTokenManager {
    * Check if refresh token exists
    */
   hasRefreshToken(): boolean {
-    return !!this.refreshToken;
+    return Boolean(this.refreshToken);
   }
 
   /**

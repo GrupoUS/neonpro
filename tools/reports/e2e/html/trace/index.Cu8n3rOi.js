@@ -249,7 +249,7 @@ const A = ({
 					}
 				})();
 			}, [n, r, d]);
-		const k = !!(!(n || b || p) && (r.length === 0 || S));
+		const k = Boolean(!(n || b || p) && (r.length === 0 || S));
 		return e.jsxs("div", {
 			className: "vbox workbench-loader",
 			onDragOver: (t) => {

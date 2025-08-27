@@ -511,7 +511,7 @@ export function useAuthStatus(): AuthContext {
   const { data: user, isLoading, error } = useProfile();
 
   const authContext = useMemo<AuthContext>(() => {
-    const isAuthenticated = !!user && !error;
+    const isAuthenticated = Boolean(user) && !error;
 
     // Role checking functions
     const hasRole = (roles: UserRole | UserRole[]): boolean => {
@@ -579,7 +579,7 @@ export function useAuthStatus(): AuthContext {
       isAdmin: hasRole("admin"),
 
       // LGPD compliance
-      hasLgpdConsent: !!consentDate,
+      hasLgpdConsent: Boolean(consentDate),
       isConsentExpired,
       consentExpiryDate,
 

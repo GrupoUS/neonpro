@@ -16,7 +16,7 @@ export function usePatient(id: string) {
   return useQuery({
     queryKey: patientKeys.detail(id),
     queryFn: () => patientApi.getPatient(id),
-    enabled: !!id,
+    enabled: Boolean(id),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }

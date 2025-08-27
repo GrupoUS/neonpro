@@ -113,7 +113,7 @@ export function usePatient(patientId: string | undefined) {
 
       return result.data as Patient;
     },
-    enabled: !!patientId,
+    enabled: Boolean(patientId),
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -328,7 +328,7 @@ export function useSearchPatients(searchParams: PatientSearch) {
 
       return result as PaginatedResponse<Patient>;
     },
-    enabled: !!(searchParams.query && searchParams.query.length >= 2),
+    enabled: Boolean(searchParams.query && searchParams.query.length >= 2),
     staleTime: 1000 * 60, // 1 minute
     gcTime: 1000 * 60 * 3, // 3 minutes
   });

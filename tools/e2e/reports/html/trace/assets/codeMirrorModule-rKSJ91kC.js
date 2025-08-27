@@ -18,11 +18,11 @@ function It() {
 						$ = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(C),
 						V = /Edge\/(\d+)/.exec(C),
 						b = K || $ || V,
-						N = b && (K ? document.documentMode || 6 : +(V || $)[1]),
+						N = b && (K ? document.documentMode || 6 : Number((V || $)[1])),
 						_ = !V && /WebKit\//.test(C),
 						ie = _ && /Qt\/\d+\.\d+/.test(C),
 						O = !V && /Chrome\/(\d+)/.exec(C),
-						q = O && +O[1],
+						q = O && Number(O[1]),
 						z = /Opera\//.test(C),
 						X = /Apple Computer/.test(navigator.vendor),
 						ke = /Mac OS X 1\d\D([8-9]|\d\d)\D/.test(C),
@@ -1664,7 +1664,7 @@ b`.split(/\n/).length !== 3
 						const n = $t && t.markedSpans;
 						if (n) {
 							for (let r = void 0, i = 0; i < n.length; ++i) {
-								if (((r = n[i]), !!r.marker.collapsed)) {
+								if (((r = n[i]), Boolean(r.marker.collapsed))) {
 									if (r.from === undefined) {
 										return !0;
 									}
@@ -7678,7 +7678,7 @@ b`.split(/\n/).length !== 3
 							i === "multi" && (e.state.keySeq = t),
 							i === "handled" && ot(e, "keyHandled", e, t, n),
 							(i === "handled" || i === "multi") && (ht(n), _i(e)),
-							!!i
+							Boolean(i)
 						);
 					}
 					function Ql(e, t) {
@@ -8185,7 +8185,7 @@ b`.split(/\n/).length !== 3
 								!0,
 							),
 							n("lineSeparator", undefined, (r, i) => {
-								if (((r.doc.lineSep = i), !!i)) {
+								if (((r.doc.lineSep = i), Boolean(i))) {
 									let o = [],
 										l = r.doc.first;
 									r.doc.iter((s) => {
@@ -8738,7 +8738,7 @@ b`.split(/\n/).length !== 3
 					function uo(e, t, n, r) {
 						e.setAttribute("autocorrect", n ? "on" : "off"),
 							e.setAttribute("autocapitalize", r ? "on" : "off"),
-							e.setAttribute("spellcheck", !!t);
+							e.setAttribute("spellcheck", Boolean(t));
 					}
 					function fa() {
 						const e = d(
@@ -9142,7 +9142,7 @@ b`.split(/\n/).length !== 3
 								return this.display.input.getField() === y(Y(this));
 							},
 							isReadOnly() {
-								return !!(this.options.readOnly || this.doc.cantEdit);
+								return Boolean(this.options.readOnly || this.doc.cantEdit);
 							},
 							scrollTo: vt(function (r, i) {
 								mn(this, r, i);
@@ -9355,7 +9355,7 @@ b`.split(/\n/).length !== 3
 						} else {
 							r === "line" && (l = n > 0 ? t.bottom + 3 : t.top - 3);
 						}
-						for (let u; (u = Oi(e, o, l)), !!u.outside; ) {
+						for (let u; (u = Oi(e, o, l)), Boolean(u.outside); ) {
 							if (n < 0 ? l <= 0 : l >= i.height) {
 								u.hitSide = !0;
 								break;
@@ -9848,7 +9848,7 @@ b`.split(/\n/).length !== 3
 								let E = x.getAttribute("cm-marker"),
 									R;
 								if (E) {
-									const U = e.findMarks(L(r, 0), L(i + 1, 0), u(+E));
+									const U = e.findMarks(L(r, 0), L(i + 1, 0), u(Number(E)));
 									U.length &&
 										(R = U[0].find(0)) &&
 										v(Vt(e.doc, R.from, R.to).join(a));
@@ -10305,7 +10305,7 @@ b`.split(/\n/).length !== 3
 						($e.prototype.readOnlyChanged = function readOnlyChanged(e) {
 							e || this.reset(),
 								(this.textarea.disabled = e === "nocursor"),
-								(this.textarea.readOnly = !!e);
+								(this.textarea.readOnly = Boolean(e));
 						}),
 						($e.prototype.setUneditable = () => {}),
 						($e.prototype.needsContentAttribute = !1);
@@ -13047,7 +13047,7 @@ function Wa() {
 						}
 						function w(f) {
 							const { state: g } = D;
-							if (((D.marked = "def"), !!N)) {
+							if (((D.marked = "def"), Boolean(N))) {
 								if (g.context) {
 									if (
 										g.lexical.info === "var" &&

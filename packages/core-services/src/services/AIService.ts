@@ -241,7 +241,7 @@ export class AIService extends EnhancedServiceBase {
           : this.generateChatCacheKey(request),
         cacheTTL: 5 * 60 * 1000, // 5 minutes for chat responses
         requiresAuth: true,
-        sensitiveData: !!request.patientId,
+        sensitiveData: Boolean(request.patientId),
       },
     );
   }
@@ -269,7 +269,7 @@ export class AIService extends EnhancedServiceBase {
       context,
       {
         requiresAuth: true,
-        sensitiveData: !!request.patientId,
+        sensitiveData: Boolean(request.patientId),
       },
     );
   }

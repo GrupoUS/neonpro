@@ -390,9 +390,9 @@ export class GoLiveChecker {
       const cert = response.headers.get("strict-transport-security");
 
       return {
-        passed: response.ok && !!cert,
-        score: response.ok && !!cert ? 100 : 0,
-        message: response.ok && !!cert
+        passed: response.ok && Boolean(cert),
+        score: response.ok && Boolean(cert) ? 100 : 0,
+        message: response.ok && Boolean(cert)
           ? "SSL/TLS properly configured"
           : "SSL/TLS configuration issues",
         details: [

@@ -62,7 +62,7 @@ export default defineConfig({
 
   // 🚀 PERFORMANCE OPTIMIZATIONS
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
+  forbidOnly: Boolean(process.env.CI),
 
   // Optimized retry strategy
   retries: process.env.CI ? 2 : 1,
