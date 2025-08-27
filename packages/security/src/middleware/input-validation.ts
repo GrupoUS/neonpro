@@ -159,7 +159,7 @@ export const nameSchema = z
   .min(MIN_NAME_LENGTH, `Name must be at least ${MIN_NAME_LENGTH} characters`)
   .max(MAX_NAME_LENGTH, `Name must not exceed ${MAX_NAME_LENGTH} characters`)
   .regex(
-    /^[a-zA-ZÀ-ÿ\u00F1\u00D1\s\-.']+$/,
+    /^[a-zA-ZÀ-ÿ\u00F1\u00D1\s\-.']+$/u,
     "Name contains invalid characters",
   );
 
