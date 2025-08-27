@@ -242,7 +242,7 @@ export class PatientSegmentationService {
     // Apply exclusion criteria if specified
     if (target.exclusionCriteria) {
       candidates = candidates.filter(
-        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria!),
+        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria),
       );
     }
 

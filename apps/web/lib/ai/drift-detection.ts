@@ -269,7 +269,7 @@ export class DriftDetectionSystem {
     }
 
     // General performance drift based on error rate increase
-    const { 05: baselineErrorRate } = 0; // 5% baseline
+    const baselineErrorRate = 0.05; // 5% baseline
     const currentErrorRate = metrics.errorRate || baselineErrorRate;
 
     return Math.max(
@@ -528,8 +528,8 @@ export class DriftDetectionSystem {
     // console.warn(`Drift Score: ${(alert.driftScore * 100).toFixed(2)}%`);
     // console.warn(`Severity: ${alert.severity.toUpperCase()}`);
     // console.warn(
-      `Revenue at Risk: $${alert.estimatedImpact.revenueAtRisk.toLocaleString()}`,
-    );
+    //   `Revenue at Risk: $${alert.estimatedImpact.revenueAtRisk.toLocaleString()}`,
+    // );
     // console.warn(`Recommended Actions:`, alert.recommendedActions);
 
     // Log to audit system
@@ -634,8 +634,8 @@ export class DriftDetectionSystem {
       const highAlerts = alerts.filter((a) => a.severity === "high");
 
       // console.log(
-        `🚨 Critical: ${criticalAlerts.length}, High: ${highAlerts.length}`,
-      );
+      //   `🚨 Critical: ${criticalAlerts.length}, High: ${highAlerts.length}`,
+      // );
     }
   }
 }

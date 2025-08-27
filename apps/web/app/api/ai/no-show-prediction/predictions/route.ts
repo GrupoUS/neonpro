@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
         cookies.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options || {});
         });
       },
     });
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(predictions);
-  } catch (error) {
+  } catch (_error) {
     // console.error("Error fetching no-show predictions:", error);
     return NextResponse.json(
       { error: "Failed to fetch predictions" },

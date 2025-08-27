@@ -55,8 +55,7 @@ export default function ProfilePage() {
     twoFactorAuth: false,
     darkMode: false,
     language: "pt-BR",
-  });    // Show success message
-  };
+  });
 
   const handlePreferenceChange = (key: string, value: boolean) => {
     setPreferences((prev) => ({

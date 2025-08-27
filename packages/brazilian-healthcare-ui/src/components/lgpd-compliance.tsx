@@ -19,13 +19,13 @@ export function LGPDComplianceDashboard({
   className = "",
 }: LGPDComplianceProps) {
   const [consent, setConsent] = useState<LGPDConsent | null>(
-    currentConsent || undefined,
+    currentConsent || null,
   );
   const [isUpdating, setIsUpdating] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>();
 
   useEffect(() => {
-    setConsent(currentConsent || undefined);
+    setConsent(currentConsent || null);
   }, [currentConsent]);
 
   const handleConsentChange = async (

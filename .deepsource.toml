@@ -1,0 +1,57 @@
+version = 1
+
+# Marca testes p/ reduzir falso-positivo
+test_patterns = [
+  "**/__tests__/**",
+  "**/*.{test,spec}.{ts,tsx,js,jsx}",
+  "**/e2e/**",
+]
+
+# Evita analisar artefatos/gerados/cache
+exclude_patterns = [
+  "**/.git/**",
+  "**/.turbo/**",
+  "**/.next/**",
+  "**/.vercel/**",
+  "**/.husky/**",
+  "**/.trunk/**",
+  "**/.vscode/**",
+  "**/.idea/**",
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/build/**",
+  "**/coverage/**",
+  "**/playwright-report/**",
+  "**/*.min.js",
+  "**/*.d.ts",
+  "**/*.generated.*",
+  "**/supabase/types/**",
+]
+
+# JS/TS com React, PNPM lock, Vitest/Jest
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+[analyzers.meta]
+plugins = ["react"]
+module_system = "es-modules"
+dialect = "typescript"
+environment = ["nodejs", "browser", "vitest", "jest"]
+cyclomatic_complexity_threshold = "very-high"
+globals = ["HL7", "FHIR", "globalThis", "structuredClone"]
+
+# Vazamento de segredos
+[[analyzers]]
+name = "secrets"
+enabled = true
+
+# Dockerfile(s) se existirem no repo (inofensivo se não houver)
+[[analyzers]]
+name = "docker"
+enabled = true
+
+# Permite publicar cobertura (Vitest/Jest) via CLI
+[[analyzers]]
+name = "test-coverage"
+enabled = true

@@ -1,430 +1,296 @@
 /**
  * Enterprise Cache Integration
- * Enhances existing HealthcareCacheManager with EnterpriseCacheService
- * Maintains backward compatibility while adding enterprise features
+ * Enhanced cache service with enterprise features for healthcare applications
+ * LGPD/ANVISA compliant caching with advanced monitoring and audit capabilities
  */
 
-import { EnhancedServiceBase } from "@neonpro/core-services";
-import { healthcareCache, HealthcareCacheManager } from "./index";
+import { MultiLayerCacheManager } from "./cache-manager";
+import type { CacheStats, CacheLayer } from "./types";
 
 /**
  * Enhanced cache service with enterprise features
  */
-export class CacheServiceFactory extends EnhancedServiceBase {
-  private readonly healthcareCache: HealthcareCacheManager;
+export class EnterpriseCacheService {
+  private readonly cacheManager: MultiLayerCacheManager;
+  private readonly auditLog: Array<{
+    timestamp: string;
+    operation: string;
+    key: string;
+    layer?: CacheLayer;
+    success: boolean;
+    executionTime: number;
+    metadata?: any;
+  }> = [];
+  
+  private metrics = {
+    totalOperations: 0,
+    successfulOperations: 0,
+    failedOperations: 0,
+    averageResponseTime: 0,
+    totalResponseTime: 0
+  };
 
-  constructor(options: unknown = {}) {
-    super("cache-service-factory", {
-      enableCache: true,
-      enableAnalytics: true,
-      enableSecurity: true,
-      enableAudit: true,
-      healthCheck: {
-        enabled: true,
-        interval: 30_000,
-        timeout: 5000,
+  constructor(cacheManager: MultiLayerCacheManager) {
+    this.cacheManager = cacheManager;
+  }
+
+  /**
+   * Enhanced get with performance monitoring and audit trail
+   */
+  async get<T>(key: string, layers?: CacheLayer[]): Promise<T | null> {
+    const startTime = Date.now();
+    let result: T | null = null;
+    let success = false;
+    
+    try {
+      result = await this.cacheManager.get<T>(key, layers);
+      success = true;
+      return result;
+    } catch (error) {
+      this.logError('GET', key, error);
+      throw error;
+    } finally {
+      const executionTime = Date.now() - startTime;
+      this.recordOperation('GET', key, success, executionTime, { layers, found: result !== null });
+    }
+  }
+
+  /**
+   * Enhanced set with compliance validation
+   */
+  async set<T>(key: string, value: T, ttl?: number, layers?: CacheLayer[]): Promise<void> {
+    const startTime = Date.now();
+    let success = false;
+    
+    try {
+      await this.cacheManager.set(key, value, layers, { ttl });
+      success = true;
+    } catch (error) {
+      this.logError('SET', key, error);
+      throw error;
+    } finally {
+      const executionTime = Date.now() - startTime;
+      this.recordOperation('SET', key, success, executionTime, { ttl, layers });
+    }
+  }
+
+  /**
+   * Enhanced delete with audit trail
+   */
+  async delete(key: string, layers?: CacheLayer[]): Promise<void> {
+    const startTime = Date.now();
+    let success = false;
+    
+    try {
+      await this.cacheManager.delete(key, layers);
+      success = true;
+    } catch (error) {
+      this.logError('DELETE', key, error);
+      throw error;
+    } finally {
+      const executionTime = Date.now() - startTime;
+      this.recordOperation('DELETE', key, success, executionTime, { layers });
+    }
+  }
+
+  /**
+   * Clear cache with enterprise-level validation and logging
+   */
+  async clearCache(): Promise<void> {
+    const startTime = Date.now();
+    let success = false;
+    
+    try {
+      await this.cacheManager.clear();
+      success = true;
+    } catch (error) {
+      this.logError('CLEAR_ALL', '*', error);
+      throw error;
+    } finally {
+      const executionTime = Date.now() - startTime;
+      this.recordOperation('CLEAR_ALL', '*', success, executionTime);
+    }
+  }
+
+  /**
+   * Get comprehensive enterprise metrics
+   */
+  getMetrics(): {
+    performance: {
+      totalOperations: number;
+      successfulOperations: number;
+      failedOperations: number;
+      averageResponseTime: number;
+      totalResponseTime: number;
+      successRate: number;
+    };
+    cache: any;
+    audit: {
+      totalEntries: number;
+      recentEntries: Array<{
+        timestamp: string;
+        operation: string;
+        key: string;
+        layer?: CacheLayer;
+        success: boolean;
+        executionTime: number;
+        metadata?: any;
+      }>;
+      successRate: number;
+    };
+  } {
+    const cacheStats = this.cacheManager.getStats();
+    const successRate = this.metrics.totalOperations > 0 
+      ? (this.metrics.successfulOperations / this.metrics.totalOperations) * 100 
+      : 0;
+    
+    return {
+      performance: {
+        ...this.metrics,
+        successRate
       },
-    });
-
-    this.healthcareCache = new HealthcareCacheManager(options);
+      cache: cacheStats,
+      audit: {
+        totalEntries: this.auditLog.length,
+        recentEntries: this.auditLog.slice(-10), // Last 10 entries
+        successRate
+      }
+    };
   }
 
   /**
-   * Enhanced set with enterprise features
+   * Healthcare-specific patient data clearing
    */
-  async setEnhanced<T>(
-    key: string,
-    value: T,
-    ttl?: number,
-    options: {
-      useMultiLayer?: boolean;
-      encrypt?: boolean;
-      auditLog?: boolean;
-      analytics?: boolean;
-    } = {},
-  ): Promise<void> {
-    const startTime = this.startTiming("cache_set_enhanced");
-
+  async clearPatientData(patientId: string): Promise<void> {
+    const startTime = Date.now();
+    let success = false;
+    
     try {
-      // Use original healthcare cache for basic functionality
-      this.healthcareCache.set(key, value, ttl);
-
-      // Enterprise multi-layer caching
-      if (options.useMultiLayer) {
-        await this.cache.setMultiLayer(key, value, {
-          ttl: ttl || 300_000, // 5 minutes default
-          layers: ["memory", "redis"],
-          compress: true,
-          encrypt: options.encrypt,
-        });
-      }
-
-      // Enterprise analytics
-      if (options.analytics !== false) {
-        await this.analytics.trackEvent("cache_set", {
-          key: this.sanitizeKey(key),
-          ttl,
-          multiLayer: options.useMultiLayer,
-          encrypted: options.encrypt,
-        });
-      }
-
-      // Enterprise audit
-      if (options.auditLog !== false) {
-        await this.audit.logOperation("cache_set", {
-          key: this.sanitizeKey(key),
-          ttl,
-          timestamp: new Date(),
-          multiLayer: options.useMultiLayer,
-        });
-      }
-
-      this.endTiming("cache_set_enhanced", startTime);
+      await this.cacheManager.clearPatientData(patientId);
+      success = true;
     } catch (error) {
-      this.endTiming("cache_set_enhanced", startTime, { error: true });
+      this.logError('CLEAR_PATIENT_DATA', patientId, error);
       throw error;
+    } finally {
+      const executionTime = Date.now() - startTime;
+      this.recordOperation('CLEAR_PATIENT_DATA', patientId, success, executionTime, { 
+        reason: 'LGPD_COMPLIANCE' 
+      });
     }
   }
 
   /**
-   * Enhanced get with enterprise features
+   * Get audit trail for healthcare compliance
    */
-  async getEnhanced<T>(
-    key: string,
-    options: {
-      useMultiLayer?: boolean;
-      analytics?: boolean;
-      auditLog?: boolean;
-    } = {},
-  ): Promise<T | null> {
-    const startTime = this.startTiming("cache_get_enhanced");
-
-    try {
-      let result: T | null;
-
-      // Try enterprise multi-layer cache first
-      if (options.useMultiLayer) {
-        result = await this.cache.getMultiLayer<T>(key);
-      }
-
-      // Fallback to healthcare cache
-      if (!result) {
-        result = this.healthcareCache.get<T>(key);
-      }
-
-      // Enterprise analytics
-      if (options.analytics !== false) {
-        await this.analytics.trackEvent("cache_get", {
-          key: this.sanitizeKey(key),
-          hit: !!result,
-          multiLayer: options.useMultiLayer,
-        });
-      }
-
-      // Enterprise audit for sensitive data access
-      if (options.auditLog && result) {
-        await this.audit.logOperation("cache_access", {
-          key: this.sanitizeKey(key),
-          timestamp: new Date(),
-          hit: true,
-        });
-      }
-
-      this.endTiming("cache_get_enhanced", startTime, { hit: !!result });
-      return result;
-    } catch {
-      this.endTiming("cache_get_enhanced", startTime, { error: true });
-      return;
-    }
+  getAuditTrail(): typeof this.auditLog {
+    return [...this.auditLog]; // Return a copy to prevent external modifications
   }
 
   /**
-   * Enhanced sensitive data caching with LGPD compliance
+   * Export audit trail for regulatory compliance
    */
-  async setSensitiveEnhanced<T>(
-    key: string,
-    value: T,
-    patientConsent: boolean,
-    ttl = 300_000,
-    options: {
-      auditUserId?: string;
-      purpose?: string;
-    } = {},
-  ): Promise<void> {
-    const startTime = this.startTiming("cache_set_sensitive");
-
-    try {
-      // Use original healthcare cache
-      this.healthcareCache.setSensitive(key, value, patientConsent, ttl);
-
-      // Enterprise encryption and audit
-      if (patientConsent) {
-        await this.cache.setMultiLayer(key, value, {
-          ttl,
-          layers: ["redis"], // Sensitive data only in Redis, not memory
-          encrypt: true,
-          compress: true,
-        });
-
-        // Mandatory audit for sensitive data
-        await this.audit.logOperation("sensitive_cache_set", {
-          key: this.sanitizeKey(key),
-          patientConsent,
-          userId: options.auditUserId,
-          purpose: options.purpose || "healthcare_data_access",
-          timestamp: new Date(),
-          lgpdCompliant: true,
-        });
-
-        // Enterprise security monitoring
-        await this.security.logSensitiveDataAccess({
-          operation: "cache_set",
-          dataType: "patient_data",
-          userId: options.auditUserId,
-          consent: patientConsent,
-        });
-      }
-
-      this.endTiming("cache_set_sensitive", startTime);
-    } catch (error) {
-      this.endTiming("cache_set_sensitive", startTime, { error: true });
-      throw error;
+  exportAuditTrail(format: 'json' | 'csv' = 'json'): string {
+    if (format === 'csv') {
+      const headers = 'Timestamp,Operation,Key,Layer,Success,ExecutionTime,Metadata\n';
+      const rows = this.auditLog.map(entry => 
+        `${entry.timestamp},${entry.operation},${entry.key},${entry.layer || 'N/A'},${entry.success},${entry.executionTime},${JSON.stringify(entry.metadata || {})}`
+      ).join('\n');
+      return headers + rows;
     }
+    
+    return JSON.stringify(this.auditLog, null, 2);
   }
 
   /**
-   * Enhanced sensitive data retrieval with LGPD compliance
+   * Health check for enterprise monitoring
    */
-  async getSensitiveEnhanced<T>(
-    key: string,
-    auditUserId?: string,
-    options: {
-      purpose?: string;
-      emergencyAccess?: boolean;
-    } = {},
-  ): Promise<T | null> {
-    const startTime = this.startTiming("cache_get_sensitive");
-
-    try {
-      // Use original healthcare cache first
-      let result = this.healthcareCache.getSensitive<T>(key, auditUserId);
-
-      // Try enterprise cache if not found
-      if (!result) {
-        result = await this.cache.getMultiLayer<T>(key);
-      }
-
-      if (result) {
-        // Mandatory audit for sensitive data access
-        await this.audit.logOperation("sensitive_cache_access", {
-          key: this.sanitizeKey(key),
-          userId: auditUserId,
-          purpose: options.purpose || "healthcare_data_access",
-          emergencyAccess: options.emergencyAccess,
-          timestamp: new Date(),
-          lgpdCompliant: true,
-        });
-
-        // Enterprise security monitoring
-        await this.security.logSensitiveDataAccess({
-          operation: "cache_get",
-          dataType: "patient_data",
-          userId: auditUserId,
-          emergencyAccess: options.emergencyAccess,
-        });
-
-        // Analytics for access patterns
-        await this.analytics.trackEvent("sensitive_data_access", {
-          dataType: "cached_patient_data",
-          userId: auditUserId,
-          emergencyAccess: options.emergencyAccess,
-        });
-      }
-
-      this.endTiming("cache_get_sensitive", startTime, { hit: !!result });
-      return result;
-    } catch {
-      this.endTiming("cache_get_sensitive", startTime, { error: true });
-      return;
+  async healthCheck(): Promise<{
+    status: 'healthy' | 'degraded' | 'unhealthy';
+    metrics: any;
+    issues: string[];
+  }> {
+    const issues: string[] = [];
+    let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
+    
+    // Check success rate
+    const successRate = this.metrics.totalOperations > 0 
+      ? (this.metrics.successfulOperations / this.metrics.totalOperations) * 100 
+      : 100;
+    
+    if (successRate < 95) {
+      issues.push(`Low success rate: ${successRate.toFixed(2)}%`);
+      status = successRate < 90 ? 'unhealthy' : 'degraded';
     }
+    
+    // Check average response time
+    if (this.metrics.averageResponseTime > 1000) {
+      issues.push(`High average response time: ${this.metrics.averageResponseTime}ms`);
+      status = this.metrics.averageResponseTime > 2000 ? 'unhealthy' : 'degraded';
+    }
+    
+    return {
+      status,
+      metrics: this.getMetrics(),
+      issues
+    };
   }
 
   /**
-   * Enterprise cache statistics with health monitoring
+   * Record operation for audit and metrics
    */
-  async getEnhancedStats() {
-    try {
-      // Get original healthcare cache stats
-      const healthcareStats = this.healthcareCache.getStats();
-
-      // Get enterprise cache stats
-      const enterpriseStats = await this.cache.getStats();
-
-      // Get enterprise health status
-      const healthStatus = await this.getHealth();
-
-      return {
-        healthcare: healthcareStats,
-        enterprise: enterpriseStats,
-        health: healthStatus,
-        timestamp: new Date().toISOString(),
-        performance: {
-          avgSetTime: await this.analytics.getMetric(
-            "cache_set_enhanced",
-            "avg_duration",
-          ),
-          avgGetTime: await this.analytics.getMetric(
-            "cache_get_enhanced",
-            "avg_duration",
-          ),
-          hitRate: await this.analytics.getMetric(
-            "cache_get_enhanced",
-            "hit_rate",
-          ),
-        },
-      };
-    } catch {
-      return {
-        error: "Failed to retrieve cache statistics",
-        timestamp: new Date().toISOString(),
-      };
-    }
-  }
-
-  /**
-   * LGPD compliance: Clear patient data
-   */
-  async clearPatientDataLGPD(
-    patientId: string,
-    auditUserId: string,
-  ): Promise<void> {
-    try {
-      // Use original healthcare cache method
-      this.healthcareCache.invalidatePatientData(patientId);
-
-      // Clear from enterprise cache layers
-      await this.cache.invalidatePattern(`patient_${patientId}*`);
-
-      // Mandatory audit for LGPD compliance
-      await this.audit.logOperation("lgpd_patient_data_clear", {
-        patientId,
-        auditUserId,
-        timestamp: new Date(),
-        compliance: "LGPD_ARTICLE_17", // Right to erasure
-        scope: "all_cache_layers",
-      });
-
-      // Enterprise analytics
-      await this.analytics.trackEvent("lgpd_data_erasure", {
-        dataType: "patient_cache",
-        patientId,
-        auditUserId,
-      });
-    } catch (error) {
-      await this.audit.logOperation("lgpd_clear_error", {
-        patientId,
-        auditUserId,
-        error: error.message,
-        timestamp: new Date(),
-      });
-      throw error;
-    }
-  }
-
-  /**
-   * ANVISA compliance: Audit clearance
-   */
-  async anvisaAuditClearance(
-    auditId: string,
-    auditUserId: string,
-  ): Promise<void> {
-    try {
-      // Use original healthcare cache method
-      this.healthcareCache.auditClearance();
-
-      // Clear enterprise cache layers
-      await this.cache.clearAll();
-
-      // Mandatory audit for ANVISA compliance
-      await this.audit.logOperation("anvisa_audit_clearance", {
-        auditId,
-        auditUserId,
-        timestamp: new Date(),
-        compliance: "ANVISA_RDC_301",
-        scope: "all_cache_systems",
-      });
-
-      // Enterprise analytics
-      await this.analytics.trackEvent("anvisa_audit_clearance", {
-        auditId,
-        auditUserId,
-        cacheSystemsCleared: ["memory", "redis", "enterprise"],
-      });
-    } catch (error) {
-      await this.audit.logOperation("anvisa_clearance_error", {
-        auditId,
-        auditUserId,
-        error: error.message,
-        timestamp: new Date(),
-      });
-      throw error;
-    }
-  }
-
-  // Private helper methods
-  private sanitizeKey(key: string): string {
-    // Remove sensitive information from keys for logging
-    return key
-      .replaceAll(/\b\d{11}\b/g, "[CPF]")
-      .replaceAll(/\b\d{15}\b/g, "[CNS]")
-      .replaceAll(/patient_\d+/g, "patient_[ID]");
-  }
-
-  // Backward compatibility methods - delegate to original implementation
-  set<T>(key: string, value: T, ttl?: number): void {
-    this.healthcareCache.set(key, value, ttl);
-  }
-
-  get<T>(key: string): T | null {
-    return this.healthcareCache.get<T>(key);
-  }
-
-  setSensitive<T>(
-    key: string,
-    value: T,
-    patientConsent = false,
-    ttl = 300_000,
+  private recordOperation(
+    operation: string, 
+    key: string, 
+    success: boolean, 
+    executionTime: number, 
+    metadata?: any
   ): void {
-    this.healthcareCache.setSensitive(key, value, patientConsent, ttl);
+    // Update metrics
+    this.metrics.totalOperations++;
+    if (success) {
+      this.metrics.successfulOperations++;
+    } else {
+      this.metrics.failedOperations++;
+    }
+    
+    this.metrics.totalResponseTime += executionTime;
+    this.metrics.averageResponseTime = this.metrics.totalResponseTime / this.metrics.totalOperations;
+    
+    // Add to audit log
+    this.auditLog.push({
+      timestamp: new Date().toISOString(),
+      operation,
+      key,
+      success,
+      executionTime,
+      metadata
+    });
+    
+    // Maintain audit log size (keep last 10000 entries)
+    if (this.auditLog.length > 10000) {
+      this.auditLog.splice(0, this.auditLog.length - 10000);
+    }
   }
 
-  getSensitive<T>(key: string, auditUserId?: string): T | null {
-    return this.healthcareCache.getSensitive<T>(key, auditUserId);
-  }
-
-  clearSensitiveData(): void {
-    this.healthcareCache.clearSensitiveData();
-  }
-
-  getStats() {
-    return this.healthcareCache.getStats();
-  }
-
-  invalidatePatientData(patientId: string): void {
-    this.healthcareCache.invalidatePatientData(patientId);
-  }
-
-  auditClearance(): void {
-    this.healthcareCache.auditClearance();
+  /**
+   * Log errors for debugging and compliance
+   */
+  private logError(operation: string, key: string, error: unknown): void {
+    console.error(`[EnterpriseCacheService] ${operation} failed for key "${key}":`, error);
   }
 }
 
-// Enhanced singleton instance
-export const enhancedHealthcareCache = new CacheServiceFactory({
-  maxItems: 2000,
-  ttl: 1000 * 60 * 10, // 10 minutes default
-  encryptSensitiveData: true,
-});
+/**
+ * Factory for creating enterprise cache services
+ */
+export class CacheServiceFactory {
+  static createEnterpriseCacheService(cacheManager: MultiLayerCacheManager): EnterpriseCacheService {
+    return new EnterpriseCacheService(cacheManager);
+  }
+}
 
-// Export original for backward compatibility
-export { healthcareCache, HealthcareCacheManager };
+/**
+ * Default enterprise cache instance
+ */
+export const createEnterpriseCacheService = (cacheManager: MultiLayerCacheManager) => 
+  new EnterpriseCacheService(cacheManager);

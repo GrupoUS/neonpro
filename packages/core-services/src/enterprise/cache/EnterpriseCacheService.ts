@@ -13,7 +13,7 @@
  * - Health monitoring e auto-healing
  */
 
-import Redis from "ioredis";
+import type Redis from "ioredis";
 import { LRUCache } from "lru-cache";
 import type { PerformanceMetrics } from "../../types";
 
@@ -118,18 +118,25 @@ class RedisCacheLayer implements CacheLayer {
   name = "redis";
   priority = 2;
 
-  private readonly redis: Redis;
+  private readonly redis: Redis | null;
   private readonly accessCount = 0;
   private readonly hitCount = 0;
   private readonly keyPrefix: string;
 
   constructor(config: EnterpriseCacheConfig["layers"]["redis"]) {
-    this.redis = new Redis({
-      host: config.host,
-      port: config.port,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
-    });
+    try {
+      // Dynamic import to make Redis optional
+      const RedisModule = require("ioredis");
+      this.redis = new RedisModule({
+        host: config.host,
+        port: config.port,
+        maxRetriesPerRequest: 3,
+        lazyConnect: true,
+      });
+    } catch (error) {
+      console.warn("Redis not available, falling back to memory cache:", error);
+      this.redis = null;
+    }
     this.keyPrefix = config.keyPrefix || "neonpro:cache:";
   }
 
@@ -139,20 +146,22 @@ class RedisCacheLayer implements CacheLayer {
 
   async get<T>(key: string): Promise<T | null> {
     try {
+      if (!this.redis) return null;
       this.accessCount++;
       const value = await this.redis.get(this.getKey(key));
       if (value) {
         this.hitCount++;
         return JSON.parse(value) as T;
       }
-      return;
+      return null;
     } catch {
-      return;
+      return null;
     }
   }
 
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
     try {
+      if (!this.redis) return;
       const redisKey = this.getKey(key);
       const serialized = JSON.stringify(value);
 
@@ -166,12 +175,14 @@ class RedisCacheLayer implements CacheLayer {
 
   async delete(key: string): Promise<void> {
     try {
+      if (!this.redis) return;
       await this.redis.del(this.getKey(key));
     } catch {}
   }
 
   async clear(): Promise<void> {
     try {
+      if (!this.redis) return;
       const keys = await this.redis.keys(`${this.keyPrefix}*`);
       if (keys.length > 0) {
         await this.redis.del(...keys);

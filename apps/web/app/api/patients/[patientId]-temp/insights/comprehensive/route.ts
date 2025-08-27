@@ -41,9 +41,7 @@ export async function GET(
     const requestedInsights = searchParams.get("insights")?.split(",") || [];
     const treatmentContext = searchParams.get("context") || undefined;
 
-    // Create comprehensive insight request
-    const _insightRequest: PatientInsightRequest = {
-      patient_id: patientId,
+    // Create comprehensive insight request for processing
       requestedInsights: requestedInsights.length > 0
         ? (requestedInsights as unknown[])
         : undefined,

@@ -139,9 +139,7 @@ export class BlockchainStorage {
 
       // console.log("✅ Blockchain Storage initialized successfully");
       // console.log(`🔗 Network ID: ${this.config.networkId}`);
-      // console.log(
-        `⚡ Processing interval: ${this.config.processingInterval}ms`,
-      );
+      // console.log(`⚡ Processing interval: ${this.config.processingInterval}ms`);
     } catch (error) {
       // console.error("❌ Failed to initialize Blockchain Storage:", error);
       throw error;

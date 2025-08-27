@@ -82,11 +82,10 @@ export default function TreatmentsPage() {
   const {
     treatmentPlans,
     activeTreatments,
-    completedTreatments,
+    // completedTreatments, // TODO: Display completed treatments
     upcomingSessions,
     todaysSessions,
-    totalTreatments,
-    activeSessionsCount,
+    // totalTreatments, activeSessionsCount, // TODO: Add summary statistics
     completionRate,
     averageSatisfactionScore,
     loading,
@@ -105,7 +104,7 @@ export default function TreatmentsPage() {
   const [statusFilter, setStatusFilter] = useState<TreatmentStatus | "all">(
     "all",
   );
-  const [_selectedTreatment, _setSelectedTreatment] = useState<TreatmentPlan | null>();
+  // const [selectedTreatment, setSelectedTreatment] = useState<TreatmentPlan | null>(); // TODO: Implement treatment selection
   const [showNewTreatmentDialog, setShowNewTreatmentDialog] = useState(false);
 
   // Handle search
@@ -118,14 +117,14 @@ export default function TreatmentsPage() {
   const handleCategoryFilter = (category: string) => {
     setCategoryFilter(category as AestheticTreatmentCategory | "all");
     filterByCategory(
-      category === "all" ? undefined : (category as AestheticTreatmentCategory),
+      category === "all" ? null : (category as AestheticTreatmentCategory),
     );
   };
 
   // Handle status filter
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status as TreatmentStatus | "all");
-    filterByStatus(status === "all" ? undefined : (status as TreatmentStatus));
+    filterByStatus(status === "all" ? null : (status as TreatmentStatus));
   };
 
   // Mock data for demonstration (in real implementation, this would come from the hook)
@@ -152,8 +151,8 @@ export default function TreatmentsPage() {
     expected_outcomes: {},
     risk_assessment: {},
     total_cost: 3500,
-    payment_plan: undefined,
-    insurance_coverage: undefined,
+    payment_plan: null,
+    insurance_coverage: null,
     start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     estimated_completion_date: new Date(
       Date.now() + 90 * 24 * 60 * 60 * 1000,
@@ -517,7 +516,7 @@ export default function TreatmentsPage() {
             {loading
               ? (
                 // Loading skeleton
-                new Array(4).fill().map((_, i) => (
+                Array.from({ length: 4 }).map((_, i) => (
                   <Card key={i}>
                     <CardHeader>
                       <div className="space-y-2">

@@ -153,11 +153,7 @@ export const complianceRoutes = new Hono()
     const {
       page,
       limit,
-      startDate: _startDate,
-      endDate: _endDate,
-      userId: _userId,
-      action: _action,
-      resourceType: _resourceType,
+      // startDate, endDate, userId, action, resourceType // TODO: Implement filtering
     } = c.req.valid("query");
 
     try {

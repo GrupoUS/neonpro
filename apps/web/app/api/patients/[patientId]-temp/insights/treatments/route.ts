@@ -36,8 +36,7 @@ export async function GET(
     }
 
     // Get treatment context from query parameters
-    const { searchParams } = new URL(request.url);
-    const treatmentContext = searchParams.get("context") || undefined;
+    const url = new URL(request.url);
 
     // Generate treatment guidance
     const treatmentRecommendations = await patientInsights.getTreatmentRecommendations(patientId);
@@ -74,8 +73,6 @@ export async function POST(
     const { patientId } = await params;
     const body = await request.json();
     const {
-      treatmentContext,
-      includeAlternatives = true,
       includeRiskAssessment = true,
       outcomeData,
     } = body;

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
         cookies.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options || {});
         });
       },
     });
@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(stats);
-  } catch (error) {
+  } catch (_error) {
     // console.error("Error fetching no-show stats:", error);
     return NextResponse.json(
       { error: "Failed to fetch statistics" },

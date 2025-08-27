@@ -118,7 +118,7 @@ interface Metric {
   change: number;
   trend: "up" | "down" | "stable";
   format: "number" | "percentage" | "currency";
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 interface Task {
@@ -468,23 +468,23 @@ export default function NeonProHealthcareDashboard({
     return () => clearInterval(interval);
   }, [aiState.featureFlags.realTimeAlerts]);
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = useCallback((value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
+  }, []);
 
-  const formatPercentage = (value: number) => {
+  const formatPercentage = useCallback((value: number) => {
     return `${value.toFixed(1)}%`;
-  };
+  }, []);
 
-  const getMetricIcon = (metric: Metric) => {
+  const getMetricIcon = useCallback((metric: Metric) => {
     const { icon: Icon } = metric;
     return <Icon className="h-4 w-4" />;
-  };
+  }, []);
 
-  const getChangeColor = (change: number) => {
+  const getChangeColor = useCallback((change: number) => {
     if (change > 0) {
       return "text-green-600";
     }
@@ -492,7 +492,7 @@ export default function NeonProHealthcareDashboard({
       return "text-red-600";
     }
     return "text-gray-600";
-  };
+  }, []);
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -1368,48 +1368,56 @@ export default function NeonProHealthcareDashboard({
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={aiState.featureFlags.aiInsights}
-                        onCheckedChange={(checked) =>
-                          aiDispatch({
-                            type: "UPDATE_FEATURE_FLAGS",
-                            payload: { aiInsights: checked },
-                          })}
-                      />
-                      <label className="text-sm">AI Insights</label>
+                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                        <Switch
+                          checked={aiState.featureFlags.aiInsights}
+                          onCheckedChange={(checked) =>
+                            aiDispatch({
+                              type: "UPDATE_FEATURE_FLAGS",
+                              payload: { aiInsights: checked },
+                            })}
+                        />
+                        AI Insights
+                      </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={aiState.featureFlags.predictiveAnalytics}
-                        onCheckedChange={(checked) =>
-                          aiDispatch({
-                            type: "UPDATE_FEATURE_FLAGS",
-                            payload: { predictiveAnalytics: checked },
-                          })}
-                      />
-                      <label className="text-sm">Análise Preditiva</label>
+                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                        <Switch
+                          checked={aiState.featureFlags.predictiveAnalytics}
+                          onCheckedChange={(checked) =>
+                            aiDispatch({
+                              type: "UPDATE_FEATURE_FLAGS",
+                              payload: { predictiveAnalytics: checked },
+                            })}
+                        />
+                        Análise Preditiva
+                      </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={aiState.featureFlags.realTimeAlerts}
-                        onCheckedChange={(checked) =>
-                          aiDispatch({
-                            type: "UPDATE_FEATURE_FLAGS",
-                            payload: { realTimeAlerts: checked },
-                          })}
-                      />
-                      <label className="text-sm">Alertas em Tempo Real</label>
+                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                        <Switch
+                          checked={aiState.featureFlags.realTimeAlerts}
+                          onCheckedChange={(checked) =>
+                            aiDispatch({
+                              type: "UPDATE_FEATURE_FLAGS",
+                              payload: { realTimeAlerts: checked },
+                            })}
+                        />
+                        Alertas em Tempo Real
+                      </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={aiState.featureFlags.smartMetrics}
-                        onCheckedChange={(checked) =>
-                          aiDispatch({
-                            type: "UPDATE_FEATURE_FLAGS",
-                            payload: { smartMetrics: checked },
-                          })}
-                      />
-                      <label className="text-sm">Métricas Inteligentes</label>
+                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                        <Switch
+                          checked={aiState.featureFlags.smartMetrics}
+                          onCheckedChange={(checked) =>
+                            aiDispatch({
+                              type: "UPDATE_FEATURE_FLAGS",
+                              payload: { smartMetrics: checked },
+                            })}
+                        />
+                        Métricas Inteligentes
+                      </label>
                     </div>
                   </div>
                 </CardContent>

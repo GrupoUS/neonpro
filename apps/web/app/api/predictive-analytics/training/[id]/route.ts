@@ -23,10 +23,9 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; }>; },
+  { params: _params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
-    const resolvedParams = await params;
     const body = await request.json();
     const { data } = body;
 

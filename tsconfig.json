@@ -71,7 +71,7 @@
       "path": "./packages/domain"
     },
     {
-      "path": "./packages/db"
+      "path": "./packages/database"
     },
     {
       "path": "./packages/types"

@@ -44,7 +44,7 @@ export default function PatientsPage() {
       || patient.phone?.includes(filters.searchTerm);
 
     return matchesSearch;
-  });  };
+  });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR");

@@ -6,7 +6,6 @@
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { RetentionStrategyStatus, RetentionStrategyType } from "@/app/types/retention-analytics";
-import type { CreateRetentionStrategy } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";

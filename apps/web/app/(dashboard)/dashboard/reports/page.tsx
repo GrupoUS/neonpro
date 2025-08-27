@@ -386,7 +386,7 @@ const handleExportReport = (
     switch (format) {
       case "pdf": {
         const pdfGenerator = new HealthcarePDFGenerator();
-        let pdfData: Uint8Array;: Uint8Array;
+        let pdfData: Uint8Array;
 
         switch (reportId) {
           case "lgpd-compliance": {

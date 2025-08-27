@@ -137,10 +137,10 @@ const mockCertificates: DigitalCertificate[] = [
 ];
 
 export function DigitalSignature({
-  consentId,
-  patientId,
+  consentId: _consentId,
+  patientId: _patientId,
   consentType,
-  consentDocument,
+  consentDocument: _consentDocument,
   onSignatureComplete,
   onSignatureCancel,
   isOpen,

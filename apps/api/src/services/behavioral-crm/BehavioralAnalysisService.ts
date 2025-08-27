@@ -650,13 +650,13 @@ export class BehavioralAnalysisService {
     }
   }
 
-  private async getPatientInteractions(_patientId: string): Promise<any[]> {
+  private async getPatientInteractions(_patientId: string): Promise<unknown[]> {
     // This would integrate with communication systems
     // WhatsApp, email, SMS logs, etc.
     return [];
   }
 
-  private async getAppointmentHistory(patientId: string): Promise<any[]> {
+  private async getAppointmentHistory(patientId: string): Promise<unknown[]> {
     try {
       const { data, error } = await supabase
         .from("appointments")

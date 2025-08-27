@@ -247,7 +247,15 @@ export class HealthcareEncryption {
     dataSize: number,
     error?: unknown,
   ): void {
-    // Store in audit log - would use actual audit service  }
+    // Store in audit log - would use actual audit service
+    console.debug('Healthcare Encryption Audit:', {
+      action,
+      classification,
+      dataSize,
+      timestamp: new Date().toISOString(),
+      error: error ? String(error) : undefined
+    });
+  }
 }
 
 /**

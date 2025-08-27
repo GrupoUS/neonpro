@@ -1,5 +1,8 @@
 "use client";
 
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 import { formatCurrency, formatDate, reportData } from "./healthcare-data";
 
 // PDF Export Configuration
@@ -25,12 +28,11 @@ const PDF_CONFIG = {
 
 // Professional PDF Template Generator
 export class HealthcarePDFGenerator {
-  private readonly doc: unknown;
+  private readonly doc: jsPDF;
   private yPosition: number;
 
   constructor() {
-    // this.doc = new jsPDF();
-    this.doc = undefined as unknown; // Temporarily disabled due to import issues
+    this.doc = new jsPDF();
     this.yPosition = PDF_CONFIG.margin;
   }
 
@@ -237,7 +239,7 @@ export class HealthcarePDFGenerator {
     });
 
     this.addFooter();
-    return this.doc.output("arraybuffer");
+    return new Uint8Array(this.doc.output("arraybuffer"));
   }
 
   // Generate Financial Report
@@ -317,7 +319,7 @@ export class HealthcarePDFGenerator {
     ]);
 
     this.addFooter();
-    return this.doc.output("arraybuffer");
+    return new Uint8Array(this.doc.output("arraybuffer"));
   }
 
   // Generate Clinical Report
@@ -410,7 +412,7 @@ export class HealthcarePDFGenerator {
     }
 
     this.addFooter();
-    return this.doc.output("arraybuffer");
+    return new Uint8Array(this.doc.output("arraybuffer"));
   }
 }
 

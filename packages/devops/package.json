@@ -13,7 +13,13 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "deploy:blue-green": "tsx src/deployment/blue-green/deployer.ts",
+    "health:check": "tsx src/deployment/blue-green/health-checker.ts",
+    "rollback:execute": "tsx src/deployment/blue-green/rollback-manager.ts",
+    "monitor:deployment": "tsx src/deployment/monitoring/deployment-monitor.ts",
+    "validate:pre-deploy": "tsx src/deployment/automation/pre-deploy-checks.ts",
+    "validate:post-deploy": "tsx src/deployment/automation/post-deploy-validation.ts"
   },
   "dependencies": {
     "@neonpro/database": "workspace:*",
@@ -23,7 +29,22 @@
     "lighthouse": "^12.2.1",
     "prometheus-api-metrics": "^3.2.2",
     "winston": "^3.14.2",
-    "docker": "^1.0.0"
+    "docker": "^1.0.0",
+    "@octokit/rest": "^20.0.2",
+    "@vercel/node": "^3.0.21",
+    "dockerode": "^4.0.2",
+    "kubernetes-client": "^9.0.0",
+    "node-ssh": "^13.1.0",
+    "pg": "^8.11.3",
+    "redis": "^4.6.12",
+    "axios": "^1.6.2",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "inquirer": "^9.2.12",
+    "yaml": "^2.3.4",
+    "fs-extra": "^11.2.0",
+    "glob": "^10.3.10",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
@@ -31,7 +52,11 @@
     "happy-dom": "^18.0.1",
     "tsup": "^8.3.0",
     "typescript": "^5.6.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/pg": "^8.10.9",
+    "@types/fs-extra": "^11.0.4",
+    "tsx": "^4.6.2"
   },
   "keywords": [
     "devops",

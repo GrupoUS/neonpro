@@ -379,8 +379,8 @@ export class ModelManagementSystem {
   ): Promise<void> {
     // In production, this would send notifications via email/Slack/etc
     // console.warn(
-      `🚨 Model Drift Alert: Model ${modelId} has ${(driftScore * 100).toFixed(2)}% drift`,
-    );
+    //   `🚨 Model Drift Alert: Model ${modelId} has ${(driftScore * 100).toFixed(2)}% drift`,
+    // );
 
     // Log alert to compliance system
     await this.logModelEvent(modelId, "drift_alert", {
@@ -395,12 +395,12 @@ export class ModelManagementSystem {
     metrics: Partial<ModelPerformanceMetrics>,
   ): Promise<void> {
     // console.warn(
-      `⚡ Performance Alert: Model ${modelId} accuracy dropped to ${
-        (
-          metrics.accuracy! * 100
-        ).toFixed(2)
-      }%`,
-    );
+    //   `⚡ Performance Alert: Model ${modelId} accuracy dropped to ${
+    //     (
+    //       metrics.accuracy! * 100
+    //     ).toFixed(2)
+    //   }%`,
+    // );
 
     await this.logModelEvent(modelId, "performance_alert", {
       metrics,

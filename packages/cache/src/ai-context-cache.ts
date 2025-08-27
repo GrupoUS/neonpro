@@ -344,15 +344,18 @@ export class AIContextCacheLayer implements CacheOperation {
     // Evict bottom 10%
     const evictCount = Math.floor(entries.length * 0.1);
     for (let i = 0; i < evictCount; i++) {
-      const key = entries[i].key.replace(this.buildKey(''), '');
-      await this.delete(key);
+      const entry = entries[i];
+      if (entry) {
+        const key = entry.key.replace(this.buildKey(''), '');
+        await this.delete(key);
+      }
     }
   }
 
   private calculateEvictionScore(entry: any): number {
     const now = Date.now();
     const age = now - entry.timestamp;
-    const accessRecency = now - entry.lastAccessed;
+    const accessRecency = now - (entry.lastAccessed || entry.timestamp);
     const accessFrequency = entry.accessCount || 0;
 
     // Importance weights
@@ -363,7 +366,7 @@ export class AIContextCacheLayer implements CacheOperation {
       'critical': 8,
     };
 
-    const importanceWeight = importanceWeights[entry.importance] || 2;
+    const importanceWeight = importanceWeights[entry.importance as keyof typeof importanceWeights] || 2;
 
     // Lower score = more likely to be evicted
     return (age / 1000) + (accessRecency / 1000) - (accessFrequency * 1000) - (importanceWeight * 10000);

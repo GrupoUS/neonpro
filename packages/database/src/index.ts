@@ -87,21 +87,21 @@ export const healthcareUtils = {
     // CPF validation algorithm
     let sum = 0;
     for (let i = 0; i < 9; i++) {
-      sum += parseInt(cleaned[i]) * (10 - i);
+      sum += parseInt(cleaned[i] || '0') * (10 - i);
     }
     let digit1 = (sum * 10) % 11;
     if (digit1 === 10) digit1 = 0;
     
-    if (parseInt(cleaned[9]) !== digit1) return false;
+    if (parseInt(cleaned[9] || '0') !== digit1) return false;
     
     sum = 0;
     for (let i = 0; i < 10; i++) {
-      sum += parseInt(cleaned[i]) * (11 - i);
+      sum += parseInt(cleaned[i] || '0') * (11 - i);
     }
     let digit2 = (sum * 10) % 11;
     if (digit2 === 10) digit2 = 0;
     
-    return parseInt(cleaned[10]) === digit2;
+    return parseInt(cleaned[10] || '0') === digit2;
   },
   
   // CFM validation
@@ -120,25 +120,25 @@ export const healthcareUtils = {
     const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     
     for (let i = 0; i < 12; i++) {
-      sum += parseInt(cleaned[i]) * weights1[i];
+      sum += parseInt(cleaned[i] || '0') * (weights1[i] || 0);
     }
     
     let digit1 = sum % 11;
     digit1 = digit1 < 2 ? 0 : 11 - digit1;
     
-    if (parseInt(cleaned[12]) !== digit1) return false;
+    if (parseInt(cleaned[12] || '0') !== digit1) return false;
     
     sum = 0;
     const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
     
     for (let i = 0; i < 13; i++) {
-      sum += parseInt(cleaned[i]) * weights2[i];
+      sum += parseInt(cleaned[i] || '0') * (weights2[i] || 0);
     }
     
     let digit2 = sum % 11;
     digit2 = digit2 < 2 ? 0 : 11 - digit2;
     
-    return parseInt(cleaned[13]) === digit2;
+    return parseInt(cleaned[13] || '0') === digit2;
   },
   
   // Brazilian states for address validation

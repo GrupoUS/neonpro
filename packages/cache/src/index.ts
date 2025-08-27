@@ -20,16 +20,56 @@ export * from './enterprise';
 
 // Default cache manager instance for easy consumption
 import { MultiLayerCacheManager } from './cache-manager';
+import type { MultiLayerCacheConfig } from './cache-manager';
 import type { CacheConfig } from './types';
+import { CacheLayer } from './types';
 
-// Healthcare-optimized default configuration
+// Healthcare-optimized default configuration for MultiLayerCacheManager
+const defaultMultiLayerConfig: MultiLayerCacheConfig = {
+  supabase: {
+    projectId: process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || 'ownkoxryswokcdanrdgj',
+    apiUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ownkoxryswokcdanrdgj.supabase.co',
+    serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+    tableName: 'cache_entries',
+    defaultTTL: 60 * 60 * 1000, // 1 hour
+    compressionEnabled: true,
+    encryptionEnabled: true
+  },
+  browser: {
+    maxSize: 100,
+    defaultTTL: 5 * 60 * 1000,
+    storageQuota: 50 * 1024 * 1024,
+    lgpdCompliant: true,
+    compressionEnabled: true
+  },
+  edge: {
+    endpoint: process.env.EDGE_CACHE_ENDPOINT || 'https://edge.neonpro.app',
+    region: process.env.EDGE_CACHE_REGION || 'us-east-1',
+    defaultTTL: 15 * 60 * 1000,
+    maxTTL: 24 * 60 * 60 * 1000,
+    compressionThreshold: 1024,
+    maxSize: 1000,
+    encryption: true
+  },
+  aiContext: {
+    maxContextSize: 10000,
+    defaultTTL: 24 * 60 * 60 * 1000,
+    maxTTL: 7 * 24 * 60 * 60 * 1000,
+    compressionEnabled: true,
+    targetHitRate: 95,
+    contextRetention: true,
+    maxTokensPerContext: 32000
+  }
+};
+
+// Legacy CacheConfig for backward compatibility
 const defaultConfig: CacheConfig = {
-  layers: ['BROWSER', 'EDGE', 'SUPABASE', 'AI_CONTEXT'],
+  layers: [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE, CacheLayer.AI_CONTEXT],
   ttl: {
-    BROWSER: 5 * 60 * 1000,        // 5 minutes
-    EDGE: 15 * 60 * 1000,          // 15 minutes  
-    SUPABASE: 60 * 60 * 1000,      // 1 hour
-    AI_CONTEXT: 24 * 60 * 60 * 1000 // 24 hours
+    [CacheLayer.BROWSER]: 5 * 60 * 1000,        // 5 minutes
+    [CacheLayer.EDGE]: 15 * 60 * 1000,          // 15 minutes  
+    [CacheLayer.SUPABASE]: 60 * 60 * 1000,      // 1 hour
+    [CacheLayer.AI_CONTEXT]: 24 * 60 * 60 * 1000 // 24 hours
   },
   healthcare: {
     encryptSensitiveData: true,
@@ -49,14 +89,14 @@ const defaultConfig: CacheConfig = {
   },
   fallback: {
     enableGracefulDegradation: true,
-    fallbackLayers: ['BROWSER', 'EDGE'],
+    fallbackLayers: [CacheLayer.BROWSER, CacheLayer.EDGE],
     errorThreshold: 5,
     recoveryTimeMs: 30000
   }
 };
 
 // Default cache manager instance
-export const healthcareCache = new MultiLayerCacheManager(defaultConfig);
+export const healthcareCache = new MultiLayerCacheManager(defaultMultiLayerConfig);
 
 // Convenience functions for common healthcare use cases
 export const cacheKeys = {

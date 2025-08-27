@@ -115,7 +115,7 @@ export class FocusManager {
 
 // Screen reader announcement utility
 export class ScreenReaderAnnouncer {
-  private static announcer: HTMLElement | null = undefined;
+  private static announcer: HTMLElement | null = null;
 
   static initialize() {
     if (ScreenReaderAnnouncer.announcer) {
@@ -254,7 +254,7 @@ export class ContrastChecker {
         g: Number.parseInt(result[2], 16),
         b: Number.parseInt(result[3], 16),
       }
-      : undefined;
+      : null;
   }
 }
 
@@ -534,7 +534,7 @@ export class HealthcareAccessibilityValidator {
     );
 
     if (focusableElements.length > 0) {
-      const [firstElement] = focusableElements as HTMLElement;
+      const firstElement = focusableElements[0] as HTMLElement;
       if (document.activeElement !== firstElement) {
         issues.push("Modal deve definir foco inicial");
       }

@@ -139,11 +139,11 @@ export class OpenAPIGenerator {
 
         // Merge components
         if (parsed.components) {
-          Object.keys(parsed.components).forEach((componentType) => {
-            if (components[componentType]) {
+          Object.keys(parsed.components as any).forEach((componentType) => {
+            if ((components as any)[componentType]) {
               Object.assign(
-                components[componentType],
-                parsed.components[componentType],
+                (components as any)[componentType],
+                (parsed.components as any)[componentType],
               );
             }
           });
@@ -171,7 +171,7 @@ export class OpenAPIGenerator {
       }
 
       try {
-        const schema = this.parseInterfaceToSchema(interfaceBody);
+        const schema = this.parseInterfaceToSchema(interfaceBody) as any;
         schemas[interfaceName] = {
           type: "object",
           properties: schema.properties,
@@ -309,7 +309,7 @@ export class OpenAPIGenerator {
    */
   private async validateSpec(spec: unknown): Promise<void> {
     // Basic validation
-    if (!(spec.openapi && spec.info && spec.paths)) {
+    if (!((spec as any).openapi && (spec as any).info && (spec as any).paths)) {
       throw new Error("Invalid OpenAPI specification structure");
     }
 
@@ -326,15 +326,15 @@ export class OpenAPIGenerator {
     const warnings: string[] = [];
 
     // Check for security schemes
-    if (!spec.components?.securitySchemes) {
+    if (!(spec as any).components?.securitySchemes) {
       warnings.push(
         "No security schemes defined - required for healthcare compliance",
       );
     }
 
     // Check for required healthcare tags
-    const healthcareTags = spec.tags?.some((tag: unknown) =>
-      tag.name.toLowerCase().includes("healthcare")
+    const healthcareTags = (spec as any).tags?.some((tag: any) =>
+      (tag as any).name.toLowerCase().includes("healthcare")
     );
     if (!healthcareTags) {
       warnings.push("No healthcare-specific tags found");

@@ -9,6 +9,14 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 );
 
+// Analytics query schema
+const _analyticsQuerySchema = z.object({
+  metric: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  filters: z.record(z.any()).optional(),
+});
+
 // Validation schemas
 const eventTrackingSchema = z.object({
   event_type: z.string(),
@@ -370,6 +378,6 @@ export class UnifiedSessionSystem {}
 
 export const trackLoginPerformance = () => {};
 
-export type PermissionContext = any;
+export type PermissionContext = unknown;
 
-export type SessionValidationResult = any;
+export type SessionValidationResult = unknown;

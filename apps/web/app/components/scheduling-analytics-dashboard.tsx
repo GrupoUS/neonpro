@@ -192,7 +192,7 @@ export const SchedulingAnalyticsDashboard: React.FC<
       <div className="animate-pulse rounded-lg bg-white p-6 shadow-lg">
         <div className="mb-6 h-8 rounded bg-gray-200" />
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {new Array(4).fill().map((_, i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div className="h-32 rounded-lg bg-gray-200" key={i} />
           ))}
         </div>

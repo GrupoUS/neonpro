@@ -22,7 +22,7 @@ export const getUser = cache(async (): Promise<User | null> => {
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options as any);
         });
       },
     });
@@ -33,7 +33,7 @@ export const getUser = cache(async (): Promise<User | null> => {
     } = await supabase.auth.getUser();
 
     if (error) {
-      return;
+      return null;
     }
 
     // Healthcare audit logging for user access
@@ -43,7 +43,7 @@ export const getUser = cache(async (): Promise<User | null> => {
 
     return user;
   } catch {
-    return;
+    return null;
   }
 });
 
@@ -58,7 +58,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options as any);
         });
       },
     });
@@ -69,12 +69,12 @@ export const getSession = cache(async (): Promise<Session | null> => {
     } = await supabase.auth.getSession();
 
     if (error) {
-      return;
+      return null;
     }
 
     return session;
   } catch {
-    return;
+    return null;
   }
 });
 
@@ -105,7 +105,7 @@ export async function requireHealthcareProfessional(): Promise<User> {
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
       cookies.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
+        cookieStore.set(name, value, options as any);
       });
     },
   });
@@ -146,7 +146,7 @@ async function logHealthcareAccess(
       getAll: () => cookieStore.getAll(),
       setAll: (cookieList) => {
         cookieList.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options as any);
         });
       },
     });
@@ -175,7 +175,7 @@ export async function signOut(): Promise<void> {
     getAll: () => cookieStore.getAll(),
     setAll: (cookies) => {
       cookies.forEach(({ name, value, options }) => {
-        cookieStore.set(name, value, options);
+        cookieStore.set(name, value, options as any);
       });
     },
   });

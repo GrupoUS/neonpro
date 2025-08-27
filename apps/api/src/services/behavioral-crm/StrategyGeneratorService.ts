@@ -575,7 +575,7 @@ export class StrategyGeneratorService {
     profile: PatientBehaviorProfile,
   ): Promise<ActionPlan["timing"]> {
     // Adapt to patient's response time pattern
-    const { delay } = baseTiming;
+    let { delay } = baseTiming;
     if (profile.patterns.responseTime === "immediate") {
       delay = Math.max(1, delay * 0.5); // Faster for immediate responders
     } else if (profile.patterns.responseTime === "delayed") {

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
         cookies.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options || {});
         });
       },
     });
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
       getAll: () => cookieStore.getAll(),
       setAll: (cookies) => {
         cookies.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          cookieStore.set(name, value, options || {});
         });
       },
     });

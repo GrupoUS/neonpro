@@ -25,7 +25,7 @@
       "path": "../ui"
     },
     {
-      "path": "../db"
+      "path": "../database"
     }
   ]
 }

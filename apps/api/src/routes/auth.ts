@@ -125,7 +125,7 @@ export const authRoutes = new Hono()
   })
   // 🔄 Refresh token endpoint
   .post("/refresh", zValidator("json", RefreshTokenRequestSchema), (c) => {
-    const { refreshToken: _refreshToken } = c.req.valid("json");
+    // const { refreshToken } = c.req.valid("json"); // TODO: Implement refresh token logic
 
     try {
       // TODO: Validate refresh token
@@ -233,7 +233,7 @@ export const authRoutes = new Hono()
     "/forgot-password",
     zValidator("json", ForgotPasswordRequestSchema),
     async (c) => {
-      const { email: _email } = c.req.valid("json");
+      // const { email } = c.req.valid("json"); // TODO: Implement password reset logic
 
       try {
         // TODO: Generate reset token
@@ -263,7 +263,7 @@ export const authRoutes = new Hono()
     "/reset-password",
     zValidator("json", ResetPasswordRequestSchema),
     async (c) => {
-      const { token: _token, password: _password } = c.req.valid("json");
+      // const { token, password } = c.req.valid("json"); // TODO: Implement password reset logic
 
       try {
         // TODO: Validate reset token
@@ -294,7 +294,7 @@ export const authRoutes = new Hono()
     "/change-password",
     zValidator("json", ChangePasswordRequestSchema),
     async (c) => {
-      const { currentPassword: _currentPassword, newPassword: _newPassword } = c.req.valid("json");
+      // const { currentPassword, newPassword } = c.req.valid("json"); // TODO: Implement password change logic
 
       try {
         const userId = c.get("userId");

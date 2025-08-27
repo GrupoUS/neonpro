@@ -303,7 +303,7 @@ export default function ConsentManagementPage() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
   const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>();
-  const [_isLoading, _setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false); // TODO: Implement loading state
 
   // Filter functions
   const filteredConsents = mockConsentRecords.filter((consent) => {

@@ -182,7 +182,10 @@ export class ADRGenerator {
         performanceImpact: (answers.performanceImpact || "") as string,
       };
 
-      // Generate and save ADR    } catch (error) {
+      // Generate and save ADR
+      const filename = this.generateADRFile(adrContent);
+      this.spinner.succeed(`ADR created successfully: ${filename}`);
+    } catch (error) {
       this.spinner.fail(`Failed to create ADR: ${error}`);
       throw error;
     }
@@ -326,7 +329,7 @@ export class ADRGenerator {
   private parseADRMetadata(filename: string): ADRMetadata | null {
     const match = filename.match(/^adr-(\d{3})-(.*)\.md$/);
     if (!match) {
-      return;
+      return null;
     }
 
     const [, numberStr, titleSlug] = match;
@@ -357,7 +360,7 @@ export class ADRGenerator {
         supersededBy: supersededBy || undefined,
       };
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -366,7 +369,7 @@ export class ADRGenerator {
    */
   private extractTitle(content: string): string | null {
     const match = content.match(/^# ADR-\d{3}: (.+)$/m);
-    return match?.[1] ?? undefined;
+    return match?.[1] ?? null;
   }
 
   /**
@@ -382,7 +385,7 @@ export class ADRGenerator {
    */
   private extractDate(content: string): string | null {
     const match = content.match(/\*\*Date\*\*: (.+)$/m);
-    return match?.[1] ? match[1] : undefined;
+    return match?.[1] ? match[1] : null;
   }
 
   /**
@@ -390,7 +393,7 @@ export class ADRGenerator {
    */
   private extractAuthor(content: string): string | null {
     const match = content.match(/\*\*Author\(s\)\*\*: (.+)$/m);
-    return match?.[1] ? match[1] : undefined;
+    return match?.[1] ? match[1] : null;
   }
 
   /**

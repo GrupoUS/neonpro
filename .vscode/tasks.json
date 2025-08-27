@@ -96,6 +96,58 @@
       }
     },
     {
+      "label": "🌳 Trunk Check",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1", "check"],
+      "group": "build",
+      "detail": "Run Trunk multi-linter check (includes dprint, prettier, security checks)",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🌳 Trunk Format",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1", "fmt"],
+      "group": "build",
+      "detail": "Format code using Trunk (dprint + prettier + other formatters)",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🌳 Trunk Fix",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1", "check", "--fix"],
+      "group": "build",
+      "detail": "Auto-fix issues using Trunk (security, formatting, linting)",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "⚡ Super Fix All",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1 fmt; if ($LASTEXITCODE -eq 0) { pnpm ci:fix }"],
+      "group": "build",
+      "detail": "Ultimate fix: Trunk format + dprint + oxlint + type check",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
       "label": "🧪 Run Unit Tests",
       "type": "shell",
       "command": "pnpm",

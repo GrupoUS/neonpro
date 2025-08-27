@@ -13,8 +13,9 @@
     "format": "dprint fmt",
     "format:check": "dprint check",
     "lint": "oxlint apps packages --max-warnings=10",
-    "lint:fix": "oxlint apps packages --fix",
+    "lint:fix": "oxlint apps packages --fix && dprint fmt",
     "type-check": "tsc --noEmit",
+    "trunk": "trunk check --all",
     "ci:check": "pnpm format:check && pnpm lint && pnpm type-check",
     "ci:fix": "pnpm format && pnpm lint:fix && pnpm type-check",
     "test": "turbo test",
@@ -40,7 +41,8 @@
     "deploy:vercel": "pnpm build:production && vercel --prod --yes",
     "deploy:staging": "pnpm build:production && vercel --yes",
     "health:check": "curl -f http://localhost:3000/api/health || echo 'Health check failed'",
-    "monitor:production": "pnpm health:check && echo '✅ Production monitoring active'"
+    "monitor:production": "pnpm health:check && echo '✅ Production monitoring active'",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

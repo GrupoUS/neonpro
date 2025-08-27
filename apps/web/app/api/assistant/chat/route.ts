@@ -268,6 +268,6 @@ export class UnifiedSessionSystem {}
 
 export const trackLoginPerformance = () => {};
 
-export type PermissionContext = any;
+export type PermissionContext = unknown;
 
-export type SessionValidationResult = any;
+export type SessionValidationResult = unknown;

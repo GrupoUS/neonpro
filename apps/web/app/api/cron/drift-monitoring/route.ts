@@ -80,8 +80,8 @@ export async function GET(request: NextRequest) {
 
     // console.log(`✅ Drift monitoring complete in ${executionTime}ms`);
     // console.log(
-      `📊 Results: ${criticalAlerts.length} critical, ${highAlerts.length} high, ${mediumAlerts.length} medium, ${lowAlerts.length} low`,
-    );
+    //   `📊 Results: ${criticalAlerts.length} critical, ${highAlerts.length} high, ${mediumAlerts.length} medium, ${lowAlerts.length} low`,
+    // );
 
     if (alerts.length > 0) {
       const totalRevenue = alerts.reduce(
@@ -89,8 +89,8 @@ export async function GET(request: NextRequest) {
         0,
       );
       // console.log(
-        `💰 Total revenue at risk: $${totalRevenue.toLocaleString()}`,
-      );
+      //   `💰 Total revenue at risk: $${totalRevenue.toLocaleString()}`,
+      // );
     }
 
     return NextResponse.json({
@@ -147,7 +147,7 @@ export async function GET(request: NextRequest) {
         user_id: undefined,
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       // console.error("Failed to log drift monitoring failure:", error);
     }
 

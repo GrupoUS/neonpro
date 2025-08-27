@@ -34,6 +34,23 @@ jobs:
   # ============================================================================
   # 🛡️ PR SAFETY & SECURITY CHECKS
   # ============================================================================
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '18', cache: 'pnpm' }
+      - run: pnpm i -D oxlint dprint
+      - run: npx --yes oxlint@latest --deny-warnings
+      - run: npx dprint check
+  trunk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: trunk-io/trunk-action@v1
+
   pr-safety-check:
     name: 🛡️ PR Safety Check
     runs-on: ubuntu-latest

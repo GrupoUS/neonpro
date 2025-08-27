@@ -243,7 +243,7 @@ export async function POST(
 
     // Parse request body
     const body = await request.json();
-    const { patientIds, forceRecalculate = false } = body;
+    const { patientIds } = body;
 
     // Verify authentication
     const supabase = await createClient();

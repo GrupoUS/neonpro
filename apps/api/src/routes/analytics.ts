@@ -68,11 +68,7 @@ export const analyticsRoutes = new Hono()
     "/dashboard",
     zValidator("query", AnalyticsQuerySchema),
     async (context) => {
-      const {
-        period: _period,
-        startDate: _startDate,
-        endDate: _endDate,
-      } = context.req.valid("query");
+      // const { period, startDate, endDate } = context.req.valid("query"); // TODO: Use query parameters
 
       try {
         // TODO: Implement actual analytics query
@@ -161,11 +157,7 @@ export const analyticsRoutes = new Hono()
   )
   // ðŸ’° Revenue analytics
   .get("/revenue", zValidator("query", RevenueQuerySchema), async (context) => {
-    const {
-      period: _period,
-      serviceCategory: _serviceCategory,
-      professionalId: _professionalId,
-    } = context.req.valid("query");
+    // const { period, serviceCategory, professionalId } = context.req.valid("query"); // TODO: Use query parameters
 
     try {
       // TODO: Implement actual revenue query
@@ -250,7 +242,7 @@ export const analyticsRoutes = new Hono()
     "/appointments",
     zValidator("query", AnalyticsQuerySchema),
     async (context) => {
-      const { period: _period, groupBy: _groupBy } = context.req.valid("query");
+      // const { period, groupBy } = context.req.valid("query"); // TODO: Use query parameters
 
       try {
         // TODO: Implement actual appointments analytics
@@ -498,8 +490,7 @@ export const analyticsRoutes = new Hono()
       const {
         reportType,
         filters,
-        groupBy: _groupBy,
-        includeComparison: _includeComparison,
+        // groupBy, includeComparison // TODO: Implement groupBy and comparison features
       } = context.req.valid("json");
 
       try {

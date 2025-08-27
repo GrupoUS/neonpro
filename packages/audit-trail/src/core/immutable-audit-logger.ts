@@ -162,9 +162,7 @@ export class ImmutableAuditLogger {
 
       // console.log("✅ Immutable Audit Logger initialized successfully");
       // console.log(`🔗 Chain ID: ${this.chainId}`);
-      // console.log(
-        `📊 Performance target: <${this.config.performanceTarget}ms per event`,
-      );
+      // console.log(`📊 Performance target: <${this.config.performanceTarget}ms per event`);
     } catch (error) {
       // console.error("❌ Failed to initialize Immutable Audit Logger:", error);
       throw error;

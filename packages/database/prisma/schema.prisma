@@ -76,8 +76,6 @@ model User {
   // Relations
   patient_record           Patient?                @relation("UserPatientRecord")
   professional_record      HealthcareProfessional? @relation("UserProfessionalRecord")
-  appointments_as_patient  Appointment[]           @relation("PatientAppointments")
-  appointments_as_professional Appointment[]       @relation("ProfessionalAppointments")
   audit_logs              AuditLog[]
   notifications           Notification[]
   created_appointments    Appointment[]           @relation("CreatedByUser")
@@ -128,6 +126,7 @@ model Clinic {
   appointments      Appointment[]
   audit_logs        AuditLog[]
   notifications     Notification[]
+  system_configurations SystemConfiguration[]
   
   @@map("clinics")
 }
@@ -245,10 +244,10 @@ model Appointment {
   
   // Participants
   patient_id            String
-  patient               User              @relation("PatientAppointments", fields: [patient_id], references: [id])
+  patient               Patient           @relation(fields: [patient_id], references: [id])
   
   professional_id       String
-  professional          User              @relation("ProfessionalAppointments", fields: [professional_id], references: [id])
+  professional          HealthcareProfessional @relation(fields: [professional_id], references: [id])
   
   // Location
   room_number           String?

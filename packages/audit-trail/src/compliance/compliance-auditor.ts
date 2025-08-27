@@ -186,9 +186,7 @@ export class ComplianceAuditor {
 
       // console.log("✅ Compliance Auditor initialized successfully");
       // console.log(`🏥 Active frameworks: ${this.config.frameworks.join(", ")}`);
-      // console.log(
-        `📊 Real-time monitoring: ${this.config.enableRealTimeMonitoring ? "Enabled" : "Disabled"}`,
-      );
+      // console.log(`📊 Real-time monitoring: ${this.config.enableRealTimeMonitoring ? "Enabled" : "Disabled"}`);
     } catch (error) {
       // console.error("❌ Failed to initialize Compliance Auditor:", error);
       throw error;

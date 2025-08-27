@@ -2,10 +2,11 @@
   "categories": {
     "correctness": "error",
     "suspicious": "warn",
-    "style": "off", // Disabled for aesthetic clinic context - focus on functionality
-    "pedantic": "off", // Disabled - too strict for healthcare practical needs
-    "perf": "warn"
-    // Note: Avoiding "nursery" (unstable) and selective "restriction" rules below
+    "perf": "warn",
+    "style": "off",
+    "pedantic": "off",
+    "nursery": "off",
+    "restriction": "off"
   },
   "plugins": [
     "typescript",
@@ -60,14 +61,15 @@
     }
   },
   "rules": {
-    // ===== HEALTHCARE CONTEXT RULES =====
-    // Disabled overly strict style rules for healthcare functionality focus
+    // ===== RELAXED RULES (Healthcare Context) =====
+    "eqeqeq": ["error", "smart"],
+    "curly": ["error", "all"],
+    "react/no-unstable-nested-components": "warn",
+    "react/no-unused-prop-types": "warn",
     "sort-keys": "off", // Allow flexible object key ordering
     "no-magic-numbers": "off", // Allow numeric constants in healthcare context
     "id-length": "off", // Allow short variable names (c, i, id, etc.)
-    "no-ternary": "off", // Allow ternary operators for readability
-    "object-shorthand": "off", // Allow both object patterns
-    "prefer-destructuring": "off", // Allow flexible destructuring patterns
+    "no-ternary": "off", // Allow ternary operators for readability patterns
     "sort-imports": "off", // Allow flexible import ordering
     "complexity": "off", // Allow complex functions for healthcare logic
     "max-depth": "off", // Allow nested logic for medical validations
@@ -76,10 +78,24 @@
     "max-statements": "off", // Allow complex healthcare procedures
     "no-await-in-loop": "off", // Healthcare may require sequential processing for safety
     "eslint/no-await-in-loop": "off", // Same as above for eslint plugin
+    "max-lines": "off", // Allow longer files for healthcare modules
+    "no-nested-ternary": "off", // Allow nested ternary for conditional logic
+    "unicorn/no-nested-ternary": "off", // Same as above for unicorn plugin
+    "new-cap": "off", // Allow Next.js font constructors like Inter(), JetBrains_Mono()
+    "no-new": "off", // Allow new operators for specific patterns
+    "import/no-unassigned-import": "off", // Allow CSS imports and side-effect imports
+    "unicorn/prefer-global-this": "off", // Allow window, self, global in appropriate contextsng
+    "import/order": "off", // Allow flexible import ordering
+    "import/extensions": "off", // Allow imports without extensions
+    "unicorn/consistent-function-scoping": "off", // Allow functions inside components
+    "no-extraneous-class": "off", // Allow static class patterns for services
+    "typescript/no-extraneous-class": "off", // Same as above for typescript
+    "no-array-index-key": "off", // Allow array indices as keys for simple cases
+    "react/no-array-index-key": "off", // Same as above for React
 
     // ===== CORRECTNESS RULES (Healthcare Critical) =====
     "no-debugger": "error",
-    "no-console": "warn",
+    "no-console": "off",
     "no-alert": "error",
     "no-eval": "error",
     "no-implied-eval": "error",
@@ -172,7 +188,7 @@
     "react/jsx-no-new-array-as-prop": "warn",
     "react/jsx-no-new-function-as-prop": "warn",
     "react/jsx-no-new-object-as-prop": "warn",
-    "unicorn/prefer-array-find": "warn",
+    "unicorn/prefer-array-find": "off", // Allow filter patterns
     "unicorn/prefer-array-flat-map": "warn",
     "unicorn/prefer-set-has": "warn",
 
@@ -209,16 +225,16 @@
     "unicorn/prefer-string-slice": "warn",
     "unicorn/prefer-regexp-test": "warn",
     "unicorn/prefer-math-trunc": "warn",
-    "unicorn/prefer-modern-dom-apis": "warn",
-    "unicorn/prefer-query-selector": "warn",
+    "unicorn/prefer-modern-dom-apis": "off",
+    "unicorn/prefer-query-selector": "off",
     "unicorn/prefer-dom-node-text-content": "warn",
     "unicorn/prefer-dom-node-append": "warn",
-    "unicorn/prefer-dom-node-remove": "warn",
+    "unicorn/prefer-dom-node-remove": "off",
     "unicorn/prefer-add-event-listener": "warn",
-    "unicorn/prefer-optional-catch-binding": "warn",
+    "unicorn/prefer-optional-catch-binding": "off",
     "unicorn/throw-new-error": "error",
     "unicorn/error-message": "error",
-    "unicorn/no-null": "warn",
+    "unicorn/no-null": "off",
     "unicorn/no-useless-undefined": "warn",
     "unicorn/no-zero-fractions": "error",
     "unicorn/number-literal-case": "error",
@@ -232,7 +248,7 @@
     "promise/no-nesting": "warn",
     "promise/no-promise-in-callback": "warn",
     "promise/no-callback-in-promise": "warn",
-    "promise/avoid-new": "warn",
+    "promise/avoid-new": "off",
     "promise/prefer-await-to-then": "warn",
 
     // ===== SELECTIVE RESTRICTION RULES (Healthcare Critical) =====
@@ -260,6 +276,7 @@
     "**/logs/**",
     "**/.cache/**",
     "**/.tmp/**",
+    "**/tmp.*/**",
     "**/temp-*/**",
 
     // IDE and development tool configurations

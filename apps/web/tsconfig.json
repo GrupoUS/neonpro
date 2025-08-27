@@ -138,8 +138,7 @@
         "./lib/placeholders/qrcode-react"
       ]
     },
-    "emitDeclarationOnly": true,
-    "noEmit": true
+    "emitDeclarationOnly": true
   },
   "include": [
     "**/*.ts",
@@ -177,7 +176,7 @@
       "path": "../../packages/compliance"
     },
     {
-      "path": "../../packages/db"
+      "path": "../../packages/database"
     },
     {
       "path": "../../packages/shared"

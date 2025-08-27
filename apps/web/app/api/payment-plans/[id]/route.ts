@@ -218,7 +218,7 @@ export async function DELETE(
     try {
       const body = await request.json();
       if (body.reason) {
-        reason = body.reason;
+        ({ reason } = body);
       }
     } catch {
       // Body is optional for DELETE requests

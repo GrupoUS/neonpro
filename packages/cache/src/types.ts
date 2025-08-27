@@ -64,3 +64,62 @@ export interface SupabaseCacheConfig {
   compressionEnabled?: boolean;
   encryptionEnabled?: boolean;
 }
+
+// Multi-layer cache configuration
+export interface CacheConfig {
+  layers: CacheLayer[];
+  ttl: Record<CacheLayer, number>;
+  healthcare: {
+    encryptSensitiveData: boolean;
+    auditTrailEnabled: boolean;
+    lgpdCompliant: boolean;
+    anvisaCompliant: boolean;
+    patientDataTTL: number;
+    maxSensitiveItems: number;
+    clearOnPrivacyRequest: boolean;
+  };
+  performance: {
+    batchSize: number;
+    debounceMs: number;
+    maxRetries: number;
+    circuitBreaker: boolean;
+    metricsEnabled: boolean;
+  };
+  fallback: {
+    enableGracefulDegradation: boolean;
+    fallbackLayers: CacheLayer[];
+    errorThreshold: number;
+    recoveryTimeMs: number;
+  };
+}
+
+// Browser cache configuration
+export interface BrowserCacheConfig {
+  maxSize: number;
+  defaultTTL: number;
+  storageQuota: number;
+  lgpdCompliant: boolean;
+  compressionEnabled: boolean;
+}
+
+// Edge cache configuration
+export interface EdgeCacheConfig {
+  endpoint: string;
+  region: string;
+  defaultTTL: number;
+  maxTTL: number;
+  compressionThreshold: number;
+  maxSize: number;
+  encryption: boolean;
+}
+
+// AI Context cache configuration
+export interface AIContextCacheConfig {
+  maxContextSize: number;
+  defaultTTL: number;
+  maxTTL: number;
+  compressionEnabled: boolean;
+  targetHitRate: number;
+  contextRetention: boolean;
+  maxTokensPerContext: number;
+}

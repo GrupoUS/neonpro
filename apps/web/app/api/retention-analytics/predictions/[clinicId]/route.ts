@@ -302,7 +302,7 @@ export async function POST(
       );
     }
 
-    const { patientId, patientIds, modelType, forceRegenerate } = validation.data;
+    const { patientId, patientIds, modelType } = validation.data;
 
     // Verify authentication
     const supabase = await createClient();
@@ -348,7 +348,7 @@ export async function POST(
     }
 
     // Prepare patient IDs for processing
-    const targetPatientIds = patientId ? [patientId] : patientIds!;
+    const targetPatientIds = patientId ? [patientId] : patientIds || [];
 
     // Validate that all patients belong to the clinic
     const { data: validPatients, error: validationError } = await supabase

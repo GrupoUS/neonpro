@@ -54,12 +54,12 @@ export function ResponsiveLayout({
 
     // Use Network Information API if available
     if ("connection" in navigator) {
-      const connection = (navigator as unknown).connection;
+      const connection = (navigator as any).connection;
       const updateConnectionInfo = () => {
-        setConnectionSpeed(connection.effectiveType || "unknown");
+        setConnectionSpeed(connection?.effectiveType || "unknown");
         setIsLowBandwidth(
-          connection.effectiveType === "slow-2g"
-            || connection.effectiveType === "2g",
+          connection?.effectiveType === "slow-2g"
+            || connection?.effectiveType === "2g",
         );
       };
 
@@ -120,7 +120,7 @@ export function ResponsiveLayout({
       data-connectivity={connectionSpeed}
       data-viewport={viewport}
       style={{
-        "--min-touch-target": (optimizations as unknown).minTouchTarget || "48px",
+        "--min-touch-target": (optimizations as any)?.minTouchTarget || "48px",
       } as React.CSSProperties}
     >
       {/* Connectivity Status Bar - Critical for Brazilian healthcare */}

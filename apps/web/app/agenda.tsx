@@ -232,8 +232,7 @@ const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
 };
 
 export default function Agenda() {
-  const [selectedDate, _setSelectedDate] = useState(new Date());
-  const [_viewMode, _setViewMode] = useState("list");
+  const [selectedDate] = useState(new Date());
   const [filterStatus, setFilterStatus] = useState("todos");
   const [searchTerm, setSearchTerm] = useState("");
 

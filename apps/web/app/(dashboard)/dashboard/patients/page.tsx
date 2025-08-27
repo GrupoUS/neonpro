@@ -60,7 +60,7 @@ export default function PatientsPage() {
         {loading
           ? (
             // Loading skeleton
-            new Array(6).fill().map((_, i) => (
+            Array.from({ length: 6 }).map((_, i) => (
               <Card key={i}>
                 <CardHeader>
                   <div className="flex items-center space-x-4">

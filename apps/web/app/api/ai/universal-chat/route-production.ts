@@ -110,9 +110,9 @@ export async function POST(request: NextRequest) {
 
     if (!complianceCheck.compliant) {
       // console.error(
-        "Compliance violations detected:",
-        complianceCheck.violations,
-      );
+      //   "Compliance violations detected:",
+      //   complianceCheck.violations,
+      // );
       return NextResponse.json(
         { error: "Request blocked due to compliance requirements" },
         {
@@ -462,17 +462,13 @@ async function getUserChatSessions(userId: string): Promise<ChatSession[]> {
 }
 
 async function storeChatMessage(
-  sessionId: string,
-  userMessage: ChatMessage,
-  aiResponse: unknown,
+  _sessionId: string,
+  _userMessage: ChatMessage,
+  _aiResponse: unknown,
 ): Promise<void> {
   // Mock implementation - replace with actual database call
-  // console.log("Storing chat message", {
-    sessionId,
-    userRole: userMessage.role,
-    messageLength: userMessage.content.length,
-    responseLength: aiResponse.response?.length || 0,
-  });
+  // TODO: Implement chat message storage
+}
 }
 
 async function _getPatientContext(patientId: string): Promise<unknown> {
@@ -481,8 +477,5 @@ async function _getPatientContext(patientId: string): Promise<unknown> {
   return { patientId, context: "patient_context_placeholder" };
 }
 
-async function _getClinicContext(clinicId: string): Promise<unknown> {
-  // Implementation would fetch clinic context from database
-  // This is a placeholder
-  return { clinicId, context: "clinic_context_placeholder" };
-}
+// Removed unused helper functions - TODO: Implement when needed
+// async function _getClinicContext(clinicId: string): Promise<unknown> { ... }

@@ -1,26 +1,15 @@
-import { BrowserCacheLayer } from "./browser-cache";
 import { SupabaseCacheLayer } from "./supabase-cache";
 import { AIContextCacheLayer } from "./ai-context-cache";
 import { EdgeCacheLayer } from "./edge-cache";
+import { BrowserCacheLayer } from "./browser-cache";
 import { CacheLayer } from "./types";
-import type { CacheOperation, CacheStats, HealthcareDataPolicy, SupabaseCacheConfig } from "./types";
+import type { CacheOperation, CacheStats, HealthcareDataPolicy, SupabaseCacheConfig, BrowserCacheConfig, EdgeCacheConfig, AIContextCacheConfig } from "./types";
 
 export interface MultiLayerCacheConfig {
   supabase: SupabaseCacheConfig;
-  browser?: {
-    maxSize?: number;
-    defaultTTL?: number;
-    storageQuota?: number;
-  };
-  edge?: {
-    endpoint?: string;
-    region?: string;
-    defaultTTL?: number;
-  };
-  aiContext?: {
-    maxContextSize?: number;
-    compressionEnabled?: boolean;
-  };
+  browser?: BrowserCacheConfig;
+  edge?: EdgeCacheConfig;
+  aiContext?: AIContextCacheConfig;
 }
 
 export class MultiLayerCacheManager {
@@ -28,7 +17,24 @@ export class MultiLayerCacheManager {
   private readonly edge: EdgeCacheLayer;
   private readonly supabase: SupabaseCacheLayer;
   private readonly aiContext: AIContextCacheLayer;
+  
+  private readonly auditTrail: Array<{
+    timestamp: string;
+    operation: string;
+    key: string;
+    layer?: CacheLayer;
+    success: boolean;
+    executionTime: number;
+  }> = [];
+  
+  private readonly stats = {
+    browser: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
+    edge: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
+    supabase: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
+    aiContext: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 }
+  };
 
+  // Hit rate targets for each layer
   private readonly hitRateTargets = {
     [CacheLayer.BROWSER]: 90, // >90% hit rate
     [CacheLayer.EDGE]: 85, // >85% hit rate
@@ -37,10 +43,38 @@ export class MultiLayerCacheManager {
   };
 
   constructor(config: MultiLayerCacheConfig) {
-    this.browser = new BrowserCacheLayer(config.browser);
-    this.edge = new EdgeCacheLayer(config.edge);
+    const defaultBrowserConfig: BrowserCacheConfig = {
+      maxSize: 100,
+      defaultTTL: 5 * 60 * 1000,
+      storageQuota: 50 * 1024 * 1024,
+      lgpdCompliant: true,
+      compressionEnabled: true
+    };
+    
+    const defaultEdgeConfig: EdgeCacheConfig = {
+      endpoint: process.env.EDGE_CACHE_ENDPOINT || 'https://edge.neonpro.app',
+      region: process.env.EDGE_CACHE_REGION || 'us-east-1',
+      defaultTTL: 15 * 60 * 1000,
+      maxTTL: 24 * 60 * 60 * 1000,
+      compressionThreshold: 1024,
+      maxSize: 1000,
+      encryption: true
+    };
+    
+    const defaultAIContextConfig: AIContextCacheConfig = {
+      maxContextSize: 10000,
+      defaultTTL: 24 * 60 * 60 * 1000,
+      maxTTL: 7 * 24 * 60 * 60 * 1000,
+      compressionEnabled: true,
+      targetHitRate: 95,
+      contextRetention: true,
+      maxTokensPerContext: 32000
+    };
+    
+    this.browser = new BrowserCacheLayer(config.browser ? { ...defaultBrowserConfig, ...config.browser } : defaultBrowserConfig);
+    this.edge = new EdgeCacheLayer(config.edge ? { ...defaultEdgeConfig, ...config.edge } : defaultEdgeConfig);
     this.supabase = new SupabaseCacheLayer(config.supabase);
-    this.aiContext = new AIContextCacheLayer(config.aiContext);
+    this.aiContext = new AIContextCacheLayer(config.aiContext ? { ...defaultAIContextConfig, ...config.aiContext } : defaultAIContextConfig);
   }
 
   async get<T>(
@@ -53,43 +87,42 @@ export class MultiLayerCacheManager {
     options?: {
       healthcareData?: boolean;
       lgpdCompliant?: boolean;
-      fallbackToAll?: boolean;
-    },
+      policy?: HealthcareDataPolicy;
+      tags?: string[];
+    }
   ): Promise<T | null> {
-    // Try each layer in order (fastest to slowest)
+    // Try each layer in order
     for (const layer of layers) {
       try {
-        const cache = this.getCache(layer);
-        const result = await cache.get<T>(key);
+        let value: T | null = null;
 
-        if (result !== null) {
-          // Populate faster layers with the found result
-          await this.populateUpstream(key, result, layer, layers, options);
-          return result;
+        switch (layer) {
+          case CacheLayer.BROWSER:
+            value = await this.browser.get<T>(key);
+            break;
+          case CacheLayer.EDGE:
+            value = await this.edge.get<T>(key);
+            break;
+          case CacheLayer.SUPABASE:
+            value = await this.supabase.get<T>(key);
+            break;
+          case CacheLayer.AI_CONTEXT:
+            value = await this.aiContext.get<T>(key);
+            break;
+        }
+
+        if (value !== null) {
+          // Cache hit - populate upstream layers
+          await this.populateUpstream(key, value, layer, layers);
+          return value;
         }
       } catch (error) {
-        console.debug(`Cache layer ${layer} error:`, error);
+        console.warn(`Cache layer ${layer} failed for key ${key}:`, error);
+        // Continue to next layer on error
       }
     }
 
-    // If no result found and fallback is enabled, try all layers
-    if (options?.fallbackToAll) {
-      const allLayers = [CacheLayer.AI_CONTEXT];
-      for (const layer of allLayers) {
-        if (!layers.includes(layer)) {
-          try {
-            const cache = this.getCache(layer);
-            const result = await cache.get<T>(key);
-            if (result !== null) {
-              return result;
-            }
-          } catch (error) {
-            console.debug(`Fallback cache layer ${layer} error:`, error);
-          }
-        }
-      }
-    }
-
+    // Cache miss on all layers
     return null;
   }
 
@@ -111,106 +144,112 @@ export class MultiLayerCacheManager {
         importance: "low" | "medium" | "high" | "critical";
         userId?: string;
         sessionId?: string;
+        topic?: string;
+        lastUsed?: Date;
+        accessFrequency?: number;
       };
-    },
+    }
   ): Promise<void> {
-    const promises: Promise<void>[] = [];
-
-    for (const layer of layers) {
+    const promises = layers.map(async (layer) => {
       try {
-        const cache = this.getCache(layer);
-        const layerTTL = this.getOptimalTTL(layer, options?.ttl);
+        const cache = this.getCacheLayer(layer);
+        const ttl = options?.ttl || this.getDefaultTTL(layer);
 
-        if (layer === CacheLayer.AI_CONTEXT && options?.aiContextMetadata) {
-          promises.push(
-            (cache as AIContextCacheLayer).set(
+        // Healthcare data needs special handling
+        if (options?.healthcareData && layer === CacheLayer.BROWSER) {
+          // Browser cache for healthcare data requires LGPD compliance
+          if (options?.policy) {
+            await (cache as BrowserCacheLayer).set(
               key,
               value,
-              layerTTL,
-              options.aiContextMetadata,
-            ),
-          );
-        } else if (layer === CacheLayer.SUPABASE && options?.healthcareData) {
-          promises.push(
-            (cache as SupabaseCacheLayer).set(key, value, layerTTL, {
-              healthcareData: options.healthcareData,
-              tags: options.tags,
-              auditContext: `cache_set_${Date.now()}`,
-            }),
-          );
-        } else if (layer === CacheLayer.BROWSER && options?.policy) {
-          promises.push(
-            (cache as BrowserCacheLayer).set(
-              key,
-              value,
-              layerTTL,
-              options.policy,
-            ),
+              ttl,
+              options.policy
+            );
+          } else {
+            await cache.set(key, value, ttl);
+          }
+        } else if (layer === CacheLayer.AI_CONTEXT && options?.aiContextMetadata) {
+          // AI Context cache with metadata
+          await (cache as AIContextCacheLayer).set(
+            key,
+            value,
+            ttl,
+            options.aiContextMetadata
           );
         } else {
-          promises.push(cache.set(key, value, layerTTL));
+          // Standard cache set
+          await cache.set(key, value, ttl);
         }
       } catch (error) {
-        console.debug(`Cache layer ${layer} set error:`, error);
+        console.warn(`Failed to set cache in layer ${layer} for key ${key}:`, error);
       }
-    }
+    });
 
-    // Execute all cache operations in parallel
     await Promise.allSettled(promises);
   }
 
   async delete(key: string, layers?: CacheLayer[]): Promise<void> {
-    const targetLayers = layers || Object.values(CacheLayer);
-    const promises = targetLayers.map((layer) => {
+    const targetLayers = layers || [
+      CacheLayer.BROWSER,
+      CacheLayer.EDGE,
+      CacheLayer.SUPABASE,
+      CacheLayer.AI_CONTEXT,
+    ];
+
+    const promises = targetLayers.map(async (layer) => {
       try {
-        return this.getCache(layer).delete(key);
+        const cache = this.getCacheLayer(layer);
+        await cache.delete(key);
       } catch (error) {
-        console.debug(`Cache layer ${layer} delete error:`, error);
-        return Promise.resolve();
+        console.warn(`Failed to delete key ${key} from layer ${layer}:`, error);
       }
     });
 
     await Promise.allSettled(promises);
   }
 
-  async invalidateByTags(tags: string[], layers?: CacheLayer[]): Promise<void> {
-    const targetLayers = layers || Object.values(CacheLayer);
-    const promises = targetLayers.map((layer) => {
+  async invalidateByTags(
+    tags: string[],
+    layers?: CacheLayer[]
+  ): Promise<void> {
+    const targetLayers = layers || [
+      CacheLayer.BROWSER,
+      CacheLayer.EDGE,
+      CacheLayer.SUPABASE,
+      CacheLayer.AI_CONTEXT,
+    ];
+
+    const promises = targetLayers.map(async (layer) => {
       try {
-        return this.getCache(layer).invalidateByTags(tags);
+        const cache = this.getCacheLayer(layer);
+        await cache.invalidateByTags(tags);
       } catch (error) {
-        console.debug(`Cache layer ${layer} invalidateByTags error:`, error);
-        return Promise.resolve();
+        console.warn(`Failed to invalidate tags in layer ${layer}:`, error);
       }
     });
 
     await Promise.allSettled(promises);
-  }
-
-  async getLayerStats(layer: CacheLayer): Promise<CacheStats> {
-    return await this.getCache(layer).getStats();
   }
 
   async getAllStats(): Promise<Record<CacheLayer, CacheStats>> {
-    const promises = Object.values(CacheLayer).map(async (layer) => ({
-      layer,
-      stats: await this.getLayerStats(layer).catch(() => ({
+    const promises = Object.values(CacheLayer).map(async (layer) =>
+      this.getCacheLayer(layer).getStats().catch(() => ({
         hits: 0,
         misses: 0,
         hitRate: 0,
         totalRequests: 0,
         averageResponseTime: 0,
       })),
-    }));
+    );
 
     const results = await Promise.allSettled(promises);
     const stats: Partial<Record<CacheLayer, CacheStats>> = {};
 
     results.forEach((result, index) => {
       const layer = Object.values(CacheLayer)[index];
-      if (result.status === "fulfilled") {
-        stats[result.value.layer] = result.value.stats;
-      } else {
+      if (result.status === "fulfilled" && layer) {
+        stats[layer] = result.value;
+      } else if (layer) {
         stats[layer] = {
           hits: 0,
           misses: 0,
@@ -224,63 +263,46 @@ export class MultiLayerCacheManager {
     return stats as Record<CacheLayer, CacheStats>;
   }
 
-  async performHealthCheck(): Promise<{
-    healthy: boolean;
-    layers: Record<
-      CacheLayer,
-      { healthy: boolean; hitRate: number; target: number; }
-    >;
-    recommendations: string[];
-  }> {
-    const allStats = await this.getAllStats();
-    const recommendations: string[] = [];
-    let overallHealthy = true;
-
-    const layerHealth: Record<
-      CacheLayer,
-      { healthy: boolean; hitRate: number; target: number; }
-    > = {} as any;
-
-    for (
-      const [layer, stats] of Object.entries(allStats) as [
-        CacheLayer,
-        CacheStats,
-      ][]
-    ) {
-      const target = this.hitRateTargets[layer];
-      const healthy = stats.hitRate >= target;
-
-      layerHealth[layer] = {
-        healthy,
-        hitRate: stats.hitRate,
-        target,
-      };
-
-      if (!healthy) {
-        overallHealthy = false;
-        recommendations.push(
-          `${layer} cache hit rate (${stats.hitRate.toFixed(1)}%) below target (${target}%)`,
-        );
-      }
+  private getCacheLayer(layer: CacheLayer): CacheOperation {
+    switch (layer) {
+      case CacheLayer.BROWSER:
+        return this.browser;
+      case CacheLayer.EDGE:
+        return this.edge;
+      case CacheLayer.SUPABASE:
+        return this.supabase;
+      case CacheLayer.AI_CONTEXT:
+        return this.aiContext;
+      default:
+        throw new Error(`Unknown cache layer: ${layer}`);
     }
+  }
 
-    return {
-      healthy: overallHealthy,
-      layers: layerHealth,
-      recommendations,
-    };
+  private getDefaultTTL(layer: CacheLayer): number {
+    switch (layer) {
+      case CacheLayer.BROWSER:
+        return 5 * 60 * 1000; // 5 minutes
+      case CacheLayer.EDGE:
+        return 15 * 60 * 1000; // 15 minutes
+      case CacheLayer.SUPABASE:
+        return 60 * 60 * 1000; // 1 hour
+      case CacheLayer.AI_CONTEXT:
+        return 24 * 60 * 60; // 24 hours (seconds)
+      default:
+        return 60 * 1000; // 1 minute default
+    }
   }
 
   // Healthcare-specific methods
-  async setPatientData<T>(
+  async setHealthcareData<T>(
     patientId: string,
     dataKey: string,
     value: T,
-    policy: HealthcareDataPolicy,
+    policy: HealthcareDataPolicy
   ): Promise<void> {
     const key = `patient:${patientId}:${dataKey}`;
     const layers = policy.dataClassification === "RESTRICTED"
-      ? [CacheLayer.SUPABASE] // Only Supabase for restricted data
+      ? [CacheLayer.SUPABASE]
       : [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE];
 
     await this.set(key, value, layers, {
@@ -290,10 +312,10 @@ export class MultiLayerCacheManager {
     });
   }
 
-  async getPatientData<T>(
+  async getHealthcareData<T>(
     patientId: string,
     dataKey: string,
-    policy: HealthcareDataPolicy,
+    policy: HealthcareDataPolicy
   ): Promise<T | null> {
     const key = `patient:${patientId}:${dataKey}`;
     const layers = policy.dataClassification === "RESTRICTED"
@@ -304,21 +326,6 @@ export class MultiLayerCacheManager {
       healthcareData: true,
       lgpdCompliant: true,
     });
-  }
-
-  async clearPatientData(patientId: string): Promise<void> {
-    // Clear from browser cache
-    if (this.browser.clearPatientData) {
-      await this.browser.clearPatientData(patientId);
-    }
-
-    // Clear from Supabase cache
-    if (this.supabase.clearPatientData) {
-      await this.supabase.clearPatientData(patientId);
-    }
-
-    // Invalidate by tags
-    await this.invalidateByTags([`patient:${patientId}`]);
   }
 
   async getHealthcareMetrics(): Promise<{
@@ -345,66 +352,156 @@ export class MultiLayerCacheManager {
     };
   }
 
-  private getCache(layer: CacheLayer): CacheOperation {
-    switch (layer) {
-      case CacheLayer.BROWSER:
-        return this.browser;
-      case CacheLayer.EDGE:
-        return this.edge;
-      case CacheLayer.SUPABASE:
-        return this.supabase;
-      case CacheLayer.AI_CONTEXT:
-        return this.aiContext;
-      default:
-        throw new Error(`Unknown cache layer: ${layer}`);
+  // AI Context specific methods
+  async storeAIConversation(
+    userId: string,
+    sessionId: string,
+    conversation: any,
+    metadata?: {
+      importance?: "low" | "medium" | "high" | "critical";
+      topic?: string;
+      lastUsed?: Date;
     }
+  ): Promise<void> {
+    const key = `ai:conversation:${userId}:${sessionId}`;
+    await this.set(key, conversation, [CacheLayer.AI_CONTEXT], {
+      aiContextMetadata: {
+        contextType: "conversation",
+        importance: metadata?.importance || "medium",
+        userId,
+        sessionId,
+        topic: metadata?.topic,
+        lastUsed: metadata?.lastUsed || new Date(),
+        accessFrequency: 1,
+      },
+    });
   }
 
-  private getOptimalTTL(layer: CacheLayer, baseTTL?: number): number {
-    if (baseTTL) {
-      return baseTTL;
-    }
+  async getAIConversation(
+    userId: string,
+    sessionId: string
+  ): Promise<any | null> {
+    const key = `ai:conversation:${userId}:${sessionId}`;
+    return await this.get(key, [CacheLayer.AI_CONTEXT]);
+  }
 
-    // Default TTLs optimized for each layer
-    switch (layer) {
-      case CacheLayer.BROWSER:
-        return 5 * 60 * 1000; // 5 minutes
-      case CacheLayer.EDGE:
-        return 10 * 60; // 10 minutes (seconds)
-      case CacheLayer.SUPABASE:
-        return 30 * 1000; // 30 seconds
-      case CacheLayer.AI_CONTEXT:
-        return 24 * 60 * 60; // 24 hours (seconds)
-      default:
-        return 60 * 1000; // 1 minute default
-    }
+  // Batch operations
+  async setBatch<T>(
+    entries: Array<{ key: string; value: T; ttl?: number }>,
+    layers?: CacheLayer[]
+  ): Promise<void> {
+    const promises = entries.map(({ key, value, ttl }) =>
+      this.set(key, value, layers, { ttl })
+    );
+    await Promise.allSettled(promises);
+  }
+
+  async getBatch<T>(
+    keys: string[],
+    layers?: CacheLayer[]
+  ): Promise<Record<string, T | null>> {
+    const promises = keys.map(async (key) => ({
+      key,
+      value: await this.get<T>(key, layers),
+    }));
+
+    const results = await Promise.allSettled(promises);
+    const batch: Record<string, T | null> = {};
+
+    results.forEach((result) => {
+      if (result.status === "fulfilled") {
+        batch[result.value.key] = result.value.value;
+      }
+    });
+
+    return batch;
   }
 
   private async populateUpstream<T>(
     key: string,
     value: T,
-    foundLayer: CacheLayer,
-    searchedLayers: CacheLayer[],
-    _options?: any,
+    sourceLayer: CacheLayer,
+    layers: CacheLayer[]
   ): Promise<void> {
-    const layerIndex = searchedLayers.indexOf(foundLayer);
-    if (layerIndex <= 0) {
-      return; // Already at fastest layer or not found
-    }
+    const sourceIndex = layers.indexOf(sourceLayer);
+    if (sourceIndex <= 0) return; // Already at the top layer or not found
 
-    // Populate all faster layers
-    const upstreamLayers = searchedLayers.slice(0, layerIndex);
-    const promises = upstreamLayers.map((layer) => {
+    const upstreamLayers = layers.slice(0, sourceIndex);
+    const promises = upstreamLayers.map(async (layer) => {
       try {
-        const cache = this.getCache(layer);
-        const ttl = this.getOptimalTTL(layer);
-        return cache.set(key, value, ttl);
+        const cache = this.getCacheLayer(layer);
+        const ttl = this.getDefaultTTL(layer);
+        await cache.set(key, value, ttl);
       } catch (error) {
-        console.debug(`Upstream population error for ${layer}:`, error);
-        return Promise.resolve();
+        console.warn(`Failed to populate upstream layer ${layer}:`, error);
       }
     });
 
     await Promise.allSettled(promises);
+  }
+
+  /**
+   * Clear all cache layers
+   */
+  async clear(): Promise<void> {
+    await Promise.allSettled([
+      this.browser.clear(),
+      this.edge.clear(),
+      this.supabase.clear(),
+      this.aiContext.clear()
+    ]);
+  }
+
+  /**
+   * Clear all patient-related data for LGPD compliance
+   */
+  async clearPatientData(patientId: string): Promise<void> {
+    const patientKeys = [
+      `patient_${patientId}`,
+      `patient_history_${patientId}`,
+      `patient_consent_${patientId}`,
+      `lgpd_consent_${patientId}`
+    ];
+
+    await Promise.allSettled(
+      patientKeys.flatMap(key =>
+        [CacheLayer.BROWSER, CacheLayer.EDGE, CacheLayer.SUPABASE, CacheLayer.AI_CONTEXT]
+          .map(layer => this.delete(key, [layer]))
+      )
+    );
+  }
+
+  /**
+   * Get healthcare audit trail
+   */
+  getHealthcareAuditTrail(): any[] {
+    // Return audit trail from all layers
+    return [
+      ...this.auditTrail.slice(-100) // Last 100 operations
+    ];
+  }
+
+  /**
+   * Get comprehensive cache statistics
+   */
+  getStats(): { [key: string]: any } {
+    return {
+      layers: {
+        browser: this.stats.browser,
+        edge: this.stats.edge,
+        supabase: this.stats.supabase,
+        aiContext: this.stats.aiContext
+      },
+      overall: {
+        totalHits: Object.values(this.stats).reduce((sum, stat) => sum + stat.hits, 0),
+        totalMisses: Object.values(this.stats).reduce((sum, stat) => sum + stat.misses, 0),
+        averageHitRate: Object.values(this.stats).reduce((sum, stat) => sum + stat.hitRate, 0) / 4,
+        totalOperations: this.auditTrail.length
+      },
+      audit: {
+        totalEntries: this.auditTrail.length,
+        lastOperation: this.auditTrail[this.auditTrail.length - 1]?.timestamp
+      }
+    };
   }
 }
