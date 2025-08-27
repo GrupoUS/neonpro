@@ -11,9 +11,7 @@ type ConcernType = "wrinkles" | "acne-scars" | "pigmentation" | "texture";
 type ExpectationType = "subtle" | "moderate" | "dramatic";
 type UrgencyType = "low" | "moderate" | "high";
 
-// Constants for time calculations and business rules
-const _MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-const _BUSINESS_DAYS = [1, 2, 3, 4, 5]; // Monday to Friday
+// Constants for time calculations and business rules // Monday to Friday
 
 /**
  * Initialize the complete AI prediction system
@@ -91,9 +89,9 @@ export function createTreatmentRequest(
 ): TreatmentRequest {
   const defaultRequest: TreatmentRequest = {
     patientId,
-    treatmentType: treatmentType as any,
+    treatmentType: treatmentType as unknown,
     targetAreas: targetAreas.map((area) => ({
-      region: area as any,
+      region: area as unknown,
       concern: "wrinkles" as ConcernType,
       severity: 5,
       priority: 1,
@@ -190,8 +188,8 @@ export function formatSkinType(skinType: string | number): SkinType {
   // Handle common variations
   const normalizedType = skinType.toLowerCase();
   if (
-    normalizedType.includes("very fair") ||
-    normalizedType.includes("type 1")
+    normalizedType.includes("very fair")
+    || normalizedType.includes("type 1")
   ) {
     return "fitzpatrick-1";
   }
@@ -239,16 +237,16 @@ export function formatRecommendations(recommendations: string[]): {
 } {
   const critical = recommendations.filter(
     (rec) =>
-      rec.toLowerCase().includes("urgent") ||
-      rec.toLowerCase().includes("contraindication") ||
-      rec.toLowerCase().includes("immediate"),
+      rec.toLowerCase().includes("urgent")
+      || rec.toLowerCase().includes("contraindication")
+      || rec.toLowerCase().includes("immediate"),
   );
 
   const important = recommendations.filter(
     (rec) =>
-      rec.toLowerCase().includes("consider") ||
-      rec.toLowerCase().includes("recommend") ||
-      rec.toLowerCase().includes("significant"),
+      rec.toLowerCase().includes("consider")
+      || rec.toLowerCase().includes("recommend")
+      || rec.toLowerCase().includes("significant"),
   );
 
   const general = recommendations.filter(
@@ -269,7 +267,7 @@ export async function checkAccuracyTargets(): Promise<{
   try {
     const health = await neonproAIIntegration.getSystemHealth();
 
-    const targetAccuracy = 0.85;
+    const { 85: targetAccuracy } = 0;
     const individualTargets: Record<string, boolean> = {};
     const recommendations: string[] = [];
 
@@ -283,9 +281,8 @@ export async function checkAccuracyTargets(): Promise<{
       }
     }
 
-    const overallAccuracy =
-      Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0) /
-      Object.values(health.accuracy).length;
+    const overallAccuracy = Object.values(health.accuracy).reduce((sum, acc) => sum + acc, 0)
+      / Object.values(health.accuracy).length;
     const overallTarget = overallAccuracy >= targetAccuracy;
 
     if (!overallTarget) {

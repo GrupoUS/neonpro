@@ -7,13 +7,13 @@ import { mockAnalyticsData } from "../../../utils/mockData";
 
 // Mock Recharts components
 vi.mock<typeof import("recharts")>("recharts", () => ({
-  LineChart: ({ children }: { children: React.ReactNode }) => (
+  LineChart: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="line-chart">{children}</div>
   ),
-  BarChart: ({ children }: { children: React.ReactNode }) => (
+  BarChart: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="bar-chart">{children}</div>
   ),
-  PieChart: ({ children }: { children: React.ReactNode }) => (
+  PieChart: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="pie-chart">{children}</div>
   ),
   Line: () => <div data-testid="line" />,
@@ -24,7 +24,7 @@ vi.mock<typeof import("recharts")>("recharts", () => ({
   CartesianGrid: () => <div data-testid="cartesian-grid" />,
   Tooltip: () => <div data-testid="tooltip" />,
   Legend: () => <div data-testid="legend" />,
-  ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
+  ResponsiveContainer: ({ children }: { children: React.ReactNode; }) => (
     <div data-testid="responsive-container">{children}</div>
   ),
 }));
@@ -53,16 +53,14 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
+  return ({ children }: { children: React.ReactNode; }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
 
 describe("analyticsDashboard", () => {
-  const mockUseAnalyticsData =
-    require("@/hooks/analytics/useAnalyticsData").useAnalyticsData;
-  const mockUseExportData =
-    require("@/hooks/analytics/useExportData").useExportData;
+  const mockUseAnalyticsData = require("@/hooks/analytics/useAnalyticsData").useAnalyticsData;
+  const mockUseExportData = require("@/hooks/analytics/useExportData").useExportData;
 
   beforeEach(() => {
     mockUseAnalyticsData.mockReturnValue({

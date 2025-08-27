@@ -15,7 +15,7 @@ export interface RegulatoryReport {
     | "data_breach_notification";
   period_start: string;
   period_end: string;
-  report_data: Record<string, any>;
+  report_data: Record<string, unknown>;
   status: "generated" | "submitted" | "acknowledged" | "rejected";
   submitted_at?: string;
   acknowledgment_receipt?: string;
@@ -71,16 +71,15 @@ export class RegulatoryReportingService {
     tenantId: string,
     periodStart: string,
     periodEnd: string,
-  ): Promise<{ report?: RegulatoryReport; error?: string }> {
+  ): Promise<{ report?: RegulatoryReport; error?: string; }> {
     try {
       // Collect ANVISA compliance data
-      const [equipmentData, adverseEvents, qualityData, professionalsData] =
-        await Promise.all([
-          this.getEquipmentRegistrations(tenantId, periodStart, periodEnd),
-          this.getAdverseEvents(tenantId, periodStart, periodEnd),
-          this.getQualityIncidents(tenantId, periodStart, periodEnd),
-          this.getProfessionalCertifications(tenantId),
-        ]);
+      const [equipmentData, adverseEvents, qualityData, professionalsData] = await Promise.all([
+        this.getEquipmentRegistrations(tenantId, periodStart, periodEnd),
+        this.getAdverseEvents(tenantId, periodStart, periodEnd),
+        this.getQualityIncidents(tenantId, periodStart, periodEnd),
+        this.getProfessionalCertifications(tenantId),
+      ]);
 
       const reportData: ANVISAReport = {
         equipment_registrations: equipmentData.length,
@@ -91,10 +90,9 @@ export class RegulatoryReportingService {
           product_name: eq.equipment_name,
           registration_number: eq.anvisa_registration,
           expiry_date: eq.certification_expiry,
-          status:
-            new Date(eq.certification_expiry) > new Date()
-              ? "active"
-              : "expired",
+          status: new Date(eq.certification_expiry) > new Date()
+            ? "active"
+            : "expired",
         })),
         compliance_score: this.calculateANVISAScore(
           equipmentData,
@@ -130,10 +128,9 @@ export class RegulatoryReportingService {
       return { report: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate ANVISA report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate ANVISA report",
       };
     }
   }
@@ -145,7 +142,7 @@ export class RegulatoryReportingService {
     tenantId: string,
     periodStart: string,
     periodEnd: string,
-  ): Promise<{ report?: RegulatoryReport; error?: string }> {
+  ): Promise<{ report?: RegulatoryReport; error?: string; }> {
     try {
       const [
         proceduresData,
@@ -173,7 +170,7 @@ export class RegulatoryReportingService {
         })),
         ethical_violations: ethicsData.length,
         continuing_education_hours: educationData.reduce(
-          (sum: number, edu: any) => sum + edu.hours,
+          (sum: number, edu: unknown) => sum + edu.hours,
           0,
         ),
         compliance_score: this.calculateCFMScore(
@@ -209,10 +206,9 @@ export class RegulatoryReportingService {
       return { report: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate CFM report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate CFM report",
       };
     }
   }
@@ -224,7 +220,7 @@ export class RegulatoryReportingService {
     tenantId: string,
     periodStart: string,
     periodEnd: string,
-  ): Promise<{ report?: RegulatoryReport; error?: string }> {
+  ): Promise<{ report?: RegulatoryReport; error?: string; }> {
     try {
       const [
         consentData,
@@ -247,7 +243,7 @@ export class RegulatoryReportingService {
         data_retention_policies: retentionPolicies.length,
         security_incidents: securityIncidents.length,
         breach_notifications: securityIncidents.filter(
-          (i: any) => i.severity === "high" || i.severity === "critical",
+          (i: unknown) => i.severity === "high" || i.severity === "critical",
         ).length,
         compliance_score: this.calculateLGPDScore(
           consentData,
@@ -277,10 +273,9 @@ export class RegulatoryReportingService {
       return { report: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate LGPD report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate LGPD report",
       };
     }
   }
@@ -290,7 +285,7 @@ export class RegulatoryReportingService {
    */
   async scheduleAutomaticReports(
     tenantId: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const currentDate = new Date();
       const quarterStart = new Date(
@@ -343,10 +338,9 @@ export class RegulatoryReportingService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to schedule automatic reports",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to schedule automatic reports",
       };
     }
   }
@@ -520,9 +514,9 @@ export class RegulatoryReportingService {
 
   // Compliance scoring algorithms
   private calculateANVISAScore(
-    equipment: any[],
-    adverse: any[],
-    quality: any[],
+    equipment: unknown[],
+    adverse: unknown[],
+    quality: unknown[],
   ): number {
     let score = 100;
 
@@ -542,10 +536,10 @@ export class RegulatoryReportingService {
   }
 
   private calculateCFMScore(
-    _procedures: any[],
-    ethics: any[],
-    education: any[],
-    licenses: any[],
+    _procedures: unknown[],
+    ethics: unknown[],
+    education: unknown[],
+    licenses: unknown[],
   ): number {
     let score = 100;
 
@@ -560,7 +554,7 @@ export class RegulatoryReportingService {
 
     // Deduct for insufficient continuing education
     const totalHours = education.reduce(
-      (sum: number, edu: any) => sum + edu.hours,
+      (sum: number, edu: unknown) => sum + edu.hours,
       0,
     );
     if (totalHours < 40) {
@@ -572,9 +566,9 @@ export class RegulatoryReportingService {
   }
 
   private calculateLGPDScore(
-    consent: any,
-    _requests: any[],
-    incidents: any[],
+    consent: unknown,
+    _requests: unknown[],
+    incidents: unknown[],
   ): number {
     let score = 100;
 
@@ -583,15 +577,14 @@ export class RegulatoryReportingService {
 
     // Deduct for high-severity incidents
     const highSeverity = incidents.filter(
-      (i: any) => i.severity === "high" || i.severity === "critical",
+      (i: unknown) => i.severity === "high" || i.severity === "critical",
     ).length;
     score -= highSeverity * 20;
 
     // Deduct for poor consent management
-    const consentRate =
-      consent.total_activities > 0
-        ? consent.granted / consent.total_activities
-        : 1;
+    const consentRate = consent.total_activities > 0
+      ? consent.granted / consent.total_activities
+      : 1;
     if (consentRate < 0.8) {
       score -= (0.8 - consentRate) * 100;
     }
@@ -613,7 +606,7 @@ export class RegulatoryReportingService {
 
     // In a real implementation, this would integrate with the regulatory authority's API
     // For now, we'll log the submission
-    console.log(`Report ${reportId} submitted to ${authority.toUpperCase()}`);
+    // console.log(`Report ${reportId} submitted to ${authority.toUpperCase()}`);
   }
 }
 

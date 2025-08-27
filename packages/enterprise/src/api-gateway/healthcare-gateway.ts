@@ -5,15 +5,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { HealthcareAuthenticator } from "./auth-handler";
 import { CircuitBreaker } from "./circuit-breaker";
 import { ComplianceValidator } from "./compliance-validator";
-import { HealthcareAuthenticator } from "./auth-handler";
 import { RateLimiter } from "./rate-limiter";
-import type {
-  AuthContext,
-  HealthcareMetadata,
-  MicroserviceRoute,
-} from "./types";
+import type { AuthContext, HealthcareMetadata, MicroserviceRoute } from "./types";
 
 // Constants
 const HTTP_STATUS_UNAUTHORIZED = 401;
@@ -195,42 +191,37 @@ export class HealthcareAPIGateway {
       "/api/appointments": {
         circuitBreakerKey: "appointment-service",
         complianceLevel: "medium",
-        endpoint:
-          process.env.APPOINTMENT_SERVICE_URL ||
-          "http://appointment-service:3000",
+        endpoint: process.env.APPOINTMENT_SERVICE_URL
+          || "http://appointment-service:3000",
         healthcareContext: "scheduling",
         service: "appointment-service",
       },
       "/api/billing": {
         circuitBreakerKey: "billing-service",
         complianceLevel: "high",
-        endpoint:
-          process.env.BILLING_SERVICE_URL || "http://billing-service:3000",
+        endpoint: process.env.BILLING_SERVICE_URL || "http://billing-service:3000",
         healthcareContext: "financial",
         service: "billing-service",
       },
       "/api/compliance": {
         circuitBreakerKey: "compliance-service",
         complianceLevel: "maximum",
-        endpoint:
-          process.env.COMPLIANCE_SERVICE_URL ||
-          "http://compliance-service:3000",
+        endpoint: process.env.COMPLIANCE_SERVICE_URL
+          || "http://compliance-service:3000",
         healthcareContext: "regulatory",
         service: "compliance-service",
       },
       "/api/medical": {
         circuitBreakerKey: "medical-service",
         complianceLevel: "maximum",
-        endpoint:
-          process.env.MEDICAL_SERVICE_URL || "http://medical-service:3000",
+        endpoint: process.env.MEDICAL_SERVICE_URL || "http://medical-service:3000",
         healthcareContext: "medical_records",
         service: "medical-service",
       },
       "/api/patients": {
         circuitBreakerKey: "patient-service",
         complianceLevel: "high",
-        endpoint:
-          process.env.PATIENT_SERVICE_URL || "http://patient-service:3000",
+        endpoint: process.env.PATIENT_SERVICE_URL || "http://patient-service:3000",
         healthcareContext: "patient_data",
         service: "patient-service",
       },
@@ -357,7 +348,7 @@ export class HealthcareAPIGateway {
     // In production, this would send to proper logging service
     if (process.env.NODE_ENV !== "production") {
       // biome-ignore lint/suspicious/noConsoleLog: Dev logging only
-      // console.log(JSON.stringify(structuredLog)); // Removed per lint rule
+      // // console.log(JSON.stringify(structuredLog)); // Removed per lint rule
     }
   }
 
@@ -380,5 +371,4 @@ export class HealthcareAPIGateway {
 }
 
 // Factory function for creating healthcare gateway
-export const createHealthcareGateway = (): HealthcareAPIGateway =>
-  new HealthcareAPIGateway();
+export const createHealthcareGateway = (): HealthcareAPIGateway => new HealthcareAPIGateway();

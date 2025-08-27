@@ -4,10 +4,7 @@
  */
 
 import { voiceNavigationService } from "@/lib/services/voice-navigation-service";
-import type {
-  VoiceCommand,
-  VoiceNavigationState,
-} from "@/lib/services/voice-navigation-service";
+import type { VoiceCommand, VoiceNavigationState } from "@/lib/services/voice-navigation-service";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseVoiceNavigationReturn {
@@ -63,7 +60,7 @@ export function useVoiceNavigation(): UseVoiceNavigationReturn {
       await voiceNavigationService.startListening();
       updateState();
     } catch (error) {
-      console.error("Error starting voice navigation:", error);
+      // console.error("Error starting voice navigation:", error);
       throw error;
     }
   }, [isSupported, updateState]);

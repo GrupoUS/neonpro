@@ -1,4 +1,4 @@
-﻿// Healthcare-specific constants and configurations
+// Healthcare-specific constants and configurations
 
 const PATIENT_STATUS = {
   ACTIVE: "active",
@@ -54,11 +54,11 @@ const ANVISA_CONSTANTS = {
 } as const;
 
 export {
-  PATIENT_STATUS,
+  ANVISA_CONSTANTS,
   APPOINTMENT_STATUS,
   APPOINTMENT_TYPE,
-  URGENCY_LEVELS,
-  STATUS_VARIANTS,
   LGPD_CONSTANTS,
-  ANVISA_CONSTANTS,
+  PATIENT_STATUS,
+  STATUS_VARIANTS,
+  URGENCY_LEVELS,
 };

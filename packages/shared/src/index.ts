@@ -373,9 +373,11 @@ export const utils = {
   formatCPF: (cpf: string): string => {
     const cleaned = cpf.replaceAll(/\D/g, "");
     if (cleaned.length === 11) {
-      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(
-        9,
-      )}`;
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${
+        cleaned.slice(
+          9,
+        )
+      }`;
     }
     return cpf;
   },
@@ -383,10 +385,12 @@ export const utils = {
   formatCNPJ: (cnpj: string): string => {
     const cleaned = cnpj.replaceAll(/\D/g, "");
     if (cleaned.length === 14) {
-      return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${cleaned.slice(
-        8,
-        12,
-      )}-${cleaned.slice(12)}`;
+      return `${cleaned.slice(0, 2)}.${cleaned.slice(2, 5)}.${cleaned.slice(5, 8)}/${
+        cleaned.slice(
+          8,
+          12,
+        )
+      }-${cleaned.slice(12)}`;
     }
     return cnpj;
   },
@@ -442,3 +446,36 @@ export * from "./api-client";
 export * from "./hooks/use-healthcare-realtime";
 export * from "./hooks/use-lgpd-realtime";
 export * from "./hooks/use-realtime";
+
+// Additional constants and exports that API needs
+export const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  ACCEPTED: 202,
+  NO_CONTENT: 204,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  METHOD_NOT_ALLOWED: 405,
+  CONFLICT: 409,
+  UNPROCESSABLE_ENTITY: 422,
+  INTERNAL_SERVER_ERROR: 500,
+  NOT_IMPLEMENTED: 501,
+  SERVICE_UNAVAILABLE: 503,
+} as const;
+
+export const MAGIC_NUMBERS = {
+  HUNDRED: 100,
+  NEGATIVE_ONE: -1,
+  ONE: 1,
+  TWO: 2,
+  ZERO: 0,
+  TWENTY_FOUR_HOURS: 24,
+  SIXTY_MINUTES: 60,
+  SIXTY_SECONDS: 60,
+  MILLISECONDS_IN_SECOND: 1000,
+  THIRTY_DAYS: 30,
+  HTTP_INTERNAL_ERROR: 500,
+  HTTP_UNAUTHORIZED: 401,
+} as const;

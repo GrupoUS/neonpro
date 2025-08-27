@@ -21,9 +21,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
   });
 
   test.describe("⚡ Emergency Login (<10s)", () => {
-    test("should complete emergency login within 10 seconds", async ({
-      page,
-    }) => {
+    test("should complete emergency login within 10 seconds", async ({ page }) => {
       const startTime = Date.now();
 
       // Navigate to emergency access portal
@@ -75,9 +73,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should handle life-threatening emergency access bypass", async ({
-      page,
-    }) => {
+    test("should handle life-threatening emergency access bypass", async ({ page }) => {
       // Click emergency access button on login screen
       await page.goto("/login");
       await expect(
@@ -129,9 +125,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should bypass normal authentication restrictions in emergency mode", async ({
-      page,
-    }) => {
+    test("should bypass normal authentication restrictions in emergency mode", async ({ page }) => {
       await page.goto("/emergency");
 
       // Emergency login
@@ -164,9 +158,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toHaveClass(/emergency|critical/);
     });
 
-    test("should validate emergency credentials and prevent abuse", async ({
-      page,
-    }) => {
+    test("should validate emergency credentials and prevent abuse", async ({ page }) => {
       await page.goto("/login");
       await page.click('[data-testid="emergency-access-btn"]');
 
@@ -202,9 +194,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
   });
 
   test.describe("🔍 Critical Data Access", () => {
-    test("should provide immediate access to critical patient data", async ({
-      page,
-    }) => {
+    test("should provide immediate access to critical patient data", async ({ page }) => {
       // Emergency login
       await page.goto("/emergency");
       await page.fill('[data-testid="emergency-code"]', "EMRG2024");
@@ -257,9 +247,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       }
     });
 
-    test("should provide rapid patient data access in emergency mode", async ({
-      page,
-    }) => {
+    test("should provide rapid patient data access in emergency mode", async ({ page }) => {
       // Start emergency session
       await page.goto("/login");
       await page.click('[data-testid="emergency-access-btn"]');
@@ -323,9 +311,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       await expect(page.locator('[data-testid="recent-vitals"]')).toBeVisible();
     });
 
-    test("should display patient allergies and contraindications prominently", async ({
-      page,
-    }) => {
+    test("should display patient allergies and contraindications prominently", async ({ page }) => {
       // Emergency login and patient search
       await page.goto("/emergency");
       await page.fill('[data-testid="emergency-code"]', "EMRG2024");
@@ -420,9 +406,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
   });
 
   test.describe("💊 Emergency Prescription Authorization", () => {
-    test("should handle emergency prescription authorization", async ({
-      page,
-    }) => {
+    test("should handle emergency prescription authorization", async ({ page }) => {
       // Setup emergency session
       await page.goto("/login");
       await page.click('[data-testid="emergency-access-btn"]');
@@ -543,9 +527,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       }
     });
 
-    test("should require justification for emergency access", async ({
-      page,
-    }) => {
+    test("should require justification for emergency access", async ({ page }) => {
       // Emergency login
       await page.goto("/emergency");
       await page.fill('[data-testid="emergency-code"]', "EMRG2024");
@@ -596,9 +578,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toContainText("Justificativa registrada");
     });
 
-    test("should generate comprehensive emergency audit logs", async ({
-      page,
-    }) => {
+    test("should generate comprehensive emergency audit logs", async ({ page }) => {
       // Complete an emergency session
       await page.goto("/login");
       await page.click('[data-testid="emergency-access-btn"]');
@@ -673,9 +653,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should maintain audit integrity and prevent tampering", async ({
-      page,
-    }) => {
+    test("should maintain audit integrity and prevent tampering", async ({ page }) => {
       // Emergency login
       await page.goto("/emergency");
       await page.fill('[data-testid="emergency-code"]', "EMRG2024");
@@ -735,16 +713,13 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
   });
 
   test.describe("⏱️ Performance & Reliability", () => {
-    test("should handle concurrent emergency access requests", async ({
-      page,
-      context,
-    }) => {
+    test("should handle concurrent emergency access requests", async ({ page, context }) => {
       // Simulate multiple emergency access attempts
       const page1 = page;
       const page2 = await context.newPage();
       const page3 = await context.newPage();
 
-      const emergencyLogin = async (testPage: any, professionalId: string) => {
+      const emergencyLogin = async (testPage: unknown, professionalId: string) => {
         await testPage.goto("/emergency");
         await testPage.fill('[data-testid="emergency-code"]', "EMRG2024");
         await testPage.fill('[data-testid="professional-id"]', professionalId);
@@ -785,9 +760,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       await page3.close();
     });
 
-    test("should maintain performance under emergency conditions", async ({
-      page,
-    }) => {
+    test("should maintain performance under emergency conditions", async ({ page }) => {
       // Emergency login
       await page.goto("/emergency");
       await page.fill('[data-testid="emergency-code"]', "EMRG2024");
@@ -839,8 +812,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       }
 
       // All searches should be fast
-      const avgSearchTime =
-        searchTimes.reduce((a, b) => a + b, 0) / searchTimes.length;
+      const avgSearchTime = searchTimes.reduce((a, b) => a + b, 0) / searchTimes.length;
       expect(avgSearchTime).toBeLessThan(5000); // Average under 5 seconds
 
       // No search should take more than 8 seconds
@@ -848,9 +820,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       expect(maxSearchTime).toBeLessThan(8000);
     });
 
-    test("should handle system failures gracefully in emergency mode", async ({
-      page,
-    }) => {
+    test("should handle system failures gracefully in emergency mode", async ({ page }) => {
       // Emergency login
       await page.goto("/emergency");
       await page.fill('[data-testid="emergency-code"]', "EMRG2024");
@@ -887,9 +857,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toBeVisible();
 
       // Click retry with modified route
-      await page.route("**/api/patients/emergency-search", (route) =>
-        route.continue(),
-      );
+      await page.route("**/api/patients/emergency-search", (route) => route.continue());
       await page.click('[data-testid="retry-button"]');
 
       // Should eventually succeed
@@ -934,9 +902,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       }
     });
 
-    test("should enforce emergency session time limits and auto-logout", async ({
-      page,
-    }) => {
+    test("should enforce emergency session time limits and auto-logout", async ({ page }) => {
       // Start emergency session
       await page.goto("/login");
       await page.click('[data-testid="emergency-access-btn"]');
@@ -993,9 +959,7 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       await expect(page.locator("text=Aguardando aprovação")).toBeVisible();
     });
 
-    test("should automatically log out after emergency session expires", async ({
-      page,
-    }) => {
+    test("should automatically log out after emergency session expires", async ({ page }) => {
       // This test would require either mocking time or using a shorter session duration
       // For demonstration, we'll test the logout mechanism exists
 
@@ -1030,16 +994,11 @@ test.describe("🚨 Emergency Access - Critical E2E", () => {
       ).toBeVisible();
 
       // Should clear all session data
-      const sessionData = await page.evaluate(() =>
-        localStorage.getItem("emergency-session"),
-      );
+      const sessionData = await page.evaluate(() => localStorage.getItem("emergency-session"));
       expect(sessionData).toBeNull();
     });
 
-    test("should handle multiple concurrent emergency sessions", async ({
-      page,
-      context,
-    }) => {
+    test("should handle multiple concurrent emergency sessions", async ({ page, context }) => {
       // First emergency session
       await page.goto("/login");
       await page.click('[data-testid="emergency-access-btn"]');

@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log("🔄 Starting automated drift monitoring...");
+    // console.log("🔄 Starting automated drift monitoring...");
     const startTime = Date.now();
 
     // Run drift detection across all active models
@@ -78,8 +78,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log(`✅ Drift monitoring complete in ${executionTime}ms`);
-    console.log(
+    // console.log(`✅ Drift monitoring complete in ${executionTime}ms`);
+    // console.log(
       `📊 Results: ${criticalAlerts.length} critical, ${highAlerts.length} high, ${mediumAlerts.length} medium, ${lowAlerts.length} low`,
     );
 
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
         (sum, a) => sum + a.estimatedImpact.revenueAtRisk,
         0,
       );
-      console.log(
+      // console.log(
         `💰 Total revenue at risk: $${totalRevenue.toLocaleString()}`,
       );
     }
@@ -121,16 +121,15 @@ export async function GET(request: NextRequest) {
       monitoring: {
         targetDetectionTime: "<24 hours",
         currentFrequency: "Every 6 hours",
-        systemHealth:
-          alerts.length < 5
-            ? "good"
-            : alerts.length < 10
-              ? "warning"
-              : "critical",
+        systemHealth: alerts.length < 5
+          ? "good"
+          : alerts.length < 10
+          ? "warning"
+          : "critical",
       },
     });
   } catch (error) {
-    console.error("❌ Automated drift monitoring failed:", error);
+    // console.error("❌ Automated drift monitoring failed:", error);
 
     // Log failure for debugging
     try {
@@ -149,7 +148,7 @@ export async function GET(request: NextRequest) {
         created_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error("Failed to log drift monitoring failure:", error);
+      // console.error("Failed to log drift monitoring failure:", error);
     }
 
     return NextResponse.json(
@@ -190,7 +189,7 @@ System monitoring completed in ${summary.executionTime}ms.
 Next automated check: ${new Date(Date.now() + 6 * 60 * 60 * 1000).toLocaleString()}
   `;
 
-  console.log("📧 Executive Summary:", message);
+  // console.log("📧 Executive Summary:", message);
 
   // Log executive summary for audit trail
   const supabase = await createClient();

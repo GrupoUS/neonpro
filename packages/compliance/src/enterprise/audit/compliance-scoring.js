@@ -91,14 +91,12 @@ export class ComplianceScoringService {
         complianceAreaScores,
       );
       // Generate improvement recommendations
-      const improvementRecommendations =
-        await this.generateImprovementRecommendations(
-          scoreAssessment,
-          methodology,
-        );
+      const improvementRecommendations = await this.generateImprovementRecommendations(
+        scoreAssessment,
+        methodology,
+      );
       // Generate next assessment recommendations
-      const nextAssessment =
-        this.generateNextAssessmentRecommendations(scoreAssessment);
+      const nextAssessment = this.generateNextAssessmentRecommendations(scoreAssessment);
       const scoringResponse = {
         successful: true,
         assessment_results: scoreAssessment,
@@ -141,8 +139,8 @@ export class ComplianceScoringService {
       }
       // Constitutional Healthcare Assessment
       if (complianceAreas.includes("constitutional_healthcare")) {
-        scores.constitutional_healthcare_score =
-          await this.assessConstitutionalHealthcareCompliance(tenantId);
+        scores.constitutional_healthcare_score = await this
+          .assessConstitutionalHealthcareCompliance(tenantId);
       }
       // Ensure constitutional minimums
       scores.lgpd_score = Math.max(scores.lgpd_score, 9.9);
@@ -174,14 +172,11 @@ export class ComplianceScoringService {
       // Process compliance assessment
       const processCompliance = await this.assessProcessCompliance(tenantId);
       // Documentation completeness assessment
-      const documentationCompleteness =
-        await this.assessDocumentationCompleteness(tenantId);
+      const documentationCompleteness = await this.assessDocumentationCompleteness(tenantId);
       // Audit trail integrity assessment
-      const auditTrailIntegrity =
-        await this.assessAuditTrailIntegrity(tenantId);
+      const auditTrailIntegrity = await this.assessAuditTrailIntegrity(tenantId);
       // Patient safety measures assessment
-      const patientSafetyMeasures =
-        await this.assessPatientSafetyMeasures(tenantId);
+      const patientSafetyMeasures = await this.assessPatientSafetyMeasures(tenantId);
       return {
         data_quality: Math.max(dataQuality, 9.9),
         process_compliance: Math.max(processCompliance, 9.9),
@@ -221,16 +216,14 @@ export class ComplianceScoringService {
       const operationalRisks = await this.assessOperationalRisks(tenantId);
       riskFactors.push(...operationalRisks);
       // Assess constitutional risks
-      const constitutionalRisks =
-        await this.assessConstitutionalRisks(tenantId);
+      const constitutionalRisks = await this.assessConstitutionalRisks(tenantId);
       riskFactors.push(...constitutionalRisks);
       // Calculate overall risk score
       totalRiskScore = riskFactors.reduce(
         (sum, risk) => sum + risk.calculated_risk_score,
         0,
       );
-      const averageRiskScore =
-        riskFactors.length > 0 ? totalRiskScore / riskFactors.length : 0;
+      const averageRiskScore = riskFactors.length > 0 ? totalRiskScore / riskFactors.length : 0;
       // Determine overall risk level
       let overallRiskLevel = "low";
       if (averageRiskScore > 75) {
@@ -241,8 +234,7 @@ export class ComplianceScoringService {
         overallRiskLevel = "medium";
       }
       // Generate mitigation recommendations
-      const mitigationRecommendations =
-        this.generateRiskMitigationRecommendations(riskFactors);
+      const mitigationRecommendations = this.generateRiskMitigationRecommendations(riskFactors);
       return {
         overall_risk_level: overallRiskLevel,
         risk_score: Math.round(averageRiskScore),
@@ -265,37 +257,34 @@ export class ComplianceScoringService {
   ) {
     try {
       // Weighted compliance area scores (60% weight)
-      const complianceWeight = 0.6;
-      const complianceScore =
-        complianceAreaScores.lgpd_score * methodology.area_weights.lgpd +
-        complianceAreaScores.anvisa_score * methodology.area_weights.anvisa +
-        complianceAreaScores.cfm_score * methodology.area_weights.cfm +
-        complianceAreaScores.constitutional_healthcare_score *
-          methodology.area_weights.constitutional_healthcare;
+      const { 6: complianceWeight } = 0;
+      const complianceScore = complianceAreaScores.lgpd_score * methodology.area_weights.lgpd
+        + complianceAreaScores.anvisa_score * methodology.area_weights.anvisa
+        + complianceAreaScores.cfm_score * methodology.area_weights.cfm
+        + complianceAreaScores.constitutional_healthcare_score
+          * methodology.area_weights.constitutional_healthcare;
       // Weighted quality indicators (30% weight)
-      const qualityWeight = 0.3;
-      const qualityScore =
-        qualityIndicators.data_quality *
-          methodology.quality_weights.data_quality +
-        qualityIndicators.process_compliance *
-          methodology.quality_weights.process_compliance +
-        qualityIndicators.documentation_completeness *
-          methodology.quality_weights.documentation_completeness +
-        qualityIndicators.audit_trail_integrity *
-          methodology.quality_weights.audit_trail_integrity +
-        qualityIndicators.patient_safety_measures *
-          methodology.quality_weights.patient_safety_measures;
+      const { 3: qualityWeight } = 0;
+      const qualityScore = qualityIndicators.data_quality
+          * methodology.quality_weights.data_quality
+        + qualityIndicators.process_compliance
+          * methodology.quality_weights.process_compliance
+        + qualityIndicators.documentation_completeness
+          * methodology.quality_weights.documentation_completeness
+        + qualityIndicators.audit_trail_integrity
+          * methodology.quality_weights.audit_trail_integrity
+        + qualityIndicators.patient_safety_measures
+          * methodology.quality_weights.patient_safety_measures;
       // Risk adjustment (10% weight)
-      const riskWeight = 0.1;
+      const { 1: riskWeight } = 0;
       const riskAdjustment = Math.max(
         0,
         (100 - riskAssessment.risk_score) / 10,
       ); // Convert risk score to positive adjustment
       // Calculate weighted overall score
-      const overallScore =
-        complianceScore * complianceWeight +
-        qualityScore * qualityWeight +
-        riskAdjustment * riskWeight;
+      const overallScore = complianceScore * complianceWeight
+        + qualityScore * qualityWeight
+        + riskAdjustment * riskWeight;
       // Ensure constitutional minimum
       const constitutionalScore = Math.max(
         overallScore,
@@ -576,7 +565,8 @@ export class ComplianceScoringService {
         if (score < 10) {
           recommendations.push({
             priority: score < 9.9 ? "critical" : "medium",
-            description: `Improve ${area} compliance from ${score} to achieve constitutional excellence`,
+            description:
+              `Improve ${area} compliance from ${score} to achieve constitutional excellence`,
             expected_improvement: 10 - score,
             implementation_timeframe: score < 9.9 ? "Immediate" : "30 days",
             constitutional_impact: score < 9.9,
@@ -587,8 +577,7 @@ export class ComplianceScoringService {
     return recommendations;
   }
   generateNextAssessmentRecommendations(assessment) {
-    const timeframe =
-      assessment.overall_constitutional_score < 9.9 ? "30 days" : "90 days";
+    const timeframe = assessment.overall_constitutional_score < 9.9 ? "30 days" : "90 days";
     return {
       recommended_timeframe: timeframe,
       focus_areas: ["constitutional_healthcare", "lgpd"],

@@ -5,25 +5,11 @@ import { z } from "zod";
 
 // Initialize Supabase client with service role key for server-side operations
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 );
 
 // Validation schemas
-const _analyticsQuerySchema = z.object({
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-  metric: z
-    .enum(["revenue", "subscriptions", "trials", "conversions", "churn"])
-    .optional(),
-  granularity: z
-    .enum(["day", "week", "month", "quarter"])
-    .optional()
-    .default("day"),
-  userId: z.string().optional(),
-  subscriptionTier: z.enum(["free", "pro", "enterprise"]).optional(),
-});
-
 const eventTrackingSchema = z.object({
   event_type: z.string(),
   user_id: z.string(),
@@ -39,8 +25,6 @@ export async function GET(request: NextRequest) {
     // Extract user info from middleware headers
     const userId = request.headers.get("x-user-id");
     const userRole = request.headers.get("x-user-role");
-    const _subscriptionStatus = request.headers.get("x-user-subscription");
-
     if (!userId) {
       return NextResponse.json(
         { error: "Authentication required" },
@@ -64,9 +48,9 @@ export async function GET(request: NextRequest) {
 
     // Check permissions - only admins can view other users' data
     if (
-      validatedParams.userId &&
-      validatedParams.userId !== userId &&
-      userRole !== "admin"
+      validatedParams.userId
+      && validatedParams.userId !== userId
+      && userRole !== "admin"
     ) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
@@ -75,15 +59,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Set default date range if not provided (last 30 days)
-    const endDate =
-      validatedParams.endDate || new Date().toISOString().split("T")[0];
-    const startDate =
-      validatedParams.startDate ||
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const endDate = validatedParams.endDate || new Date().toISOString().split("T")[0];
+    const startDate = validatedParams.startDate
+      || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split("T")[0];
 
-    let analyticsData: any = {};
+    let analyticsData: unknown = {};
 
     // Fetch different metrics based on request
     switch (validatedParams.metric) {
@@ -365,11 +347,10 @@ async function getDashboardAnalytics(
     trials,
     conversions,
     summary: {
-      totalRevenue:
-        revenue?.reduce(
-          (sum: number, item: any) => sum + (item.revenue || 0),
-          0,
-        ) || 0,
+      totalRevenue: revenue?.reduce(
+        (sum: number, item: unknown) => sum + (item.revenue || 0),
+        0,
+      ) || 0,
       totalSubscriptions: subscriptions?.length || 0,
       totalTrials: trials?.length || 0,
       conversionRate: conversions?.conversion_rate || 0,

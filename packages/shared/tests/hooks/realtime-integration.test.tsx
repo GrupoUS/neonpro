@@ -60,7 +60,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: ReactNode }) => (
+  return ({ children }: { children: ReactNode; }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
@@ -127,7 +127,7 @@ describe("real-time Core Functionality", () => {
       };
 
       const mockSupabaseClientForError = {
-        ...(globalThis as any).mockSupabaseClient,
+        ...(globalThis as unknown).mockSupabaseClient,
         channel: vi.fn().mockReturnValue(mockChannelInstance),
         removeChannel: vi.fn(),
       };
@@ -167,7 +167,7 @@ describe("real-time Core Functionality", () => {
       };
 
       const mockSupabaseClientForCleanup = {
-        ...(globalThis as any).mockSupabaseClient,
+        ...(globalThis as unknown).mockSupabaseClient,
         channel: vi.fn().mockReturnValue(mockChannelInstance),
         removeChannel: vi.fn(),
       };
@@ -272,7 +272,7 @@ describe("useRealtimeQuery Hook", () => {
 describe("lGPD Compliance Utilities", () => {
   // Mock LGPD utilities for testing
   const LGPDDataProcessor = {
-    anonymizePayload: (payload: any, config: any) => {
+    anonymizePayload: (payload: unknown, config: unknown) => {
       const anonymized = { ...payload };
       if (config.sensitiveFields?.includes("email")) {
         anonymized.new.email = "***@***.***";
@@ -282,7 +282,7 @@ describe("lGPD Compliance Utilities", () => {
       }
       return anonymized;
     },
-    minimizeData: (payload: any, allowedFields: string[]) => {
+    minimizeData: (payload: unknown, allowedFields: string[]) => {
       const minimized = { ...payload };
       minimized.new = {};
       allowedFields.forEach((field) => {
@@ -292,7 +292,7 @@ describe("lGPD Compliance Utilities", () => {
       });
       return minimized;
     },
-    pseudonymizePayload: (payload: any, config: any) => {
+    pseudonymizePayload: (payload: unknown, config: unknown) => {
       const pseudonymized = { ...payload };
       if (config.sensitiveFields?.includes("email")) {
         pseudonymized.new.email = `user${Math.floor(Math.random() * 1000)}@example.com`;

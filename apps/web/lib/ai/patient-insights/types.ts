@@ -7,11 +7,11 @@ export interface PatientInsightRequest {
     start: string;
     end: string;
   };
-  requestedInsights?: any[];
-  treatmentContext?: any;
+  requestedInsights?: unknown[];
+  treatmentContext?: unknown;
   treatmentId?: string;
-  customParameters?: any;
-  feedbackData?: any;
+  customParameters?: unknown;
+  feedbackData?: unknown;
   timestamp?: Date;
   requestId?: string;
 }

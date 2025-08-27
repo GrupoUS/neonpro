@@ -19,9 +19,7 @@ test.describe("Homepage - Landing Page", () => {
     await page.waitForLoadState("networkidle");
   });
 
-  test("should load homepage within performance thresholds", async ({
-    page,
-  }) => {
+  test("should load homepage within performance thresholds", async ({ page }) => {
     const startTime = Date.now();
 
     // Wait for main content to be visible
@@ -59,9 +57,7 @@ test.describe("Homepage - Landing Page", () => {
     await expect(page).toHaveURL(/.*\/login/);
   });
 
-  test("should display dashboard metrics for authenticated users", async ({
-    page,
-  }) => {
+  test("should display dashboard metrics for authenticated users", async ({ page }) => {
     // This test assumes user might be logged in
     const metricsSection = page.locator('[data-testid="dashboard-metrics"]');
 
@@ -96,8 +92,7 @@ test.describe("Homepage - Landing Page", () => {
       .or(page.locator('[data-testid="anvisa-badge"]'));
 
     // At least one compliance indicator should be visible
-    const hasCompliance =
-      (await lgpdIndicator.isVisible()) || (await anvisaIndicator.isVisible());
+    const hasCompliance = (await lgpdIndicator.isVisible()) || (await anvisaIndicator.isVisible());
     expect(hasCompliance).toBeTruthy();
   });
 
@@ -120,9 +115,7 @@ test.describe("Homepage - Landing Page", () => {
     ).toBeVisible();
   });
 
-  test("should display recent patients and appointments for authenticated users", async ({
-    page,
-  }) => {
+  test("should display recent patients and appointments for authenticated users", async ({ page }) => {
     // Check if user is authenticated by looking for dashboard content
     const recentPatientsSection = page.locator(
       '[data-testid="recent-patients"]',
@@ -167,7 +160,7 @@ test.describe("Homepage - Performance Monitoring", () => {
     if ((await performanceScript.count()) > 0) {
       // Verify performance tracking is active
       const performanceData = await page.evaluate(() => {
-        return (window as any).webVitalsData || undefined;
+        return (window as unknown).webVitalsData || undefined;
       });
 
       // Should have some performance data if monitoring is active

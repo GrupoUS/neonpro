@@ -12,7 +12,7 @@ export interface SecurityEvent {
   deviceId?: string;
   riskLevel: "low" | "medium" | "high" | "critical";
   success: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ComplianceReport {
@@ -47,14 +47,14 @@ export interface AuditFinding {
   category: string;
   description: string;
   recommendation?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ThreatData {
   source: string;
   type: string;
   severity: "low" | "medium" | "high" | "critical";
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ThreatDetection {
@@ -63,7 +63,7 @@ export interface ThreatDetection {
   confidence: number;
   riskLevel: "low" | "medium" | "high" | "critical";
   actions: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export class SecurityAuditFramework {
@@ -131,8 +131,7 @@ export class SecurityAuditFramework {
           severity: "warning",
           category: "api",
           description: "API rate limiting needs enhancement",
-          recommendation:
-            "Implement stricter rate limiting on authentication endpoints",
+          recommendation: "Implement stricter rate limiting on authentication endpoints",
         },
         {
           severity: "error",
@@ -165,24 +164,22 @@ export class SecurityAuditFramework {
    */
   async detectThreat(threatData: ThreatData): Promise<ThreatDetection> {
     // Mock threat detection logic
-    const confidence =
-      threatData.severity === "critical"
-        ? 0.9
-        : threatData.severity === "high"
-          ? 0.7
-          : threatData.severity === "medium"
-            ? 0.5
-            : 0.2;
+    const confidence = threatData.severity === "critical"
+      ? 0.9
+      : threatData.severity === "high"
+      ? 0.7
+      : threatData.severity === "medium"
+      ? 0.5
+      : 0.2;
 
     const detection: ThreatDetection = {
       threatId: `threat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       detected: confidence > 0.6,
       confidence,
       riskLevel: threatData.severity,
-      actions:
-        confidence > 0.6
-          ? ["alert_security_team", "increase_monitoring"]
-          : ["log_event", "continue_monitoring"],
+      actions: confidence > 0.6
+        ? ["alert_security_team", "increase_monitoring"]
+        : ["log_event", "continue_monitoring"],
       metadata: {
         ...threatData.metadata,
         detectedAt: new Date().toISOString(),
@@ -252,8 +249,8 @@ export class SecurityAuditFramework {
    */
   async generateReport(
     type: "security" | "compliance",
-    options: { period?: string; format?: string } = {},
-  ): Promise<any> {
+    options: { period?: string; format?: string; } = {},
+  ): Promise<unknown> {
     const { period = "30d", format = "json" } = options;
 
     if (type === "compliance") {
@@ -277,11 +274,10 @@ export class SecurityAuditFramework {
       totalEvents: this.events.length,
       totalAudits: this.auditHistory.length,
       riskDistribution,
-      averageRiskScore:
-        this.auditHistory.length > 0
-          ? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0) /
-            this.auditHistory.length
-          : 0,
+      averageRiskScore: this.auditHistory.length > 0
+        ? this.auditHistory.reduce((sum, audit) => sum + audit.riskScore, 0)
+          / this.auditHistory.length
+        : 0,
       generatedAt: new Date().toISOString(),
       data: {
         events: this.events,

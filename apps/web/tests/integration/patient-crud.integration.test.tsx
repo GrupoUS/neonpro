@@ -27,13 +27,10 @@ interface Patient {
 }
 
 // Use the global Supabase client mock from vitest.setup.ts
-const mockSupabaseClient = (globalThis as any).mockSupabaseClient;
+const mockSupabaseClient = (globalThis as unknown).mockSupabaseClient;
 
 // Use global service mocks from vitest.setup.ts
-const mockCpfValidator = (globalThis as any).mockCpfValidator;
-const _mockNotificationService = (globalThis as any).mockNotificationService;
-const _mockLgpdService = (globalThis as any).mockLgpdService;
-
+const mockCpfValidator = (globalThis as unknown).mockCpfValidator;
 // Mock patient service hook
 const mockPatientsHook = {
   patients: [],
@@ -76,8 +73,7 @@ vi.mock<typeof import("../../lib/utils/cpf-validator")>(
   }),
 );
 
-// Test wrapper component
-const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
+// Test wrapper component }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
@@ -85,9 +81,7 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 // Mock patient data for Brazilian healthcare system
@@ -201,8 +195,6 @@ describe("patient CRUD Integration Tests", () => {
 
       mockPatientsHook.createPatient.mockImplementation(async (patientData) => {
         // Simulate actual hook behavior by calling global mocks
-        const _isValidCpf = mockCpfValidator.isValid(patientData.cpf);
-
         // Simulate database call
         mockSupabaseClient.from("patients");
 
@@ -483,14 +475,6 @@ describe("patient CRUD Integration Tests", () => {
 
   describe("lGPD Compliance Integration", () => {
     it("should validate data processing purposes", async () => {
-      const _dataProcessingValidation = {
-        patient_id: "patient-123",
-        purposes: ["treatment", "emergency_contact"],
-        legal_basis: "consent",
-        data_controller: "clinic-1",
-        retention_period: "10_years", // Brazilian medical record retention
-      };
-
       // Mock LGPD validation service
       const lgpdValidation = {
         isCompliant: true,
@@ -505,12 +489,6 @@ describe("patient CRUD Integration Tests", () => {
     });
 
     it("should handle data subject access requests", async () => {
-      const _accessRequest = {
-        subject_id: "patient-123",
-        request_type: "data_access",
-        requester_cpf: "123.456.789-00",
-      };
-
       const exportedData = {
         patient_data: createdPatient,
         medical_records: [],
@@ -626,13 +604,13 @@ describe("patient CRUD Integration Tests", () => {
       mockFrom.mockReturnValue({ select: mockSelect });
 
       // Use the global mock properly
-      (globalThis as any).mockSupabaseClient.from = mockFrom;
+      (globalThis as unknown).mockSupabaseClient.from = mockFrom;
 
       // Mock the patients hook to implement retry logic
       mockPatientsHook.getPatient.mockImplementation(async (id) => {
         try {
           // First attempt - will fail
-          const result = await (globalThis as any).mockSupabaseClient
+          const result = await (globalThis as unknown).mockSupabaseClient
             .from("patients")
             .select("*")
             .eq("id", id)
@@ -641,7 +619,7 @@ describe("patient CRUD Integration Tests", () => {
         } catch {
           // Simulate retry delay
           await new Promise((resolve) => setTimeout(resolve, 100));
-          const retryResult = await (globalThis as any).mockSupabaseClient
+          const retryResult = await (globalThis as unknown).mockSupabaseClient
             .from("patients")
             .select("*")
             .eq("id", id)
@@ -660,8 +638,7 @@ describe("patient CRUD Integration Tests", () => {
 
     it("should handle database constraint violations", async () => {
       const duplicateCpfError = {
-        message:
-          'duplicate key value violates unique constraint "patients_cpf_clinic_id_key"',
+        message: 'duplicate key value violates unique constraint "patients_cpf_clinic_id_key"',
         code: "23505",
       };
 

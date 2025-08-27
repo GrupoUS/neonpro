@@ -20,8 +20,7 @@ import {
 // Encryption configuration
 const ALGORITHM = "aes-256-gcm";
 const KEY_LENGTH = 32; // 256 bits
-const IV_LENGTH = 12; // 96 bits for GCM
-const _TAG_LENGTH = 16; // 128 bits
+const IV_LENGTH = 12; // 96 bits for GCM // 128 bits
 const SALT_LENGTH = 32; // 256 bits
 const PBKDF2_ITERATIONS = 100_000; // OWASP recommendation
 const HASH_OUTPUT_LENGTH = 64; // 64 bytes = 512 bits for SHA-512
@@ -57,8 +56,7 @@ export const DataClassification = {
   MEDICAL: "MEDICAL",
 } as const;
 
-export type DataClassification =
-  (typeof DataClassification)[keyof typeof DataClassification];
+export type DataClassification = (typeof DataClassification)[keyof typeof DataClassification];
 
 /**
  * Healthcare-grade encryption service
@@ -102,8 +100,8 @@ export class HealthcareEncryption {
 
       // Create audit log for sensitive data encryption
       if (
-        classification === DataClassification.MEDICAL ||
-        classification === DataClassification.RESTRICTED
+        classification === DataClassification.MEDICAL
+        || classification === DataClassification.RESTRICTED
       ) {
         this.auditEncryption("ENCRYPT", classification, plaintext.length);
       }
@@ -150,8 +148,8 @@ export class HealthcareEncryption {
 
       // Create audit log for sensitive data decryption
       if (
-        classification === DataClassification.MEDICAL ||
-        classification === DataClassification.RESTRICTED
+        classification === DataClassification.MEDICAL
+        || classification === DataClassification.RESTRICTED
       ) {
         this.auditEncryption("DECRYPT", classification, decrypted.length);
       }
@@ -211,9 +209,8 @@ export class HealthcareEncryption {
 
   private deriveKeyFromEnvironment(): Buffer {
     // In production, this would use a proper key management system (HSM, AWS KMS, etc.)
-    const envKey =
-      process.env.ENCRYPTION_MASTER_KEY ||
-      "default-dev-key-change-in-production";
+    const envKey = process.env.ENCRYPTION_MASTER_KEY
+      || "default-dev-key-change-in-production";
 
     // Derive key from environment variable
     const salt = Buffer.from("neonpro-healthcare-encryption", "utf8");
@@ -250,25 +247,13 @@ export class HealthcareEncryption {
     dataSize: number,
     error?: unknown,
   ): void {
-    // Store in audit log - would use actual audit service
-    const _auditData = {
-      action: `ENCRYPTION_${action}`,
-      classification,
-      dataSize,
-      timestamp: new Date().toISOString(),
-      error: error
-        ? error instanceof Error
-          ? error.message
-          : String(error)
-        : undefined,
-    };
-  }
+    // Store in audit log - would use actual audit service  }
 }
 
 /**
  * Factory function to create encryption service
  */
-export function createHealthcareEncryption(
+export default function createHealthcareEncryption(
   masterKey?: Buffer,
 ): HealthcareEncryption {
   return new HealthcareEncryption(masterKey);
@@ -306,8 +291,7 @@ export const encryptionUtils = {
    * Generate secure random password for key derivation
    */
   generateSecurePassword(length = 32): string {
-    const charset =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
     let password = "";
 
     for (let i = 0; i < length; i++) {

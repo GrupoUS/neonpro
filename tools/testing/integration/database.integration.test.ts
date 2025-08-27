@@ -16,17 +16,16 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 // Test environment configuration
 const supabaseUrl = process.env.TEST_SUPABASE_URL || "https://test.supabase.co";
 const supabaseKey = process.env.TEST_SUPABASE_ANON_KEY || "test_anon_key";
-const supabaseServiceKey =
-  process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test_service_key";
+const supabaseServiceKey = process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test_service_key";
 
 // Create test clients
 const supabase = createClient(supabaseUrl, supabaseKey);
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 // Test data containers
-let testUser: any;
-let testClinic: any;
-let testPatient: any;
+let testUser: unknown;
+let testClinic: unknown;
+let testPatient: unknown;
 
 describe("🔗 Integration Tests - Database Operations", () => {
   beforeAll(async () => {

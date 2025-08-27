@@ -7,8 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 );
 
 describe("🔐 NeonPro Security Audit Tests", () => {
@@ -24,8 +24,8 @@ describe("🔐 NeonPro Security Audit Tests", () => {
     it("should enforce authentication for protected endpoints", async () => {
       // Test without authentication token
       const unauthenticatedClient = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       );
 
       const { data, error } = await unauthenticatedClient
@@ -49,7 +49,7 @@ describe("🔐 NeonPro Security Audit Tests", () => {
 
       // Test RLS enforcement
       if (clinics && clinics.length > 0) {
-        const clinicId = clinics[0].id;
+        const [clinicId] = clinics.id;
         const { data: transactions, error: txnError } = await supabase
           .from("financial_transactions")
           .select("*")
@@ -107,7 +107,7 @@ describe("🔐 NeonPro Security Audit Tests", () => {
           method: "GET",
           headers: {
             Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-            apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+            apikey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
           },
         },
       );
@@ -380,8 +380,7 @@ describe("🔐 NeonPro Security Audit Tests", () => {
         supabase
           .from("financial_transactions")
           .select("count(*)")
-          .eq("clinic_id", testClinicId),
-      );
+          .eq("clinic_id", testClinicId));
 
       const startTime = Date.now();
       const results = await Promise.allSettled(rapidRequests);

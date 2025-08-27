@@ -49,7 +49,7 @@ export {
 
 // ANVISA Utilities and Constants
 export const ANVISA_COMPLIANCE_VERSION = "1.0.0";
-export const CONSTITUTIONAL_COMPLIANCE_MINIMUM = 9.9;
+export const { 9: CONSTITUTIONAL_COMPLIANCE_MINIMUM } = 9;
 
 // Import classes for factory function
 import { AdverseEventService } from "./adverse-event-service";
@@ -62,7 +62,7 @@ import { RegulatoryDocumentationService } from "./regulatory-documentation-servi
  * ANVISA Service Factory
  * Constitutional service initialization with Supabase integration
  */
-export function createAnvisaServices(supabaseClient: any) {
+export function createAnvisaServices(supabaseClient: unknown) {
   return {
     adverseEvent: new AdverseEventService(),
     medicalDevice: new MedicalDeviceService(),
@@ -91,8 +91,7 @@ export async function validateAnvisaCompliance(
 
   try {
     // Check product registrations
-    const { data: products } =
-      await services.productRegistration.getProductRegistrations(tenantId);
+    const { data: products } = await services.productRegistration.getProductRegistrations(tenantId);
     if (!products || products.length === 0) {
       issues.push("No registered products found");
       totalScore -= 1;
@@ -100,8 +99,10 @@ export async function validateAnvisaCompliance(
     }
 
     // Check for expiring registrations
-    const { data: expiringProducts } =
-      await services.productRegistration.getExpiringProducts(tenantId, 30);
+    const { data: expiringProducts } = await services.productRegistration.getExpiringProducts(
+      tenantId,
+      30,
+    );
     if (expiringProducts && expiringProducts.length > 0) {
       issues.push(
         `${expiringProducts.length} products expiring within 30 days`,
@@ -112,8 +113,7 @@ export async function validateAnvisaCompliance(
 
     // Constitutional compliance minimum
     const finalScore = Math.max(totalScore, CONSTITUTIONAL_COMPLIANCE_MINIMUM);
-    const compliant =
-      finalScore >= CONSTITUTIONAL_COMPLIANCE_MINIMUM && issues.length === 0;
+    const compliant = finalScore >= CONSTITUTIONAL_COMPLIANCE_MINIMUM && issues.length === 0;
 
     return {
       compliant,

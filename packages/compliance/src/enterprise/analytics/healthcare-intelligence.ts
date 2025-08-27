@@ -153,9 +153,9 @@ export interface HealthcareIntelligenceAudit {
   query_id: string;
   analysis_type: string;
   ai_model_used: string;
-  ethical_review_result: Record<string, any>;
-  privacy_impact_assessment: Record<string, any>;
-  medical_accuracy_validation: Record<string, any>;
+  ethical_review_result: Record<string, unknown>;
+  privacy_impact_assessment: Record<string, unknown>;
+  medical_accuracy_validation: Record<string, unknown>;
   constitutional_compliance_score: number;
   created_at: string;
   created_by: string;
@@ -180,7 +180,7 @@ export class HealthcareIntelligenceService {
    * Generate healthcare intelligence insights with constitutional AI compliance
    */
   async generateHealthcareInsights(
-    patientData: any[],
+    patientData: unknown[],
     query: HealthcareIntelligenceQuery,
   ): Promise<HealthcareIntelligenceResults> {
     // Validate query compliance
@@ -232,8 +232,7 @@ export class HealthcareIntelligenceService {
     );
 
     // Privacy certification
-    const privacyCertification =
-      await this.generatePrivacyCertification(validatedQuery);
+    const privacyCertification = await this.generatePrivacyCertification(validatedQuery);
 
     // Create comprehensive results
     const results: HealthcareIntelligenceResults = {
@@ -264,8 +263,7 @@ export class HealthcareIntelligenceService {
       created_at: new Date().toISOString(),
       created_by: "healthcare-intelligence-service",
       reviewed_by_physician: this.config.human_oversight_required,
-      cfm_ethics_approval:
-        validatedQuery.ethical_considerations.cfm_ethics_approval,
+      cfm_ethics_approval: validatedQuery.ethical_considerations.cfm_ethics_approval,
     };
 
     this.auditTrail.push(auditEntry);
@@ -310,7 +308,7 @@ export class HealthcareIntelligenceService {
   private async performEthicalValidation(
     query: HealthcareIntelligenceQuery,
   ): Promise<void> {
-    const ethical = query.ethical_considerations;
+    const { ethical_considerations: ethical } = query;
 
     // Validate four principles of medical ethics
     if (!ethical.patient_autonomy_respected) {
@@ -334,8 +332,8 @@ export class HealthcareIntelligenceService {
    * Apply privacy protection and anonymization
    */
   private async applyPrivacyProtection(
-    patientData: any[],
-    privacyRequirements: any,
+    patientData: unknown[],
+    privacyRequirements: unknown,
   ): Promise<any[]> {
     let protectedData = [...patientData];
 
@@ -371,7 +369,7 @@ export class HealthcareIntelligenceService {
    * Detect and mitigate bias in AI analysis
    */
   private async detectAndMitigateBias(
-    data: any[],
+    data: unknown[],
     query: HealthcareIntelligenceQuery,
   ): Promise<void> {
     if (!this.config.bias_detection_enabled) {
@@ -398,9 +396,9 @@ export class HealthcareIntelligenceService {
    * Generate AI-driven insights with constitutional compliance
    */
   private async generateAiInsights(
-    data: any[],
+    data: unknown[],
     query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     switch (query.query_type) {
       case "treatment_prediction": {
         return await this.generateTreatmentPredictions(data, query);
@@ -433,9 +431,9 @@ export class HealthcareIntelligenceService {
    * Generate treatment predictions with medical accuracy validation
    */
   private async generateTreatmentPredictions(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Mock advanced AI treatment prediction
     const predictions = {
       primary_findings: [
@@ -447,8 +445,7 @@ export class HealthcareIntelligenceService {
           confidence_score: 0.87,
           clinical_significance: "high" as const,
           evidence_strength: "strong" as const,
-          recommendation:
-            "Consider combination therapy with modified dosing schedule",
+          recommendation: "Consider combination therapy with modified dosing schedule",
           contraindications: ["severe_liver_disease", "pregnancy"],
         },
       ],
@@ -457,8 +454,7 @@ export class HealthcareIntelligenceService {
           finding_id: crypto.randomUUID(),
           description: "Alternative treatment option with 78% success rate",
           statistical_significance: 0.95,
-          clinical_relevance:
-            "Suitable for patients with contraindications to primary therapy",
+          clinical_relevance: "Suitable for patients with contraindications to primary therapy",
         },
       ],
       risk_factors: [
@@ -478,21 +474,19 @@ export class HealthcareIntelligenceService {
    * Generate outcome analysis with statistical validation
    */
   private async generateOutcomeAnalysis(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
           title: "Treatment Outcome Prediction",
-          description:
-            "Patient cohort shows 90% probability of positive outcome within 6 months",
+          description: "Patient cohort shows 90% probability of positive outcome within 6 months",
           confidence_score: 0.92,
           clinical_significance: "high" as const,
           evidence_strength: "very_strong" as const,
-          recommendation:
-            "Continue current treatment protocol with monthly monitoring",
+          recommendation: "Continue current treatment protocol with monthly monitoring",
         },
       ],
       secondary_findings: [],
@@ -504,21 +498,19 @@ export class HealthcareIntelligenceService {
    * Generate resource optimization insights
    */
   private async generateResourceOptimization(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
           title: "Optimal Resource Allocation",
-          description:
-            "Resource optimization suggests 15% efficiency improvement possible",
+          description: "Resource optimization suggests 15% efficiency improvement possible",
           confidence_score: 0.89,
           clinical_significance: "moderate" as const,
           evidence_strength: "strong" as const,
-          recommendation:
-            "Implement staggered scheduling with 30-minute intervals",
+          recommendation: "Implement staggered scheduling with 30-minute intervals",
         },
       ],
       secondary_findings: [],
@@ -530,16 +522,15 @@ export class HealthcareIntelligenceService {
    * Generate risk assessment with constitutional compliance
    */
   private async generateRiskAssessment(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
           title: "Patient Risk Profile",
-          description:
-            "Low risk profile with 95% probability of positive outcome",
+          description: "Low risk profile with 95% probability of positive outcome",
           confidence_score: 0.94,
           clinical_significance: "high" as const,
           evidence_strength: "very_strong" as const,
@@ -562,9 +553,9 @@ export class HealthcareIntelligenceService {
    * Generate wellness insights
    */
   private async generateWellnessInsights(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       primary_findings: [
         {
@@ -586,16 +577,15 @@ export class HealthcareIntelligenceService {
    * Generate population health insights
    */
   private async generatePopulationHealthInsights(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
           title: "Population Health Trend",
-          description:
-            "Population shows improving health metrics over 12-month period",
+          description: "Population shows improving health metrics over 12-month period",
           confidence_score: 0.91,
           clinical_significance: "high" as const,
           evidence_strength: "strong" as const,
@@ -611,16 +601,15 @@ export class HealthcareIntelligenceService {
    * Generate clinical decision support
    */
   private async generateClinicalDecisionSupport(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       primary_findings: [
         {
           insight_id: crypto.randomUUID(),
           title: "Clinical Decision Recommendation",
-          description:
-            "Evidence supports proceeding with proposed treatment approach",
+          description: "Evidence supports proceeding with proposed treatment approach",
           confidence_score: 0.88,
           clinical_significance: "high" as const,
           evidence_strength: "strong" as const,
@@ -636,18 +625,16 @@ export class HealthcareIntelligenceService {
    * Validate medical accuracy of AI insights
    */
   private async validateMedicalAccuracy(
-    insights: any,
+    insights: unknown,
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Medical accuracy validation against clinical guidelines
     const validatedInsights = { ...insights };
 
     // Ensure all confidence scores meet threshold
-    validatedInsights.primary_findings =
-      validatedInsights.primary_findings.filter(
-        (finding: any) =>
-          finding.confidence_score >= this.config.medical_accuracy_threshold,
-      );
+    validatedInsights.primary_findings = validatedInsights.primary_findings.filter(
+      (finding: unknown) => finding.confidence_score >= this.config.medical_accuracy_threshold,
+    );
 
     return validatedInsights;
   }
@@ -656,9 +643,9 @@ export class HealthcareIntelligenceService {
    * Perform human oversight review
    */
   private async performHumanOversightReview(
-    insights: any,
+    insights: unknown,
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     if (!this.config.human_oversight_required) {
       return insights;
     }
@@ -682,9 +669,9 @@ export class HealthcareIntelligenceService {
    * Generate explainability report
    */
   private async generateExplainabilityReport(
-    _insights: any,
+    _insights: unknown,
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       model_explanation:
         "Machine learning model trained on anonymized patient cohort data with constitutional privacy protection",
@@ -692,20 +679,17 @@ export class HealthcareIntelligenceService {
         {
           feature_name: "treatment_history",
           importance_score: 0.35,
-          clinical_interpretation:
-            "Previous treatment response is strongest predictor of outcome",
+          clinical_interpretation: "Previous treatment response is strongest predictor of outcome",
         },
         {
           feature_name: "age_group",
           importance_score: 0.28,
-          clinical_interpretation:
-            "Age significantly influences treatment efficacy",
+          clinical_interpretation: "Age significantly influences treatment efficacy",
         },
         {
           feature_name: "comorbidities",
           importance_score: 0.22,
-          clinical_interpretation:
-            "Presence of comorbidities affects treatment selection",
+          clinical_interpretation: "Presence of comorbidities affects treatment selection",
         },
       ],
       decision_pathway: [
@@ -720,8 +704,7 @@ export class HealthcareIntelligenceService {
           primary_prediction: "85-92%",
           secondary_outcome: "78-85%",
         },
-        sensitivity_analysis:
-          "Model performance robust across different patient subgroups",
+        sensitivity_analysis: "Model performance robust across different patient subgroups",
         limitation_disclosure: [
           "Predictions based on historical data patterns",
           "Individual patient factors may influence actual outcomes",
@@ -735,9 +718,9 @@ export class HealthcareIntelligenceService {
    * Validate results ethics
    */
   private async validateResultsEthics(
-    _insights: any,
+    _insights: unknown,
     _query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       cfm_ethics_score: 9.8,
       bias_assessment: {
@@ -761,23 +744,21 @@ export class HealthcareIntelligenceService {
    */
   private async generatePrivacyCertification(
     query: HealthcareIntelligenceQuery,
-  ): Promise<any> {
-    const privacyBudgetConsumed =
-      this.config.differential_privacy_epsilon * 0.6;
+  ): Promise<unknown> {
+    const privacyBudgetConsumed = this.config.differential_privacy_epsilon * 0.6;
     this.privacyBudgetUsed += privacyBudgetConsumed;
 
     return {
       anonymization_verified: true,
       lgpd_compliance_score: 9.9,
-      consent_validation_complete:
-        query.privacy_requirements.consent_validation,
+      consent_validation_complete: query.privacy_requirements.consent_validation,
       data_minimization_applied: query.privacy_requirements.data_minimization,
       privacy_budget_consumed: privacyBudgetConsumed,
     };
   }
 
   // Helper methods for privacy protection
-  private async applyFullAnonymization(data: any[]): Promise<any[]> {
+  private async applyFullAnonymization(data: unknown[]): Promise<any[]> {
     return data.map((record) => ({
       ...record,
       id: crypto.randomUUID(), // Replace with new UUID
@@ -789,7 +770,7 @@ export class HealthcareIntelligenceService {
     }));
   }
 
-  private async applyAdvancedAnonymization(data: any[]): Promise<any[]> {
+  private async applyAdvancedAnonymization(data: unknown[]): Promise<any[]> {
     return data.map((record) => ({
       ...record,
       name: record.name
@@ -801,7 +782,7 @@ export class HealthcareIntelligenceService {
     }));
   }
 
-  private async applyBasicAnonymization(data: any[]): Promise<any[]> {
+  private async applyBasicAnonymization(data: unknown[]): Promise<any[]> {
     return data.map((record) => ({
       ...record,
       name: record.name ? `${record.name.slice(0, 2)}***` : undefined,
@@ -809,7 +790,7 @@ export class HealthcareIntelligenceService {
     }));
   }
 
-  private async applyDifferentialPrivacy(data: any[]): Promise<any[]> {
+  private async applyDifferentialPrivacy(data: unknown[]): Promise<any[]> {
     // Add Laplace noise for differential privacy
     return data.map((record) => {
       const noisyRecord = { ...record };
@@ -825,7 +806,7 @@ export class HealthcareIntelligenceService {
     });
   }
 
-  private async applyDataMinimization(data: any[]): Promise<any[]> {
+  private async applyDataMinimization(data: unknown[]): Promise<any[]> {
     // Remove unnecessary fields for analysis
     const essentialFields = [
       "id",
@@ -835,7 +816,7 @@ export class HealthcareIntelligenceService {
       "created_at",
     ];
     return data.map((record) => {
-      const minimizedRecord: any = {};
+      const minimizedRecord: unknown = {};
       for (const field of essentialFields) {
         if (record[field] !== undefined) {
           minimizedRecord[field] = record[field];
@@ -852,21 +833,21 @@ export class HealthcareIntelligenceService {
 
   // Helper methods for bias detection
   private async detectDemographicBias(
-    _data: any[],
-  ): Promise<{ bias_score: number }> {
+    _data: unknown[],
+  ): Promise<{ bias_score: number; }> {
     // Mock demographic bias detection
     return { bias_score: 0.15 };
   }
 
   private async detectTreatmentBias(
-    _data: any[],
-  ): Promise<{ bias_score: number }> {
+    _data: unknown[],
+  ): Promise<{ bias_score: number; }> {
     // Mock treatment bias detection
     return { bias_score: 0.12 };
   }
 
   private async applyBiasMitigation(
-    _data: any[],
+    _data: unknown[],
     _query: HealthcareIntelligenceQuery,
   ): Promise<void> {
     // Mock bias mitigation techniques
@@ -884,8 +865,8 @@ export class HealthcareIntelligenceService {
       clinical_decision_support: "HealthcareML-Clinical-v2.2",
     };
     return (
-      modelMap[queryType as keyof typeof modelMap] ||
-      "HealthcareML-Generic-v1.0"
+      modelMap[queryType as keyof typeof modelMap]
+      || "HealthcareML-Generic-v1.0"
     );
   }
 
@@ -916,7 +897,7 @@ export class HealthcareIntelligenceService {
   /**
    * Get privacy budget usage
    */
-  getPrivacyBudgetUsage(): { used: number; remaining: number } {
+  getPrivacyBudgetUsage(): { used: number; remaining: number; } {
     return {
       used: this.privacyBudgetUsed,
       remaining: Math.max(0, 10 - this.privacyBudgetUsed), // Assuming max budget of 10
@@ -981,7 +962,7 @@ export function createHealthcareIntelligenceService(
 export async function validateHealthcareIntelligence(
   query: HealthcareIntelligenceQuery,
   config: HealthcareIntelligenceConfig,
-): Promise<{ valid: boolean; violations: string[] }> {
+): Promise<{ valid: boolean; violations: string[]; }> {
   const violations: string[] = [];
 
   // Validate AI ethics requirements

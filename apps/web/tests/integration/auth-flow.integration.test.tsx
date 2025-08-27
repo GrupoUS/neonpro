@@ -2,21 +2,12 @@
 // Complete authentication lifecycle testing for NeonPro Healthcare
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  getGlobalSupabaseMock,
-  resetAllGlobalMocks,
-} from "../../../../tools/tests/test-utils";
+import { getGlobalSupabaseMock, resetAllGlobalMocks } from "../../../../tools/tests/test-utils";
 
 // Get the global mock that's configured in vitest.setup.ts
-let mockSupabaseClient: any;
+let mockSupabaseClient: unknown;
 
 // Mock authentication hook
 const mockAuthHook = {
@@ -56,7 +47,7 @@ const MockLoginComponent = () => {
       await signIn(email, password);
     } catch (error) {
       // Handle authentication errors gracefully
-      console.log("Authentication error handled:", error);
+      // console.log("Authentication error handled:", error);
     }
   };
 
@@ -81,18 +72,10 @@ const MockLoginComponent = () => {
       </button>
     </form>
   );
-};
-const _MockDashboard = () => {
-  return (
-    <div data-testid="dashboard">
-      <h1>Dashboard</h1>
-      <p>Welcome to NeonPro Healthcare</p>
-    </div>
-  );
-};
+};}
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -104,9 +87,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 describe("authentication Flow Integration", () => {
@@ -200,11 +181,6 @@ describe("authentication Flow Integration", () => {
       mockAuthHook.signIn.mockImplementation(
         async (email: string, password: string) => {
           // Simulate actual hook behavior by calling global mock
-          const _authResult = await mockSupabaseClient.auth.signInWithPassword({
-            email,
-            password,
-          });
-
           mockAuthHook.user = mockUser;
           mockAuthHook.session = mockSession;
           return {
@@ -294,13 +270,6 @@ describe("authentication Flow Integration", () => {
 
   describe("session Management", () => {
     it("should refresh session when token expires", async () => {
-      const _expiredSession = {
-        access_token: "expired-token",
-        refresh_token: "valid-refresh-token",
-        expires_at: Date.now() - 1000, // Expired 1 second ago
-        user: mockAuthHook.user,
-      };
-
       const newSession = {
         access_token: "new-token",
         refresh_token: "new-refresh-token",

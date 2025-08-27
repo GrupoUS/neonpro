@@ -1,14 +1,10 @@
 "use client";
 
-import type {
-  Alert,
-  HealthCheckResult,
-  PerformanceInsight,
-} from "@neonpro/performance-monitor";
+import type { Alert, HealthCheckResult, PerformanceInsight } from "@neonpro/monitoring";
 import { useEffect, useState } from "react";
 
 interface DashboardProps {
-  performanceMonitor?: any;
+  performanceMonitor?: unknown;
   refreshInterval?: number;
 }
 
@@ -31,12 +27,11 @@ export function PerformanceDashboard({
       try {
         setIsLoading(true);
 
-        const [currentAlerts, healthResults, recentInsights] =
-          await Promise.all([
-            performanceMonitor.getActiveAlerts(),
-            performanceMonitor.performHealthCheck(),
-            performanceMonitor.getRecentInsights(10),
-          ]);
+        const [currentAlerts, healthResults, recentInsights] = await Promise.all([
+          performanceMonitor.getActiveAlerts(),
+          performanceMonitor.performHealthCheck(),
+          performanceMonitor.getRecentInsights(10),
+        ]);
 
         setAlerts(currentAlerts);
         setHealthChecks(healthResults);
@@ -77,8 +72,7 @@ export function PerformanceDashboard({
             Performance Dashboard
           </h1>
           <p className="mt-2 text-gray-600">
-            Real-time monitoring and analytics • Last updated:{" "}
-            {lastUpdated?.toLocaleTimeString()}
+            Real-time monitoring and analytics • Last updated: {lastUpdated?.toLocaleTimeString()}
           </p>
         </div>
         {/* Alerts Section */}
@@ -94,10 +88,10 @@ export function PerformanceDashboard({
                     alert.severity === "critical"
                       ? "border-red-500 bg-red-50"
                       : alert.severity === "high"
-                        ? "border-orange-500 bg-orange-50"
-                        : alert.severity === "medium"
-                          ? "border-yellow-500 bg-yellow-50"
-                          : "border-blue-500 bg-blue-50"
+                      ? "border-orange-500 bg-orange-50"
+                      : alert.severity === "medium"
+                      ? "border-yellow-500 bg-yellow-50"
+                      : "border-blue-500 bg-blue-50"
                   }`}
                   key={alert.id}
                 >
@@ -141,10 +135,10 @@ export function PerformanceDashboard({
                       check.status === "healthy"
                         ? "bg-green-100 text-green-800"
                         : check.status === "degraded"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : check.status === "unhealthy"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-red-100 text-red-800"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : check.status === "unhealthy"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-red-100 text-red-800"
                     }`}
                   >
                     {check.status}
@@ -180,10 +174,10 @@ export function PerformanceDashboard({
                           insight.severity === "critical"
                             ? "bg-red-100 text-red-800"
                             : insight.severity === "high"
-                              ? "bg-orange-100 text-orange-800"
-                              : insight.severity === "medium"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-blue-100 text-blue-800"
+                            ? "bg-orange-100 text-orange-800"
+                            : insight.severity === "medium"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-blue-100 text-blue-800"
                         }`}
                       >
                         {insight.severity}

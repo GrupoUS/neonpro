@@ -21,7 +21,7 @@ const auditLogs: {
 }[] = [];
 
 // Mock rate limit storage
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+const rateLimitStore = new Map<string, { count: number; resetTime: number; }>();
 
 // Create middleware-enabled Hono app
 const createMiddlewareApp = () => {
@@ -55,8 +55,7 @@ const createMiddlewareApp = () => {
 
   // Rate limiting middleware
   app.use("/api/*", async (c, next) => {
-    const clientIP =
-      c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
+    const clientIP = c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
     const key = `rate_limit:${clientIP}`;
     const now = Date.now();
     const windowMs = 60_000; // 1 minute
@@ -70,8 +69,7 @@ const createMiddlewareApp = () => {
       return c.json(
         {
           error: "Muitas tentativas",
-          message:
-            "Limite de requisições excedido. Tente novamente em 1 minuto.",
+          message: "Limite de requisições excedido. Tente novamente em 1 minuto.",
           retryAfter: Math.ceil((current.resetTime - now) / 1000),
         },
         429,
@@ -377,7 +375,7 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
 
   describe("audit Logging Middleware", () => {
     it("should create audit log entries for all requests", async () => {
-      const initialLogCount = auditLogs.length;
+      const { length: initialLogCount } = auditLogs;
 
       await app.request("/health");
 
@@ -398,7 +396,7 @@ describe("🛡️ NEONPRO Healthcare - Middleware Validation", () => {
     });
 
     it("should include user information in audit logs for authenticated requests", async () => {
-      const initialLogCount = auditLogs.length;
+      const { length: initialLogCount } = auditLogs;
 
       await app.request("/api/v1/patients", {
         headers: {

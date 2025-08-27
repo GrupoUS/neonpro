@@ -108,8 +108,7 @@ export const servicesRoutes = new Hono()
         {
           id: "srv_1",
           name: "Limpeza de Pele Profunda",
-          description:
-            "Tratamento completo de limpeza facial com extração e hidratação",
+          description: "Tratamento completo de limpeza facial com extração e hidratação",
           category: "facial_treatments",
           duration: 60,
           price: 120,
@@ -146,8 +145,8 @@ export const servicesRoutes = new Hono()
         },
       ].filter((service) => {
         if (
-          search &&
-          !service.name.toLowerCase().includes(search.toLowerCase())
+          search
+          && !service.name.toLowerCase().includes(search.toLowerCase())
         ) {
           return false;
         }
@@ -169,7 +168,7 @@ export const servicesRoutes = new Hono()
         return true;
       });
 
-      const total = mockServices.length;
+      const { length: total } = mockServices;
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
       const paginatedServices = mockServices.slice(startIndex, endIndex);
@@ -217,8 +216,7 @@ export const servicesRoutes = new Hono()
       const mockService = {
         id,
         name: "Limpeza de Pele Profunda",
-        description:
-          "Tratamento completo de limpeza facial com extração e hidratação",
+        description: "Tratamento completo de limpeza facial com extração e hidratação",
         category: "facial_treatments",
         duration: 60,
         price: 120,
@@ -232,8 +230,7 @@ export const servicesRoutes = new Hono()
           "Tratamentos com ácido recentes",
           "Pele com lesões ativas",
         ],
-        aftercareInstructions:
-          "Evitar exposição solar por 24h. Usar protetor solar.",
+        aftercareInstructions: "Evitar exposição solar por 24h. Usar protetor solar.",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -330,7 +327,7 @@ export const servicesRoutes = new Hono()
 
     try {
       // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string }> = {
+      const response: ApiResponse<{ id: string; }> = {
         success: true,
         data: { id },
         message: "Serviço removido com sucesso",

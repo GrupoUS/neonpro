@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 import { COMPLIANCE_AREAS } from "./compliance-automation-constants";
 
 // Zod schemas

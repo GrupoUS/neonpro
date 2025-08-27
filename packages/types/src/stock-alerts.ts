@@ -39,28 +39,28 @@ export interface ResolveAlert {
  * Validate stock alert configuration
  */
 export function validateStockAlertConfig(
-  config: any,
+  config: unknown,
 ): config is StockAlertConfig {
   return (
-    typeof config === "object" &&
-    typeof config.id === "string" &&
-    typeof config.productId === "string" &&
-    typeof config.minimumThreshold === "number" &&
-    typeof config.criticalThreshold === "number" &&
-    typeof config.notificationEnabled === "boolean" &&
-    Array.isArray(config.notificationEmails)
+    typeof config === "object"
+    && typeof config.id === "string"
+    && typeof config.productId === "string"
+    && typeof config.minimumThreshold === "number"
+    && typeof config.criticalThreshold === "number"
+    && typeof config.notificationEnabled === "boolean"
+    && Array.isArray(config.notificationEmails)
   );
 }
 
 /**
  * Validate resolve alert request
  */
-export function validateResolveAlert(request: any): request is ResolveAlert {
+export function validateResolveAlert(request: unknown): request is ResolveAlert {
   return (
-    typeof request === "object" &&
-    typeof request.alertId === "string" &&
-    typeof request.resolvedBy === "string" &&
-    ["restocked", "threshold_adjusted", "product_discontinued"].includes(
+    typeof request === "object"
+    && typeof request.alertId === "string"
+    && typeof request.resolvedBy === "string"
+    && ["restocked", "threshold_adjusted", "product_discontinued"].includes(
       request.action,
     )
   );

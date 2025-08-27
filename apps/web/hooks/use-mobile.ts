@@ -91,7 +91,7 @@ export function useAgentChat() {
       updateLastActivity();
     },
     onError: (error) => {
-      console.error("AI Chat Error:", error);
+      // console.error("AI Chat Error:", error);
       setChatState((prev) => ({
         ...prev,
         error: error.message,
@@ -125,7 +125,7 @@ export function useAgentChat() {
         }));
       }
     } catch (error) {
-      console.error("Error updating client context:", error);
+      // console.error("Error updating client context:", error);
       setChatState((prev) => ({
         ...prev,
         error: "Failed to load client context",
@@ -142,8 +142,7 @@ export function useAgentChat() {
   useEffect(() => {
     // Verificar suporte para Speech Recognition
     if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (SpeechRecognition) {
         isRecognitionSupported.current = true;
@@ -168,7 +167,7 @@ export function useAgentChat() {
         };
 
         recognition.current.onresult = (event: SpeechRecognitionEvent) => {
-          const results = event.results;
+          const { results: results } = event;
           let finalTranscript = "";
           let interimTranscript = "";
 
@@ -201,7 +200,7 @@ export function useAgentChat() {
         };
 
         recognition.current.onerror = (event) => {
-          console.error("Speech recognition error:", event.error);
+          // console.error("Speech recognition error:", event.error);
           setChatState((prev) => ({
             ...prev,
             voiceInput: {
@@ -287,7 +286,7 @@ export function useAgentChat() {
     try {
       recognition.current.start();
     } catch (error) {
-      console.error("Error starting voice input:", error);
+      // console.error("Error starting voice input:", error);
       setChatState((prev) => ({
         ...prev,
         voiceInput: {
@@ -323,7 +322,7 @@ export function useAgentChat() {
       };
 
       // Enviar para o AI chat
-      handleInputChange({ target: { value: transcript } } as any);
+      handleInputChange({ target: { value: transcript } } as unknown);
       submitToAI();
       updateLastActivity();
     },

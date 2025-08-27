@@ -19,8 +19,8 @@ import { cn } from "@neonpro/utils";
 import {
   AlertTriangle,
   Award,
-  BookOpen,
   BookmarkPlus,
+  BookOpen,
   Calendar,
   CheckCircle,
   ChevronRight,
@@ -58,8 +58,7 @@ const mockEducationalContent = {
           category: "Cuidados Pós-Procedimento",
           priority: "high",
           completed: false,
-          description:
-            "Instruções essenciais para as primeiras 24h após aplicação de Botox",
+          description: "Instruções essenciais para as primeiras 24h após aplicação de Botox",
           thumbnail: "/botox-care-thumb.jpg",
           tags: ["botox", "pós-procedimento", "cuidados"],
         },
@@ -71,8 +70,7 @@ const mockEducationalContent = {
           category: "Evolução",
           priority: "medium",
           completed: true,
-          description:
-            "Timeline detalhado da evolução do Botox na primeira semana",
+          description: "Timeline detalhado da evolução do Botox na primeira semana",
           tags: ["botox", "evolução", "resultados"],
         },
         {
@@ -83,8 +81,7 @@ const mockEducationalContent = {
           category: "Exercícios",
           priority: "medium",
           completed: false,
-          description:
-            "Exercícios específicos para otimizar os resultados do Botox",
+          description: "Exercícios específicos para otimizar os resultados do Botox",
           tags: ["botox", "exercícios", "resultados"],
         },
       ],
@@ -118,8 +115,7 @@ const mockEducationalContent = {
       priority: "high",
       rating: 4.8,
       views: 1234,
-      description:
-        "Como e por que usar protetor solar durante tratamentos estéticos",
+      description: "Como e por que usar protetor solar durante tratamentos estéticos",
       tags: ["proteção solar", "cuidados", "prevenção"],
       featured: true,
     },
@@ -181,8 +177,7 @@ const mockCareInstructions = {
     {
       id: 1,
       title: "Evitar exercícios intensos",
-      description:
-        "Não faça atividades físicas que aumentem muito a frequência cardíaca",
+      description: "Não faça atividades físicas que aumentem muito a frequência cardíaca",
       status: "active",
       timeframe: "Até 24h pós-procedimento",
       completed: false,
@@ -222,7 +217,7 @@ function ContentCard({
   content,
   onView,
 }: {
-  content: any;
+  content: unknown;
   onView: () => void;
 }) {
   const getTypeIcon = (type: string) => {
@@ -302,12 +297,8 @@ function ContentCard({
                 {getTypeIcon(content.type)}
                 <span className="capitalize">{content.type}</span>
               </Badge>
-              {content.completed && (
-                <CheckCircle className="h-4 w-4 text-green-600" />
-              )}
-              {content.featured && (
-                <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-              )}
+              {content.completed && <CheckCircle className="h-4 w-4 text-green-600" />}
+              {content.featured && <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />}
             </div>
 
             <h3 className="mb-1 font-semibold text-sm">{content.title}</h3>
@@ -368,8 +359,8 @@ function CareInstructionsWidget() {
     (i) => i.completed,
   );
   const progressPercentage =
-    (completedInstructions.length / mockCareInstructions.instructions.length) *
-    100;
+    (completedInstructions.length / mockCareInstructions.instructions.length)
+    * 100;
 
   return (
     <Card className="border-l-4 border-l-pink-500">
@@ -379,8 +370,7 @@ function CareInstructionsWidget() {
           <span>Cuidados Atuais</span>
         </CardTitle>
         <CardDescription>
-          {mockCareInstructions.currentPhase} •{" "}
-          {mockCareInstructions.timeRemaining} restantes
+          {mockCareInstructions.currentPhase} • {mockCareInstructions.timeRemaining} restantes
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -438,7 +428,7 @@ function CareInstructionsWidget() {
   );
 }
 
-function VideoPlayer({ content }: { content: any }) {
+function VideoPlayer({ content }: { content: unknown; }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, _setCurrentTime] = useState(45); // seconds
@@ -483,11 +473,7 @@ function VideoPlayer({ content }: { content: any }) {
                     size="sm"
                     variant="ghost"
                   >
-                    {isPlaying ? (
-                      <Pause className="h-5 w-5" />
-                    ) : (
-                      <Play className="h-5 w-5" />
-                    )}
+                    {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
                   </Button>
 
                   <Button
@@ -496,11 +482,7 @@ function VideoPlayer({ content }: { content: any }) {
                     size="sm"
                     variant="ghost"
                   >
-                    {isMuted ? (
-                      <VolumeX className="h-5 w-5" />
-                    ) : (
-                      <Volume2 className="h-5 w-5" />
-                    )}
+                    {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
                   </Button>
 
                   <span className="text-sm">
@@ -618,7 +600,7 @@ export function EducationCenter() {
   const [_selectedCategory, setSelectedCategory] = useState("all");
   const [selectedContent, setSelectedContent] = useState<any>();
 
-  const handleViewContent = (content: any) => {
+  const handleViewContent = (content: unknown) => {
     setSelectedContent(content);
   };
 
@@ -632,9 +614,7 @@ export function EducationCenter() {
         </Button>
 
         {/* Content Viewer */}
-        {selectedContent.type === "video" ? (
-          <VideoPlayer content={selectedContent} />
-        ) : (
+        {selectedContent.type === "video" ? <VideoPlayer content={selectedContent} /> : (
           <Card>
             <CardHeader>
               <CardTitle>{selectedContent.title}</CardTitle>

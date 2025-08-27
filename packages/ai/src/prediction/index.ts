@@ -51,9 +51,9 @@ export {
  * );
  *
  * if (result.success) {
- *   console.log('Treatment Plan:', result.recommendation.treatmentPlan);
- *   console.log('Risk Assessment:', result.recommendation.riskProfile);
- *   console.log('Success Probability:', result.recommendation.successProbability);
+ *   // console.log('Treatment Plan:', result.recommendation.treatmentPlan);
+ *   // console.log('Risk Assessment:', result.recommendation.riskProfile);
+ *   // console.log('Success Probability:', result.recommendation.successProbability);
  * }
  * ```
  */

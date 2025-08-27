@@ -101,9 +101,7 @@ test.describe("Complete Healthcare Workflow", () => {
     ).toBeVisible();
   });
 
-  test("should manage prescriptions with controlled medications", async ({
-    page,
-  }) => {
+  test("should manage prescriptions with controlled medications", async ({ page }) => {
     // Start from consultation or patient profile
     await page.goto("/patients");
     await page.click('[data-testid="patient-item-123.456.789-00"]');

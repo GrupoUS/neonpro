@@ -7,15 +7,6 @@ import { SecurityAPI } from "@/lib/security";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock Supabase client
-const _mockSupabase = {
-  from: vi.fn(),
-  rpc: vi.fn(),
-  auth: {
-    getUser: vi.fn(),
-    getSession: vi.fn(),
-  },
-};
-
 // Mock SecurityAPI
 vi.mock<typeof import("@/lib/security")>("@/lib/security", () => ({
   SecurityAPI: {
@@ -515,8 +506,7 @@ describe("security System Integration Tests", () => {
         SecurityAPI.createSecurityEvent({
           event_type: "authentication",
           severity: "low",
-        }),
-      );
+        }));
 
       const results = await Promise.all(concurrentRequests);
 

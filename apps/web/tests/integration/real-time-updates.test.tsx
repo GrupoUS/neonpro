@@ -83,8 +83,7 @@ const mockAppointment = {
   clinic_id: "clinic-1",
   scheduled_at: new Date().toISOString(),
   status: "scheduled",
-}; // Test wrapper component
-const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
+}; // Test wrapper component }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -96,9 +95,7 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 describe("real-time Updates Integration Tests", () => {
@@ -211,7 +208,7 @@ describe("real-time Updates Integration Tests", () => {
         updated_at: new Date().toISOString(),
       };
 
-      let realtimeCallback: ((payload: any) => void) | null;
+      let realtimeCallback: ((payload: unknown) => void) | null;
 
       mockRealtimeHook.subscribe.mockImplementation(
         (_channelName, callback) => {
@@ -285,7 +282,7 @@ describe("real-time Updates Integration Tests", () => {
       const finalPatient = queryClient.getQueryData([
         "patients",
         "patient-123",
-      ]) as any;
+      ]) as unknown;
 
       // Validate the final state matches the update
       expect(finalPatient).toBeDefined();
@@ -358,7 +355,7 @@ describe("real-time Updates Integration Tests", () => {
       };
 
       let conflictDetected = false;
-      let realtimeCallback: ((payload: any) => void) | null;
+      let realtimeCallback: ((payload: unknown) => void) | null;
 
       // Set existing appointment in cache FIRST
       queryClient.setQueryData(
@@ -379,16 +376,15 @@ describe("real-time Updates Integration Tests", () => {
           (payload) => {
             if (payload.eventType === "INSERT") {
               // Check for scheduling conflicts
-              const existingAppointments =
-                (queryClient.getQueryData([
-                  "appointments",
-                  "doctor-123",
-                ]) as any[]) || [];
+              const existingAppointments = (queryClient.getQueryData([
+                "appointments",
+                "doctor-123",
+              ]) as unknown[]) || [];
               const conflict = existingAppointments.find(
                 (apt) =>
-                  apt.scheduled_at === payload.new.scheduled_at &&
-                  apt.id !== payload.new.id &&
-                  apt.status !== "cancelled",
+                  apt.scheduled_at === payload.new.scheduled_at
+                  && apt.id !== payload.new.id
+                  && apt.status !== "cancelled",
               );
 
               if (conflict) {
@@ -481,12 +477,12 @@ describe("real-time Updates Integration Tests", () => {
   describe("performance and Scalability", () => {
     it("should handle high-frequency updates without performance degradation", async () => {
       const updateCount = 100;
-      const updates: any[] = [];
+      const updates: unknown[] = [];
 
       // Use the QueryClient instance from the test scope
       const testQueryClient = queryClient;
 
-      let realtimeCallback: ((payload: any) => void) | null;
+      let realtimeCallback: ((payload: unknown) => void) | null;
 
       mockRealtimeHook.subscribe.mockImplementation(
         (_channelName, callback) => {
@@ -496,7 +492,7 @@ describe("real-time Updates Integration Tests", () => {
       );
 
       // Define the callback function with proper QueryClient reference
-      const subscriptionCallback = (payload: any) => {
+      const subscriptionCallback = (payload: unknown) => {
         updates.push(payload);
         // Simulate efficient cache update
         if (payload.eventType === "UPDATE") {
@@ -591,8 +587,8 @@ describe("real-time Updates Integration Tests", () => {
 
   describe("multi-tenant Isolation in Real-time", () => {
     it("should ensure clinic isolation in realtime subscriptions", async () => {
-      const clinic1Updates: any[] = [];
-      const clinic2Updates: any[] = [];
+      const clinic1Updates: unknown[] = [];
+      const clinic2Updates: unknown[] = [];
 
       mockRealtimeHook.subscribe.mockImplementation((channelName, callback) => {
         if (channelName.includes("clinic-1")) {

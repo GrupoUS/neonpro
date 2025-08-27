@@ -44,7 +44,7 @@ export class SecurityMiddleware {
   private config: SecurityConfig;
   private readonly rateLimitStore: Map<
     string,
-    { count: number; resetTime: number }
+    { count: number; resetTime: number; }
   > = new Map();
 
   constructor(config: Partial<SecurityConfig> = {}) {
@@ -76,8 +76,8 @@ export class SecurityMiddleware {
 
       // 4. Threat detection
       if (
-        this.config.enableThreatDetection &&
-        this.detectThreat(request, context)
+        this.config.enableThreatDetection
+        && this.detectThreat(request, context)
       ) {
         await this.logSecurityEvent("threat_detected", context, "critical");
         return new NextResponse("Threat Detected", { status: 403 });
@@ -99,10 +99,9 @@ export class SecurityMiddleware {
   private extractSecurityContext(request: NextRequest): SecurityContext {
     const url = new URL(request.url);
     return {
-      ipAddress:
-        request.headers.get("x-forwarded-for") ||
-        request.headers.get("x-real-ip") ||
-        "unknown",
+      ipAddress: request.headers.get("x-forwarded-for")
+        || request.headers.get("x-real-ip")
+        || "unknown",
       userAgent: request.headers.get("user-agent") || "unknown",
       endpoint: url.pathname,
       method: request.method,
@@ -123,7 +122,7 @@ export class SecurityMiddleware {
       return false;
     }
 
-    const key = context.ipAddress;
+    const { ipAddress: key } = context;
     const now = Date.now();
     const entry = this.rateLimitStore.get(key);
 
@@ -172,7 +171,7 @@ export class SecurityMiddleware {
       /\beval\(/i, // Code injection
     ];
 
-    const url = request.url;
+    const { url } = request;
     const userAgent = context.userAgent || "";
 
     return suspiciousPatterns.some(

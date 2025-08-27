@@ -23,7 +23,7 @@ import { logger } from "../../../apps/api/src/lib/logger.js";
 interface MetricValue {
   timestamp: number;
   value: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface Alert {
@@ -98,7 +98,7 @@ export const RealTimeDashboard: React.FC = () => {
 
     newSocket.on(
       "metrics-update",
-      (update: { timestamp: number; metrics: any }) => {
+      (update: { timestamp: number; metrics: unknown; }) => {
         setData((prev) => {
           const newMetrics = { ...prev.metrics };
 
@@ -149,10 +149,7 @@ export const RealTimeDashboard: React.FC = () => {
     [data.metrics],
   );
 
-  // 🎨 Obter cor baseada no status
-  const _getStatusColor = (status: string) => {
-    return COLORS[status as keyof typeof COLORS] || "#6B7280";
-  };
+  // 🎨 Obter cor baseada no status  };
 
   // 📈 Componente de métricas overview
   const MetricsOverview: React.FC = () => (
@@ -186,8 +183,8 @@ export const RealTimeDashboard: React.FC = () => {
                     latestValue >= 90
                       ? "bg-green-500"
                       : latestValue >= 70
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
                   }`}
                   style={{ width: `${Math.min(latestValue, 100)}%` }}
                 />
@@ -209,8 +206,8 @@ export const RealTimeDashboard: React.FC = () => {
             data.health.status === "healthy"
               ? "bg-green-100 text-green-800"
               : data.health.status === "degraded"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
+              ? "bg-yellow-100 text-yellow-800"
+              : "bg-red-100 text-red-800"
           }`}
         >
           {data.health.status.toUpperCase()}
@@ -230,8 +227,8 @@ export const RealTimeDashboard: React.FC = () => {
               data.health.score >= 90
                 ? "bg-green-500"
                 : data.health.score >= 70
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
+                ? "bg-yellow-500"
+                : "bg-red-500"
             }`}
             style={{ width: `${data.health.score}%` }}
           />
@@ -266,19 +263,17 @@ export const RealTimeDashboard: React.FC = () => {
         Recent Alerts
       </h3>
       <div className="max-h-96 space-y-2 overflow-y-auto">
-        {data.alerts.length === 0 ? (
-          <p className="py-8 text-center text-gray-500">No alerts</p>
-        ) : (
+        {data.alerts.length === 0 ? <p className="py-8 text-center text-gray-500">No alerts</p> : (
           data.alerts.map((alert) => (
             <div
               className={`rounded border-l-4 p-3 ${
                 alert.level === "critical"
                   ? "border-red-500 bg-red-50"
                   : alert.level === "error"
-                    ? "border-red-400 bg-red-50"
-                    : alert.level === "warning"
-                      ? "border-yellow-400 bg-yellow-50"
-                      : "border-blue-400 bg-blue-50"
+                  ? "border-red-400 bg-red-50"
+                  : alert.level === "warning"
+                  ? "border-yellow-400 bg-yellow-50"
+                  : "border-blue-400 bg-blue-50"
               }`}
               key={alert.id}
             >
@@ -288,10 +283,10 @@ export const RealTimeDashboard: React.FC = () => {
                     alert.level === "critical"
                       ? "text-red-800"
                       : alert.level === "error"
-                        ? "text-red-700"
-                        : alert.level === "warning"
-                          ? "text-yellow-700"
-                          : "text-blue-700"
+                      ? "text-red-700"
+                      : alert.level === "warning"
+                      ? "text-yellow-700"
+                      : "text-blue-700"
                   }`}
                 >
                   {alert.level}
@@ -389,7 +384,7 @@ export const RealTimeDashboard: React.FC = () => {
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                   key={tab}
-                  onClick={() => setActiveTab(tab as any)}
+                  onClick={() => setActiveTab(tab as unknown)}
                 >
                   {tab}
                 </button>

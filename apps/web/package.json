@@ -29,7 +29,7 @@
     "@ai-sdk/openai": "^2.0.15",
     "@aws-sdk/client-ses": "^3.864.0",
     "@hookform/resolvers": "^3.10.0",
-    "@neonpro/db": "workspace:*",
+    "@neonpro/database": "workspace:*",
     "@neonpro/domain": "workspace:*",
     "@neonpro/shared": "workspace:*",
     "@neonpro/ui": "workspace:*",

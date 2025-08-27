@@ -14,7 +14,7 @@ export class TreatmentSuccessService {
     };
   }
 
-  async updateTreatmentOutcome(outcomeId: string, data: any) {
+  async updateTreatmentOutcome(outcomeId: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: outcomeId,

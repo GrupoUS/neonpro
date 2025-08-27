@@ -8,13 +8,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Activity,
@@ -54,7 +48,7 @@ interface ActivityEvent {
   timestamp: Date;
   location?: string;
   priority: "low" | "medium" | "high" | "critical";
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface LiveStats {
@@ -220,7 +214,7 @@ export function RealTimeActivityDashboard() {
           id: Date.now().toString(),
           type: ["appointment", "consultation", "message"][
             Math.floor(Math.random() * 3)
-          ] as any,
+          ] as unknown,
           title: "Nova Atividade",
           description: "Atividade simulada em tempo real",
           user: {
@@ -238,11 +232,11 @@ export function RealTimeActivityDashboard() {
       setLiveStats((prev) =>
         prev
           ? {
-              ...prev,
-              activeUsers: Math.floor(10 + Math.random() * 8),
-              ongoingConsultations: Math.floor(2 + Math.random() * 4),
-            }
-          : undefined,
+            ...prev,
+            activeUsers: Math.floor(10 + Math.random() * 8),
+            ongoingConsultations: Math.floor(2 + Math.random() * 4),
+          }
+          : undefined
       );
     }, 10_000);
 
@@ -531,10 +525,12 @@ export function RealTimeActivityDashboard() {
                 >
                   {/* Icon */}
                   <div
-                    className={`p-2 rounded-lg ${getActivityColor(
-                      activity.type,
-                      activity.priority,
-                    )}`}
+                    className={`p-2 rounded-lg ${
+                      getActivityColor(
+                        activity.type,
+                        activity.priority,
+                      )
+                    }`}
                   >
                     {getActivityIcon(activity.type)}
                   </div>

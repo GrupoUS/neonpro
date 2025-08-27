@@ -4,9 +4,9 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
+  AdverseEvent,
   ANVISAProcedure,
   ANVISAProduct,
-  AdverseEvent,
   ComplianceReport,
   ComplianceTask,
 } from "./anvisa-types";
@@ -192,8 +192,8 @@ export class ANVISAComplianceReporter {
   ): number {
     const ZERO_FALLBACK = 0;
     return (
-      events.filter((event) => event.event_type === eventType).length ||
-      ZERO_FALLBACK
+      events.filter((event) => event.event_type === eventType).length
+      || ZERO_FALLBACK
     );
   }
 
@@ -205,9 +205,8 @@ export class ANVISAComplianceReporter {
     const ZERO_FALLBACK = 0;
 
     // Deduct points for compliance issues
-    const expiredProducts =
-      products.filter((product) => new Date(product.expiry_date) < new Date())
-        .length || ZERO_FALLBACK;
+    const expiredProducts = products.filter((product) => new Date(product.expiry_date) < new Date())
+      .length || ZERO_FALLBACK;
     const suspendedProducts =
       products.filter((product) => product.regulatory_status === "suspended")
         .length || ZERO_FALLBACK;

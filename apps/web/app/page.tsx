@@ -1,12 +1,12 @@
 "use client";
 
+import { useAppointments } from "@/hooks/useAppointments";
+import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
+import { usePatients } from "@/hooks/usePatients";
 import { AppointmentsList } from "./components/dashboard/AppointmentsList";
 import { HeroSection } from "./components/dashboard/HeroSection";
 import { MetricsCards } from "./components/dashboard/MetricsCards";
 import { PatientsList } from "./components/dashboard/PatientsList";
-import { useAppointments } from "@/hooks/useAppointments";
-import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
-import { usePatients } from "@/hooks/usePatients";
 
 interface Patient {
   id: string;
@@ -43,8 +43,7 @@ const MetricsSection = ({
         Performance em Tempo Real
       </h2>
       <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-        Acompanhe o crescimento da sua clínica com métricas atualizadas
-        automaticamente
+        Acompanhe o crescimento da sua clínica com métricas atualizadas automaticamente
       </p>
     </div>
 

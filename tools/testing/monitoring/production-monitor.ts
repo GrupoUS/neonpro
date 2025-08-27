@@ -25,7 +25,7 @@ import { logger } from "../../../apps/api/src/lib/logger.js";
 interface MetricValue {
   timestamp: number;
   value: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface Alert {
@@ -34,7 +34,7 @@ interface Alert {
   message: string;
   timestamp: number;
   resolved: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface HealthStatus {
@@ -426,7 +426,7 @@ class ProductionMonitor {
   private createAlert(
     level: Alert["level"],
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     const alert: Alert = {
       id: `alert-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,

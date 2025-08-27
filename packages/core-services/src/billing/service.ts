@@ -89,7 +89,7 @@ export interface BillingStats {
     count: number;
     amount: number;
   }[];
-  treatmentRevenue: { treatmentType: string; count: number; revenue: number }[];
+  treatmentRevenue: { treatmentType: string; count: number; revenue: number; }[];
 }
 
 export class BillingService {
@@ -100,13 +100,11 @@ export class BillingService {
     try {
       // Calculate invoice totals
       const subtotal = data.items.reduce(
-        (sum, item) =>
-          sum + (item.quantity * item.unitPrice - item.discountAmount),
+        (sum, item) => sum + (item.quantity * item.unitPrice - item.discountAmount),
         0,
       );
 
-      const discountAmount =
-        data.discountAmount || (subtotal * data.discountPercentage) / 100;
+      const discountAmount = data.discountAmount || (subtotal * data.discountPercentage) / 100;
       const taxAmount = (subtotal - discountAmount) * 0.1; // 10% tax (adjust as needed)
       const totalAmount = subtotal - discountAmount + taxAmount;
 
@@ -130,7 +128,7 @@ export class BillingService {
   }
   async processPayment(
     data: CreatePaymentData,
-  ): Promise<{ payment: Payment; invoice: Invoice }> {
+  ): Promise<{ payment: Payment; invoice: Invoice; }> {
     const invoice = await this.repository.getInvoice(data.invoiceId);
     if (!invoice) {
       throw new Error("Invoice not found");
@@ -166,8 +164,7 @@ export class BillingService {
     // Update invoice
     const newPaidAmount = invoice.paidAmount + data.amount;
     const newBalanceAmount = invoice.totalAmount - newPaidAmount;
-    const newStatus =
-      newBalanceAmount <= 0 ? BillingStatus.PAID : BillingStatus.PENDING;
+    const newStatus = newBalanceAmount <= 0 ? BillingStatus.PAID : BillingStatus.PENDING;
 
     const updatedInvoice = await this.repository.updateInvoice(data.invoiceId, {
       paidAmount: newPaidAmount,
@@ -221,7 +218,7 @@ export class BillingService {
     }
 
     // Recalculate invoice totals
-    const newSubtotal = invoice.subtotal;
+    const { subtotal: newSubtotal } = invoice;
     const newDiscountAmount = invoice.discountAmount + discountAmount;
     const newTaxAmount = (newSubtotal - newDiscountAmount) * 0.1;
     const newTotalAmount = newSubtotal - newDiscountAmount + newTaxAmount;
@@ -290,8 +287,7 @@ export class BillingService {
       installments: [], // Will be generated after payment plan creation
     };
 
-    const paymentPlan =
-      await this.repository.createPaymentPlan(paymentPlanData);
+    const paymentPlan = await this.repository.createPaymentPlan(paymentPlanData);
 
     // Process down payment if any
     if (data.downPayment > 0) {
@@ -396,8 +392,8 @@ export class BillingService {
     if (discount.applicableTreatments.length > 0) {
       const invoiceHasApplicableTreatment = invoice.items.some(
         (item) =>
-          item.treatmentType &&
-          discount.applicableTreatments.includes(item.treatmentType),
+          item.treatmentType
+          && discount.applicableTreatments.includes(item.treatmentType),
       );
 
       if (!invoiceHasApplicableTreatment) {
@@ -482,12 +478,11 @@ export class BillingService {
       await this.repository.updateInvoice(payment.invoiceId, {
         paidAmount: newPaidAmount,
         balanceAmount: newBalanceAmount,
-        status:
-          newPaidAmount === 0
-            ? BillingStatus.PENDING
-            : newBalanceAmount <= 0
-              ? BillingStatus.PAID
-              : BillingStatus.PENDING,
+        status: newPaidAmount === 0
+          ? BillingStatus.PENDING
+          : newBalanceAmount <= 0
+          ? BillingStatus.PAID
+          : BillingStatus.PENDING,
       });
     }
 
@@ -497,11 +492,6 @@ export class BillingService {
     startDate?: Date,
     endDate?: Date,
   ): Promise<BillingStats> {
-    const _invoices =
-      startDate && endDate
-        ? await this.repository.getInvoicesByDateRange(startDate, endDate)
-        : await this.repository.getInvoicesByStatus(BillingStatus.PAID);
-
     const allInvoices = await this.repository.getInvoicesByDateRange(
       startDate || new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
       endDate || new Date(),
@@ -512,8 +502,8 @@ export class BillingService {
     );
     const unpaidInvoices = allInvoices.filter(
       (inv) =>
-        inv.status === BillingStatus.PENDING ||
-        inv.status === BillingStatus.OVERDUE,
+        inv.status === BillingStatus.PENDING
+        || inv.status === BillingStatus.OVERDUE,
     );
 
     const totalRevenue = paidInvoices.reduce(
@@ -535,8 +525,7 @@ export class BillingService {
     );
 
     const monthlyInvoices = paidInvoices.filter(
-      (inv) =>
-        inv.paidDate && inv.paidDate >= monthStart && inv.paidDate <= monthEnd,
+      (inv) => inv.paidDate && inv.paidDate >= monthStart && inv.paidDate <= monthEnd,
     );
     const monthlyRevenue = monthlyInvoices.reduce(
       (sum, inv) => sum + inv.totalAmount,
@@ -551,16 +540,15 @@ export class BillingService {
       .filter((inv) => isBefore(inv.dueDate, new Date()))
       .reduce((sum, inv) => sum + inv.balanceAmount, 0);
 
-    const averageInvoiceAmount =
-      allInvoices.length > 0
-        ? allInvoices.reduce((sum, inv) => sum + inv.totalAmount, 0) /
-          allInvoices.length
-        : 0;
+    const averageInvoiceAmount = allInvoices.length > 0
+      ? allInvoices.reduce((sum, inv) => sum + inv.totalAmount, 0)
+        / allInvoices.length
+      : 0;
 
     // Payment method distribution
     const paymentMethodMap = new Map<
       PaymentMethod,
-      { count: number; amount: number }
+      { count: number; amount: number; }
     >();
 
     for (const invoice of paidInvoices) {
@@ -587,7 +575,7 @@ export class BillingService {
     // Treatment revenue
     const treatmentRevenueMap = new Map<
       string,
-      { count: number; revenue: number }
+      { count: number; revenue: number; }
     >();
 
     for (const invoice of paidInvoices) {
@@ -672,8 +660,8 @@ export class BillingService {
       if (plan.status === PaymentPlanStatus.ACTIVE) {
         const pendingInstallments = plan.installments.filter(
           (inst) =>
-            inst.status === InstallmentStatus.PENDING &&
-            isBefore(inst.dueDate, targetDate),
+            inst.status === InstallmentStatus.PENDING
+            && isBefore(inst.dueDate, targetDate),
         );
         upcomingPayments.push(...pendingInstallments);
       }

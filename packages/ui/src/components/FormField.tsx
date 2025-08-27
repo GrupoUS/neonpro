@@ -32,9 +32,7 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
 
         {children}
 
-        {description && (
-          <p className="text-muted-foreground text-sm">{description}</p>
-        )}
+        {description && <p className="text-muted-foreground text-sm">{description}</p>}
 
         {error && <p className="text-red-600 text-sm">{error}</p>}
       </div>

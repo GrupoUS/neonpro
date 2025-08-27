@@ -259,11 +259,9 @@ async function deployPerformanceOptimization() {
   }
 
   // Generate deployment report
-  const _report = generateDeploymentReport();
-
   // Summary
   const successful = results.filter((r) => r.success).length;
-  const total = results.length;
+  const { length: total } = results;
 
   log(
     `\n📈 Deployment Summary: ${successful}/${total} steps completed`,

@@ -7,18 +7,15 @@ import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 // Global test configuration
 export const TEST_CONFIG = {
   database: {
-    test_database_url:
-      process.env.TEST_DATABASE_URL ||
-      "postgresql://test:test@localhost:5432/neonpro_test",
+    test_database_url: process.env.TEST_DATABASE_URL
+      || "postgresql://test:test@localhost:5432/neonpro_test",
     connection_timeout: 10_000,
     query_timeout: 5000,
   },
   supabase: {
-    test_project_url:
-      process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
+    test_project_url: process.env.TEST_SUPABASE_URL || "https://test.supabase.co",
     test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-    test_service_role_key:
-      process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
   },
   api: {
     test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3001",
@@ -38,6 +35,7 @@ export const TEST_CONFIG = {
 };
 
 // Test data factory for consistent test data
+// TODO: Convert to standalone functions
 export class TestDataFactory {
   static createMockPatient(overrides: Partial<any> = {}) {
     return {
@@ -117,6 +115,7 @@ export function createTestQueryClient(): QueryClient {
 }
 
 // Database cleanup utilities
+// TODO: Convert to standalone functions
 export class TestDatabaseCleanup {
   static async cleanupTestData() {
     // In real implementation, this would:
@@ -186,8 +185,9 @@ export class TestPerformanceMonitor {
 }
 
 // LGPD compliance testing utilities
+// TODO: Convert to standalone functions
 export class TestLGPDCompliance {
-  static validateConsentRequirement(testData: any): boolean {
+  static validateConsentRequirement(testData: unknown): boolean {
     return (
       testData.lgpd_consent === true && testData.lgpd_consent_date !== undefined
     );
@@ -195,13 +195,13 @@ export class TestLGPDCompliance {
 
   static validateDataMinimization(
     requestedData: string[],
-    actualData: any,
+    actualData: unknown,
   ): boolean {
     const actualKeys = Object.keys(actualData);
     return requestedData.every((field) => actualKeys.includes(field));
   }
 
-  static validateAuditTrail(_operation: string, auditEntry: any): boolean {
+  static validateAuditTrail(_operation: string, auditEntry: unknown): boolean {
     const requiredFields = [
       "user_id",
       "timestamp",
@@ -212,7 +212,7 @@ export class TestLGPDCompliance {
     return requiredFields.every((field) => auditEntry[field] !== undefined);
   }
 
-  static mockCPFValidation(cpf: string): { valid: boolean; formatted: string } {
+  static mockCPFValidation(cpf: string): { valid: boolean; formatted: string; } {
     // Mock CPF validation for testing
     const cleanCpf = cpf.replaceAll(/[^\d]/g, "");
     const isValid = cleanCpf.length === 11 && cleanCpf !== "00000000000";
@@ -227,6 +227,7 @@ export class TestLGPDCompliance {
 }
 
 // Emergency access testing utilities
+// TODO: Convert to standalone functions
 export class TestEmergencyAccess {
   static validateEmergencyJustification(
     emergencyType: string,
@@ -274,6 +275,7 @@ export class TestEmergencyAccess {
 }
 
 // Healthcare-specific test utilities
+// TODO: Convert to standalone functions
 export class TestHealthcareUtilities {
   static mockBrazilianHealthcareData() {
     return {
@@ -336,9 +338,7 @@ export function setupIntegrationTests() {
   afterAll(async () => {
     await TestDatabaseCleanup.cleanupTestData();
 
-    // Generate performance report
-    const _report = TestPerformanceMonitor.generatePerformanceReport();
-  });
+    // Generate performance report  });
 
   beforeEach(() => {
     // Reset any global state if needed

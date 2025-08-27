@@ -114,8 +114,7 @@ export class ComplianceTester {
   ): Promise<ProcedureValidationResult> {
     const validationChecks = {
       procedureClassification: this.validateProcedureClass(procedure),
-      professionalRequirements:
-        await this.validateProfessionalRequirements(procedure),
+      professionalRequirements: await this.validateProfessionalRequirements(procedure),
       equipmentRequirements: this.validateEquipmentRequirements(procedure),
       facilityRequirements: this.validateFacilityRequirements(procedure),
       patientConsentRequirements: this.validatePatientConsent(procedure),
@@ -270,10 +269,10 @@ export class ComplianceTester {
     docs: TechnicalDocumentation,
   ): boolean {
     return (
-      docs.technicalFile !== null &&
-      docs.riskAnalysis !== null &&
-      docs.clinicalEvaluation !== null &&
-      docs.labelingInstructions !== null
+      docs.technicalFile !== null
+      && docs.riskAnalysis !== null
+      && docs.clinicalEvaluation !== null
+      && docs.labelingInstructions !== null
     );
   }
 
@@ -281,8 +280,8 @@ export class ComplianceTester {
     return (
       certs.some(
         (cert) => cert.type === "ISO13485" && cert.status === "valid",
-      ) &&
-      certs.some(
+      )
+      && certs.some(
         (cert) => cert.type === "CE_MARKING" && cert.status === "valid",
       )
     );
@@ -290,17 +289,17 @@ export class ComplianceTester {
 
   private validateClinicalEvidence(clinicalData: ClinicalData[]): boolean {
     return (
-      clinicalData.length > 0 &&
-      clinicalData.every((data) => data.ethicsApproval === true)
+      clinicalData.length > 0
+      && clinicalData.every((data) => data.ethicsApproval === true)
     );
   }
 
   private validateLabeling(labeling: ProductLabeling): boolean {
     return (
-      labeling.portugueseLanguage === true &&
-      labeling.requiredInformation.includes("manufacturer") &&
-      labeling.requiredInformation.includes("registration_number") &&
-      labeling.requiredInformation.includes("intended_use")
+      labeling.portugueseLanguage === true
+      && labeling.requiredInformation.includes("manufacturer")
+      && labeling.requiredInformation.includes("registration_number")
+      && labeling.requiredInformation.includes("intended_use")
     );
   }
 
@@ -308,9 +307,9 @@ export class ComplianceTester {
     surveillance: PostMarketSurveillance,
   ): boolean {
     return (
-      surveillance.plan !== null &&
-      surveillance.periodicReports === true &&
-      surveillance.adverseEventMonitoring === true
+      surveillance.plan !== null
+      && surveillance.periodicReports === true
+      && surveillance.adverseEventMonitoring === true
     );
   }
 
@@ -322,10 +321,10 @@ export class ComplianceTester {
 
   private validateEventInformation(event: AdverseEvent): boolean {
     return (
-      event.patientInformation !== null &&
-      event.deviceInformation !== null &&
-      event.eventDescription !== null &&
-      event.outcomeInformation !== null
+      event.patientInformation !== null
+      && event.deviceInformation !== null
+      && event.eventDescription !== null
+      && event.outcomeInformation !== null
     );
   }
 
@@ -338,8 +337,7 @@ export class ComplianceTester {
   // Public reporting methods
   generateANVISAComplianceReport(): ANVISAComplianceReport {
     const results = [...this.testResults.values()];
-    const averageScore =
-      results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {
@@ -431,8 +429,7 @@ export function createComplianceTestSuite(
         },
       };
 
-      const result =
-        await complianceTester.validateMedicalDeviceRegistration(mockDevice);
+      const result = await complianceTester.validateMedicalDeviceRegistration(mockDevice);
       expect(result.isCompliant).toBeTruthy();
       expect(result.score).toBeGreaterThanOrEqual(9.9);
     });
@@ -469,8 +466,7 @@ export async function testHealthcareCompliance(
   ]);
 
   const scores = results.map((r) => r.score);
-  const averageScore =
-    scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  const averageScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
   return {
     medicalDevice: scores[0],

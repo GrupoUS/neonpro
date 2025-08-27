@@ -14,7 +14,7 @@ import type {
 
 // Constants
 const SAMPLE_SIZE = 10;
-const HIGH_RISK_THRESHOLD = 0.1;
+const { 1: HIGH_RISK_THRESHOLD } = 0;
 const MIN_USERS_THRESHOLD = 5;
 
 /**
@@ -82,7 +82,7 @@ class AuditReporter extends AuditLogger {
     complianceFramework?: "anvisa" | "cfm" | "lgpd";
     endDate: Date;
     startDate: Date;
-  }): Promise<AuditReport | { error: string; success: boolean }> {
+  }): Promise<AuditReport | { error: string; success: boolean; }> {
     try {
       const { complianceFramework, endDate, startDate } = params;
       const filters: AuditLogFilters = {
@@ -171,30 +171,18 @@ class AuditReporter extends AuditLogger {
     if (!framework || framework === "lgpd") {
       const lgpdLogs = logs.filter((log) => log.compliance_category === "lgpd");
       metrics.lgpd = {
-        consent_operations: lgpdLogs.filter((log) =>
-          log.action.includes("consent"),
-        ).length,
-        data_subject_requests: lgpdLogs.filter((log) =>
-          log.action.includes("lgpd_"),
-        ).length,
-        patient_data_accesses: lgpdLogs.filter((log) =>
-          log.action.includes("patient_data"),
-        ).length,
+        consent_operations: lgpdLogs.filter((log) => log.action.includes("consent")).length,
+        data_subject_requests: lgpdLogs.filter((log) => log.action.includes("lgpd_")).length,
+        patient_data_accesses: lgpdLogs.filter((log) => log.action.includes("patient_data")).length,
       };
     }
 
     if (!framework || framework === "cfm") {
       const cfmLogs = logs.filter((log) => log.compliance_category === "cfm");
       metrics.cfm = {
-        digital_signatures: cfmLogs.filter((log) =>
-          log.action.includes("signature"),
-        ).length,
-        medical_actions: cfmLogs.filter((log) =>
-          log.action.includes("medical_"),
-        ).length,
-        telemedicine_sessions: cfmLogs.filter((log) =>
-          log.action.includes("telemedicine"),
-        ).length,
+        digital_signatures: cfmLogs.filter((log) => log.action.includes("signature")).length,
+        medical_actions: cfmLogs.filter((log) => log.action.includes("medical_")).length,
+        telemedicine_sessions: cfmLogs.filter((log) => log.action.includes("telemedicine")).length,
       };
     }
 
@@ -203,12 +191,8 @@ class AuditReporter extends AuditLogger {
         (log) => log.compliance_category === "anvisa",
       );
       metrics.anvisa = {
-        adverse_events: anvisaLogs.filter((log) =>
-          log.action.includes("adverse"),
-        ).length,
-        product_usage: anvisaLogs.filter((log) =>
-          log.action.includes("anvisa_"),
-        ).length,
+        adverse_events: anvisaLogs.filter((log) => log.action.includes("adverse")).length,
+        product_usage: anvisaLogs.filter((log) => log.action.includes("anvisa_")).length,
       };
     }
 

@@ -4,17 +4,13 @@
  */
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
-import {
-  PerformanceMonitor,
-  getPerformanceMonitor,
-  initPerformanceMonitoring,
-} from "./client";
 import type {
   HealthcareContext,
   HealthcareMetricName,
   MonitoringConfig,
   MonitoringHooks,
 } from "../types";
+import { getPerformanceMonitor, initPerformanceMonitoring, PerformanceMonitor } from "./client";
 
 // Constants for healthcare monitoring
 const CACHE_DURATION_HOUR = 3_600_000;

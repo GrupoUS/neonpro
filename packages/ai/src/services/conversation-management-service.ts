@@ -12,7 +12,7 @@ export interface ConversationManagementInput {
 
 export interface ConversationManagementOutput {
   success: boolean;
-  data: any;
+  data: unknown;
   analytics?: ConversationAnalytics;
   recommendations?: ConversationRecommendation[];
   summary?: ConversationSummary;
@@ -174,7 +174,7 @@ export interface ConversationSession {
   title: string;
   status: "active" | "archived" | "deleted";
   context: ConversationContext;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   messages: ConversationMessage[];
   createdAt: Date;
   updatedAt: Date;
@@ -190,7 +190,7 @@ export interface ConversationMessage {
   responseTime: number;
   confidence?: number;
   complianceFlags: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
 }
 
@@ -205,7 +205,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
   private readonly supabase: SupabaseClient;
 
-  constructor(supabase: SupabaseClient, config: any) {
+  constructor(supabase: SupabaseClient, config: unknown) {
     super(config);
     this.supabase = supabase;
   }
@@ -216,7 +216,7 @@ export class ConversationManagementService extends EnhancedAIService<
     try {
       this.validateInput(input);
 
-      let result: any;
+      let result: unknown;
       let analytics: ConversationAnalytics | undefined;
       let recommendations: ConversationRecommendation[] | undefined;
       let summary: ConversationSummary | undefined;
@@ -382,7 +382,7 @@ export class ConversationManagementService extends EnhancedAIService<
   private async updateConversation(
     input: ConversationManagementInput,
   ): Promise<ConversationSession> {
-    const updates: any = {};
+    const updates: unknown = {};
 
     if (input.context) {
       updates.context = input.context;
@@ -499,11 +499,9 @@ export class ConversationManagementService extends EnhancedAIService<
       conversation.messages,
     );
     const topicDistribution = await this.analyzeTopics(conversation.messages);
-    const engagementMetrics =
-      await this.calculateEngagementMetrics(conversation);
+    const engagementMetrics = await this.calculateEngagementMetrics(conversation);
     const complianceMetrics = await this.assessCompliance(conversation);
-    const performanceMetrics =
-      await this.calculatePerformanceMetrics(conversation);
+    const performanceMetrics = await this.calculatePerformanceMetrics(conversation);
 
     return {
       totalMessages: conversation.messages.length,
@@ -524,10 +522,6 @@ export class ConversationManagementService extends EnhancedAIService<
 
     // Extract key information from messages
     const userMessages = conversation.messages.filter((m) => m.role === "user");
-    const _assistantMessages = conversation.messages.filter(
-      (m) => m.role === "assistant",
-    );
-
     // Generate AI-powered summary
     const overview = await this.generateOverview(conversation);
     const keyTopics = analytics.topicDistribution
@@ -574,8 +568,7 @@ export class ConversationManagementService extends EnhancedAIService<
         priority: "medium",
         category: "performance",
         title: "Optimize Response Time",
-        description:
-          "Average response time exceeds target threshold of 2 seconds",
+        description: "Average response time exceeds target threshold of 2 seconds",
         actionItems: [
           "Review AI model optimization",
           "Check cache configuration",
@@ -619,8 +612,7 @@ export class ConversationManagementService extends EnhancedAIService<
         priority: "urgent",
         category: "compliance",
         title: "Address LGPD Compliance Issues",
-        description:
-          "Conversation contains potential LGPD compliance violations",
+        description: "Conversation contains potential LGPD compliance violations",
         actionItems: [
           "Review data handling practices",
           "Ensure proper consent management",
@@ -662,7 +654,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
   private async exportConversation(
     input: ConversationManagementInput,
-  ): Promise<any> {
+  ): Promise<unknown> {
     const conversation = await this.getConversation(input.sessionId!);
     const analytics = input.options?.includeAnalytics
       ? await this.analyzeConversation(input.sessionId!)
@@ -740,10 +732,9 @@ export class ConversationManagementService extends EnhancedAIService<
 
     return {
       overall,
-      confidence:
-        total > 0
-          ? Math.max(positiveCount, negativeCount, neutralCount) / total
-          : 0,
+      confidence: total > 0
+        ? Math.max(positiveCount, negativeCount, neutralCount) / total
+        : 0,
       emotions: this.extractEmotions(messages),
       sentimentTimeline,
     };
@@ -829,15 +820,13 @@ export class ConversationManagementService extends EnhancedAIService<
       (m) => m.role === "assistant",
     );
 
-    const responseRate =
-      userMessages.length > 0
-        ? assistantMessages.length / userMessages.length
-        : 0;
-    const averageMessageLength =
-      userMessages.length > 0
-        ? userMessages.reduce((sum, m) => sum + m.content.length, 0) /
-          userMessages.length
-        : 0;
+    const responseRate = userMessages.length > 0
+      ? assistantMessages.length / userMessages.length
+      : 0;
+    const averageMessageLength = userMessages.length > 0
+      ? userMessages.reduce((sum, m) => sum + m.content.length, 0)
+        / userMessages.length
+      : 0;
 
     const conversationDepth = Math.min(conversation.messages.length / 2, 10); // Normalize to 0-10 scale
 
@@ -846,8 +835,8 @@ export class ConversationManagementService extends EnhancedAIService<
 
     const escalationTriggered = conversation.messages.some(
       (m) =>
-        m.metadata?.escalation_triggered ||
-        m.complianceFlags.includes("emergency_detected"),
+        m.metadata?.escalation_triggered
+        || m.complianceFlags.includes("emergency_detected"),
     );
 
     const goalAchievement = this.assessGoalAchievement(conversation);
@@ -868,20 +857,20 @@ export class ConversationManagementService extends EnhancedAIService<
     // Check compliance based on conversation content and metadata
     const lgpdCompliant = !conversation.messages.some(
       (m) =>
-        m.complianceFlags.includes("LGPD-001") ||
-        m.complianceFlags.includes("LGPD-002"),
+        m.complianceFlags.includes("LGPD-001")
+        || m.complianceFlags.includes("LGPD-002"),
     );
 
     const anvisaCompliant = !conversation.messages.some(
       (m) =>
-        m.complianceFlags.includes("ANVISA-001") ||
-        m.complianceFlags.includes("ANVISA-002"),
+        m.complianceFlags.includes("ANVISA-001")
+        || m.complianceFlags.includes("ANVISA-002"),
     );
 
     const cfmCompliant = !conversation.messages.some(
       (m) =>
-        m.complianceFlags.includes("CFM-001") ||
-        m.complianceFlags.includes("CFM-002"),
+        m.complianceFlags.includes("CFM-001")
+        || m.complianceFlags.includes("CFM-002"),
     );
 
     const auditTrailComplete = conversation.messages.every(
@@ -911,27 +900,24 @@ export class ConversationManagementService extends EnhancedAIService<
       (m) => m.role === "assistant",
     );
 
-    const averageResponseTime =
-      assistantMessages.length > 0
-        ? assistantMessages.reduce((sum, m) => sum + m.responseTime, 0) /
-          assistantMessages.length
-        : 0;
+    const averageResponseTime = assistantMessages.length > 0
+      ? assistantMessages.reduce((sum, m) => sum + m.responseTime, 0)
+        / assistantMessages.length
+      : 0;
 
     const systemResponseTime = averageResponseTime; // Simplified - same as AI response time
 
-    const aiConfidenceScore =
-      assistantMessages.length > 0
-        ? assistantMessages.reduce((sum, m) => sum + (m.confidence || 0.5), 0) /
-          assistantMessages.length
-        : 0.5;
+    const aiConfidenceScore = assistantMessages.length > 0
+      ? assistantMessages.reduce((sum, m) => sum + (m.confidence || 0.5), 0)
+        / assistantMessages.length
+      : 0.5;
 
     const errorMessages = conversation.messages.filter(
       (m) => m.metadata?.error || m.complianceFlags.includes("error"),
     );
-    const errorRate =
-      conversation.messages.length > 0
-        ? errorMessages.length / conversation.messages.length
-        : 0;
+    const errorRate = conversation.messages.length > 0
+      ? errorMessages.length / conversation.messages.length
+      : 0;
 
     const successRate = 1 - errorRate;
 
@@ -961,8 +947,7 @@ export class ConversationManagementService extends EnhancedAIService<
 
   // Additional helper methods
   private generateSessionTitle(context: ConversationContext): string {
-    const interface_type =
-      context.interfaceType === "external" ? "Paciente" : "Equipe";
+    const interface_type = context.interfaceType === "external" ? "Paciente" : "Equipe";
     const date = new Date().toLocaleDateString("pt-BR");
     const time = new Date().toLocaleTimeString("pt-BR", {
       hour: "2-digit",
@@ -972,7 +957,7 @@ export class ConversationManagementService extends EnhancedAIService<
     return `Chat ${interface_type} - ${date} ${time}`;
   }
 
-  private mapSessionData(data: any): ConversationSession {
+  private mapSessionData(data: unknown): ConversationSession {
     return {
       id: data.id,
       userId: data.user_id,
@@ -988,7 +973,7 @@ export class ConversationManagementService extends EnhancedAIService<
     };
   }
 
-  private readonly mapMessageData = (data: any): ConversationMessage => ({
+  private readonly mapMessageData = (data: unknown): ConversationMessage => ({
     id: data.id,
     sessionId: data.session_id,
     role: data.role,
@@ -1002,17 +987,17 @@ export class ConversationManagementService extends EnhancedAIService<
     createdAt: new Date(data.created_at),
   });
 
-  private calculateDuration(result: any): number {
+  private calculateDuration(result: unknown): number {
     if (result.updatedAt && result.createdAt) {
       return (
-        new Date(result.updatedAt).getTime() -
-        new Date(result.createdAt).getTime()
+        new Date(result.updatedAt).getTime()
+        - new Date(result.createdAt).getTime()
       );
     }
     return 0;
   }
 
-  private calculateParticipantCount(_result: any): number {
+  private calculateParticipantCount(_result: unknown): number {
     // In a chat session, typically 2 participants (user + assistant)
     return 2;
   }
@@ -1086,9 +1071,9 @@ export class ConversationManagementService extends EnhancedAIService<
     // Simplified goal achievement assessment
     const hasResolution = conversation.messages.some(
       (m) =>
-        m.content.toLowerCase().includes("resolvido") ||
-        m.content.toLowerCase().includes("agendado") ||
-        m.content.toLowerCase().includes("confirmado"),
+        m.content.toLowerCase().includes("resolvido")
+        || m.content.toLowerCase().includes("agendado")
+        || m.content.toLowerCase().includes("confirmado"),
     );
 
     return hasResolution ? 0.8 : 0.4;
@@ -1104,14 +1089,17 @@ export class ConversationManagementService extends EnhancedAIService<
   ): Promise<string> {
     const messageCount = conversation.messages.length;
     const duration = this.calculateDuration(conversation);
-    const interface_type =
-      conversation.context.interfaceType === "external" ? "paciente" : "equipe";
+    const interface_type = conversation.context.interfaceType === "external"
+      ? "paciente"
+      : "equipe";
 
     return (
-      `Conversa de ${interface_type} com ${messageCount} mensagens durante ${Math.round(
-        duration / 1000 / 60,
-      )} minutos. ` +
-      `Contexto: ${conversation.context.emergencyContext ? "emergencial" : "rotineiro"}.`
+      `Conversa de ${interface_type} com ${messageCount} mensagens durante ${
+        Math.round(
+          duration / 1000 / 60,
+        )
+      } minutos. `
+      + `Contexto: ${conversation.context.emergencyContext ? "emergencial" : "rotineiro"}.`
     );
   }
 
@@ -1204,14 +1192,14 @@ export class ConversationManagementService extends EnhancedAIService<
     analytics: ConversationAnalytics,
   ): Promise<SafetyAssessment> {
     const emergencyDetected = conversation.messages.some((m) =>
-      m.complianceFlags.includes("emergency_detected"),
+      m.complianceFlags.includes("emergency_detected")
     );
 
     const riskLevel = emergencyDetected
       ? "high"
       : analytics.engagementMetrics.escalationTriggered
-        ? "medium"
-        : "low";
+      ? "medium"
+      : "low";
 
     const concerns: string[] = [];
     const recommendations: string[] = [];
@@ -1232,11 +1220,11 @@ export class ConversationManagementService extends EnhancedAIService<
     };
   }
 
-  private anonymizeExportData(exportData: any): void {
+  private anonymizeExportData(exportData: unknown): void {
     // Remove or hash sensitive information
     if (exportData.session) {
       exportData.session.userId = this.hashValue(exportData.session.userId);
-      exportData.session.messages?.forEach((message: any) => {
+      exportData.session.messages?.forEach((message: unknown) => {
         // Remove or anonymize personal information from message content
         message.content = this.anonymizeText(message.content);
       });

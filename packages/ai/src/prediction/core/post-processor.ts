@@ -70,7 +70,7 @@ export class AestheticPostProcessor {
     );
 
     // Calculate expected duration (base 3-4 months)
-    const baseDuration = 3.5; // months
+    const { 5: baseDuration } = 3; // months
     const expectedDuration = baseDuration * durationFactor;
 
     // Estimate onset time (typically 3-14 days)
@@ -93,7 +93,7 @@ export class AestheticPostProcessor {
     targetAreas: string[],
   ): FillerVolumePrediction["outputs"] {
     // Raw outputs: [volume_per_area_1, volume_per_area_2, ..., confidence, longevity_factor]
-    const areaCount = targetAreas.length;
+    const { length: areaCount } = targetAreas;
     const volumeData = rawOutput.slice(0, areaCount);
     const confidence = Math.max(0, Math.min(1, rawOutput[areaCount]));
     const longevityFactor = Math.max(
@@ -233,7 +233,7 @@ export class AestheticPostProcessor {
   ): InjectionPoint[] {
     const areaDistribution: Record<
       string,
-      { percentage: number; technique: string }
+      { percentage: number; technique: string; }
     > = {
       forehead: { percentage: 0.25, technique: "horizontal_lines" },
       glabella: { percentage: 0.3, technique: "central_spread" },
@@ -251,7 +251,7 @@ export class AestheticPostProcessor {
         const areaUnits = Math.round(totalUnits * distribution.percentage);
 
         injectionPoints.push({
-          area: area as any,
+          area: area as unknown,
           units: areaUnits,
           depth: this.determineInjectionDepth(area),
           technique: distribution.technique,
@@ -278,10 +278,10 @@ export class AestheticPostProcessor {
     return depthMap[area] || "mid";
   }
 
-  private generateInjectionCoordinates(area: string): { x: number; y: number } {
+  private generateInjectionCoordinates(area: string): { x: number; y: number; } {
     // This would ideally use facial mapping data
     // For now, return relative coordinates
-    const coordinateMap: Record<string, { x: number; y: number }> = {
+    const coordinateMap: Record<string, { x: number; y: number; }> = {
       forehead: { x: 0.5, y: 0.2 },
       glabella: { x: 0.5, y: 0.3 },
       "crows-feet": { x: 0.7, y: 0.4 },
@@ -334,7 +334,7 @@ export class AestheticPostProcessor {
     const layerDistribution = this.calculateLayerDistribution(area, volume);
 
     return {
-      area: area as any,
+      area: area as unknown,
       volume: Math.round(volume * 10) / 10, // Round to 0.1ml
       product: productRecommendations[area] || "Medium consistency HA",
       layers: layerDistribution,
@@ -476,7 +476,7 @@ export class AestheticPostProcessor {
    * Generate treatment recommendations based on prediction results
    */
   generateTreatmentRecommendations(
-    result: any,
+    result: unknown,
     patient: PatientProfile,
   ): string[] {
     const recommendations: string[] = [];
@@ -603,9 +603,9 @@ export class AestheticPostProcessor {
     }
 
     if (
-      patient.skinType.includes("4") ||
-      patient.skinType.includes("5") ||
-      patient.skinType.includes("6")
+      patient.skinType.includes("4")
+      || patient.skinType.includes("5")
+      || patient.skinType.includes("6")
     ) {
       recommendations.push("Monitor closely for pigmentation changes");
     }

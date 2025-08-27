@@ -41,21 +41,10 @@ function runTest(test, testType = "UNIT") {
 
     if (testType === "E2E") {
       // Run Playwright E2E tests
-      const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;
-      const _output = execSync(command, {
-        cwd: process.cwd(),
-        encoding: "utf8",
-        timeout: test.timeout + 30_000,
-      });
-    } else {
+      const command = `npx playwright test ${test.file} --reporter=list --timeout=${test.timeout}`;    } else {
       // Run Jest tests with isolated configuration
-      const command = `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;
-      const _output = execSync(command, {
-        cwd: path.join(process.cwd(), "apps/web"),
-        encoding: "utf8",
-        timeout: test.timeout + 30_000,
-      });
-    }
+      const command =
+        `npx jest ${test.file} --verbose --detectOpenHandles --forceExit --timeout=${test.timeout}`;    }
 
     const endTime = Date.now();
     const duration = (endTime - startTime) / 1000;
@@ -70,17 +59,12 @@ function runTest(test, testType = "UNIT") {
 function generateReport(results) {
   const passed = results.filter((r) => r.status === "PASSED").length;
   const failed = results.filter((r) => r.status === "FAILED").length;
-  const total = results.length;
+  const { length: total } = results;
 
   if (passed >= 3) {
   } else {
   }
   results.forEach((result) => {
-    const _status = result.status === "PASSED" ? "✅" : "❌";
-    const _duration = result.duration
-      ? ` (${result.duration.toFixed(2)}s)`
-      : "";
-
     if (result.status === "FAILED" && result.error) {
     }
   });
@@ -118,8 +102,6 @@ async function main() {
   }
 
   // Generate comprehensive report
-  const _report = generateReport(results);
-
   // Exit with appropriate code
   const hasFailures = results.some((r) => r.status === "FAILED");
   process.exit(hasFailures ? 1 : 0);

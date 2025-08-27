@@ -19,13 +19,6 @@ import { getViolations, injectAxe } from "axe-playwright";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // WCAG 2.1 AA+ Color Contrast Requirements
-const _COLOR_CONTRAST_STANDARDS = {
-  NORMAL_TEXT: 4.5, // AA standard for normal text
-  LARGE_TEXT: 3, // AA standard for large text (18pt+ or 14pt+ bold)
-  AAA_NORMAL: 7, // AAA standard for enhanced readability
-  AAA_LARGE: 4.5, // AAA standard for large text
-};
-
 // Healthcare-specific accessibility requirements
 const HEALTHCARE_A11Y_REQUIREMENTS = {
   EMERGENCY_ACCESS_TIME: 3000, // Max 3 seconds to access emergency features
@@ -36,7 +29,7 @@ const HEALTHCARE_A11Y_REQUIREMENTS = {
 
 interface AccessibilityTestResult {
   url: string;
-  violations: any[];
+  violations: unknown[];
   passes: number;
   incomplete: number;
   timestamp: string;
@@ -205,9 +198,9 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
       // Check for healthcare-specific accessibility requirements
       const healthcareViolations = result.violations.filter(
         (v) =>
-          v.description?.includes("medical") ||
-          v.description?.includes("health") ||
-          v.tags?.includes("healthcare"),
+          v.description?.includes("medical")
+          || v.description?.includes("health")
+          || v.tags?.includes("healthcare"),
       );
 
       expect(healthcareViolations).toHaveLength(0);
@@ -215,9 +208,9 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
       // Verify complex medical forms have adequate error handling
       const errorHandlingViolations = result.violations.filter(
         (v) =>
-          v.id === "aria-valid" ||
-          v.id === "aria-describedby" ||
-          v.id === "aria-errormessage",
+          v.id === "aria-valid"
+          || v.id === "aria-describedby"
+          || v.id === "aria-errormessage",
       );
 
       expect(errorHandlingViolations).toHaveLength(0);
@@ -233,14 +226,15 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
       const datePickerViolations = result.violations.filter((v) =>
         v.nodes?.some(
           (node) => node.html?.includes("date") || node.html?.includes("time"),
-        ),
+        )
       );
 
       expect(datePickerViolations).toHaveLength(0);
 
       // Verify keyboard navigation works for appointment booking
-      const keyboardAccessible =
-        await accessibilityTester.testKeyboardNavigation("/appointments/book");
+      const keyboardAccessible = await accessibilityTester.testKeyboardNavigation(
+        "/appointments/book",
+      );
       expect(keyboardAccessible).toBeTruthy();
     });
   });
@@ -321,8 +315,7 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
       ];
 
       for (const page of keyboardNavigationPages) {
-        const keyboardAccessible =
-          await accessibilityTester.testKeyboardNavigation(page);
+        const keyboardAccessible = await accessibilityTester.testKeyboardNavigation(page);
         expect(keyboardAccessible).toBeTruthy();
 
         // Test specific keyboard interactions
@@ -383,16 +376,15 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
         // Check for ARIA-related violations
         const ariaViolations = result.violations.filter(
           (v) =>
-            v.id.includes("aria") ||
-            v.id.includes("label") ||
-            v.id.includes("role"),
+            v.id.includes("aria")
+            || v.id.includes("label")
+            || v.id.includes("role"),
         );
 
         expect(ariaViolations).toHaveLength(0);
 
         // Verify medical data has proper semantic markup
-        const medicalDataAccessibility =
-          await testMedicalDataAccessibility(interface_);
+        const medicalDataAccessibility = await testMedicalDataAccessibility(interface_);
         expect(medicalDataAccessibility.hasProperSemantics).toBeTruthy();
         expect(medicalDataAccessibility.hasContextualLabels).toBeTruthy();
       }
@@ -430,8 +422,7 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
       ];
 
       for (const imageType of medicalImageTypes) {
-        const imageAccessibility =
-          await testMedicalImageAccessibility(imageType);
+        const imageAccessibility = await testMedicalImageAccessibility(imageType);
 
         expect(imageAccessibility.hasAltText).toBeTruthy();
         expect(imageAccessibility.altTextDescriptive).toBeTruthy();
@@ -551,7 +542,7 @@ describe("♿ WCAG 2.1 AA+ Accessibility Compliance", () => {
 
 // Mock implementation functions for accessibility testing
 
-async function testHealthcareAlert(alert: any) {
+async function testHealthcareAlert(alert: unknown) {
   return {
     hasHighContrast: alert.type === "emergency",
     hasAudioIndicator: alert.type === "emergency" || alert.type === "critical",
@@ -602,7 +593,7 @@ async function testMedicalDataAccessibility(_interface_: string) {
   };
 }
 
-async function testScreenReaderAnnouncement(info: any) {
+async function testScreenReaderAnnouncement(info: unknown) {
   return {
     hasAriaLive: true,
     hasProperPoliteness: true,
@@ -616,8 +607,7 @@ async function testMedicalImageAccessibility(imageType: string) {
     hasAltText: true,
     altTextDescriptive: true,
     medicalContextIncluded: true,
-    hasLongDescription:
-      imageType.includes("chart") || imageType.includes("graph"),
+    hasLongDescription: imageType.includes("chart") || imageType.includes("graph"),
   };
 }
 
@@ -647,7 +637,7 @@ async function testSessionTimeoutAccessibility() {
   };
 }
 
-async function testResponsiveAccessibility(_viewport: any) {
+async function testResponsiveAccessibility(_viewport: unknown) {
   return {
     contentAccessible: true,
     navigationUsable: true,

@@ -14,7 +14,7 @@ const server = setupServer(
   }),
   // Mock export endpoint
   rest.post("/api/analytics/export", (req, res, ctx) => {
-    const { format } = req.body as { format: string };
+    const { format } = req.body as { format: string; };
 
     switch (format) {
       case "pdf": {
@@ -76,7 +76,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
+  return ({ children }: { children: React.ReactNode; }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
@@ -125,8 +125,6 @@ describe("analytics Dashboard Integration", () => {
     server.use(
       rest.get("/api/analytics/data", (req, res, ctx) => {
         const startDate = req.url.searchParams.get("startDate");
-        const _endDate = req.url.searchParams.get("endDate");
-
         // Return different data based on date range
         const filteredData = {
           ...mockAnalyticsData,

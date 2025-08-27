@@ -782,10 +782,8 @@ excellence.
 ```css
 /* Brand Typography System */
 --font-brand-primary: "Montserrat", sans-serif; /* Brazilian-designed warmth */
---font-brand-secondary:
-  "Source Sans Pro", sans-serif; /* International readability */
---font-medical-data:
-  "IBM Plex Mono", monospace; /* Technical precision with personality */
+--font-brand-secondary: "Source Sans Pro", sans-serif; /* International readability */
+--font-medical-data: "IBM Plex Mono", monospace; /* Technical precision with personality */
 
 /* Portuguese Language Optimization */
 --portuguese-text-scaling: 1.1; /* Account for longer Portuguese words */

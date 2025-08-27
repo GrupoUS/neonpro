@@ -72,14 +72,12 @@ vi.mock<typeof import("../../lib/api/hono-client")>(
   () => ({
     honoClient: mockHonoClient,
   }),
-); // Test wrapper component
-const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
+); // Test wrapper component }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         retry: 3,
-        retryDelay: (attemptIndex) =>
-          Math.min(1000 * 2 ** attemptIndex, 30_000),
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
       },
       mutations: {
         retry: 2,
@@ -87,9 +85,7 @@ const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
     },
   });
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 describe("aPI Client Integration Tests", () => {
@@ -166,8 +162,8 @@ describe("aPI Client Integration Tests", () => {
       };
 
       const authResponse: ApiResponse<{
-        user: any;
-        session: any;
+        user: unknown;
+        session: unknown;
         access_token: string;
         refresh_token: string;
       }> = {
@@ -357,7 +353,7 @@ describe("aPI Client Integration Tests", () => {
       };
 
       const patientsResponse: ApiResponse<{
-        patients: any[];
+        patients: unknown[];
         total: number;
         page: number;
         limit: number;
@@ -415,7 +411,7 @@ describe("aPI Client Integration Tests", () => {
         });
 
       // Mock retry logic implementation
-      const retryRequest = async (fn: () => Promise<any>, maxRetries = 3) => {
+      const retryRequest = async (fn: () => Promise<unknown>, maxRetries = 3) => {
         for (let attempt = 0; attempt < maxRetries; attempt++) {
           try {
             return await fn();
@@ -423,9 +419,7 @@ describe("aPI Client Integration Tests", () => {
             if (attempt === maxRetries - 1) {
               throw error;
             }
-            await new Promise((resolve) =>
-              setTimeout(resolve, 1000 * (attempt + 1)),
-            );
+            await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
           }
         }
       };
@@ -434,7 +428,7 @@ describe("aPI Client Integration Tests", () => {
         mockHonoClient.api.patients.$get({
           query: {},
           headers: { Authorization: "Bearer jwt-access-token" },
-        }),
+        })
       );
 
       expect(mockHonoClient.api.patients.$get).toHaveBeenCalledTimes(3);

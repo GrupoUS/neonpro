@@ -213,8 +213,7 @@ export class BlueGreenDeployer {
     const results = await Promise.allSettled(checks);
     const failures = results
       .filter(
-        (result): result is PromiseRejectedResult =>
-          result.status === "rejected",
+        (result): result is PromiseRejectedResult => result.status === "rejected",
       )
       .map((result) => result.reason);
 
@@ -244,8 +243,6 @@ export class BlueGreenDeployer {
   private async deployToEnvironment(
     environment: "blue" | "green",
   ): Promise<void> {
-    const _envConfig = this.config.environments[environment];
-
     try {
       // Healthcare-specific deployment steps
       await this.deployHealthcareCompliantVersion(environment);
@@ -342,8 +339,7 @@ export class BlueGreenDeployer {
     const results = await Promise.allSettled(validations);
     const failures = results
       .filter(
-        (result): result is PromiseRejectedResult =>
-          result.status === "rejected",
+        (result): result is PromiseRejectedResult => result.status === "rejected",
       )
       .map((result) => result.reason);
 
@@ -513,6 +509,7 @@ if (require.main === module) {
   deployer
     .deploy()
     .then((result) => {
+      return;
       process.exit(result.success ? 0 : 1);
     })
     .catch((_error) => {

@@ -151,7 +151,8 @@ const mockCommunications = {
       },
       {
         id: 5,
-        text: "Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.",
+        text:
+          "Perfeito! Isso é esperado nas primeiras 24-48h. Continue com os cuidados que orientei.",
         timestamp: "2024-08-18T14:00:00Z",
         from: "doctor",
         type: "text",
@@ -220,7 +221,7 @@ function ConversationList({
   conversations,
   onSelectConversation,
   selectedId,
-}: any) {
+}: unknown) {
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -257,7 +258,7 @@ function ConversationList({
 
   return (
     <div className="space-y-2">
-      {conversations.map((conversation: any) => (
+      {conversations.map((conversation: unknown) => (
         <Card
           className={cn(
             "cursor-pointer border-l-4 transition-all hover:shadow-md",
@@ -287,9 +288,7 @@ function ConversationList({
                     <h3 className="truncate font-medium text-sm">
                       {conversation.participant.name}
                     </h3>
-                    {conversation.isPinned && (
-                      <Pin className="h-3 w-3 text-muted-foreground" />
-                    )}
+                    {conversation.isPinned && <Pin className="h-3 w-3 text-muted-foreground" />}
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="text-muted-foreground text-xs">
@@ -318,7 +317,7 @@ function ConversationList({
   );
 }
 
-function ChatWindow({ conversation }: any) {
+function ChatWindow({ conversation }: unknown) {
   const [message, setMessage] = useState("");
   const [_showCallOptions, _setShowCallOptions] = useState(false);
 
@@ -371,8 +370,7 @@ function ChatWindow({ conversation }: any) {
             <div>
               <h3 className="font-medium">{conversation.participant.name}</h3>
               <p className="text-muted-foreground text-sm">
-                {conversation.participant.role} •{" "}
-                {conversation.participant.clinic}
+                {conversation.participant.role} • {conversation.participant.clinic}
               </p>
               <p className="text-green-600 text-xs">
                 {conversation.participant.isOnline ? "Online" : "Offline"}
@@ -396,7 +394,7 @@ function ChatWindow({ conversation }: any) {
 
       {/* Messages */}
       <div className="flex-1 space-y-4 overflow-y-auto p-4">
-        {conversation.messages.map((msg: any) => (
+        {conversation.messages.map((msg: unknown) => (
           <div
             className={cn(
               "flex",
@@ -466,7 +464,7 @@ function ChatWindow({ conversation }: any) {
   );
 }
 
-function NotificationsList({ notifications }: any) {
+function NotificationsList({ notifications }: unknown) {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case "appointment": {
@@ -503,7 +501,7 @@ function NotificationsList({ notifications }: any) {
 
   return (
     <div className="space-y-3">
-      {notifications.map((notification: any) => (
+      {notifications.map((notification: unknown) => (
         <Card
           className={cn(
             "cursor-pointer transition-all hover:shadow-md",
@@ -548,9 +546,7 @@ function NotificationsList({ notifications }: any) {
               </div>
 
               <div className="flex items-center space-x-1">
-                {!notification.read && (
-                  <div className="h-2 w-2 rounded-full bg-primary" />
-                )}
+                {!notification.read && <div className="h-2 w-2 rounded-full bg-primary" />}
                 <Button size="sm" variant="ghost">
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -563,10 +559,10 @@ function NotificationsList({ notifications }: any) {
   );
 }
 
-function EmergencyContacts({ contacts }: any) {
+function EmergencyContacts({ contacts }: unknown) {
   return (
     <div className="space-y-4">
-      {contacts.map((contact: any) => (
+      {contacts.map((contact: unknown) => (
         <Card className="border-l-4 border-l-red-500" key={contact.id}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -729,16 +725,16 @@ export function CommunicationHub() {
             {/* Chat Window */}
             <div className="lg:col-span-2">
               <Card className="h-[600px]">
-                {selectedConversation ? (
-                  <ChatWindow conversation={selectedConversation} />
-                ) : (
-                  <CardContent className="flex h-full items-center justify-center">
-                    <div className="text-center text-muted-foreground">
-                      <MessageCircle className="mx-auto mb-4 h-12 w-12" />
-                      <p>Selecione uma conversa para começar</p>
-                    </div>
-                  </CardContent>
-                )}
+                {selectedConversation
+                  ? <ChatWindow conversation={selectedConversation} />
+                  : (
+                    <CardContent className="flex h-full items-center justify-center">
+                      <div className="text-center text-muted-foreground">
+                        <MessageCircle className="mx-auto mb-4 h-12 w-12" />
+                        <p>Selecione uma conversa para começar</p>
+                      </div>
+                    </CardContent>
+                  )}
               </Card>
             </div>
           </div>

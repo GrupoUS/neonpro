@@ -85,13 +85,13 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
                         <React.Fragment key={item.href || item.title || index}>
                           {index > 0 && <BreadcrumbSeparator />}
                           <BreadcrumbItem>
-                            {item.href ? (
-                              <BreadcrumbLink href={item.href}>
-                                {item.title}
-                              </BreadcrumbLink>
-                            ) : (
-                              <BreadcrumbPage>{item.title}</BreadcrumbPage>
-                            )}
+                            {item.href
+                              ? (
+                                <BreadcrumbLink href={item.href}>
+                                  {item.title}
+                                </BreadcrumbLink>
+                              )
+                              : <BreadcrumbPage>{item.title}</BreadcrumbPage>}
                           </BreadcrumbItem>
                         </React.Fragment>
                       ))}
@@ -107,15 +107,11 @@ const DashboardLayout = React.forwardRef<HTMLDivElement, DashboardLayoutProps>(
                 )}
 
                 {/* Page Description */}
-                {description && (
-                  <p className="text-muted-foreground">{description}</p>
-                )}
+                {description && <p className="text-muted-foreground">{description}</p>}
               </div>
 
               {/* Header Actions */}
-              {headerActions && (
-                <div className="flex items-center gap-3">{headerActions}</div>
-              )}
+              {headerActions && <div className="flex items-center gap-3">{headerActions}</div>}
             </div>
           </header>
 

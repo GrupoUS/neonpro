@@ -265,9 +265,8 @@ export class RiskScoringEngine {
 
     // Data freshness validation for real-time assessment
     const now = new Date();
-    const vitalSignsAge =
-      now.getTime() -
-      input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
+    const vitalSignsAge = now.getTime()
+      - input.currentCondition.vitalSigns.bloodPressure.timestamp.getTime();
     const maxAge = 24 * 60 * 60 * 1000; // 24 hours
 
     if (vitalSignsAge > maxAge) {
@@ -290,16 +289,17 @@ export class RiskScoringEngine {
 
     // Medication interaction validation
     if (input.procedureSpecific?.drugInteractions) {
-      const contraindicatedInteractions =
-        input.procedureSpecific.drugInteractions.filter(
-          (interaction) => interaction.severity === "CONTRAINDICATED",
-        );
+      const contraindicatedInteractions = input.procedureSpecific.drugInteractions.filter(
+        (interaction) => interaction.severity === "CONTRAINDICATED",
+      );
 
       if (contraindicatedInteractions.length > 0) {
         throw new Error(
-          `Interações medicamentosas contraindicadas detectadas: ${contraindicatedInteractions
-            .map((i) => `${i.medication1} + ${i.medication2}`)
-            .join(", ")}`,
+          `Interações medicamentosas contraindicadas detectadas: ${
+            contraindicatedInteractions
+              .map((i) => `${i.medication1} + ${i.medication2}`)
+              .join(", ")
+          }`,
         );
       }
     }
@@ -324,7 +324,7 @@ export class RiskScoringEngine {
     scoreBreakdown: RiskScoreBreakdown,
     input: RiskAssessmentInput,
   ): ProfessionalOversight {
-    const riskLevel = scoreBreakdown.riskLevel;
+    const { riskLevel: riskLevel } = scoreBreakdown;
     const thresholds = this.oversightConfig.autoReviewThresholds[riskLevel];
 
     // Check for specialist consultation requirements
@@ -341,10 +341,9 @@ export class RiskScoringEngine {
     if (highRiskConditions.length > 0 && scoreBreakdown.overallScore > 70) {
       specialistConsultation = {
         specialty: this.determineRequiredSpecialty(highRiskConditions, input),
-        urgency:
-          scoreBreakdown.overallScore > 85
-            ? ("URGENT" as const)
-            : ("ROUTINE" as const),
+        urgency: scoreBreakdown.overallScore > 85
+          ? ("URGENT" as const)
+          : ("ROUTINE" as const),
         reason: `Condições de alto risco: ${highRiskConditions.join(", ")}`,
       };
     }
@@ -449,7 +448,8 @@ export class RiskScoringEngine {
         category: "Risco Crítico",
         priority: "CRITICAL",
         action: "Revisão médica imediata e monitoramento contínuo",
-        rationale: `Score de risco crítico (${scoreBreakdown.overallScore}/100) requer intervenção imediata`,
+        rationale:
+          `Score de risco crítico (${scoreBreakdown.overallScore}/100) requer intervenção imediata`,
         timeframe: "Imediato",
       });
     }
@@ -457,14 +457,15 @@ export class RiskScoringEngine {
     // Vital signs recommendations
     const vitals = input.currentCondition.vitalSigns;
     if (
-      vitals.bloodPressure.systolic > 160 ||
-      vitals.bloodPressure.diastolic > 100
+      vitals.bloodPressure.systolic > 160
+      || vitals.bloodPressure.diastolic > 100
     ) {
       recommendations.push({
         category: "Pressão Arterial",
         priority: "HIGH",
         action: "Monitoramento de pressão arterial e ajuste medicamentoso",
-        rationale: `Pressão arterial elevada: ${vitals.bloodPressure.systolic}/${vitals.bloodPressure.diastolic} mmHg`,
+        rationale:
+          `Pressão arterial elevada: ${vitals.bloodPressure.systolic}/${vitals.bloodPressure.diastolic} mmHg`,
         timeframe: "2-4 horas",
       });
     }
@@ -475,8 +476,7 @@ export class RiskScoringEngine {
         priority: vitals.oxygenSaturation.percentage < 90 ? "CRITICAL" : "HIGH",
         action: "Avaliação respiratória e suporte de oxigênio se necessário",
         rationale: `Saturação de oxigênio baixa: ${vitals.oxygenSaturation.percentage}%`,
-        timeframe:
-          vitals.oxygenSaturation.percentage < 90 ? "Imediato" : "1 hora",
+        timeframe: vitals.oxygenSaturation.percentage < 90 ? "Imediato" : "1 hora",
       });
     }
 
@@ -493,8 +493,8 @@ export class RiskScoringEngine {
 
     // Procedure-specific recommendations
     if (
-      input.procedureSpecific &&
-      scoreBreakdown.categoryScores.procedureSpecific > 50
+      input.procedureSpecific
+      && scoreBreakdown.categoryScores.procedureSpecific > 50
     ) {
       recommendations.push({
         category: "Procedimento",
@@ -522,8 +522,7 @@ export class RiskScoringEngine {
       recommendations.push({
         category: "Medicações",
         priority: "MEDIUM",
-        action:
-          "Revisão farmacêutica para identificar interações e simplificar regime",
+        action: "Revisão farmacêutica para identificar interações e simplificar regime",
         rationale: `Polifarmácia detectada: ${medicationCount} medicações simultâneas`,
         timeframe: "72 horas",
       });
@@ -628,16 +627,13 @@ export class RiskScoringEngine {
       smokingStatus: input.demographicFactors.smokingStatus,
       // Include vital signs (rounded to reduce cache misses)
       vitalSigns: {
-        systolic:
-          Math.round(
-            input.currentCondition.vitalSigns.bloodPressure.systolic / 5,
-          ) * 5,
-        diastolic:
-          Math.round(
-            input.currentCondition.vitalSigns.bloodPressure.diastolic / 5,
-          ) * 5,
-        heartRate:
-          Math.round(input.currentCondition.vitalSigns.heartRate.bpm / 5) * 5,
+        systolic: Math.round(
+          input.currentCondition.vitalSigns.bloodPressure.systolic / 5,
+        ) * 5,
+        diastolic: Math.round(
+          input.currentCondition.vitalSigns.bloodPressure.diastolic / 5,
+        ) * 5,
+        heartRate: Math.round(input.currentCondition.vitalSigns.heartRate.bpm / 5) * 5,
         oxygenSat: Math.round(
           input.currentCondition.vitalSigns.oxygenSaturation.percentage,
         ),
@@ -735,25 +731,7 @@ export class RiskScoringEngine {
     action: "CREATED" | "VIEWED" | "MODIFIED" | "CACHED_RESULT",
     performedBy: string,
   ): Promise<void> {
-    // This would integrate with the audit trail service
-    const _auditEntry = {
-      id: crypto.randomUUID(),
-      patientId: result.patientId,
-      assessmentId: result.id,
-      action,
-      performedBy,
-      performedAt: new Date(),
-      ipAddress: "127.0.0.1", // Would be actual IP
-      userAgent: "RiskScoringEngine",
-      dataAccessed: ["risk_score", "recommendations"],
-      dataModified: action === "CREATED" ? ["risk_assessment"] : [],
-      justification: "Risk assessment calculation for patient care",
-      digitalSignature: "digital_signature_placeholder",
-      legalBasis: "VITAL_INTEREST" as const,
-      dataSubjectNotified: false,
-      retentionExpiry: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000), // 7 years
-    };
-  }
+    // This would integrate with the audit trail service  }
 
   private updateAuditTrail(
     result: RiskAssessmentResult,
@@ -803,10 +781,8 @@ export class RiskScoringEngine {
         {
           category: "Erro do Sistema",
           priority: "CRITICAL",
-          action:
-            "Revisão médica manual imediata devido a falha no sistema de avaliação de risco",
-          rationale:
-            "Sistema de avaliação de risco falhou - revisão manual necessária",
+          action: "Revisão médica manual imediata devido a falha no sistema de avaliação de risco",
+          rationale: "Sistema de avaliação de risco falhou - revisão manual necessária",
           timeframe: "Imediato",
         },
       ],
@@ -855,16 +831,14 @@ export class RiskScoringEngine {
       (sum, entry) => sum + entry.hitCount,
       0,
     );
-    const cacheHitRate =
-      cacheEntries.length > 0
-        ? (totalCacheRequests /
-            (this.performanceMetrics.length + totalCacheRequests)) *
-          100
-        : 0;
+    const cacheHitRate = cacheEntries.length > 0
+      ? (totalCacheRequests
+        / (this.performanceMetrics.length + totalCacheRequests))
+        * 100
+      : 0;
 
     return {
-      averageProcessingTime:
-        totalProcessingTime / this.performanceMetrics.length,
+      averageProcessingTime: totalProcessingTime / this.performanceMetrics.length,
       averageAccuracy: totalAccuracy / this.performanceMetrics.length,
       totalAssessments: this.performanceMetrics.length,
       cacheHitRate,

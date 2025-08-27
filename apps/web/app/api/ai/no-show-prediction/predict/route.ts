@@ -1,4 +1,4 @@
-import { createServerClient } from "@neonpro/db";
+import { createServerClient } from "@neonpro/database";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -8,7 +8,7 @@ interface NoShowPredictionRequest {
   appointmentId: string;
   appointmentDate: string;
   appointmentTime: string;
-  patientData?: Record<string, any>;
+  patientData?: Record<string, unknown>;
 }
 
 export async function POST(request: NextRequest) {
@@ -52,14 +52,13 @@ export async function POST(request: NextRequest) {
     );
     const riskScore = (patientIdNum % 100) / 100;
 
-    const riskCategory: "low" | "medium" | "high" | "very_high" =
-      riskScore < 0.3
-        ? "low"
-        : riskScore < 0.6
-          ? "medium"
-          : riskScore < 0.8
-            ? "high"
-            : "very_high";
+    const riskCategory: "low" | "medium" | "high" | "very_high" = riskScore < 0.3
+      ? "low"
+      : riskScore < 0.6
+      ? "medium"
+      : riskScore < 0.8
+      ? "high"
+      : "very_high";
 
     const prediction = {
       patientId: predictionRequest.patientId,
@@ -80,10 +79,9 @@ export async function POST(request: NextRequest) {
       recommendations: [
         {
           actionType: "reminder" as const,
-          priority:
-            riskCategory === "very_high"
-              ? ("urgent" as const)
-              : ("medium" as const),
+          priority: riskCategory === "very_high"
+            ? ("urgent" as const)
+            : ("medium" as const),
           description: "Ligação de confirmação recomendada",
           estimatedImpact: 0.35,
           implementationCost: "low" as const,
@@ -108,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(prediction);
   } catch (error) {
-    console.error("Error creating prediction:", error);
+    // console.error("Error creating prediction:", error);
     return NextResponse.json(
       { error: "Failed to create prediction" },
       { status: 500 },

@@ -16,7 +16,7 @@ export interface TimeSlot {
 export interface UseRealtimeAvailabilityOptions {
   professionalId?: string;
   serviceId?: string;
-  dateRange?: { start: Date; end: Date };
+  dateRange?: { start: Date; end: Date; };
   autoRefresh?: boolean;
 }
 
@@ -35,11 +35,8 @@ export function useRealtimeAvailability(
 ): UseRealtimeAvailabilityReturn {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(undefined);
+  const [error, setError] = useState<string | null>();
   const [isConnected, setIsConnected] = useState(false);
-
-  const _subscriptionRef = useRef<any>(null);
-
   const refreshSlots = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
@@ -62,8 +59,7 @@ export function useRealtimeAvailability(
       setSlots(mockSlots);
       setIsConnected(true);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to refresh slots";
+      const errorMessage = error instanceof Error ? error.message : "Failed to refresh slots";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -73,15 +69,12 @@ export function useRealtimeAvailability(
   const bookSlot = useCallback(async (slotId: string): Promise<boolean> => {
     try {
       setSlots((prev) =>
-        prev.map((slot) =>
-          slot.id === slotId ? { ...slot, is_available: false } : slot,
-        ),
+        prev.map((slot) => slot.id === slotId ? { ...slot, is_available: false } : slot)
       );
 
       return true;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to book slot";
+      const errorMessage = error instanceof Error ? error.message : "Failed to book slot";
       setError(errorMessage);
       return false;
     }
@@ -90,15 +83,12 @@ export function useRealtimeAvailability(
   const releaseSlot = useCallback(async (slotId: string): Promise<boolean> => {
     try {
       setSlots((prev) =>
-        prev.map((slot) =>
-          slot.id === slotId ? { ...slot, is_available: true } : slot,
-        ),
+        prev.map((slot) => slot.id === slotId ? { ...slot, is_available: true } : slot)
       );
 
       return true;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to release slot";
+      const errorMessage = error instanceof Error ? error.message : "Failed to release slot";
       setError(errorMessage);
       return false;
     }

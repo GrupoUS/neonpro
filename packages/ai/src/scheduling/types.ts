@@ -340,7 +340,7 @@ export interface AISchedulingAudit {
   action: string;
   userId: string;
   appointmentId: string;
-  changes: Record<string, any>;
+  changes: Record<string, unknown>;
   aiDecision: boolean;
   confidence: number;
   outcome: "success" | "failure" | "partial";

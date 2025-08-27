@@ -8,13 +8,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import {
-  emailSchema,
-  phoneSchema,
-  validateEmail,
-  validatePhone,
-  z,
-} from "../src/validation";
+import { emailSchema, phoneSchema, validateEmail, validatePhone, z } from "../src/validation";
 
 describe("validation Utils - Email", () => {
   describe("emailSchema", () => {

@@ -27,7 +27,7 @@ export function ResponsiveLayout({
 
   useEffect(() => {
     const handleResize = () => {
-      const width = window.innerWidth;
+      const { innerWidth: width } = window;
       if (width < 768) {
         setViewport("mobile");
       } else if (width < 1024) {
@@ -45,30 +45,28 @@ export function ResponsiveLayout({
   // Monitor connectivity for Brazilian network conditions
   useEffect(() => {
     if (connectivity) {
-      const isSlow =
-        connectivity.type === "2G" ||
-        (connectivity.type === "3G" && connectivity.strength === "weak") ||
-        connectivity.latency > 1000;
+      const isSlow = connectivity.type === "2G"
+        || (connectivity.type === "3G" && connectivity.strength === "weak")
+        || connectivity.latency > 1000;
       setIsLowBandwidth(isSlow);
       setConnectionSpeed(`${connectivity.type} ${connectivity.strength}`);
     }
 
     // Use Network Information API if available
     if ("connection" in navigator) {
-      const connection = (navigator as any).connection;
+      const connection = (navigator as unknown).connection;
       const updateConnectionInfo = () => {
         setConnectionSpeed(connection.effectiveType || "unknown");
         setIsLowBandwidth(
-          connection.effectiveType === "slow-2g" ||
-            connection.effectiveType === "2g",
+          connection.effectiveType === "slow-2g"
+            || connection.effectiveType === "2g",
         );
       };
 
       updateConnectionInfo();
       connection.addEventListener("change", updateConnectionInfo);
 
-      return () =>
-        connection.removeEventListener("change", updateConnectionInfo);
+      return () => connection.removeEventListener("change", updateConnectionInfo);
     }
   }, [connectivity]);
 
@@ -121,11 +119,9 @@ export function ResponsiveLayout({
       } ${className}`}
       data-connectivity={connectionSpeed}
       data-viewport={viewport}
-      style={
-        {
-          "--min-touch-target": (optimizations as any).minTouchTarget || "48px",
-        } as React.CSSProperties
-      }
+      style={{
+        "--min-touch-target": (optimizations as unknown).minTouchTarget || "48px",
+      } as React.CSSProperties}
     >
       {/* Connectivity Status Bar - Critical for Brazilian healthcare */}
       <div
@@ -163,8 +159,8 @@ export function ResponsiveLayout({
           viewport === "mobile"
             ? "mobile-layout"
             : viewport === "tablet"
-              ? "tablet-layout"
-              : "desktop-layout"
+            ? "tablet-layout"
+            : "desktop-layout"
         }`}
       >
         {viewport === "mobile" && (
@@ -230,9 +226,9 @@ export function ResponsiveLayout({
 
         /* Touch targets for tablets - healthcare requirement */
         .tablet-layout button,
-        .tablet-layout [role="button"],
+        .tablet-layout [// role="button" - consider using actual button element],
         .mobile-layout button,
-        .mobile-layout [role="button"] {
+        .mobile-layout [// role="button" - consider using actual button element] {
           min-height: var(--min-touch-target);
           min-width: var(--min-touch-target);
         }
@@ -249,7 +245,7 @@ function MobileLayout({
 }: {
   children: ReactNode;
   isLowBandwidth: boolean;
-  optimizations: any;
+  optimizations: unknown;
 }) {
   return (
     <div className="mobile-layout">
@@ -292,7 +288,7 @@ function TabletLayout({
 }: {
   children: ReactNode;
   isLowBandwidth: boolean;
-  optimizations: any;
+  optimizations: unknown;
 }) {
   return (
     <div className="tablet-layout flex h-screen">
@@ -333,7 +329,7 @@ function DesktopLayout({
 }: {
   children: ReactNode;
   isLowBandwidth: boolean;
-  optimizations: any;
+  optimizations: unknown;
 }) {
   return (
     <div className="desktop-layout flex h-screen">

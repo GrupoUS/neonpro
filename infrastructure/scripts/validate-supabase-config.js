@@ -8,8 +8,6 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const _chalk = require("chalk");
-
 // Target Supabase project configuration
 const TARGET_CONFIG = {
   project_id: "gfkskrkbnawkuppazkpt",
@@ -55,8 +53,6 @@ class SupabaseConfigValidator {
 
   log(_message, type = "info") {
     const timestamp = new Date().toISOString();
-    const _prefix = `[${timestamp}] [VIBECODE-VALIDATOR]`;
-
     switch (type) {
       case "success":
         break;
@@ -124,9 +120,9 @@ class SupabaseConfigValidator {
           } else if (Array.isArray(value)) {
             value.forEach((item) => {
               if (
-                typeof item === "string" &&
-                item.includes("supabase.co") &&
-                !item.includes(TARGET_CONFIG.project_id)
+                typeof item === "string"
+                && item.includes("supabase.co")
+                && !item.includes(TARGET_CONFIG.project_id)
               ) {
                 this.warnings.push(
                   `URL in ${filePath} array may be incorrect: ${item}`,

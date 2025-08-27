@@ -191,8 +191,7 @@ describe("stock Alert Integration Tests", () => {
 
       mockStockAlertsService.acknowledgeAlert.mockResolvedValue(mockResult);
 
-      const result =
-        await mockStockAlertsService.acknowledgeAlert(acknowledgeData);
+      const result = await mockStockAlertsService.acknowledgeAlert(acknowledgeData);
 
       expect(result).toBeDefined();
       expect(result.status).toBe("acknowledged");

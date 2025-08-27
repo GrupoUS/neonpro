@@ -165,8 +165,8 @@ async function testTriggersAndFunctions() {
   });
 
   if (
-    error &&
-    !error.message.includes('function "get_function_exists" does not exist')
+    error
+    && !error.message.includes('function "get_function_exists" does not exist')
   ) {
     throw new Error(`Erro ao verificar functions: ${error.message}`);
   }
@@ -203,17 +203,6 @@ async function testCRUDOperations() {
 
   try {
     // Simular criação de assinatura (apenas validar SQL)
-    const _insertQuery = supabase.from("user_subscriptions").insert({
-      user_id: testUserId,
-      plan_id: "starter",
-      stripe_subscription_id: "sub_test_123",
-      status: "active",
-      current_period_start: new Date().toISOString(),
-      current_period_end: new Date(
-        Date.now() + 30 * 24 * 60 * 60 * 1000,
-      ).toISOString(),
-    });
-
     // Não executar de verdade, apenas verificar se a query é válida
     return "Operações CRUD parecem estar estruturadas corretamente";
   } catch (error) {

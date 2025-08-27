@@ -66,7 +66,7 @@ export interface MfaAuditLog {
   userAgent?: string;
   success: boolean;
   errorMessage?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt?: Date;
 }
 
@@ -76,8 +76,8 @@ export interface MfaAuditLog {
  */
 export class MfaDatabaseService {
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
   );
 
   /**
@@ -256,14 +256,13 @@ export class MfaDatabaseService {
       return { valid: false };
     }
 
-    const codeRecord = codes[0];
+    const [codeRecord] = codes;
 
     // Check if code matches
-    const valid =
-      codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
+    const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
 
     // Increment attempts and potentially mark as used
-    const updates: any = {
+    const updates: unknown = {
       attempts: codeRecord.attempts + 1,
     };
 
@@ -351,7 +350,7 @@ export class MfaDatabaseService {
       return { locked: false, attempts: 0 };
     }
 
-    const record = data[0];
+    const [record] = data;
     return {
       locked: record.attempts >= record.max_attempts,
       lockoutUntil: new Date(record.expires_at),
@@ -359,7 +358,7 @@ export class MfaDatabaseService {
     };
   }
 
-  private mapDbDataToSettings(data: any): MfaSettings {
+  private mapDbDataToSettings(data: unknown): MfaSettings {
     return {
       id: data.id,
       userId: data.user_id,
@@ -397,7 +396,7 @@ export class MfaDatabaseService {
     };
   }
 
-  private mapDbDataToCode(data: any): MfaVerificationCode {
+  private mapDbDataToCode(data: unknown): MfaVerificationCode {
     return {
       id: data.id,
       userId: data.user_id,

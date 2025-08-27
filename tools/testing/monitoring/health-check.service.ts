@@ -15,7 +15,7 @@ interface HealthCheckResult {
   status: "healthy" | "degraded" | "down";
   responseTime: number;
   message: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface SystemHealth {
@@ -28,8 +28,8 @@ interface SystemHealth {
 
 export class HealthCheckService {
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
   );
 
   /**
@@ -139,9 +139,7 @@ export class HealthCheckService {
       const endpoints = ["/api/health", "/api/patients", "/api/appointments"];
 
       const results = await Promise.allSettled(
-        endpoints.map((endpoint) =>
-          axios.get(`${baseURL}${endpoint}`, { timeout: 5000 }),
-        ),
+        endpoints.map((endpoint) => axios.get(`${baseURL}${endpoint}`, { timeout: 5000 })),
       );
 
       const responseTime = performance.now() - start;
@@ -308,10 +306,9 @@ export class HealthCheckService {
         component: "environment",
         status,
         responseTime,
-        message:
-          status === "healthy"
-            ? "Environment variables configured"
-            : `Missing variables: ${missingVars.join(", ")}`,
+        message: status === "healthy"
+          ? "Environment variables configured"
+          : `Missing variables: ${missingVars.join(", ")}`,
         metadata: {
           required: requiredEnvVars.length,
           missing: missingVars.length,
@@ -403,8 +400,7 @@ export class HealthCheckService {
       };
 
       const responseTime = performance.now() - start;
-      const passedChecks =
-        Object.values(complianceChecks).filter(Boolean).length;
+      const passedChecks = Object.values(complianceChecks).filter(Boolean).length;
       const totalChecks = Object.keys(complianceChecks).length;
       const complianceRate = (passedChecks / totalChecks) * 100;
 

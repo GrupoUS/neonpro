@@ -118,11 +118,11 @@ export default defineConfig({
   webServer: process.env.CI
     ? undefined
     : {
-        command: "pnpm dev",
-        port: DEV_SERVER_PORT,
-        reuseExistingServer: !process.env.CI,
-        timeout: TIMEOUT_SECONDS * 1000,
-      },
+      command: "pnpm dev",
+      port: DEV_SERVER_PORT,
+      reuseExistingServer: !process.env.CI,
+      timeout: TIMEOUT_SECONDS * 1000,
+    },
 
   // Expect configuration for visual testing
   expect: {

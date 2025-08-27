@@ -22,8 +22,8 @@ export async function GET(request: NextRequest) {
     const filters = {
       patient_id: searchParams.get("patient_id") || undefined,
       treatment_type: searchParams.get("treatment_type") || undefined,
-      analysis_type: (searchParams.get("analysis_type") as any) || undefined,
-      status: (searchParams.get("status") as any) || undefined,
+      analysis_type: (searchParams.get("analysis_type") as unknown) || undefined,
+      status: (searchParams.get("status") as unknown) || undefined,
       date_from: searchParams.get("date_from") || undefined,
       date_to: searchParams.get("date_to") || undefined,
       accuracy_min: searchParams.get("accuracy_min")
@@ -33,13 +33,11 @@ export async function GET(request: NextRequest) {
     };
 
     // Validate filters
-    const validatedFilters =
-      validationSchemas.analysisSessionFilters.parse(filters);
+    const validatedFilters = validationSchemas.analysisSessionFilters.parse(filters);
 
-    const sessions =
-      await automatedBeforeAfterAnalysisService.getAnalysisSessions(
-        validatedFilters,
-      );
+    const sessions = await automatedBeforeAfterAnalysisService.getAnalysisSessions(
+      validatedFilters,
+    );
 
     return NextResponse.json({
       success: true,
@@ -74,10 +72,9 @@ export async function POST(request: NextRequest) {
     // Validate request body
     const validatedData = validationSchemas.createAnalysisSession.parse(body);
 
-    const session =
-      await automatedBeforeAfterAnalysisService.createAnalysisSession(
-        validatedData,
-      );
+    const session = await automatedBeforeAfterAnalysisService.createAnalysisSession(
+      validatedData,
+    );
 
     return NextResponse.json(
       {
@@ -121,14 +118,12 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validate updates
-    const validatedUpdates =
-      validationSchemas.updateAnalysisSession.parse(updates);
+    const validatedUpdates = validationSchemas.updateAnalysisSession.parse(updates);
 
-    const updatedSession =
-      await automatedBeforeAfterAnalysisService.updateAnalysisSession(
-        id,
-        validatedUpdates,
-      );
+    const updatedSession = await automatedBeforeAfterAnalysisService.updateAnalysisSession(
+      id,
+      validatedUpdates,
+    );
 
     return NextResponse.json({
       success: true,

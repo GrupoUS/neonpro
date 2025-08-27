@@ -65,7 +65,7 @@ export interface SSOUser {
   firstName: string;
   lastName: string;
   displayName: string;
-  attributes: Record<string, any>;
+  attributes: Record<string, unknown>;
   isActive: boolean;
   lastLogin: Date;
   createdAt: Date;
@@ -115,7 +115,7 @@ export interface SSOUserInfo {
   picture: string;
   locale: string;
   groups: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface SSOAuditLog {
@@ -128,7 +128,7 @@ export interface SSOAuditLog {
   ipAddress: string;
   userAgent: string;
   timestamp: Date;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 export type SSOAction =
@@ -176,8 +176,7 @@ export const SSO_PROVIDERS = {
   LDAP: "ldap",
 } as const;
 
-export type SSOProviderType =
-  (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
+export type SSOProviderType = (typeof SSO_PROVIDERS)[keyof typeof SSO_PROVIDERS];
 
 // SAML specific types
 export interface SAMLAssertion {

@@ -440,10 +440,9 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? ["https://neonpro.app", "https://*.neonpro.app"]
-        : ["http://localhost:3000", "http://localhost:3001"],
+    origin: process.env.NODE_ENV === "production"
+      ? ["https://neonpro.app", "https://*.neonpro.app"]
+      : ["http://localhost:3000", "http://localhost:3001"],
     credentials: true,
   }),
 );

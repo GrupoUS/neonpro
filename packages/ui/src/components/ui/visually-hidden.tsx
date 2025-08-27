@@ -102,7 +102,7 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
   ) => {
     // Determine additional attributes based on medical context
     const getContextAttributes = () => {
-      const attrs: Record<string, any> = {};
+      const attrs: Record<string, unknown> = {};
 
       if (medicalContext) {
         attrs["data-medical-context"] = medicalContext;
@@ -145,14 +145,14 @@ const VisuallyHidden = React.forwardRef<HTMLElement, VisuallyHiddenProps>(
     const contextAttributes = getContextAttributes();
 
     return React.createElement(
-      Component as any,
+      Component as unknown,
       {
         ref,
         className: cn(
           visuallyHiddenClasses,
           // Allow focusing if focusable
-          focusable &&
-            "focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:m-0 focus:h-auto focus:w-auto focus:overflow-visible focus:whitespace-normal focus:rounded-md focus:border focus:bg-background focus:p-2 focus:text-foreground focus:shadow-lg",
+          focusable
+            && "focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:m-0 focus:h-auto focus:w-auto focus:overflow-visible focus:whitespace-normal focus:rounded-md focus:border focus:bg-background focus:p-2 focus:text-foreground focus:shadow-lg",
           className,
         ),
         ...contextAttributes,
@@ -173,8 +173,7 @@ const ScreenReaderOnly = VisuallyHidden;
 /**
  * MedicalDefinition - Hidden medical term definitions
  */
-interface MedicalDefinitionProps
-  extends Omit<VisuallyHiddenProps, "medicalContext"> {
+interface MedicalDefinitionProps extends Omit<VisuallyHiddenProps, "medicalContext"> {
   term: string;
   definition: string;
 }
@@ -197,8 +196,7 @@ MedicalDefinition.displayName = "MedicalDefinition";
 /**
  * LGPDNotice - Hidden LGPD/privacy notices
  */
-interface LGPDNoticeProps
-  extends Omit<VisuallyHiddenProps, "medicalContext" | "children"> {
+interface LGPDNoticeProps extends Omit<VisuallyHiddenProps, "medicalContext" | "children"> {
   context: "collection" | "processing" | "storage" | "sharing" | "rights";
   notice?: string;
   children?: React.ReactNode;
@@ -208,10 +206,8 @@ const LGPDNotice = React.forwardRef<HTMLElement, LGPDNoticeProps>(
   ({ context, notice, children, ...props }, ref) => {
     const defaultNotices = {
       collection: "Este campo coleta dados pessoais em conformidade com a LGPD",
-      processing:
-        "Seus dados serão processados conforme nossa política de privacidade",
-      storage:
-        "Dados armazenados com segurança por período determinado pela LGPD",
+      processing: "Seus dados serão processados conforme nossa política de privacidade",
+      storage: "Dados armazenados com segurança por período determinado pela LGPD",
       sharing: "Dados não serão compartilhados sem seu consentimento explícito",
       rights: "Você pode exercer seus direitos LGPD a qualquer momento",
     };
@@ -236,7 +232,8 @@ LGPDNotice.displayName = "LGPDNotice";
  * EmergencyInstruction - Hidden emergency procedure instructions
  */
 interface EmergencyInstructionProps
-  extends Omit<VisuallyHiddenProps, "medicalContext" | "liveRegion"> {
+  extends Omit<VisuallyHiddenProps, "medicalContext" | "liveRegion">
+{
   instruction: string;
   priority?: "normal" | "high" | "critical";
 }
@@ -263,8 +260,7 @@ EmergencyInstruction.displayName = "EmergencyInstruction";
 /**
  * FormInstruction - Hidden form field instructions
  */
-interface FormInstructionProps
-  extends Omit<VisuallyHiddenProps, "medicalContext" | "children"> {
+interface FormInstructionProps extends Omit<VisuallyHiddenProps, "medicalContext" | "children"> {
   fieldId: string;
   instruction: string;
   required?: boolean;
@@ -293,8 +289,8 @@ const FormInstruction = React.forwardRef<HTMLElement, FormInstructionProps>(
       ref={ref}
       {...props}
     >
-      {children ||
-        `${instruction}${required ? " (Campo obrigatório)" : ""}${
+      {children
+        || `${instruction}${required ? " (Campo obrigatório)" : ""}${
           sensitive ? " (Dados sensíveis - protegido pela LGPD)" : ""
         }`}
     </VisuallyHidden>
@@ -306,8 +302,7 @@ FormInstruction.displayName = "FormInstruction";
 /**
  * StatusAnnouncement - Live region for status announcements
  */
-interface StatusAnnouncementProps
-  extends Omit<VisuallyHiddenProps, "liveRegion"> {
+interface StatusAnnouncementProps extends Omit<VisuallyHiddenProps, "liveRegion"> {
   message: string;
   priority?: "polite" | "assertive";
   temporary?: boolean;

@@ -258,8 +258,7 @@ export class RetentionAnalyticsService {
       clinic_id: clinicId,
       model_type: modelType,
       churn_probability: Math.random() * 0.8 + 0.1, // Random between 0.1 and 0.9
-      risk_level:
-        Math.random() > 0.5 ? "high" : Math.random() > 0.3 ? "medium" : "low",
+      risk_level: Math.random() > 0.5 ? "high" : Math.random() > 0.3 ? "medium" : "low",
       confidence_score: Math.random() * 0.3 + 0.7, // Random between 0.7 and 1.0
       prediction_factors: [
         { factor: "days_since_last_visit", impact: 0.3, value: 45 },
@@ -274,7 +273,7 @@ export class RetentionAnalyticsService {
     };
   }
 
-  async createRetentionStrategy(createData: any) {
+  async createRetentionStrategy(createData: unknown) {
     // Mock implementation for build compatibility
     return {
       id: "strategy_" + Math.random().toString(36).slice(2, 9),

@@ -5,14 +5,7 @@
  * Based on 2025 performance best practices
  */
 
-import {
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { startTransition, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DependencyList } from "react";
 
 // Performance thresholds for monitoring
@@ -24,7 +17,7 @@ const PERFORMANCE_THRESHOLDS = {
 } as const;
 
 // Enhanced useCallback with performance monitoring
-export function useOptimizedCallback<T extends (...args: any[]) => any>(
+export function useOptimizedCallback<T extends (...args: unknown[]) => any>(
   callback: T,
   deps: DependencyList,
   _debugName?: string,
@@ -51,8 +44,8 @@ export function useOptimizedCallback<T extends (...args: any[]) => any>(
 
     // Warn about slow callbacks in development
     if (
-      process.env.NODE_ENV === "development" &&
-      duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
+      process.env.NODE_ENV === "development"
+      && duration > PERFORMANCE_THRESHOLDS.INTERACTION_TIME_WARNING
     ) {
     }
 
@@ -88,8 +81,8 @@ export function useOptimizedMemo<T>(
 
     // Warn about expensive computations in development
     if (
-      process.env.NODE_ENV === "development" &&
-      duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
+      process.env.NODE_ENV === "development"
+      && duration > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING
     ) {
     }
 
@@ -114,9 +107,6 @@ export function useRenderPerformance(_componentName: string) {
 
     // Log performance in development
     if (process.env.NODE_ENV === "development") {
-      const _avgRenderTime =
-        totalRenderTimeRef.current / renderCountRef.current;
-
       if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_ERROR) {
       } else if (renderTime > PERFORMANCE_THRESHOLDS.RENDER_TIME_WARNING) {
       }
@@ -227,13 +217,13 @@ export function useIntersectionObserver(
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const element = ref.current;
+    const { current: element } = ref;
     if (!element) {
       return;
     }
 
     const observer = new IntersectionObserver(([entry]) => {
-      const intersecting = entry.isIntersecting;
+      const { isIntersecting: intersecting } = entry;
       setIsIntersecting(intersecting);
 
       if (intersecting && !hasIntersected) {
@@ -256,9 +246,9 @@ export function useMemoryMonitor(_componentName: string) {
   useEffect(() => {
     if (process.env.NODE_ENV === "development" && "memory" in performance) {
       const checkMemory = () => {
-        const memory = (performance as any).memory;
-        const used = memory.usedJSHeapSize;
-        const total = memory.totalJSHeapSize;
+        const memory = (performance as unknown).memory;
+        const { usedJSHeapSize: used } = memory;
+        const { totalJSHeapSize: total } = memory;
 
         if (used > PERFORMANCE_THRESHOLDS.MEMORY_USAGE_WARNING) {
         }
@@ -347,7 +337,7 @@ export function usePerformanceProfiler(
   name: string,
   enabled: boolean = process.env.NODE_ENV === "development",
 ) {
-  const marksRef = useRef<{ [key: string]: number }>({});
+  const marksRef = useRef<{ [key: string]: number; }>({});
 
   const mark = useCallback(
     (markName: string) => {
@@ -378,8 +368,7 @@ export function usePerformanceProfiler(
           endName,
         );
 
-        const duration =
-          marksRef.current[endMark] - marksRef.current[startMark];
+        const duration = marksRef.current[endMark] - marksRef.current[startMark];
 
         return duration;
       } catch {}

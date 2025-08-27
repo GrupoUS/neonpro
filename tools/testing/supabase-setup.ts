@@ -70,7 +70,7 @@ export const mockSupabaseClient = {
       upsert: vi.fn().mockReturnThis(),
 
       // Filtering methods
-      eq: vi.fn((column: string, value: any) => {
+      eq: vi.fn((column: string, value: unknown) => {
         mockContext.queryConditions.set(column, value);
         return queryBuilder;
       }),
@@ -94,8 +94,7 @@ export const mockSupabaseClient = {
           "medical_record_number",
         );
         const hasClinicId = mockContext.queryConditions.has("clinic_id");
-        const isDuplicateCheck =
-          table === "patients" && hasMedicalRecord && hasClinicId;
+        const isDuplicateCheck = table === "patients" && hasMedicalRecord && hasClinicId;
 
         if (isDuplicateCheck) {
           // For createPatient duplicate checks, return null (no duplicate found)
@@ -112,9 +111,9 @@ export const mockSupabaseClient = {
       maybeSingle: vi.fn(async () => {
         // Same logic as single for maybeSingle
         if (
-          table === "patients" &&
-          mockContext.queryConditions.has("medical_record_number") &&
-          !mockContext.shouldReturnExistingPatient
+          table === "patients"
+          && mockContext.queryConditions.has("medical_record_number")
+          && !mockContext.shouldReturnExistingPatient
         ) {
           return { data: undefined, error: undefined };
         }
@@ -205,7 +204,7 @@ export const mockSupabaseClient = {
   })),
 
   // RPC (Remote Procedure Call) mock for custom functions
-  rpc: vi.fn(async (functionName: string, _params?: any) => {
+  rpc: vi.fn(async (functionName: string, _params?: unknown) => {
     const mockRpcResults = {
       calculate_patient_age: 35,
       get_treatment_statistics: {
@@ -222,16 +221,15 @@ export const mockSupabaseClient = {
     };
 
     return {
-      data:
-        mockRpcResults[functionName as keyof typeof mockRpcResults] ||
-        undefined,
+      data: mockRpcResults[functionName as keyof typeof mockRpcResults]
+        || undefined,
       error: undefined,
     };
   }),
 };
 
 // Helper function to generate mock data based on table name
-export function getMockData(table: string): any {
+export function getMockData(table: string): unknown {
   const mockDataMap = {
     patients: {
       id: "patient-123",
@@ -420,9 +418,9 @@ export const testDatabaseUtils = {
   simulateRLS: {
     patientCanOnlyAccessOwnData: vi.fn((userId: string, patientId: string) => {
       return (
-        userId === `patient-${patientId}` ||
-        userId.includes("doctor") ||
-        userId.includes("admin")
+        userId === `patient-${patientId}`
+        || userId.includes("doctor")
+        || userId.includes("admin")
       );
     }),
 

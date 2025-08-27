@@ -5,10 +5,7 @@
 // =====================================================================================
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import {
-  RetentionStrategyStatus,
-  RetentionStrategyType,
-} from "@/app/types/retention-analytics";
+import { RetentionStrategyStatus, RetentionStrategyType } from "@/app/types/retention-analytics";
 import type { CreateRetentionStrategy } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
@@ -46,21 +43,13 @@ const CreateStrategySchema = z.object({
   is_active: z.boolean().default(true),
   schedule_config: z.record(z.any()).optional(),
 });
-
-const _ExecuteStrategySchema = z.object({
-  strategyId: z.string().uuid("Invalid strategy ID format"),
-  patientIds: z.array(z.string().uuid()).min(1),
-  executeImmediately: z.boolean().default(false),
-  scheduledAt: z.string().optional(),
-});
-
 // =====================================================================================
 // GET RETENTION STRATEGIES
 // =====================================================================================
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -157,19 +146,19 @@ export async function GET(
 
     if (strategyType) {
       filteredStrategies = filteredStrategies.filter(
-        (s: any) => s.strategy_type === strategyType,
+        (s: unknown) => s.strategy_type === strategyType,
       );
     }
 
     if (status) {
       filteredStrategies = filteredStrategies.filter(
-        (s: any) => s.status === status,
+        (s: unknown) => s.status === status,
       );
     }
 
     // Apply sorting
     filteredStrategies.sort((a, b) => {
-      let valueA: any, valueB: any;
+      let valueA: unknown, valueB: unknown;
 
       switch (sortBy) {
         case "created_at": {
@@ -219,17 +208,16 @@ export async function GET(
         count: filteredStrategies.filter((s) => s.strategy_type === type)
           .length,
       })),
-      average_success_rate:
-        filteredStrategies.reduce(
-          (sum: number, s: any) => sum + (s.success_rate || 0),
-          0,
-        ) / filteredStrategies.length || 0,
+      average_success_rate: filteredStrategies.reduce(
+            (sum: number, s: unknown) => sum + (s.success_rate || 0),
+            0,
+          ) / filteredStrategies.length || 0,
       total_executions: filteredStrategies.reduce(
-        (sum: number, s: any) => sum + s.execution_count,
+        (sum: number, s: unknown) => sum + s.execution_count,
         0,
       ),
       successful_executions: filteredStrategies.reduce(
-        (sum: number, s: any) => sum + s.successful_executions,
+        (sum: number, s: unknown) => sum + s.successful_executions,
         0,
       ),
     };
@@ -272,7 +260,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -307,7 +295,7 @@ export async function POST(
       );
     }
 
-    const strategyData = validation.data;
+    const { data: strategyData } = validation;
 
     // Verify authentication
     const supabase = await createClient();
@@ -354,7 +342,7 @@ export async function POST(
 
     // Create retention strategy
     const retentionService = new RetentionAnalyticsService();
-    const createData: any = {
+    const createData: unknown = {
       ...strategyData,
       clinic_id: clinicId,
     };

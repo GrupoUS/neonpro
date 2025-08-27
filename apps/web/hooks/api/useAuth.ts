@@ -39,7 +39,7 @@ export function useProfile() {
 
       return result.data;
     },
-    retry: (failureCount, error: any) => {
+    retry: (failureCount, error: unknown) => {
       // Don't retry on auth errors
       if (error?.message?.includes("UNAUTHORIZED")) {
         return false;
@@ -271,8 +271,7 @@ export function useAuthStatus() {
     isLoading,
     error,
     hasRole: (role: string) => user?.role === role,
-    hasPermission: (permission: string) =>
-      user?.permissions?.includes(permission) ?? false,
+    hasPermission: (permission: string) => user?.permissions?.includes(permission) ?? false,
   };
 }
 

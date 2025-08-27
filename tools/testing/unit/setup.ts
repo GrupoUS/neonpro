@@ -3,10 +3,7 @@
 
 import { afterAll, afterEach, beforeAll, beforeEach } from "vitest";
 import { setupSupabaseMock } from "./setup/supabase-mock";
-import {
-  setupHealthcareEnvironment,
-  teardownHealthcareEnvironment,
-} from "./setup/test-env";
+import { setupHealthcareEnvironment, teardownHealthcareEnvironment } from "./setup/test-env";
 
 // Global test setup - runs once before all tests
 beforeAll(async () => {
@@ -40,7 +37,7 @@ export const healthcareTestUtils = {
       consent_given: true,
       data_processing_consent: new Date().toISOString(),
     }),
-    validateDataProtection: (data: any) => {
+    validateDataProtection: (data: unknown) => {
       // Validate LGPD compliance in test data
       return data.consent_given === true;
     },
@@ -55,7 +52,7 @@ export const healthcareTestUtils = {
       status: "approved",
       validation_date: new Date().toISOString(),
     }),
-    validateDeviceCompliance: (device: any) => {
+    validateDeviceCompliance: (device: unknown) => {
       // Validate ANVISA device compliance
       return device.anvisa_registration && device.status === "approved";
     },
@@ -71,7 +68,7 @@ export const healthcareTestUtils = {
       status: "active",
       validation_date: new Date().toISOString(),
     }),
-    validateProfessionalCompliance: (professional: any) => {
+    validateProfessionalCompliance: (professional: unknown) => {
       // Validate CFM professional compliance
       return professional.cfm_license && professional.status === "active";
     },

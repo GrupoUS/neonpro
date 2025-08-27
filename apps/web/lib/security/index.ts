@@ -11,39 +11,39 @@
 // Security API - Main interface for security operations
 export const SecurityAPI = {
   // Security Events
-  createSecurityEvent: async (event: any) => {
+  createSecurityEvent: async (event: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, event };
   },
 
-  getSecurityEvents: async (_filters?: any) => {
+  getSecurityEvents: async (_filters?: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, events: [] };
   },
 
   // Security Alerts
-  createSecurityAlert: async (alert: any) => {
+  createSecurityAlert: async (alert: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, alert };
   },
 
-  getSecurityAlerts: async (_filters?: any) => {
+  getSecurityAlerts: async (_filters?: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, alerts: [] };
   },
 
-  updateAlert: async (alertId: string, updates: any) => {
+  updateAlert: async (alertId: string, updates: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, alertId, updates };
   },
 
   // Audit Logs
-  createAuditLog: async (log: any) => {
+  createAuditLog: async (log: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, log };
   },
 
-  getAuditLogs: async (_filters?: any) => {
+  getAuditLogs: async (_filters?: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, logs: [] };
   },
@@ -78,7 +78,7 @@ export const SecurityAPI = {
   },
 
   // Authentication Security
-  validateAuthenticationSecurity: async (_request: any) => {
+  validateAuthenticationSecurity: async (_request: unknown) => {
     // Implementation will be added based on requirements
     return { success: true, valid: true };
   },

@@ -7,8 +7,8 @@
 "use client";
 
 import type {
-  ChatAIInsights,
   ChatAction,
+  ChatAIInsights,
   ChatConfig,
   ChatInterface,
   ChatMessage,
@@ -17,13 +17,7 @@ import type {
   PerformanceMetrics,
 } from "@neonpro/types/ai-chat";
 import type React from "react";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useReducer } from "react";
 
 // Initial State
 const initialChatState: ChatState = {
@@ -85,10 +79,9 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return {
         ...state,
         sessions: updatedSessions,
-        active_session_id:
-          state.active_session_id === action.payload.session_id
-            ? undefined
-            : state.active_session_id,
+        active_session_id: state.active_session_id === action.payload.session_id
+          ? undefined
+          : state.active_session_id,
       };
     }
 
@@ -167,10 +160,10 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
               (msg) =>
                 msg.id === action.payload.message_id
                   ? {
-                      ...msg,
-                      content: msg.content + action.payload.chunk,
-                      streaming: true,
-                    }
+                    ...msg,
+                    content: msg.content + action.payload.chunk,
+                    streaming: true,
+                  }
                   : msg,
             ),
             updated_at: new Date(),
@@ -586,8 +579,8 @@ export function ChatProvider({
   // Auto-connect effect
   useEffect(() => {
     if (
-      !state.active_session_id &&
-      state.connection_status === "disconnected"
+      !state.active_session_id
+      && state.connection_status === "disconnected"
     ) {
       startSession(state.config.interface_type).catch(console.error);
     }
@@ -616,9 +609,7 @@ export function ChatProvider({
     hasActiveSession,
   };
 
-  return (
-    <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>
-  );
+  return <ChatContext.Provider value={contextValue}>{children}</ChatContext.Provider>;
 }
 
 // Hook

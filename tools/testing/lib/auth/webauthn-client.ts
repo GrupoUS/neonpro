@@ -62,10 +62,9 @@ export class WebAuthnClient {
 
   constructor() {
     // Mock browser support detection
-    this.isSupported =
-      typeof window !== "undefined" &&
-      "credentials" in navigator &&
-      "create" in navigator.credentials;
+    this.isSupported = typeof window !== "undefined"
+      && "credentials" in navigator
+      && "create" in navigator.credentials;
   }
 
   static getInstance(): WebAuthnClient {

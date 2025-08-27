@@ -5,9 +5,9 @@
 
 // Main audit system class imports
 import { ANVISALogger } from "./audit-anvisa";
-import { AuditReporter } from "./audit-reporter";
 import { MedicalLogger } from "./audit-medical";
 import { PatientDataLogger } from "./audit-patient";
+import { AuditReporter } from "./audit-reporter";
 import { SecurityLogger } from "./audit-security";
 
 /**
@@ -59,10 +59,10 @@ export {
   type RiskLevel,
 } from "./audit-types";
 
-export { AuditLogger } from "./audit-core";
 export { ANVISALogger } from "./audit-anvisa";
+export { AuditLogger } from "./audit-core";
 export { MedicalLogger } from "./audit-medical";
 export { PatientDataLogger } from "./audit-patient";
-export { SecurityLogger } from "./audit-security";
 export { AuditReporter } from "./audit-reporter";
+export { SecurityLogger } from "./audit-security";
 export { ComprehensiveAuditSystem };

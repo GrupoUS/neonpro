@@ -8,16 +8,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execSync } = require("node:child_process");
-
-const _colors = {
-  green: "\u001B[32m",
-  red: "\u001B[31m",
-  yellow: "\u001B[33m",
-  blue: "\u001B[34m",
-  reset: "\u001B[0m",
-  bold: "\u001B[1m",
-};
-
 const log = {
   success: (_msg) => {
     /* intentionally empty */

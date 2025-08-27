@@ -101,8 +101,7 @@ export const complianceRoutes = new Hono()
           {
             id: "act_1",
             type: "consent_granted",
-            description:
-              "Paciente Maria Silva concedeu consentimento para fotos",
+            description: "Paciente Maria Silva concedeu consentimento para fotos",
             timestamp: new Date(Date.now() - 3_600_000).toISOString(),
           },
           {
@@ -178,8 +177,7 @@ export const complianceRoutes = new Hono()
         ],
         resourceId: `res_${Math.floor(Math.random() * 100)}`,
         ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
-        userAgent:
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         details: {
           endpoint: "/api/v1/patients",
           method: "POST",
@@ -189,7 +187,7 @@ export const complianceRoutes = new Hono()
         lgpdRelevant: Math.random() > 0.7,
       }));
 
-      const total = mockLogs.length;
+      const { length: total } = mockLogs;
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
       const paginatedLogs = mockLogs.slice(startIndex, endIndex);
@@ -298,8 +296,7 @@ export const complianceRoutes = new Hono()
             completed: mockRequests.filter((r) => r.status === "completed")
               .length,
             overdue: mockRequests.filter(
-              (r) =>
-                r.status !== "completed" && new Date(r.dueDate) < new Date(),
+              (r) => r.status !== "completed" && new Date(r.dueDate) < new Date(),
             ).length,
           },
         },
@@ -467,18 +464,18 @@ export const complianceRoutes = new Hono()
 
           procedures: includeDetails
             ? [
-                {
-                  date: "2024-01-20",
-                  patientId: "pat_123_anonymized",
-                  procedure: "Aplicação de Botox",
-                  product: "Botox Allergan 100UI",
-                  batchNumber: "BT20240115",
-                  professionalId: "prof_1",
-                  duration: 30,
-                  outcome: "success",
-                },
-                // ... more procedures
-              ]
+              {
+                date: "2024-01-20",
+                patientId: "pat_123_anonymized",
+                procedure: "Aplicação de Botox",
+                product: "Botox Allergan 100UI",
+                batchNumber: "BT20240115",
+                professionalId: "prof_1",
+                duration: 30,
+                outcome: "success",
+              },
+              // ... more procedures
+            ]
             : [],
 
           products: [

@@ -40,7 +40,7 @@ class SubscriptionManager {
     };
   }
 
-  async updatePlan(planId: string, data: any) {
+  async updatePlan(planId: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: planId,

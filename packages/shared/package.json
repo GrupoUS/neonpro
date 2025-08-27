@@ -44,7 +44,7 @@
     "lint:fix": "oxlint src --fix"
   },
   "dependencies": {
-    "@neonpro/db": "workspace:*",
+    "@neonpro/database": "workspace:*",
     "@supabase/supabase-js": "^2.55.0",
     "@tanstack/react-query": "^5.51.23",
     "hono": "^4.5.8",

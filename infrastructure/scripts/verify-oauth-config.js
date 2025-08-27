@@ -42,15 +42,5 @@ const configPath = path.join(
   "config.toml",
 );
 if (fs.existsSync(configPath)) {
-  const configContent = fs.readFileSync(configPath, "utf8");
-
-  const _hasGoogleConfig = configContent.includes("[auth.external.google]");
-  const _isGoogleEnabled = configContent.includes("enabled = true");
-  const _hasClientIdRef = configContent.includes(
-    'client_id = "env(GOOGLE_CLIENT_ID)"',
-  );
-  const _hasSecretRef = configContent.includes(
-    'secret = "env(GOOGLE_CLIENT_SECRET)"',
-  );
-} else {
+  const configContent = fs.readFileSync(configPath, "utf8");} else {
 }

@@ -521,7 +521,7 @@ export class PerformanceMonitor {
       context.environment = process.env.NODE_ENV;
       // Check for network connection info safely
       const navConnection = (
-        navigator as Navigator & { connection?: { effectiveType?: string } }
+        navigator as Navigator & { connection?: { effectiveType?: string; }; }
       ).connection;
       context.connection = navConnection?.effectiveType || "unknown";
     }

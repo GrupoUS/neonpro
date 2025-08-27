@@ -36,21 +36,21 @@ class MockCacheService implements CacheService {
 }
 
 class MockLoggerService implements LoggerService {
-  logs: { level: string; message: string; meta?: any }[] = [];
+  logs: { level: string; message: string; meta?: unknown; }[] = [];
 
-  async info(message: string, meta?: Record<string, any>): Promise<void> {
+  async info(message: string, meta?: Record<string, unknown>): Promise<void> {
     this.logs.push({ level: "info", message, meta });
   }
 
-  async warn(message: string, meta?: Record<string, any>): Promise<void> {
+  async warn(message: string, meta?: Record<string, unknown>): Promise<void> {
     this.logs.push({ level: "warn", message, meta });
   }
 
-  async error(message: string, meta?: Record<string, any>): Promise<void> {
+  async error(message: string, meta?: Record<string, unknown>): Promise<void> {
     this.logs.push({ level: "error", message, meta });
   }
 
-  async debug(message: string, meta?: Record<string, any>): Promise<void> {
+  async debug(message: string, meta?: Record<string, unknown>): Promise<void> {
     this.logs.push({ level: "debug", message, meta });
   }
 }
@@ -103,25 +103,25 @@ class MockMetricsService implements MetricsService {
 }
 
 class MockDatabaseService implements Partial<DatabaseService> {
-  auditLogs: { create: Mock } = {
+  auditLogs: { create: Mock; } = {
     create: vi.fn().mockResolvedValue({}),
   };
 
-  complianceEvents: { create: Mock } = {
+  complianceEvents: { create: Mock; } = {
     create: vi.fn().mockResolvedValue({}),
   };
 }
 
 // Test implementation of EnhancedAIService
 class TestAIService extends EnhancedAIService<
-  { input: string },
-  { output: string }
+  { input: string; },
+  { output: string; }
 > {
   protected serviceId = "test-service";
   protected version = "1.0.0";
   protected description = "Test AI service";
 
-  async execute(input: { input: string }): Promise<{ output: string }> {
+  async execute(input: { input: string; }): Promise<{ output: string; }> {
     if (input.input === "error") {
       throw new Error("Test error");
     }
@@ -159,10 +159,10 @@ describe("enhancedAIService", () => {
 
     service = new TestAIService(config);
     // Inject mocks via protected methods (in real implementation, these would be injected)
-    (service as any).cache = mockCache;
-    (service as any).logger = mockLogger;
-    (service as any).metrics = mockMetrics;
-    (service as any).database = mockDatabase;
+    (service as unknown).cache = mockCache;
+    (service as unknown).logger = mockLogger;
+    (service as unknown).metrics = mockMetrics;
+    (service as unknown).database = mockDatabase;
   });
 
   afterEach(() => {
@@ -218,7 +218,7 @@ describe("enhancedAIService", () => {
       expect(result2).toStrictEqual({ output: "CACHED" });
 
       // Verify cache was used by checking if value exists
-      const cacheKey = (service as any).generateCacheKey({ input: "cached" });
+      const cacheKey = (service as unknown).generateCacheKey({ input: "cached" });
       const cached = await mockCache.get(cacheKey);
       expect(cached).toBeDefined();
     });
@@ -230,7 +230,7 @@ describe("enhancedAIService", () => {
         // Expected to throw
       }
 
-      const cacheKey = (service as any).generateCacheKey({ input: "error" });
+      const cacheKey = (service as unknown).generateCacheKey({ input: "error" });
       const cached = await mockCache.get(cacheKey);
       expect(cached).toBeNull();
     });
@@ -268,8 +268,8 @@ describe("enhancedAIService", () => {
 
       const hasExecutionLog = infoLogs.some(
         (log) =>
-          log.message.includes("Service execution") ||
-          log.message.includes("completed"),
+          log.message.includes("Service execution")
+          || log.message.includes("completed"),
       );
       expect(hasExecutionLog).toBeTruthy();
     });
@@ -330,10 +330,10 @@ describe("enhancedAIService", () => {
       };
 
       const rateLimitedService = new TestAIService(rateLimitConfig);
-      (rateLimitedService as any).cache = mockCache;
-      (rateLimitedService as any).logger = mockLogger;
-      (rateLimitedService as any).metrics = mockMetrics;
-      (rateLimitedService as any).database = mockDatabase;
+      (rateLimitedService as unknown).cache = mockCache;
+      (rateLimitedService as unknown).logger = mockLogger;
+      (rateLimitedService as unknown).metrics = mockMetrics;
+      (rateLimitedService as unknown).database = mockDatabase;
 
       // First two requests should succeed
       await rateLimitedService.executeWithMetrics({ input: "test1" });
@@ -350,7 +350,7 @@ describe("enhancedAIService", () => {
     it("should measure execution time accurately", async () => {
       await service.executeWithMetrics({ input: "slow" });
 
-      const metrics = mockMetrics.metrics;
+      const { metrics: metrics } = mockMetrics;
       expect(metrics).toHaveLength(1);
       expect(metrics[0].duration).toBeGreaterThan(90); // Should be at least 100ms minus some tolerance
     });
@@ -370,7 +370,7 @@ describe("enhancedAIService", () => {
 
   describe("health checks", () => {
     it("should report service health status", async () => {
-      const health = await (service as any).checkHealth();
+      const health = await (service as unknown).checkHealth();
 
       expect(health).toMatchObject({
         status: "healthy",
@@ -386,7 +386,7 @@ describe("enhancedAIService", () => {
         .mockImplementation()
         .mockRejectedValue(new Error("Cache unavailable"));
 
-      const health = await (service as any).checkHealth();
+      const health = await (service as unknown).checkHealth();
 
       expect(health.status).toBe("degraded");
       expect(health.issues).toContainEqual(
@@ -421,7 +421,7 @@ describe("enhancedAIService", () => {
       expect(mockDatabase.auditLogs.create).toHaveBeenCalled();
 
       // Verify caching
-      const cacheKey = (service as any).generateCacheKey({ input: "complex" });
+      const cacheKey = (service as unknown).generateCacheKey({ input: "complex" });
       const cached = await mockCache.get(cacheKey);
       expect(cached).toBeDefined();
     });
@@ -466,9 +466,9 @@ describe("enhancedAIService", () => {
     it("should use default configuration when not provided", () => {
       const defaultService = new TestAIService();
 
-      expect((defaultService as any).config.enableCaching).toBeTruthy();
-      expect((defaultService as any).config.enableMetrics).toBeTruthy();
-      expect((defaultService as any).config.enableCompliance).toBeTruthy();
+      expect((defaultService as unknown).config.enableCaching).toBeTruthy();
+      expect((defaultService as unknown).config.enableMetrics).toBeTruthy();
+      expect((defaultService as unknown).config.enableCompliance).toBeTruthy();
     });
   });
 });
@@ -480,8 +480,8 @@ describe("enhancedAIService utilities", () => {
       const service = new TestAIService();
       const input = { input: "test" };
 
-      const key1 = (service as any).generateCacheKey(input);
-      const key2 = (service as any).generateCacheKey(input);
+      const key1 = (service as unknown).generateCacheKey(input);
+      const key2 = (service as unknown).generateCacheKey(input);
 
       expect(key1).toBe(key2);
     });
@@ -489,8 +489,8 @@ describe("enhancedAIService utilities", () => {
     it("should generate different cache keys for different inputs", () => {
       const service = new TestAIService();
 
-      const key1 = (service as any).generateCacheKey({ input: "test1" });
-      const key2 = (service as any).generateCacheKey({ input: "test2" });
+      const key1 = (service as unknown).generateCacheKey({ input: "test1" });
+      const key2 = (service as unknown).generateCacheKey({ input: "test2" });
 
       expect(key1).not.toBe(key2);
     });
@@ -507,7 +507,7 @@ describe("enhancedAIService utilities", () => {
       ];
 
       errorTypes.forEach(({ error, expected }) => {
-        const classified = (service as any).classifyError(error);
+        const classified = (service as unknown).classifyError(error);
         expect(classified).toBe(expected);
       });
     });
@@ -518,13 +518,11 @@ describe("enhancedAIService utilities", () => {
       const service = new TestAIService();
 
       // Valid input
-      expect(() =>
-        (service as any).validateInput({ input: "valid" }),
-      ).not.toThrow();
+      expect(() => (service as unknown).validateInput({ input: "valid" })).not.toThrow();
 
       // Invalid input
-      expect(() => (service as any).validateInput()).toThrow(/invalid input/i);
-      expect(() => (service as any).validateInput({})).toThrow(
+      expect(() => (service as unknown).validateInput()).toThrow(/invalid input/i);
+      expect(() => (service as unknown).validateInput({})).toThrow(
         /missing required/i,
       );
     });

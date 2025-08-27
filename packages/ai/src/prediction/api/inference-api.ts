@@ -17,7 +17,7 @@ import type {
 export class AestheticInferenceAPI {
   private readonly cache = new Map<
     string,
-    { data: any; timestamp: number; ttl: number }
+    { data: unknown; timestamp: number; ttl: number; }
   >();
   private readonly isInitialized = false;
   private requestCount = 0;
@@ -71,11 +71,10 @@ export class AestheticInferenceAPI {
       }
 
       // Make prediction
-      const prediction =
-        await aestheticPredictionEngine.predictTreatmentOutcome(
-          patient,
-          treatment,
-        );
+      const prediction = await aestheticPredictionEngine.predictTreatmentOutcome(
+        patient,
+        treatment,
+      );
 
       // Cache result for 1 hour
       this.setCache(cacheKey, prediction, 3_600_000);
@@ -134,11 +133,10 @@ export class AestheticInferenceAPI {
         );
       }
 
-      const prediction =
-        await aestheticPredictionEngine.getComprehensivePrediction(
-          patient,
-          treatment,
-        );
+      const prediction = await aestheticPredictionEngine.getComprehensivePrediction(
+        patient,
+        treatment,
+      );
 
       this.setCache(cacheKey, prediction, 1_800_000); // Cache for 30 minutes
       this.trackPerformance(startTime);
@@ -165,7 +163,7 @@ export class AestheticInferenceAPI {
    */
   async healthCheck(): Promise<{
     status: "healthy" | "degraded" | "unhealthy";
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }> {
     try {
       const engineHealth = await aestheticPredictionEngine.healthCheck();
@@ -179,10 +177,9 @@ export class AestheticInferenceAPI {
       };
 
       return {
-        status:
-          this.isInitialized && engineHealth.status === "healthy"
-            ? "healthy"
-            : engineHealth.status,
+        status: this.isInitialized && engineHealth.status === "healthy"
+          ? "healthy"
+          : engineHealth.status,
         details: apiDetails,
       };
     } catch (error) {
@@ -239,13 +236,13 @@ export class AestheticInferenceAPI {
   private generateCacheKey(
     modelType: string,
     patientId: string,
-    params: any,
+    params: unknown,
   ): string {
     const paramsHash = this.hashObject(params);
     return `${modelType}_${patientId}_${paramsHash}`;
   }
 
-  private hashObject(obj: any): string {
+  private hashObject(obj: unknown): string {
     // Simple hash function for cache keys
     const str = JSON.stringify(obj);
     let hash = 0;
@@ -257,7 +254,7 @@ export class AestheticInferenceAPI {
     return Math.abs(hash).toString(36);
   }
 
-  private getFromCache(key: string): any | null {
+  private getFromCache(key: string): unknown | null {
     const entry = this.cache.get(key);
     if (!entry) {
       return;
@@ -272,7 +269,7 @@ export class AestheticInferenceAPI {
     return entry.data;
   }
 
-  private setCache(key: string, data: any, ttl: number): void {
+  private setCache(key: string, data: unknown, ttl: number): void {
     // Implement simple LRU cache with max size
     const maxCacheSize = 1000;
 

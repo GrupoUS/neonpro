@@ -4,7 +4,7 @@ export interface Toast {
   id: string;
   title?: string;
   description?: string;
-  action?: any;
+  action?: unknown;
   variant?: "default" | "destructive" | "success" | "warning";
 }
 

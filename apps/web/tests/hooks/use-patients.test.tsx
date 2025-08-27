@@ -65,7 +65,7 @@ vi.mock<typeof import("@neonpro/shared/api-client")>(
     ApiHelpers: {
       handleApiResponse: vi.fn(),
       handleApiError: vi.fn(),
-      isAuthError: vi.fn((error: any) => {
+      isAuthError: vi.fn((error: unknown) => {
         return error?.code === "UNAUTHORIZED" || error?.status === 401;
       }),
     },
@@ -145,7 +145,7 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
 
   // Wrapper component for testing hooks
   const createWrapper = () => {
-    return ({ children }: { children: React.ReactNode }) => (
+    return ({ children }: { children: React.ReactNode; }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };
@@ -170,10 +170,8 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       // Create a test-specific mutation that we can control
       const { result } = renderHook(
         () => {
-          const _queryClient = useQueryClient();
-
           return useMutation({
-            mutationFn: async (_patientData: any) => {
+            mutationFn: async (_patientData: unknown) => {
               // Mock a successful response for this test
               return mockCreatePatientResponse;
             },
@@ -300,21 +298,8 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
     });
 
     it("should delete patient with LGPD compliance", async () => {
-      const _mockDelete = vi.fn().mockResolvedValue({
-        success: true,
-        data: {
-          message: "Paciente removido com sucesso",
-          lgpdCompliance: {
-            dataErased: true,
-            auditRetained: true,
-            erasureDate: new Date().toISOString(),
-          },
-        },
-        error: undefined,
-      });
-
       // Mock window.confirm for the deletion confirmation
-      const originalConfirm = window.confirm;
+      const { confirm: originalConfirm } = window;
       jest.spyOn(window, "confirm").mockImplementation().mockReturnValue(true);
 
       const mockDeleteHook = {
@@ -458,10 +443,8 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
       // Create a test-specific mutation that we can control
       const { result } = renderHook(
         () => {
-          const _queryClient = useQueryClient();
-
           return useMutation({
-            mutationFn: async (_patientData: any) => {
+            mutationFn: async (_patientData: unknown) => {
               // Mock a successful emergency response for this test
               return mockEmergencyResponse;
             },
@@ -499,17 +482,6 @@ describe("usePatients Hook - NeonPro Healthcare Patient Management", () => {
         ...mockPatient,
         cns: "123456789012345", // Valid CNS format
       };
-
-      const _mockValidation = vi.fn().mockResolvedValue({
-        success: true,
-        data: {
-          isValid: true,
-          cnsStatus: "ACTIVE",
-          susValidation: true,
-        },
-        error: undefined,
-      });
-
       expect(patientWithCNS.cns).toHaveLength(15);
       expect(typeof patientWithCNS.cns).toBe("string");
     });

@@ -16,25 +16,20 @@ import {
   EnterpriseSecurityService,
 } from "../enterprise";
 import { EnterpriseHealthCheckService } from "../health";
-import type {
-  AuditEvent,
-  PerformanceMetrics,
-  SecurityConfig,
-  ServiceContext,
-} from "../types";
+import type { AuditEvent, PerformanceMetrics, SecurityConfig, ServiceContext } from "../types";
 
 // Core service interfaces
 interface ICacheService {
   get<T>(key: string): Promise<T | null>;
   set<T>(key: string, value: T, ttl?: number): Promise<void>;
   invalidate(pattern: string): Promise<void>;
-  getStats(): Promise<any>;
+  getStats(): Promise<unknown>;
 }
 
 interface IAnalyticsService {
-  track(event: string, properties: any): Promise<void>;
+  track(event: string, properties: unknown): Promise<void>;
   recordPerformance(operation: string, duration: number): Promise<void>;
-  recordError(error: Error, context: any): Promise<void>;
+  recordError(error: Error, context: unknown): Promise<void>;
   getMetrics(period: string): Promise<PerformanceMetrics>;
 }
 
@@ -332,7 +327,7 @@ export abstract class EnhancedServiceBase {
   /**
    * Audit operation with LGPD/ANVISA compliance
    */
-  private async auditOperation(eventType: string, details: any): Promise<void> {
+  private async auditOperation(eventType: string, details: unknown): Promise<void> {
     const auditEvent: AuditEvent = {
       id: `${this.config.serviceName}_${Date.now()}_${Math.random()}`,
       service: this.config.serviceName,
@@ -350,7 +345,7 @@ export abstract class EnhancedServiceBase {
    */
   private async auditServiceLifecycle(
     event: string,
-    details: any,
+    details: unknown,
   ): Promise<void> {
     await this.auditOperation("SERVICE_LIFECYCLE", { event, ...details });
   }
@@ -358,13 +353,13 @@ export abstract class EnhancedServiceBase {
   /**
    * Get service health metrics
    */
-  public async getHealthMetrics(): Promise<any> {
+  public async getHealthMetrics(): Promise<unknown> {
     const uptime = Date.now() - this.startTime;
     const cacheStats = await this.cache.getStats();
     const auditStats = await this.audit.getAuditStats();
 
     // Calculate operation averages
-    const operationStats: Record<string, any> = {};
+    const operationStats: Record<string, unknown> = {};
     for (const [operation, durations] of this.operationMetrics.entries()) {
       operationStats[operation] = {
         count: durations.length,
@@ -413,7 +408,7 @@ export abstract class EnhancedServiceBase {
           await self.enterpriseCache.invalidatePatientData(patientId);
         }
       },
-      async getStats(): Promise<any> {
+      async getStats(): Promise<unknown> {
         return self.enterpriseCache.getStats();
       },
     };
@@ -425,7 +420,7 @@ export abstract class EnhancedServiceBase {
   private initializeAnalyticsService(): IAnalyticsService {
     const self = this;
     return {
-      async track(event: string, properties: any): Promise<void> {
+      async track(event: string, properties: unknown): Promise<void> {
         await self.enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
           type: event,
@@ -449,7 +444,7 @@ export abstract class EnhancedServiceBase {
           tags: { operation, service: self.config.serviceName },
         });
       },
-      async recordError(error: Error, context: any): Promise<void> {
+      async recordError(error: Error, context: unknown): Promise<void> {
         await self.enterpriseAnalytics.trackEvent({
           id: `${Date.now()}-${Math.random()}`,
           type: "error",
@@ -526,10 +521,10 @@ export abstract class EnhancedServiceBase {
    */
   public async validateEnterpriseServices(): Promise<{
     status: "healthy" | "degraded" | "unhealthy";
-    services: Record<string, any>;
+    services: Record<string, unknown>;
     errors: string[];
   }> {
-    const results: Record<string, any> = {};
+    const results: Record<string, unknown> = {};
     const errors: string[] = [];
 
     try {
@@ -574,12 +569,11 @@ export abstract class EnhancedServiceBase {
       errors.push(`Audit service error: ${(error as Error).message}`);
     }
 
-    const status =
-      errors.length === 0
-        ? "healthy"
-        : errors.length <= 2
-          ? "degraded"
-          : "unhealthy";
+    const status = errors.length === 0
+      ? "healthy"
+      : errors.length <= 2
+      ? "degraded"
+      : "unhealthy";
 
     return { status, services: results, errors };
   }

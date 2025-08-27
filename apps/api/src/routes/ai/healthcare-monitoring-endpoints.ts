@@ -1,13 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
 
-import {
-  CONSTANTS,
-  HTTP_STATUS,
-  MAGIC_NUMBERS,
-  STATUS_CODES,
-} from "@neonpro/shared";
-
 import type { ApiResponse } from "@neonpro/types";
 
 // Healthcare Monitoring Service Integration
@@ -15,7 +8,7 @@ const healthcareMonitoring = new Hono();
 
 // Healthcare service connection test
 const healthcareService = {
-  async getMetrics(query: unknown) {
+  async getMetrics(_query: unknown) {
     // Mock implementation for development
     return {
       metrics: [
@@ -87,7 +80,7 @@ healthcareMonitoring.get("/vitals", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -127,7 +120,7 @@ healthcareMonitoring.post("/vitals", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -178,7 +171,7 @@ healthcareMonitoring.get("/alerts", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -250,7 +243,7 @@ healthcareMonitoring.get("/monitoring/dashboard", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -314,7 +307,7 @@ healthcareMonitoring.get("/monitoring/trends", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -335,7 +328,9 @@ healthcareMonitoring.post("/monitoring/simulate", async (context) => {
     const simulatedData = Array.from(
       { length: simulationCount },
       (_, index) => ({
-        blood_pressure: `${MAGIC_NUMBERS.ONE_HUNDRED_TWENTY + index}/${MAGIC_NUMBERS.EIGHTY + index}`,
+        blood_pressure: `${MAGIC_NUMBERS.ONE_HUNDRED_TWENTY + index}/${
+          MAGIC_NUMBERS.EIGHTY + index
+        }`,
         heart_rate: MAGIC_NUMBERS.SEVENTY + index,
         patient_id: `sim_patient_${index + MAGIC_NUMBERS.ONE}`,
         recorded_at: new Date(
@@ -359,7 +354,7 @@ healthcareMonitoring.post("/monitoring/simulate", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -378,7 +373,7 @@ healthcareMonitoring.get("/monitoring/patient/:patientId", async (context) => {
 
     if (!patientId) {
       const errorResponse: ApiResponse<null> = {
-        data: null,
+        data: undefined,
         message: "Patient ID is required",
         success: false,
       };
@@ -415,14 +410,15 @@ healthcareMonitoring.get("/monitoring/patient/:patientId", async (context) => {
       vital_history: Array.from(
         { length: MAGIC_NUMBERS.TWENTY_FOUR },
         (_, index) => ({
-          blood_pressure: `${MAGIC_NUMBERS.ONE_HUNDRED_TWENTY + (index % MAGIC_NUMBERS.TEN)}/${MAGIC_NUMBERS.EIGHTY + (index % MAGIC_NUMBERS.FIVE)}`,
+          blood_pressure: `${MAGIC_NUMBERS.ONE_HUNDRED_TWENTY + (index % MAGIC_NUMBERS.TEN)}/${
+            MAGIC_NUMBERS.EIGHTY + (index % MAGIC_NUMBERS.FIVE)
+          }`,
           heart_rate: MAGIC_NUMBERS.SEVENTY + (index % MAGIC_NUMBERS.FIFTEEN),
           recorded_at: new Date(
             Date.now() - index * MAGIC_NUMBERS.ONE_HOUR_IN_MS,
           ).toISOString(),
-          temperature:
-            MAGIC_NUMBERS.THIRTY_SIX_POINT_FIVE +
-            (index % MAGIC_NUMBERS.TEN) * 0.1,
+          temperature: MAGIC_NUMBERS.THIRTY_SIX_POINT_FIVE
+            + (index % MAGIC_NUMBERS.TEN) * 0.1,
         }),
       ),
     };
@@ -441,7 +437,7 @@ healthcareMonitoring.get("/monitoring/patient/:patientId", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -463,7 +459,7 @@ healthcareMonitoring.post(
 
       if (!patientId) {
         const errorResponse: ApiResponse<null> = {
-          data: null,
+          data: undefined,
           message: "Patient ID is required",
           success: false,
         };
@@ -502,7 +498,7 @@ healthcareMonitoring.post(
       }
 
       const errorResponse: ApiResponse<null> = {
-        data: null,
+        data: undefined,
         message: errorMessage,
         success: false,
       };
@@ -571,7 +567,7 @@ healthcareMonitoring.get("/monitoring/system/health", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -585,11 +581,10 @@ healthcareMonitoring.get("/monitoring/system/health", async (context) => {
  */
 healthcareMonitoring.onError((error, context) => {
   const errorResponse: ApiResponse<null> = {
-    data: null,
-    message:
-      process.env.NODE_ENV === "development"
-        ? error.message
-        : "Healthcare monitoring service error",
+    data: undefined,
+    message: process.env.NODE_ENV === "development"
+      ? error.message
+      : "Healthcare monitoring service error",
     success: false,
   };
 

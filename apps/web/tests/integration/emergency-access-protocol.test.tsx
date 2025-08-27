@@ -77,7 +77,7 @@ const mockEmergencyAuth = {
 };
 
 // Use global notification service from vitest.setup.ts
-const mockNotificationService = (globalThis as any).mockNotificationService;
+const mockNotificationService = (globalThis as unknown).mockNotificationService;
 
 vi.mock<typeof import("../../lib/services/emergency-access-service")>(
   "../../lib/services/emergency-access-service",
@@ -150,14 +150,11 @@ const mockEmergencyGrant: EmergencyAccessGrant = {
   legal_basis: "vital_interests",
 };
 
-// Test wrapper component
-const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
+// Test wrapper component }) => {
   // Use the global mock QueryClient instead of creating a new one
-  const queryClient = globalThis.queryClient;
+  const { queryClient: queryClient } = globalThis;
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 describe("emergency Access Protocol Integration Tests", () => {
   let queryClient: QueryClient;
@@ -188,8 +185,8 @@ describe("emergency Access Protocol Integration Tests", () => {
           "respiratory_failure",
         ];
         if (
-          request.priority === "critical" ||
-          criticalEmergencies.includes(request.emergency_type)
+          request.priority === "critical"
+          || criticalEmergencies.includes(request.emergency_type)
         ) {
           await mockNotificationService.sendEmergencyAlert({
             patient_id: request.patient_id,
@@ -281,19 +278,16 @@ describe("emergency Access Protocol Integration Tests", () => {
         credential_level: "emergency_qualified",
       });
 
-      const justificationResult =
-        await mockEmergencyService.validateEmergencyJustification({
-          emergency_type: "cardiac_arrest",
-          justification:
-            "Patient in cardiac arrest, need immediate access to medical history",
-          requesting_user_role: "emergency_nurse",
-        });
+      const justificationResult = await mockEmergencyService.validateEmergencyJustification({
+        emergency_type: "cardiac_arrest",
+        justification: "Patient in cardiac arrest, need immediate access to medical history",
+        requesting_user_role: "emergency_nurse",
+      });
 
-      const credentialsResult =
-        await mockEmergencyAuth.validateEmergencyCredentials({
-          user_id: "nurse-emergency-456",
-          location: "Emergency Room",
-        });
+      const credentialsResult = await mockEmergencyAuth.validateEmergencyCredentials({
+        user_id: "nurse-emergency-456",
+        location: "Emergency Room",
+      });
 
       expect(justificationResult.valid).toBeTruthy();
       expect(justificationResult.auto_approve).toBeTruthy();
@@ -306,8 +300,7 @@ describe("emergency Access Protocol Integration Tests", () => {
         ...mockEmergencyRequest,
         emergency_type: "allergic_reaction" as const,
         priority: "medium" as const,
-        justification:
-          "Patient showing signs of allergic reaction, need to check allergy history",
+        justification: "Patient showing signs of allergic reaction, need to check allergy history",
       };
 
       mockEmergencyService.requestEmergencyAccess.mockResolvedValue({
@@ -400,8 +393,7 @@ describe("emergency Access Protocol Integration Tests", () => {
         grant_id: mockEmergencyGrant.id,
         current_expires_at: mockEmergencyGrant.expires_at,
         extension_minutes: 30,
-        justification:
-          "Patient still in critical condition, continued emergency care needed",
+        justification: "Patient still in critical condition, continued emergency care needed",
         authorized_by: "head_doctor-999",
       };
 
@@ -412,8 +404,7 @@ describe("emergency Access Protocol Integration Tests", () => {
         extension_audit_id: "audit-extension-123",
       });
 
-      const result =
-        await mockEmergencyService.grantEmergencyAccess(extensionRequest);
+      const result = await mockEmergencyService.grantEmergencyAccess(extensionRequest);
 
       expect(result.extension_granted).toBeTruthy();
       expect(result.new_expiration).toBeDefined();
@@ -440,12 +431,11 @@ describe("emergency Access Protocol Integration Tests", () => {
         compliance_score: 0.98,
       });
 
-      const complianceResult =
-        await mockEmergencyService.checkEmergencyCompliance({
-          grant_id: mockEmergencyGrant.id,
-          emergency_type: "cardiac_arrest",
-          data_accessed: ["allergies", "medical_history"],
-        });
+      const complianceResult = await mockEmergencyService.checkEmergencyCompliance({
+        grant_id: mockEmergencyGrant.id,
+        emergency_type: "cardiac_arrest",
+        data_accessed: ["allergies", "medical_history"],
+      });
 
       expect(complianceResult.lgpd_compliant).toBeTruthy();
       expect(complianceResult.legal_basis).toBe("vital_interests");
@@ -569,10 +559,9 @@ describe("emergency Access Protocol Integration Tests", () => {
         compliance_requirements_met: true,
       });
 
-      const result =
-        await mockNotificationService.logEmergencyNotification(
-          notificationAudit,
-        );
+      const result = await mockNotificationService.logEmergencyNotification(
+        notificationAudit,
+      );
 
       expect(result.notification_logged).toBeTruthy();
       expect(result.compliance_requirements_met).toBeTruthy();
@@ -633,7 +622,7 @@ describe("emergency Access Protocol Integration Tests", () => {
 
       const results = await Promise.all(
         concurrentEmergencies.map((emergency) =>
-          mockEmergencyService.requestEmergencyAccess(emergency),
+          mockEmergencyService.requestEmergencyAccess(emergency)
         ),
       );
 

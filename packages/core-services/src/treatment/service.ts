@@ -191,18 +191,15 @@ export class TreatmentService {
       throw new Error("Treatment plan not found");
     }
 
-    const sessions =
-      await this.repository.getTreatmentSessionsByPlan(treatmentPlanId);
+    const sessions = await this.repository.getTreatmentSessionsByPlan(treatmentPlanId);
     const completedSessions = sessions.filter((s) => s.isCompleted);
-    const progressPercentage =
-      (completedSessions.length / plan.totalSessions) * 100;
+    const progressPercentage = (completedSessions.length / plan.totalSessions) * 100;
 
     let status: TreatmentStatus;
     if (!plan.isActive) {
-      status =
-        plan.completedSessions === plan.totalSessions
-          ? TreatmentStatus.COMPLETED
-          : TreatmentStatus.CANCELLED;
+      status = plan.completedSessions === plan.totalSessions
+        ? TreatmentStatus.COMPLETED
+        : TreatmentStatus.CANCELLED;
     } else if (plan.completedSessions === 0) {
       status = TreatmentStatus.PLANNED;
     } else if (plan.completedSessions < plan.totalSessions) {
@@ -213,8 +210,8 @@ export class TreatmentService {
 
     let nextSessionDate: Date | undefined;
     if (
-      status === TreatmentStatus.IN_PROGRESS &&
-      completedSessions.length > 0
+      status === TreatmentStatus.IN_PROGRESS
+      && completedSessions.length > 0
     ) {
       const lastSession = completedSessions.at(-1);
       nextSessionDate = addDays(lastSession.date, plan.sessionInterval);
@@ -239,7 +236,7 @@ export class TreatmentService {
     completedPlans: number;
     totalSessions: number;
     completedSessions: number;
-    popularTreatments: { treatmentType: string; count: number }[];
+    popularTreatments: { treatmentType: string; count: number; }[];
   }> {
     const plans = providerId
       ? await this.repository.getTreatmentPlansByProvider(providerId)

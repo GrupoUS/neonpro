@@ -78,12 +78,12 @@ export interface ComplianceCondition {
     | "less_than"
     | "in"
     | "not_in";
-  value: any;
+  value: unknown;
 }
 
 export interface ComplianceAction {
   type: "log" | "block" | "require_consent" | "notify_dpo" | "limit_retention";
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
 }
 
 export class ComplianceAutomationService extends EnhancedAIService<
@@ -92,13 +92,12 @@ export class ComplianceAutomationService extends EnhancedAIService<
 > {
   protected serviceId = "compliance-automation";
   protected version = "1.0.0";
-  protected description =
-    "Automated compliance checking and enforcement for AI services";
+  protected description = "Automated compliance checking and enforcement for AI services";
 
   private readonly supabase: SupabaseClient;
   private readonly complianceRules: Map<string, ComplianceRule> = new Map();
 
-  constructor(supabase: SupabaseClient, config: any) {
+  constructor(supabase: SupabaseClient, config: unknown) {
     super(config);
     this.supabase = supabase;
     this.loadComplianceRules();
@@ -178,10 +177,10 @@ export class ComplianceAutomationService extends EnhancedAIService<
   private validateInput(input: ComplianceAutomationInput): void {
     if (
       !(
-        input.userId &&
-        input.clinicId &&
-        input.serviceName &&
-        input.operationType
+        input.userId
+        && input.clinicId
+        && input.serviceName
+        && input.operationType
       )
     ) {
       throw new Error(
@@ -190,8 +189,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
     }
 
     if (
-      !Array.isArray(input.dataCategories) ||
-      input.dataCategories.length === 0
+      !Array.isArray(input.dataCategories)
+      || input.dataCategories.length === 0
     ) {
       throw new Error("Data categories must be a non-empty array");
     }
@@ -259,8 +258,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
     });
   }
 
-  private getFieldValue(input: ComplianceAutomationInput, field: string): any {
-    const fieldMap: Record<string, any> = {
+  private getFieldValue(input: ComplianceAutomationInput, field: string): unknown {
+    const fieldMap: Record<string, unknown> = {
       serviceName: input.serviceName,
       operationType: input.operationType,
       dataCategories: input.dataCategories,
@@ -274,9 +273,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
   }
 
   private evaluateCondition(
-    fieldValue: any,
+    fieldValue: unknown,
     operator: string,
-    expectedValue: any,
+    expectedValue: unknown,
   ): boolean {
     switch (operator) {
       case "equals": {
@@ -347,8 +346,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
             code: "LGPD-001",
             description: "Sensitive data processing requires explicit consent",
             regulation: "Lei Geral de Proteção de Dados - Art. 11",
-            remediation:
-              "Obtain explicit consent before processing sensitive health data",
+            remediation: "Obtain explicit consent before processing sensitive health data",
           };
         }
         break;
@@ -360,11 +358,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
             type: "LGPD",
             severity: "high",
             code: "LGPD-002",
-            description:
-              "Data processing purpose is not clearly defined or legitimate",
+            description: "Data processing purpose is not clearly defined or legitimate",
             regulation: "Lei Geral de Proteção de Dados - Art. 6, I",
-            remediation:
-              "Define a clear, legitimate purpose for data processing",
+            remediation: "Define a clear, legitimate purpose for data processing",
           };
         }
         break;
@@ -378,8 +374,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
             code: "LGPD-003",
             description: "Data collection appears excessive for stated purpose",
             regulation: "Lei Geral de Proteção de Dados - Art. 6, III",
-            remediation:
-              "Limit data collection to what is necessary for the specified purpose",
+            remediation: "Limit data collection to what is necessary for the specified purpose",
           };
         }
         break;
@@ -388,8 +383,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
       case "lgpd_retention_period": {
         const maxRetention = this.getMaxRetentionPeriod(input.dataCategories);
         if (
-          input.retentionPeriodDays &&
-          input.retentionPeriodDays > maxRetention
+          input.retentionPeriodDays
+          && input.retentionPeriodDays > maxRetention
         ) {
           return {
             type: "LGPD",
@@ -420,11 +415,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
               type: "ANVISA",
               severity: "critical",
               code: "ANVISA-001",
-              description:
-                "Medical data must be encrypted in transit and at rest",
+              description: "Medical data must be encrypted in transit and at rest",
               regulation: "ANVISA Resolution RDC 797/2023",
-              remediation:
-                "Implement end-to-end encryption for all medical data",
+              remediation: "Implement end-to-end encryption for all medical data",
             };
           }
           break;
@@ -432,8 +425,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
 
         case "anvisa_professional_authorization": {
           if (
-            input.operationType.includes("diagnosis") &&
-            !this.hasHealthcareProfessionalAuth(input)
+            input.operationType.includes("diagnosis")
+            && !this.hasHealthcareProfessionalAuth(input)
           ) {
             return {
               type: "ANVISA",
@@ -442,8 +435,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
               description:
                 "Medical diagnosis operations require healthcare professional authorization",
               regulation: "ANVISA Resolution RDC 797/2023",
-              remediation:
-                "Ensure operation is authorized by licensed healthcare professional",
+              remediation: "Ensure operation is authorized by licensed healthcare professional",
             };
           }
           break;
@@ -460,8 +452,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
   ): ComplianceViolation | null {
     // CFM (Conselho Federal de Medicina) compliance checks
     if (
-      input.operationType.includes("medical") ||
-      input.operationType.includes("diagnosis")
+      input.operationType.includes("medical")
+      || input.operationType.includes("diagnosis")
     ) {
       switch (rule.id) {
         case "cfm_telemedicine_requirements": {
@@ -470,11 +462,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
               type: "CFM",
               severity: "high",
               code: "CFM-001",
-              description:
-                "Telemedicine operations must comply with CFM Resolution 2314/2022",
+              description: "Telemedicine operations must comply with CFM Resolution 2314/2022",
               regulation: "CFM Resolution 2314/2022",
-              remediation:
-                "Ensure telemedicine consultation meets all CFM requirements",
+              remediation: "Ensure telemedicine consultation meets all CFM requirements",
             };
           }
           break;
@@ -486,11 +476,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
               type: "CFM",
               severity: "high",
               code: "CFM-002",
-              description:
-                "Medical record integrity and authenticity must be guaranteed",
+              description: "Medical record integrity and authenticity must be guaranteed",
               regulation: "CFM Resolution 1638/2002",
-              remediation:
-                "Implement digital signatures and audit trails for medical records",
+              remediation: "Implement digital signatures and audit trails for medical records",
             };
           }
           break;
@@ -509,18 +497,16 @@ export class ComplianceAutomationService extends EnhancedAIService<
     switch (rule.id) {
       case "internal_ai_transparency": {
         if (
-          input.serviceName.includes("ai") &&
-          !this.hasAITransparency(input)
+          input.serviceName.includes("ai")
+          && !this.hasAITransparency(input)
         ) {
           return {
             type: "INTERNAL",
             severity: "medium",
             code: "INT-001",
-            description:
-              "AI operations must provide transparency and explainability",
+            description: "AI operations must provide transparency and explainability",
             regulation: "Internal AI Ethics Policy",
-            remediation:
-              "Implement AI decision transparency and user notification",
+            remediation: "Implement AI decision transparency and user notification",
           };
         }
         break;
@@ -532,11 +518,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
             type: "INTERNAL",
             severity: "medium",
             code: "INT-002",
-            description:
-              "All operations must maintain comprehensive audit trails",
+            description: "All operations must maintain comprehensive audit trails",
             regulation: "Internal Audit Policy",
-            remediation:
-              "Enable comprehensive audit logging for all operations",
+            remediation: "Enable comprehensive audit logging for all operations",
           };
         }
         break;
@@ -557,15 +541,15 @@ export class ComplianceAutomationService extends EnhancedAIService<
     }
 
     if (
-      input.purpose.includes("contract") ||
-      input.purpose.includes("service")
+      input.purpose.includes("contract")
+      || input.purpose.includes("service")
     ) {
       return "contract_execution"; // Art. 7, V LGPD
     }
 
     if (
-      input.purpose.includes("legal") ||
-      input.purpose.includes("compliance")
+      input.purpose.includes("legal")
+      || input.purpose.includes("compliance")
     ) {
       return "legal_obligation"; // Art. 7, II LGPD
     }
@@ -578,9 +562,9 @@ export class ComplianceAutomationService extends EnhancedAIService<
     lawfulBasis: string,
   ): boolean {
     return (
-      lawfulBasis === "explicit_consent" ||
-      input.sensitiveDataHandled ||
-      input.dataCategories.includes("biometric_data")
+      lawfulBasis === "explicit_consent"
+      || input.sensitiveDataHandled
+      || input.dataCategories.includes("biometric_data")
     );
   }
 
@@ -636,8 +620,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
             category: "data_protection",
             priority: "high",
             action: "Define clear data processing purposes",
-            description:
-              "Establish clear, documented purposes for all data processing activities",
+            description: "Establish clear, documented purposes for all data processing activities",
             implementationSteps: [
               "Document all data processing purposes",
               "Map data flows to specific purposes",
@@ -653,8 +636,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
             category: "data_protection",
             priority: "high",
             action: "Implement medical data encryption",
-            description:
-              "Deploy end-to-end encryption for all medical data processing",
+            description: "Deploy end-to-end encryption for all medical data processing",
             implementationSteps: [
               "Enable database encryption at rest",
               "Implement TLS 1.3 for data in transit",
@@ -673,8 +655,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
         category: "access_control",
         priority: "medium",
         action: "Implement AI transparency measures",
-        description:
-          "Add explainability and transparency features for AI decisions",
+        description: "Add explainability and transparency features for AI decisions",
         implementationSteps: [
           "Implement decision explanation interfaces",
           "Add confidence score displays",
@@ -701,12 +682,11 @@ export class ComplianceAutomationService extends EnhancedAIService<
       serviceName: input.serviceName,
       operationType: input.operationType,
       dataCategories: input.dataCategories,
-      complianceStatus:
-        violations.length === 0
-          ? "compliant"
-          : violations.some((v) => v.severity === "critical")
-            ? "non_compliant"
-            : "requires_review",
+      complianceStatus: violations.length === 0
+        ? "compliant"
+        : violations.some((v) => v.severity === "critical")
+        ? "non_compliant"
+        : "requires_review",
       violationsCount: violations.length,
       lawfulBasis,
       consentObtained: !consentRequired || this.hasValidConsent(input),
@@ -727,8 +707,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
         lawful_basis: auditTrail.lawfulBasis,
         purpose: "AI service compliance check",
         retention_period_days: auditTrail.retentionPeriod,
-        sensitive_data_handled:
-          auditTrail.dataCategories.includes("sensitive_data"),
+        sensitive_data_handled: auditTrail.dataCategories.includes("sensitive_data"),
         consent_obtained: auditTrail.consentObtained,
         audit_trail: {
           compliance_status: auditTrail.complianceStatus,
@@ -810,8 +789,8 @@ export class ComplianceAutomationService extends EnhancedAIService<
     // Block operations for critical violations
     const blockingCodes = ["LGPD-001", "ANVISA-001", "ANVISA-002"];
     return (
-      violation.severity === "critical" &&
-      blockingCodes.includes(violation.code)
+      violation.severity === "critical"
+      && blockingCodes.includes(violation.code)
     );
   }
 
@@ -833,9 +812,7 @@ export class ComplianceAutomationService extends EnhancedAIService<
       "billing_processing",
     ];
 
-    return legitimatePurposes.some((legit) =>
-      purpose.toLowerCase().includes(legit),
-    );
+    return legitimatePurposes.some((legit) => purpose.toLowerCase().includes(legit));
   }
 
   private isDataExcessive(dataCategories: string[], purpose: string): boolean {

@@ -21,7 +21,7 @@ interface Notification {
   priority: NotificationPriority;
   title: string;
   content: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   status: NotificationStatus;
   scheduledAt?: Date;
   sentAt?: Date;
@@ -30,7 +30,7 @@ interface Notification {
   retryCount: number;
   maxRetries: number;
   errorMessage?: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
   createdBy?: string;
@@ -46,7 +46,7 @@ interface NotificationTemplate {
   content: string;
   variables: string[];
   isActive: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,7 +61,7 @@ interface NotificationPreference {
   quietHoursStart?: string;
   quietHoursEnd?: string;
   timezone: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -75,7 +75,7 @@ interface NotificationRule {
   conditions: NotificationCondition[];
   actions: NotificationAction[];
   isActive: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -83,13 +83,13 @@ interface NotificationRule {
 interface NotificationTrigger {
   event: string;
   entity: string;
-  conditions?: Record<string, any>;
+  conditions?: Record<string, unknown>;
 }
 
 interface NotificationCondition {
   field: string;
   operator: ConditionOperator;
-  value: any;
+  value: unknown;
   logicalOperator?: LogicalOperator;
 }
 
@@ -124,7 +124,7 @@ interface NotificationBatch {
   scheduledAt?: Date;
   startedAt?: Date;
   completedAt?: Date;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -274,10 +274,10 @@ interface SendNotificationRequest {
   priority?: NotificationPriority;
   title: string;
   content: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   scheduledAt?: Date;
   expiresAt?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface SendBulkNotificationRequest {
@@ -288,10 +288,10 @@ interface SendBulkNotificationRequest {
   title: string;
   content: string;
   recipients: NotificationRecipient[];
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   scheduledAt?: Date;
   expiresAt?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface CreateTemplateRequest {
@@ -302,7 +302,7 @@ interface CreateTemplateRequest {
   subject: string;
   content: string;
   variables: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface NotificationFilters {
@@ -328,8 +328,8 @@ interface NotificationFilters {
 export class NotificationService {
   private static instance: NotificationService;
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
   private maxRetries = 3;
@@ -564,7 +564,7 @@ export class NotificationService {
     templateId: string,
     recipientId: string,
     recipientType: RecipientType,
-    variables: Record<string, any>,
+    variables: Record<string, unknown>,
     userId: string,
     priority?: NotificationPriority,
     scheduledAt?: Date,
@@ -642,8 +642,8 @@ export class NotificationService {
 
       // Check if notification is valid for sending
       if (
-        notification.status !== NotificationStatus.PENDING &&
-        notification.status !== NotificationStatus.SCHEDULED
+        notification.status !== NotificationStatus.PENDING
+        && notification.status !== NotificationStatus.SCHEDULED
       ) {
         return false;
       }
@@ -831,7 +831,7 @@ export class NotificationService {
   async searchNotifications(
     filters: NotificationFilters,
     userId: string,
-  ): Promise<{ notifications: Notification[]; total: number }> {
+  ): Promise<{ notifications: Notification[]; total: number; }> {
     try {
       monitoring.debug("Searching notifications", "notification-service", {
         filters,
@@ -1079,8 +1079,8 @@ export class NotificationService {
       const totalSent = notifications.filter((n) => n.sent_at).length;
       const totalDelivered = notifications.filter(
         (n) =>
-          n.status === NotificationStatus.DELIVERED ||
-          n.status === NotificationStatus.READ,
+          n.status === NotificationStatus.DELIVERED
+          || n.status === NotificationStatus.READ,
       ).length;
       const totalFailed = notifications.filter(
         (n) => n.status === NotificationStatus.FAILED,
@@ -1091,7 +1091,7 @@ export class NotificationService {
       const readRate = totalDelivered > 0 ? totalRead / totalDelivered : 0;
 
       // Group by channel
-      const byChannel: Record<NotificationChannel, ChannelStats> = {} as any;
+      const byChannel: Record<NotificationChannel, ChannelStats> = {} as unknown;
       Object.values(NotificationChannel).forEach((channel) => {
         const channelNotifications = notifications.filter(
           (n) => n.channel === channel,
@@ -1101,8 +1101,8 @@ export class NotificationService {
         ).length;
         const channelDelivered = channelNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED ||
-            n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED
+            || n.status === NotificationStatus.READ,
         ).length;
         const channelFailed = channelNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1122,14 +1122,14 @@ export class NotificationService {
       });
 
       // Group by type
-      const byType: Record<NotificationType, TypeStats> = {} as any;
+      const byType: Record<NotificationType, TypeStats> = {} as unknown;
       Object.values(NotificationType).forEach((type) => {
         const typeNotifications = notifications.filter((n) => n.type === type);
         const typeSent = typeNotifications.filter((n) => n.sent_at).length;
         const typeDelivered = typeNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED ||
-            n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED
+            || n.status === NotificationStatus.READ,
         ).length;
         const typeFailed = typeNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1147,7 +1147,7 @@ export class NotificationService {
       });
 
       // Group by priority
-      const byPriority: Record<NotificationPriority, PriorityStats> = {} as any;
+      const byPriority: Record<NotificationPriority, PriorityStats> = {} as unknown;
       Object.values(NotificationPriority).forEach((priority) => {
         const priorityNotifications = notifications.filter(
           (n) => n.priority === priority,
@@ -1157,8 +1157,8 @@ export class NotificationService {
         ).length;
         const priorityDelivered = priorityNotifications.filter(
           (n) =>
-            n.status === NotificationStatus.DELIVERED ||
-            n.status === NotificationStatus.READ,
+            n.status === NotificationStatus.DELIVERED
+            || n.status === NotificationStatus.READ,
         ).length;
         const priorityFailed = priorityNotifications.filter(
           (n) => n.status === NotificationStatus.FAILED,
@@ -1167,22 +1167,21 @@ export class NotificationService {
         // Calculate average delivery time
         const deliveredNotifications = priorityNotifications.filter(
           (n) =>
-            n.sent_at &&
-            (n.status === NotificationStatus.DELIVERED ||
-              n.status === NotificationStatus.READ),
+            n.sent_at
+            && (n.status === NotificationStatus.DELIVERED
+              || n.status === NotificationStatus.READ),
         );
-        const avgDeliveryTime =
-          deliveredNotifications.length > 0
-            ? deliveredNotifications.reduce((sum, n) => {
-                const sentTime = new Date(n.sent_at!).getTime();
-                const deliveredTime = new Date(
-                  n.read_at || n.sent_at!,
-                ).getTime();
-                return sum + (deliveredTime - sentTime);
-              }, 0) /
-              deliveredNotifications.length /
-              1000 // Convert to seconds
-            : 0;
+        const avgDeliveryTime = deliveredNotifications.length > 0
+          ? deliveredNotifications.reduce((sum, n) => {
+            const sentTime = new Date(n.sent_at!).getTime();
+            const deliveredTime = new Date(
+              n.read_at || n.sent_at!,
+            ).getTime();
+            return sum + (deliveredTime - sentTime);
+          }, 0)
+            / deliveredNotifications.length
+            / 1000 // Convert to seconds
+          : 0;
 
         byPriority[priority] = {
           sent: prioritySent,
@@ -1277,8 +1276,8 @@ export class NotificationService {
         });
 
         if (
-          currentTime >= data.quiet_hours_start &&
-          currentTime <= data.quiet_hours_end
+          currentTime >= data.quiet_hours_start
+          && currentTime <= data.quiet_hours_end
         ) {
           return false;
         }
@@ -1398,7 +1397,7 @@ export class NotificationService {
     status: NotificationStatus,
     sentAt?: Date,
   ): Promise<void> {
-    const updateData: any = {
+    const updateData: unknown = {
       status,
       updated_at: new Date().toISOString(),
     };
@@ -1427,8 +1426,7 @@ export class NotificationService {
     if (data && data.retry_count < data.max_retries) {
       // Schedule retry
       const retryCount = data.retry_count + 1;
-      const retryDelay =
-        this.retryDelays[Math.min(retryCount - 1, this.retryDelays.length - 1)];
+      const retryDelay = this.retryDelays[Math.min(retryCount - 1, this.retryDelays.length - 1)];
       const scheduledAt = new Date(Date.now() + retryDelay);
 
       await this.supabase
@@ -1473,7 +1471,7 @@ export class NotificationService {
 
   private processTemplateVariables(
     template: string,
-    variables: Record<string, any>,
+    variables: Record<string, unknown>,
   ): string {
     let processed = template;
 
@@ -1488,7 +1486,7 @@ export class NotificationService {
     return processed;
   }
 
-  private mapNotificationFromDb(data: any): Notification {
+  private mapNotificationFromDb(data: unknown): Notification {
     return {
       id: data.id,
       tenantId: data.tenant_id,
@@ -1515,7 +1513,7 @@ export class NotificationService {
     };
   }
 
-  private mapTemplateFromDb(data: any): NotificationTemplate {
+  private mapTemplateFromDb(data: unknown): NotificationTemplate {
     return {
       id: data.id,
       tenantId: data.tenant_id,
@@ -1532,7 +1530,7 @@ export class NotificationService {
     };
   }
 
-  private mapBatchFromDb(data: any): NotificationBatch {
+  private mapBatchFromDb(data: unknown): NotificationBatch {
     return {
       id: data.id,
       tenantId: data.tenant_id,

@@ -589,9 +589,7 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
     }
   });
 
-  test("should track outstanding payments and collections", async ({
-    page,
-  }) => {
+  test("should track outstanding payments and collections", async ({ page }) => {
     // Look for collections analytics
     const collectionsAnalytics = page
       .locator('[data-testid="collections-analytics"]')
@@ -625,9 +623,7 @@ test.describe("Dashboard Analytics - Financial Analytics", () => {
     }
   });
 
-  test("should analyze insurance claims and reimbursements", async ({
-    page,
-  }) => {
+  test("should analyze insurance claims and reimbursements", async ({ page }) => {
     // Look for insurance analytics
     const insuranceAnalytics = page
       .locator('[data-testid="insurance-analytics"]')
@@ -874,9 +870,9 @@ test.describe("Dashboard Analytics - Performance & Accessibility", () => {
       const firstChart = charts.first();
       const hasAriaLabel = await firstChart.evaluate((el) => {
         return (
-          el.getAttribute("aria-label") ||
-          el.getAttribute("aria-labelledby") ||
-          el.getAttribute("role")
+          el.getAttribute("aria-label")
+          || el.getAttribute("aria-labelledby")
+          || el.getAttribute("role")
         );
       });
       expect(hasAriaLabel).toBeTruthy();
@@ -926,11 +922,6 @@ test.describe("Dashboard Analytics - Performance & Accessibility", () => {
       await expect(realTimeIndicator).toBeVisible();
 
       // Should update periodically
-      const _initialText = await page
-        .locator('[data-testid="today-metrics"]')
-        .or(page.locator(".today-metrics"))
-        .textContent();
-
       // Wait for potential update
       await page.waitForTimeout(5000);
 

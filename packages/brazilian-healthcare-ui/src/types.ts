@@ -136,5 +136,5 @@ export interface AuditEvent {
   ipAddress: string;
   userAgent: string;
   outcome: "success" | "failure";
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }

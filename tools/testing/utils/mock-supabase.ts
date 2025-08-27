@@ -4,8 +4,8 @@
  */
 
 export interface MockQueryResult {
-  data?: any;
-  error?: any;
+  data?: unknown;
+  error?: unknown;
   count?: number;
 }
 
@@ -116,7 +116,7 @@ export function createMockSupabaseClient(): MockSupabaseClient {
  */
 
 export function createSuccessfulMockSupabaseClient(
-  data: any = [],
+  data: unknown = [],
 ): MockSupabaseClient {
   const client = createMockSupabaseClient();
 
@@ -150,7 +150,7 @@ export function createSuccessfulMockSupabaseClient(
 /**
  * Creates a mock Supabase client with preset error responses
  */
-export function createErrorMockSupabaseClient(error: any): MockSupabaseClient {
+export function createErrorMockSupabaseClient(error: unknown): MockSupabaseClient {
   const client = createMockSupabaseClient();
 
   // Override with error responses
@@ -186,7 +186,7 @@ export { createMockSupabaseClient as createMockSupabaseC }; /**
  * These functions create realistic patient data for testing scenarios
  */
 
-export function createMockPatientData(overrides: any = {}) {
+export function createMockPatientData(overrides: unknown = {}) {
   return {
     id: "patient-12345",
     name: "João Silva",

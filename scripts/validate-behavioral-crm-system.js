@@ -81,14 +81,14 @@ class BehavioralCrmValidator {
       throw new Error("Missing patient_behavior in response");
     }
 
-    const behavior = data.patient_behavior;
+    const { patient_behavior: behavior } = data;
 
     // Validate behavioral profile
     if (!behavior.behavioral_profile) {
       throw new Error("Missing behavioral_profile");
     }
 
-    const profile = behavior.behavioral_profile;
+    const { behavioral_profile: profile } = behavior;
     const requiredProfileFields = [
       "engagement_level",
       "communication_preference",
@@ -173,8 +173,8 @@ class BehavioralCrmValidator {
     // Verify sorting (highest scores first)
     for (let i = 1; i < data.segmented_patients.length; i++) {
       if (
-        data.segmented_patients[i].segment_score >
-        data.segmented_patients[i - 1].segment_score
+        data.segmented_patients[i].segment_score
+          > data.segmented_patients[i - 1].segment_score
       ) {
         throw new Error("Segments not properly sorted by score");
       }
@@ -183,14 +183,12 @@ class BehavioralCrmValidator {
     return {
       total_segments: data.total_segments,
       criteria_applied: Object.keys(segmentationCriteria).length,
-      highest_score:
-        data.segmented_patients.length > 0
-          ? data.segmented_patients[0].segment_score
-          : 0,
-      lowest_score:
-        data.segmented_patients.length > 0
-          ? data.segmented_patients.at(-1).segment_score
-          : 0,
+      highest_score: data.segmented_patients.length > 0
+        ? data.segmented_patients[0].segment_score
+        : 0,
+      lowest_score: data.segmented_patients.length > 0
+        ? data.segmented_patients.at(-1).segment_score
+        : 0,
     };
   }
 
@@ -229,7 +227,7 @@ class BehavioralCrmValidator {
       );
     }
 
-    const personalizedMessage = data.personalized_message;
+    const { personalized_message: personalizedMessage } = data;
 
     // Validate required fields
     const requiredFields = [
@@ -246,8 +244,8 @@ class BehavioralCrmValidator {
 
     // Validate personalization score range
     if (
-      personalizedMessage.personalization_score < 0 ||
-      personalizedMessage.personalization_score > 1
+      personalizedMessage.personalization_score < 0
+      || personalizedMessage.personalization_score > 1
     ) {
       throw new Error(
         `Personalization score out of range: ${personalizedMessage.personalization_score}`,
@@ -255,9 +253,8 @@ class BehavioralCrmValidator {
     }
 
     // Check that personalization variables were replaced
-    const hasUnreplacedVariables =
-      personalizedMessage.personalized_content.includes("{") &&
-      personalizedMessage.personalized_content.includes("}");
+    const hasUnreplacedVariables = personalizedMessage.personalized_content.includes("{")
+      && personalizedMessage.personalized_content.includes("}");
     if (hasUnreplacedVariables) {
     }
 
@@ -377,8 +374,7 @@ class BehavioralCrmValidator {
         {
           template_id: "template_001",
           channel: "sms",
-          content:
-            "We miss you! Let's schedule your next appointment with a 15% discount.",
+          content: "We miss you! Let's schedule your next appointment with a 15% discount.",
           personalization_variables: ["patient_name", "preferred_time"],
           call_to_action: {
             text: "Book Now",
@@ -513,7 +509,7 @@ class BehavioralCrmValidator {
       );
     }
 
-    const dashboardData = data.dashboard_data;
+    const { dashboard_data: dashboardData } = data;
 
     // Validate overview metrics
     const requiredMetrics = [
@@ -548,10 +544,8 @@ class BehavioralCrmValidator {
       active_patients: dashboardData.overview_metrics.active_patients,
       behavioral_segments: dashboardData.behavioral_segments.length,
       active_campaigns: dashboardData.campaign_performance.length,
-      churn_predictions:
-        dashboardData.predictive_analytics.churn_predictions.length,
-      revenue_forecast_30d:
-        dashboardData.predictive_analytics.revenue_forecast.next_30_days,
+      churn_predictions: dashboardData.predictive_analytics.churn_predictions.length,
+      revenue_forecast_30d: dashboardData.predictive_analytics.revenue_forecast.next_30_days,
     };
   }
 
@@ -607,14 +601,12 @@ class BehavioralCrmValidator {
     return {
       insights_count: data.insights.length,
       insight_types: data.insights.map((i) => i.insight_type),
-      avg_findings_per_insight:
-        data.insights.reduce((sum, i) => sum + i.key_findings.length, 0) /
-        data.insights.length,
-      avg_recommendations_per_insight:
-        data.insights.reduce(
-          (sum, i) => sum + i.actionable_recommendations.length,
-          0,
-        ) / data.insights.length,
+      avg_findings_per_insight: data.insights.reduce((sum, i) => sum + i.key_findings.length, 0)
+        / data.insights.length,
+      avg_recommendations_per_insight: data.insights.reduce(
+        (sum, i) => sum + i.actionable_recommendations.length,
+        0,
+      ) / data.insights.length,
     };
   }
 
@@ -634,7 +626,7 @@ class BehavioralCrmValidator {
     }
 
     // Validate endpoint status
-    const endpoints = data.endpoints;
+    const { endpoints: endpoints } = data;
     const requiredEndpoints = [
       "behavioral_analytics",
       "personalization_engine",
@@ -673,14 +665,14 @@ class BehavioralCrmValidator {
       throw new Error(`Metrics fetch failed: ${data.error || "Unknown error"}`);
     }
 
-    const metrics = data.metrics;
+    const { metrics: metrics } = data;
 
     // Validate metrics structure
     if (
       !(
-        metrics.api_requests &&
-        metrics.performance_metrics &&
-        metrics.business_metrics
+        metrics.api_requests
+        && metrics.performance_metrics
+        && metrics.business_metrics
       )
     ) {
       throw new Error("Missing required metrics categories");
@@ -823,11 +815,6 @@ class BehavioralCrmValidator {
 
     for (const [_category, results] of Object.entries(this.testResults)) {
       const categoryTotal = results.passed + results.failed;
-      const _successRate =
-        categoryTotal > 0
-          ? Math.round((results.passed / categoryTotal) * 100)
-          : 0;
-
       totalPassed += results.passed;
       totalFailed += results.failed;
 
@@ -839,8 +826,9 @@ class BehavioralCrmValidator {
     }
 
     const overallTotal = totalPassed + totalFailed;
-    const overallSuccessRate =
-      overallTotal > 0 ? Math.round((totalPassed / overallTotal) * 100) : 0;
+    const overallSuccessRate = overallTotal > 0
+      ? Math.round((totalPassed / overallTotal) * 100)
+      : 0;
 
     if (overallSuccessRate >= 90) {
     } else if (overallSuccessRate >= 70) {

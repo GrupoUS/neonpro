@@ -55,7 +55,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^2.0.15",
     "@neonpro/core-services": "workspace:*",
-    "@neonpro/db": "workspace:*",
+    "@neonpro/database": "workspace:*",
     "@neonpro/types": "workspace:*",
     "@neonpro/ui": "workspace:*",
     "@supabase/supabase-js": "^2.45.4",

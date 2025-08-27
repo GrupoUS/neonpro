@@ -98,7 +98,7 @@ export interface Database {
           event_type: string;
           user_id: string;
           resource_id: string;
-          details: any;
+          details: unknown;
           created_at: string;
         };
         Insert: {
@@ -106,7 +106,7 @@ export interface Database {
           event_type: string;
           user_id: string;
           resource_id: string;
-          details?: any;
+          details?: unknown;
           created_at?: string;
         };
         Update: {
@@ -114,7 +114,7 @@ export interface Database {
           event_type?: string;
           user_id?: string;
           resource_id?: string;
-          details?: any;
+          details?: unknown;
           created_at?: string;
         };
       };

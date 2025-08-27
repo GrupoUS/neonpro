@@ -8,10 +8,7 @@
  * with TanStack Query integration and LGPD compliance
  */
 
-import {
-  RealtimeQueryManager,
-  defaultRealtimeConfig,
-} from "@/lib/query/realtime-query-utils";
+import { defaultRealtimeConfig, RealtimeQueryManager } from "@/lib/query/realtime-query-utils";
 import type { RealtimeQueryConfig } from "@/lib/query/realtime-query-utils";
 import { createClient } from "@/lib/supabase/client";
 import type { SupabaseClient } from "@supabase/supabase-js";

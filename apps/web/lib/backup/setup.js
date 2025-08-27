@@ -13,7 +13,6 @@
  */
 
 const fs = require("node:fs");
-const _path = require("node:path");
 const { execSync } = require("node:child_process");
 const readline = require("node:readline");
 
@@ -23,17 +22,6 @@ const rl = readline.createInterface({
 });
 
 // Colors for console output
-const _colors = {
-  reset: "\u001B[0m",
-  bright: "\u001B[1m",
-  red: "\u001B[31m",
-  green: "\u001B[32m",
-  yellow: "\u001B[33m",
-  blue: "\u001B[34m",
-  magenta: "\u001B[35m",
-  cyan: "\u001B[36m",
-};
-
 function log(_message, _color = "reset") {
   // Logging disabled for backup operations
   // This function is intentionally empty to suppress output

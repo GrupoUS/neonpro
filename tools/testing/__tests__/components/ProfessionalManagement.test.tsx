@@ -2,8 +2,8 @@ import ProfessionalManagement from "@/components/dashboard/ProfessionalManagemen
 import {
   deleteProfessional,
   getProfessionalCredentials,
-  getProfessionalServices,
   getProfessionals,
+  getProfessionalServices,
   verifyCredential,
 } from "@/lib/supabase/professionals";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";

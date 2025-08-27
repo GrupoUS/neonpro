@@ -30,14 +30,16 @@ const mockPatientValidation = {
 
     return {
       valid: true,
-      formatted: `${cleanCPF.slice(0, 3)}.${cleanCPF.slice(3, 6)}.${cleanCPF.slice(6, 9)}-${cleanCPF.slice(
-        9,
-        11,
-      )}`,
+      formatted: `${cleanCPF.slice(0, 3)}.${cleanCPF.slice(3, 6)}.${cleanCPF.slice(6, 9)}-${
+        cleanCPF.slice(
+          9,
+          11,
+        )
+      }`,
     };
   },
 
-  sanitizePatientData: (patientData: any) => {
+  sanitizePatientData: (patientData: unknown) => {
     const sanitized = { ...patientData };
 
     // Remove or mask sensitive fields for logging

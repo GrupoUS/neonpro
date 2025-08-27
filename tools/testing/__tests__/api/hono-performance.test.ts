@@ -50,12 +50,11 @@ const createPerformanceApp = () => {
       responseTime,
       database: {
         connected: true,
-        latency: Math.round((dbCheck as any).queryTime),
+        latency: Math.round((dbCheck as unknown).queryTime),
       },
       timestamp: new Date().toISOString(),
       performance: {
-        withinThreshold:
-          responseTime < performanceMetrics.responseTimeThreshold,
+        withinThreshold: responseTime < performanceMetrics.responseTimeThreshold,
       },
     });
   });
@@ -79,7 +78,7 @@ const createPerformanceApp = () => {
     const queryTime = Math.round(endTime - startTime);
 
     return c.json({
-      data: (result as any).data.map((item: any) => ({
+      data: (result as unknown).data.map((item: unknown) => ({
         id: `pat_${item.id}`,
         name: `Patient ${item.id}`,
         email: `patient${item.id}@example.com`,
@@ -124,9 +123,8 @@ const createPerformanceApp = () => {
       })),
       performance: {
         processingTime,
-        queryTime: (analyticsData as any).queryTime,
-        withinThreshold:
-          processingTime < performanceMetrics.responseTimeThreshold,
+        queryTime: (analyticsData as unknown).queryTime,
+        withinThreshold: processingTime < performanceMetrics.responseTimeThreshold,
       },
     });
   });
@@ -226,8 +224,9 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
       const startTime = performance.now();
 
       // Create array of concurrent requests
-      const requestPromises = Array.from({ length: concurrentRequests }, () =>
-        app.request("/api/v1/fast"),
+      const requestPromises = Array.from(
+        { length: concurrentRequests },
+        () => app.request("/api/v1/fast"),
       );
 
       const responses = await Promise.all(requestPromises);
@@ -324,8 +323,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
       await Promise.all(operations);
 
       const finalMemory = process.memoryUsage();
-      const memoryIncrease =
-        (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024; // MB
+      const memoryIncrease = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024; // MB
 
       // Memory increase should be minimal
       expect(memoryIncrease).toBeLessThan(
@@ -348,8 +346,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
       }
 
       const finalMemory = process.memoryUsage();
-      const memoryIncrease =
-        (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
+      const memoryIncrease = (finalMemory.heapUsed - initialMemory.heapUsed) / 1024 / 1024;
 
       expect(memoryIncrease).toBeLessThan(
         performanceMetrics.memoryUsageThreshold,
@@ -388,8 +385,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
       const endTime = performance.now();
 
       const totalTime = Math.round(endTime - startTime);
-      const successRate =
-        responses.filter((res) => res.status === 200).length / peakRequests;
+      const successRate = responses.filter((res) => res.status === 200).length / peakRequests;
 
       expect(successRate).toBeGreaterThan(0.95); // 95% success rate minimum
       expect(totalTime).toBeLessThan(8000); // Should complete within 8 seconds
@@ -425,8 +421,9 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
       // Spike phase
       const spikeStartTime = performance.now();
-      const spikePromises = Array.from({ length: spikeRequests }, () =>
-        app.request("/api/v1/patients"),
+      const spikePromises = Array.from(
+        { length: spikeRequests },
+        () => app.request("/api/v1/patients"),
       );
 
       const spikeResponses = await Promise.all(spikePromises);
@@ -437,26 +434,21 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
 
       // Normal load phase
       const normalStartTime = performance.now();
-      const normalPromises = Array.from({ length: normalRequests }, () =>
-        app.request("/api/v1/fast"),
+      const normalPromises = Array.from(
+        { length: normalRequests },
+        () => app.request("/api/v1/fast"),
       );
 
       const normalResponses = await Promise.all(normalPromises);
       const normalEndTime = performance.now();
 
       // Both phases should succeed
-      const spikeSuccessRate =
-        spikeResponses.filter((res) => res.status === 200).length /
-        spikeRequests;
-      const normalSuccessRate =
-        normalResponses.filter((res) => res.status === 200).length /
-        normalRequests;
+      const spikeSuccessRate = spikeResponses.filter((res) => res.status === 200).length
+        / spikeRequests;
+      const normalSuccessRate = normalResponses.filter((res) => res.status === 200).length
+        / normalRequests;
 
       expect(spikeSuccessRate).toBeGreaterThan(0.9); // 90% during spike
-      expect(normalSuccessRate).toBeGreaterThan(0.95); // Should recover to 95%
-
-      const _spikeTime = Math.round(spikeEndTime - spikeStartTime);
-      const _normalTime = Math.round(normalEndTime - normalStartTime);
-    });
+      expect(normalSuccessRate).toBeGreaterThan(0.95); // Should recover to 95%    });
   });
 });

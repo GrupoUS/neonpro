@@ -54,7 +54,7 @@ export const setupSupabaseMock = async () => {
   return mock;
 };
 
-function setupPatientDataMocks(mock: any) {
+function setupPatientDataMocks(mock: unknown) {
   // Mock LGPD-compliant patient data
   const mockPatients = [
     {
@@ -86,43 +86,14 @@ function setupPatientDataMocks(mock: any) {
   });
 }
 
-function setupAnvisaDataMocks(_mock: any) {
-  // Mock ANVISA device registration data
-  const _mockDevices = [
-    {
-      id: "device-001",
-      name: "Test Medical Device",
-      anvisa_registration: "REG-001-2024",
-      status: "approved",
-      validation_date: new Date().toISOString(),
-    },
-  ];
-}
+function setupAnvisaDataMocks(_mock: unknown) {
+  // Mock ANVISA device registration data}
 
-function setupCFMDataMocks(_mock: any) {
+function setupCFMDataMocks(_mock: unknown) {
   // Mock CFM professional validation data
-  const _mockProfessionals = [
-    {
-      id: "prof-001",
-      name: "Dr. Test Professional",
-      cfm_license: "CRM-12345",
-      specialty: "Dermatologia",
-      status: "active",
-      validation_date: new Date().toISOString(),
-    },
-  ];
 }
 
-function setupAuditTrailMocks(_mock: any) {
+function setupAuditTrailMocks(_mock: unknown) {
+  // Implementation here
   // Mock audit trail for compliance
-  const _mockAuditLogs = [
-    {
-      id: "audit-001",
-      action: "patient_data_access",
-      user_id: "user-001",
-      timestamp: new Date().toISOString(),
-      ip_address: "127.0.0.1",
-      compliance_validated: true,
-    },
-  ];
 }

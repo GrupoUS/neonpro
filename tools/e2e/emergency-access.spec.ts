@@ -433,9 +433,7 @@ test.describe("Emergency Access - Emergency Actions", () => {
       .first();
 
     if (await exportButton.isVisible()) {
-      // Start export process
-      const _downloadPromise = page.waitForEvent("download");
-      await exportButton.click();
+      // Start export process      await exportButton.click();
 
       // Should show export options
       const exportOptions = page
@@ -588,9 +586,7 @@ test.describe("Emergency Access - Performance & Accessibility", () => {
     ).toBeVisible();
   });
 
-  test("should be keyboard accessible for quick navigation", async ({
-    page,
-  }) => {
+  test("should be keyboard accessible for quick navigation", async ({ page }) => {
     await page.goto("/emergency");
 
     // Should be able to navigate with keyboard
@@ -613,9 +609,7 @@ test.describe("Emergency Access - Performance & Accessibility", () => {
     }
   });
 
-  test("should have high contrast for emergency visibility", async ({
-    page,
-  }) => {
+  test("should have high contrast for emergency visibility", async ({ page }) => {
     await page.goto("/emergency");
 
     // Emergency elements should have high contrast
@@ -676,9 +670,9 @@ test.describe("Emergency Access - Performance & Accessibility", () => {
     if (await searchField.isVisible()) {
       const hasAriaLabel = await searchField.evaluate((el) => {
         return (
-          el.getAttribute("aria-label") ||
-          el.getAttribute("aria-labelledby") ||
-          el.labels?.length > 0
+          el.getAttribute("aria-label")
+          || el.getAttribute("aria-labelledby")
+          || el.labels?.length > 0
         );
       });
       expect(hasAriaLabel).toBeTruthy();

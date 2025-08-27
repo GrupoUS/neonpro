@@ -14,7 +14,7 @@ interface ValidationResult {
   passed: boolean;
   errors: string[];
   warnings: string[];
-  metrics?: Record<string, any>;
+  metrics?: Record<string, unknown>;
 }
 
 class SystemValidator {
@@ -172,8 +172,8 @@ class SystemValidator {
 
         // Check for critical functions
         if (
-          util.includes("compliance-helpers") &&
-          !(content.includes("validateCPF") && content.includes("validateCNPJ"))
+          util.includes("compliance-helpers")
+          && !(content.includes("validateCPF") && content.includes("validateCNPJ"))
         ) {
           errors.push(
             "Compliance helpers missing Brazilian validation functions",
@@ -181,8 +181,8 @@ class SystemValidator {
         }
 
         if (
-          util.includes("audit-utils") &&
-          !(
+          util.includes("audit-utils")
+          && !(
             content.includes("createAuditLog") && content.includes("LGPD_BASIS")
           )
         ) {
@@ -254,8 +254,8 @@ class SystemValidator {
 
       if (
         !(
-          healthcareDashboard.includes("LGPD") &&
-          healthcareDashboard.includes("audit")
+          healthcareDashboard.includes("LGPD")
+          && healthcareDashboard.includes("audit")
         )
       ) {
         warnings.push(
@@ -270,8 +270,8 @@ class SystemValidator {
       );
       if (
         !(
-          aiScheduling.includes("createAuditLog") &&
-          aiScheduling.includes("validateHealthcareAccess")
+          aiScheduling.includes("createAuditLog")
+          && aiScheduling.includes("validateHealthcareAccess")
         )
       ) {
         errors.push("AI scheduling missing compliance integration");
@@ -321,8 +321,6 @@ class SystemValidator {
     let _criticalErrors = 0;
 
     for (const result of this.results) {
-      const _status = result.passed ? "✅" : "❌";
-
       if (result.passed) {
         totalPassed++;
       } else {
@@ -357,9 +355,8 @@ class SystemValidator {
         total_components: this.results.length,
         passed: this.results.filter((r) => r.passed).length,
         failed: this.results.filter((r) => !r.passed).length,
-        success_rate:
-          (this.results.filter((r) => r.passed).length / this.results.length) *
-          100,
+        success_rate: (this.results.filter((r) => r.passed).length / this.results.length)
+          * 100,
       },
     };
 

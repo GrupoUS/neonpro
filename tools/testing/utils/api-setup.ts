@@ -79,6 +79,6 @@ process.env.NEXTAUTH_SECRET = "test-secret";
 process.env.NEXTAUTH_URL = "http://localhost:3000";
 
 // Helper function for API route testing
-export const testApiRoute = async (handler: any, req: any, res: any) => {
+export const testApiRoute = async (handler: unknown, req: unknown, res: unknown) => {
   return handler(req, res);
 };

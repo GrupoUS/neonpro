@@ -1,7 +1,7 @@
 // Batch Prediction API Templates - Response Templates and Utilities
 // Standardized response templates and email/notification templates
 
-import { STATUS_CODES, ERROR_MESSAGES } from "./batch-prediction-constants";
+import { ERROR_MESSAGES, STATUS_CODES } from "./batch-prediction-constants";
 
 // Response Template Interfaces
 interface ApiResponse<T = unknown> {
@@ -32,6 +32,7 @@ interface ValidationErrorResponse extends ErrorResponse {
 }
 
 // Response Template Service
+// TODO: Convert to standalone functions
 export class ResponseTemplates {
   static success<T>(data: T, message = "Operation successful"): ApiResponse<T> {
     return {
@@ -117,6 +118,7 @@ export class ResponseTemplates {
 }
 
 // Email and Notification Templates
+// TODO: Convert to standalone functions
 export class NotificationTemplates {
   static batchJobCompleted(
     jobId: string,
@@ -163,9 +165,10 @@ export class NotificationTemplates {
     total: number,
     successful: number,
     failed: number,
-  ): { html: string; subject: string; text: string } {
+  ): { html: string; subject: string; text: string; } {
     const subject = `Bulk Operation Summary: ${bulkOperationId}`;
-    const text = `Bulk operation ${bulkOperationId} completed. ${successful}/${total} jobs successful, ${failed} failed.`;
+    const text =
+      `Bulk operation ${bulkOperationId} completed. ${successful}/${total} jobs successful, ${failed} failed.`;
     const html = `
       <h2>Bulk Operation Summary</h2>
       <p>Bulk operation <strong>${bulkOperationId}</strong> has completed.</p>
@@ -181,6 +184,7 @@ export class NotificationTemplates {
 }
 
 // API Documentation Templates
+// TODO: Convert to standalone functions
 export class ApiDocumentationTemplates {
   static getOpenApiSchema() {
     return {

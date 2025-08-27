@@ -58,8 +58,8 @@ export interface SimulationData {
 interface ARResultsSimulatorProps {
   patientId: string;
   simulationData?: SimulationData;
-  onSimulationCreate?: (data: any) => void;
-  onSimulationUpdate?: (id: string, data: any) => void;
+  onSimulationCreate?: (data: unknown) => void;
+  onSimulationUpdate?: (id: string, data: unknown) => void;
   className?: string;
 }
 
@@ -87,10 +87,10 @@ function ViewportPlaceholder({
           {showBefore && showAfter
             ? "Before & After View"
             : showBefore
-              ? "Before Treatment"
-              : showAfter
-                ? "After Treatment"
-                : "Select View Mode"}
+            ? "Before Treatment"
+            : showAfter
+            ? "After Treatment"
+            : "Select View Mode"}
         </div>
       </div>
     </div>
@@ -122,11 +122,7 @@ function SimulationControls({
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={onPlayPause}>
-              {isPlaying ? (
-                <Pause className="w-4 h-4" />
-              ) : (
-                <Play className="w-4 h-4" />
-              )}
+              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
             </Button>
 
             <Button variant="outline" size="sm" onClick={onReset}>
@@ -157,7 +153,7 @@ function SimulationControls({
   );
 }
 
-function ResultsPanel({ simulationData }: { simulationData: SimulationData }) {
+function ResultsPanel({ simulationData }: { simulationData: SimulationData; }) {
   if (!simulationData) {
     return;
   }
@@ -296,7 +292,7 @@ export default function ARResultsSimulator({
 
   const handleCapture = () => {
     // Implement screenshot functionality
-    console.log("Capturing simulation screenshot...");
+    // console.log("Capturing simulation screenshot...");
   };
 
   if (isLoading) {

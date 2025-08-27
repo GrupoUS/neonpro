@@ -38,7 +38,7 @@ import { useEffect, useState } from "react";
 interface NavigationItem {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; }>;
   badge?: string;
   category: "main" | "dashboard" | "tools" | "settings";
   description?: string;
@@ -235,7 +235,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                     </h3>
                     <div className="space-y-1">
                       {items.map((item) => {
-                        const Icon = item.icon;
+                        const { icon: Icon } = item;
                         const active = isActive(item.href);
 
                         return (
@@ -255,11 +255,9 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                                 <span className="truncate">{item.label}</span>
                                 {item.badge && (
                                   <Badge
-                                    variant={
-                                      item.badge === "IA"
-                                        ? "secondary"
-                                        : "default"
-                                    }
+                                    variant={item.badge === "IA"
+                                      ? "secondary"
+                                      : "default"}
                                     className="ml-2 text-xs"
                                   >
                                     {item.badge}
@@ -345,7 +343,7 @@ export function MobileBottomNavigation() {
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
       <nav className="flex items-center justify-around py-2">
         {quickItems.map((item) => {
-          const Icon = item.icon;
+          const { icon: Icon } = item;
           const active = isActive(item.href);
 
           if (item.action) {

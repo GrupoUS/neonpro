@@ -1,11 +1,4 @@
-import {
-  AlertTriangle,
-  CheckCircle,
-  Eye,
-  Keyboard,
-  Volume2,
-  X,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, Eye, Keyboard, Volume2, X } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { calculateContrastRatio } from "./contrast-validator";
@@ -129,35 +122,32 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
     for (const [index, element] of [...elements].entries()) {
       const htmlElement = element as HTMLElement;
       const computedStyle = window.getComputedStyle(htmlElement);
-      const backgroundColor = computedStyle.backgroundColor;
-      const color = computedStyle.color;
+      const { backgroundColor } = computedStyle;
+      const { color } = computedStyle;
       const fontSize = Number.parseFloat(computedStyle.fontSize);
 
       // Skip elements with transparent backgrounds or no text
       if (
-        backgroundColor === "rgba(0, 0, 0, 0)" ||
-        !htmlElement.textContent?.trim()
+        backgroundColor === "rgba(0, 0, 0, 0)"
+        || !htmlElement.textContent?.trim()
       ) {
         continue;
       }
 
-      const textSize =
-        fontSize >= 18 || computedStyle.fontWeight === "bold"
-          ? "large"
-          : "normal";
-      const isHealthcareElement =
-        htmlElement.hasAttribute("data-medical-context") ||
-        htmlElement.hasAttribute("data-sensitive") ||
-        htmlElement.hasAttribute("data-emergency");
+      const textSize = fontSize >= 18 || computedStyle.fontWeight === "bold"
+        ? "large"
+        : "normal";
+      const isHealthcareElement = htmlElement.hasAttribute("data-medical-context")
+        || htmlElement.hasAttribute("data-sensitive")
+        || htmlElement.hasAttribute("data-emergency");
 
-      const minimumRatio =
-        healthcareContext || isHealthcareElement
-          ? textSize === "large"
-            ? 4.5
-            : 7.0
-          : textSize === "large"
-            ? 3.0
-            : 4.5;
+      const minimumRatio = healthcareContext || isHealthcareElement
+        ? textSize === "large"
+          ? 4.5
+          : 7
+        : textSize === "large"
+        ? 3
+        : 4.5;
 
       const ratio = calculateContrastRatio(backgroundColor, color);
 
@@ -165,14 +155,16 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
         violations.push({
           id: `contrast-${index}`,
           type: "contrast",
-          severity:
-            ratio < 3 ? "critical" : ratio < 4.5 ? "serious" : "moderate",
+          severity: ratio < 3 ? "critical" : ratio < 4.5 ? "serious" : "moderate",
           element: htmlElement,
-          description: `Color contrast ratio ${ratio.toFixed(
-            2,
-          )}:1 is below minimum ${minimumRatio}:1`,
+          description: `Color contrast ratio ${
+            ratio.toFixed(
+              2,
+            )
+          }:1 is below minimum ${minimumRatio}:1`,
           wcagCriterion: "WCAG 2.1 SC 1.4.3 Contrast (Minimum)",
-          suggestion: `Increase contrast between background (${backgroundColor}) and text (${color})`,
+          suggestion:
+            `Increase contrast between background (${backgroundColor}) and text (${color})`,
           healthcare: isHealthcareElement,
         });
       }
@@ -187,20 +179,19 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
   const scanKeyboardViolations = (): AccessibilityIssue[] => {
     const violations: AccessibilityIssue[] = [];
     const interactiveElements = document.querySelectorAll(
-      'button, [role="button"], input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])',
+      'button, [// role="button" - consider using actual button element], input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])',
     );
 
     for (const [index, element] of [...interactiveElements].entries()) {
       const htmlElement = element as HTMLElement;
-      const tabIndex = htmlElement.tabIndex;
+      const { tabIndex } = htmlElement;
       const computedStyle = window.getComputedStyle(htmlElement);
 
       // Check if focusable element has visible focus indicator
-      const hasFocusStyles =
-        computedStyle.outline !== "none" ||
-        computedStyle.boxShadow.includes("0px 0px") ||
-        htmlElement.classList.contains("focus:ring") ||
-        htmlElement.classList.contains("focus-visible:ring");
+      const hasFocusStyles = computedStyle.outline !== "none"
+        || computedStyle.boxShadow.includes("0px 0px")
+        || htmlElement.classList.contains("focus:ring")
+        || htmlElement.classList.contains("focus-visible:ring");
 
       if (tabIndex >= 0 && !hasFocusStyles) {
         violations.push({
@@ -217,8 +208,8 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 
       // Check for skip links
       if (
-        htmlElement.tagName === "MAIN" &&
-        !document.querySelector('[data-skip-link="true"]')
+        htmlElement.tagName === "MAIN"
+        && !document.querySelector('[data-skip-link="true"]')
       ) {
         violations.push({
           id: "missing-skip-link",
@@ -264,9 +255,8 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
     inputs.forEach((input, index) => {
       const htmlInput = input as HTMLInputElement;
       const hasLabel = htmlInput.labels && htmlInput.labels.length > 0;
-      const hasAriaLabel =
-        htmlInput.hasAttribute("aria-label") ||
-        htmlInput.hasAttribute("aria-labelledby");
+      const hasAriaLabel = htmlInput.hasAttribute("aria-label")
+        || htmlInput.hasAttribute("aria-labelledby");
 
       if (!(hasLabel || hasAriaLabel)) {
         violations.push({
@@ -356,19 +346,18 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
         contrastIssues: contrastViolations.length,
         keyboardIssues: keyboardViolations.length,
         ariaIssues: ariaViolations.length,
-        healthcareCompliance:
-          healthcareElements > 0
-            ? Math.round(
-                ((healthcareElements - healthcareViolations) /
-                  healthcareElements) *
-                  100,
-              )
-            : 100,
+        healthcareCompliance: healthcareElements > 0
+          ? Math.round(
+            ((healthcareElements - healthcareViolations)
+              / healthcareElements)
+              * 100,
+          )
+          : 100,
         wcagLevel: allViolations.some((v) => v.severity === "critical")
           ? "Failed"
           : allViolations.some((v) => v.severity === "serious")
-            ? "AA"
-            : "AAA",
+          ? "AA"
+          : "AAA",
         lastScan: new Date(),
       };
 
@@ -466,7 +455,7 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
             setIsExpanded(!isExpanded);
           }
         }}
-        role="button"
+        // role="button" - consider using actual button element
         tabIndex={0}
       >
         <div className="flex items-center justify-between">
@@ -477,8 +466,8 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
                 stats.wcagLevel === "AAA"
                   ? "bg-green-500"
                   : stats.wcagLevel === "AA"
-                    ? "bg-yellow-500"
-                    : "bg-red-500",
+                  ? "bg-yellow-500"
+                  : "bg-red-500",
               )}
             />
             <span className="font-medium text-sm">A11y Monitor</span>
@@ -559,86 +548,88 @@ const AccessibilityMonitor: React.FC<AccessibilityMonitorProps> = ({
 
           {/* Issues List */}
           <div className="p-2">
-            {issues.length === 0 ? (
-              <div className="flex items-center gap-2 p-3 text-green-600">
-                <CheckCircle className="h-4 w-4" />
-                <span className="font-medium text-sm">
-                  No accessibility issues found!
-                </span>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {issues.slice(0, 10).map((issue) => (
-                  <div
-                    className={cn(
-                      "cursor-pointer rounded-md border-l-4 p-2 hover:bg-gray-50",
-                      issue.severity === "critical" && "border-l-red-500",
-                      issue.severity === "serious" && "border-l-orange-500",
-                      issue.severity === "moderate" && "border-l-yellow-500",
-                      issue.severity === "minor" && "border-l-blue-500",
-                    )}
-                    key={issue.id}
-                    onClick={() => {
-                      issue.element.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center",
-                      });
-                      issue.element.focus();
-                    }}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-2">
-                        <AlertTriangle
-                          className={cn(
-                            "mt-0.5 h-3 w-3",
-                            issue.severity === "critical" && "text-red-500",
-                            issue.severity === "serious" && "text-orange-500",
-                            issue.severity === "moderate" && "text-yellow-500",
-                            issue.severity === "minor" && "text-blue-500",
-                          )}
-                        />
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900 text-xs">
-                            {issue.description}
-                          </div>
-                          <div className="mt-1 text-gray-500 text-xs">
-                            {issue.wcagCriterion}
-                          </div>
-                          {devMode && (
-                            <div className="mt-1 text-gray-400 text-xs">
-                              {issue.suggestion}
+            {issues.length === 0
+              ? (
+                <div className="flex items-center gap-2 p-3 text-green-600">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="font-medium text-sm">
+                    No accessibility issues found!
+                  </span>
+                </div>
+              )
+              : (
+                <div className="space-y-2">
+                  {issues.slice(0, 10).map((issue) => (
+                    <div
+                      className={cn(
+                        "cursor-pointer rounded-md border-l-4 p-2 hover:bg-gray-50",
+                        issue.severity === "critical" && "border-l-red-500",
+                        issue.severity === "serious" && "border-l-orange-500",
+                        issue.severity === "moderate" && "border-l-yellow-500",
+                        issue.severity === "minor" && "border-l-blue-500",
+                      )}
+                      key={issue.id}
+                      onClick={() => {
+                        issue.element.scrollIntoView({
+                          behavior: "smooth",
+                          block: "center",
+                        });
+                        issue.element.focus();
+                      }}
+                      // role="button" - consider using actual button element
+                      tabIndex={0}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle
+                            className={cn(
+                              "mt-0.5 h-3 w-3",
+                              issue.severity === "critical" && "text-red-500",
+                              issue.severity === "serious" && "text-orange-500",
+                              issue.severity === "moderate" && "text-yellow-500",
+                              issue.severity === "minor" && "text-blue-500",
+                            )}
+                          />
+                          <div className="flex-1">
+                            <div className="font-medium text-gray-900 text-xs">
+                              {issue.description}
                             </div>
+                            <div className="mt-1 text-gray-500 text-xs">
+                              {issue.wcagCriterion}
+                            </div>
+                            {devMode && (
+                              <div className="mt-1 text-gray-400 text-xs">
+                                {issue.suggestion}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          <span
+                            className={cn(
+                              "rounded px-1.5 py-0.5 font-medium text-xs",
+                              getSeverityColor(issue.severity),
+                            )}
+                          >
+                            {issue.severity}
+                          </span>
+                          {issue.healthcare && (
+                            <span className="rounded bg-blue-50 px-1.5 py-0.5 font-medium text-blue-600 text-xs">
+                              HC
+                            </span>
                           )}
                         </div>
                       </div>
-                      <div className="flex gap-1">
-                        <span
-                          className={cn(
-                            "rounded px-1.5 py-0.5 font-medium text-xs",
-                            getSeverityColor(issue.severity),
-                          )}
-                        >
-                          {issue.severity}
-                        </span>
-                        {issue.healthcare && (
-                          <span className="rounded bg-blue-50 px-1.5 py-0.5 font-medium text-blue-600 text-xs">
-                            HC
-                          </span>
-                        )}
-                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
 
-                {issues.length > 10 && (
-                  <div className="p-2 text-center text-gray-500 text-xs">
-                    ... and {issues.length - 10} more issues
-                  </div>
-                )}
-              </div>
-            )}
+                  {issues.length > 10 && (
+                    <div className="p-2 text-center text-gray-500 text-xs">
+                      ... and {issues.length - 10} more issues
+                    </div>
+                  )}
+                </div>
+              )}
 
             <div className="mt-3 border-t pt-2">
               <button

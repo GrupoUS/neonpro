@@ -7,7 +7,7 @@
 
 // Basic compliance analytics service implementation
 export class ComplianceAnalyticsService {
-  constructor(readonly _supabaseClient: any) {}
+  constructor(readonly _supabaseClient: unknown) {}
 
   async getComplianceMetrics(_tenantId: string) {
     return {
@@ -39,7 +39,7 @@ export class ComplianceAnalyticsService {
 /**
  * Create compliance analytics services
  */
-export function createAnalyticsServices(supabaseClient: any) {
+export function createAnalyticsServices(supabaseClient: unknown) {
   return {
     analytics: new ComplianceAnalyticsService(supabaseClient),
   };
@@ -50,7 +50,7 @@ export function createAnalyticsServices(supabaseClient: any) {
  */
 export async function validateAnalyticsCompliance(
   tenantId: string,
-  supabaseClient: any,
+  supabaseClient: unknown,
 ): Promise<{
   isCompliant: boolean;
   score: number;
@@ -75,7 +75,7 @@ export async function validateAnalyticsCompliance(
       };
     }
 
-    const metrics = metricsResult.metrics;
+    const { metrics: metrics } = metricsResult;
     const issues: string[] = [];
     const recommendations: string[] = [];
     let score = 10;

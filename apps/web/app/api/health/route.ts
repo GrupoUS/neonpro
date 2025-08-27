@@ -36,7 +36,6 @@ interface HealthStatus {
 }
 
 export async function GET() {
-  const _startTime = performance.now();
   const timestamp = new Date().toISOString();
 
   try {
@@ -68,12 +67,11 @@ export async function GET() {
       },
     };
 
-    const statusCode =
-      overallStatus === "healthy"
-        ? 200
-        : overallStatus === "degraded"
-          ? 200
-          : 503;
+    const statusCode = overallStatus === "healthy"
+      ? 200
+      : overallStatus === "degraded"
+      ? 200
+      : 503;
 
     return NextResponse.json(response, {
       status: statusCode,

@@ -178,8 +178,8 @@ export default function PatientDashboard() {
     const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0
+      || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
@@ -212,10 +212,8 @@ export default function PatientDashboard() {
 
     return (
       <Badge
-        className={
-          variants[status as keyof typeof variants] ||
-          "bg-gray-100 text-gray-800"
-        }
+        className={variants[status as keyof typeof variants]
+          || "bg-gray-100 text-gray-800"}
       >
         {labels[status as keyof typeof labels] || status}
       </Badge>
@@ -364,8 +362,7 @@ export default function PatientDashboard() {
           <AlertDescription>
             <strong>Próxima consulta:</strong> {upcomingAppointment.doctor} (
             {upcomingAppointment.specialty}) -{" "}
-            {upcomingAppointment.date.toLocaleDateString("pt-BR")} às{" "}
-            {upcomingAppointment.time}
+            {upcomingAppointment.date.toLocaleDateString("pt-BR")} às {upcomingAppointment.time}
           </AlertDescription>
         </Alert>
       )}
@@ -433,8 +430,8 @@ export default function PatientDashboard() {
                       {healthMetrics.weight.trend === "stable"
                         ? "Estável"
                         : healthMetrics.weight.trend === "up"
-                          ? "Subindo"
-                          : "Descendo"}
+                        ? "Subindo"
+                        : "Descendo"}
                     </Badge>
                   </div>
                 </div>
@@ -563,8 +560,7 @@ export default function PatientDashboard() {
                           Prescrito por {medication.prescribedBy}
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          Desde{" "}
-                          {medication.startDate.toLocaleDateString("pt-BR")}
+                          Desde {medication.startDate.toLocaleDateString("pt-BR")}
                         </p>
                       </div>
                     </div>
@@ -581,8 +577,8 @@ export default function PatientDashboard() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Lembre-se:</strong> Sempre consulte seu médico antes
-                  de alterar ou interromper medicações.
+                  <strong>Lembre-se:</strong>{" "}
+                  Sempre consulte seu médico antes de alterar ou interromper medicações.
                 </AlertDescription>
               </Alert>
             </CardContent>

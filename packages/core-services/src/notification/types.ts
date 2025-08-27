@@ -1,11 +1,5 @@
 import { z } from "zod";
-import {
-  DateSchema,
-  EmailSchema,
-  NotificationType,
-  PhoneSchema,
-  UUIDSchema,
-} from "../types";
+import { DateSchema, EmailSchema, NotificationType, PhoneSchema, UUIDSchema } from "../types";
 import type { BaseEntity } from "../types";
 
 // Notification interfaces for aesthetic clinic communications
@@ -18,7 +12,7 @@ export interface Notification extends BaseEntity {
   title: string;
   message: string;
   templateId?: string;
-  templateData?: Record<string, any>;
+  templateData?: Record<string, unknown>;
   scheduledAt?: Date;
   sentAt?: Date;
   deliveredAt?: Date;
@@ -29,7 +23,7 @@ export interface Notification extends BaseEntity {
   maxRetries: number;
   errorMessage?: string;
   externalId?: string; // ID from external service (SendGrid, Twilio, etc.)
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   campaignId?: string;
   automationId?: string;
   isAutomated: boolean;
@@ -84,11 +78,11 @@ export interface NotificationCampaign extends BaseEntity {
 export interface AudienceFilter {
   patientIds?: string[];
   tags?: string[];
-  ageRange?: { min: number; max: number };
+  ageRange?: { min: number; max: number; };
   gender?: string;
   treatmentHistory?: string[];
-  lastVisitDate?: { from: Date; to: Date };
-  totalSpent?: { min: number; max: number };
+  lastVisitDate?: { from: Date; to: Date; };
+  totalSpent?: { min: number; max: number; };
   city?: string[];
   marketingConsent: boolean;
   excludePatientIds?: string[];
@@ -149,7 +143,7 @@ export interface NotificationLog extends BaseEntity {
   notificationId: string;
   event: NotificationEvent;
   timestamp: Date;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   location?: string;

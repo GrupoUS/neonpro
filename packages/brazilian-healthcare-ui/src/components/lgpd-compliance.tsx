@@ -99,7 +99,7 @@ export function LGPDComplianceDashboard({
       };
     }
 
-    const hasRequiredConsents = consent.dataProcessing;
+    const { dataProcessing: hasRequiredConsents } = consent;
     if (!hasRequiredConsents) {
       return {
         status: "incomplete",
@@ -123,8 +123,8 @@ export function LGPDComplianceDashboard({
           consentStatus.color === "green"
             ? "border-green-500 bg-green-50"
             : consentStatus.color === "yellow"
-              ? "border-yellow-500 bg-yellow-50"
-              : "border-red-500 bg-red-50"
+            ? "border-yellow-500 bg-yellow-50"
+            : "border-red-500 bg-red-50"
         }`}
       >
         <div className="flex items-center justify-between">
@@ -139,8 +139,8 @@ export function LGPDComplianceDashboard({
               consentStatus.color === "green"
                 ? "bg-green-100 text-green-800"
                 : consentStatus.color === "yellow"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-red-100 text-red-800"
             }`}
           >
             {consentStatus.message}
@@ -155,147 +155,140 @@ export function LGPDComplianceDashboard({
       </div>{" "}
       {/* Consent Management */}
       <div className="p-4">
-        {consent ? (
-          <div className="space-y-4">
-            {/* Data Processing Consent - Required */}
-            <div className="flex items-start justify-between rounded-lg border p-3">
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">
-                  Processamento de Dados de Saúde
-                </h4>
-                <p className="mt-1 text-gray-600 text-sm">
-                  Autorização para processar dados pessoais de saúde conforme
-                  LGPD Art. 11
-                </p>
-                <div className="mt-2 flex items-center text-xs">
-                  <span className="rounded bg-red-100 px-2 py-1 text-red-800">
-                    OBRIGATÓRIO
-                  </span>
+        {consent
+          ? (
+            <div className="space-y-4">
+              {/* Data Processing Consent - Required */}
+              <div className="flex items-start justify-between rounded-lg border p-3">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900">
+                    Processamento de Dados de Saúde
+                  </h4>
+                  <p className="mt-1 text-gray-600 text-sm">
+                    Autorização para processar dados pessoais de saúde conforme LGPD Art. 11
+                  </p>
+                  <div className="mt-2 flex items-center text-xs">
+                    <span className="rounded bg-red-100 px-2 py-1 text-red-800">
+                      OBRIGATÓRIO
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <label className="relative inline-flex cursor-pointer items-center">
+                    <input
+                      checked={consent.dataProcessing}
+                      className="peer sr-only"
+                      disabled={isUpdating}
+                      onChange={(e) => handleConsentChange("dataProcessing", e.target.checked)}
+                      type="checkbox"
+                    />
+                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
+                  </label>
                 </div>
               </div>
-              <div className="ml-4">
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    checked={consent.dataProcessing}
-                    className="peer sr-only"
-                    disabled={isUpdating}
-                    onChange={(e) =>
-                      handleConsentChange("dataProcessing", e.target.checked)
-                    }
-                    type="checkbox"
-                  />
-                  <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
-                </label>
-              </div>
-            </div>
 
-            {/* Marketing Consent - Optional */}
-            <div className="flex items-start justify-between rounded-lg border p-3">
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">
-                  Comunicações de Marketing
-                </h4>
-                <p className="mt-1 text-gray-600 text-sm">
-                  Envio de informações sobre novos tratamentos e promoções
-                </p>
-                <div className="mt-2 flex items-center text-xs">
-                  <span className="rounded bg-blue-100 px-2 py-1 text-blue-800">
-                    OPCIONAL
-                  </span>
+              {/* Marketing Consent - Optional */}
+              <div className="flex items-start justify-between rounded-lg border p-3">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900">
+                    Comunicações de Marketing
+                  </h4>
+                  <p className="mt-1 text-gray-600 text-sm">
+                    Envio de informações sobre novos tratamentos e promoções
+                  </p>
+                  <div className="mt-2 flex items-center text-xs">
+                    <span className="rounded bg-blue-100 px-2 py-1 text-blue-800">
+                      OPCIONAL
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <label className="relative inline-flex cursor-pointer items-center">
+                    <input
+                      checked={consent.marketing}
+                      className="peer sr-only"
+                      disabled={isUpdating}
+                      onChange={(e) => handleConsentChange("marketing", e.target.checked)}
+                      type="checkbox"
+                    />
+                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
+                  </label>
                 </div>
               </div>
-              <div className="ml-4">
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    checked={consent.marketing}
-                    className="peer sr-only"
-                    disabled={isUpdating}
-                    onChange={(e) =>
-                      handleConsentChange("marketing", e.target.checked)
-                    }
-                    type="checkbox"
-                  />
-                  <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
-                </label>
-              </div>
-            </div>
 
-            {/* Data Sharing Consent - Optional */}
-            <div className="flex items-start justify-between rounded-lg border p-3">
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">
-                  Compartilhamento com Parceiros
-                </h4>
-                <p className="mt-1 text-gray-600 text-sm">
-                  Compartilhamento de dados com laboratórios e clínicas
-                  parceiras
-                </p>
-                <div className="mt-2 flex items-center text-xs">
-                  <span className="rounded bg-blue-100 px-2 py-1 text-blue-800">
-                    OPCIONAL
-                  </span>
+              {/* Data Sharing Consent - Optional */}
+              <div className="flex items-start justify-between rounded-lg border p-3">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-900">
+                    Compartilhamento com Parceiros
+                  </h4>
+                  <p className="mt-1 text-gray-600 text-sm">
+                    Compartilhamento de dados com laboratórios e clínicas parceiras
+                  </p>
+                  <div className="mt-2 flex items-center text-xs">
+                    <span className="rounded bg-blue-100 px-2 py-1 text-blue-800">
+                      OPCIONAL
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <label className="relative inline-flex cursor-pointer items-center">
+                    <input
+                      checked={consent.dataSharing}
+                      className="peer sr-only"
+                      disabled={isUpdating}
+                      onChange={(e) => handleConsentChange("dataSharing", e.target.checked)}
+                      type="checkbox"
+                    />
+                    <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
+                  </label>
                 </div>
               </div>
-              <div className="ml-4">
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    checked={consent.dataSharing}
-                    className="peer sr-only"
-                    disabled={isUpdating}
-                    onChange={(e) =>
-                      handleConsentChange("dataSharing", e.target.checked)
-                    }
-                    type="checkbox"
-                  />
-                  <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
-                </label>
-              </div>
-            </div>
 
-            {/* Consent Details */}
-            <div className="rounded-lg bg-gray-50 p-3 text-sm">
-              <h5 className="mb-2 font-medium text-gray-700">
-                Detalhes do Consentimento
-              </h5>
-              <div className="space-y-1 text-gray-600">
-                <div>
-                  Data: {new Date(consent.consentDate).toLocaleString("pt-BR")}
+              {/* Consent Details */}
+              <div className="rounded-lg bg-gray-50 p-3 text-sm">
+                <h5 className="mb-2 font-medium text-gray-700">
+                  Detalhes do Consentimento
+                </h5>
+                <div className="space-y-1 text-gray-600">
+                  <div>
+                    Data: {new Date(consent.consentDate).toLocaleString("pt-BR")}
+                  </div>
+                  <div>Versão: {consent.consentVersion}</div>
+                  <div>IP: {consent.ipAddress}</div>
                 </div>
-                <div>Versão: {consent.consentVersion}</div>
-                <div>IP: {consent.ipAddress}</div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="py-8 text-center">
-            <span className="mb-4 block text-4xl">⚠️</span>
-            <h4 className="mb-2 font-medium text-gray-900 text-lg">
-              Consentimento LGPD Necessário
-            </h4>
-            <p className="mb-4 text-gray-600">
-              É necessário coletar o consentimento do paciente antes de
-              processar dados de saúde.
-            </p>
-            <button
-              className="rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700"
-              onClick={() => {
-                // Initialize consent form
-                const initialConsent: LGPDConsent = {
-                  dataProcessing: false,
-                  marketing: false,
-                  dataSharing: false,
-                  consentDate: new Date().toISOString(),
-                  consentVersion: "2.1",
-                  ipAddress: "192.168.1.1",
-                  userAgent: navigator.userAgent,
-                };
-                setConsent(initialConsent);
-              }}
-            >
-              Iniciar Coleta de Consentimento
-            </button>
-          </div>
-        )}
+          )
+          : (
+            <div className="py-8 text-center">
+              <span className="mb-4 block text-4xl">⚠️</span>
+              <h4 className="mb-2 font-medium text-gray-900 text-lg">
+                Consentimento LGPD Necessário
+              </h4>
+              <p className="mb-4 text-gray-600">
+                É necessário coletar o consentimento do paciente antes de processar dados de saúde.
+              </p>
+              <button
+                className="rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700"
+                onClick={() => {
+                  // Initialize consent form
+                  const initialConsent: LGPDConsent = {
+                    dataProcessing: false,
+                    marketing: false,
+                    dataSharing: false,
+                    consentDate: new Date().toISOString(),
+                    consentVersion: "2.1",
+                    ipAddress: "192.168.1.1",
+                    userAgent: navigator.userAgent,
+                  };
+                  setConsent(initialConsent);
+                }}
+              >
+                Iniciar Coleta de Consentimento
+              </button>
+            </div>
+          )}
 
         {/* Loading State */}
         {isUpdating && (
@@ -334,10 +327,10 @@ export function DataClassificationBadge({
         color === "green"
           ? "bg-green-100 text-green-800"
           : color === "blue"
-            ? "bg-blue-100 text-blue-800"
-            : color === "yellow"
-              ? "bg-yellow-100 text-yellow-800"
-              : "bg-red-100 text-red-800"
+          ? "bg-blue-100 text-blue-800"
+          : color === "yellow"
+          ? "bg-yellow-100 text-yellow-800"
+          : "bg-red-100 text-red-800"
       }`}
     >
       <span className="mr-1">{icon}</span>

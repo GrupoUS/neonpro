@@ -40,8 +40,7 @@ export const formatters = {
    * Format date to Brazilian standard
    */
   date: (dateInput: Date | string): string => {
-    const dateObj =
-      typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+    const dateObj = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
     return format(dateObj, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
   },
 
@@ -49,8 +48,7 @@ export const formatters = {
    * Format date to short Brazilian standard
    */
   shortDate: (dateInput: Date | string): string => {
-    const dateObj =
-      typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+    const dateObj = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
     return format(dateObj, "dd/MM/yyyy", { locale: ptBR });
   },
 
@@ -58,8 +56,7 @@ export const formatters = {
    * Format relative time (e.g., "há 2 dias")
    */
   relativeTime: (dateInput: Date | string): string => {
-    const dateObj =
-      typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+    const dateObj = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
     return formatDistanceToNow(dateObj, {
       addSuffix: true,
       locale: ptBR,
@@ -70,15 +67,14 @@ export const formatters = {
    * Calculate age from birth date
    */
   age: (birthDate: Date | string): number => {
-    const birth =
-      typeof birthDate === "string" ? new Date(birthDate) : birthDate;
+    const birth = typeof birthDate === "string" ? new Date(birthDate) : birthDate;
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0
+      || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
@@ -126,7 +122,7 @@ export const formatters = {
   },
 };
 // Legacy exports for backward compatibility
-export const date = formatters.date;
+export const { date } = formatters;
 export const time = (timeInput: string | Date): string => {
   if (typeof timeInput === "string") {
     return timeInput;
@@ -136,13 +132,13 @@ export const time = (timeInput: string | Date): string => {
     minute: "2-digit",
   });
 };
-export const dateTime = formatters.date;
-export const relativeTime = formatters.relativeTime;
-export const cpf = formatters.cpf;
-export const phone = formatters.phone;
-export const initials = formatters.initials;
+export const { date: dateTime } = formatters;
+export const { relativeTime } = formatters;
+export const { cpf } = formatters;
+export const { phone } = formatters;
+export const { initials } = formatters;
 export const firstName = (name: string): string => name.split(" ")[0];
-export const age = formatters.age;
-export const currency = formatters.currency;
-export const formatDate = formatters.date;
-export const formatPhone = formatters.phone;
+export const { age } = formatters;
+export const { currency } = formatters;
+export const { date: formatDate } = formatters;
+export const { phone: formatPhone } = formatters;

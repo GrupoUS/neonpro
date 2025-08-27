@@ -23,9 +23,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
   });
 
   test.describe("📝 Complete Registration with CPF Validation", () => {
-    test("should complete full patient registration with valid data", async ({
-      page,
-    }) => {
+    test("should complete full patient registration with valid data", async ({ page }) => {
       // Navigate to patient registration
       await page.goto("/patients/register");
       await page.waitForLoadState("networkidle");
@@ -124,9 +122,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should validate CPF format and prevent invalid CPF registration", async ({
-      page,
-    }) => {
+    test("should validate CPF format and prevent invalid CPF registration", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Test invalid CPF format
@@ -187,9 +183,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       }
     });
 
-    test("should validate required fields before proceeding", async ({
-      page,
-    }) => {
+    test("should validate required fields before proceeding", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Try to continue without filling required fields
@@ -219,9 +213,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
     });
   });
   test.describe("🔒 LGPD Consent Capture", () => {
-    test("should capture comprehensive LGPD consent with detailed explanations", async ({
-      page,
-    }) => {
+    test("should capture comprehensive LGPD consent with detailed explanations", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Fill basic information to reach LGPD step
@@ -295,9 +287,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       ).toContainText("Consentimentos registrados");
     });
 
-    test("should require mandatory LGPD consents for registration", async ({
-      page,
-    }) => {
+    test("should require mandatory LGPD consents for registration", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Fill basic info and navigate to LGPD
@@ -387,9 +377,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       ).toContainText("Direitos do titular");
     });
 
-    test("should create audit trail for LGPD consent events", async ({
-      page,
-    }) => {
+    test("should create audit trail for LGPD consent events", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Complete registration with LGPD consent
@@ -519,9 +507,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should capture and validate allergy information with severity levels", async ({
-      page,
-    }) => {
+    test("should capture and validate allergy information with severity levels", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Navigate to allergies step
@@ -594,9 +580,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       ).toContainText("Alergias registradas com sucesso");
     });
 
-    test("should handle patients with no known allergies properly", async ({
-      page,
-    }) => {
+    test("should handle patients with no known allergies properly", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Navigate to allergies step
@@ -629,9 +613,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       ).toContainText("Informação de alergias registrada");
     });
 
-    test("should validate critical allergy information completeness", async ({
-      page,
-    }) => {
+    test("should validate critical allergy information completeness", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Navigate to allergies step
@@ -688,9 +670,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
     });
   });
   test.describe("✅ Complete Registration Workflow", () => {
-    test("should complete end-to-end patient registration with all components", async ({
-      page,
-    }) => {
+    test("should complete end-to-end patient registration with all components", async ({ page }) => {
       const startTime = Date.now();
 
       await page.goto("/patients/register");
@@ -821,9 +801,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       expect(totalTime).toBeLessThan(30_000);
     });
 
-    test("should generate patient ID and medical record number", async ({
-      page,
-    }) => {
+    test("should generate patient ID and medical record number", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Quick registration for ID generation test
@@ -871,9 +849,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       expect(currentUrl).toMatch(/\/patients\/\d+/);
     });
 
-    test("should integrate with appointment scheduling system", async ({
-      page,
-    }) => {
+    test("should integrate with appointment scheduling system", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Complete patient registration
@@ -970,9 +946,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
   });
 
   test.describe("🚀 Performance & Validation", () => {
-    test("should complete registration within performance targets", async ({
-      page,
-    }) => {
+    test("should complete registration within performance targets", async ({ page }) => {
       const performanceStart = Date.now();
 
       await page.goto("/patients/register");
@@ -1005,9 +979,7 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       expect(navigationTime).toBeLessThan(5000);
     });
 
-    test("should provide accessibility compliance in registration form", async ({
-      page,
-    }) => {
+    test("should provide accessibility compliance in registration form", async ({ page }) => {
       await page.goto("/patients/register");
 
       // Check for proper form labels
@@ -1046,16 +1018,13 @@ test.describe("👥 Patient Registration - Critical E2E", () => {
       await expect(focusedElement).toBeVisible();
     });
 
-    test("should handle concurrent registration attempts", async ({
-      page,
-      context,
-    }) => {
+    test("should handle concurrent registration attempts", async ({ page, context }) => {
       // Simulate multiple users registering simultaneously
       const page1 = page;
       const page2 = await context.newPage();
 
       const registerPatient = async (
-        testPage: any,
+        testPage: unknown,
         patientName: string,
         cpf: string,
       ) => {

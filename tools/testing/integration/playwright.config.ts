@@ -153,16 +153,15 @@ export default defineConfig({
   webServer: process.env.CI
     ? undefined
     : {
-        command: "pnpm dev",
-        port: 3000,
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000, // 2 minutes for healthcare app to start
-        env: {
-          NODE_ENV: "test",
-          DATABASE_URL:
-            process.env.TEST_DATABASE_URL || process.env.DATABASE_URL,
-        },
+      command: "pnpm dev",
+      port: 3000,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120 * 1000, // 2 minutes for healthcare app to start
+      env: {
+        NODE_ENV: "test",
+        DATABASE_URL: process.env.TEST_DATABASE_URL || process.env.DATABASE_URL,
       },
+    },
 
   // Test matching patterns
   testMatch: ["**/*.spec.ts", "**/*.test.ts"],

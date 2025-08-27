@@ -22,8 +22,7 @@ class MedicalLogger extends AuditLogger {
     professionalId: string;
     userAgent: string;
   }): Promise<boolean> {
-    const { action, details, ipAddress, patientId, professionalId, userAgent } =
-      params;
+    const { action, details, ipAddress, patientId, professionalId, userAgent } = params;
 
     return this.logAction({
       action: `medical_${action}`,

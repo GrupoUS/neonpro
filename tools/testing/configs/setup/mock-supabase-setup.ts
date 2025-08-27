@@ -12,38 +12,38 @@ export interface MockSupabaseClient {
   auth: MockAuthClient;
   storage: MockStorageClient;
   channel: (name: string) => MockChannel;
-  rpc: (fn: string, params?: any) => Promise<any>;
+  rpc: (fn: string, params?: unknown) => Promise<unknown>;
 }
 
 export interface MockQueryBuilder {
   select: (columns?: string) => MockQueryBuilder;
-  insert: (data: any) => MockQueryBuilder;
-  update: (data: any) => MockQueryBuilder;
+  insert: (data: unknown) => MockQueryBuilder;
+  update: (data: unknown) => MockQueryBuilder;
   delete: () => MockQueryBuilder;
-  eq: (column: string, value: any) => MockQueryBuilder;
-  neq: (column: string, value: any) => MockQueryBuilder;
-  gte: (column: string, value: any) => MockQueryBuilder;
-  lte: (column: string, value: any) => MockQueryBuilder;
+  eq: (column: string, value: unknown) => MockQueryBuilder;
+  neq: (column: string, value: unknown) => MockQueryBuilder;
+  gte: (column: string, value: unknown) => MockQueryBuilder;
+  lte: (column: string, value: unknown) => MockQueryBuilder;
   like: (column: string, pattern: string) => MockQueryBuilder;
   ilike: (column: string, pattern: string) => MockQueryBuilder;
-  in: (column: string, values: any[]) => MockQueryBuilder;
+  in: (column: string, values: unknown[]) => MockQueryBuilder;
   order: (
     column: string,
-    options?: { ascending?: boolean },
+    options?: { ascending?: boolean; },
   ) => MockQueryBuilder;
   limit: (count: number) => MockQueryBuilder;
   range: (from: number, to: number) => MockQueryBuilder;
   single: () => MockQueryBuilder;
   maybeSingle: () => MockQueryBuilder;
-  then: (onfulfilled?: any, onrejected?: any) => Promise<any>;
+  then: (onfulfilled?: unknown, onrejected?: unknown) => Promise<unknown>;
 }
 
 export interface MockAuthClient {
-  getUser: () => Promise<{ data: { user: any } | null; error: any }>;
-  getSession: () => Promise<{ data: { session: any } | null; error: any }>;
-  signUp: (credentials: any) => Promise<{ data: any; error: any }>;
-  signInWithPassword: (credentials: any) => Promise<{ data: any; error: any }>;
-  signOut: () => Promise<{ error: any }>;
+  getUser: () => Promise<{ data: { user: unknown; } | null; error: unknown; }>;
+  getSession: () => Promise<{ data: { session: unknown; } | null; error: unknown; }>;
+  signUp: (credentials: unknown) => Promise<{ data: unknown; error: unknown; }>;
+  signInWithPassword: (credentials: unknown) => Promise<{ data: unknown; error: unknown; }>;
+  signOut: () => Promise<{ error: unknown; }>;
 }
 
 export interface MockStorageClient {
@@ -51,16 +51,16 @@ export interface MockStorageClient {
 }
 
 export interface MockBucket {
-  upload: (path: string, file: any) => Promise<{ data: any; error: any }>;
-  download: (path: string) => Promise<{ data: any; error: any }>;
-  remove: (paths: string[]) => Promise<{ data: any; error: any }>;
-  list: (path?: string) => Promise<{ data: any; error: any }>;
+  upload: (path: string, file: unknown) => Promise<{ data: unknown; error: unknown; }>;
+  download: (path: string) => Promise<{ data: unknown; error: unknown; }>;
+  remove: (paths: string[]) => Promise<{ data: unknown; error: unknown; }>;
+  list: (path?: string) => Promise<{ data: unknown; error: unknown; }>;
 }
 
 export interface MockChannel {
-  on: (event: string, filter: any, callback: any) => MockChannel;
+  on: (event: string, filter: unknown, callback: unknown) => MockChannel;
   subscribe: () => MockChannel;
-  unsubscribe: () => Promise<any>;
+  unsubscribe: () => Promise<unknown>;
 } // Healthcare Mock Data Store
 class HealthcareMockDataStore {
   private readonly data: Map<string, any[]> = new Map();
@@ -82,19 +82,18 @@ class HealthcareMockDataStore {
     this.data.set("lgpd_consents", []);
   }
 
-  getTable(tableName: string): any[] {
+  getTable(tableName: string): unknown[] {
     return this.data.get(tableName) || [];
   }
 
-  setTable(tableName: string, data: any[]): void {
+  setTable(tableName: string, data: unknown[]): void {
     this.data.set(tableName, data);
   }
 
-  addRecord(tableName: string, record: any): any {
+  addRecord(tableName: string, record: unknown): unknown {
     const table = this.getTable(tableName);
-    const id =
-      record.id ||
-      `${tableName}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    const id = record.id
+      || `${tableName}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     const tenantRecord = {
       ...record,
       id,
@@ -115,7 +114,7 @@ class HealthcareMockDataStore {
 class MockQueryBuilderImpl implements MockQueryBuilder {
   private readonly tableName: string;
   private readonly dataStore: HealthcareMockDataStore;
-  private readonly query: any = {};
+  private readonly query: unknown = {};
   private operation: "select" | "insert" | "update" | "delete" = "select";
 
   constructor(tableName: string, dataStore: HealthcareMockDataStore) {
@@ -129,13 +128,13 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
     return this;
   }
 
-  insert(data: any): MockQueryBuilder {
+  insert(data: unknown): MockQueryBuilder {
     this.operation = "insert";
     this.query.data = data;
     return this;
   }
 
-  update(data: any): MockQueryBuilder {
+  update(data: unknown): MockQueryBuilder {
     this.operation = "update";
     this.query.data = data;
     return this;
@@ -146,25 +145,25 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
     return this;
   }
 
-  eq(column: string, value: any): MockQueryBuilder {
+  eq(column: string, value: unknown): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
     this.query.filters.push({ type: "eq", column, value });
     return this;
   }
 
-  neq(column: string, value: any): MockQueryBuilder {
+  neq(column: string, value: unknown): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
     this.query.filters.push({ type: "neq", column, value });
     return this;
   }
 
-  gte(column: string, value: any): MockQueryBuilder {
+  gte(column: string, value: unknown): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
     this.query.filters.push({ type: "gte", column, value });
     return this;
   }
 
-  lte(column: string, value: any): MockQueryBuilder {
+  lte(column: string, value: unknown): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
     this.query.filters.push({ type: "lte", column, value });
     return this;
@@ -182,13 +181,13 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
     return this;
   }
 
-  in(column: string, values: any[]): MockQueryBuilder {
+  in(column: string, values: unknown[]): MockQueryBuilder {
     this.query.filters = this.query.filters || [];
     this.query.filters.push({ type: "in", column, value: values });
     return this;
   }
 
-  order(column: string, options?: { ascending?: boolean }): MockQueryBuilder {
+  order(column: string, options?: { ascending?: boolean; }): MockQueryBuilder {
     this.query.order = { column, ascending: options?.ascending !== false };
     return this;
   }
@@ -213,17 +212,17 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
     return this;
   }
 
-  then(onfulfilled?: any, onrejected?: any): Promise<any> {
+  then(onfulfilled?: unknown, onrejected?: unknown): Promise<unknown> {
     return this.execute().then(onfulfilled, onrejected);
   }
-  private async execute(): Promise<any> {
+  private async execute(): Promise<unknown> {
     try {
       let data = this.dataStore.getTable(this.tableName);
 
       // Apply filters
       if (this.query.filters) {
         data = data.filter((record) => {
-          return this.query.filters.every((filter: any) => {
+          return this.query.filters.every((filter: unknown) => {
             const value = record[filter.column];
             switch (filter.type) {
               case "eq": {
@@ -295,9 +294,8 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
           // Update matching records
           const table = this.dataStore.getTable(this.tableName);
           const updatedRecords = table.map((record) => {
-            const matches =
-              !this.query.filters ||
-              this.query.filters.every((filter: any) => {
+            const matches = !this.query.filters
+              || this.query.filters.every((filter: unknown) => {
                 const value = record[filter.column];
                 return filter.type === "eq" ? value === filter.value : true;
               });
@@ -324,10 +322,10 @@ class MockQueryBuilderImpl implements MockQueryBuilder {
             .getTable(this.tableName)
             .filter((record) => {
               return this.query.filters
-                ? !this.query.filters.every((filter: any) => {
-                    const value = record[filter.column];
-                    return filter.type === "eq" ? value === filter.value : true;
-                  })
+                ? !this.query.filters.every((filter: unknown) => {
+                  const value = record[filter.column];
+                  return filter.type === "eq" ? value === filter.value : true;
+                })
                 : false;
             });
 
@@ -381,14 +379,14 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
       };
     },
 
-    async signUp(credentials: any) {
+    async signUp(credentials: unknown) {
       return {
         data: { user: { id: "new-user-id", ...credentials } },
         error: undefined,
       };
     },
 
-    async signInWithPassword(credentials: any) {
+    async signInWithPassword(credentials: unknown) {
       return {
         data: { user: { id: "test-user-id", email: credentials.email } },
         error: undefined,
@@ -402,7 +400,7 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
 
   storage: MockStorageClient = {
     from: (_bucket: string) => ({
-      async upload(path: string, _file: any) {
+      async upload(path: string, _file: unknown) {
         return { data: { path, size: 1024 }, error: undefined };
       },
       async download(_path: string) {
@@ -419,7 +417,7 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
 
   channel(name: string): MockChannel {
     return {
-      on: (_event: string, _filter: any, _callback: any) => {
+      on: (_event: string, _filter: unknown, _callback: unknown) => {
         // Mock real-time subscription
         return this.channel(name);
       },
@@ -428,7 +426,7 @@ export class MockSupabaseClientImpl implements MockSupabaseClient {
     };
   }
 
-  async rpc(fn: string, _params?: any) {
+  async rpc(fn: string, _params?: unknown) {
     // Mock RPC calls for healthcare functions
     switch (fn) {
       case "get_patient_analytics": {
@@ -462,8 +460,8 @@ export const setupMockSupabase = () => {
   mockSupabaseClient = new MockSupabaseClientImpl(mockDataStore);
 
   // Set global mock client
-  (globalThis as any).__MOCK_SUPABASE_CLIENT__ = mockSupabaseClient;
-  (globalThis as any).__MOCK_DATA_STORE__ = mockDataStore;
+  (globalThis as unknown).__MOCK_SUPABASE_CLIENT__ = mockSupabaseClient;
+  (globalThis as unknown).__MOCK_DATA_STORE__ = mockDataStore;
 
   // Mock Supabase imports
   vi.doMock<typeof import("@supabase/supabase-js")>(
@@ -483,7 +481,7 @@ export const cleanupMockSupabase = () => {
   if (mockDataStore) {
     mockDataStore.clear();
   }
-  (globalThis as any).__MOCK_SUPABASE_CLIENT__ = undefined;
-  (globalThis as any).__MOCK_DATA_STORE__ = undefined;
+  (globalThis as unknown).__MOCK_SUPABASE_CLIENT__ = undefined;
+  (globalThis as unknown).__MOCK_DATA_STORE__ = undefined;
   vi.resetModules();
 };

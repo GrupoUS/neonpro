@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * AI Chat Assistant E2E Tests
@@ -32,7 +32,7 @@ test.describe("AI Chat Assistant", () => {
     // Verify AI response
     await expect(
       page.locator('[data-testid="ai-response"]').first(),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 15_000 });
 
     // Verify medical accuracy disclaimer
     await expect(
@@ -45,9 +45,7 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should provide treatment recommendations with safety protocols", async ({
-    page,
-  }) => {
+  test("should provide treatment recommendations with safety protocols", async ({ page }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // Query for treatment recommendations
@@ -59,7 +57,7 @@ test.describe("AI Chat Assistant", () => {
     // Verify comprehensive response
     await expect(
       page.locator('[data-testid="ai-response"]').first(),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 15_000 });
 
     // Verify safety protocols are included
     await expect(
@@ -77,9 +75,7 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should handle emergency medical queries with priority escalation", async ({
-    page,
-  }) => {
+  test("should handle emergency medical queries with priority escalation", async ({ page }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // Emergency scenario query
@@ -90,7 +86,7 @@ test.describe("AI Chat Assistant", () => {
 
     // Verify emergency response protocol
     await expect(page.locator('[data-testid="emergency-alert"]')).toBeVisible({
-      timeout: 10000,
+      timeout: 10_000,
     });
     await expect(
       page.locator('[data-testid="emergency-protocol"]'),
@@ -107,9 +103,7 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should maintain conversation context and medical history integration", async ({
-    page,
-  }) => {
+  test("should maintain conversation context and medical history integration", async ({ page }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // First query about patient
@@ -120,7 +114,7 @@ test.describe("AI Chat Assistant", () => {
     await page.click('[data-testid="send-message"]');
     await expect(
       page.locator('[data-testid="ai-response"]').first(),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 15_000 });
 
     // Follow-up query referencing previous context
     await page.fill(
@@ -132,7 +126,7 @@ test.describe("AI Chat Assistant", () => {
     // Verify context-aware response
     await expect(
       page.locator('[data-testid="ai-response"]').nth(1),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 15_000 });
     await expect(
       page.locator('[data-testid="patient-context-maintained"]'),
     ).toBeVisible();
@@ -162,9 +156,7 @@ test.describe("AI Chat Assistant", () => {
     ).toBeVisible();
   });
 
-  test("should provide drug interaction and dosage guidance", async ({
-    page,
-  }) => {
+  test("should provide drug interaction and dosage guidance", async ({ page }) => {
     await page.click('[data-testid="ai-chat-assistant"]');
 
     // Drug interaction query
@@ -177,7 +169,7 @@ test.describe("AI Chat Assistant", () => {
     // Verify comprehensive drug analysis
     await expect(
       page.locator('[data-testid="drug-interaction-analysis"]'),
-    ).toBeVisible({ timeout: 15000 });
+    ).toBeVisible({ timeout: 15_000 });
     await expect(
       page.locator('[data-testid="dosage-recommendations"]'),
     ).toBeVisible();

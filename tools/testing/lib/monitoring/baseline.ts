@@ -7,6 +7,7 @@ export interface BaselineMetric {
   status: "healthy" | "warning" | "critical";
 }
 
+// TODO: Convert to standalone functions
 export class BaselineMonitoringService {
   static checkSystemHealth(): BaselineMetric[] {
     return [

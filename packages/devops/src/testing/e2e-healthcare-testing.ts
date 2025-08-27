@@ -149,8 +149,7 @@ export class HealthcareE2ETester {
       success: allAreasOperational,
       score,
       operationalAreas,
-      operationalEfficiency:
-        this.calculateOperationalEfficiency(operationalAreas),
+      operationalEfficiency: this.calculateOperationalEfficiency(operationalAreas),
       costOptimization: this.calculateCostOptimization(operationalAreas),
     };
   }
@@ -284,8 +283,7 @@ export class HealthcareE2ETester {
       backupIntegration: await this.testBackupIntegration(),
     };
 
-    const allIntegrationsWorking =
-      Object.values(integrationTests).every(Boolean);
+    const allIntegrationsWorking = Object.values(integrationTests).every(Boolean);
     const score = allIntegrationsWorking
       ? 9.9
       : this.calculateIntegrationScore(integrationTests);
@@ -714,8 +712,7 @@ export class HealthcareE2ETester {
   // Public reporting methods
   generateE2EReport(): HealthcareE2EReport {
     const results = [...this.testResults.values()];
-    const averageScore =
-      results.reduce((sum, r) => sum + r.score, 0) / results.length;
+    const averageScore = results.reduce((sum, r) => sum + r.score, 0) / results.length;
     const allPassed = results.every((r) => r.passed);
 
     return {

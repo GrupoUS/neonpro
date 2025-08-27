@@ -1,16 +1,13 @@
-import { Redis } from "ioredis";
+import { createClient } from "@supabase/supabase-js";
 import type { CacheService, LoggerService, MetricsService } from "../types";
 
 interface CacheConfig {
-  redis: {
-    host: string;
-    port: number;
-    password?: string;
-    database: number;
+  supabase: {
+    url: string;
+    serviceKey: string;
+    tableName: string;
     keyPrefix: string;
-    retryDelayOnFailover: number;
-    maxRetriesPerRequest: number;
-    lazyConnect: boolean;
+    maxRetries: number;
   };
   defaultTTL: number;
   compressionThreshold: number;
@@ -28,8 +25,8 @@ interface CacheMetrics {
   avgResponseTime: number;
 }
 
-export class RedisCacheService implements CacheService {
-  private readonly redis: Redis;
+export class SupabaseCacheService implements CacheService {
+  private readonly supabase: unknown;
   private readonly logger: LoggerService;
   private readonly metrics: MetricsService;
   private readonly config: CacheConfig;
@@ -54,166 +51,105 @@ export class RedisCacheService implements CacheService {
     this.logger = logger;
     this.metrics = metrics;
 
-    this.redis = new Redis({
-      host: config.redis.host,
-      port: config.redis.port,
-      password: config.redis.password,
-      db: config.redis.database,
-      keyPrefix: config.redis.keyPrefix,
-      retryDelayOnFailover: config.redis.retryDelayOnFailover,
-      maxRetriesPerRequest: config.redis.maxRetriesPerRequest,
-      lazyConnect: config.redis.lazyConnect,
-    });
+    this.supabase = createClient(
+      config.supabase.url,
+      config.supabase.serviceKey,
+      {
+        auth: { persistSession: false },
+        db: { schema: "public" },
+      },
+    );
 
     this.setupEventHandlers();
-    this.startMetricsReporting();
   }
 
-  async get<T>(key: string): Promise<T | null> {
+  async get<T = any>(key: string): Promise<T | null> {
     const startTime = Date.now();
 
     try {
-      const cachedValue = await this.redis.get(key);
-      const responseTime = Date.now() - startTime;
+      const fullKey = `${this.config.supabase.keyPrefix}${key}`;
 
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.totalOperations++;
+      const { data, error } = await this.supabase
+        .from(this.config.supabase.tableName)
+        .select("value, expires_at")
+        .eq("key", fullKey)
+        .single();
 
-      if (cachedValue === null) {
+      if (error || !data) {
         this.operationMetrics.misses++;
+        this.operationMetrics.totalOperations++;
         this.updateHitRate();
-
-        await this.logger.debug("Cache miss", { key, responseTime });
-
-        if (this.config.enableMetrics) {
-          await this.metrics.recordCounter("cache_misses", 1, { key });
-          await this.metrics.recordHistogram(
-            "cache_response_time",
-            responseTime,
-            {
-              operation: "get",
-              result: "miss",
-            },
-          );
-        }
-
         return;
       }
 
-      this.operationMetrics.hits++;
-      this.updateHitRate();
-
-      let parsedValue: T;
-      try {
-        // Try to parse as JSON first
-        parsedValue = JSON.parse(cachedValue);
-      } catch {
-        // If parsing fails, return as string (for simple string caches)
-        parsedValue = cachedValue as unknown as T;
+      // Check if expired
+      if (data.expires_at && new Date(data.expires_at) < new Date()) {
+        // Delete expired entry
+        await this.delete(key);
+        this.operationMetrics.misses++;
+        this.operationMetrics.totalOperations++;
+        this.updateHitRate();
+        return;
       }
 
-      await this.logger.debug("Cache hit", { key, responseTime });
+      const responseTime = Date.now() - startTime;
+      this.recordResponseTime(responseTime);
+
+      this.operationMetrics.hits++;
+      this.operationMetrics.totalOperations++;
+      this.updateHitRate();
 
       if (this.config.enableMetrics) {
         await this.metrics.recordCounter("cache_hits", 1, { key });
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "get",
-            result: "hit",
-          },
-        );
+        await this.metrics.recordTimer("cache_get_duration", responseTime, { key });
       }
 
-      return parsedValue;
+      return this.deserializeValue(data.value);
     } catch (error) {
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
       this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache get error", {
-        key,
-        error: error.message,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_errors", 1, {
-          operation: "get",
-          key,
-        });
-      }
-
+      await this.logger.error("Cache get error", { key, error: error.message });
       return;
     }
   }
 
-  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+  async set<T = any>(key: string, value: T, ttl?: number): Promise<void> {
     const startTime = Date.now();
+    const effectiveTTL = ttl ?? this.config.defaultTTL;
 
     try {
+      const fullKey = `${this.config.supabase.keyPrefix}${key}`;
       const serializedValue = this.serializeValue(value);
-      const effectiveTTL = ttl || this.config.defaultTTL;
+      const expiresAt = effectiveTTL > 0 ? new Date(Date.now() + effectiveTTL * 1000) : undefined;
 
-      // Use compression for large values
-      const finalValue =
-        serializedValue.length > this.config.compressionThreshold
-          ? await this.compressValue(serializedValue)
-          : serializedValue;
+      const { error } = await this.supabase
+        .from(this.config.supabase.tableName)
+        .upsert({
+          key: fullKey,
+          value: serializedValue,
+          expires_at: expiresAt,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
 
-      if (effectiveTTL > 0) {
-        await this.redis.setex(key, effectiveTTL, finalValue);
-      } else {
-        await this.redis.set(key, finalValue);
+      if (error) {
+        throw error;
       }
 
       const responseTime = Date.now() - startTime;
       this.recordResponseTime(responseTime);
+
       this.operationMetrics.sets++;
       this.operationMetrics.totalOperations++;
 
-      await this.logger.debug("Cache set", {
-        key,
-        ttl: effectiveTTL,
-        size: finalValue.length,
-        compressed: finalValue !== serializedValue,
-        responseTime,
-      });
-
       if (this.config.enableMetrics) {
         await this.metrics.recordCounter("cache_sets", 1, { key });
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "set",
-          },
-        );
-        await this.metrics.recordGauge("cache_value_size", finalValue.length, {
-          key,
-        });
+        await this.metrics.recordTimer("cache_set_duration", responseTime, { key });
       }
+
+      await this.logger.debug("Cache set", { key, ttl: effectiveTTL });
     } catch (error) {
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
       this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache set error", {
-        key,
-        error: error.message,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_errors", 1, {
-          operation: "set",
-          key,
-        });
-      }
-
+      await this.logger.error("Cache set error", { key, error: error.message });
       throw error;
     }
   }
@@ -222,356 +158,124 @@ export class RedisCacheService implements CacheService {
     const startTime = Date.now();
 
     try {
-      const deleted = await this.redis.del(key);
-      const responseTime = Date.now() - startTime;
+      const fullKey = `${this.config.supabase.keyPrefix}${key}`;
 
+      const { error } = await this.supabase
+        .from(this.config.supabase.tableName)
+        .delete()
+        .eq("key", fullKey);
+
+      if (error) {
+        throw error;
+      }
+
+      const responseTime = Date.now() - startTime;
       this.recordResponseTime(responseTime);
+
       this.operationMetrics.deletes++;
       this.operationMetrics.totalOperations++;
 
-      await this.logger.debug("Cache delete", {
-        key,
-        deleted: deleted > 0,
-        responseTime,
-      });
-
       if (this.config.enableMetrics) {
         await this.metrics.recordCounter("cache_deletes", 1, { key });
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "delete",
-          },
-        );
+        await this.metrics.recordTimer("cache_delete_duration", responseTime, { key });
       }
+
+      await this.logger.debug("Cache delete", { key });
     } catch (error) {
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
       this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache delete error", {
-        key,
-        error: error.message,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_errors", 1, {
-          operation: "delete",
-          key,
-        });
-      }
-
+      await this.logger.error("Cache delete error", { key, error: error.message });
       throw error;
     }
   }
 
-  async exists(key: string): Promise<boolean> {
-    const startTime = Date.now();
-
-    try {
-      const exists = await this.redis.exists(key);
-      const responseTime = Date.now() - startTime;
-
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.debug("Cache exists check", {
-        key,
-        exists: exists === 1,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "exists",
-          },
-        );
-      }
-
-      return exists === 1;
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache exists error", {
-        key,
-        error: error.message,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_errors", 1, {
-          operation: "exists",
-          key,
-        });
-      }
-
-      return false;
-    }
+  async has(key: string): Promise<boolean> {
+    const value = await this.get(key);
+    return value !== null;
   }
 
-  async clear(pattern?: string): Promise<void> {
+  async clear(pattern?: string): Promise<{ deletedKeys: string[]; }> {
     const startTime = Date.now();
+    let deletedKeys: string[] = [];
 
     try {
-      let deletedKeys: string[] = [];
-
       if (pattern) {
-        // Use SCAN to find keys matching pattern
-        const stream = this.redis.scanStream({
-          match: pattern,
-          count: 100,
-        });
+        // Get keys matching pattern
+        const { data, error } = await this.supabase
+          .from(this.config.supabase.tableName)
+          .select("key")
+          .like("key", `${this.config.supabase.keyPrefix}${pattern}`);
 
-        const keysToDelete: string[] = [];
-        stream.on("data", (keys) => {
-          keysToDelete.push(...keys);
-        });
+        if (error) {
+          throw error;
+        }
 
-        await new Promise((resolve, reject) => {
-          stream.on("end", resolve);
-          stream.on("error", reject);
-        });
+        if (data && data.length > 0) {
+          const keysToDelete = data.map(item => item.key);
 
-        if (keysToDelete.length > 0) {
-          const deleted = await this.redis.del(...keysToDelete);
+          const { error: deleteError } = await this.supabase
+            .from(this.config.supabase.tableName)
+            .delete()
+            .in("key", keysToDelete);
+
+          if (deleteError) {
+            throw deleteError;
+          }
+
           deletedKeys = keysToDelete;
-
-          await this.logger.info("Cache pattern clear", {
-            pattern,
-            keysDeleted: deleted,
-            totalKeys: keysToDelete.length,
-          });
         }
       } else {
-        // Clear entire database
-        await this.redis.flushdb();
+        // Clear all entries with our prefix
+        const { error } = await this.supabase
+          .from(this.config.supabase.tableName)
+          .delete()
+          .like("key", `${this.config.supabase.keyPrefix}%`);
 
-        await this.logger.info("Cache cleared entirely");
-      }
-
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.deletes += deletedKeys.length;
-      this.operationMetrics.totalOperations++;
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_clears", 1, {
-          pattern: pattern || "all",
-        });
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "clear",
-          },
-        );
-      }
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache clear error", {
-        pattern,
-        error: error.message,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_errors", 1, {
-          operation: "clear",
-          pattern,
-        });
-      }
-
-      throw error;
-    }
-  }
-
-  // Advanced cache operations
-
-  async mget<T>(keys: string[]): Promise<(T | null)[]> {
-    const startTime = Date.now();
-
-    try {
-      const values = await this.redis.mget(...keys);
-      const responseTime = Date.now() - startTime;
-
-      const parsedValues = values.map((value) => {
-        if (value === null) {
-          return;
+        if (error) {
+          throw error;
         }
 
-        try {
-          return JSON.parse(value) as T;
-        } catch {
-          return value as unknown as T;
-        }
-      });
-
-      const hits = parsedValues.filter((v) => v !== null).length;
-      const misses = keys.length - hits;
-
-      this.operationMetrics.hits += hits;
-      this.operationMetrics.misses += misses;
-      this.operationMetrics.totalOperations++;
-      this.recordResponseTime(responseTime);
-      this.updateHitRate();
-
-      await this.logger.debug("Cache mget", {
-        keysRequested: keys.length,
-        hits,
-        misses,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_mget_operations", 1);
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "mget",
-          },
-        );
+        deletedKeys = ["*"]; // Indicate all keys deleted
       }
 
-      return parsedValues;
-    } catch (error) {
       const responseTime = Date.now() - startTime;
       this.recordResponseTime(responseTime);
+
+      await this.logger.info("Cache cleared", { pattern, deletedCount: deletedKeys.length });
+
+      return { deletedKeys };
+    } catch (error) {
       this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache mget error", {
-        keys,
-        error: error.message,
-        responseTime,
-      });
-
-      return keys.map(() => {});
-    }
-  }
-
-  async mset<T>(
-    keyValuePairs: { key: string; value: T; ttl?: number }[],
-  ): Promise<void> {
-    const startTime = Date.now();
-
-    try {
-      const pipeline = this.redis.pipeline();
-
-      for (const { key, value, ttl } of keyValuePairs) {
-        const serializedValue = this.serializeValue(value);
-        const effectiveTTL = ttl || this.config.defaultTTL;
-
-        if (effectiveTTL > 0) {
-          pipeline.setex(key, effectiveTTL, serializedValue);
-        } else {
-          pipeline.set(key, serializedValue);
-        }
-      }
-
-      await pipeline.exec();
-
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.sets += keyValuePairs.length;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.debug("Cache mset", {
-        keysSet: keyValuePairs.length,
-        responseTime,
-      });
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_mset_operations", 1);
-        await this.metrics.recordHistogram(
-          "cache_response_time",
-          responseTime,
-          {
-            operation: "mset",
-          },
-        );
-      }
-    } catch (error) {
-      const responseTime = Date.now() - startTime;
-      this.recordResponseTime(responseTime);
-      this.operationMetrics.errors++;
-      this.operationMetrics.totalOperations++;
-
-      await this.logger.error("Cache mset error", {
-        keyCount: keyValuePairs.length,
-        error: error.message,
-        responseTime,
-      });
-
+      await this.logger.error("Cache clear error", { pattern, error: error.message });
       throw error;
     }
   }
-
-  async increment(key: string, increment = 1): Promise<number> {
-    try {
-      const newValue = await this.redis.incrby(key, increment);
-
-      if (this.config.enableMetrics) {
-        await this.metrics.recordCounter("cache_increments", 1, { key });
-      }
-
-      return newValue;
-    } catch (error) {
-      await this.logger.error("Cache increment error", {
-        key,
-        increment,
-        error: error.message,
-      });
-
-      throw error;
-    }
-  }
-
-  async expire(key: string, ttl: number): Promise<void> {
-    try {
-      await this.redis.expire(key, ttl);
-
-      await this.logger.debug("Cache expiration set", { key, ttl });
-    } catch (error) {
-      await this.logger.error("Cache expire error", {
-        key,
-        ttl,
-        error: error.message,
-      });
-
-      throw error;
-    }
-  }
-
-  // Health and monitoring methods
 
   async ping(): Promise<boolean> {
     try {
-      const response = await this.redis.ping();
-      return response === "PONG";
+      const { data, error } = await this.supabase
+        .from(this.config.supabase.tableName)
+        .select("count", { count: "exact", head: true });
+
+      return !error;
     } catch (error) {
       await this.logger.error("Cache ping error", { error: error.message });
       return false;
     }
   }
 
-  async getInfo(): Promise<any> {
+  async getInfo(): Promise<unknown> {
     try {
-      const info = await this.redis.info();
-      return info;
+      const { count } = await this.supabase
+        .from(this.config.supabase.tableName)
+        .select("*", { count: "exact", head: true });
+
+      return {
+        type: "supabase",
+        table: this.config.supabase.tableName,
+        total_keys: count,
+        hit_rate: this.operationMetrics.hitRate,
+        avg_response_time: this.operationMetrics.avgResponseTime,
+      };
     } catch (error) {
       await this.logger.error("Cache info error", { error: error.message });
       return;
@@ -583,27 +287,9 @@ export class RedisCacheService implements CacheService {
   }
 
   // Private helper methods
-
   private setupEventHandlers(): void {
-    this.redis.on("connect", () => {
-      this.logger.info("Redis cache connected");
-    });
-
-    this.redis.on("ready", () => {
-      this.logger.info("Redis cache ready");
-    });
-
-    this.redis.on("error", (error) => {
-      this.logger.error("Redis cache error", { error: error.message });
-    });
-
-    this.redis.on("close", () => {
-      this.logger.warn("Redis cache connection closed");
-    });
-
-    this.redis.on("reconnecting", () => {
-      this.logger.info("Redis cache reconnecting");
-    });
+    // Supabase doesn't have events like Redis, but we can add health checks
+    this.logger.info("Supabase cache service initialized");
   }
 
   private serializeValue<T>(value: T): string {
@@ -611,121 +297,55 @@ export class RedisCacheService implements CacheService {
       return value;
     }
 
-    return JSON.stringify(value);
+    const serialized = JSON.stringify(value);
+
+    if (serialized.length > this.config.compressionThreshold) {
+      // Could add compression here if needed
+      return serialized;
+    }
+
+    return serialized;
   }
 
-  private async compressValue(value: string): Promise<string> {
-    // Simple compression placeholder - in production, use zlib or similar
-    return value; // For now, return as-is
+  private deserializeValue<T>(value: string): T {
+    try {
+      return JSON.parse(value) as T;
+    } catch {
+      return value as unknown as T;
+    }
   }
 
   private recordResponseTime(responseTime: number): void {
     this.responseTimes.push(responseTime);
 
-    // Keep only last 1000 response times
-    if (this.responseTimes.length > 1000) {
-      this.responseTimes = this.responseTimes.slice(-1000);
+    // Keep only last 100 response times
+    if (this.responseTimes.length > 100) {
+      this.responseTimes.shift();
     }
 
-    // Update average response time
-    this.operationMetrics.avgResponseTime =
-      this.responseTimes.reduce((sum, time) => sum + time, 0) /
-      this.responseTimes.length;
+    this.operationMetrics.avgResponseTime = this.responseTimes.reduce((sum, time) => sum + time, 0)
+      / this.responseTimes.length;
   }
 
   private updateHitRate(): void {
-    const totalHitsAndMisses =
-      this.operationMetrics.hits + this.operationMetrics.misses;
-    this.operationMetrics.hitRate =
-      totalHitsAndMisses > 0
-        ? (this.operationMetrics.hits / totalHitsAndMisses) * 100
-        : 0;
-  }
-
-  private startMetricsReporting(): void {
-    if (!this.config.enableMetrics) {
-      return;
-    }
-
-    // Report metrics every 60 seconds
-    setInterval(async () => {
-      const metrics = this.getMetrics();
-
-      await this.metrics.recordGauge("cache_hit_rate", metrics.hitRate);
-      await this.metrics.recordGauge(
-        "cache_avg_response_time",
-        metrics.avgResponseTime,
-      );
-      await this.metrics.recordGauge(
-        "cache_total_operations",
-        metrics.totalOperations,
-      );
-      await this.metrics.recordGauge("cache_errors", metrics.errors);
-
-      await this.logger.info("Cache metrics report", metrics);
-    }, 60_000);
+    const totalHitsAndMisses = this.operationMetrics.hits + this.operationMetrics.misses;
+    this.operationMetrics.hitRate = totalHitsAndMisses > 0
+      ? (this.operationMetrics.hits / totalHitsAndMisses) * 100
+      : 0;
   }
 
   // Cleanup method
   async disconnect(): Promise<void> {
     try {
-      await this.redis.quit();
-      await this.logger.info("Redis cache disconnected cleanly");
+      // Supabase client doesn't need explicit disconnection
+      await this.logger.info("Supabase cache service disconnected cleanly");
     } catch (error) {
-      await this.logger.error("Error disconnecting Redis cache", {
+      await this.logger.error("Error disconnecting Supabase cache service", {
         error: error.message,
       });
     }
   }
 }
 
-// Cache service factory
-export class CacheServiceFactory {
-  private static instance: CacheService;
-
-  public static createCacheService(
-    config: CacheConfig,
-    logger: LoggerService,
-    metrics: MetricsService,
-  ): CacheService {
-    if (!CacheServiceFactory.instance) {
-      CacheServiceFactory.instance = new RedisCacheService(
-        config,
-        logger,
-        metrics,
-      );
-    }
-    return CacheServiceFactory.instance;
-  }
-
-  public static getInstance(): CacheService {
-    if (!CacheServiceFactory.instance) {
-      throw new Error(
-        "Cache service not initialized. Call createCacheService first.",
-      );
-    }
-    return CacheServiceFactory.instance;
-  }
-}
-
-// Cache configuration helper
-export const createCacheConfig = (
-  overrides: Partial<CacheConfig> = {},
-): CacheConfig => {
-  return {
-    redis: {
-      host: process.env.REDIS_HOST || "localhost",
-      port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
-      password: process.env.REDIS_PASSWORD,
-      database: Number.parseInt(process.env.REDIS_DATABASE || "0", 10),
-      keyPrefix: process.env.REDIS_KEY_PREFIX || "neonpro:ai:",
-      retryDelayOnFailover: 100,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
-    },
-    defaultTTL: Number.parseInt(process.env.CACHE_DEFAULT_TTL || "3600", 10), // 1 hour
-    compressionThreshold: 1024, // 1KB
-    enableMetrics: process.env.CACHE_ENABLE_METRICS === "true",
-    ...overrides,
-  };
-};
+// Export as default for backward compatibility
+export default SupabaseCacheService;

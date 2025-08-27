@@ -44,7 +44,7 @@ export interface BehavioralEvent {
   eventSubtype: string;
   timestamp: Date;
   outcome: "positive" | "neutral" | "negative";
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   impact: number; // -100 to +100
 }
 
@@ -88,8 +88,6 @@ export class BehavioralAnalysisService {
       // 1. Collect behavioral data
       const events = await this.collectBehavioralEvents(patientId);
       const interactions = await this.getPatientInteractions(patientId);
-      const _appointments = await this.getAppointmentHistory(patientId);
-
       // 2. Calculate behavioral scores
       const scores = await this.calculateBehavioralScores(patientId, events);
 
@@ -198,8 +196,7 @@ export class BehavioralAnalysisService {
     const appointmentEvents = recentEvents.filter(
       (e) => e.eventType === "appointment",
     );
-    const consistentAttendance =
-      this.calculateAttendanceConsistency(appointmentEvents);
+    const consistentAttendance = this.calculateAttendanceConsistency(appointmentEvents);
     const referrals = recentEvents.filter(
       (e) => e.eventType === "referral",
     ).length;
@@ -265,7 +262,7 @@ export class BehavioralAnalysisService {
 
   private async detectBehavioralPatterns(
     events: BehavioralEvent[],
-    interactions: any[],
+    interactions: unknown[],
   ): Promise<PatientBehaviorProfile["patterns"]> {
     // Communication Style Analysis
     const communicationStyle = this.analyzeCommunicationStyle(interactions);
@@ -292,12 +289,11 @@ export class BehavioralAnalysisService {
   }
 
   private analyzeCommunicationStyle(
-    interactions: any[],
+    interactions: unknown[],
   ): PatientBehaviorProfile["patterns"]["communicationStyle"] {
     // Analyze language patterns, message length, formality
-    const avgMessageLength =
-      interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0) /
-      interactions.length;
+    const avgMessageLength = interactions.reduce((sum, i) => sum + (i.message?.length || 0), 0)
+      / interactions.length;
 
     const formalWords = interactions.filter(
       (i) => i.message?.includes("Senhor") || i.message?.includes("Senhora"),
@@ -316,7 +312,7 @@ export class BehavioralAnalysisService {
   }
 
   private analyzeResponseTime(
-    interactions: any[],
+    interactions: unknown[],
   ): PatientBehaviorProfile["patterns"]["responseTime"] {
     const responseTimes = interactions
       .map((i) => i.responseTimeHours)
@@ -326,8 +322,7 @@ export class BehavioralAnalysisService {
       return "delayed";
     }
 
-    const avgResponseTime =
-      responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+    const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
 
     if (avgResponseTime < 1) {
       return "immediate";
@@ -357,7 +352,7 @@ export class BehavioralAnalysisService {
 
     return (
       (Object.keys(channelCounts).reduce((a, b) =>
-        channelCounts[a] > channelCounts[b] ? a : b,
+        channelCounts[a] > channelCounts[b] ? a : b
       ) as PatientBehaviorProfile["patterns"]["preferredChannel"]) || "whatsapp"
     );
   }
@@ -374,9 +369,6 @@ export class BehavioralAnalysisService {
     ).length;
     const earlyCount = appointmentEvents.filter(
       (e) => e.eventSubtype === "attended_early",
-    ).length;
-    const _lateCount = appointmentEvents.filter(
-      (e) => e.eventSubtype === "attended_late",
     ).length;
     const rescheduleCount = appointmentEvents.filter(
       (e) => e.eventSubtype === "rescheduled",
@@ -408,8 +400,7 @@ export class BehavioralAnalysisService {
     );
 
     // Identify peak months
-    const avgActivity =
-      Object.values(monthlyActivity).reduce((a, b) => a + b, 0) / 12;
+    const avgActivity = Object.values(monthlyActivity).reduce((a, b) => a + b, 0) / 12;
     const peakMonths = Object.entries(monthlyActivity)
       .filter(([_, count]) => count > avgActivity * 1.3)
       .map(([month, _]) => {
@@ -459,7 +450,7 @@ export class BehavioralAnalysisService {
 
   private async analyzePersonalityType(
     events: BehavioralEvent[],
-    interactions: any[],
+    interactions: unknown[],
   ): Promise<PatientBehaviorProfile["personalityType"]> {
     let analyticalScore = 0;
     let expressiveScore = 0;
@@ -477,9 +468,7 @@ export class BehavioralAnalysisService {
     }
 
     // Information seeking behavior (Analytical)
-    const questionsAsked = interactions.filter((i) =>
-      i.message?.includes("?"),
-    ).length;
+    const questionsAsked = interactions.filter((i) => i.message?.includes("?")).length;
     if (questionsAsked > interactions.length * 0.4) {
       analyticalScore += 2;
     }
@@ -487,8 +476,8 @@ export class BehavioralAnalysisService {
     // Social interaction level (Expressive vs Analytical)
     const socialReferences = interactions.filter(
       (i) =>
-        i.message?.toLowerCase().includes("família") ||
-        i.message?.toLowerCase().includes("amigo"),
+        i.message?.toLowerCase().includes("família")
+        || i.message?.toLowerCase().includes("amigo"),
     ).length;
     if (socialReferences > interactions.length * 0.2) {
       expressiveScore += 2;
@@ -516,7 +505,7 @@ export class BehavioralAnalysisService {
     return Object.keys(scores).reduce((a, b) =>
       scores[a as keyof typeof scores] > scores[b as keyof typeof scores]
         ? a
-        : b,
+        : b
     ) as PatientBehaviorProfile["personalityType"];
   }
 
@@ -528,8 +517,7 @@ export class BehavioralAnalysisService {
     scores: PatientBehaviorProfile["scores"],
     _patterns: PatientBehaviorProfile["patterns"],
   ): Promise<PatientBehaviorProfile["segment"]> {
-    const avgScore =
-      (scores.engagement + scores.loyalty + scores.satisfaction) / 3;
+    const avgScore = (scores.engagement + scores.loyalty + scores.satisfaction) / 3;
 
     // VIP: High value, high loyalty, low risk
     if (avgScore > 85 && scores.risk < 20 && scores.loyalty > 90) {
@@ -591,8 +579,8 @@ export class BehavioralAnalysisService {
         monthsActive = Math.max(
           1,
           Math.ceil(
-            (lastPayment.getTime() - firstPayment.getTime()) /
-              (1000 * 60 * 60 * 24 * 30),
+            (lastPayment.getTime() - firstPayment.getTime())
+              / (1000 * 60 * 60 * 24 * 30),
           ),
         );
       }
@@ -638,19 +626,17 @@ export class BehavioralAnalysisService {
           eventType: "appointment",
           eventSubtype: apt.status,
           timestamp: new Date(apt.scheduled_at),
-          outcome:
-            apt.status === "completed"
-              ? "positive"
-              : apt.status === "no_show"
-                ? "negative"
-                : "neutral",
+          outcome: apt.status === "completed"
+            ? "positive"
+            : apt.status === "no_show"
+            ? "negative"
+            : "neutral",
           metadata: { appointmentId: apt.id },
-          impact:
-            apt.status === "completed"
-              ? 10
-              : apt.status === "no_show"
-                ? -20
-                : 0,
+          impact: apt.status === "completed"
+            ? 10
+            : apt.status === "no_show"
+            ? -20
+            : 0,
         });
       });
 

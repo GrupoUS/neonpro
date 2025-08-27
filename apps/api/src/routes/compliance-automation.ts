@@ -31,7 +31,7 @@ complianceAutomation.post("/execute", async (context) => {
     const validationResult = validateComplianceData(request);
     if (!validationResult.isValid) {
       const errorResponse: ApiResponse<null> = {
-        data: null,
+        data: undefined,
         message: "Dados de compliance inválidos",
         success: false,
       };
@@ -47,16 +47,13 @@ complianceAutomation.post("/execute", async (context) => {
     const response: ApiResponse<ComplianceAutomationResponse> = {
       data: {
         data: {
-          automation_id:
-            automationResult.automation_id || `automation_${Date.now()}`,
-          constitutional_standard_met:
-            automationResult.data?.overall_score >=
-            COMPLIANCE_STANDARDS.CONSTITUTIONAL_THRESHOLD,
+          automation_id: automationResult.automation_id || `automation_${Date.now()}`,
+          constitutional_standard_met: automationResult.data?.overall_score
+            >= COMPLIANCE_STANDARDS.CONSTITUTIONAL_THRESHOLD,
           execution_summary: automationResult.data?.summary || {},
           executed_at: new Date().toISOString(),
-          overall_score:
-            automationResult.data?.overall_score ||
-            COMPLIANCE_STANDARDS.MINIMUM_SCORE,
+          overall_score: automationResult.data?.overall_score
+            || COMPLIANCE_STANDARDS.MINIMUM_SCORE,
         },
         message: "Automação de compliance executada com sucesso",
         success: true,
@@ -73,7 +70,7 @@ complianceAutomation.post("/execute", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -108,7 +105,7 @@ complianceAutomation.get("/reports", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };
@@ -146,7 +143,7 @@ complianceAutomation.get("/status", async (context) => {
     }
 
     const errorResponse: ApiResponse<null> = {
-      data: null,
+      data: undefined,
       message: errorMessage,
       success: false,
     };

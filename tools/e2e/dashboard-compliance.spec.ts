@@ -13,9 +13,7 @@ test.describe("Dashboard Compliance Page", () => {
   });
 
   test.describe("Compliance Overview", () => {
-    test("should display compliance dashboard with key metrics", async ({
-      page,
-    }) => {
+    test("should display compliance dashboard with key metrics", async ({ page }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Compliance.*NeonPro/);
       await expect(page.locator("h1")).toContainText("Compliance Dashboard");
@@ -510,9 +508,7 @@ test.describe("Dashboard Compliance Page", () => {
   });
 
   test.describe("Performance and Accessibility", () => {
-    test("should load compliance dashboard within performance thresholds", async ({
-      page,
-    }) => {
+    test("should load compliance dashboard within performance thresholds", async ({ page }) => {
       const startTime = Date.now();
       await page.goto("/dashboard/compliance");
       await page.waitForLoadState("networkidle");
@@ -540,9 +536,7 @@ test.describe("Dashboard Compliance Page", () => {
       await expect(focusedElement).toBeVisible();
     });
 
-    test("should have proper ARIA labels for compliance data", async ({
-      page,
-    }) => {
+    test("should have proper ARIA labels for compliance data", async ({ page }) => {
       // Check ARIA labels on compliance metrics
       await expect(
         page.locator('[data-testid="compliance-score"][aria-label]'),

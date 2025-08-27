@@ -1,27 +1,15 @@
-﻿// Batch Prediction API Routes - Clean Implementation
+// Batch Prediction API Routes - Clean Implementation
 // Hono routes for batch prediction endpoints
 
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 import { z } from "zod";
-import {
-  BatchJobFiltersSchema,
-  CreateBatchJobSchema,
-} from "./batch-prediction-schemas";
+import { BatchJobFiltersSchema, CreateBatchJobSchema } from "./batch-prediction-schemas";
 import { BatchPredictionService } from "./batch-prediction-services";
 
 import { MAGIC_NUMBERS } from "./batch-prediction-constants-extended";
 import {
-  calculateAverageProcessingTime,
-  calculateAveragePredictionsPerJob,
-  calculateSuccessRate,
-  calculateThroughputPerHour,
-  getDatePlusDays,
-  getDatePlusHours,
   getErrorMessage,
-  getStatusCode,
-  getTodayDateString,
-  hasErrors,
 } from "./batch-prediction-helpers";
 
 // Initialize service instance
@@ -107,10 +95,9 @@ batchPredictionRoutes.post(
 
       return context.json(
         {
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to create batch job",
+          error: error instanceof Error
+            ? error.message
+            : "Failed to create batch job",
           processing_time_ms: Math.round(processingTime),
           success: false,
         },
@@ -247,10 +234,9 @@ batchPredictionRoutes.get(
 
       return context.json(
         {
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to list batch jobs",
+          error: error instanceof Error
+            ? error.message
+            : "Failed to list batch jobs",
           processing_time_ms: Math.round(processingTime),
           success: false,
         },
@@ -339,13 +325,12 @@ batchPredictionRoutes.get("/analytics", async (context) => {
       .filter((job) => job.processing_time_ms)
       .map((job) => job.processing_time_ms);
 
-    const avgProcessingTime =
-      processingTimes.length > MAGIC_NUMBERS.ZERO
-        ? processingTimes.reduce(
-            (sum, time) => sum + time,
-            MAGIC_NUMBERS.ZERO,
-          ) / processingTimes.length
-        : MAGIC_NUMBERS.ZERO;
+    const avgProcessingTime = processingTimes.length > MAGIC_NUMBERS.ZERO
+      ? processingTimes.reduce(
+        (sum, time) => sum + time,
+        MAGIC_NUMBERS.ZERO,
+      ) / processingTimes.length
+      : MAGIC_NUMBERS.ZERO;
 
     // Calculate total predictions processed
     const totalPredictionsProcessed = completedJobs
@@ -374,26 +359,23 @@ batchPredictionRoutes.get("/analytics", async (context) => {
         failed_jobs: failedJobs.length,
         processing_jobs: processingJobs.length,
         queued_jobs: queuedJobs.length,
-        success_rate_percentage:
-          recentJobs.length > MAGIC_NUMBERS.ZERO
-            ? Math.round((completedJobs.length / recentJobs.length) * 100)
-            : MAGIC_NUMBERS.ZERO,
+        success_rate_percentage: recentJobs.length > MAGIC_NUMBERS.ZERO
+          ? Math.round((completedJobs.length / recentJobs.length) * 100)
+          : MAGIC_NUMBERS.ZERO,
         total_jobs: recentJobs.length,
       },
       performance: {
-        avg_predictions_per_job:
-          completedJobs.length > MAGIC_NUMBERS.ZERO
-            ? Math.round(totalPredictionsProcessed / completedJobs.length)
-            : MAGIC_NUMBERS.ZERO,
+        avg_predictions_per_job: completedJobs.length > MAGIC_NUMBERS.ZERO
+          ? Math.round(totalPredictionsProcessed / completedJobs.length)
+          : MAGIC_NUMBERS.ZERO,
         avg_processing_time_ms: Math.round(avgProcessingTime),
-        estimated_throughput_per_hour:
-          totalPredictionsProcessed > MAGIC_NUMBERS.ZERO &&
-          avgProcessingTime > MAGIC_NUMBERS.ZERO
-            ? Math.round(
-                (totalPredictionsProcessed / avgProcessingTime) *
-                  MAGIC_NUMBERS.THREE_THOUSAND_SIX_HUNDRED,
-              )
-            : MAGIC_NUMBERS.ZERO,
+        estimated_throughput_per_hour: totalPredictionsProcessed > MAGIC_NUMBERS.ZERO
+            && avgProcessingTime > MAGIC_NUMBERS.ZERO
+          ? Math.round(
+            (totalPredictionsProcessed / avgProcessingTime)
+              * MAGIC_NUMBERS.THREE_THOUSAND_SIX_HUNDRED,
+          )
+          : MAGIC_NUMBERS.ZERO,
         total_predictions_processed: totalPredictionsProcessed,
       },
       recent_activity: recentJobs
@@ -418,10 +400,9 @@ batchPredictionRoutes.get("/analytics", async (context) => {
 
     return context.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate analytics",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate analytics",
         processing_time_ms: Math.round(processingTime),
         success: false,
       },
@@ -434,17 +415,16 @@ batchPredictionRoutes.get("/analytics", async (context) => {
 batchPredictionRoutes.get("/templates", async (context) => {
   const templates = {
     daily_morning_predictions: {
-      description:
-        "Predict no-shows for appointments in the next MAGIC_NUMBERS.TWENTY_FOUR hours",
+      description: "Predict no-shows for appointments in the next MAGIC_NUMBERS.TWENTY_FOUR hours",
       parameters: {
         batch_size: 100,
         date_range: {
           end_date: new Date(
-            Date.now() +
-              MAGIC_NUMBERS.TWENTY_FOUR *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.ONE_THOUSAND,
+            Date.now()
+              + MAGIC_NUMBERS.TWENTY_FOUR
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.ONE_THOUSAND,
           )
             .toISOString()
             .split("T")[MAGIC_NUMBERS.ZERO],
@@ -459,17 +439,16 @@ batchPredictionRoutes.get("/templates", async (context) => {
       type: "daily_predictions",
     },
     high_risk_intervention: {
-      description:
-        "Identify high-risk appointments needing immediate intervention",
+      description: "Identify high-risk appointments needing immediate intervention",
       parameters: {
         batch_size: 50,
         date_range: {
           end_date: new Date(
-            Date.now() +
-              MAGIC_NUMBERS.FORTY_EIGHT *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.ONE_THOUSAND,
+            Date.now()
+              + MAGIC_NUMBERS.FORTY_EIGHT
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.ONE_THOUSAND,
           )
             .toISOString()
             .split("T")[MAGIC_NUMBERS.ZERO],
@@ -489,12 +468,12 @@ batchPredictionRoutes.get("/templates", async (context) => {
         batch_size: 200,
         date_range: {
           end_date: new Date(
-            Date.now() +
-              MAGIC_NUMBERS.THIRTY *
-                MAGIC_NUMBERS.TWENTY_FOUR *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.ONE_THOUSAND,
+            Date.now()
+              + MAGIC_NUMBERS.THIRTY
+                * MAGIC_NUMBERS.TWENTY_FOUR
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.ONE_THOUSAND,
           )
             .toISOString()
             .split("T")[MAGIC_NUMBERS.ZERO],
@@ -505,18 +484,17 @@ batchPredictionRoutes.get("/templates", async (context) => {
       type: "risk_assessment",
     },
     weekly_forecast: {
-      description:
-        "Generate weekly no-show risk forecast for capacity planning",
+      description: "Generate weekly no-show risk forecast for capacity planning",
       parameters: {
         batch_size: 500,
         date_range: {
           end_date: new Date(
-            Date.now() +
-              MAGIC_NUMBERS.SEVEN *
-                MAGIC_NUMBERS.TWENTY_FOUR *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.SIXTY *
-                MAGIC_NUMBERS.ONE_THOUSAND,
+            Date.now()
+              + MAGIC_NUMBERS.SEVEN
+                * MAGIC_NUMBERS.TWENTY_FOUR
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.SIXTY
+                * MAGIC_NUMBERS.ONE_THOUSAND,
           )
             .toISOString()
             .split("T")[MAGIC_NUMBERS.ZERO],
@@ -529,8 +507,7 @@ batchPredictionRoutes.get("/templates", async (context) => {
   };
 
   return context.json({
-    message:
-      "Use these templates to quickly create common batch prediction jobs",
+    message: "Use these templates to quickly create common batch prediction jobs",
     success: true,
     templates,
   });
@@ -555,7 +532,7 @@ batchPredictionRoutes.post(
     try {
       const body = await context.req.json();
       const jobIds: string[] = [];
-      const errors: { error: string; index: number }[] = [];
+      const errors: { error: string; index: number; }[] = [];
 
       for (let index = MAGIC_NUMBERS.ZERO; index < body.jobs.length; index++) {
         try {
@@ -591,10 +568,9 @@ batchPredictionRoutes.post(
 
       return context.json(
         {
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to create bulk batch jobs",
+          error: error instanceof Error
+            ? error.message
+            : "Failed to create bulk batch jobs",
           processing_time_ms: Math.round(processingTime),
           success: false,
         },

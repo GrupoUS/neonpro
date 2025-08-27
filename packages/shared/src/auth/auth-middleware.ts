@@ -49,7 +49,7 @@ async function validateJWTToken(token: string): Promise<AuthUser | null> {
       throw new Error("JWT_SECRET not configured");
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as unknown;
 
     if (!decoded || typeof decoded !== "object") {
       return;
@@ -155,7 +155,7 @@ export const requirePermissions = (permissions: string[]) => {
       });
     }
 
-    const user = authContext.user;
+    const { user: user } = authContext;
 
     // Admin tem todas as permissões
     if (user.role === "admin") {
@@ -167,17 +167,17 @@ export const requirePermissions = (permissions: string[]) => {
     // Por enquanto, apenas verifica roles básicas
     const hasPermissions = permissions.every((permission) => {
       switch (permission) {
-        case "read:patients":
+        case "read: {patients":
           return ["healthcare_professional", "nurse", "doctor"].includes(
             user.role || "",
           );
-        case "write:patients":
+        case "write: {patients":
           return ["healthcare_professional", "doctor"].includes(
             user.role || "",
           );
-        case "read:analytics":
+        case "read: {analytics":
           return ["admin", "manager"].includes(user.role || "");
-        case "write:system":
+        case "write: {system":
           return user.role === "admin";
         default: {
           return false;
@@ -208,9 +208,8 @@ export const requireTenant = createMiddleware(async (c, next) => {
     });
   }
 
-  const user = authContext.user;
-  const requestedTenantId =
-    c.req.header("x-tenant-id") || c.req.param("tenantId");
+  const { user: user } = authContext;
+  const requestedTenantId = c.req.header("x-tenant-id") || c.req.param("tenantId");
 
   if (!user.tenantId) {
     throw new HTTPException(403, {
@@ -230,7 +229,7 @@ export const requireTenant = createMiddleware(async (c, next) => {
 /**
  * Utility para obter dados de autenticação do contexto
  */
-export function getAuthContext(c: any): AuthContext | null {
+export function getAuthContext(c: unknown): AuthContext | null {
   try {
     return c.get("auth") || undefined;
   } catch {
@@ -241,7 +240,7 @@ export function getAuthContext(c: any): AuthContext | null {
 /**
  * Utility para obter usuário atual
  */
-export function getCurrentUser(c: any): AuthUser | null {
+export function getCurrentUser(c: unknown): AuthUser | null {
   const authContext = getAuthContext(c);
   return authContext?.user || undefined;
 }

@@ -37,8 +37,7 @@ test.describe("NeonPro Healthcare Platform - Core E2E", () => {
     const nav = page.locator('nav, [role="navigation"], .nav, .navigation');
 
     // At minimum, we should have some content structure
-    const hasContent =
-      (await mainContent.count()) > 0 || (await nav.count()) > 0;
+    const hasContent = (await mainContent.count()) > 0 || (await nav.count()) > 0;
     expect(hasContent).toBeTruthy();
   });
 

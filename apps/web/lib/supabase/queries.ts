@@ -117,7 +117,7 @@ export const getPatientsWithFilters = async (
 export const getAppointmentsWithDetails = async (
   supabase: SupabaseClient,
   filters: {
-    dateRange?: { start: string; end: string };
+    dateRange?: { start: string; end: string; };
     status?: string;
     staffMemberId?: string;
     patientId?: string;
@@ -295,8 +295,7 @@ export const getStaffWithAppointmentStats = async (
     throw revenueError;
   }
 
-  const totalRevenue =
-    revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
+  const totalRevenue = revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
   return {
     totalAppointments: totalAppointments || 0,
@@ -385,8 +384,7 @@ export const getServiceUsageStats = async (
     throw revenueError;
   }
 
-  const totalRevenue =
-    revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
+  const totalRevenue = revenueData?.reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
   return {
     totalAppointments: totalAppointments || 0,
@@ -403,10 +401,10 @@ export const getServiceUsageStats = async (
  * Executa query com retry automático
  */
 export const executeWithRetry = async <T>(
-  queryFunction: () => Promise<{ data: T; error: any }>,
+  queryFunction: () => Promise<{ data: T; error: unknown; }>,
   maxRetries = 3,
 ): Promise<T> => {
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -416,9 +414,7 @@ export const executeWithRetry = async <T>(
         lastError = error;
         if (attempt < maxRetries) {
           // Wait before retry (exponential backoff)
-          await new Promise((resolve) =>
-            setTimeout(resolve, 2 ** attempt * 1000),
-          );
+          await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
           continue;
         }
         throw error;
@@ -428,9 +424,7 @@ export const executeWithRetry = async <T>(
     } catch (error) {
       lastError = error;
       if (attempt < maxRetries) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, 2 ** attempt * 1000),
-        );
+        await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
         continue;
       }
       throw error;
@@ -445,7 +439,7 @@ export const executeWithRetry = async <T>(
  */
 const queryCache = new Map<
   string,
-  { data: any; timestamp: number; ttl: number }
+  { data: unknown; timestamp: number; ttl: number; }
 >();
 
 export const getCachedQuery = async <T>(

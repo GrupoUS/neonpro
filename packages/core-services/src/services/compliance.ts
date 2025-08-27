@@ -23,7 +23,7 @@ interface CompliancePolicy {
   version: string;
   effectiveDate: Date;
   expiryDate?: Date;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -38,13 +38,13 @@ interface ComplianceRule {
   action: RuleAction;
   severity: SeverityLevel;
   isActive: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface RuleCondition {
   field: string;
   operator: ConditionOperator;
-  value: any;
+  value: unknown;
   dataSource: DataSource;
   logicalOperator?: LogicalOperator;
   nestedConditions?: RuleCondition[];
@@ -52,7 +52,7 @@ interface RuleCondition {
 
 interface RuleAction {
   type: ActionType;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   autoExecute: boolean;
   notificationRequired: boolean;
   escalationRequired: boolean;
@@ -74,7 +74,7 @@ interface ComplianceAudit {
   completedAt?: Date;
   nextDueDate?: Date;
   assessor: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -94,7 +94,7 @@ interface ComplianceFinding {
   dueDate?: Date;
   resolvedAt?: Date;
   resolution?: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface ComplianceEvidence {
@@ -102,9 +102,9 @@ interface ComplianceEvidence {
   type: EvidenceType;
   source: string;
   timestamp: Date;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   hash: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface ComplianceIncident {
@@ -126,7 +126,7 @@ interface ComplianceIncident {
   containmentActions: ContainmentAction[];
   rootCause?: string;
   remediation: RemediationPlan;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -148,7 +148,7 @@ interface ContainmentAction {
   executedAt: Date;
   executedBy: string;
   effectiveness: EffectivenessLevel;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface RemediationPlan {
@@ -189,7 +189,7 @@ interface ConsentRecord {
   withdrawalMethod?: string;
   retentionPeriod: number;
   isActive: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -209,7 +209,7 @@ interface DataSubjectRequest {
   processedBy?: string;
   verificationMethod: VerificationMethod;
   verificationStatus: VerificationStatus;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -222,14 +222,14 @@ interface ComplianceReport {
   framework: ComplianceFramework;
   period: ReportPeriod;
   status: ReportStatus;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   generatedAt?: Date;
   generatedBy?: string;
   approvedAt?: Date;
   approvedBy?: string;
   submittedAt?: Date;
   submittedTo?: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -578,7 +578,7 @@ interface CreatePolicyRequest {
   rules: Omit<ComplianceRule, "id">[];
   effectiveDate: Date;
   expiryDate?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface CreateAuditRequest {
@@ -591,7 +591,7 @@ interface CreateAuditRequest {
   startDate: Date;
   endDate?: Date;
   assessor: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface ReportIncidentRequest {
@@ -606,7 +606,7 @@ interface ReportIncidentRequest {
     DataImpactAssessment,
     "notificationRequired" | "regulatoryReportingRequired"
   >;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface CreateConsentRequest {
@@ -620,7 +620,7 @@ interface CreateConsentRequest {
   consentMethod: ConsentMethod;
   consentVersion: string;
   retentionPeriod: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface DataSubjectRequestRequest {
@@ -629,7 +629,7 @@ interface DataSubjectRequestRequest {
   requestType: DataSubjectRequestType;
   description: string;
   verificationMethod: VerificationMethod;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface ComplianceFilters {
@@ -653,8 +653,8 @@ interface ComplianceFilters {
 export class ComplianceService {
   private static instance: ComplianceService;
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
   private constructor() {
@@ -787,7 +787,7 @@ export class ComplianceService {
   async searchPolicies(
     filters: ComplianceFilters,
     userId: string,
-  ): Promise<{ policies: CompliancePolicy[]; total: number }> {
+  ): Promise<{ policies: CompliancePolicy[]; total: number; }> {
     try {
       monitoring.debug("Searching compliance policies", "compliance-service", {
         filters,
@@ -913,8 +913,8 @@ export class ComplianceService {
 
       // Auto-assign based on severity
       if (
-        incident.severity === SeverityLevel.CRITICAL ||
-        incident.severity === SeverityLevel.HIGH
+        incident.severity === SeverityLevel.CRITICAL
+        || incident.severity === SeverityLevel.HIGH
       ) {
         await this.autoAssignIncident(incident.id, request.tenantId);
       }
@@ -1310,8 +1310,7 @@ export class ComplianceService {
       );
 
       // Create compliance by framework
-      const complianceByFramework =
-        await this.createComplianceByFramework(tenantId);
+      const complianceByFramework = await this.createComplianceByFramework(tenantId);
 
       return {
         policyCompliance,
@@ -1364,7 +1363,7 @@ export class ComplianceService {
     tenantId: string,
     event: string,
     description: string,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     userId: string,
   ): Promise<void> {
     try {
@@ -1396,15 +1395,13 @@ export class ComplianceService {
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification and regulatory reporting requirements
-    const notificationRequired =
-      affectedData.recordsAffected > 100 ||
-      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
+    const notificationRequired = affectedData.recordsAffected > 100
+      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED;
 
-    const regulatoryReportingRequired =
-      affectedData.recordsAffected > 500 ||
-      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
-      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
-      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const regulatoryReportingRequired = affectedData.recordsAffected > 500
+      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
+      || affectedData.estimatedImpact === ImpactLevel.MAJOR
+      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
     return {
       ...affectedData,
@@ -1457,7 +1454,7 @@ export class ComplianceService {
     );
   }
 
-  private calculatePolicyCompliance(policies: any[]): number {
+  private calculatePolicyCompliance(policies: unknown[]): number {
     if (policies.length === 0) {
       return 100;
     }
@@ -1466,7 +1463,7 @@ export class ComplianceService {
     return (activePolicies.length / policies.length) * 100;
   }
 
-  private calculateRiskScore(incidents: any[], findings: any[]): number {
+  private calculateRiskScore(incidents: unknown[], findings: unknown[]): number {
     let score = 0;
 
     incidents.forEach((incident) => {
@@ -1514,7 +1511,7 @@ export class ComplianceService {
     return Math.min(score, 100);
   }
 
-  private calculateConsentRate(consents: any[]): number {
+  private calculateConsentRate(consents: unknown[]): number {
     if (consents.length === 0) {
       return 0;
     }
@@ -1532,7 +1529,7 @@ export class ComplianceService {
     return 24; // hours (mock)
   }
 
-  private calculateAuditScore(findings: any[]): number {
+  private calculateAuditScore(findings: unknown[]): number {
     if (findings.length === 0) {
       return 100;
     }
@@ -1557,8 +1554,8 @@ export class ComplianceService {
   }
 
   private createRiskBreakdown(
-    incidents: any[],
-    findings: any[],
+    incidents: unknown[],
+    findings: unknown[],
   ): RiskBreakdown {
     const breakdown = { critical: 0, high: 0, medium: 0, low: 0 };
 
@@ -1590,8 +1587,7 @@ export class ComplianceService {
     _tenantId: string,
   ): Promise<Record<ComplianceFramework, FrameworkCompliance>> {
     // Create compliance breakdown by framework (simplified)
-    const frameworks: Record<ComplianceFramework, FrameworkCompliance> =
-      {} as any;
+    const frameworks: Record<ComplianceFramework, FrameworkCompliance> = {} as unknown;
 
     Object.values(ComplianceFramework).forEach((framework) => {
       frameworks[framework] = {
@@ -1605,7 +1601,7 @@ export class ComplianceService {
     return frameworks;
   }
 
-  private mapPolicyFromDb(data: any): CompliancePolicy {
+  private mapPolicyFromDb(data: unknown): CompliancePolicy {
     return {
       id: data.id,
       tenantId: data.tenant_id,
@@ -1626,7 +1622,7 @@ export class ComplianceService {
     };
   }
 
-  private mapIncidentFromDb(data: any): ComplianceIncident {
+  private mapIncidentFromDb(data: unknown): ComplianceIncident {
     return {
       id: data.id,
       tenantId: data.tenant_id,
@@ -1654,7 +1650,7 @@ export class ComplianceService {
     };
   }
 
-  private mapConsentFromDb(data: any): ConsentRecord {
+  private mapConsentFromDb(data: unknown): ConsentRecord {
     return {
       id: data.id,
       tenantId: data.tenant_id,
@@ -1680,7 +1676,7 @@ export class ComplianceService {
     };
   }
 
-  private mapDataSubjectRequestFromDb(data: any): DataSubjectRequest {
+  private mapDataSubjectRequestFromDb(data: unknown): DataSubjectRequest {
     return {
       id: data.id,
       tenantId: data.tenant_id,

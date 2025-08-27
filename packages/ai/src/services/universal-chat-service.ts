@@ -1,11 +1,6 @@
 import { EnhancedServiceBase } from "@neonpro/core-services";
 import { createClient } from "@supabase/supabase-js";
-import type {
-  ChatMessage,
-  ChatSession,
-  ComplianceMetrics,
-  HealthcareChatContext,
-} from "../types";
+import type { ChatMessage, ChatSession, ComplianceMetrics, HealthcareChatContext } from "../types";
 
 interface ChatServiceInput {
   message: string;
@@ -52,8 +47,8 @@ export class UniversalChatService extends EnhancedServiceBase {
 
     // Initialize Supabase client
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
     );
   }
 
@@ -66,8 +61,6 @@ export class UniversalChatService extends EnhancedServiceBase {
   }
 
   async execute(input: ChatServiceInput): Promise<ChatServiceOutput> {
-    const _startTime = Date.now();
-
     try {
       // Input validation
       await this.validateInput(input);
@@ -504,8 +497,8 @@ export class UniversalChatService extends EnhancedServiceBase {
 
     return escalationKeywords.some(
       (keyword) =>
-        input.message.toLowerCase().includes(keyword) ||
-        response.toLowerCase().includes(keyword),
+        input.message.toLowerCase().includes(keyword)
+        || response.toLowerCase().includes(keyword),
     );
   }
 

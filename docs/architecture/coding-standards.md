@@ -217,17 +217,20 @@ Closes: TASK-123"
 ### **Development Setup**
 
 1. **Clone repository**
+
    ```bash
    git clone <repository-url>
    cd neonpro
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Setup environment**
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your credentials
@@ -252,7 +255,7 @@ const updateClient = async (id: string, data: ClientData) => {
 
 // ✅ Verificar e corrigir imports não utilizados
 // import { unused } from './utils'; // REMOVER
-import { encrypt, auditLog } from "./utils"; // MANTER
+import { auditLog, encrypt } from "./utils"; // MANTER
 ```
 
 ### **Always Check Architecture Docs**
@@ -281,21 +284,21 @@ const implementFeature = async () => {
 ### **Authentication & Basic Patterns**
 
 ```typescript
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
 // Sign in
 const { data, error } = await supabase.auth.signInWithPassword({
-  email: 'user@example.com',
-  password: 'password'
-})
+  email: "user@example.com",
+  password: "password",
+});
 
 // Use session token for API calls
-const token = data.session?.access_token
+const token = data.session?.access_token;
 ```
 
 ### **Server Components for Sensitive Data**
@@ -305,7 +308,7 @@ const token = data.session?.access_token
 export default async function ClientProfile({ clientId }: { clientId: string; }) {
   // ✅ Validação server-side obrigatória
   const session = await getSession();
-  if (!session?.user) redirect('/auth');
+  if (!session?.user) redirect("/auth");
 
   // ✅ Dados criptografados permanecem no servidor
   const encryptedClient = await getClientSecure(clientId, session.user.id);
@@ -321,7 +324,7 @@ export default async function ClientProfile({ clientId }: { clientId: string; })
 
 // Server Actions para operações críticas
 export async function updateClientAction(formData: FormData) {
-  'use server';
+  "use server";
 
   const session = await getSession();
   const data = Object.fromEntries(formData);
@@ -338,7 +341,7 @@ export async function updateClientAction(formData: FormData) {
 
     await tx.auditLog.create({
       data: {
-        action: 'UPDATE_CLIENT',
+        action: "UPDATE_CLIENT",
         userId: session.user.id,
         clientId: validatedData.id,
         timestamp: new Date(),
@@ -449,11 +452,11 @@ export class LGPDManager {
       data: {
         clientId,
         purpose,
-        status: 'pending',
+        status: "pending",
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
       },
     });
-    
+
     // Send consent request notification
     await NotificationService.sendConsentRequest(clientId, consent.id);
     return consent;
@@ -464,13 +467,13 @@ export class LGPDManager {
       // Mark consent as revoked
       await tx.lgpdConsent.update({
         where: { id: consentId },
-        data: { status: 'revoked', revokedAt: new Date() },
+        data: { status: "revoked", revokedAt: new Date() },
       });
-      
+
       // Anonymize related data
       await tx.clientData.updateMany({
         where: { clientId },
-        data: { status: 'anonymized' },
+        data: { status: "anonymized" },
       });
     });
   }
@@ -491,19 +494,23 @@ export const decrypt = (encryptedData: string): Promise<string> => {
 
 ```typescript
 // Authentication middleware
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.replace('Bearer ', '');
-  
+export const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+
   if (!token) {
-    return res.status(401).json({ error: 'Token required' });
+    return res.status(401).json({ error: "Token required" });
   }
-  
+
   try {
     const { data: user } = await supabase.auth.getUser(token);
     req.user = user.user;
     next();
   } catch (error) {
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: "Invalid token" });
   }
 };
 
@@ -629,8 +636,7 @@ export class AestheticAI {
       messages: [
         {
           role: "system",
-          content:
-            "You are an aesthetic health AI assistant. Never store or log client data.",
+          content: "You are an aesthetic health AI assistant. Never store or log client data.",
         },
         { role: "user", content: sanitized },
       ],
@@ -907,8 +913,7 @@ export class HealthcareAI {
       messages: [
         {
           role: "system",
-          content:
-            "You are a healthcare AI assistant. Never store or log patient data.",
+          content: "You are a healthcare AI assistant. Never store or log patient data.",
         },
         { role: "user", content: sanitized },
       ],

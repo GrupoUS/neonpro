@@ -350,8 +350,8 @@ test.describe("Patient Portal - Test Results", () => {
       const hasIndicator = await abnormalResults.first().evaluate((el) => {
         const style = window.getComputedStyle(el);
         return (
-          style.color !== "rgb(0, 0, 0)" ||
-          style.backgroundColor !== "rgba(0, 0, 0, 0)"
+          style.color !== "rgb(0, 0, 0)"
+          || style.backgroundColor !== "rgba(0, 0, 0, 0)"
         );
       });
       expect(hasIndicator).toBeTruthy();
@@ -396,8 +396,7 @@ test.describe("Patient Portal - Security & Privacy", () => {
 
     if (headers) {
       // Should have security headers in production
-      const hasSecurityHeaders =
-        headers["x-frame-options"] || headers["x-content-type-options"];
+      const hasSecurityHeaders = headers["x-frame-options"] || headers["x-content-type-options"];
       if (url.includes("production")) {
         expect(hasSecurityHeaders).toBeTruthy();
       }
@@ -487,9 +486,7 @@ test.describe("Patient Portal - Accessibility", () => {
     }
   });
 
-  test("should support screen readers for medical information", async ({
-    page,
-  }) => {
+  test("should support screen readers for medical information", async ({ page }) => {
     // Login as patient
     await page.goto("/patient-portal");
     await page.fill('[data-testid="patient-cpf"]', "123.456.789-00");

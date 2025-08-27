@@ -13,7 +13,7 @@ export interface AIServiceConfig {
 export interface RateLimitConfig {
   maxRequests: number;
   windowMs: number;
-  keyGenerator?: (input: any) => string;
+  keyGenerator?: (input: unknown) => string;
 }
 
 export interface ServiceMetrics {
@@ -41,7 +41,7 @@ export interface ChatMessage {
   sessionId: string;
   role: "user" | "assistant" | "system";
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
 }
 
@@ -95,7 +95,7 @@ export interface AuditEntry {
   action: string;
   timestamp: Date;
   userId?: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -297,9 +297,9 @@ export interface AppointmentPreferences {
   preferredTimes: TimeSlot[];
   advanceBookingPreference: number; // days in advance
   reminderPreferences: {
-    sms: { enabled: boolean; hoursBeforeH; boolean };
-    email: { enabled: boolean; hoursBeforeemphasis: number };
-    phone: { enabled: boolean; hoursBeforeemphasis: number };
+    sms: { enabled: boolean; hoursBeforeH; boolean; };
+    email: { enabled: boolean; hoursBeforeemphasis: number; };
+    phone: { enabled: boolean; hoursBeforeemphasis: number; };
   };
 }
 
@@ -348,10 +348,10 @@ export interface CacheService {
 
 // Logger Service Types
 export interface LoggerService {
-  info(message: string, meta?: Record<string, any>): Promise<void>;
-  warn(message: string, meta?: Record<string, any>): Promise<void>;
-  error(message: string, meta?: Record<string, any>): Promise<void>;
-  debug(message: string, meta?: Record<string, any>): Promise<void>;
+  info(message: string, meta?: Record<string, unknown>): Promise<void>;
+  warn(message: string, meta?: Record<string, unknown>): Promise<void>;
+  error(message: string, meta?: Record<string, unknown>): Promise<void>;
+  debug(message: string, meta?: Record<string, unknown>): Promise<void>;
 }
 
 // Metrics Service Types
@@ -392,50 +392,50 @@ export interface DatabaseService {
 }
 
 export interface ChatSessionRepository {
-  findFirst(query: any): Promise<ChatSession | null>;
-  create(data: any): Promise<ChatSession>;
-  update(query: any): Promise<ChatSession>;
-  delete(query: any): Promise<void>;
+  findFirst(query: unknown): Promise<ChatSession | null>;
+  create(data: unknown): Promise<ChatSession>;
+  update(query: unknown): Promise<ChatSession>;
+  delete(query: unknown): Promise<void>;
 }
 
 export interface ConversationRepository {
-  create(data: any): Promise<void>;
-  findMany(query: any): Promise<any[]>;
-  aggregate(query: any): Promise<any>;
+  create(data: unknown): Promise<void>;
+  findMany(query: unknown): Promise<any[]>;
+  aggregate(query: unknown): Promise<unknown>;
 }
 
 export interface EmbeddingRepository {
-  create(data: any): Promise<void>;
+  create(data: unknown): Promise<void>;
   findSimilar(embedding: number[], limit: number): Promise<any[]>;
 }
 
 export interface PredictionRepository {
-  create(data: any): Promise<void>;
-  findMany(query: any): Promise<PredictionResult[]>;
+  create(data: unknown): Promise<void>;
+  findMany(query: unknown): Promise<PredictionResult[]>;
   updateActual(predictionId: string, actual: boolean): Promise<void>;
 }
 
 export interface PatientBehaviorRepository {
-  findFirst(query: any): Promise<PatientBehaviorData | null>;
-  upsert(data: any): Promise<PatientBehaviorData>;
-  update(query: any): Promise<PatientBehaviorData>;
+  findFirst(query: unknown): Promise<PatientBehaviorData | null>;
+  upsert(data: unknown): Promise<PatientBehaviorData>;
+  update(query: unknown): Promise<PatientBehaviorData>;
 }
 
 export interface PatientRepository {
-  findFirst(query: any): Promise<any>;
-  findUnique(query: any): Promise<any>;
-  update(query: any): Promise<any>;
+  findFirst(query: unknown): Promise<unknown>;
+  findUnique(query: unknown): Promise<unknown>;
+  update(query: unknown): Promise<unknown>;
 }
 
 export interface AppointmentRepository {
-  findMany(query: any): Promise<AppointmentData[]>;
-  findFirst(query: any): Promise<AppointmentData | null>;
-  update(query: any): Promise<AppointmentData>;
+  findMany(query: unknown): Promise<AppointmentData[]>;
+  findFirst(query: unknown): Promise<AppointmentData | null>;
+  update(query: unknown): Promise<AppointmentData>;
 }
 
 export interface AuditLogRepository {
-  create(data: any): Promise<void>;
-  findMany(query: any): Promise<any[]>;
+  create(data: unknown): Promise<void>;
+  findMany(query: unknown): Promise<any[]>;
 }
 
 // Feature Flag Types
@@ -445,7 +445,7 @@ export interface FeatureFlag {
   enabledFor?: string[]; // user IDs or clinic IDs
   rolloutPercentage?: number; // 0-100
   conditions?: FeatureFlagCondition[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -453,20 +453,20 @@ export interface FeatureFlag {
 export interface FeatureFlagCondition {
   attribute: string;
   operator: "equals" | "not_equals" | "contains" | "in" | "not_in";
-  value: any;
+  value: unknown;
 }
 
 // Error Types
 export interface AIServiceError extends Error {
   code: string;
   statusCode: number;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   retryable: boolean;
 }
 
 export interface ValidationError extends AIServiceError {
   field: string;
-  value: any;
+  value: unknown;
 }
 
 export interface ComplianceError extends AIServiceError {
@@ -481,7 +481,7 @@ export interface APIResponse<T> {
   error?: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   };
   metadata?: {
     requestId: string;

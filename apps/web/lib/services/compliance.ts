@@ -41,15 +41,11 @@ export class ComplianceService {
     try {
       // Check LGPD compliance requirements
       const lgpdData: LGPDComplianceData = {
-        data_processing_consent:
-          await this.verifyDataProcessingConsent(tenantId),
+        data_processing_consent: await this.verifyDataProcessingConsent(tenantId),
         privacy_policy_updated: await this.verifyPrivacyPolicyUpdated(tenantId),
-        data_retention_compliant:
-          await this.verifyDataRetentionCompliance(tenantId),
-        breach_notification_process:
-          await this.verifyBreachNotificationProcess(tenantId),
-        data_subject_rights_enabled:
-          await this.verifyDataSubjectRights(tenantId),
+        data_retention_compliant: await this.verifyDataRetentionCompliance(tenantId),
+        breach_notification_process: await this.verifyBreachNotificationProcess(tenantId),
+        data_subject_rights_enabled: await this.verifyDataSubjectRights(tenantId),
       };
 
       const isCompliant = Object.values(lgpdData).every(Boolean);
@@ -79,10 +75,9 @@ export class ComplianceService {
       return { compliance: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "LGPD compliance check failed",
+        error: error instanceof Error
+          ? error.message
+          : "LGPD compliance check failed",
       };
     }
   }
@@ -93,13 +88,10 @@ export class ComplianceService {
   }> {
     try {
       const anvisaData: ANVISAComplianceData = {
-        product_registration_valid:
-          await this.verifyProductRegistration(tenantId),
-        adverse_event_reporting:
-          await this.verifyAdverseEventReporting(tenantId),
+        product_registration_valid: await this.verifyProductRegistration(tenantId),
+        adverse_event_reporting: await this.verifyAdverseEventReporting(tenantId),
         quality_management_system: await this.verifyQualityManagement(tenantId),
-        professional_licensing_valid:
-          await this.verifyProfessionalLicensing(tenantId),
+        professional_licensing_valid: await this.verifyProfessionalLicensing(tenantId),
       };
 
       const isCompliant = Object.values(anvisaData).every(Boolean);
@@ -128,10 +120,9 @@ export class ComplianceService {
       return { compliance: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "ANVISA compliance check failed",
+        error: error instanceof Error
+          ? error.message
+          : "ANVISA compliance check failed",
       };
     }
   }
@@ -143,8 +134,7 @@ export class ComplianceService {
     try {
       const cfmData: CFMComplianceData = {
         medical_license_valid: await this.verifyMedicalLicense(tenantId),
-        continuing_education_current:
-          await this.verifyContinuingEducation(tenantId),
+        continuing_education_current: await this.verifyContinuingEducation(tenantId),
         ethical_compliance: await this.verifyEthicalCompliance(tenantId),
         telemedicine_authorization: await this.verifyTelemedicineAuth(tenantId),
       };
@@ -175,10 +165,9 @@ export class ComplianceService {
       return { compliance: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "CFM compliance check failed",
+        error: error instanceof Error
+          ? error.message
+          : "CFM compliance check failed",
       };
     }
   }

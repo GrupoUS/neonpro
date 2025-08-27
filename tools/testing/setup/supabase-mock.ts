@@ -6,13 +6,13 @@
 import { vi } from "vitest";
 
 // Suppress Supabase warnings immediately
-const originalConsoleWarn = console.warn;
+const { warn: originalConsoleWarn } = console;
 console.warn = (...args) => {
   const message = args.join(" ");
   if (
-    message.includes("Multiple GoTrueClient instances detected") ||
-    message.includes("GoTrueClient") ||
-    message.includes("Multiple instances of auth client")
+    message.includes("Multiple GoTrueClient instances detected")
+    || message.includes("GoTrueClient")
+    || message.includes("Multiple instances of auth client")
   ) {
     return; // Suppress these warnings
   }
@@ -20,7 +20,7 @@ console.warn = (...args) => {
 };
 
 // Create a singleton mock Supabase client to prevent "Multiple GoTrueClient instances" warning
-let singletonMockSupabaseClient: any;
+let singletonMockSupabaseClient: unknown;
 
 const createMockSupabaseClient = () => {
   if (singletonMockSupabaseClient) {
@@ -29,12 +29,8 @@ const createMockSupabaseClient = () => {
 
   singletonMockSupabaseClient = {
     auth: {
-      getSession: vi.fn(() =>
-        Promise.resolve({ data: { session: undefined }, error: undefined }),
-      ),
-      getUser: vi.fn(() =>
-        Promise.resolve({ data: { user: undefined }, error: undefined }),
-      ),
+      getSession: vi.fn(() => Promise.resolve({ data: { session: undefined }, error: undefined })),
+      getUser: vi.fn(() => Promise.resolve({ data: { user: undefined }, error: undefined })),
       signIn: vi.fn(),
       signOut: vi.fn(),
       onAuthStateChange: vi.fn(() => ({
@@ -58,9 +54,7 @@ const createMockSupabaseClient = () => {
       is: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
-      single: vi.fn(() =>
-        Promise.resolve({ data: undefined, error: undefined }),
-      ),
+      single: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
       then: vi.fn((fn) => fn({ data: [], error: undefined })),
     })),
     rpc: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
@@ -88,7 +82,7 @@ vi.mock<typeof import("@supabase/supabase-js")>(
 // Mock the GoTrueClient directly to prevent multiple instances warning
 vi.mock<typeof import("@supabase/auth-js")>("@supabase/auth-js", () => {
   const originalModule = vi.importActual("@supabase/auth-js");
-  let singletonGoTrueClient: any;
+  let singletonGoTrueClient: unknown;
 
   return {
     ...originalModule,

@@ -25,8 +25,8 @@ interface PerformanceMetrics {
   lastCheck: Date;
   uptime: number;
   errors: number;
-  performance: Record<string, any>;
-  [key: string]: any; // Allow any additional properties
+  performance: Record<string, unknown>;
+  [key: string]: unknown; // Allow any additional properties
 }
 
 interface SecurityRule {
@@ -86,7 +86,7 @@ interface SecurityThreat {
   sessionId?: string;
   ipAddress?: string;
   timestamp: number;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   resolved: boolean;
 }
 
@@ -349,14 +349,9 @@ export class EnterpriseSecurityService {
         0,
         this.encryptionConfig.keyDerivation.saltSize,
       );
-      const _iv = combined.subarray(
-        this.encryptionConfig.keyDerivation.saltSize,
-        this.encryptionConfig.keyDerivation.saltSize +
-          this.encryptionConfig.ivSize,
-      );
       const encrypted = combined.subarray(
-        this.encryptionConfig.keyDerivation.saltSize +
-          this.encryptionConfig.ivSize,
+        this.encryptionConfig.keyDerivation.saltSize
+          + this.encryptionConfig.ivSize,
       );
 
       // Derive key
@@ -437,16 +432,14 @@ export class EnterpriseSecurityService {
     session: UserSession,
     _context: ServiceContext,
   ): Promise<boolean> {
-    const conditions = rule.conditions;
+    const { conditions: conditions } = rule;
     if (!conditions) {
       return true;
     }
 
     // Check roles
     if (conditions.roles && conditions.roles.length > 0) {
-      const hasRole = conditions.roles.some((role) =>
-        session.roles.includes(role),
-      );
+      const hasRole = conditions.roles.some((role) => session.roles.includes(role));
       if (!hasRole) {
         return false;
       }
@@ -455,7 +448,7 @@ export class EnterpriseSecurityService {
     // Check permissions
     if (conditions.permissions && conditions.permissions.length > 0) {
       const hasPermission = conditions.permissions.some((perm) =>
-        session.permissions.includes(perm),
+        session.permissions.includes(perm)
       );
       if (!hasPermission) {
         return false;
@@ -469,11 +462,11 @@ export class EnterpriseSecurityService {
 
     // Check IP restrictions
     if (
-      conditions.ipRestrictions &&
-      conditions.ipRestrictions.length > 0 &&
-      !(
-        session.ipAddress &&
-        conditions.ipRestrictions.includes(session.ipAddress)
+      conditions.ipRestrictions
+      && conditions.ipRestrictions.length > 0
+      && !(
+        session.ipAddress
+        && conditions.ipRestrictions.includes(session.ipAddress)
       )
     ) {
       return false;
@@ -501,7 +494,7 @@ export class EnterpriseSecurityService {
    */
   async detectThreat(
     type: string,
-    details: Record<string, any>,
+    details: Record<string, unknown>,
   ): Promise<void> {
     const threat: SecurityThreat = {
       id: this.generateSecureId(),
@@ -635,7 +628,7 @@ export class EnterpriseSecurityService {
 
   private categorizeThreatSeverity(
     type: string,
-    details: any,
+    details: unknown,
   ): "low" | "medium" | "high" | "critical" {
     switch (type) {
       case "multiple_failed_logins": {
@@ -719,7 +712,7 @@ export class EnterpriseSecurityService {
 
   private async logSecurityEvent(
     eventType: string,
-    _details: any,
+    _details: unknown,
   ): Promise<void> {
     // Store critical events for analysis
     if (
@@ -735,7 +728,7 @@ export class EnterpriseSecurityService {
   /**
    * Get security statistics
    */
-  async getSecurityStats(): Promise<any> {
+  async getSecurityStats(): Promise<unknown> {
     const activeSessions = this.sessions.size;
     const recentThreats = this.threats.filter(
       (t) => t.timestamp > Date.now() - 24 * 60 * 60 * 1000,

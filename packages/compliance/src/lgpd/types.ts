@@ -27,7 +27,7 @@ export interface LGPDConsent {
   revokedAt?: Date;
   expiresAt?: Date;
   version: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface LGPDDataCategory {
@@ -138,7 +138,7 @@ export interface LGPDAuditLog {
   action: string;
   subjectId?: string;
   userId: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -150,7 +150,7 @@ export interface LGPDReport {
     start: Date;
     end: Date;
   };
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   generatedAt: Date;
   generatedBy: string;
 }
@@ -202,7 +202,7 @@ export interface LGPDExportOptions {
 export interface LGPDEvent {
   type: string;
   timestamp: Date;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export type LGPDEventHandler = (event: LGPDEvent) => void | Promise<void>;

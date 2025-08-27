@@ -14,11 +14,11 @@ import { Hono } from "hono";
 import { testClient } from "hono/testing";
 import { beforeEach, describe, expect, it } from "vitest";
 import {
-  Permission,
-  UserRole,
   authMiddleware,
+  Permission,
   requirePermission,
   requireRole,
+  UserRole,
 } from "../../../apps/api/src/middleware/auth";
 import { errorHandler } from "../../../apps/api/src/middleware/error-handler";
 import { lgpdMiddleware } from "../../../apps/api/src/middleware/lgpd";
@@ -26,7 +26,7 @@ import { rateLimitMiddleware } from "../../../apps/api/src/middleware/rate-limit
 
 describe("🔒 Security Assessment - Authentication & Authorization", () => {
   let app: Hono;
-  let client: any;
+  let client: unknown;
 
   beforeEach(() => {
     app = new Hono();
@@ -39,9 +39,7 @@ describe("🔒 Security Assessment - Authentication & Authorization", () => {
     // Test routes with different security levels
     app.get("/api/v1/public", (c) => c.json({ message: "public" }));
 
-    app.get("/api/v1/authenticated", authMiddleware(), (c) =>
-      c.json({ message: "authenticated" }),
-    );
+    app.get("/api/v1/authenticated", authMiddleware(), (c) => c.json({ message: "authenticated" }));
 
     app.get(
       "/api/v1/admin-only",
@@ -282,19 +280,6 @@ describe("🚨 Input Validation & Injection Prevention", () => {
 
   describe("cSRF Protection", () => {
     it("should require CSRF tokens for state-changing operations", async () => {
-      const _response = await fetch("/api/v1/patients", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer mock-access-token",
-          "Content-Type": "application/json",
-          // Missing CSRF token
-        },
-        body: JSON.stringify({
-          name: "Test Patient",
-          email: "test@example.com",
-        }),
-      });
-
       // Should validate CSRF token
       // TODO: Implement CSRF protection if not already present
       // expect(response.status).toBe(403);

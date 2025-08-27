@@ -430,7 +430,7 @@ const rule = await automationEngine.createRule({
 ### Dashboard de Métricas
 
 ```typescript
-import { NotificationDashboard } from '@/components/notifications';
+import { NotificationDashboard } from "@/components/notifications";
 
 // Componente React
 <NotificationDashboard />;
@@ -522,11 +522,7 @@ class TemplateEngine {
 ### Exemplo Completo: Sistema de Lembretes
 
 ```typescript
-import {
-  automationEngine,
-  notificationManager,
-  templateEngine,
-} from "@/lib/notifications";
+import { automationEngine, notificationManager, templateEngine } from "@/lib/notifications";
 
 // 1. Criar template
 const reminderTemplate = await templateEngine.createTemplate({

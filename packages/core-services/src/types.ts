@@ -74,7 +74,7 @@ export interface AnalyticsEvent {
   type: string;
   category: string;
   action: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
   patientId?: string;
@@ -102,7 +102,7 @@ export interface AnalyticsInsight {
   type: "TREND" | "ANOMALY" | "RECOMMENDATION";
   category: string;
   severity: "LOW" | "MEDIUM" | "HIGH";
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   createdAt: Date;
 }
 
@@ -127,7 +127,7 @@ export interface SecurityPolicy {
   id: string;
   name: string;
   description: string;
-  rules: any[];
+  rules: unknown[];
   isActive: boolean;
   version: number;
 }
@@ -163,12 +163,12 @@ export interface AuditRecord {
   patientId?: string;
   resource: string;
   action: string;
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
   timestamp: Date;
   ipAddress?: string;
   userAgent?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
 }
 
 // Compliance Types
@@ -178,7 +178,7 @@ export interface ComplianceReport {
   framework: "LGPD" | "ANVISA" | "CFM";
   status: "COMPLIANT" | "NON_COMPLIANT" | "PENDING";
   score: number;
-  findings: any[];
+  findings: unknown[];
   generatedAt: Date;
   period: {
     start: Date;
@@ -205,7 +205,7 @@ export interface AuditEvent {
   service: string;
   eventType: string;
   timestamp: string;
-  details: any;
+  details: unknown;
   version: string;
   userId?: string;
   patientId?: string;

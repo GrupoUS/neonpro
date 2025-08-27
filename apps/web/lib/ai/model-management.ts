@@ -12,8 +12,7 @@ import type { Database } from "@/types/supabase";
 
 type AIModel = Database["public"]["Tables"]["ai_models"]["Row"];
 type AIModelInsert = Database["public"]["Tables"]["ai_models"]["Insert"];
-type ModelDriftMonitoring =
-  Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
+type ModelDriftMonitoring = Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
 type ModelABTest = Database["public"]["Tables"]["model_ab_tests"]["Row"];
 
 export interface ModelPerformanceMetrics {
@@ -37,7 +36,7 @@ export interface ModelConfig {
     | "computer_vision"
     | "time_series";
   version: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   trainingData: {
     size: number;
     source: string;
@@ -75,8 +74,8 @@ export class ModelManagementSystem {
       description: config.description,
       model_type: config.modelType,
       version: config.version,
-      config: config.config as any,
-      performance_metrics: config.performanceMetrics as any,
+      config: config.config as unknown,
+      performance_metrics: config.performanceMetrics as unknown,
       is_active: true,
       training_status: "idle",
       predictions_count: 0,
@@ -135,7 +134,7 @@ export class ModelManagementSystem {
     const { error } = await this.supabase
       .from("ai_models")
       .update({
-        performance_metrics: metrics as any,
+        performance_metrics: metrics as unknown,
         updated_at: new Date().toISOString(),
       })
       .eq("id", modelId);
@@ -160,7 +159,7 @@ export class ModelManagementSystem {
     const { error } = await this.supabase
       .from("ai_models")
       .update({
-        drift_detection_config: config as any,
+        drift_detection_config: config as unknown,
         updated_at: new Date().toISOString(),
       })
       .eq("id", modelId);
@@ -209,7 +208,7 @@ export class ModelManagementSystem {
       });
 
     if (error) {
-      console.error("Failed to record drift detection:", error);
+      // console.error("Failed to record drift detection:", error);
     }
 
     // Trigger alert if drift is significant
@@ -279,7 +278,7 @@ export class ModelManagementSystem {
     const modelAPerformance = 0.92 + Math.random() * 0.05;
     const modelBPerformance = 0.88 + Math.random() * 0.05;
     const winnerModel = modelAPerformance > modelBPerformance ? "A" : "B";
-    const confidence = 0.95;
+    const { 95: confidence } = 0;
 
     return {
       testName: data.test_name,
@@ -316,8 +315,7 @@ export class ModelManagementSystem {
     const recommendations = models.map((model) => {
       const currentCost = model.cost_per_prediction || 0.01;
       const optimizedCost = currentCost * 0.6; // 40% reduction target
-      const savings =
-        (currentCost - optimizedCost) * (model.predictions_count || 0);
+      const savings = (currentCost - optimizedCost) * (model.predictions_count || 0);
 
       return {
         modelId: model.id,
@@ -380,7 +378,7 @@ export class ModelManagementSystem {
     driftScore: number,
   ): Promise<void> {
     // In production, this would send notifications via email/Slack/etc
-    console.warn(
+    // console.warn(
       `🚨 Model Drift Alert: Model ${modelId} has ${(driftScore * 100).toFixed(2)}% drift`,
     );
 
@@ -396,10 +394,12 @@ export class ModelManagementSystem {
     modelId: string,
     metrics: Partial<ModelPerformanceMetrics>,
   ): Promise<void> {
-    console.warn(
-      `⚡ Performance Alert: Model ${modelId} accuracy dropped to ${(
-        metrics.accuracy! * 100
-      ).toFixed(2)}%`,
+    // console.warn(
+      `⚡ Performance Alert: Model ${modelId} accuracy dropped to ${
+        (
+          metrics.accuracy! * 100
+        ).toFixed(2)
+      }%`,
     );
 
     await this.logModelEvent(modelId, "performance_alert", {
@@ -411,7 +411,7 @@ export class ModelManagementSystem {
   private async logModelEvent(
     modelId: string,
     eventType: string,
-    metadata: any,
+    metadata: unknown,
   ): Promise<void> {
     await this.supabase.from("audit_events").insert({
       event_type: `ai_model_${eventType}`,
@@ -429,9 +429,4 @@ export class ModelManagementSystem {
 export const modelManager = new ModelManagementSystem();
 
 // Export types for use in other modules
-export type {
-  AIModel,
-  DriftDetectionConfig,
-  ModelConfig,
-  ModelPerformanceMetrics,
-};
+export type { AIModel, DriftDetectionConfig, ModelConfig, ModelPerformanceMetrics };

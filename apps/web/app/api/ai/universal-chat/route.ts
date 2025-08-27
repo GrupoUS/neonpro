@@ -90,9 +90,7 @@ export async function POST(request: NextRequest) {
             controller.enqueue(encoder.encode(`data: ${chunkData}\\n\\n`));
 
             // Add realistic delay
-            await new Promise((resolve) =>
-              setTimeout(resolve, 30 + Math.random() * 70),
-            );
+            await new Promise((resolve) => setTimeout(resolve, 30 + Math.random() * 70));
           }
 
           // Send completion with metadata
@@ -117,13 +115,12 @@ export async function POST(request: NextRequest) {
 
           controller.close();
         } catch (error) {
-          console.error("Streaming error:", error);
+          // console.error("Streaming error:", error);
           const errorData = JSON.stringify({
             type: "error",
-            error:
-              error instanceof Error
-                ? error.message
-                : "Erro interno do servidor",
+            error: error instanceof Error
+              ? error.message
+              : "Erro interno do servidor",
           });
           controller.enqueue(encoder.encode(`data: ${errorData}\\n\\n`));
           controller.close();
@@ -142,12 +139,11 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Universal chat error:", error);
+    // console.error("Universal chat error:", error);
     return NextResponse.json(
       {
         error: "Erro interno do servidor",
-        message:
-          "Desculpe, ocorreu um erro. Tente novamente em alguns momentos.",
+        message: "Desculpe, ocorreu um erro. Tente novamente em alguns momentos.",
       },
       { status: 500 },
     );

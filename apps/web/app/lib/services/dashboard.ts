@@ -16,7 +16,7 @@ export interface DashboardUser {
   status: "online" | "offline" | "away";
   lastSeen: Date;
   permissions: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface DashboardMetric {
@@ -73,7 +73,7 @@ export interface DashboardActivity {
   target: string;
   targetType: "project" | "task" | "user" | "system";
   timestamp: Date;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   severity: "info" | "warning" | "error" | "success";
 }
 
@@ -95,7 +95,7 @@ export interface DashboardNotification {
 }
 
 export interface DashboardFilter {
-  dateRange?: { start: Date; end: Date };
+  dateRange?: { start: Date; end: Date; };
   status?: string[];
   priority?: string[];
   department?: string[];
@@ -268,10 +268,9 @@ export class NeonProDashboardService {
           context.clinicId,
         );
 
-        const change =
-          previousValue > 0
-            ? ((metric.current_value - previousValue) / previousValue) * 100
-            : 0;
+        const change = previousValue > 0
+          ? ((metric.current_value - previousValue) / previousValue) * 100
+          : 0;
 
         return {
           id: metric.id,
@@ -346,7 +345,7 @@ export class NeonProDashboardService {
       endDate: new Date(project.end_date),
       budget: project.budget || 0,
       spent: project.spent || 0,
-      team: (project.project_members || []).map((member: any) => ({
+      team: (project.project_members || []).map((member: unknown) => ({
         id: member.user_id,
         name: member.healthcare_professionals.users.name,
         email: member.healthcare_professionals.users.email,
@@ -657,7 +656,7 @@ export class NeonProDashboardService {
 
   private async getProjectStatistics(
     clinicId: string,
-    dateRange: { start: Date; end: Date },
+    dateRange: { start: Date; end: Date; },
   ) {
     const { data } = await this.supabase
       .from("dashboard_projects")
@@ -665,7 +664,7 @@ export class NeonProDashboardService {
       .eq("clinic_id", clinicId);
 
     const projects = data || [];
-    const total = projects.length;
+    const { length: total } = projects;
     const active = projects.filter((p) => p.status === "active").length;
     const newProjects = projects.filter(
       (p) => new Date(p.created_at) >= dateRange.start,
@@ -681,7 +680,7 @@ export class NeonProDashboardService {
 
   private async getTaskStatistics(
     clinicId: string,
-    _dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date; },
   ) {
     const { data } = await this.supabase
       .from("dashboard_tasks")
@@ -691,7 +690,7 @@ export class NeonProDashboardService {
     const tasks = data || [];
     const completed = tasks.filter((t) => t.status === "completed").length;
     const pending = tasks.filter((t) => t.status === "pending").length;
-    const total = tasks.length;
+    const { length: total } = tasks;
 
     return {
       completed,
@@ -709,7 +708,7 @@ export class NeonProDashboardService {
       .eq("clinic_id", clinicId);
 
     const users = data || [];
-    const total = users.length;
+    const { length: total } = users;
     const online = 0; // Would need real-time presence
 
     return { total, online };
@@ -717,7 +716,7 @@ export class NeonProDashboardService {
 
   private async getBudgetStatistics(
     clinicId: string,
-    _dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date; },
   ) {
     const { data } = await this.supabase
       .from("dashboard_projects")
@@ -741,7 +740,7 @@ export class NeonProDashboardService {
 
   private async getPerformanceMetrics(
     _clinicId: string,
-    _dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date; },
   ) {
     // Complex performance calculations would go here
     return {
@@ -772,13 +771,12 @@ export class NeonProDashboardService {
   }
 
   private calculateProjectHealth(
-    project: any,
+    project: unknown,
   ): "healthy" | "at-risk" | "critical" {
     const budgetHealth = (project.spent || 0) / (project.budget || 1);
-    const timeHealth =
-      (Date.now() - new Date(project.start_date).getTime()) /
-      (new Date(project.end_date).getTime() -
-        new Date(project.start_date).getTime());
+    const timeHealth = (Date.now() - new Date(project.start_date).getTime())
+      / (new Date(project.end_date).getTime()
+        - new Date(project.start_date).getTime());
 
     if (budgetHealth > 1.2 || timeHealth > 1.2) {
       return "critical";

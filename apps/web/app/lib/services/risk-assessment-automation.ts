@@ -11,27 +11,27 @@ export interface RiskAssessmentConfig {
 }
 
 export interface RiskAssessmentService {
-  assessPatientRisk: (patientData: any) => Promise<any>;
-  createTreatmentPrediction: (riskData: any) => Promise<any>;
-  startRealTimeMonitoring: (patientId: string) => Promise<any>;
-  processVitalSigns: (vitalSigns: any) => Promise<any>;
-  checkPerformanceCompliance: () => Promise<any>;
-  validateLGPDCompliance: (patientId: string) => Promise<any>;
-  validateContextConsistency: () => Promise<any>;
-  handleDatabaseFailure: () => Promise<any>;
-  validateInputIntegrity: (input: any) => Promise<any>;
+  assessPatientRisk: (patientData: unknown) => Promise<unknown>;
+  createTreatmentPrediction: (riskData: unknown) => Promise<unknown>;
+  startRealTimeMonitoring: (patientId: string) => Promise<unknown>;
+  processVitalSigns: (vitalSigns: unknown) => Promise<unknown>;
+  checkPerformanceCompliance: () => Promise<unknown>;
+  validateLGPDCompliance: (patientId: string) => Promise<unknown>;
+  validateContextConsistency: () => Promise<unknown>;
+  handleDatabaseFailure: () => Promise<unknown>;
+  validateInputIntegrity: (input: unknown) => Promise<unknown>;
   executeRiskAssessment: (
-    patientData: any,
+    patientData: unknown,
     doctorId: string,
-    options?: any,
-  ) => Promise<any>;
+    options?: unknown,
+  ) => Promise<unknown>;
 }
 
 export function createRiskAssessmentService(
   _config: RiskAssessmentConfig,
 ): RiskAssessmentService {
   const service = {
-    assessPatientRisk: vi.fn().mockImplementation(async (patientData: any) => {
+    assessPatientRisk: vi.fn().mockImplementation(async (patientData: unknown) => {
       // Mock implementation for testing
       const riskLevel = patientData.age > 65 ? "high" : "low";
       return {
@@ -46,13 +46,12 @@ export function createRiskAssessmentService(
 
     createTreatmentPrediction: vi
       .fn()
-      .mockImplementation(async (riskData: any) => {
+      .mockImplementation(async (riskData: unknown) => {
         return {
           treatmentId: `treatment-${Math.random().toString(36).slice(2, 9)}`,
-          predictedOutcome:
-            riskData.riskLevel === "high"
-              ? "requires monitoring"
-              : "standard care",
+          predictedOutcome: riskData.riskLevel === "high"
+            ? "requires monitoring"
+            : "standard care",
           confidence: 0.85,
           timeline: "2-4 weeks",
         };
@@ -69,9 +68,8 @@ export function createRiskAssessmentService(
         };
       }),
 
-    processVitalSigns: vi.fn().mockImplementation(async (vitalSigns: any) => {
-      const isStable =
-        vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
+    processVitalSigns: vi.fn().mockImplementation(async (vitalSigns: unknown) => {
+      const isStable = vitalSigns.heartRate >= 60 && vitalSigns.heartRate <= 100;
       return {
         processedAt: new Date().toISOString(),
         status: isStable ? "stable" : "requires_attention",
@@ -118,7 +116,7 @@ export function createRiskAssessmentService(
       };
     }),
 
-    validateInputIntegrity: vi.fn().mockImplementation(async (input: any) => {
+    validateInputIntegrity: vi.fn().mockImplementation(async (input: unknown) => {
       const isValid = input && typeof input === "object" && input.id;
       return {
         valid: isValid,
@@ -130,7 +128,7 @@ export function createRiskAssessmentService(
     executeRiskAssessment: vi
       .fn()
       .mockImplementation(
-        async (patientData: any, doctorId: string, _options?: any) => {
+        async (patientData: unknown, doctorId: string, _options?: unknown) => {
           // Validate input integrity first
           if (!patientData?.id) {
             throw new Error("Invalid patient data: missing required fields");
@@ -138,8 +136,7 @@ export function createRiskAssessmentService(
 
           // Comprehensive risk assessment execution
           const riskAssessment = await service.assessPatientRisk(patientData);
-          const treatmentPrediction =
-            await service.createTreatmentPrediction(riskAssessment);
+          const treatmentPrediction = await service.createTreatmentPrediction(riskAssessment);
 
           // Performance and compliance checks
           const performanceResult = await service.checkPerformanceCompliance();

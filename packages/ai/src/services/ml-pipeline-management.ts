@@ -20,11 +20,7 @@ import type {
   MLPipelineStatus,
   ModelVersion,
 } from "@neonpro/types";
-import type {
-  AIServiceConfig,
-  AIServiceMetrics,
-  CacheService,
-} from "./enhanced-service-base";
+import type { AIServiceConfig, AIServiceMetrics, CacheService } from "./enhanced-service-base";
 import { EnhancedAIService } from "./enhanced-service-base";
 
 // Supabase MCP Integration
@@ -32,12 +28,12 @@ declare global {
   function mcp__supabase_mcp__execute_sql(
     projectId: string,
     query: string,
-  ): Promise<any>;
+  ): Promise<unknown>;
   function mcp__supabase_mcp__apply_migration(
     projectId: string,
     name: string,
     query: string,
-  ): Promise<any>;
+  ): Promise<unknown>;
 }
 
 export class MLPipelineManagementService extends EnhancedAIService<any, any> {
@@ -61,7 +57,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
   }
 
   // Implementation required by EnhancedAIService
-  protected async executeCore(_input: any): Promise<any> {
+  protected async executeCore(_input: unknown): Promise<unknown> {
     throw new Error("Use specific methods instead of executeCore");
   }
 
@@ -329,7 +325,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
       // Simplified drift detection algorithm
       // In production, this would use statistical tests like KS test, PSI, etc.
       const driftScore = Math.random() * 0.3; // Simulated drift score
-      const threshold = 0.2;
+      const { 2: threshold } = 0;
       const hasDrift = driftScore > threshold;
 
       let severity: "low" | "medium" | "high" | "critical" = "low";
@@ -413,9 +409,12 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
 
     try {
       // Get counts from different tables
-      const activeModelsQuery = `SELECT COUNT(*) as count FROM ai_models WHERE clinic_id = '${clinicId}' AND status = 'active'`;
-      const runningTestsQuery = `SELECT COUNT(*) as count FROM ab_tests WHERE clinic_id = '${clinicId}' AND status = 'running'`;
-      const driftDetectionsQuery = `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
+      const activeModelsQuery =
+        `SELECT COUNT(*) as count FROM ai_models WHERE clinic_id = '${clinicId}' AND status = 'active'`;
+      const runningTestsQuery =
+        `SELECT COUNT(*) as count FROM ab_tests WHERE clinic_id = '${clinicId}' AND status = 'running'`;
+      const driftDetectionsQuery =
+        `SELECT COUNT(*) as count FROM drift_detections WHERE clinic_id = '${clinicId}' AND status = 'detected'`;
 
       const [activeModels, runningTests, driftDetections] = await Promise.all([
         mcp__supabase_mcp__execute_sql(
@@ -438,8 +437,7 @@ export class MLPipelineManagementService extends EnhancedAIService<any, any> {
         detected_drifts: driftDetections.data[0].count,
         models_needing_retrain: 0, // Would be calculated based on performance metrics
         last_evaluation_date: new Date().toISOString(),
-        overall_health:
-          driftDetections.data[0].count > 0 ? "warning" : "healthy",
+        overall_health: driftDetections.data[0].count > 0 ? "warning" : "healthy",
       };
 
       if (this.config.enableCaching) {

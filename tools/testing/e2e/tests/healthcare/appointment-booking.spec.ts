@@ -50,9 +50,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
   });
 
   test.describe("🔍 Search Availability & Booking Flow", () => {
-    test("should display available appointment slots with healthcare context", async ({
-      page,
-    }) => {
+    test("should display available appointment slots with healthcare context", async ({ page }) => {
       // Navigate to appointment scheduling using multiple strategies
       const appointmentsNav = page.locator(
         '[data-testid="nav-appointments"], [data-testid="appointments-menu"], text=Agendamentos',
@@ -127,9 +125,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       }
     });
 
-    test("should book new appointment with complete healthcare workflow", async ({
-      page,
-    }) => {
+    test("should book new appointment with complete healthcare workflow", async ({ page }) => {
       // Navigate to appointments
       await page.goto("/appointments");
       await page.waitForLoadState("networkidle");
@@ -214,9 +210,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       await page.waitForURL(/appointments/);
     });
 
-    test("should handle appointment conflicts and availability checks", async ({
-      page,
-    }) => {
+    test("should handle appointment conflicts and availability checks", async ({ page }) => {
       await page.goto("/appointments/schedule");
       await page.waitForLoadState("networkidle");
 
@@ -247,9 +241,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       }
     });
 
-    test("should validate required fields in appointment form", async ({
-      page,
-    }) => {
+    test("should validate required fields in appointment form", async ({ page }) => {
       await page.goto("/appointments/schedule");
       await page.waitForLoadState("networkidle");
 
@@ -285,9 +277,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
   });
 
   test.describe("📋 Appointment Management", () => {
-    test("should display existing appointments in calendar view", async ({
-      page,
-    }) => {
+    test("should display existing appointments in calendar view", async ({ page }) => {
       await page.goto("/appointments");
       await page.waitForLoadState("networkidle");
 
@@ -371,9 +361,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       }
     });
 
-    test("should cancel appointment with proper confirmation", async ({
-      page,
-    }) => {
+    test("should cancel appointment with proper confirmation", async ({ page }) => {
       await page.goto("/appointments");
       await page.waitForLoadState("networkidle");
 
@@ -482,9 +470,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       }
     });
 
-    test("should validate professional availability and credentials", async ({
-      page,
-    }) => {
+    test("should validate professional availability and credentials", async ({ page }) => {
       await page.goto("/appointments/schedule");
       await page.waitForLoadState("networkidle");
 
@@ -515,9 +501,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
   });
 
   test.describe("📱 Patient Notifications & Communication", () => {
-    test("should send appointment confirmation notifications", async ({
-      page,
-    }) => {
+    test("should send appointment confirmation notifications", async ({ page }) => {
       // This test verifies notification system exists
       await page.goto("/appointments/schedule");
       await page.waitForLoadState("networkidle");
@@ -549,9 +533,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       }
     });
 
-    test("should handle appointment reminders configuration", async ({
-      page,
-    }) => {
+    test("should handle appointment reminders configuration", async ({ page }) => {
       await page.goto("/appointments/reminders");
       await page.waitForLoadState("networkidle");
 
@@ -575,9 +557,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
   });
 
   test.describe("📊 Reporting & Analytics", () => {
-    test("should display appointment statistics for healthcare professionals", async ({
-      page,
-    }) => {
+    test("should display appointment statistics for healthcare professionals", async ({ page }) => {
       await page.goto("/appointments/reports");
       await page.waitForLoadState("networkidle");
 
@@ -609,9 +589,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
   });
 
   test.describe("♿ Accessibility & Performance", () => {
-    test("should be accessible for users with disabilities", async ({
-      page,
-    }) => {
+    test("should be accessible for users with disabilities", async ({ page }) => {
       await page.goto("/appointments");
       await page.waitForLoadState("networkidle");
 
@@ -629,9 +607,7 @@ test.describe("📅 Appointment Booking - Critical E2E", () => {
       }
     });
 
-    test("should load appointment calendar within performance budget", async ({
-      page,
-    }) => {
+    test("should load appointment calendar within performance budget", async ({ page }) => {
       const startTime = Date.now();
 
       await page.goto("/appointments");

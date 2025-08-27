@@ -80,9 +80,7 @@ function isIgnored(filePath) {
     }
   }
 
-  // Checar se o arquivo está na lista de arquivos ignorados
-  const _fileName = path.basename(filePath);
-  return IGNORE_FILES.some((ignore) => filePath.includes(ignore));
+  // Checar se o arquivo está na lista de arquivos ignorados  return IGNORE_FILES.some((ignore) => filePath.includes(ignore));
 }
 
 function scanFile(filePath) {
@@ -124,8 +122,8 @@ function scanDirectory(dirPath) {
       if (item.isDirectory()) {
         violations.push(...scanDirectory(fullPath));
       } else if (
-        item.isFile() &&
-        CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
+        item.isFile()
+        && CHECK_EXTENSIONS.some((ext) => item.name.endsWith(ext))
       ) {
         violations.push(...scanFile(fullPath));
       }

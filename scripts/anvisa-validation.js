@@ -149,9 +149,8 @@ async function validateANVISAConfiguration() {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     // Check for Supabase client (required for ANVISA compliance)
-    const hasSupabase =
-      packageJson.dependencies?.["@supabase/supabase-js"] ||
-      packageJson.devDependencies?.["@supabase/supabase-js"];
+    const hasSupabase = packageJson.dependencies?.["@supabase/supabase-js"]
+      || packageJson.devDependencies?.["@supabase/supabase-js"];
 
     if (hasSupabase) {
       logSuccess(

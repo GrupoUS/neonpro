@@ -44,7 +44,7 @@ export interface PatientRepository {
 
 export interface PatientFilters {
   status?: PatientStatus;
-  ageRange?: { min: number; max: number };
+  ageRange?: { min: number; max: number; };
   gender?: string;
   tags?: string[];
   city?: string;
@@ -56,9 +56,9 @@ export interface PatientStats {
   activePatients: number;
   newPatientsThisMonth: number;
   averageAge: number;
-  genderDistribution: { male: number; female: number; other: number };
-  topReferralSources: { source: string; count: number }[];
-  patientsByStatus: { status: PatientStatus; count: number }[];
+  genderDistribution: { male: number; female: number; other: number; };
+  topReferralSources: { source: string; count: number; }[];
+  patientsByStatus: { status: PatientStatus; count: number; }[];
 }
 
 export class PatientService {
@@ -185,9 +185,9 @@ export class PatientService {
     const consentForms = await this.repository.getConsentForms(patientId);
     return consentForms.some(
       (form) =>
-        form.treatmentType === treatmentType &&
-        form.isActive &&
-        form.signedDate,
+        form.treatmentType === treatmentType
+        && form.isActive
+        && form.signedDate,
     );
   }
 

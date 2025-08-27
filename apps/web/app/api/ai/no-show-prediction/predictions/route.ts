@@ -1,4 +1,4 @@
-import { createServerClient } from "@neonpro/db";
+import { createServerClient } from "@neonpro/database";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -58,8 +58,7 @@ function generatePredictionData(count = 10): NoShowPredictionResponse[] {
   ];
 
   return Array.from({ length: count }, (_, i) => {
-    const riskCategory =
-      riskCategories[Math.floor(Math.random() * riskCategories.length)];
+    const riskCategory = riskCategories[Math.floor(Math.random() * riskCategories.length)];
     const noShowProbability = {
       low: Math.random() * 0.3,
       medium: 0.3 + Math.random() * 0.3,
@@ -75,12 +74,10 @@ function generatePredictionData(count = 10): NoShowPredictionResponse[] {
       confidenceScore: 0.75 + Math.random() * 0.25,
       contributingFactors: [
         {
-          factorName:
-            factorNames[Math.floor(Math.random() * factorNames.length)],
+          factorName: factorNames[Math.floor(Math.random() * factorNames.length)],
           category: "historical",
           importanceWeight: Math.random() * 0.5 + 0.2,
-          impactDirection:
-            Math.random() > 0.7 ? "decreases_risk" : "increases_risk",
+          impactDirection: Math.random() > 0.7 ? "decreases_risk" : "increases_risk",
           description: "Fator baseado em histórico do paciente",
           confidence: 0.8 + Math.random() * 0.2,
         },
@@ -145,7 +142,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(predictions);
   } catch (error) {
-    console.error("Error fetching no-show predictions:", error);
+    // console.error("Error fetching no-show predictions:", error);
     return NextResponse.json(
       { error: "Failed to fetch predictions" },
       { status: 500 },

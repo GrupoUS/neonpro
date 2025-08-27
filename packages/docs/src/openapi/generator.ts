@@ -22,7 +22,7 @@ export interface OpenAPIConfig {
   outputPath: string;
   includePatterns: string[];
   excludePatterns?: string[];
-  securitySchemes?: Record<string, any>;
+  securitySchemes?: Record<string, unknown>;
   healthcare?: {
     hipaaCompliant: boolean;
     lgpdCompliant: boolean;
@@ -94,7 +94,7 @@ export class OpenAPIGenerator {
   /**
    * Extract OpenAPI components from TypeScript files
    */
-  private async extractComponents(files: string[]): Promise<any> {
+  private async extractComponents(files: string[]): Promise<unknown> {
     const components = {
       schemas: {},
       parameters: {},
@@ -127,7 +127,7 @@ export class OpenAPIGenerator {
   /**
    * Parse JSDoc comments for OpenAPI annotations
    */
-  private parseJSDocForOpenAPI(jsdoc: string, components: any): void {
+  private parseJSDocForOpenAPI(jsdoc: string, components: unknown): void {
     // Extract @swagger or @openapi annotations
     const swaggerMatch = jsdoc.match(/@swagger\s+([\s\S]*?)(?=\*\/|\* @)/)?.[1];
     const openapiMatch = jsdoc.match(/@openapi\s+([\s\S]*?)(?=\*\/|\* @)/)?.[1];
@@ -157,7 +157,7 @@ export class OpenAPIGenerator {
    */
   private extractTypeScriptSchemas(
     content: string,
-    schemas: Record<string, any>,
+    schemas: Record<string, unknown>,
   ): void {
     // Simple regex to extract interface definitions
     const interfaceRegex = /export\s+interface\s+(\w+)\s*{([^}]*)}/g;
@@ -185,8 +185,8 @@ export class OpenAPIGenerator {
   /**
    * Parse TypeScript interface body to OpenAPI schema
    */
-  private parseInterfaceToSchema(interfaceBody: string): any {
-    const properties: Record<string, any> = {};
+  private parseInterfaceToSchema(interfaceBody: string): unknown {
+    const properties: Record<string, unknown> = {};
     const required: string[] = [];
 
     // Simple property extraction (property: type;)
@@ -213,9 +213,9 @@ export class OpenAPIGenerator {
   /**
    * Convert TypeScript type to OpenAPI type
    */
-  private typeScriptTypeToOpenAPIType(tsType: string): any {
+  private typeScriptTypeToOpenAPIType(tsType: string): unknown {
     // Basic type mappings
-    const typeMap: Record<string, any> = {
+    const typeMap: Record<string, unknown> = {
       string: { type: "string" },
       number: { type: "number" },
       boolean: { type: "boolean" },
@@ -251,7 +251,7 @@ export class OpenAPIGenerator {
   /**
    * Generate OpenAPI specification
    */
-  private generateSpec(components: any): any {
+  private generateSpec(components: unknown): unknown {
     const spec = {
       openapi: "3.0.3",
       info: {
@@ -307,7 +307,7 @@ export class OpenAPIGenerator {
   /**
    * Validate OpenAPI specification
    */
-  private async validateSpec(spec: any): Promise<void> {
+  private async validateSpec(spec: unknown): Promise<void> {
     // Basic validation
     if (!(spec.openapi && spec.info && spec.paths)) {
       throw new Error("Invalid OpenAPI specification structure");
@@ -322,7 +322,7 @@ export class OpenAPIGenerator {
   /**
    * Validate healthcare compliance requirements
    */
-  private validateHealthcareCompliance(spec: any): void {
+  private validateHealthcareCompliance(spec: unknown): void {
     const warnings: string[] = [];
 
     // Check for security schemes
@@ -333,8 +333,8 @@ export class OpenAPIGenerator {
     }
 
     // Check for required healthcare tags
-    const healthcareTags = spec.tags?.some((tag: any) =>
-      tag.name.toLowerCase().includes("healthcare"),
+    const healthcareTags = spec.tags?.some((tag: unknown) =>
+      tag.name.toLowerCase().includes("healthcare")
     );
     if (!healthcareTags) {
       warnings.push("No healthcare-specific tags found");
@@ -348,7 +348,7 @@ export class OpenAPIGenerator {
   /**
    * Write output files (JSON and YAML)
    */
-  private async writeOutputFiles(spec: any): Promise<void> {
+  private async writeOutputFiles(spec: unknown): Promise<void> {
     const outputDir = dirname(this.config.outputPath);
 
     // Ensure output directory exists
@@ -368,11 +368,7 @@ export class OpenAPIGenerator {
   /**
    * Log generation summary
    */
-  private logSummary(spec: any): void {
-    const _pathCount = Object.keys(spec.paths || {}).length;
-    const _schemaCount = Object.keys(spec.components?.schemas || {}).length;
-    const _tagCount = (spec.tags || []).length;
-
+  private logSummary(spec: unknown): void {
     if (this.config.healthcare) {
     }
   }
@@ -384,8 +380,7 @@ export class OpenAPIGenerator {
 export const defaultConfig: OpenAPIConfig = {
   title: "NeonPro Healthcare API",
   version: "1.0.0",
-  description:
-    "Enterprise-grade healthcare platform API - HIPAA, LGPD, and ANVISA compliant",
+  description: "Enterprise-grade healthcare platform API - HIPAA, LGPD, and ANVISA compliant",
   servers: [
     {
       url: "https://api.neonpro.com.br",

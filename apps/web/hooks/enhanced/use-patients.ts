@@ -7,7 +7,7 @@
  */
 
 // Import our enhanced API client
-import { ApiHelpers, apiClient } from "@neonpro/shared/api-client";
+import { apiClient, ApiHelpers } from "@neonpro/shared/api-client";
 import type { ApiResponse } from "@neonpro/shared/api-client";
 // Import validation schemas and types
 import {
@@ -16,8 +16,8 @@ import {
   PatientDataExportSchema,
   PatientQuerySchema,
   PatientResponseSchema,
-  PatientStatsSchema,
   PatientsListResponseSchema,
+  PatientStatsSchema,
   UpdatePatientSchema,
 } from "@neonpro/shared/schemas";
 import type {
@@ -90,8 +90,8 @@ export function usePatient(id: string) {
     retry: (failureCount, error) => {
       // Don't retry on permission or not found errors
       if (
-        ApiHelpers.isAuthError(error) ||
-        (error as any)?.message?.includes("not found")
+        ApiHelpers.isAuthError(error)
+        || (error as unknown)?.message?.includes("not found")
       ) {
         return false;
       }
@@ -111,7 +111,7 @@ export function usePatients(filters?: PatientQuery) {
       const validatedFilters = filters ? PatientQuerySchema.parse(filters) : {};
 
       const response = await apiClient.api.v1.patients.$get({
-        query: validatedFilters as any,
+        query: validatedFilters as unknown,
       });
       return await response.json();
     },
@@ -242,8 +242,7 @@ export function useUpdatePatient(id: string) {
     // Optimistic update for better UX
     ...queryUtils.createOptimisticUpdate<PatientBase>(
       QueryKeys.patients.detail(id),
-      (oldData) =>
-        oldData ? { ...oldData, ...patientData } : (oldData as PatientBase),
+      (oldData) => oldData ? { ...oldData, ...patientData } : (oldData as PatientBase),
     ),
 
     onSuccess: (_response, _variables) => {
@@ -360,7 +359,7 @@ export function useClinicPatients(
       const validatedFilters = PatientQuerySchema.parse(queryFilters);
 
       const response = await apiClient.api.v1.patients.$get({
-        query: validatedFilters as any,
+        query: validatedFilters as unknown,
       });
       return await response.json();
     },
@@ -467,7 +466,7 @@ export function useSearchPatients() {
           });
 
           const response = await apiClient.api.v1.patients.$get({
-            query: queryFilters as any,
+            query: queryFilters as unknown,
           });
           return await response.json();
         },
@@ -520,8 +519,8 @@ export function usePatientUtils() {
         const monthDiff = today.getMonth() - birth.getMonth();
 
         if (
-          monthDiff < 0 ||
-          (monthDiff === 0 && today.getDate() < birth.getDate())
+          monthDiff < 0
+          || (monthDiff === 0 && today.getDate() < birth.getDate())
         ) {
           age--;
         }
@@ -537,9 +536,9 @@ export function usePatientUtils() {
       // Get primary address
       getPrimaryAddress: (patient: PatientBase): Address | null => {
         return (
-          patient.addresses.find((addr) => addr.is_primary) ||
-          patient.addresses[0] ||
-          undefined
+          patient.addresses.find((addr) => addr.is_primary)
+          || patient.addresses[0]
+          || undefined
         );
       },
 
@@ -548,9 +547,9 @@ export function usePatientUtils() {
         patient: PatientBase,
       ): EmergencyContact | null => {
         return (
-          patient.emergency_contacts.find((contact) => contact.is_primary) ||
-          patient.emergency_contacts[0] ||
-          undefined
+          patient.emergency_contacts.find((contact) => contact.is_primary)
+          || patient.emergency_contacts[0]
+          || undefined
         );
       },
 

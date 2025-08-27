@@ -7,8 +7,8 @@ import { createClient } from "@supabase/supabase-js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 );
 
 describe("bank Reconciliation API Integration Tests", () => {
@@ -68,7 +68,7 @@ describe("bank Reconciliation API Integration Tests", () => {
     });
 
     it("should update transaction status during reconciliation", async () => {
-      const testId = testTransactionIds[0];
+      const [testId] = testTransactionIds;
       if (!testId) {
         return;
       }
@@ -148,7 +148,7 @@ describe("bank Reconciliation API Integration Tests", () => {
     });
 
     it("should maintain audit trail for all operations", async () => {
-      const testId = testTransactionIds[0];
+      const [testId] = testTransactionIds;
       if (!testId) {
         return;
       }
@@ -165,7 +165,7 @@ describe("bank Reconciliation API Integration Tests", () => {
     });
 
     it("should validate LGPD compliance fields", async () => {
-      const testId = testTransactionIds[0];
+      const [testId] = testTransactionIds;
       if (!testId) {
         return;
       }
@@ -205,8 +205,7 @@ describe("bank Reconciliation API Integration Tests", () => {
         supabase
           .from("financial_transactions")
           .select("count(*)")
-          .eq("clinic_id", "test-clinic-123"),
-      );
+          .eq("clinic_id", "test-clinic-123"));
 
       const results = await Promise.all(concurrentRequests);
 
@@ -270,7 +269,7 @@ describe("bank Reconciliation API Integration Tests", () => {
 
     it("should enforce healthcare compliance validation", async () => {
       // Test healthcare-specific validation rules
-      const testId = testTransactionIds[0];
+      const [testId] = testTransactionIds;
       if (!testId) {
         return;
       }

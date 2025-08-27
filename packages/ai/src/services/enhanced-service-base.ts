@@ -96,7 +96,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   async executeWithMetrics(
     input: TInput,
-    context?: { userId?: string; clinicId?: string },
+    context?: { userId?: string; clinicId?: string; },
   ): Promise<TOutput> {
     const startTime = Date.now();
     const operationId = this.generateOperationId();
@@ -290,11 +290,11 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   protected extractConfidence(result: TOutput): number | undefined {
     if (
-      typeof result === "object" &&
-      result !== null &&
-      "confidence" in result
+      typeof result === "object"
+      && result !== null
+      && "confidence" in result
     ) {
-      return (result as any).confidence;
+      return (result as unknown).confidence;
     }
     return;
   }
@@ -302,10 +302,10 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   /**
    * Sanitize result for audit trail (remove sensitive data)
    */
-  protected sanitizeForAudit(result: TOutput): any {
+  protected sanitizeForAudit(result: TOutput): unknown {
     // Default implementation - override in subclasses for specific sanitization
     if (typeof result === "object" && result !== null) {
-      const sanitized = { ...(result as any) };
+      const sanitized = { ...(result as unknown) };
 
       // Remove common sensitive fields
       sanitized.apiKey = undefined;
@@ -322,7 +322,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   /**
    * Determine if error should trigger retry
    */
-  protected shouldRetry(error: any): boolean {
+  protected shouldRetry(error: unknown): boolean {
     // Retry for network errors, rate limits, and temporary service issues
     const retryableErrors = [
       "NetworkError",
@@ -334,8 +334,8 @@ export abstract class EnhancedAIService<TInput, TOutput> {
 
     return retryableErrors.some(
       (errorType) =>
-        error.name?.includes(errorType) ||
-        error.message?.includes(errorType.toLowerCase()),
+        error.name?.includes(errorType)
+        || error.message?.includes(errorType.toLowerCase()),
     );
   }
 
@@ -411,7 +411,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   protected async createAuditTrailEntry(
     operationId: string,
     status: "started" | "completed" | "failed",
-    data: any,
+    data: unknown,
   ): Promise<void> {
     try {
       // This would integrate with your existing audit system
@@ -445,7 +445,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   protected async recordPerformanceMetric(
     type: string,
     value: number,
-    metadata?: any,
+    metadata?: unknown,
   ): Promise<void> {
     if (!this.config.enableMetrics) {
       return;
@@ -474,7 +474,7 @@ export abstract class EnhancedAIService<TInput, TOutput> {
   /**
    * Health check for AI service
    */
-  async healthCheck(): Promise<{ healthy: boolean; details: any }> {
+  async healthCheck(): Promise<{ healthy: boolean; details: unknown; }> {
     try {
       // Basic connectivity and configuration check
       const checks = {
@@ -525,9 +525,9 @@ export abstract class EnhancedAIService<TInput, TOutput> {
    */
   private validateConfiguration(): boolean {
     return (
-      this.config.cacheTTL > 0 &&
-      this.config.performanceThreshold > 0 &&
-      this.config.errorRetryCount >= 0
+      this.config.cacheTTL > 0
+      && this.config.performanceThreshold > 0
+      && this.config.errorRetryCount >= 0
     );
   }
 }

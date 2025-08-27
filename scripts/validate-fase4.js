@@ -71,9 +71,7 @@ function validateComponent(filePath, componentName) {
       /tabIndex/,
     ];
 
-    const hasAccessibility = accessibilityPatterns.some((pattern) =>
-      pattern.test(content),
-    );
+    const hasAccessibility = accessibilityPatterns.some((pattern) => pattern.test(content));
     if (!(hasAccessibility || componentName.includes("index"))) {
       errors.push(`⚠️  ${componentName}: Limited accessibility attributes`);
     }
@@ -81,9 +79,7 @@ function validateComponent(filePath, componentName) {
     // Check for mobile responsiveness
     const mobilePatterns = [/md:/, /lg:/, /sm:/, /grid-cols-/, /flex-col/];
 
-    const hasMobileSupport = mobilePatterns.some((pattern) =>
-      pattern.test(content),
-    );
+    const hasMobileSupport = mobilePatterns.some((pattern) => pattern.test(content));
     if (!(hasMobileSupport || componentName.includes("index"))) {
       errors.push(`⚠️  ${componentName}: Limited mobile responsiveness`);
     }

@@ -9,7 +9,7 @@ export interface ComplianceLog {
   action: string;
   resource_type: string;
   resource_id: string | null;
-  metadata: Record<string, any> | null;
+  metadata: Record<string, unknown> | null;
   ip_address: string;
   user_agent: string;
   clinic_id: string;
@@ -55,7 +55,7 @@ export interface UseRealtimeComplianceReturn {
   complianceScore: number;
   subscribe: () => void;
   unsubscribe: () => void;
-  generateComplianceReport: () => Promise<any>;
+  generateComplianceReport: () => Promise<unknown>;
   triggerManualAudit: () => void;
 }
 
@@ -81,17 +81,15 @@ export function useRealtimeCompliance(
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [totalEvents, setTotalEvents] = useState(0);
   const [criticalEvents, setCriticalEvents] = useState(0);
-  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>(undefined);
+  const [lastEvent, setLastEvent] = useState<ComplianceLog | null>();
   const [complianceScore, setComplianceScore] = useState(100);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
-    undefined,
-  );
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
 
   /**
    * Determine compliance type based on payload
    */
   const determineComplianceType = useCallback(
-    (payload: any): keyof ComplianceEventType => {
+    (payload: unknown): keyof ComplianceEventType => {
       const eventData = payload.new || payload.old;
 
       if (!eventData) {
@@ -106,14 +104,14 @@ export function useRealtimeCompliance(
       }
 
       if (
-        eventData.action?.includes("deletion") ||
-        eventData.action?.includes("delete")
+        eventData.action?.includes("deletion")
+        || eventData.action?.includes("delete")
       ) {
         return "LGPD_DATA_DELETION";
       }
 
       if (eventData.action?.includes("anvisa")) {
-        const metadata = (eventData.metadata as Record<string, any>) || {};
+        const metadata = (eventData.metadata as Record<string, unknown>) || {};
         if (metadata.severity === "CRITICAL") {
           return "ANVISA_VIOLATION";
         }
@@ -121,15 +119,15 @@ export function useRealtimeCompliance(
       }
 
       if (
-        eventData.action?.includes("breach") ||
-        eventData.action?.includes("vazamento")
+        eventData.action?.includes("breach")
+        || eventData.action?.includes("vazamento")
       ) {
         return "DATA_BREACH_DETECTED";
       }
 
       if (
-        eventData.action?.includes("unauthorized") ||
-        eventData.action?.includes("nao_autorizado")
+        eventData.action?.includes("unauthorized")
+        || eventData.action?.includes("nao_autorizado")
       ) {
         return "UNAUTHORIZED_ACCESS";
       }
@@ -143,36 +141,36 @@ export function useRealtimeCompliance(
    * Determine severity level based on compliance event
    */
   const determineSeverity = useCallback(
-    (payload: any): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
+    (payload: unknown): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" => {
       const eventData = payload.new || payload.old;
-      const eventType = payload.eventType;
+      const { eventType: eventType } = payload;
 
       // Critical severity scenarios
       if (
-        eventData?.action?.includes("breach") ||
-        eventData?.action?.includes("unauthorized") ||
-        eventData?.action?.includes("violation") ||
-        eventData?.action?.includes("vazamento") ||
-        eventData?.action?.includes("nao_autorizado")
+        eventData?.action?.includes("breach")
+        || eventData?.action?.includes("unauthorized")
+        || eventData?.action?.includes("violation")
+        || eventData?.action?.includes("vazamento")
+        || eventData?.action?.includes("nao_autorizado")
       ) {
         return "CRITICAL";
       }
 
       // High severity scenarios
       if (
-        eventType === "DELETE" ||
-        eventData?.action?.includes("consent_revoked") ||
-        eventData?.action?.includes("data_deletion") ||
-        eventData?.action?.includes("anvisa_violation")
+        eventType === "DELETE"
+        || eventData?.action?.includes("consent_revoked")
+        || eventData?.action?.includes("data_deletion")
+        || eventData?.action?.includes("anvisa_violation")
       ) {
         return "HIGH";
       }
 
       // Medium severity scenarios
       if (
-        eventData?.action?.includes("consent_granted") ||
-        eventData?.action?.includes("data_export") ||
-        eventData?.action?.includes("anvisa_compliance_check")
+        eventData?.action?.includes("consent_granted")
+        || eventData?.action?.includes("data_export")
+        || eventData?.action?.includes("anvisa_compliance_check")
       ) {
         return "MEDIUM";
       }
@@ -228,9 +226,7 @@ export function useRealtimeCompliance(
 
             case "UPDATE": {
               if (newData) {
-                return oldCache.map((log) =>
-                  log.id === newData.id ? newData : log,
-                );
+                return oldCache.map((log) => log.id === newData.id ? newData : log);
               }
               return oldCache;
             }
@@ -314,7 +310,7 @@ export function useRealtimeCompliance(
    * Handle realtime compliance changes
    */
   const handleComplianceChange = useCallback(
-    (payload: any) => {
+    (payload: unknown) => {
       try {
         // Determine compliance type and severity
         const complianceType = determineComplianceType(payload);

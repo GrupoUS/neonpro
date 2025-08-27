@@ -131,7 +131,7 @@ export interface ComplianceDashboardAudit {
   metrics_snapshot: ComplianceDashboardMetrics;
   alerts_generated: ComplianceAlert[];
   constitutional_validation: boolean;
-  privacy_impact_assessment: Record<string, any>;
+  privacy_impact_assessment: Record<string, unknown>;
   created_at: string;
   created_by: string;
 }
@@ -331,8 +331,7 @@ export class ComplianceDashboardService {
         alert_type: "critical",
         category: "operational",
         title: "Constitutional Compliance Monitoring Failure",
-        description:
-          "Automated compliance monitoring system encountered an error",
+        description: "Automated compliance monitoring system encountered an error",
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -359,15 +358,16 @@ export class ComplianceDashboardService {
 
     // Check critical compliance score threshold
     if (
-      metrics.overall_compliance_score <
-      this.config.alert_thresholds.critical_compliance_score
+      metrics.overall_compliance_score
+        < this.config.alert_thresholds.critical_compliance_score
     ) {
       alerts.push({
         alert_id: crypto.randomUUID(),
         alert_type: "critical",
         category: "constitutional",
         title: "Critical Constitutional Compliance Violation",
-        description: `Overall compliance score (${metrics.overall_compliance_score}) below critical threshold (${this.config.alert_thresholds.critical_compliance_score})`,
+        description:
+          `Overall compliance score (${metrics.overall_compliance_score}) below critical threshold (${this.config.alert_thresholds.critical_compliance_score})`,
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -383,17 +383,19 @@ export class ComplianceDashboardService {
 
     // Check privacy budget warning threshold
     if (
-      metrics.privacy_metrics.privacy_budget_utilization >
-      this.config.alert_thresholds.privacy_budget_warning
+      metrics.privacy_metrics.privacy_budget_utilization
+        > this.config.alert_thresholds.privacy_budget_warning
     ) {
       alerts.push({
         alert_id: crypto.randomUUID(),
         alert_type: "warning",
         category: "privacy",
         title: "Privacy Budget Near Exhaustion",
-        description: `Privacy budget utilization (${Math.round(
-          metrics.privacy_metrics.privacy_budget_utilization * 100,
-        )}%) approaching limit`,
+        description: `Privacy budget utilization (${
+          Math.round(
+            metrics.privacy_metrics.privacy_budget_utilization * 100,
+          )
+        }%) approaching limit`,
         severity_score: 7,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -414,7 +416,8 @@ export class ComplianceDashboardService {
         alert_type: "critical",
         category: "privacy",
         title: "Patient Privacy Violations Detected",
-        description: `${metrics.privacy_metrics.privacy_violations_count} privacy violations require immediate attention`,
+        description:
+          `${metrics.privacy_metrics.privacy_violations_count} privacy violations require immediate attention`,
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -435,7 +438,8 @@ export class ComplianceDashboardService {
         alert_type: "critical",
         category: "security",
         title: "Data Breach Incidents Detected",
-        description: `${metrics.security_metrics.data_breach_incidents} data breach incidents require immediate investigation`,
+        description:
+          `${metrics.security_metrics.data_breach_incidents} data breach incidents require immediate investigation`,
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -497,8 +501,7 @@ export class ComplianceDashboardService {
     const reportingPeriod = this.calculateReportingPeriod(reportType);
 
     // Get current metrics
-    const currentMetrics =
-      this.currentMetrics || (await this.collectComplianceMetrics());
+    const currentMetrics = this.currentMetrics || (await this.collectComplianceMetrics());
 
     // Generate executive summary
     const executiveSummary = this.generateExecutiveSummary(currentMetrics);
@@ -528,10 +531,8 @@ export class ComplianceDashboardService {
       detailed_metrics: detailedMetrics,
       constitutional_certification: {
         privacy_officer_review: true,
-        regulatory_compliance_verified:
-          currentMetrics.overall_compliance_score >= 9.5,
-        constitutional_standards_met:
-          currentMetrics.constitutional_compliance_score >= 9.9,
+        regulatory_compliance_verified: currentMetrics.overall_compliance_score >= 9.5,
+        constitutional_standards_met: currentMetrics.constitutional_compliance_score >= 9.9,
         audit_trail_complete: this.auditTrail.length > 0,
       },
     };
@@ -559,7 +560,7 @@ export class ComplianceDashboardService {
   async resolveAlert(
     alertId: string,
     resolution: string,
-  ): Promise<{ success: boolean }> {
+  ): Promise<{ success: boolean; }> {
     const alertIndex = this.activeAlerts.findIndex(
       (alert) => alert.alert_id === alertId,
     );
@@ -592,18 +593,18 @@ export class ComplianceDashboardService {
   }
 
   // Helper methods for metric collection
-  private async collectLgpdMetrics(): Promise<{ score: number }> {
+  private async collectLgpdMetrics(): Promise<{ score: number; }> {
     // Mock LGPD compliance assessment
     // In production, this would integrate with actual LGPD compliance services
     return { score: 9.7 };
   }
 
-  private async collectAnvisaMetrics(): Promise<{ score: number }> {
+  private async collectAnvisaMetrics(): Promise<{ score: number; }> {
     // Mock ANVISA compliance assessment
     return { score: 9.6 };
   }
 
-  private async collectCfmMetrics(): Promise<{ score: number }> {
+  private async collectCfmMetrics(): Promise<{ score: number; }> {
     // Mock CFM compliance assessment
     return { score: 9.8 };
   }
@@ -669,8 +670,7 @@ export class ComplianceDashboardService {
     };
 
     const weightedSum = Object.entries(scores).reduce(
-      (sum, [key, score]) =>
-        sum + score * (weights[key as keyof typeof weights] || 0),
+      (sum, [key, score]) => sum + score * (weights[key as keyof typeof weights] || 0),
       0,
     );
 
@@ -728,7 +728,7 @@ export class ComplianceDashboardService {
     critical_issues: string[];
     recommendations: string[];
   } {
-    const score = metrics.overall_compliance_score;
+    const { overall_compliance_score: score } = metrics;
     let rating: "excellent" | "good" | "fair" | "poor" | "critical";
 
     if (score >= 9.5) {
@@ -811,8 +811,8 @@ export class ComplianceDashboardService {
 
     // Check compliance scores
     if (
-      this.currentMetrics &&
-      this.currentMetrics.constitutional_compliance_score < 9.9
+      this.currentMetrics
+      && this.currentMetrics.constitutional_compliance_score < 9.9
     ) {
       issues.push("Constitutional compliance score below required 9.9/10");
       score -= 0.2;
@@ -840,7 +840,7 @@ export function createComplianceDashboardService(
  */
 export async function validateComplianceDashboard(
   config: ComplianceDashboardConfig,
-): Promise<{ valid: boolean; violations: string[] }> {
+): Promise<{ valid: boolean; violations: string[]; }> {
   const violations: string[] = [];
 
   // Validate monitoring intervals

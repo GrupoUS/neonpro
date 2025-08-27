@@ -29,16 +29,15 @@ interface TestConfig {
 const TEST_CONFIG: TestConfig = {
   api: {
     test_api_base_url: process.env.TEST_API_BASE_URL || "http://localhost:3000",
-    production_api_base_url:
-      process.env.PRODUCTION_API_BASE_URL || "https://api.neonpro.healthcare",
+    production_api_base_url: process.env.PRODUCTION_API_BASE_URL
+      || "https://api.neonpro.healthcare",
     timeout_ms: 30_000,
     max_retries: 3,
   },
   supabase: {
     test_url: process.env.TEST_SUPABASE_URL || "http://localhost:54321",
     test_anon_key: process.env.TEST_SUPABASE_ANON_KEY || "test-anon-key",
-    test_service_role_key:
-      process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
+    test_service_role_key: process.env.TEST_SUPABASE_SERVICE_ROLE_KEY || "test-service-key",
   },
   ai_services: {
     feature_flags_enabled: true,
@@ -55,7 +54,7 @@ const TEST_CONFIG: TestConfig = {
 
 interface AIServiceResponse {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
   metadata?: {
     service_version: string;
@@ -67,8 +66,8 @@ interface AIServiceResponse {
 }
 
 interface EcosystemTestContext {
-  supabaseClient: any;
-  testSession: any;
+  supabaseClient: unknown;
+  testSession: unknown;
   cleanupTasks: (() => Promise<void>)[];
   testStartTime: number;
   serviceMetrics: Map<string, any>;
@@ -101,7 +100,7 @@ class AIServicesEcosystemTester {
       try {
         await cleanup();
       } catch (error) {
-        console.warn("Cleanup task failed:", error);
+        // console.warn("Cleanup task failed:", error);
       }
     }
 
@@ -189,7 +188,7 @@ class AIServicesEcosystemTester {
       .upsert(testPatients);
 
     if (patientsError) {
-      console.warn("Failed to insert test patients:", patientsError);
+      // console.warn("Failed to insert test patients:", patientsError);
     }
 
     AIServicesEcosystemTester.context.cleanupTasks.push(async () => {
@@ -233,7 +232,7 @@ class AIServicesEcosystemTester {
       .upsert(testFlags);
 
     if (error) {
-      console.warn("Failed to setup test feature flags:", error);
+      // console.warn("Failed to setup test feature flags:", error);
     }
 
     AIServicesEcosystemTester.context.cleanupTasks.push(async () => {
@@ -271,28 +270,29 @@ class AIServicesEcosystemTester {
   }
 
   private static async generateTestReport(): Promise<void> {
-    const testDuration =
-      Date.now() - AIServicesEcosystemTester.context.testStartTime;
+    const testDuration = Date.now() - AIServicesEcosystemTester.context.testStartTime;
     const metrics = Object.fromEntries(
       AIServicesEcosystemTester.context.serviceMetrics,
     );
 
-    console.log("\n=== AI Services Ecosystem Test Report ===");
-    console.log(`Test Duration: ${testDuration}ms`);
-    console.log(`Services Tested: ${metrics.services_tested || 0}`);
-    console.log(`Total API Calls: ${metrics.total_api_calls || 0}`);
-    console.log(
-      `Cache Hit Rate: ${(
-        ((metrics.cache_hits || 0) / (metrics.cache_requests || 1)) *
-        100
-      ).toFixed(2)}%`,
+    // console.log("\n=== AI Services Ecosystem Test Report ===");
+    // console.log(`Test Duration: ${testDuration}ms`);
+    // console.log(`Services Tested: ${metrics.services_tested || 0}`);
+    // console.log(`Total API Calls: ${metrics.total_api_calls || 0}`);
+    // console.log(
+      `Cache Hit Rate: ${
+        (
+          ((metrics.cache_hits || 0) / (metrics.cache_requests || 1))
+          * 100
+        ).toFixed(2)
+      }%`,
     );
-    console.log(
+    // console.log(
       `Average Response Time: ${
         (metrics.total_response_time || 0) / (metrics.total_api_calls || 1)
       }ms`,
     );
-    console.log("==========================================\n");
+    // console.log("==========================================\n");
   }
 
   static async testFullAIChatWorkflow(): Promise<void> {
@@ -781,8 +781,6 @@ class AIServicesEcosystemTester {
     // Analyze results
     let totalRequests = 0;
     let successfulRequests = 0;
-    const _totalResponseTime = 0;
-
     results.forEach((resultSet) => {
       resultSet.forEach((result) => {
         totalRequests++;
@@ -798,10 +796,12 @@ class AIServicesEcosystemTester {
     expect(successRate).toBeGreaterThan(95); // At least 95% success rate
     expect(avgResponseTime).toBeLessThan(5000); // Average response time under 5 seconds
 
-    console.log(
-      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${avgResponseTime.toFixed(
-        2,
-      )}ms avg response time`,
+    // console.log(
+      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${
+        avgResponseTime.toFixed(
+          2,
+        )
+      }ms avg response time`,
     );
 
     AIServicesEcosystemTester.context.serviceMetrics.set(

@@ -1,13 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -102,8 +96,8 @@ export function AppointmentsList({
 
   const shouldShowViewAllButton = () => {
     return (
-      !appointmentsLoading &&
-      todaysAppointments.length > DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
+      !appointmentsLoading
+      && todaysAppointments.length > DASHBOARD_CONSTANTS.TODAYS_APPOINTMENTS_LIMIT
     );
   };
 

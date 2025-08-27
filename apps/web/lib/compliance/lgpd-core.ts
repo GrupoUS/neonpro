@@ -69,8 +69,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
     isHealthcareRelated: true,
     requiresExplicitConsent: false, // Legal basis is health protection
     canBeAnonymized: false, // Medical data must maintain traceability
-    description:
-      "Processamento de dados de saúde para prestação de cuidados médicos",
+    description: "Processamento de dados de saúde para prestação de cuidados médicos",
   },
   {
     id: "patient_identification",
@@ -82,8 +81,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
     isHealthcareRelated: true,
     requiresExplicitConsent: false,
     canBeAnonymized: true,
-    description:
-      "Dados pessoais para identificação e comunicação com pacientes",
+    description: "Dados pessoais para identificação e comunicação com pacientes",
   },
   {
     id: "emergency_contact",
@@ -107,8 +105,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
     isHealthcareRelated: true,
     requiresExplicitConsent: true,
     canBeAnonymized: true,
-    description:
-      "Análise de dados agregados para melhoria dos cuidados de saúde",
+    description: "Análise de dados agregados para melhoria dos cuidados de saúde",
   },
   {
     id: "medical_research",
@@ -120,8 +117,7 @@ export const HEALTHCARE_PROCESSING_PURPOSES: LGPDProcessingPurpose[] = [
     isHealthcareRelated: true,
     requiresExplicitConsent: true,
     canBeAnonymized: true,
-    description:
-      "Participação em pesquisas médicas e científicas (anonimizadas)",
+    description: "Participação em pesquisas médicas e científicas (anonimizadas)",
   },
 ];
 
@@ -167,7 +163,7 @@ export interface LGPDAuditLog {
   userAgent: string;
   dataAccessed?: string[];
   dataModified?: string[];
-  additionalContext: Record<string, any>;
+  additionalContext: Record<string, unknown>;
 }
 
 class LGPDComplianceManager {
@@ -283,7 +279,7 @@ class LGPDComplianceManager {
     return data;
   }
 
-  async handleAccessRequest(userId: string): Promise<any> {
+  async handleAccessRequest(userId: string): Promise<unknown> {
     // Compile all user data across tables
     const userData = await this.getUserDataForExport(userId);
 
@@ -315,7 +311,7 @@ class LGPDComplianceManager {
 
   async handleErasureRequest(
     userId: string,
-  ): Promise<{ canDelete: boolean; retainedData: string[] }> {
+  ): Promise<{ canDelete: boolean; retainedData: string[]; }> {
     // Check for legal obligations to retain data
     const retainedData: string[] = [];
     let canDelete = true;
@@ -368,7 +364,7 @@ class LGPDComplianceManager {
     userId: string,
     purposeId: string,
     dataTypes: string[],
-  ): Promise<{ isValid: boolean; reasons: string[] }> {
+  ): Promise<{ isValid: boolean; reasons: string[]; }> {
     const reasons: string[] = [];
     let isValid = true;
 
@@ -437,7 +433,7 @@ class LGPDComplianceManager {
   }
 
   // Helper Methods
-  private async getUserDataForExport(userId: string): Promise<any> {
+  private async getUserDataForExport(userId: string): Promise<unknown> {
     const [profile, medical, consents, auditLogs] = await Promise.all([
       this.supabase.from("profiles").select("*").eq("id", userId).single(),
       this.supabase
@@ -456,7 +452,7 @@ class LGPDComplianceManager {
     };
   }
 
-  private getDataRetentionInfo(_userId: string): any {
+  private getDataRetentionInfo(_userId: string): unknown {
     return HEALTHCARE_PROCESSING_PURPOSES.map((purpose) => ({
       purpose: purpose.purpose,
       category: purpose.category,
@@ -505,14 +501,12 @@ class LGPDComplianceManager {
       .eq("userId", userId)
       .eq("status", "granted");
 
-    const consentCoverage =
-      (userConsents.data?.length || 0) / requiredConsents.length;
-    const consentStatus =
-      consentCoverage === 1
-        ? "compliant"
-        : consentCoverage > 0.5
-          ? "partial"
-          : "non_compliant";
+    const consentCoverage = (userConsents.data?.length || 0) / requiredConsents.length;
+    const consentStatus = consentCoverage === 1
+      ? "compliant"
+      : consentCoverage > 0.5
+      ? "partial"
+      : "non_compliant";
 
     if (consentStatus !== "compliant") {
       overallScore -= 20;
@@ -537,8 +531,8 @@ class LGPDComplianceManager {
 
 // Export singleton instance
 export const lgpdManager = new LGPDComplianceManager(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
 );
 
 // Helper functions for common LGPD operations
@@ -562,7 +556,7 @@ export const LGPDUtils = {
   },
 
   // Format data for LGPD export
-  formatDataForExport: (userData: any): any => {
+  formatDataForExport: (userData: unknown): unknown => {
     return {
       ...userData,
       exportInfo: {

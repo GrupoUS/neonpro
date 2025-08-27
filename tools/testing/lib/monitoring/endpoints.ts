@@ -6,8 +6,8 @@
 export interface EndpointConfig {
   path: string;
   method: "GET" | "POST" | "PUT" | "DELETE";
-  handler: (req: any, res: any) => Promise<any>;
-  middleware?: ((req: any, res: any, next: any) => void)[];
+  handler: (req: unknown, res: unknown) => Promise<unknown>;
+  middleware?: ((req: unknown, res: unknown, next: unknown) => void)[];
   rateLimit?: number;
   auth?: boolean;
 }
@@ -20,14 +20,14 @@ export interface HealthCheckResult {
     {
       status: "up" | "down" | "degraded";
       responseTime: number;
-      details?: any;
+      details?: unknown;
     }
   >;
   system: {
     uptime: number;
-    memory: { used: number; total: number };
-    cpu: { usage: number };
-    disk: { usage: number };
+    memory: { used: number; total: number; };
+    cpu: { usage: number; };
+    disk: { usage: number; };
   };
 }
 
@@ -59,9 +59,9 @@ export const healthEndpoint: EndpointConfig = {
         uptime: process.uptime ? process.uptime() : 3600,
         memory: process.memoryUsage
           ? {
-              used: process.memoryUsage().heapUsed,
-              total: process.memoryUsage().heapTotal,
-            }
+            used: process.memoryUsage().heapUsed,
+            total: process.memoryUsage().heapTotal,
+          }
           : { used: 512 * 1024 * 1024, total: 2 * 1024 * 1024 * 1024 },
         cpu: { usage: Math.random() * 100 },
         disk: { usage: Math.random() * 100 },
@@ -78,12 +78,11 @@ export const healthEndpoint: EndpointConfig = {
       healthCheck.status = "degraded";
     }
 
-    const statusCode =
-      healthCheck.status === "healthy"
-        ? 200
-        : healthCheck.status === "degraded"
-          ? 200
-          : 503;
+    const statusCode = healthCheck.status === "healthy"
+      ? 200
+      : healthCheck.status === "degraded"
+      ? 200
+      : 503;
 
     return res.status(statusCode).json(healthCheck);
   },
@@ -125,7 +124,7 @@ export const metricsEndpoint: EndpointConfig = {
     if (format === "prometheus") {
       // Convert to Prometheus format
       let prometheusMetrics = "";
-      const flattenMetrics = (obj: any, prefix = "") => {
+      const flattenMetrics = (obj: unknown, prefix = "") => {
         for (const [key, value] of Object.entries(obj)) {
           if (typeof value === "object" && value !== null) {
             flattenMetrics(value, `${prefix}${key}_`);
@@ -196,9 +195,8 @@ export const alertsEndpoint: EndpointConfig = {
       type: ["error", "warning", "info", "critical"][
         Math.floor(Math.random() * 4)
       ],
-      severity:
-        severity ||
-        ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)],
+      severity: severity
+        || ["low", "medium", "high", "critical"][Math.floor(Math.random() * 4)],
       message: [
         "High CPU usage detected",
         "Memory threshold exceeded",
@@ -211,10 +209,9 @@ export const alertsEndpoint: EndpointConfig = {
         Math.floor(Math.random() * 4)
       ],
       timestamp: Date.now() - Math.random() * 3_600_000, // Random time within last hour
-      status:
-        status === "all"
-          ? ["active", "resolved"][Math.floor(Math.random() * 2)]
-          : status,
+      status: status === "all"
+        ? ["active", "resolved"][Math.floor(Math.random() * 2)]
+        : status,
       acknowledged: Math.random() > 0.7,
       resolved: status === "resolved" || Math.random() > 0.8,
     });
@@ -225,10 +222,9 @@ export const alertsEndpoint: EndpointConfig = {
     );
 
     return res.json({
-      alerts:
-        status === "all"
-          ? alerts
-          : alerts.filter((alert) => alert.status === status),
+      alerts: status === "all"
+        ? alerts
+        : alerts.filter((alert) => alert.status === status),
       total: alerts.length,
       filters: { status, limit, severity },
     });
@@ -245,13 +241,11 @@ export const logsEndpoint: EndpointConfig = {
     const generateLog = (id: number) => ({
       id: `log_${id}`,
       timestamp: new Date(Date.now() - Math.random() * 3_600_000).toISOString(),
-      level:
-        level === "all"
-          ? ["debug", "info", "warn", "error"][Math.floor(Math.random() * 4)]
-          : level,
-      service:
-        service ||
-        ["api", "auth", "database", "monitoring"][
+      level: level === "all"
+        ? ["debug", "info", "warn", "error"][Math.floor(Math.random() * 4)]
+        : level,
+      service: service
+        || ["api", "auth", "database", "monitoring"][
           Math.floor(Math.random() * 4)
         ],
       message: [
@@ -277,8 +271,7 @@ export const logsEndpoint: EndpointConfig = {
 
     return res.json({
       logs: logs.sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       ),
       total: logs.length,
       filters: { level, service, limit, start, end },
@@ -338,7 +331,7 @@ export const monitoringEndpoints: EndpointConfig[] = [
 ];
 
 // Utility to register endpoints with Express
-export const registerMonitoringEndpoints = (app: any) => {
+export const registerMonitoringEndpoints = (app: unknown) => {
   monitoringEndpoints.forEach((endpoint) => {
     const method = endpoint.method.toLowerCase() as
       | "get"

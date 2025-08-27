@@ -81,7 +81,7 @@ export class HealthcareDirectoryCleanup {
   private readonly config: CleanupConfig;
   private readonly cleanedFiles: string[] = [];
   private readonly preservedFiles: string[] = [];
-  private readonly errors: { file: string; error: string }[] = [];
+  private readonly errors: { file: string; error: string; }[] = [];
 
   constructor(config: CleanupConfig) {
     this.config = config;
@@ -111,7 +111,7 @@ export class HealthcareDirectoryCleanup {
         this.cleanedFiles.push(filename);
       } catch (error) {
         // File doesn't exist or can't be removed - this is often expected
-        if ((error as any).code !== "ENOENT") {
+        if ((error as unknown).code !== "ENOENT") {
           this.errors.push({ file: filename, error: (error as Error).message });
         }
       }
@@ -125,7 +125,7 @@ export class HealthcareDirectoryCleanup {
       for (const filename of files) {
         // Check if file should be preserved
         const shouldPreserve = this.config.preservePatterns.some((pattern) =>
-          pattern.test(filename),
+          pattern.test(filename)
         );
 
         if (shouldPreserve) {
@@ -134,9 +134,7 @@ export class HealthcareDirectoryCleanup {
         }
 
         // Check if file matches removal patterns
-        const shouldRemove = this.config.patternsToRemove.some((pattern) =>
-          pattern.test(filename),
-        );
+        const shouldRemove = this.config.patternsToRemove.some((pattern) => pattern.test(filename));
 
         if (shouldRemove) {
           const filepath = join(this.config.rootPath, filename);
@@ -172,7 +170,7 @@ export class HealthcareDirectoryCleanup {
         }
       } catch (error) {
         // Directory doesn't exist - this is expected
-        if ((error as any).code !== "ENOENT") {
+        if ((error as unknown).code !== "ENOENT") {
           this.errors.push({ file: dirName, error: (error as Error).message });
         }
       }

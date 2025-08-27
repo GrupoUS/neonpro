@@ -18,16 +18,6 @@ import type { Browser, Page } from "@playwright/test";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // Security testing thresholds and configurations
-const _PENETRATION_TEST_CONFIG = {
-  MAX_RESPONSE_TIME: 5000, // Max time for security responses
-  BRUTEFORCE_ATTEMPTS: 100, // Number of brute force attempts
-  SQL_INJECTION_PAYLOADS: 50, // Number of SQL injection tests
-  XSS_PAYLOADS: 30, // Number of XSS attack tests
-  SESSION_TIMEOUT: 1_800_000, // 30 minutes session timeout
-  RATE_LIMIT_THRESHOLD: 100, // Requests per minute threshold
-  ENCRYPTION_MIN_STRENGTH: 256, // Minimum encryption strength (bits)
-};
-
 // Common attack payloads for testing
 const ATTACK_PAYLOADS = {
   SQL_INJECTION: [
@@ -134,11 +124,8 @@ class PenetrationTester {
           /Microsoft.*ODBC.*SQL Server/i,
         ];
 
-        const hasErrors = sqlErrorPatterns.some((pattern) =>
-          pattern.test(responseText),
-        );
-        const unexpectedSuccess =
-          response.status === 200 && responseText.includes("admin");
+        const hasErrors = sqlErrorPatterns.some((pattern) => pattern.test(responseText));
+        const unexpectedSuccess = response.status === 200 && responseText.includes("admin");
 
         if (hasErrors || unexpectedSuccess) {
           results.push({
@@ -185,16 +172,15 @@ class PenetrationTester {
 
         // Check if payload is reflected without encoding
         if (
-          responseText.includes(payload) &&
-          !responseText.includes("&lt;script&gt;")
+          responseText.includes(payload)
+          && !responseText.includes("&lt;script&gt;")
         ) {
           results.push({
             vulnerability: "Cross-Site Scripting (XSS)",
             severity: "HIGH",
             exploitable: true,
             details: `XSS vulnerability detected with payload: ${payload}`,
-            remediation:
-              "Implement output encoding and Content Security Policy",
+            remediation: "Implement output encoding and Content Security Policy",
             cvssScore: 8.1,
           });
         }
@@ -298,8 +284,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
             severity: "CRITICAL",
             exploitable: true,
             details: `Weak credentials accepted: ${creds.username}/${creds.password}`,
-            remediation:
-              "Implement strong password policies and account lockouts",
+            remediation: "Implement strong password policies and account lockouts",
             cvssScore: 9.8,
           });
         }
@@ -335,9 +320,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
             /Bearer\s+[a-zA-Z0-9\-_.]+/,
           ];
 
-          const hasSensitiveData = sensitivePatterns.some((pattern) =>
-            pattern.test(responseText),
-          );
+          const hasSensitiveData = sensitivePatterns.some((pattern) => pattern.test(responseText));
 
           if (hasSensitiveData) {
             penTester.recordVulnerability({
@@ -345,8 +328,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
               severity: "CRITICAL",
               exploitable: true,
               details: `Sensitive data exposed at ${endpoint} without authentication`,
-              remediation:
-                "Implement proper authentication and data encryption",
+              remediation: "Implement proper authentication and data encryption",
               cvssScore: 9.1,
             });
           }
@@ -386,8 +368,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
         expect(deviceBypassTest.bypassSuccessful).toBeFalsy();
 
         // Test device command injection
-        const commandInjectionTest =
-          await testMedicalDeviceCommandInjection(endpoint);
+        const commandInjectionTest = await testMedicalDeviceCommandInjection(endpoint);
         expect(commandInjectionTest.vulnerabilityFound).toBeFalsy();
 
         // Test unauthorized device control
@@ -591,7 +572,7 @@ describe("🎯 Comprehensive Penetration Testing", () => {
 
     it("should test HTTP security headers", async () => {
       const response = await fetch("/");
-      const headers = response.headers;
+      const { headers: headers } = response;
 
       const requiredHeaders = {
         "X-Content-Type-Options": "nosniff",
@@ -691,7 +672,7 @@ async function testEmergencyBypass(_endpoint: string, _type: string) {
   };
 }
 
-async function testPatientDataSeparation(_test: any) {
+async function testPatientDataSeparation(_test: unknown) {
   return {
     dataLeakage: false,
     crossPatientAccess: false,
@@ -750,8 +731,7 @@ function generateSecurityAssessmentReport(
     return sum + riskScores[vuln.severity];
   }, 0);
 
-  const averageRisk =
-    vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
+  const averageRisk = vulnerabilities.length > 0 ? totalRisk / vulnerabilities.length : 0;
 
   return {
     overallRiskScore: averageRisk,

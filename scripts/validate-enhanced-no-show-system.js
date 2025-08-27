@@ -82,7 +82,7 @@ class ValidationRunner {
     }
 
     // Apply stacking boost (meta-learner improvement)
-    const stackingBoost = 0.025; // 2.5% improvement from stacking
+    const { 025: stackingBoost } = 0; // 2.5% improvement from stacking
     const ensembleAccuracy = Math.min(0.999, weightedAverage + stackingBoost);
 
     this.results.ml_accuracy = ensembleAccuracy;
@@ -91,9 +91,11 @@ class ValidationRunner {
 
     if (!passed) {
       throw new Error(
-        `ML accuracy ${(ensembleAccuracy * 100).toFixed(2)}% below target ${(
-          this.targets.ml_accuracy * 100
-        ).toFixed(0)}%`,
+        `ML accuracy ${(ensembleAccuracy * 100).toFixed(2)}% below target ${
+          (
+            this.targets.ml_accuracy * 100
+          ).toFixed(0)
+        }%`,
       );
     }
   }
@@ -120,12 +122,7 @@ class ValidationRunner {
           `Response time ${responseTime}ms exceeds target ${this.targets.response_time}ms for ${scenario.name}`,
         );
       }
-    }
-
-    const _avgResponseTime =
-      this.results.response_times.reduce((sum, r) => sum + r.time, 0) /
-      this.results.response_times.length;
-  }
+    }  }
 
   async simulateAPICall(scenario) {
     const startTime = performance.now();
@@ -157,8 +154,8 @@ class ValidationRunner {
     };
 
     const noShowsAvoided = Math.floor(
-      monthlyMetrics.appointments *
-        (monthlyMetrics.baselineNoShowRate - monthlyMetrics.currentNoShowRate),
+      monthlyMetrics.appointments
+        * (monthlyMetrics.baselineNoShowRate - monthlyMetrics.currentNoShowRate),
     );
 
     const grossSavings = noShowsAvoided * monthlyMetrics.avgCostPerNoShow;
@@ -178,8 +175,8 @@ class ValidationRunner {
   }
 
   async validateNoShowReduction() {
-    const baselineRate = 0.18; // 18% baseline no-show rate
-    const currentRate = 0.115; // 11.5% current rate with advanced ML
+    const { 18: baselineRate } = 0; // 18% baseline no-show rate
+    const { 115: currentRate } = 0; // 11.5% current rate with advanced ML
     const reductionAchieved = (baselineRate - currentRate) / baselineRate;
 
     this.results.no_show_reduction = reductionAchieved;
@@ -188,9 +185,11 @@ class ValidationRunner {
 
     if (!passed) {
       throw new Error(
-        `No-show reduction ${(reductionAchieved * 100).toFixed(1)}% below target ${(
-          this.targets.no_show_reduction * 100
-        ).toFixed(0)}%`,
+        `No-show reduction ${(reductionAchieved * 100).toFixed(1)}% below target ${
+          (
+            this.targets.no_show_reduction * 100
+          ).toFixed(0)
+        }%`,
       );
     }
   }
@@ -224,24 +223,18 @@ class ValidationRunner {
       avgResponseTime: 24, // hours
       costPerIntervention: 8.5,
       preventedNoShows: 238,
-    };
-
-    const _responseRate =
-      interventionMetrics.campaignsWithResponse /
-      interventionMetrics.totalCampaigns;
-    const conversionRate =
-      interventionMetrics.successfulInterventions /
-      interventionMetrics.totalCampaigns;
+    };    const conversionRate = interventionMetrics.successfulInterventions
+      / interventionMetrics.totalCampaigns;
     const systemEffectiveness = conversionRate;
 
     this.results.intervention_effectiveness = systemEffectiveness;
 
     // Channel performance
-    for (const [_channel, metrics] of Object.entries(
-      interventionMetrics.channelPerformance,
-    )) {
-      const _channelRate = metrics.responded / metrics.sent;
-    }
+    for (
+      const [_channel, metrics] of Object.entries(
+        interventionMetrics.channelPerformance,
+      )
+    ) {    }
 
     const passed = systemEffectiveness >= 0.65; // 65% minimum effectiveness
 
@@ -302,10 +295,9 @@ class ValidationRunner {
 
     let healthPassed = true;
     for (const check of healthChecks) {
-      const passed =
-        check.operator === ">="
-          ? check.value >= check.threshold
-          : check.value <= check.threshold;
+      const passed = check.operator === ">="
+        ? check.value >= check.threshold
+        : check.value <= check.threshold;
       if (!passed) {
         healthPassed = false;
       }
@@ -321,28 +313,25 @@ class ValidationRunner {
     const mlPassed = this.results.ml_accuracy >= this.targets.ml_accuracy;
 
     // Response Time
-    const avgResponseTime =
-      this.results.response_times.reduce((sum, r) => sum + r.time, 0) /
-      this.results.response_times.length;
+    const avgResponseTime = this.results.response_times.reduce((sum, r) => sum + r.time, 0)
+      / this.results.response_times.length;
     const timePassed = avgResponseTime <= this.targets.response_time;
 
     // ROI
     const roiPassed = this.results.roi_projection >= this.targets.annual_roi;
 
     // No-Show Reduction
-    const reductionPassed =
-      this.results.no_show_reduction >= this.targets.no_show_reduction;
+    const reductionPassed = this.results.no_show_reduction >= this.targets.no_show_reduction;
 
     // Intervention Effectiveness
     const interventionPassed = this.results.intervention_effectiveness >= 0.65;
 
     // Overall Status
-    const allPassed =
-      mlPassed &&
-      timePassed &&
-      roiPassed &&
-      reductionPassed &&
-      interventionPassed;
+    const allPassed = mlPassed
+      && timePassed
+      && roiPassed
+      && reductionPassed
+      && interventionPassed;
 
     if (allPassed) {
     } else {

@@ -202,14 +202,12 @@ class ProductionReadinessValidator {
       performance: this.metrics.performance.coreWebVitals / 10,
       security: this.metrics.security.complianceScore / 10,
       compliance: this.metrics.compliance.lgpdCompliance / 10,
-      deployment:
-        ((this.metrics.deployment.buildSuccess ? 1 : 0) +
-          (this.metrics.deployment.environmentValidation ? 1 : 0) +
-          (this.metrics.deployment.rollbackCapability ? 1 : 0) +
-          (this.metrics.deployment.monitoringSetup ? 1 : 0)) *
-        2.5, // Convert to 10 point scale
-      operationalReadiness:
-        this.metrics.operationalReadiness.documentation / 10,
+      deployment: ((this.metrics.deployment.buildSuccess ? 1 : 0)
+        + (this.metrics.deployment.environmentValidation ? 1 : 0)
+        + (this.metrics.deployment.rollbackCapability ? 1 : 0)
+        + (this.metrics.deployment.monitoringSetup ? 1 : 0))
+        * 2.5, // Convert to 10 point scale
+      operationalReadiness: this.metrics.operationalReadiness.documentation / 10,
     };
 
     return Object.entries(weights).reduce((total, [key, weight]) => {
@@ -547,20 +545,14 @@ describe("final Production Readiness Certification - NeonPro Healthcare Platform
 
       // Critical Quality Gates for Healthcare Applications
       const qualityGates = {
-        zeroSecurityVulnerabilities:
-          certification.metrics.security.vulnerabilities === 0,
-        fullCriticalPathCoverage:
-          certification.metrics.testCoverage.critical_paths === 100,
+        zeroSecurityVulnerabilities: certification.metrics.security.vulnerabilities === 0,
+        fullCriticalPathCoverage: certification.metrics.testCoverage.critical_paths === 100,
         lgpdCompliant: certification.metrics.compliance.lgpdCompliance > 98,
-        performanceBenchmark:
-          certification.metrics.performance.apiResponseTime < 100,
-        accessibilityCompliant:
-          certification.metrics.compliance.accessibilityScore > 95,
+        performanceBenchmark: certification.metrics.performance.apiResponseTime < 100,
+        accessibilityCompliant: certification.metrics.compliance.accessibilityScore > 95,
         auditTrailEnabled: certification.metrics.security.auditTrail === true,
-        rollbackCapable:
-          certification.metrics.deployment.rollbackCapability === true,
-        monitoringSetup:
-          certification.metrics.deployment.monitoringSetup === true,
+        rollbackCapable: certification.metrics.deployment.rollbackCapability === true,
+        monitoringSetup: certification.metrics.deployment.monitoringSetup === true,
       };
 
       // All quality gates must pass
@@ -581,16 +573,12 @@ describe("final Production Readiness Certification - NeonPro Healthcare Platform
         dataEncryptionGrade: ["A", "A+"].includes(
           certification.metrics.security.encryptionGrade,
         ),
-        regulatoryCompliance:
-          certification.metrics.compliance.anvisaCompliance > 95,
-        professionalStandards:
-          certification.metrics.compliance.cfmCompliance > 95,
-        patientDataProtection:
-          certification.metrics.compliance.lgpdCompliance > 98,
+        regulatoryCompliance: certification.metrics.compliance.anvisaCompliance > 95,
+        professionalStandards: certification.metrics.compliance.cfmCompliance > 95,
+        patientDataProtection: certification.metrics.compliance.lgpdCompliance > 98,
         emergencyAccess: certification.metrics.security.auditTrail === true, // Emergency access with audit
         dataIntegrity: certification.metrics.security.complianceScore > 95,
-        performanceReliability:
-          certification.metrics.performance.coreWebVitals > 95,
+        performanceReliability: certification.metrics.performance.coreWebVitals > 95,
       };
 
       Object.entries(healthcareRequirements).forEach(([requirement, met]) => {

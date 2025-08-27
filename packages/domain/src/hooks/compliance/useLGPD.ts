@@ -82,7 +82,7 @@ export interface AuditEvent {
   resource_type: string | null;
   resource_id: string | null;
   action: string;
-  details: any | null;
+  details: unknown | null;
   ip_address: string | null;
   user_agent: string | null;
   timestamp: string;
@@ -94,7 +94,7 @@ export interface ComplianceAssessment {
   status: "pending" | "in_progress" | "completed" | "failed";
   score: number | null;
   max_score: number;
-  findings: any | null;
+  findings: unknown | null;
   recommendations: string[] | null;
   conducted_by: string | null;
   started_at: string;
@@ -108,11 +108,6 @@ export function useLGPDDashboard() {
   const [metrics, setMetrics] = useState<LGPDMetrics | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>();
-  const _supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
-
   const fetchMetrics = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -150,8 +145,6 @@ export function useConsentManagement() {
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>();
-  const _user = useUser();
-
   const fetchConsents = useCallback(
     async (filters?: {
       user_id?: string;
@@ -310,7 +303,7 @@ export function useDataSubjectRights() {
   );
 
   const createRequest = useCallback(
-    async (requestData: { request_type: string; description?: string }) => {
+    async (requestData: { request_type: string; description?: string; }) => {
       try {
         const response = await fetch("/api/lgpd/data-subject-rights", {
           method: "POST",
@@ -345,7 +338,7 @@ export function useDataSubjectRights() {
       requestId: string,
       updateData: {
         status?: string;
-        response_data?: any;
+        response_data?: unknown;
         notes?: string;
       },
     ) => {
@@ -568,7 +561,7 @@ export function useAuditTrail() {
   );
 
   const exportEvents = useCallback(
-    async (format: "json" | "csv", filters?: any) => {
+    async (format: "json" | "csv", filters?: unknown) => {
       try {
         const params = new URLSearchParams();
         params.append("export", format);
@@ -659,7 +652,7 @@ export function useComplianceAssessment() {
   );
 
   const createAssessment = useCallback(
-    async (assessmentData: { assessment_type: "manual" | "automated" }) => {
+    async (assessmentData: { assessment_type: "manual" | "automated"; }) => {
       try {
         const response = await fetch("/api/lgpd/compliance", {
           method: "POST",
@@ -734,8 +727,8 @@ export function useConsentBanner() {
   const [error, setError] = useState<Error | null>();
   const user = useUser();
   const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
   );
 
   const fetchConsentPurposes = useCallback(async () => {

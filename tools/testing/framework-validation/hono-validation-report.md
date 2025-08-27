@@ -30,7 +30,7 @@
 
 ```typescript
 // ✅ VALIDATED: Correct Hono app initialization
-const app = new Hono<{ Bindings: Env }>();
+const app = new Hono<{ Bindings: Env; }>();
 
 // ✅ VALIDATED: Proper route organization with app.route()
 app.route("/api/auth", authRoutes);

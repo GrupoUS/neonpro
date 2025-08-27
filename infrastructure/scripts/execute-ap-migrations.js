@@ -44,9 +44,9 @@ async function executeMigrations() {
 
       for (const [_index, statement] of statements.entries()) {
         if (
-          statement.toLowerCase().includes("begin") ||
-          statement.toLowerCase().includes("commit") ||
-          statement.toLowerCase().includes("end")
+          statement.toLowerCase().includes("begin")
+          || statement.toLowerCase().includes("commit")
+          || statement.toLowerCase().includes("end")
         ) {
           continue;
         }

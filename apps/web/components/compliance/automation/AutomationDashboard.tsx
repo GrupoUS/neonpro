@@ -9,13 +9,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -128,8 +122,7 @@ export default function BrazilianComplianceAutomationDashboard() {
           regulation: "lgpd",
           severity: "medium",
           title: "Revisão de Política de Privacidade",
-          description:
-            "Política precisa ser atualizada com novos procedimentos",
+          description: "Política precisa ser atualizada com novos procedimentos",
           article: "Art. 8º, LGPD",
           deadline: new Date("2024-03-01"),
           status: "in_progress",
@@ -207,9 +200,9 @@ export default function BrazilianComplianceAutomationDashboard() {
       setLastUpdate(new Date());
 
       // Aqui seria feita a verificação real com APIs governamentais
-      console.log("🔄 Refreshing compliance status...");
+      // console.log("🔄 Refreshing compliance status...");
     } catch (error) {
-      console.error("Error refreshing compliance:", error);
+      // console.error("Error refreshing compliance:", error);
     } finally {
       setLoading(false);
     }
@@ -217,7 +210,7 @@ export default function BrazilianComplianceAutomationDashboard() {
 
   const handleGenerateReport = useCallback(
     (regulation: "lgpd" | "anvisa" | "cfm" | "all") => {
-      console.log(`📄 Generating ${regulation} compliance report...`);
+      // console.log(`📄 Generating ${regulation} compliance report...`);
       // Aqui seria implementada a geração de relatórios
     },
     [],
@@ -262,10 +255,9 @@ export default function BrazilianComplianceAutomationDashboard() {
   };
 
   const calculateOverallScore = () => {
-    const totalScore =
-      complianceStatus.lgpd.score +
-      complianceStatus.anvisa.score +
-      complianceStatus.cfm.score;
+    const totalScore = complianceStatus.lgpd.score
+      + complianceStatus.anvisa.score
+      + complianceStatus.cfm.score;
     return Math.round(totalScore / 3);
   };
 
@@ -410,8 +402,7 @@ export default function BrazilianComplianceAutomationDashboard() {
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>LGPD - Ação Necessária</AlertTitle>
                   <AlertDescription>
-                    Política de privacidade precisa ser atualizada até
-                    01/03/2024
+                    Política de privacidade precisa ser atualizada até 01/03/2024
                   </AlertDescription>
                 </Alert>
 
@@ -552,9 +543,7 @@ export default function BrazilianComplianceAutomationDashboard() {
                       <div className="flex items-center justify-between">
                         <h4 className="font-semibold">{license.type}</h4>
                         <Badge
-                          variant={
-                            license.status === "valid" ? "success" : "warning"
-                          }
+                          variant={license.status === "valid" ? "success" : "warning"}
                         >
                           {license.status.toUpperCase()}
                         </Badge>
@@ -563,8 +552,7 @@ export default function BrazilianComplianceAutomationDashboard() {
                         Nº {license.number}
                       </p>
                       <p className="text-sm">
-                        Válida até:{" "}
-                        {license.expiryDate.toLocaleDateString("pt-BR")}
+                        Válida até: {license.expiryDate.toLocaleDateString("pt-BR")}
                       </p>
                     </div>
                   ))}
@@ -585,11 +573,9 @@ export default function BrazilianComplianceAutomationDashboard() {
                           {inspection.date.toLocaleDateString("pt-BR")}
                         </span>
                         <Badge
-                          variant={
-                            inspection.result === "approved"
-                              ? "success"
-                              : "warning"
-                          }
+                          variant={inspection.result === "approved"
+                            ? "success"
+                            : "warning"}
                         >
                           {inspection.result.toUpperCase()}
                         </Badge>
@@ -634,11 +620,9 @@ export default function BrazilianComplianceAutomationDashboard() {
                           {registration.doctorName}
                         </h4>
                         <Badge
-                          variant={
-                            registration.status === "active"
-                              ? "success"
-                              : "warning"
-                          }
+                          variant={registration.status === "active"
+                            ? "success"
+                            : "warning"}
                         >
                           {registration.status.toUpperCase()}
                         </Badge>
@@ -647,8 +631,7 @@ export default function BrazilianComplianceAutomationDashboard() {
                         {registration.crm} - {registration.specialty}
                       </p>
                       <p className="text-sm">
-                        Válido até:{" "}
-                        {registration.expiryDate.toLocaleDateString("pt-BR")}
+                        Válido até: {registration.expiryDate.toLocaleDateString("pt-BR")}
                       </p>
                     </div>
                   ))}
@@ -670,16 +653,13 @@ export default function BrazilianComplianceAutomationDashboard() {
                       <div className="flex items-center justify-between">
                         <h4 className="font-semibold">{cert.type}</h4>
                         <Badge
-                          variant={
-                            cert.status === "valid" ? "success" : "warning"
-                          }
+                          variant={cert.status === "valid" ? "success" : "warning"}
                         >
                           {cert.status.toUpperCase()}
                         </Badge>
                       </div>
                       <p className="text-sm">
-                        Válida até:{" "}
-                        {cert.validUntil.toLocaleDateString("pt-BR")}
+                        Válida até: {cert.validUntil.toLocaleDateString("pt-BR")}
                       </p>
                     </div>
                   ))}

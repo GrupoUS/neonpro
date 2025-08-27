@@ -52,8 +52,8 @@ export class CircuitBreaker {
         this.logStateChange("OPEN", "HALF_OPEN", "Reset timeout reached");
       } else {
         throw new CircuitBreakerOpenError(
-          `Circuit breaker is OPEN for ${this.config.healthcareContext}. ` +
-            `Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
+          `Circuit breaker is OPEN for ${this.config.healthcareContext}. `
+            + `Next attempt at: ${this.nextAttemptTime?.toISOString()}`,
         );
       }
     }
@@ -126,7 +126,7 @@ export class CircuitBreaker {
   /**
    * Handle failed operation
    */
-  private onFailure(error: any): void {
+  private onFailure(error: unknown): void {
     this.lastFailureTime = new Date();
     this.failureCount++;
     this.successCount = 0;
@@ -158,8 +158,8 @@ export class CircuitBreaker {
    */
   private isEmergencyContext(): boolean {
     return (
-      this.config.healthcareContext === "emergency" ||
-      this.config.healthcareContext === "patient_data"
+      this.config.healthcareContext === "emergency"
+      || this.config.healthcareContext === "patient_data"
     );
   }
 
@@ -195,65 +195,17 @@ export class CircuitBreaker {
   /**
    * Log state changes for healthcare audit
    */
-  private logStateChange(from: string, to: string, reason: string): void {
-    const _logEntry = {
-      timestamp: new Date().toISOString(),
-      circuitBreaker: {
-        healthcareContext: this.config.healthcareContext,
-        stateChange: { from, to, reason },
-        failureCount: this.failureCount,
-        successCount: this.successCount,
-      },
-      compliance: {
-        lgpd_logged: true,
-        anvisa_audited: true,
-        cfm_monitored: true,
-      },
-    };
-  }
+  private logStateChange(from: string, to: string, reason: string): void {}
 
   /**
    * Log healthcare failures for regulatory compliance
    */
-  private logHealthcareFailure(error: any): void {
-    const _errorLog = {
-      timestamp: new Date().toISOString(),
-      healthcareContext: this.config.healthcareContext,
-      error: {
-        message: error.message,
-        type: error.constructor.name,
-        stack: error.stack,
-      },
-      circuitBreakerState: {
-        state: this.state,
-        failureCount: this.failureCount,
-        threshold: this.config.failureThreshold,
-      },
-      compliance: {
-        lgpd_error_logged: true,
-        anvisa_incident_reported: true,
-        cfm_failure_audited: true,
-      },
-    };
-  }
+  private logHealthcareFailure(error: unknown): void {}
 
   /**
    * Log emergency bypass usage
    */
-  private logEmergencyBypass(error: any): void {
-    const _bypassLog = {
-      timestamp: new Date().toISOString(),
-      event: "EMERGENCY_BYPASS_USED",
-      healthcareContext: this.config.healthcareContext,
-      circuitBreakerState: this.state,
-      error: error.message,
-      compliance: {
-        emergency_protocol_activated: true,
-        patient_safety_prioritized: true,
-        audit_trail_maintained: true,
-      },
-    };
-  }
+  private logEmergencyBypass(error: unknown): void {}
 }
 
 // Healthcare Circuit Breaker States

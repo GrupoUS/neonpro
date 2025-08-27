@@ -86,7 +86,7 @@ export interface InventoryStats {
   outOfStockItems: number;
   expiringItems: number;
   totalValue: number;
-  topCategories: { category: ProductCategory; count: number; value: number }[];
+  topCategories: { category: ProductCategory; count: number; value: number; }[];
   pendingOrders: number;
 }
 
@@ -194,8 +194,7 @@ export class InventoryService {
       // Update stock item
       await this.repository.updateStockItem(stockItem.id, {
         quantity: newQuantity,
-        status:
-          newQuantity === 0 ? InventoryStatus.OUT_OF_STOCK : stockItem.status,
+        status: newQuantity === 0 ? InventoryStatus.OUT_OF_STOCK : stockItem.status,
       });
 
       // Record movement
@@ -222,8 +221,8 @@ export class InventoryService {
   async checkLowStock(productId?: string): Promise<InventoryAlert[]> {
     const products = productId
       ? ([await this.repository.getProduct(productId)].filter(
-          Boolean,
-        ) as Product[])
+        Boolean,
+      ) as Product[])
       : await this.repository.getProducts({ isActive: true });
 
     const alerts: InventoryAlert[] = [];
@@ -294,8 +293,7 @@ export class InventoryService {
           message: `Stock item expires in ${daysUntilExpiry} days (Batch: ${
             item.batchNumber || "N/A"
           })`,
-          severity:
-            daysUntilExpiry <= 7 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
+          severity: daysUntilExpiry <= 7 ? AlertSeverity.HIGH : AlertSeverity.MEDIUM,
           isRead: false,
         });
         alerts.push(alert);
@@ -356,14 +354,14 @@ export class InventoryService {
 
     const categoryStats = new Map<
       ProductCategory,
-      { count: number; value: number }
+      { count: number; value: number; }
     >();
 
     for (const product of activeProducts) {
       const productStockItems = stockItems.filter(
         (item) =>
-          item.productId === product.id &&
-          item.status === InventoryStatus.IN_STOCK,
+          item.productId === product.id
+          && item.status === InventoryStatus.IN_STOCK,
       );
 
       const totalStock = productStockItems.reduce(
@@ -386,8 +384,7 @@ export class InventoryService {
       // Check for expiring items
       const today = new Date();
       const expiringItems = productStockItems.filter(
-        (item) =>
-          item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
+        (item) => item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
       );
       expiringCount += expiringItems.length;
 
@@ -439,8 +436,7 @@ export class InventoryService {
 
     const today = new Date();
     const expiringItems = availableItems.filter(
-      (item) =>
-        item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
+      (item) => item.expiryDate && differenceInDays(item.expiryDate, today) <= 30,
     );
     const expiringStock = expiringItems.reduce(
       (sum, item) => sum + item.quantity,

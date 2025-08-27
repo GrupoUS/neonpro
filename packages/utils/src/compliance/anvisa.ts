@@ -5,9 +5,9 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { ANVISAAdverseEventManager } from "./anvisa-adverse-events";
-import { ANVISAComplianceReporter } from "./anvisa-reporting";
-import { ANVISAProductManager } from "./anvisa-products";
 import { ANVISAProcedureManager } from "./anvisa-procedures";
+import { ANVISAProductManager } from "./anvisa-products";
+import { ANVISAComplianceReporter } from "./anvisa-reporting";
 
 export class ANVISACompliance {
   private readonly productManager: ANVISAProductManager;
@@ -17,8 +17,8 @@ export class ANVISACompliance {
 
   constructor() {
     if (
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      !process.env.SUPABASE_SERVICE_ROLE_KEY
+      !process.env.NEXT_PUBLIC_SUPABASE_URL
+      || !process.env.SUPABASE_SERVICE_ROLE_KEY
     ) {
       throw new Error("Supabase configuration is missing");
     }
@@ -35,10 +35,10 @@ export class ANVISACompliance {
   }
 
   // Product Management
-  registerProduct(data: any) {
+  registerProduct(data: unknown) {
     return this.productManager.registerProduct(data);
   }
-  validateProductCompliance(data: any) {
+  validateProductCompliance(data: unknown) {
     return this.productManager.validateProductCompliance(data);
   }
   getExpiringSoonProducts() {
@@ -52,7 +52,7 @@ export class ANVISACompliance {
   }
 
   // Procedure Management
-  classifyProcedure(data: any) {
+  classifyProcedure(data: unknown) {
     return this.procedureManager.classifyProcedure(data);
   }
   validateProcedureQualifications(
@@ -66,7 +66,7 @@ export class ANVISACompliance {
   }
 
   // Adverse Event Management
-  reportAdverseEvent(data: any) {
+  reportAdverseEvent(data: unknown) {
     return this.adverseEventManager.reportAdverseEvent(data);
   }
   getPendingANVISAReports() {
@@ -81,9 +81,9 @@ export class ANVISACompliance {
 
 // Re-export types for convenience
 export type {
-  ANVISAProduct,
-  ANVISAProcedure,
   AdverseEvent,
-  ComplianceTask,
+  ANVISAProcedure,
+  ANVISAProduct,
   ComplianceReport,
+  ComplianceTask,
 } from "./anvisa-types";

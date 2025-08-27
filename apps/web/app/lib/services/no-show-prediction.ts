@@ -3,7 +3,7 @@ interface NoShowPredictionRequest {
   appointmentId: string;
   appointmentDate: string;
   appointmentTime: string;
-  patientData?: Record<string, any>;
+  patientData?: Record<string, unknown>;
 }
 
 interface NoShowPredictionResponse {
@@ -64,7 +64,7 @@ export async function getPredictions(filters?: {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching no-show predictions:", error);
+    // console.error("Error fetching no-show predictions:", error);
     throw error;
   }
 }
@@ -85,7 +85,7 @@ export async function getDashboardStats(
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
+    // console.error("Error fetching dashboard stats:", error);
     throw error;
   }
 }
@@ -108,7 +108,7 @@ export async function triggerPrediction(
 
     return await response.json();
   } catch (error) {
-    console.error("Error triggering prediction:", error);
+    // console.error("Error triggering prediction:", error);
     throw error;
   }
 }
@@ -130,7 +130,7 @@ export async function updatePrediction(
       throw new Error(`Failed to update prediction: ${response.statusText}`);
     }
   } catch (error) {
-    console.error("Error updating prediction feedback:", error);
+    // console.error("Error updating prediction feedback:", error);
     throw error;
   }
 }
@@ -172,7 +172,7 @@ export const noShowPredictionEngine = {
     return await response.json();
   },
 
-  updatePrediction: async (id: string, updates: any) => {
+  updatePrediction: async (id: string, updates: unknown) => {
     // Implementation would update a specific prediction
     // For now, return a mock structure to resolve build errors
     return {

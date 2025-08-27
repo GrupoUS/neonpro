@@ -7,11 +7,7 @@
 
 import { performance } from "node:perf_hooks";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  mockAppointment,
-  mockPatient,
-  mockUser,
-} from "../setup/final-test-setup";
+import { mockAppointment, mockPatient, mockUser } from "../setup/final-test-setup";
 
 // Performance monitoring utilities
 class PerformanceMonitor {
@@ -176,8 +172,7 @@ describe("performance Validation Tests - Final Production Readiness", () => {
 
       expect(p95ResponseTime).toBeLessThan(100); // P95 under 100ms
 
-      const averageTime =
-        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       expect(averageTime).toBeLessThan(50); // Average under 50ms
     });
 
@@ -275,8 +270,7 @@ describe("performance Validation Tests - Final Production Readiness", () => {
         expect(response.status).toBe(200);
       }
 
-      const averageTime =
-        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       expect(averageTime).toBeLessThan(200); // Average under 200ms
     });
   });
@@ -340,23 +334,24 @@ describe("performance Validation Tests - Final Production Readiness", () => {
         3000,
       );
 
-      const [patientResults, appointmentResults, authResults] =
-        await Promise.all([patientQueries, appointmentQueries, authRequests]);
+      const [patientResults, appointmentResults, authResults] = await Promise.all([
+        patientQueries,
+        appointmentQueries,
+        authRequests,
+      ]);
 
       // All endpoints should maintain performance under mixed load
       expect(patientResults.averageResponseTime).toBeLessThan(120);
       expect(appointmentResults.averageResponseTime).toBeLessThan(180);
       expect(authResults.averageResponseTime).toBeLessThan(250);
 
-      const totalSuccessfulRequests =
-        patientResults.successfulRequests +
-        appointmentResults.successfulRequests +
-        authResults.successfulRequests;
+      const totalSuccessfulRequests = patientResults.successfulRequests
+        + appointmentResults.successfulRequests
+        + authResults.successfulRequests;
 
-      const totalRequests =
-        patientResults.totalRequests +
-        appointmentResults.totalRequests +
-        authResults.totalRequests;
+      const totalRequests = patientResults.totalRequests
+        + appointmentResults.totalRequests
+        + authResults.totalRequests;
 
       // Overall success rate should remain high
       expect(totalSuccessfulRequests / totalRequests).toBeGreaterThan(0.85);
@@ -493,12 +488,6 @@ describe("performance Validation Tests - Final Production Readiness", () => {
       const mockUpdates = 100;
 
       // Mock real-time subscription
-      const _mockChannel = {
-        on: vi.fn(),
-        subscribe: vi.fn(),
-        unsubscribe: vi.fn(),
-      };
-
       // Simulate real-time updates under load
       for (let i = 0; i < mockUpdates; i++) {
         const updateStart = performance.now();
@@ -533,8 +522,7 @@ describe("performance Validation Tests - Final Production Readiness", () => {
         updateTimes.push(updateTime);
       }
 
-      const averageUpdateTime =
-        updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length;
+      const averageUpdateTime = updateTimes.reduce((a, b) => a + b, 0) / updateTimes.length;
       const maxUpdateTime = Math.max(...updateTimes);
 
       expect(averageUpdateTime).toBeLessThan(30); // Average under 30ms
@@ -747,9 +735,7 @@ describe("performance Validation Tests - Final Production Readiness", () => {
             }
 
             // Small delay between actions
-            await new Promise((resolve) =>
-              setTimeout(resolve, Math.random() * 10),
-            );
+            await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
           }
 
           return professional;
@@ -762,8 +748,7 @@ describe("performance Validation Tests - Final Production Readiness", () => {
         0,
       );
       const successfulActions = results.reduce(
-        (sum, prof) =>
-          sum + prof.actions.filter((action) => action.success).length,
+        (sum, prof) => sum + prof.actions.filter((action) => action.success).length,
         0,
       );
 
@@ -814,9 +799,8 @@ describe("performance Validation Tests - Final Production Readiness", () => {
         expect(result.requestsPerSecond).toBeGreaterThan(result.load * 30);
       }
 
-      const consistencyVariation =
-        Math.max(...performanceResults.map((r) => r.averageResponseTime)) -
-        Math.min(...performanceResults.map((r) => r.averageResponseTime));
+      const consistencyVariation = Math.max(...performanceResults.map((r) => r.averageResponseTime))
+        - Math.min(...performanceResults.map((r) => r.averageResponseTime));
 
       expect(consistencyVariation).toBeLessThan(100); // Less than 100ms variation
     });

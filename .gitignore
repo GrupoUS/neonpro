@@ -75,6 +75,16 @@ next-env.d.ts
 # Sentry Config File
 .env.sentry-build-plugin
 
+# Backup Files Prevention
+*.backup
+*.nuclear_backup
+*.corrupted
+*.removed
+*.old
+*.orig
+*~
+*.tmp
+
 
 # START Ruler Generated Files
 *.bak

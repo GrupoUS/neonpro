@@ -153,7 +153,7 @@ export interface AuthService {
   login: (credentials: {
     email: string;
     password: string;
-  }) => Promise<{ user: User; token: string }>;
+  }) => Promise<{ user: User; token: string; }>;
   logout: () => Promise<void>;
   register: (data: {
     email: string;

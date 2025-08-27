@@ -19,12 +19,12 @@ export interface PersonalDataExport {
   userId: string;
   exportDate: Date;
   dataCategories: {
-    profile: any;
-    medical: any;
-    appointments: any[];
-    treatments: any[];
-    financial: any[];
-    communications: any[];
+    profile: unknown;
+    medical: unknown;
+    appointments: unknown[];
+    treatments: unknown[];
+    financial: unknown[];
+    communications: unknown[];
   };
   format: "json" | "csv" | "pdf";
 }
@@ -189,11 +189,11 @@ export class LGPDDataSubjectRights {
   ): Promise<void> {}
 
   // Data export methods
-  private async exportProfileData(userId: string): Promise<any> {
+  private async exportProfileData(userId: string): Promise<unknown> {
     return { message: `Profile data for user ${userId}` };
   }
 
-  private async exportMedicalData(userId: string): Promise<any> {
+  private async exportMedicalData(userId: string): Promise<unknown> {
     return { message: `Medical data for user ${userId}` };
   }
 

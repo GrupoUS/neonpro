@@ -5,7 +5,7 @@
 
 import chalk from "chalk";
 import inquirer from "inquirer";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import ora from "ora";
 
@@ -169,9 +169,8 @@ export class ADRGenerator {
           title: String(answers.title || "Untitled"),
           status: (answers.status || "Proposed") as ADRMetadata["status"],
           author: String(answers.author || "Unknown"),
-          date:
-            new Date().toISOString().split("T")[0] ||
-            new Date().toISOString().slice(0, 10),
+          date: new Date().toISOString().split("T")[0]
+            || new Date().toISOString().slice(0, 10),
         },
         context: (answers.context || "") as string,
         decision: (answers.decision || "") as string,
@@ -183,9 +182,7 @@ export class ADRGenerator {
         performanceImpact: (answers.performanceImpact || "") as string,
       };
 
-      // Generate and save ADR
-      const _filename = this.generateADRFile(adrContent);
-    } catch (error) {
+      // Generate and save ADR    } catch (error) {
       this.spinner.fail(`Failed to create ADR: ${error}`);
       throw error;
     }
@@ -245,8 +242,6 @@ export class ADRGenerator {
     }
 
     adrs.forEach((adr) => {
-      const _statusColor = this.getStatusColor(adr.status);
-
       if (adr.supersededBy) {
       }
     });
@@ -272,9 +267,11 @@ export class ADRGenerator {
       indexContent += "|--------|-------|--------|------|--------|\n";
 
       adrs.forEach((adr) => {
-        const link = `[ADR-${adr.number.toString().padStart(3, "0")}](${this.getADRFilename(
-          adr.number,
-        )})`;
+        const link = `[ADR-${adr.number.toString().padStart(3, "0")}](${
+          this.getADRFilename(
+            adr.number,
+          )
+        })`;
         const status = adr.supersededBy
           ? `Superseded by ADR-${adr.supersededBy}`
           : adr.status;
@@ -329,7 +326,7 @@ export class ADRGenerator {
   private parseADRMetadata(filename: string): ADRMetadata | null {
     const match = filename.match(/^adr-(\d{3})-(.*)\.md$/);
     if (!match) {
-      return null;
+      return;
     }
 
     const [, numberStr, titleSlug] = match;
@@ -342,13 +339,11 @@ export class ADRGenerator {
 
       // Extract metadata from content
       const extractedTitle = this.extractTitle(content);
-      const title =
-        extractedTitle ??
-        (safeTitleSlug
+      const title = extractedTitle
+        ?? (safeTitleSlug
           ? String(safeTitleSlug).replaceAll("-", " ")
           : "Untitled");
-      const status =
-        (this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
+      const status = (this.extractStatus(content) as ADRMetadata["status"]) || "Proposed";
       const date = this.extractDate(content) ?? "1970-01-01";
       const author = this.extractAuthor(content) ?? "Unknown";
       const supersededBy = this.extractSupersededBy(content);
@@ -362,7 +357,7 @@ export class ADRGenerator {
         supersededBy: supersededBy || undefined,
       };
     } catch {
-      return null;
+      return;
     }
   }
 
@@ -371,7 +366,7 @@ export class ADRGenerator {
    */
   private extractTitle(content: string): string | null {
     const match = content.match(/^# ADR-\d{3}: (.+)$/m);
-    return match?.[1] ?? null;
+    return match?.[1] ?? undefined;
   }
 
   /**
@@ -387,7 +382,7 @@ export class ADRGenerator {
    */
   private extractDate(content: string): string | null {
     const match = content.match(/\*\*Date\*\*: (.+)$/m);
-    return match?.[1] ? match[1] : null;
+    return match?.[1] ? match[1] : undefined;
   }
 
   /**
@@ -395,7 +390,7 @@ export class ADRGenerator {
    */
   private extractAuthor(content: string): string | null {
     const match = content.match(/\*\*Author\(s\)\*\*: (.+)$/m);
-    return match?.[1] ? match[1] : null;
+    return match?.[1] ? match[1] : undefined;
   }
 
   /**

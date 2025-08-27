@@ -36,9 +36,7 @@ test.describe("New Todo", () => {
     await checkNumberOfTodosInLocalStorage(page, 2);
   });
 
-  test("should clear text input field when an item is added", async ({
-    page,
-  }) => {
+  test("should clear text input field when an item is added", async ({ page }) => {
     // create a new todo locator
     const newTodo = page.getByPlaceholder("What needs to be done?");
 
@@ -51,9 +49,7 @@ test.describe("New Todo", () => {
     await checkNumberOfTodosInLocalStorage(page, 1);
   });
 
-  test("should append new items to the bottom of the list", async ({
-    page,
-  }) => {
+  test("should append new items to the bottom of the list", async ({ page }) => {
     // Create 3 items.
     await createDefaultTodos(page);
 
@@ -95,9 +91,7 @@ test.describe("Mark all as completed", () => {
     await checkNumberOfCompletedTodosInLocalStorage(page, 3);
   });
 
-  test("should allow me to clear the complete state of all items", async ({
-    page,
-  }) => {
+  test("should allow me to clear the complete state of all items", async ({ page }) => {
     const toggleAll = page.getByLabel("Mark all as complete");
     // Check and then immediately uncheck.
     await toggleAll.check();
@@ -107,9 +101,7 @@ test.describe("Mark all as completed", () => {
     await expect(page.getByTestId("todo-item")).toHaveClass(["", "", ""]);
   });
 
-  test("complete all checkbox should update state when items are completed / cleared", async ({
-    page,
-  }) => {
+  test("complete all checkbox should update state when items are completed / cleared", async ({ page }) => {
     const toggleAll = page.getByLabel("Mark all as complete");
     await toggleAll.check();
     await expect(toggleAll).toBeChecked();
@@ -263,9 +255,7 @@ test.describe("Editing", () => {
     await checkTodosInLocalStorage(page, "buy some sausages");
   });
 
-  test("should remove the item if an empty text string was entered", async ({
-    page,
-  }) => {
+  test("should remove the item if an empty text string was entered", async ({ page }) => {
     const todoItems = page.getByTestId("todo-item");
     await todoItems.nth(1).dblclick();
     await todoItems.nth(1).getByRole("textbox", { name: "Edit" }).fill("");
@@ -333,9 +323,7 @@ test.describe("Clear completed button", () => {
     await expect(todoItems).toHaveText([TODO_ITEMS[0], TODO_ITEMS[2]]);
   });
 
-  test("should be hidden when there are no items that are completed", async ({
-    page,
-  }) => {
+  test("should be hidden when there are no items that are completed", async ({ page }) => {
     await page.locator(".todo-list li .toggle").first().check();
     await page.getByRole("button", { name: "Clear completed" }).click();
     await expect(
@@ -475,7 +463,7 @@ async function checkNumberOfCompletedTodosInLocalStorage(
   return await page.waitForFunction((e) => {
     return (
       JSON.parse(localStorage["react-todos"]).filter(
-        (todo: any) => todo.completed,
+        (todo: unknown) => todo.completed,
       ).length === e
     );
   }, expected);
@@ -484,7 +472,7 @@ async function checkNumberOfCompletedTodosInLocalStorage(
 async function checkTodosInLocalStorage(page: Page, title: string) {
   return await page.waitForFunction((t) => {
     return JSON.parse(localStorage["react-todos"])
-      .map((todo: any) => todo.title)
+      .map((todo: unknown) => todo.title)
       .includes(t);
   }, title);
 }

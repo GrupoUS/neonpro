@@ -27,14 +27,13 @@ function checkItem(name, checkFn, weight = 1) {
 }
 
 function checkNodeVersion() {
-  const version = process.version;
+  const { version: version } = process;
   const major = Number.parseInt(version.slice(1).split(".")[0], 10);
   return {
     success: major >= 20,
-    message:
-      major >= 20
-        ? `Node.js ${version} (✓ healthcare requirement)`
-        : `Node.js ${version} (requires ≥20.0.0)`,
+    message: major >= 20
+      ? `Node.js ${version} (✓ healthcare requirement)`
+      : `Node.js ${version} (requires ≥20.0.0)`,
   };
 }
 
@@ -222,8 +221,6 @@ function checkPlaywrightBrowsers() {
 
 function displayResults() {
   const percentage = Math.round((healthScore / maxScore) * 100);
-  const _healthGrade = getHealthGrade(percentage);
-
   if (issues.length > 0) {
     issues.forEach((_issue, _index) => {});
   }

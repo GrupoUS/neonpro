@@ -1,8 +1,8 @@
-'use strict';
-const { execSync } = require('node:child_process');
-const { readFileSync, existsSync } = require('node:fs');
-const { join } = require('node:path');
-const { logger } = require('../apps/api/src/lib/logger');
+"use strict";
+const { execSync } = require("node:child_process");
+const { readFileSync, existsSync } = require("node:fs");
+const { join } = require("node:path");
+const { logger } = require("../apps/api/src/lib/logger");
 
 const rootDir = process.cwd();
 
@@ -13,50 +13,50 @@ class MigrationValidator {
     this.success = [];
   }
 
-  log(message, type = 'info') {
+  log(message, type = "info") {
     const timestamp = new Date().toISOString();
     const prefix = {
-      error: '❌',
-      warning: '⚠️ ',
-      success: '✅',
-      info: 'ℹ️ ',
+      error: "❌",
+      warning: "⚠️ ",
+      success: "✅",
+      info: "ℹ️ ",
     }[type];
 
     logger.info(`${prefix} [${timestamp}] ${message}`);
 
-    if (type === 'error') {
+    if (type === "error") {
       this.errors.push(message);
     }
-    if (type === 'warning') {
+    if (type === "warning") {
       this.warnings.push(message);
     }
-    if (type === 'success') {
+    if (type === "success") {
       this.success.push(message);
     }
   }
 
   // Validar estrutura básica do Turborepo
   validateTurborepoStructure() {
-    this.log('🔍 Validando estrutura Turborepo...', 'info');
+    this.log("🔍 Validando estrutura Turborepo...", "info");
 
-    const requiredFiles = ['turbo.json', 'pnpm-workspace.yaml', 'package.json'];
+    const requiredFiles = ["turbo.json", "pnpm-workspace.yaml", "package.json"];
 
     const requiredDirs = [
-      'apps',
-      'packages',
-      'apps/web',
-      'packages/ui',
-      'packages/utils',
-      'packages/types',
+      "apps",
+      "packages",
+      "apps/web",
+      "packages/ui",
+      "packages/utils",
+      "packages/types",
     ];
 
     // Verificar arquivos obrigatórios
     for (const file of requiredFiles) {
       const filePath = join(rootDir, file);
       if (existsSync(filePath)) {
-        this.log(`Arquivo encontrado: ${file}`, 'success');
+        this.log(`Arquivo encontrado: ${file}`, "success");
       } else {
-        this.log(`Arquivo obrigatório ausente: ${file}`, 'error');
+        this.log(`Arquivo obrigatório ausente: ${file}`, "error");
       }
     }
 
@@ -64,92 +64,92 @@ class MigrationValidator {
     for (const dir of requiredDirs) {
       const dirPath = join(rootDir, dir);
       if (existsSync(dirPath)) {
-        this.log(`Diretório encontrado: ${dir}`, 'success');
+        this.log(`Diretório encontrado: ${dir}`, "success");
       } else {
-        this.log(`Diretório obrigatório ausente: ${dir}`, 'error');
+        this.log(`Diretório obrigatório ausente: ${dir}`, "error");
       }
     }
   }
 
   // Validar configuração do Turbo
   validateTurboConfig() {
-    this.log('🔍 Validando configuração Turbo...', 'info');
+    this.log("🔍 Validando configuração Turbo...", "info");
 
     try {
-      const turboConfigPath = join(rootDir, 'turbo.json');
-      const turboConfig = JSON.parse(readFileSync(turboConfigPath, 'utf8'));
+      const turboConfigPath = join(rootDir, "turbo.json");
+      const turboConfig = JSON.parse(readFileSync(turboConfigPath, "utf8"));
 
       // Verificar tasks essenciais
-      const requiredTasks = ['build', 'dev', 'lint', 'test', 'type-check'];
+      const requiredTasks = ["build", "dev", "lint", "test", "type-check"];
 
       for (const task of requiredTasks) {
         if (turboConfig.tasks?.[task]) {
-          this.log(`Task configurada: ${task}`, 'success');
+          this.log(`Task configurada: ${task}`, "success");
         } else {
-          this.log(`Task ausente: ${task}`, 'warning');
+          this.log(`Task ausente: ${task}`, "warning");
         }
       }
 
       // Verificar remote cache
       if (turboConfig.remoteCache) {
-        this.log('Remote cache configurado', 'success');
+        this.log("Remote cache configurado", "success");
       } else {
-        this.log('Remote cache não configurado', 'warning');
+        this.log("Remote cache não configurado", "warning");
       }
     } catch (error) {
-      this.log(`Erro ao ler turbo.json: ${error.message}`, 'error');
+      this.log(`Erro ao ler turbo.json: ${error.message}`, "error");
     }
   }
 
   // Validar workspace PNPM
   validatePnpmWorkspace() {
-    this.log('🔍 Validando PNPM workspace...', 'info');
+    this.log("🔍 Validando PNPM workspace...", "info");
 
     try {
-      const workspacePath = join(rootDir, 'pnpm-workspace.yaml');
-      const workspaceContent = readFileSync(workspacePath, 'utf8');
+      const workspacePath = join(rootDir, "pnpm-workspace.yaml");
+      const workspaceContent = readFileSync(workspacePath, "utf8");
 
-      if (workspaceContent.includes('apps/*')) {
-        this.log('Apps workspace configurado', 'success');
+      if (workspaceContent.includes("apps/*")) {
+        this.log("Apps workspace configurado", "success");
       } else {
-        this.log('Apps workspace não configurado', 'error');
+        this.log("Apps workspace não configurado", "error");
       }
 
-      if (workspaceContent.includes('packages/*')) {
-        this.log('Packages workspace configurado', 'success');
+      if (workspaceContent.includes("packages/*")) {
+        this.log("Packages workspace configurado", "success");
       } else {
-        this.log('Packages workspace não configurado', 'error');
+        this.log("Packages workspace não configurado", "error");
       }
 
       // Verificar catalog
-      if (workspaceContent.includes('catalog:')) {
-        this.log('PNPM catalog configurado', 'success');
+      if (workspaceContent.includes("catalog:")) {
+        this.log("PNPM catalog configurado", "success");
       } else {
-        this.log('PNPM catalog ausente', 'warning');
+        this.log("PNPM catalog ausente", "warning");
       }
     } catch (error) {
-      this.log(`Erro ao ler pnpm-workspace.yaml: ${error.message}`, 'error');
+      this.log(`Erro ao ler pnpm-workspace.yaml: ${error.message}`, "error");
     }
   }
 
   // Executar todas as validações
   runAll() {
-    logger.info('🚀 INICIANDO VALIDAÇÃO COMPLETA DA MIGRAÇÃO TURBOREPO\n');
+    logger.info("🚀 INICIANDO VALIDAÇÃO COMPLETA DA MIGRAÇÃO TURBOREPO\n");
 
     this.validateTurborepoStructure();
     this.validateTurboConfig();
     this.validatePnpmWorkspace();
 
-    logger.info('\n📊 RELATÓRIO FINAL:');
+    logger.info("\n📊 RELATÓRIO FINAL:");
     logger.info(`✅ Sucessos: ${this.success.length}`);
     logger.info(`⚠️  Avisos: ${this.warnings.length}`);
     logger.info(`❌ Erros: ${this.errors.length}`);
 
     if (this.errors.length === 0) {
-      logger.info('\n🎉 MIGRAÇÃO VALIDADA COM SUCESSO!');
+      logger.info("\n🎉 MIGRAÇÃO VALIDADA COM SUCESSO!");
       return true;
     }
-    logger.info('\n🔧 ERROS ENCONTRADOS - REQUER ATENÇÃO');
+    logger.info("\n🔧 ERROS ENCONTRADOS - REQUER ATENÇÃO");
     return false;
   }
 }

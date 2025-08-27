@@ -177,7 +177,7 @@ export function isTrustedOrigin(
   }
 
   const url = new URL(origin);
-  const hostname = url.hostname;
+  const { hostname: hostname } = url;
 
   return trustedDomains.some((domain) => {
     if (domain.startsWith("*.")) {

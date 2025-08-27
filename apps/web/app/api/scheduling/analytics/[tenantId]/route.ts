@@ -1,7 +1,4 @@
-import type {
-  SchedulingAnalytics,
-  TimeSlotEfficiency,
-} from "@neonpro/core-services/scheduling";
+import type { SchedulingAnalytics, TimeSlotEfficiency } from "@neonpro/core-services/scheduling";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
@@ -23,7 +20,7 @@ const analyticsQuerySchema = z.object({
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tenantId: string } },
+  { params }: { params: { tenantId: string; }; },
 ) {
   const startTime = performance.now();
 
@@ -97,7 +94,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { tenantId: string } },
+  { params }: { params: { tenantId: string; }; },
 ) {
   try {
     const { tenantId } = params;
@@ -178,7 +175,7 @@ function generateTimeSlotEfficiency(): TimeSlotEfficiency[] {
 async function calculateTrends(
   _analytics: SchedulingAnalytics,
   _tenantId: string,
-): Promise<any> {
+): Promise<unknown> {
   // Calculate improvement trends
   return {
     schedulingTimeReduction: 62.3, // 62.3% improvement
@@ -205,8 +202,8 @@ async function calculateTrends(
 
 async function generateAIInsights(
   _analytics: SchedulingAnalytics,
-  _trends: any,
-): Promise<any> {
+  _trends: unknown,
+): Promise<unknown> {
   return {
     keyAchievements: [
       "Successfully achieved 60% scheduling time reduction target",
@@ -258,5 +255,5 @@ async function generateAIInsights(
 
 async function recordSchedulingEvent(
   _tenantId: string,
-  _eventData: any,
+  _eventData: unknown,
 ): Promise<void> {}

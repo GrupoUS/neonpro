@@ -28,7 +28,7 @@ interface LogEntry {
   tenantId?: string;
   requestId?: string;
   sessionId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   timestamp: Date;
   stack?: string;
   duration?: number;
@@ -87,8 +87,8 @@ interface PerformanceMetrics {
 export class MonitoringService {
   private static instance: MonitoringService;
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
   private metricsBuffer: MetricData[] = [];
@@ -184,32 +184,25 @@ export class MonitoringService {
     };
 
     // Console output for development
-    if (process.env.NODE_ENV === "development") {
-      const _logMethod =
-        level === "error" || level === "critical"
-          ? "error"
-          : level === "warn"
-            ? "warn"
-            : "log";
-    }
+    if (process.env.NODE_ENV === "development") {}
 
     this.logsBuffer.push(logEntry);
     this.flushBufferIfNeeded();
   }
 
-  debug(message: string, service: string, metadata?: any): void {
+  debug(message: string, service: string, metadata?: unknown): void {
     this.log("debug", message, service, metadata);
   }
 
-  info(message: string, service: string, metadata?: any): void {
+  info(message: string, service: string, metadata?: unknown): void {
     this.log("info", message, service, metadata);
   }
 
-  warn(message: string, service: string, metadata?: any): void {
+  warn(message: string, service: string, metadata?: unknown): void {
     this.log("warn", message, service, metadata);
   }
 
-  error(message: string, service: string, error?: Error, metadata?: any): void {
+  error(message: string, service: string, error?: Error, metadata?: unknown): void {
     this.log("error", message, service, {
       ...metadata,
       stack: error?.stack,
@@ -221,7 +214,7 @@ export class MonitoringService {
     message: string,
     service: string,
     error?: Error,
-    metadata?: any,
+    metadata?: unknown,
   ): void {
     this.log("critical", message, service, {
       ...metadata,
@@ -331,8 +324,7 @@ export class MonitoringService {
 
       // Memory usage check
       const memoryUsage = process.memoryUsage();
-      const memoryUsagePercent =
-        (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
+      const memoryUsagePercent = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
 
       checks.memory = {
         status: memoryUsagePercent > 90 ? "fail" : "pass",
@@ -480,7 +472,7 @@ export class MonitoringService {
 
   async getPerformanceMetrics(
     service: string,
-    timeRange: { start: Date; end: Date },
+    timeRange: { start: Date; end: Date; },
   ): Promise<PerformanceMetrics> {
     try {
       const { data, error } = await this.supabase
@@ -579,8 +571,8 @@ export class MonitoringService {
 
   private flushBufferIfNeeded(): void {
     if (
-      this.metricsBuffer.length >= this.maxBufferSize ||
-      this.logsBuffer.length >= this.maxBufferSize
+      this.metricsBuffer.length >= this.maxBufferSize
+      || this.logsBuffer.length >= this.maxBufferSize
     ) {
       this.flushBuffers();
     }
@@ -760,7 +752,7 @@ export function logOperation(
   level: LogEntry["level"],
   message: string,
   service: string,
-  metadata?: any,
+  metadata?: unknown,
 ): void {
   monitoring.log(level, message, service, metadata);
 }
@@ -770,12 +762,11 @@ export function logOperation(
 // ================================================
 
 export function Monitor(metricName?: string) {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
-    const finalMetricName =
-      metricName || `${target.constructor.name}.${propertyKey}`;
+  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+    const { value: originalMethod } = descriptor;
+    const finalMetricName = metricName || `${target.constructor.name}.${propertyKey}`;
 
-    descriptor.value = async function value(...args: any[]) {
+    descriptor.value = async function value(...args: unknown[]) {
       return monitoring.measureOperation(
         finalMetricName,
         () => originalMethod.apply(this, args),
@@ -791,11 +782,11 @@ export function Monitor(metricName?: string) {
 }
 
 export function LogExecution(service?: string) {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    const originalMethod = descriptor.value;
+  return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
+    const { value: originalMethod } = descriptor;
     const finalService = service || target.constructor.name;
 
-    descriptor.value = async function value(...args: any[]) {
+    descriptor.value = async function value(...args: unknown[]) {
       const startTime = Date.now();
 
       try {

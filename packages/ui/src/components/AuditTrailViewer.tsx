@@ -16,13 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 import { Badge } from "./Badge";
 import { Button } from "./Button";
 import { Input } from "./Input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Select";
 
 export type AuditEventType =
   | "login"
@@ -72,7 +66,7 @@ export interface AuditEvent {
   dataAccessed?: string[];
   consentStatus?: "granted" | "required" | "withdrawn";
   lgpdBasis?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AuditTrailViewerProps {
@@ -117,7 +111,7 @@ export interface AuditTrailViewerProps {
   onFilterChange?: (filters: {
     eventTypes?: AuditEventType[];
     severities?: AuditSeverity[];
-    dateRange?: { start: Date; end: Date };
+    dateRange?: { start: Date; end: Date; };
     searchQuery?: string;
   }) => void;
   /**
@@ -288,8 +282,7 @@ const AuditEventCard: React.FC<{
               {/* Patient Info */}
               {event.patientName && (
                 <div className="mt-1 text-muted-foreground text-sm">
-                  Paciente:{" "}
-                  <span className="font-medium">{event.patientName}</span>
+                  Paciente: <span className="font-medium">{event.patientName}</span>
                 </div>
               )}
             </div>
@@ -304,30 +297,30 @@ const AuditEventCard: React.FC<{
           </div>
 
           {/* LGPD Data Access Details */}
-          {showDataAccessDetails &&
-            event.dataAccessed &&
-            event.dataAccessed.length > 0 && (
-              <div className="mt-3 rounded-lg bg-muted p-3">
-                <div className="mb-2 flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium text-sm">
-                    Dados Acessados (LGPD Art. 20)
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {event.dataAccessed.map((data, index) => (
-                    <Badge key={index} size="sm" variant="outline">
-                      {data}
-                    </Badge>
-                  ))}
-                </div>
-                {event.lgpdBasis && (
-                  <p className="mt-2 text-muted-foreground text-xs">
-                    Base legal: {event.lgpdBasis}
-                  </p>
-                )}
+          {showDataAccessDetails
+            && event.dataAccessed
+            && event.dataAccessed.length > 0 && (
+            <div className="mt-3 rounded-lg bg-muted p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <Shield className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium text-sm">
+                  Dados Acessados (LGPD Art. 20)
+                </span>
               </div>
-            )}
+              <div className="flex flex-wrap gap-1">
+                {event.dataAccessed.map((data, index) => (
+                  <Badge key={index} size="sm" variant="outline">
+                    {data}
+                  </Badge>
+                ))}
+              </div>
+              {event.lgpdBasis && (
+                <p className="mt-2 text-muted-foreground text-xs">
+                  Base legal: {event.lgpdBasis}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Expandable Details */}
           {(event.userAgent || event.ipAddress || event.metadata) && (
@@ -402,10 +395,8 @@ export const AuditTrailViewer = React.forwardRef<
     ref,
   ) => {
     const [localSearchQuery, setLocalSearchQuery] = React.useState(searchQuery);
-    const [selectedEventType, setSelectedEventType] =
-      React.useState<string>("all");
-    const [selectedSeverity, setSelectedSeverity] =
-      React.useState<string>("all");
+    const [selectedEventType, setSelectedEventType] = React.useState<string>("all");
+    const [selectedSeverity, setSelectedSeverity] = React.useState<string>("all");
 
     const handleSearchChange = (query: string) => {
       setLocalSearchQuery(query);
@@ -511,59 +502,60 @@ export const AuditTrailViewer = React.forwardRef<
         )}
 
         {/* Events List */}
-        {loading ? (
-          <div className="space-y-4">
-            {new Array(5).fill(undefined).map((_, index) => (
-              <div
-                className="animate-pulse rounded-lg border bg-card p-4"
-                key={index}
-              >
-                <div className="flex gap-4">
-                  <div className="h-10 w-10 rounded-full bg-muted" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-3/4 rounded bg-muted" />
-                    <div className="h-3 w-1/2 rounded bg-muted" />
-                    <div className="h-3 w-1/4 rounded bg-muted" />
+        {loading
+          ? (
+            <div className="space-y-4">
+              {new Array(5).fill().map((_, index) => (
+                <div
+                  className="animate-pulse rounded-lg border bg-card p-4"
+                  key={index}
+                >
+                  <div className="flex gap-4">
+                    <div className="h-10 w-10 rounded-full bg-muted" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-3/4 rounded bg-muted" />
+                      <div className="h-3 w-1/2 rounded bg-muted" />
+                      <div className="h-3 w-1/4 rounded bg-muted" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : events.length === 0 ? (
-          <div className="rounded-lg border bg-card p-8 text-center">
-            <Activity className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <p className="text-muted-foreground">
-              Nenhum evento de auditoria encontrado para os filtros
-              selecionados.
-            </p>
-          </div>
-        ) : (
-          <div
-            aria-label="Eventos de auditoria"
-            className="space-y-4"
-            role="list"
-          >
-            {events.map((event) => (
-              <AuditEventCard
-                event={event}
-                key={event.id}
-                showDataAccessDetails={showDataAccessDetails}
-              />
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )
+          : events.length === 0
+          ? (
+            <div className="rounded-lg border bg-card p-8 text-center">
+              <Activity className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                Nenhum evento de auditoria encontrado para os filtros selecionados.
+              </p>
+            </div>
+          )
+          : (
+            <div
+              aria-label="Eventos de auditoria"
+              className="space-y-4"
+              role="list"
+            >
+              {events.map((event) => (
+                <AuditEventCard
+                  event={event}
+                  key={event.id}
+                  showDataAccessDetails={showDataAccessDetails}
+                />
+              ))}
+            </div>
+          )}
 
         {/* Summary */}
         {events.length > 0 && (
           <div className="rounded-lg bg-muted p-4 text-sm">
             <div className="flex items-center justify-between">
               <span>
-                Total de {events.length} evento{events.length !== 1 ? "s" : ""}{" "}
-                de auditoria
+                Total de {events.length} evento{events.length !== 1 ? "s" : ""} de auditoria
               </span>
               <span className="text-muted-foreground">
-                Último evento:{" "}
-                {events[0] ? formatDate(events[0].timestamp) : "N/A"}
+                Último evento: {events[0] ? formatDate(events[0].timestamp) : "N/A"}
               </span>
             </div>
           </div>

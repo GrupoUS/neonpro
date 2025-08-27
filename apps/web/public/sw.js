@@ -13,10 +13,6 @@ const HEALTHCARE_CRITICAL_CACHE = `neonpro-healthcare-critical-v${CACHE_VERSION}
 // Healthcare-specific background sync configuration
 const BACKGROUND_SYNC_TAG = "neonpro-background-sync";
 const APPOINTMENT_SYNC_TAG = "appointment-booking-sync";
-const _EMERGENCY_SYNC_TAG = "emergency-healthcare-sync";
-const _PATIENT_DATA_SYNC_TAG = "patient-data-sync";
-const _MEDICATION_ALERT_SYNC_TAG = "medication-alert-sync";
-
 // Critical resources for offline functionality
 const STATIC_CACHE_URLS = [
   "/",
@@ -41,36 +37,9 @@ const CACHEABLE_API_PATTERNS = [
 ];
 
 // Healthcare-critical API endpoints (always cache for offline access)
-const _HEALTHCARE_CRITICAL_PATTERNS = [
-  /\/api\/patient\/emergency-contacts$/,
-  /\/api\/patient\/medications$/,
-  /\/api\/patient\/allergies$/,
-  /\/api\/patient\/critical-data$/,
-  /\/api\/emergency\/protocols$/,
-  /\/api\/medications\/interactions$/,
-  /\/api\/patient\/[^/]+\/medical-history$/,
-];
-
 // Healthcare real-time endpoints (network-first with critical fallback)
-const _HEALTHCARE_REALTIME_PATTERNS = [
-  /\/api\/patient\/[^/]+\/vitals$/,
-  /\/api\/appointments\/upcoming$/,
-  /\/api\/medications\/alerts$/,
-  /\/api\/patient\/notifications$/,
-  /\/api\/emergency\/status$/,
-];
-
 // Network-first patterns (real-time data)
-const _NETWORK_FIRST_PATTERNS = [
-  /\/api\/appointments/,
-  /\/api\/patients\/[^/]+$/,
-  /\/api\/auth/,
-  /\/api\/patient\/appointments/,
-];
-
 // Offline queue for failed requests
-const _offlineQueue = [];
-
 // Install Event - Cache static assets and initialize healthcare cache
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -131,8 +100,8 @@ self.addEventListener("fetch", (event) => {
   // Handle POST/PUT/DELETE requests for background sync
   if (request.method !== "GET") {
     if (
-      url.pathname.startsWith("/api/patient/appointments") ||
-      url.pathname.startsWith("/api/patient/profile")
+      url.pathname.startsWith("/api/patient/appointments")
+      || url.pathname.startsWith("/api/patient/profile")
     ) {
       event.respondWith(handleOfflineCapableRequest(request));
     }
@@ -416,8 +385,6 @@ async function handleApiRequest(request) {
 
 // Handle offline requests
 async function handleOfflineRequest(request) {
-  const _url = new URL(request.url);
-
   // Navigation requests - Return offline page
   if (request.mode === "navigate") {
     const cache = await caches.open(STATIC_CACHE);
@@ -443,8 +410,8 @@ async function handleOfflineRequest(request) {
 // Utility functions
 function isStaticAsset(pathname) {
   return (
-    /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname) ||
-    STATIC_CACHE_URLS.includes(pathname)
+    /\.(js|css|png|jpg|jpeg|svg|ico|woff|woff2)$/.test(pathname)
+    || STATIC_CACHE_URLS.includes(pathname)
   );
 }
 
@@ -507,8 +474,8 @@ self.addEventListener("push", (event) => {
 
 // Notification click handler
 self.addEventListener("notificationclick", (event) => {
-  const notification = event.notification;
-  const action = event.action;
+  const { notification: notification } = event;
+  const { action: action } = event;
   const data = notification.data || {};
 
   notification.close();
@@ -572,7 +539,7 @@ self.addEventListener("notificationclick", (event) => {
 
 // Notification close handler
 self.addEventListener("notificationclose", (event) => {
-  const notification = event.notification;
+  const { notification: notification } = event;
   const data = notification.data || {};
 
   // Track notification closure analytics if needed
@@ -643,6 +610,7 @@ self.addEventListener("message", (event) => {
 
     case "CLEAR_CACHE": {
       caches.delete(CACHE_NAME).then(() => {
+        return;
         event.ports[0].postMessage({
           type: "CACHE_CLEARED",
           success: true,

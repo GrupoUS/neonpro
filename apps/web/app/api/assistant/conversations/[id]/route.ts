@@ -20,7 +20,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     const resolvedParams = await params;
-    const conversationId = resolvedParams.id;
+    const { id: conversationId } = resolvedParams;
 
     // Verificar se a conversa existe e pertence ao usuário
     const { data: conversation, error: convError } = await supabase
@@ -73,7 +73,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const resolvedParams = await params;
-    const conversationId = resolvedParams.id;
+    const { id: conversationId } = resolvedParams;
     const { title, is_active } = await request.json();
 
     // Verificar se a conversa existe e pertence ao usuário
@@ -92,7 +92,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     // Preparar dados para atualização
-    const updateData: any = {};
+    const updateData: unknown = {};
     if (title !== undefined) {
       updateData.title = title;
     }
@@ -144,7 +144,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     }
 
     const resolvedParams = await params;
-    const conversationId = resolvedParams.id;
+    const { id: conversationId } = resolvedParams;
 
     // Verificar se a conversa existe e pertence ao usuário
     const { data: existingConversation, error: convError } = await supabase

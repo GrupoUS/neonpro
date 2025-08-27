@@ -20,8 +20,7 @@ const skipLinkVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "border-2 border-primary bg-primary text-primary-foreground focus:ring-primary",
+        default: "border-2 border-primary bg-primary text-primary-foreground focus:ring-primary",
         healthcare:
           "border-2 border-primary/50 bg-gradient-primary text-primary-foreground shadow-healthcare-lg backdrop-blur-sm focus:ring-primary",
         emergency:
@@ -47,8 +46,8 @@ const skipLinkVariants = cva(
 );
 
 interface SkipLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement>,
-    VariantProps<typeof skipLinkVariants> {
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement>, VariantProps<typeof skipLinkVariants>
+{
   targetId: string;
   children?: React.ReactNode;
   showOnFocus?: boolean;
@@ -76,8 +75,8 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
     const finalVariant = emergencyMode
       ? "emergency"
       : medicalContext
-        ? "healthcare"
-        : variant;
+      ? "healthcare"
+      : variant;
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
@@ -135,8 +134,8 @@ const SkipLink = React.forwardRef<HTMLAnchorElement, SkipLinkProps>(
         className={cn(
           skipLinkVariants({ variant: finalVariant, position, size }),
           // Hide by default, show on focus (unless showOnFocus is false)
-          showOnFocus &&
-            "-translate-y-full opacity-0 focus:translate-y-0 focus:opacity-100",
+          showOnFocus
+            && "-translate-y-full opacity-0 focus:translate-y-0 focus:opacity-100",
           !showOnFocus && "translate-y-0 opacity-100",
           className,
         )}

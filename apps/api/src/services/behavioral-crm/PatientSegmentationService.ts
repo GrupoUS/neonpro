@@ -28,11 +28,11 @@ export interface PatientSegment {
 
 export interface SegmentCriteria {
   scores?: {
-    engagement?: { min?: number; max?: number };
-    loyalty?: { min?: number; max?: number };
-    satisfaction?: { min?: number; max?: number };
-    risk?: { min?: number; max?: number };
-    compliance?: { min?: number; max?: number };
+    engagement?: { min?: number; max?: number; };
+    loyalty?: { min?: number; max?: number; };
+    satisfaction?: { min?: number; max?: number; };
+    risk?: { min?: number; max?: number; };
+    compliance?: { min?: number; max?: number; };
   };
   personalityTypes?: string[];
   patterns?: {
@@ -42,7 +42,7 @@ export interface SegmentCriteria {
     appointmentBehavior?: string[];
   };
   demographics?: {
-    ageRange?: { min?: number; max?: number };
+    ageRange?: { min?: number; max?: number; };
     location?: string[];
     treatmentHistory?: string[];
   };
@@ -202,7 +202,7 @@ export class PatientSegmentationService {
 
       // Find matching segments
       const matchingSegments = segments.filter((segment) =>
-        this.doesPatientMatchCriteria(profile, segment.criteria),
+        this.doesPatientMatchCriteria(profile, segment.criteria)
       );
 
       // Update patient segment assignments
@@ -236,15 +236,13 @@ export class PatientSegmentationService {
 
     // Remove duplicates
     candidates = candidates.filter(
-      (patient, index, self) =>
-        index === self.findIndex((p) => p.patientId === patient.patientId),
+      (patient, index, self) => index === self.findIndex((p) => p.patientId === patient.patientId),
     );
 
     // Apply exclusion criteria if specified
     if (target.exclusionCriteria) {
       candidates = candidates.filter(
-        (patient) =>
-          !this.doesPatientMatchCriteria(patient, target.exclusionCriteria!),
+        (patient) => !this.doesPatientMatchCriteria(patient, target.exclusionCriteria!),
       );
     }
 
@@ -271,10 +269,9 @@ export class PatientSegmentationService {
     variantCriteria: SegmentCriteria,
     testName: string,
     splitPercentage = 50,
-  ): Promise<{ controlGroup: string[]; testGroup: string[] }> {
+  ): Promise<{ controlGroup: string[]; testGroup: string[]; }> {
     const originalPatients = await this.getSegmentPatients(segmentId);
-    const variantPatients =
-      await this.findPatientsMatchingCriteria(variantCriteria);
+    const variantPatients = await this.findPatientsMatchingCriteria(variantCriteria);
 
     // Randomize and split
     const shuffled = originalPatients.sort(() => Math.random() - 0.5);
@@ -351,7 +348,7 @@ export class PatientSegmentationService {
   async getTopPerformingSegments(
     metric: "revenue" | "engagement" | "growth" | "ltv",
     limit = 10,
-  ): Promise<{ segment: PatientSegment; performance: SegmentPerformance }[]> {
+  ): Promise<{ segment: PatientSegment; performance: SegmentPerformance; }[]> {
     const segments = await this.getAllSegments();
     const performances = await Promise.all(
       segments.map(async (segment) => ({
@@ -368,14 +365,14 @@ export class PatientSegmentationService {
         }
         case "engagement": {
           return (
-            b.performance.metrics.engagementScore -
-            a.performance.metrics.engagementScore
+            b.performance.metrics.engagementScore
+            - a.performance.metrics.engagementScore
           );
         }
         case "growth": {
           return (
-            b.performance.trends.revenueGrowth -
-            a.performance.trends.revenueGrowth
+            b.performance.trends.revenueGrowth
+            - a.performance.trends.revenueGrowth
           );
         }
         case "ltv": {
@@ -401,8 +398,7 @@ export class PatientSegmentationService {
     const templates = [
       {
         name: "VIP Champions",
-        description:
-          "High-value, highly engaged patients with excellent compliance",
+        description: "High-value, highly engaged patients with excellent compliance",
         criteria: {
           scores: {
             engagement: { min: 80 },
@@ -414,8 +410,7 @@ export class PatientSegmentationService {
       },
       {
         name: "Loyal Advocates",
-        description:
-          "Long-term patients with good engagement and referral potential",
+        description: "Long-term patients with good engagement and referral potential",
         criteria: {
           scores: {
             loyalty: { min: 70 },
@@ -426,8 +421,7 @@ export class PatientSegmentationService {
       },
       {
         name: "At-Risk Recovery",
-        description:
-          "Patients showing signs of disengagement requiring intervention",
+        description: "Patients showing signs of disengagement requiring intervention",
         criteria: {
           scores: {
             risk: { min: 60 },
@@ -436,8 +430,7 @@ export class PatientSegmentationService {
       },
       {
         name: "High-Touch Analyticals",
-        description:
-          "Detail-oriented patients who need comprehensive information",
+        description: "Detail-oriented patients who need comprehensive information",
         criteria: {
           personalityTypes: ["analytical"],
           patterns: {
@@ -447,8 +440,7 @@ export class PatientSegmentationService {
       },
       {
         name: "Quick-Decision Drivers",
-        description:
-          "Time-conscious patients preferring efficient interactions",
+        description: "Time-conscious patients preferring efficient interactions",
         criteria: {
           personalityTypes: ["driver"],
           patterns: {
@@ -459,8 +451,7 @@ export class PatientSegmentationService {
       },
       {
         name: "Social Expressives",
-        description:
-          "Relationship-focused patients with high referral potential",
+        description: "Relationship-focused patients with high referral potential",
         criteria: {
           personalityTypes: ["expressive"],
           patterns: {
@@ -545,8 +536,7 @@ export class PatientSegmentationService {
     // Score-based criteria
     if (criteria.scores) {
       for (const [scoreType, range] of Object.entries(criteria.scores)) {
-        const patientScore =
-          patient.scores[scoreType as keyof typeof patient.scores];
+        const patientScore = patient.scores[scoreType as keyof typeof patient.scores];
         if (range.min && patientScore < range.min) {
           return false;
         }
@@ -558,8 +548,8 @@ export class PatientSegmentationService {
 
     // Personality type criteria
     if (
-      criteria.personalityTypes &&
-      !criteria.personalityTypes.includes(patient.personalityType)
+      criteria.personalityTypes
+      && !criteria.personalityTypes.includes(patient.personalityType)
     ) {
       return false;
     }
@@ -567,30 +557,30 @@ export class PatientSegmentationService {
     // Pattern-based criteria
     if (criteria.patterns) {
       if (
-        criteria.patterns.communicationStyle &&
-        !criteria.patterns.communicationStyle.includes(
+        criteria.patterns.communicationStyle
+        && !criteria.patterns.communicationStyle.includes(
           patient.patterns.communicationStyle,
         )
       ) {
         return false;
       }
       if (
-        criteria.patterns.responseTime &&
-        !criteria.patterns.responseTime.includes(patient.patterns.responseTime)
+        criteria.patterns.responseTime
+        && !criteria.patterns.responseTime.includes(patient.patterns.responseTime)
       ) {
         return false;
       }
       if (
-        criteria.patterns.preferredChannel &&
-        !criteria.patterns.preferredChannel.includes(
+        criteria.patterns.preferredChannel
+        && !criteria.patterns.preferredChannel.includes(
           patient.patterns.preferredChannel,
         )
       ) {
         return false;
       }
       if (
-        criteria.patterns.appointmentBehavior &&
-        !criteria.patterns.appointmentBehavior.includes(
+        criteria.patterns.appointmentBehavior
+        && !criteria.patterns.appointmentBehavior.includes(
           patient.patterns.appointmentBehavior,
         )
       ) {
@@ -672,7 +662,7 @@ export class PatientSegmentationService {
     }
   }
 
-  private convertToPatientProfile(dbProfile: any): PatientBehaviorProfile {
+  private convertToPatientProfile(dbProfile: unknown): PatientBehaviorProfile {
     return {
       patientId: dbProfile.patient_id,
       scores: dbProfile.scores,
@@ -829,7 +819,7 @@ export class PatientSegmentationService {
     }
   }
 
-  private async storeABTest(test: any): Promise<void> {
+  private async storeABTest(test: unknown): Promise<void> {
     const { error } = await supabase.from("segment_ab_tests").insert(test);
 
     if (error) {

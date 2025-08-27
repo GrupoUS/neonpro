@@ -21,22 +21,10 @@ import { cn } from "../../lib/utils";
 import { Alert, AlertDescription } from "../Alert";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Input } from "../Input";
 import { Label } from "../Label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../Select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../Select";
 import { Textarea } from "../Textarea";
 
 interface Product {
@@ -189,7 +177,7 @@ export function ANVISAProductRegistration({
           <div className="h-10 w-32 animate-pulse rounded bg-gray-200" />
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {new Array(6).fill(undefined).map((_, i) => (
+          {new Array(6).fill().map((_, i) => (
             <Card className="animate-pulse" key={i}>
               <CardHeader>
                 <div className="h-4 w-32 rounded bg-gray-200" />
@@ -259,8 +247,7 @@ export function ANVISAProductRegistration({
                   <Input
                     id="name"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                      setFormData({ ...formData, name: e.target.value })}
                     placeholder="Ex: Ácido Hialurônico Restylane"
                     required
                     value={formData.name}
@@ -277,8 +264,7 @@ export function ANVISAProductRegistration({
                       setFormData({
                         ...formData,
                         registration_number: e.target.value,
-                      })
-                    }
+                      })}
                     placeholder="Ex: 12345.678.901-2"
                     required
                     value={formData.registration_number}
@@ -290,8 +276,7 @@ export function ANVISAProductRegistration({
                   <Input
                     id="manufacturer"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, manufacturer: e.target.value })
-                    }
+                      setFormData({ ...formData, manufacturer: e.target.value })}
                     placeholder="Ex: Galderma"
                     required
                     value={formData.manufacturer}
@@ -301,9 +286,7 @@ export function ANVISAProductRegistration({
                 <div className="space-y-2">
                   <Label htmlFor="category">Categoria</Label>
                   <Select
-                    onValueChange={(value: string) =>
-                      setFormData({ ...formData, category: value })
-                    }
+                    onValueChange={(value: string) => setFormData({ ...formData, category: value })}
                     value={formData.category}
                   >
                     <SelectTrigger>
@@ -335,8 +318,7 @@ export function ANVISAProductRegistration({
                   <Input
                     id="batch_number"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, batch_number: e.target.value })
-                    }
+                      setFormData({ ...formData, batch_number: e.target.value })}
                     placeholder="Ex: LOT123456"
                     value={formData.batch_number}
                   />
@@ -347,8 +329,7 @@ export function ANVISAProductRegistration({
                   <Input
                     id="expiry_date"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, expiry_date: e.target.value })
-                    }
+                      setFormData({ ...formData, expiry_date: e.target.value })}
                     required
                     type="date"
                     value={formData.expiry_date}
@@ -364,8 +345,7 @@ export function ANVISAProductRegistration({
                       setFormData({
                         ...formData,
                         lot_size: Number(e.target.value),
-                      })
-                    }
+                      })}
                     placeholder="Ex: 50"
                     type="number"
                     value={formData.lot_size}
@@ -378,8 +358,7 @@ export function ANVISAProductRegistration({
                 <Textarea
                   id="description"
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
+                    setFormData({ ...formData, description: e.target.value })}
                   placeholder="Descrição detalhada do produto, indicações e especificações"
                   rows={3}
                   value={formData.description}
@@ -465,11 +444,9 @@ export function ANVISAProductRegistration({
                     {product.status === "active" && (
                       <CheckCircle className="h-4 w-4 text-green-500" />
                     )}
-                    {product.status === "pending" && (
-                      <Clock className="h-4 w-4 text-yellow-500" />
-                    )}
-                    {(product.status === "expired" ||
-                      product.status === "suspended") && (
+                    {product.status === "pending" && <Clock className="h-4 w-4 text-yellow-500" />}
+                    {(product.status === "expired"
+                      || product.status === "suspended") && (
                       <XCircle className="h-4 w-4 text-red-500" />
                     )}
                   </div>
@@ -488,8 +465,7 @@ export function ANVISAProductRegistration({
               Nenhum produto registrado
             </h3>
             <p className="mb-4 text-center text-muted-foreground">
-              Comece registrando seus produtos estéticos para garantir
-              conformidade com a ANVISA
+              Comece registrando seus produtos estéticos para garantir conformidade com a ANVISA
             </p>
             <Button onClick={() => setShowForm(true)}>
               <Plus className="mr-2 h-4 w-4" />

@@ -33,7 +33,7 @@ export class ComplianceRiskPredictionService {
    */
   async analyzeComplianceRisks(
     tenantId: string,
-  ): Promise<{ metrics?: ComplianceMetrics; error?: string }> {
+  ): Promise<{ metrics?: ComplianceMetrics; error?: string; }> {
     try {
       // Collect real-time data for risk assessment
       const [
@@ -100,10 +100,9 @@ export class ComplianceRiskPredictionService {
       return { metrics };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to analyze compliance risks",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to analyze compliance risks",
       };
     }
   }
@@ -112,16 +111,15 @@ export class ComplianceRiskPredictionService {
    * Calculate LGPD-specific risk score
    */
   private calculateLGPDRiskScore(
-    consentData: any,
-    securityEvents: any[],
-    activity: any[],
-  ): any {
+    consentData: unknown,
+    securityEvents: unknown[],
+    activity: unknown[],
+  ): unknown {
     let score = 100;
     const riskFactors = [];
 
     // Consent compliance analysis
-    const consentRate =
-      consentData.total > 0 ? consentData.granted / consentData.total : 1;
+    const consentRate = consentData.total > 0 ? consentData.granted / consentData.total : 1;
     if (consentRate < 0.8) {
       const impact = Math.round((0.8 - consentRate) * 50);
       score -= impact;
@@ -133,9 +131,8 @@ export class ComplianceRiskPredictionService {
     }
 
     // Data retention violations
-    const retentionViolations = activity.filter((a) =>
-      a.action?.includes("data_retention_exceeded"),
-    ).length;
+    const retentionViolations =
+      activity.filter((a) => a.action?.includes("data_retention_exceeded")).length;
     if (retentionViolations > 0) {
       score -= retentionViolations * 15;
       riskFactors.push({
@@ -161,8 +158,8 @@ export class ComplianceRiskPredictionService {
     // Data subject request response time
     const slowResponses = activity.filter(
       (a) =>
-        a.action?.includes("data_subject_request") &&
-        a.response_time_hours > 72, // LGPD requires response within 72 hours
+        a.action?.includes("data_subject_request")
+        && a.response_time_hours > 72, // LGPD requires response within 72 hours
     ).length;
     if (slowResponses > 0) {
       score -= slowResponses * 10;
@@ -183,9 +180,9 @@ export class ComplianceRiskPredictionService {
    * Calculate ANVISA-specific risk score
    */
   private calculateANVISARiskScore(
-    equipmentStatus: any[],
-    activity: any[],
-  ): any {
+    equipmentStatus: unknown[],
+    activity: unknown[],
+  ): unknown {
     let score = 100;
     const riskFactors = [];
 
@@ -232,9 +229,7 @@ export class ComplianceRiskPredictionService {
     }
 
     // Adverse events
-    const adverseEvents = activity.filter((a) =>
-      a.action?.includes("adverse_event"),
-    ).length;
+    const adverseEvents = activity.filter((a) => a.action?.includes("adverse_event")).length;
     if (adverseEvents > 0) {
       score -= adverseEvents * 20;
       riskFactors.push({
@@ -253,7 +248,7 @@ export class ComplianceRiskPredictionService {
   /**
    * Calculate CFM-specific risk score
    */
-  private calculateCFMRiskScore(staffLicenses: any[], activity: any[]): any {
+  private calculateCFMRiskScore(staffLicenses: unknown[], activity: unknown[]): unknown {
     let score = 100;
     const riskFactors = [];
 
@@ -300,9 +295,8 @@ export class ComplianceRiskPredictionService {
     }
 
     // Ethical violations
-    const ethicalViolations = activity.filter((a) =>
-      a.action?.includes("ethical_violation"),
-    ).length;
+    const ethicalViolations =
+      activity.filter((a) => a.action?.includes("ethical_violation")).length;
     if (ethicalViolations > 0) {
       score -= ethicalViolations * 25;
       riskFactors.push({
@@ -336,8 +330,8 @@ export class ComplianceRiskPredictionService {
    */
   private async predictFutureRisks(
     tenantId: string,
-    currentScores: any,
-    historicalTrends: any[],
+    currentScores: unknown,
+    historicalTrends: unknown[],
   ): Promise<RiskPrediction[]> {
     const predictions: RiskPrediction[] = [];
 
@@ -361,7 +355,7 @@ export class ComplianceRiskPredictionService {
           predictions.push({
             risk_level: this.mapScoreToRiskLevel(scoreData.score),
             confidence: Math.min(90, Math.abs(trend.slope) * 15),
-            predicted_violation_type: framework as any,
+            predicted_violation_type: framework as unknown,
             risk_factors: scoreData.riskFactors,
             prevention_actions: this.generatePreventionActions(
               framework,
@@ -388,7 +382,7 @@ export class ComplianceRiskPredictionService {
    */
   private generatePreventionActions(
     framework: string,
-    riskFactors: any[],
+    riskFactors: unknown[],
   ): string[] {
     const actions: string[] = [];
 
@@ -527,12 +521,12 @@ export class ComplianceRiskPredictionService {
     return [];
   }
 
-  private calculateScoreTrend(trends: any[]) {
+  private calculateScoreTrend(trends: unknown[]) {
     if (trends.length < 2) {
       return { slope: 0 };
     }
 
-    const n = trends.length;
+    const { length: n } = trends;
     const sumX = trends.reduce((sum, _, i) => sum + i, 0);
     const sumY = trends.reduce((sum, t) => sum + t.score, 0);
     const sumXY = trends.reduce((sum, t, i) => sum + i * t.score, 0);
@@ -567,7 +561,7 @@ export class ComplianceRiskPredictionService {
   }
 
   private calculateTrend(
-    historicalTrends: any[],
+    historicalTrends: unknown[],
     currentScore: number,
   ): "improving" | "stable" | "declining" {
     if (historicalTrends.length < 3) {
@@ -575,8 +569,7 @@ export class ComplianceRiskPredictionService {
     }
 
     const recentTrend = historicalTrends.slice(-3);
-    const avgRecent =
-      recentTrend.reduce((sum, t) => sum + t.overall_score, 0) / 3;
+    const avgRecent = recentTrend.reduce((sum, t) => sum + t.overall_score, 0) / 3;
 
     if (currentScore > avgRecent + 2) {
       return "improving";
@@ -605,9 +598,10 @@ export class ComplianceRiskPredictionService {
       if (risk.risk_level === "high" || risk.risk_level === "critical") {
         await supabase.from("compliance_alerts").insert({
           tenant_id: tenantId,
-          alert_type: `${risk.predicted_violation_type}_violation` as any,
+          alert_type: `${risk.predicted_violation_type}_violation` as unknown,
           severity: risk.risk_level === "critical" ? "critical" : "high",
-          description: `Predicted ${risk.predicted_violation_type.toUpperCase()} violation in ${risk.estimated_days_to_violation} days`,
+          description:
+            `Predicted ${risk.predicted_violation_type.toUpperCase()} violation in ${risk.estimated_days_to_violation} days`,
           action_required: risk.prevention_actions.join("; "),
           status: "open",
         });
@@ -616,5 +610,4 @@ export class ComplianceRiskPredictionService {
   }
 }
 
-export const complianceRiskPredictionService =
-  new ComplianceRiskPredictionService();
+export const complianceRiskPredictionService = new ComplianceRiskPredictionService();

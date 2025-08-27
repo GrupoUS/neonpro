@@ -5,7 +5,7 @@
  */
 
 import { EnhancedServiceBase } from "@neonpro/core-services";
-import { HealthcareCacheManager, healthcareCache } from "./index";
+import { healthcareCache, HealthcareCacheManager } from "./index";
 
 /**
  * Enhanced cache service with enterprise features
@@ -13,7 +13,7 @@ import { HealthcareCacheManager, healthcareCache } from "./index";
 export class CacheServiceFactory extends EnhancedServiceBase {
   private readonly healthcareCache: HealthcareCacheManager;
 
-  constructor(options: any = {}) {
+  constructor(options: unknown = {}) {
     super("cache-service-factory", {
       enableCache: true,
       enableAnalytics: true,

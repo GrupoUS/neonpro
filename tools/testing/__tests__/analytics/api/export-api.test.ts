@@ -33,7 +33,7 @@ vi.mock<typeof import("xlsx")>("xlsx", () => ({
 }));
 
 describe("export API Routes", () => {
-  let mockSupabase: any;
+  let mockSupabase: unknown;
 
   beforeEach(() => {
     // Setup mock Supabase client

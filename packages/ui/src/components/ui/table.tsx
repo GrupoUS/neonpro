@@ -97,15 +97,15 @@ const TableRow = React.forwardRef<
     <tr
       className={cn(
         "border-border/60 border-b backdrop-blur-sm transition-all duration-300 data-[state=selected]:bg-muted/80",
-        priority === "critical" &&
-          "animate-pulse-healthcare border-destructive/30 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-healthcare-sm",
-        priority === "high" &&
-          "bg-gradient-to-br from-warning/8 via-warning/4 to-transparent",
+        priority === "critical"
+          && "animate-pulse-healthcare border-destructive/30 bg-gradient-to-br from-destructive/10 via-destructive/5 to-transparent shadow-healthcare-sm",
+        priority === "high"
+          && "bg-gradient-to-br from-warning/8 via-warning/4 to-transparent",
         priority === "low" && "opacity-75",
-        interactive &&
-          "cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:bg-gradient-to-br hover:from-muted/60 hover:via-muted/40 hover:to-transparent hover:shadow-healthcare-sm",
-        selected &&
-          "border-primary/30 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 shadow-healthcare-sm",
+        interactive
+          && "cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:bg-gradient-to-br hover:from-muted/60 hover:via-muted/40 hover:to-transparent hover:shadow-healthcare-sm",
+        selected
+          && "border-primary/30 bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 shadow-healthcare-sm",
         className,
       )}
       data-priority={priority}
@@ -127,8 +127,8 @@ const TableHead = React.forwardRef<
   <th
     className={cn(
       "h-12 px-4 text-left align-middle font-semibold text-foreground [&:has([role=checkbox])]:pr-0",
-      sortable &&
-        "cursor-pointer select-none rounded-md transition-all duration-200 hover:bg-gradient-to-br hover:from-muted/40 hover:via-muted/30 hover:to-transparent hover:text-primary",
+      sortable
+        && "cursor-pointer select-none rounded-md transition-all duration-200 hover:bg-gradient-to-br hover:from-muted/40 hover:via-muted/30 hover:to-transparent hover:text-primary",
       className,
     )}
     onClick={sortable ? onSort : undefined}
@@ -139,16 +139,16 @@ const TableHead = React.forwardRef<
       {children}
       {sortable && (
         <div className="flex flex-col transition-all duration-200">
-          {sortDirection === "asc" ? (
-            <ChevronUp className="h-4 w-4 text-primary" />
-          ) : sortDirection === "desc" ? (
-            <ChevronDown className="h-4 w-4 text-primary" />
-          ) : (
-            <div className="h-4 w-4 opacity-50 transition-opacity hover:opacity-100">
-              <ChevronUp className="h-2 w-2" />
-              <ChevronDown className="h-2 w-2" />
-            </div>
-          )}
+          {sortDirection === "asc"
+            ? <ChevronUp className="h-4 w-4 text-primary" />
+            : sortDirection === "desc"
+            ? <ChevronDown className="h-4 w-4 text-primary" />
+            : (
+              <div className="h-4 w-4 opacity-50 transition-opacity hover:opacity-100">
+                <ChevronUp className="h-2 w-2" />
+                <ChevronDown className="h-2 w-2" />
+              </div>
+            )}
         </div>
       )}
     </div>
@@ -166,10 +166,10 @@ const TableCell = React.forwardRef<
   <td
     className={cn(
       "p-4 align-middle [&:has([role=checkbox])]:pr-0",
-      sensitive &&
-        "bg-gradient-to-br from-warning/10 via-warning/5 to-transparent backdrop-blur-sm",
-      lgpdProtected &&
-        "bg-gradient-to-br from-success/8 via-success/4 to-transparent backdrop-blur-sm",
+      sensitive
+        && "bg-gradient-to-br from-warning/10 via-warning/5 to-transparent backdrop-blur-sm",
+      lgpdProtected
+        && "bg-gradient-to-br from-success/8 via-success/4 to-transparent backdrop-blur-sm",
       className,
     )}
     data-lgpd-protected={lgpdProtected}
@@ -254,9 +254,9 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
 
       return patients.filter(
         (patient) =>
-          patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          patient.cpf.includes(searchTerm) ||
-          patient.email.toLowerCase().includes(searchTerm.toLowerCase()),
+          patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+          || patient.cpf.includes(searchTerm)
+          || patient.email.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }, [patients, searchTerm]);
 
@@ -313,9 +313,7 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
               <TableHead
                 onSort={() => onSort?.("lastVisit")}
                 sortable
-                sortDirection={
-                  sortBy === "lastVisit" ? sortDirection : undefined
-                }
+                sortDirection={sortBy === "lastVisit" ? sortDirection : undefined}
               >
                 Última Visita
               </TableHead>
@@ -359,12 +357,12 @@ const PatientTable = React.forwardRef<HTMLTableElement, PatientTableProps>(
                   <span
                     className={cn(
                       "inline-flex items-center rounded-full px-2 py-1 font-medium text-xs",
-                      patient.status === "active" &&
-                        "border border-success/20 bg-success/10 text-success",
-                      patient.status === "inactive" &&
-                        "border border-muted bg-muted/50 text-muted-foreground",
-                      patient.status === "pending" &&
-                        "border border-warning/20 bg-warning/10 text-warning",
+                      patient.status === "active"
+                        && "border border-success/20 bg-success/10 text-success",
+                      patient.status === "inactive"
+                        && "border border-muted bg-muted/50 text-muted-foreground",
+                      patient.status === "pending"
+                        && "border border-warning/20 bg-warning/10 text-warning",
                     )}
                   >
                     {patient.status === "active" && "Ativo"}
@@ -455,7 +453,6 @@ const AppointmentTable = React.forwardRef<
       appointments,
       onAppointmentSelect,
       onAppointmentEdit,
-      onStatusChange,
       dateFilter,
       statusFilter,
       sortBy,
@@ -467,8 +464,8 @@ const AppointmentTable = React.forwardRef<
     const filteredAppointments = React.useMemo(() => {
       return appointments.filter((appointment) => {
         if (
-          dateFilter &&
-          appointment.datetime.toDateString() !== dateFilter.toDateString()
+          dateFilter
+          && appointment.datetime.toDateString() !== dateFilter.toDateString()
         ) {
           return false;
         }
@@ -545,18 +542,14 @@ const AppointmentTable = React.forwardRef<
             <TableHead
               onSort={() => onSort?.("patientName")}
               sortable
-              sortDirection={
-                sortBy === "patientName" ? sortDirection : undefined
-              }
+              sortDirection={sortBy === "patientName" ? sortDirection : undefined}
             >
               Paciente
             </TableHead>
             <TableHead
               onSort={() => onSort?.("professionalName")}
               sortable
-              sortDirection={
-                sortBy === "professionalName" ? sortDirection : undefined
-              }
+              sortDirection={sortBy === "professionalName" ? sortDirection : undefined}
             >
               Profissional
             </TableHead>

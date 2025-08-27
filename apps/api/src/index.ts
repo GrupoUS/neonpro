@@ -35,22 +35,22 @@ import { secureHeaders } from "hono/secure-headers";
 import { timing } from "hono/timing";
 
 // Import application modules (sorted alphabetically)
+import { auditMiddleware } from "@/middleware/audit";
+import { errorHandler } from "@/middleware/error-handler";
+import { lgpdMiddleware } from "@/middleware/lgpd";
+import { rateLimitMiddleware } from "@/middleware/rate-limit";
 import { aiRoutes } from "@/routes/ai";
 import { analyticsRoutes } from "@/routes/analytics";
 import { appointmentRoutes } from "@/routes/appointments";
-import { auditMiddleware } from "@/middleware/audit";
 import { authRoutes } from "@/routes/auth";
 import { clinicRoutes } from "@/routes/clinics";
-import complianceAutomationRoutes from "@/routes/compliance-automation";
 import { complianceRoutes } from "@/routes/compliance";
-import { errorHandler } from "@/middleware/error-handler";
-import { HTTP_STATUS, RESPONSE_MESSAGES } from "./lib/constants";
-import { lgpdMiddleware } from "@/middleware/lgpd";
+import complianceAutomationRoutes from "@/routes/compliance-automation";
 import { patientRoutes } from "@/routes/patients";
 import { professionalsRoutes } from "@/routes/professionals";
-import { rateLimitMiddleware } from "@/middleware/rate-limit";
 import { servicesRoutes } from "@/routes/services";
 import type { AppEnv } from "@/types/env";
+import { HTTP_STATUS, RESPONSE_MESSAGES } from "./lib/constants";
 
 // Environment configuration
 const ENVIRONMENT = process.env.NODE_ENV || "development";
@@ -125,8 +125,7 @@ const getDocsUrl = (): string => "/docs";
 app.get("/", (context) => {
   const docsUrl = getDocsUrl();
   return context.json({
-    description:
-      "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
+    description: "Sistema de gestão para clínicas de estética multiprofissionais brasileiras",
     docs: docsUrl,
     environment: ENVIRONMENT,
     features: [
@@ -197,8 +196,7 @@ app.get("/health", async (context) => {
       version: "1.0.0",
     };
 
-    const isHealthy =
-      healthData.services.database && healthData.services.supabase;
+    const isHealthy = healthData.services.database && healthData.services.supabase;
     const responseStatus = getResponseStatus(isHealthy);
 
     return context.json(healthData, responseStatus);
@@ -242,7 +240,7 @@ app.notFound((context) =>
       timestamp: new Date().toISOString(),
     },
     HTTP_STATUS_NOT_FOUND,
-  ),
+  )
 );
 
 // Global error handler

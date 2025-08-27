@@ -112,22 +112,22 @@ const excelResult = await exportService.generateExcelExport({
 ### React Component Usage
 
 ```typescript
-import { ExportDashboard } from '@/components/analytics/export';
+import { ExportDashboard } from "@/components/analytics/export";
 
 function AnalyticsPage() {
   const handleExportComplete = (response) => {
-    console.log('Export completed:', response);
+    console.log("Export completed:", response);
   };
 
   const handleExportError = (error) => {
-    console.error('Export failed:', error);
+    console.error("Export failed:", error);
   };
 
   return (
     <ExportDashboard
       defaultDateRange={{
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-01-31'),
+        startDate: new Date("2024-01-01"),
+        endDate: new Date("2024-01-31"),
       }}
       onExportComplete={handleExportComplete}
       onExportError={handleExportError}

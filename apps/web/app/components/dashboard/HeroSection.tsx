@@ -1,15 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  ArrowRight,
-  Calendar,
-  FileText,
-  Heart,
-  Shield,
-  Star,
-  Stethoscope,
-} from "lucide-react";
+import { ArrowRight, Calendar, FileText, Heart, Shield, Star, Stethoscope } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function HeroSection() {
@@ -51,9 +43,9 @@ export function HeroSection() {
             </span>
           </h1>
           <p className="mx-auto mb-12 max-w-3xl text-muted-foreground text-xl leading-relaxed">
-            Gestão inteligente com compliance total LGPD, ANVISA e CFM.
-            Transforme sua clínica com tecnologia de ponta, resultados reais e a
-            confiança do mercado brasileiro de medicina estética.
+            Gestão inteligente com compliance total LGPD, ANVISA e CFM. Transforme sua clínica com
+            tecnologia de ponta, resultados reais e a confiança do mercado brasileiro de medicina
+            estética.
           </p>
 
           {/* Trust Indicators */}
@@ -98,8 +90,7 @@ export function HeroSection() {
 
           {/* Trust Line */}
           <p className="mt-8 text-muted-foreground text-sm">
-            ✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte
-            especializado em saúde
+            ✓ Teste grátis por 30 dias • ✓ Sem cartão de crédito • ✓ Suporte especializado em saúde
           </p>
         </div>
       </div>

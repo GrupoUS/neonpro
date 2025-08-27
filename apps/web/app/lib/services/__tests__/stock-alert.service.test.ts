@@ -13,7 +13,7 @@ class MockStockAlertService {
     };
   }
 
-  async sendAlert(alert: any) {
+  async sendAlert(alert: unknown) {
     return { success: true, alertId: alert.id };
   }
 

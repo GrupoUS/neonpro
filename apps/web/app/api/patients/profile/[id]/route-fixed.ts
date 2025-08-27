@@ -7,8 +7,6 @@ import { z } from "zod";
 
 // Initialize services
 const profileManager = new ProfileManager();
-const _patientInsights = new PatientInsightsIntegration();
-
 // Validation schema for updates
 const UpdateProfileSchema = z.object({
   demographics: z
@@ -51,7 +49,7 @@ const UpdateProfileSchema = z.object({
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = await createClient();
@@ -86,7 +84,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = await createClient();
@@ -139,7 +137,7 @@ export async function PUT(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = await createClient();

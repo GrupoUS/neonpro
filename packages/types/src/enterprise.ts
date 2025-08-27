@@ -66,7 +66,7 @@ export type AnalyticsExportFormat = "json" | "csv" | "pdf" | "excel";
 export interface AnalyticsEvent {
   id: string;
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   timestamp: Date;
   userId?: string;
   sessionId?: string;
@@ -142,7 +142,7 @@ export interface SecurityEvent {
   userId?: string;
   ip: string;
   userAgent: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   riskScore: number; // 1-10
   resolved: boolean;
   timestamp: Date;
@@ -203,7 +203,7 @@ export interface AuditEvent {
   action: string;
   resource: string;
   outcome: "success" | "failure" | "error";
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   ip: string;
   userAgent: string;
   sessionId?: string;
@@ -417,7 +417,7 @@ export interface DashboardWidget {
   id: string;
   type: "metric" | "chart" | "table" | "alert" | "health";
   title: string;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   position: {
     x: number;
     y: number;
@@ -479,7 +479,7 @@ export interface ReportRecipient {
 export interface ReportFilter {
   field: string;
   operator: "equals" | "contains" | "greater_than" | "less_than" | "between";
-  value: any;
+  value: unknown;
 }
 
 // Enterprise Configuration Types

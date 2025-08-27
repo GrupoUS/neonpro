@@ -2,13 +2,7 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -192,7 +186,8 @@ export function CosmeticConsentBrazilian({
         patient_id: treatmentPlan.patient_id,
         treatment_plan_id: treatmentPlan.id,
         consent_type: "treatment",
-        purpose_description: `Consentimento para ${treatmentPlan.treatment_name} - ${treatmentPlan.description}`,
+        purpose_description:
+          `Consentimento para ${treatmentPlan.treatment_name} - ${treatmentPlan.description}`,
         data_categories: [
           "dados_pessoais",
           "historico_medico",
@@ -208,8 +203,7 @@ export function CosmeticConsentBrazilian({
         risks_explained: formData.risksUnderstood,
         alternatives_discussed: formData.alternativesDiscussed,
         realistic_expectations_set: formData.expectationsSet,
-        consent_granted:
-          formData.treatmentConsentGranted && formData.dataProcessingConsent,
+        consent_granted: formData.treatmentConsentGranted && formData.dataProcessingConsent,
         consent_date: new Date().toISOString(),
         consent_method: "digital",
         witness_present: formData.witnessRequired,
@@ -217,10 +211,9 @@ export function CosmeticConsentBrazilian({
         requires_guardian_consent: formData.isMinor,
         guardian_name: formData.guardianName || undefined,
         guardian_relationship: formData.guardianRelationship || undefined,
-        guardian_consent_date:
-          formData.isMinor && formData.guardianConsent
-            ? new Date().toISOString()
-            : undefined,
+        guardian_consent_date: formData.isMinor && formData.guardianConsent
+          ? new Date().toISOString()
+          : undefined,
         withdrawal_allowed: true,
         withdrawal_date: undefined,
         withdrawal_reason: undefined,
@@ -273,11 +266,9 @@ export function CosmeticConsentBrazilian({
                   Status do Consentimento
                 </Label>
                 <div className="flex items-center gap-2">
-                  {existingConsent.consent_granted ? (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <X className="h-4 w-4 text-red-500" />
-                  )}
+                  {existingConsent.consent_granted
+                    ? <CheckCircle className="h-4 w-4 text-green-500" />
+                    : <X className="h-4 w-4 text-red-500" />}
                   <span className="text-white">
                     {existingConsent.consent_granted ? "Concedido" : "Negado"}
                   </span>
@@ -310,31 +301,25 @@ export function CosmeticConsentBrazilian({
                 </Label>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    {existingConsent.informed_consent_provided ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <X className="h-4 w-4 text-red-500" />
-                    )}
+                    {existingConsent.informed_consent_provided
+                      ? <CheckCircle className="h-4 w-4 text-green-500" />
+                      : <X className="h-4 w-4 text-red-500" />}
                     <span className="text-sm text-white">
                       Consentimento Informado
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {existingConsent.risks_explained ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <X className="h-4 w-4 text-red-500" />
-                    )}
+                    {existingConsent.risks_explained
+                      ? <CheckCircle className="h-4 w-4 text-green-500" />
+                      : <X className="h-4 w-4 text-red-500" />}
                     <span className="text-sm text-white">
                       Riscos Explicados
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    {existingConsent.alternatives_discussed ? (
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <X className="h-4 w-4 text-red-500" />
-                    )}
+                    {existingConsent.alternatives_discussed
+                      ? <CheckCircle className="h-4 w-4 text-green-500" />
+                      : <X className="h-4 w-4 text-red-500" />}
                     <span className="text-sm text-white">
                       Alternativas Discutidas
                     </span>
@@ -367,19 +352,19 @@ export function CosmeticConsentBrazilian({
               </div>
             </div>
 
-            {existingConsent.withdrawal_allowed &&
-              !existingConsent.withdrawal_date && (
-                <div className="pt-4">
-                  <Button
-                    className="w-full"
-                    onClick={() => setShowWithdrawDialog(true)}
-                    variant="outline"
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    Retirar Consentimento
-                  </Button>
-                </div>
-              )}
+            {existingConsent.withdrawal_allowed
+              && !existingConsent.withdrawal_date && (
+              <div className="pt-4">
+                <Button
+                  className="w-full"
+                  onClick={() => setShowWithdrawDialog(true)}
+                  variant="outline"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Retirar Consentimento
+                </Button>
+              </div>
+            )}
 
             {existingConsent.withdrawal_date && (
               <Alert className="border-red-500/50 bg-red-500/10">
@@ -407,9 +392,8 @@ export function CosmeticConsentBrazilian({
             <DialogHeader>
               <DialogTitle>Retirar Consentimento</DialogTitle>
               <DialogDescription>
-                Ao retirar o consentimento, o tratamento será interrompido e
-                seus dados serão processados conforme a política de retenção
-                LGPD.
+                Ao retirar o consentimento, o tratamento será interrompido e seus dados serão
+                processados conforme a política de retenção LGPD.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
@@ -476,8 +460,7 @@ export function CosmeticConsentBrazilian({
         <CardHeader>
           <CardTitle>Formulário de Consentimento</CardTitle>
           <CardDescription>
-            Por favor, leia atentamente e forneça seu consentimento para cada
-            item abaixo.
+            Por favor, leia atentamente e forneça seu consentimento para cada item abaixo.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -498,13 +481,11 @@ export function CosmeticConsentBrazilian({
               <Alert>
                 <Info className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Informações sobre o Tratamento:</strong>{" "}
-                  {treatmentPlan.treatment_name}
+                  <strong>Informações sobre o Tratamento:</strong> {treatmentPlan.treatment_name}
                   <br />
                   <strong>Descrição:</strong> {treatmentPlan.description}
                   <br />
-                  <strong>Sessões Previstas:</strong>{" "}
-                  {treatmentPlan.expected_sessions}
+                  <strong>Sessões Previstas:</strong> {treatmentPlan.expected_sessions}
                 </AlertDescription>
               </Alert>
 
@@ -517,8 +498,7 @@ export function CosmeticConsentBrazilian({
                     onCheckedChange={(checked) =>
                       updateFormData({
                         treatmentConsentGranted: checked as boolean,
-                      })
-                    }
+                      })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -531,8 +511,7 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="treatment-consent-description"
                     >
-                      Declaro que compreendi a natureza do tratamento e autorizo
-                      sua realização.
+                      Declaro que compreendi a natureza do tratamento e autorizo sua realização.
                     </p>
                   </div>
                 </div>
@@ -543,8 +522,7 @@ export function CosmeticConsentBrazilian({
                     checked={formData.risksUnderstood}
                     id="risks-understood"
                     onCheckedChange={(checked) =>
-                      updateFormData({ risksUnderstood: checked as boolean })
-                    }
+                      updateFormData({ risksUnderstood: checked as boolean })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -557,8 +535,8 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="risks-description"
                     >
-                      Todos os riscos, benefícios e possíveis complicações foram
-                      explicados e compreendidos.
+                      Todos os riscos, benefícios e possíveis complicações foram explicados e
+                      compreendidos.
                     </p>
                   </div>
                 </div>
@@ -571,8 +549,7 @@ export function CosmeticConsentBrazilian({
                     onCheckedChange={(checked) =>
                       updateFormData({
                         alternativesDiscussed: checked as boolean,
-                      })
-                    }
+                      })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -585,8 +562,8 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="alternatives-description"
                     >
-                      Outras opções de tratamento foram apresentadas e suas
-                      vantagens/desvantagens explicadas.
+                      Outras opções de tratamento foram apresentadas e suas vantagens/desvantagens
+                      explicadas.
                     </p>
                   </div>
                 </div>
@@ -597,8 +574,7 @@ export function CosmeticConsentBrazilian({
                     checked={formData.expectationsSet}
                     id="expectations-set"
                     onCheckedChange={(checked) =>
-                      updateFormData({ expectationsSet: checked as boolean })
-                    }
+                      updateFormData({ expectationsSet: checked as boolean })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -611,8 +587,8 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="expectations-description"
                     >
-                      Compreendo que os resultados podem variar e não há
-                      garantia de resultado específico.
+                      Compreendo que os resultados podem variar e não há garantia de resultado
+                      específico.
                     </p>
                   </div>
                 </div>
@@ -621,9 +597,9 @@ export function CosmeticConsentBrazilian({
               <Alert className="border-yellow-500/50 bg-yellow-500/10">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Importante:</strong> Este consentimento está em
-                  conformidade com as diretrizes do Conselho Federal de Medicina
-                  (CFM) para procedimentos estéticos.
+                  <strong>Importante:</strong>{" "}
+                  Este consentimento está em conformidade com as diretrizes do Conselho Federal de
+                  Medicina (CFM) para procedimentos estéticos.
                 </AlertDescription>
               </Alert>
             </TabsContent>
@@ -635,8 +611,7 @@ export function CosmeticConsentBrazilian({
                 <AlertDescription>
                   <strong>Lei Geral de Proteção de Dados (LGPD)</strong>
                   <br />
-                  Conforme a Lei nº 13.709/2018, você tem direitos sobre seus
-                  dados pessoais.
+                  Conforme a Lei nº 13.709/2018, você tem direitos sobre seus dados pessoais.
                 </AlertDescription>
               </Alert>
 
@@ -649,8 +624,7 @@ export function CosmeticConsentBrazilian({
                     onCheckedChange={(checked) =>
                       updateFormData({
                         dataProcessingConsent: checked as boolean,
-                      })
-                    }
+                      })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -663,8 +637,8 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="data-processing-description"
                     >
-                      Necessário para realização do tratamento, prontuário
-                      médico e acompanhamento clínico.
+                      Necessário para realização do tratamento, prontuário médico e acompanhamento
+                      clínico.
                     </p>
                   </div>
                 </div>
@@ -677,8 +651,7 @@ export function CosmeticConsentBrazilian({
                     onCheckedChange={(checked) =>
                       updateFormData({
                         photoDocumentationConsent: checked as boolean,
-                      })
-                    }
+                      })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -691,8 +664,8 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="photo-description"
                     >
-                      Para acompanhamento clínico, com proteção biométrica e
-                      anonimização automática.
+                      Para acompanhamento clínico, com proteção biométrica e anonimização
+                      automática.
                     </p>
                   </div>
                 </div>
@@ -703,8 +676,7 @@ export function CosmeticConsentBrazilian({
                     checked={formData.marketingConsent}
                     id="marketing-consent"
                     onCheckedChange={(checked) =>
-                      updateFormData({ marketingConsent: checked as boolean })
-                    }
+                      updateFormData({ marketingConsent: checked as boolean })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -717,8 +689,7 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="marketing-description"
                     >
-                      Fotos anonimizadas podem ser usadas em materiais
-                      educativos e promocionais.
+                      Fotos anonimizadas podem ser usadas em materiais educativos e promocionais.
                     </p>
                   </div>
                 </div>
@@ -729,8 +700,7 @@ export function CosmeticConsentBrazilian({
                     checked={formData.researchConsent}
                     id="research-consent"
                     onCheckedChange={(checked) =>
-                      updateFormData({ researchConsent: checked as boolean })
-                    }
+                      updateFormData({ researchConsent: checked as boolean })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -743,8 +713,7 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="research-description"
                     >
-                      Dados anonimizados podem contribuir para estudos
-                      científicos na área.
+                      Dados anonimizados podem contribuir para estudos científicos na área.
                     </p>
                   </div>
                 </div>
@@ -757,8 +726,7 @@ export function CosmeticConsentBrazilian({
                     onCheckedChange={(checked) =>
                       updateFormData({
                         crossBorderTransferConsent: checked as boolean,
-                      })
-                    }
+                      })}
                   />
                   <div className="grid gap-1.5 leading-none">
                     <Label
@@ -771,8 +739,8 @@ export function CosmeticConsentBrazilian({
                       className="text-muted-foreground text-xs"
                       id="cross-border-description"
                     >
-                      Apenas para serviços de nuvem com proteção adequada e
-                      certificações de segurança.
+                      Apenas para serviços de nuvem com proteção adequada e certificações de
+                      segurança.
                     </p>
                   </div>
                 </div>
@@ -790,10 +758,8 @@ export function CosmeticConsentBrazilian({
                     min="365"
                     onChange={(e) =>
                       updateFormData({
-                        customRetentionPeriod:
-                          Number.parseInt(e.target.value, 10) || 2555,
-                      })
-                    }
+                        customRetentionPeriod: Number.parseInt(e.target.value, 10) || 2555,
+                      })}
                     type="number"
                     value={formData.customRetentionPeriod}
                   />
@@ -802,18 +768,17 @@ export function CosmeticConsentBrazilian({
                   </span>
                 </div>
                 <p className="text-muted-foreground text-xs">
-                  Seus dados serão mantidos pelo período especificado, conforme
-                  legislação médica brasileira.
+                  Seus dados serão mantidos pelo período especificado, conforme legislação médica
+                  brasileira.
                 </p>
               </div>
 
               <Alert className="border-blue-500/50 bg-blue-500/10">
                 <Shield className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Seus Direitos LGPD:</strong> Você pode a qualquer
-                  momento acessar, corrigir, excluir ou portar seus dados, bem
-                  como retirar este consentimento através do nosso portal ou
-                  solicitação direta.
+                  <strong>Seus Direitos LGPD:</strong>{" "}
+                  Você pode a qualquer momento acessar, corrigir, excluir ou portar seus dados, bem
+                  como retirar este consentimento através do nosso portal ou solicitação direta.
                 </AlertDescription>
               </Alert>
             </TabsContent>
@@ -824,17 +789,14 @@ export function CosmeticConsentBrazilian({
                 <Checkbox
                   checked={formData.isMinor}
                   id="is-minor"
-                  onCheckedChange={(checked) =>
-                    updateFormData({ isMinor: checked as boolean })
-                  }
+                  onCheckedChange={(checked) => updateFormData({ isMinor: checked as boolean })}
                 />
                 <div className="grid gap-1.5 leading-none">
                   <Label
                     className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     htmlFor="is-minor"
                   >
-                    Paciente menor de idade (requer consentimento do
-                    responsável)
+                    Paciente menor de idade (requer consentimento do responsável)
                   </Label>
                 </div>
               </div>
@@ -847,9 +809,7 @@ export function CosmeticConsentBrazilian({
                     </Label>
                     <Input
                       id="guardian-name"
-                      onChange={(e) =>
-                        updateFormData({ guardianName: e.target.value })
-                      }
+                      onChange={(e) => updateFormData({ guardianName: e.target.value })}
                       placeholder="Nome completo do responsável"
                       required
                       value={formData.guardianName}
@@ -862,9 +822,7 @@ export function CosmeticConsentBrazilian({
                     </Label>
                     <Input
                       id="guardian-relationship"
-                      onChange={(e) =>
-                        updateFormData({ guardianRelationship: e.target.value })
-                      }
+                      onChange={(e) => updateFormData({ guardianRelationship: e.target.value })}
                       placeholder="Ex: Pai, Mãe, Tutor legal"
                       required
                       value={formData.guardianRelationship}
@@ -876,8 +834,7 @@ export function CosmeticConsentBrazilian({
                       checked={formData.guardianConsent}
                       id="guardian-consent"
                       onCheckedChange={(checked) =>
-                        updateFormData({ guardianConsent: checked as boolean })
-                      }
+                        updateFormData({ guardianConsent: checked as boolean })}
                     />
                     <div className="grid gap-1.5 leading-none">
                       <Label
@@ -887,8 +844,8 @@ export function CosmeticConsentBrazilian({
                         Como responsável legal, autorizo o tratamento proposto *
                       </Label>
                       <p className="text-muted-foreground text-xs">
-                        O responsável declara ter compreendido todos os termos e
-                        autoriza o tratamento.
+                        O responsável declara ter compreendido todos os termos e autoriza o
+                        tratamento.
                       </p>
                     </div>
                   </div>
@@ -902,16 +859,15 @@ export function CosmeticConsentBrazilian({
                   checked={formData.witnessRequired}
                   id="witness-required"
                   onCheckedChange={(checked) =>
-                    updateFormData({ witnessRequired: checked as boolean })
-                  }
+                    updateFormData({ witnessRequired: checked as boolean })}
                 />
                 <div className="grid gap-1.5 leading-none">
                   <Label
                     className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     htmlFor="witness-required"
                   >
-                    Presença de testemunha (opcional, mas recomendado para
-                    procedimentos de alto risco)
+                    Presença de testemunha (opcional, mas recomendado para procedimentos de alto
+                    risco)
                   </Label>
                 </div>
               </div>
@@ -921,15 +877,12 @@ export function CosmeticConsentBrazilian({
                   <Label htmlFor="witness-name">Nome da Testemunha</Label>
                   <Input
                     id="witness-name"
-                    onChange={(e) =>
-                      updateFormData({ witnessName: e.target.value })
-                    }
+                    onChange={(e) => updateFormData({ witnessName: e.target.value })}
                     placeholder="Nome completo da testemunha"
                     value={formData.witnessName}
                   />
                   <p className="text-muted-foreground text-xs">
-                    A testemunha deve estar presente durante a assinatura do
-                    consentimento.
+                    A testemunha deve estar presente durante a assinatura do consentimento.
                   </p>
                 </div>
               )}
@@ -940,8 +893,8 @@ export function CosmeticConsentBrazilian({
               <Alert>
                 <Signature className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Assinatura Digital:</strong> Sua assinatura confirma
-                  que leu, compreendeu e concorda com todos os termos do
+                  <strong>Assinatura Digital:</strong>{" "}
+                  Sua assinatura confirma que leu, compreendeu e concorda com todos os termos do
                   consentimento.
                 </AlertDescription>
               </Alert>
@@ -953,9 +906,7 @@ export function CosmeticConsentBrazilian({
                   </Label>
                   <Textarea
                     id="additional-notes"
-                    onChange={(e) =>
-                      updateFormData({ additionalNotes: e.target.value })
-                    }
+                    onChange={(e) => updateFormData({ additionalNotes: e.target.value })}
                     placeholder="Inclua qualquer observação ou solicitação especial..."
                     rows={3}
                     value={formData.additionalNotes}
@@ -968,16 +919,14 @@ export function CosmeticConsentBrazilian({
                   </Label>
                   <Input
                     id="patient-signature"
-                    onChange={(e) =>
-                      updateFormData({ patientSignature: e.target.value })
-                    }
+                    onChange={(e) => updateFormData({ patientSignature: e.target.value })}
                     placeholder="Digite seu nome completo como assinatura"
                     required
                     value={formData.patientSignature}
                   />
                   <p className="text-muted-foreground text-xs">
-                    Digite seu nome completo. Esta assinatura digital tem
-                    validade legal conforme a legislação brasileira.
+                    Digite seu nome completo. Esta assinatura digital tem validade legal conforme a
+                    legislação brasileira.
                   </p>
                 </div>
 
@@ -1006,27 +955,21 @@ export function CosmeticConsentBrazilian({
                     </p>
                     <ul className="mt-2 space-y-1">
                       <li className="flex items-center gap-2">
-                        {formData.treatmentConsentGranted ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 text-red-500" />
-                        )}
+                        {formData.treatmentConsentGranted
+                          ? <CheckCircle className="h-4 w-4 text-green-500" />
+                          : <X className="h-4 w-4 text-red-500" />}
                         Consentimento para Tratamento
                       </li>
                       <li className="flex items-center gap-2">
-                        {formData.dataProcessingConsent ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 text-red-500" />
-                        )}
+                        {formData.dataProcessingConsent
+                          ? <CheckCircle className="h-4 w-4 text-green-500" />
+                          : <X className="h-4 w-4 text-red-500" />}
                         Processamento de Dados LGPD
                       </li>
                       <li className="flex items-center gap-2">
-                        {formData.patientSignature.trim() ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 text-red-500" />
-                        )}
+                        {formData.patientSignature.trim()
+                          ? <CheckCircle className="h-4 w-4 text-green-500" />
+                          : <X className="h-4 w-4 text-red-500" />}
                         Assinatura Digital
                       </li>
                     </ul>
@@ -1036,27 +979,21 @@ export function CosmeticConsentBrazilian({
                     <p className="font-medium">Consentimentos Opcionais:</p>
                     <ul className="mt-2 space-y-1">
                       <li className="flex items-center gap-2">
-                        {formData.photoDocumentationConsent ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 text-gray-400" />
-                        )}
+                        {formData.photoDocumentationConsent
+                          ? <CheckCircle className="h-4 w-4 text-green-500" />
+                          : <X className="h-4 w-4 text-gray-400" />}
                         Documentação Fotográfica
                       </li>
                       <li className="flex items-center gap-2">
-                        {formData.marketingConsent ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 text-gray-400" />
-                        )}
+                        {formData.marketingConsent
+                          ? <CheckCircle className="h-4 w-4 text-green-500" />
+                          : <X className="h-4 w-4 text-gray-400" />}
                         Uso para Marketing
                       </li>
                       <li className="flex items-center gap-2">
-                        {formData.researchConsent ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <X className="h-4 w-4 text-gray-400" />
-                        )}
+                        {formData.researchConsent
+                          ? <CheckCircle className="h-4 w-4 text-green-500" />
+                          : <X className="h-4 w-4 text-gray-400" />}
                         Pesquisa Científica
                       </li>
                     </ul>
@@ -1065,38 +1002,37 @@ export function CosmeticConsentBrazilian({
 
                 <Button
                   className="w-full"
-                  disabled={
-                    !(
-                      formData.treatmentConsentGranted &&
-                      formData.dataProcessingConsent &&
-                      formData.patientSignature.trim()
-                    ) ||
-                    isSubmitting ||
-                    (formData.isMinor &&
-                      !(
+                  disabled={!(
+                    formData.treatmentConsentGranted
+                    && formData.dataProcessingConsent
+                    && formData.patientSignature.trim()
+                  )
+                    || isSubmitting
+                    || (formData.isMinor
+                      && !(
                         formData.guardianConsent && formData.guardianName.trim()
-                      ))
-                  }
+                      ))}
                   onClick={handleSubmitConsent}
                   size="lg"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-white border-b-2" />
-                      Processando Consentimento...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="mr-2 h-4 w-4" />
-                      Confirmar Consentimento
-                    </>
-                  )}
+                  {isSubmitting
+                    ? (
+                      <>
+                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-white border-b-2" />
+                        Processando Consentimento...
+                      </>
+                    )
+                    : (
+                      <>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Confirmar Consentimento
+                      </>
+                    )}
                 </Button>
 
                 <p className="text-center text-muted-foreground text-xs">
-                  Este documento será arquivado digitalmente com timestamp e
-                  assinatura eletrônica conforme as normas brasileiras de
-                  validade jurídica.
+                  Este documento será arquivado digitalmente com timestamp e assinatura eletrônica
+                  conforme as normas brasileiras de validade jurídica.
                 </p>
               </div>
             </TabsContent>

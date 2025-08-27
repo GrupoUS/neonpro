@@ -22,7 +22,7 @@ interface AnalyticsEvent {
   type: string;
   category: string;
   action: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
   patientId?: string;
@@ -150,8 +150,8 @@ interface Widget {
   title: string;
   description: string;
   dataSource: string;
-  configuration: Record<string, any>;
-  position: { x: number; y: number; width: number; height: number };
+  configuration: Record<string, unknown>;
+  position: { x: number; y: number; width: number; height: number; };
   refreshRate: number;
   isVisible: boolean;
 }
@@ -159,7 +159,7 @@ interface Widget {
 interface DashboardFilter {
   field: string;
   operator: string;
-  value: any;
+  value: unknown;
   label: string;
 }
 
@@ -168,7 +168,7 @@ interface Report {
   name: string;
   type: ReportType;
   description: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   schedule?: ReportSchedule;
   format: ReportFormat;
   recipients: string[];
@@ -192,7 +192,7 @@ interface Insight {
   type: InsightType;
   title: string;
   description: string;
-  data: any;
+  data: unknown;
   confidence: number;
   importance: InsightImportance;
   actionable: boolean;
@@ -213,7 +213,7 @@ interface Trend {
 interface TrendDataPoint {
   timestamp: number;
   value: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // ================================================
@@ -279,11 +279,11 @@ interface TrackEventRequest {
   type: string;
   category: string;
   action: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
   patientId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface GetMetricsRequest {
@@ -291,7 +291,7 @@ interface GetMetricsRequest {
   startDate: Date;
   endDate: Date;
   granularity?: "hour" | "day" | "week" | "month";
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   metrics?: string[];
 }
 
@@ -309,7 +309,7 @@ interface CreateReportRequest {
   name: string;
   type: ReportType;
   description: string;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   schedule?: ReportSchedule;
   format: ReportFormat;
   recipients: string[];
@@ -454,7 +454,8 @@ export class AnalyticsService extends EnhancedServiceBase {
     return this.executeOperation(
       "getHealthcareMetrics",
       async () => {
-        const cacheKey = `healthcare_metrics_${request.tenantId}_${request.startDate.getTime()}_${request.endDate.getTime()}`;
+        const cacheKey =
+          `healthcare_metrics_${request.tenantId}_${request.startDate.getTime()}_${request.endDate.getTime()}`;
 
         // Try cache first
         const cached = await this.cache.get<HealthcareMetrics>(cacheKey);
@@ -609,7 +610,7 @@ export class AnalyticsService extends EnhancedServiceBase {
   async getDashboardData(
     dashboardId: string,
     context: ServiceContext,
-  ): Promise<Record<string, any>> {
+  ): Promise<Record<string, unknown>> {
     return this.executeOperation(
       "getDashboardData",
       async () => {
@@ -619,13 +620,13 @@ export class AnalyticsService extends EnhancedServiceBase {
         }
 
         const cacheKey = `dashboard_data_${dashboardId}`;
-        const cached = await this.cache.get<Record<string, any>>(cacheKey);
+        const cached = await this.cache.get<Record<string, unknown>>(cacheKey);
         if (cached) {
           return cached;
         }
 
         // Generate data for each widget
-        const dashboardData: Record<string, any> = {};
+        const dashboardData: Record<string, unknown> = {};
 
         for (const widget of dashboard.widgets) {
           if (widget.isVisible) {
@@ -1009,7 +1010,7 @@ export class AnalyticsService extends EnhancedServiceBase {
   private async generateWidgetData(
     widget: Widget,
     _context: ServiceContext,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Generate data based on widget type and data source
     switch (widget.type) {
       case WidgetType.METRIC: {
@@ -1062,8 +1063,7 @@ export class AnalyticsService extends EnhancedServiceBase {
         id: `insight_${Date.now()}_2`,
         type: InsightType.ANOMALY,
         title: "Taxa de cancelamento acima do normal",
-        description:
-          "A taxa de cancelamento desta semana está 25% acima da média histórica.",
+        description: "A taxa de cancelamento desta semana está 25% acima da média histórica.",
         data: { currentRate: 12.5, normalRate: 10, increase: 25 },
         confidence: 0.92,
         importance: InsightImportance.HIGH,
@@ -1086,14 +1086,13 @@ export class AnalyticsService extends EnhancedServiceBase {
     return Array.from({ length: 30 }, (_, _i) => 100 + Math.random() * 20 - 10);
   }
 
-  private detectStatisticalAnomalies(data: number[]): any[] {
+  private detectStatisticalAnomalies(data: number[]): unknown[] {
     // Simple anomaly detection using z-score
     const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
-    const variance =
-      data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
+    const variance = data.reduce((sum, value) => sum + (value - mean) ** 2, 0) / data.length;
     const stdDev = Math.sqrt(variance);
 
-    const anomalies: any[] = [];
+    const anomalies: unknown[] = [];
     const threshold = 2; // 2 standard deviations
 
     data.forEach((value, index) => {
@@ -1112,7 +1111,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     return anomalies;
   }
 
-  private analyzeAnomalies(anomalies: any[], metric: string): string {
+  private analyzeAnomalies(anomalies: unknown[], metric: string): string {
     if (anomalies.length === 0) {
       return `Nenhuma anomalia detectada na métrica ${metric}.`;
     }
@@ -1126,7 +1125,7 @@ export class AnalyticsService extends EnhancedServiceBase {
   }
 
   private generateAnomalyRecommendations(
-    anomalies: any[],
+    anomalies: unknown[],
     _metric: string,
   ): string[] {
     if (anomalies.length === 0) {
@@ -1187,7 +1186,7 @@ export class AnalyticsService extends EnhancedServiceBase {
   private async generateReportData(
     report: Report,
     _context: ServiceContext,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Generate report data based on type
     switch (report.type) {
       case ReportType.PERFORMANCE: {
@@ -1202,7 +1201,7 @@ export class AnalyticsService extends EnhancedServiceBase {
     }
   }
 
-  private async createReportFile(report: Report, _data: any): Promise<string> {
+  private async createReportFile(report: Report, _data: unknown): Promise<string> {
     // Create report file in specified format
     const fileId = `report_${report.id}_${Date.now()}`;
     return fileId;

@@ -14,7 +14,7 @@ import { z } from "zod";
 // Constants for compliance scoring
 const MIN_SCORE = 0;
 const MAX_SCORE = 10;
-const REQUIRED_COMPLIANCE_THRESHOLD = 9.9;
+const { 9: REQUIRED_COMPLIANCE_THRESHOLD } = 9;
 const MIN_STRING_LENGTH = 1;
 
 /**
@@ -222,20 +222,20 @@ const ConsentRecordSchema = z.object({
 // Grouped exports
 export {
   ANVISAComplianceCategory,
+  type AuditTrailEntry,
   AuditTrailEntrySchema,
   type BaseComplianceEntity,
   CFMProfessionalCategory,
-  ComplianceScoreSchema,
   type ComplianceScore,
+  ComplianceScoreSchema,
   ComplianceStatus,
-  ComplianceViolationSchema,
   type ComplianceValidationResult,
   type ComplianceViolation,
-  ConsentRecordSchema,
+  ComplianceViolationSchema,
   type ConsentRecord,
+  ConsentRecordSchema,
   HealthcareConsentType,
   HealthcareRegulation,
   LGPDDataSubjectRights,
   PatientDataClassification,
-  type AuditTrailEntry,
 };

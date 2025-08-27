@@ -41,7 +41,7 @@ export function QuickActionsSection() {
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
           {quickActions.map((action, index) => {
-            const IconComponent = action.icon;
+            const { icon: IconComponent } = action;
             return (
               <Button
                 className={`flex h-20 flex-col items-center justify-center gap-2 p-4 ${action.color} border-0 text-white transition-all duration-200 hover:scale-105`}

@@ -15,15 +15,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
-import {
-  AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Plus,
-  Settings,
-  Trash2,
-  X,
-} from "lucide-react";
+import { AlertTriangle, Calendar, CheckCircle, Plus, Settings, Trash2, X } from "lucide-react";
 import { useState } from "react";
 
 // Types for scheduling
@@ -249,8 +241,7 @@ export default function SchedulingModal({
               Agendamento de Relatórios
             </h2>
             <p className="text-slate-400 text-sm">
-              Automatize a geração e distribuição de:{" "}
-              <strong>{reportName}</strong>
+              Automatize a geração e distribuição de: <strong>{reportName}</strong>
             </p>
           </div>
           <Button
@@ -279,9 +270,7 @@ export default function SchedulingModal({
               <div className="space-y-4">
                 <Label className="font-medium text-white">Frequência</Label>
                 <Select
-                  onValueChange={(value: ScheduleFrequency) =>
-                    setFrequency(value)
-                  }
+                  onValueChange={(value: ScheduleFrequency) => setFrequency(value)}
                   value={frequency}
                 >
                   <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -380,9 +369,7 @@ export default function SchedulingModal({
                     <div className="flex gap-2" key={index}>
                       <Input
                         className="flex-1 border-slate-700 bg-slate-800 text-white"
-                        onChange={(e) =>
-                          handleRecipientChange(index, e.target.value)
-                        }
+                        onChange={(e) => handleRecipientChange(index, e.target.value)}
                         placeholder="email@exemplo.com"
                         type="email"
                         value={email}
@@ -407,9 +394,7 @@ export default function SchedulingModal({
                 <div className="space-y-2">
                   <Label className="font-medium text-white">Formato</Label>
                   <Select
-                    onValueChange={(value: "pdf" | "excel" | "both") =>
-                      setFormat(value)
-                    }
+                    onValueChange={(value: "pdf" | "excel" | "both") => setFormat(value)}
                     value={format}
                   >
                     <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -428,9 +413,7 @@ export default function SchedulingModal({
                     Método de Entrega
                   </Label>
                   <Select
-                    onValueChange={(value: DeliveryMethod) =>
-                      setDeliveryMethod(value)
-                    }
+                    onValueChange={(value: DeliveryMethod) => setDeliveryMethod(value)}
                     value={deliveryMethod}
                   >
                     <SelectTrigger className="border-slate-700 bg-slate-800 text-white">
@@ -493,10 +476,10 @@ export default function SchedulingModal({
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Aviso LGPD:</strong> Este agendamento processará dados
-                  pessoais. Certifique-se de que existe base legal adequada e
-                  consentimento dos titulares para o compartilhamento automático
-                  dos relatórios.
+                  <strong>Aviso LGPD:</strong>{" "}
+                  Este agendamento processará dados pessoais. Certifique-se de que existe base legal
+                  adequada e consentimento dos titulares para o compartilhamento automático dos
+                  relatórios.
                 </AlertDescription>
               </Alert>
 
@@ -558,11 +541,9 @@ export default function SchedulingModal({
                     <div>
                       <p className="text-slate-400">LGPD</p>
                       <p className="text-white">
-                        {schedule.lgpdCompliant ? (
-                          <CheckCircle className="inline h-4 w-4 text-green-400" />
-                        ) : (
-                          <AlertTriangle className="inline h-4 w-4 text-yellow-400" />
-                        )}
+                        {schedule.lgpdCompliant
+                          ? <CheckCircle className="inline h-4 w-4 text-green-400" />
+                          : <AlertTriangle className="inline h-4 w-4 text-yellow-400" />}
                       </p>
                     </div>
                   </div>

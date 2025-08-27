@@ -52,7 +52,7 @@ export function SystemStatusSection() {
       <CardContent>
         <div className="space-y-4">
           {systemStatus.map((service, index) => {
-            const IconComponent = service.icon;
+            const { icon: IconComponent } = service;
             return (
               <div
                 className="flex items-center justify-between rounded-lg bg-muted/30 p-3"

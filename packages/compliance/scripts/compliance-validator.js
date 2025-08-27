@@ -16,9 +16,6 @@ class ComplianceValidator {
   }
 
   log(message, type = "info") {
-    const _timestamp = new Date().toISOString();
-    const _prefix = type === "error" ? "❌" : type === "warning" ? "⚠️" : "✅";
-
     if (type === "error") {
       this.issues.push(message);
     } else {

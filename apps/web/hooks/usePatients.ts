@@ -60,14 +60,13 @@ export function usePatients(): PatientsHook {
   const recentPatients = useMemo(() => {
     return patients
       .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       )
       .slice(0, 10);
   }, [patients]);
 
   // Total count
-  const totalCount = patients.length;
+  const { length: totalCount } = patients;
 
   // Função para buscar paciente por ID
   const getPatientById = useCallback(
@@ -111,13 +110,11 @@ export function usePatients(): PatientsHook {
               prev.map((patient) =>
                 patient.id === payload.new.id
                   ? (payload.new as Patient)
-                  : patient,
-              ),
+                  : patient
+              )
             );
           } else if (payload.eventType === "DELETE") {
-            setPatients((prev) =>
-              prev.filter((patient) => patient.id !== payload.old.id),
-            );
+            setPatients((prev) => prev.filter((patient) => patient.id !== payload.old.id));
           }
         },
       )

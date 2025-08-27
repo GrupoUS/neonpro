@@ -76,10 +76,10 @@ export function useStaffMembers(): StaffHook {
   }, [staffMembers]);
 
   // Total de funcionários
-  const totalStaff = staffMembers.length;
+  const { length: totalStaff } = staffMembers;
 
   // Total de funcionários ativos
-  const activeStaffCount = activeStaff.length;
+  const { length: activeStaffCount } = activeStaff;
 
   // Função para atualizar a lista de staff
   const refreshStaff = useCallback(async () => {
@@ -110,13 +110,11 @@ export function useStaffMembers(): StaffHook {
               prev.map((staff) =>
                 staff.id === payload.new.id
                   ? (payload.new as StaffMember)
-                  : staff,
-              ),
+                  : staff
+              )
             );
           } else if (payload.eventType === "DELETE") {
-            setStaffMembers((prev) =>
-              prev.filter((staff) => staff.id !== payload.old.id),
-            );
+            setStaffMembers((prev) => prev.filter((staff) => staff.id !== payload.old.id));
           }
         },
       )

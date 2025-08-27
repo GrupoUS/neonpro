@@ -6,13 +6,6 @@
 
 import { execSync } from "node:child_process";
 import { existsSync, writeFileSync } from "node:fs";
-
-const _HEALTHCARE_REQUIREMENTS = {
-  node: ">=20.0.0",
-  pnpm: ">=8.0.0",
-  qualityThreshold: 9.9,
-};
-
 function executeCommand(command, _description) {
   try {
     execSync(command, { stdio: "inherit" });
@@ -23,13 +16,10 @@ function executeCommand(command, _description) {
 
 function validateEnvironment() {
   // Check Node.js version
-  const _nodeVersion = process.version;
+  const { version: _nodeVersion } = process;
 
   // Check pnpm
   try {
-    const _pnpmVersion = execSync("pnpm --version", {
-      encoding: "utf8",
-    }).trim();
   } catch {
     process.exit(1);
   }

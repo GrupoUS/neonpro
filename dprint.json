@@ -8,7 +8,6 @@
     "**/*.{ts,tsx,js,jsx,mjs,cjs,mts,cts,json,jsonc,md,toml,yaml,yml,css,scss,sass,less,Dockerfile}"
   ],
   "excludes": [
-    // Version control and build outputs
     "**/.git/**",
     "**/.turbo/**",
     "**/.next/**",
@@ -18,24 +17,19 @@
     "**/coverage/**",
     "**/playwright-report/**",
     "**/.vercel/**",
-
-    // IDE and development tool configurations (as requested by user)
     "**/.claude/**",
     "**/.github/**",
     "**/.vscode/**",
     "**/.idea/**",
     "**/.trae/**",
     "**/.ruler/**",
-
-    // Test and report outputs
+    "**/scripts/**",
     "**/tools/testing/reports/assets/**",
     "**/tools/e2e/reports/**",
     "**/tools/reports/**",
     "**/test-results/**",
     "**/performance-report.json",
     "**/load-test-report.json",
-
-    // Legacy and archive projects
     "archon/**",
     "serena/**",
     "**/temp-*/**",
@@ -43,64 +37,60 @@
     "**/backups/**",
     "**/deprecated/**",
     "**/legacy/**",
-
-    // Lock files and generated files
     "**/pnpm-lock.yaml",
     "**/package-lock.json",
     "**/yarn.lock",
     "**/tsconfig.tsbuildinfo",
     "**/*.d.ts",
-
-    // Environment and config files that shouldn't be formatted
+    "**/packages/types/src/database.ts",
+    "**/*.generated.*",
+    "**/supabase/migrations/**",
+    "**/supabase/types/**",
+    "**/logs/**",
     "**/.env*",
     "**/sentry.*.config.*",
     "**/instrumentation*.ts"
   ],
 
   "typescript": {
-    "quoteStyle": "alwaysDouble",
-    "jsx.quoteStyle": "alwaysDouble",
+    "quoteStyle": "preferDouble",
     "semiColons": "always",
     "trailingCommas": "onlyMultiLine",
     "operatorPosition": "nextLine",
     "module.sortImportDeclarations": "caseInsensitive",
     "module.sortExportDeclarations": "caseInsensitive",
     "useBraces": "whenNotSingleLine",
-    "bracePosition": "sameLineUnlessHanging"
+    "bracePosition": "sameLineUnlessHanging",
+    "nextControlFlowPosition": "sameLine",
+    "singleBodyPosition": "maintain",
+    "jsx.quoteStyle": "preferDouble",
+    "jsx.multiLineParens": "prefer",
+    "commentLine.forceSpaceAfterSlashes": true
   },
   "json": {
     "indentWidth": 2,
     "trailingCommas": "never"
   },
   "markdown": {
-    "textWrap": "maintain",
-    "emphasis": "*",
-    "strong": "**"
+    "textWrap": "maintain"
   },
   "yaml": {
     "indentWidth": 2
   },
 
   "plugins": [
-    // TypeScript/JavaScript - versão mais recente (0.95.10)
     "https://plugins.dprint.dev/typescript-0.95.10.wasm",
 
-    // JSON - versão mais recente (0.20.0)
     "https://plugins.dprint.dev/json-0.20.0.wasm",
 
-    // Markdown - versão mais recente (0.19.0)
     "https://plugins.dprint.dev/markdown-0.19.0.wasm",
 
-    // TOML - versão mais recente (0.7.0)
     "https://plugins.dprint.dev/toml-0.7.0.wasm",
 
-    // YAML - versão mais recente (v0.5.1)
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm",
 
-    // CSS/SCSS - versão mais recente (v0.14.2)
     "https://plugins.dprint.dev/g-plane/malva-v0.14.2.wasm",
 
-    // Dockerfile - versão mais recente (0.3.3)
     "https://plugins.dprint.dev/dockerfile-0.3.3.wasm"
   ]
 }

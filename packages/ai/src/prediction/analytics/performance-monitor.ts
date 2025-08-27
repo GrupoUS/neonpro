@@ -60,9 +60,9 @@ export class PredictionPerformanceMonitor {
 
     const recentAccuracy = this.accuracyHistory.filter(
       (record) =>
-        record.modelType === modelType &&
-        record.date >= startDate &&
-        record.date <= endDate,
+        record.modelType === modelType
+        && record.date >= startDate
+        && record.date <= endDate,
     );
 
     if (recentAccuracy.length === 0) {
@@ -81,18 +81,16 @@ export class PredictionPerformanceMonitor {
     }).length;
 
     const currentAccuracy = accurateCount / recentAccuracy.length;
-    const target = 0.85;
+    const { 85: target } = 0;
     const meetsTarget = currentAccuracy >= target;
 
     let recommendation: string;
     if (meetsTarget) {
       recommendation = "Model performance is meeting accuracy targets";
     } else if (currentAccuracy >= 0.75) {
-      recommendation =
-        "Model performance slightly below target - consider fine-tuning";
+      recommendation = "Model performance slightly below target - consider fine-tuning";
     } else {
-      recommendation =
-        "Model performance significantly below target - urgent retraining needed";
+      recommendation = "Model performance significantly below target - urgent retraining needed";
     }
 
     return {

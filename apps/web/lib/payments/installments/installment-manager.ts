@@ -1,4 +1,4 @@
-﻿// Installment Manager - Mock implementation for build compatibility
+// Installment Manager - Mock implementation for build compatibility
 
 class InstallmentManager {
   getPaymentPlan(planId: string) {
@@ -127,7 +127,7 @@ class InstallmentManager {
   }
 }
 
-const getInstallmentManager = function (): InstallmentManager {
+const getInstallmentManager = function getInstallmentManager(): InstallmentManager {
   return new InstallmentManager();
 };
 

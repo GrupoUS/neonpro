@@ -52,7 +52,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 if (e.target.value) {
                   onDateChange(new Date(e.target.value));
                 } else {
-                  onDateChange(undefined);
+                  onDateChange();
                 }
                 setOpen(false);
               }}

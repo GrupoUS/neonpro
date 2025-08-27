@@ -26,7 +26,7 @@ export interface CreateSessionRequest {
 export interface UpdateSessionRequest {
   lastActivity?: Date;
   expiresAt?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface DeviceRegistration {
@@ -45,7 +45,7 @@ export interface SessionSecurityEvent {
   sessionId: string;
   eventType: SecurityEventType;
   severity: "low" | "medium" | "high" | "critical";
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   timestamp: Date;
   resolved?: boolean;
 }

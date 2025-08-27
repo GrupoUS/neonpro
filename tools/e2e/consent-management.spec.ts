@@ -309,13 +309,6 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
     await consentType.selectOption("medical-procedure");
 
     // Should require all informed consent elements
-    const _requiredFields = [
-      '[data-testid="procedure-name"]',
-      '[data-testid="procedure-description"]',
-      '[data-testid="procedure-risks"]',
-      '[data-testid="expected-results"]',
-    ];
-
     // Try to save without filling required fields
     await page.click('[data-testid="save-consent"]');
 
@@ -325,9 +318,7 @@ test.describe("Consent Management - Medical Procedure Consent", () => {
     ).toBeVisible();
   });
 
-  test("should include ANVISA compliance for aesthetic procedures", async ({
-    page,
-  }) => {
+  test("should include ANVISA compliance for aesthetic procedures", async ({ page }) => {
     // Create aesthetic procedure consent
     const createConsentButton = page
       .locator('[data-testid="create-consent"]')
@@ -496,9 +487,7 @@ test.describe("Consent Management - Digital Signatures", () => {
     }
   });
 
-  test("should capture witness signature for critical procedures", async ({
-    page,
-  }) => {
+  test("should capture witness signature for critical procedures", async ({ page }) => {
     // Create high-risk procedure consent
     const createConsentButton = page
       .locator('[data-testid="create-consent"]')
@@ -751,9 +740,9 @@ test.describe("Consent Management - Accessibility & Performance", () => {
         const firstField = formFields.first();
         const hasLabel = await firstField.evaluate((el) => {
           return (
-            el.labels?.length > 0 ||
-            el.getAttribute("aria-label") ||
-            el.getAttribute("aria-labelledby")
+            el.labels?.length > 0
+            || el.getAttribute("aria-label")
+            || el.getAttribute("aria-labelledby")
           );
         });
         expect(hasLabel).toBeTruthy();

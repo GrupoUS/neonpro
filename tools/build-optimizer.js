@@ -21,15 +21,6 @@ class BuildOptimizer {
   }
 
   log(message, type = "info") {
-    const _timestamp = new Date().toISOString();
-    const _prefix = {
-      error: "❌",
-      warning: "⚠️ ",
-      success: "✅",
-      info: "ℹ️ ",
-      optimization: "🚀",
-    }[type];
-
     if (type === "optimization") {
       this.optimizations.push(message);
     }
@@ -209,8 +200,7 @@ class BuildOptimizer {
 
         // CI/CD optimized
         ci: "pnpm install --frozen-lockfile && turbo format:check lint type-check test build",
-        "ci:cache":
-          "turbo format:check lint type-check test build --cache-dir=.turbo",
+        "ci:cache": "turbo format:check lint type-check test build --cache-dir=.turbo",
       };
 
       packageJson.scripts = optimizedScripts;
@@ -342,6 +332,7 @@ class BuildOptimizer {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const optimizer = new BuildOptimizer();
   optimizer.runAll().then(() => {
+    return;
     process.exit(0);
   });
 }

@@ -22,7 +22,7 @@ export interface MetricMetadata {
   source?: string;
   environment?: string;
   version?: string;
-  additional_data?: Record<string, any>;
+  additional_data?: Record<string, unknown>;
 }
 
 export interface AlertRule {
@@ -54,7 +54,7 @@ export interface AlertRuleMetadata {
   owner: string;
   escalation_policy?: string;
   tags?: string[];
-  custom_fields?: Record<string, any>;
+  custom_fields?: Record<string, unknown>;
 }
 
 export interface Alert {
@@ -71,7 +71,7 @@ export interface Alert {
   acknowledged_at?: string;
   acknowledged_by?: string;
   message: string;
-  context: Record<string, any>;
+  context: Record<string, unknown>;
 }
 
 export interface MonitoringInput extends AIServiceInput {
@@ -192,8 +192,8 @@ export class MonitoringService extends EnhancedAIService<
     super("monitoring_service");
 
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     );
 
     // Initialize monitoring
@@ -266,8 +266,8 @@ export class MonitoringService extends EnhancedAIService<
     input: MonitoringInput,
   ): Promise<MonitoringOutput> {
     if (
-      !(input.service && input.metric_name) ||
-      input.metric_value === undefined
+      !(input.service && input.metric_name)
+      || input.metric_value === undefined
     ) {
       throw new Error("service, metric_name, and metric_value are required");
     }
@@ -320,8 +320,8 @@ export class MonitoringService extends EnhancedAIService<
     for (const metricData of input.bulk_metrics) {
       try {
         if (
-          !(metricData.service && metricData.metric_name) ||
-          metricData.metric_value === undefined
+          !(metricData.service && metricData.metric_name)
+          || metricData.metric_value === undefined
         ) {
           results.push({
             success: false,
@@ -678,7 +678,7 @@ export class MonitoringService extends EnhancedAIService<
       throw new Error("service is required");
     }
 
-    const service = input.service;
+    const { service: service } = input;
     const now = new Date();
     const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
 
@@ -732,12 +732,11 @@ export class MonitoringService extends EnhancedAIService<
     );
 
     // Determine overall health
-    let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" =
-      "unknown";
+    let overallHealth: "healthy" | "degraded" | "unhealthy" | "unknown" = "unknown";
     if (
-      responseTimeStats.avg_value > 0 ||
-      errorRateStats.avg_value >= 0 ||
-      throughputStats.avg_value > 0
+      responseTimeStats.avg_value > 0
+      || errorRateStats.avg_value >= 0
+      || throughputStats.avg_value > 0
     ) {
       if ((alerts?.length || 0) === 0 && errorRateStats.avg_value < 5) {
         overallHealth = "healthy";
@@ -878,9 +877,9 @@ export class MonitoringService extends EnhancedAIService<
   ): Promise<void> {
     const relevantRules = [...this.alertRules.values()].filter(
       (rule) =>
-        rule.enabled &&
-        rule.metric_name === metric.metric_name &&
-        (!rule.service || rule.service === metric.service),
+        rule.enabled
+        && rule.metric_name === metric.metric_name
+        && (!rule.service || rule.service === metric.service),
     );
 
     for (const rule of relevantRules) {
@@ -897,7 +896,7 @@ export class MonitoringService extends EnhancedAIService<
     rule: AlertRule,
   ): boolean {
     const { operator, threshold_value } = rule;
-    const value = metric.metric_value;
+    const { metric_value: value } = metric;
 
     switch (operator) {
       case ">": {
@@ -927,10 +926,10 @@ export class MonitoringService extends EnhancedAIService<
   private isInCooldown(rule: AlertRule): boolean {
     const existingAlert = [...this.activeAlerts.values()].find(
       (alert) =>
-        alert.rule_id === rule.id &&
-        alert.status === "active" &&
-        Date.now() - new Date(alert.triggered_at).getTime() <
-          rule.cooldown_minutes * 60 * 1000,
+        alert.rule_id === rule.id
+        && alert.status === "active"
+        && Date.now() - new Date(alert.triggered_at).getTime()
+          < rule.cooldown_minutes * 60 * 1000,
     );
 
     return !!existingAlert;
@@ -950,7 +949,8 @@ export class MonitoringService extends EnhancedAIService<
       severity: rule.severity,
       status: "active",
       triggered_at: new Date().toISOString(),
-      message: `${rule.name}: ${metric.metric_name} is ${metric.metric_value} (threshold: ${rule.threshold_value})`,
+      message:
+        `${rule.name}: ${metric.metric_name} is ${metric.metric_value} (threshold: ${rule.threshold_value})`,
       context: {
         metric_tags: metric.tags,
         rule_condition: rule.condition,

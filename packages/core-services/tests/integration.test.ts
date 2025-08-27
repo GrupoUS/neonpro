@@ -17,9 +17,7 @@ describe("core Services Integration", () => {
   let inventoryService: InventoryService;
   let notificationService: NotificationService;
 
-  // Mock repositories
-  const _mockSchedulingRepo = {};
-  const mockTreatmentRepo = {};
+  // Mock repositories  const mockTreatmentRepo = {};
   const mockPatientRepo = {};
   const mockBillingRepo = {};
   const mockInventoryRepo = {};

@@ -11,7 +11,7 @@ const mockCreateClient = createClient as vi.MockedFunction<typeof createClient>;
 vi.mock("@/lib/analytics/service");
 
 describe("analytics Dashboard API Routes", () => {
-  let mockSupabase: any;
+  let mockSupabase: unknown;
 
   beforeEach(() => {
     // Setup mock Supabase client
@@ -172,8 +172,6 @@ describe("analytics Dashboard API Routes", () => {
 
       // Act
       const responses = await Promise.all(requests);
-      const _lastResponse = responses.at(-1);
-
       // Assert
       // At least one request should be rate limited (this is implementation-dependent)
       const rateLimitedResponse = responses.find((res) => res.status === 429);

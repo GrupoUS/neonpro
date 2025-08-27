@@ -4,9 +4,10 @@ export interface EmergencyEvent {
   severity: 1 | 2 | 3 | 4 | 5;
   description: string;
   timestamp: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
+// TODO: Convert to standalone functions
 export class EmergencyResponseService {
   static triggerEmergencyAlert(event: EmergencyEvent): void {
     if (event.severity >= 4) {

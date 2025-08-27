@@ -622,9 +622,7 @@ describe("validation Functions", () => {
 
   describe("validateCreateStockAlertConfig", () => {
     it("should validate valid create config", () => {
-      expect(() =>
-        validateCreateStockAlertConfig(validCreateAlertConfig),
-      ).not.toThrow();
+      expect(() => validateCreateStockAlertConfig(validCreateAlertConfig)).not.toThrow();
     });
 
     it("should throw on invalid create config", () => {
@@ -635,9 +633,7 @@ describe("validation Functions", () => {
 
   describe("validateAcknowledgeAlert", () => {
     it("should validate valid acknowledge request", () => {
-      expect(() =>
-        validateAcknowledgeAlert(validAcknowledgeAlert),
-      ).not.toThrow();
+      expect(() => validateAcknowledgeAlert(validAcknowledgeAlert)).not.toThrow();
     });
 
     it("should throw on invalid acknowledge request", () => {
@@ -683,12 +679,7 @@ describe("edge Cases and Security", () => {
     expect(result.success).toBeFalsy();
   });
 
-  it("should sanitize string inputs", () => {
-    const _configWithWhitespace = {
-      ...validCreateAlertConfig,
-      // Note: reportName trimming is tested in custom reports
-    };
-    // Additional sanitization tests can be added here
+  it("should sanitize string inputs", () => { // Additional sanitization tests can be added here
   });
 
   it("should handle array validation correctly", () => {

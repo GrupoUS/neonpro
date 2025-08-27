@@ -3,22 +3,8 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Bluetooth,
-  Nfc,
-  Plus,
-  Shield,
-  Smartphone,
-  Trash2,
-  Usb,
-} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Bluetooth, Nfc, Plus, Shield, Smartphone, Trash2, Usb } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface WebAuthnCredential {
@@ -62,9 +48,9 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 
   const isWebAuthnSupported = () => {
     return (
-      typeof window !== "undefined" &&
-      "credentials" in navigator &&
-      "create" in navigator.credentials
+      typeof window !== "undefined"
+      && "credentials" in navigator
+      && "create" in navigator.credentials
     );
   };
 
@@ -99,7 +85,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
             id: new Uint8Array(options.user.id),
           },
         },
-      })) as any;
+      })) as unknown;
 
       if (!credential) {
         throw new Error("No credential was created");
@@ -135,7 +121,7 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
 
       // Refresh credentials list
       await fetchCredentials();
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError(error.message || "Failed to register WebAuthn credential");
     } finally {
       setIsRegistering(false);
@@ -207,8 +193,8 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
         <CardContent>
           <Alert>
             <AlertDescription>
-              WebAuthn is not supported in this browser. Please use a modern
-              browser that supports Web Authentication API.
+              WebAuthn is not supported in this browser. Please use a modern browser that supports
+              Web Authentication API.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -246,70 +232,73 @@ export function WebAuthnManager({ className }: WebAuthnManagerProps) {
           </Alert>
         )}
 
-        {loading ? (
-          <div className="py-8 text-center">
-            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-gray-900 border-b-2" />
-            <p className="mt-2 text-muted-foreground text-sm">
-              Loading credentials...
-            </p>
-          </div>
-        ) : credentials.length === 0 ? (
-          <div className="py-8 text-center">
-            <Shield className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="font-semibold text-lg">
-              No Security Keys Registered
-            </h3>
-            <p className="mb-4 text-muted-foreground text-sm">
-              Add a security key or biometric authenticator to enhance your
-              account security
-            </p>
-            <Button disabled={isRegistering} onClick={registerCredential}>
-              <Plus className="mr-2 h-4 w-4" />
-              Register Your First Security Key
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {credentials.map((credential) => (
-              <div
-                className="flex items-center justify-between rounded-lg border p-4"
-                key={credential.id}
-              >
-                <div className="flex-1">
-                  <div className="mb-2 flex items-center gap-2">
-                    <h4 className="font-medium">{credential.name}</h4>
-                    <div className="flex gap-1">
-                      {credential.transports.map((transport) => (
-                        <Badge
-                          className="flex items-center gap-1"
-                          key={transport}
-                          variant="secondary"
-                        >
-                          {getTransportIcon(transport)}
-                          {transport}
-                        </Badge>
-                      ))}
+        {loading
+          ? (
+            <div className="py-8 text-center">
+              <div className="mx-auto h-8 w-8 animate-spin rounded-full border-gray-900 border-b-2" />
+              <p className="mt-2 text-muted-foreground text-sm">
+                Loading credentials...
+              </p>
+            </div>
+          )
+          : credentials.length === 0
+          ? (
+            <div className="py-8 text-center">
+              <Shield className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <h3 className="font-semibold text-lg">
+                No Security Keys Registered
+              </h3>
+              <p className="mb-4 text-muted-foreground text-sm">
+                Add a security key or biometric authenticator to enhance your account security
+              </p>
+              <Button disabled={isRegistering} onClick={registerCredential}>
+                <Plus className="mr-2 h-4 w-4" />
+                Register Your First Security Key
+              </Button>
+            </div>
+          )
+          : (
+            <div className="space-y-3">
+              {credentials.map((credential) => (
+                <div
+                  className="flex items-center justify-between rounded-lg border p-4"
+                  key={credential.id}
+                >
+                  <div className="flex-1">
+                    <div className="mb-2 flex items-center gap-2">
+                      <h4 className="font-medium">{credential.name}</h4>
+                      <div className="flex gap-1">
+                        {credential.transports.map((transport) => (
+                          <Badge
+                            className="flex items-center gap-1"
+                            key={transport}
+                            variant="secondary"
+                          >
+                            {getTransportIcon(transport)}
+                            {transport}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-muted-foreground text-sm">
+                      <p>Created: {formatDate(credential.created_at)}</p>
+                      {credential.last_used_at && (
+                        <p>Last used: {formatDate(credential.last_used_at)}</p>
+                      )}
                     </div>
                   </div>
-                  <div className="text-muted-foreground text-sm">
-                    <p>Created: {formatDate(credential.created_at)}</p>
-                    {credential.last_used_at && (
-                      <p>Last used: {formatDate(credential.last_used_at)}</p>
-                    )}
-                  </div>
+                  <Button
+                    className="text-red-600 hover:text-red-700"
+                    onClick={() => deleteCredential(credential.credential_id)}
+                    size="sm"
+                    variant="outline"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button
-                  className="text-red-600 hover:text-red-700"
-                  onClick={() => deleteCredential(credential.credential_id)}
-                  size="sm"
-                  variant="outline"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
       </CardContent>
     </Card>
   );

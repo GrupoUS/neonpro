@@ -312,8 +312,7 @@ test.describe("🤖 Compliance Automation Suite", () => {
           consent_form: true,
           before_photos: true,
           after_photos: false, // Will be added post-procedure
-          procedure_notes:
-            "Test procedure documentation for compliance validation",
+          procedure_notes: "Test procedure documentation for compliance validation",
         },
         performed_at: new Date().toISOString(),
       };
@@ -428,8 +427,8 @@ test.describe("🤖 Compliance Automation Suite", () => {
 
         // If report is generated immediately, validate structure
         if (
-          reportResult.generation_status === "completed" &&
-          reportResult.report_data
+          reportResult.generation_status === "completed"
+          && reportResult.report_data
         ) {
           expect(reportResult.report_data).toHaveProperty("lgpd_compliance");
           expect(reportResult.report_data).toHaveProperty("anvisa_compliance");

@@ -21,7 +21,7 @@ const updatePlanSchema = z.object({
 // GET /api/subscription-plans/[id] - Get plan details
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   const { id } = await params;
   const planId = id;
@@ -69,12 +69,9 @@ export async function GET(
 
     const stats = {
       total_subscriptions: subscriptionStats?.length || 0,
-      active_subscriptions:
-        subscriptionStats?.filter((s) => s.status === "active").length || 0,
-      trialing_subscriptions:
-        subscriptionStats?.filter((s) => s.status === "trialing").length || 0,
-      canceled_subscriptions:
-        subscriptionStats?.filter((s) => s.status === "canceled").length || 0,
+      active_subscriptions: subscriptionStats?.filter((s) => s.status === "active").length || 0,
+      trialing_subscriptions: subscriptionStats?.filter((s) => s.status === "trialing").length || 0,
+      canceled_subscriptions: subscriptionStats?.filter((s) => s.status === "canceled").length || 0,
     };
 
     return NextResponse.json({
@@ -95,7 +92,7 @@ export async function GET(
 // PUT /api/subscription-plans/[id] - Update plan
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   const { id } = await params;
   const planId = id;
@@ -153,8 +150,8 @@ export async function PUT(
 
     // Check if name is being changed and if it conflicts
     if (
-      validationResult.data.name &&
-      validationResult.data.name !== existingPlan.name
+      validationResult.data.name
+      && validationResult.data.name !== existingPlan.name
     ) {
       const { data: conflictingPlan } = await supabase
         .from("subscription_plans")
@@ -200,7 +197,7 @@ export async function PUT(
 // DELETE /api/subscription-plans/[id] - Deactivate plan
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   const { id } = await params;
   try {
@@ -254,8 +251,7 @@ export async function DELETE(
           error: "Cannot deactivate plan with active subscriptions",
           details: {
             active_subscriptions: activeSubscriptions.length,
-            message:
-              "Cancel or migrate all active subscriptions before deactivating the plan",
+            message: "Cancel or migrate all active subscriptions before deactivating the plan",
           },
         },
         { status: 409 },

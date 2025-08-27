@@ -38,28 +38,6 @@ export interface SecurityAlert {
 }
 
 // Validation schemas
-const _SecurityEventSchema = z.object({
-  event_type: z.string(),
-  severity: z.enum(["info", "warning", "error", "critical"]),
-  title: z.string(),
-  description: z.string().optional(),
-  user_id: z.string().optional(),
-  session_id: z.string().optional(),
-  ip_address: z.string().optional(),
-  user_agent: z.string().optional(),
-  event_data: z.record(z.unknown()).optional(),
-});
-
-const _SecurityAlertSchema = z.object({
-  alert_type: z.string(),
-  title: z.string(),
-  description: z.string().optional(),
-  severity: z.enum(["low", "medium", "high", "critical"]),
-  source_type: z.enum(["manual", "automated", "external"]),
-  affected_user_id: z.string().optional(),
-  alert_data: z.record(z.unknown()).optional(),
-});
-
 // Security API class with placeholder implementations
 export class SecurityAPI {
   private static instance: SecurityAPI;
@@ -109,7 +87,7 @@ export class SecurityAPI {
     alert_type?: string;
     page?: number;
     limit?: number;
-  }): Promise<{ data: SecurityAlert[]; count: number }> {
+  }): Promise<{ data: SecurityAlert[]; count: number; }> {
     // Placeholder - replace with actual database query
     return { data: [], count: 0 };
   }
@@ -122,7 +100,7 @@ export class SecurityAPI {
     return;
   }
 
-  async getSecurityMetrics(_period: { start: Date; end: Date }): Promise<{
+  async getSecurityMetrics(_period: { start: Date; end: Date; }): Promise<{
     events: {
       total: number;
       by_severity: Record<string, number>;

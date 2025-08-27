@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { logger } from "../../../utils/logger";
 
 describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
-  let server: any;
+  let server: unknown;
   let baseUrl: string;
 
   beforeAll(async () => {
@@ -92,13 +92,6 @@ describe("🎯 HONO RPC CLIENT INTEGRATION VALIDATION", () => {
         );
 
         // Check for type-related exports
-        const _hasTypeExports = Object.keys(clientModule).some(
-          (key) =>
-            key.includes("Type") ||
-            key.includes("Client") ||
-            key.includes("Api"),
-        );
-
         logger.info("✅ Client module exports:", Object.keys(clientModule));
       } catch (error) {
         logger.error("❌ Type validation failed:", error);

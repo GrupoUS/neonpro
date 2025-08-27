@@ -37,9 +37,7 @@ test.describe("🏥 Healthcare Compliance Workflows", () => {
     await expect(auditLog).toContainText("LGPD consent recorded");
   });
 
-  test("ANVISA Compliance: Professional registration validation", async ({
-    page,
-  }) => {
+  test("ANVISA Compliance: Professional registration validation", async ({ page }) => {
     await page.goto("/professionals/register");
 
     await page.fill('[data-testid="professional-name"]', "Dr. Ana Silva");
@@ -189,9 +187,7 @@ test.describe("🏥 Healthcare Compliance Workflows", () => {
     ).toBeVisible();
   });
 
-  test("Appointment Workflow: Complete healthcare journey", async ({
-    page,
-  }) => {
+  test("Appointment Workflow: Complete healthcare journey", async ({ page }) => {
     await page.goto("/schedule");
     await page.selectOption('[data-testid="doctor-select"]', "dr-ana-silva");
     await page.selectOption('[data-testid="procedure-select"]', "consultation");

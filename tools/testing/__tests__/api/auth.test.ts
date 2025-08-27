@@ -34,7 +34,7 @@ const mockAuthService = {
     return { valid: false, error: "Unknown token format" };
   },
 
-  generateToken: (userData: any) => {
+  generateToken: (userData: unknown) => {
     if (!(userData.email && userData.role)) {
       throw new Error("Email and role required");
     }
@@ -86,7 +86,7 @@ const mockLGPDService = {
     }
     // Mock consent validation
     const hasConsent = dataTypes.every((type) =>
-      ["personal_data", "medical_data", "contact_data"].includes(type),
+      ["personal_data", "medical_data", "contact_data"].includes(type)
     );
     return {
       valid: hasConsent,

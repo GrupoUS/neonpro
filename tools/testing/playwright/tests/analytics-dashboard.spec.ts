@@ -144,13 +144,6 @@ test.describe("Analytics Dashboard E2E", () => {
     await expect(page.getByTestId("analytics-dashboard")).toBeVisible();
 
     // Get initial values
-    const _initialPatients = await page
-      .getByTestId("total-patients-value")
-      .textContent();
-    const _initialRevenue = await page
-      .getByTestId("total-revenue-value")
-      .textContent();
-
     // Click refresh button
     await page.getByRole("button", { name: "Refresh Data" }).click();
 

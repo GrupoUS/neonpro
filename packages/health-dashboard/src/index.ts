@@ -6,7 +6,7 @@ export type {
   HealthCheckResult,
   PerformanceInsight,
   PerformanceMetric,
-} from "@neonpro/performance-monitor";
+} from "@neonpro/monitoring";
 export { CacheMetrics } from "./components/cache-metrics";
 export { PerformanceDashboard } from "./components/dashboard";
 export { MetricWidget, ROIMetric } from "./components/metric-widgets";

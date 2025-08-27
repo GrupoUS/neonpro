@@ -9,7 +9,7 @@ import { vi } from "vitest";
 
 // Get the global Supabase mock instance that was created in vitest.setup.ts
 export const getGlobalSupabaseMock = () => {
-  return (globalThis as any).mockSupabaseClient;
+  return (globalThis as unknown).mockSupabaseClient;
 };
 
 // Utility to reset all global mocks
@@ -17,10 +17,10 @@ export const resetAllGlobalMocks = () => {
   const globalMock = getGlobalSupabaseMock();
   if (globalMock) {
     // Reset all mock call histories recursively
-    const resetMockRecursively = (obj: any) => {
-      Object.values(obj).forEach((value: any) => {
+    const resetMockRecursively = (obj: unknown) => {
+      Object.values(obj).forEach((value: unknown) => {
         if (typeof value === "function" && "mockClear" in value) {
-          (value as any).mockClear();
+          (value as unknown).mockClear();
         } else if (typeof value === "object" && value !== null) {
           resetMockRecursively(value);
         }
@@ -32,7 +32,7 @@ export const resetAllGlobalMocks = () => {
 };
 
 // Helper to set up common Supabase mock behaviors for tests
-export const setupSupabaseMockForTable = (tableName: string, mockData: any) => {
+export const setupSupabaseMockForTable = (tableName: string, mockData: unknown) => {
   const globalMock = getGlobalSupabaseMock();
   if (globalMock?.from) {
     globalMock.from.mockImplementation((table: string) => {

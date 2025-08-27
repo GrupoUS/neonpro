@@ -403,9 +403,7 @@ test.describe("Reports Center - Compliance Reports", () => {
     }
   });
 
-  test("should generate professional license compliance report", async ({
-    page,
-  }) => {
+  test("should generate professional license compliance report", async ({ page }) => {
     // Navigate to professional compliance
     const complianceCategory = page
       .locator('[data-testid="compliance-reports"]')
@@ -559,9 +557,7 @@ test.describe("Reports Center - Financial Reports", () => {
     }
   });
 
-  test("should track payment methods and PIX transactions", async ({
-    page,
-  }) => {
+  test("should track payment methods and PIX transactions", async ({ page }) => {
     // Navigate to payment reports
     const financialCategory = page
       .locator('[data-testid="financial-reports"]')
@@ -1091,9 +1087,7 @@ test.describe("Reports Center - Performance & Accessibility", () => {
     }
   });
 
-  test("should have proper ARIA labels for charts and data", async ({
-    page,
-  }) => {
+  test("should have proper ARIA labels for charts and data", async ({ page }) => {
     await page.goto("/login");
     await page.fill('[data-testid="email"]', "dr.silva@clinic.com");
     await page.fill('[data-testid="password"]', "healthcare123");
@@ -1133,9 +1127,9 @@ test.describe("Reports Center - Performance & Accessibility", () => {
         const firstChart = charts.first();
         const hasAriaLabel = await firstChart.evaluate((el) => {
           return (
-            el.getAttribute("aria-label") ||
-            el.getAttribute("aria-labelledby") ||
-            el.getAttribute("role")
+            el.getAttribute("aria-label")
+            || el.getAttribute("aria-labelledby")
+            || el.getAttribute("role")
           );
         });
         expect(hasAriaLabel).toBeTruthy();

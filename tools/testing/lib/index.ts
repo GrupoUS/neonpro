@@ -21,10 +21,7 @@ export {
 
 // Cache Services
 export * from "./cache/cache-service";
-export {
-  mockCacheService,
-  mockCacheService as cacheService,
-} from "./cache/cache-service";
+export { mockCacheService, mockCacheService as cacheService } from "./cache/cache-service";
 // Monitoring Services
 export * from "./monitoring/monitoring-service";
 export { mockMonitoringService as MonitoringService } from "./monitoring/monitoring-service";

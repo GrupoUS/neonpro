@@ -19,11 +19,9 @@ import path from "node:path";
 
 // Healthcare test configuration constants
 const HEALTHCARE_CONFIG = {
-  TEST_DATABASE_URL:
-    process.env.TEST_DATABASE_URL ||
-    "postgresql://test:test@localhost:5432/neonpro_test",
-  SUPABASE_TEST_URL:
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:54321",
+  TEST_DATABASE_URL: process.env.TEST_DATABASE_URL
+    || "postgresql://test:test@localhost:5432/neonpro_test",
+  SUPABASE_TEST_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || "http://localhost:54321",
   SUPABASE_TEST_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "test-key",
   BASE_URL: process.env.BASE_URL || "http://localhost:3000",
   HEALTHCARE_MODE: "true",
@@ -58,13 +56,13 @@ function setupHealthcareEnvironment() {
   });
 
   // Suppress console warnings during tests (healthcare data privacy)
-  const originalConsoleWarn = console.warn;
+  const { warn: originalConsoleWarn } = console;
   console.warn = (...args) => {
     const message = args.join(" ");
     if (
-      message.includes("Multiple GoTrueClient instances detected") ||
-      message.includes("Supabase client warning") ||
-      message.includes("Healthcare data privacy warning")
+      message.includes("Multiple GoTrueClient instances detected")
+      || message.includes("Supabase client warning")
+      || message.includes("Healthcare data privacy warning")
     ) {
       return; // Suppress healthcare-related warnings
     }

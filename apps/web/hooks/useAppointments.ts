@@ -5,9 +5,9 @@ import type { Database } from "@/types/supabase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
-  patients: { name: string; email: string } | null;
-  staff_members: { name: string; specialty: string } | null;
-  services: { name: string; duration: number } | null;
+  patients: { name: string; email: string; } | null;
+  staff_members: { name: string; specialty: string; } | null;
+  services: { name: string; duration: number; } | null;
 };
 
 interface AppointmentsHook {
@@ -67,9 +67,9 @@ export function useAppointments(): AppointmentsHook {
       .filter((appointment) => {
         const appointmentDate = new Date(appointment.appointment_date);
         return (
-          appointmentDate >= now &&
-          appointmentDate <= thirtyDaysFromNow &&
-          appointment.status === "scheduled"
+          appointmentDate >= now
+          && appointmentDate <= thirtyDaysFromNow
+          && appointment.status === "scheduled"
         );
       })
       .slice(0, 10); // Limitar a 10 próximas consultas
@@ -86,15 +86,15 @@ export function useAppointments(): AppointmentsHook {
       .filter((appointment) => {
         const appointmentDate = new Date(appointment.appointment_date);
         return (
-          appointmentDate >= today &&
-          appointmentDate < tomorrow &&
-          ["scheduled", "confirmed"].includes(appointment.status)
+          appointmentDate >= today
+          && appointmentDate < tomorrow
+          && ["scheduled", "confirmed"].includes(appointment.status)
         );
       })
       .sort(
         (a, b) =>
-          new Date(a.appointment_date).getTime() -
-          new Date(b.appointment_date).getTime(),
+          new Date(a.appointment_date).getTime()
+          - new Date(b.appointment_date).getTime(),
       );
   }, [appointments]);
 
@@ -113,8 +113,8 @@ export function useAppointments(): AppointmentsHook {
         })
         .sort(
           (a, b) =>
-            new Date(a.appointment_date).getTime() -
-            new Date(b.appointment_date).getTime(),
+            new Date(a.appointment_date).getTime()
+            - new Date(b.appointment_date).getTime(),
         );
     },
     [appointments],

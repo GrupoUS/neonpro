@@ -345,9 +345,8 @@ test.describe("Team Management - Accessibility", () => {
 
     for (let i = 0; i < Math.min(buttonCount, 5); i++) {
       const button = buttons.nth(i);
-      const hasLabel =
-        (await button.getAttribute("aria-label")) ||
-        (await button.textContent());
+      const hasLabel = (await button.getAttribute("aria-label"))
+        || (await button.textContent());
       expect(hasLabel).toBeTruthy();
     }
   });

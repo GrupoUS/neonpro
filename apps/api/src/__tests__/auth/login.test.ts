@@ -14,13 +14,6 @@ import type { Context } from "hono";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the Hono app and auth routes
-const _mockApp = {
-  post: vi.fn(),
-  get: vi.fn(),
-  delete: vi.fn(),
-  use: vi.fn(),
-};
-
 // Mock authentication service
 const mockAuthService = {
   login: vi.fn(),
@@ -98,7 +91,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       mockJWT.sign.mockReturnValue(mockTokens.accessToken);
 
       // Mock request context
-      const mockContext = {
+      const _mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
             email: "doctor@neonpro.com.br",
@@ -111,7 +104,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       } as unknown as Context;
 
       // Simulate login endpoint
-      const loginHandler = async (c: Context) => {
+      const _loginHandler = async (c: Context) => {
         const { email, password, tenantId } = await c.req.json();
 
         // Validate healthcare professional
@@ -143,9 +136,6 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           message: "Login realizado com sucesso",
         });
       };
-
-      const _response = await loginHandler(mockContext);
-
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
         where: {
           email: "doctor@neonpro.com.br",
@@ -244,8 +234,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         });
 
         if (user && user.role === "DOCTOR") {
-          const validation =
-            await mockAuthService.validateHealthcareProfessional(user);
+          const validation = await mockAuthService.validateHealthcareProfessional(user);
           if (!validation.isValid) {
             return c.json(
               {
@@ -305,8 +294,6 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         const { refreshToken } = await c.req.json();
 
         // Verify refresh token
-        const _decoded = mockJWT.verify(refreshToken);
-
         // Find active session
         const session = await mockPrisma.session.findUnique({
           where: {

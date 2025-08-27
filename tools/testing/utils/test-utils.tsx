@@ -135,9 +135,7 @@ export const AllTheProviders: React.FC<AllTheProvidersProps> = ({
   children,
   queryClient = createTestQueryClient(),
 }) => {
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 
 // ============================================================================
@@ -157,7 +155,7 @@ export const renderWithProviders = (
 ) => {
   const { queryClient, ...renderOptions } = options;
 
-  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  const Wrapper: React.FC<{ children: React.ReactNode; }> = ({ children }) => (
     <AllTheProviders queryClient={queryClient}>{children}</AllTheProviders>
   );
 
@@ -202,7 +200,7 @@ export const waitFor = (ms: number): Promise<void> =>
 /**
  * Creates mock server responses for fetch requests
  */
-export const createMockResponse = (data: any, status = 200) => ({
+export const createMockResponse = (data: unknown, status = 200) => ({
   ok: status >= 200 && status < 300,
   status,
   json: () => Promise.resolve(data),

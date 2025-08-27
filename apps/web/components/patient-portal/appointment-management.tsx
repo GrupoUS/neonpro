@@ -149,7 +149,7 @@ function AppointmentCard({
   appointment,
   isPast = false,
 }: {
-  appointment: any;
+  appointment: unknown;
   isPast?: boolean;
 }) {
   const getStatusColor = (status: string) => {
@@ -226,10 +226,10 @@ function AppointmentCard({
                   {appointment.status === "confirmed"
                     ? "Confirmado"
                     : appointment.status === "pending"
-                      ? "Pendente"
-                      : appointment.status === "cancelled"
-                        ? "Cancelado"
-                        : "Concluído"}
+                    ? "Pendente"
+                    : appointment.status === "cancelled"
+                    ? "Cancelado"
+                    : "Concluído"}
                 </span>
               </Badge>
             </div>
@@ -484,12 +484,12 @@ function NewAppointmentForm() {
             </h4>
             <div className="space-y-1 text-green-800 text-sm dark:text-green-200">
               <p>
-                <strong>Tratamento:</strong>{" "}
-                {treatmentTypes.find((t) => t.id === selectedTreatment)?.name}
+                <strong>Tratamento:</strong> {treatmentTypes.find((t) =>
+                  t.id === selectedTreatment
+                )?.name}
               </p>
               <p>
-                <strong>Data:</strong>{" "}
-                {new Date(selectedDate).toLocaleDateString("pt-BR", {
+                <strong>Data:</strong> {new Date(selectedDate).toLocaleDateString("pt-BR", {
                   weekday: "long",
                   day: "numeric",
                   month: "long",
@@ -500,12 +500,8 @@ function NewAppointmentForm() {
                 <strong>Horário:</strong> {selectedTime}
               </p>
               <p>
-                <strong>Duração:</strong>{" "}
-                {
-                  treatmentTypes.find((t) => t.id === selectedTreatment)
-                    ?.duration
-                }{" "}
-                minutos
+                <strong>Duração:</strong> {treatmentTypes.find((t) => t.id === selectedTreatment)
+                  ?.duration} minutos
               </p>
               <p>
                 <strong>Valor:</strong> R${" "}
@@ -596,54 +592,58 @@ export function AppointmentManagement() {
         </TabsList>
 
         <TabsContent className="space-y-4" value="upcoming">
-          {mockAppointments.upcoming.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 font-medium text-lg">
-                  Nenhuma consulta agendada
-                </h3>
-                <p className="mb-4 text-center text-muted-foreground">
-                  Que tal agendar sua próxima sessão de tratamento?
-                </p>
-                <Button
-                  className="bg-primary hover:bg-primary-dark"
-                  onClick={() => setShowNewAppointment(true)}
-                >
-                  <Plus className="h-4 w-4" />
-                  Agendar Consulta
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
-            mockAppointments.upcoming.map((appointment) => (
-              <AppointmentCard appointment={appointment} key={appointment.id} />
-            ))
-          )}
+          {mockAppointments.upcoming.length === 0
+            ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />
+                  <h3 className="mb-2 font-medium text-lg">
+                    Nenhuma consulta agendada
+                  </h3>
+                  <p className="mb-4 text-center text-muted-foreground">
+                    Que tal agendar sua próxima sessão de tratamento?
+                  </p>
+                  <Button
+                    className="bg-primary hover:bg-primary-dark"
+                    onClick={() => setShowNewAppointment(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Agendar Consulta
+                  </Button>
+                </CardContent>
+              </Card>
+            )
+            : (
+              mockAppointments.upcoming.map((appointment) => (
+                <AppointmentCard appointment={appointment} key={appointment.id} />
+              ))
+            )}
         </TabsContent>
 
         <TabsContent className="space-y-4" value="past">
-          {mockAppointments.past.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <CheckCircle className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 font-medium text-lg">
-                  Nenhuma consulta anterior
-                </h3>
-                <p className="text-center text-muted-foreground">
-                  Seu histórico de consultas aparecerá aqui
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            mockAppointments.past.map((appointment) => (
-              <AppointmentCard
-                appointment={appointment}
-                isPast
-                key={appointment.id}
-              />
-            ))
-          )}
+          {mockAppointments.past.length === 0
+            ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <CheckCircle className="mb-4 h-12 w-12 text-muted-foreground" />
+                  <h3 className="mb-2 font-medium text-lg">
+                    Nenhuma consulta anterior
+                  </h3>
+                  <p className="text-center text-muted-foreground">
+                    Seu histórico de consultas aparecerá aqui
+                  </p>
+                </CardContent>
+              </Card>
+            )
+            : (
+              mockAppointments.past.map((appointment) => (
+                <AppointmentCard
+                  appointment={appointment}
+                  isPast
+                  key={appointment.id}
+                />
+              ))
+            )}
         </TabsContent>
       </Tabs>
 

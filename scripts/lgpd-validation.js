@@ -144,8 +144,8 @@ async function validateDatabaseSchema() {
 
       for (const table of requiredTables) {
         if (
-          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) ||
-          content.includes(`CREATE TABLE ${table}`)
+          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`)
+          || content.includes(`CREATE TABLE ${table}`)
         ) {
           logSuccess(`LGPD table found in migration: ${table}`);
           foundTables++;
@@ -159,8 +159,8 @@ async function validateDatabaseSchema() {
     for (const file of migrationFiles) {
       const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
       if (
-        content.includes("ENABLE ROW LEVEL SECURITY") ||
-        content.includes("CREATE POLICY")
+        content.includes("ENABLE ROW LEVEL SECURITY")
+        || content.includes("CREATE POLICY")
       ) {
         hasRLS = true;
         logSuccess("Row Level Security (RLS) found in migrations");
@@ -365,8 +365,8 @@ async function validateDataRetention() {
     testPolicies.forEach((policy, index) => {
       const categoryValid = validCategories.has(policy.category);
       const basisValid = validLegalBases.has(policy.legal_basis);
-      const retentionValid =
-        policy.retention.includes("year") || policy.retention.includes("month");
+      const retentionValid = policy.retention.includes("year")
+        || policy.retention.includes("month");
 
       if (categoryValid && basisValid && retentionValid) {
         logSuccess(
@@ -501,9 +501,8 @@ async function validateLGPDConfiguration() {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     // Check for required dependencies
-    const hasSupabase =
-      packageJson.dependencies?.["@supabase/supabase-js"] ||
-      packageJson.devDependencies?.["@supabase/supabase-js"];
+    const hasSupabase = packageJson.dependencies?.["@supabase/supabase-js"]
+      || packageJson.devDependencies?.["@supabase/supabase-js"];
 
     const hasCrypto = true; // crypto is a Node.js built-in module
 

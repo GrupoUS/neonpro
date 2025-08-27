@@ -27,12 +27,6 @@ describe("stock Alerts API", () => {
   });
 
   it("should handle POST /api/stock/alerts", async () => {
-    const _mockAlert = {
-      productId: "prod-1",
-      type: "low_stock",
-      threshold: 10,
-    };
-
     const mockResponse = {
       success: true,
       alertId: "alert-1",

@@ -128,14 +128,14 @@ test.describe("Accessibility Demo", () => {
   test("should work with screen reader announcements", async ({ page }) => {
     // Enable announcements tracking
     await page.addInitScript(() => {
-      (window as any).ariaAnnouncements = [];
+      (window as unknown).ariaAnnouncements = [];
       const originalSetAttribute = Element.prototype.setAttribute;
       Element.prototype.setAttribute = function setAttribute(
         name: string,
         value: string,
       ) {
         if (name === "aria-live" && this.textContent) {
-          (window as any).ariaAnnouncements.push(this.textContent);
+          (window as unknown).ariaAnnouncements.push(this.textContent);
         }
         return originalSetAttribute.call(this, name, value);
       };
@@ -153,7 +153,7 @@ test.describe("Accessibility Demo", () => {
     await page.waitForTimeout(3000);
 
     const announcements = await page.evaluate(
-      () => (window as any).ariaAnnouncements,
+      () => (window as unknown).ariaAnnouncements,
     );
     expect(
       announcements.some((text: string) => text.includes("sucesso")),
@@ -173,7 +173,7 @@ test.describe("Accessibility Audit", () => {
     // Run axe accessibility audit
     const results = await page.evaluate(async () => {
       // @ts-expect-error
-      const axe = window.axe;
+      const { axe: axe } = window;
       return await axe.run();
     });
 

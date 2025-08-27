@@ -11,7 +11,7 @@ import { securityAuditFramework } from "../../lib/auth/security-audit-framework"
 import { sessionManager } from "../../lib/auth/session-manager";
 
 describe("tASK-002: Core Foundation Enhancement Integration Test", () => {
-  let performanceTracker: any;
+  let performanceTracker: unknown;
 
   beforeEach(() => {
     // Reset all mocks
@@ -239,14 +239,11 @@ describe("tASK-002: Core Foundation Enhancement Integration Test", () => {
     it("should provide accessible error handling and feedback", () => {
       // Test accessible error messages
       const errorStates = {
-        authenticationFailed:
-          "Authentication failed. Please check your credentials and try again.",
-        sessionExpired:
-          "Your session has expired. Please log in again to continue.",
+        authenticationFailed: "Authentication failed. Please check your credentials and try again.",
+        sessionExpired: "Your session has expired. Please log in again to continue.",
         securityAlert:
           "Security alert detected. Please contact support if you believe this is an error.",
-        networkError:
-          "Network connection error. Please check your connection and try again.",
+        networkError: "Network connection error. Please check your connection and try again.",
       };
 
       // Verify error messages are descriptive and accessible
@@ -264,8 +261,7 @@ describe("tASK-002: Core Foundation Enhancement Integration Test", () => {
       performanceTracker.startTracking("full-auth-flow");
 
       // 2. Validate initial session
-      const initialValidation =
-        await sessionManager.validateSession("initial-token");
+      const initialValidation = await sessionManager.validateSession("initial-token");
       expect(initialValidation).toBeDefined();
 
       // 3. Extend session
@@ -327,8 +323,7 @@ describe("tASK-002: Core Foundation Enhancement Integration Test", () => {
 
   describe("error Handling and Edge Cases", () => {
     it("should handle invalid session tokens gracefully", async () => {
-      const invalidTokenValidation =
-        await sessionManager.validateSession("invalid-token");
+      const invalidTokenValidation = await sessionManager.validateSession("invalid-token");
       expect(invalidTokenValidation.isValid).toBeFalsy();
       expect(invalidTokenValidation.error).toBeDefined();
     });
@@ -336,7 +331,7 @@ describe("tASK-002: Core Foundation Enhancement Integration Test", () => {
     it("should handle security audit failures with proper fallbacks", async () => {
       // Test audit with invalid parameters
       const invalidAudit = await securityAuditFramework.performAudit(
-        "invalid-type" as any,
+        "invalid-type" as unknown,
       );
       expect(invalidAudit.success).toBeFalsy();
       expect(invalidAudit.error).toBeDefined();

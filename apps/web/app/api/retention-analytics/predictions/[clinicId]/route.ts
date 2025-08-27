@@ -5,10 +5,7 @@
 // =====================================================================================
 
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import {
-  ChurnModelType,
-  ChurnRiskLevel,
-} from "@/app/types/retention-analytics";
+import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -54,7 +51,7 @@ const GeneratePredictionSchema = z
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -146,7 +143,7 @@ export async function GET(
 
     // Date filtering
     if (startDate || endDate) {
-      filteredPredictions = filteredPredictions.filter((prediction: any) => {
+      filteredPredictions = filteredPredictions.filter((prediction: unknown) => {
         const predictionDate = new Date(prediction.prediction_date);
         if (startDate && predictionDate < new Date(startDate)) {
           return false;
@@ -160,7 +157,7 @@ export async function GET(
 
     // Sorting
     filteredPredictions.sort((a, b) => {
-      let valueA: any, valueB: any;
+      let valueA: unknown, valueB: unknown;
 
       switch (sortBy) {
         case "prediction_date": {
@@ -219,11 +216,11 @@ export async function GET(
           (p) => p.risk_level === ChurnRiskLevel.CRITICAL,
         ).length,
       },
-      average_churn_probability:
-        filteredPredictions.reduce((sum, p) => sum + p.churn_probability, 0) /
-          filteredPredictions.length || 0,
+      average_churn_probability: filteredPredictions.reduce((sum, p) =>
+            sum + p.churn_probability, 0)
+          / filteredPredictions.length || 0,
       high_risk_patients: filteredPredictions.filter((p) =>
-        ["high", "critical"].includes(p.risk_level),
+        ["high", "critical"].includes(p.risk_level)
       ).length,
       recent_predictions: filteredPredictions.filter((p) => {
         const predictionDate = new Date(p.prediction_date);
@@ -270,7 +267,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -305,8 +302,7 @@ export async function POST(
       );
     }
 
-    const { patientId, patientIds, modelType, forceRegenerate } =
-      validation.data;
+    const { patientId, patientIds, modelType, forceRegenerate } = validation.data;
 
     // Verify authentication
     const supabase = await createClient();
@@ -382,8 +378,8 @@ export async function POST(
 
     // Generate predictions
     const retentionService = new RetentionAnalyticsService();
-    const results: any[] = [];
-    const errors: any[] = [];
+    const results: unknown[] = [];
+    const errors: unknown[] = [];
 
     // Process in batches for better performance
     const batchSize = 5; // Smaller batch for ML predictions
@@ -435,7 +431,7 @@ export async function POST(
       success_rate: results.length / targetPatientIds.length,
       model_type: modelType,
       high_risk_detected: results.filter((r) =>
-        ["high", "critical"].includes(r.prediction.risk_level),
+        ["high", "critical"].includes(r.prediction.risk_level)
       ).length,
     };
 

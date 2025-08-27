@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       {
         cookies: {
           getAll() {
@@ -69,10 +69,9 @@ export async function GET(request: NextRequest) {
       if (session?.user) {
         // Healthcare audit logging for successful email confirmation
         await logHealthcareEmailConfirmation(session.user.id, type, {
-          ip_address:
-            request.headers.get("x-forwarded-for") ||
-            request.headers.get("x-real-ip") ||
-            "unknown",
+          ip_address: request.headers.get("x-forwarded-for")
+            || request.headers.get("x-real-ip")
+            || "unknown",
           user_agent: request.headers.get("user-agent") || "unknown",
         });
 
@@ -135,14 +134,14 @@ export async function GET(request: NextRequest) {
 async function logHealthcareEmailConfirmation(
   userId: string,
   confirmationType: string,
-  metadata: Record<string, any>,
+  metadata: Record<string, unknown>,
 ): Promise<void> {
   try {
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       {
         cookies: {
           getAll() {

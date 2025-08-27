@@ -84,8 +84,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "LGPD_CONSENT_REQUIRED",
-          message:
-            "Consentimento LGPD obrigatório para processamento de dados pelo assistente IA",
+          message: "Consentimento LGPD obrigatório para processamento de dados pelo assistente IA",
         },
         { status: 403 },
       );
@@ -133,7 +132,8 @@ export async function POST(request: NextRequest) {
       .limit(5);
 
     // Construir prompt do sistema com contexto personalizado
-    const systemPrompt = `Você é o Assistente Virtual do NeonPro, uma plataforma de gestão para clínicas de estética e beleza.
+    const systemPrompt =
+      `Você é o Assistente Virtual do NeonPro, uma plataforma de gestão para clínicas de estética e beleza.
 
 CONTEXTO DO USUÁRIO:
 - Nome: ${profile?.full_name || "Usuário"}
@@ -147,16 +147,18 @@ PREFERÊNCIAS DO ASSISTENTE:
 - Idioma: ${preferences?.language || "pt-BR"}
 
 CONTEXTO RECENTE: ${
-      recentAppointments && recentAppointments.length > 0
-        ? `Últimos agendamentos:
-${recentAppointments
-  .map(
-    (apt) =>
-      `- ${apt.date_time}: ${apt.service || "Serviço não informado"} (${apt.status})`,
-  )
-  .join("\n")}`
-        : "Nenhum agendamento recente encontrado."
-    }
+        recentAppointments && recentAppointments.length > 0
+          ? `Últimos agendamentos:
+${
+            recentAppointments
+              .map(
+                (apt) =>
+                  `- ${apt.date_time}: ${apt.service || "Serviço não informado"} (${apt.status})`,
+              )
+              .join("\n")
+          }`
+          : "Nenhum agendamento recente encontrado."
+      }
 
 INSTRUÇÕES:
 1. Sempre responda em português brasileiro
@@ -219,11 +221,11 @@ Seja sempre útil, preciso e contextualmente relevante para a gestão de clínic
       tenant_id: user.id,
       alert_type: "ai_interaction_monitoring",
       severity: complianceRisks.length > 0 ? "medium" : "low",
-      description: `AI Assistant interaction monitored - ${complianceRisks.length} potential risks detected`,
-      action_required:
-        complianceRisks.length > 0
-          ? "Review AI response for compliance"
-          : "None",
+      description:
+        `AI Assistant interaction monitored - ${complianceRisks.length} potential risks detected`,
+      action_required: complianceRisks.length > 0
+        ? "Review AI response for compliance"
+        : "None",
       status: "resolved",
     });
 

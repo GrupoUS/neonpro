@@ -40,10 +40,10 @@ class RegressionDetector {
       const baselineData = await fs.readFile(baselinePath, "utf8");
       return JSON.parse(baselineData);
     } catch (error) {
-      console.warn(
+      // console.warn(
         `⚠️ Warning: Could not load baseline metrics from ${this.baselineMetricsFile}`,
       );
-      console.warn(
+      // console.warn(
         "This might be the first run. Creating baseline from current metrics.",
       );
       return null;
@@ -56,16 +56,16 @@ class RegressionDetector {
       const currentData = await fs.readFile(currentPath, "utf8");
       return JSON.parse(currentData);
     } catch (error) {
-      console.error(
+      // console.error(
         `❌ Error: Could not load current metrics from ${this.currentMetricsFile}`,
       );
-      console.error("Make sure to run collect-healthcare-metrics.js first");
+      // console.error("Make sure to run collect-healthcare-metrics.js first");
       throw error;
     }
   }
 
   async createBaseline(currentMetrics) {
-    console.log("📊 Creating new performance baseline...");
+    // console.log("📊 Creating new performance baseline...");
 
     const baseline = {
       created_at: new Date().toISOString(),
@@ -80,12 +80,12 @@ class RegressionDetector {
     const baselinePath = path.join(process.cwd(), this.baselineMetricsFile);
     await fs.writeFile(baselinePath, JSON.stringify(baseline, null, 2));
 
-    console.log(`✅ Baseline created and saved to ${this.baselineMetricsFile}`);
+    // console.log(`✅ Baseline created and saved to ${this.baselineMetricsFile}`);
     return baseline;
   }
 
   comparePerformanceMetrics(baseline, current) {
-    console.log("🔍 Comparing performance metrics...");
+    // console.log("🔍 Comparing performance metrics...");
 
     const baselinePerf = baseline.performance?.metrics || {};
     const currentPerf = current.performance?.metrics || {};
@@ -94,8 +94,7 @@ class RegressionDetector {
       if (currentPerf[metric] !== undefined) {
         const baselineValue = baselinePerf[metric];
         const currentValue = currentPerf[metric];
-        const percentageChange =
-          ((currentValue - baselineValue) / baselineValue) * 100;
+        const percentageChange = ((currentValue - baselineValue) / baselineValue) * 100;
         const weight = this.healthcareMetricsWeight[metric] || 1.0;
         const weightedChange = percentageChange * weight;
 
@@ -183,7 +182,7 @@ class RegressionDetector {
   }
 
   compareComplianceMetrics(baseline, current) {
-    console.log("🏥 Comparing compliance metrics...");
+    // console.log("🏥 Comparing compliance metrics...");
 
     const baselineCompliance = baseline.compliance || {};
     const currentCompliance = current.compliance || {};
@@ -193,8 +192,7 @@ class RegressionDetector {
       const currentStatus = currentCompliance[area]?.status;
 
       if (baselineStatus && currentStatus && baselineStatus !== currentStatus) {
-        const isRegression =
-          baselineStatus === "COMPLIANT" && currentStatus !== "COMPLIANT";
+        const isRegression = baselineStatus === "COMPLIANT" && currentStatus !== "COMPLIANT";
 
         const change = {
           area,
@@ -217,7 +215,7 @@ class RegressionDetector {
   }
 
   compareSecurityMetrics(baseline, current) {
-    console.log("🔒 Comparing security metrics...");
+    // console.log("🔒 Comparing security metrics...");
 
     // Check for security feature regressions
     const baselineSecurity = baseline.security || {};
@@ -296,7 +294,7 @@ class RegressionDetector {
   }
 
   generateRegressionReport() {
-    console.log("📄 Generating regression analysis report...");
+    // console.log("📄 Generating regression analysis report...");
 
     const totalRegressions = this.regressions.length;
     const criticalRegressions = this.regressions.filter(
@@ -324,8 +322,7 @@ class RegressionDetector {
         total_regressions: totalRegressions,
         critical_regressions: criticalRegressions,
         warning_regressions: warningRegressions,
-        minor_regressions:
-          totalRegressions - criticalRegressions - warningRegressions,
+        minor_regressions: totalRegressions - criticalRegressions - warningRegressions,
         improvements: this.improvements.length,
       },
       regressions: this.regressions.sort((a, b) => {
@@ -336,8 +333,8 @@ class RegressionDetector {
       }),
       improvements: this.improvements.sort(
         (a, b) =>
-          Math.abs(b.percentage_change || 0) -
-          Math.abs(a.percentage_change || 0),
+          Math.abs(b.percentage_change || 0)
+          - Math.abs(a.percentage_change || 0),
       ),
       recommendations: this.generateRecommendations(),
     };
@@ -374,8 +371,7 @@ class RegressionDetector {
         category: "SECURITY",
         issue: `Security feature regression: ${regression.metric}`,
         impact: regression.healthcare_impact,
-        recommendation:
-          "Restore security feature immediately and investigate root cause",
+        recommendation: "Restore security feature immediately and investigate root cause",
         action_required: "IMMEDIATE",
       });
     });
@@ -404,19 +400,16 @@ class RegressionDetector {
         "Optimize patient data queries, implement caching, check database indexes",
       emergency_access_time:
         "CRITICAL: Optimize emergency access path, implement dedicated fast lanes",
-      medical_record_access_time:
-        "Review medical record queries, optimize database performance",
+      medical_record_access_time: "Review medical record queries, optimize database performance",
       appointment_scheduling_time:
         "Optimize scheduling algorithms, implement caching for availability",
-      ai_response_time:
-        "Check AI model performance, optimize inference pipeline, scale resources",
-      database_query_time:
-        "Analyze slow queries, update indexes, consider query optimization",
+      ai_response_time: "Check AI model performance, optimize inference pipeline, scale resources",
+      database_query_time: "Analyze slow queries, update indexes, consider query optimization",
     };
 
     return (
-      recommendations[metric] ||
-      "Investigate performance bottlenecks and optimize accordingly"
+      recommendations[metric]
+      || "Investigate performance bottlenecks and optimize accordingly"
     );
   }
 
@@ -427,7 +420,7 @@ class RegressionDetector {
     // Generate human-readable report
     await this.generateHumanReadableReport(report);
 
-    console.log(`✅ Regression analysis saved to: ${reportPath}`);
+    // console.log(`✅ Regression analysis saved to: ${reportPath}`);
     return reportPath;
   }
 
@@ -444,77 +437,85 @@ class RegressionDetector {
 - **Improvements**: ${report.summary.improvements}
 
 ${
-  report.summary.critical_regressions > 0
-    ? `
+      report.summary.critical_regressions > 0
+        ? `
 ## 🚨 Critical Regressions
-${report.regressions
-  .filter((r) => r.severity === "CRITICAL")
-  .map(
-    (r) => `
+${
+          report.regressions
+            .filter((r) => r.severity === "CRITICAL")
+            .map(
+              (r) => `
 ### ${r.metric}
 - **Change**: ${r.percentage_change}% (${r.current_value} vs ${r.baseline_value})
 - **Healthcare Impact**: ${r.healthcare_impact}
 - **Severity**: ${r.severity}
 `,
-  )
-  .join("\n")}
+            )
+            .join("\n")
+        }
 `
-    : ""
-}
+        : ""
+    }
 
 ${
-  report.summary.warning_regressions > 0
-    ? `
+      report.summary.warning_regressions > 0
+        ? `
 ## ⚠️ Warning Level Regressions
-${report.regressions
-  .filter((r) => r.severity === "WARNING")
-  .map(
-    (r) => `
+${
+          report.regressions
+            .filter((r) => r.severity === "WARNING")
+            .map(
+              (r) => `
 ### ${r.metric}
 - **Change**: ${r.percentage_change}% (${r.current_value} vs ${r.baseline_value})
 - **Healthcare Impact**: ${r.healthcare_impact}
 `,
-  )
-  .join("\n")}
+            )
+            .join("\n")
+        }
 `
-    : ""
-}
+        : ""
+    }
 
 ${
-  report.summary.improvements > 0
-    ? `
+      report.summary.improvements > 0
+        ? `
 ## ✅ Performance Improvements
-${report.improvements
-  .slice(0, 5)
-  .map(
-    (r) => `
+${
+          report.improvements
+            .slice(0, 5)
+            .map(
+              (r) => `
 ### ${r.metric}
 - **Improvement**: ${Math.abs(r.percentage_change)}% faster
 - **Values**: ${r.current_value} vs ${r.baseline_value}
 `,
-  )
-  .join("\n")}
+            )
+            .join("\n")
+        }
 `
-    : ""
-}
+        : ""
+    }
 
 ${
-  report.recommendations.length > 0
-    ? `
+      report.recommendations.length > 0
+        ? `
 ## 📋 Recommendations
-${report.recommendations
-  .map(
-    (rec, i) => `
+${
+          report.recommendations
+            .map(
+              (rec, i) => `
 ${i + 1}. **[${rec.priority}] ${rec.category}**: ${rec.issue}
    - **Impact**: ${rec.impact}
    - **Action**: ${rec.recommendation}
    - **Timeline**: ${rec.action_required}
 `,
-  )
-  .join("\n")}
+            )
+            .join("\n")
+        }
 `
-    : ""
-}
+        : ""
+    }
 
 ---
 Generated on: ${new Date().toISOString()}
@@ -527,24 +528,24 @@ Generated on: ${new Date().toISOString()}
   }
 
   async run() {
-    console.log("🔍 Starting performance regression detection...\n");
+    // console.log("🔍 Starting performance regression detection...\n");
 
     try {
       // Load current metrics
       const currentMetrics = await this.loadCurrentMetrics();
-      console.log("✅ Current metrics loaded");
+      // console.log("✅ Current metrics loaded");
 
       // Load or create baseline
       let baseline = await this.loadBaseline();
       if (!baseline) {
         baseline = await this.createBaseline(currentMetrics);
-        console.log(
+        // console.log(
           "ℹ️  New baseline created. Run again after next metrics collection for comparison.",
         );
         return { status: "BASELINE_CREATED" };
       }
 
-      console.log("✅ Baseline metrics loaded");
+      // console.log("✅ Baseline metrics loaded");
 
       // Compare metrics
       this.comparePerformanceMetrics(baseline, currentMetrics);
@@ -556,26 +557,26 @@ Generated on: ${new Date().toISOString()}
       await this.saveReport(report);
 
       // Log summary
-      console.log("\n📊 Regression Detection Results:");
-      console.log(`Status: ${report.status}`);
-      console.log(
+      // console.log("\n📊 Regression Detection Results:");
+      // console.log(`Status: ${report.status}`);
+      // console.log(
         `Regressions: ${report.summary.total_regressions} (${report.summary.critical_regressions} critical)`,
       );
-      console.log(`Improvements: ${report.summary.improvements}`);
+      // console.log(`Improvements: ${report.summary.improvements}`);
 
       if (report.summary.critical_regressions > 0) {
-        console.log("\n🚨 CRITICAL REGRESSIONS DETECTED!");
+        // console.log("\n🚨 CRITICAL REGRESSIONS DETECTED!");
         process.exit(1);
       } else if (report.summary.warning_regressions > 0) {
-        console.log("\n⚠️  Warning level regressions detected");
+        // console.log("\n⚠️  Warning level regressions detected");
         process.exit(1);
       } else {
-        console.log("\n✅ No significant regressions detected");
+        // console.log("\n✅ No significant regressions detected");
       }
 
       return report;
     } catch (error) {
-      console.error("❌ Error during regression detection:", error);
+      // console.error("❌ Error during regression detection:", error);
       process.exit(1);
     }
   }

@@ -54,11 +54,8 @@ test.describe("⚡ Performance Testing Suite", () => {
         }
 
         // Calculate statistics
-        const avgResponseTime =
-          measurements.reduce((a, b) => a + b, 0) / measurements.length;
+        const avgResponseTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
         const maxResponseTime = Math.max(...measurements);
-        const _minResponseTime = Math.min(...measurements);
-
         // Assert performance requirements
         expect(
           avgResponseTime,
@@ -82,9 +79,7 @@ test.describe("⚡ Performance Testing Suite", () => {
       const startTime = Date.now();
 
       // Create concurrent requests
-      const requests = Array.from({ length: concurrentRequests }, () =>
-        page.request.get(endpoint),
-      );
+      const requests = Array.from({ length: concurrentRequests }, () => page.request.get(endpoint));
 
       const responses = await Promise.all(requests);
 
@@ -93,8 +88,6 @@ test.describe("⚡ Performance Testing Suite", () => {
 
       // Analyze results
       const successfulResponses = responses.filter((r) => r.status() < 400);
-      const _failedResponses = responses.filter((r) => r.status() >= 400);
-
       const successRate = successfulResponses.length / responses.length;
       const throughput = responses.length / (totalTime / 1000); // requests per second
 
@@ -114,9 +107,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 
       const startTime = Date.now();
 
-      const requests = Array.from({ length: concurrentQueries }, () =>
-        page.request.get(endpoint),
-      );
+      const requests = Array.from({ length: concurrentQueries }, () => page.request.get(endpoint));
 
       const responses = await Promise.all(requests);
 
@@ -155,7 +146,7 @@ test.describe("⚡ Performance Testing Suite", () => {
       ];
 
       const totalRequests = 100;
-      const requestPromises: Promise<any>[] = [];
+      const requestPromises: Promise<unknown>[] = [];
 
       const startTime = Date.now();
 
@@ -180,9 +171,7 @@ test.describe("⚡ Performance Testing Suite", () => {
 
         // Add small random delay to simulate realistic user behavior
         if (i % 10 === 0) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, Math.random() * 100),
-          );
+          await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
         }
       }
 
@@ -197,10 +186,9 @@ test.describe("⚡ Performance Testing Suite", () => {
         const successCount = scenarioResults.filter(
           (r) => r.status < 400,
         ).length;
-        const successRate =
-          scenarioResults.length > 0
-            ? successCount / scenarioResults.length
-            : 0;
+        const successRate = scenarioResults.length > 0
+          ? successCount / scenarioResults.length
+          : 0;
 
         return {
           ...scenario,
@@ -211,8 +199,7 @@ test.describe("⚡ Performance Testing Suite", () => {
       });
 
       const totalTime = endTime - startTime;
-      const overallSuccessRate =
-        results.filter((r) => r.status < 400).length / results.length;
+      const overallSuccessRate = results.filter((r) => r.status < 400).length / results.length;
       const throughput = results.length / (totalTime / 1000);
 
       scenarioStats.forEach((_stat) => {});
@@ -261,19 +248,13 @@ test.describe("⚡ Performance Testing Suite", () => {
 
       // Calculate statistical metrics
       measurements.sort((a, b) => a - b);
-
-      const _min = measurements[0];
-      const _max = measurements.at(-1);
-      const _median = measurements[Math.floor(measurements.length / 2)];
       const p95 = measurements[Math.floor(measurements.length * 0.95)];
       const p99 = measurements[Math.floor(measurements.length * 0.99)];
-      const average =
-        measurements.reduce((a, b) => a + b, 0) / measurements.length;
+      const average = measurements.reduce((a, b) => a + b, 0) / measurements.length;
 
       // Calculate standard deviation
-      const variance =
-        measurements.reduce((acc, val) => acc + (val - average) ** 2, 0) /
-        measurements.length;
+      const variance = measurements.reduce((acc, val) => acc + (val - average) ** 2, 0)
+        / measurements.length;
       const stdDev = Math.sqrt(variance);
 
       // Performance assertions
@@ -317,9 +298,9 @@ test.describe("⚡ Performance Testing Suite", () => {
         const metrics = await page.evaluate(() => {
           return {
             // Memory usage (if available)
-            usedJSMemory: (performance as any).memory?.usedJSMemory || 0,
-            totalJSMemory: (performance as any).memory?.totalJSMemory || 0,
-            jsMemoryLimit: (performance as any).memory?.jsHeapSizeLimit || 0,
+            usedJSMemory: (performance as unknown).memory?.usedJSMemory || 0,
+            totalJSMemory: (performance as unknown).memory?.totalJSMemory || 0,
+            jsMemoryLimit: (performance as unknown).memory?.jsHeapSizeLimit || 0,
 
             // Timing metrics
             navigationTiming: performance.getEntriesByType("navigation")[0],
@@ -339,9 +320,8 @@ test.describe("⚡ Performance Testing Suite", () => {
       }
 
       // Analyze metrics
-      const avgResponseTime =
-        performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0) /
-        performanceMetrics.length;
+      const avgResponseTime = performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0)
+        / performanceMetrics.length;
       const successfulRequests = performanceMetrics.filter(
         (m) => m.responseStatus < 400,
       ).length;
@@ -352,13 +332,8 @@ test.describe("⚡ Performance Testing Suite", () => {
         (m) => m.usedJSMemory > 0,
       );
       if (memoryMetrics.length > 0) {
-        const avgMemoryUsage =
-          memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0) /
-          memoryMetrics.length;
-        const _maxMemoryUsage = Math.max(
-          ...memoryMetrics.map((m) => m.usedJSMemory),
-        );
-
+        const avgMemoryUsage = memoryMetrics.reduce((sum, m) => sum + m.usedJSMemory, 0)
+          / memoryMetrics.length;
         // Memory usage assertions
         expect(
           avgMemoryUsage / 1024 / 1024,
@@ -421,8 +396,7 @@ test.describe("⚡ Performance Testing Suite", () => {
           ).toBeTruthy();
         }
 
-        const avgTime =
-          measurements.reduce((a, b) => a + b, 0) / measurements.length;
+        const avgTime = measurements.reduce((a, b) => a + b, 0) / measurements.length;
 
         // Healthcare data queries should be fast for good user experience
         expect(
@@ -480,8 +454,7 @@ test.describe("⚡ Performance Testing Suite", () => {
         workflowTimes.push(workflowTime);
       }
 
-      const avgWorkflowTime =
-        workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
+      const avgWorkflowTime = workflowTimes.reduce((a, b) => a + b, 0) / workflowTimes.length;
 
       // Complete appointment booking should complete quickly for good UX
       expect(

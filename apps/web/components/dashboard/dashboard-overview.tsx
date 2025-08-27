@@ -9,29 +9,14 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
 import { useSearch } from "@tanstack/react-router";
-import {
-  Activity,
-  Calendar,
-  Clock,
-  DollarSign,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { Activity, Calendar, Clock, DollarSign, TrendingUp, Users } from "lucide-react";
 
 export function DashboardOverview() {
   const search = useSearch({ from: "/dashboard" });
   const { user } = useAuth();
-  const _activeTab = search?.tab || "overview";
-
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -101,8 +86,7 @@ export function DashboardOverview() {
           <CardContent>
             <div className="font-bold text-2xl">73.2%</div>
             <p className="text-muted-foreground text-xs">
-              <span className="text-green-500">+5.1%</span> desde a semana
-              passada
+              <span className="text-green-500">+5.1%</span> desde a semana passada
             </p>
           </CardContent>
         </Card>

@@ -88,8 +88,7 @@ export class LGPDReportGenerator {
     const reportId = `lgpd_report_${Date.now()}`;
 
     // Validate constitutional compliance
-    const constitutionalValidation =
-      await this.validateConstitutionalCompliance();
+    const constitutionalValidation = await this.validateConstitutionalCompliance();
 
     // Generate report summary
     const summary = await this.generateSummary();
@@ -151,8 +150,7 @@ export class LGPDReportGenerator {
     return [
       {
         category: "Data Protection",
-        description:
-          "All personal data processing activities comply with LGPD requirements",
+        description: "All personal data processing activities comply with LGPD requirements",
         severity: "low" as const,
         recommendation: "Continue current practices",
         constitutional_impact: false,
@@ -186,7 +184,7 @@ export class LGPDReportGenerator {
   /**
    * Generate PDF report
    */
-  private generatePdfReport(report: any): string {
+  private generatePdfReport(report: unknown): string {
     // Basic PDF-like text representation
     // In production, integrate with libraries like puppeteer or pdfkit
     const pdfContent = `
@@ -278,7 +276,7 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
   /**
    * Format content for PDF
    */
-  private formatPdfContent(items: any[]): string {
+  private formatPdfContent(items: unknown[]): string {
     if (items.length === 0) {
       return "0 -15 Td\n(Nenhum registro encontrado) Tj";
     }
@@ -297,7 +295,7 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
   /**
    * Generate CSV report
    */
-  private generateCsvReport(report: any): string {
+  private generateCsvReport(report: unknown): string {
     const csvLines: string[] = [];
 
     // Header
@@ -312,7 +310,7 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
     if (report.consents && report.consents.length > 0) {
       csvLines.push("CONSENTIMENTOS");
       csvLines.push("ID,Tipo,Status,Data,Finalidade");
-      report.consents.forEach((consent: any) => {
+      report.consents.forEach((consent: unknown) => {
         csvLines.push(
           `${consent.id || ""},${consent.type || ""},${consent.status || ""},${
             consent.createdAt || ""
@@ -326,7 +324,7 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
     if (report.breaches && report.breaches.length > 0) {
       csvLines.push("VIOLAÇÕES DE DADOS");
       csvLines.push("ID,Categoria,Severidade,Data,Descrição,Status");
-      report.breaches.forEach((breach: any) => {
+      report.breaches.forEach((breach: unknown) => {
         csvLines.push(
           `${breach.id || ""},${breach.category || ""},${breach.severity || ""},${
             breach.detectedAt || ""
@@ -340,7 +338,7 @@ ${1000 + JSON.stringify(report, undefined, 2).length}
     if (report.rightsExercises && report.rightsExercises.length > 0) {
       csvLines.push("EXERCÍCIO DE DIREITOS");
       csvLines.push("ID,Tipo,Status,Data Solicitação,Data Conclusão");
-      report.rightsExercises.forEach((exercise: any) => {
+      report.rightsExercises.forEach((exercise: unknown) => {
         csvLines.push(
           `${exercise.id || ""},${exercise.type || ""},${exercise.status || ""},${
             exercise.requestedAt || ""

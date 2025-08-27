@@ -2,7 +2,7 @@
 export interface FeatureFlag {
   name: string;
   enabled: boolean;
-  variants?: Record<string, any>;
+  variants?: Record<string, unknown>;
 }
 
 export class FeatureFlagsService {

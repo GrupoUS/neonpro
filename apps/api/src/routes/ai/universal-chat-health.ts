@@ -32,8 +32,8 @@ class UniversalChatHealthService {
   private static async checkDatabaseConnectivity(): Promise<"ok" | "error"> {
     try {
       const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        process.env.SUPABASE_URL || "",
+        process.env.SUPABASE_SERVICE_ROLE_KEY || "",
       );
 
       const { error } = await supabase
@@ -73,8 +73,8 @@ class UniversalChatHealthService {
   private static async checkSessionManagement(): Promise<"ok" | "error"> {
     try {
       const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        process.env.SUPABASE_URL || "",
+        process.env.SUPABASE_SERVICE_ROLE_KEY || "",
       );
 
       // Test session creation and retrieval
@@ -105,11 +105,11 @@ class UniversalChatHealthService {
     }
   }
 
-  private static async getServiceMetrics(): Promise<any> {
+  private static async getServiceMetrics(): Promise<unknown> {
     try {
       const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        process.env.SUPABASE_URL || "",
+        process.env.SUPABASE_SERVICE_ROLE_KEY || "",
       );
 
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
@@ -146,13 +146,12 @@ class UniversalChatHealthService {
     const startTime = Date.now();
 
     try {
-      const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] =
-        await Promise.all([
-          UniversalChatHealthService.checkDatabaseConnectivity(),
-          UniversalChatHealthService.checkAIModelAvailability(),
-          UniversalChatHealthService.checkSessionManagement(),
-          UniversalChatHealthService.getServiceMetrics(),
-        ]);
+      const [dbConnectivity, aiModelAvailability, sessionManagement, metrics] = await Promise.all([
+        UniversalChatHealthService.checkDatabaseConnectivity(),
+        UniversalChatHealthService.checkAIModelAvailability(),
+        UniversalChatHealthService.checkSessionManagement(),
+        UniversalChatHealthService.getServiceMetrics(),
+      ]);
 
       const details = {
         database_connectivity: dbConnectivity,

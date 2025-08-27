@@ -12,8 +12,6 @@
 
 const { performance } = require("node:perf_hooks");
 const fs = require("node:fs");
-const _path = require("node:path");
-
 // Configuration
 const config = {
   baseUrl: "http://localhost:3000",
@@ -35,11 +33,7 @@ function logResult(test, duration, target, status) {
     overallPass = false;
   }
 
-  results.push({ test, duration, target, passed, status });
-
-  const _icon = passed ? "✅" : "❌";
-  const _color = passed ? "\u001B[32m" : "\u001B[31m";
-}
+  results.push({ test, duration, target, passed, status });}
 
 function logInfo(_message) {}
 
@@ -75,8 +69,6 @@ async function measureDashboardLoad() {
 
   const duration = Math.round(baseTime + componentLoadTime + networkSimulation);
   const end = performance.now();
-  const _actualDuration = Math.round(end - start);
-
   logResult(
     "Dashboard Load",
     duration,
@@ -101,8 +93,6 @@ async function measureApiEndpoints() {
   let allPassed = true;
 
   for (const endpoint of endpoints) {
-    const _start = performance.now();
-
     // Simulate API response time
     const routeFile = `apps/web/app${endpoint.path}/route.ts`;
     const apiFile = "apps/api/src/routes/ai/ml-pipeline-endpoints.ts";
@@ -141,9 +131,6 @@ async function measureMLPredictions() {
     "packages/ai/src/services/ml-pipeline-management.ts",
     "apps/web/app/lib/services/no-show-prediction.ts",
   ];
-
-  const _start = performance.now();
-
   let servicesExist = 0;
   for (const service of mlServices) {
     if (fs.existsSync(service)) {
@@ -202,7 +189,7 @@ async function checkDependencies() {
 
 async function generateReport() {
   const passed = results.filter((r) => r.passed).length;
-  const total = results.length;
+  const { length: total } = results;
   const percentage = Math.round((passed / total) * 100);
 
   if (overallPass) {
@@ -255,9 +242,9 @@ async function runPerformanceTests() {
 
 // Run tests if this script is executed directly
 if (require.main === module) {
-  runPerformanceTests().then((success) => {
+  runPerformanceTests().then((success) => { return 
     process.exit(success ? 0 : 1);
-  });
+  ; });
 }
 
 module.exports = { runPerformanceTests, config };

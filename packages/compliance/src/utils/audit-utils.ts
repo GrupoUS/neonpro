@@ -16,8 +16,8 @@ export interface AuditLogEntry {
   clinic_id: string;
   ip_address?: string;
   user_agent?: string;
-  before_state?: Record<string, any>;
-  after_state?: Record<string, any>;
+  before_state?: Record<string, unknown>;
+  after_state?: Record<string, unknown>;
   compliance_context: {
     lgpd_basis: string;
     data_category: "personal" | "sensitive" | "health" | "administrative";
@@ -78,8 +78,8 @@ export function createAuditLog(params: {
   clinic_id: string;
   ip_address?: string;
   user_agent?: string;
-  before_state?: Record<string, any>;
-  after_state?: Record<string, any>;
+  before_state?: Record<string, unknown>;
+  after_state?: Record<string, unknown>;
   lgpd_basis?: string;
   data_category?: "personal" | "sensitive" | "health" | "administrative";
 }): AuditLogEntry {
@@ -171,8 +171,8 @@ export const AuditLogSchema = z.object({
 
 // Anonymize sensitive data for audit logs
 export function anonymizeAuditData(
-  data: Record<string, any>,
-): Record<string, any> {
+  data: Record<string, unknown>,
+): Record<string, unknown> {
   const sensitiveFields = [
     "cpf",
     "rg",
@@ -194,7 +194,7 @@ export function anonymizeAuditData(
 
 // Generate audit report for compliance verification
 export interface AuditReport {
-  period: { start: Date; end: Date };
+  period: { start: Date; end: Date; };
   total_entries: number;
   by_action: Record<string, number>;
   by_user: Record<string, number>;
@@ -232,10 +232,9 @@ export function generateAuditReport(
   }
 
   // Calculate compliance score (100% if no violations)
-  const complianceScore =
-    violations.length === 0
-      ? 100
-      : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
+  const complianceScore = violations.length === 0
+    ? 100
+    : Math.max(0, 100 - (violations.length / filteredLogs.length) * 100);
 
   return {
     period: { start: startDate, end: endDate },

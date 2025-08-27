@@ -177,8 +177,7 @@ export async function runAuthE2ETest(
 
     return result;
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     result.errors.push(`Test execution error: ${errorMessage}`);
 
     // Limpar estado em caso de erro
@@ -209,7 +208,7 @@ export async function testSessionPersistence(): Promise<boolean> {
     }
 
     // Simular reload da página criando nova instância
-    const newManager = new (authTokenManager.constructor as any)();
+    const newManager = new (authTokenManager.constructor as unknown)();
 
     // Verificar se tokens foram carregados
     const persistedToken = newManager.getAccessToken();

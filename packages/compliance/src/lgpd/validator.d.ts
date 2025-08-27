@@ -236,12 +236,12 @@ export declare class LGPDValidator {
    * Validate data processing activity
    */
   validateDataProcessing(
-    processingActivity: any,
+    processingActivity: unknown,
   ): Promise<LGPDValidationResult>;
   /**
    * Validate consent management
    */
-  validateConsent(consentData: any): Promise<LGPDValidationResult>;
+  validateConsent(consentData: unknown): Promise<LGPDValidationResult>;
   /**
    * Validate constitutional compliance
    */
@@ -249,7 +249,7 @@ export declare class LGPDValidator {
   /**
    * Validate data transfer
    */
-  validateDataTransfer(transferData: any): Promise<LGPDValidationResult>;
+  validateDataTransfer(transferData: unknown): Promise<LGPDValidationResult>;
 }
 /**
  * Create LGPD Validator service

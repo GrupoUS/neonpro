@@ -4,7 +4,7 @@
  * Integra com toast system e audio alerts para urgências médicas
  */
 
-import type { Notification } from "@neonpro/db";
+import type { Notification } from "@neonpro/database";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
@@ -79,12 +79,9 @@ export function useRealtimeNotifications(
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [lastNotification, setLastNotification] =
-    useState<NotificationRow | null>(undefined);
+  const [lastNotification, setLastNotification] = useState<NotificationRow | null>();
   const [emergencyCount, setEmergencyCount] = useState(0);
-  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>(
-    undefined,
-  );
+  const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /**
@@ -120,8 +117,8 @@ export function useRealtimeNotifications(
           playPromise.catch((_error) => {
             // Fallback to system notification sound
             if (
-              "Notification" in window &&
-              Notification.permission === "granted"
+              "Notification" in window
+              && Notification.permission === "granted"
             ) {
               new Notification("NeonPro Healthcare", {
                 body: "Nova notificação recebida",
@@ -174,7 +171,7 @@ export function useRealtimeNotifications(
             case "UPDATE": {
               if (newData) {
                 return oldCache.map((notification) =>
-                  notification.id === newData.id ? newData : notification,
+                  notification.id === newData.id ? newData : notification
                 );
               }
               return oldCache;
@@ -208,7 +205,7 @@ export function useRealtimeNotifications(
    * Handle realtime notification changes
    */
   const handleNotificationChange = useCallback(
-    (payload: any) => {
+    (payload: unknown) => {
       try {
         const realtimePayload: RealtimeNotificationPayload = {
           eventType: payload.eventType,

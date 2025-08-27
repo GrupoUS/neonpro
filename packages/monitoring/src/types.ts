@@ -1,275 +1,346 @@
 /**
- * Performance Monitoring Types
- * TypeScript definitions for performance monitoring and healthcare-specific metrics.
+ * Consolidated Types for NeonPro Healthcare Performance Monitoring
+ * =================================================================
+ * 
+ * Type definitions for all monitoring functionality including:
+ * - Web Vitals with healthcare optimization
+ * - Real-time metrics streaming
+ * - AI/Cache/System metrics collection
+ * - Healthcare compliance and audit trails
  */
 
-import type { Metric } from "web-vitals";
+// ============================================================================
+// BASE TYPES
+// ============================================================================
 
-// Core types
-type WebVitalName = "CLS" | "FCP" | "FID" | "INP" | "LCP" | "TTFB";
-
-type HealthcareMetricName =
-  | "auth_verification_time"
-  | "compliance_check_time"
-  | "data_encryption_time"
-  | "database_query_time"
-  | "form_submission_time"
-  | "image_upload_time"
-  | "patient_search_time"
-  | "report_generation_time";
-
-interface CustomMetric {
-  context?: {
-    environment?: string;
-    feature?: string;
-    patientId?: string;
-    procedureId?: string;
-    sessionId?: string;
-    userId?: string;
-    userRole?: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
-  };
-  delta?: number;
-  entries?: PerformanceEntry[];
-  id?: string;
-  name: HealthcareMetricName;
-  navigationType?: string;
-  rating: "good" | "needs-improvement" | "poor";
-  timestamp?: number;
+export interface PerformanceMetric {
+  name: string;
   value: number;
+  timestamp: string;
+  unit?: string;
+  category: 'web-vitals' | 'ai-metrics' | 'cache-metrics' | 'system-metrics' | 'database-metrics';
+  metadata?: Record<string, unknown>;
 }
 
-interface PerformanceThresholds {
-  healthcare: {
-    [K in HealthcareMetricName]: {
-      good: number;
-      needsImprovement: number;
-    };
-  };
-  webVitals: {
-    [K in WebVitalName]: {
-      good: number;
-      needsImprovement: number;
-    };
-  };
+export interface HealthcareContext {
+  clinicId?: string;
+  userId?: string;
+  patientId?: string;
+  workflowType?: 'patient-registration' | 'medical-form' | 'procedure-scheduling' | 'medical-history' | 'real-time-update';
+  deviceType?: 'desktop' | 'tablet' | 'mobile';
+  networkConnection?: 'fast' | 'slow' | 'offline';
 }
 
-interface MonitoringConfig {
-  context: {
-    includeEnvironmentInfo: boolean;
-    includePatientInfo: boolean;
-    includeUserInfo: boolean;
-  };
-  enabled: boolean;
-  endpoints: {
-    errors: string;
-    metrics: string;
-    vitals: string;
-  };
-  privacy: {
-    excludeFields: string[];
-    hashSensitiveData: boolean;
-    retentionDays: number;
-  };
-  sampling: {
-    customMetrics: number;
-    errors: number;
-    webVitals: number;
-  };
-  thresholds: PerformanceThresholds;
-}
+// ============================================================================
+// WEB VITALS TYPES  
+// ============================================================================
 
-interface AlertConfig {
-  channels: {
-    email?: string[];
-    slack?: string;
-    webhook?: string;
-  };
-  conditions: {
-    minSampleSize: number;
-    timeWindow: number;
-  };
-  enabled: boolean;
-  thresholds: {
-    customMetricThreshold: number;
-    errorRate: number;
-    responseTime: number;
-  };
-}
-
-interface HealthcareContext {
-  complianceLevel: "basic" | "healthcare" | "anvisa" | "cfm";
-  feature:
-    | "patient-management"
-    | "procedures"
-    | "compliance"
-    | "reports"
-    | "auth";
-  sensitivity: "low" | "medium" | "high" | "critical";
-  userRole: "patient" | "doctor" | "nurse" | "admin" | "receptionist";
-}
-
-interface PerformanceReport {
-  alerts: {
-    message: string;
-    resolved: boolean;
-    severity: "low" | "medium" | "high" | "critical";
-    timestamp: Date;
-    type: "error_rate" | "performance" | "availability";
-  }[];
-  customMetrics: {
-    [K in HealthcareMetricName]?: {
-      average: number;
-      median: number;
-      p95: number;
-      samples: number;
-      trend: "improving" | "degrading" | "stable";
-    };
-  };
-  period: {
-    end: Date;
-    start: Date;
-  };
-  summary: {
-    averageLoadTime: number;
-    errorRate: number;
-    topIssues: string[];
-    totalSessions: number;
-  };
-  webVitals: {
-    [K in WebVitalName]: {
-      p50: number;
-      p75: number;
-      p90: number;
-      p95: number;
-      samples: number;
-    };
-  };
-}
-
-interface ErrorInfo {
-  colno: number;
-  error?: Error;
-  filename: string;
-  lineno: number;
-  message: string;
-}
-
-interface ErrorEvent {
-  context?: HealthcareContext;
-  fingerprint: string;
+export interface WebVitalsMetric extends PerformanceMetric {
+  category: 'web-vitals';
+  name: 'CLS' | 'FCP' | 'FID' | 'LCP' | 'TTFB' | 'INP';
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
   id: string;
-  message: string;
-  severity: "info" | "warning" | "error" | "fatal";
-  stack?: string;
-  tags: Record<string, string>;
-  timestamp: Date;
-  url: string;
-  userAgent: string;
+}
+
+export interface HealthcareVitalsMetric extends WebVitalsMetric, HealthcareContext {
+  criticalPath: boolean;
+  complianceCategory?: 'lgpd-sensitive' | 'anvisa-regulated' | 'cfm-controlled';
+}
+
+export interface PerformanceThresholds {
+  CLS: { good: number; poor: number };
+  FCP: { good: number; poor: number };
+  FID: { good: number; poor: number };
+  LCP: { good: number; poor: number };
+  TTFB: { good: number; poor: number };
+  INP: { good: number; poor: number };
+  
+  // Healthcare-specific thresholds
+  patientLookup: { good: number; poor: number };
+  medicalFormLoad: { good: number; poor: number };
+  procedureScheduling: { good: number; poor: number };
+  realTimeUpdate: { good: number; poor: number };
+}
+
+export type PerformanceEventHandler = (metric: HealthcareVitalsMetric) => void;
+
+// ============================================================================
+// AI METRICS TYPES
+// ============================================================================
+
+export interface AIMetric extends PerformanceMetric {
+  category: 'ai-metrics';
+  name: 'inference-time' | 'model-accuracy' | 'training-loss' | 'prediction-confidence' | 'data-drift';
+  modelId?: string;
+  modelVersion?: string;
+  inputSize?: number;
+  outputSize?: number;
+}
+
+export interface AIPerformanceConfig {
+  modelMonitoring: boolean;
+  driftDetection: boolean;
+  accuracyThreshold: number;
+  inferenceTimeThreshold: number;
+  confidenceThreshold: number;
+}
+
+// ============================================================================
+// CACHE METRICS TYPES
+// ============================================================================
+
+export interface CacheMetric extends PerformanceMetric {
+  category: 'cache-metrics';
+  name: 'hit-rate' | 'miss-rate' | 'eviction-rate' | 'memory-usage' | 'response-time';
+  cacheLayer: 'browser' | 'edge' | 'supabase' | 'ai-context';
+  hitCount?: number;
+  missCount?: number;
+  totalRequests?: number;
+}
+
+export interface CachePerformanceConfig {
+  hitRateThreshold: number;
+  responseTimeThreshold: number;
+  memoryUsageThreshold: number;
+  evictionRateThreshold: number;
+}
+
+// ============================================================================
+// SYSTEM METRICS TYPES
+// ============================================================================
+
+export interface SystemMetric extends PerformanceMetric {
+  category: 'system-metrics';
+  name: 'cpu-usage' | 'memory-usage' | 'disk-usage' | 'network-latency' | 'error-rate';
+  resourceType: 'cpu' | 'memory' | 'disk' | 'network' | 'application';
+  usage?: number;
+  capacity?: number;
+  utilizationPercentage?: number;
+}
+
+export interface SystemPerformanceConfig {
+  cpuThreshold: number;
+  memoryThreshold: number;
+  diskThreshold: number;
+  networkLatencyThreshold: number;
+  errorRateThreshold: number;
+}
+
+// ============================================================================
+// DATABASE METRICS TYPES
+// ============================================================================
+
+export interface DatabaseMetric extends PerformanceMetric {
+  category: 'database-metrics';
+  name: 'query-time' | 'connection-count' | 'transaction-rate' | 'cache-hit-rate' | 'row-count';
+  queryType?: 'select' | 'insert' | 'update' | 'delete';
+  tableId?: string;
+  indexUsed?: boolean;
+  executionPlan?: string;
+}
+
+export interface DatabasePerformanceConfig {
+  queryTimeThreshold: number;
+  connectionCountThreshold: number;
+  cacheHitRateThreshold: number;
+  slowQueryLogging: boolean;
+}
+
+// ============================================================================
+// REAL-TIME STREAMING TYPES
+// ============================================================================
+
+export interface RealtimeMetricEvent {
+  type: 'metric-update' | 'alert' | 'threshold-exceeded' | 'system-health';
+  metric: PerformanceMetric;
+  timestamp: string;
+  severity: 'info' | 'warning' | 'error' | 'critical';
+  clinicId?: string;
   userId?: string;
 }
 
-interface ResourceData {
-  duration: number;
-  name: string;
-  size: number;
-  startTime: number;
-  type: string;
+export interface SupabaseStreamingConfig {
+  projectId: string;
+  clinicId?: string;
+  tableName?: string;
+  enableCompression?: boolean;
+  batchSize?: number;
+  flushInterval?: number;
 }
 
-interface ComplianceReport {
-  healthcare: {
-    anvisaCompliance: number;
-    cfmCompliance: number;
-    hipaaCompliance: number;
+// ============================================================================
+// MONITORING CONFIGURATION
+// ============================================================================
+
+export interface ConsolidatedMonitoringConfig extends HealthcareContext {
+  // Core settings
+  enabled: boolean;
+  realtimeEnabled: boolean;
+  healthcareCompliance: boolean;
+  auditTrailEnabled: boolean;
+  
+  // Feature flags
+  webVitalsEnabled: boolean;
+  aiMetricsEnabled: boolean;
+  cacheMetricsEnabled: boolean;
+  systemMetricsEnabled: boolean;
+  databaseMetricsEnabled?: boolean;
+  
+  // Configuration
+  supabaseProjectId: string;
+  collectInterval: number;
+  batchSize?: number;
+  
+  // Thresholds
+  webVitalsThresholds?: Partial<PerformanceThresholds>;
+  aiConfig?: Partial<AIPerformanceConfig>;
+  cacheConfig?: Partial<CachePerformanceConfig>;
+  systemConfig?: Partial<SystemPerformanceConfig>;
+  databaseConfig?: Partial<DatabasePerformanceConfig>;
+}
+
+// ============================================================================
+// ALERT AND NOTIFICATION TYPES
+// ============================================================================
+
+export interface PerformanceAlert {
+  id: string;
+  type: 'threshold-exceeded' | 'system-down' | 'performance-degradation' | 'healthcare-compliance-violation';
+  severity: 'info' | 'warning' | 'error' | 'critical';
+  message: string;
+  metric: PerformanceMetric;
+  threshold?: number;
+  timestamp: string;
+  acknowledged: boolean;
+  clinicId?: string;
+  userId?: string;
+}
+
+export interface AlertRule {
+  id: string;
+  name: string;
+  metricName: string;
+  operator: 'gt' | 'lt' | 'eq' | 'gte' | 'lte';
+  threshold: number;
+  severity: PerformanceAlert['severity'];
+  enabled: boolean;
+  cooldownPeriod?: number; // minutes
+  healthcareCategory?: 'patient-safety' | 'data-privacy' | 'system-availability' | 'compliance';
+}
+
+// ============================================================================
+// DASHBOARD AND REPORTING TYPES
+// ============================================================================
+
+export interface PerformanceDashboardData {
+  webVitals: {
+    current: WebVitalsMetric[];
+    trends: { timestamp: string; value: number; }[];
+    alerts: PerformanceAlert[];
   };
-  lgpd: {
-    consentRate: number;
-    dataMinimization: number;
-    rightsRequests: number;
+  aiMetrics: {
+    current: AIMetric[];
+    modelPerformance: { modelId: string; accuracy: number; responseTime: number; }[];
+    driftDetection: { timestamp: string; driftScore: number; }[];
   };
-  overall_score: number;
-  performance: {
-    avgResponseTime: number;
-    errorRate: number;
-    uptime: number;
+  cacheMetrics: {
+    current: CacheMetric[];
+    hitRates: { layer: string; hitRate: number; }[];
+    performance: { timestamp: string; responseTime: number; }[];
   };
-  privacy: {
-    consentTracking: number;
-    dataMinimization: number;
-    lgpdCompliance: number;
+  systemMetrics: {
+    current: SystemMetric[];
+    resourceUsage: { resource: string; usage: number; capacity: number; }[];
+    healthStatus: 'healthy' | 'warning' | 'critical';
+  };
+  lastUpdated: string;
+  clinicId?: string;
+}
+
+export interface PerformanceReport {
+  id: string;
+  title: string;
+  generatedAt: string;
+  period: { start: string; end: string; };
+  summary: {
+    totalMetrics: number;
+    alertsGenerated: number;
+    averagePerformance: number;
+    complianceScore: number;
+  };
+  sections: {
+    webVitals: any;
+    aiPerformance: any;
+    cacheEfficiency: any;
+    systemHealth: any;
   };
   recommendations: string[];
-  security: {
-    dataEncryption: number;
-    mfaAdoption: number;
-    passwordCompliance: number;
-  };
+  clinicId?: string;
+}
+
+// ============================================================================
+// COLLECTOR INTERFACE
+// ============================================================================
+
+export interface MetricCollector {
+  name: string;
+  start(): Promise<void>;
+  stop(): Promise<void>;
+  getLatestMetrics(): Promise<PerformanceMetric[]>;
+  onMetric?(handler: (metric: PerformanceMetric) => void): void;
+  setHealthcareContext?(context: HealthcareContext): void;
+}
+
+// ============================================================================
+// HEALTHCARE COMPLIANCE TYPES
+// ============================================================================
+
+export interface HealthcareComplianceMetric extends PerformanceMetric {
+  complianceCategory: 'lgpd-data-access' | 'anvisa-audit-trail' | 'cfm-patient-privacy';
+  sensitivityLevel: 'public' | 'internal' | 'confidential' | 'restricted';
+  accessPattern: 'read' | 'write' | 'update' | 'delete';
+  dataSubject?: 'patient' | 'healthcare-professional' | 'clinic' | 'system';
+  retentionPeriod?: number; // days
+}
+
+export interface LGPDComplianceConfig {
+  enabled: boolean;
+  auditTrailRetention: number; // days
+  dataSubjectRights: boolean;
+  consentManagement: boolean;
+  dataMinimization: boolean;
+}
+
+export interface ANVISAComplianceConfig {
+  enabled: boolean;
+  adverseEventReporting: boolean;
+  productTraceability: boolean;
+  qualitySystemCompliance: boolean;
+  regulatoryReporting: boolean;
+}
+
+// ============================================================================
+// UTILITY TYPES
+// ============================================================================
+
+export type HealthCheckResult = {
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  checks: {
+    name: string;
+    status: 'pass' | 'fail' | 'warn';
+    responseTime?: number;
+    error?: string;
+  }[];
   timestamp: string;
-}
+};
 
-interface DashboardMetrics {
-  complianceScore: number;
-  healthScore: number;
-  insights: Record<string, string>;
-  performanceScore: number;
-  securityScore: number;
+export type PerformanceInsight = {
+  type: 'optimization' | 'alert' | 'trend' | 'anomaly';
+  title: string;
+  description: string;
+  impact: 'low' | 'medium' | 'high' | 'critical';
+  recommendation: string;
+  metrics: PerformanceMetric[];
   timestamp: string;
-  trends: Record<string, number[]>;
-}
-
-interface AlertData {
-  message: string;
-  resolved: boolean;
-  severity: "low" | "medium" | "high" | "critical";
-  timestamp: Date;
-  type: "error_rate" | "performance" | "availability";
-}
-
-interface ComplianceStatus {
-  anvisa: { lastCheck: Date; score: number; status: string };
-  cfm: { lastCheck: Date; score: number; status: string };
-  lgpd: { lastCheck: Date; score: number; status: string };
-  security: { lastCheck: Date; score: number; status: string };
-}
-
-interface ComplianceMetrics {
-  details: {
-    consentManagement: number;
-    dataMinimization: number;
-    dataProtection: number;
-    rightsManagement: number;
-  };
-  lastUpdated: Date;
-  score: number;
-}
-
-interface MonitoringHooks {
-  afterSend?: (response: Response) => void;
-  beforeSend?: (
-    data: Record<string, unknown>,
-  ) => Record<string, unknown> | null;
-  onAlert?: (alert: Record<string, unknown>) => void;
-  onError?: (error: ErrorEvent) => void;
-  onMetric?: (metric: Metric | CustomMetric) => void;
-}
-
-// Export all types together
-export type {
-  AlertConfig,
-  AlertData,
-  ComplianceMetrics,
-  ComplianceReport,
-  ComplianceStatus,
-  CustomMetric,
-  DashboardMetrics,
-  ErrorEvent,
-  ErrorInfo,
-  HealthcareContext,
-  HealthcareMetricName,
-  MonitoringConfig,
-  MonitoringHooks,
-  PerformanceReport,
-  PerformanceThresholds,
-  ResourceData,
-  WebVitalName,
 };

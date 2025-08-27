@@ -13,7 +13,7 @@ import { logger } from "../../../../utils/logger";
 class DeploymentValidator {
   async validateEnvironmentVariables(
     requiredVars: string[],
-  ): Promise<{ valid: boolean; missing: string[] }> {
+  ): Promise<{ valid: boolean; missing: string[]; }> {
     const missing = requiredVars.filter((variable) => !process.env[variable]);
     return { valid: missing.length === 0, missing };
   }
@@ -24,24 +24,20 @@ class DeploymentValidator {
   }> {
     const start = performance.now();
     // Simulate database connection check
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.random() * 20 + 10),
-    );
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 20 + 10));
     const latency = performance.now() - start;
     return { connected: true, latency };
   }
 
   async validateExternalServices(): Promise<{
-    [service: string]: { status: string; responseTime: number };
+    [service: string]: { status: string; responseTime: number; };
   }> {
     const services = ["supabase", "email", "sms", "analytics"];
-    const results: any = {};
+    const results: unknown = {};
 
     for (const service of services) {
       const start = performance.now();
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 30 + 10),
-      );
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 30 + 10));
       results[service] = {
         status: "healthy",
         responseTime: performance.now() - start,
@@ -51,7 +47,7 @@ class DeploymentValidator {
     return results;
   }
 
-  async runHealthChecks(): Promise<{ overall: string; checks: any[] }> {
+  async runHealthChecks(): Promise<{ overall: string; checks: unknown[]; }> {
     const checks = [
       { name: "database", status: "healthy", details: "Connection successful" },
       { name: "api", status: "healthy", details: "All endpoints responding" },
@@ -98,7 +94,7 @@ class BuildValidator {
 
   async validateBundleOptimization(): Promise<{
     optimized: boolean;
-    sizes: any;
+    sizes: unknown;
     recommendations: string[];
   }> {
     const sizes = {
@@ -121,8 +117,8 @@ class BuildValidator {
 
   async validateTypeScriptCompilation(): Promise<{
     success: boolean;
-    errors: any[];
-    warnings: any[];
+    errors: unknown[];
+    warnings: unknown[];
   }> {
     // Simulate TypeScript compilation check
     return {
@@ -232,8 +228,7 @@ describe("production Deployment Validation Tests - Final Readiness", () => {
         "ENCRYPTION_KEY",
       ];
 
-      const result =
-        await deploymentValidator.validateEnvironmentVariables(requiredVars);
+      const result = await deploymentValidator.validateEnvironmentVariables(requiredVars);
 
       expect(result.valid).toBeTruthy();
       expect(result.missing).toHaveLength(0);
@@ -362,9 +357,7 @@ describe("production Deployment Validation Tests - Final Readiness", () => {
 
       expect(corsConfig.allowed_origins.length).toBeGreaterThan(0);
       expect(
-        corsConfig.allowed_origins.every((origin) =>
-          origin.startsWith("https://"),
-        ),
+        corsConfig.allowed_origins.every((origin) => origin.startsWith("https://")),
       ).toBeTruthy();
       expect(corsConfig.credentials_allowed).toBeTruthy();
     });

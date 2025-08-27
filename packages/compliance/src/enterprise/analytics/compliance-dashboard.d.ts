@@ -405,7 +405,7 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
       critical_issues: string[];
       recommendations: string[];
     };
-    detailed_metrics: Record<string, any>;
+    detailed_metrics: Record<string, unknown>;
     constitutional_certification: {
       privacy_officer_review: boolean;
       regulatory_compliance_verified: boolean;
@@ -438,7 +438,7 @@ declare const ComplianceDashboardReportSchema: z.ZodObject<
       critical_issues: string[];
       recommendations: string[];
     };
-    detailed_metrics: Record<string, any>;
+    detailed_metrics: Record<string, unknown>;
     constitutional_certification: {
       privacy_officer_review: boolean;
       regulatory_compliance_verified: boolean;
@@ -463,7 +463,7 @@ export type ComplianceDashboardAudit = {
   metrics_snapshot: ComplianceDashboardMetrics;
   alerts_generated: ComplianceAlert[];
   constitutional_validation: boolean;
-  privacy_impact_assessment: Record<string, any>;
+  privacy_impact_assessment: Record<string, unknown>;
   created_at: string;
   created_by: string;
 };

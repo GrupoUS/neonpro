@@ -143,7 +143,7 @@ interface AppointmentCardProps {
 
 const AppointmentCard = ({ appointment, index }: AppointmentCardProps) => {
   const statusInfo = statusConfig[appointment.status];
-  const StatusIcon = statusInfo.icon;
+  const { icon: StatusIcon } = statusInfo;
 
   return (
     <motion.div
@@ -238,11 +238,9 @@ export default function Agenda() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAppointments = agendaData.appointments.filter((appointment) => {
-    const matchesSearch =
-      appointment.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      filterStatus === "todos" || appointment.status === filterStatus;
+    const matchesSearch = appointment.patient.toLowerCase().includes(searchTerm.toLowerCase())
+      || appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === "todos" || appointment.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 

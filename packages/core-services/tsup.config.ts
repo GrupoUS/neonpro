@@ -33,7 +33,7 @@ export default defineConfig({
 
   // External dependencies (not bundled)
   external: [
-    "@neonpro/db",
+    "@neonpro/database",
     "@neonpro/domain",
     "@neonpro/utils",
     "@neonpro/cache",

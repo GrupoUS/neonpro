@@ -145,7 +145,7 @@ export class HealthcareTestUtils {
       temperature: number;
       oxygenSaturation?: number;
     };
-  }): Promise<TestPatient & { emergencyData: typeof data }> {
+  }): Promise<TestPatient & { emergencyData: typeof data; }> {
     const patient = await this.createTestPatient();
 
     await this.page.goto("/emergency/registration");
@@ -214,7 +214,7 @@ export class HealthcareTestUtils {
    * Logs in as a healthcare professional
    */
   async loginAsProfessional(
-    professional: Partial<TestProfessional> | { crm: string; password: string },
+    professional: Partial<TestProfessional> | { crm: string; password: string; },
   ): Promise<void> {
     await this.page.goto("/auth/professional-login");
 
@@ -421,10 +421,8 @@ export class HealthcareTestUtils {
 
     // Fill justification
     const justifications = {
-      data_access:
-        "Solicito acesso aos meus dados pessoais conforme Art. 9º da LGPD",
-      data_portability:
-        "Solicito portabilidade dos dados conforme Art. 18º da LGPD",
+      data_access: "Solicito acesso aos meus dados pessoais conforme Art. 9º da LGPD",
+      data_portability: "Solicito portabilidade dos dados conforme Art. 18º da LGPD",
       data_deletion: "Solicito exclusão dos dados conforme Art. 18º da LGPD",
       data_correction: "Solicito correção de dados conforme Art. 18º da LGPD",
     };
@@ -457,7 +455,7 @@ export class HealthcareTestUtils {
   async validateNotification(notification: {
     type: string;
     recipients: string[];
-    data: any;
+    data: unknown;
   }): Promise<void> {
     // Wait for notification to appear
     await expect(
@@ -511,7 +509,7 @@ export class HealthcareTestUtils {
       type: string;
       professional: string;
       timestamp: string;
-      data: any;
+      data: unknown;
     }[]
   > {
     await this.page.goto(`/patients/${patientId}/timeline`);

@@ -86,8 +86,6 @@ self.addEventListener("fetch", (event) => {
 
 // Handle portal page requests
 async function handlePortalRequest(request) {
-  const _url = new URL(request.url);
-
   try {
     // Try network first for HTML pages
     if (request.mode === "navigate") {

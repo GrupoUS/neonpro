@@ -75,8 +75,7 @@ export class LGPDAuditLogger {
   async logDataProcessing(activity) {
     const logId = `lgpd_audit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     // Constitutional impact assessment
-    const constitutionalImpact =
-      await this.assessConstitutionalImpact(activity);
+    const constitutionalImpact = await this.assessConstitutionalImpact(activity);
     // Compliance validation
     const complianceValidation = await this.validateCompliance(activity);
     // Generate integrity hash
@@ -113,8 +112,8 @@ export class LGPDAuditLogger {
     await this.storeAuditLog(logEntry);
     // Real-time monitoring alerts
     if (
-      this.config.real_time_monitoring &&
-      !complianceValidation.lgpd_compliant
+      this.config.real_time_monitoring
+      && !complianceValidation.lgpd_compliant
     ) {
       await this.triggerComplianceAlert(logEntry);
     }
@@ -182,8 +181,7 @@ export class LGPDAuditLogger {
       violations.push("Data categories not specified");
     }
     const lgpdCompliant = violations.length === 0;
-    const constitutionalCompliant =
-      lgpdCompliant && this.config.constitutional_validation;
+    const constitutionalCompliant = lgpdCompliant && this.config.constitutional_validation;
     return {
       lgpd_compliant: lgpdCompliant,
       constitutional_compliant: constitutionalCompliant,

@@ -61,7 +61,7 @@ export interface ComplianceAlert {
 export class MonitoringService {
   async recordMetric(
     metric: Omit<SystemMetric, "id" | "created_at">,
-  ): Promise<{ metric?: SystemMetric; error?: string }> {
+  ): Promise<{ metric?: SystemMetric; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("system_metrics")
@@ -79,8 +79,7 @@ export class MonitoringService {
       return { metric: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to record metric",
+        error: error instanceof Error ? error.message : "Failed to record metric",
       };
     }
   }
@@ -94,7 +93,7 @@ export class MonitoringService {
       endDate?: string;
       limit?: number;
     },
-  ): Promise<{ metrics?: SystemMetric[]; error?: string }> {
+  ): Promise<{ metrics?: SystemMetric[]; error?: string; }> {
     try {
       let query = supabase
         .from("system_metrics")
@@ -138,7 +137,7 @@ export class MonitoringService {
 
   async recordSecurityEvent(
     event: Omit<SecurityEvent, "id" | "created_at">,
-  ): Promise<{ event?: SecurityEvent; error?: string }> {
+  ): Promise<{ event?: SecurityEvent; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("security_events")
@@ -161,10 +160,9 @@ export class MonitoringService {
       return { event: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to record security event",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to record security event",
       };
     }
   }
@@ -179,7 +177,7 @@ export class MonitoringService {
       endDate?: string;
       limit?: number;
     },
-  ): Promise<{ events?: SecurityEvent[]; error?: string }> {
+  ): Promise<{ events?: SecurityEvent[]; error?: string; }> {
     try {
       let query = supabase
         .from("security_events")
@@ -220,17 +218,16 @@ export class MonitoringService {
       return { events: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get security events",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get security events",
       };
     }
   }
 
   async createComplianceAlert(
     alert: Omit<ComplianceAlert, "id" | "created_at">,
-  ): Promise<{ alert?: ComplianceAlert; error?: string }> {
+  ): Promise<{ alert?: ComplianceAlert; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("compliance_alerts")
@@ -253,10 +250,9 @@ export class MonitoringService {
       return { alert: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to create compliance alert",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to create compliance alert",
       };
     }
   }
@@ -269,7 +265,7 @@ export class MonitoringService {
       status?: ComplianceAlert["status"];
       limit?: number;
     },
-  ): Promise<{ alerts?: ComplianceAlert[]; error?: string }> {
+  ): Promise<{ alerts?: ComplianceAlert[]; error?: string; }> {
     try {
       let query = supabase
         .from("compliance_alerts")
@@ -302,17 +298,16 @@ export class MonitoringService {
       return { alerts: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get compliance alerts",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get compliance alerts",
       };
     }
   }
 
   async getPerformanceMetrics(
     tenantId: string,
-  ): Promise<{ metrics?: PerformanceMetrics; error?: string }> {
+  ): Promise<{ metrics?: PerformanceMetrics; error?: string; }> {
     try {
       const currentTime = new Date();
       const oneHourAgo = new Date(currentTime.getTime() - 60 * 60 * 1000);
@@ -356,10 +351,9 @@ export class MonitoringService {
       return { metrics };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get performance metrics",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get performance metrics",
       };
     }
   }
@@ -369,7 +363,7 @@ export class MonitoringService {
     eventType: string,
     patientId?: string,
     details?: Record<string, unknown>,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       const securityEvent: Omit<SecurityEvent, "id" | "created_at"> = {
         tenant_id: tenantId,
@@ -392,10 +386,9 @@ export class MonitoringService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to record healthcare event",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to record healthcare event",
       };
     }
   }
@@ -410,30 +403,27 @@ export class MonitoringService {
     tenantId: string,
     startDate: string,
     endDate: string,
-  ): Promise<{ report?: Record<string, unknown>; error?: string }> {
+  ): Promise<{ report?: Record<string, unknown>; error?: string; }> {
     try {
-      const [performanceResult, securityResult, complianceResult] =
-        await Promise.all([
-          this.getPerformanceMetrics(tenantId),
-          this.getSecurityEvents(tenantId, { startDate, endDate }),
-          this.getComplianceAlerts(tenantId, { status: "open" }),
-        ]);
+      const [performanceResult, securityResult, complianceResult] = await Promise.all([
+        this.getPerformanceMetrics(tenantId),
+        this.getSecurityEvents(tenantId, { startDate, endDate }),
+        this.getComplianceAlerts(tenantId, { status: "open" }),
+      ]);
 
       const report = {
         period: { start: startDate, end: endDate },
         performance: performanceResult.metrics,
         security: {
           total_events: securityResult.events?.length || 0,
-          high_severity_events:
-            securityResult.events?.filter(
-              (e) => e.severity === "high" || e.severity === "critical",
-            ).length || 0,
+          high_severity_events: securityResult.events?.filter(
+            (e) => e.severity === "high" || e.severity === "critical",
+          ).length || 0,
         },
         compliance: {
           open_alerts: complianceResult.alerts?.length || 0,
-          critical_alerts:
-            complianceResult.alerts?.filter((a) => a.severity === "critical")
-              .length || 0,
+          critical_alerts: complianceResult.alerts?.filter((a) => a.severity === "critical")
+            .length || 0,
         },
         generated_at: new Date().toISOString(),
       };
@@ -441,10 +431,9 @@ export class MonitoringService {
       return { report };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to generate monitoring report",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to generate monitoring report",
       };
     }
   }

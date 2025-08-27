@@ -73,19 +73,17 @@ class PatientDataLogger extends AuditLogger {
     return this.logAction({
       action: `lgpd_${requestType}_request`,
       additional_metadata: {
-        legal_basis: (requestDetails as { legal_basis?: string }).legal_basis,
+        legal_basis: (requestDetails as { legal_basis?: string; }).legal_basis,
         processing_status: processingStatus,
         request_details: requestDetails,
         response_deadline: this.calculateResponseDeadline(requestType),
       },
       compliance_category: "lgpd",
-      ip_address:
-        (requestDetails as { ip_address?: string }).ip_address || "unknown",
+      ip_address: (requestDetails as { ip_address?: string; }).ip_address || "unknown",
       resource_id: subjectId,
       resource_type: "data_subject_rights",
       risk_level: "high",
-      user_agent:
-        (requestDetails as { user_agent?: string }).user_agent || "unknown",
+      user_agent: (requestDetails as { user_agent?: string; }).user_agent || "unknown",
       user_id: subjectId,
       user_role: "data_subject",
     });

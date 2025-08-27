@@ -107,8 +107,8 @@ class AuditLogger {
   private async checkComplianceThresholds(entry: AuditLogEntry): Promise<void> {
     // Check for suspicious patterns
     if (
-      entry.risk_level === "critical" ||
-      entry.compliance_category === "security"
+      entry.risk_level === "critical"
+      || entry.compliance_category === "security"
     ) {
       // Implementation would go here for threshold checks
       // This is a placeholder to satisfy the lint rules

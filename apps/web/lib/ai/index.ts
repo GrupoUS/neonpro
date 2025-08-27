@@ -57,8 +57,7 @@ export class MLPipelineStatus {
         accuracy: `${(noShowMetrics.accuracy * 100).toFixed(1)}%`,
         targetAccuracy: "95%",
         roiProjection: "$468,750/year",
-        status:
-          noShowMetrics.accuracy >= 0.95 ? "TARGET_ACHIEVED" : "OPTIMIZING",
+        status: noShowMetrics.accuracy >= 0.95 ? "TARGET_ACHIEVED" : "OPTIMIZING",
       },
       pipeline: {
         modelManagement: "active",
@@ -86,17 +85,17 @@ export class MLPipelineStatus {
    * Initialize the entire ML pipeline
    */
   static async initializePipeline() {
-    console.log("🚀 Initializing Advanced ML Pipeline...");
+    // console.log("🚀 Initializing Advanced ML Pipeline...");
 
     try {
       // Initialize No-Show Engine (highest ROI)
       await noShowEngine.initialize();
-      console.log("✅ No-Show Engine initialized");
+      // console.log("✅ No-Show Engine initialized");
 
       // Start drift monitoring
-      console.log("🔍 Drift detection system ready");
+      // console.log("🔍 Drift detection system ready");
 
-      console.log("🎯 ML Pipeline ready - Target ROI: $1,045,950/year");
+      // console.log("🎯 ML Pipeline ready - Target ROI: $1,045,950/year");
 
       return {
         success: true,
@@ -110,7 +109,7 @@ export class MLPipelineStatus {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      console.error("❌ ML Pipeline initialization failed:", error);
+      // console.error("❌ ML Pipeline initialization failed:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : String(error),
@@ -155,20 +154,19 @@ export const MLPipelineUtils = {
   /**
    * Format prediction results for display
    */
-  formatPrediction: (prediction: any) => ({
+  formatPrediction: (prediction: unknown) => ({
     riskScore: `${Math.round(prediction.riskScore * 100)}%`,
     riskLevel: prediction.riskLevel.toUpperCase(),
     confidence: `${Math.round(prediction.confidence * 100)}%`,
-    preventedLoss:
-      prediction.riskLevel === "high" || prediction.riskLevel === "critical"
-        ? "$312.50"
-        : "$0",
+    preventedLoss: prediction.riskLevel === "high" || prediction.riskLevel === "critical"
+      ? "$312.50"
+      : "$0",
   }),
 
   /**
    * Calculate ROI impact for predictions
    */
-  calculateROI: (predictions: any[]) => {
+  calculateROI: (predictions: unknown[]) => {
     const highRisk = predictions.filter(
       (p) => p.riskLevel === "high" || p.riskLevel === "critical",
     ).length;
@@ -217,7 +215,7 @@ export default {
 
 export interface ArchonQueryResult {
   success: boolean;
-  data: any;
+  data: unknown;
   source: "rag" | "code_examples" | "task_data" | "project_data";
   confidence: number;
   timestamp: Date;
@@ -238,8 +236,7 @@ export interface ArchonSearchOptions {
 export class ArchonKnowledgeService {
   private isAvailable = false;
   private lastHealthCheck: Date | null = undefined;
-  private cache: Map<string, { result: ArchonQueryResult; expiry: Date }> =
-    new Map();
+  private cache: Map<string, { result: ArchonQueryResult; expiry: Date; }> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
   constructor() {
@@ -261,14 +258,14 @@ export class ArchonKnowledgeService {
       this.isAvailable = response.ok;
       this.lastHealthCheck = new Date();
 
-      console.log("🔗 Archon MCP Health:", {
+      // console.log("🔗 Archon MCP Health:", {
         available: this.isAvailable,
         timestamp: this.lastHealthCheck.toISOString(),
       });
 
       return this.isAvailable;
     } catch (error) {
-      console.warn("Archon MCP health check failed:", error);
+      // console.warn("Archon MCP health check failed:", error);
       this.isAvailable = false;
       this.lastHealthCheck = new Date();
       return false;
@@ -330,7 +327,7 @@ export class ArchonKnowledgeService {
       this.setCachedResult(cacheKey, archonResult);
       return archonResult;
     } catch (error) {
-      console.error("RAG query error:", error);
+      // console.error("RAG query error:", error);
       return this.getErrorResult(query, "rag", error);
     }
   }
@@ -390,7 +387,7 @@ export class ArchonKnowledgeService {
       this.setCachedResult(cacheKey, archonResult);
       return archonResult;
     } catch (error) {
-      console.error("Code examples search error:", error);
+      // console.error("Code examples search error:", error);
       return this.getErrorResult(query, "code_examples", error);
     }
   }
@@ -440,7 +437,7 @@ export class ArchonKnowledgeService {
 
       return results;
     } catch (error) {
-      console.error("Comprehensive search error:", error);
+      // console.error("Comprehensive search error:", error);
       return [this.getErrorResult(query, "rag", error)];
     }
   }
@@ -486,7 +483,7 @@ export class ArchonKnowledgeService {
         reranked: result.reranked || false,
       };
     } catch (error) {
-      console.error("Task data search error:", error);
+      // console.error("Task data search error:", error);
       return this.getErrorResult(query, "task_data", error);
     }
   }
@@ -523,7 +520,7 @@ export class ArchonKnowledgeService {
     }
   }
 
-  private calculateConfidence(result: any): number {
+  private calculateConfidence(result: unknown): number {
     // Calculate confidence based on result quality
     if (!result || !result.success) {
       return 0;
@@ -544,9 +541,9 @@ export class ArchonKnowledgeService {
     );
   }
 
-  private estimateTokens(result: any): number {
+  private estimateTokens(result: unknown): number {
     const data = result.results || result.data || [];
-    return data.reduce((total: number, item: any) => {
+    return data.reduce((total: number, item: unknown) => {
       const content = item.content || item.text || JSON.stringify(item);
       return total + Math.ceil(content.length / 4);
     }, 0);
@@ -557,13 +554,12 @@ export class ArchonKnowledgeService {
       success: false,
       data: [
         {
-          content:
-            "Archon MCP server não disponível. Utilizando conhecimento base do assistente.",
+          content: "Archon MCP server não disponível. Utilizando conhecimento base do assistente.",
           title: "Fallback Response",
           source: "fallback",
         },
       ],
-      source: source as any,
+      source: source as unknown,
       confidence: 0.3,
       timestamp: new Date(),
       query,
@@ -575,12 +571,12 @@ export class ArchonKnowledgeService {
   private getErrorResult(
     query: string,
     source: string,
-    _error: any,
+    _error: unknown,
   ): ArchonQueryResult {
     return {
       success: false,
       data: [],
-      source: source as any,
+      source: source as unknown,
       confidence: 0,
       timestamp: new Date(),
       query,
@@ -625,12 +621,12 @@ export const archonKnowledge = new ArchonKnowledgeService();
  */
 export async function queryHealthcareKnowledge(
   query: string,
-  context?: { userRole?: string; specialty?: string },
+  context?: { userRole?: string; specialty?: string; },
 ): Promise<ArchonQueryResult> {
   const enhancedQuery = context
     ? `Healthcare ${context.specialty || "general"} for ${
-        context.userRole || "professional"
-      }: ${query}`
+      context.userRole || "professional"
+    }: ${query}`
     : `Healthcare: ${query}`;
 
   return archonKnowledge.performRAGQuery(enhancedQuery, 5);

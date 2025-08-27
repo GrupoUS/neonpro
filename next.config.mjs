@@ -1,4 +1,4 @@
-import { withSentryConfig } from '@sentry/nextjs';
+import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
 // ⚠️ DEPRECATED: This next.config.mjs is now DEPRECATED after Turborepo reorganization
@@ -8,10 +8,10 @@ import { withSentryConfig } from '@sentry/nextjs';
 const nextConfig = {
   // Legacy transpilePackages for compatibility during migration
   transpilePackages: [
-    '@neonpro/ui',
-    '@neonpro/domain',
-    '@neonpro/types',
-    '@neonpro/utils',
+    "@neonpro/ui",
+    "@neonpro/domain",
+    "@neonpro/types",
+    "@neonpro/utils",
   ],
 
   // Environment variables
@@ -19,19 +19,19 @@ const nextConfig = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL
-      || (process.env.NODE_ENV === 'production'
-        ? '/api/v1'
-        : 'http://localhost:3003'),
+      || (process.env.NODE_ENV === "production"
+        ? "/api/v1"
+        : "http://localhost:3003"),
   },
 
   // API configuration - no rewrites needed in production (Vercel handles this)
   async rewrites() {
     // Only rewrite in development
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       return [
         {
-          source: '/api/:path*',
-          destination: 'http://localhost:3003/:path*',
+          source: "/api/:path*",
+          destination: "http://localhost:3003/:path*",
         },
       ];
     }
@@ -42,19 +42,19 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
           },
         ],
       },
@@ -63,8 +63,8 @@ const nextConfig = {
 
   // Image configuration
   images: {
-    domains: ['localhost'],
-    formats: ['image/webp', 'image/avif'],
+    domains: ["localhost"],
+    formats: ["image/webp", "image/avif"],
   },
 };
 
@@ -72,9 +72,9 @@ export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
-  org: 'grupous',
+  org: "grupous",
 
-  project: 'javascript-nextjs',
+  project: "javascript-nextjs",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
@@ -89,7 +89,7 @@ export default withSentryConfig(nextConfig, {
   // This can increase your server load as well as your hosting bill.
   // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
   // side errors will fail.
-  tunnelRoute: '/monitoring',
+  tunnelRoute: "/monitoring",
 
   // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,

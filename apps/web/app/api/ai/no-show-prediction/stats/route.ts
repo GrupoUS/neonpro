@@ -1,4 +1,4 @@
-import { createServerClient } from "@neonpro/db";
+import { createServerClient } from "@neonpro/database";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -35,8 +35,7 @@ function generateMockStats(timeRange: string): DashboardStats {
     },
   };
 
-  const stats =
-    baseStats[timeRange as keyof typeof baseStats] || baseStats["24h"];
+  const stats = baseStats[timeRange as keyof typeof baseStats] || baseStats["24h"];
 
   return {
     ...stats,
@@ -97,7 +96,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Error fetching no-show stats:", error);
+    // console.error("Error fetching no-show stats:", error);
     return NextResponse.json(
       { error: "Failed to fetch statistics" },
       { status: 500 },

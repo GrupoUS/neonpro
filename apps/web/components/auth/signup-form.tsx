@@ -223,9 +223,7 @@ export function SignupForm() {
           type="text"
           value={formData.fullName}
         />
-        {errors.fullName && (
-          <p className="text-destructive text-sm">{errors.fullName}</p>
-        )}
+        {errors.fullName && <p className="text-destructive text-sm">{errors.fullName}</p>}
       </div>
 
       <div className="space-y-2">
@@ -238,9 +236,7 @@ export function SignupForm() {
           type="email"
           value={formData.email}
         />
-        {errors.email && (
-          <p className="text-destructive text-sm">{errors.email}</p>
-        )}
+        {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
       </div>
 
       <div className="space-y-2">
@@ -261,16 +257,10 @@ export function SignupForm() {
             type="button"
             variant="ghost"
           >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
         </div>
-        {errors.password && (
-          <p className="text-destructive text-sm">{errors.password}</p>
-        )}
+        {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
       </div>
 
       <div className="space-y-2">
@@ -278,9 +268,7 @@ export function SignupForm() {
         <div className="relative">
           <Input
             id="confirmPassword"
-            onChange={(e) =>
-              handleInputChange("confirmPassword", e.target.value)
-            }
+            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
             placeholder="Confirme sua senha"
             required
             type={showConfirmPassword ? "text" : "password"}
@@ -293,11 +281,7 @@ export function SignupForm() {
             type="button"
             variant="ghost"
           >
-            {showConfirmPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
         </div>
         {errors.confirmPassword && (
@@ -334,9 +318,7 @@ export function SignupForm() {
           type="text"
           value={formData.phone}
         />
-        {errors.phone && (
-          <p className="text-destructive text-sm">{errors.phone}</p>
-        )}
+        {errors.phone && <p className="text-destructive text-sm">{errors.phone}</p>}
       </div>
 
       <div className="space-y-2">
@@ -349,9 +331,7 @@ export function SignupForm() {
           type="text"
           value={formData.clinicName}
         />
-        {errors.clinicName && (
-          <p className="text-destructive text-sm">{errors.clinicName}</p>
-        )}
+        {errors.clinicName && <p className="text-destructive text-sm">{errors.clinicName}</p>}
       </div>
 
       <div className="space-y-2">
@@ -359,7 +339,7 @@ export function SignupForm() {
         <select
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:border-ring focus:ring-2 focus:ring-ring focus:ring-offset-2"
           id="userType"
-          onChange={(e) => handleInputChange("userType", e.target.value as any)}
+          onChange={(e) => handleInputChange("userType", e.target.value as unknown)}
           required
           value={formData.userType}
         >
@@ -378,9 +358,7 @@ export function SignupForm() {
           <Checkbox
             checked={formData.lgpdConsent}
             id="lgpdConsent"
-            onCheckedChange={(checked) =>
-              handleInputChange("lgpdConsent", !!checked)
-            }
+            onCheckedChange={(checked) => handleInputChange("lgpdConsent", !!checked)}
           />
           <div className="text-sm leading-5">
             <label className="cursor-pointer" htmlFor="lgpdConsent">
@@ -393,12 +371,9 @@ export function SignupForm() {
               >
                 Termos de Privacidade LGPD
               </a>{" "}
-              e autorizo o tratamento dos meus dados pessoais conforme a Lei
-              13.709/2018.
+              e autorizo o tratamento dos meus dados pessoais conforme a Lei 13.709/2018.
             </label>
-            {errors.lgpdConsent && (
-              <p className="mt-1 text-destructive">{errors.lgpdConsent}</p>
-            )}
+            {errors.lgpdConsent && <p className="mt-1 text-destructive">{errors.lgpdConsent}</p>}
           </div>
         </div>
 
@@ -430,9 +405,7 @@ export function SignupForm() {
               </a>
               .
             </label>
-            {errors.terms && (
-              <p className="mt-1 text-destructive">{errors.terms}</p>
-            )}
+            {errors.terms && <p className="mt-1 text-destructive">{errors.terms}</p>}
           </div>
         </div>
       </div>
@@ -447,10 +420,9 @@ export function SignupForm() {
               Conformidade Regulatória Brasileira
             </p>
             <p className="leading-relaxed">
-              Ao criar sua conta, você confirma estar ciente e de acordo com as
-              regulamentações ANVISA, CFM e demais órgãos reguladores aplicáveis
-              às atividades de clínicas estéticas e procedimentos de medicina
-              estética no Brasil.
+              Ao criar sua conta, você confirma estar ciente e de acordo com as regulamentações
+              ANVISA, CFM e demais órgãos reguladores aplicáveis às atividades de clínicas estéticas
+              e procedimentos de medicina estética no Brasil.
             </p>
             <div className="flex items-center space-x-2 pt-2">
               <div className="h-1.5 w-1.5 rounded-full bg-primary" />
@@ -475,8 +447,8 @@ export function SignupForm() {
                 stepNumber === step
                   ? "neonpro-gradient neonpro-glow text-primary-foreground"
                   : stepNumber < step
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
               }`}
             >
               {stepNumber < step ? <Check className="h-5 w-5" /> : stepNumber}
@@ -537,46 +509,50 @@ export function SignupForm() {
         {step === 3 && renderStep3()}
 
         <div className="flex items-center justify-between pt-4">
-          {step > 1 ? (
-            <Button
-              className="border-border hover:bg-muted/50"
-              onClick={() => setStep(step - 1)}
-              type="button"
-              variant="outline"
-            >
-              ← Voltar
-            </Button>
-          ) : (
-            <div />
-          )}
+          {step > 1
+            ? (
+              <Button
+                className="border-border hover:bg-muted/50"
+                onClick={() => setStep(step - 1)}
+                type="button"
+                variant="outline"
+              >
+                ← Voltar
+              </Button>
+            )
+            : <div />}
 
-          {step < 3 ? (
-            <Button
-              className="neonpro-button-primary"
-              onClick={handleNextStep}
-              type="button"
-            >
-              Continuar →
-            </Button>
-          ) : (
-            <Button
-              className="neonpro-button-primary"
-              disabled={isSubmitting || loading}
-              type="submit"
-            >
-              {isSubmitting || loading ? (
-                <>
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                  Criando sua conta...
-                </>
-              ) : (
-                <>
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Criar Conta Gratuita
-                </>
-              )}
-            </Button>
-          )}
+          {step < 3
+            ? (
+              <Button
+                className="neonpro-button-primary"
+                onClick={handleNextStep}
+                type="button"
+              >
+                Continuar →
+              </Button>
+            )
+            : (
+              <Button
+                className="neonpro-button-primary"
+                disabled={isSubmitting || loading}
+                type="submit"
+              >
+                {isSubmitting || loading
+                  ? (
+                    <>
+                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                      Criando sua conta...
+                    </>
+                  )
+                  : (
+                    <>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Criar Conta Gratuita
+                    </>
+                  )}
+              </Button>
+            )}
         </div>
       </form>
 

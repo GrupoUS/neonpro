@@ -68,7 +68,7 @@ export async function analyzeBundleStats(
           name: chunk.names?.[0] || chunk.id,
           size: chunkSize,
           gzippedSize: Math.round(chunkSize * 0.3), // Estimated gzip ratio
-          modules: chunk.modules?.map((m: any) => m.name) || [],
+          modules: chunk.modules?.map((m: unknown) => m.name) || [],
           status: chunkStatus,
         });
 
@@ -102,8 +102,8 @@ function getChunkStatus(size: number): "good" | "warning" | "error" {
 }
 
 // Analyze modules for optimization opportunities
-function analyzeModules(modules: any[], analysis: BundleAnalysis) {
-  const moduleMap = new Map<string, { chunk: string; size: number }[]>();
+function analyzeModules(modules: unknown[], analysis: BundleAnalysis) {
+  const moduleMap = new Map<string, { chunk: string; size: number; }[]>();
 
   for (const module of modules) {
     const moduleName = cleanModuleName(module.name);
@@ -132,9 +132,8 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
   // Find duplicate modules
   for (const [moduleName, occurrences] of moduleMap) {
     if (occurrences.length > 1) {
-      const totalWasted =
-        occurrences.reduce((sum, occ) => sum + occ.size, 0) -
-        Math.max(...occurrences.map((occ) => occ.size));
+      const totalWasted = occurrences.reduce((sum, occ) => sum + occ.size, 0)
+        - Math.max(...occurrences.map((occ) => occ.size));
 
       if (totalWasted > 1024) {
         // Only report if > 1KB wasted
@@ -202,9 +201,11 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
       0,
     );
     recommendations.push(
-      `📦 ${analysis.duplicates.length} duplicate modules waste ${formatBytes(
-        totalWasted,
-      )} - optimize imports`,
+      `📦 ${analysis.duplicates.length} duplicate modules waste ${
+        formatBytes(
+          totalWasted,
+        )
+      } - optimize imports`,
     );
   }
 
@@ -216,9 +217,7 @@ function generateRecommendations(analysis: BundleAnalysis): string[] {
   }
 
   // Specific library recommendations
-  const recharts = analysis.largeModules.find((m) =>
-    m.name.includes("recharts"),
-  );
+  const recharts = analysis.largeModules.find((m) => m.name.includes("recharts"));
   if (recharts) {
     recommendations.push(
       '📊 Recharts detected - use selective imports: import { LineChart } from "recharts"',
@@ -272,12 +271,11 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
   // Chunk details
   report += "## Chunks\n";
   analysis.chunks.forEach((chunk) => {
-    const status =
-      chunk.status === "error"
-        ? "🚨"
-        : chunk.status === "warning"
-          ? "⚠️"
-          : "✅";
+    const status = chunk.status === "error"
+      ? "🚨"
+      : chunk.status === "warning"
+      ? "⚠️"
+      : "✅";
     report += `- ${status} **${chunk.name}**: ${formatBytes(chunk.size)}\n`;
   });
   report += "\n";
@@ -295,9 +293,11 @@ export function generateBundleReport(analysis: BundleAnalysis): string {
   if (analysis.duplicates.length > 0) {
     report += "## Duplicate Modules\n";
     analysis.duplicates.slice(0, 10).forEach((dup) => {
-      report += `- **${dup.module}**: ${formatBytes(
-        dup.wastedBytes,
-      )} wasted across ${dup.chunks.length} chunks\n`;
+      report += `- **${dup.module}**: ${
+        formatBytes(
+          dup.wastedBytes,
+        )
+      } wasted across ${dup.chunks.length} chunks\n`;
     });
   }
 

@@ -60,12 +60,12 @@ export const SystemHealthComponent: React.FC<SystemHealthComponentProps> = ({
         { key: "status", className: "health-status" },
         "Healthy",
       ),
-      showDetailed &&
-        React.createElement(
-          "div",
-          { key: "details", className: "health-details" },
-          "Detailed metrics available",
-        ),
+      showDetailed
+      && React.createElement(
+        "div",
+        { key: "details", className: "health-details" },
+        "Detailed metrics available",
+      ),
     ],
   );
 };
@@ -160,7 +160,7 @@ export const AlertsList: React.FC<MonitoringComponentProps> = ({
             className: `alert alert-${alert.type}`,
           },
           `[${alert.type.toUpperCase()}] ${alert.message}`,
-        ),
+        )
       ),
     ),
   ]);
@@ -225,7 +225,7 @@ export const MetricsDashboard: React.FC<
                 (metricValues[metric] || 0).toFixed(1),
               ),
             ],
-          ),
+          )
         ),
       ),
     ],
@@ -243,7 +243,7 @@ export const MonitoringComponents = {
 // Helper functions for component integration
 export const createMonitoringComponent = (
   type: keyof typeof MonitoringComponents,
-  props: any,
+  props: unknown,
 ) => {
   const Component = MonitoringComponents[type];
   return React.createElement(Component, props);
@@ -289,12 +289,12 @@ export const usePerformanceMetrics = (
   refreshInterval = 5000,
 ) => {
   const [metrics, setMetrics] = React.useState<
-    Record<string, { value: number; timestamp: number }>
+    Record<string, { value: number; timestamp: number; }>
   >({});
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      const updates: Record<string, { value: number; timestamp: number }> = {};
+      const updates: Record<string, { value: number; timestamp: number; }> = {};
       metricNames.forEach((name) => {
         updates[name] = {
           value: Math.random() * 1000,

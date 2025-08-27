@@ -169,8 +169,7 @@ const complianceAlerts: ComplianceAlert[] = [
     id: "lgpd-consent-review",
     type: "important",
     title: "Revisão de Consentimentos LGPD",
-    description:
-      "Revisar e atualizar formulários de consentimento para pacientes",
+    description: "Revisar e atualizar formulários de consentimento para pacientes",
     dueDate: "2024-01-25",
     category: "LGPD",
     actionRequired: true,
@@ -234,8 +233,8 @@ const actionItems: ActionItem[] = [
 // Compliance Overview Section
 function ComplianceOverview() {
   const overallScore = Math.round(
-    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) /
-      complianceMetrics.length,
+    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0)
+      / complianceMetrics.length,
   );
 
   const getScoreColor = (score: number) => {
@@ -288,21 +287,17 @@ function ComplianceOverview() {
                 {metric.score}%
               </div>
               <div className="mt-2 flex items-center justify-center">
-                {metric.trend === "up" && (
-                  <TrendingUp className="h-4 w-4 text-green-400" />
-                )}
+                {metric.trend === "up" && <TrendingUp className="h-4 w-4 text-green-400" />}
                 {metric.trend === "down" && (
                   <TrendingUp className="h-4 w-4 rotate-180 text-red-400" />
                 )}
-                {metric.trend === "stable" && (
-                  <Activity className="h-4 w-4 text-yellow-400" />
-                )}
+                {metric.trend === "stable" && <Activity className="h-4 w-4 text-yellow-400" />}
                 <span className="ml-1 text-slate-400 text-xs">
                   {metric.trend === "up"
                     ? "Melhorando"
                     : metric.trend === "down"
-                      ? "Declinando"
-                      : "Estável"}
+                    ? "Declinando"
+                    : "Estável"}
                 </span>
               </div>
             </div>
@@ -313,13 +308,6 @@ function ComplianceOverview() {
   );
 } // Critical Alerts Section
 function CriticalAlerts() {
-  const _criticalAlerts = complianceAlerts.filter(
-    (alert) => alert.type === "critical",
-  );
-  const _importantAlerts = complianceAlerts.filter(
-    (alert) => alert.type === "important",
-  );
-
   const getAlertIcon = (type: string) => {
     switch (type) {
       case "critical": {
@@ -404,8 +392,7 @@ function CriticalAlerts() {
                   <div className="flex items-center space-x-4 text-slate-400 text-xs">
                     <span className="flex items-center">
                       <Clock className="mr-1 h-3 w-3" />
-                      Prazo:{" "}
-                      {new Date(alert.dueDate).toLocaleDateString("pt-BR")}
+                      Prazo: {new Date(alert.dueDate).toLocaleDateString("pt-BR")}
                     </span>
                     {alert.actionRequired && (
                       <span className="font-medium text-red-400">
@@ -602,8 +589,7 @@ function ANVISAComplianceModule() {
             <div>
               <p className="font-medium text-sm text-white">{license.name}</p>
               <p className="text-slate-400 text-xs">
-                Expira em:{" "}
-                {new Date(license.expiry).toLocaleDateString("pt-BR")}
+                Expira em: {new Date(license.expiry).toLocaleDateString("pt-BR")}
               </p>
             </div>
             <span
@@ -830,8 +816,8 @@ function ActionItemsSection() {
                       item.category === "LGPD"
                         ? "bg-blue-500"
                         : item.category === "ANVISA"
-                          ? "bg-green-500"
-                          : "bg-purple-500"
+                        ? "bg-green-500"
+                        : "bg-purple-500"
                     } text-white text-xs`}
                   >
                     {item.category}
@@ -848,8 +834,7 @@ function ActionItemsSection() {
                     <span>Responsável: {item.assignedTo}</span>
                     <span>Tempo estimado: {item.estimatedTime}</span>
                     <span>
-                      Prazo:{" "}
-                      {new Date(item.dueDate).toLocaleDateString("pt-BR")}
+                      Prazo: {new Date(item.dueDate).toLocaleDateString("pt-BR")}
                     </span>
                   </div>
                 </div>
@@ -1006,22 +991,22 @@ function RegulatoryCalendar() {
                       daysUntil <= 7
                         ? "text-red-400"
                         : daysUntil <= 30
-                          ? "text-yellow-400"
-                          : "text-green-400"
+                        ? "text-yellow-400"
+                        : "text-green-400"
                     }`}
                   >
                     {daysUntil < 0
                       ? "Vencido"
                       : daysUntil === 0
-                        ? "Hoje"
-                        : `${daysUntil} dias`}
+                      ? "Hoje"
+                      : `${daysUntil} dias`}
                   </div>
                   <p className="text-slate-400 text-xs">
                     {daysUntil < 0
                       ? "Ação urgente"
                       : daysUntil <= 7
-                        ? "Urgente"
-                        : "No prazo"}
+                      ? "Urgente"
+                      : "No prazo"}
                   </p>
                 </div>
               </div>
@@ -1048,14 +1033,16 @@ export default function ComplianceAutomationPage() {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 2000);
+    });
     setLastUpdated(new Date());
     setIsRefreshing(false);
   };
 
   const overallComplianceScore = Math.round(
-    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0) /
-      complianceMetrics.length,
+    complianceMetrics.reduce((acc, metric) => acc + metric.score, 0)
+      / complianceMetrics.length,
   );
 
   return (
@@ -1080,8 +1067,8 @@ export default function ComplianceAutomationPage() {
                 overallComplianceScore >= 90
                   ? "bg-green-500/20 text-green-400"
                   : overallComplianceScore >= 80
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-red-500/20 text-red-400"
+                  ? "bg-yellow-500/20 text-yellow-400"
+                  : "bg-red-500/20 text-red-400"
               }`}
             >
               <span className="font-medium text-sm">Compliance:</span>

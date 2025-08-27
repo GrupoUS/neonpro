@@ -127,11 +127,9 @@ const MOCK_TEST_RESULTS: TestResult[] = [
 
 export default function PatientPortalPage() {
   const { user, loading } = useAuth();
-  const [appointments, _setAppointments] =
-    useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const [appointments, _setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
   const [records, _setRecords] = useState<MedicalRecord[]>(MOCK_RECORDS);
-  const [testResults, _setTestResults] =
-    useState<TestResult[]>(MOCK_TEST_RESULTS);
+  const [testResults, _setTestResults] = useState<TestResult[]>(MOCK_TEST_RESULTS);
   const [_selectedDate, _setSelectedDate] = useState<Date>(new Date());
 
   const getStatusBadge = (status: string) => {
@@ -155,10 +153,8 @@ export default function PatientPortalPage() {
 
     return (
       <Badge
-        className={
-          variants[status as keyof typeof variants] ||
-          "bg-gray-100 text-gray-800"
-        }
+        className={variants[status as keyof typeof variants]
+          || "bg-gray-100 text-gray-800"}
       >
         {labels[status as keyof typeof labels] || status}
       </Badge>
@@ -210,9 +206,11 @@ export default function PatientPortalPage() {
                 <p className="font-medium text-sm">Próxima Consulta</p>
                 <p className="text-muted-foreground text-xs">
                   {nextAppointment
-                    ? `${new Date(nextAppointment.date).toLocaleDateString(
+                    ? `${
+                      new Date(nextAppointment.date).toLocaleDateString(
                         "pt-BR",
-                      )} às ${nextAppointment.time}`
+                      )
+                    } às ${nextAppointment.time}`
                     : "Nenhuma agendada"}
                 </p>
               </div>
@@ -274,8 +272,7 @@ export default function PatientPortalPage() {
           <AlertDescription>
             <strong>Próxima consulta:</strong> {nextAppointment.doctor} (
             {nextAppointment.specialty}) -{" "}
-            {new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às{" "}
-            {nextAppointment.time}
+            {new Date(nextAppointment.date).toLocaleDateString("pt-BR")} às {nextAppointment.time}
             <Button className="ml-2 h-auto p-0" variant="link">
               Ver detalhes
             </Button>
@@ -385,9 +382,7 @@ export default function PatientPortalPage() {
                       <div>
                         <span className="font-medium text-sm">Prescrição:</span>
                         <ul className="list-inside list-disc text-sm">
-                          {record.prescription.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
+                          {record.prescription.map((item, index) => <li key={index}>{item}</li>)}
                         </ul>
                       </div>
 
@@ -527,8 +522,8 @@ export default function PatientPortalPage() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <strong>Lembrete:</strong> Sempre consulte seu médico antes de
-                  alterar ou interromper medicações.
+                  <strong>Lembrete:</strong>{" "}
+                  Sempre consulte seu médico antes de alterar ou interromper medicações.
                 </AlertDescription>
               </Alert>
             </CardContent>

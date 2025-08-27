@@ -188,7 +188,7 @@ export interface QualityResult {
   status: QualityStatus;
   score: number;
   threshold: number;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   issues: QualityIssue[];
 }
 
@@ -233,7 +233,7 @@ export class HealthcareQualityValidator {
     return Object.values(report).every((result) =>
       typeof result === "object" && "status" in result
         ? result.status !== QualityStatus.FAIL
-        : true,
+        : true
     );
   }
 

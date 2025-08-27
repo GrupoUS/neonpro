@@ -26,9 +26,7 @@ test.describe("🏥 Healthcare Bank Reconciliation System E2E", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should load reconciliation dashboard with healthcare security", async ({
-    page,
-  }) => {
+  test("should load reconciliation dashboard with healthcare security", async ({ page }) => {
     // Verify healthcare security measures
     await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -48,13 +46,8 @@ test.describe("🏥 Healthcare Bank Reconciliation System E2E", () => {
     await HealthcarePerformanceHelper.validatePerformanceRequirements(page);
   });
 
-  test("should import bank statement with healthcare data anonymization", async ({
-    page,
-  }) => {
+  test("should import bank statement with healthcare data anonymization", async ({ page }) => {
     // Generate anonymous financial data for testing
-    const _testFinancialData =
-      HealthcareDataAnonymizer.generateAnonymousFinancialData();
-
     // Start file import process with performance validation
     await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
       page,
@@ -105,9 +98,7 @@ test.describe("🏥 Healthcare Bank Reconciliation System E2E", () => {
     ).toBeGreaterThan(0);
   });
 
-  test("should perform intelligent transaction matching with healthcare validation", async ({
-    page,
-  }) => {
+  test("should perform intelligent transaction matching with healthcare validation", async ({ page }) => {
     // First import sample data with healthcare data protection
     await page.getByTestId("import-statement-button").click();
     const fileInput = page.getByTestId("file-upload-input");
@@ -160,9 +151,7 @@ test.describe("🏥 Healthcare Bank Reconciliation System E2E", () => {
     await HealthcareWorkflowHelper.validatePatientDataProtection(page);
   });
 
-  test("should handle manual transaction matching with healthcare audit trail", async ({
-    page,
-  }) => {
+  test("should handle manual transaction matching with healthcare audit trail", async ({ page }) => {
     // Navigate to manual matching with performance validation
     await HealthcarePerformanceHelper.validateRoutineOperationPerformance(
       page,
@@ -207,12 +196,8 @@ test.describe("🏥 Healthcare Bank Reconciliation System E2E", () => {
   });
 });
 
-test("should export reconciliation report with healthcare compliance", async ({
-  page,
-}) => {
+test("should export reconciliation report with healthcare compliance", async ({ page }) => {
   // Setup: ensure we have test data with healthcare anonymization
-  const _testData = HealthcareDataAnonymizer.generateAnonymousFinancialData();
-
   // Import sample data first
   await page.getByTestId("import-statement-button").click();
   await page
@@ -258,9 +243,7 @@ test("should export reconciliation report with healthcare compliance", async ({
   expect(download2.suggestedFilename()).toContain(".xlsx");
 });
 
-test("should handle large dataset with healthcare performance standards", async ({
-  page,
-}) => {
+test("should handle large dataset with healthcare performance standards", async ({ page }) => {
   // Import large dataset with performance monitoring
   await page.getByTestId("import-statement-button").click();
   await page
@@ -301,9 +284,7 @@ test("should handle large dataset with healthcare performance standards", async 
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
 });
 
-test("should maintain healthcare audit trail with constitutional compliance", async ({
-  page,
-}) => {
+test("should maintain healthcare audit trail with constitutional compliance", async ({ page }) => {
   // Perform operations to generate audit entries
   await page.getByTestId("import-statement-button").click();
   await page
@@ -352,9 +333,7 @@ test("should maintain healthcare audit trail with constitutional compliance", as
   expect(auditContent).not.toMatch(/\(\d{2}\)\s*9\d{4}-\d{4}/); // No phone numbers
 });
 
-test("should handle errors gracefully with healthcare standards", async ({
-  page,
-}) => {
+test("should handle errors gracefully with healthcare standards", async ({ page }) => {
   // Test file format error with healthcare error handling
   await page.getByTestId("import-statement-button").click();
   await page
@@ -404,9 +383,7 @@ test("should handle errors gracefully with healthcare standards", async ({
   await HealthcareWorkflowHelper.validatePatientDataProtection(page);
 });
 
-test("should validate LGPD compliance features in financial operations", async ({
-  page,
-}) => {
+test("should validate LGPD compliance features in financial operations", async ({ page }) => {
   // Navigate to privacy settings with healthcare compliance
   await page.getByTestId("privacy-settings-tab").click();
 
@@ -443,9 +420,7 @@ test("should validate LGPD compliance features in financial operations", async (
   await LGPDComplianceHelper.validateConsentManagement(page);
 });
 
-test("should handle mobile responsive design with healthcare accessibility", async ({
-  page,
-}) => {
+test("should handle mobile responsive design with healthcare accessibility", async ({ page }) => {
   // Set mobile viewport for patient accessibility
   await page.setViewportSize({ width: 375, height: 667 });
 
@@ -474,9 +449,7 @@ test("should handle mobile responsive design with healthcare accessibility", asy
   }
 });
 
-test("should maintain security throughout reconciliation with healthcare standards", async ({
-  page,
-}) => {
+test("should maintain security throughout reconciliation with healthcare standards", async ({ page }) => {
   // Verify healthcare security measures
   await HealthcareSecurityHelper.validateDataEncryption(page);
 
@@ -515,9 +488,7 @@ test("should maintain security throughout reconciliation with healthcare standar
     expect(headers["content-type"]).toContain("application/json");
     expect(route.request().url()).toMatch(/^https:\/\//);
 
-    // Verify healthcare-specific security headers
-    const _responseHeaders = {
-      "strict-transport-security": "max-age=31536000; includeSubDomains",
+    // Verify healthcare-specific security headers includeSubDomains",
       "x-content-type-options": "nosniff",
       "x-frame-options": "DENY",
       "x-xss-protection": "1; mode=block",

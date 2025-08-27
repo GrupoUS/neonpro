@@ -24,12 +24,12 @@ export interface PerformanceTestConfig {
 export interface ComprehensivePerformanceReport {
   timestamp: string;
   testConfig: PerformanceTestConfig;
-  lighthouse: any;
-  healthcare: any;
-  database: any;
-  api: any;
-  frontend: any;
-  bundle: any;
+  lighthouse: unknown;
+  healthcare: unknown;
+  database: unknown;
+  api: unknown;
+  frontend: unknown;
+  bundle: unknown;
   summary: PerformanceSummary;
   recommendations: string[];
   passedTests: string[];
@@ -95,7 +95,7 @@ export class PerformanceTestRunner {
 
     return report;
   }
-  private async runLighthouseTests(): Promise<any> {
+  private async runLighthouseTests(): Promise<unknown> {
     const auditor = new PerformanceAuditor();
     await auditor.initialize();
 
@@ -117,7 +117,7 @@ export class PerformanceTestRunner {
     }
   }
 
-  private async runDatabaseTests(): Promise<any> {
+  private async runDatabaseTests(): Promise<unknown> {
     const dbTester = new DatabasePerformanceTester();
 
     const connectionTime = await dbTester.testConnectionPerformance();
@@ -146,7 +146,7 @@ export class PerformanceTestRunner {
     };
   }
 
-  private async runApiTests(): Promise<any> {
+  private async runApiTests(): Promise<unknown> {
     const apiTester = new ApiPerformanceTester(this.config.apiUrl);
 
     const healthcareEndpoints = await apiTester.testHealthcareEndpoints();
@@ -171,7 +171,7 @@ export class PerformanceTestRunner {
       loadTestResults,
     };
   }
-  private async runFrontendTests(): Promise<any> {
+  private async runFrontendTests(): Promise<unknown> {
     const frontendTester = new FrontendPerformanceTester();
     await frontendTester.initialize();
 
@@ -199,7 +199,7 @@ export class PerformanceTestRunner {
     }
   }
 
-  private async runBundleAnalysis(): Promise<any> {
+  private async runBundleAnalysis(): Promise<unknown> {
     const bundleOptimizer = new BundleOptimizer(
       this.config.buildPath,
       this.outputDir,
@@ -220,7 +220,7 @@ export class PerformanceTestRunner {
     return analysis;
   }
 
-  private async runHealthcareTests(): Promise<any> {
+  private async runHealthcareTests(): Promise<unknown> {
     const auditor = new PerformanceAuditor();
     await auditor.initialize();
 
@@ -267,8 +267,7 @@ export class PerformanceTestRunner {
   ): PerformanceSummary {
     const totalTargets = this.passedTests.length + this.failedTests.length;
     const passedTargets = this.passedTests.length;
-    const overallScore =
-      totalTargets > 0 ? Math.round((passedTargets / totalTargets) * 100) : 0;
+    const overallScore = totalTargets > 0 ? Math.round((passedTargets / totalTargets) * 100) : 0;
 
     let criticalIssues = 0;
     let warnings = 0;

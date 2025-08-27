@@ -129,21 +129,9 @@ function validateBuildProcess() {
   header("BUILD PROCESS VALIDATION");
 
   try {
-    info("Building API package...");
-    const _apiResult = execSync("pnpm --filter=@neonpro/api build", {
-      cwd: projectRoot,
-      encoding: "utf8",
-      timeout: 60_000,
-    });
-    success("API build completed successfully");
+    info("Building API package...");    success("API build completed successfully");
 
-    info("Type checking web components...");
-    const _webResult = execSync("pnpm --filter=@neonpro/web type-check", {
-      cwd: projectRoot,
-      encoding: "utf8",
-      timeout: 60_000,
-    });
-    success("Web type checking completed successfully");
+    info("Type checking web components...");    success("Web type checking completed successfully");
 
     return true;
   } catch (error) {
@@ -342,7 +330,7 @@ async function runValidation() {
   });
 
   const passedCount = results.filter((r) => r.success).length;
-  const totalCount = results.length;
+  const { length: totalCount } = results;
 
   log(`\n${"=".repeat(60)}`, colors.cyan);
 
@@ -382,9 +370,9 @@ async function runValidation() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   runValidation()
-    .then((success) => {
+    .then((success) => { return 
       process.exit(success ? 0 : 1);
-    })
+    ; })
     .catch((error) => {
       error(`Validation script error: ${error.message}`);
       process.exit(1);

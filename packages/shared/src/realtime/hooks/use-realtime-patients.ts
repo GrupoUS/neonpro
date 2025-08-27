@@ -4,7 +4,7 @@
  * Otimizado para ambiente healthcare com LGPD compliance
  */
 
-import type { Database } from "@neonpro/db";
+import type { Database } from "@neonpro/database";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { getRealtimeManager } from "../connection-manager";
@@ -56,7 +56,7 @@ export function useRealtimePatients(
   const queryClient = useQueryClient();
   const [isConnected, setIsConnected] = useState(false);
   const [connectionHealth, setConnectionHealth] = useState(0);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>(undefined);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>();
   const [totalUpdates, setTotalUpdates] = useState(0);
   const [unsubscribeFn, setUnsubscribeFn] = useState<(() => void) | null>();
 
@@ -85,9 +85,7 @@ export function useRealtimePatients(
 
             case "UPDATE": {
               if (newData) {
-                return oldCache.map((patient) =>
-                  patient.id === newData.id ? newData : patient,
-                );
+                return oldCache.map((patient) => patient.id === newData.id ? newData : patient);
               }
               return oldCache;
             }
@@ -125,7 +123,7 @@ export function useRealtimePatients(
    * Handle realtime patient changes
    */
   const handlePatientChange = useCallback(
-    (payload: any) => {
+    (payload: unknown) => {
       try {
         const realtimePayload: RealtimePatientPayload = {
           eventType: payload.eventType,
@@ -242,7 +240,7 @@ export function useOptimisticPatients(tenantId: string) {
             return oldCache;
           }
           return oldCache.map((patient) =>
-            patient.id === patientId ? { ...patient, ...updates } : patient,
+            patient.id === patientId ? { ...patient, ...updates } : patient
           );
         },
       );

@@ -47,7 +47,7 @@ interface UseAISchedulingReturn {
   // Utility functions
   predictNoShowRisk: (patientId: string, slotId: string) => Promise<number>;
   optimizeStaffWorkload: () => Promise<SchedulingAction[]>;
-  forecastDemand: (days: number) => Promise<any>;
+  forecastDemand: (days: number) => Promise<unknown>;
 
   // Configuration
   updateConfig: (config: Partial<any>) => void;
@@ -70,10 +70,8 @@ export const useAIScheduling = (
 
   // Core state
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(undefined);
-  const [lastResult, setLastResult] = useState<SchedulingResult | null>(
-    undefined,
-  );
+  const [error, setError] = useState<string | null>();
+  const [lastResult, setLastResult] = useState<SchedulingResult | null>();
 
   // Optimization state
   const [optimizationScore, setOptimizationScore] = useState(0.8);
@@ -82,9 +80,7 @@ export const useAIScheduling = (
   >([]);
 
   // Analytics state
-  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>(
-    undefined,
-  );
+  const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>();
   const [processingTime, setProcessingTime] = useState(0);
 
   // Refs for AI engine and real-time connections
@@ -233,8 +229,7 @@ export const useAIScheduling = (
 
         return result;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Scheduling failed";
+        const errorMessage = error instanceof Error ? error.message : "Scheduling failed";
         setError(errorMessage);
         throw new Error(errorMessage);
       } finally {
@@ -319,9 +314,9 @@ export const useAIScheduling = (
         if (autoOptimize) {
           const autoActions = actions.filter(
             (action) =>
-              action.impact.efficiencyChange > 10 &&
-              action.executionTime < 60 &&
-              action.impact.patientSatisfactionChange >= 0,
+              action.impact.efficiencyChange > 10
+              && action.executionTime < 60
+              && action.impact.patientSatisfactionChange >= 0,
           );
 
           for (const action of autoActions) {
@@ -408,7 +403,7 @@ export const useAIScheduling = (
   }, []);
 
   // Handle real-time updates from WebSocket
-  const handleRealtimeUpdate = useCallback((data: any) => {
+  const handleRealtimeUpdate = useCallback((data: unknown) => {
     switch (data.type) {
       case "schedule_change": {
         // Refresh available slots

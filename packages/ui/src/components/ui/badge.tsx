@@ -44,7 +44,8 @@ const badgeVariants = cva(
           "border-transparent bg-gradient-to-br from-warning/20 via-warning/15 to-warning/10 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         normal:
           "border-transparent bg-gradient-to-br from-primary/15 via-primary/10 to-primary/5 text-primary shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
-        low: "border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
+        low:
+          "border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
 
         // NEONPROV1 Appointment status variants
         scheduled:
@@ -63,7 +64,8 @@ const badgeVariants = cva(
         // NEONPROV1 Professional availability variants
         available:
           "border-transparent bg-gradient-to-br from-success/15 via-success/10 to-success/5 text-success shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
-        busy: "border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
+        busy:
+          "border-transparent bg-gradient-to-br from-warning/15 via-warning/10 to-warning/5 text-warning shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
         offline:
           "border-transparent bg-gradient-to-br from-muted-foreground/15 via-muted-foreground/10 to-muted-foreground/5 text-muted-foreground shadow-healthcare-sm backdrop-blur-sm hover:scale-105",
 
@@ -93,9 +95,7 @@ const badgeVariants = cva(
   },
 );
 
-interface BadgeProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof badgeVariants> {
+interface BadgeProps extends React.ComponentProps<"div">, VariantProps<typeof badgeVariants> {
   icon?: React.ReactNode;
   pulse?: boolean;
   interactive?: boolean;
@@ -308,11 +308,9 @@ const ProfessionalBadge = forwardRef<HTMLDivElement, ProfessionalBadgeProps>(
       <Badge
         icon={getAvailabilityIcon()}
         ref={ref}
-        title={
-          specialty
-            ? `${getAvailabilityLabel()} - ${specialty}`
-            : getAvailabilityLabel()
-        }
+        title={specialty
+          ? `${getAvailabilityLabel()} - ${specialty}`
+          : getAvailabilityLabel()}
         variant={availability}
         {...props}
       >
@@ -390,7 +388,7 @@ const LGPDBadge = forwardRef<HTMLDivElement, LGPDBadgeProps>(
         icon={getComplianceIcon()}
         pulse={compliance === "violation"}
         ref={ref}
-        variant={getVariant() as any}
+        variant={getVariant() as unknown}
         {...props}
       >
         {props.children || getComplianceLabel()}

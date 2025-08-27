@@ -71,7 +71,7 @@ export interface AuditLog {
   resourceType?: string;
   action: string;
   description: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   timestamp: Date;
@@ -91,7 +91,7 @@ export interface AuditEvent {
   resourceType?: string;
   action: string;
   description: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   regulation: HealthcareRegulation;
@@ -153,7 +153,7 @@ export interface ComplianceAuditReport {
   actionItems: ComplianceActionItem[];
   nextAuditDue: Date;
   status: "DRAFT" | "FINAL" | "APPROVED";
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 /**

@@ -50,7 +50,7 @@ export interface PhotoInput {
   url: string;
   quality: number; // 0-100
   lighting: "good" | "poor" | "excellent";
-  resolution: { width: number; height: number };
+  resolution: { width: number; height: number; };
   landmarks: FacialLandmark[];
 }
 
@@ -280,8 +280,7 @@ export class ARResultsSimulatorService {
       );
 
       // Extract facial measurements from photos
-      const measurements =
-        await this.extractFacialMeasurements(validatedPhotos);
+      const measurements = await this.extractFacialMeasurements(validatedPhotos);
 
       // Create simulation record
       const simulation: ARSimulation = {
@@ -295,7 +294,7 @@ export class ARResultsSimulatorService {
           preferences: request.preferences,
           treatmentParameters: request.treatmentParameters,
         },
-        outputData: {} as any, // Will be populated during processing
+        outputData: {} as unknown, // Will be populated during processing
         metadata: {
           modelVersion: "2.1.0",
           processingTime: 0,
@@ -529,7 +528,7 @@ export class ARResultsSimulatorService {
     }
 
     // Extract measurements using facial landmarks
-    const landmarks = frontPhoto.landmarks;
+    const { landmarks } = frontPhoto;
 
     // Calculate facial proportions and measurements
     const measurements: FacialMeasurements = {
@@ -667,12 +666,11 @@ export class ARResultsSimulatorService {
         timestamp,
         transformations,
         blendShapes: [],
-        description:
-          i === 0
-            ? "Before treatment"
-            : i === frameCount
-              ? "After treatment"
-              : `Treatment progress ${Math.round(progress * 100)}%`,
+        description: i === 0
+          ? "Before treatment"
+          : i === frameCount
+          ? "After treatment"
+          : `Treatment progress ${Math.round(progress * 100)}%`,
       });
     }
 
@@ -711,8 +709,7 @@ export class ARResultsSimulatorService {
       satisfactionPrediction,
     );
 
-    const maintenanceRequired =
-      await this.calculateMaintenanceSchedule(treatmentParams);
+    const maintenanceRequired = await this.calculateMaintenanceSchedule(treatmentParams);
     const riskFactors = await this.assessRiskFactors(treatmentParams);
 
     return {
@@ -757,8 +754,7 @@ export class ARResultsSimulatorService {
     let confidence = 85; // Base confidence
 
     // Adjust based on photo quality
-    const avgPhotoQuality =
-      photos.reduce((sum, p) => sum + p.quality, 0) / photos.length;
+    const avgPhotoQuality = photos.reduce((sum, p) => sum + p.quality, 0) / photos.length;
     confidence *= avgPhotoQuality / 100;
 
     // Adjust based on facial symmetry (better symmetry = more predictable results)
@@ -799,7 +795,7 @@ export class ARResultsSimulatorService {
     return complexityMap[treatmentParams.treatmentType] || 0.3;
   }
 
-  private getRecoveryData(treatmentType: string): any {
+  private getRecoveryData(treatmentType: string): unknown {
     const recoveryTemplates = {
       botox: {
         stages: [
@@ -971,7 +967,7 @@ export class ARResultsSimulatorService {
 
   private async getPhotoResolution(
     _photo: File,
-  ): Promise<{ width: number; height: number }> {
+  ): Promise<{ width: number; height: number; }> {
     // Mock resolution detection
     return { width: 1920, height: 1080 };
   }
@@ -1060,10 +1056,8 @@ export class ARResultsSimulatorService {
 
   private async adjustIntensity(
     _model: Model3D,
-    intensity: PatientPreferences["intensityLevel"],
+    _intensity: PatientPreferences["intensityLevel"],
   ): Promise<void> {
-    const intensityMultipliers = { subtle: 0.6, moderate: 0.8, dramatic: 1 };
-    const _multiplier = intensityMultipliers[intensity];
     // Mock implementation
   }
 
@@ -1184,16 +1178,14 @@ export class ARResultsSimulatorService {
     const metrics: ComparisonMetric[] = [];
 
     if (simulations.length >= 2) {
-      const sim1 = simulations[0];
-      const sim2 = simulations[1];
+      const [sim1, sim2] = simulations;
 
       metrics.push({
         name: "Satisfaction Prediction",
         value1: sim1.outputData.estimatedOutcome.satisfactionPrediction,
         value2: sim2.outputData.estimatedOutcome.satisfactionPrediction,
-        difference:
-          sim2.outputData.estimatedOutcome.satisfactionPrediction -
-          sim1.outputData.estimatedOutcome.satisfactionPrediction,
+        difference: sim2.outputData.estimatedOutcome.satisfactionPrediction
+          - sim1.outputData.estimatedOutcome.satisfactionPrediction,
         unit: "%",
         interpretation: "Higher is better",
       });
@@ -1202,9 +1194,8 @@ export class ARResultsSimulatorService {
         name: "Naturalness Score",
         value1: sim1.outputData.estimatedOutcome.naturalness,
         value2: sim2.outputData.estimatedOutcome.naturalness,
-        difference:
-          sim2.outputData.estimatedOutcome.naturalness -
-          sim1.outputData.estimatedOutcome.naturalness,
+        difference: sim2.outputData.estimatedOutcome.naturalness
+          - sim1.outputData.estimatedOutcome.naturalness,
         unit: "%",
         interpretation: "Higher indicates more natural result",
       });
@@ -1216,7 +1207,7 @@ export class ARResultsSimulatorService {
   private async generateRecommendation(
     simulations: ARSimulation[],
     metrics: ComparisonMetric[],
-  ): Promise<{ recommendation: string; reasoning: string }> {
+  ): Promise<{ recommendation: string; reasoning: string; }> {
     // Simple recommendation logic
     if (metrics.length === 0) {
       return {
@@ -1226,15 +1217,16 @@ export class ARResultsSimulatorService {
     }
 
     const bestSim = simulations.reduce((best, current) =>
-      current.outputData.estimatedOutcome.satisfactionPrediction >
-      best.outputData.estimatedOutcome.satisfactionPrediction
+      current.outputData.estimatedOutcome.satisfactionPrediction
+          > best.outputData.estimatedOutcome.satisfactionPrediction
         ? current
-        : best,
+        : best
     );
 
     return {
       recommendation: `Treatment option ${simulations.indexOf(bestSim) + 1} recommended`,
-      reasoning: `Highest predicted satisfaction (${bestSim.outputData.estimatedOutcome.satisfactionPrediction}%) with good naturalness score`,
+      reasoning:
+        `Highest predicted satisfaction (${bestSim.outputData.estimatedOutcome.satisfactionPrediction}%) with good naturalness score`,
     };
   }
 
@@ -1260,7 +1252,7 @@ export class ARResultsSimulatorService {
     }
   }
 
-  private convertFromDatabase(data: any): ARSimulation {
+  private convertFromDatabase(data: unknown): ARSimulation {
     return {
       id: data.id,
       patientId: data.patient_id,

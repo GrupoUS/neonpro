@@ -6,7 +6,7 @@
  */
 
 import { modelManager } from "@/lib/ai/model-management";
-import { createServerClient } from "@neonpro/db";
+import { createServerClient } from "@neonpro/database";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Model management API error:", error);
+    // console.error("Model management API error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",
@@ -191,8 +191,7 @@ export async function POST(request: NextRequest) {
         if (!name || !description || !modelType || !version) {
           return NextResponse.json(
             {
-              error:
-                "Missing required fields: name, description, modelType, version",
+              error: "Missing required fields: name, description, modelType, version",
             },
             { status: 400 },
           );
@@ -305,7 +304,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Model management POST error:", error);
+    // console.error("Model management POST error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

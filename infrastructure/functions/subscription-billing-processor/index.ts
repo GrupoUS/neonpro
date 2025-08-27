@@ -12,8 +12,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 interface Database {
@@ -41,7 +40,7 @@ interface Database {
           external_subscription_id: string;
           cancel_at_period_end: boolean;
           canceled_at: string;
-          metadata: any;
+          metadata: unknown;
         };
       };
       subscription_plans: {
@@ -61,7 +60,7 @@ interface Database {
           amount: number;
           currency: string;
           status: string;
-          metadata: any;
+          metadata: unknown;
         };
       };
     };
@@ -115,7 +114,7 @@ serve(async (req) => {
   }
 });
 
-async function processTrialExpirations(supabase: any) {
+async function processTrialExpirations(supabase: unknown) {
   try {
     const now = new Date().toISOString();
 
@@ -162,7 +161,7 @@ async function processTrialExpirations(supabase: any) {
   } catch {}
 }
 
-async function processBillingRenewals(supabase: any) {
+async function processBillingRenewals(supabase: unknown) {
   try {
     const now = new Date();
     const renewalWindow = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours ahead
@@ -196,7 +195,7 @@ async function processBillingRenewals(supabase: any) {
         const nextBillingDate = nextPeriodEnd;
 
         // Get plan price for current billing cycle
-        const plan = subscription.plan;
+        const { plan: plan } = subscription;
         let amount = 0;
 
         switch (subscription.billing_cycle) {
@@ -247,7 +246,7 @@ async function processBillingRenewals(supabase: any) {
   } catch {}
 }
 
-async function processSubscriptionCancellations(supabase: any) {
+async function processSubscriptionCancellations(supabase: unknown) {
   try {
     const now = new Date().toISOString();
 
@@ -297,7 +296,7 @@ async function processSubscriptionCancellations(supabase: any) {
   } catch {}
 }
 
-async function processFailedPaymentRetries(supabase: any) {
+async function processFailedPaymentRetries(supabase: unknown) {
   try {
     const now = new Date();
     const retryWindow = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago

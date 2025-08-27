@@ -96,7 +96,7 @@ export interface AgentChatState {
 
 export interface ArchonQueryResult {
   success: boolean;
-  data: any;
+  data: unknown;
   source: "rag" | "code_examples" | "task_data" | "project_data";
   confidence: number;
   timestamp: Date;

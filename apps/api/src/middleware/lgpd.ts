@@ -290,8 +290,7 @@ const validateDataRetention = (
  */
 export const lgpdMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
-    const method = c.req.method;
-    const path = c.req.path;
+    const { method, path } = c.req;
 
     // Get route configuration
     const routeConfig = getRouteConfig(method, path);
@@ -354,10 +353,9 @@ export const lgpdMiddleware = (): MiddlewareHandler => {
       c.set("lgpdContext", {
         config: routeConfig,
         patientId,
-        consentValidated:
-          routeConfig.requiresConsent.length === 0 ||
-          (patientId &&
-            consentStore.hasValidConsent(
+        consentValidated: routeConfig.requiresConsent.length === 0
+          || (patientId
+            && consentStore.hasValidConsent(
               patientId,
               routeConfig.requiresConsent,
             )),
@@ -418,7 +416,7 @@ export const lgpdUtils = {
   },
 
   // Data minimization helper
-  minimizeData: <T extends Record<string, any>>(
+  minimizeData: <T extends Record<string, unknown>>(
     data: T,
     allowedFields: (keyof T)[],
   ): Partial<T> => {
@@ -432,7 +430,7 @@ export const lgpdUtils = {
   },
 
   // Anonymize data for analytics
-  anonymizeData: <T extends Record<string, any>>(data: T): T => {
+  anonymizeData: <T extends Record<string, unknown>>(data: T): T => {
     const anonymized = { ...data };
 
     // Remove direct identifiers
@@ -453,9 +451,11 @@ export const lgpdUtils = {
 
     // Generate anonymous ID for analytics correlation
     if (data.id) {
-      anonymized.anonymousId = `anon_${btoa(data.id.toString())
-        .replaceAll(/[^a-zA-Z0-9]/g, "")
-        .slice(0, 8)}`;
+      anonymized.anonymousId = `anon_${
+        btoa(data.id.toString())
+          .replaceAll(/[^a-zA-Z0-9]/g, "")
+          .slice(0, 8)
+      }`;
     }
 
     return anonymized;

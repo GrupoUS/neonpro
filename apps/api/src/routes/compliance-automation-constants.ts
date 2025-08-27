@@ -1,4 +1,4 @@
-﻿// Constants for compliance automation
+// Constants for compliance automation
 export const COMPLIANCE_STANDARDS = {
   MINIMUM_SCORE: 9.9,
   CONSTITUTIONAL_THRESHOLD: 9.9,

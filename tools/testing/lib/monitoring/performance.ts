@@ -13,8 +13,9 @@ export interface WebVital {
   rating: "good" | "needs-improvement" | "poor";
 }
 
+// TODO: Convert to standalone functions
 export class PerformanceService {
-  static startTimer(name: string): { end: () => number } {
+  static startTimer(name: string): { end: () => number; } {
     const start = performance.now();
     return {
       end: () => {

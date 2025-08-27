@@ -28,7 +28,7 @@ export class PredictiveAnalyticsService {
     };
   }
 
-  async trainModel(id: string, data: any[]) {
+  async trainModel(id: string, data: unknown[]) {
     // Mock implementation for build compatibility
     return {
       id,
@@ -38,7 +38,7 @@ export class PredictiveAnalyticsService {
     };
   }
 
-  async updateAlert(id: string, body: any) {
+  async updateAlert(id: string, body: unknown) {
     // Mock implementation for build compatibility
     return {
       id,
@@ -63,7 +63,7 @@ export class PredictiveAnalyticsService {
     };
   }
 
-  async updateForecastingModel(id: string, data: any) {
+  async updateForecastingModel(id: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id,

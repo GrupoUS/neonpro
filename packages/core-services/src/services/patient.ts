@@ -21,7 +21,7 @@ interface Patient {
   preferences: PatientPreferences;
   status: PatientStatus;
   tags: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -136,7 +136,7 @@ interface PatientCreateRequest {
   emergencyContact?: EmergencyContact;
   preferences?: Partial<PatientPreferences>;
   tags?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface PatientUpdateRequest {
@@ -146,7 +146,7 @@ interface PatientUpdateRequest {
   emergencyContact?: Partial<EmergencyContact>;
   preferences?: Partial<PatientPreferences>;
   tags?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface PatientHistory {
@@ -154,8 +154,8 @@ interface PatientHistory {
   patientId: string;
   action: string;
   fieldChanged?: string;
-  oldValue?: any;
-  newValue?: any;
+  oldValue?: unknown;
+  newValue?: unknown;
   changedBy: string;
   changedAt: Date;
   reason?: string;
@@ -185,8 +185,8 @@ interface PatientConsent {
 export class PatientService {
   private static instance: PatientService;
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
   private constructor() {}
@@ -223,8 +223,7 @@ export class PatientService {
       }
 
       // Generate full name
-      const fullName =
-        `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
+      const fullName = `${request.personalInfo.firstName} ${request.personalInfo.lastName}`.trim();
 
       // Prepare patient data
       const patientData = {
@@ -397,7 +396,7 @@ export class PatientService {
       await this.validateTenantAccess(userId, currentPatient.tenantId);
 
       // Prepare update data
-      const updateData: any = {
+      const updateData: unknown = {
         updated_by: userId,
         updated_at: new Date().toISOString(),
       };
@@ -411,17 +410,14 @@ export class PatientService {
           updateData.last_name = updates.personalInfo.lastName;
         }
         if (updates.personalInfo.firstName || updates.personalInfo.lastName) {
-          const firstName =
-            updates.personalInfo.firstName ||
-            currentPatient.personalInfo.firstName;
-          const lastName =
-            updates.personalInfo.lastName ||
-            currentPatient.personalInfo.lastName;
+          const firstName = updates.personalInfo.firstName
+            || currentPatient.personalInfo.firstName;
+          const lastName = updates.personalInfo.lastName
+            || currentPatient.personalInfo.lastName;
           updateData.full_name = `${firstName} ${lastName}`.trim();
         }
         if (updates.personalInfo.dateOfBirth) {
-          updateData.date_of_birth =
-            updates.personalInfo.dateOfBirth.toISOString();
+          updateData.date_of_birth = updates.personalInfo.dateOfBirth.toISOString();
         }
         if (updates.personalInfo.gender) {
           updateData.gender = updates.personalInfo.gender;
@@ -458,8 +454,7 @@ export class PatientService {
           updateData.whatsapp = updates.contactInfo.whatsapp;
         }
         if (updates.contactInfo.preferredContactMethod) {
-          updateData.preferred_contact_method =
-            updates.contactInfo.preferredContactMethod;
+          updateData.preferred_contact_method = updates.contactInfo.preferredContactMethod;
         }
 
         if (updates.contactInfo.address) {
@@ -511,8 +506,7 @@ export class PatientService {
           updateData.smoking_status = updates.medicalInfo.smokingStatus;
         }
         if (updates.medicalInfo.alcoholConsumption) {
-          updateData.alcohol_consumption =
-            updates.medicalInfo.alcoholConsumption;
+          updateData.alcohol_consumption = updates.medicalInfo.alcoholConsumption;
         }
         if (updates.medicalInfo.exerciseFrequency) {
           updateData.exercise_frequency = updates.medicalInfo.exerciseFrequency;
@@ -528,8 +522,7 @@ export class PatientService {
           updateData.emergency_contact_name = updates.emergencyContact.name;
         }
         if (updates.emergencyContact.relationship !== undefined) {
-          updateData.emergency_contact_relationship =
-            updates.emergencyContact.relationship;
+          updateData.emergency_contact_relationship = updates.emergencyContact.relationship;
         }
         if (updates.emergencyContact.phone !== undefined) {
           updateData.emergency_contact_phone = updates.emergencyContact.phone;
@@ -689,7 +682,7 @@ export class PatientService {
   async searchPatients(
     filters: PatientSearchFilters,
     userId: string,
-  ): Promise<{ patients: Patient[]; total: number }> {
+  ): Promise<{ patients: Patient[]; total: number; }> {
     try {
       monitoring.debug("Searching patients", "patient-service", { filters });
 
@@ -883,7 +876,7 @@ export class PatientService {
     consentText: string,
     version: string,
     userId: string,
-    clientInfo?: { ipAddress?: string; userAgent?: string },
+    clientInfo?: { ipAddress?: string; userAgent?: string; },
   ): Promise<PatientConsent> {
     try {
       monitoring.info("Recording patient consent", "patient-service", {
@@ -1040,46 +1033,40 @@ export class PatientService {
         .eq("is_active", true);
 
       // Analyze loyalty levels
-      const patientsByLoyaltyLevel =
-        patients?.reduce(
-          (acc, patient) => {
-            acc[patient.loyalty_level] = (acc[patient.loyalty_level] || 0) + 1;
-            return acc;
-          },
-          {} as Record<string, number>,
-        ) || {};
+      const patientsByLoyaltyLevel = patients?.reduce(
+        (acc, patient) => {
+          acc[patient.loyalty_level] = (acc[patient.loyalty_level] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ) || {};
 
       // Analyze risk levels
-      const patientsByRiskLevel =
-        patients?.reduce(
-          (acc, patient) => {
-            acc[patient.risk_level] = (acc[patient.risk_level] || 0) + 1;
-            return acc;
-          },
-          {} as Record<string, number>,
-        ) || {};
+      const patientsByRiskLevel = patients?.reduce(
+        (acc, patient) => {
+          acc[patient.risk_level] = (acc[patient.risk_level] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ) || {};
 
       // Calculate average age
       const currentYear = new Date().getFullYear();
-      const ages =
-        patients?.map(
-          (patient) =>
-            currentYear - new Date(patient.date_of_birth).getFullYear(),
-        ) || [];
-      const averageAge =
-        ages.length > 0
-          ? ages.reduce((sum, age) => sum + age, 0) / ages.length
-          : 0;
+      const ages = patients?.map(
+        (patient) => currentYear - new Date(patient.date_of_birth).getFullYear(),
+      ) || [];
+      const averageAge = ages.length > 0
+        ? ages.reduce((sum, age) => sum + age, 0) / ages.length
+        : 0;
 
       // Analyze gender distribution
-      const genderDistribution =
-        patients?.reduce(
-          (acc, patient) => {
-            acc[patient.gender] = (acc[patient.gender] || 0) + 1;
-            return acc;
-          },
-          {} as Record<string, number>,
-        ) || {};
+      const genderDistribution = patients?.reduce(
+        (acc, patient) => {
+          acc[patient.gender] = (acc[patient.gender] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ) || {};
 
       return {
         totalPatients: totalPatients || 0,
@@ -1148,8 +1135,8 @@ export class PatientService {
     patientId: string,
     action: string,
     fieldChanged?: string,
-    oldValue?: any,
-    newValue?: any,
+    oldValue?: unknown,
+    newValue?: unknown,
     userId?: string,
     reason?: string,
   ): Promise<void> {
@@ -1176,7 +1163,7 @@ export class PatientService {
     }
   }
 
-  private mapPatientFromDb(data: any): Patient {
+  private mapPatientFromDb(data: unknown): Patient {
     return {
       id: data.id,
       tenantId: data.tenant_id,
@@ -1251,7 +1238,7 @@ export class PatientService {
     };
   }
 
-  private mapPatientHistoryFromDb(data: any): PatientHistory {
+  private mapPatientHistoryFromDb(data: unknown): PatientHistory {
     return {
       id: data.id,
       patientId: data.patient_id,
@@ -1265,7 +1252,7 @@ export class PatientService {
     };
   }
 
-  private mapPatientConsentFromDb(data: any): PatientConsent {
+  private mapPatientConsentFromDb(data: unknown): PatientConsent {
     return {
       id: data.id,
       patientId: data.patient_id,

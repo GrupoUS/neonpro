@@ -10,12 +10,11 @@ const HOURS_IN_DAY = 24;
 const MINUTES_IN_HOUR = 60;
 const SECONDS_IN_MINUTE = 60;
 const MILLISECONDS_IN_SECOND = 1000;
-const WEEK_IN_MILLISECONDS =
-  DAYS_IN_WEEK *
-  HOURS_IN_DAY *
-  MINUTES_IN_HOUR *
-  SECONDS_IN_MINUTE *
-  MILLISECONDS_IN_SECOND;
+const WEEK_IN_MILLISECONDS = DAYS_IN_WEEK
+  * HOURS_IN_DAY
+  * MINUTES_IN_HOUR
+  * SECONDS_IN_MINUTE
+  * MILLISECONDS_IN_SECOND;
 
 interface SubscriptionStatusCardProps {
   subscription: {
@@ -85,10 +84,9 @@ const FeatureGate: React.FC<FeatureGateProps> = ({
 const SubscriptionNotifications: React.FC<SubscriptionNotificationsProps> = ({
   subscription,
 }) => {
-  const isExpiringSoon =
-    subscription.expiresAt &&
-    new Date(subscription.expiresAt).getTime() - Date.now() <
-      WEEK_IN_MILLISECONDS;
+  const isExpiringSoon = subscription.expiresAt
+    && new Date(subscription.expiresAt).getTime() - Date.now()
+      < WEEK_IN_MILLISECONDS;
 
   if (subscription.status === "expired" || isExpiringSoon) {
     return (
@@ -103,9 +101,9 @@ const SubscriptionNotifications: React.FC<SubscriptionNotificationsProps> = ({
 
 export {
   FeatureGate,
-  SubscriptionNotifications,
-  SubscriptionStatusCard,
   type FeatureGateProps,
+  SubscriptionNotifications,
   type SubscriptionNotificationsProps,
+  SubscriptionStatusCard,
   type SubscriptionStatusCardProps,
 };

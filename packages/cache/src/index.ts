@@ -1,183 +1,108 @@
-import { LRUCache } from "lru-cache";
+// ============================================================================
+// NeonPro AI Healthcare Platform - Consolidated Cache Package
+// Supabase-first multi-layer caching with LGPD/ANVISA compliance
+// ============================================================================
 
-// Healthcare-compliant cache configuration
-interface CacheOptions {
-  maxItems?: number;
-  ttl?: number; // Time to live in milliseconds
-  updateAgeOnGet?: boolean;
-  allowStale?: boolean;
-  encryptSensitiveData?: boolean;
-}
+// Core types and interfaces
+export * from './types';
 
-// Generic cache data structure
-interface CacheData<T = unknown> {
-  data: T;
-  timestamp: number;
-  auditLog: string[];
-}
+// Multi-layer cache manager (main entry point)
+export { MultiLayerCacheManager } from './cache-manager';
 
-// LGPD-compliant cache for patient data
-interface SensitiveDataCache<T = unknown> {
-  data: T;
-  encrypted: boolean;
-  patientConsent: boolean;
-  expiresAt: number;
-  auditLog: string[];
-}
+// Individual cache layers
+export { SupabaseCacheLayer } from './supabase-cache';
+export { BrowserCacheLayer } from './browser-cache';
+export { EdgeCacheLayer } from './edge-cache';
+export { AIContextCacheLayer } from './ai-context-cache';
 
-class HealthcareCacheManager {
-  private readonly memoryCache: LRUCache<string, CacheData>;
-  private readonly sensitiveCache: LRUCache<string, SensitiveDataCache>;
+// Enterprise features
+export * from './enterprise';
 
-  constructor(options: CacheOptions = {}) {
-    // Memory cache for non-sensitive data
-    this.memoryCache = new LRUCache({
-      max: options.maxItems || 1000,
-      ttl: options.ttl || 1000 * 60 * 15, // 15 minutes default
-      updateAgeOnGet: options.updateAgeOnGet ?? true,
-      allowStale: options.allowStale ?? false,
-    });
+// Default cache manager instance for easy consumption
+import { MultiLayerCacheManager } from './cache-manager';
+import type { CacheConfig } from './types';
 
-    // Separate cache for sensitive healthcare data
-    this.sensitiveCache = new LRUCache({
-      max: 100, // Limited sensitive data cache
-      ttl: 1000 * 60 * 5, // 5 minutes for sensitive data
-      updateAgeOnGet: false, // No age update for security
-      allowStale: false, // Never allow stale sensitive data
-    });
+// Healthcare-optimized default configuration
+const defaultConfig: CacheConfig = {
+  layers: ['BROWSER', 'EDGE', 'SUPABASE', 'AI_CONTEXT'],
+  ttl: {
+    BROWSER: 5 * 60 * 1000,        // 5 minutes
+    EDGE: 15 * 60 * 1000,          // 15 minutes  
+    SUPABASE: 60 * 60 * 1000,      // 1 hour
+    AI_CONTEXT: 24 * 60 * 60 * 1000 // 24 hours
+  },
+  healthcare: {
+    encryptSensitiveData: true,
+    auditTrailEnabled: true,
+    lgpdCompliant: true,
+    anvisaCompliant: true,
+    patientDataTTL: 5 * 60 * 1000,  // 5 minutes for patient data
+    maxSensitiveItems: 100,
+    clearOnPrivacyRequest: true
+  },
+  performance: {
+    batchSize: 50,
+    debounceMs: 100,
+    maxRetries: 3,
+    circuitBreaker: true,
+    metricsEnabled: true
+  },
+  fallback: {
+    enableGracefulDegradation: true,
+    fallbackLayers: ['BROWSER', 'EDGE'],
+    errorThreshold: 5,
+    recoveryTimeMs: 30000
   }
+};
 
-  // Cache non-sensitive data (appointments, general info)
-  set<T>(key: string, value: T, ttl?: number): void {
-    this.memoryCache.set(
-      key,
-      {
-        data: value,
-        timestamp: Date.now(),
-        auditLog: [`Cache set: ${new Date().toISOString()}`],
-      },
-      { ttl },
-    );
-  }
+// Default cache manager instance
+export const healthcareCache = new MultiLayerCacheManager(defaultConfig);
 
-  // Get non-sensitive data
-  get<T>(key: string): T | null {
-    const cached = this.memoryCache.get(key);
-    if (cached) {
-      cached.auditLog.push(`Cache access: ${new Date().toISOString()}`);
-      return cached.data as T;
-    }
-    return;
-  }
-
-  // Cache sensitive patient data with LGPD compliance
-  setSensitive<T>(
-    key: string,
-    value: T,
-    patientConsent = false,
-    ttl: number = 1000 * 60 * 5, // 5 minutes default
-  ): void {
-    if (!patientConsent) {
-      return;
-    }
-
-    const sensitiveData: SensitiveDataCache<T> = {
-      data: value,
-      encrypted: true, // Mark as requiring encryption
-      patientConsent,
-      expiresAt: Date.now() + ttl,
-      auditLog: [
-        `Sensitive cache set: ${new Date().toISOString()}`,
-        `Patient consent: ${patientConsent}`,
-        `TTL: ${ttl}ms`,
-      ],
-    };
-
-    this.sensitiveCache.set(key, sensitiveData, { ttl });
-  }
-
-  // Get sensitive data with LGPD audit
-  getSensitive<T>(key: string, auditUserId?: string): T | null {
-    const cached = this.sensitiveCache.get(key);
-
-    if (cached) {
-      // LGPD audit logging
-      cached.auditLog.push(
-        `Sensitive access: ${new Date().toISOString()}`,
-        `User: ${auditUserId || "anonymous"}`,
-        `Consent verified: ${cached.patientConsent}`,
-      );
-
-      // Check expiration (extra security layer)
-      if (Date.now() > cached.expiresAt) {
-        this.sensitiveCache.delete(key);
-        return;
-      }
-
-      return cached.data as T;
-    }
-
-    return;
-  }
-
-  // Clear all sensitive data (LGPD compliance)
-  clearSensitiveData(): void {
-    this.sensitiveCache.clear();
-  }
-
-  // Get cache statistics for monitoring
-  getStats() {
-    return {
-      memoryCache: {
-        size: this.memoryCache.size,
-        max: this.memoryCache.max,
-        calculatedSize: this.memoryCache.calculatedSize,
-      },
-      sensitiveCache: {
-        size: this.sensitiveCache.size,
-        max: this.sensitiveCache.max,
-        calculatedSize: this.sensitiveCache.calculatedSize,
-      },
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  // Healthcare-specific cache invalidation
-  invalidatePatientData(patientId: string): void {
-    const keys = [...this.memoryCache.keys()].filter((key) =>
-      key.includes(`patient_${patientId}`),
-    );
-
-    for (const key of keys) {
-      this.memoryCache.delete(key);
-      this.sensitiveCache.delete(key);
-    }
-  }
-
-  // ANVISA compliance: Clear cache on audit request
-  auditClearance(): void {
-    this.memoryCache.clear();
-    this.sensitiveCache.clear();
-  }
-}
-
-// Singleton instance for app-wide use
-export const healthcareCache = new HealthcareCacheManager({
-  maxItems: 2000,
-  ttl: 1000 * 60 * 10, // 10 minutes default
-  encryptSensitiveData: true,
-});
-
-// Export for custom instances
-export { HealthcareCacheManager };
-
-// Export enterprise cache service
-export * from "./enterprise";
-
-// Utility functions
+// Convenience functions for common healthcare use cases
 export const cacheKeys = {
+  // Patient-related cache keys
   patient: (id: string) => `patient_${id}`,
+  patientHistory: (id: string) => `patient_history_${id}`,
+  patientConsent: (id: string) => `patient_consent_${id}`,
+  
+  // Appointment cache keys
   appointment: (id: string) => `appointment_${id}`,
+  appointmentSlots: (providerId: string, date: string) => `slots_${providerId}_${date}`,
+  
+  // Compliance cache keys
   compliance: (type: string) => `compliance_${type}`,
+  anvisaReport: (type: string, date: string) => `anvisa_${type}_${date}`,
+  lgpdConsent: (patientId: string) => `lgpd_consent_${patientId}`,
+  
+  // AI context cache keys
+  aiConversation: (userId: string, sessionId: string) => `ai_conv_${userId}_${sessionId}`,
+  aiKnowledge: (topic: string) => `ai_knowledge_${topic}`,
+  
+  // General cache keys
   report: (type: string, date: string) => `report_${type}_${date}`,
+  metrics: (type: string) => `metrics_${type}`,
+  config: (module: string) => `config_${module}`
+} as const;
+
+// Healthcare-specific cache utilities
+export const healthcareUtils = {
+  // Clear all patient-related data for LGPD compliance
+  clearPatientData: async (patientId: string): Promise<void> => {
+    await healthcareCache.clearPatientData(patientId);
+  },
+  
+  // Emergency cache clear for ANVISA audits
+  emergencyClear: async (): Promise<void> => {
+    await healthcareCache.clear();
+  },
+  
+  // Get healthcare audit trail
+  getAuditTrail: (): any[] => {
+    return healthcareCache.getHealthcareAuditTrail();
+  },
+  
+  // Check cache health for monitoring
+  getHealthStatus: () => {
+    return healthcareCache.getStats();
+  }
 } as const;

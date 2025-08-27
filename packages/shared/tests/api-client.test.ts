@@ -36,7 +36,7 @@ import { ApiHelpers } from "../src/api-client";
 
 // Helper to create mock Response objects
 function createMockResponse(
-  data: any,
+  data: unknown,
   options: {
     ok?: boolean;
     status?: number;
@@ -52,7 +52,7 @@ function createMockResponse(
       get: vi.fn((key: string) => headers[key] || undefined),
     },
     json: vi.fn(() => Promise.resolve(data)),
-  } as any as Response;
+  } as unknown as Response;
 }
 
 describe("aPI Client - Error Handling", () => {

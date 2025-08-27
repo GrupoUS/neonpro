@@ -1,4 +1,4 @@
-﻿// Helper functions for batch prediction endpoints
+// Helper functions for batch prediction endpoints
 
 export function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error) {

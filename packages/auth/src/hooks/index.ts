@@ -10,7 +10,7 @@ import type { AuthService, User } from "../types";
 export interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string; }) => Promise<void>;
   logout: () => Promise<void>;
   register: (data: {
     email: string;
@@ -30,7 +30,7 @@ export interface AuthProviderProps {
 export interface UseAuthReturn extends AuthContextValue {}
 
 export interface UseLoginReturn {
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string; }) => Promise<void>;
   loading: boolean;
   error: string | null;
 }
@@ -80,11 +80,11 @@ export const validateAuthCredentials = (credentials: {
   password: string;
 }): boolean => {
   return (
-    credentials &&
-    typeof credentials.email === "string" &&
-    credentials.email.includes("@") &&
-    typeof credentials.password === "string" &&
-    credentials.password.length >= 6
+    credentials
+    && typeof credentials.email === "string"
+    && credentials.email.includes("@")
+    && typeof credentials.password === "string"
+    && credentials.password.length >= 6
   );
 };
 
@@ -94,9 +94,9 @@ export const validateRegisterData = (data: {
   name: string;
 }): boolean => {
   return (
-    validateAuthCredentials(data) &&
-    typeof data.name === "string" &&
-    data.name.trim().length > 0
+    validateAuthCredentials(data)
+    && typeof data.name === "string"
+    && data.name.trim().length > 0
   );
 };
 

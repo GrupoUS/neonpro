@@ -16,8 +16,8 @@ export const runtime = "edge";
 
 // Initialize Supabase client
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 );
 
 // Initialize AI Services
@@ -26,7 +26,7 @@ let chatService: UniversalChatService;
 try {
   chatService = new UniversalChatService();
 } catch (error) {
-  console.error("Failed to initialize AI services:", error);
+  // console.error("Failed to initialize AI services:", error);
 }
 
 interface ChatMessage {
@@ -52,8 +52,8 @@ interface ChatSession {
   sessionType: string;
   title?: string;
   status: "active" | "archived" | "deleted";
-  context: Record<string, any>;
-  metadata: Record<string, any>;
+  context: Record<string, unknown>;
+  metadata: Record<string, unknown>;
 }
 
 export async function POST(request: NextRequest) {
@@ -90,8 +90,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const actualClinicId =
-      clinicId || (await getClinicIdFromUser(actualUserId));
+    const actualClinicId = clinicId || (await getClinicIdFromUser(actualUserId));
 
     // Check feature flags - simplified for now
     const chatEnabled = { enabled: true };
@@ -110,7 +109,7 @@ export async function POST(request: NextRequest) {
     };
 
     if (!complianceCheck.compliant) {
-      console.error(
+      // console.error(
         "Compliance violations detected:",
         complianceCheck.violations,
       );
@@ -186,9 +185,7 @@ export async function POST(request: NextRequest) {
             controller.enqueue(encoder.encode(`data: ${chunkData}\n\n`));
 
             // Realistic streaming delay
-            await new Promise((resolve) =>
-              setTimeout(resolve, 30 + Math.random() * 70),
-            );
+            await new Promise((resolve) => setTimeout(resolve, 30 + Math.random() * 70));
           }
 
           // Send completion with metadata
@@ -204,7 +201,7 @@ export async function POST(request: NextRequest) {
 
           controller.close();
         } catch (error) {
-          console.error("Streaming error:", error);
+          // console.error("Streaming error:", error);
           const errorData = JSON.stringify({
             type: "error",
             error: "Failed to generate response",
@@ -228,7 +225,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Universal chat API error:", error);
+    // console.error("Universal chat API error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",
@@ -292,7 +289,7 @@ export async function PUT(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Session management error:", error);
+    // console.error("Session management error:", error);
     return NextResponse.json(
       { error: "Session management failed" },
       { status: 500 },
@@ -333,7 +330,7 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("GET request error:", error);
+    // console.error("GET request error:", error);
     return NextResponse.json({ error: "Request failed" }, { status: 500 });
   }
 }
@@ -413,7 +410,7 @@ async function createChatSession(
 
 async function updateChatSession(
   sessionId: string,
-  updates: any,
+  updates: unknown,
 ): Promise<void> {
   const { error } = await supabase
     .from("ai_chat_sessions")
@@ -467,10 +464,10 @@ async function getUserChatSessions(userId: string): Promise<ChatSession[]> {
 async function storeChatMessage(
   sessionId: string,
   userMessage: ChatMessage,
-  aiResponse: any,
+  aiResponse: unknown,
 ): Promise<void> {
   // Mock implementation - replace with actual database call
-  console.log("Storing chat message", {
+  // console.log("Storing chat message", {
     sessionId,
     userRole: userMessage.role,
     messageLength: userMessage.content.length,
@@ -478,13 +475,13 @@ async function storeChatMessage(
   });
 }
 
-async function _getPatientContext(patientId: string): Promise<any> {
+async function _getPatientContext(patientId: string): Promise<unknown> {
   // Implementation would fetch patient context from database
   // This is a placeholder
   return { patientId, context: "patient_context_placeholder" };
 }
 
-async function _getClinicContext(clinicId: string): Promise<any> {
+async function _getClinicContext(clinicId: string): Promise<unknown> {
   // Implementation would fetch clinic context from database
   // This is a placeholder
   return { clinicId, context: "clinic_context_placeholder" };

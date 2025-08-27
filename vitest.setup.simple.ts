@@ -7,10 +7,9 @@
 
 // CRITICAL: Polyfill HTMLFormElement.requestSubmit BEFORE any DOM setup
 // This must happen before jsdom loads to prevent the "Not implemented" error
-(globalThis as any).HTMLFormElement =
-  (globalThis as any).HTMLFormElement || class {};
-if (!(globalThis as any).HTMLFormElement.prototype.requestSubmit) {
-  (globalThis as any).HTMLFormElement.prototype.requestSubmit = function (
+(globalThis as unknown).HTMLFormElement = (globalThis as unknown).HTMLFormElement || class {};
+if (!(globalThis as unknown).HTMLFormElement.prototype.requestSubmit) {
+  (globalThis as unknown).HTMLFormElement.prototype.requestSubmit = function(
     submitter?: HTMLElement,
   ) {
     // Create and dispatch submit event
@@ -69,7 +68,7 @@ vi.mock("next/navigation", () => ({
 // Mock API client with all required methods
 vi.mock("@neonpro/shared/api-client", () => ({
   ApiHelpers: {
-    formatError: vi.fn((error: any) => {
+    formatError: vi.fn((error: unknown) => {
       if (typeof error === "string") {
         return error;
       }
@@ -80,17 +79,17 @@ vi.mock("@neonpro/shared/api-client", () => ({
         return String(error.message);
       }
       if (typeof error === "object" && error && "error" in error) {
-        const apiError = error as any;
+        const apiError = error as unknown;
         if (apiError.error?.validation_errors?.length > 0) {
           return apiError.error.validation_errors
-            .map((ve: any) => `${ve.field}: ${ve.message}`)
+            .map((ve: unknown) => `${ve.field}: ${ve.message}`)
             .join(", ");
         }
         return apiError.message || "API error occurred";
       }
       return "An unexpected error occurred";
     }),
-    handleResponse: vi.fn(async (response: any, validator?: any) => {
+    handleResponse: vi.fn(async (response: unknown, validator?: unknown) => {
       const data = await response.json();
 
       if (!response.ok) {
@@ -143,7 +142,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
         },
       };
     }),
-    createQueryKey: vi.fn((endpoint: string, params?: any, userId?: string) => {
+    createQueryKey: vi.fn((endpoint: string, params?: unknown, userId?: string) => {
       const key = ["api", endpoint];
       if (userId) {
         key.push("user", userId);
@@ -153,19 +152,19 @@ vi.mock("@neonpro/shared/api-client", () => ({
       }
       return key;
     }),
-    isNetworkError: vi.fn((error: any) => {
+    isNetworkError: vi.fn((error: unknown) => {
       if (error instanceof Error) {
         return (
-          error.message.includes("fetch") ||
-          error.message.includes("network") ||
-          error.message.includes("timeout") ||
-          error.name === "AbortError" ||
-          error.name === "NetworkError"
+          error.message.includes("fetch")
+          || error.message.includes("network")
+          || error.message.includes("timeout")
+          || error.name === "AbortError"
+          || error.name === "NetworkError"
         );
       }
       return false;
     }),
-    isAuthError: vi.fn((error: any) => {
+    isAuthError: vi.fn((error: unknown) => {
       if (typeof error === "object" && error && "error" in error) {
         const errorCode = error.error?.code;
         return [
@@ -178,17 +177,17 @@ vi.mock("@neonpro/shared/api-client", () => ({
       }
       return false;
     }),
-    isValidationError: vi.fn((error: any) => {
+    isValidationError: vi.fn((error: unknown) => {
       if (typeof error === "object" && error && "error" in error) {
-        const apiError = error as any;
+        const apiError = error as unknown;
         return (
-          apiError.error?.code === "VALIDATION_ERROR" ||
-          apiError.error?.validation_errors?.length > 0
+          apiError.error?.code === "VALIDATION_ERROR"
+          || apiError.error?.validation_errors?.length > 0
         );
       }
       return false;
     }),
-    isRateLimitError: vi.fn((error: any) => {
+    isRateLimitError: vi.fn((error: unknown) => {
       if (typeof error === "object" && error && "error" in error) {
         const errorCode = error.error?.code;
         return errorCode === "RATE_LIMIT_EXCEEDED";
@@ -224,7 +223,7 @@ vi.mock("@neonpro/shared/api-client", () => ({
             Promise.resolve({
               success: true,
               data: { id: "patient-1", name: "Test Patient" },
-            }),
+            })
           ),
           $get: vi.fn(() => Promise.resolve({ success: true, data: [] })),
         },
@@ -260,7 +259,7 @@ Object.defineProperty(global, "fetch", {
       status: 200,
       json: () => Promise.resolve({}),
       text: () => Promise.resolve(""),
-    }),
+    })
   ),
 });
 
@@ -302,7 +301,7 @@ Object.defineProperty(window, "alert", {
 if (typeof HTMLFormElement !== "undefined") {
   // Polyfill requestSubmit method
   if (!HTMLFormElement.prototype.requestSubmit) {
-    HTMLFormElement.prototype.requestSubmit = function (
+    HTMLFormElement.prototype.requestSubmit = function(
       submitter?: HTMLElement,
     ) {
       // Validate submitter if provided
@@ -349,7 +348,7 @@ if (typeof HTMLFormElement !== "undefined") {
 
   // Enhanced form validation polyfills
   if (!HTMLFormElement.prototype.checkValidity) {
-    HTMLFormElement.prototype.checkValidity = function () {
+    HTMLFormElement.prototype.checkValidity = function() {
       const formControls = this.querySelectorAll("input, select, textarea");
       let allValid = true;
 
@@ -368,7 +367,7 @@ if (typeof HTMLFormElement !== "undefined") {
   }
 
   if (!HTMLFormElement.prototype.reportValidity) {
-    HTMLFormElement.prototype.reportValidity = function () {
+    HTMLFormElement.prototype.reportValidity = function() {
       return this.checkValidity();
     };
   }
@@ -376,10 +375,10 @@ if (typeof HTMLFormElement !== "undefined") {
 
 // Also polyfill form elements if needed
 if (
-  typeof HTMLInputElement !== "undefined" &&
-  !HTMLInputElement.prototype.checkValidity
+  typeof HTMLInputElement !== "undefined"
+  && !HTMLInputElement.prototype.checkValidity
 ) {
-  HTMLInputElement.prototype.checkValidity = function () {
+  HTMLInputElement.prototype.checkValidity = function() {
     // Basic validation for required fields
     if (this.required && !this.value.trim()) {
       return false;

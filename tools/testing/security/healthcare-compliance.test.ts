@@ -18,7 +18,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
   let app: Hono;
-  let _client: any;
+  let _client: unknown;
 
   const mockProfessional = {
     id: "prof_123",
@@ -41,27 +41,20 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
     app = new Hono();
 
     // Professional management endpoints
-    app.post("/api/v1/professionals", (c) =>
-      c.json({ success: true, id: mockProfessional.id }),
-    );
+    app.post("/api/v1/professionals", (c) => c.json({ success: true, id: mockProfessional.id }));
 
-    app.get("/api/v1/professionals/:id/credentials", (c) =>
-      c.json({ success: true, credentials: mockProfessional }),
+    app.get(
+      "/api/v1/professionals/:id/credentials",
+      (c) => c.json({ success: true, credentials: mockProfessional }),
     );
 
     // Medical records endpoints
-    app.post("/api/v1/medical-records", (c) =>
-      c.json({ success: true, recordId: "mr_123" }),
-    );
+    app.post("/api/v1/medical-records", (c) => c.json({ success: true, recordId: "mr_123" }));
 
-    app.get("/api/v1/medical-records/:id", (c) =>
-      c.json({ success: true, record: {} }),
-    );
+    app.get("/api/v1/medical-records/:id", (c) => c.json({ success: true, record: {} }));
 
     // Emergency access endpoint
-    app.post("/api/v1/emergency/access", (c) =>
-      c.json({ success: true, accessGranted: true }),
-    );
+    app.post("/api/v1/emergency/access", (c) => c.json({ success: true, accessGranted: true }));
 
     _client = testClient(app);
   });
@@ -125,8 +118,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           professionalCRM: mockProfessional.crmNumber,
         };
 
-        const isValidPrescription =
-          await validatePrescriptionAgainstANVISA(prescription);
+        const isValidPrescription = await validatePrescriptionAgainstANVISA(prescription);
         expect(isValidPrescription).toBeTruthy();
       });
 
@@ -137,8 +129,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           dosage: "100mg",
         };
 
-        const isValidPrescription =
-          await validatePrescriptionAgainstANVISA(invalidPrescription);
+        const isValidPrescription = await validatePrescriptionAgainstANVISA(invalidPrescription);
         expect(isValidPrescription).toBeFalsy();
       });
     });
@@ -170,8 +161,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           description: "Equipment failure causing patient harm",
         };
 
-        const autoSubmission =
-          await autoSubmitCriticalEventToANVISA(criticalEvent);
+        const autoSubmission = await autoSubmitCriticalEventToANVISA(criticalEvent);
         expect(autoSubmission.submitted).toBeTruthy();
         expect(autoSubmission.submissionTime).toBeTruthy();
       });
@@ -267,8 +257,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           recordType: "MEDICAL_HISTORY",
         };
 
-        const accessAttempt =
-          await attemptMedicalRecordAccess(unauthorizedAccess);
+        const accessAttempt = await attemptMedicalRecordAccess(unauthorizedAccess);
         expect(accessAttempt.allowed).toBeFalsy();
         expect(accessAttempt.violation).toBe("CONFIDENTIALITY_BREACH");
 
@@ -338,8 +327,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
         const emergencyAccessId = "emergency_123";
 
         // Emergency access should be flagged for review
-        const reviewRequired =
-          await checkEmergencyAccessReview(emergencyAccessId);
+        const reviewRequired = await checkEmergencyAccessReview(emergencyAccessId);
         expect(reviewRequired.requiresReview).toBeTruthy();
         expect(reviewRequired.reviewDeadline).toBeTruthy();
 
@@ -363,8 +351,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
           grantedAt: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), // 25 hours ago
         };
 
-        const isExpiredAccessValid =
-          validateEmergencyAccessDuration(expiredAccess);
+        const isExpiredAccessValid = validateEmergencyAccessDuration(expiredAccess);
         expect(isExpiredAccessValid).toBeFalsy();
       });
     });
@@ -465,8 +452,7 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
         modificationType: "CONTENT_CHANGE",
       };
 
-      const modificationResult =
-        await attemptRecordModification(modificationAttempt);
+      const modificationResult = await attemptRecordModification(modificationAttempt);
       expect(modificationResult.allowed).toBeFalsy();
       expect(modificationResult.securityViolation).toBeTruthy();
       expect(modificationResult.auditLogged).toBeTruthy();
@@ -475,21 +461,21 @@ describe("🏥 Brazilian Healthcare Compliance Assessment", () => {
 });
 
 // Mock implementation functions for testing
-function validateAnvisaDevice(device: any): boolean {
+function validateAnvisaDevice(device: unknown): boolean {
   return device.anvisaRegistration?.startsWith("REG");
 }
 
-function logMedicalDeviceUsage(_usage: any): boolean {
+function logMedicalDeviceUsage(_usage: unknown): boolean {
   return true; // Mock implementation
 }
 
 async function validatePrescriptionAgainstANVISA(
-  prescription: any,
+  prescription: unknown,
 ): Promise<boolean> {
   return prescription.anvisaCode && prescription.anvisaCode !== "";
 }
 
-function generateANVISASurveillanceReport(data: any) {
+function generateANVISASurveillanceReport(data: unknown) {
   return {
     reportId: `ANVISA_REP_${Date.now()}`,
     anvisaSubmissionId: `SUB_${Date.now()}`,
@@ -498,7 +484,7 @@ function generateANVISASurveillanceReport(data: any) {
   };
 }
 
-async function autoSubmitCriticalEventToANVISA(event: any) {
+async function autoSubmitCriticalEventToANVISA(event: unknown) {
   return {
     submitted: event.severity === "CRITICAL",
     submissionTime: new Date().toISOString(),
@@ -528,12 +514,12 @@ async function validateCRMWithCFM(crmNumber: string) {
   );
 }
 
-async function validateProfessionalAccess(professional: any) {
+async function validateProfessionalAccess(professional: unknown) {
   const crmStatus = await validateCRMWithCFM(professional.crmNumber);
   return { allowed: crmStatus.isActive };
 }
 
-function validateSpecializationScope(prescription: any): boolean {
+function validateSpecializationScope(prescription: unknown): boolean {
   const specializationScopes = {
     Cardiologia: ["CARDIAC_MEDICATION"],
     Psiquiatria: ["PSYCHIATRIC_MEDICATION"],
@@ -544,22 +530,22 @@ function validateSpecializationScope(prescription: any): boolean {
 }
 
 // Additional mock functions would be implemented here...
-const validateInformedConsent = (_procedure: any) => ({
+const validateInformedConsent = (_procedure: unknown) => ({
   required: true,
   riskDisclosureComplete: true,
   alternativesDiscussed: true,
 });
 
-const attemptMedicalRecordAccess = async (_request: any) => ({
+const attemptMedicalRecordAccess = async (_request: unknown) => ({
   allowed: false,
   violation: "CONFIDENTIALITY_BREACH",
   auditLogged: true,
 });
 
-const generateRecordIntegrityHash = (_record: any) =>
+const generateRecordIntegrityHash = (_record: unknown) =>
   "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890";
 
-const modifyMedicalRecord = async (_modification: any) => ({
+const modifyMedicalRecord = async (_modification: unknown) => ({
   auditTrail: true,
   originalRecordPreserved: true,
 });
@@ -576,7 +562,7 @@ const checkEmergencyAccessReview = async (_accessId: string) => ({
   complianceNotified: true,
 });
 
-const validateEmergencyAccessDuration = (access: any) => {
+const validateEmergencyAccessDuration = (access: unknown) => {
   const grantedTime = new Date(access.grantedAt);
   const maxDuration = access.maxDurationHours * 60 * 60 * 1000;
   return Date.now() - grantedTime.getTime() < maxDuration;

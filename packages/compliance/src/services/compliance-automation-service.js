@@ -7,15 +7,8 @@
  * @since 2025-01-25
  */
 
-import {
-  createAnvisaServices,
-  validateAnvisaCompliance,
-} from "../anvisa/index.js";
-import {
-  createCfmServices,
-  validateCfmCompliance,
-  validateCfmResolutions,
-} from "../cfm/index.js";
+import { createAnvisaServices, validateAnvisaCompliance } from "../anvisa/index.js";
+import { createCfmServices, validateCfmCompliance, validateCfmResolutions } from "../cfm/index.js";
 import { RealTimeComplianceMonitor } from "../enterprise/audit/real-time-monitor.js";
 import { LGPDValidator } from "../lgpd/validator.js";
 /**
@@ -127,13 +120,12 @@ export class BrazilianComplianceAutomationService {
     try {
       const actions = [];
       // Validate data processing activities
-      const dataProcessingValidation =
-        await this.lgpdValidator.validateDataProcessing({
-          legal_basis: "legitimate_interest",
-          purpose: ["healthcare_treatment", "patient_management"],
-          data_minimization_applied: true,
-          transparent_processing: true,
-        });
+      const dataProcessingValidation = await this.lgpdValidator.validateDataProcessing({
+        legal_basis: "legitimate_interest",
+        purpose: ["healthcare_treatment", "patient_management"],
+        data_minimization_applied: true,
+        transparent_processing: true,
+      });
       // Validate consent management
       const consentValidation = await this.lgpdValidator.validateConsent({
         specific_purpose: true,
@@ -157,8 +149,7 @@ export class BrazilianComplianceAutomationService {
         dataProcessingValidation.compliance_score,
         consentValidation.compliance_score,
       );
-      const overallCompliant =
-        dataProcessingValidation.valid && consentValidation.valid;
+      const overallCompliant = dataProcessingValidation.valid && consentValidation.valid;
       // Collect all violations and recommendations
       const allViolations = [
         ...dataProcessingValidation.violations.map((v) => v.description),
@@ -203,9 +194,7 @@ export class BrazilianComplianceAutomationService {
       }
       // Automated remediation for missing registrations
       if (
-        anvisaValidation.issues.some((issue) =>
-          issue.includes("No registered products"),
-        )
+        anvisaValidation.issues.some((issue) => issue.includes("No registered products"))
       ) {
         actions.push(
           "Automated ANVISA product registration workflow initiated",
@@ -252,16 +241,13 @@ export class BrazilianComplianceAutomationService {
       }
       // Automated remediation for missing licenses
       if (
-        cfmValidation.issues.some((issue) =>
-          issue.includes("No CFM professional licenses"),
-        )
+        cfmValidation.issues.some((issue) => issue.includes("No CFM professional licenses"))
       ) {
         actions.push("Automated CFM license registration workflow initiated");
         await this.initiateCfmLicenseRegistration();
       }
       // Combine results
-      const combinedCompliant =
-        cfmValidation.compliant && resolutionValidation.compliant;
+      const combinedCompliant = cfmValidation.compliant && resolutionValidation.compliant;
       const combinedIssues = [
         ...cfmValidation.issues,
         ...resolutionValidation.issues,
@@ -306,8 +292,7 @@ export class BrazilianComplianceAutomationService {
             "constitutional_healthcare",
           ],
           config: {
-            monitoring_interval_minutes:
-              this.config.monitoring_config.interval_minutes,
+            monitoring_interval_minutes: this.config.monitoring_config.interval_minutes,
             score_thresholds: {
               ...this.config.monitoring_config.alert_thresholds,
               target: 10, // Add required target score
@@ -443,8 +428,7 @@ export class BrazilianComplianceAutomationService {
       await this.supabase.from("compliance_notifications").insert({
         tenant_id: this.config.tenant_id,
         notification_type: "anvisa_expiring_products",
-        message:
-          "ANVISA product registrations expiring soon - renewal required",
+        message: "ANVISA product registrations expiring soon - renewal required",
         priority: "high",
         sent_at: new Date().toISOString(),
       });
@@ -491,10 +475,9 @@ export class BrazilianComplianceAutomationService {
       anvisa: 0.3, // 30% - Regulatory compliance is critical
       cfm: 0.35, // 35% - Professional standards are essential
     };
-    const weightedScore =
-      lgpdScore * weights.lgpd +
-      anvisaScore * weights.anvisa +
-      cfmScore * weights.cfm;
+    const weightedScore = lgpdScore * weights.lgpd
+      + anvisaScore * weights.anvisa
+      + cfmScore * weights.cfm;
     // Ensure constitutional minimum
     return Math.max(weightedScore, 9.9);
   }

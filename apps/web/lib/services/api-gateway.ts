@@ -111,33 +111,9 @@ const SERVICE_ROUTES: ServiceRoute[] = [
 
 // ================================================
 // RATE LIMITING CONFIGURATION
-// ================================================
-
-const _createRateLimiter = (windowMs: number, max: number) => {
-  return rateLimit({
-    windowMs,
-    max,
-    message: {
-      error: "Too Many Requests",
-      message: "Rate limit exceeded, please try again later.",
-      retryAfter: Math.ceil(windowMs / 1000),
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
-    keyGenerator: (req: any) => {
-      // Use user ID if authenticated, otherwise IP address
-      return req.auth?.userId || req.ip;
-    },
+// ================================================    },
   });
 };
-
-const _speedLimiter = slowDown({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  delayAfter: 100, // Allow 100 requests per 15 minutes at full speed
-  delayMs: 500, // Add 500ms delay after delayAfter requests
-  maxDelayMs: 20_000, // Maximum delay of 20 seconds
-});
-
 // ================================================
 // AUTHENTICATION SERVICE
 // ================================================
@@ -307,8 +283,9 @@ export class RequestRouter {
       }
 
       // Route to service
-      const response = await this.circuitBreaker.execute(route.service, () =>
-        this.forwardRequest(request, route, authContext),
+      const response = await this.circuitBreaker.execute(
+        route.service,
+        () => this.forwardRequest(request, route, authContext),
       );
 
       // Record metrics

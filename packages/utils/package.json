@@ -16,7 +16,7 @@
     "type-check": "npx tsc --noEmit"
   },
   "dependencies": {
-    "@neonpro/db": "workspace:*",
+    "@neonpro/database": "workspace:*",
     "@supabase/supabase-js": "^2.45.4",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",

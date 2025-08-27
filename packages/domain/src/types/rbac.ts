@@ -28,7 +28,7 @@ export type Permission =
 export interface PermissionResult {
   allowed: boolean;
   reason?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface UserContext {

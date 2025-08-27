@@ -3,16 +3,7 @@
 // Integration tests covering API endpoints with database operations
 
 import type { NextRequest } from "next/server";
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // HTTP Status Constants
 const HTTP_STATUS = {
@@ -46,31 +37,11 @@ const mockRequest = (method: string, url: string, body?: unknown) =>
       };
     },
   }) as NextRequest;
-
-const _mockSession = {
-  user: {
-    id: "test-user-id-123",
-    email: "test@example.com",
-  },
-};
-
 // Test data constants
 const testClinicId = "12345678-e89b-12d3-a456-426614174000";
 const testUserId = "87654321-e89b-12d3-a456-426614174000";
 const testProductId = "11111111-e89b-12d3-a456-426614174000";
 const testAlertId = "22222222-e89b-12d3-a456-426614174000";
-
-const _mockProfile = {
-  id: testUserId,
-  clinic_id: testClinicId,
-};
-
-const _mockProduct = {
-  id: testProductId,
-  name: "Test Product",
-  category: "medication",
-};
-
 // Define mock data first
 const mockAlert = {
   id: testAlertId,
@@ -129,8 +100,8 @@ mockQueryChain.range.mockImplementation(async () => ({
   count: 1,
 }));
 mockQueryChain.single.mockImplementation(async () => {
-  const alertId = mockQueryChain._currentAlertId;
-  const insertData = mockQueryChain._insertData;
+  const { _currentAlertId: alertId } = mockQueryChain;
+  const { _insertData: insertData } = mockQueryChain;
 
   // Handle insert operations (create new alert configuration)
   if (insertData) {
@@ -170,7 +141,7 @@ mockQueryChain.single.mockImplementation(async () => {
     const isResolve = mockQueryChain._updateData?.status === "resolved";
 
     mockQueryChain._isUpdateChain = false; // Reset for next call
-    const updateData = mockQueryChain._updateData;
+    const { _updateData: updateData } = mockQueryChain;
     mockQueryChain._updateData = undefined; // Reset update data
 
     // Apply the update (assuming it passed the previous SELECT validation)
@@ -197,8 +168,7 @@ mockQueryChain.single.mockImplementation(async () => {
           status: "resolved",
           resolved_at: new Date().toISOString(),
           resolved_by: testUserId,
-          resolution_description:
-            updateData?.resolution_description || "Test resolution",
+          resolution_description: updateData?.resolution_description || "Test resolution",
           updated_at: new Date().toISOString(),
         },
         error: undefined,
@@ -217,9 +187,6 @@ mockQueryChain.single.mockImplementation(async () => {
     error: undefined,
   };
 });
-
-const _createMockQueryChain = () => mockQueryChain;
-
 // Mock Next.js headers
 vi.mock<typeof import("next/headers")>("next/headers", () => ({
   cookies: vi.fn(() => ({
@@ -259,21 +226,6 @@ import { GET, POST } from "@/api/stock/alerts/route";
 // =====================================================
 // TEST DATA FIXTURES
 // =====================================================
-
-const _mockAlertConfig = {
-  id: "44444444-e89b-12d3-a456-426614174000",
-  clinic_id: testClinicId,
-  product_id: testProductId,
-  alert_type: "low_stock",
-  threshold: 10,
-  severity: "medium",
-  is_active: true,
-  notificationChannels: ["app", "email"],
-  user_id: testUserId,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-};
-
 // =====================================================
 // SETUP AND TEARDOWN
 // =====================================================
@@ -359,11 +311,11 @@ describe("gET /api/stock/alerts", () => {
     }
 
     expect(response?.status).toBe(HTTP_STATUS.OK);
-    expect((responseData as any).success).toBeTruthy();
-    expect((responseData as any).data).toBeDefined();
-    expect(Array.isArray((responseData as any).data)).toBeTruthy();
-    expect((responseData as any).pagination).toBeDefined();
-    expect((responseData as any).pagination.total).toBe(1);
+    expect((responseData as unknown).success).toBeTruthy();
+    expect((responseData as unknown).data).toBeDefined();
+    expect(Array.isArray((responseData as unknown).data)).toBeTruthy();
+    expect((responseData as unknown).pagination).toBeDefined();
+    expect((responseData as unknown).pagination.total).toBe(1);
   });
 
   it("should filter alerts by status", async () => {
@@ -733,8 +685,6 @@ describe("edge Cases and Error Handling", () => {
     const request = mockRequest("GET", "/api/stock/alerts");
 
     const response = await GET(request);
-    const _responseData = await response.json();
-
     // Should handle timeouts or return normal response
     expect([HTTP_STATUS.OK, HTTP_STATUS.INTERNAL_SERVER_ERROR]).toContain(
       response.status,
@@ -763,13 +713,6 @@ describe("edge Cases and Error Handling", () => {
 describe("performance Tests", () => {
   it("should handle large result sets efficiently", async () => {
     // Mock large dataset
-    const _largeDataset = new Array(LARGE_DATASET_SIZE)
-      .fill(mockAlert)
-      .map((alert, index) => ({
-        ...alert,
-        id: `alert-${index}`,
-      }));
-
     // Test performance with basic request - removing complex mock setup
 
     const startTime = Date.now();

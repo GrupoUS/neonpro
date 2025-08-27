@@ -59,8 +59,8 @@ const COUNTER_BUFFER_SIZE = 8;
 const HIGH_BITS_DIVISOR = 0x1_00_00_00_00;
 const BUFFER_OFFSET_HIGH_BITS = 4;
 // Bitwise operation constants for HOTP algorithm (RFC 4226)
-const BYTE_MASK = 0xff; // 255 - masks lower 8 bits
-const HOTP_MASK = 0x7f; // 127 - masks lower 7 bits for sign bit removal
+const BYTE_MASK = 0xFF; // 255 - masks lower 8 bits
+const HOTP_MASK = 0x7F; // 127 - masks lower 7 bits for sign bit removal
 
 export const mfaVerificationSchema = z.object({
   userId: z.string().uuid("User ID deve ser um UUID válido"),
@@ -145,9 +145,11 @@ export function generateTotpQrCodeUrl(
     period: TOTP_PERIOD.toString(),
   });
 
-  return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(
-    accountName,
-  )}?${params}`;
+  return `otpauth://totp/${encodeURIComponent(issuer)}:${
+    encodeURIComponent(
+      accountName,
+    )
+  }?${params}`;
 }
 
 /**
@@ -194,7 +196,7 @@ function generateHotp(secret: string, counter: number): string {
   const counterBuffer = Buffer.alloc(COUNTER_BUFFER_SIZE);
   counterBuffer.writeUInt32BE(Math.floor(counter / HIGH_BITS_DIVISOR), 0);
   // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise mask required for 32-bit integer extraction in HOTP
-  counterBuffer.writeUInt32BE(counter & 0xff_ff_ff_ff, BUFFER_OFFSET_HIGH_BITS);
+  counterBuffer.writeUInt32BE(counter & 0xFF_FF_FF_FF, BUFFER_OFFSET_HIGH_BITS);
 
   // Generate HMAC
   const crypto = require("node:crypto");
@@ -204,14 +206,13 @@ function generateHotp(secret: string, counter: number): string {
 
   // Dynamic truncation
   // biome-ignore lint/suspicious/noBitwiseOperators: Bitwise operations are required for HOTP cryptographic algorithm
-  const offset = digest.at(-1) & 0x0f;
+  const offset = digest.at(-1) & 0x0F;
   // HOTP dynamic truncation algorithm (RFC 4226) requires bitwise operations
   // biome-ignore lint/suspicious/noBitwiseOperators: HOTP algorithm requires bitwise operations
-  const code =
-    ((digest[offset] & HOTP_MASK) << 24) |
-    ((digest[offset + 1] & BYTE_MASK) << 16) |
-    ((digest[offset + 2] & BYTE_MASK) << 8) |
-    (digest[offset + 3] & BYTE_MASK);
+  const code = ((digest[offset] & HOTP_MASK) << 24)
+    | ((digest[offset + 1] & BYTE_MASK) << 16)
+    | ((digest[offset + 2] & BYTE_MASK) << 8)
+    | (digest[offset + 3] & BYTE_MASK);
   digest[offset + HOTP_OFFSET_BYTES] & BYTE_MASK;
 
   return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, "0");
@@ -235,8 +236,7 @@ function base32Decode(encoded: string): Buffer {
 
   for (let i = 0; i < cleanEncoded.length; i++) {
     // biome-ignore lint/suspicious/noBitwiseOperators: Base32 decoding requires bitwise operations
-    value =
-      (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
+    value = (value << BASE32_BITS_PER_CHAR) | BASE32_CHARS.indexOf(cleanEncoded[i]);
     bits += BASE32_BITS_PER_CHAR;
 
     if (bits >= BYTE_SIZE) {
@@ -336,8 +336,7 @@ export function validateBackupCode(code: string): boolean {
 /**
  * Main MFA service that orchestrates different authentication methods
  */
-const _MAX_ATTEMPTS = 3;
-const _LOCKOUT_DURATION = LOCKOUT_DURATION_MINUTES * MINUTES_TO_MILLISECONDS; // 15 minutes
+// 15 minutes
 
 /**
  * Setup MFA for user
@@ -494,8 +493,7 @@ export async function verifyMfa(
         success: false,
         method,
         lockoutUntil: lockoutResult.lockoutUntil,
-        message:
-          "Conta temporariamente bloqueada devido a tentativas excessivas",
+        message: "Conta temporariamente bloqueada devido a tentativas excessivas",
       };
     }
 
@@ -552,8 +550,7 @@ export async function verifyMfa(
         method,
         remainingAttempts: 0,
         lockoutUntil: newLockoutStatus.lockoutUntil,
-        message:
-          "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
+        message: "Muitas tentativas incorretas. Conta bloqueada temporariamente.",
       };
     }
 
@@ -686,7 +683,7 @@ async function recordSuccessfulMfa(
     // Update last used timestamp
     const settings = await mfaDb.getMfaSettings(userId);
     if (settings) {
-      const updateData: any = {};
+      const updateData: unknown = {};
 
       switch (method) {
         case MfaMethod.SMS: {

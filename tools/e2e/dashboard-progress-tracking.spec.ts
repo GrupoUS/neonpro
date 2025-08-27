@@ -13,9 +13,7 @@ test.describe("Dashboard Progress Tracking Page", () => {
   });
 
   test.describe("Progress Overview", () => {
-    test("should display progress tracking dashboard with key metrics", async ({
-      page,
-    }) => {
+    test("should display progress tracking dashboard with key metrics", async ({ page }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Progress.*Tracking.*NeonPro/);
       await expect(page.locator("h1")).toContainText("Progress Tracking");
@@ -369,9 +367,7 @@ test.describe("Dashboard Progress Tracking Page", () => {
       }
     });
 
-    test("should monitor adverse events and complications", async ({
-      page,
-    }) => {
+    test("should monitor adverse events and complications", async ({ page }) => {
       await page.click('[data-testid="outcomes-tab"]');
 
       // Navigate to adverse events section
@@ -671,9 +667,7 @@ test.describe("Dashboard Progress Tracking Page", () => {
   });
 
   test.describe("Progress Analytics", () => {
-    test("should display comprehensive progress analytics", async ({
-      page,
-    }) => {
+    test("should display comprehensive progress analytics", async ({ page }) => {
       // Navigate to analytics
       await page.click('[data-testid="analytics-tab"]');
 
@@ -791,9 +785,7 @@ test.describe("Dashboard Progress Tracking Page", () => {
   });
 
   test.describe("Performance and Accessibility", () => {
-    test("should load progress tracking dashboard within performance thresholds", async ({
-      page,
-    }) => {
+    test("should load progress tracking dashboard within performance thresholds", async ({ page }) => {
       const startTime = Date.now();
       await page.goto("/dashboard/progress-tracking");
       await page.waitForLoadState("networkidle");
@@ -821,9 +813,7 @@ test.describe("Dashboard Progress Tracking Page", () => {
       await expect(focusedElement).toBeVisible();
     });
 
-    test("should have proper ARIA labels for progress data", async ({
-      page,
-    }) => {
+    test("should have proper ARIA labels for progress data", async ({ page }) => {
       // Check ARIA labels on progress metrics
       await expect(
         page.locator('[data-testid="active-treatments"][aria-label]'),
@@ -858,9 +848,7 @@ test.describe("Dashboard Progress Tracking Page", () => {
       }
     });
 
-    test("should support screen readers for progress information", async ({
-      page,
-    }) => {
+    test("should support screen readers for progress information", async ({ page }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',

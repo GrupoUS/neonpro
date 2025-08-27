@@ -132,11 +132,10 @@ export class AISchedulingEngine {
       const demandScore = this.predictDemandConflict(slot);
 
       // Combined AI scoring (all factors weighted)
-      const combinedScore =
-        durationMatch * 0.3 +
-        timePreferenceScore * 0.25 +
-        resourceScore * 0.25 +
-        demandScore * 0.2;
+      const combinedScore = durationMatch * 0.3
+        + timePreferenceScore * 0.25
+        + resourceScore * 0.25
+        + demandScore * 0.2;
 
       return combinedScore > 0.6; // AI threshold for viability
     });
@@ -156,7 +155,7 @@ export class AISchedulingEngine {
     request: SchedulingRequest,
     staff: Staff[],
     patients: Patient[],
-  ): Promise<{ viableSlots: AppointmentSlot[]; conflicts: Conflict[] }> {
+  ): Promise<{ viableSlots: AppointmentSlot[]; conflicts: Conflict[]; }> {
     const conflicts: Conflict[] = [];
     const viableSlots: AppointmentSlot[] = [];
 
@@ -200,8 +199,8 @@ export class AISchedulingEngine {
       }
 
       if (
-        slotConflicts.length === 0 ||
-        slotConflicts.every((c) => c.severity === "low")
+        slotConflicts.length === 0
+        || slotConflicts.every((c) => c.severity === "low")
       ) {
         viableSlots.push({
           ...slot,
@@ -252,11 +251,10 @@ export class AISchedulingEngine {
       const utilizationScore = this.calculateUtilizationScore(slot);
 
       // Weighted optimization based on config goals
-      const optimizationScore =
-        efficiencyScore * this.config.optimizationGoals.timeEfficiency +
-        satisfactionScore * this.config.optimizationGoals.patientSatisfaction +
-        revenueScore * this.config.optimizationGoals.revenueMaximization +
-        utilizationScore * this.config.optimizationGoals.staffUtilization;
+      const optimizationScore = efficiencyScore * this.config.optimizationGoals.timeEfficiency
+        + satisfactionScore * this.config.optimizationGoals.patientSatisfaction
+        + revenueScore * this.config.optimizationGoals.revenueMaximization
+        + utilizationScore * this.config.optimizationGoals.staffUtilization;
 
       return {
         ...slot,
@@ -276,7 +274,7 @@ export class AISchedulingEngine {
   private async makeSchedulingDecision(
     optimizedSlots: AppointmentSlot[],
     request: SchedulingRequest,
-    conflictAnalysis: { viableSlots: AppointmentSlot[]; conflicts: Conflict[] },
+    conflictAnalysis: { viableSlots: AppointmentSlot[]; conflicts: Conflict[]; },
   ): Promise<SchedulingDecision> {
     if (optimizedSlots.length === 0) {
       return {
@@ -296,7 +294,7 @@ export class AISchedulingEngine {
       };
     }
 
-    const primarySlot = optimizedSlots[0];
+    const [primarySlot] = optimizedSlots;
     const reasoning: string[] = [];
 
     // Build AI reasoning
@@ -452,7 +450,7 @@ export class AISchedulingEngine {
     // Equipment utilization optimization
     if (slot.equipmentIds && treatment.requiredEquipment) {
       const equipmentMatch = treatment.requiredEquipment.every((eq) =>
-        slot.equipmentIds?.includes(eq),
+        slot.equipmentIds?.includes(eq)
       );
       score += equipmentMatch ? 0.3 : -0.2;
     }
@@ -622,8 +620,7 @@ export class AISchedulingEngine {
 
     return {
       type: "patient_conflict",
-      severity:
-        impactScore > 0.7 ? "high" : impactScore > 0.4 ? "medium" : "low",
+      severity: impactScore > 0.7 ? "high" : impactScore > 0.4 ? "medium" : "low",
       description: `Potential cascade impact: ${(impactScore * 100).toFixed(1)}%`,
       affectedResource: slot.id,
     };
@@ -643,8 +640,7 @@ export class AISchedulingEngine {
   ): number {
     const staffEfficiency = staff.efficiency || 0.8;
     const treatmentComplexity = treatment.complexityLevel / 5;
-    const timeOptimization =
-      1 - (slot.duration - treatment.duration) / treatment.duration;
+    const timeOptimization = 1 - (slot.duration - treatment.duration) / treatment.duration;
 
     return (staffEfficiency + (1 - treatmentComplexity) + timeOptimization) / 3;
   }
@@ -690,7 +686,7 @@ export class AISchedulingEngine {
 
   private calculateUtilizationScore(slot: AppointmentSlot): number {
     const hour = slot.start.getHours();
-    const targetUtilization = 0.8;
+    const { 8: targetUtilization } = 0;
     const currentUtilization = this.getHourlyUtilization(hour);
 
     // Score higher for slots that improve utilization balance
@@ -712,8 +708,7 @@ export class AISchedulingEngine {
 
     // Increase confidence if primary slot significantly better than alternatives
     if (allSlots.length > 1) {
-      const scoreDifference =
-        primarySlot.optimizationScore - allSlots[1].optimizationScore;
+      const scoreDifference = primarySlot.optimizationScore - allSlots[1].optimizationScore;
       confidence += scoreDifference * 0.3;
     }
 
@@ -730,11 +725,10 @@ export class AISchedulingEngine {
     const tradeoffs: string[] = [];
 
     if (alternativeSlot.start.getTime() !== primarySlot.start.getTime()) {
-      const timeDiff =
-        Math.abs(
-          alternativeSlot.start.getTime() - primarySlot.start.getTime(),
-        ) /
-        (1000 * 60 * 60);
+      const timeDiff = Math.abs(
+        alternativeSlot.start.getTime() - primarySlot.start.getTime(),
+      )
+        / (1000 * 60 * 60);
       tradeoffs.push(`${timeDiff.toFixed(1)} hours time difference`);
     }
 
@@ -744,8 +738,8 @@ export class AISchedulingEngine {
 
     if (alternativeSlot.optimizationScore < primarySlot.optimizationScore) {
       const scoreDiff = (
-        (primarySlot.optimizationScore - alternativeSlot.optimizationScore) *
-        100
+        (primarySlot.optimizationScore - alternativeSlot.optimizationScore)
+        * 100
       ).toFixed(1);
       tradeoffs.push(`${scoreDiff}% lower optimization score`);
     }
@@ -756,7 +750,7 @@ export class AISchedulingEngine {
   private assessSchedulingRisks(
     slot: AppointmentSlot,
     request: SchedulingRequest,
-  ): any {
+  ): unknown {
     return {
       noShowRisk: slot.conflictScore * 0.3,
       overbookingRisk: this.calculateOverbookingRisk(slot),

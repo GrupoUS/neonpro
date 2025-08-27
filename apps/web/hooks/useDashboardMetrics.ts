@@ -142,34 +142,29 @@ export function useDashboardMetrics(): DashboardMetrics {
         const totalPatients = patientsResult.count || 0;
         const activePatients = activePatientsResult.count || 0;
 
-        const monthlyRevenue =
-          monthlyRevenueResult.data?.reduce(
-            (sum, transaction) => sum + (transaction.amount || 0),
-            0,
-          ) || 0;
+        const monthlyRevenue = monthlyRevenueResult.data?.reduce(
+          (sum, transaction) => sum + (transaction.amount || 0),
+          0,
+        ) || 0;
 
-        const previousMonthRevenue =
-          previousMonthRevenueResult.data?.reduce(
-            (sum, transaction) => sum + (transaction.amount || 0),
-            0,
-          ) || 0;
+        const previousMonthRevenue = previousMonthRevenueResult.data?.reduce(
+          (sum, transaction) => sum + (transaction.amount || 0),
+          0,
+        ) || 0;
 
-        const revenueGrowth =
-          previousMonthRevenue > 0
-            ? ((monthlyRevenue - previousMonthRevenue) / previousMonthRevenue) *
-              100
-            : 0;
+        const revenueGrowth = previousMonthRevenue > 0
+          ? ((monthlyRevenue - previousMonthRevenue) / previousMonthRevenue)
+            * 100
+          : 0;
 
         const upcomingAppointments = upcomingAppointmentsResult.count || 0;
-        const previousMonthAppointments =
-          previousMonthAppointmentsResult.count || 0;
+        const previousMonthAppointments = previousMonthAppointmentsResult.count || 0;
 
-        const appointmentsGrowth =
-          previousMonthAppointments > 0
-            ? ((upcomingAppointments - previousMonthAppointments) /
-                previousMonthAppointments) *
-              100
-            : 0;
+        const appointmentsGrowth = previousMonthAppointments > 0
+          ? ((upcomingAppointments - previousMonthAppointments)
+            / previousMonthAppointments)
+            * 100
+          : 0;
 
         const activeStaffMembers = activeStaffResult.count || 0;
 

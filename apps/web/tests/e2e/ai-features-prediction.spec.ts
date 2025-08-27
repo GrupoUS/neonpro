@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * AI Features E2E Tests: No-Show Prediction & AR Results Simulator
@@ -17,9 +17,7 @@ test.describe("AI Prediction Features", () => {
     await expect(page).toHaveURL(/.*\/professional\/dashboard/);
   });
 
-  test("should predict patient no-show probability with accuracy metrics", async ({
-    page,
-  }) => {
+  test("should predict patient no-show probability with accuracy metrics", async ({ page }) => {
     // Navigate to appointment scheduling
     await page.click('[data-testid="appointment-scheduling"]');
 
@@ -39,7 +37,7 @@ test.describe("AI Prediction Features", () => {
     // Verify prediction results
     await expect(
       page.locator('[data-testid="no-show-probability"]'),
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.locator('[data-testid="risk-factors"]')).toBeVisible();
     await expect(
       page.locator('[data-testid="confidence-score"]'),
@@ -79,9 +77,7 @@ test.describe("AI Prediction Features", () => {
     await expect(page.locator('[data-testid="reminder-sent"]')).toBeVisible();
   });
 
-  test("should integrate AR Results Simulator for treatment visualization", async ({
-    page,
-  }) => {
+  test("should integrate AR Results Simulator for treatment visualization", async ({ page }) => {
     // Navigate to patient consultation
     await page.click('[data-testid="patient-consultations"]');
     await page.click('[data-testid="new-consultation"]');
@@ -96,7 +92,7 @@ test.describe("AI Prediction Features", () => {
 
     // Verify AR interface
     await expect(page.locator('[data-testid="ar-camera-view"]')).toBeVisible({
-      timeout: 15000,
+      timeout: 15_000,
     });
     await expect(
       page.locator('[data-testid="treatment-overlay"]'),
@@ -122,9 +118,7 @@ test.describe("AI Prediction Features", () => {
     ).toBeVisible();
   });
 
-  test("should provide AI-powered treatment outcome predictions", async ({
-    page,
-  }) => {
+  test("should provide AI-powered treatment outcome predictions", async ({ page }) => {
     // Navigate to treatment planning
     await page.click('[data-testid="treatment-planning"]');
 
@@ -142,7 +136,7 @@ test.describe("AI Prediction Features", () => {
     // Verify prediction results
     await expect(
       page.locator('[data-testid="success-probability"]'),
-    ).toBeVisible({ timeout: 12000 });
+    ).toBeVisible({ timeout: 12_000 });
     await expect(
       page.locator('[data-testid="expected-results"]'),
     ).toBeVisible();
@@ -160,9 +154,7 @@ test.describe("AI Prediction Features", () => {
     ).toBeVisible();
   });
 
-  test("should handle real-time dashboard updates with AI insights", async ({
-    page,
-  }) => {
+  test("should handle real-time dashboard updates with AI insights", async ({ page }) => {
     // Navigate to AI insights dashboard
     await page.click('[data-testid="ai-insights-dashboard"]');
 
@@ -212,7 +204,7 @@ test.describe("AI Prediction Features", () => {
     await page.click('[data-testid="validate-model-performance"]');
     await expect(
       page.locator('[data-testid="validation-results"]'),
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible({ timeout: 10_000 });
 
     // Verify constitutional AI compliance
     await expect(

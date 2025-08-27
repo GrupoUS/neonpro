@@ -1,7 +1,7 @@
 // AR Simulator Validation Schemas
 
-import { VALIDATION_LIMITS } from "./ar-simulator-constants";
 import { z } from "zod";
+import { VALIDATION_LIMITS } from "./ar-simulator-constants";
 
 const CreateSimulationSchema = z.object({
   patientId: z

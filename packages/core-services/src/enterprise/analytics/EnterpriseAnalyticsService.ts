@@ -22,7 +22,7 @@ interface AnalyticsEvent {
   type: string;
   category: string;
   action: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
   timestamp: number;
@@ -157,7 +157,7 @@ export class EnterpriseAnalyticsService {
    */
   async track(
     eventName: string,
-    properties: Record<string, any>,
+    properties: Record<string, unknown>,
     userId?: string,
   ): Promise<void> {
     const event: AnalyticsEvent = {
@@ -213,9 +213,8 @@ export class EnterpriseAnalyticsService {
     serviceMetric.calls++;
 
     // Update average duration
-    serviceMetric.avgDuration =
-      (serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration) /
-      serviceMetric.calls;
+    serviceMetric.avgDuration = (serviceMetric.avgDuration * (serviceMetric.calls - 1) + duration)
+      / serviceMetric.calls;
 
     if (!success) {
       serviceMetric.errorCount++;
@@ -223,10 +222,9 @@ export class EnterpriseAnalyticsService {
     }
 
     // Update overall average
-    this.metrics.avgResponseTime =
-      (this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) +
-        duration) /
-      this.metrics.totalRequests;
+    this.metrics.avgResponseTime = (this.metrics.avgResponseTime * (this.metrics.totalRequests - 1)
+      + duration)
+      / this.metrics.totalRequests;
 
     // Track performance event
     await this.track("performance.operation", {
@@ -240,7 +238,7 @@ export class EnterpriseAnalyticsService {
   /**
    * Record error event
    */
-  async recordError(error: Error, context: Record<string, any>): Promise<void> {
+  async recordError(error: Error, context: Record<string, unknown>): Promise<void> {
     const operation = context.operation || "unknown";
 
     if (this.metrics.serviceMetrics[operation]) {
@@ -291,9 +289,8 @@ export class EnterpriseAnalyticsService {
         if (action === "returning") {
           this.healthcareMetrics.patients.returning += value;
         }
-        this.healthcareMetrics.patients.total =
-          this.healthcareMetrics.patients.new +
-          this.healthcareMetrics.patients.returning;
+        this.healthcareMetrics.patients.total = this.healthcareMetrics.patients.new
+          + this.healthcareMetrics.patients.returning;
         break;
       }
 
@@ -369,7 +366,7 @@ export class EnterpriseAnalyticsService {
   /**
    * Get comprehensive metrics
    */
-  async getMetrics(period = "1h"): Promise<any> {
+  async getMetrics(period = "1h"): Promise<unknown> {
     const periodMs = this.parsePeriod(period);
     const since = Date.now() - periodMs;
 
@@ -392,7 +389,7 @@ export class EnterpriseAnalyticsService {
   /**
    * Generate actionable insights from metrics
    */
-  private async generateInsights(): Promise<any> {
+  private async generateInsights(): Promise<unknown> {
     const insights = [];
 
     // Performance insights
@@ -402,8 +399,7 @@ export class EnterpriseAnalyticsService {
         severity: "warning",
         message: "Average response time is above 1 second",
         value: this.metrics.avgResponseTime,
-        recommendation:
-          "Consider optimizing slow operations or scaling resources",
+        recommendation: "Consider optimizing slow operations or scaling resources",
       });
     }
 
@@ -419,11 +415,10 @@ export class EnterpriseAnalyticsService {
     }
 
     // Healthcare insights
-    const noShowRate =
-      this.healthcareMetrics.appointments.scheduled > 0
-        ? this.healthcareMetrics.appointments.noShows /
-          this.healthcareMetrics.appointments.scheduled
-        : 0;
+    const noShowRate = this.healthcareMetrics.appointments.scheduled > 0
+      ? this.healthcareMetrics.appointments.noShows
+        / this.healthcareMetrics.appointments.scheduled
+      : 0;
 
     if (noShowRate > 0.15) {
       insights.push({
@@ -431,8 +426,7 @@ export class EnterpriseAnalyticsService {
         severity: "warning",
         message: "No-show rate is above 15%",
         value: noShowRate,
-        recommendation:
-          "Implement reminder systems or appointment confirmation",
+        recommendation: "Implement reminder systems or appointment confirmation",
       });
     }
 
@@ -472,8 +466,8 @@ export class EnterpriseAnalyticsService {
   private async processEvent(event: AnalyticsEvent): Promise<void> {
     // Real-time processing
     if (
-      event.category === "error" &&
-      event.properties.severity === "critical"
+      event.category === "error"
+      && event.properties.severity === "critical"
     ) {
       await this.sendAlert(event);
     }
@@ -625,7 +619,7 @@ export class EnterpriseAnalyticsService {
     );
   }
 
-  private convertToCSV(data: any): string {
+  private convertToCSV(data: unknown): string {
     // Simple CSV conversion - can be enhanced
     const headers = ["timestamp", "metric", "value"];
     const rows = [headers.join(",")];

@@ -23,7 +23,8 @@ const cardVariants = cva(
           "border-l-4 border-l-warning bg-gradient-to-br from-warning/10 via-warning/5 to-transparent shadow-healthcare-md backdrop-blur-sm",
         success:
           "border-l-4 border-l-success bg-gradient-to-br from-success/5 via-success/3 to-transparent shadow-healthcare-md backdrop-blur-sm",
-        info: "border-l-4 border-l-info bg-gradient-to-br from-info/5 via-info/3 to-transparent shadow-healthcare-md backdrop-blur-sm",
+        info:
+          "border-l-4 border-l-info bg-gradient-to-br from-info/5 via-info/3 to-transparent shadow-healthcare-md backdrop-blur-sm",
         elevated:
           "border-border/50 bg-gradient-card shadow-healthcare-lg backdrop-blur-md hover:shadow-healthcare-xl",
         interactive:
@@ -50,9 +51,7 @@ const cardVariants = cva(
   },
 );
 
-interface CardProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof cardVariants> {
+interface CardProps extends React.ComponentProps<"div">, VariantProps<typeof cardVariants> {
   interactive?: boolean;
   loading?: boolean;
 }

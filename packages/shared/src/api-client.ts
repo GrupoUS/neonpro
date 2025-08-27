@@ -260,7 +260,7 @@ class AuthTokenManager {
     }
   }
 
-  async refreshAccessToken(apiClient: any): Promise<string> {
+  async refreshAccessToken(apiClient: unknown): Promise<string> {
     // Prevent multiple simultaneous refresh attempts
     if (this.refreshPromise) {
       return this.refreshPromise;
@@ -432,12 +432,12 @@ export const ApiUtils = {
   isNetworkError: (error: Error): boolean => {
     // Network errors that should be retried
     return (
-      error.name === "TypeError" ||
-      error.name === "NetworkError" ||
-      error.message.includes("fetch") ||
-      error.message.includes("network") ||
-      error.message.includes("timeout") ||
-      error.message.includes("connection")
+      error.name === "TypeError"
+      || error.name === "NetworkError"
+      || error.message.includes("fetch")
+      || error.message.includes("network")
+      || error.message.includes("timeout")
+      || error.message.includes("connection")
     );
   },
 };
@@ -500,7 +500,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
       // Extract resource info for audit logging
       const urlParts = url.split("/");
       const resourceType = urlParts.at(-2) || "unknown";
-      const action = (init?.method?.toLowerCase() as any) || "read";
+      const action = (init?.method?.toLowerCase() as unknown) || "read";
 
       // Retry logic
       for (let attempt = 0; attempt <= finalConfig.retries; attempt++) {
@@ -606,9 +606,8 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
             },
             error: lastError,
             attempt,
-            isRetryable:
-              attempt < finalConfig.retries &&
-              !lastError.message.includes("AbortError"),
+            isRetryable: attempt < finalConfig.retries
+              && !lastError.message.includes("AbortError"),
           };
 
           if (config.onError) {
@@ -809,14 +808,14 @@ export const ApiHelpers = {
     }
 
     if (typeof error === "object" && error && "message" in error) {
-      return String((error as any).message);
+      return String((error as unknown).message);
     }
 
     if (typeof error === "object" && error && "error" in error) {
-      const apiError = error as any;
+      const apiError = error as unknown;
       if (apiError.error?.validation_errors?.length > 0) {
         return apiError.error.validation_errors
-          .map((ve: any) => `${ve.field}: ${ve.message}`)
+          .map((ve: unknown) => `${ve.field}: ${ve.message}`)
           .join(", ");
       }
       return apiError.message || "API error occurred";
@@ -829,11 +828,11 @@ export const ApiHelpers = {
   isNetworkError: (error: unknown): boolean => {
     if (error instanceof Error) {
       return (
-        error.message.includes("fetch") ||
-        error.message.includes("network") ||
-        error.message.includes("timeout") ||
-        error.name === "AbortError" ||
-        error.name === "NetworkError"
+        error.message.includes("fetch")
+        || error.message.includes("network")
+        || error.message.includes("timeout")
+        || error.name === "AbortError"
+        || error.name === "NetworkError"
       );
     }
     return false;
@@ -842,7 +841,7 @@ export const ApiHelpers = {
   // Check if error is authentication issue
   isAuthError: (error: unknown): boolean => {
     if (typeof error === "object" && error && "error" in error) {
-      const errorCode = (error as any).error?.code;
+      const errorCode = (error as unknown).error?.code;
       return [
         "UNAUTHORIZED",
         "FORBIDDEN",
@@ -857,10 +856,10 @@ export const ApiHelpers = {
   // Check if error is validation issue
   isValidationError: (error: unknown): boolean => {
     if (typeof error === "object" && error && "error" in error) {
-      const apiError = error as any;
+      const apiError = error as unknown;
       return (
-        apiError.error?.code === "VALIDATION_ERROR" ||
-        apiError.error?.validation_errors?.length > 0
+        apiError.error?.code === "VALIDATION_ERROR"
+        || apiError.error?.validation_errors?.length > 0
       );
     }
     return false;
@@ -869,7 +868,7 @@ export const ApiHelpers = {
   // Check if error is rate limit issue
   isRateLimitError: (error: unknown): boolean => {
     if (typeof error === "object" && error && "error" in error) {
-      const errorCode = (error as any).error?.code;
+      const errorCode = (error as unknown).error?.code;
       return errorCode === "RATE_LIMIT_EXCEEDED";
     }
     return false;

@@ -28,9 +28,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
   });
 
   test.describe("🚪 Login/Logout Complete Flow", () => {
-    test("should complete full login flow with valid credentials", async ({
-      page,
-    }) => {
+    test("should complete full login flow with valid credentials", async ({ page }) => {
       // Navigate to login page using multiple selector strategies
       const loginButton = page.locator(
         '[data-testid="login-button"], button:has-text("Entrar"), a:has-text("Login")',
@@ -104,15 +102,11 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       ).toBeVisible();
 
       // Verify session is completely cleared
-      const sessionData = await page.evaluate(() =>
-        localStorage.getItem("session"),
-      );
+      const sessionData = await page.evaluate(() => localStorage.getItem("session"));
       expect(sessionData).toBeNull();
     });
 
-    test("should reject invalid credentials with proper error handling", async ({
-      page,
-    }) => {
+    test("should reject invalid credentials with proper error handling", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -142,9 +136,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
   });
 
   test.describe("🏥 Healthcare Professional Authentication", () => {
-    test("should display healthcare-specific login elements", async ({
-      page,
-    }) => {
+    test("should display healthcare-specific login elements", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -161,9 +153,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       }
     });
 
-    test("should validate professional credentials format", async ({
-      page,
-    }) => {
+    test("should validate professional credentials format", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -192,9 +182,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       }
     });
 
-    test("should authenticate healthcare professional with CRM validation", async ({
-      page,
-    }) => {
+    test("should authenticate healthcare professional with CRM validation", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -217,9 +205,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should handle expired professional license scenario", async ({
-      page,
-    }) => {
+    test("should handle expired professional license scenario", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -301,9 +287,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should enforce password policy for healthcare professionals", async ({
-      page,
-    }) => {
+    test("should enforce password policy for healthcare professionals", async ({ page }) => {
       await page.goto("/register");
       await page.waitForLoadState("networkidle");
 
@@ -324,9 +308,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       }
     });
 
-    test("should implement audit logging for authentication events", async ({
-      page,
-    }) => {
+    test("should implement audit logging for authentication events", async ({ page }) => {
       // This test verifies audit logging exists (admin access required)
       await page.goto("/admin/audit-logs");
 
@@ -380,9 +362,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       }
     });
 
-    test("should restrict professional access appropriately", async ({
-      page,
-    }) => {
+    test("should restrict professional access appropriately", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -415,9 +395,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       }
     });
 
-    test("should restrict staff access to basic functions", async ({
-      page,
-    }) => {
+    test("should restrict staff access to basic functions", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -450,9 +428,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
   });
 
   test.describe("🔐 Security Validations & Compliance", () => {
-    test("should validate form inputs and prevent injection", async ({
-      page,
-    }) => {
+    test("should validate form inputs and prevent injection", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -466,9 +442,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       await expect(alert).not.toBeVisible();
     });
 
-    test("should enforce rate limiting on failed attempts", async ({
-      page,
-    }) => {
+    test("should enforce rate limiting on failed attempts", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -534,9 +508,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       }
     });
 
-    test("should show proper loading states during authentication", async ({
-      page,
-    }) => {
+    test("should show proper loading states during authentication", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -556,9 +528,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
   });
 
   test.describe("♿ Accessibility & Performance", () => {
-    test("should be accessible for healthcare professionals with disabilities", async ({
-      page,
-    }) => {
+    test("should be accessible for healthcare professionals with disabilities", async ({ page }) => {
       await page.goto("/login");
       await page.waitForLoadState("networkidle");
 
@@ -581,9 +551,7 @@ test.describe("🔐 Authentication Flow - Critical E2E", () => {
       ).toBeVisible();
     });
 
-    test("should load within performance budget for healthcare environment", async ({
-      page,
-    }) => {
+    test("should load within performance budget for healthcare environment", async ({ page }) => {
       const startTime = Date.now();
 
       await page.goto("/login");

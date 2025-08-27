@@ -1,4 +1,4 @@
-import { createServerClient } from "@neonpro/db";
+import { createServerClient } from "@neonpro/database";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       .eq("appointment_id", feedback.appointmentId);
 
     if (updateError) {
-      console.error("Error updating prediction:", updateError);
+      // console.error("Error updating prediction:", updateError);
       return NextResponse.json(
         { error: "Failed to update prediction" },
         { status: 500 },
@@ -89,11 +89,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate prediction accuracy for model training
-    const wasCorrect =
-      (feedback.actualOutcome === "no_show" &&
-        existingPrediction.no_show_probability > 0.5) ||
-      (feedback.actualOutcome === "attended" &&
-        existingPrediction.no_show_probability <= 0.5);
+    const wasCorrect = (feedback.actualOutcome === "no_show"
+      && existingPrediction.no_show_probability > 0.5)
+      || (feedback.actualOutcome === "attended"
+        && existingPrediction.no_show_probability <= 0.5);
 
     // Log prediction feedback for model improvement
     await supabase.from("no_show_prediction_logs").insert({
@@ -112,7 +111,7 @@ export async function POST(request: NextRequest) {
       predictionCorrect: wasCorrect,
     });
   } catch (error) {
-    console.error("Error processing prediction feedback:", error);
+    // console.error("Error processing prediction feedback:", error);
     return NextResponse.json(
       { error: "Failed to process feedback" },
       { status: 500 },

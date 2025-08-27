@@ -12,8 +12,6 @@
 
 const { execSync } = require("node:child_process");
 const fs = require("node:fs");
-const _path = require("node:path");
-
 let setupSteps = 0;
 let completedSteps = 0;
 const errors = [];
@@ -33,7 +31,7 @@ async function runSetupStep(name, setupFn) {
 async function checkDependencies() {
   try {
     // Verificar versão do Node.js
-    const _nodeVersion = process.version;
+    const { version: _nodeVersion } = process;
 
     // Verificar se package.json existe
     if (!fs.existsSync("package.json")) {
@@ -107,8 +105,7 @@ async function checkSupabaseConnection() {
 
 // 4. Aplicar Migration do Banco de Dados
 async function applyDatabaseMigration() {
-  const migrationPath =
-    "supabase/migrations/20250721130000_create_subscriptions_schema.sql";
+  const migrationPath = "supabase/migrations/20250721130000_create_subscriptions_schema.sql";
 
   if (!fs.existsSync(migrationPath)) {
     throw new Error("Arquivo de migration não encontrado");
@@ -116,8 +113,6 @@ async function applyDatabaseMigration() {
 
   try {
     // Ler conteúdo da migration
-    const _migrationSQL = fs.readFileSync(migrationPath, "utf8");
-
     const { createClient } = require("@supabase/supabase-js");
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -155,8 +150,6 @@ async function checkStripeConfiguration() {
     }
 
     // Verificar se existem produtos
-    const _products = await stripe.products.list({ limit: 10 });
-
     // Verificar preços
     const prices = await stripe.prices.list({ limit: 10 });
 
@@ -169,9 +162,7 @@ async function checkStripeConfiguration() {
 
 // 6. Executar testes de validação
 async function runValidationTests() {
-  try {
-    const _dbTestScript = require("./test-database-schema.js");
-  } catch {}
+  try {  } catch {}
 }
 
 // 7. Configurar scripts de desenvolvimento

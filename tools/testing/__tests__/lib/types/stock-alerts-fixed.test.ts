@@ -332,9 +332,7 @@ describe("validation Functions", () => {
 
   describe("validateCreateStockAlertConfig", () => {
     it("should validate valid create config", () => {
-      expect(() =>
-        validateCreateStockAlertConfig(validCreateAlertConfig),
-      ).not.toThrow();
+      expect(() => validateCreateStockAlertConfig(validCreateAlertConfig)).not.toThrow();
     });
 
     it("should throw on invalid create config", () => {
@@ -345,9 +343,7 @@ describe("validation Functions", () => {
 
   describe("validateAcknowledgeAlert", () => {
     it("should validate valid acknowledge request", () => {
-      expect(() =>
-        validateAcknowledgeAlert(validAcknowledgeAlert),
-      ).not.toThrow();
+      expect(() => validateAcknowledgeAlert(validAcknowledgeAlert)).not.toThrow();
     });
 
     it("should throw on invalid acknowledge request", () => {

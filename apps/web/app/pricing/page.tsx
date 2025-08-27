@@ -10,15 +10,7 @@ import {
   CardTitle,
   Separator,
 } from "@neonpro/ui";
-import {
-  Briefcase,
-  Building2,
-  Check,
-  Shield,
-  Star,
-  Users,
-  Zap,
-} from "lucide-react";
+import { Briefcase, Building2, Check, Shield, Star, Users, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 
@@ -115,7 +107,7 @@ export default function PricingPage() {
     router.push(`/signup?plan=${planId}`);
   };
 
-  const PlanIcon = ({ icon: Icon }: { icon: React.ComponentType<any> }) => (
+  const PlanIcon = ({ icon: Icon }: { icon: React.ComponentType<any>; }) => (
     <Icon className="h-8 w-8" />
   );
 
@@ -128,8 +120,8 @@ export default function PricingPage() {
             Planos e Preços
           </h1>
           <p className="mx-auto max-w-2xl text-muted-foreground text-xl">
-            Escolha o plano ideal para sua clínica ou organização de saúde.
-            Todos os planos incluem compliance LGPD e segurança de dados.
+            Escolha o plano ideal para sua clínica ou organização de saúde. Todos os planos incluem
+            compliance LGPD e segurança de dados.
           </p>
         </div>
 
@@ -170,14 +162,16 @@ export default function PricingPage() {
                   onClick={() => handleSelectPlan(plan.id)}
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  {plan.popular ? (
-                    <>
-                      <Zap className="mr-2 h-4 w-4" />
-                      Começar Agora
-                    </>
-                  ) : (
-                    "Selecionar Plano"
-                  )}
+                  {plan.popular
+                    ? (
+                      <>
+                        <Zap className="mr-2 h-4 w-4" />
+                        Começar Agora
+                      </>
+                    )
+                    : (
+                      "Selecionar Plano"
+                    )}
                 </Button>
 
                 <div className="space-y-4">

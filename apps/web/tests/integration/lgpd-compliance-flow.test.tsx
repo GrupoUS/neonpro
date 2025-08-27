@@ -52,8 +52,8 @@ interface AuditTrailEntry {
 }
 
 // Use global mocks from vitest.setup.ts
-const mockLGPDService = (globalThis as any).mockLgpdService;
-const mockSupabaseClient = (globalThis as any).mockSupabaseClient;
+const mockLGPDService = (globalThis as unknown).mockLgpdService;
+const mockSupabaseClient = (globalThis as unknown).mockSupabaseClient;
 
 vi.mock<typeof import("@supabase/supabase-js")>(
   "@supabase/supabase-js",
@@ -102,14 +102,11 @@ const mockDataRequest: DataSubjectRequest = {
   clinic_id: "clinic-1",
 };
 
-// Test wrapper component
-const _TestWrapper = ({ children }: { children: React.ReactNode }) => {
+// Test wrapper component }) => {
   // Use the global mock QueryClient instead of creating a new one
-  const queryClient = globalThis.queryClient;
+  const { queryClient: queryClient } = globalThis;
 
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 };
 describe("lGPD Compliance Flow Integration Tests", () => {
   let queryClient: QueryClient;
@@ -179,8 +176,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         requested_purpose: "marketing",
       });
 
-      const result =
-        await mockLGPDService.validatePurposeLimitation(processingRequest);
+      const result = await mockLGPDService.validatePurposeLimitation(processingRequest);
 
       expect(result.valid).toBeFalsy();
       expect(result.violation).toBe("PURPOSE_NOT_CONSENTED");
@@ -284,8 +280,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         })),
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(accessRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(accessRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.exported_data.patient_data).toStrictEqual(mockPatientData);
@@ -313,8 +308,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         audit_trail_id: "audit-rectification-123",
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(rectificationRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(rectificationRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.changes_applied).toBeTruthy();
@@ -337,13 +331,11 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         anonymization_applied: true,
         data_anonymized: true,
         medical_records_retained: true, // Due to legal medical record retention
-        retention_justification:
-          "Brazilian medical record retention law (10 years)",
+        retention_justification: "Brazilian medical record retention law (10 years)",
         audit_trail_id: "audit-erasure-123",
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(erasureRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(erasureRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.anonymization_applied).toBeTruthy();
@@ -394,8 +386,7 @@ describe("lGPD Compliance Flow Integration Tests", () => {
         machine_readable: true,
       });
 
-      const result =
-        await mockLGPDService.processDataSubjectRequest(portabilityRequest);
+      const result = await mockLGPDService.processDataSubjectRequest(portabilityRequest);
 
       expect(result.success).toBeTruthy();
       expect(result.portable_data.export_format).toBe("HL7_FHIR");
@@ -613,16 +604,6 @@ describe("lGPD Compliance Flow Integration Tests", () => {
     });
 
     it("should enforce professional council registration validation", async () => {
-      const _professionalAccess = {
-        user_id: "doctor-123",
-        professional_council: "CRM", // Conselho Regional de Medicina
-        registration_number: "CRM-SP-123456",
-        specialty: "Cardiologia",
-        clinic_id: "clinic-1",
-        requested_patient_id: "patient-123",
-        access_purpose: "treatment",
-      };
-
       const accessValidation = {
         professional_verified: true,
         council_registration_active: true,
@@ -641,25 +622,6 @@ describe("lGPD Compliance Flow Integration Tests", () => {
     });
 
     it("should handle ANVISA reporting compliance for medication data", async () => {
-      const _medicationData = {
-        patient_id: "patient-123",
-        prescriptions: [
-          {
-            medication: "Losartana 50mg",
-            controlled_substance: false,
-            prescribing_doctor: "CRM-SP-123456",
-            prescription_date: "2024-01-15",
-          },
-          {
-            medication: "Rivotril 2mg",
-            controlled_substance: true,
-            controlled_class: "B1",
-            prescribing_doctor: "CRM-SP-123456",
-            prescription_date: "2024-01-20",
-          },
-        ],
-      };
-
       const anvisaReporting = {
         controlled_substances_found: true,
         reporting_required: true,

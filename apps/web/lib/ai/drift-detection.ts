@@ -10,8 +10,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 
-type ModelDriftMonitoring =
-  Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
+type ModelDriftMonitoring = Database["public"]["Tables"]["model_drift_monitoring"]["Row"];
 type AIModel = Database["public"]["Tables"]["ai_models"]["Row"];
 
 export interface DriftMetrics {
@@ -64,7 +63,7 @@ export class DriftDetectionSystem {
         .not("drift_detection_config", "is", undefined);
 
       if (error || !models) {
-        console.error("Failed to fetch models for drift detection:", error);
+        // console.error("Failed to fetch models for drift detection:", error);
         return alerts;
       }
 
@@ -87,7 +86,7 @@ export class DriftDetectionSystem {
 
       return alerts;
     } catch (error) {
-      console.error("Drift detection system error:", error);
+      // console.error("Drift detection system error:", error);
       return alerts;
     }
   }
@@ -112,8 +111,10 @@ export class DriftDetectionSystem {
       recentWindow,
       referenceWindow,
     );
-    const predictionDistributionDrift =
-      this.calculatePredictionDistributionDrift(recentWindow, referenceWindow);
+    const predictionDistributionDrift = this.calculatePredictionDistributionDrift(
+      recentWindow,
+      referenceWindow,
+    );
     const temporalDriftScore = this.calculateTemporalDrift(recentWindow);
 
     // Combine scores with weighted average
@@ -150,7 +151,7 @@ export class DriftDetectionSystem {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Failed to fetch recent predictions:", error);
+        // console.error("Failed to fetch recent predictions:", error);
         return [];
       }
 
@@ -204,8 +205,8 @@ export class DriftDetectionSystem {
    * Calculate data shift between time periods
    */
   private async calculateDataShift(
-    recent: any[],
-    reference: any[],
+    recent: unknown[],
+    reference: unknown[],
   ): Promise<number> {
     if (recent.length === 0 || reference.length === 0) {
       return 0;
@@ -213,18 +214,16 @@ export class DriftDetectionSystem {
 
     // For no-show predictions, analyze key features
     if (recent[0]?.risk_score !== undefined) {
-      const recentAvgRisk =
-        recent.reduce((sum, p) => sum + p.risk_score, 0) / recent.length;
-      const referenceAvgRisk =
-        reference.reduce((sum, p) => sum + p.risk_score, 0) / reference.length;
+      const recentAvgRisk = recent.reduce((sum, p) => sum + p.risk_score, 0) / recent.length;
+      const referenceAvgRisk = reference.reduce((sum, p) => sum + p.risk_score, 0)
+        / reference.length;
 
       const riskShift = Math.abs(recentAvgRisk - referenceAvgRisk);
 
       // Analyze confidence distribution
-      const recentAvgConfidence =
-        recent.reduce((sum, p) => sum + p.confidence, 0) / recent.length;
-      const referenceAvgConfidence =
-        reference.reduce((sum, p) => sum + p.confidence, 0) / reference.length;
+      const recentAvgConfidence = recent.reduce((sum, p) => sum + p.confidence, 0) / recent.length;
+      const referenceAvgConfidence = reference.reduce((sum, p) => sum + p.confidence, 0)
+        / reference.length;
 
       const confidenceShift = Math.abs(
         recentAvgConfidence - referenceAvgConfidence,
@@ -234,16 +233,14 @@ export class DriftDetectionSystem {
     }
 
     // For general metrics, use response time and accuracy shifts
-    const recentAvgResponse =
-      recent.reduce((sum, p) => sum + (p.response_time || 0), 0) /
-      recent.length;
-    const referenceAvgResponse =
-      reference.reduce((sum, p) => sum + (p.response_time || 0), 0) /
-      reference.length;
+    const recentAvgResponse = recent.reduce((sum, p) => sum + (p.response_time || 0), 0)
+      / recent.length;
+    const referenceAvgResponse = reference.reduce((sum, p) => sum + (p.response_time || 0), 0)
+      / reference.length;
 
     return (
-      Math.abs(recentAvgResponse - referenceAvgResponse) /
-      Math.max(referenceAvgResponse, 1)
+      Math.abs(recentAvgResponse - referenceAvgResponse)
+      / Math.max(referenceAvgResponse, 1)
     );
   }
 
@@ -262,17 +259,17 @@ export class DriftDetectionSystem {
       return 0;
     }
 
-    const metrics = recentPerformance.performance_metrics as any;
+    const metrics = recentPerformance.performance_metrics as unknown;
 
     // For no-show model, target is 95% accuracy
     if (modelId.includes("no-show")) {
-      const targetAccuracy = 0.95;
+      const { 95: targetAccuracy } = 0;
       const currentAccuracy = metrics.accuracy || 0.78;
       return Math.max(0, targetAccuracy - currentAccuracy);
     }
 
     // General performance drift based on error rate increase
-    const baselineErrorRate = 0.05; // 5% baseline
+    const { 05: baselineErrorRate } = 0; // 5% baseline
     const currentErrorRate = metrics.errorRate || baselineErrorRate;
 
     return Math.max(
@@ -285,8 +282,8 @@ export class DriftDetectionSystem {
    * Calculate feature-specific drift
    */
   private async calculateFeatureDrift(
-    recent: any[],
-    reference: any[],
+    recent: unknown[],
+    reference: unknown[],
   ): Promise<Record<string, number>> {
     const featureDrift: Record<string, number> = {};
 
@@ -316,8 +313,8 @@ export class DriftDetectionSystem {
    * Calculate prediction distribution drift
    */
   private calculatePredictionDistributionDrift(
-    recent: any[],
-    reference: any[],
+    recent: unknown[],
+    reference: unknown[],
   ): number {
     if (recent.length === 0 || reference.length === 0) {
       return 0;
@@ -332,9 +329,8 @@ export class DriftDetectionSystem {
       let divergence = 0;
       for (const level in recentDist) {
         if (referenceDist[level] > 0) {
-          divergence +=
-            recentDist[level] *
-            Math.log(recentDist[level] / referenceDist[level]);
+          divergence += recentDist[level]
+            * Math.log(recentDist[level] / referenceDist[level]);
         }
       }
 
@@ -347,7 +343,7 @@ export class DriftDetectionSystem {
   /**
    * Calculate temporal drift (time-based patterns)
    */
-  private calculateTemporalDrift(recent: any[]): number {
+  private calculateTemporalDrift(recent: unknown[]): number {
     if (recent.length < 10) {
       return 0;
     } // Need minimum samples
@@ -356,11 +352,8 @@ export class DriftDetectionSystem {
     const timeSlots = this.groupByTimeSlots(recent);
 
     // Calculate variance in predictions across time slots
-    const variances = Object.values(timeSlots).map((slot) =>
-      this.calculateVariance(slot as any[]),
-    );
-    const avgVariance =
-      variances.reduce((sum, v) => sum + v, 0) / variances.length;
+    const variances = Object.values(timeSlots).map((slot) => this.calculateVariance(slot as unknown[]));
+    const avgVariance = variances.reduce((sum, v) => sum + v, 0) / variances.length;
 
     return Math.min(1, avgVariance); // Normalize to 0-1
   }
@@ -383,10 +376,10 @@ export class DriftDetectionSystem {
     };
 
     return (
-      components.dataShift * weights.dataShift +
-      components.performance * weights.performance +
-      components.prediction * weights.prediction +
-      components.temporal * weights.temporal
+      components.dataShift * weights.dataShift
+      + components.performance * weights.performance
+      + components.prediction * weights.prediction
+      + components.temporal * weights.temporal
     );
   }
 
@@ -503,8 +496,7 @@ export class DriftDetectionSystem {
           model_id: modelId,
           drift_score: metrics.overallDriftScore,
           drift_type: this.getDriftType(metrics),
-          threshold_breached:
-            metrics.overallDriftScore > this.DRIFT_THRESHOLDS.medium,
+          threshold_breached: metrics.overallDriftScore > this.DRIFT_THRESHOLDS.medium,
           detection_period: `[${new Date().toISOString()}, ${new Date().toISOString()}]`,
           features_affected: Object.keys(metrics.featureDriftScores),
           alert_sent: metrics.overallDriftScore > this.DRIFT_THRESHOLDS.high,
@@ -519,10 +511,10 @@ export class DriftDetectionSystem {
         });
 
       if (error) {
-        console.error("Failed to record drift detection:", error);
+        // console.error("Failed to record drift detection:", error);
       }
     } catch (error) {
-      console.error("Error recording drift detection:", error);
+      // console.error("Error recording drift detection:", error);
     }
   }
 
@@ -531,14 +523,14 @@ export class DriftDetectionSystem {
    */
   private async sendImmediateAlert(alert: DriftAlert): Promise<void> {
     // In production, this would integrate with notification systems
-    console.warn(`🚨 CRITICAL MODEL DRIFT ALERT 🚨`);
-    console.warn(`Model: ${alert.modelName} (${alert.modelId})`);
-    console.warn(`Drift Score: ${(alert.driftScore * 100).toFixed(2)}%`);
-    console.warn(`Severity: ${alert.severity.toUpperCase()}`);
-    console.warn(
+    // console.warn(`🚨 CRITICAL MODEL DRIFT ALERT 🚨`);
+    // console.warn(`Model: ${alert.modelName} (${alert.modelId})`);
+    // console.warn(`Drift Score: ${(alert.driftScore * 100).toFixed(2)}%`);
+    // console.warn(`Severity: ${alert.severity.toUpperCase()}`);
+    // console.warn(
       `Revenue at Risk: $${alert.estimatedImpact.revenueAtRisk.toLocaleString()}`,
     );
-    console.warn(`Recommended Actions:`, alert.recommendedActions);
+    // console.warn(`Recommended Actions:`, alert.recommendedActions);
 
     // Log to audit system
     await this.supabase.from("audit_events").insert({
@@ -556,13 +548,13 @@ export class DriftDetectionSystem {
   }
 
   // Helper methods
-  private aggregateFactors(predictions: any[]): Record<string, number> {
+  private aggregateFactors(predictions: unknown[]): Record<string, number> {
     const factorSums: Record<string, number> = {};
     const factorCounts: Record<string, number> = {};
 
     predictions.forEach((pred) => {
       if (pred.factors && Array.isArray(pred.factors)) {
-        pred.factors.forEach((factor: any) => {
+        pred.factors.forEach((factor: unknown) => {
           if (!factorSums[factor.factor]) {
             factorSums[factor.factor] = 0;
             factorCounts[factor.factor] = 0;
@@ -581,9 +573,9 @@ export class DriftDetectionSystem {
     return averages;
   }
 
-  private getRiskDistribution(predictions: any[]): Record<string, number> {
+  private getRiskDistribution(predictions: unknown[]): Record<string, number> {
     const distribution = { low: 0, medium: 0, high: 0, critical: 0 };
-    const total = predictions.length;
+    const { length: total } = predictions;
 
     predictions.forEach((pred) => {
       if (pred.risk_level && Object.hasOwn(distribution, pred.risk_level)) {
@@ -599,7 +591,7 @@ export class DriftDetectionSystem {
     return distribution;
   }
 
-  private groupByTimeSlots(predictions: any[]): Record<string, any[]> {
+  private groupByTimeSlots(predictions: unknown[]): Record<string, any[]> {
     const slots: Record<string, any[]> = {};
 
     predictions.forEach((pred) => {
@@ -615,15 +607,14 @@ export class DriftDetectionSystem {
     return slots;
   }
 
-  private calculateVariance(values: any[]): number {
+  private calculateVariance(values: unknown[]): number {
     if (values.length < 2) {
       return 0;
     }
 
     const risks = values.map((v) => v.risk_score || 0);
     const mean = risks.reduce((sum, r) => sum + r, 0) / risks.length;
-    const variance =
-      risks.reduce((sum, r) => sum + (r - mean) ** 2, 0) / risks.length;
+    const variance = risks.reduce((sum, r) => sum + (r - mean) ** 2, 0) / risks.length;
 
     return variance;
   }
@@ -632,17 +623,17 @@ export class DriftDetectionSystem {
    * Schedule automated drift detection (called by cron job)
    */
   async scheduleAutomatedCheck(): Promise<void> {
-    console.log("🔍 Starting automated drift detection...");
+    // console.log("🔍 Starting automated drift detection...");
 
     const alerts = await this.runDriftDetection();
 
-    console.log(`✅ Drift detection complete. Found ${alerts.length} alerts.`);
+    // console.log(`✅ Drift detection complete. Found ${alerts.length} alerts.`);
 
     if (alerts.length > 0) {
       const criticalAlerts = alerts.filter((a) => a.severity === "critical");
       const highAlerts = alerts.filter((a) => a.severity === "high");
 
-      console.log(
+      // console.log(
         `🚨 Critical: ${criticalAlerts.length}, High: ${highAlerts.length}`,
       );
     }

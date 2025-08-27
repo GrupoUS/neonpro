@@ -21,10 +21,10 @@ export interface TrafficStatus {
 }
 
 export class TrafficManager {
-  private currentConfig: TrafficConfig | null = null;
+  private currentConfig: TrafficConfig | null = undefined;
   private readonly trafficHistory: TrafficStatus[] = [];
 
-  constructor(private readonly config: { maxHistorySize: number }) {}
+  constructor(private readonly config: { maxHistorySize: number; }) {}
 
   /**
    * Route traffic between blue and green environments
@@ -105,7 +105,7 @@ export class TrafficManager {
    * Get current traffic status
    */
   getCurrentStatus(): TrafficStatus | null {
-    return this.trafficHistory.at(-1) || null;
+    return this.trafficHistory.at(-1) || undefined;
   }
 
   /**

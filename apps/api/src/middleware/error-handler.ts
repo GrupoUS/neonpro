@@ -59,8 +59,7 @@ export class NeonProError extends Error {
       [ErrorType.AUTHENTICATION_ERROR]: "Credenciais inválidas",
       [ErrorType.AUTHORIZATION_ERROR]: "Acesso negado",
       [ErrorType.NOT_FOUND_ERROR]: "Recurso não encontrado",
-      [ErrorType.RATE_LIMIT_ERROR]:
-        "Muitas tentativas. Tente novamente mais tarde",
+      [ErrorType.RATE_LIMIT_ERROR]: "Muitas tentativas. Tente novamente mais tarde",
       [ErrorType.DATABASE_ERROR]: "Erro interno do banco de dados",
       [ErrorType.EXTERNAL_API_ERROR]: "Erro de serviço externo",
       [ErrorType.BUSINESS_LOGIC_ERROR]: "Operação não permitida",
@@ -128,9 +127,7 @@ const sanitizeError = (error: unknown): unknown => {
       const lowerKey = key.toLowerCase();
 
       // Check if key contains sensitive information
-      const isSensitive = sensitiveFields.some((field) =>
-        lowerKey.includes(field),
-      );
+      const isSensitive = sensitiveFields.some((field) => lowerKey.includes(field));
 
       if (isSensitive) {
         sanitized[key] = "[REDACTED]";
@@ -178,11 +175,10 @@ const logError = (error: unknown, context: Context): void => {
 
     // Client context
     userAgent: context.req.header("User-Agent"),
-    clientIP:
-      context.req.header("CF-Connecting-IP") ||
-      context.req.header("X-Forwarded-For") ||
-      context.req.header("X-Real-IP") ||
-      "unknown",
+    clientIP: context.req.header("CF-Connecting-IP")
+      || context.req.header("X-Forwarded-For")
+      || context.req.header("X-Real-IP")
+      || "unknown",
 
     // Metadata
     metadata: error.metadata,
@@ -210,7 +206,7 @@ const logError = (error: unknown, context: Context): void => {
 const formatErrorResponse = (
   error: unknown,
   context: Context,
-): { response: ErrorResponse; statusCode: StatusCode } => {
+): { response: ErrorResponse; statusCode: StatusCode; } => {
   const requestId = context.req.header("X-Request-ID");
   const auditId = context.req.header("X-Audit-ID");
   const isProduction = process.env.NODE_ENV === "production";
@@ -241,12 +237,12 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-              validationErrors: error.errors?.map((err: unknown) => ({
-                field: err.path?.join("."),
-                message: err.message,
-                code: err.code,
-              })),
-            },
+            validationErrors: error.errors?.map((err: unknown) => ({
+              field: err.path?.join("."),
+              message: err.message,
+              code: err.code,
+            })),
+          },
         timestamp: new Date().toISOString(),
         requestId,
         auditId,
@@ -309,8 +305,8 @@ const formatErrorResponse = (
 
   // Handle database errors
   if (
-    error.name === "PrismaClientKnownRequestError" ||
-    error.name === "PrismaClientUnknownRequestError"
+    error.name === "PrismaClientKnownRequestError"
+    || error.name === "PrismaClientUnknownRequestError"
   ) {
     return {
       response: {
@@ -320,9 +316,9 @@ const formatErrorResponse = (
         details: isProduction
           ? undefined
           : {
-              code: error.code,
-              meta: sanitizeError(error.meta),
-            },
+            code: error.code,
+            meta: sanitizeError(error.meta),
+          },
         timestamp: new Date().toISOString(),
         requestId,
         auditId,

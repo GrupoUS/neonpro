@@ -289,8 +289,8 @@ export const authMiddleware = (): MiddlewareHandler => {
       await next();
     } catch (error) {
       if (
-        error.message.includes("Invalid token") ||
-        error.message.includes("jwt")
+        error.message.includes("Invalid token")
+        || error.message.includes("jwt")
       ) {
         throw createError.authentication("Token inválido");
       }
@@ -334,7 +334,7 @@ export const requirePermission = (
     }
 
     const hasAllPermissions = requiredPermissions.every((permission) =>
-      userPermissions.includes(permission),
+      userPermissions.includes(permission)
     );
 
     if (!hasAllPermissions) {
@@ -402,10 +402,9 @@ export const requireClinicAccess = (): MiddlewareHandler => {
     }
 
     // Extract clinic ID from request (URL parameter, query, or body)
-    const requestClinicId =
-      c.req.param("clinicId") ||
-      c.req.query("clinicId") ||
-      (await c.req.json().catch(() => ({})))?.clinicId;
+    const requestClinicId = c.req.param("clinicId")
+      || c.req.query("clinicId")
+      || (await c.req.json().catch(() => ({})))?.clinicId;
 
     // If clinic ID is specified in request, verify access
     if (requestClinicId && requestClinicId !== userClinicId) {
@@ -448,7 +447,7 @@ export const authUtils = {
     return c.get("userRole") === role;
   },
 
-  // Check if user has any of the specified roles
+  // Check if user has unknown of the specified roles
   hasAnyRole: (c: Context, roles: UserRole[]): boolean => {
     const userRole = c.get("userRole");
     return roles.includes(userRole);

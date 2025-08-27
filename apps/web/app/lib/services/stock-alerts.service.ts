@@ -335,18 +335,19 @@ export class StockAlertsService {
    * Determine if an alert should be triggered
    */
   private shouldTriggerAlert(
-    item: any,
+    item: unknown,
     config: StockAlertConfig,
-  ): { trigger: boolean; message: string } {
+  ): { trigger: boolean; message: string; } {
     const currentStock = item.current_quantity || 0;
-    const threshold = config.thresholdValue;
+    const { thresholdValue: threshold } = config;
 
     switch (config.alertType) {
       case "low_stock": {
         if (currentStock <= threshold) {
           return {
             trigger: true,
-            message: `Low stock alert: ${item.product_name} has ${currentStock} units (threshold: ${threshold})`,
+            message:
+              `Low stock alert: ${item.product_name} has ${currentStock} units (threshold: ${threshold})`,
           };
         }
         break;
@@ -396,7 +397,7 @@ export class StockAlertsService {
    * Create a new stock alert
    */
   private async createAlert(
-    item: any,
+    item: unknown,
     config: StockAlertConfig,
     message: string,
   ): Promise<StockAlert | null> {

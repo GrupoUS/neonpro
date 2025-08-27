@@ -17,7 +17,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock theme provider if needed
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
+const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (
   <div className="neonprov1-theme">{children}</div>
 );
 
@@ -56,7 +56,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
         expect(button).toBeInTheDocument();
 
         // Check for variant-specific classes in the className
-        const className = button.className;
+        const { className: className } = button;
         if (variant === "medical") {
           expect(className).toContain("bg-gradient-primary");
         } else if (variant === "emergency") {
@@ -85,7 +85,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
         );
 
         const button = screen.getByTestId(`button-${size}`);
-        const className = button.className;
+        const { className: className } = button;
 
         // Check for size-specific classes
         if (size === "sm") {
@@ -213,7 +213,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
       );
 
       const button = screen.getByTestId("emergency-button");
-      const className = button.className;
+      const { className: className } = button;
 
       // Emergency buttons should have the emergency variant styling
       expect(className).toContain("from-destructive");
@@ -232,7 +232,7 @@ describe("button Component - NeonPro Healthcare UI", () => {
 
       const button = screen.getByTestId("critical-emergency-button");
       // The component auto-maps critical priority to emergency variant
-      const className = button.className;
+      const { className: className } = button;
       expect(className).toContain("from-destructive");
       expect(button).toHaveAttribute("data-priority", "critical");
       expect(button).toHaveAttribute("role", "button");

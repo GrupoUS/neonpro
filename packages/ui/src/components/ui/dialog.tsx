@@ -1,23 +1,15 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
-import {
-  AlertTriangle,
-  CheckCircle,
-  FileText,
-  Heart,
-  Info,
-  Shield,
-  X,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, FileText, Heart, Info, Shield, X } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
 
-const Dialog = DialogPrimitive.Root;
-const DialogTrigger = DialogPrimitive.Trigger;
-const DialogPortal = DialogPrimitive.Portal;
-const DialogClose = DialogPrimitive.Close;
+const { Root: Dialog } = DialogPrimitive;
+const { Trigger: DialogTrigger } = DialogPrimitive;
+const { Portal: DialogPortal } = DialogPrimitive;
+const { Close: DialogClose } = DialogPrimitive;
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -48,8 +40,10 @@ const dialogContentVariants = cva(
           "border-border/60 border-l-4 border-l-warning bg-gradient-to-br from-warning/8 via-warning/4 to-transparent shadow-warning/15",
         success:
           "border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/8 via-success/4 to-transparent shadow-success/15",
-        info: "border-border/60 border-l-4 border-l-info bg-gradient-to-br from-info/8 via-info/4 to-transparent shadow-info/15",
-        lgpd: "border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/10 via-success/5 to-transparent shadow-success/20 ring-2 ring-success/20",
+        info:
+          "border-border/60 border-l-4 border-l-info bg-gradient-to-br from-info/8 via-info/4 to-transparent shadow-info/15",
+        lgpd:
+          "border-border/60 border-l-4 border-l-success bg-gradient-to-br from-success/10 via-success/5 to-transparent shadow-success/20 ring-2 ring-success/20",
       },
       size: {
         default: "max-w-lg",
@@ -68,8 +62,8 @@ const dialogContentVariants = cva(
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> &
-    VariantProps<typeof dialogContentVariants>
+  & React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+  & VariantProps<typeof dialogContentVariants>
 >(({ className, children, variant, size, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
@@ -142,8 +136,10 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName; // NEONPROV1 Healthcare-specific dialog components
 interface HealthcareDialogProps
-  extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
-    VariantProps<typeof dialogContentVariants> {
+  extends
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+    VariantProps<typeof dialogContentVariants>
+{
   title?: string;
   description?: string;
   icon?: React.ReactNode;
@@ -194,9 +190,7 @@ const ConfirmationDialog = React.forwardRef<
       }
 
       if (isDestructive) {
-        return (
-          <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
-        );
+        return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
       }
 
       switch (medicalContext) {
@@ -210,9 +204,7 @@ const ConfirmationDialog = React.forwardRef<
           return <Heart className="h-6 w-6 animate-pulse text-destructive" />;
         }
         case "emergency": {
-          return (
-            <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
-          );
+          return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
         }
         case "consent": {
           return <FileText className="h-6 w-6 text-primary" />;
@@ -266,8 +258,8 @@ const ConfirmationDialog = React.forwardRef<
           <div className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-success/15 via-success/10 to-success/5 p-3 text-sm shadow-healthcare-sm backdrop-blur-sm">
             <Shield className="h-4 w-4 text-success" />
             <span className="text-success">
-              Esta ação está em conformidade com a LGPD e os dados serão
-              processados de forma segura.
+              Esta ação está em conformidade com a LGPD e os dados serão processados de forma
+              segura.
             </span>
           </div>
         )}
@@ -334,8 +326,8 @@ const LGPDConsentDialog = ({
             </DialogTitle>
           </div>
           <DialogDescription>
-            Precisamos do seu consentimento para processar seus dados pessoais
-            de acordo com a Lei Geral de Proteção de Dados (LGPD).
+            Precisamos do seu consentimento para processar seus dados pessoais de acordo com a Lei
+            Geral de Proteção de Dados (LGPD).
           </DialogDescription>
         </DialogHeader>
 
@@ -345,9 +337,7 @@ const LGPDConsentDialog = ({
               Dados que serão coletados:
             </h4>
             <ul className="list-disc space-y-1 pl-4 text-muted-foreground text-sm">
-              {dataTypes.map((type, index) => (
-                <li key={index}>{type}</li>
-              ))}
+              {dataTypes.map((type, index) => <li key={index}>{type}</li>)}
             </ul>
           </div>
 
@@ -367,10 +357,9 @@ const LGPDConsentDialog = ({
 
           <div className="rounded-lg bg-gradient-to-br from-success/15 via-success/10 to-success/5 p-4 shadow-healthcare-sm ring-1 ring-success/20 backdrop-blur-sm">
             <p className="font-medium text-success text-xs leading-relaxed">
-              Seus dados serão protegidos com medidas de segurança adequadas e
-              você poderá exercer seus direitos (acesso, correção, exclusão,
-              portabilidade) a qualquer momento através do nosso canal de
-              atendimento.
+              Seus dados serão protegidos com medidas de segurança adequadas e você poderá exercer
+              seus direitos (acesso, correção, exclusão, portabilidade) a qualquer momento através
+              do nosso canal de atendimento.
             </p>
           </div>
         </div>
@@ -420,9 +409,7 @@ const MedicalAlertDialog = ({
   const getAlertIcon = () => {
     switch (alertType) {
       case "critical": {
-        return (
-          <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />
-        );
+        return <AlertTriangle className="h-6 w-6 animate-pulse-healthcare text-destructive" />;
       }
       case "urgent": {
         return <AlertTriangle className="h-6 w-6 text-warning" />;
@@ -455,19 +442,16 @@ const MedicalAlertDialog = ({
           <div className="mb-2 flex items-center gap-3">
             {getAlertIcon()}
             <DialogTitle
-              className={
-                alertType === "critical"
-                  ? "animate-pulse text-destructive"
-                  : "text-gradient"
-              }
+              className={alertType === "critical"
+                ? "animate-pulse text-destructive"
+                : "text-gradient"}
             >
               {title}
             </DialogTitle>
           </div>
           {patientName && (
             <div className="rounded-md bg-gradient-to-br from-muted/40 via-muted/20 to-muted/10 p-2 font-medium text-foreground text-sm backdrop-blur-sm">
-              Paciente:{" "}
-              <span className="font-semibold text-primary">{patientName}</span>
+              Paciente: <span className="font-semibold text-primary">{patientName}</span>
             </div>
           )}
           {timestamp && (

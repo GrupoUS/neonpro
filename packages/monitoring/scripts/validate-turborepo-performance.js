@@ -41,8 +41,7 @@ async function validatePerformance() {
     const baselineBuildTime = 120_000; // 2 minutes baseline
     const improvement = (baselineBuildTime - buildTime) / baselineBuildTime;
 
-    results.buildTimeImprovement =
-      improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
+    results.buildTimeImprovement = improvement >= PERFORMANCE_TARGETS.BUILD_TIME_REDUCTION;
 
     // Run build twice to test cache
     execSync("pnpm run build", { stdio: "pipe" });
@@ -51,8 +50,7 @@ async function validatePerformance() {
     const cacheTime = Date.now() - cacheStart;
 
     const cacheImprovement = (buildTime - cacheTime) / buildTime;
-    results.cacheOptimization =
-      cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
+    results.cacheOptimization = cacheImprovement >= PERFORMANCE_TARGETS.CACHE_HIT_RATE;
 
     for (const task of HEALTHCARE_COMPLIANCE_REQUIREMENTS) {
       try {

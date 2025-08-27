@@ -76,76 +76,7 @@ const ExternalFactorsSchema = z
       .optional(),
   })
   .optional();
-
-const _BulkPredictionSchema = z.object({
-  predictions: z
-    .array(
-      z.object({
-        appointment_id: z.string().min(1),
-        patient_profile: PatientProfileSchema,
-        appointment_context: AppointmentContextSchema,
-        external_factors: ExternalFactorsSchema,
-      }),
-    )
-    .min(1)
-    .max(100), // Limit bulk predictions for performance
-});
-
 // Real-time prediction response schemas
-const _PredictionResponseSchema = z.object({
-  success: z.boolean(),
-  prediction_id: z.string(),
-  appointment_id: z.string(),
-  no_show_probability: z.number().min(0).max(1),
-  risk_category: z.enum(["low", "medium", "high", "very_high"]),
-  confidence_score: z.number().min(0).max(1),
-  processing_time_ms: z.number(),
-  model_version: z.string(),
-  ensemble_details: z.object({
-    models_used: z.array(z.string()),
-    ensemble_method: z.string(),
-    calibrated: z.boolean(),
-    prediction_intervals: z.object({
-      lower_bound: z.number(),
-      upper_bound: z.number(),
-      confidence_level: z.number(),
-    }),
-  }),
-  contributing_factors: z.array(
-    z.object({
-      factor_name: z.string(),
-      impact_score: z.number(),
-      impact_direction: z.enum(["increases_risk", "decreases_risk"]),
-      confidence: z.number(),
-    }),
-  ),
-  recommendations: z.array(
-    z.object({
-      action_type: z.string(),
-      priority: z.enum(["low", "medium", "high", "urgent"]),
-      description: z.string(),
-      estimated_impact: z.number(),
-      success_probability: z.number(),
-      timing_recommendation: z.string(),
-    }),
-  ),
-  intervention_strategies: z.array(
-    z.object({
-      strategy_id: z.string(),
-      name: z.string(),
-      estimated_effectiveness: z.number(),
-      cost_per_intervention: z.number(),
-      roi_projection: z.number(),
-    }),
-  ),
-  roi_impact: z.object({
-    estimated_cost_if_no_show: z.number(),
-    intervention_cost: z.number(),
-    potential_savings: z.number(),
-    net_roi: z.number(),
-  }),
-});
-
 // Initialize Hono app with performance middleware
 export const enhancedPredictionRoutes = new Hono()
   .use(timing())
@@ -202,22 +133,17 @@ enhancedPredictionRoutes.post(
       } = c.req.valid("json");
 
       // Check cache first for performance
-      const _cacheKey =
-        options.cache_key ||
-        `prediction_${appointment_context.appointment_id}_${appointment_context.scheduled_datetime}`;
-
       // Fast-track for high priority requests
       if (options.priority === "high") {
         c.header("X-Priority", "high");
       }
 
       // Get enhanced prediction
-      const predictionResult =
-        await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
-          patient_profile,
-          appointment_context,
-          external_factors,
-        );
+      const predictionResult = await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
+        patient_profile,
+        appointment_context,
+        external_factors,
+      );
 
       // Calculate ROI impact
       const avgNoShowCost = 150;
@@ -257,31 +183,27 @@ enhancedPredictionRoutes.post(
           ),
           ensemble_method: predictionResult.prediction.ensemble_method,
           calibrated: true,
-          prediction_intervals:
-            predictionResult.prediction.prediction_intervals,
+          prediction_intervals: predictionResult.prediction.prediction_intervals,
         },
-        contributing_factors:
-          predictionResult.prediction.feature_importance_aggregated
-            .slice(0, 8)
-            .map((fi) => ({
-              factor_name: fi.feature_name,
-              impact_score: fi.importance_score,
-              impact_direction:
-                fi.importance_score > 0
-                  ? ("increases_risk" as const)
-                  : ("decreases_risk" as const),
-              confidence: fi.stability_score,
-            })),
+        contributing_factors: predictionResult.prediction.feature_importance_aggregated
+          .slice(0, 8)
+          .map((fi) => ({
+            factor_name: fi.feature_name,
+            impact_score: fi.importance_score,
+            impact_direction: fi.importance_score > 0
+              ? ("increases_risk" as const)
+              : ("decreases_risk" as const),
+            confidence: fi.stability_score,
+          })),
         recommendations: predictionResult.recommended_interventions
           .slice(0, 5)
           .map((ri) => ({
             action_type: ri.name.toLowerCase().includes("reminder")
               ? "reminder"
               : "intervention",
-            priority:
-              ri.estimated_effectiveness > 0.7
-                ? ("high" as const)
-                : ("medium" as const),
+            priority: ri.estimated_effectiveness > 0.7
+              ? ("high" as const)
+              : ("medium" as const),
             description: ri.description,
             estimated_impact: ri.estimated_effectiveness,
             success_probability: ri.success_metrics.conversion_rate,
@@ -360,14 +282,14 @@ enhancedPredictionRoutes.post(
     const batchId = `batch_${Date.now()}_${Math.random().toString(36).slice(7)}`;
 
     try {
-      const { predictions, options = {} } = c.req.valid("json");
+      const { predictions } = c.req.valid("json");
 
       // Parallel processing for performance
       const predictionPromises = predictions.map(
         async (predRequest, _index) => {
           try {
-            const predictionResult =
-              await enhancedNoShowPredictionService.getEnhancedPredictionWithROI(
+            const predictionResult = await enhancedNoShowPredictionService
+              .getEnhancedPredictionWithROI(
                 predRequest.patient_profile,
                 predRequest.appointment_context,
                 predRequest.external_factors,
@@ -376,19 +298,16 @@ enhancedPredictionRoutes.post(
             return {
               appointment_id: predRequest.appointment_id,
               success: true,
-              no_show_probability:
-                predictionResult.prediction.calibrated_probability,
+              no_show_probability: predictionResult.prediction.calibrated_probability,
               risk_category: calculateRiskCategory(
                 predictionResult.prediction.calibrated_probability,
               ),
               confidence_score: predictionResult.prediction.confidence_score,
-              top_risk_factors:
-                predictionResult.prediction.feature_importance_aggregated
-                  .slice(0, 3)
-                  .map((fi) => fi.feature_name),
-              recommended_action:
-                predictionResult.recommended_interventions[0]?.name ||
-                "standard_reminder",
+              top_risk_factors: predictionResult.prediction.feature_importance_aggregated
+                .slice(0, 3)
+                .map((fi) => fi.feature_name),
+              recommended_action: predictionResult.recommended_interventions[0]?.name
+                || "standard_reminder",
               estimated_roi: predictionResult.roi_impact.net_savings,
             };
           } catch {
@@ -409,11 +328,10 @@ enhancedPredictionRoutes.post(
 
       // Calculate batch statistics
       const successCount = results.filter((r) => r.success).length;
-      const avgProbability =
-        results
-          .filter((r) => r.success)
-          .reduce((sum, r) => sum + r.no_show_probability, 0) /
-        Math.max(1, successCount);
+      const avgProbability = results
+        .filter((r) => r.success)
+        .reduce((sum, r) => sum + r.no_show_probability, 0)
+        / Math.max(1, successCount);
 
       const totalEstimatedROI = results
         .filter((r) => r.success && r.estimated_roi)
@@ -432,8 +350,7 @@ enhancedPredictionRoutes.post(
         batch_statistics: {
           avg_no_show_probability: Math.round(avgProbability * 1000) / 1000,
           high_risk_count: results.filter(
-            (r) =>
-              r.risk_category === "high" || r.risk_category === "very_high",
+            (r) => r.risk_category === "high" || r.risk_category === "very_high",
           ).length,
           total_estimated_roi: Math.round(totalEstimatedROI * 100) / 100,
           recommendations_generated: results.filter((r) => r.recommended_action)
@@ -484,8 +401,7 @@ enhancedPredictionRoutes.get(
   }),
   async (c) => {
     try {
-      const metrics =
-        await enhancedNoShowPredictionService.getAdvancedPredictionMetrics();
+      const metrics = await enhancedNoShowPredictionService.getAdvancedPredictionMetrics();
 
       return c.json({
         success: true,
@@ -498,10 +414,8 @@ enhancedPredictionRoutes.get(
           accuracy_achieved: metrics.model_performance.ensemble_accuracy,
           accuracy_met: metrics.model_performance.ensemble_accuracy >= 0.95,
           response_time_target: 200,
-          response_time_achieved:
-            metrics.system_performance.avg_prediction_time_ms,
-          response_time_met:
-            metrics.system_performance.avg_prediction_time_ms <= 200,
+          response_time_achieved: metrics.system_performance.avg_prediction_time_ms,
+          response_time_met: metrics.system_performance.avg_prediction_time_ms <= 200,
           roi_target_annual: 150_000,
           roi_projected_annual: metrics.roi_summary.yearly_projection,
           roi_target_met: metrics.roi_summary.yearly_projection >= 150_000,
@@ -573,24 +487,21 @@ enhancedPredictionRoutes.get(
         health_check_time_ms: Math.round(healthCheckTime),
         services: {
           ensemble_models: {
-            status:
-              healthChecks[0].status === "fulfilled"
-                ? "operational"
-                : "degraded",
+            status: healthChecks[0].status === "fulfilled"
+              ? "operational"
+              : "degraded",
             last_checked: new Date().toISOString(),
           },
           cache_service: {
-            status:
-              healthChecks[1].status === "fulfilled"
-                ? "operational"
-                : "degraded",
+            status: healthChecks[1].status === "fulfilled"
+              ? "operational"
+              : "degraded",
             hit_rate: 0.87,
           },
           database: {
-            status:
-              healthChecks[2].status === "fulfilled"
-                ? "connected"
-                : "disconnected",
+            status: healthChecks[2].status === "fulfilled"
+              ? "connected"
+              : "disconnected",
             response_time_ms: 45,
           },
         },

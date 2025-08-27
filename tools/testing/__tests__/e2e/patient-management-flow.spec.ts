@@ -238,9 +238,7 @@ test.describe("Complete Patient Management Flow", () => {
     await page.click('[data-testid="cancel-anonymization-btn"]');
   });
 
-  test("should handle patient data deletion (LGPD right to erasure)", async ({
-    page,
-  }) => {
+  test("should handle patient data deletion (LGPD right to erasure)", async ({ page }) => {
     await page.goto("/patients");
     await page.click('[data-testid="patient-item-123.456.789-00"]');
 

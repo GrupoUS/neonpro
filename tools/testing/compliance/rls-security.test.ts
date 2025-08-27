@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  mockAuditLogger,
-  mockSupabaseHealthcare,
-  testDatabaseUtils,
-} from "../supabase-setup";
+import { mockAuditLogger, mockSupabaseHealthcare, testDatabaseUtils } from "../supabase-setup";
 
 describe("row Level Security (RLS) Compliance Tests", () => {
   beforeEach(() => {
@@ -16,17 +12,15 @@ describe("row Level Security (RLS) Compliance Tests", () => {
       const otherPatientId = "patient-456";
 
       // Mock RLS policy simulation
-      const canPatientAccessData =
-        testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
-          patientUserId,
-          patientUserId.replace("patient-", ""),
-        );
+      const canPatientAccessData = testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
+        patientUserId,
+        patientUserId.replace("patient-", ""),
+      );
 
-      const canPatientAccessOtherData =
-        testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
-          patientUserId,
-          otherPatientId.replace("patient-", ""),
-        );
+      const canPatientAccessOtherData = testDatabaseUtils.simulateRLS.patientCanOnlyAccessOwnData(
+        patientUserId,
+        otherPatientId.replace("patient-", ""),
+      );
 
       expect(canPatientAccessData).toBeTruthy();
       expect(canPatientAccessOtherData).toBeFalsy();
@@ -35,13 +29,10 @@ describe("row Level Security (RLS) Compliance Tests", () => {
     it("should allow doctors to access only assigned patients", async () => {
       const doctorId = "doctor-123";
       const assignedPatientId = "patient-123";
-      const _unassignedPatientId = "patient-456";
-
-      const canAccessAssigned =
-        testDatabaseUtils.simulateRLS.doctorCanAccessAssignedPatients(
-          doctorId,
-          assignedPatientId,
-        );
+      const canAccessAssigned = testDatabaseUtils.simulateRLS.doctorCanAccessAssignedPatients(
+        doctorId,
+        assignedPatientId,
+      );
 
       // In a real scenario, this would check appointment/treatment assignments
       expect(canAccessAssigned).toBeTruthy();
@@ -50,8 +41,7 @@ describe("row Level Security (RLS) Compliance Tests", () => {
     it("should allow admins to access all data with proper audit logging", async () => {
       const adminUserId = "admin-123";
 
-      const hasAdminAccess =
-        testDatabaseUtils.simulateRLS.adminCanAccessAllData(adminUserId);
+      const hasAdminAccess = testDatabaseUtils.simulateRLS.adminCanAccessAllData(adminUserId);
 
       expect(hasAdminAccess).toBeTruthy();
 
@@ -80,8 +70,7 @@ describe("row Level Security (RLS) Compliance Tests", () => {
         treatment: "Test treatment",
       };
 
-      const record =
-        await mockSupabaseHealthcare.medicalRecords.create(medicalRecordData);
+      const record = await mockSupabaseHealthcare.medicalRecords.create(medicalRecordData);
 
       expect(record.data).toHaveProperty("patient_id", patientId);
       expect(record.data).toHaveProperty("doctor_id", doctorId);
@@ -89,9 +78,6 @@ describe("row Level Security (RLS) Compliance Tests", () => {
     });
 
     it("should prevent unauthorized access to medical records", async () => {
-      const _unauthorizedUserId = "unauthorized-user-123";
-      const _patientId = "patient-123";
-
       // Simulate RLS policy blocking unauthorized access
       const mockUnauthorizedAccess = vi.fn(() => {
         throw new Error("RLS policy violation: Insufficient privileges");
@@ -125,13 +111,6 @@ describe("row Level Security (RLS) Compliance Tests", () => {
 
   describe("treatment Data Protection", () => {
     it("should restrict treatment data based on user role", async () => {
-      const _treatmentData = {
-        patient_id: "patient-123",
-        doctor_id: "doctor-123",
-        type: "botox-application",
-        status: "scheduled",
-      };
-
       // Different access levels based on user role
       const accessLevels = {
         patient: ["read"],
@@ -142,8 +121,7 @@ describe("row Level Security (RLS) Compliance Tests", () => {
       };
 
       const validateAccess = (userRole: string, action: string) => {
-        const allowedActions =
-          accessLevels[userRole as keyof typeof accessLevels] || [];
+        const allowedActions = accessLevels[userRole as keyof typeof accessLevels] || [];
         return allowedActions.includes(action);
       };
 
@@ -155,14 +133,6 @@ describe("row Level Security (RLS) Compliance Tests", () => {
     });
 
     it("should protect sensitive treatment information", async () => {
-      const _sensitiveTreatmentData = {
-        patient_id: "patient-123",
-        procedure_notes: "Confidential medical notes",
-        medication_dosage: "50 UI Botox",
-        patient_response: "No adverse reactions",
-        doctor_observations: "Private doctor notes",
-      };
-
       // Different data visibility based on user role
       const getVisibleFields = (userRole: string) => {
         const fieldVisibility = {
@@ -249,14 +219,6 @@ describe("row Level Security (RLS) Compliance Tests", () => {
 
   describe("audit Trail Security", () => {
     it("should protect audit logs from modification", async () => {
-      const _auditEntry = {
-        user_id: "doctor-123",
-        action: "view_patient_data",
-        resource_id: "patient-123",
-        timestamp: new Date().toISOString(),
-        ip_address: "192.168.1.100",
-      };
-
       // Audit logs should be append-only
       const auditPermissions = {
         create: true,
@@ -334,7 +296,7 @@ describe("row Level Security (RLS) Compliance Tests", () => {
       };
 
       // Check that sensitive fields are protected
-      const isDataProtected = (data: any, field: string) => {
+      const isDataProtected = (data: unknown, field: string) => {
         const value = data[field];
         if (!value) {
           return true; // No data to protect
@@ -342,9 +304,9 @@ describe("row Level Security (RLS) Compliance Tests", () => {
 
         // Check for encryption markers or masking
         return (
-          value.includes("***") ||
-          value.includes("[ENCRYPTED]") ||
-          value.includes("####")
+          value.includes("***")
+          || value.includes("[ENCRYPTED]")
+          || value.includes("####")
         );
       };
 
@@ -396,18 +358,6 @@ describe("row Level Security (RLS) Compliance Tests", () => {
 
   describe("multi-tenant Data Isolation", () => {
     it("should isolate data between different clinics", async () => {
-      const _clinic1Data = {
-        clinic_id: "clinic-001",
-        patient_id: "patient-123",
-        data: "Clinic 1 patient data",
-      };
-
-      const _clinic2Data = {
-        clinic_id: "clinic-002",
-        patient_id: "patient-456",
-        data: "Clinic 2 patient data",
-      };
-
       // RLS should prevent cross-clinic data access
       const canAccessCrossClinic = (
         userClinicId: string,

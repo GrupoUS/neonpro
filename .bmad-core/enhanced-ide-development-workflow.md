@@ -142,7 +142,7 @@ full commands (`*risk-profile`, `*test-design`, `*nfr-assess`, `*trace-requireme
 | **Status**   | **Meaning**                                  | **Action Required**     | **Can Proceed?** |
 | ------------ | -------------------------------------------- | ----------------------- | ---------------- |
 | **PASS**     | All critical requirements met                | None                    | ✅ Yes           |
-| **CONCERNS** | Non-critical issues found                    | Team review recommended | ⚠️ With caution  |
+| **CONCERNS** | Non-critical issues found                    | Team review recommended | ⚠️ With caution   |
 | **FAIL**     | Critical issues (security, missing P0 tests) | Must fix                | ❌ No            |
 | **WAIVED**   | Issues acknowledged and accepted             | Document reasoning      | ✅ With approval |
 

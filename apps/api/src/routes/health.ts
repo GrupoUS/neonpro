@@ -8,7 +8,7 @@ interface HealthCheckResult {
   status: "healthy" | "degraded" | "unhealthy";
   timestamp: string;
   response_time_ms: number;
-  details: any;
+  details: unknown;
   version: string;
 }
 
@@ -17,7 +17,7 @@ interface SystemHealth {
   services: HealthCheckResult[];
   system_info: {
     uptime_ms: number;
-    memory_usage: any;
+    memory_usage: unknown;
     node_version: string;
     environment: string;
   };
@@ -36,8 +36,8 @@ class HealthCheckService {
 
     try {
       const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        process.env.SUPABASE_URL || "",
+        process.env.SUPABASE_SERVICE_ROLE_KEY || "",
       );
 
       // Test basic database connectivity
@@ -87,8 +87,8 @@ class HealthCheckService {
 
     try {
       const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_ANON_KEY!,
+        process.env.SUPABASE_URL || "",
+        process.env.SUPABASE_ANON_KEY || "",
       );
 
       // Test Supabase API connectivity
@@ -149,7 +149,7 @@ class HealthCheckService {
     }
   }
 
-  static getSystemInfo(): any {
+  static getSystemInfo(): unknown {
     return {
       uptime_ms: Date.now() - HealthCheckService.startTime,
       memory_usage: process.memoryUsage(),
@@ -160,7 +160,7 @@ class HealthCheckService {
 
   static determineOverallStatus(
     services: HealthCheckResult[],
-    dependencies: any,
+    dependencies: unknown,
   ): "healthy" | "degraded" | "unhealthy" {
     const allChecks = [
       ...services,
@@ -213,12 +213,11 @@ health.get("/health", async (c) => {
     };
 
     // Set appropriate HTTP status code
-    const statusCode =
-      systemHealth.overall_status === "healthy"
-        ? 200
-        : systemHealth.overall_status === "degraded"
-          ? 200
-          : 503;
+    const statusCode = systemHealth.overall_status === "healthy"
+      ? 200
+      : systemHealth.overall_status === "degraded"
+      ? 200
+      : 503;
 
     return c.json(
       {
@@ -245,12 +244,11 @@ health.get("/health", async (c) => {
 // Database-specific health check
 health.get("/health/database", async (c) => {
   const dbHealth = await HealthCheckService.checkDatabaseHealth();
-  const statusCode =
-    dbHealth.status === "healthy"
-      ? 200
-      : dbHealth.status === "degraded"
-        ? 200
-        : 503;
+  const statusCode = dbHealth.status === "healthy"
+    ? 200
+    : dbHealth.status === "degraded"
+    ? 200
+    : 503;
 
   return c.json(
     {
@@ -264,12 +262,11 @@ health.get("/health/database", async (c) => {
 // Supabase-specific health check
 health.get("/health/supabase", async (c) => {
   const supabaseHealth = await HealthCheckService.checkSupabaseHealth();
-  const statusCode =
-    supabaseHealth.status === "healthy"
-      ? 200
-      : supabaseHealth.status === "degraded"
-        ? 200
-        : 503;
+  const statusCode = supabaseHealth.status === "healthy"
+    ? 200
+    : supabaseHealth.status === "degraded"
+    ? 200
+    : 503;
 
   return c.json(
     {
@@ -291,21 +288,15 @@ health.get("/health/ai-services", async (c) => {
       fetch(`${process.env.API_BASE_URL}/api/ai/feature-flags/health`).then(
         (r) => r.json(),
       ),
-      fetch(`${process.env.API_BASE_URL}/api/ai/cache/health`).then((r) =>
-        r.json(),
-      ),
-      fetch(`${process.env.API_BASE_URL}/api/ai/monitoring/health`).then((r) =>
-        r.json(),
-      ),
+      fetch(`${process.env.API_BASE_URL}/api/ai/cache/health`).then((r) => r.json()),
+      fetch(`${process.env.API_BASE_URL}/api/ai/monitoring/health`).then((r) => r.json()),
       fetch(
         `${process.env.API_BASE_URL}/api/ai/no-show-prediction/health`,
       ).then((r) => r.json()),
       fetch(
         `${process.env.API_BASE_URL}/api/ai/appointment-optimization/health`,
       ).then((r) => r.json()),
-      fetch(`${process.env.API_BASE_URL}/api/ai/compliance/health`).then((r) =>
-        r.json(),
-      ),
+      fetch(`${process.env.API_BASE_URL}/api/ai/compliance/health`).then((r) => r.json()),
     ]);
 
     const serviceNames = [
@@ -320,25 +311,22 @@ health.get("/health/ai-services", async (c) => {
 
     const serviceResults = aiServiceChecks.map((result, index) => ({
       service: serviceNames[index],
-      status:
-        result.status === "fulfilled" && result.value.healthy
-          ? "healthy"
-          : "unhealthy",
-      details:
-        result.status === "fulfilled"
-          ? result.value
-          : { error: result.reason?.message },
+      status: result.status === "fulfilled" && result.value.healthy
+        ? "healthy"
+        : "unhealthy",
+      details: result.status === "fulfilled"
+        ? result.value
+        : { error: result.reason?.message },
     }));
 
     const unhealthyServices = serviceResults.filter(
       (s) => s.status === "unhealthy",
     ).length;
-    const overallStatus =
-      unhealthyServices === 0
-        ? "healthy"
-        : unhealthyServices < serviceResults.length / 2
-          ? "degraded"
-          : "unhealthy";
+    const overallStatus = unhealthyServices === 0
+      ? "healthy"
+      : unhealthyServices < serviceResults.length / 2
+      ? "degraded"
+      : "unhealthy";
 
     return c.json(
       {

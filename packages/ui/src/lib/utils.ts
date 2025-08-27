@@ -58,8 +58,8 @@ export const useComplianceAlerts = () => [
 ];
 
 export const useComplianceReports = () => ({
-  generateReport: (_type: string, _filters: any) => Promise.resolve(),
-  scheduleReport: (_type: string, _schedule: any) => Promise.resolve(),
+  generateReport: (_type: string, _filters: unknown) => Promise.resolve(),
+  scheduleReport: (_type: string, _schedule: unknown) => Promise.resolve(),
   downloadReport: (_reportId: string, _format: string) => Promise.resolve(),
   deleteReport: (_reportId: string) => Promise.resolve(),
 });

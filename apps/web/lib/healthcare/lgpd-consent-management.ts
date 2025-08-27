@@ -4,11 +4,7 @@
  */
 
 import { supabase } from "@/lib/supabase";
-import type {
-  ConsentRecord,
-  DataSubjectRequest,
-  DataSubjectRightType,
-} from "@/types/lgpd";
+import type { ConsentRecord, DataSubjectRequest, DataSubjectRightType } from "@/types/lgpd";
 
 export class LGPDConsentManager {
   /**
@@ -19,7 +15,7 @@ export class LGPDConsentManager {
     purpose: string;
     legalBasis: string;
     consentGiven: boolean;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }): Promise<ConsentRecord> {
     const { data, error } = await supabase
       .from("consent_records")
@@ -84,7 +80,7 @@ export class LGPDConsentManager {
     dataSubjectId: string;
     requestType: DataSubjectRightType;
     description?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }): Promise<DataSubjectRequest> {
     const { data, error } = await supabase
       .from("data_subject_requests")
@@ -145,7 +141,7 @@ export class LGPDConsentManager {
       | "under_review",
     response?: string,
   ): Promise<void> {
-    const updateData: any = {
+    const updateData: unknown = {
       status,
       updated_at: new Date().toISOString(),
     };
@@ -197,7 +193,7 @@ export class LGPDConsentManager {
    * Generate data portability export
    */
   async generateDataExport(dataSubjectId: string): Promise<{
-    personalData: any;
+    personalData: unknown;
     consentRecords: ConsentRecord[];
     requestHistory: DataSubjectRequest[];
   }> {

@@ -4,7 +4,7 @@
  * Enhanced configuration with integrated performance monitoring
  */
 
-import { test as base, expect } from "@playwright/test";
+import { expect, test as base } from "@playwright/test";
 import { e2eMonitor } from "./monitoring";
 
 // Extend the test with monitoring capabilities
@@ -51,7 +51,7 @@ export const healthcareHelpers = {
   /**
    * 🏥 Validate LGPD compliance in forms
    */
-  async validateLGPDCompliance(page: any) {
+  async validateLGPDCompliance(page: unknown) {
     // Check for consent checkboxes
     await expect(page.locator('[data-testid="lgpd-consent"]')).toBeVisible();
 
@@ -69,7 +69,7 @@ export const healthcareHelpers = {
   /**
    * 🏥 Validate ANVISA compliance for medical forms
    */
-  async validateANVISACompliance(page: any) {
+  async validateANVISACompliance(page: unknown) {
     // Check for medical license validation
     await expect(page.locator('[data-testid="medical-license"]')).toBeVisible();
 
@@ -85,7 +85,7 @@ export const healthcareHelpers = {
   /**
    * 🏥 Validate healthcare performance thresholds
    */
-  async validatePerformanceThresholds(page: any) {
+  async validatePerformanceThresholds(page: unknown) {
     // Measure page load time
     const navigationStart = await page.evaluate(
       () => performance.timing.navigationStart,
@@ -108,14 +108,14 @@ export const performanceHelpers = {
   /**
    * 📊 Measure Core Web Vitals
    */
-  async measureWebVitals(page: any) {
+  async measureWebVitals(page: unknown) {
     return await page.evaluate(() => {
       return new Promise((resolve) => {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const vitals: any = {};
+          const vitals: unknown = {};
 
-          entries.forEach((entry: any) => {
+          entries.forEach((entry: unknown) => {
             if (entry.entryType === "largest-contentful-paint") {
               vitals.lcp = entry.startTime;
             }
@@ -149,9 +149,9 @@ export const performanceHelpers = {
   /**
    * 🚀 Measure page load performance
    */
-  async measurePageLoad(page: any) {
+  async measurePageLoad(page: unknown) {
     const metrics = await page.evaluate(() => {
-      const timing = performance.timing;
+      const { timing: timing } = performance;
       return {
         domLoading: timing.domLoading - timing.navigationStart,
         domInteractive: timing.domInteractive - timing.navigationStart,

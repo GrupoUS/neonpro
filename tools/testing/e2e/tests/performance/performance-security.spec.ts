@@ -54,8 +54,7 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
 
     // Verify API response times
     expect(apiResponses.length).toBeGreaterThan(0);
-    const avgResponseTime =
-      apiResponses.reduce((a, b) => a + b, 0) / apiResponses.length;
+    const avgResponseTime = apiResponses.reduce((a, b) => a + b, 0) / apiResponses.length;
     expect(avgResponseTime).toBeLessThan(500);
 
     // Check for any slow APIs
@@ -248,10 +247,7 @@ test.describe("⚡ Performance & Security E2E Tests", () => {
     }
   });
 
-  test("Mobile Responsiveness: Touch interactions", async ({
-    page,
-    isMobile,
-  }) => {
+  test("Mobile Responsiveness: Touch interactions", async ({ page, isMobile }) => {
     test.skip(!isMobile, "This test is only for mobile");
 
     await page.goto("/patients");

@@ -108,8 +108,6 @@ async function archiveTestArtifacts() {
 
       // Archive test results for compliance audit
       const timestamp = new Date().toISOString().replaceAll(/[:.]/g, "-");
-      const _archivePath = path.join(archiveDir, `test-artifacts-${timestamp}`);
-
       // Create archive metadata
       const metadata = {
         archived_at: new Date().toISOString(),

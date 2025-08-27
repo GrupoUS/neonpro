@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  mockAuditLogger,
-  mockLGPDConsent,
-  mockPatientData,
-} from "../healthcare-setup";
+import { mockAuditLogger, mockLGPDConsent, mockPatientData } from "../healthcare-setup";
 
 describe("lGPD Compliance Tests", () => {
   beforeEach(() => {
@@ -115,7 +111,7 @@ describe("lGPD Compliance Tests", () => {
       };
 
       // Mock data correction function
-      const correctPatientData = vi.fn(async (id: string, data: any) => ({
+      const correctPatientData = vi.fn(async (id: string, data: unknown) => ({
         patientId: id,
         previousData: { email: "old@email.com", phone: "+55 11 88888-8888" },
         newData: data,
@@ -220,7 +216,7 @@ describe("lGPD Compliance Tests", () => {
       };
 
       // Function to validate data necessity
-      const validateDataNecessity = (data: any) => {
+      const validateDataNecessity = (data: unknown) => {
         const allowedFields = new Set([
           "name",
           "cpf",
@@ -278,8 +274,8 @@ describe("lGPD Compliance Tests", () => {
       // Check if breach requires subject notification
       const requiresSubjectNotification = (breach: typeof breachEvent) => {
         return (
-          breach.dataTypes.includes("medical_records") ||
-          breach.severityLevel === "high"
+          breach.dataTypes.includes("medical_records")
+          || breach.severityLevel === "high"
         );
       };
 

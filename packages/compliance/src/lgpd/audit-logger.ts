@@ -100,8 +100,7 @@ export class LGPDAuditLogger {
     const logId = `lgpd_audit_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
     // Constitutional impact assessment
-    const constitutionalImpact =
-      await this.assessConstitutionalImpact(activity);
+    const constitutionalImpact = await this.assessConstitutionalImpact(activity);
 
     // Compliance validation
     const complianceValidation = await this.validateCompliance(activity);
@@ -143,8 +142,8 @@ export class LGPDAuditLogger {
 
     // Real-time monitoring alerts
     if (
-      this.config.real_time_monitoring &&
-      !complianceValidation.lgpd_compliant
+      this.config.real_time_monitoring
+      && !complianceValidation.lgpd_compliant
     ) {
       await this.triggerComplianceAlert(logEntry);
     }
@@ -201,7 +200,7 @@ export class LGPDAuditLogger {
   /**
    * Assess constitutional impact
    */
-  private async assessConstitutionalImpact(activity: any) {
+  private async assessConstitutionalImpact(activity: unknown) {
     const privacyRightsAffected = [
       "data_access",
       "data_modification",
@@ -221,7 +220,7 @@ export class LGPDAuditLogger {
   /**
    * Validate compliance
    */
-  private async validateCompliance(activity: any) {
+  private async validateCompliance(activity: unknown) {
     const violations: string[] = [];
 
     // Validate legal basis
@@ -240,8 +239,7 @@ export class LGPDAuditLogger {
     }
 
     const lgpdCompliant = violations.length === 0;
-    const constitutionalCompliant =
-      lgpdCompliant && this.config.constitutional_validation;
+    const constitutionalCompliant = lgpdCompliant && this.config.constitutional_validation;
 
     return {
       lgpd_compliant: lgpdCompliant,
@@ -254,7 +252,7 @@ export class LGPDAuditLogger {
   /**
    * Generate integrity hash
    */
-  private async generateIntegrityHash(data: any): Promise<string> {
+  private async generateIntegrityHash(data: unknown): Promise<string> {
     const dataString = JSON.stringify(data, Object.keys(data).sort());
     const encoder = new TextEncoder();
     const dataBuffer = encoder.encode(dataString);

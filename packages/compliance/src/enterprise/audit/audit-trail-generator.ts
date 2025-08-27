@@ -53,9 +53,9 @@ export interface AuditTrailEntry {
   /** Action performed */
   action_performed: string;
   /** Previous state (for modifications) */
-  previous_state?: Record<string, any>;
+  previous_state?: Record<string, unknown>;
   /** New state (for modifications) */
-  new_state?: Record<string, any>;
+  new_state?: Record<string, unknown>;
   /** IP address of the action origin */
   ip_address: string;
   /** User agent information */
@@ -257,7 +257,7 @@ export interface AuditEventContext {
     /** Request headers */
     request_headers?: Record<string, string>;
     /** Request body (sanitized) */
-    request_body_sanitized?: Record<string, any>;
+    request_body_sanitized?: Record<string, unknown>;
   };
   /** Business context */
   business_context: {
@@ -311,7 +311,7 @@ export class AuditTrailGeneratorService {
   async generateAuditTrail(
     params: AuditTrailGenerationParams,
     generatorUserId: string,
-  ): Promise<{ success: boolean; data?: AuditTrailReport; error?: string }> {
+  ): Promise<{ success: boolean; data?: AuditTrailReport; error?: string; }> {
     try {
       // Validate generation parameters
       const validationResult = await this.validateGenerationParams(params);
@@ -351,15 +351,16 @@ export class AuditTrailGeneratorService {
       const processedEntries = await this.processAuditEntries(
         auditEntries || [],
       );
-      const integrityVerification =
-        await this.verifyEntriesIntegrity(processedEntries);
+      const integrityVerification = await this.verifyEntriesIntegrity(processedEntries);
 
       // Generate report metadata
       const metadata = this.generateReportMetadata(processedEntries);
 
       // Perform constitutional compliance assessment
-      const constitutionalAssessment =
-        await this.assessConstitutionalCompliance(processedEntries, params);
+      const constitutionalAssessment = await this.assessConstitutionalCompliance(
+        processedEntries,
+        params,
+      );
 
       // Create audit trail report
       const reportId = crypto.randomUUID();
@@ -422,10 +423,10 @@ export class AuditTrailGeneratorService {
     resource_affected: AuditTrailEntry["resource_affected"];
     constitutional_context: AuditTrailEntry["constitutional_context"];
     tenant_id: string;
-    previous_state?: Record<string, any>;
-    new_state?: Record<string, any>;
+    previous_state?: Record<string, unknown>;
+    new_state?: Record<string, unknown>;
     event_context?: AuditEventContext;
-  }): Promise<{ success: boolean; data?: AuditTrailEntry; error?: string }> {
+  }): Promise<{ success: boolean; data?: AuditTrailEntry; error?: string; }> {
     try {
       const timestamp = new Date();
       const auditEntryId = crypto.randomUUID();
@@ -499,15 +500,12 @@ export class AuditTrailGeneratorService {
   }> {
     try {
       // Validate configuration
-      const validationResult =
-        await this.validateAuditConfiguration(configuration);
+      const validationResult = await this.validateAuditConfiguration(configuration);
       if (!validationResult.valid) {
         return { success: false, error: validationResult.error };
       }
 
       const configId = crypto.randomUUID();
-      const _timestamp = new Date();
-
       const auditConfig: AuditTrailConfiguration = {
         config_id: configId,
         tenant_id: tenantId,
@@ -561,9 +559,9 @@ export class AuditTrailGeneratorService {
   // Private helper methods
 
   private applyFilters(
-    query: any,
+    query: unknown,
     filters: AuditTrailGenerationParams["filters"],
-  ): any {
+  ): unknown {
     if (!filters) {
       return query;
     }
@@ -602,7 +600,7 @@ export class AuditTrailGeneratorService {
   }
 
   private async processAuditEntries(
-    entries: any[],
+    entries: unknown[],
   ): Promise<AuditTrailEntry[]> {
     return entries.map((entry) => ({
       ...entry,
@@ -640,8 +638,7 @@ export class AuditTrailGeneratorService {
 
     entries.forEach((entry) => {
       // Count by type
-      entriesByType[entry.event_type] =
-        (entriesByType[entry.event_type] || 0) + 1;
+      entriesByType[entry.event_type] = (entriesByType[entry.event_type] || 0) + 1;
 
       // Count by user
       entriesByUser[entry.user_id] = (entriesByUser[entry.user_id] || 0) + 1;
@@ -683,7 +680,7 @@ export class AuditTrailGeneratorService {
       new Set(entries.map((e) => e.event_type)),
     );
     const missingEventTypes = expectedEventTypes.filter(
-      (type) => !presentEventTypes.has(type as any),
+      (type) => !presentEventTypes.has(type as unknown),
     );
 
     if (missingEventTypes.length > 0) {
@@ -821,8 +818,8 @@ export class AuditTrailGeneratorService {
 
       // Check for unauthorized access patterns
       if (
-        entry.event_type === "data_access" &&
-        entry.constitutional_context.patient_data_involved
+        entry.event_type === "data_access"
+        && entry.constitutional_context.patient_data_involved
       ) {
         await this.checkUnauthorizedAccessPattern(entry);
       }
@@ -845,7 +842,7 @@ export class AuditTrailGeneratorService {
 
   private async validateGenerationParams(
     params: AuditTrailGenerationParams,
-  ): Promise<{ valid: boolean; error?: string }> {
+  ): Promise<{ valid: boolean; error?: string; }> {
     if (!params.tenant_id) {
       return {
         valid: false,
@@ -869,20 +866,18 @@ export class AuditTrailGeneratorService {
 
   private async validateAuditConfiguration(
     config: Omit<AuditTrailConfiguration, "config_id" | "tenant_id">,
-  ): Promise<{ valid: boolean; error?: string }> {
+  ): Promise<{ valid: boolean; error?: string; }> {
     if ((config.retention_period_days as number) < 30) {
       return {
         valid: false,
-        error:
-          "Minimum retention period is 30 days for constitutional compliance",
+        error: "Minimum retention period is 30 days for constitutional compliance",
       };
     }
 
-    if (!(config.constitutional_compliance as any).constitutional_monitoring) {
+    if (!(config.constitutional_compliance as unknown).constitutional_monitoring) {
       return {
         valid: false,
-        error:
-          "Constitutional monitoring must be enabled for healthcare compliance",
+        error: "Constitutional monitoring must be enabled for healthcare compliance",
       };
     }
 

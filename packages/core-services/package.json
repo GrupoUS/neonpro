@@ -54,7 +54,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@neonpro/db": "workspace:*",
+    "@neonpro/database": "workspace:*",
     "@neonpro/domain": "workspace:*",
     "@neonpro/utils": "workspace:*",
     "date-fns": "^3.6.0",

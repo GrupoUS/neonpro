@@ -65,8 +65,7 @@ abstract class EnhancedService<T, U> {
 
 ```typescript
 // Universal AI Chat Service Interface
-interface UniversalAIChatService
-  extends EnhancedService<ChatRequest, ChatResponse> {
+interface UniversalAIChatService extends EnhancedService<ChatRequest, ChatResponse> {
   processPatientQuery(
     query: string,
     context: PatientContext,

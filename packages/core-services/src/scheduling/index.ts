@@ -38,15 +38,15 @@ export interface AppointmentData {
 }
 
 export class AISchedulingEngine {
-  intelligentSlotFiltering(_criteria: any): SchedulingSlot[] {
+  intelligentSlotFiltering(_criteria: unknown): SchedulingSlot[] {
     return [];
   }
 
-  scheduleAppointment(_data: AppointmentData): Promise<any> {
+  scheduleAppointment(_data: AppointmentData): Promise<unknown> {
     return Promise.resolve({ success: true });
   }
 
-  handleDynamicEvent(_event: any): void {
+  handleDynamicEvent(_event: unknown): void {
     // Placeholder method
   }
 }

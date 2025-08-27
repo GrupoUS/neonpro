@@ -120,7 +120,7 @@ class AITestDataFactory extends TestDataFactory {
 
 // Universal AI Chat Integration Tests
 describe("universal AI Chat Integration", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testSessionId: string;
 
   beforeAll(async () => {
@@ -215,8 +215,7 @@ describe("universal AI Chat Integration", () => {
   });
 
   it("should detect and handle emergency situations appropriately", async () => {
-    const emergencyMessage =
-      "SOCORRO! Estou tendo um infarto! Preciso de ajuda urgente!";
+    const emergencyMessage = "SOCORRO! Estou tendo um infarto! Preciso de ajuda urgente!";
 
     const response = await fetch(
       `${TEST_CONFIG.api.test_api_base_url}/api/ai/universal-chat/message`,
@@ -253,7 +252,7 @@ describe("universal AI Chat Integration", () => {
       "E sobre exercícios físicos?",
     ];
 
-    let lastResponse: any;
+    let lastResponse: unknown;
 
     for (const message of messages) {
       const response = await fetch(
@@ -296,7 +295,7 @@ describe("universal AI Chat Integration", () => {
 
 // Compliance Automation Integration Tests
 describe("compliance Automation Integration", () => {
-  let _supabaseClient: any;
+  let _supabaseClient: unknown;
 
   beforeAll(async () => {
     _supabaseClient = createClient(
@@ -494,7 +493,7 @@ describe("compliance Automation Integration", () => {
 
 // Conversation Management Integration Tests
 describe("conversation Management Integration", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
   let testConversationId: string;
 
   beforeAll(async () => {
@@ -526,8 +525,7 @@ describe("conversation Management Integration", () => {
       AITestDataFactory.createMockChatMessage({
         session_id: testConversationId,
         role: "assistant",
-        content:
-          "Entendo sua preocupação. Pode me contar mais sobre os sintomas?",
+        content: "Entendo sua preocupação. Pode me contar mais sobre os sintomas?",
       }),
       AITestDataFactory.createMockChatMessage({
         session_id: testConversationId,
@@ -700,7 +698,7 @@ describe("conversation Management Integration", () => {
 
 // AI Database Integration Tests
 describe("aI Database Integration", () => {
-  let supabaseClient: any;
+  let supabaseClient: unknown;
 
   beforeAll(async () => {
     supabaseClient = createClient(
@@ -852,7 +850,7 @@ describe("aI Services End-to-End Integration", () => {
     const sessionResult = await sessionResponse.json();
     expect(sessionResult.success).toBeTruthy();
 
-    const sessionId = sessionResult.session_id;
+    const { session_id: sessionId } = sessionResult;
 
     // Step 2: Send healthcare message
     const messageResponse = await fetch(
@@ -865,8 +863,7 @@ describe("aI Services End-to-End Integration", () => {
         },
         body: JSON.stringify({
           session_id: sessionId,
-          message:
-            "Tenho sentido muita fadiga e perdi peso sem motivo aparente",
+          message: "Tenho sentido muita fadiga e perdi peso sem motivo aparente",
         }),
       },
     );

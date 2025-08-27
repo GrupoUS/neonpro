@@ -31,8 +31,7 @@ describe("aNVISA Compliance Tests", () => {
         registrationStatus: "not_found",
       });
 
-      const validation =
-        await mockANVISACompliance.validateProduct(invalidProduct);
+      const validation = await mockANVISACompliance.validateProduct(invalidProduct);
 
       expect(validation.isValid).toBeFalsy();
       expect(validation.reason).toBe("Product not found in ANVISA registry");
@@ -78,8 +77,7 @@ describe("aNVISA Compliance Tests", () => {
     it("should validate ANVISA authorization for aesthetic procedures", async () => {
       const procedureCode = "PROC-BOTOX-001";
 
-      const validation =
-        await mockANVISACompliance.validateProcedure(procedureCode);
+      const validation = await mockANVISACompliance.validateProcedure(procedureCode);
 
       expect(validation).toHaveProperty("isAuthorized", true);
       expect(validation).toHaveProperty("procedureName");
@@ -97,8 +95,8 @@ describe("aNVISA Compliance Tests", () => {
       };
 
       const validateProfessionalLicense = (
-        procedure: any,
-        professional: any,
+        procedure: unknown,
+        professional: unknown,
       ) => {
         const validLicenses = {
           medical: ["doctor", "dermatologist"],
@@ -106,10 +104,9 @@ describe("aNVISA Compliance Tests", () => {
           aesthetics: ["aesthetician"],
         };
 
-        const requiredLicenses =
-          validLicenses[
-            procedure.requiredLicense as keyof typeof validLicenses
-          ];
+        const requiredLicenses = validLicenses[
+          procedure.requiredLicense as keyof typeof validLicenses
+        ];
         return requiredLicenses.includes(professional.type);
       };
 
@@ -169,8 +166,7 @@ describe("aNVISA Compliance Tests", () => {
         reportedBy: "doctor-123",
       };
 
-      const report =
-        await mockANVISACompliance.reportAdverseEvent(adverseEvent);
+      const report = await mockANVISACompliance.reportAdverseEvent(adverseEvent);
 
       expect(report).toHaveProperty("reportId");
       expect(report).toHaveProperty("status", "submitted");
@@ -186,7 +182,7 @@ describe("aNVISA Compliance Tests", () => {
         { type: "temporary_numbness", severity: "mild" },
       ];
 
-      const classifyBySeverity = (events: any[]) => {
+      const classifyBySeverity = (events: unknown[]) => {
         return events.reduce(
           (acc, event) => {
             acc[event.severity] = acc[event.severity] || [];
@@ -282,9 +278,8 @@ describe("aNVISA Compliance Tests", () => {
         light: "protected",
       };
 
-      const validateStorage = (product: string, conditions: any) => {
-        const requirements =
-          storageRequirements[product as keyof typeof storageRequirements];
+      const validateStorage = (product: string, conditions: unknown) => {
+        const requirements = storageRequirements[product as keyof typeof storageRequirements];
         if (!requirements) {
           return false;
         }
@@ -360,13 +355,12 @@ describe("aNVISA Compliance Tests", () => {
         },
       ];
 
-      const validateDocuments = (docs: any[]) => {
+      const validateDocuments = (docs: unknown[]) => {
         return docs.map((doc) => ({
           ...doc,
           isExpired: new Date(doc.expirationDate) < new Date(),
-          needsRenewal:
-            new Date(doc.expirationDate) <
-            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+          needsRenewal: new Date(doc.expirationDate)
+            < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
         }));
       };
 

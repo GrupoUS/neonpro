@@ -113,10 +113,9 @@ test.describe("NeonPro Healthcare System", () => {
     // If no patient route found, verify proper redirect to login/dashboard
     if (!foundPatientRoute) {
       const currentUrl = page.url();
-      const isRedirectToAuth =
-        currentUrl.includes("login") ||
-        currentUrl.includes("auth") ||
-        currentUrl.includes("dashboard");
+      const isRedirectToAuth = currentUrl.includes("login")
+        || currentUrl.includes("auth")
+        || currentUrl.includes("dashboard");
       expect(isRedirectToAuth).toBe(true);
     }
   });
@@ -179,9 +178,7 @@ test.describe("NeonPro Healthcare System", () => {
 });
 
 test.describe("Healthcare Data Protection (LGPD)", () => {
-  test("should not expose sensitive data in network requests", async ({
-    page,
-  }) => {
+  test("should not expose sensitive data in network requests", async ({ page }) => {
     const sensitivePatterns = [
       /cpf.*\d{11}/i,
       /password.*[:=]/i,

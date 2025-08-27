@@ -30,7 +30,7 @@ const CalculateMetricsSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -134,7 +134,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;

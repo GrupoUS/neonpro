@@ -43,6 +43,7 @@ export const DEPLOYMENT_CONFIG = {
 } as const;
 
 // Pre-build optimization tasks
+// TODO: Convert to standalone functions
 export class PreBuildOptimizer {
   static async optimizeAssets(): Promise<void> {
     // Optimize images in public directory
@@ -53,7 +54,7 @@ export class PreBuildOptimizer {
 
     // Validate environment variables
     await PreBuildOptimizer.validateEnvironment();
-  }
+  };
 
   private static async optimizeImages(): Promise<void> {
     const publicDir = path.join(process.cwd(), "public");
@@ -81,12 +82,10 @@ export class PreBuildOptimizer {
       const fullPath = path.join(process.cwd(), dir);
       try {
         await fs.access(fullPath);
-        // Don't delete, just report size
-        const _size = await PreBuildOptimizer.getDirectorySize(fullPath);
-      } catch {
+        // Don't delete, just report size      } catch {
         // Directory doesn't exist, skip
       }
-    }
+    };
   }
 
   private static async validateEnvironment(): Promise<void> {
@@ -159,6 +158,7 @@ export class PreBuildOptimizer {
 }
 
 // Build optimization
+// TODO: Convert to standalone functions
 export class BuildOptimizer {
   static async optimizedBuild(): Promise<void> {
     const startTime = Date.now();
@@ -174,10 +174,7 @@ export class BuildOptimizer {
       await BuildOptimizer.runBuild();
 
       // Post-build analysis
-      await BuildOptimizer.analyzeBuild();
-
-      const _buildTime = Date.now() - startTime;
-    } catch {
+      await BuildOptimizer.analyzeBuild();    } catch {
       process.exit(1);
     }
   }
@@ -224,8 +221,6 @@ export class BuildOptimizer {
       await fs.access(buildDir);
 
       // Analyze build size
-      const _buildSize = await PreBuildOptimizer.getDirectorySize(buildDir);
-
       // Check for critical files
       const criticalFiles = [
         ".next/static",
@@ -244,6 +239,7 @@ export class BuildOptimizer {
 }
 
 // Production health checks
+// TODO: Convert to standalone functions
 export class ProductionHealthCheck {
   static async runHealthChecks(): Promise<boolean> {
     const checks = [
@@ -363,6 +359,7 @@ export class ProductionHealthCheck {
 }
 
 // Deployment automation
+// TODO: Convert to standalone functions
 export class DeploymentAutomation {
   static async deploy(
     environment: "staging" | "production" = "production",
@@ -415,9 +412,7 @@ if (require.main === module) {
     }
 
     case "health-check": {
-      ProductionHealthCheck.runHealthChecks().then((passed) =>
-        process.exit(passed ? 0 : 1),
-      );
+      ProductionHealthCheck.runHealthChecks().then((passed) => process.exit(passed ? 0 : 1));
       break;
     }
 

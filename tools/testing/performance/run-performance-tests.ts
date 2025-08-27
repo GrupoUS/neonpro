@@ -51,8 +51,6 @@ class PerformanceValidator {
     await new Promise((resolve) => setTimeout(resolve, 100)); // Mock delay
 
     const endTime = performance.now();
-    const _loadTime = endTime - startTime;
-
     // Mock realistic page load time
     const mockLoadTime = 2500; // 2.5s
 
@@ -79,9 +77,6 @@ class PerformanceValidator {
       const responseTime = endTime - startTime;
       totalResponseTime += responseTime;
     }
-
-    const _averageResponseTime = totalResponseTime / apiEndpoints.length;
-
     // Mock realistic API response time
     const mockApiResponseTime = 85; // 85ms average
 
@@ -96,8 +91,6 @@ class PerformanceValidator {
     await new Promise((resolve) => setTimeout(resolve, 150)); // Permission check
 
     const endTime = performance.now();
-    const _emergencyAccessTime = endTime - startTime;
-
     // Mock realistic emergency access time
     const mockEmergencyTime = 8500; // 8.5s
 
@@ -157,8 +150,6 @@ class PerformanceValidator {
     let allPassed = true;
 
     validations.forEach((validation) => {
-      const _status = validation.passed ? "✅ PASS" : "❌ FAIL";
-
       if (!validation.passed) {
         allPassed = false;
       }
@@ -190,8 +181,4 @@ if (require.main === module) {
   });
 }
 
-export {
-  type PerformanceResults,
-  type PerformanceTargets,
-  PerformanceValidator,
-};
+export { type PerformanceResults, type PerformanceTargets, PerformanceValidator };

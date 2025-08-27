@@ -14,11 +14,14 @@ export {
 } from "./appointment.schema";
 // Auth schemas only (no type exports to avoid conflicts)
 export {
+  ChangePasswordRequestSchema,
+  ForgotPasswordRequestSchema,
   LoginRequestSchema,
   LoginResponseSchema,
   RefreshTokenRequestSchema,
   RefreshTokenResponseSchema,
   RegisterRequestSchema,
+  ResetPasswordRequestSchema,
   UserBaseSchema,
   UserPermissionSchema,
   UserRoleSchema,

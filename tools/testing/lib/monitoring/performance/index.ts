@@ -10,23 +10,22 @@ export { default as PerformanceMonitor } from "../performance-monitor";
 export interface MonitoringPerformanceIntegration {
   trackAuthenticationPerformance: (duration: number) => void;
   trackDatabasePerformance: (duration: number) => void;
-  getPerformanceReport: () => Record<string, any>;
+  getPerformanceReport: () => Record<string, unknown>;
 }
 
-export const monitoringPerformanceIntegration: MonitoringPerformanceIntegration =
-  {
-    trackAuthenticationPerformance(_duration: number) {},
+export const monitoringPerformanceIntegration: MonitoringPerformanceIntegration = {
+  trackAuthenticationPerformance(_duration: number) {},
 
-    trackDatabasePerformance(_duration: number) {},
+  trackDatabasePerformance(_duration: number) {},
 
-    getPerformanceReport() {
-      return {
-        authentication: { average: 95, p95: 180 },
-        database: { average: 45, p95: 85 },
-        api: { average: 120, p95: 220 },
-      };
-    },
-  };
+  getPerformanceReport() {
+    return {
+      authentication: { average: 95, p95: 180 },
+      database: { average: 45, p95: 85 },
+      api: { average: 120, p95: 220 },
+    };
+  },
+};
 
 // CommonJS compatibility
 module.exports = {

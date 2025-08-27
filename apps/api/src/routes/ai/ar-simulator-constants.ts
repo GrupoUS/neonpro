@@ -1,4 +1,4 @@
-﻿// AR Simulator Constants and Types
+// AR Simulator Constants and Types
 
 const VALIDATION_LIMITS = {
   MAX_PRIORITY: 5,

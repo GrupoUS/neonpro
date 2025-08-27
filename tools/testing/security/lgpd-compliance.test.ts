@@ -15,15 +15,11 @@ import { Hono } from "hono";
 import { testClient } from "hono/testing";
 import { beforeEach, describe, expect, it } from "vitest";
 import { auditStore, lgpdAudit } from "../../../apps/api/src/middleware/audit";
-import {
-  ConsentType,
-  lgpdMiddleware,
-  lgpdUtils,
-} from "../../../apps/api/src/middleware/lgpd";
+import { ConsentType, lgpdMiddleware, lgpdUtils } from "../../../apps/api/src/middleware/lgpd";
 
 describe("🛡️ LGPD Compliance Assessment", () => {
   let app: Hono;
-  let _client: any;
+  let _client: unknown;
   const testPatientId = "pat_test_123";
   const testUserId = "user_test_456";
 
@@ -32,27 +28,20 @@ describe("🛡️ LGPD Compliance Assessment", () => {
     app.use("*", lgpdMiddleware());
 
     // Mock patient data endpoints
-    app.post("/api/v1/patients", (c) =>
-      c.json({ success: true, id: testPatientId }),
-    );
+    app.post("/api/v1/patients", (c) => c.json({ success: true, id: testPatientId }));
 
     app.get("/api/v1/patients", (c) => c.json({ success: true, patients: [] }));
 
-    app.put("/api/v1/patients/:id", (c) =>
-      c.json({ success: true, updated: true }),
-    );
+    app.put("/api/v1/patients/:id", (c) => c.json({ success: true, updated: true }));
 
-    app.delete("/api/v1/patients/:id", (c) =>
-      c.json({ success: true, deleted: true }),
-    );
+    app.delete("/api/v1/patients/:id", (c) => c.json({ success: true, deleted: true }));
 
     // LGPD-specific endpoints
-    app.get("/api/v1/compliance/export", (c) =>
-      c.json({ success: true, data: {} }),
-    );
+    app.get("/api/v1/compliance/export", (c) => c.json({ success: true, data: {} }));
 
-    app.post("/api/v1/marketing/campaigns", (c) =>
-      c.json({ success: true, campaignId: "camp_123" }),
+    app.post(
+      "/api/v1/marketing/campaigns",
+      (c) => c.json({ success: true, campaignId: "camp_123" }),
     );
 
     _client = testClient(app);
@@ -139,7 +128,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
       expect(data.success).toBeTruthy();
 
       // Should contain all patient data categories
-      const responseHeaders = response.headers;
+      const { headers: responseHeaders } = response;
       expect(responseHeaders.get("X-LGPD-Categories")).toContain(
         "identifying,health,behavioral",
       );
@@ -237,7 +226,7 @@ describe("🛡️ LGPD Compliance Assessment", () => {
       });
 
       if (response.status === 200) {
-        const headers = response.headers;
+        const { headers: headers } = response;
         expect(headers.get("X-LGPD-Categories")).toContain("health");
         expect(headers.get("X-LGPD-Categories")).toContain("biometric");
       }

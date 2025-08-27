@@ -289,9 +289,8 @@ async function validateCFMConfiguration() {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     // Check for required dependencies
-    const hasSupabase =
-      packageJson.dependencies?.["@supabase/supabase-js"] ||
-      packageJson.devDependencies?.["@supabase/supabase-js"];
+    const hasSupabase = packageJson.dependencies?.["@supabase/supabase-js"]
+      || packageJson.devDependencies?.["@supabase/supabase-js"];
 
     const hasCrypto = true; // crypto is a Node.js built-in module
 

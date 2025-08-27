@@ -10,8 +10,8 @@ import {
   getProfessionalById,
   getProfessionalCredentials,
   getProfessionalPerformanceMetrics,
-  getProfessionalServices,
   getProfessionals,
+  getProfessionalServices,
   updatePerformanceMetric,
   updateProfessional,
   updateProfessionalCredential,
@@ -50,7 +50,7 @@ const createMockQuery = () => {
 
   // Default resolution
   mockQuery.then.mockImplementation((onResolve) =>
-    Promise.resolve({ data: [], error: undefined }).then(onResolve),
+    Promise.resolve({ data: [], error: undefined }).then(onResolve)
   );
 
   return mockQuery;
@@ -135,10 +135,8 @@ const mockPerformanceMetric = {
 
 describe("professional Supabase Functions", () => {
   // Helper function to setup mock responses consistently
-  const setupMockResponse = (response: any) => {
-    mockQuery.then.mockImplementation((onResolve) =>
-      Promise.resolve(response).then(onResolve),
-    );
+  const setupMockResponse = (response: unknown) => {
+    mockQuery.then.mockImplementation((onResolve) => Promise.resolve(response).then(onResolve));
   };
 
   beforeEach(() => {

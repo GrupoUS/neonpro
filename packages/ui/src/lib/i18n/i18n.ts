@@ -267,7 +267,7 @@ export function createTranslator(dictionary: Dictionary) {
     params?: Record<string, string | number>,
   ): string {
     const keys = key.split(".");
-    let value: any = dictionary;
+    let value: unknown = dictionary;
 
     for (const k of keys) {
       value = value?.[k];

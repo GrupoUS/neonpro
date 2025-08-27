@@ -400,7 +400,7 @@ export interface PatientHandoff {
 
   // Medical Information
   currentCondition: string; // Current patient condition
-  vitalSigns: Record<string, any>; // Latest vital signs
+  vitalSigns: Record<string, unknown>; // Latest vital signs
   activeMedications: string[]; // Current medications
   allergies: string[]; // Known allergies
   recentProcedures: string[]; // Recent procedures
@@ -530,9 +530,9 @@ export interface DashboardWidget {
     | "communication"
     | "resources";
   title: string;
-  position: { x: number; y: number };
-  size: { width: number; height: number };
-  config: Record<string, any>; // Widget-specific configuration
+  position: { x: number; y: number; };
+  size: { width: number; height: number; };
+  config: Record<string, unknown>; // Widget-specific configuration
   isVisible: boolean;
   permissions: string[]; // Required permissions to view
 }
@@ -540,7 +540,7 @@ export interface DashboardWidget {
 export interface DashboardFilters {
   departments: string[];
   roles: ProfessionalRole[];
-  dateRange: { start: Date; end: Date };
+  dateRange: { start: Date; end: Date; };
   shiftTypes: ShiftType[];
   showInactiveStaff: boolean;
 }
@@ -642,8 +642,8 @@ export interface AuditLog {
   action: string;
   resource: string;
   resourceId: string;
-  previousData?: Record<string, any>;
-  newData?: Record<string, any>;
+  previousData?: Record<string, unknown>;
+  newData?: Record<string, unknown>;
   ipAddress: string;
   userAgent: string;
   timestamp: Date;

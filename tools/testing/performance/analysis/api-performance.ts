@@ -59,7 +59,7 @@ export class ApiPerformanceTester {
   async testEndpoint(
     endpoint: string,
     method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-    payload?: any,
+    payload?: unknown,
     iterations = 100,
   ): Promise<EndpointMetrics> {
     const responseTimes: number[] = [];
@@ -100,8 +100,7 @@ export class ApiPerformanceTester {
     return {
       endpoint,
       method,
-      averageResponseTime:
-        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+      averageResponseTime: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
       maxResponseTime: Math.max(...responseTimes),
       minResponseTime: Math.min(...responseTimes),
       errorRate: errorCount / iterations,
@@ -155,6 +154,7 @@ export class ApiPerformanceTester {
 
       userPromises.push(
         this.simulateUser(userDelay, endTime, responseTimes).then((results) => {
+          return;
           totalRequests += results.requests;
           totalErrors += results.errors;
         }),
@@ -168,8 +168,7 @@ export class ApiPerformanceTester {
 
     return {
       responseTime: {
-        average:
-          responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+        average: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
         p50: this.percentile(responseTimes, 0.5),
         p95: this.percentile(responseTimes, 0.95),
         p99: this.percentile(responseTimes, 0.99),
@@ -184,7 +183,7 @@ export class ApiPerformanceTester {
     startDelay: number,
     endTime: number,
     responseTimes: number[],
-  ): Promise<{ requests: number; errors: number }> {
+  ): Promise<{ requests: number; errors: number; }> {
     await new Promise((resolve) => setTimeout(resolve, startDelay));
 
     let requests = 0;
@@ -209,9 +208,7 @@ export class ApiPerformanceTester {
       }
 
       // Brief pause between requests (simulating user behavior)
-      await new Promise((resolve) =>
-        setTimeout(resolve, 100 + Math.random() * 400),
-      );
+      await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 400));
     }
 
     return { requests, errors };
@@ -229,14 +226,7 @@ export class ApiPerformanceTester {
     metrics: ApiPerformanceMetrics,
     healthcareMetrics: HealthcareApiMetrics,
     _outputPath: string,
-  ): Promise<void> {
-    const _report = {
-      timestamp: new Date().toISOString(),
-      summary: metrics,
-      healthcareEndpoints: healthcareMetrics,
-      recommendations: this.generateRecommendations(metrics, healthcareMetrics),
-    };
-  }
+  ): Promise<void> {}
 
   private generateRecommendations(
     metrics: ApiPerformanceMetrics,

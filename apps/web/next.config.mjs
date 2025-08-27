@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
-  transpilePackages: ['@neonpro/ui', '@neonpro/utils', '@neonpro/domain', '@neonpro/db'],
+  output: "standalone",
+  transpilePackages: ["@neonpro/ui", "@neonpro/utils", "@neonpro/domain", "@neonpro/database"],
 
   // HEALTHCARE PRODUCTION OPTIMIZATION
   compress: true, // Enable gzip compression for production
@@ -9,17 +9,17 @@ const nextConfig = {
 
   // Image optimization for healthcare media
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
   // Performance optimization
   experimental: {
-    optimizePackageImports: ['@neonpro/ui', 'lucide-react', '@radix-ui/react-icons'],
+    optimizePackageImports: ["@neonpro/ui", "lucide-react", "@radix-ui/react-icons"],
     turbo: {
       resolveAlias: {
-        '@/': './',
+        "@/": "./",
       },
     },
   },
@@ -28,23 +28,23 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
           {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
           },
         ],
       },

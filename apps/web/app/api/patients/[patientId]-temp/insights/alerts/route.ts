@@ -9,7 +9,7 @@ const patientInsights = new PatientInsightsIntegration();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string; }>; },
 ) {
   try {
     const supabase = await createClient();
@@ -52,7 +52,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ patientId: string }> },
+  { params }: { params: Promise<{ patientId: string; }>; },
 ) {
   try {
     const supabase = await createClient();
@@ -76,9 +76,7 @@ export async function POST(
     let filteredAlerts = alertSummary.active_alerts;
 
     if (alertTypes.length > 0) {
-      filteredAlerts = filteredAlerts.filter((alert) =>
-        alertTypes.includes(alert.type),
-      );
+      filteredAlerts = filteredAlerts.filter((alert) => alertTypes.includes(alert.type));
     }
 
     if (severityFilter) {

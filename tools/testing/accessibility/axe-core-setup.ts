@@ -1,10 +1,7 @@
 // tools/testing/accessibility/axe-core-setup.ts
 import { configureAxe, getViolations } from "jest-axe";
 import type { Result } from "jest-axe";
-import {
-  HEALTHCARE_A11Y_SCENARIOS,
-  WCAG_AA_CONFIG,
-} from "./accessibility-audit-config";
+import { HEALTHCARE_A11Y_SCENARIOS, WCAG_AA_CONFIG } from "./accessibility-audit-config";
 
 /**
  * NEONPRO HEALTHCARE - AXE-CORE TEST SETUP
@@ -20,7 +17,7 @@ export const axeConfig = configureAxe(WCAG_AA_CONFIG);
  * Healthcare-specific accessibility test utilities
  */
 export class HealthcareAccessibilityTester {
-  private readonly axe: any;
+  private readonly axe: unknown;
 
   constructor() {
     this.axe = axeConfig;
@@ -102,10 +99,10 @@ export class HealthcareAccessibilityTester {
     // Check for LGPD-related accessibility issues
     results.violations?.forEach((violation) => {
       violation.nodes.forEach((node) => {
-        const element = node.element;
+        const { element: element } = node;
         if (
-          element?.hasAttribute("data-lgpd") ||
-          element?.hasAttribute("data-sensitive")
+          element?.hasAttribute("data-lgpd")
+          || element?.hasAttribute("data-sensitive")
         ) {
           issues.push(
             `LGPD-protected element has accessibility violation: ${violation.description}`,
@@ -133,11 +130,11 @@ export class HealthcareAccessibilityTester {
 
     results.violations?.forEach((violation) => {
       violation.nodes.forEach((node) => {
-        const element = node.element;
+        const { element: element } = node;
         if (
-          element?.hasAttribute("data-emergency") ||
-          (element?.hasAttribute("data-priority") &&
-            element.getAttribute("data-priority") === "critical")
+          element?.hasAttribute("data-emergency")
+          || (element?.hasAttribute("data-priority")
+            && element.getAttribute("data-priority") === "critical")
         ) {
           emergencyElementsCount++;
           issues.push(
@@ -160,15 +157,12 @@ export class HealthcareAccessibilityTester {
    * Calculate overall accessibility score (0-100)
    */
   private calculateAccessibilityScore(results: Result): number {
-    const totalRules =
-      results.passes.length +
-      results.violations.length +
-      results.incomplete.length;
+    const totalRules = results.passes.length
+      + results.violations.length
+      + results.incomplete.length;
     if (totalRules === 0) {
       return 100;
     }
-
-    const _passedRules = results.passes.length;
     const violationWeight = results.violations.reduce((weight, violation) => {
       switch (violation.impact) {
         case "critical": {
@@ -241,8 +235,8 @@ export class HealthcareAccessibilityTester {
     // Check if critical elements meet enhanced contrast ratio
     return !results.violations.some(
       (v) =>
-        v.id === "color-contrast" &&
-        v.nodes.some((node) => node.element?.hasAttribute("data-emergency")),
+        v.id === "color-contrast"
+        && v.nodes.some((node) => node.element?.hasAttribute("data-emergency")),
     );
   }
 }
@@ -313,8 +307,7 @@ export const toBeAccessibleForHealthcare = (
     const tester = new HealthcareAccessibilityTester();
     const result = await tester.auditComponent(container, scenario);
 
-    const pass =
-      result.violations.length === 0 && result.healthcareCompliance.compliant;
+    const pass = result.violations.length === 0 && result.healthcareCompliance.compliant;
 
     resolve({
       pass,
@@ -330,10 +323,10 @@ export const toBeAccessibleForHealthcare = (
         const healthcareIssues = result.healthcareCompliance.issues.join("\n");
 
         return (
-          "Expected element to be accessible but found violations:\n\n" +
-          `WCAG Violations:\n${violationMessages}\n\n` +
-          `Healthcare Compliance Issues:\n${healthcareIssues}\n\n` +
-          `Accessibility Score: ${result.score}/100`
+          "Expected element to be accessible but found violations:\n\n"
+          + `WCAG Violations:\n${violationMessages}\n\n`
+          + `Healthcare Compliance Issues:\n${healthcareIssues}\n\n`
+          + `Accessibility Score: ${result.score}/100`
         );
       },
     });
@@ -342,18 +335,18 @@ export const toBeAccessibleForHealthcare = (
 
 // Type definitions
 export interface HealthcareAccessibilityResult {
-  violations: any[];
-  passes: any[];
-  incomplete: any[];
-  inapplicable: any[];
+  violations: unknown[];
+  passes: unknown[];
+  incomplete: unknown[];
+  inapplicable: unknown[];
   healthcareCompliance: HealthcareComplianceResult;
   lgpdCompliance: LGPDComplianceResult;
   emergencyAccessibility: EmergencyAccessibilityResult;
   score: number;
-  criticalIssues: any[];
-  seriousIssues: any[];
-  moderateIssues: any[];
-  minorIssues: any[];
+  criticalIssues: unknown[];
+  seriousIssues: unknown[];
+  moderateIssues: unknown[];
+  minorIssues: unknown[];
 }
 
 export interface HealthcareComplianceResult {

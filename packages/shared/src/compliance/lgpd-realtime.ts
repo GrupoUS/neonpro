@@ -192,7 +192,7 @@ export class LGPDDataProcessor {
     return minimized;
   }
 
-  private static anonymizeFields(data: any, sensitiveFields: string[]): any {
+  private static anonymizeFields(data: unknown, sensitiveFields: string[]): unknown {
     if (!data || typeof data !== "object") {
       return data;
     }
@@ -202,8 +202,8 @@ export class LGPDDataProcessor {
     // Auto-detect sensitive fields
     const detectedSensitiveFields = Object.keys(data).filter((field) =>
       LGPDDataProcessor.SENSITIVE_FIELD_PATTERNS.some((pattern) =>
-        field.toLowerCase().includes(pattern.toLowerCase()),
-      ),
+        field.toLowerCase().includes(pattern.toLowerCase())
+      )
     );
 
     const fieldsToAnonymize = [...sensitiveFields, ...detectedSensitiveFields];
@@ -220,7 +220,7 @@ export class LGPDDataProcessor {
     return anonymized;
   }
 
-  private static pseudonymizeFields(data: any, sensitiveFields: string[]): any {
+  private static pseudonymizeFields(data: unknown, sensitiveFields: string[]): unknown {
     if (!data || typeof data !== "object") {
       return data;
     }
@@ -239,12 +239,12 @@ export class LGPDDataProcessor {
     return pseudonymized;
   }
 
-  private static extractFields(data: any, allowedFields: string[]): any {
+  private static extractFields(data: unknown, allowedFields: string[]): unknown {
     if (!data || typeof data !== "object") {
       return data;
     }
 
-    const extracted: any = {};
+    const extracted: unknown = {};
 
     allowedFields.forEach((field) => {
       if (field in data) {
@@ -257,7 +257,7 @@ export class LGPDDataProcessor {
 
   private static generateAnonymousValue(
     fieldName: string,
-    originalValue: any,
+    originalValue: unknown,
   ): string {
     const fieldLower = fieldName.toLowerCase();
 
@@ -265,9 +265,9 @@ export class LGPDDataProcessor {
       return "***@***.***";
     }
     if (
-      fieldLower.includes("phone") ||
-      fieldLower.includes("telefone") ||
-      fieldLower.includes("celular")
+      fieldLower.includes("phone")
+      || fieldLower.includes("telefone")
+      || fieldLower.includes("celular")
     ) {
       return "***-***-****";
     }
@@ -292,7 +292,7 @@ export class LGPDDataProcessor {
 
   private static generatePseudonym(
     fieldName: string,
-    originalValue: any,
+    originalValue: unknown,
   ): string {
     // Simple hash-based pseudonymization (in production, use proper cryptographic methods)
     const hash = LGPDDataProcessor.simpleHash(String(originalValue));
@@ -329,7 +329,7 @@ export class LGPDDataProcessor {
 export class LGPDConsentValidator {
   private static consentCache = new Map<
     string,
-    { status: LGPDConsentStatus; expiresAt?: Date }
+    { status: LGPDConsentStatus; expiresAt?: Date; }
   >();
 
   /**
@@ -415,8 +415,6 @@ export class LGPDConsentValidator {
       (key) => key.startsWith(`${userId}:`),
     );
 
-    keysToDelete.forEach((key) =>
-      LGPDConsentValidator.consentCache.delete(key),
-    );
+    keysToDelete.forEach((key) => LGPDConsentValidator.consentCache.delete(key));
   }
 }

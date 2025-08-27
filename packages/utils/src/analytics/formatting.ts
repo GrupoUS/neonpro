@@ -101,7 +101,7 @@ const exportToCSV = (
           }
           return String(value);
         })
-        .join(","),
+        .join(",")
     ),
   ].join("\n");
 
@@ -122,9 +122,9 @@ const exportToPDF = (
 export {
   type AnalyticsData,
   type ExportOptions,
-  type FilterParams,
   exportToCSV,
   exportToPDF,
+  type FilterParams,
   formatAnalyticsPercentage,
   parseAnalyticsFilters,
 };

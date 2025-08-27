@@ -112,9 +112,9 @@ async function validateHealthcareTables() {
 
       for (const table of requiredTables) {
         if (
-          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`) ||
-          content.includes(`CREATE TABLE ${table}`) ||
-          content.includes(`ALTER TABLE ${table}`)
+          content.includes(`CREATE TABLE IF NOT EXISTS ${table}`)
+          || content.includes(`CREATE TABLE ${table}`)
+          || content.includes(`ALTER TABLE ${table}`)
         ) {
           foundTables.add(table);
         }
@@ -122,7 +122,7 @@ async function validateHealthcareTables() {
     }
 
     // Validate found tables
-    const foundCount = foundTables.size;
+    const { size: foundCount } = foundTables;
     foundTables.forEach((table) => {
       logSuccess(`Healthcare table found: ${table}`);
     });
@@ -239,8 +239,8 @@ async function validateHealthcareCompliance() {
         complianceFeatures.cfm_registration = true;
       }
       if (
-        content.includes("consent_records") ||
-        content.includes("lgpd_consent")
+        content.includes("consent_records")
+        || content.includes("lgpd_consent")
       ) {
         complianceFeatures.lgpd_consent = true;
       }
@@ -248,15 +248,15 @@ async function validateHealthcareCompliance() {
         complianceFeatures.audit_trail = true;
       }
       if (
-        content.includes("data_retention_policies") ||
-        content.includes("retention_period")
+        content.includes("data_retention_policies")
+        || content.includes("retention_period")
       ) {
         complianceFeatures.data_retention = true;
       }
       if (
-        content.includes("encrypted") ||
-        content.includes("hash") ||
-        content.includes("pgp_sym_encrypt")
+        content.includes("encrypted")
+        || content.includes("hash")
+        || content.includes("pgp_sym_encrypt")
       ) {
         complianceFeatures.encryption_fields = true;
       }
@@ -361,8 +361,8 @@ async function validateTriggers() {
     for (const file of migrationFiles) {
       const content = fs.readFileSync(path.join(migrationsPath, file), "utf8");
       if (
-        content.includes("update_updated_at_column") ||
-        content.includes("updated_at")
+        content.includes("update_updated_at_column")
+        || content.includes("updated_at")
       ) {
         hasUpdatedAtTriggers = true;
         break;
@@ -462,8 +462,8 @@ async function validateSupabaseConfig() {
       if (fs.existsSync(packagePath)) {
         const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
         if (
-          packageJson.dependencies?.["@supabase/supabase-js"] ||
-          packageJson.devDependencies?.["@supabase/supabase-js"]
+          packageJson.dependencies?.["@supabase/supabase-js"]
+          || packageJson.devDependencies?.["@supabase/supabase-js"]
         ) {
           hasSupabaseDep = true;
           logSuccess(`Supabase dependency found in ${packagePath}`);

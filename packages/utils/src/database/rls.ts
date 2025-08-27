@@ -36,8 +36,7 @@ class DatabaseRLS {
       table: "patients",
     },
     {
-      condition:
-        "patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
+      condition: "patient_id IN (SELECT id FROM patients WHERE user_id = auth.uid())",
       policy: "Appointment access control",
       roles: ["patient", "doctor", "receptionist"],
       table: "appointments",

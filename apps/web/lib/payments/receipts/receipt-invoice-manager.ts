@@ -4,9 +4,9 @@ export class ReceiptInvoiceManager {
   constructor(
     private supabaseUrl: string,
     private supabaseKey: string,
-    private companyInfo: any,
-    private nfseConfig: any,
-    private emailConfig: any,
+    private companyInfo: unknown,
+    private nfseConfig: unknown,
+    private emailConfig: unknown,
   ) {}
 
   async getDocument(documentId: string) {
@@ -37,7 +37,7 @@ export class ReceiptInvoiceManager {
     };
   }
 
-  async createReceipt(data: any) {
+  async createReceipt(data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: "receipt_" + Math.random().toString(36).slice(2, 9),
@@ -47,7 +47,7 @@ export class ReceiptInvoiceManager {
     };
   }
 
-  async createInvoice(data: any) {
+  async createInvoice(data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: "invoice_" + Math.random().toString(36).slice(2, 9),
@@ -57,7 +57,7 @@ export class ReceiptInvoiceManager {
     };
   }
 
-  async updateDocument(documentId: string, data: any) {
+  async updateDocument(documentId: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id: documentId,
@@ -92,7 +92,7 @@ export class ReceiptInvoiceManager {
     return this.sendByEmail(documentId, recipientEmail || "", customMessage);
   }
 
-  async regenerateDocument(documentId: string, options: any) {
+  async regenerateDocument(documentId: string, options: unknown) {
     // Mock implementation for build compatibility
     return {
       document_id: documentId,
@@ -111,7 +111,7 @@ export class ReceiptInvoiceManager {
     };
   }
 
-  async generatePDF(documentData: any, templateOptions: any) {
+  async generatePDF(documentData: unknown, templateOptions: unknown) {
     // Mock implementation for build compatibility
     return {
       success: true,
@@ -122,7 +122,7 @@ export class ReceiptInvoiceManager {
     };
   }
 
-  async generateNFSe(documentData: any) {
+  async generateNFSe(documentData: unknown) {
     // Mock implementation for build compatibility
     return {
       success: true,

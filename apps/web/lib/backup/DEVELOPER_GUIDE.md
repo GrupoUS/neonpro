@@ -150,8 +150,8 @@ validateRecoveryPoint(backupId: string): Promise<ValidationResult>
 ### React Component Integration
 
 ```typescript
-import { BackupDashboard } from '@/components/backup/backup-dashboard';
-import { useBackupSystem } from '@/hooks/use-backup-system';
+import { BackupDashboard } from "@/components/backup/backup-dashboard";
+import { useBackupSystem } from "@/hooks/use-backup-system";
 
 function MyBackupPage() {
   const {
@@ -164,11 +164,11 @@ function MyBackupPage() {
 
   const handleCreateBackup = async () => {
     const config = await createConfig({
-      name: 'My Backup',
-      type: 'INCREMENTAL',
-      source_type: 'FILES',
-      source_config: { paths: ['/app/data'] },
-      storage_provider: 'LOCAL',
+      name: "My Backup",
+      type: "INCREMENTAL",
+      source_type: "FILES",
+      source_config: { paths: ["/app/data"] },
+      storage_provider: "LOCAL",
     });
 
     await runManualBackup(config.id);

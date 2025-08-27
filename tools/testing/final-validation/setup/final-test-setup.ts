@@ -15,8 +15,7 @@ process.env.NODE_ENV = "test";
 process.env.NEXT_PUBLIC_SUPABASE_URL = "http://localhost:54321";
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
-process.env.DATABASE_URL =
-  "postgresql://test:test@localhost:54322/neonpro_test";
+process.env.DATABASE_URL = "postgresql://test:test@localhost:54322/neonpro_test";
 
 // Mock global fetch for API testing
 jest.spyOn(global, "fetch").mockImplementation();
@@ -28,16 +27,14 @@ vi.mock<typeof import("@supabase/supabase-js")>(
     createClient: vi.fn(() => ({
       auth: {
         getSession: vi.fn(() =>
-          Promise.resolve({ data: { session: undefined }, error: undefined }),
+          Promise.resolve({ data: { session: undefined }, error: undefined })
         ),
-        getUser: vi.fn(() =>
-          Promise.resolve({ data: { user: undefined }, error: undefined }),
-        ),
+        getUser: vi.fn(() => Promise.resolve({ data: { user: undefined }, error: undefined })),
         signInWithPassword: vi.fn(() =>
           Promise.resolve({
             data: { user: mockUser, session: mockSession },
             error: undefined,
-          }),
+          })
         ),
         signOut: vi.fn(() => Promise.resolve({ error: undefined })),
         onAuthStateChange: vi.fn(() => ({
@@ -47,9 +44,7 @@ vi.mock<typeof import("@supabase/supabase-js")>(
       from: vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({ data: [], error: undefined })),
-          single: vi.fn(() =>
-            Promise.resolve({ data: undefined, error: undefined }),
-          ),
+          single: vi.fn(() => Promise.resolve({ data: undefined, error: undefined })),
         })),
         insert: vi.fn(() => Promise.resolve({ data: [], error: undefined })),
         update: vi.fn(() => Promise.resolve({ data: [], error: undefined })),
@@ -57,12 +52,8 @@ vi.mock<typeof import("@supabase/supabase-js")>(
       })),
       storage: {
         from: vi.fn(() => ({
-          upload: vi.fn(() =>
-            Promise.resolve({ data: { path: "test-path" }, error: undefined }),
-          ),
-          download: vi.fn(() =>
-            Promise.resolve({ data: new Blob(), error: undefined }),
-          ),
+          upload: vi.fn(() => Promise.resolve({ data: { path: "test-path" }, error: undefined })),
+          download: vi.fn(() => Promise.resolve({ data: new Blob(), error: undefined })),
         })),
       },
       realtime: {

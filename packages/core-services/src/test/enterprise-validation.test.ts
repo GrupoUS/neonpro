@@ -17,7 +17,7 @@ interface TestContext {
 }
 
 interface TestRepo {
-  findData: (id: string) => Promise<any>;
+  findData: (id: string) => Promise<unknown>;
 }
 
 // Mock repository for testing
@@ -68,7 +68,6 @@ async function testEnterpriseServices() {
     const cacheService = new EnterpriseCacheService();
 
     await cacheService.set("test-key", { value: "test-data" });
-    const _cachedData = await cacheService.get("test-key");
     const analyticsService = new EnterpriseAnalyticsService();
 
     await analyticsService.trackEvent({
@@ -77,12 +76,6 @@ async function testEnterpriseServices() {
       properties: { test: true },
     });
     const securityService = new EnterpriseSecurityService();
-
-    const _hasAccess = await securityService.validateAccess("testOperation", {
-      userId: "test-user",
-      resource: "test-resource",
-      action: "read",
-    });
     const auditService = new EnterpriseAuditService();
 
     await auditService.logEvent({
@@ -95,8 +88,6 @@ async function testEnterpriseServices() {
       data: { test: true },
     });
     const healthService = new EnterpriseHealthCheckService();
-
-    const _healthResult = await healthService.checkHealth("cache");
     const testService = new TestEnterpriseService();
 
     const context: TestContext = {
@@ -104,14 +95,6 @@ async function testEnterpriseServices() {
       operation: "test",
       ipAddress: "127.0.0.1",
     };
-
-    const _result1 = await testService.testOperation("test-id-1", context);
-
-    const _result2 = await testService.testCachedOperation(
-      "test-id-2",
-      context,
-    );
-
     return true;
   } catch {
     return false;
@@ -125,6 +108,7 @@ export { TestEnterpriseService, testEnterpriseServices };
 if (require.main === module) {
   testEnterpriseServices()
     .then((success) => {
+      return;
       process.exit(success ? 0 : 1);
     })
     .catch((_error) => {

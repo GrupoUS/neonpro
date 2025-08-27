@@ -4,7 +4,7 @@
  * Otimizado para ambiente healthcare com alta disponibilidade
  */
 
-import type { Database } from "@neonpro/db";
+import type { Database } from "@neonpro/database";
 import { createClient } from "@supabase/supabase-js";
 import type { RealtimeChannel, SupabaseClient } from "@supabase/supabase-js";
 
@@ -25,7 +25,7 @@ export interface ChannelSubscription {
   isActive: boolean;
   retryCount: number;
   lastError?: Error;
-  callbacks: Map<string, (payload: any) => void>;
+  callbacks: Map<string, (payload: unknown) => void>;
   config?: {
     table?: string;
     schema?: string;
@@ -286,14 +286,14 @@ export class SupabaseRealtimeManager {
     // Setup postgres changes listener with configuration
     if (config?.table) {
       channel.on(
-        "postgres_changes" as any,
+        "postgres_changes" as unknown,
         {
           event: config.event || "*",
           schema: config.schema || "public",
           table: config.table,
           filter: config.filter,
         },
-        (payload: any) => {
+        (payload: unknown) => {
           callbacks.forEach((callback) => {
             try {
               callback(payload);
@@ -304,9 +304,9 @@ export class SupabaseRealtimeManager {
     } else {
       // Setup generic postgres changes listener for backwards compatibility
       channel.on(
-        "postgres_changes" as any,
+        "postgres_changes" as unknown,
         { event: "*", schema: "public" },
-        (payload: any) => {
+        (payload: unknown) => {
           callbacks.forEach((callback) => {
             try {
               callback(payload);
@@ -413,8 +413,8 @@ export class SupabaseRealtimeManager {
 
     const maxScore = 100;
     const retryPenalty = this.connectionStatus.totalRetries * 10;
-    const inactiveChannelPenalty =
-      (this.subscriptions.size - this.connectionStatus.activeChannels) * 5;
+    const inactiveChannelPenalty = (this.subscriptions.size - this.connectionStatus.activeChannels)
+      * 5;
 
     return Math.max(0, maxScore - retryPenalty - inactiveChannelPenalty);
   }

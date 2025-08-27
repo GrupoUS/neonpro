@@ -279,13 +279,13 @@ export class AestheticPredictionEngine {
 
     // Map all model types to the same extractor instance
     // In production, you might have specialized extractors
-    this.featureExtractors.set("treatment-outcome", extractor as any);
-    this.featureExtractors.set("duration-estimation", extractor as any);
-    this.featureExtractors.set("success-probability", extractor as any);
-    this.featureExtractors.set("risk-assessment", extractor as any);
-    this.featureExtractors.set("botox-optimization", extractor as any);
-    this.featureExtractors.set("filler-volume", extractor as any);
-    this.featureExtractors.set("laser-settings", extractor as any);
+    this.featureExtractors.set("treatment-outcome", extractor as unknown);
+    this.featureExtractors.set("duration-estimation", extractor as unknown);
+    this.featureExtractors.set("success-probability", extractor as unknown);
+    this.featureExtractors.set("risk-assessment", extractor as unknown);
+    this.featureExtractors.set("botox-optimization", extractor as unknown);
+    this.featureExtractors.set("filler-volume", extractor as unknown);
+    this.featureExtractors.set("laser-settings", extractor as unknown);
   }
 
   /**
@@ -295,13 +295,13 @@ export class AestheticPredictionEngine {
     const processor = new AestheticPostProcessor();
 
     // Map all model types to the same processor instance
-    this.postProcessors.set("treatment-outcome", processor as any);
-    this.postProcessors.set("duration-estimation", processor as any);
-    this.postProcessors.set("success-probability", processor as any);
-    this.postProcessors.set("risk-assessment", processor as any);
-    this.postProcessors.set("botox-optimization", processor as any);
-    this.postProcessors.set("filler-volume", processor as any);
-    this.postProcessors.set("laser-settings", processor as any);
+    this.postProcessors.set("treatment-outcome", processor as unknown);
+    this.postProcessors.set("duration-estimation", processor as unknown);
+    this.postProcessors.set("success-probability", processor as unknown);
+    this.postProcessors.set("risk-assessment", processor as unknown);
+    this.postProcessors.set("botox-optimization", processor as unknown);
+    this.postProcessors.set("filler-volume", processor as unknown);
+    this.postProcessors.set("laser-settings", processor as unknown);
   }
 
   /**
@@ -438,7 +438,7 @@ export class AestheticPredictionEngine {
    * Generate treatment-specific recommendations
    */
   private generateTreatmentRecommendations(
-    result: any,
+    result: unknown,
     patient: PatientProfile,
   ): string[] {
     const processor = this.postProcessors.get("treatment-outcome");
@@ -494,22 +494,22 @@ export class AestheticPredictionEngine {
    * Get feature names for interpretability
    */
   private getTreatmentFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get("treatment-outcome") as any;
+    const extractor = this.featureExtractors.get("treatment-outcome") as unknown;
     return extractor?.getTreatmentFeatureNames() || [];
   }
 
   private getBotoxFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get("botox-optimization") as any;
+    const extractor = this.featureExtractors.get("botox-optimization") as unknown;
     return extractor?.getBotoxFeatureNames() || [];
   }
 
   private getFillerFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get("filler-volume") as any;
+    const extractor = this.featureExtractors.get("filler-volume") as unknown;
     return extractor?.getFillerFeatureNames() || [];
   }
 
   private getLaserFeatureNames(): string[] {
-    const extractor = this.featureExtractors.get("laser-settings") as any;
+    const extractor = this.featureExtractors.get("laser-settings") as unknown;
     return extractor?.getLaserFeatureNames() || [];
   }
 
@@ -705,7 +705,7 @@ export class AestheticPredictionEngine {
    */
   async healthCheck(): Promise<{
     status: "healthy" | "degraded" | "unhealthy";
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }> {
     const modelHealth = await aiModelManager.healthCheck();
 
@@ -990,7 +990,7 @@ export class AestheticPredictionEngine {
 
   private generateRiskMitigationRecommendations(
     overallRisk: string,
-    specificRisks: any[],
+    specificRisks: unknown[],
   ): string[] {
     const recommendations: string[] = [];
 
@@ -1114,7 +1114,7 @@ export class AestheticPredictionEngine {
 
   private generateSuccessOptimizationRecommendations(
     successProbability: number,
-    riskFactors: any[],
+    riskFactors: unknown[],
   ): string[] {
     const recommendations: string[] = [];
 
@@ -1186,14 +1186,14 @@ export class AestheticPredictionEngine {
   // ==================== RECOMMENDATION GENERATORS ====================
 
   private generateRiskRecommendations(
-    result: any,
+    result: unknown,
     _patient: PatientProfile,
   ): string[] {
     return result.recommendations || [];
   }
 
   private generateDurationRecommendations(
-    result: any,
+    result: unknown,
     _patient: PatientProfile,
   ): string[] {
     const recommendations: string[] = [];
@@ -1214,7 +1214,7 @@ export class AestheticPredictionEngine {
   }
 
   private generateSuccessRecommendations(
-    result: any,
+    result: unknown,
     _patient: PatientProfile,
   ): string[] {
     return result.recommendations || [];

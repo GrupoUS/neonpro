@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import type { SchedulingResult } from "@neonpro/core-services/scheduling";
+import { useCallback, useState } from "react";
 
 interface UseAISchedulingOptions {
   tenantId: string;
@@ -11,12 +11,12 @@ interface UseAISchedulingOptions {
 }
 
 interface UseAISchedulingReturn {
-  scheduleAppointment: (data: any) => Promise<SchedulingResult>;
+  scheduleAppointment: (data: unknown) => Promise<SchedulingResult>;
   isLoading: boolean;
   error: string | null;
   lastResult: SchedulingResult | null;
   optimizationScore: number;
-  analytics: any;
+  analytics: unknown;
   processingTime: number;
 }
 
@@ -24,16 +24,14 @@ export function useAIScheduling(
   options: UseAISchedulingOptions,
 ): UseAISchedulingReturn {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(undefined);
-  const [lastResult, setLastResult] = useState<SchedulingResult | null>(
-    undefined,
-  );
+  const [error, setError] = useState<string | null>();
+  const [lastResult, setLastResult] = useState<SchedulingResult | null>();
   const [optimizationScore] = useState(0.95); // Mock high optimization score
-  const [analytics] = useState(undefined);
+  const [analytics] = useState();
   const [processingTime] = useState(500); // Mock processing time
 
   const scheduleAppointment = useCallback(
-    async (data: any): Promise<SchedulingResult> => {
+    async (data: unknown): Promise<SchedulingResult> => {
       setIsLoading(true);
       setError(undefined);
 
@@ -52,8 +50,7 @@ export function useAIScheduling(
         setLastResult(result);
         return result;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Scheduling failed";
+        const errorMessage = error instanceof Error ? error.message : "Scheduling failed";
         setError(errorMessage);
 
         const result: SchedulingResult = {

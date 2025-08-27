@@ -22,7 +22,7 @@ const DEFAULT_MONITORING_INTERVAL_MS = 60_000;
 const ZERO_THRESHOLD = 0;
 const PLACEHOLDER_UPTIME = 1000;
 const PLACEHOLDER_RESPONSE_TIME = 200;
-const PLACEHOLDER_ERROR_RATE = 0.5;
+const { 5: PLACEHOLDER_ERROR_RATE } = 0;
 
 /**
  * Enhanced Healthcare Monitoring Dashboard

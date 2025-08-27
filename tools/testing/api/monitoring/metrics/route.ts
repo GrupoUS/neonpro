@@ -25,8 +25,6 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const _body = await request.json();
-
     return NextResponse.json({
       success: true,
       id: `metric-${Date.now()}`,

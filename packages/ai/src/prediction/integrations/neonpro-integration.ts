@@ -34,10 +34,10 @@ export class NeonProAIIntegration {
     patientId: string,
     treatmentType: string,
     targetAreas: string[],
-    _additionalParams?: Record<string, any>,
+    _additionalParams?: Record<string, unknown>,
   ): Promise<{
     success: boolean;
-    recommendation?: any;
+    recommendation?: unknown;
     error?: string;
     metadata: {
       processingTime: number;
@@ -54,21 +54,21 @@ export class NeonProAIIntegration {
       // Create treatment request
       const treatmentRequest: TreatmentRequest = {
         patientId,
-        treatmentType: treatmentType as any,
+        treatmentType: treatmentType as unknown,
         targetAreas: targetAreas.map((area) => ({
-          region: area as any,
-          concern: "wrinkles" as any, // Default, would be specified
+          region: area as unknown,
+          concern: "wrinkles" as unknown, // Default, would be specified
           severity: 5, // Default, would be assessed
           priority: 1, // Default
         })),
         goals: {
           primary: "Aesthetic improvement",
           secondary: [],
-          expectations: "moderate" as any,
+          expectations: "moderate" as unknown,
           maintenance: false,
           naturalLook: true,
         },
-        urgency: "moderate" as any,
+        urgency: "moderate" as unknown,
         budgetRange: {
           min: 1000,
           max: 5000,
@@ -205,7 +205,7 @@ export class NeonProAIIntegration {
         "success-probability",
       ].map((modelType) => {
         const check = predictionPerformanceMonitor.checkAccuracyTarget(
-          modelType as any,
+          modelType as unknown,
         );
         return { [modelType]: check };
       });
@@ -214,7 +214,7 @@ export class NeonProAIIntegration {
         {},
         ...accuracyChecks.map((check) => {
           const [key, value] = Object.entries(check)[0];
-          return { [key]: (value as any).currentAccuracy };
+          return { [key]: (value as unknown).currentAccuracy };
         }),
       );
 
@@ -323,7 +323,7 @@ export class NeonProAIIntegration {
    * Format AI prediction into NeonPro treatment recommendation
    */
   private formatTreatmentRecommendation(
-    prediction: any,
+    prediction: unknown,
     request: TreatmentRequest,
   ) {
     return {
@@ -360,7 +360,7 @@ export class NeonProAIIntegration {
   /**
    * Calculate overall confidence from multiple predictions
    */
-  private calculateOverallConfidence(predictions: any): number {
+  private calculateOverallConfidence(predictions: unknown): number {
     const confidences = [
       predictions.outcome.outputs.confidence,
       predictions.risk.outputs.confidence,

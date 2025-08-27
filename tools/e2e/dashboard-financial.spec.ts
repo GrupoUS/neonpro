@@ -13,9 +13,7 @@ test.describe("Dashboard Financial Page", () => {
   });
 
   test.describe("Financial Overview", () => {
-    test("should display financial dashboard with key metrics", async ({
-      page,
-    }) => {
+    test("should display financial dashboard with key metrics", async ({ page }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Financial.*NeonPro/);
       await expect(page.locator("h1")).toContainText("Financial Dashboard");
@@ -558,9 +556,7 @@ test.describe("Dashboard Financial Page", () => {
       ).toBeVisible();
     });
 
-    test("should generate tax reports for Brazilian compliance", async ({
-      page,
-    }) => {
+    test("should generate tax reports for Brazilian compliance", async ({ page }) => {
       await page.click('[data-testid="tax-tab"]');
 
       // Navigate to tax reports
@@ -648,9 +644,7 @@ test.describe("Dashboard Financial Page", () => {
   });
 
   test.describe("Financial Reports", () => {
-    test("should generate comprehensive financial reports", async ({
-      page,
-    }) => {
+    test("should generate comprehensive financial reports", async ({ page }) => {
       // Navigate to reports section
       await page.click('[data-testid="reports-tab"]');
 
@@ -739,9 +733,7 @@ test.describe("Dashboard Financial Page", () => {
   });
 
   test.describe("Performance and Accessibility", () => {
-    test("should load financial dashboard within performance thresholds", async ({
-      page,
-    }) => {
+    test("should load financial dashboard within performance thresholds", async ({ page }) => {
       const startTime = Date.now();
       await page.goto("/dashboard/financial");
       await page.waitForLoadState("networkidle");
@@ -769,9 +761,7 @@ test.describe("Dashboard Financial Page", () => {
       await expect(focusedElement).toBeVisible();
     });
 
-    test("should have proper ARIA labels for financial data", async ({
-      page,
-    }) => {
+    test("should have proper ARIA labels for financial data", async ({ page }) => {
       // Check ARIA labels on financial metrics
       await expect(
         page.locator('[data-testid="total-revenue"][aria-label]'),
@@ -806,9 +796,7 @@ test.describe("Dashboard Financial Page", () => {
       }
     });
 
-    test("should support screen readers for financial information", async ({
-      page,
-    }) => {
+    test("should support screen readers for financial information", async ({ page }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',

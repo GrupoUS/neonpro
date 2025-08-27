@@ -72,7 +72,7 @@ export interface CommunicationChannel {
   type: "whatsapp" | "email" | "sms" | "phone" | "app_notification";
   priority: number; // 1-5, 1 = highest priority
   availability: {
-    hours: { start: string; end: string };
+    hours: { start: string; end: string; };
     days: number[]; // Days of week available
     timeZone: string;
   };
@@ -86,7 +86,7 @@ export interface CommunicationChannel {
 export interface TriggerCondition {
   type: "behavioral" | "temporal" | "event" | "score_change";
   condition: string; // Description of the trigger
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -151,8 +151,8 @@ export class StrategyGeneratorService {
     patientProfile: PatientBehaviorProfile,
     context?: {
       segments?: PatientSegment[];
-      recentEvents?: any[];
-      campaignHistory?: any[];
+      recentEvents?: unknown[];
+      campaignHistory?: unknown[];
     },
   ): Promise<PersonalizedStrategy> {
     try {
@@ -229,9 +229,7 @@ export class StrategyGeneratorService {
     const chunkSize = 5;
     for (let i = 0; i < patientProfiles.length; i += chunkSize) {
       const chunk = patientProfiles.slice(i, i + chunkSize);
-      const chunkPromises = chunk.map((profile) =>
-        this.generatePersonalizedStrategy(profile),
-      );
+      const chunkPromises = chunk.map((profile) => this.generatePersonalizedStrategy(profile));
 
       try {
         const chunkResults = await Promise.allSettled(chunkPromises);
@@ -300,7 +298,7 @@ export class StrategyGeneratorService {
 
   private async determineStrategyType(
     profile: PatientBehaviorProfile,
-    _context?: any,
+    _context?: unknown,
   ): Promise<PersonalizedStrategy["type"]> {
     // High-risk patients need recovery strategies
     if (profile.scores.risk > 70) {
@@ -319,9 +317,9 @@ export class StrategyGeneratorService {
 
     // VIP and loyal segments with high scores get upsell strategies
     if (
-      (profile.segment === "vip" || profile.segment === "loyal") &&
-      profile.scores.satisfaction > 80 &&
-      profile.scores.engagement > 75
+      (profile.segment === "vip" || profile.segment === "loyal")
+      && profile.scores.satisfaction > 80
+      && profile.scores.engagement > 75
     ) {
       return "upsell";
     }
@@ -338,67 +336,65 @@ export class StrategyGeneratorService {
   private async createStrategyForType(
     profile: PatientBehaviorProfile,
     type: PersonalizedStrategy["type"],
-    _context?: any,
+    _context?: unknown,
   ): Promise<PersonalizedStrategy["strategy"]> {
     const strategies = {
       retention: {
         title: "Programa de Retenção Personalizado",
-        description:
-          "Estratégia focada em reconectar e manter o engajamento do paciente",
-        reasoning: `Paciente apresenta score de risco ${profile.scores.risk}% e necessita atenção especial para evitar churn`,
-        expectedOutcome:
-          "Redução de 60% no risco de churn e aumento de 25% no engajamento",
+        description: "Estratégia focada em reconectar e manter o engajamento do paciente",
+        reasoning:
+          `Paciente apresenta score de risco ${profile.scores.risk}% e necessita atenção especial para evitar churn`,
+        expectedOutcome: "Redução de 60% no risco de churn e aumento de 25% no engajamento",
         timeline: "30-60 dias",
       },
       engagement: {
         title: "Otimização de Engajamento",
-        description:
-          "Melhoria da comunicação e relacionamento baseada no perfil comportamental",
-        reasoning: `Perfil ${profile.personalityType} com score de engajamento ${profile.scores.engagement}% permite otimizações específicas`,
-        expectedOutcome:
-          "Aumento de 35% no engajement e melhoria na satisfação",
+        description: "Melhoria da comunicação e relacionamento baseada no perfil comportamental",
+        reasoning:
+          `Perfil ${profile.personalityType} com score de engajamento ${profile.scores.engagement}% permite otimizações específicas`,
+        expectedOutcome: "Aumento de 35% no engajement e melhoria na satisfação",
         timeline: "21-45 dias",
       },
       upsell: {
         title: "Oportunidades de Crescimento",
-        description:
-          "Apresentação de serviços complementares alinhados ao perfil do paciente",
-        reasoning: `Paciente ${profile.segment} com alta satisfação (${profile.scores.satisfaction}%) e LTV ${profile.lifetimeValue.toLocaleString(
-          "pt-BR",
-          { style: "currency", currency: "BRL" },
-        )}`,
-        expectedOutcome:
-          "Aumento de 40-60% no LTV através de serviços complementares",
+        description: "Apresentação de serviços complementares alinhados ao perfil do paciente",
+        reasoning:
+          `Paciente ${profile.segment} com alta satisfação (${profile.scores.satisfaction}%) e LTV ${
+            profile.lifetimeValue.toLocaleString(
+              "pt-BR",
+              { style: "currency", currency: "BRL" },
+            )
+          }`,
+        expectedOutcome: "Aumento de 40-60% no LTV através de serviços complementares",
         timeline: "14-30 dias",
       },
       recovery: {
         title: "Recuperação de Relacionamento",
-        description:
-          "Intervenção imediata para reverter sinais de insatisfação ou afastamento",
-        reasoning: `Score de risco crítico ${profile.scores.risk}% requer ação imediata para evitar perda do paciente`,
-        expectedOutcome:
-          "Recuperação de 70% dos pacientes em risco e melhoria na satisfação",
+        description: "Intervenção imediata para reverter sinais de insatisfação ou afastamento",
+        reasoning:
+          `Score de risco crítico ${profile.scores.risk}% requer ação imediata para evitar perda do paciente`,
+        expectedOutcome: "Recuperação de 70% dos pacientes em risco e melhoria na satisfação",
         timeline: "7-21 dias",
       },
       onboarding: {
         title: "Jornada de Integração Personalizada",
         description:
           "Acompanhamento estruturado para novos pacientes baseado no perfil comportamental",
-        reasoning: `Paciente novo com perfil ${profile.personalityType} necessita onboarding personalizado para maximizar engajamento`,
-        expectedOutcome:
-          "Aumento de 85% na retenção de novos pacientes nos primeiros 90 dias",
+        reasoning:
+          `Paciente novo com perfil ${profile.personalityType} necessita onboarding personalizado para maximizar engajamento`,
+        expectedOutcome: "Aumento de 85% na retenção de novos pacientes nos primeiros 90 dias",
         timeline: "90 dias",
       },
       reactivation: {
         title: "Campanha de Reativação",
-        description:
-          "Reconexão com pacientes inativos através de abordagem personalizada",
-        reasoning: `Paciente inativo há mais de 6 meses com histórico de ${profile.lifetimeValue.toLocaleString(
-          "pt-BR",
-          { style: "currency", currency: "BRL" },
-        )} em LTV`,
-        expectedOutcome:
-          "Reativação de 45% dos pacientes inativos e agendamento de consulta",
+        description: "Reconexão com pacientes inativos através de abordagem personalizada",
+        reasoning: `Paciente inativo há mais de 6 meses com histórico de ${
+          profile.lifetimeValue.toLocaleString(
+            "pt-BR",
+            { style: "currency", currency: "BRL" },
+          )
+        } em LTV`,
+        expectedOutcome: "Reativação de 45% dos pacientes inativos e agendamento de consulta",
         timeline: "30-60 dias",
       },
     };
@@ -478,16 +474,14 @@ export class StrategyGeneratorService {
         {
           type: "survey" as const,
           title: "Pesquisa de Satisfação",
-          content:
-            "Gostaríamos de ouvir sua opinião para melhorar ainda mais nossos serviços.",
+          content: "Gostaríamos de ouvir sua opinião para melhorar ainda mais nossos serviços.",
           timing: { delay: 72, timeOfDay: "morning" },
           conditions: { skipIf: ["no_response_previous"] },
         },
         {
           type: "appointment" as const,
           title: "Oferta de Consulta Especial",
-          content:
-            "Preparamos uma consulta especial para você. Agende sem compromisso.",
+          content: "Preparamos uma consulta especial para você. Agende sem compromisso.",
           timing: { delay: 168, timeOfDay: "afternoon" },
         },
       ],
@@ -502,8 +496,7 @@ export class StrategyGeneratorService {
         {
           type: "reminder" as const,
           title: "Lembrete de Cuidados",
-          content:
-            "Lembrete personalizado sobre seus cuidados com base no seu tratamento.",
+          content: "Lembrete personalizado sobre seus cuidados com base no seu tratamento.",
           timing: { delay: 168, timeOfDay: "morning" },
         },
       ],
@@ -518,8 +511,7 @@ export class StrategyGeneratorService {
         {
           type: "appointment" as const,
           title: "Consulta de Avaliação Gratuita",
-          content:
-            "Oferta especial: consulta de avaliação sem custo para serviços premium.",
+          content: "Oferta especial: consulta de avaliação sem custo para serviços premium.",
           timing: { delay: 72, timeOfDay: "morning" },
         },
       ],
@@ -527,16 +519,14 @@ export class StrategyGeneratorService {
         {
           type: "communication" as const,
           title: "Intervenção Imediata",
-          content:
-            "Notamos que algo pode não estar como esperado. Podemos conversar?",
+          content: "Notamos que algo pode não estar como esperado. Podemos conversar?",
           timing: { delay: 0 },
           conditions: { requiresResponse: true },
         },
         {
           type: "appointment" as const,
           title: "Consulta de Resolução",
-          content:
-            "Agende uma consulta prioritária para resolvermos qualquer questão.",
+          content: "Agende uma consulta prioritária para resolvermos qualquer questão.",
           timing: { delay: 24, timeOfDay: "morning" },
         },
       ],
@@ -544,22 +534,19 @@ export class StrategyGeneratorService {
         {
           type: "communication" as const,
           title: "Boas-vindas Personalizada",
-          content:
-            "Bem-vindo(a) à nossa clínica! Preparamos um guia especial para você.",
+          content: "Bem-vindo(a) à nossa clínica! Preparamos um guia especial para você.",
           timing: { delay: 0 },
         },
         {
           type: "survey" as const,
           title: "Conhecendo Suas Preferências",
-          content:
-            "Ajude-nos a personalizar sua experiência respondendo algumas perguntas.",
+          content: "Ajude-nos a personalizar sua experiência respondendo algumas perguntas.",
           timing: { delay: 48 },
         },
         {
           type: "appointment" as const,
           title: "Primeira Consulta de Acompanhamento",
-          content:
-            "Agende sua consulta de acompanhamento para otimizar seus resultados.",
+          content: "Agende sua consulta de acompanhamento para otimizar seus resultados.",
           timing: { delay: 168 },
         },
       ],
@@ -567,8 +554,7 @@ export class StrategyGeneratorService {
         {
           type: "communication" as const,
           title: "Reconexão Especial",
-          content:
-            "Sentimos sua falta! Temos novidades especiais para nossos pacientes especiais.",
+          content: "Sentimos sua falta! Temos novidades especiais para nossos pacientes especiais.",
           timing: { delay: 0, timeOfDay: "afternoon" },
         },
         {
@@ -585,11 +571,11 @@ export class StrategyGeneratorService {
   }
 
   private async personalizeActionTiming(
-    baseTiming: any,
+    baseTiming: unknown,
     profile: PatientBehaviorProfile,
   ): Promise<ActionPlan["timing"]> {
     // Adapt to patient's response time pattern
-    let delay = baseTiming.delay;
+    const { delay } = baseTiming;
     if (profile.patterns.responseTime === "immediate") {
       delay = Math.max(1, delay * 0.5); // Faster for immediate responders
     } else if (profile.patterns.responseTime === "delayed") {
@@ -962,7 +948,7 @@ export class StrategyGeneratorService {
   private calculateConfidence(
     profile: PatientBehaviorProfile,
     strategyType: PersonalizedStrategy["type"],
-    _context?: any,
+    _context?: unknown,
   ): number {
     let baseConfidence = 70;
 
@@ -972,7 +958,7 @@ export class StrategyGeneratorService {
     }
 
     // Adjust based on data completeness (simulated)
-    const dataCompleteness = 0.8; // Would calculate based on available data
+    const { 8: dataCompleteness } = 0; // Would calculate based on available data
     baseConfidence *= dataCompleteness;
 
     // Adjust based on strategy type success rates
@@ -999,8 +985,7 @@ export class StrategyGeneratorService {
     currentProfile: PatientBehaviorProfile,
   ): Promise<boolean> {
     // Compare target metrics with actual results
-    const targetEngagement =
-      strategy.metrics.targetMetrics.engagementIncrease || 0;
+    const targetEngagement = strategy.metrics.targetMetrics.engagementIncrease || 0;
     const actualEngagement = strategy.metrics.actualResults.engagementChange;
 
     // Strategy needs adjustment if results are significantly below target
@@ -1046,7 +1031,7 @@ export class StrategyGeneratorService {
     actualResults: StrategyMetrics["actualResults"],
     _targetMetrics: StrategyMetrics["targetMetrics"],
   ): number {
-    const revenue = actualResults.revenueGenerated;
+    const { revenueGenerated: revenue } = actualResults;
     const estimatedCost = 200; // Estimated cost per strategy execution
 
     if (estimatedCost === 0) {

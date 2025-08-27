@@ -3,16 +3,12 @@
 
 import { v4 as uuidv4 } from "uuid";
 import type { z } from "zod";
+import { ERROR_MESSAGES, JOB_STATUS, STATUS_CODES } from "./batch-prediction-constants";
 import type {
   BatchJobFiltersSchema,
   BulkJobCreationSchema,
   CreateBatchJobSchema,
 } from "./batch-prediction-schemas";
-import {
-  ERROR_MESSAGES,
-  STATUS_CODES,
-  JOB_STATUS,
-} from "./batch-prediction-constants";
 
 // Type definitions from schemas
 type CreateBatchJobRequest = z.infer<typeof CreateBatchJobSchema>;
@@ -31,6 +27,7 @@ export class BatchPredictionError extends Error {
 }
 
 // Core Batch Prediction Service
+// TODO: Convert to standalone functions
 export class BatchPredictionService {
   static async createBatchJob(data: CreateBatchJobRequest) {
     try {
@@ -169,8 +166,8 @@ export class BatchPredictionService {
     const maxRange = 365; // days
 
     if (
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) >
-      maxRange
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        > maxRange
     ) {
       throw new Error("Date range cannot exceed 365 days");
     }
@@ -180,30 +177,29 @@ export class BatchPredictionService {
 
   private static async storeJob(job: unknown) {
     // Database storage implementation
-    console.log("Storing job:", job);
+    // console.log("Storing job:", job);
     return job;
   }
 
-  private static async queueJob(jobId: string) {
+  private static async queueJob(_jobId: string) {
     // Queue implementation for job processing
-    console.log("Queueing job:", jobId);
+    // console.log("Queueing job:", jobId);
   }
 
-  private static async fetchJobs(filters: BatchJobFilters) {
+  private static async fetchJobs(_filters: BatchJobFilters) {
     // Database query implementation
-    console.log("Fetching jobs with filters:", filters);
+    // console.log("Fetching jobs with filters:", filters);
     return [];
   }
 
-  private static async fetchJobById(jobId: string) {
+  private static async fetchJobById(_jobId: string) {
     // Database query implementation
-    console.log("Fetching job by ID:", jobId);
-    return null;
+    // console.log("Fetching job by ID:", jobId);
+    return;
   }
 
   private static isValidUuid(uuid: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
   }
 }

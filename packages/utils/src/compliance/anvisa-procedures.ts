@@ -52,7 +52,7 @@ export class ANVISAProcedureManager {
 
       // Check if professional has all required qualifications
       return procedure.required_qualifications.every((requirement: string) =>
-        professionalQualifications.includes(requirement),
+        professionalQualifications.includes(requirement)
       );
     } catch {
       return false;

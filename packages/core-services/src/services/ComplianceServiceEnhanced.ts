@@ -30,7 +30,7 @@ interface CompliancePolicy {
   version: string;
   effectiveDate: Date;
   expiryDate?: Date;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
@@ -45,13 +45,13 @@ interface ComplianceRule {
   action: RuleAction;
   severity: SeverityLevel;
   isActive: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface RuleCondition {
   field: string;
   operator: ConditionOperator;
-  value: any;
+  value: unknown;
   dataSource: DataSource;
   logicalOperator?: LogicalOperator;
   nestedConditions?: RuleCondition[];
@@ -59,7 +59,7 @@ interface RuleCondition {
 
 interface RuleAction {
   type: ActionType;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   autoExecute: boolean;
   notificationRequired: boolean;
   escalationRequired: boolean;
@@ -84,7 +84,7 @@ interface ComplianceIncident {
   containmentActions: ContainmentAction[];
   rootCause?: string;
   remediation: RemediationPlan;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -106,7 +106,7 @@ interface ContainmentAction {
   executedAt: Date;
   executedBy: string;
   effectiveness: EffectivenessLevel;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface RemediationPlan {
@@ -147,7 +147,7 @@ interface ConsentRecord {
   withdrawalMethod?: string;
   retentionPeriod: number;
   isActive: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -375,7 +375,7 @@ interface CreatePolicyRequest {
   rules: Omit<ComplianceRule, "id">[];
   effectiveDate: Date;
   expiryDate?: Date;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface ReportIncidentRequest {
@@ -390,7 +390,7 @@ interface ReportIncidentRequest {
     DataImpactAssessment,
     "notificationRequired" | "regulatoryReportingRequired"
   >;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface CreateConsentRequest {
@@ -404,7 +404,7 @@ interface CreateConsentRequest {
   consentMethod: ConsentMethod;
   consentVersion: string;
   retentionPeriod: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // ================================================
@@ -422,8 +422,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
       rules: [
         {
           name: "Consentimento Explícito",
-          description:
-            "Verificar consentimento antes de processar dados pessoais",
+          description: "Verificar consentimento antes de processar dados pessoais",
           type: RuleType.PREVENTIVE,
           severity: SeverityLevel.HIGH,
         },
@@ -665,8 +664,8 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
         // Auto-assign based on severity
         if (
-          incident.severity === SeverityLevel.CRITICAL ||
-          incident.severity === SeverityLevel.HIGH
+          incident.severity === SeverityLevel.CRITICAL
+          || incident.severity === SeverityLevel.HIGH
         ) {
           await this.autoAssignIncident(incident);
         }
@@ -900,9 +899,9 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     tenantId: string,
     context: ServiceContext,
   ): Promise<{
-    lgpd: { compliant: boolean; issues: string[] };
-    anvisa: { compliant: boolean; issues: string[] };
-    cfm: { compliant: boolean; issues: string[] };
+    lgpd: { compliant: boolean; issues: string[]; };
+    anvisa: { compliant: boolean; issues: string[]; };
+    cfm: { compliant: boolean; issues: string[]; };
     overall: {
       score: number;
       status: "compliant" | "non-compliant" | "warning";
@@ -920,12 +919,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         // Check CFM compliance
         const cfmCheck = await this.checkCFMCompliance(tenantId, context);
 
-        // Calculate overall score
-        const _issues =
-          lgpdCheck.issues.length +
-          anvisaCheck.issues.length +
-          cfmCheck.issues.length;
-        const totalChecks = 3;
+        // Calculate overall score        const totalChecks = 3;
         const compliantFrameworks = [
           lgpdCheck.compliant,
           anvisaCheck.compliant,
@@ -1008,17 +1002,15 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
     >,
   ): Promise<DataImpactAssessment> {
     // Assess notification requirements based on Brazilian laws
-    const notificationRequired =
-      affectedData.recordsAffected > 100 ||
-      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
-      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
-      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const notificationRequired = affectedData.recordsAffected > 100
+      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
+      || affectedData.estimatedImpact === ImpactLevel.MAJOR
+      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
-    const regulatoryReportingRequired =
-      affectedData.recordsAffected > 500 ||
-      affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED ||
-      affectedData.estimatedImpact === ImpactLevel.MAJOR ||
-      affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
+    const regulatoryReportingRequired = affectedData.recordsAffected > 500
+      || affectedData.sensitivityLevel === SensitivityLevel.RESTRICTED
+      || affectedData.estimatedImpact === ImpactLevel.MAJOR
+      || affectedData.estimatedImpact === ImpactLevel.CATASTROPHIC;
 
     return {
       ...affectedData,
@@ -1057,7 +1049,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkLGPDCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[] }> {
+  ): Promise<{ compliant: boolean; issues: string[]; }> {
     // Mock LGPD compliance check
     return {
       compliant: true,
@@ -1068,7 +1060,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkANVISACompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[] }> {
+  ): Promise<{ compliant: boolean; issues: string[]; }> {
     // Mock ANVISA compliance check
     return {
       compliant: true,
@@ -1079,7 +1071,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
   private async checkCFMCompliance(
     _tenantId: string,
     _context: ServiceContext,
-  ): Promise<{ compliant: boolean; issues: string[] }> {
+  ): Promise<{ compliant: boolean; issues: string[]; }> {
     // Mock CFM compliance check
     return {
       compliant: true,
@@ -1113,7 +1105,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
         medium: 2,
         low: 4,
       },
-      complianceByFramework: {} as any,
+      complianceByFramework: {} as unknown,
     };
   }
 
@@ -1151,7 +1143,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   private async fetchPoliciesFromDatabase(
     _tenantId: string,
-    _filters: any,
+    _filters: unknown,
     _context: ServiceContext,
   ): Promise<CompliancePolicy[]> {
     return []; // Mock empty result
@@ -1169,7 +1161,7 @@ export class ComplianceServiceEnhanced extends EnhancedServiceBase {
 
   private async updateConsentInDatabase(
     _consentId: string,
-    _updates: any,
+    _updates: unknown,
     _context: ServiceContext,
   ): Promise<boolean> {
     return true;

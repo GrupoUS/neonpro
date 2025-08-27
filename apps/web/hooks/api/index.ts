@@ -62,36 +62,36 @@ export const ALL_QUERY_KEYS = {
 // Utility functions for working with multiple hooks
 export const queryUtils = {
   // Invalidate all data (useful for logout or major updates)
-  invalidateAll: (queryClient: any) => {
+  invalidateAll: (queryClient: unknown) => {
     queryClient.invalidateQueries();
   },
 
   // Invalidate specific domain data
-  invalidateAuth: (queryClient: any) => {
+  invalidateAuth: (queryClient: unknown) => {
     queryClient.invalidateQueries({
       queryKey: AUTH_QUERY_KEYS.all,
     });
   },
 
-  invalidatePatients: (queryClient: any) => {
+  invalidatePatients: (queryClient: unknown) => {
     queryClient.invalidateQueries({
       queryKey: PATIENT_QUERY_KEYS.all,
     });
   },
 
-  invalidateAppointments: (queryClient: any) => {
+  invalidateAppointments: (queryClient: unknown) => {
     queryClient.invalidateQueries({
       queryKey: APPOINTMENT_QUERY_KEYS.all,
     });
   },
 
   // Clear all cached data
-  clearAll: (queryClient: any) => {
+  clearAll: (queryClient: unknown) => {
     queryClient.clear();
   },
 
   // Prefetch common data (useful for app initialization)
-  prefetchCommonData: async (queryClient: any) => {
+  prefetchCommonData: async (queryClient: unknown) => {
     const promises = [
       // Prefetch user profile
       queryClient.prefetchQuery({

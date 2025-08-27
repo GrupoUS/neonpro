@@ -19,7 +19,7 @@ class ProgressTrackingService {
     };
   }
 
-  async updateProgressTracking(id: string, data: any) {
+  async updateProgressTracking(id: string, data: unknown) {
     // Mock implementation for build compatibility
     return {
       id,

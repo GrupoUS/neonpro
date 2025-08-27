@@ -33,54 +33,48 @@ class NeonProLogger implements Logger {
     return `[${timestamp}] ${level.toUpperCase()}: ${message}${contextStr}`;
   }
 
-  info(message: string, context?: LogContext): void {
-    const formatted = this.formatMessage("info", message, context);
+  info(_message: string, _context?: LogContext): void {
     if (process.env.NODE_ENV === "production") {
       // In production, send to logging service (Sentry, DataDog, etc.)
       // For now, use console.info as fallback
       // biome-ignore lint/suspicious/noConsole: Centralized logging utility
-      console.info(formatted);
+      // console.info(formatted);
     } else {
       // biome-ignore lint/suspicious/noConsole: Development logging
-      console.info(formatted);
+      // console.info(formatted);
     }
   }
 
-  warn(message: string, context?: LogContext): void {
-    const formatted = this.formatMessage("warn", message, context);
+  warn(_message: string, _context?: LogContext): void {
     if (process.env.NODE_ENV === "production") {
       // In production, send to logging service
       // biome-ignore lint/suspicious/noConsole: Centralized logging utility
-      console.warn(formatted);
+      // console.warn(formatted);
     } else {
       // biome-ignore lint/suspicious/noConsole: Development logging
-      console.warn(formatted);
+      // console.warn(formatted);
     }
   }
 
-  error(message: string, error?: Error | unknown, context?: LogContext): void {
-    const errorContext =
-      error instanceof Error
-        ? { ...context, error: error.message, stack: error.stack }
-        : { ...context, error: String(error) };
-
-    const formatted = this.formatMessage("error", message, errorContext);
+  error(_message: string, error?: Error | unknown, context?: LogContext): void {
+    const _errorContext = error instanceof Error
+      ? { ...context, error: error.message, stack: error.stack }
+      : { ...context, error: String(error) };
 
     if (process.env.NODE_ENV === "production") {
       // In production, send to error tracking service
       // biome-ignore lint/suspicious/noConsole: Centralized logging utility
-      console.error(formatted);
+      // console.error(formatted);
     } else {
       // biome-ignore lint/suspicious/noConsole: Development logging
-      console.error(formatted);
+      // console.error(formatted);
     }
   }
 
-  debug(message: string, context?: LogContext): void {
+  debug(_message: string, _context?: LogContext): void {
     if (process.env.NODE_ENV !== "production") {
-      const formatted = this.formatMessage("debug", message, context);
       // biome-ignore lint/suspicious/noConsole: Development debugging
-      console.debug(formatted);
+      // console.debug(formatted);
     }
   }
 }

@@ -30,7 +30,7 @@ process.env = {
 Object.defineProperty(global, "crypto", {
   value: {
     randomUUID: () => "test-uuid",
-    getRandomValues: (arr: any) => arr,
+    getRandomValues: (arr: unknown) => arr,
   },
 });
 

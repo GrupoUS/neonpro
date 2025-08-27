@@ -20,7 +20,7 @@ interface AuthContextType {
   // Ações
   login: (
     credentials: LoginCredentials,
-  ) => Promise<{ success: boolean; error?: string }>;
+  ) => Promise<{ success: boolean; error?: string; }>;
   logout: () => Promise<void>;
 
   // Utilidades
@@ -68,9 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     timeUntilExpiration: authHook.timeUntilExpiration,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 /**

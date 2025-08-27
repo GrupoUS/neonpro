@@ -53,10 +53,9 @@ describe("cFM (Medical Council) Compliance Tests", () => {
         procedure: string,
         doctorSpecialty: string,
       ) => {
-        const authorizedSpecialties =
-          procedureSpecialtyMap[
-            procedure as keyof typeof procedureSpecialtyMap
-          ];
+        const authorizedSpecialties = procedureSpecialtyMap[
+          procedure as keyof typeof procedureSpecialtyMap
+        ];
         return authorizedSpecialties?.includes(doctorSpecialty);
       };
 
@@ -89,8 +88,8 @@ describe("cFM (Medical Council) Compliance Tests", () => {
           cmeValid,
           hoursCompleted,
           expiresIn: Math.ceil(
-            (new Date(doc.cmeValidUntil).getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24),
+            (new Date(doc.cmeValidUntil).getTime() - Date.now())
+              / (1000 * 60 * 60 * 24),
           ),
         };
       };
@@ -107,8 +106,7 @@ describe("cFM (Medical Council) Compliance Tests", () => {
     it("should validate digital signatures for medical documents", async () => {
       const signature = "digital-signature-hash-123";
 
-      const validation =
-        await mockCFMValidation.validateDigitalSignature(signature);
+      const validation = await mockCFMValidation.validateDigitalSignature(signature);
 
       expect(validation).toHaveProperty("isValid", true);
       expect(validation).toHaveProperty("signatureId", signature);
@@ -183,8 +181,7 @@ describe("cFM (Medical Council) Compliance Tests", () => {
         prescriptionType: "aesthetic_treatment",
       };
 
-      const validation =
-        await mockCFMValidation.validatePrescription(prescription);
+      const validation = await mockCFMValidation.validatePrescription(prescription);
 
       expect(validation).toHaveProperty("isValid", true);
       expect(validation).toHaveProperty("prescriptionId");
@@ -201,8 +198,7 @@ describe("cFM (Medical Council) Compliance Tests", () => {
       };
 
       const validateControlledSubstance = (medication: string) => {
-        const substance =
-          controlledSubstances[medication as keyof typeof controlledSubstances];
+        const substance = controlledSubstances[medication as keyof typeof controlledSubstances];
         return {
           isControlled: !!substance,
           schedule: substance?.schedule,
@@ -274,8 +270,7 @@ describe("cFM (Medical Council) Compliance Tests", () => {
         recordType: string,
         patientAge?: number,
       ) => {
-        const policy =
-          retentionPolicies[recordType as keyof typeof retentionPolicies];
+        const policy = retentionPolicies[recordType as keyof typeof retentionPolicies];
 
         if (recordType === "minor_patient" && patientAge) {
           const yearsUntil18 = Math.max(0, 18 - patientAge);
@@ -335,13 +330,11 @@ describe("cFM (Medical Council) Compliance Tests", () => {
         ];
 
         return {
-          isCompliant:
-            missingFields.length === 0 && securityRequirements.every(Boolean),
+          isCompliant: missingFields.length === 0 && securityRequirements.every(Boolean),
           missingFields,
-          securityScore:
-            (securityRequirements.filter(Boolean).length /
-              securityRequirements.length) *
-            100,
+          securityScore: (securityRequirements.filter(Boolean).length
+            / securityRequirements.length)
+            * 100,
         };
       };
 
@@ -377,10 +370,9 @@ describe("cFM (Medical Council) Compliance Tests", () => {
       };
 
       const canUseTelemedine = (procedure: string) => {
-        const restriction =
-          procedureRestrictions[
-            procedure as keyof typeof procedureRestrictions
-          ];
+        const restriction = procedureRestrictions[
+          procedure as keyof typeof procedureRestrictions
+        ];
         return restriction?.telemedicine_allowed;
       };
 
@@ -429,11 +421,9 @@ describe("cFM (Medical Council) Compliance Tests", () => {
         );
 
         return {
-          isValid:
-            completedElements.length === requiredElements.length &&
-            presentSignatures.length === requiredSignatures.length,
-          completionRate:
-            (completedElements.length / requiredElements.length) * 100,
+          isValid: completedElements.length === requiredElements.length
+            && presentSignatures.length === requiredSignatures.length,
+          completionRate: (completedElements.length / requiredElements.length) * 100,
           missingElements: requiredElements.filter(
             (element) => consent[element as keyof typeof consent] !== true,
           ),

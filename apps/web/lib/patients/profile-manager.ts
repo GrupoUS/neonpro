@@ -1,4 +1,4 @@
-﻿// Profile Manager - Mock implementation for build compatibility
+// Profile Manager - Mock implementation for build compatibility
 
 class ProfileManager {
   getProfile(patientId: string) {

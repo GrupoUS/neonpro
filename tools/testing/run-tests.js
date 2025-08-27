@@ -9,8 +9,6 @@
  */
 
 const { spawn } = require("node:child_process");
-const _path = require("node:path");
-
 // Test configurations
 const CONFIGS = {
   vitest: {
@@ -101,7 +99,7 @@ async function runPlaywright(config = "simple") {
  */
 async function main() {
   const args = process.argv.slice(2);
-  const command = args[0];
+  const [command] = args;
   const config = args[1] || "simple";
 
   switch (command) {

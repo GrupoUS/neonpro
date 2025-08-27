@@ -138,8 +138,7 @@ const MOCK_DOCTORS: DoctorStats[] = [
 
 export default function ClinicDashboard() {
   const [metrics, _setMetrics] = useState<ClinicMetrics>(MOCK_METRICS);
-  const [activities, _setActivities] =
-    useState<RecentActivity[]>(MOCK_ACTIVITIES);
+  const [activities, _setActivities] = useState<RecentActivity[]>(MOCK_ACTIVITIES);
   const [doctors, _setDoctors] = useState<DoctorStats[]>(MOCK_DOCTORS);
   const [_timeRange, _setTimeRange] = useState("today");
 
@@ -196,9 +195,7 @@ export default function ClinicDashboard() {
       offline: "Offline",
     };
 
-    return (
-      <Badge className={variants[availability]}>{labels[availability]}</Badge>
-    );
+    return <Badge className={variants[availability]}>{labels[availability]}</Badge>;
   };
 
   const formatCurrency = (value: number) => {
@@ -460,9 +457,11 @@ export default function ClinicDashboard() {
                 {activities.map((activity) => (
                   <div className="flex items-start space-x-4" key={activity.id}>
                     <div
-                      className={`rounded-full p-2 ${getActivityStatusColor(
-                        activity.status,
-                      )} bg-opacity-10`}
+                      className={`rounded-full p-2 ${
+                        getActivityStatusColor(
+                          activity.status,
+                        )
+                      } bg-opacity-10`}
                     >
                       {getActivityIcon(activity.type)}
                     </div>

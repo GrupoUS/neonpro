@@ -172,19 +172,17 @@ function simulateWebVitals() {
   };
 
   Object.entries(metrics).forEach(([name, value]) => {
-    const formattedValue =
-      name === "CLS"
-        ? value.toFixed(3)
-        : name === "LCP" || name === "FCP"
-          ? `${value.toFixed(1)}s`
-          : `${Math.round(value)}ms`;
+    const formattedValue = name === "CLS"
+      ? value.toFixed(3)
+      : name === "LCP" || name === "FCP"
+      ? `${value.toFixed(1)}s`
+      : `${Math.round(value)}ms`;
 
-    const isGood =
-      (name === "LCP" && value <= 2.5) ||
-      (name === "FID" && value <= 100) ||
-      (name === "CLS" && value <= 0.1) ||
-      (name === "FCP" && value <= 1.8) ||
-      (name === "TTFB" && value <= 800);
+    const isGood = (name === "LCP" && value <= 2.5)
+      || (name === "FID" && value <= 100)
+      || (name === "CLS" && value <= 0.1)
+      || (name === "FCP" && value <= 1.8)
+      || (name === "TTFB" && value <= 800);
 
     if (isGood) {
       success(`${name}: ${formattedValue} (Good)`);
@@ -227,7 +225,7 @@ async function runPerformanceTests() {
   log("=".repeat(60), colors.bold);
 
   const passed = results.filter((r) => r.passed).length;
-  const total = results.length;
+  const { length: total } = results;
 
   results.forEach((result) => {
     if (result.passed) {

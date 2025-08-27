@@ -15,8 +15,6 @@ import { useSearch } from "@tanstack/react-router";
 import { Calendar, Clock, MapPin, User } from "lucide-react";
 
 export function AppointmentsCalendar() {
-  const _search = useSearch({ from: "/appointments" });
-
   // Mock appointments data
   const appointments = [
     {
@@ -54,14 +52,10 @@ export function AppointmentsCalendar() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed": {
-        return (
-          <Badge className="bg-green-100 text-green-800">Confirmada</Badge>
-        );
+        return <Badge className="bg-green-100 text-green-800">Confirmada</Badge>;
       }
       case "pending": {
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>;
       }
       case "completed": {
         return <Badge className="bg-blue-100 text-blue-800">Concluída</Badge>;
@@ -130,9 +124,8 @@ export function AppointmentsCalendar() {
                     <span className="mt-2 font-medium text-sm">
                       {appointment.time}
                     </span>
-                    {index < appointments.length - 1 && (
-                      <div className="mt-2 h-8 w-0.5 bg-border" />
-                    )}
+                    {index < appointments.length - 1
+                      && <div className="mt-2 h-8 w-0.5 bg-border" />}
                   </div>
 
                   <div className="min-w-0 flex-1">
@@ -171,12 +164,11 @@ export function AppointmentsCalendar() {
                       <div>
                         <p className="font-medium">Horário</p>
                         <p className="text-muted-foreground">
-                          {appointment.time} -{" "}
-                          {new Date(
+                          {appointment.time} - {new Date(
                             new Date(
                               `2024-01-01 ${appointment.time}`,
-                            ).getTime() +
-                              appointment.duration * 60_000,
+                            ).getTime()
+                              + appointment.duration * 60_000,
                           ).toLocaleTimeString("pt-BR", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -192,9 +184,7 @@ export function AppointmentsCalendar() {
                       <Button size="sm" variant="outline">
                         Reagendar
                       </Button>
-                      {appointment.status === "pending" && (
-                        <Button size="sm">Confirmar</Button>
-                      )}
+                      {appointment.status === "pending" && <Button size="sm">Confirmar</Button>}
                     </div>
                   </div>
                 </div>

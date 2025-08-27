@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  getDashboardStats,
-  getPredictions,
-} from "@/app/lib/services/no-show-prediction";
+import { getDashboardStats, getPredictions } from "@/app/lib/services/no-show-prediction";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,13 +85,7 @@ interface AntiNoShowDashboardProps {
   className?: string;
 }
 
-// Utility functions for risk categories and analytics
-const _formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+// Utility functions for risk categories and analytics};
 
 const getRiskBadgeVariant = (riskCategory: string) => {
   switch (riskCategory.toLowerCase()) {
@@ -328,8 +319,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
     setIsLoading(true);
     try {
       // Load actual predictions from the API
-      const filters =
-        selectedFilter !== "all" ? { riskLevel: selectedFilter } : undefined;
+      const filters = selectedFilter !== "all" ? { riskLevel: selectedFilter } : undefined;
       const predictions = await getPredictions(filters);
 
       // Convert API response to PatientRiskData format
@@ -357,10 +347,11 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
       toast({
         title: "Predições Atualizadas",
-        description: `${formattedData.length} pacientes analisados. ${dashboardStats.predictedNoShows} em alto risco.`,
+        description:
+          `${formattedData.length} pacientes analisados. ${dashboardStats.predictedNoShows} em alto risco.`,
       });
     } catch (error) {
-      console.error("Error loading predictions:", error);
+      // console.error("Error loading predictions:", error);
 
       // Fallback to mock data if API is not available
       const mockData = generateMockData();
@@ -368,8 +359,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
       toast({
         title: "Usando Dados de Demonstração",
-        description:
-          "API não disponível. Mostrando dados simulados para demonstração.",
+        description: "API não disponível. Mostrando dados simulados para demonstração.",
         variant: "default",
       });
     } finally {
@@ -445,7 +435,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         ],
       });
     } catch (error) {
-      console.error("Failed to load ML pipeline data:", error);
+      // console.error("Failed to load ML pipeline data:", error);
     }
   }, []);
 
@@ -457,8 +447,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
 
       toast({
         title: "Manutenção Concluída",
-        description:
-          "Verificação de modelo e detecção de drift executadas com sucesso",
+        description: "Verificação de modelo e detecção de drift executadas com sucesso",
       });
 
       // Refresh data after maintenance
@@ -517,12 +506,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
     return true;
   });
 
-  // Risk category styling
-  const _getRiskBadgeVariant = (category: string) => {
-    switch (category) {
-      case "very_high": {
-        return "destructive";
-      }
+  // Risk category styling      }
       case "high": {
         return "destructive";
       }
@@ -536,13 +520,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         return "outline";
       }
     }
-  };
-
-  const _getRiskIcon = (category: string) => {
-    switch (category) {
-      case "very_high": {
-        return <XCircle className="h-4 w-4" />;
-      }
+  };      }
       case "high": {
         return <AlertTriangle className="h-4 w-4" />;
       }
@@ -556,13 +534,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         return <Minus className="h-4 w-4" />;
       }
     }
-  };
-
-  const _getRiskLabel = (category: string) => {
-    switch (category) {
-      case "very_high": {
-        return "Muito Alto";
-      }
+  };      }
       case "high": {
         return "Alto";
       }
@@ -746,18 +718,14 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                 <Button
                   onClick={() => setSelectedFilter("high")}
                   size="sm"
-                  variant={
-                    selectedFilter === "high" ? "destructive" : "outline"
-                  }
+                  variant={selectedFilter === "high" ? "destructive" : "outline"}
                 >
                   Alto Risco
                 </Button>
                 <Button
                   onClick={() => setSelectedFilter("medium")}
                   size="sm"
-                  variant={
-                    selectedFilter === "medium" ? "secondary" : "outline"
-                  }
+                  variant={selectedFilter === "medium" ? "secondary" : "outline"}
                 >
                   Médio
                 </Button>
@@ -776,28 +744,30 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
           <TabsContent className="space-y-4" value="risk_patients">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
               <AnimatePresence>
-                {isLoading ? (
-                  <motion.div
-                    animate={{ opacity: 1 }}
-                    className="flex items-center justify-center py-12"
-                    initial={{ opacity: 0 }}
-                  >
-                    <div className="text-center">
-                      <RefreshCw className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
-                      <p className="mt-2 text-muted-foreground">
-                        Carregando predições...
-                      </p>
-                    </div>
-                  </motion.div>
-                ) : (
-                  filteredPatients.map((patient, index) => (
-                    <PatientRiskCard
-                      delay={index * 0.1}
-                      key={patient.patientId}
-                      patient={patient}
-                    />
-                  ))
-                )}
+                {isLoading
+                  ? (
+                    <motion.div
+                      animate={{ opacity: 1 }}
+                      className="flex items-center justify-center py-12"
+                      initial={{ opacity: 0 }}
+                    >
+                      <div className="text-center">
+                        <RefreshCw className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
+                        <p className="mt-2 text-muted-foreground">
+                          Carregando predições...
+                        </p>
+                      </div>
+                    </motion.div>
+                  )
+                  : (
+                    filteredPatients.map((patient, index) => (
+                      <PatientRiskCard
+                        delay={index * 0.1}
+                        key={patient.patientId}
+                        patient={patient}
+                      />
+                    ))
+                  )}
               </AnimatePresence>
             </div>
           </TabsContent>
@@ -860,8 +830,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     key={version.version_id}
                     className={cn(
                       "transition-all duration-200",
-                      version.deployment_status === "production" &&
-                        "ring-2 ring-green-500",
+                      version.deployment_status === "production"
+                        && "ring-2 ring-green-500",
                     )}
                   >
                     <CardHeader className="pb-3">
@@ -870,11 +840,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           {version.version_number}
                         </CardTitle>
                         <Badge
-                          variant={
-                            version.deployment_status === "production"
-                              ? "default"
-                              : "secondary"
-                          }
+                          variant={version.deployment_status === "production"
+                            ? "default"
+                            : "secondary"}
                         >
                           {version.deployment_status}
                         </Badge>
@@ -920,8 +888,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                       </div>
 
                       <div className="pt-2 text-xs text-muted-foreground">
-                        Criado:{" "}
-                        {new Date(version.created_at).toLocaleDateString(
+                        Criado: {new Date(version.created_at).toLocaleDateString(
                           "pt-BR",
                         )}
                       </div>
@@ -947,8 +914,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         )}
                       />
                       <CardTitle className="text-base">
-                        Status:{" "}
-                        {driftStatus.drift_detected
+                        Status: {driftStatus.drift_detected
                           ? "Drift Detectado"
                           : "Modelo Estável"}
                       </CardTitle>
@@ -958,11 +924,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-sm">Severidade:</span>
                       <Badge
-                        variant={
-                          driftStatus.drift_severity === "low"
-                            ? "outline"
-                            : "destructive"
-                        }
+                        variant={driftStatus.drift_severity === "low"
+                          ? "outline"
+                          : "destructive"}
                       >
                         {driftStatus.drift_severity}
                       </Badge>
@@ -987,8 +951,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     </div>
 
                     <div className="pt-2 text-xs text-muted-foreground">
-                      Última verificação:{" "}
-                      {new Date(driftStatus.detection_timestamp).toLocaleString(
+                      Última verificação: {new Date(driftStatus.detection_timestamp).toLocaleString(
                         "pt-BR",
                       )}
                     </div>
@@ -1017,9 +980,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         {test.model_a_version} vs {test.model_b_version}
                       </CardTitle>
                       <Badge
-                        variant={
-                          test.status === "running" ? "default" : "secondary"
-                        }
+                        variant={test.status === "running" ? "default" : "secondary"}
                       >
                         {test.status}
                       </Badge>
@@ -1096,11 +1057,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           Significância estatística:
                         </span>
                         <Badge
-                          variant={
-                            test.statistical_significance
-                              ? "default"
-                              : "outline"
-                          }
+                          variant={test.statistical_significance
+                            ? "default"
+                            : "outline"}
                         >
                           {test.statistical_significance
                             ? "Significativo"
@@ -1121,8 +1080,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     </div>
 
                     <div className="pt-2 text-xs text-muted-foreground">
-                      Iniciado:{" "}
-                      {new Date(test.start_date).toLocaleDateString("pt-BR")}
+                      Iniciado: {new Date(test.start_date).toLocaleDateString("pt-BR")}
                     </div>
                   </CardContent>
                 </Card>
@@ -1192,8 +1150,7 @@ function PatientRiskCard({
                   {patient.patientName}
                 </CardTitle>
                 <p className="text-muted-foreground text-sm">
-                  {patient.appointmentDate} às {patient.appointmentTime} -{" "}
-                  {patient.appointmentType}
+                  {patient.appointmentDate} às {patient.appointmentTime} - {patient.appointmentType}
                 </p>
               </div>
             </div>
@@ -1249,11 +1206,9 @@ function PatientRiskCard({
                   key={index}
                 >
                   <div className="flex items-center gap-2">
-                    {factor.impactDirection === "increases_risk" ? (
-                      <ArrowUp className="h-3 w-3 text-red-500" />
-                    ) : (
-                      <ArrowDown className="h-3 w-3 text-green-500" />
-                    )}
+                    {factor.impactDirection === "increases_risk"
+                      ? <ArrowUp className="h-3 w-3 text-red-500" />
+                      : <ArrowDown className="h-3 w-3 text-green-500" />}
                     <span>{factor.factorName}</span>
                   </div>
                   <span className="font-medium">
@@ -1277,8 +1232,8 @@ function PatientRiskCard({
                     {action.priority === "urgent"
                       ? "🚨"
                       : action.priority === "high"
-                        ? "⚡"
-                        : "📋"}
+                      ? "⚡"
+                      : "📋"}
                   </Badge>
                   <div className="flex-1">
                     <p className="font-medium">{action.description}</p>

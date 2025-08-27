@@ -25,7 +25,7 @@ interface ModelVersionInfo {
   accuracy: number;
   created_at: string;
   deployed_at?: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 interface ABTestExperiment {
@@ -37,7 +37,7 @@ interface ABTestExperiment {
   traffic_split: number;
   start_date: string;
   end_date?: string;
-  success_criteria: Record<string, any>;
+  success_criteria: Record<string, unknown>;
 }
 
 interface DriftAnalysisRequest {

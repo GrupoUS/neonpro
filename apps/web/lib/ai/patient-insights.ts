@@ -11,8 +11,8 @@ export class PatientInsightsIntegration {
     };
   }
 
-  async getComprehensiveInsights(patientId: string): Promise<any>;
-  async getComprehensiveInsights(request: any): Promise<any>;
+  async getComprehensiveInsights(patientId: string): Promise<unknown>;
+  async getComprehensiveInsights(request: unknown): Promise<unknown>;
   async getComprehensiveInsights(patientIdOrRequest: string | any) {
     // Mock implementation for build compatibility
     if (typeof patientIdOrRequest === "string") {
@@ -52,7 +52,7 @@ export class PatientInsightsIntegration {
   async updatePatientOutcome(
     patientId: string,
     treatmentId: string,
-    outcomeData: any,
+    outcomeData: unknown,
   ) {
     // Mock implementation for build compatibility
     return {

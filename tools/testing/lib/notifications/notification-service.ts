@@ -41,7 +41,7 @@ export interface NotificationMessage {
   priority: NotificationChannel["priority"];
   subject: string;
   body: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   scheduledAt?: Date;
   sentAt?: Date;
   deliveredAt?: Date;
@@ -103,8 +103,7 @@ class MockNotificationService {
   private readonly channels: Map<string, NotificationChannel> = new Map();
   private readonly templates: Map<string, NotificationTemplate> = new Map();
   private readonly messages: NotificationMessage[] = [];
-  private readonly preferences: Map<string, NotificationPreferences> =
-    new Map();
+  private readonly preferences: Map<string, NotificationPreferences> = new Map();
 
   constructor() {
     this.initializeDefaultChannels();
@@ -120,7 +119,7 @@ class MockNotificationService {
     variables?: Record<string, string>;
     priority?: NotificationChannel["priority"];
     scheduledAt?: Date;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }): Promise<NotificationMessage> {
     const template = this.templates.get(request.templateId);
     if (!template) {
@@ -133,7 +132,7 @@ class MockNotificationService {
       : undefined;
 
     // Determine best channel based on preferences and template
-    const availableChannels = template.channels;
+    const { channels: availableChannels } = template;
     const preferredChannel = this.selectOptimalChannel(
       availableChannels,
       userPrefs,
@@ -182,7 +181,7 @@ class MockNotificationService {
     body: string;
     priority?: NotificationChannel["priority"];
     scheduledAt?: Date;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }): Promise<NotificationMessage> {
     const message: NotificationMessage = {
       id: `msg_${Date.now()}_${Math.random().toString(36).slice(2)}`,
@@ -342,8 +341,7 @@ class MockNotificationService {
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const readRate =
-      totalDelivered > 0 ? (totalRead / totalDelivered) * 100 : 0;
+    const readRate = totalDelivered > 0 ? (totalRead / totalDelivered) * 100 : 0;
     const errorRate = totalSent > 0 ? (totalFailed / totalSent) * 100 : 0;
 
     // Calculate stats by channel
@@ -459,8 +457,8 @@ class MockNotificationService {
   async processPendingNotifications(): Promise<void> {
     const pendingMessages = this.messages.filter(
       (msg) =>
-        msg.status === "pending" &&
-        (!msg.scheduledAt || msg.scheduledAt <= new Date()),
+        msg.status === "pending"
+        && (!msg.scheduledAt || msg.scheduledAt <= new Date()),
     );
 
     for (const message of pendingMessages) {
@@ -530,7 +528,8 @@ class MockNotificationService {
         name: "Medical Alert - Critical",
         type: "medical_alert",
         subject: "URGENT: Critical Medical Alert - {{patientName}}",
-        body: "Critical medical alert for patient {{patientName}} (ID: {{patientId}}).\n\nAlert: {{alertMessage}}\n\nImmediate attention required.\n\nTime: {{timestamp}}\nProvider: {{providerName}}",
+        body:
+          "Critical medical alert for patient {{patientName}} (ID: {{patientId}}).\n\nAlert: {{alertMessage}}\n\nImmediate attention required.\n\nTime: {{timestamp}}\nProvider: {{providerName}}",
         variables: [
           "patientName",
           "patientId",
@@ -545,7 +544,8 @@ class MockNotificationService {
         name: "Appointment Reminder",
         type: "appointment_reminder",
         subject: "Appointment Reminder - {{appointmentDate}}",
-        body: "Hello {{patientName}},\n\nThis is a reminder for your upcoming appointment:\n\nDate: {{appointmentDate}}\nTime: {{appointmentTime}}\nProvider: {{providerName}}\nLocation: {{location}}\n\nPlease confirm your attendance or reschedule if needed.",
+        body:
+          "Hello {{patientName}},\n\nThis is a reminder for your upcoming appointment:\n\nDate: {{appointmentDate}}\nTime: {{appointmentTime}}\nProvider: {{providerName}}\nLocation: {{location}}\n\nPlease confirm your attendance or reschedule if needed.",
         variables: [
           "patientName",
           "appointmentDate",
@@ -560,7 +560,8 @@ class MockNotificationService {
         name: "System Maintenance Notice",
         type: "system_notification",
         subject: "System Maintenance - {{maintenanceDate}}",
-        body: "Dear User,\n\nScheduled system maintenance will occur on {{maintenanceDate}} from {{startTime}} to {{endTime}}.\n\nDuring this time, the system may be unavailable.\n\nWe apologize for any inconvenience.",
+        body:
+          "Dear User,\n\nScheduled system maintenance will occur on {{maintenanceDate}} from {{startTime}} to {{endTime}}.\n\nDuring this time, the system may be unavailable.\n\nWe apologize for any inconvenience.",
         variables: ["maintenanceDate", "startTime", "endTime"],
         channels: ["email", "in_app"],
         priority: "low",
@@ -569,7 +570,8 @@ class MockNotificationService {
         name: "Compliance Alert",
         type: "compliance_alert",
         subject: "Compliance Alert - Action Required",
-        body: "Compliance alert detected:\n\nType: {{complianceType}}\nSeverity: {{severity}}\nDescription: {{description}}\n\nAction required by: {{dueDate}}\n\nPlease review and take appropriate action.",
+        body:
+          "Compliance alert detected:\n\nType: {{complianceType}}\nSeverity: {{severity}}\nDescription: {{description}}\n\nAction required by: {{dueDate}}\n\nPlease review and take appropriate action.",
         variables: ["complianceType", "severity", "description", "dueDate"],
         channels: ["email", "webhook"],
         priority: "high",
@@ -650,9 +652,7 @@ class MockNotificationService {
   ): Promise<void> {
     try {
       // Simulate network delay
-      await new Promise((resolve) =>
-        setTimeout(resolve, Math.random() * 100 + 50),
-      );
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 100 + 50));
 
       // Simulate delivery success/failure (95% success rate)
       const success = Math.random() > 0.05;

@@ -6,7 +6,7 @@
  * com estruturas padronizadas para cada endpoint.
  */
 
-import type { Notification } from "@neonpro/db";
+import type { Notification } from "@neonpro/database";
 import type { TimeSlot } from "../schemas/appointment.schema";
 import type { AuthToken, AuthUser } from "../schemas/auth.schema";
 import type { ApiMeta, ApiResponse, PaginationMeta } from "./api.types";
@@ -35,33 +35,37 @@ export interface ListResponse<T> extends ApiResponse<T[]> {
 }
 
 // Authentication Responses
-export interface LoginResponse
-  extends ApiResponse<{
+export interface LoginResponse extends
+  ApiResponse<{
     user: AuthUser;
     tokens: AuthToken;
     requiresMFA?: boolean;
-  }> {}
+  }>
+{}
 
-export interface RegisterResponse
-  extends ApiResponse<{
+export interface RegisterResponse extends
+  ApiResponse<{
     user: AuthUser;
     message: string;
     requiresVerification?: boolean;
-  }> {}
+  }>
+{}
 
-export interface RefreshTokenResponse
-  extends ApiResponse<{
+export interface RefreshTokenResponse extends
+  ApiResponse<{
     tokens: AuthToken;
-  }> {}
+  }>
+{}
 
 export interface ProfileResponse extends ApiResponse<AuthUser> {}
 
-export interface MFASetupResponse
-  extends ApiResponse<{
+export interface MFASetupResponse extends
+  ApiResponse<{
     qrCode?: string; // For TOTP
     backupCodes?: string[];
     secret?: string;
-  }> {}
+  }>
+{}
 
 // Patient Responses
 export interface PatientResponse extends ApiResponse<Patient> {}
@@ -70,8 +74,8 @@ export interface PatientsListResponse extends PaginatedResponse<Patient> {}
 
 export interface PatientSearchResponse extends PaginatedResponse<Patient> {}
 
-export interface PatientStatsResponse
-  extends ApiResponse<{
+export interface PatientStatsResponse extends
+  ApiResponse<{
     totalPatients: number;
     newPatientsThisMonth: number;
     averageAge: number;
@@ -84,43 +88,44 @@ export interface PatientStatsResponse
       city: string;
       count: number;
     }[];
-  }> {}
+  }>
+{}
 
-export interface PatientExportResponse
-  extends ApiResponse<{
+export interface PatientExportResponse extends
+  ApiResponse<{
     downloadUrl: string;
     format: "csv" | "xlsx" | "pdf";
     totalRecords: number;
     expiresAt: string;
-  }> {}
+  }>
+{}
 
 // Appointment Responses
 export interface AppointmentResponse extends ApiResponse<Appointment> {}
 
-export interface AppointmentsListResponse
-  extends PaginatedResponse<Appointment> {}
+export interface AppointmentsListResponse extends PaginatedResponse<Appointment> {}
 
-export interface AppointmentSearchResponse
-  extends PaginatedResponse<Appointment> {}
+export interface AppointmentSearchResponse extends PaginatedResponse<Appointment> {}
 
-export interface AppointmentAvailabilityResponse
-  extends ApiResponse<TimeSlot[]> {}
+export interface AppointmentAvailabilityResponse extends ApiResponse<TimeSlot[]> {}
 
-export interface AppointmentRescheduleResponse
-  extends ApiResponse<{
+export interface AppointmentRescheduleResponse extends
+  ApiResponse<{
     appointment: Appointment;
     message: string;
-  }> {}
+  }>
+{}
 
-export interface AppointmentCancelResponse
-  extends ApiResponse<{
+export interface AppointmentCancelResponse extends
+  ApiResponse<{
     appointment: Appointment;
     refundAmount?: number;
     message: string;
-  }> {}
+  }>
+{}
 
-export interface AppointmentStatsResponse
-  extends ApiResponse<{
+export interface AppointmentStatsResponse extends
+  ApiResponse<{
     totalAppointments: number;
     thisMonth: number;
     upcomingToday: number;
@@ -132,7 +137,8 @@ export interface AppointmentStatsResponse
     typeDistribution: Record<string, number>;
     revenueThisMonth: number;
     averageRating: number;
-  }> {}
+  }>
+{}
 
 // Clinic Responses
 export interface ClinicResponse extends ApiResponse<Clinic> {}
@@ -143,28 +149,30 @@ export interface ClinicSearchResponse extends PaginatedResponse<Clinic> {}
 
 export interface ClinicStaffResponse extends ListResponse<Professional> {}
 
-export interface ClinicServicesResponse
-  extends ListResponse<{
+export interface ClinicServicesResponse extends
+  ListResponse<{
     id: string;
     name: string;
     category: string;
     duration: number;
     price?: number;
     isActive: boolean;
-  }> {}
+  }>
+{}
 
-export interface ClinicAvailabilityResponse
-  extends ApiResponse<{
+export interface ClinicAvailabilityResponse extends
+  ApiResponse<{
     date: string;
     professionals: {
       professionalId: string;
       name: string;
       availableSlots: TimeSlot[];
     }[];
-  }> {}
+  }>
+{}
 
-export interface ClinicStatsResponse
-  extends ApiResponse<{
+export interface ClinicStatsResponse extends
+  ApiResponse<{
     totalRevenue: number;
     monthlyRevenue: number;
     totalAppointments: number;
@@ -179,24 +187,26 @@ export interface ClinicStatsResponse
       count: number;
       revenue: number;
     }[];
-  }> {}
+  }>
+{}
 
 // Professional Responses
 export interface ProfessionalResponse extends ApiResponse<Professional> {}
 
 export interface ProfessionalsListResponse extends ListResponse<Professional> {}
 
-export interface ProfessionalScheduleResponse
-  extends ApiResponse<{
+export interface ProfessionalScheduleResponse extends
+  ApiResponse<{
     professional: Professional;
     schedule: {
       date: string;
       slots: TimeSlot[];
     }[];
-  }> {}
+  }>
+{}
 
-export interface ProfessionalStatsResponse
-  extends ApiResponse<{
+export interface ProfessionalStatsResponse extends
+  ApiResponse<{
     totalPatients: number;
     totalAppointments: number;
     completedAppointments: number;
@@ -208,34 +218,35 @@ export interface ProfessionalStatsResponse
       treatment: string;
       count: number;
     }[];
-  }> {}
+  }>
+{}
 
 // Notification Responses
 export interface NotificationResponse extends ApiResponse<Notification> {}
 
-export interface NotificationsListResponse
-  extends PaginatedResponse<Notification> {}
+export interface NotificationsListResponse extends PaginatedResponse<Notification> {}
 
-export interface NotificationMarkReadResponse
-  extends ApiResponse<{
+export interface NotificationMarkReadResponse extends
+  ApiResponse<{
     notification: Notification;
-  }> {}
+  }>
+{}
 
-export interface NotificationStatsResponse
-  extends ApiResponse<{
+export interface NotificationStatsResponse extends
+  ApiResponse<{
     unreadCount: number;
     totalCount: number;
     byType: Record<string, number>;
-  }> {}
+  }>
+{}
 
 // Treatment Record Responses
 export interface TreatmentRecordResponse extends ApiResponse<TreatmentRecord> {}
 
-export interface TreatmentRecordsListResponse
-  extends PaginatedResponse<TreatmentRecord> {}
+export interface TreatmentRecordsListResponse extends PaginatedResponse<TreatmentRecord> {}
 
-export interface TreatmentStatsResponse
-  extends ApiResponse<{
+export interface TreatmentStatsResponse extends
+  ApiResponse<{
     totalTreatments: number;
     byType: Record<string, number>;
     successRate: number;
@@ -245,23 +256,25 @@ export interface TreatmentStatsResponse
       treatment: string;
       count: number;
     }[];
-  }> {}
+  }>
+{}
 
 // Payment Responses
 export interface PaymentResponse extends ApiResponse<Payment> {}
 
 export interface PaymentsListResponse extends PaginatedResponse<Payment> {}
 
-export interface PaymentCreateResponse
-  extends ApiResponse<{
+export interface PaymentCreateResponse extends
+  ApiResponse<{
     payment: Payment;
     paymentUrl?: string; // For external processors
     qrCode?: string; // For PIX
     barcodeNumber?: string; // For bank slip
-  }> {}
+  }>
+{}
 
-export interface PaymentStatsResponse
-  extends ApiResponse<{
+export interface PaymentStatsResponse extends
+  ApiResponse<{
     totalRevenue: number;
     monthlyRevenue: number;
     pendingAmount: number;
@@ -276,22 +289,24 @@ export interface PaymentStatsResponse
       }
     >;
     avgPaymentValue: number;
-  }> {}
+  }>
+{}
 
 // File/Document Responses
 export interface FileUploadResponse extends ApiResponse<FileDocument> {}
 
 export interface FilesListResponse extends ListResponse<FileDocument> {}
 
-export interface FileDownloadResponse
-  extends ApiResponse<{
+export interface FileDownloadResponse extends
+  ApiResponse<{
     downloadUrl: string;
     expiresAt: string;
-  }> {}
+  }>
+{}
 
 // Health Check Response
-export interface HealthCheckResponse
-  extends ApiResponse<{
+export interface HealthCheckResponse extends
+  ApiResponse<{
     status: "healthy" | "unhealthy";
     environment: string;
     version: string;
@@ -308,11 +323,12 @@ export interface HealthCheckResponse
       memoryUsage: number;
       cpuUsage?: number;
     };
-  }> {}
+  }>
+{}
 
 // Analytics/Dashboard Responses
-export interface DashboardStatsResponse
-  extends ApiResponse<{
+export interface DashboardStatsResponse extends
+  ApiResponse<{
     overview: {
       totalPatients: number;
       totalAppointments: number;
@@ -336,10 +352,11 @@ export interface DashboardStatsResponse
       revenue: number;
       appointments: number;
     }[];
-  }> {}
+  }>
+{}
 
-export interface ReportsResponse
-  extends ApiResponse<{
+export interface ReportsResponse extends
+  ApiResponse<{
     reportType: string;
     generatedAt: string;
     period: {
@@ -348,11 +365,12 @@ export interface ReportsResponse
     };
     data: Record<string, unknown>;
     downloadUrl?: string;
-  }> {}
+  }>
+{}
 
 // Bulk Operation Responses
-export interface BulkImportResponse
-  extends ApiResponse<{
+export interface BulkImportResponse extends
+  ApiResponse<{
     totalProcessed: number;
     successCount: number;
     errorCount: number;
@@ -362,17 +380,19 @@ export interface BulkImportResponse
       message: string;
     }[];
     importId: string;
-  }> {}
+  }>
+{}
 
-export interface BulkDeleteResponse
-  extends ApiResponse<{
+export interface BulkDeleteResponse extends
+  ApiResponse<{
     deletedCount: number;
     failedCount: number;
     errors?: {
       id: string;
       reason: string;
     }[];
-  }> {}
+  }>
+{}
 
 // Search/Filter Response Types
 export type SearchResponse<T> = PaginatedResponse<T>;
@@ -380,11 +400,12 @@ export type SearchResponse<T> = PaginatedResponse<T>;
 // Generic CRUD Response Types
 export interface CreateResponse<T> extends ApiResponse<T> {}
 export interface UpdateResponse<T> extends ApiResponse<T> {}
-export interface DeleteResponse
-  extends ApiResponse<{
+export interface DeleteResponse extends
+  ApiResponse<{
     id: string;
     message: string;
-  }> {}
+  }>
+{}
 
 // Error Response Types
 export interface ValidationErrorResponse extends ApiResponse<never> {
@@ -453,10 +474,10 @@ export const isErrorResponse = (
   response: unknown,
 ): response is ErrorResponse => {
   return (
-    typeof response === "object" &&
-    response !== null &&
-    "success" in response &&
-    (response as any).success === false
+    typeof response === "object"
+    && response !== null
+    && "success" in response
+    && (response as unknown).success === false
   );
 };
 
@@ -464,10 +485,10 @@ export const isPaginatedResponse = <T>(
   response: unknown,
 ): response is PaginatedResponse<T> => {
   return (
-    typeof response === "object" &&
-    response !== null &&
-    "success" in response &&
-    "meta" in response &&
-    "pagination" in (response as any).meta
+    typeof response === "object"
+    && response !== null
+    && "success" in response
+    && "meta" in response
+    && "pagination" in (response as unknown).meta
   );
 };

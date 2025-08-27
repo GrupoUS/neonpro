@@ -21,7 +21,7 @@ export interface MonitorConfig {
 
 export class DeploymentMonitor {
   private readonly deploymentHistory: DeploymentMetrics[] = [];
-  private currentDeployment: DeploymentMetrics | null = null;
+  private currentDeployment: DeploymentMetrics | null = undefined;
 
   constructor(private readonly config: MonitorConfig) {}
 
@@ -59,7 +59,7 @@ export class DeploymentMonitor {
    */
   completeDeployment(success: boolean): DeploymentMetrics | null {
     if (!this.currentDeployment) {
-      return null;
+      return;
     }
 
     this.currentDeployment.endTime = new Date();
@@ -73,8 +73,8 @@ export class DeploymentMonitor {
       this.deploymentHistory.shift();
     }
 
-    const completed = this.currentDeployment;
-    this.currentDeployment = null;
+    const { currentDeployment: completed } = this;
+    this.currentDeployment = undefined;
     return completed;
   }
 
@@ -110,14 +110,12 @@ export class DeploymentMonitor {
     const completedDeployments = this.deploymentHistory.filter(
       (d) => d.endTime,
     );
-    const averageTime =
-      completedDeployments.length > 0
-        ? completedDeployments.reduce((sum, d) => {
-            const duration =
-              (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
-            return sum + duration;
-          }, 0) / completedDeployments.length
-        : 0;
+    const averageTime = completedDeployments.length > 0
+      ? completedDeployments.reduce((sum, d) => {
+        const duration = (d.endTime?.getTime() ?? 0) - d.startTime.getTime();
+        return sum + duration;
+      }, 0) / completedDeployments.length
+      : 0;
 
     return {
       totalDeployments: total,

@@ -543,7 +543,7 @@ class nt {
 					g(l, h, v);
 			}
 			for (const h of _.tests) {
-				const v = h.title;
+				const { title: v } = h;
 				let u = a.children.find((C) => C.kind !== "group" && C.title === v);
 				u ||
 					((u = {
@@ -1686,7 +1686,7 @@ const wt = navigator.platform === "MacIntel",
 						((x.current = new Set([...x.current, ...m])),
 						(E.current = E.current.then(async () => {
 							let P, U, D;
-							const k = x.current;
+							const { current: k } = x;
 							if (((x.current = new Set()), k.size === 0)) {
 								return;
 							}

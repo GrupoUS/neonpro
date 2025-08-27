@@ -89,7 +89,7 @@ global.testUtils = {
   }),
 
   // Performance testing utilities
-  measurePerformance: async (fn: () => Promise<any>, _label = "Operation") => {
+  measurePerformance: async (fn: () => Promise<unknown>, _label = "Operation") => {
     const start = performance.now();
     const result = await fn();
     const end = performance.now();

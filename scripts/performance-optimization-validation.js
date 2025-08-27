@@ -68,14 +68,12 @@ async function validatePerformanceOptimizations() {
       validationResults,
       await validateFinalReport(finalReport),
     );
-    const constitutionalResults =
-      await validateConstitutionalCompliance(finalReport);
+    const constitutionalResults = await validateConstitutionalCompliance(finalReport);
     validationResults = mergResults(validationResults, constitutionalResults);
 
-    const totalTests =
-      validationResults.passed +
-      validationResults.failed +
-      validationResults.warnings;
+    const totalTests = validationResults.passed
+      + validationResults.failed
+      + validationResults.warnings;
     const successRate = Math.round(
       (validationResults.passed / totalTests) * 100,
     );
@@ -195,9 +193,8 @@ async function validateAIInferencePerformance(_integration) {
       }
     });
 
-    const avgResponseTime =
-      inferenceTests.reduce((sum, test) => sum + test.responseTime, 0) /
-      inferenceTests.length;
+    const avgResponseTime = inferenceTests.reduce((sum, test) => sum + test.responseTime, 0)
+      / inferenceTests.length;
 
     if (avgResponseTime <= PERFORMANCE_TARGETS.aiInferenceTime) {
       results.passed++;
@@ -287,9 +284,8 @@ async function validateDatabasePerformance(_integration) {
       }
     });
 
-    const avgQueryTime =
-      queryTests.reduce((sum, test) => sum + test.responseTime, 0) /
-      queryTests.length;
+    const avgQueryTime = queryTests.reduce((sum, test) => sum + test.responseTime, 0)
+      / queryTests.length;
 
     if (avgQueryTime <= PERFORMANCE_TARGETS.databaseQueryTime) {
       results.passed++;
@@ -383,7 +379,7 @@ async function validateFinalReport(report) {
     });
 
     // Validate performance metrics
-    const metrics = report.metrics;
+    const { metrics: metrics } = report;
     if (metrics.overallScore >= 90) {
       results.passed++;
       results.details.push(

@@ -47,32 +47,6 @@ const ComplianceDashboardMetricsSchema = z.object({
   }),
   last_updated: z.string().datetime(),
 });
-const _ComplianceAlertSchema = z.object({
-  alert_id: z.string().uuid(),
-  alert_type: z.enum(["critical", "warning", "info"]),
-  category: z.enum([
-    "lgpd",
-    "anvisa",
-    "cfm",
-    "constitutional",
-    "privacy",
-    "security",
-    "operational",
-  ]),
-  title: z.string().min(1).max(200),
-  description: z.string().min(1).max(1000),
-  severity_score: z.number().min(1).max(10),
-  compliance_impact: z.object({
-    affects_patient_privacy: z.boolean(),
-    affects_regulatory_compliance: z.boolean(),
-    affects_constitutional_rights: z.boolean(),
-    affects_medical_accuracy: z.boolean(),
-  }),
-  resolution_required: z.boolean(),
-  estimated_resolution_time: z.string().optional(),
-  created_at: z.string().datetime(),
-  resolved_at: z.string().datetime().optional(),
-});
 const ComplianceDashboardReportSchema = z.object({
   report_id: z.string().uuid(),
   report_type: z.enum([
@@ -271,8 +245,7 @@ export class ComplianceDashboardService {
         alert_type: "critical",
         category: "operational",
         title: "Constitutional Compliance Monitoring Failure",
-        description:
-          "Automated compliance monitoring system encountered an error",
+        description: "Automated compliance monitoring system encountered an error",
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -294,15 +267,16 @@ export class ComplianceDashboardService {
     const alerts = [];
     // Check critical compliance score threshold
     if (
-      metrics.overall_compliance_score <
-      this.config.alert_thresholds.critical_compliance_score
+      metrics.overall_compliance_score
+        < this.config.alert_thresholds.critical_compliance_score
     ) {
       alerts.push({
         alert_id: crypto.randomUUID(),
         alert_type: "critical",
         category: "constitutional",
         title: "Critical Constitutional Compliance Violation",
-        description: `Overall compliance score (${metrics.overall_compliance_score}) below critical threshold (${this.config.alert_thresholds.critical_compliance_score})`,
+        description:
+          `Overall compliance score (${metrics.overall_compliance_score}) below critical threshold (${this.config.alert_thresholds.critical_compliance_score})`,
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -317,17 +291,19 @@ export class ComplianceDashboardService {
     }
     // Check privacy budget warning threshold
     if (
-      metrics.privacy_metrics.privacy_budget_utilization >
-      this.config.alert_thresholds.privacy_budget_warning
+      metrics.privacy_metrics.privacy_budget_utilization
+        > this.config.alert_thresholds.privacy_budget_warning
     ) {
       alerts.push({
         alert_id: crypto.randomUUID(),
         alert_type: "warning",
         category: "privacy",
         title: "Privacy Budget Near Exhaustion",
-        description: `Privacy budget utilization (${Math.round(
-          metrics.privacy_metrics.privacy_budget_utilization * 100,
-        )}%) approaching limit`,
+        description: `Privacy budget utilization (${
+          Math.round(
+            metrics.privacy_metrics.privacy_budget_utilization * 100,
+          )
+        }%) approaching limit`,
         severity_score: 7,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -347,7 +323,8 @@ export class ComplianceDashboardService {
         alert_type: "critical",
         category: "privacy",
         title: "Patient Privacy Violations Detected",
-        description: `${metrics.privacy_metrics.privacy_violations_count} privacy violations require immediate attention`,
+        description:
+          `${metrics.privacy_metrics.privacy_violations_count} privacy violations require immediate attention`,
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -367,7 +344,8 @@ export class ComplianceDashboardService {
         alert_type: "critical",
         category: "security",
         title: "Data Breach Incidents Detected",
-        description: `${metrics.security_metrics.data_breach_incidents} data breach incidents require immediate investigation`,
+        description:
+          `${metrics.security_metrics.data_breach_incidents} data breach incidents require immediate investigation`,
         severity_score: 10,
         compliance_impact: {
           affects_patient_privacy: true,
@@ -411,8 +389,7 @@ export class ComplianceDashboardService {
     // Calculate reporting period
     const reportingPeriod = this.calculateReportingPeriod(reportType);
     // Get current metrics
-    const currentMetrics =
-      this.currentMetrics || (await this.collectComplianceMetrics());
+    const currentMetrics = this.currentMetrics || (await this.collectComplianceMetrics());
     // Generate executive summary
     const executiveSummary = this.generateExecutiveSummary(currentMetrics);
     // Collect detailed metrics
@@ -439,10 +416,8 @@ export class ComplianceDashboardService {
       detailed_metrics: detailedMetrics,
       constitutional_certification: {
         privacy_officer_review: true,
-        regulatory_compliance_verified:
-          currentMetrics.overall_compliance_score >= 9.5,
-        constitutional_standards_met:
-          currentMetrics.constitutional_compliance_score >= 9.9,
+        regulatory_compliance_verified: currentMetrics.overall_compliance_score >= 9.5,
+        constitutional_standards_met: currentMetrics.constitutional_compliance_score >= 9.9,
         audit_trail_complete: this.auditTrail.length > 0,
       },
     };
@@ -580,7 +555,7 @@ export class ComplianceDashboardService {
     };
   }
   generateExecutiveSummary(metrics) {
-    const score = metrics.overall_compliance_score;
+    const { overall_compliance_score: score } = metrics;
     let rating;
     if (score >= 9.5) {
       rating = "excellent";
@@ -648,8 +623,8 @@ export class ComplianceDashboardService {
     }
     // Check compliance scores
     if (
-      this.currentMetrics &&
-      this.currentMetrics.constitutional_compliance_score < 9.9
+      this.currentMetrics
+      && this.currentMetrics.constitutional_compliance_score < 9.9
     ) {
       issues.push("Constitutional compliance score below required 9.9/10");
       score -= 0.2;

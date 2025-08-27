@@ -17,7 +17,7 @@ interface PerformanceMetric {
   delta: number;
   id: string;
   navigationType: string;
-  entries: any[];
+  entries: unknown[];
   url: string;
   userAgent: string;
   timestamp: number;
@@ -78,16 +78,15 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     // Parse request body
-    const metrics: PerformanceMetric | PerformanceMetric[] =
-      await request.json();
+    const metrics: PerformanceMetric | PerformanceMetric[] = await request.json();
     const metricsArray = Array.isArray(metrics) ? metrics : [metrics];
 
     // Validate metrics
     const validMetrics = metricsArray.filter(
       (metric) =>
-        (metric as any).name &&
-        typeof metric.value === "number" &&
-        (SUPPORTED_METRICS as readonly string[]).includes((metric as any).name),
+        (metric as unknown).name
+        && typeof metric.value === "number"
+        && (SUPPORTED_METRICS as readonly string[]).includes((metric as unknown).name),
     );
 
     if (validMetrics.length === 0) {
@@ -109,15 +108,13 @@ export async function POST(request: NextRequest) {
       userId: userId || undefined,
       sessionId: generateSessionId(request),
       url: metric.url || request.headers.get("referer") || "unknown",
-      userAgent:
-        metric.userAgent || request.headers.get("user-agent") || "unknown",
+      userAgent: metric.userAgent || request.headers.get("user-agent") || "unknown",
       timestamp: metric.timestamp || Date.now,
-      grade:
-        metric.grade ||
-        calculateGrade((metric as any).name as MetricType, metric.value),
+      grade: metric.grade
+        || calculateGrade((metric as unknown).name as MetricType, metric.value),
       ip_address: getClientIP(request),
-      country: (request as any).geo?.country || "unknown",
-      city: (request as any).geo?.city || "unknown",
+      country: (request as unknown).geo?.country || "unknown",
+      city: (request as unknown).geo?.city || "unknown",
     }));
 
     // Store metrics in database
@@ -143,7 +140,7 @@ export async function POST(request: NextRequest) {
         stored: data?.length || 0,
         metrics: data?.map((d) => ({
           id: d.id,
-          name: (d as any).name,
+          name: (d as unknown).name,
           grade: d.grade,
         })),
       },
@@ -249,10 +246,10 @@ function generateSessionId(request: NextRequest): string {
 
 function getClientIP(request: NextRequest): string {
   return (
-    request.headers.get("x-forwarded-for")?.split(",")[0] ||
-    request.headers.get("x-real-ip") ||
-    (request as any).ip ||
-    "unknown"
+    request.headers.get("x-forwarded-for")?.split(",")[0]
+    || request.headers.get("x-real-ip")
+    || (request as unknown).ip
+    || "unknown"
   );
 }
 
@@ -260,8 +257,7 @@ function calculateGrade(
   metric: MetricType,
   value: number,
 ): "good" | "needs-improvement" | "poor" {
-  const thresholds =
-    PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
+  const thresholds = PERFORMANCE_ALERTS[metric as keyof typeof PERFORMANCE_ALERTS];
 
   if (!thresholds) {
     return "poor";
@@ -287,38 +283,37 @@ function _parseTimeRange(timeRange: string): number {
   return ranges[timeRange] || 0;
 }
 
-function _calculateAggregatedStats(metrics: any[]) {
+function _calculateAggregatedStats(metrics: unknown[]) {
   if (metrics.length === 0) {
     return {};
   }
 
-  const statsByMetric: Record<string, any> = {};
+  const statsByMetric: Record<string, unknown> = {};
 
   for (const metric of metrics) {
-    if (!statsByMetric[(metric as any).name]) {
-      statsByMetric[(metric as any).name] = {
+    if (!statsByMetric[(metric as unknown).name]) {
+      statsByMetric[(metric as unknown).name] = {
         count: 0,
         values: [],
         grades: { good: 0, "needs-improvement": 0, poor: 0 },
       };
     }
 
-    statsByMetric[(metric as any).name].count++;
-    statsByMetric[(metric as any).name].values.push(metric.value);
-    statsByMetric[(metric as any).name].grades[metric.grade]++;
+    statsByMetric[(metric as unknown).name].count++;
+    statsByMetric[(metric as unknown).name].values.push(metric.value);
+    statsByMetric[(metric as unknown).name].grades[metric.grade]++;
   }
 
   // Calculate percentiles and averages
   for (const [metricName, stats] of Object.entries(statsByMetric)) {
     const values = stats.values.sort((a: number, b: number) => a - b);
-    const count = values.length;
+    const { length: count } = values;
 
     statsByMetric[metricName] = {
       ...stats,
       min: values[0],
       max: values[count - 1],
-      average:
-        values.reduce((sum: number, val: number) => sum + val, 0) / count,
+      average: values.reduce((sum: number, val: number) => sum + val, 0) / count,
       median: values[Math.floor(count / 2)],
       p75: values[Math.floor(count * 0.75)],
       p95: values[Math.floor(count * 0.95)],
@@ -332,18 +327,17 @@ function _calculateAggregatedStats(metrics: any[]) {
   return statsByMetric;
 }
 
-async function checkPerformanceAlerts(metrics: any[], supabase: any) {
+async function checkPerformanceAlerts(metrics: unknown[], supabase: unknown) {
   for (const metric of metrics) {
-    const threshold =
-      PERFORMANCE_ALERTS[
-        (metric as any).name as keyof typeof PERFORMANCE_ALERTS
-      ];
+    const threshold = PERFORMANCE_ALERTS[
+      (metric as unknown).name as keyof typeof PERFORMANCE_ALERTS
+    ];
 
     if (threshold && metric.grade === "poor") {
       // Store alert (you could extend this to send notifications)
       try {
         await (await supabase).from("performance_alerts").insert({
-          metric_name: (metric as any).name,
+          metric_name: (metric as unknown).name,
           metric_value: metric.value,
           threshold: threshold.critical,
           user_id: metric.userId,

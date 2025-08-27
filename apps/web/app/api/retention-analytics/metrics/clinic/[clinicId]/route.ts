@@ -32,7 +32,7 @@ const ClinicMetricsQuerySchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -73,8 +73,7 @@ export async function GET(
       );
     }
 
-    const { limit, offset, startDate, endDate, riskLevel } =
-      queryValidation.data;
+    const { limit, offset, startDate, endDate, riskLevel } = queryValidation.data;
 
     // Verify authentication
     const supabase = await createClient();
@@ -131,17 +130,17 @@ export async function GET(
     let filteredMetrics = metrics.metrics;
 
     if (startDate || endDate || riskLevel) {
-      filteredMetrics = metrics.metrics.filter((metric: any) => {
+      filteredMetrics = metrics.metrics.filter((metric: unknown) => {
         // Filter by date range
         if (
-          startDate &&
-          new Date(metric.last_appointment_date) < new Date(startDate)
+          startDate
+          && new Date(metric.last_appointment_date) < new Date(startDate)
         ) {
           return false;
         }
         if (
-          endDate &&
-          new Date(metric.last_appointment_date) > new Date(endDate)
+          endDate
+          && new Date(metric.last_appointment_date) > new Date(endDate)
         ) {
           return false;
         }
@@ -158,24 +157,22 @@ export async function GET(
     // Calculate summary statistics
     const summary = {
       total_patients: filteredMetrics.length,
-      average_retention_rate:
-        filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
-          filteredMetrics.length || 0,
-      average_churn_risk:
-        filteredMetrics.reduce(
-          (sum: number, m: any) => sum + m.churn_risk_score,
-          0,
-        ) / filteredMetrics.length || 0,
+      average_retention_rate: filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0)
+          / filteredMetrics.length || 0,
+      average_churn_risk: filteredMetrics.reduce(
+            (sum: number, m: unknown) => sum + m.churn_risk_score,
+            0,
+          ) / filteredMetrics.length || 0,
       risk_distribution: {
-        low: filteredMetrics.filter((m: any) => m.churn_risk_level === "low")
+        low: filteredMetrics.filter((m: unknown) => m.churn_risk_level === "low")
           .length,
         medium: filteredMetrics.filter(
-          (m: any) => m.churn_risk_level === "medium",
+          (m: unknown) => m.churn_risk_level === "medium",
         ).length,
-        high: filteredMetrics.filter((m: any) => m.churn_risk_level === "high")
+        high: filteredMetrics.filter((m: unknown) => m.churn_risk_level === "high")
           .length,
         critical: filteredMetrics.filter(
-          (m: any) => m.churn_risk_level === "critical",
+          (m: unknown) => m.churn_risk_level === "critical",
         ).length,
       },
       total_lifetime_value: filteredMetrics.reduce(
@@ -183,7 +180,7 @@ export async function GET(
         0,
       ),
       patients_at_risk: filteredMetrics.filter((m) =>
-        ["high", "critical"].includes(m.churn_risk_level),
+        ["high", "critical"].includes(m.churn_risk_level)
       ).length,
     };
 
@@ -223,7 +220,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ clinicId: string }> },
+  { params }: { params: Promise<{ clinicId: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -327,8 +324,8 @@ export async function POST(
 
     // Calculate metrics in batches to avoid overwhelming the system
     const retentionService = new RetentionAnalyticsService();
-    const results: any[] = [];
-    const errors: any[] = [];
+    const results: unknown[] = [];
+    const errors: unknown[] = [];
 
     const batchSize = 10; // Process 10 patients at a time
 
@@ -337,11 +334,10 @@ export async function POST(
 
       const batchPromises = batch.map(async (patientId: string) => {
         try {
-          const metrics =
-            await retentionService.calculatePatientRetentionMetrics(
-              patientId,
-              clinicId,
-            );
+          const metrics = await retentionService.calculatePatientRetentionMetrics(
+            patientId,
+            clinicId,
+          );
           return { patientId, metrics, success: true };
         } catch (error) {
           return {

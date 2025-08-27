@@ -37,7 +37,7 @@ export class WebAuthnService {
     });
   }
 
-  async verifyRegistration(expectedChallenge: string, credential: any) {
+  async verifyRegistration(expectedChallenge: string, credential: unknown) {
     return await verifyRegistrationResponse({
       response: credential,
       expectedChallenge,
@@ -46,7 +46,7 @@ export class WebAuthnService {
     });
   }
 
-  async verifyAuthentication(expectedChallenge: string, credential: any) {
+  async verifyAuthentication(expectedChallenge: string, credential: unknown) {
     return await verifyAuthenticationResponse({
       response: credential,
       expectedChallenge,

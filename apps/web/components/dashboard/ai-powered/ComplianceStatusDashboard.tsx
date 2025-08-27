@@ -9,13 +9,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -83,8 +77,7 @@ export function ComplianceStatusDashboard() {
             {
               id: "lgpd-1",
               title: "Consentimento Granular",
-              description:
-                "Consentimento específico para cada finalidade de tratamento",
+              description: "Consentimento específico para cada finalidade de tratamento",
               status: "compliant",
               lastChecked: "2025-01-25T08:00:00Z",
               autoRemediationAvailable: true,
@@ -288,22 +281,16 @@ export function ComplianceStatusDashboard() {
     }
   };
 
-  const overallScore =
-    frameworks.length > 0
-      ? Math.round(
-          frameworks.reduce((acc, f) => acc + f.score, 0) / frameworks.length,
-        )
-      : 0;
+  const overallScore = frameworks.length > 0
+    ? Math.round(
+      frameworks.reduce((acc, f) => acc + f.score, 0) / frameworks.length,
+    )
+    : 0;
 
   const totalCriticalIssues = frameworks.reduce(
     (acc, f) => acc + f.criticalIssues,
     0,
   );
-  const _totalWarningIssues = frameworks.reduce(
-    (acc, f) => acc + f.warningIssues,
-    0,
-  );
-
   if (loading) {
     return (
       <div className="space-y-6">
@@ -360,8 +347,8 @@ export function ComplianceStatusDashboard() {
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           <AlertTitle>Atenção: Problemas Críticos Detectados</AlertTitle>
           <AlertDescription>
-            {totalCriticalIssues} issue(s) crítica(s) requer(em) atenção
-            imediata para manter compliance.
+            {totalCriticalIssues}{" "}
+            issue(s) crítica(s) requer(em) atenção imediata para manter compliance.
           </AlertDescription>
         </Alert>
       )}
@@ -378,8 +365,7 @@ export function ComplianceStatusDashboard() {
                 {framework.name}
               </CardTitle>
               <CardDescription>
-                Última auditoria:{" "}
-                {new Date(framework.lastAudit).toLocaleDateString("pt-BR")}
+                Última auditoria: {new Date(framework.lastAudit).toLocaleDateString("pt-BR")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -398,8 +384,7 @@ export function ComplianceStatusDashboard() {
                   </span>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  Próxima auditoria:{" "}
-                  {new Date(framework.nextAudit).toLocaleDateString("pt-BR")}
+                  Próxima auditoria: {new Date(framework.nextAudit).toLocaleDateString("pt-BR")}
                 </div>
               </div>
             </CardContent>
@@ -461,8 +446,7 @@ export function ComplianceStatusDashboard() {
                       </p>
                       <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                         <span>
-                          Última verificação:{" "}
-                          {new Date(req.lastChecked).toLocaleDateString(
+                          Última verificação: {new Date(req.lastChecked).toLocaleDateString(
                             "pt-BR",
                           )}
                         </span>
@@ -477,12 +461,12 @@ export function ComplianceStatusDashboard() {
                       </div>
                     </div>
                     <div className="flex space-x-2">
-                      {req.autoRemediationAvailable &&
-                        req.status !== "compliant" && (
-                          <Button size="sm" variant="outline">
-                            Corrigir Automaticamente
-                          </Button>
-                        )}
+                      {req.autoRemediationAvailable
+                        && req.status !== "compliant" && (
+                        <Button size="sm" variant="outline">
+                          Corrigir Automaticamente
+                        </Button>
+                      )}
                       <Button size="sm" variant="ghost">
                         <Eye className="h-4 w-4" />
                       </Button>

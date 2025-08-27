@@ -259,8 +259,7 @@ export const ENTERPRISE_AUDIT_MODULE = {
   services: {
     auditTrail: {
       name: "Audit Trail Generator",
-      description:
-        "Comprehensive audit trail generation with cryptographic integrity",
+      description: "Comprehensive audit trail generation with cryptographic integrity",
       constitutional_features: [
         "Immutable audit logs with cryptographic signatures",
         "Constitutional compliance tracking",

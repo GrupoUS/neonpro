@@ -47,9 +47,7 @@ test.describe("Doctor Role Access Control", () => {
     await page.waitForURL("/dashboard");
   });
 
-  test("should have full access to patient medical records", async ({
-    page,
-  }) => {
+  test("should have full access to patient medical records", async ({ page }) => {
     await page.click('[data-testid="nav-patients"]');
     await page.click('[data-testid="patient-item-first"]');
 
@@ -81,9 +79,7 @@ test.describe("Doctor Role Access Control", () => {
     ).toBeVisible();
   });
 
-  test("should be able to create and modify prescriptions", async ({
-    page,
-  }) => {
+  test("should be able to create and modify prescriptions", async ({ page }) => {
     await page.click('[data-testid="nav-prescriptions"]');
 
     // Should access prescription management
@@ -120,9 +116,7 @@ test.describe("Doctor Role Access Control", () => {
     ).toContainText(testUsers.doctor.crm);
   });
 
-  test("should access administrative functions for their patients", async ({
-    page,
-  }) => {
+  test("should access administrative functions for their patients", async ({ page }) => {
     await page.click('[data-testid="nav-reports"]');
 
     // Should see doctor-specific reports
@@ -191,9 +185,7 @@ test.describe("Nurse Role Access Control", () => {
     await page.waitForURL("/dashboard");
   });
 
-  test("should have limited access to patient medical records", async ({
-    page,
-  }) => {
+  test("should have limited access to patient medical records", async ({ page }) => {
     await page.click('[data-testid="nav-patients"]');
     await page.click('[data-testid="patient-item-first"]');
 
@@ -220,9 +212,7 @@ test.describe("Nurse Role Access Control", () => {
     ).toBeVisible();
   });
 
-  test("should be able to manage vital signs and nursing care", async ({
-    page,
-  }) => {
+  test("should be able to manage vital signs and nursing care", async ({ page }) => {
     await page.click('[data-testid="nav-patients"]');
     await page.click('[data-testid="patient-item-first"]');
     await page.click('[data-testid="vital-signs-tab"]');
@@ -368,9 +358,7 @@ test.describe("Administrator Role Access Control", () => {
     ).toBeVisible();
   });
 
-  test("should NOT access patient medical records directly", async ({
-    page,
-  }) => {
+  test("should NOT access patient medical records directly", async ({ page }) => {
     // Admin should not see patient navigation by default
     await expect(
       page.locator('[data-testid="nav-patients"]'),
@@ -426,9 +414,7 @@ test.describe("Secretary Role Access Control", () => {
     ).toBeVisible();
   });
 
-  test("should access basic patient contact information only", async ({
-    page,
-  }) => {
+  test("should access basic patient contact information only", async ({ page }) => {
     await page.click('[data-testid="nav-patients"]');
 
     // Should see patient list for appointment purposes
@@ -477,9 +463,7 @@ test.describe("Secretary Role Access Control", () => {
     ).toBeVisible();
   });
 
-  test("should NOT access prescription or medical diagnosis features", async ({
-    page,
-  }) => {
+  test("should NOT access prescription or medical diagnosis features", async ({ page }) => {
     // Should not see medical navigation
     await expect(
       page.locator('[data-testid="nav-prescriptions"]'),

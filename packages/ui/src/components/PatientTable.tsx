@@ -151,13 +151,16 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
     ref,
   ) => {
     // Internal state management
-    const [sort, setSort] = React.useState<{
-      column: string;
-      direction: "asc" | "desc";
-    } | null>();
+    const [sort, setSort] = React.useState<
+      {
+        column: string;
+        direction: "asc" | "desc";
+      } | null
+    >();
     const [searchTerm, setSearchTerm] = React.useState(searchValue);
-    const [internalSelectedPatients, setSelectedPatients] =
-      React.useState<string[]>(selectedPatients);
+    const [internalSelectedPatients, setSelectedPatients] = React.useState<string[]>(
+      selectedPatients,
+    );
     const [internalPagination, setPagination] = React.useState(pagination);
     const [internalViewMode, setViewMode] = React.useState(viewMode);
 
@@ -172,9 +175,9 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       if (searchTerm) {
         result = result.filter(
           (patient) =>
-            patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            patient.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            patient.phone?.includes(searchTerm),
+            patient.name?.toLowerCase().includes(searchTerm.toLowerCase())
+            || patient.email?.toLowerCase().includes(searchTerm.toLowerCase())
+            || patient.phone?.includes(searchTerm),
         );
       }
 
@@ -187,8 +190,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         return filteredData;
       }
 
-      const startIndex =
-        ((internalPagination.page || 1) - 1) * internalPagination.pageSize;
+      const startIndex = ((internalPagination.page || 1) - 1) * internalPagination.pageSize;
       const endIndex = startIndex + internalPagination.pageSize;
       return filteredData.slice(startIndex, endIndex);
     }, [filteredData, internalPagination]);
@@ -223,17 +225,15 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
       });
 
       if (onSort) {
-        const newDirection =
-          sort?.column === column && sort?.direction === "asc" ? "desc" : "asc";
+        const newDirection = sort?.column === column && sort?.direction === "asc" ? "desc" : "asc";
         onSort(column, newDirection);
       }
     };
 
     const handleSelectAll = () => {
-      const newSelected =
-        internalSelectedPatients.length === patients.length
-          ? []
-          : patients.map((p) => p.id);
+      const newSelected = internalSelectedPatients.length === patients.length
+        ? []
+        : patients.map((p) => p.id);
       setSelectedPatients(newSelected);
 
       if (onSelectionChange) {
@@ -344,7 +344,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         }
 
         default: {
-          return (patient as any)[column.key] || "-";
+          return (patient as unknown)[column.key] || "-";
         }
       }
     };
@@ -440,10 +440,8 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                     {enableSelection && (
                       <th className="w-12 px-4 py-3 text-left">
                         <Checkbox
-                          checked={
-                            internalSelectedPatients.length ===
-                              patients.length && patients.length > 0
-                          }
+                          checked={internalSelectedPatients.length
+                              === patients.length && patients.length > 0}
                           onCheckedChange={handleSelectAll}
                         />
                       </th>
@@ -452,24 +450,20 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                       <th
                         className={cn(
                           "px-4 py-3 text-left font-medium text-muted-foreground text-xs uppercase tracking-wider",
-                          column.sortable &&
-                            "cursor-pointer hover:text-foreground",
+                          column.sortable
+                            && "cursor-pointer hover:text-foreground",
                           column.width && `w-[${column.width}]`,
                         )}
                         key={column.key}
-                        onClick={() =>
-                          column.sortable && handleSort(column.key as string)
-                        }
+                        onClick={() => column.sortable && handleSort(column.key as string)}
                       >
                         <div className="flex items-center gap-2">
                           {column.label}
                           {column.sortable && sort?.column === column.key && (
                             <div className="text-foreground">
-                              {sort.direction === "asc" ? (
-                                <ChevronUp className="h-4 w-4" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4" />
-                              )}
+                              {sort.direction === "asc"
+                                ? <ChevronUp className="h-4 w-4" />
+                                : <ChevronDown className="h-4 w-4" />}
                             </div>
                           )}
                         </div>
@@ -490,9 +484,7 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
                             checked={internalSelectedPatients.includes(
                               patient.id,
                             )}
-                            onCheckedChange={() =>
-                              handleSelectPatient(patient.id)
-                            }
+                            onCheckedChange={() => handleSelectPatient(patient.id)}
                             onClick={(e) => e.stopPropagation()}
                           />
                         </td>
@@ -528,24 +520,18 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
         {internalPagination && internalPagination.totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-muted-foreground text-sm">
-              Mostrando{" "}
-              {((internalPagination.page || 1) - 1) *
-                internalPagination.pageSize +
-                1}{" "}
-              a{" "}
-              {Math.min(
-                (internalPagination.page || 1) * internalPagination.pageSize,
-                internalPagination.totalItems,
-              )}{" "}
-              de {internalPagination.totalItems} pacientes
+              Mostrando {((internalPagination.page || 1) - 1)
+                  * internalPagination.pageSize
+                + 1} a {Math.min(
+                  (internalPagination.page || 1) * internalPagination.pageSize,
+                  internalPagination.totalItems,
+                )} de {internalPagination.totalItems} pacientes
             </div>
 
             <div className="flex items-center gap-2">
               <Button
                 disabled={(internalPagination.page || 1) <= 1}
-                onClick={() =>
-                  handlePaginationChange((internalPagination.page || 1) - 1)
-                }
+                onClick={() => handlePaginationChange((internalPagination.page || 1) - 1)}
                 size="sm"
                 variant="outline"
               >
@@ -554,18 +540,13 @@ const PatientTable = React.forwardRef<HTMLDivElement, PatientTableProps>(
               </Button>
 
               <span className="text-sm">
-                Página {internalPagination.page || 1} de{" "}
-                {internalPagination.totalPages}
+                Página {internalPagination.page || 1} de {internalPagination.totalPages}
               </span>
 
               <Button
-                disabled={
-                  (internalPagination.page || 1) >=
-                  internalPagination.totalPages
-                }
-                onClick={() =>
-                  handlePaginationChange((internalPagination.page || 1) + 1)
-                }
+                disabled={(internalPagination.page || 1)
+                  >= internalPagination.totalPages}
+                onClick={() => handlePaginationChange((internalPagination.page || 1) + 1)}
                 size="sm"
                 variant="outline"
               >

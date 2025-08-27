@@ -40,8 +40,7 @@ export const HEALTHCARE_ANNOUNCEMENTS = {
   SCHEDULE_CREATED: "Agendamento criado com sucesso.",
   LGPD_COMPLIANCE_ACTIVE: "Modo de conformidade LGPD ativo.",
   ERROR_OCCURRED: "Erro ocorrido. Verifique os detalhes.",
-  SEARCH_RESULTS_UPDATED: (count: number) =>
-    `${count} relatórios encontrados para sua busca.`,
+  SEARCH_RESULTS_UPDATED: (count: number) => `${count} relatórios encontrados para sua busca.`,
   CATEGORY_SELECTED: (category: string) => `Categoria ${category} selecionada.`,
 } as const;
 
@@ -55,7 +54,7 @@ export class FocusManager {
       return;
     }
 
-    const firstElement = focusableElements[0];
+    const [firstElement] = focusableElements;
     const lastElement = focusableElements[focusableElements.length - 1];
 
     const handleTabKey = (e: KeyboardEvent) => {
@@ -104,7 +103,7 @@ export class FocusManager {
       "textarea:not([disabled])",
       "a[href]",
       '[tabindex]:not([tabindex="-1"])',
-      '[role="button"]:not([disabled])',
+      '[// role="button" - consider using actual button element]:not([disabled])',
       '[role="menuitem"]:not([disabled])',
     ].join(", ");
 
@@ -157,11 +156,12 @@ export class ScreenReaderAnnouncer {
 }
 
 // High contrast utilities for healthcare environments
+// TODO: Convert to standalone functions
 export class HighContrastManager {
   static isHighContrastMode(): boolean {
     return (
-      window.matchMedia("(prefers-contrast: high)").matches ||
-      window.matchMedia("(forced-colors: active)").matches
+      window.matchMedia("(prefers-contrast: high)").matches
+      || window.matchMedia("(forced-colors: active)").matches
     );
   }
 
@@ -185,6 +185,7 @@ export class HighContrastManager {
 }
 
 // Reduced motion utilities
+// TODO: Convert to standalone functions
 export class MotionManager {
   static respectsReducedMotion(): boolean {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -204,6 +205,7 @@ export class MotionManager {
 }
 
 // Color contrast utilities
+// TODO: Convert to standalone functions
 export class ContrastChecker {
   static calculateContrast(color1: string, color2: string): number {
     const luminance1 = ContrastChecker.getLuminance(color1);
@@ -235,31 +237,29 @@ export class ContrastChecker {
     const gsRGB = rgb.g / 255;
     const bsRGB = rgb.b / 255;
 
-    const r =
-      rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
-    const g =
-      gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
-    const b =
-      bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
+    const r = rsRGB <= 0.039_28 ? rsRGB / 12.92 : ((rsRGB + 0.055) / 1.055) ** 2.4;
+    const g = gsRGB <= 0.039_28 ? gsRGB / 12.92 : ((gsRGB + 0.055) / 1.055) ** 2.4;
+    const b = bsRGB <= 0.039_28 ? bsRGB / 12.92 : ((bsRGB + 0.055) / 1.055) ** 2.4;
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
   private static hexToRgb(
     hex: string,
-  ): { r: number; g: number; b: number } | null {
+  ): { r: number; g: number; b: number; } | null {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
       ? {
-          r: Number.parseInt(result[1], 16),
-          g: Number.parseInt(result[2], 16),
-          b: Number.parseInt(result[3], 16),
-        }
+        r: Number.parseInt(result[1], 16),
+        g: Number.parseInt(result[2], 16),
+        b: Number.parseInt(result[3], 16),
+      }
       : undefined;
   }
 }
 
 // Form accessibility utilities
+// TODO: Convert to standalone functions
 export class FormAccessibility {
   static associateLabelWithField(labelId: string, fieldId: string) {
     const label = document.getElementById(labelId);
@@ -335,6 +335,7 @@ export class FormAccessibility {
 }
 
 // Table accessibility utilities for report data
+// TODO: Convert to standalone functions
 export class TableAccessibility {
   static addTableHeaders(tableId: string) {
     const table = document.getElementById(tableId);
@@ -431,7 +432,7 @@ export function useReducedMotion() {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handleChange = () => {
       // Update motion settings when preference changes
-      const root = document.documentElement;
+      const { documentElement: root } = document;
       if (MotionManager.respectsReducedMotion()) {
         root.style.setProperty("--animation-duration", "0ms");
         root.style.setProperty("--transition-duration", "0ms");
@@ -471,6 +472,7 @@ export function SkipLinks() {
 }
 
 // Healthcare-specific accessibility validation
+// TODO: Convert to standalone functions
 export class HealthcareAccessibilityValidator {
   static validateReportCard(cardElement: HTMLElement): string[] {
     const issues: string[] = [];
@@ -482,12 +484,13 @@ export class HealthcareAccessibilityValidator {
     }
 
     // Check for actionable elements
-    const buttons = cardElement.querySelectorAll('button, [role="button"]');
+    const buttons = cardElement.querySelectorAll(
+      'button, [// role="button" - consider using actual button element]',
+    );
     buttons.forEach((button, index) => {
-      const accessibleName =
-        button.getAttribute("aria-label") ||
-        button.getAttribute("aria-labelledby") ||
-        button.textContent?.trim();
+      const accessibleName = button.getAttribute("aria-label")
+        || button.getAttribute("aria-labelledby")
+        || button.textContent?.trim();
 
       if (!accessibleName) {
         issues.push(`Botão ${index + 1} precisa de nome acessível`);
@@ -531,7 +534,7 @@ export class HealthcareAccessibilityValidator {
     );
 
     if (focusableElements.length > 0) {
-      const firstElement = focusableElements[0] as HTMLElement;
+      const [firstElement] = focusableElements as HTMLElement;
       if (document.activeElement !== firstElement) {
         issues.push("Modal deve definir foco inicial");
       }
@@ -551,7 +554,7 @@ export function initializeAccessibility() {
 
   // Set up reduced motion preferences
   const motionSettings = MotionManager.getMotionSettings();
-  const root = document.documentElement;
+  const { documentElement: root } = document;
   root.style.setProperty(
     "--animation-duration",
     motionSettings.animationDuration,

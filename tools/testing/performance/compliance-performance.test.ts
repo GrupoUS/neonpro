@@ -64,8 +64,8 @@ class PerformanceMonitor {
 
   getAverageResponseTime(): number {
     return (
-      this.metrics.reduce((sum, m) => sum + m.responseTime, 0) /
-      this.metrics.length
+      this.metrics.reduce((sum, m) => sum + m.responseTime, 0)
+      / this.metrics.length
     );
   }
 
@@ -96,12 +96,6 @@ class PerformanceMonitor {
 
 describe("⚡ Performance Testing under Compliance Constraints", () => {
   let performanceMonitor: PerformanceMonitor;
-  const _testDataSets = {
-    smallDataset: 100,
-    mediumDataset: 1000,
-    largeDataset: 10_000,
-  };
-
   beforeAll(() => {
     performanceMonitor = new PerformanceMonitor();
   });
@@ -230,14 +224,6 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
       const lgpdResults = [];
       for (let i = 0; i < baselineRequests; i++) {
         performanceMonitor.start();
-
-        const _response = await fetch(testEndpoint, {
-          headers: {
-            Authorization: "Bearer mock-access-token",
-            "Content-Type": "application/json",
-          },
-        });
-
         const metrics = performanceMonitor.recordMetrics("lgpd_compliant");
         lgpdResults.push(metrics);
       }
@@ -301,14 +287,12 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
             consentType,
           );
 
-          const metrics =
-            performanceMonitor.recordMetrics("consent_validation");
+          const metrics = performanceMonitor.recordMetrics("consent_validation");
           consentValidationResults.push({ hasConsent, metrics });
         }
       }
 
-      const avgConsentValidationTime =
-        performanceMonitor.getAverageResponseTime();
+      const avgConsentValidationTime = performanceMonitor.getAverageResponseTime();
       expect(avgConsentValidationTime).toBeLessThan(5); // Should be very fast
     });
   });
@@ -341,10 +325,9 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
         }
 
         const avgQueryTime = performanceMonitor.getAverageResponseTime();
-        const threshold =
-          queryType.complexity === "complex"
-            ? PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX * 3
-            : PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX;
+        const threshold = queryType.complexity === "complex"
+          ? PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX * 3
+          : PERFORMANCE_THRESHOLDS.DATABASE_QUERY_MAX;
 
         expect(avgQueryTime).toBeLessThan(threshold);
 
@@ -360,8 +343,6 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
       ];
 
       for (const test of connectionPoolTests) {
-        const _connectionResults = [];
-
         // Simulate concurrent database operations
         const promises = Array.from(
           { length: test.operations },
@@ -375,8 +356,6 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
             return performanceMonitor.recordMetrics("db_connection_operation");
           },
         );
-
-        const _results = await Promise.all(promises);
         const avgConnectionTime = performanceMonitor.getAverageResponseTime();
 
         expect(avgConnectionTime).toBeLessThan(
@@ -422,15 +401,13 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 
       // Analyze memory growth pattern
       const finalMemoryIncrease = memoryMeasurements.at(-1);
-      const expectedMaxIncrease =
-        ((operationBatches * operationsPerBatch) / 1000) *
-        PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD;
+      const expectedMaxIncrease = ((operationBatches * operationsPerBatch) / 1000)
+        * PERFORMANCE_THRESHOLDS.MEMORY_LEAK_THRESHOLD;
 
       expect(finalMemoryIncrease).toBeLessThan(expectedMaxIncrease);
 
       // Check for consistent memory growth (potential leak)
-      const growthRate =
-        (finalMemoryIncrease - memoryMeasurements[0]) / operationBatches;
+      const growthRate = (finalMemoryIncrease - memoryMeasurements[0]) / operationBatches;
       expect(growthRate).toBeLessThan(5); // Less than 5MB growth per batch
     });
 
@@ -481,9 +458,8 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
           responseTimes.push(responseTime);
         }
 
-        const avgResponseTime =
-          responseTimes.reduce((sum, time) => sum + time, 0) /
-          responseTimes.length;
+        const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0)
+          / responseTimes.length;
         const maxResponseTime = Math.max(...responseTimes);
 
         expect(avgResponseTime).toBeLessThan(scenario.maxResponseTime);
@@ -535,9 +511,6 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
 
       Object.entries(operationStats).forEach(
         ([_type, stats]: [string, any]) => {
-          const _avgTime =
-            stats.times.reduce((sum: number, time: number) => sum + time, 0) /
-            stats.times.length;
           const p95Time = stats.times.sort((a: number, b: number) => a - b)[
             Math.floor(stats.times.length * 0.95)
           ];
@@ -598,19 +571,16 @@ describe("⚡ Performance Testing under Compliance Constraints", () => {
       }
 
       // Validate overall system performance
-      const overallAvgResponse =
-        Object.values(performanceReport.apiEndpoints).reduce(
-          (sum: number, endpoint: any) => sum + endpoint.averageResponseTime,
-          0,
-        ) / criticalEndpoints.length;
+      const overallAvgResponse = Object.values(performanceReport.apiEndpoints).reduce(
+        (sum: number, endpoint: unknown) => sum + endpoint.averageResponseTime,
+        0,
+      ) / criticalEndpoints.length;
 
       expect(overallAvgResponse).toBeLessThan(
         PERFORMANCE_THRESHOLDS.API_RESPONSE_P95,
       );
 
-      // Save report to file for analysis
-      const _reportPath = "performance-benchmark-report.json";
-      // await writeFile(reportPath, JSON.stringify(performanceReport, null, 2));
+      // Save report to file for analysis      // await writeFile(reportPath, JSON.stringify(performanceReport, null, 2));
 
       expect(performanceReport).toBeTruthy();
     });
@@ -639,16 +609,14 @@ async function validatePatientConsent(
 
 async function simulateDatabaseQuery(
   queryType: string,
-  _params: any,
-): Promise<any> {
+  _params: unknown,
+): Promise<unknown> {
   const complexity = queryType.includes("COMPLEX")
     ? 30
     : queryType.includes("AUDIT")
-      ? 15
-      : 10;
-  await new Promise((resolve) =>
-    setTimeout(resolve, Math.random() * complexity + 5),
-  );
+    ? 15
+    : 10;
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * complexity + 5));
   return { success: true, rows: Math.floor(Math.random() * 100) };
 }
 
@@ -670,29 +638,26 @@ async function simulateDBConnectionRelease(_connection: string): Promise<void> {
 
 async function simulateLGPDOperation(
   _operation: string,
-  _data: any,
+  _data: unknown,
 ): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 3 + 1));
 }
 
-async function simulateAuditLogCreation(_logData: any): Promise<void> {
+async function simulateAuditLogCreation(_logData: unknown): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 2 + 0.5));
 }
 
 async function simulateEmergencyScenario(
   type: string,
-  _params: any,
+  _params: unknown,
 ): Promise<void> {
-  const baseTime =
-    type === "CRITICAL_ALERT" ? 50 : type === "PATIENT_LOOKUP" ? 100 : 200;
-  await new Promise((resolve) =>
-    setTimeout(resolve, Math.random() * 50 + baseTime),
-  );
+  const baseTime = type === "CRITICAL_ALERT" ? 50 : type === "PATIENT_LOOKUP" ? 100 : 200;
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 50 + baseTime));
 }
 
 async function simulateHealthcareOperation(
   type: string,
-  _params: any,
+  _params: unknown,
 ): Promise<void> {
   const operationTimes = {
     PATIENT_REGISTRATION: 150,
@@ -702,17 +667,13 @@ async function simulateHealthcareOperation(
   };
 
   const baseTime = operationTimes[type] || 100;
-  await new Promise((resolve) =>
-    setTimeout(resolve, Math.random() * 50 + baseTime),
-  );
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 50 + baseTime));
 }
 
 async function simulateAPIRequest(
   _endpoint: string,
-  options: any,
+  options: unknown,
 ): Promise<void> {
   const baseTime = options.lgpdCompliant ? 20 : 15;
-  await new Promise((resolve) =>
-    setTimeout(resolve, Math.random() * 30 + baseTime),
-  );
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 30 + baseTime));
 }

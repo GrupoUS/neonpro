@@ -30,7 +30,7 @@ interface ChatMessage {
   role: "user" | "assistant" | "system";
   content: string;
   timestamp: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface ChatRequest {
@@ -73,7 +73,7 @@ interface PredictionRequest {
     | "treatment_outcome"
     | "patient_risk"
     | "demand_forecast";
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   modelVersion?: string;
   confidenceThreshold?: number;
 }
@@ -81,7 +81,7 @@ interface PredictionRequest {
 interface PredictionResponse {
   id: string;
   type: string;
-  prediction: any;
+  prediction: unknown;
   confidence: number;
   modelVersion: string;
   explanation?: string;
@@ -97,8 +97,8 @@ interface ProcessingJob {
   id: string;
   type: string;
   status: "pending" | "processing" | "completed" | "failed";
-  input: any;
-  output?: any;
+  input: unknown;
+  output?: unknown;
   progress: number;
   createdAt: Date;
   completedAt?: Date;
@@ -340,7 +340,7 @@ export class AIService extends EnhancedServiceBase {
    * Análise de risco de paciente
    */
   async analyzePatientRisk(
-    patientData: Record<string, any>,
+    patientData: Record<string, unknown>,
     context: ServiceContext,
   ): Promise<{
     riskLevel: "low" | "medium" | "high" | "critical";
@@ -432,7 +432,7 @@ export class AIService extends EnhancedServiceBase {
    */
   async generateMedicalReport(
     reportType: "consultation" | "treatment" | "discharge",
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     context: ServiceContext,
   ): Promise<{
     report: string;
@@ -478,7 +478,7 @@ export class AIService extends EnhancedServiceBase {
    */
   async submitProcessingJob(
     type: string,
-    input: any,
+    input: unknown,
     context: ServiceContext,
   ): Promise<string> {
     return this.executeOperation(
@@ -619,7 +619,7 @@ Responda em formato JSON estruturado.`;
 
   private buildReportGenerationPrompt(
     reportType: string,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
   ): string {
     return `Gere um relatório médico do tipo "${reportType}" baseado nos seguintes dados:
 
@@ -637,7 +637,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   private async callAIProvider(
     _messages: ChatMessage[],
     _config: AIModelConfig,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Mock implementation - replace with actual AI provider calls
     return {
       content:
@@ -672,9 +672,9 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   }
 
   private async preprocessData(
-    data: any,
+    data: unknown,
     predictionType: string,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Preprocessing logic based on prediction type
     switch (predictionType) {
       case "appointment_noshow": {
@@ -689,7 +689,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     }
   }
 
-  private preprocessNoShowData(data: any): any {
+  private preprocessNoShowData(data: unknown): unknown {
     // Extract relevant features for no-show prediction
     return {
       daysSinceScheduled: data.daysSinceScheduled || 0,
@@ -701,7 +701,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     };
   }
 
-  private preprocessRiskData(data: any): any {
+  private preprocessRiskData(data: unknown): unknown {
     // Extract relevant features for risk assessment
     return {
       age: data.age || 0,
@@ -714,9 +714,9 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
 
   private async executePrediction(
     type: string,
-    _data: any,
+    _data: unknown,
     _request: PredictionRequest,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Mock prediction execution - replace with actual ML models
     switch (type) {
       case "appointment_noshow": {
@@ -747,8 +747,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
           },
           confidence: 0.84,
           modelVersion: "risk_v2.1.0",
-          explanation:
-            "Risco moderado devido a fatores de idade e histórico médico",
+          explanation: "Risco moderado devido a fatores de idade e histórico médico",
           recommendations: ["Monitoramento regular", "Exames preventivos"],
           featuresUsed: ["age", "chronicConditions", "vitalSigns"],
           modelAccuracy: 0.88,
@@ -761,7 +760,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     }
   }
 
-  private parseSymptomAnalysisResponse(content: string): any {
+  private parseSymptomAnalysisResponse(content: string): unknown {
     // Parse AI response into structured format
     // In production, this would handle robust JSON parsing with fallbacks
     try {
@@ -776,7 +775,7 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
     }
   }
 
-  private parseMedicalReportResponse(content: string): any {
+  private parseMedicalReportResponse(content: string): unknown {
     // Parse medical report response
     try {
       return JSON.parse(content);
@@ -833,8 +832,8 @@ Responda em formato JSON estruturado seguindo padrões médicos brasileiros.`;
   protected async initialize(): Promise<void> {
     // Validate environment variables
     if (
-      !process.env.OPENAI_API_KEY &&
-      this.modelConfigs.get("default")?.provider === "openai"
+      !process.env.OPENAI_API_KEY
+      && this.modelConfigs.get("default")?.provider === "openai"
     ) {
     }
 

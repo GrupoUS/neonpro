@@ -13,7 +13,7 @@ interface CacheLayerStats {
 }
 
 interface CacheMetricsProps {
-  cacheManager?: any;
+  cacheManager?: unknown;
   refreshInterval?: number;
 }
 
@@ -43,7 +43,7 @@ export function CacheMetrics({
         let totalResponseTime = 0;
 
         for (const [layer, layerData] of Object.entries(allStats)) {
-          const data = layerData as any;
+          const data = layerData as unknown;
           stats.push({
             layer,
             hitRate: data.hitRate,
@@ -96,25 +96,22 @@ export function CacheMetrics({
 
         {/* Overall Performance */}
         <MetricWidget
-          color={
-            overallStats.hitRate >= 85
-              ? "green"
-              : overallStats.hitRate >= 70
-                ? "yellow"
-                : "red"
-          }
+          color={overallStats.hitRate >= 85
+            ? "green"
+            : overallStats.hitRate >= 70
+            ? "yellow"
+            : "red"}
           description="Target: 85% hit rate across all cache layers"
           title="Overall Cache Hit Rate"
           value={{
             current: overallStats.hitRate,
             target: 85, // 85% target
             unit: "%",
-            trend:
-              overallStats.hitRate >= 85
-                ? "up"
-                : overallStats.hitRate >= 70
-                  ? "stable"
-                  : "down",
+            trend: overallStats.hitRate >= 85
+              ? "up"
+              : overallStats.hitRate >= 70
+              ? "stable"
+              : "down",
           }}
         />
       </div>

@@ -1,4 +1,4 @@
-﻿// AR Simulator Helper Functions
+// AR Simulator Helper Functions
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {

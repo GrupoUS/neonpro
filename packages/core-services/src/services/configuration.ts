@@ -11,7 +11,7 @@ import { createClient } from "@supabase/supabase-js";
 
 interface ConfigurationValue {
   key: string;
-  value: any;
+  value: unknown;
   type: "string" | "number" | "boolean" | "json" | "array";
   environment: string;
   tenantId?: string;
@@ -45,7 +45,7 @@ interface ConfigurationContext {
 
 interface ConfigurationUpdate {
   key: string;
-  value: any;
+  value: unknown;
   updatedBy: string;
   reason?: string;
 }
@@ -55,12 +55,11 @@ interface ConfigurationUpdate {
 // ================================================
 
 class ConfigurationCache {
-  private readonly cache: Map<string, { value: any; expiry: number }> =
-    new Map();
+  private readonly cache: Map<string, { value: unknown; expiry: number; }> = new Map();
   private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
   private readonly secretTtl = 60 * 1000; // 1 minute for secrets
 
-  set(key: string, value: any, isSecret = false): void {
+  set(key: string, value: unknown, isSecret = false): void {
     const ttl = isSecret ? this.secretTtl : this.defaultTtl;
     this.cache.set(key, {
       value,
@@ -68,7 +67,7 @@ class ConfigurationCache {
     });
   }
 
-  get(key: string): any | null {
+  get(key: string): unknown | null {
     const cached = this.cache.get(key);
     if (!cached) {
       return;
@@ -103,8 +102,8 @@ export class ConfigurationService {
   private static instance: ConfigurationService;
   private readonly cache = new ConfigurationCache();
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
   private constructor() {
@@ -125,8 +124,8 @@ export class ConfigurationService {
   async getConfiguration(
     key: string,
     context: ConfigurationContext,
-    defaultValue?: any,
-  ): Promise<any> {
+    defaultValue?: unknown,
+  ): Promise<unknown> {
     const cacheKey = this.buildCacheKey(key, context);
 
     // Try cache first
@@ -162,7 +161,7 @@ export class ConfigurationService {
         return defaultValue;
       }
 
-      const config = data[0] as ConfigurationValue;
+      const [config] = data as ConfigurationValue;
       const value = this.parseConfigValue(config);
 
       // Cache the result
@@ -176,7 +175,7 @@ export class ConfigurationService {
 
   async setConfiguration(
     key: string,
-    value: any,
+    value: unknown,
     context: ConfigurationContext,
     update: ConfigurationUpdate,
   ): Promise<boolean> {
@@ -290,7 +289,7 @@ export class ConfigurationService {
         return false;
       }
 
-      const flag = data[0] as FeatureFlag;
+      const [flag] = data as FeatureFlag;
       const isEnabled = this.evaluateFeatureFlag(flag, context);
 
       // Cache the result
@@ -354,8 +353,8 @@ export class ConfigurationService {
   async getConfigurations(
     keys: string[],
     context: ConfigurationContext,
-  ): Promise<Record<string, any>> {
-    const results: Record<string, any> = {};
+  ): Promise<Record<string, unknown>> {
+    const results: Record<string, unknown> = {};
 
     await Promise.allSettled(
       keys.map(async (key) => {
@@ -401,7 +400,7 @@ export class ConfigurationService {
     return `${context.environment}:${context.tenantId || "global"}:${key}`;
   }
 
-  private parseConfigValue(config: ConfigurationValue): any {
+  private parseConfigValue(config: ConfigurationValue): unknown {
     try {
       switch (config.type) {
         case "string": {
@@ -426,7 +425,7 @@ export class ConfigurationService {
     }
   }
 
-  private getValueType(value: any): ConfigurationValue["type"] {
+  private getValueType(value: unknown): ConfigurationValue["type"] {
     if (typeof value === "string") {
       return "string";
     }
@@ -470,18 +469,18 @@ export class ConfigurationService {
 
     // Check tenant restriction
     if (
-      flag.tenantIds &&
-      flag.tenantIds.length > 0 &&
-      !(context.tenantId && flag.tenantIds.includes(context.tenantId))
+      flag.tenantIds
+      && flag.tenantIds.length > 0
+      && !(context.tenantId && flag.tenantIds.includes(context.tenantId))
     ) {
       return false;
     }
 
     // Check role restriction
     if (
-      flag.userRoles &&
-      flag.userRoles.length > 0 &&
-      !context.userRoles?.some((role) => flag.userRoles?.includes(role))
+      flag.userRoles
+      && flag.userRoles.length > 0
+      && !context.userRoles?.some((role) => flag.userRoles?.includes(role))
     ) {
       return false;
     }
@@ -513,7 +512,7 @@ export class ConfigurationService {
 
   private async logConfigurationChange(
     key: string,
-    value: any,
+    value: unknown,
     update: ConfigurationUpdate,
   ): Promise<void> {
     try {
@@ -538,13 +537,11 @@ export class ConfigurationService {
         (payload) => {
           // Invalidate relevant cache entries
           if (
-            payload.new &&
-            typeof payload.new === "object" &&
-            "key" in payload.new
+            payload.new
+            && typeof payload.new === "object"
+            && "key" in payload.new
           ) {
             const config = payload.new as ConfigurationValue;
-            const _keyPattern = `*:*:${config.key}`;
-
             // Invalidate all cache entries for this key
             this.cache
               .keys()
@@ -564,19 +561,16 @@ export class ConfigurationService {
         (payload) => {
           // Invalidate relevant cache entries
           if (
-            payload.new &&
-            typeof payload.new === "object" &&
-            "key" in payload.new
+            payload.new
+            && typeof payload.new === "object"
+            && "key" in payload.new
           ) {
             const flag = payload.new as FeatureFlag;
-            const _keyPattern = `feature:*:*:${flag.key}`;
-
             // Invalidate all cache entries for this feature flag
             this.cache
               .keys()
               .filter(
-                (key) =>
-                  key.includes("feature:") && key.endsWith(`:${flag.key}`),
+                (key) => key.includes("feature:") && key.endsWith(`:${flag.key}`),
               )
               .forEach((key) => this.cache.invalidate(key));
           }

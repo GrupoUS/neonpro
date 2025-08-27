@@ -16,7 +16,7 @@ interface AuthContextType {
     email: string,
     password: string,
   ) => Promise<{
-    data: any;
+    data: unknown;
     error: AuthError | null;
   }>;
   signUp: (
@@ -30,16 +30,16 @@ interface AuthContextType {
       userType: string;
     },
   ) => Promise<{
-    data: any;
+    data: unknown;
     error: AuthError | null;
   }>;
   signInWithGoogle: () => Promise<{
-    data: any;
+    data: unknown;
     error: AuthError | null;
   }>;
-  signOut: () => Promise<{ error: AuthError | null }>;
+  signOut: () => Promise<{ error: AuthError | null; }>;
   resetPassword: (email: string) => Promise<{
-    data: any;
+    data: unknown;
     error: AuthError | null;
   }>;
 }
@@ -140,12 +140,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: additionalData
             ? {
-                full_name: additionalData.fullName,
-                cpf: additionalData.cpf,
-                phone: additionalData.phone,
-                clinic_name: additionalData.clinicName,
-                user_type: additionalData.userType,
-              }
+              full_name: additionalData.fullName,
+              cpf: additionalData.cpf,
+              phone: additionalData.phone,
+              clinic_name: additionalData.clinicName,
+              user_type: additionalData.userType,
+            }
             : undefined,
         },
       });
@@ -207,10 +207,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const popup = window.open(
           data.url,
           "google-oauth",
-          "width=500,height=600,scrollbars=yes,resizable=yes,left=" +
-            (window.screen.width / 2 - 250) +
-            ",top=" +
-            (window.screen.height / 2 - 300),
+          "width=500,height=600,scrollbars=yes,resizable=yes,left="
+            + (window.screen.width / 2 - 250)
+            + ",top="
+            + (window.screen.height / 2 - 300),
         );
 
         if (!popup) {

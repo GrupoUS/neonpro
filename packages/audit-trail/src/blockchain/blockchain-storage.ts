@@ -1,10 +1,10 @@
 /**
  * Blockchain Storage - Immutable Verification System
- * 
+ *
  * Provides blockchain-based verification for audit trail immutability
  * in the NeonPro AI Healthcare Platform. Ensures constitutional compliance
  * and cryptographic proof of audit event integrity.
- * 
+ *
  * Features:
  * - Distributed ledger integration
  * - Cryptographic proof generation
@@ -13,9 +13,10 @@
  * - Constitutional governance integration
  */
 
-import { createHash, randomUUID } from 'crypto';
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import { z } from 'zod';
+import { createClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createHash, randomUUID } from "node:crypto";
+import { z } from "zod";
 
 // Blockchain schemas
 const BlockchainTransactionSchema = z.object({
@@ -27,24 +28,24 @@ const BlockchainTransactionSchema = z.object({
   timestamp: z.string(),
   gasUsed: z.number().optional(),
   gasPrice: z.string().optional(),
-  status: z.enum(['PENDING', 'CONFIRMED', 'FAILED']),
+  status: z.enum(["PENDING", "CONFIRMED", "FAILED"]),
   confirmations: z.number().int().min(0).default(0),
   networkId: z.string(),
   contractAddress: z.string().optional(),
-  metadata: z.record(z.unknown()).optional()
+  metadata: z.record(z.unknown()).optional(),
 });
 
 const BlockchainConfigSchema = z.object({
   supabaseUrl: z.string(),
   supabaseServiceKey: z.string(),
-  networkId: z.string().default('healthcare-audit-chain'),
+  networkId: z.string().default("healthcare-audit-chain"),
   contractAddress: z.string().optional(),
   requiredConfirmations: z.number().int().min(1).max(50).default(6),
   batchSize: z.number().int().min(1).max(100).default(50),
-  processingInterval: z.number().int().min(1000).max(300000).default(30000), // 30 seconds
+  processingInterval: z.number().int().min(1000).max(300_000).default(30_000), // 30 seconds
   enableMockBlockchain: z.boolean().default(true), // For development
   gasLimit: z.number().optional(),
-  gasPriceMultiplier: z.number().positive().default(1.1)
+  gasPriceMultiplier: z.number().positive().default(1.1),
 });
 
 const ProofOfIntegritySchema = z.object({
@@ -56,7 +57,7 @@ const ProofOfIntegritySchema = z.object({
   eventHashes: z.array(z.string()),
   proofHash: z.string(),
   verified: z.boolean(),
-  blockchainTxId: z.string().optional()
+  blockchainTxId: z.string().optional(),
 });
 
 export type BlockchainTransaction = z.infer<typeof BlockchainTransactionSchema>;
@@ -69,7 +70,7 @@ export interface BlockchainMetrics {
   confirmedTransactions: number;
   failedTransactions: number;
   averageConfirmationTime: number;
-  networkHealth: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY';
+  networkHealth: "HEALTHY" | "DEGRADED" | "UNHEALTHY";
   gasEfficiency: number;
   verificationRate: number;
 }
@@ -86,24 +87,27 @@ export interface VerificationResult {
 
 /**
  * Blockchain Storage System
- * 
+ *
  * Handles blockchain verification for audit trail immutability
  * with healthcare compliance and performance optimization.
  */
 export class BlockchainStorage {
   private readonly config: BlockchainConfig;
   private readonly supabase: SupabaseClient;
-  
+
   // Processing queues
-  private readonly pendingQueue: Array<{ blockId: string; priority: 'LOW' | 'MEDIUM' | 'HIGH' }> = [];
+  private readonly pendingQueue: {
+    blockId: string;
+    priority: "LOW" | "MEDIUM" | "HIGH";
+  }[] = [];
   private readonly processingInterval: NodeJS.Timeout;
-  
+
   // Metrics tracking
   private totalTransactions: number = 0;
   private confirmedTransactions: number = 0;
   private failedTransactions: number = 0;
   private readonly confirmationTimes: number[] = [];
-  
+
   // Mock blockchain for development
   private readonly mockChain: Map<string, BlockchainTransaction> = new Map();
   private mockBlockNumber: number = 1;
@@ -111,12 +115,12 @@ export class BlockchainStorage {
   constructor(config: BlockchainConfig) {
     this.config = BlockchainConfigSchema.parse(config);
     this.supabase = createClient(config.supabaseUrl, config.supabaseServiceKey);
-    
+
     // Start processing queue
     this.processingInterval = setInterval(() => {
       this.processVerificationQueue();
     }, this.config.processingInterval);
-    
+
     this.initializeBlockchainStorage();
   }
 
@@ -127,18 +131,19 @@ export class BlockchainStorage {
     try {
       // Load pending transactions
       await this.loadPendingTransactions();
-      
+
       // Initialize mock blockchain if enabled
       if (this.config.enableMockBlockchain) {
         await this.initializeMockBlockchain();
       }
-      
-      console.log('✅ Blockchain Storage initialized successfully');
-      console.log(`🔗 Network ID: ${this.config.networkId}`);
-      console.log(`⚡ Processing interval: ${this.config.processingInterval}ms`);
-      
+
+      // console.log("✅ Blockchain Storage initialized successfully");
+      // console.log(`🔗 Network ID: ${this.config.networkId}`);
+      // console.log(
+        `⚡ Processing interval: ${this.config.processingInterval}ms`,
+      );
     } catch (error) {
-      console.error('❌ Failed to initialize Blockchain Storage:', error);
+      // console.error("❌ Failed to initialize Blockchain Storage:", error);
       throw error;
     }
   }
@@ -147,16 +152,16 @@ export class BlockchainStorage {
    * Submit audit block for blockchain verification
    */
   public async submitForVerification(
-    blockId: string, 
-    blockHash: string, 
+    blockId: string,
+    blockHash: string,
     previousHash: string,
     eventHashes: string[],
-    priority: 'LOW' | 'MEDIUM' | 'HIGH' = 'MEDIUM'
+    priority: "LOW" | "MEDIUM" | "HIGH" = "MEDIUM",
   ): Promise<string> {
     try {
       // Generate Merkle root from event hashes
       const merkleRoot = this.generateMerkleRoot(eventHashes);
-      
+
       // Create proof of integrity
       const proofOfIntegrity: ProofOfIntegrity = {
         blockId,
@@ -166,27 +171,31 @@ export class BlockchainStorage {
         timestamp: new Date().toISOString(),
         eventHashes,
         proofHash: this.generateProofHash(blockHash, merkleRoot, previousHash),
-        verified: false
+        verified: false,
       };
-      
+
       // Store proof of integrity
       await this.storeProofOfIntegrity(proofOfIntegrity);
-      
+
       // Add to processing queue
       this.pendingQueue.push({ blockId, priority });
-      
+
       // Sort queue by priority
       this.pendingQueue.sort((a, b) => {
-        const priorityOrder = { 'HIGH': 3, 'MEDIUM': 2, 'LOW': 1 };
+        const priorityOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
         return priorityOrder[b.priority] - priorityOrder[a.priority];
       });
-      
-      console.log(`📝 Submitted block ${blockId} for blockchain verification (${priority} priority)`);
-      
+
+      // console.log(
+        `📝 Submitted block ${blockId} for blockchain verification (${priority} priority)`,
+      );
+
       return proofOfIntegrity.proofHash;
-      
     } catch (error) {
-      console.error(`❌ Failed to submit block ${blockId} for verification:`, error);
+      // console.error(
+        `❌ Failed to submit block ${blockId} for verification:`,
+        error,
+      );
       throw error;
     }
   }
@@ -198,18 +207,18 @@ export class BlockchainStorage {
     if (this.pendingQueue.length === 0) {
       return;
     }
-    
+
     const batchSize = Math.min(this.config.batchSize, this.pendingQueue.length);
     const batch = this.pendingQueue.splice(0, batchSize);
-    
-    console.log(`🔄 Processing ${batch.length} blockchain verifications...`);
-    
-    const promises = batch.map(item => this.verifyBlock(item.blockId));
-    
+
+    // console.log(`🔄 Processing ${batch.length} blockchain verifications...`);
+
+    const promises = batch.map((item) => this.verifyBlock(item.blockId));
+
     try {
       await Promise.allSettled(promises);
     } catch (error) {
-      console.error('❌ Error in verification batch processing:', error);
+      // console.error("❌ Error in verification batch processing:", error);
     }
   }
 
@@ -218,29 +227,29 @@ export class BlockchainStorage {
    */
   private async verifyBlock(blockId: string): Promise<VerificationResult> {
     const startTime = Date.now();
-    
+
     try {
       // Get proof of integrity
       const proof = await this.getProofOfIntegrity(blockId);
       if (!proof) {
         throw new Error(`Proof of integrity not found for block ${blockId}`);
       }
-      
+
       // Submit to blockchain (mock or real)
       const transaction = await this.submitToBlockchain(proof);
-      
+
       // Wait for confirmation
       const verificationResult = await this.waitForConfirmation(transaction);
-      
+
       // Record confirmation time
       const confirmationTime = Date.now() - startTime;
       this.confirmationTimes.push(confirmationTime);
-      
+
       // Keep only recent confirmation times
       if (this.confirmationTimes.length > 100) {
         this.confirmationTimes.shift();
       }
-      
+
       // Update metrics
       this.totalTransactions++;
       if (verificationResult.verified) {
@@ -248,25 +257,28 @@ export class BlockchainStorage {
       } else {
         this.failedTransactions++;
       }
-      
+
       // Update proof verification status
       await this.updateProofVerification(blockId, verificationResult);
-      
-      console.log(`✅ Block ${blockId} verification completed: ${verificationResult.verified ? 'VERIFIED' : 'FAILED'}`);
-      
+
+      // console.log(
+        `✅ Block ${blockId} verification completed: ${
+          verificationResult.verified ? "VERIFIED" : "FAILED"
+        }`,
+      );
+
       return verificationResult;
-      
     } catch (error) {
       this.failedTransactions++;
-      console.error(`❌ Failed to verify block ${blockId}:`, error);
-      
+      // console.error(`❌ Failed to verify block ${blockId}:`, error);
+
       return {
         blockId,
         verified: false,
         confirmations: 0,
         timestamp: new Date().toISOString(),
-        proofOfIntegrity: await this.getProofOfIntegrity(blockId) || {} as ProofOfIntegrity,
-        errors: [(error as Error).message]
+        proofOfIntegrity: (await this.getProofOfIntegrity(blockId)) || ({} as ProofOfIntegrity),
+        errors: [(error as Error).message],
       };
     }
   }
@@ -274,15 +286,17 @@ export class BlockchainStorage {
   /**
    * Submit proof to blockchain (mock implementation)
    */
-  private async submitToBlockchain(proof: ProofOfIntegrity): Promise<BlockchainTransaction> {
+  private async submitToBlockchain(
+    proof: ProofOfIntegrity,
+  ): Promise<BlockchainTransaction> {
     const transactionId = randomUUID();
-    
+
     if (this.config.enableMockBlockchain) {
       return this.submitToMockBlockchain(transactionId, proof);
     }
-    
+
     // Real blockchain submission would go here
-    throw new Error('Real blockchain integration not implemented');
+    throw new Error("Real blockchain integration not implemented");
   }
 
   /**
@@ -290,108 +304,123 @@ export class BlockchainStorage {
    */
   private async submitToMockBlockchain(
     transactionId: string,
-    proof: ProofOfIntegrity
+    proof: ProofOfIntegrity,
   ): Promise<BlockchainTransaction> {
-    
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000 + 500));
+
     const transaction: BlockchainTransaction = {
       id: transactionId,
       blockId: proof.blockId,
-      transactionHash: this.generateTransactionHash(transactionId, proof.proofHash),
+      transactionHash: this.generateTransactionHash(
+        transactionId,
+        proof.proofHash,
+      ),
       blockHash: this.generateBlockHash(this.mockBlockNumber, proof.proofHash),
       blockNumber: this.mockBlockNumber++,
       timestamp: new Date().toISOString(),
-      status: Math.random() > 0.05 ? 'PENDING' : 'FAILED', // 95% success rate
+      status: Math.random() > 0.05 ? "PENDING" : "FAILED", // 95% success rate
       confirmations: 0,
       networkId: this.config.networkId,
       metadata: {
         proofHash: proof.proofHash,
         merkleRoot: proof.merkleRoot,
-        eventCount: proof.eventHashes.length
-      }
+        eventCount: proof.eventHashes.length,
+      },
     };
-    
+
     this.mockChain.set(transactionId, transaction);
-    
+
     // Store transaction in database
     await this.storeBlockchainTransaction(transaction);
-    
+
     return transaction;
   }
 
   /**
    * Wait for transaction confirmation
    */
-  private async waitForConfirmation(transaction: BlockchainTransaction): Promise<VerificationResult> {
-    const maxWaitTime = 300000; // 5 minutes
+  private async waitForConfirmation(
+    transaction: BlockchainTransaction,
+  ): Promise<VerificationResult> {
+    const maxWaitTime = 300_000; // 5 minutes
     const checkInterval = 5000; // 5 seconds
     const startTime = Date.now();
-    
+
     while (Date.now() - startTime < maxWaitTime) {
-      const updatedTransaction = await this.getTransactionStatus(transaction.id);
-      
-      if (updatedTransaction.status === 'CONFIRMED' && 
-          updatedTransaction.confirmations >= this.config.requiredConfirmations) {
-        
+      const updatedTransaction = await this.getTransactionStatus(
+        transaction.id,
+      );
+
+      if (
+        updatedTransaction.status === "CONFIRMED"
+        && updatedTransaction.confirmations >= this.config.requiredConfirmations
+      ) {
         return {
           blockId: transaction.blockId,
           verified: true,
           transactionHash: updatedTransaction.transactionHash,
           confirmations: updatedTransaction.confirmations,
           timestamp: updatedTransaction.timestamp,
-          proofOfIntegrity: await this.getProofOfIntegrity(transaction.blockId) || {} as ProofOfIntegrity
+          proofOfIntegrity: (await this.getProofOfIntegrity(transaction.blockId))
+            || ({} as ProofOfIntegrity),
         };
       }
-      
-      if (updatedTransaction.status === 'FAILED') {
+
+      if (updatedTransaction.status === "FAILED") {
         return {
           blockId: transaction.blockId,
           verified: false,
           confirmations: 0,
           timestamp: updatedTransaction.timestamp,
-          proofOfIntegrity: await this.getProofOfIntegrity(transaction.blockId) || {} as ProofOfIntegrity,
-          errors: ['Transaction failed on blockchain']
+          proofOfIntegrity: (await this.getProofOfIntegrity(transaction.blockId))
+            || ({} as ProofOfIntegrity),
+          errors: ["Transaction failed on blockchain"],
         };
       }
-      
+
       // Simulate confirmation progress for mock blockchain
-      if (this.config.enableMockBlockchain && updatedTransaction.status === 'PENDING') {
+      if (
+        this.config.enableMockBlockchain
+        && updatedTransaction.status === "PENDING"
+      ) {
         await this.simulateConfirmationProgress(transaction.id);
       }
-      
-      await new Promise(resolve => setTimeout(resolve, checkInterval));
+
+      await new Promise((resolve) => setTimeout(resolve, checkInterval));
     }
-    
+
     // Timeout
     return {
       blockId: transaction.blockId,
       verified: false,
       confirmations: 0,
       timestamp: new Date().toISOString(),
-      proofOfIntegrity: await this.getProofOfIntegrity(transaction.blockId) || {} as ProofOfIntegrity,
-      errors: ['Confirmation timeout']
+      proofOfIntegrity: (await this.getProofOfIntegrity(transaction.blockId))
+        || ({} as ProofOfIntegrity),
+      errors: ["Confirmation timeout"],
     };
   }
 
   /**
    * Simulate confirmation progress for mock blockchain
    */
-  private async simulateConfirmationProgress(transactionId: string): Promise<void> {
+  private async simulateConfirmationProgress(
+    transactionId: string,
+  ): Promise<void> {
     const transaction = this.mockChain.get(transactionId);
-    if (!transaction || transaction.status !== 'PENDING') {
+    if (!transaction || transaction.status !== "PENDING") {
       return;
     }
-    
+
     // Randomly add confirmations
     transaction.confirmations += Math.floor(Math.random() * 3) + 1;
-    
+
     // Mark as confirmed when reaching required confirmations
     if (transaction.confirmations >= this.config.requiredConfirmations) {
-      transaction.status = 'CONFIRMED';
+      transaction.status = "CONFIRMED";
     }
-    
+
     // Update in database
     await this.updateBlockchainTransaction(transaction);
   }
@@ -401,81 +430,86 @@ export class BlockchainStorage {
    */
   private generateMerkleRoot(eventHashes: string[]): string {
     if (eventHashes.length === 0) {
-      return createHash('sha256').update('').digest('hex');
+      return createHash("sha256").update("").digest("hex");
     }
-    
+
     if (eventHashes.length === 1) {
       return eventHashes[0];
     }
-    
+
     // Simple Merkle tree implementation
     let currentLevel = [...eventHashes];
-    
+
     while (currentLevel.length > 1) {
       const nextLevel: string[] = [];
-      
+
       for (let i = 0; i < currentLevel.length; i += 2) {
         const left = currentLevel[i];
         const right = i + 1 < currentLevel.length ? currentLevel[i + 1] : left;
-        
-        const combined = createHash('sha256')
+
+        const combined = createHash("sha256")
           .update(left + right)
-          .digest('hex');
-        
+          .digest("hex");
+
         nextLevel.push(combined);
       }
-      
+
       currentLevel = nextLevel;
     }
-    
+
     return currentLevel[0];
   }
 
   /**
    * Generate proof hash
    */
-  private generateProofHash(blockHash: string, merkleRoot: string, previousHash: string): string {
-    return createHash('sha256')
+  private generateProofHash(
+    blockHash: string,
+    merkleRoot: string,
+    previousHash: string,
+  ): string {
+    return createHash("sha256")
       .update(`${blockHash}:${merkleRoot}:${previousHash}`)
-      .digest('hex');
+      .digest("hex");
   }
 
   /**
    * Generate transaction hash
    */
-  private generateTransactionHash(transactionId: string, proofHash: string): string {
-    return createHash('sha256')
+  private generateTransactionHash(
+    transactionId: string,
+    proofHash: string,
+  ): string {
+    return createHash("sha256")
       .update(`${transactionId}:${proofHash}:${Date.now()}`)
-      .digest('hex');
+      .digest("hex");
   }
 
   /**
    * Generate block hash
    */
   private generateBlockHash(blockNumber: number, proofHash: string): string {
-    return createHash('sha256')
+    return createHash("sha256")
       .update(`${blockNumber}:${proofHash}:${Date.now()}`)
-      .digest('hex');
+      .digest("hex");
   }
 
   /**
    * Store proof of integrity
    */
   private async storeProofOfIntegrity(proof: ProofOfIntegrity): Promise<void> {
-    const { error } = await this.supabase
-      .from('blockchain_proofs')
-      .insert({
-        block_id: proof.blockId,
-        merkle_root: proof.merkleRoot,
-        block_hash: proof.blockHash,
-        previous_block_hash: proof.previousBlockHash,
-        timestamp: proof.timestamp,
-        event_hashes: proof.eventHashes,
-        proof_hash: proof.proofHash,
-        verified: proof.verified,
-        blockchain_tx_id: proof.blockchainTxId
-      });
-    
+    const { error } = await this.supabase.from("blockchain_proofs").insert({
+      block_id: proof.blockId,
+      merkle_root: proof.merkleRoot,
+      block_hash: proof.blockHash,
+      previous_block_hash: proof.previousBlockHash,
+      timestamp: proof.timestamp,
+      event_hashes: proof.eventHashes,
+      proof_hash: proof.proofHash,
+      verified: proof.verified,
+      blockchain_tx_id: proof.blockchainTxId,
+    });
+
     if (error) {
       throw new Error(`Failed to store proof of integrity: ${error.message}`);
     }
@@ -484,17 +518,19 @@ export class BlockchainStorage {
   /**
    * Get proof of integrity
    */
-  private async getProofOfIntegrity(blockId: string): Promise<ProofOfIntegrity | null> {
+  private async getProofOfIntegrity(
+    blockId: string,
+  ): Promise<ProofOfIntegrity | null> {
     const { data, error } = await this.supabase
-      .from('blockchain_proofs')
-      .select('*')
-      .eq('block_id', blockId)
+      .from("blockchain_proofs")
+      .select("*")
+      .eq("block_id", blockId)
       .single();
-    
+
     if (error || !data) {
-      return null;
+      return;
     }
-    
+
     return ProofOfIntegritySchema.parse({
       blockId: data.block_id,
       merkleRoot: data.merkle_root,
@@ -504,33 +540,41 @@ export class BlockchainStorage {
       eventHashes: data.event_hashes,
       proofHash: data.proof_hash,
       verified: data.verified,
-      blockchainTxId: data.blockchain_tx_id
+      blockchainTxId: data.blockchain_tx_id,
     });
   }
 
   /**
    * Update proof verification status
    */
-  private async updateProofVerification(blockId: string, result: VerificationResult): Promise<void> {
+  private async updateProofVerification(
+    blockId: string,
+    result: VerificationResult,
+  ): Promise<void> {
     const { error } = await this.supabase
-      .from('blockchain_proofs')
+      .from("blockchain_proofs")
       .update({
         verified: result.verified,
-        blockchain_tx_id: result.transactionHash
+        blockchain_tx_id: result.transactionHash,
       })
-      .eq('block_id', blockId);
-    
+      .eq("block_id", blockId);
+
     if (error) {
-      console.error(`Failed to update proof verification for ${blockId}:`, error);
+      // console.error(
+        `Failed to update proof verification for ${blockId}:`,
+        error,
+      );
     }
   }
 
   /**
    * Store blockchain transaction
    */
-  private async storeBlockchainTransaction(transaction: BlockchainTransaction): Promise<void> {
+  private async storeBlockchainTransaction(
+    transaction: BlockchainTransaction,
+  ): Promise<void> {
     const { error } = await this.supabase
-      .from('blockchain_transactions')
+      .from("blockchain_transactions")
       .insert({
         id: transaction.id,
         block_id: transaction.blockId,
@@ -544,52 +588,61 @@ export class BlockchainStorage {
         confirmations: transaction.confirmations,
         network_id: transaction.networkId,
         contract_address: transaction.contractAddress,
-        metadata: transaction.metadata
+        metadata: transaction.metadata,
       });
-    
+
     if (error) {
-      throw new Error(`Failed to store blockchain transaction: ${error.message}`);
+      throw new Error(
+        `Failed to store blockchain transaction: ${error.message}`,
+      );
     }
   }
 
   /**
    * Update blockchain transaction
    */
-  private async updateBlockchainTransaction(transaction: BlockchainTransaction): Promise<void> {
+  private async updateBlockchainTransaction(
+    transaction: BlockchainTransaction,
+  ): Promise<void> {
     const { error } = await this.supabase
-      .from('blockchain_transactions')
+      .from("blockchain_transactions")
       .update({
         status: transaction.status,
-        confirmations: transaction.confirmations
+        confirmations: transaction.confirmations,
       })
-      .eq('id', transaction.id);
-    
+      .eq("id", transaction.id);
+
     if (error) {
-      console.error(`Failed to update blockchain transaction ${transaction.id}:`, error);
+      // console.error(
+        `Failed to update blockchain transaction ${transaction.id}:`,
+        error,
+      );
     }
   }
 
   /**
    * Get transaction status
    */
-  private async getTransactionStatus(transactionId: string): Promise<BlockchainTransaction> {
+  private async getTransactionStatus(
+    transactionId: string,
+  ): Promise<BlockchainTransaction> {
     if (this.config.enableMockBlockchain) {
       const mockTransaction = this.mockChain.get(transactionId);
       if (mockTransaction) {
         return mockTransaction;
       }
     }
-    
+
     const { data, error } = await this.supabase
-      .from('blockchain_transactions')
-      .select('*')
-      .eq('id', transactionId)
+      .from("blockchain_transactions")
+      .select("*")
+      .eq("id", transactionId)
       .single();
-    
+
     if (error || !data) {
       throw new Error(`Transaction ${transactionId} not found`);
     }
-    
+
     return BlockchainTransactionSchema.parse({
       id: data.id,
       blockId: data.block_id,
@@ -603,7 +656,7 @@ export class BlockchainStorage {
       confirmations: data.confirmations,
       networkId: data.network_id,
       contractAddress: data.contract_address,
-      metadata: data.metadata
+      metadata: data.metadata,
     });
   }
 
@@ -613,24 +666,25 @@ export class BlockchainStorage {
   private async loadPendingTransactions(): Promise<void> {
     try {
       const { data: pendingTx } = await this.supabase
-        .from('blockchain_verification_queue')
-        .select('block_id, priority')
-        .eq('status', 'PENDING')
-        .order('scheduled_at', { ascending: true });
-      
+        .from("blockchain_verification_queue")
+        .select("block_id, priority")
+        .eq("status", "PENDING")
+        .order("scheduled_at", { ascending: true });
+
       if (pendingTx) {
         for (const tx of pendingTx) {
           this.pendingQueue.push({
             blockId: tx.block_id,
-            priority: tx.priority as 'LOW' | 'MEDIUM' | 'HIGH'
+            priority: tx.priority as "LOW" | "MEDIUM" | "HIGH",
           });
         }
-        
-        console.log(`📋 Loaded ${this.pendingQueue.length} pending blockchain verifications`);
+
+        // console.log(
+          `📋 Loaded ${this.pendingQueue.length} pending blockchain verifications`,
+        );
       }
-      
     } catch (error) {
-      console.error('⚠️ Failed to load pending transactions:', error);
+      // console.error("⚠️ Failed to load pending transactions:", error);
     }
   }
 
@@ -638,8 +692,8 @@ export class BlockchainStorage {
    * Initialize mock blockchain
    */
   private async initializeMockBlockchain(): Promise<void> {
-    console.log('🎭 Mock blockchain enabled for development');
-    console.log('⚠️ Not suitable for production use');
+    // console.log("🎭 Mock blockchain enabled for development");
+    // console.log("⚠️ Not suitable for production use");
   }
 
   /**
@@ -647,20 +701,23 @@ export class BlockchainStorage {
    */
   public getMetrics(): BlockchainMetrics {
     const averageConfirmationTime = this.confirmationTimes.length > 0
-      ? this.confirmationTimes.reduce((sum, time) => sum + time, 0) / this.confirmationTimes.length
+      ? this.confirmationTimes.reduce((sum, time) => sum + time, 0)
+        / this.confirmationTimes.length
       : 0;
-    
-    const successRate = this.totalTransactions > 0 
-      ? this.confirmedTransactions / this.totalTransactions 
+
+    const successRate = this.totalTransactions > 0
+      ? this.confirmedTransactions / this.totalTransactions
       : 0;
-    
-    const networkHealth: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' = 
-      successRate > 0.95 ? 'HEALTHY' :
-      successRate > 0.8 ? 'DEGRADED' : 'UNHEALTHY';
-    
+
+    const networkHealth: "HEALTHY" | "DEGRADED" | "UNHEALTHY" = successRate > 0.95
+      ? "HEALTHY"
+      : successRate > 0.8
+      ? "DEGRADED"
+      : "UNHEALTHY";
+
     const gasEfficiency = 85; // Mock value
     const verificationRate = successRate * 100;
-    
+
     return {
       totalTransactions: this.totalTransactions,
       pendingTransactions: this.pendingQueue.length,
@@ -669,7 +726,7 @@ export class BlockchainStorage {
       averageConfirmationTime,
       networkHealth,
       gasEfficiency,
-      verificationRate
+      verificationRate,
     };
   }
 
@@ -697,45 +754,50 @@ export class BlockchainStorage {
           merkleRootValid: false,
           chainIntegrityValid: false,
           details: {
-            blockHash: '',
-            proofHash: '',
-            confirmations: 0
-          }
+            blockHash: "",
+            proofHash: "",
+            confirmations: 0,
+          },
         };
       }
-      
+
       // Verify Merkle root
       const recalculatedMerkleRoot = this.generateMerkleRoot(proof.eventHashes);
       const merkleRootValid = recalculatedMerkleRoot === proof.merkleRoot;
-      
+
       // Verify proof hash
       const recalculatedProofHash = this.generateProofHash(
         proof.blockHash,
         proof.merkleRoot,
-        proof.previousBlockHash
+        proof.previousBlockHash,
       );
       const proofVerified = recalculatedProofHash === proof.proofHash;
-      
+
       // Get blockchain transaction details
       let transactionHash: string | undefined;
       let confirmations = 0;
       let blockVerified = false;
-      
+
       if (proof.blockchainTxId) {
         try {
-          const transaction = await this.getTransactionStatus(proof.blockchainTxId);
+          const transaction = await this.getTransactionStatus(
+            proof.blockchainTxId,
+          );
           transactionHash = transaction.transactionHash;
           confirmations = transaction.confirmations;
-          blockVerified = transaction.status === 'CONFIRMED' && 
-                          confirmations >= this.config.requiredConfirmations;
+          blockVerified = transaction.status === "CONFIRMED"
+            && confirmations >= this.config.requiredConfirmations;
         } catch (error) {
-          console.error(`Failed to get transaction details for ${proof.blockchainTxId}:`, error);
+          // console.error(
+            `Failed to get transaction details for ${proof.blockchainTxId}:`,
+            error,
+          );
         }
       }
-      
+
       // TODO: Implement chain integrity verification
       const chainIntegrityValid = true; // Simplified for now
-      
+
       return {
         blockVerified,
         proofVerified,
@@ -745,12 +807,14 @@ export class BlockchainStorage {
           blockHash: proof.blockHash,
           proofHash: proof.proofHash,
           transactionHash,
-          confirmations
-        }
+          confirmations,
+        },
       };
-      
     } catch (error) {
-      console.error(`Failed to verify audit trail integrity for ${blockId}:`, error);
+      // console.error(
+        `Failed to verify audit trail integrity for ${blockId}:`,
+        error,
+      );
       throw error;
     }
   }
@@ -759,26 +823,28 @@ export class BlockchainStorage {
    * Shutdown blockchain storage
    */
   public async shutdown(): Promise<void> {
-    console.log('🛑 Shutting down Blockchain Storage...');
-    
+    // console.log("🛑 Shutting down Blockchain Storage...");
+
     // Clear processing interval
     clearInterval(this.processingInterval);
-    
+
     // Process remaining queue
     if (this.pendingQueue.length > 0) {
-      console.log(`📋 Processing ${this.pendingQueue.length} remaining verifications...`);
+      // console.log(
+        `📋 Processing ${this.pendingQueue.length} remaining verifications...`,
+      );
       await this.processVerificationQueue();
     }
-    
+
     // Final metrics
     const metrics = this.getMetrics();
-    console.log('📊 Final blockchain metrics:', {
+    // console.log("📊 Final blockchain metrics:", {
       totalTransactions: metrics.totalTransactions,
       successRate: `${metrics.verificationRate.toFixed(1)}%`,
       networkHealth: metrics.networkHealth,
-      avgConfirmationTime: `${metrics.averageConfirmationTime.toFixed(0)}ms`
+      avgConfirmationTime: `${metrics.averageConfirmationTime.toFixed(0)}ms`,
     });
-    
-    console.log('✅ Blockchain Storage shutdown complete');
+
+    // console.log("✅ Blockchain Storage shutdown complete");
   }
 }

@@ -60,7 +60,7 @@ if (!result.allowed) {
 ### 3. Uso em Componentes React
 
 ```typescript
-import { useCSRFToken, useSessionSecurity } from '@/lib/security/hooks/useSessionSecurity';
+import { useCSRFToken, useSessionSecurity } from "@/lib/security/hooks/useSessionSecurity";
 
 function MyComponent() {
   const { csrfToken } = useCSRFToken(sessionId);
@@ -68,11 +68,11 @@ function MyComponent() {
 
   // Usar token CSRF em requisições
   const handleSubmit = async (data) => {
-    const response = await fetch('/api/protected', {
-      method: 'POST',
+    const response = await fetch("/api/protected", {
+      method: "POST",
       headers: {
-        'X-CSRF-Token': csrfToken,
-        'Content-Type': 'application/json',
+        "X-CSRF-Token": csrfToken,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     });

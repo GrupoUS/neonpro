@@ -731,9 +731,9 @@ test.describe("Profile Page - Accessibility", () => {
       const firstField = formFields.first();
       const hasLabel = await firstField.evaluate((el) => {
         return (
-          el.labels?.length > 0 ||
-          el.getAttribute("aria-label") ||
-          el.getAttribute("aria-labelledby")
+          el.labels?.length > 0
+          || el.getAttribute("aria-label")
+          || el.getAttribute("aria-labelledby")
         );
       });
       expect(hasLabel).toBeTruthy();

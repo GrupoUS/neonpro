@@ -20,14 +20,14 @@ export function usePatientRealtime(
     patientId?: string;
     clinicId?: string;
     enabled?: boolean;
-    onPatientUpdate?: (patient: any) => void;
+    onPatientUpdate?: (patient: unknown) => void;
   },
 ) {
   const filter = options.patientId
     ? `id=eq.${options.patientId}`
     : options.clinicId
-      ? `clinic_id=eq.${options.clinicId}`
-      : "";
+    ? `clinic_id=eq.${options.clinicId}`
+    : "";
 
   const config: UseRealtimeQueryConfig = {
     table: "patients",
@@ -60,9 +60,9 @@ export function useAppointmentRealtime(
     patientId?: string;
     professionalId?: string;
     clinicId?: string;
-    dateRange?: { start: string; end: string };
+    dateRange?: { start: string; end: string; };
     enabled?: boolean;
-    onAppointmentUpdate?: (appointment: any) => void;
+    onAppointmentUpdate?: (appointment: unknown) => void;
   },
 ) {
   const buildFilter = useCallback(() => {
@@ -124,7 +124,7 @@ export function useProfessionalRealtime(
     clinicId?: string;
     specialty?: string;
     enabled?: boolean;
-    onProfessionalUpdate?: (professional: any) => void;
+    onProfessionalUpdate?: (professional: unknown) => void;
   },
 ) {
   const buildFilter = useCallback(() => {
@@ -177,7 +177,7 @@ export function useDashboardRealtime(
   options: {
     clinicId?: string;
     enabled?: boolean;
-    onMetricsUpdate?: (metrics: any) => void;
+    onMetricsUpdate?: (metrics: unknown) => void;
   },
 ) {
   // Listen to multiple tables for dashboard metrics
@@ -209,10 +209,9 @@ export function useDashboardRealtime(
     appointments: appointmentsRealtime,
     patients: patientsRealtime,
     professionals: professionalsRealtime,
-    isConnected:
-      appointmentsRealtime.isConnected ||
-      patientsRealtime.isConnected ||
-      professionalsRealtime.isConnected,
+    isConnected: appointmentsRealtime.isConnected
+      || patientsRealtime.isConnected
+      || professionalsRealtime.isConnected,
     errors: [
       appointmentsRealtime.error,
       patientsRealtime.error,
@@ -231,7 +230,7 @@ export function useAuditRealtime(
     userId?: string;
     action?: string;
     enabled?: boolean;
-    onAuditUpdate?: (audit: any) => void;
+    onAuditUpdate?: (audit: unknown) => void;
   },
 ) {
   const buildFilter = useCallback(() => {

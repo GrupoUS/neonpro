@@ -96,7 +96,7 @@ export interface PatientConsent {
 export class PatientService {
   async createPatient(
     patient: Omit<Patient, "id" | "created_at" | "updated_at">,
-  ): Promise<{ patient?: Patient; error?: string }> {
+  ): Promise<{ patient?: Patient; error?: string; }> {
     try {
       // Validate CPF format
       if (!this.isValidCPF(patient.cpf)) {
@@ -135,8 +135,7 @@ export class PatientService {
           patient_id: data.id!,
           tenant_id: patient.tenant_id,
           consent_type: "lgpd",
-          consent_text:
-            "Consent granted for personal data processing according to LGPD",
+          consent_text: "Consent granted for personal data processing according to LGPD",
           granted: true,
           granted_at: new Date().toISOString(),
         });
@@ -145,8 +144,7 @@ export class PatientService {
       return { patient: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to create patient",
+        error: error instanceof Error ? error.message : "Failed to create patient",
       };
     }
   }
@@ -154,7 +152,7 @@ export class PatientService {
   async getPatient(
     id: string,
     tenantId: string,
-  ): Promise<{ patient?: Patient; error?: string }> {
+  ): Promise<{ patient?: Patient; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("patients")
@@ -186,7 +184,7 @@ export class PatientService {
       limit?: number;
       offset?: number;
     },
-  ): Promise<{ patients?: Patient[]; total?: number; error?: string }> {
+  ): Promise<{ patients?: Patient[]; total?: number; error?: string; }> {
     try {
       let query = supabase
         .from("patients")
@@ -224,8 +222,7 @@ export class PatientService {
       return { patients: data, total: count || 0 };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to get patients",
+        error: error instanceof Error ? error.message : "Failed to get patients",
       };
     }
   }
@@ -234,7 +231,7 @@ export class PatientService {
     id: string,
     tenantId: string,
     updates: Partial<Patient>,
-  ): Promise<{ patient?: Patient; error?: string }> {
+  ): Promise<{ patient?: Patient; error?: string; }> {
     try {
       // Validate CPF if being updated
       if (updates.cpf && !this.isValidCPF(updates.cpf)) {
@@ -259,8 +256,7 @@ export class PatientService {
       return { patient: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to update patient",
+        error: error instanceof Error ? error.message : "Failed to update patient",
       };
     }
   }
@@ -268,7 +264,7 @@ export class PatientService {
   async deletePatient(
     id: string,
     tenantId: string,
-  ): Promise<{ success?: boolean; error?: string }> {
+  ): Promise<{ success?: boolean; error?: string; }> {
     try {
       // In healthcare, we typically don't hard delete patient data
       // Instead, we mark as inactive for LGPD compliance
@@ -288,8 +284,7 @@ export class PatientService {
       return { success: true };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to delete patient",
+        error: error instanceof Error ? error.message : "Failed to delete patient",
       };
     }
   }
@@ -303,7 +298,7 @@ export class PatientService {
       endDate?: string;
       limit?: number;
     },
-  ): Promise<{ appointments?: PatientAppointment[]; error?: string }> {
+  ): Promise<{ appointments?: PatientAppointment[]; error?: string; }> {
     try {
       let query = supabase
         .from("patient_appointments")
@@ -343,10 +338,9 @@ export class PatientService {
       return { appointments: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get patient appointments",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get patient appointments",
       };
     }
   }
@@ -354,7 +348,7 @@ export class PatientService {
   async getPatientTreatments(
     patientId: string,
     tenantId: string,
-  ): Promise<{ treatments?: PatientTreatment[]; error?: string }> {
+  ): Promise<{ treatments?: PatientTreatment[]; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("patient_treatments")
@@ -375,17 +369,16 @@ export class PatientService {
       return { treatments: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get patient treatments",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get patient treatments",
       };
     }
   }
 
   async recordConsent(
     consent: Omit<PatientConsent, "id" | "created_at">,
-  ): Promise<{ consent?: PatientConsent; error?: string }> {
+  ): Promise<{ consent?: PatientConsent; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("patient_consents")
@@ -403,8 +396,7 @@ export class PatientService {
       return { consent: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to record consent",
+        error: error instanceof Error ? error.message : "Failed to record consent",
       };
     }
   }
@@ -412,7 +404,7 @@ export class PatientService {
   async getPatientConsents(
     patientId: string,
     tenantId: string,
-  ): Promise<{ consents?: PatientConsent[]; error?: string }> {
+  ): Promise<{ consents?: PatientConsent[]; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("patient_consents")
@@ -428,10 +420,9 @@ export class PatientService {
       return { consents: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get patient consents",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get patient consents",
       };
     }
   }
@@ -440,7 +431,7 @@ export class PatientService {
     tenantId: string,
     searchTerm: string,
     limit = 10,
-  ): Promise<{ patients?: Patient[]; error?: string }> {
+  ): Promise<{ patients?: Patient[]; error?: string; }> {
     try {
       const { data, error } = await supabase
         .from("patients")
@@ -459,15 +450,14 @@ export class PatientService {
       return { patients: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error ? error.message : "Failed to search patients",
+        error: error instanceof Error ? error.message : "Failed to search patients",
       };
     }
   }
 
   async getPatientStats(
     tenantId: string,
-  ): Promise<{ stats?: Record<string, number>; error?: string }> {
+  ): Promise<{ stats?: Record<string, number>; error?: string; }> {
     try {
       const { data, error } = await supabase.rpc("get_patient_stats", {
         p_tenant_id: tenantId,
@@ -480,10 +470,9 @@ export class PatientService {
       return { stats: data };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to get patient stats",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to get patient stats",
       };
     }
   }
@@ -533,7 +522,7 @@ export class PatientService {
   async exportPatientData(
     patientId: string,
     tenantId: string,
-  ): Promise<{ data?: Record<string, unknown>; error?: string }> {
+  ): Promise<{ data?: Record<string, unknown>; error?: string; }> {
     try {
       // LGPD data portability requirement
       const [
@@ -563,10 +552,9 @@ export class PatientService {
       return { data: exportData };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to export patient data",
+        error: error instanceof Error
+          ? error.message
+          : "Failed to export patient data",
       };
     }
   }

@@ -1,7 +1,7 @@
 {
   "name": "@neonpro/monitoring",
-  "version": "1.0.0",
-  "description": "Performance monitoring and metrics for NeonPro healthcare applications",
+  "version": "1.0.0", 
+  "description": "Consolidated Performance Monitoring and Metrics for NeonPro healthcare - Supabase real-time integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,12 +9,28 @@
     "dev": "tsc --watch",
     "lint": "oxlint src/",
     "format": "dprint fmt",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "analyze:bundle": "node scripts/analyze-bundle.js",
+    "analyze:performance": "node scripts/analyze-performance.js", 
+    "analyze:database": "node scripts/analyze-database.js",
+    "optimize:bundles": "node scripts/optimize-bundles.js",
+    "optimize:assets": "node scripts/optimize-assets.js",
+    "optimize:database": "node scripts/optimize-database.js",
+    "validate:performance": "node scripts/validate-performance.js",
+    "validate:web-vitals": "node scripts/validate-web-vitals.js",
+    "validate:mobile": "node scripts/validate-mobile.js"
   },
   "dependencies": {
     "@neonpro/core-services": "workspace:*",
+    "@neonpro/database": "workspace:*",
+    "@neonpro/cache": "workspace:*",
     "@sentry/nextjs": "^8.0.0",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "lighthouse": "^11.4.0", 
+    "webpack-bundle-analyzer": "^4.10.1",
+    "@vercel/analytics": "^1.1.1",
+    "@supabase/supabase-js": "^2.45.4",
+    "@supabase/ssr": "^0.5.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -30,21 +46,50 @@
       "default": "./dist/index.js"
     },
     "./client": {
-      "types": "./dist/client/index.d.ts",
+      "types": "./dist/client/index.d.ts", 
       "default": "./dist/client/index.js"
     },
     "./server": {
       "types": "./dist/server/index.d.ts",
       "default": "./dist/server/index.js"
+    },
+    "./web-vitals": {
+      "types": "./dist/web-vitals/index.d.ts",
+      "default": "./dist/web-vitals/index.js"
+    },
+    "./bundle-analysis": {
+      "types": "./dist/bundle-analysis/index.d.ts",
+      "default": "./dist/bundle-analysis/index.js"
+    },
+    "./database": {
+      "types": "./dist/database/index.d.ts",
+      "default": "./dist/database/index.js"
+    },
+    "./collectors": {
+      "types": "./dist/collectors/index.d.ts",
+      "default": "./dist/collectors/index.js"
+    },
+    "./realtime": {
+      "types": "./dist/realtime/index.d.ts",
+      "default": "./dist/realtime/index.js"
     }
   },
+  "files": [
+    "dist",
+    "scripts"
+  ],
   "keywords": [
     "monitoring",
     "performance",
     "healthcare",
-    "metrics",
+    "metrics", 
     "web-vitals",
-    "sentry"
+    "sentry",
+    "supabase",
+    "real-time",
+    "optimization",
+    "bundle-analysis",
+    "database-performance"
   ],
   "author": "NeonPro Team",
   "license": "MIT"

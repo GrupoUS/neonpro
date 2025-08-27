@@ -13,7 +13,7 @@ export function getGlobalSupabaseMock() {
 export function resetAllGlobalMocks() {
   if (global.mockSupabaseClient) {
     // Reset all auth methods
-    Object.values(global.mockSupabaseClient.auth).forEach((method: any) => {
+    Object.values(global.mockSupabaseClient.auth).forEach((method: unknown) => {
       if (typeof method === "function" && method.mockReset) {
         method.mockReset();
       }
@@ -47,7 +47,7 @@ export function resetAllGlobalMocks() {
 
   if (global.mockReactHooks) {
     // Reset React hooks
-    Object.values(global.mockReactHooks).forEach((hook: any) => {
+    Object.values(global.mockReactHooks).forEach((hook: unknown) => {
       if (typeof hook === "function" && hook.mockReset) {
         hook.mockReset();
       }
@@ -59,11 +59,11 @@ export function resetAllGlobalMocks() {
  * Create a test wrapper with common providers
  */
 export function createTestWrapper(
-  options: { queryClient?: any; router?: any } = {},
+  options: { queryClient?: unknown; router?: unknown; } = {},
 ) {
   const { queryClient, router } = options;
 
-  return ({ children }: { children: React.ReactNode }) => {
+  return ({ children }: { children: React.ReactNode; }) => {
     let wrapper = children;
 
     if (queryClient) {

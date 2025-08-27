@@ -6,11 +6,7 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import {
-  mockAppointment,
-  mockPatient,
-  mockUser,
-} from "../setup/final-test-setup";
+import { mockAppointment, mockPatient, mockUser } from "../setup/final-test-setup";
 
 describe("aPI Integration Tests - Final Validation", () => {
   describe("authentication API", () => {

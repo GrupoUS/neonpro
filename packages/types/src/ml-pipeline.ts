@@ -18,7 +18,7 @@ export interface ModelVersion extends BaseEntity {
   deployment_date?: string;
   retired_date?: string;
   clinic_id: string;
-  model_config: Record<string, any>;
+  model_config: Record<string, unknown>;
   validation_metrics: Record<string, number>;
   notes?: string;
 }
@@ -33,7 +33,7 @@ export interface ABTest extends BaseEntity {
   traffic_split: number; // 0.0 to 1.0, percentage for model A
   clinic_id: string;
   description?: string;
-  success_criteria: Record<string, any>;
+  success_criteria: Record<string, unknown>;
 }
 
 export interface ABTestResult extends BaseEntity {
@@ -65,7 +65,7 @@ export interface DriftDetection extends BaseEntity {
   status: "detected" | "investigating" | "resolved" | "false_positive";
   clinic_id: string;
   affected_metrics: string[];
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 export interface DriftDetectionResult {
@@ -73,7 +73,7 @@ export interface DriftDetectionResult {
   driftScore: number;
   severity: "low" | "medium" | "high" | "critical";
   affectedFeatures: string[];
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 // Request/Response Types
@@ -85,7 +85,7 @@ export interface CreateModelVersionRequest {
   recall: number;
   f1_score: number;
   clinic_id: string;
-  model_config: Record<string, any>;
+  model_config: Record<string, unknown>;
   validation_metrics: Record<string, number>;
   notes?: string;
 }
@@ -97,14 +97,14 @@ export interface CreateABTestRequest {
   traffic_split: number;
   clinic_id: string;
   description?: string;
-  success_criteria: Record<string, any>;
+  success_criteria: Record<string, unknown>;
   end_date?: string;
 }
 
 export interface DriftDetectionRequest {
   model_id: string;
-  current_data: Record<string, any>[];
-  reference_data?: Record<string, any>[];
+  current_data: Record<string, unknown>[];
+  reference_data?: Record<string, unknown>[];
   clinic_id: string;
 }
 

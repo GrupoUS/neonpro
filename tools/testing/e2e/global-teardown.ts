@@ -37,8 +37,6 @@ async function globalTeardown(config: FullConfig) {
     );
     writeFileSync(metricsPath, JSON.stringify(metrics, undefined, 2));
   } catch {}
-
-  const _teardownTime = Date.now() - startTime;
 }
 
 export default globalTeardown;

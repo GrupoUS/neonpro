@@ -7,9 +7,9 @@ import { vi } from "vitest";
 // Healthcare-specific test context providers
 interface HealthcareTestProviderProps {
   children: React.ReactNode;
-  initialPatient?: any;
-  initialDoctor?: any;
-  initialClinicSettings?: any;
+  initialPatient?: unknown;
+  initialDoctor?: unknown;
+  initialClinicSettings?: unknown;
 }
 
 // Mock healthcare context provider for testing
@@ -19,34 +19,14 @@ export function HealthcareTestProvider({
   initialDoctor,
   initialClinicSettings = {},
 }: HealthcareTestProviderProps) {
-  const _mockHealthcareContext = {
-    patient: initialPatient,
-    doctor: initialDoctor,
-    clinicSettings: {
-      timezone: "America/Sao_Paulo",
-      workingHours: { start: "08:00", end: "18:00" },
-      appointmentDuration: 60,
-      lgpdCompliance: true,
-      anvisaCompliance: true,
-      ...initialClinicSettings,
-    },
-
-    // Mock functions for healthcare operations
-    updatePatient: vi.fn(),
-    createAppointment: vi.fn(),
-    updateTreatment: vi.fn(),
-    recordConsent: vi.fn(),
-    generateAuditLog: vi.fn(),
-  };
-
   return <div data-testid="healthcare-provider">{children}</div>;
 }
 
 // Custom render function with healthcare providers
 interface CustomRenderOptions extends Omit<RenderOptions, "wrapper"> {
-  initialPatient?: any;
-  initialDoctor?: any;
-  initialClinicSettings?: any;
+  initialPatient?: unknown;
+  initialDoctor?: unknown;
+  initialClinicSettings?: unknown;
 }
 
 export function renderWithHealthcareProvider(
@@ -60,7 +40,7 @@ export function renderWithHealthcareProvider(
     ...renderOptions
   } = options;
 
-  function Wrapper({ children }: { children: React.ReactNode }) {
+  function Wrapper({ children }: { children: React.ReactNode; }) {
     return (
       <HealthcareTestProvider
         initialClinicSettings={initialClinicSettings}
@@ -197,7 +177,7 @@ export const healthcareAssertions = {
     expect(cleanCPF).not.toBe("11111111111");
   },
 
-  expectLGPDConsentToBeRecorded: (consent: any) => {
+  expectLGPDConsentToBeRecorded: (consent: unknown) => {
     expect(consent).toHaveProperty("granted", true);
     expect(consent).toHaveProperty("grantedAt");
     expect(consent).toHaveProperty("purposes");
@@ -205,7 +185,7 @@ export const healthcareAssertions = {
     expect(consent.purposes.length).toBeGreaterThan(0);
   },
 
-  expectANVISAComplianceToBeValid: (product: any) => {
+  expectANVISAComplianceToBeValid: (product: unknown) => {
     expect(product).toHaveProperty("anvisaCode");
     expect(product.anvisaCode).toMatch(/^ANVISA-/);
     expect(product).toHaveProperty("batch");
@@ -213,13 +193,13 @@ export const healthcareAssertions = {
     expect(new Date(product.expiryDate)).toBeInstanceOf(Date);
   },
 
-  expectDigitalSignatureToBePresent: (record: any) => {
+  expectDigitalSignatureToBePresent: (record: unknown) => {
     expect(record).toHaveProperty("digitalSignature");
     expect(record.digitalSignature).toBeTruthy();
     expect(typeof record.digitalSignature).toBe("string");
   },
 
-  expectAuditTrailToBeComplete: (auditLog: any) => {
+  expectAuditTrailToBeComplete: (auditLog: unknown) => {
     expect(auditLog).toHaveProperty("action");
     expect(auditLog).toHaveProperty("userId");
     expect(auditLog).toHaveProperty("timestamp");
@@ -230,7 +210,7 @@ export const healthcareAssertions = {
 
 // Healthcare form testing utilities
 export const healthcareFormUtils = {
-  fillPatientForm: async (user: any, patientData: any) => {
+  fillPatientForm: async (user: unknown, patientData: unknown) => {
     const nameInput = document.querySelector(
       'input[name="name"]',
     ) as HTMLInputElement;
@@ -258,7 +238,7 @@ export const healthcareFormUtils = {
     }
   },
 
-  submitFormWithLGPDConsent: async (user: any) => {
+  submitFormWithLGPDConsent: async (user: unknown) => {
     const lgpdCheckbox = document.querySelector(
       'input[name="lgpdConsent"]',
     ) as HTMLInputElement;
@@ -302,7 +282,7 @@ export const mockHealthcareAPI = {
     },
   })),
 
-  recordLGPDConsent: vi.fn(async (_consentData: any) => ({
+  recordLGPDConsent: vi.fn(async (_consentData: unknown) => ({
     success: true,
     consentId: "consent-123",
     timestamp: new Date().toISOString(),

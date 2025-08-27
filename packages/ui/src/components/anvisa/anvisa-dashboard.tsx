@@ -10,13 +10,7 @@ import { cn } from "../../lib/utils";
 import { Alert, AlertDescription } from "../Alert";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Progress } from "../Progress";
 
 export interface AnvisaDashboardProps {
@@ -39,7 +33,7 @@ export function AnvisaDashboard({
   stats,
   recentActivity,
   className,
-}: AnvisaDashboardProps & { className?: string }) {
+}: AnvisaDashboardProps & { className?: string; }) {
   const formatDate = (date: string) => new Date(date).toLocaleDateString();
 
   return (
@@ -47,8 +41,7 @@ export function AnvisaDashboard({
       <div>
         <h1 className="font-bold text-3xl">ANVISA Compliance Dashboard</h1>
         <p className="text-muted-foreground">
-          Monitor compliance status with ANVISA regulations for medical devices
-          and software.
+          Monitor compliance status with ANVISA regulations for medical devices and software.
         </p>
       </div>
 
@@ -123,15 +116,9 @@ export function AnvisaDashboard({
               {recentActivity.map((activity) => (
                 <div className="flex items-center space-x-4" key={activity.id}>
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted">
-                    {activity.type === "registration" && (
-                      <FileTextIcon className="h-4 w-4" />
-                    )}
-                    {activity.type === "approval" && (
-                      <CheckIcon className="h-4 w-4" />
-                    )}
-                    {activity.type === "alert" && (
-                      <AlertTriangleIcon className="h-4 w-4" />
-                    )}
+                    {activity.type === "registration" && <FileTextIcon className="h-4 w-4" />}
+                    {activity.type === "approval" && <CheckIcon className="h-4 w-4" />}
+                    {activity.type === "alert" && <AlertTriangleIcon className="h-4 w-4" />}
                   </div>
                   <div className="flex-1 space-y-1">
                     <p className="font-medium text-sm leading-none">
@@ -142,13 +129,11 @@ export function AnvisaDashboard({
                     </p>
                   </div>
                   <Badge
-                    variant={
-                      activity.status === "approved"
-                        ? "default"
-                        : activity.status === "pending"
-                          ? "secondary"
-                          : "destructive"
-                    }
+                    variant={activity.status === "approved"
+                      ? "default"
+                      : activity.status === "pending"
+                      ? "secondary"
+                      : "destructive"}
                   >
                     {activity.status}
                   </Badge>
@@ -185,8 +170,7 @@ export function AnvisaDashboard({
         <Alert>
           <AlertTriangleIcon className="h-4 w-4" />
           <AlertDescription>
-            You have {stats.recentAlerts} compliance alerts that require
-            attention.{" "}
+            You have {stats.recentAlerts} compliance alerts that require attention.{" "}
             <Button className="h-auto p-0" variant="link">
               View details
             </Button>

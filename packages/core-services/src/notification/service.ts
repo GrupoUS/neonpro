@@ -118,7 +118,7 @@ export interface NotificationStats {
   deliveryRate: number;
   openRate: number;
   clickRate: number;
-  channelDistribution: { channel: NotificationChannel; count: number }[];
+  channelDistribution: { channel: NotificationChannel; count: number; }[];
 }
 
 export interface ExternalNotificationProvider {
@@ -126,15 +126,15 @@ export interface ExternalNotificationProvider {
     to: string,
     subject: string,
     content: string,
-    metadata?: any,
+    metadata?: unknown,
   ): Promise<string>;
-  sendSMS(to: string, message: string, metadata?: any): Promise<string>;
-  sendWhatsApp(to: string, message: string, metadata?: any): Promise<string>;
+  sendSMS(to: string, message: string, metadata?: unknown): Promise<string>;
+  sendWhatsApp(to: string, message: string, metadata?: unknown): Promise<string>;
   sendPush(
     deviceToken: string,
     title: string,
     message: string,
-    metadata?: any,
+    metadata?: unknown,
   ): Promise<string>;
 }
 
@@ -352,8 +352,7 @@ export class NotificationService {
     treatmentPlanId: string,
     sessionNumber: number,
   ): Promise<Notification> {
-    const treatmentPlan =
-      await this.repository.getTreatmentPlan(treatmentPlanId);
+    const treatmentPlan = await this.repository.getTreatmentPlan(treatmentPlanId);
     if (!treatmentPlan) {
       throw new Error("Treatment plan not found");
     }
@@ -401,7 +400,7 @@ export class NotificationService {
 
   async renderTemplate(
     templateId: string,
-    variables: Record<string, any>,
+    variables: Record<string, unknown>,
   ): Promise<string> {
     const template = await this.repository.getTemplate(templateId);
     if (!template) {
@@ -434,7 +433,7 @@ export class NotificationService {
     return content;
   }
 
-  private convertAndValidateVariable(value: any, variable: any): string {
+  private convertAndValidateVariable(value: unknown, variable: unknown): string {
     switch (variable.type) {
       case VariableType.DATE: {
         if (value instanceof Date) {
@@ -491,8 +490,8 @@ export class NotificationService {
     }
 
     if (
-      campaign.status !== CampaignStatus.SCHEDULED &&
-      campaign.status !== CampaignStatus.DRAFT
+      campaign.status !== CampaignStatus.SCHEDULED
+      && campaign.status !== CampaignStatus.DRAFT
     ) {
       throw new Error("Can only launch scheduled or draft campaigns");
     }
@@ -651,22 +650,21 @@ export class NotificationService {
   }
 
   // Message builders for default templates
-  private buildAppointmentReminderMessage(data: any): string {
+  private buildAppointmentReminderMessage(data: unknown): string {
     return `Olá ${data.patientName}! Lembramos que você tem uma consulta de ${data.treatmentType} agendada para ${data.appointmentDate} às ${data.appointmentTime}. Duração: ${data.duration} minutos. Para reagendar, entre em contato conosco.`;
   }
 
-  private buildAppointmentConfirmationMessage(data: any): string {
+  private buildAppointmentConfirmationMessage(data: unknown): string {
     return `Olá ${data.patientName}! Sua consulta de ${data.treatmentType} foi confirmada para ${data.appointmentDate} às ${data.appointmentTime}. Estamos ansiosos para atendê-lo(a)!`;
   }
 
-  private buildTreatmentFollowUpMessage(data: any): string {
+  private buildTreatmentFollowUpMessage(data: unknown): string {
     return `Olá ${data.patientName}! Como você está se sentindo após a sessão ${data.sessionNumber} de ${data.treatmentType}? Sua opinião é muito importante para nós. Responda a esta mensagem ou entre em contato conosco.`;
   }
 
   // Scheduled notification processing
   async processScheduledNotifications(): Promise<void> {
-    const scheduledNotifications =
-      await this.repository.getScheduledNotifications(new Date());
+    const scheduledNotifications = await this.repository.getScheduledNotifications(new Date());
 
     for (const notification of scheduledNotifications) {
       try {
@@ -688,14 +686,13 @@ export class NotificationService {
     );
 
     // Filter by date range if provided
-    const filteredNotifications =
-      startDate && endDate
-        ? allNotifications.filter(
-            (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
-          )
-        : allNotifications;
+    const filteredNotifications = startDate && endDate
+      ? allNotifications.filter(
+        (n) => n.sentAt && n.sentAt >= startDate && n.sentAt <= endDate,
+      )
+      : allNotifications;
 
-    const totalSent = filteredNotifications.length;
+    const { length: totalSent } = filteredNotifications;
     const totalDelivered = filteredNotifications.filter(
       (n) => n.status === NotificationStatus.DELIVERED,
     ).length;
@@ -710,8 +707,7 @@ export class NotificationService {
     ).length;
 
     const deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
-    const openRate =
-      totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
+    const openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0;
     const clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0;
 
     // Channel distribution

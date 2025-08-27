@@ -35,8 +35,8 @@ const RegenerateSchema = z.object({
 
 // Initialize services
 function getReceiptInvoiceManager() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
   const companyInfo = {
     name: process.env.COMPANY_NAME || "NeonPro",
@@ -53,12 +53,12 @@ function getReceiptInvoiceManager() {
 
   const nfseConfig = {
     enabled: process.env.NFSE_ENABLED === "true",
-    provider: (process.env.NFSE_PROVIDER as any) || "ginfes",
+    provider: (process.env.NFSE_PROVIDER as unknown) || "ginfes",
     certificatePath: process.env.NFSE_CERTIFICATE_PATH,
     certificatePassword: process.env.NFSE_CERTIFICATE_PASSWORD,
     serviceCode: process.env.NFSE_SERVICE_CODE,
     cityCode: process.env.NFSE_CITY_CODE,
-    environment: (process.env.NFSE_ENVIRONMENT as any) || "sandbox",
+    environment: (process.env.NFSE_ENVIRONMENT as unknown) || "sandbox",
   };
 
   const emailConfig = {
@@ -110,12 +110,12 @@ function getReceiptInvoiceManager() {
 // GET - Get document details
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     );
 
     // Check authentication
@@ -163,12 +163,12 @@ export async function GET(
 // POST - Perform actions on document
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     );
 
     // Check authentication
@@ -386,12 +386,12 @@ export async function POST(
 // PUT - Update document details
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     );
 
     // Check authentication
@@ -466,12 +466,12 @@ export async function PUT(
 // DELETE - Delete document
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     );
 
     // Check authentication

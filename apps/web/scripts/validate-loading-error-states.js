@@ -12,14 +12,6 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 // Cores para output
-const _colors = {
-  green: "\u001B[32m",
-  red: "\u001B[31m",
-  yellow: "\u001B[33m",
-  blue: "\u001B[34m",
-  reset: "\u001B[0m",
-};
-
 const log = {
   success: (_msg) => {},
   error: (_msg) => {},
@@ -46,8 +38,7 @@ function validateHooks() {
       const content = fs.readFileSync(path.join(hooksDir, hook), "utf8");
 
       // Verificar loading state
-      const hasLoading =
-        content.includes("loading") && content.includes("boolean");
+      const hasLoading = content.includes("loading") && content.includes("boolean");
       if (hasLoading) {
         log.success(`${hook} - Loading state implementado`);
       } else {
@@ -55,8 +46,7 @@ function validateHooks() {
       }
 
       // Verificar error state
-      const hasError =
-        content.includes("error") && content.includes("Error | null");
+      const hasError = content.includes("error") && content.includes("Error | null");
       if (hasError) {
         log.success(`${hook} - Error state implementado`);
       } else {
@@ -64,8 +54,7 @@ function validateHooks() {
       }
 
       // Verificar try-catch
-      const hasTryCatch =
-        content.includes("try {") && content.includes("catch");
+      const hasTryCatch = content.includes("try {") && content.includes("catch");
       if (hasTryCatch) {
         log.success(`${hook} - Try-catch implementado`);
       } else {

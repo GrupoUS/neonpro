@@ -13,9 +13,7 @@ test.describe("Dashboard Treatments Page", () => {
   });
 
   test.describe("Treatments Overview", () => {
-    test("should display treatments dashboard with key metrics", async ({
-      page,
-    }) => {
+    test("should display treatments dashboard with key metrics", async ({ page }) => {
       // Check page title and navigation
       await expect(page).toHaveTitle(/Treatments.*NeonPro/);
       await expect(page.locator("h1")).toContainText("Treatments Dashboard");
@@ -627,9 +625,7 @@ test.describe("Dashboard Treatments Page", () => {
   });
 
   test.describe("Performance and Accessibility", () => {
-    test("should load treatments dashboard within performance thresholds", async ({
-      page,
-    }) => {
+    test("should load treatments dashboard within performance thresholds", async ({ page }) => {
       const startTime = Date.now();
       await page.goto("/dashboard/treatments");
       await page.waitForLoadState("networkidle");
@@ -657,9 +653,7 @@ test.describe("Dashboard Treatments Page", () => {
       await expect(focusedElement).toBeVisible();
     });
 
-    test("should have proper ARIA labels for treatment data", async ({
-      page,
-    }) => {
+    test("should have proper ARIA labels for treatment data", async ({ page }) => {
       // Check ARIA labels on treatment metrics
       await expect(
         page.locator('[data-testid="active-treatments"][aria-label]'),
@@ -694,9 +688,7 @@ test.describe("Dashboard Treatments Page", () => {
       }
     });
 
-    test("should support screen readers for treatment information", async ({
-      page,
-    }) => {
+    test("should support screen readers for treatment information", async ({ page }) => {
       // Check for screen reader announcements
       const announcements = page.locator(
         '[aria-live="polite"], [aria-live="assertive"]',

@@ -7,13 +7,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
   Activity,
@@ -164,7 +158,7 @@ export function PerformanceMetricsDashboard() {
 
   const getPerformanceStatus = (
     value: number,
-    thresholds: { good: number; warning: number },
+    thresholds: { good: number; warning: number; },
     inverse = false,
   ) => {
     if (inverse) {
@@ -269,16 +263,18 @@ export function PerformanceMetricsDashboard() {
           <CardContent>
             <div className="space-y-2">
               <div
-                className={`text-2xl font-bold ${getStatusColor(
-                  getPerformanceStatus(
-                    metrics.systemPerformance.cpuUsage,
-                    {
-                      good: 70,
-                      warning: 85,
-                    },
-                    true,
-                  ),
-                )}`}
+                className={`text-2xl font-bold ${
+                  getStatusColor(
+                    getPerformanceStatus(
+                      metrics.systemPerformance.cpuUsage,
+                      {
+                        good: 70,
+                        warning: 85,
+                      },
+                      true,
+                    ),
+                  )
+                }`}
               >
                 {metrics.systemPerformance.cpuUsage}%
               </div>
@@ -291,8 +287,8 @@ export function PerformanceMetricsDashboard() {
                 {metrics.systemPerformance.cpuUsage < 70
                   ? " Ótimo"
                   : metrics.systemPerformance.cpuUsage < 85
-                    ? " Bom"
-                    : " Atenção"}
+                  ? " Bom"
+                  : " Atenção"}
               </div>
             </div>
           </CardContent>
@@ -312,16 +308,18 @@ export function PerformanceMetricsDashboard() {
           <CardContent>
             <div className="space-y-2">
               <div
-                className={`text-2xl font-bold ${getStatusColor(
-                  getPerformanceStatus(
-                    metrics.systemPerformance.memoryUsage,
-                    {
-                      good: 80,
-                      warning: 90,
-                    },
-                    true,
-                  ),
-                )}`}
+                className={`text-2xl font-bold ${
+                  getStatusColor(
+                    getPerformanceStatus(
+                      metrics.systemPerformance.memoryUsage,
+                      {
+                        good: 80,
+                        warning: 90,
+                      },
+                      true,
+                    ),
+                  )
+                }`}
               >
                 {metrics.systemPerformance.memoryUsage}%
               </div>
@@ -350,24 +348,24 @@ export function PerformanceMetricsDashboard() {
           <CardContent>
             <div className="space-y-2">
               <div
-                className={`text-2xl font-bold ${getStatusColor(
-                  getPerformanceStatus(
-                    300 - metrics.applicationMetrics.responseTime,
-                    {
-                      good: 150,
-                      warning: 100,
-                    },
-                  ),
-                )}`}
+                className={`text-2xl font-bold ${
+                  getStatusColor(
+                    getPerformanceStatus(
+                      300 - metrics.applicationMetrics.responseTime,
+                      {
+                        good: 150,
+                        warning: 100,
+                      },
+                    ),
+                  )
+                }`}
               >
                 {metrics.applicationMetrics.responseTime}ms
               </div>
               <div className="flex items-center space-x-1">
-                {metrics.applicationMetrics.responseTime < 200 ? (
-                  <TrendingDown className="h-3 w-3 text-green-600" />
-                ) : (
-                  <TrendingUp className="h-3 w-3 text-yellow-600" />
-                )}
+                {metrics.applicationMetrics.responseTime < 200
+                  ? <TrendingDown className="h-3 w-3 text-green-600" />
+                  : <TrendingUp className="h-3 w-3 text-yellow-600" />}
                 <span className="text-xs text-muted-foreground">
                   vs. hora anterior
                 </span>
@@ -573,8 +571,7 @@ export function PerformanceMetricsDashboard() {
                   <span className="text-sm">Receita/Hora</span>
                 </div>
                 <span className="text-lg font-bold text-green-600">
-                  R${" "}
-                  {metrics.businessMetrics.revenuePerHour.toLocaleString(
+                  R$ {metrics.businessMetrics.revenuePerHour.toLocaleString(
                     "pt-BR",
                   )}
                 </span>

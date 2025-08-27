@@ -12,10 +12,7 @@ import {
   SkipToContentLink,
   StatusAnnouncer,
 } from "@/components/accessibility/AccessibilityComponents";
-import {
-  MobileBottomNavigation,
-  MobileNavigation,
-} from "@/components/mobile/MobileNavigation";
+import { MobileBottomNavigation, MobileNavigation } from "@/components/mobile/MobileNavigation";
 import { Toaster } from "@/components/ui/toaster";
 import { useEffect, useState } from "react";
 
@@ -38,7 +35,7 @@ export function MainLayout({
     setIsClient(true);
 
     // Set up global accessibility styles
-    const root = document.documentElement;
+    const { documentElement: root } = document;
 
     // Respect user's motion preferences
     const prefersReducedMotion = window.matchMedia(
@@ -183,7 +180,7 @@ export function DashboardPageLayout({
 }
 
 // Auth layout for login/signup pages
-export function AuthLayout({ children }: { children: React.ReactNode }) {
+export function AuthLayout({ children }: { children: React.ReactNode; }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       <SkipToContentLink />
@@ -279,8 +276,8 @@ export function PrintLayout({
         {/* Print Footer */}
         <div className="border-t pt-4 text-xs text-muted-foreground">
           <p>
-            Este relatório foi gerado automaticamente pelo sistema NeonPro
-            Healthcare em conformidade com LGPD, ANVISA e CFM.
+            Este relatório foi gerado automaticamente pelo sistema NeonPro Healthcare em
+            conformidade com LGPD, ANVISA e CFM.
           </p>
         </div>
       </div>

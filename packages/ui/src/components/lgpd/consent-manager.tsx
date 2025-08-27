@@ -6,13 +6,7 @@ import { toast } from "sonner";
 import { Alert, AlertDescription } from "../Alert";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Switch } from "../Switch";
 
 // ============================================================================
@@ -120,13 +114,7 @@ export function ConsentManager() {
     } catch {
       toast.error("Erro ao retirar consentimento");
     }
-  };
-
-  const _getCategoryIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "essential": {
-        return <Shield className="h-4 w-4 text-green-600" />;
-      }
+  };      }
       case "functional": {
         return <Check className="h-4 w-4 text-blue-600" />;
       }
@@ -140,13 +128,7 @@ export function ConsentManager() {
         return <Shield className="h-4 w-4 text-gray-600" />;
       }
     }
-  };
-
-  const _getCategoryColor = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "essential": {
-        return "bg-green-100 text-green-800";
-      }
+  };      }
       case "functional": {
         return "bg-blue-100 text-blue-800";
       }
@@ -176,9 +158,7 @@ export function ConsentManager() {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div className="h-20 rounded-lg bg-gray-200" key={i} />
-            ))}
+            {[1, 2, 3].map((i) => <div className="h-20 rounded-lg bg-gray-200" key={i} />)}
           </div>
         </CardContent>
       </Card>
@@ -198,8 +178,7 @@ export function ConsentManager() {
             Gerenciamento de Consentimento - LGPD
           </CardTitle>
           <CardDescription>
-            Gerencie suas preferências de privacidade e consentimentos de acordo
-            com a LGPD
+            Gerencie suas preferências de privacidade e consentimentos de acordo com a LGPD
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -207,8 +186,8 @@ export function ConsentManager() {
             <Alert className="mb-6">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Alguns consentimentos obrigatórios não foram concedidos. Isso
-                pode afetar o funcionamento completo da plataforma.
+                Alguns consentimentos obrigatórios não foram concedidos. Isso pode afetar o
+                funcionamento completo da plataforma.
               </AlertDescription>
             </Alert>
           )}
@@ -286,11 +265,9 @@ function ConsentCard({
           <div className="flex-1">
             <div className="mb-2 flex items-center gap-3">
               <div className="flex items-center gap-2">
-                {consent.granted ? (
-                  <Check className="h-4 w-4 text-green-600" />
-                ) : (
-                  <X className="h-4 w-4 text-red-600" />
-                )}
+                {consent.granted
+                  ? <Check className="h-4 w-4 text-green-600" />
+                  : <X className="h-4 w-4 text-red-600" />}
                 <h4 className="font-medium">{consent.purpose}</h4>
               </div>
               <Badge className={getCategoryColor(consent.category)}>
@@ -307,8 +284,7 @@ function ConsentCard({
 
             {consent.granted && consent.grantedAt && (
               <p className="text-gray-500 text-xs">
-                Consentido em:{" "}
-                {new Date(consent.grantedAt).toLocaleString("pt-BR")}
+                Consentido em: {new Date(consent.grantedAt).toLocaleString("pt-BR")}
                 {consent.version && ` (v${consent.version})`}
               </p>
             )}
@@ -318,9 +294,7 @@ function ConsentCard({
             <Switch
               checked={consent.granted}
               disabled={updating}
-              onCheckedChange={(checked: boolean) =>
-                onUpdate(consent.purpose, checked)
-              }
+              onCheckedChange={(checked: boolean) => onUpdate(consent.purpose, checked)}
             />
 
             {consent.granted && !consent.required && (

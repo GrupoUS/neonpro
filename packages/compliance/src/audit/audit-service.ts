@@ -26,9 +26,9 @@ import type {
  * Manages audit logging and trail validation for healthcare compliance
  */
 export class AuditService {
-  private readonly supabaseClient: any;
+  private readonly supabaseClient: unknown;
 
-  constructor(supabaseClient: any) {
+  constructor(supabaseClient: unknown) {
     this.supabaseClient = supabaseClient;
   }
 
@@ -38,7 +38,7 @@ export class AuditService {
   async logEvent(
     tenantId: string,
     event: AuditEvent,
-  ): Promise<{ success: boolean; auditLogId?: string; error?: string }> {
+  ): Promise<{ success: boolean; auditLogId?: string; error?: string; }> {
     try {
       // Validate event data
       const validatedEvent = AuditEventSchema.parse(event);
@@ -96,7 +96,7 @@ export class AuditService {
    */
   async queryLogs(
     filters: AuditFilters,
-  ): Promise<{ success: boolean; logs?: AuditLog[]; error?: string }> {
+  ): Promise<{ success: boolean; logs?: AuditLog[]; error?: string; }> {
     try {
       // Validate filters
       const validatedFilters = AuditFiltersSchema.parse(filters);
@@ -114,15 +114,15 @@ export class AuditService {
       }
 
       if (
-        validatedFilters.eventTypes &&
-        validatedFilters.eventTypes.length > 0
+        validatedFilters.eventTypes
+        && validatedFilters.eventTypes.length > 0
       ) {
         query = query.in("event_type", validatedFilters.eventTypes);
       }
 
       if (
-        validatedFilters.severities &&
-        validatedFilters.severities.length > 0
+        validatedFilters.severities
+        && validatedFilters.severities.length > 0
       ) {
         query = query.in("severity", validatedFilters.severities);
       }
@@ -219,7 +219,7 @@ export class AuditService {
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,
       ];
 
-      const loggedEventTypes = new Set(logs.map((log: any) => log.event_type));
+      const loggedEventTypes = new Set(logs.map((log: unknown) => log.event_type));
 
       for (const requiredType of requiredEventTypes) {
         if (!loggedEventTypes.has(requiredType)) {
@@ -232,7 +232,7 @@ export class AuditService {
       // Check for gaps in audit trail (periods without any logs)
       if (logs.length > 0) {
         const sortedLogs = logs.sort(
-          (a: any, b: any) =>
+          (a: unknown, b: unknown) =>
             new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
         );
 
@@ -253,7 +253,7 @@ export class AuditService {
 
       // Check for suspicious patterns
       const criticalEvents = logs.filter(
-        (log: any) => log.severity === AuditSeverity.CRITICAL,
+        (log: unknown) => log.severity === AuditSeverity.CRITICAL,
       );
       if (criticalEvents.length > 10) {
         violations.push("High number of critical events detected");
@@ -301,7 +301,7 @@ export class AuditService {
    */
   async configureAudit(
     config: AuditConfig,
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       // Validate configuration
       const validatedConfig = AuditConfigSchema.parse(config);

@@ -245,8 +245,8 @@ const SystemHealthIndicator: React.FC<{
   const overallHealth = healthItems.every((item) => item.status === "online")
     ? "online"
     : healthItems.some((item) => item.status === "error")
-      ? "error"
-      : "unstable";
+    ? "error"
+    : "unstable";
 
   return (
     <div className="space-y-3">
@@ -259,7 +259,7 @@ const SystemHealthIndicator: React.FC<{
 
       <div className="space-y-2">
         {healthItems.map((item) => {
-          const Icon = item.icon;
+          const { icon: Icon } = item;
           const status = connectionStatusInfo[item.status];
 
           return (
@@ -344,8 +344,7 @@ const ConstitutionalResilienceInfo: React.FC<{
 
       <div className="space-y-2">
         {items.map((item) => {
-          const isActive =
-            constitutionalInfo[item.key as keyof typeof constitutionalInfo];
+          const isActive = constitutionalInfo[item.key as keyof typeof constitutionalInfo];
 
           return (
             <div className="flex items-start gap-3" key={item.key}>
@@ -357,11 +356,9 @@ const ConstitutionalResilienceInfo: React.FC<{
                     : "bg-red-100 text-red-700",
                 )}
               >
-                {isActive ? (
-                  <CheckCircle className="h-3 w-3" />
-                ) : (
-                  <AlertTriangle className="h-3 w-3" />
-                )}
+                {isActive
+                  ? <CheckCircle className="h-3 w-3" />
+                  : <AlertTriangle className="h-3 w-3" />}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="font-medium text-sm">{item.label}</div>
@@ -418,7 +415,7 @@ export const OfflineIndicator = React.forwardRef<
       lg: "text-lg",
     };
 
-    const StatusIcon = statusInfo.icon;
+    const { icon: StatusIcon } = statusInfo;
 
     // Compact indicator for fixed positions
     if (position !== "inline" && !expanded) {
@@ -436,7 +433,7 @@ export const OfflineIndicator = React.forwardRef<
           {...props}
           aria-expanded={false}
           aria-label={`Status da conexão: ${statusInfo.label}. Clique para expandir`}
-          role="button"
+          // role="button" - consider using actual button element
         >
           <div className="flex items-center gap-2">
             <StatusIcon className={cn("h-4 w-4", statusInfo.color)} />
@@ -507,15 +504,13 @@ export const OfflineIndicator = React.forwardRef<
               <span className="text-sm">{capabilityInfo.description}</span>
               <Badge
                 size="sm"
-                variant={
-                  offlineCapability === "full"
-                    ? "confirmed"
-                    : offlineCapability === "limited"
-                      ? "medium"
-                      : offlineCapability === "emergency_only"
-                        ? "high"
-                        : "urgent"
-                }
+                variant={offlineCapability === "full"
+                  ? "confirmed"
+                  : offlineCapability === "limited"
+                  ? "medium"
+                  : offlineCapability === "emergency_only"
+                  ? "high"
+                  : "urgent"}
               >
                 {capabilityInfo.label}
               </Badge>
@@ -550,8 +545,7 @@ export const OfflineIndicator = React.forwardRef<
                 <div>
                   <span className="text-muted-foreground">Armazenamento:</span>
                   <div className="font-medium">
-                    {formatBytes(offlineData.storageUsed)} /{" "}
-                    {formatBytes(offlineData.storageLimit)}
+                    {formatBytes(offlineData.storageUsed)} / {formatBytes(offlineData.storageLimit)}
                   </div>
                 </div>
 
@@ -560,11 +554,9 @@ export const OfflineIndicator = React.forwardRef<
                     Dados emergência:
                   </span>
                   <div className="flex items-center gap-1">
-                    {offlineData.emergencyDataAvailable ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <AlertTriangle className="h-4 w-4 text-red-600" />
-                    )}
+                    {offlineData.emergencyDataAvailable
+                      ? <CheckCircle className="h-4 w-4 text-green-600" />
+                      : <AlertTriangle className="h-4 w-4 text-red-600" />}
                     <span className="text-sm">
                       {offlineData.emergencyDataAvailable
                         ? "Disponível"
@@ -601,8 +593,8 @@ export const OfflineIndicator = React.forwardRef<
                     Modo de Emergência Médica
                   </h4>
                   <p className="mt-1 text-orange-700 text-sm">
-                    Funcionalidades críticas mantidas para garantir continuidade
-                    dos cuidados. Dados de emergência acessíveis mesmo offline.
+                    Funcionalidades críticas mantidas para garantir continuidade dos cuidados. Dados
+                    de emergência acessíveis mesmo offline.
                   </p>
                 </div>
               </div>
@@ -625,17 +617,19 @@ export const OfflineIndicator = React.forwardRef<
 
             {onToggleOfflineMode && (
               <Button onClick={onToggleOfflineMode} size="sm" variant="outline">
-                {connectionStatus === "offline" ? (
-                  <>
-                    <Wifi className="mr-2 h-4 w-4" />
-                    Tentar Reconectar
-                  </>
-                ) : (
-                  <>
-                    <WifiOff className="mr-2 h-4 w-4" />
-                    Modo Offline
-                  </>
-                )}
+                {connectionStatus === "offline"
+                  ? (
+                    <>
+                      <Wifi className="mr-2 h-4 w-4" />
+                      Tentar Reconectar
+                    </>
+                  )
+                  : (
+                    <>
+                      <WifiOff className="mr-2 h-4 w-4" />
+                      Modo Offline
+                    </>
+                  )}
               </Button>
             )}
           </div>

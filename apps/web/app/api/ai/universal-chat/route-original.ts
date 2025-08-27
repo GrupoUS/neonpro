@@ -78,10 +78,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Select system prompt based on interface
-    const systemPrompt =
-      interface_type === "external"
-        ? EXTERNAL_SYSTEM_PROMPT
-        : INTERNAL_SYSTEM_PROMPT;
+    const systemPrompt = interface_type === "external"
+      ? EXTERNAL_SYSTEM_PROMPT
+      : INTERNAL_SYSTEM_PROMPT;
 
     // Initialize AI engine for analysis
     const aiEngine = new HealthcareAIEngine(interface_type);
@@ -150,12 +149,11 @@ DADOS DISPONÍVEIS:
     // Return streaming response
     return result.toTextStreamResponse();
   } catch (error) {
-    console.error("Universal chat error:", error);
+    // console.error("Universal chat error:", error);
     return NextResponse.json(
       {
         error: "Erro interno do servidor",
-        message:
-          "Desculpe, ocorreu um erro. Tente novamente em alguns momentos.",
+        message: "Desculpe, ocorreu um erro. Tente novamente em alguns momentos.",
       },
       { status: 500 },
     );
@@ -205,7 +203,7 @@ export async function PUT(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Session management error:", error);
+    // console.error("Session management error:", error);
     return NextResponse.json(
       { error: "Session management failed" },
       { status: 500 },
@@ -264,7 +262,7 @@ export async function GET(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Analytics error:", error);
+    // console.error("Analytics error:", error);
     return NextResponse.json(
       { error: "Analytics request failed" },
       { status: 500 },

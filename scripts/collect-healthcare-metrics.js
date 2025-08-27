@@ -34,7 +34,7 @@ class HealthcareMetricsCollector {
   }
 
   async collectPerformanceMetrics() {
-    console.log("📊 Collecting performance metrics...");
+    // console.log("📊 Collecting performance metrics...");
 
     const startTime = performance.now();
 
@@ -144,8 +144,9 @@ class HealthcareMetricsCollector {
     );
 
     this.metrics.performance.violations = violations;
-    this.metrics.performance.compliance_status =
-      violations.length === 0 ? "COMPLIANT" : "NON_COMPLIANT";
+    this.metrics.performance.compliance_status = violations.length === 0
+      ? "COMPLIANT"
+      : "NON_COMPLIANT";
   }
 
   calculateSeverity(value, threshold) {
@@ -158,7 +159,7 @@ class HealthcareMetricsCollector {
   }
 
   async collectComplianceMetrics() {
-    console.log("🏥 Collecting healthcare compliance metrics...");
+    // console.log("🏥 Collecting healthcare compliance metrics...");
 
     this.metrics.compliance = {
       collected_at: new Date().toISOString(),
@@ -195,7 +196,7 @@ class HealthcareMetricsCollector {
   }
 
   async collectSecurityMetrics() {
-    console.log("🔒 Collecting security metrics...");
+    // console.log("🔒 Collecting security metrics...");
 
     this.metrics.security = {
       collected_at: new Date().toISOString(),
@@ -224,7 +225,7 @@ class HealthcareMetricsCollector {
   }
 
   async collectAccessibilityMetrics() {
-    console.log("♿ Collecting accessibility metrics...");
+    // console.log("♿ Collecting accessibility metrics...");
 
     this.metrics.accessibility = {
       collected_at: new Date().toISOString(),
@@ -250,7 +251,7 @@ class HealthcareMetricsCollector {
   }
 
   async collectHealthcareSpecificMetrics() {
-    console.log("🏥 Collecting healthcare-specific metrics...");
+    // console.log("🏥 Collecting healthcare-specific metrics...");
 
     this.metrics.healthcare_specific = {
       collected_at: new Date().toISOString(),
@@ -281,7 +282,7 @@ class HealthcareMetricsCollector {
   }
 
   async generateReport() {
-    console.log("📄 Generating healthcare metrics report...");
+    // console.log("📄 Generating healthcare metrics report...");
 
     const reportPath = path.join(process.cwd(), "healthcare-metrics.json");
 
@@ -297,7 +298,7 @@ class HealthcareMetricsCollector {
 
     // Write metrics to file
     await fs.writeFile(reportPath, JSON.stringify(this.metrics, null, 2));
-    console.log(`✅ Healthcare metrics report saved to: ${reportPath}`);
+    // console.log(`✅ Healthcare metrics report saved to: ${reportPath}`);
 
     // Generate human-readable summary
     await this.generateHumanReadableSummary();
@@ -311,9 +312,9 @@ class HealthcareMetricsCollector {
     function countRecursive(obj) {
       Object.values(obj).forEach((value) => {
         if (
-          typeof value === "object" &&
-          value !== null &&
-          !Array.isArray(value)
+          typeof value === "object"
+          && value !== null
+          && !Array.isArray(value)
         ) {
           countRecursive(value);
         } else {
@@ -328,9 +329,7 @@ class HealthcareMetricsCollector {
 
   getOverallComplianceStatus() {
     const complianceStatuses = Object.values(this.metrics.compliance)
-      .map((area) =>
-        typeof area === "object" && area.status ? area.status : null,
-      )
+      .map((area) => typeof area === "object" && area.status ? area.status : null)
       .filter(Boolean);
 
     return complianceStatuses.every((status) => status === "COMPLIANT")
@@ -424,16 +423,16 @@ class HealthcareMetricsCollector {
 
 ## Performance Metrics
 ${
-  this.metrics.performance.violations?.length > 0
-    ? "### ⚠️ Performance Violations:\n" +
-      this.metrics.performance.violations
-        .map(
-          (v) =>
-            `- **${v.metric}**: ${v.value}ms (threshold: ${v.threshold}ms, severity: ${v.severity})`,
-        )
-        .join("\n")
-    : "### ✅ All performance metrics within thresholds"
-}
+      this.metrics.performance.violations?.length > 0
+        ? "### ⚠️ Performance Violations:\n"
+          + this.metrics.performance.violations
+            .map(
+              (v) =>
+                `- **${v.metric}**: ${v.value}ms (threshold: ${v.threshold}ms, severity: ${v.severity})`,
+            )
+            .join("\n")
+        : "### ✅ All performance metrics within thresholds"
+    }
 
 ## Compliance Status
 - **HIPAA**: ${this.metrics.compliance.hipaa?.status || "UNKNOWN"}
@@ -451,7 +450,7 @@ Generated on: ${new Date().toISOString()}
   }
 
   async run() {
-    console.log("🏥 Starting NeonPro Healthcare Metrics Collection...\n");
+    // console.log("🏥 Starting NeonPro Healthcare Metrics Collection...\n");
 
     try {
       await this.collectPerformanceMetrics();
@@ -462,20 +461,20 @@ Generated on: ${new Date().toISOString()}
 
       const report = await this.generateReport();
 
-      console.log("\n✅ Healthcare metrics collection completed successfully!");
-      console.log(
+      // console.log("\n✅ Healthcare metrics collection completed successfully!");
+      // console.log(
         `📊 Total metrics collected: ${this.metrics.summary.total_metrics_collected}`,
       );
-      console.log(
+      // console.log(
         `🏥 Overall compliance: ${this.metrics.summary.compliance_status}`,
       );
-      console.log(
+      // console.log(
         `⚡ Performance grade: ${this.metrics.summary.performance_grade}`,
       );
 
       return report;
     } catch (error) {
-      console.error("❌ Error collecting healthcare metrics:", error);
+      // console.error("❌ Error collecting healthcare metrics:", error);
       process.exit(1);
     }
   }

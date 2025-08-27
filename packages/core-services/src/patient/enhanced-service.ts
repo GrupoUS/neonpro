@@ -10,14 +10,14 @@ import type { ServiceContext } from "../types";
 
 // Temporary type definitions for build - will be replaced with proper types
 interface PatientRepository {
-  createPatient(data: any): Promise<any>;
-  getPatient(id: string): Promise<any>;
-  getPatientByEmail(email: string): Promise<any>;
-  updatePatient(id: string, data: any): Promise<any>;
-  getPatients(filters?: any): Promise<any[]>;
-  updateMedicalHistory(patientId: string, history: any): Promise<void>;
-  getPatientStats(): Promise<any>;
-  addConsentForm(patientId: string, form: any): Promise<void>;
+  createPatient(data: unknown): Promise<unknown>;
+  getPatient(id: string): Promise<unknown>;
+  getPatientByEmail(email: string): Promise<unknown>;
+  updatePatient(id: string, data: unknown): Promise<unknown>;
+  getPatients(filters?: unknown): Promise<any[]>;
+  updateMedicalHistory(patientId: string, history: unknown): Promise<void>;
+  getPatientStats(): Promise<unknown>;
+  addConsentForm(patientId: string, form: unknown): Promise<void>;
   getConsentForms(patientId: string): Promise<any[]>;
   searchPatients(query: string): Promise<any[]>;
 }
@@ -34,7 +34,7 @@ interface CreatePatientData {
 }
 interface UpdatePatientData {
   email?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 interface MedicalHistory {}
 interface AestheticHistory {}
@@ -341,9 +341,9 @@ export class EnhancedPatientService extends EnhancedServiceBase {
         const consentForms = await this.repository.getConsentForms(patientId);
         return consentForms.some(
           (form) =>
-            form.treatmentType === treatmentType &&
-            form.isActive &&
-            form.signedDate,
+            form.treatmentType === treatmentType
+            && form.isActive
+            && form.signedDate,
         );
       },
       context,
@@ -386,7 +386,7 @@ export class EnhancedPatientService extends EnhancedServiceBase {
   /**
    * Enhanced service health with patient-specific metrics
    */
-  async getServiceHealth(): Promise<any> {
+  async getServiceHealth(): Promise<unknown> {
     const baseHealth = await super.getHealthMetrics();
 
     // Add patient-specific metrics

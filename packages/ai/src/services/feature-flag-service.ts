@@ -25,7 +25,7 @@ export interface FeatureFlagConditions {
   time_restrictions?: TimeRestriction[];
   percentage_rollout?: number;
   environment?: string[];
-  custom_conditions?: Record<string, any>;
+  custom_conditions?: Record<string, unknown>;
 }
 
 export interface TimeRestriction {
@@ -54,7 +54,7 @@ export interface FeatureFlagContext {
   environment?: string;
   request_ip?: string;
   user_agent?: string;
-  custom_attributes?: Record<string, any>;
+  custom_attributes?: Record<string, unknown>;
 }
 
 export interface FeatureFlagInput extends AIServiceInput {
@@ -105,8 +105,8 @@ export class FeatureFlagService extends EnhancedAIService<
     super("feature_flag_service");
 
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     );
 
     // Initialize flag cache refresh
@@ -281,9 +281,8 @@ export class FeatureFlagService extends EnhancedAIService<
 
     const flagData = {
       ...input.flag_data,
-      id:
-        input.flag_data.id ||
-        `ff_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+      id: input.flag_data.id
+        || `ff_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       metadata: {
@@ -483,7 +482,7 @@ export class FeatureFlagService extends EnhancedAIService<
       }
 
       const hasRequiredRole = flag.conditions.user_roles.some((role) =>
-        context.user_roles?.includes(role),
+        context.user_roles?.includes(role)
       );
 
       if (!hasRequiredRole) {
@@ -520,8 +519,8 @@ export class FeatureFlagService extends EnhancedAIService<
 
       if (
         !(
-          context.clinic_id &&
-          flag.conditions.clinic_ids.includes(context.clinic_id)
+          context.clinic_id
+          && flag.conditions.clinic_ids.includes(context.clinic_id)
         )
       ) {
         return {
@@ -536,8 +535,8 @@ export class FeatureFlagService extends EnhancedAIService<
 
     // Check time restrictions
     if (
-      flag.conditions.time_restrictions &&
-      flag.conditions.time_restrictions.length > 0
+      flag.conditions.time_restrictions
+      && flag.conditions.time_restrictions.length > 0
     ) {
       conditionsChecked.push("time_restrictions");
 
@@ -551,8 +550,8 @@ export class FeatureFlagService extends EnhancedAIService<
           if (now >= startTime && now <= endTime) {
             // If days of week are specified, check current day
             if (
-              restriction.days_of_week &&
-              restriction.days_of_week.length > 0
+              restriction.days_of_week
+              && restriction.days_of_week.length > 0
             ) {
               return restriction.days_of_week.includes(now.getDay());
             }
@@ -575,8 +574,8 @@ export class FeatureFlagService extends EnhancedAIService<
 
     // Check percentage rollout
     if (
-      flag.conditions.percentage_rollout !== undefined &&
-      flag.conditions.percentage_rollout < 100
+      flag.conditions.percentage_rollout !== undefined
+      && flag.conditions.percentage_rollout < 100
     ) {
       conditionsChecked.push("percentage_rollout");
 

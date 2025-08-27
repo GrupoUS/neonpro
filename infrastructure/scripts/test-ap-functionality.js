@@ -82,13 +82,6 @@ async function testAPFunctionality() {
       .from("accounts_payable")
       .select("net_amount")
       .in("status", ["pending", "approved", "overdue"]);
-
-    const _totalOpen =
-      openPayables?.reduce(
-        (sum, p) => sum + Number.parseFloat(p.net_amount),
-        0,
-      ) || 0;
-
     // Contas vencidas
     const { data: overduePayables } = await supabase
       .from("accounts_payable")

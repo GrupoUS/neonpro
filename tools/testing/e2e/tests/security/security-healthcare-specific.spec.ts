@@ -20,9 +20,7 @@ test.describe("🏥 Healthcare Security Compliance", () => {
     await page.waitForURL("/dashboard");
   });
 
-  test("should enforce LGPD data protection in patient views", async ({
-    page,
-  }) => {
+  test("should enforce LGPD data protection in patient views", async ({ page }) => {
     await page.goto("/patients");
 
     // Test that sensitive data is properly masked
@@ -38,9 +36,7 @@ test.describe("🏥 Healthcare Security Compliance", () => {
     await expect(page.locator('[data-testid="consent-date"]')).toBeVisible();
   });
 
-  test("should validate ANVISA device security requirements", async ({
-    page,
-  }) => {
+  test("should validate ANVISA device security requirements", async ({ page }) => {
     await page.goto("/devices");
 
     // Test device registration validation
@@ -75,9 +71,7 @@ test.describe("🏥 Healthcare Security Compliance", () => {
     ).toBeVisible();
   });
 
-  test("should maintain audit trail for all healthcare actions", async ({
-    page,
-  }) => {
+  test("should maintain audit trail for all healthcare actions", async ({ page }) => {
     await page.goto("/patients/1");
 
     // Perform an action that should be audited

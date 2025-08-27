@@ -28,13 +28,7 @@ import {
 import { useEffect, useId, useState } from "react";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 
 // Healthcare Design System Color Palette
 export const HEALTHCARE_COLORS = {
@@ -223,7 +217,6 @@ export function HealthcareCard({
   onClick,
   className,
 }: HealthcareCardProps) {
-  const _cardId = useId();
   const titleId = useId();
 
   const getTypeIcon = () => {
@@ -288,16 +281,14 @@ export function HealthcareCard({
 				${className}
 			`}
       onClick={onClick}
-      onKeyDown={
-        onClick
-          ? (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onClick();
-              }
-            }
-          : undefined
-      }
+      onKeyDown={onClick
+        ? (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }
+        : undefined}
       role={onClick ? "button" : "article"}
       tabIndex={onClick ? 0 : undefined}
     >
@@ -326,9 +317,7 @@ export function HealthcareCard({
 
       <CardContent>
         {children}
-        {actions && (
-          <div className="mt-4 flex gap-2 border-t pt-4">{actions}</div>
-        )}
+        {actions && <div className="mt-4 flex gap-2 border-t pt-4">{actions}</div>}
       </CardContent>
     </Card>
   );
@@ -498,11 +487,13 @@ export function HealthcareButton({
       disabled={disabled || loading}
       onClick={onClick}
     >
-      {loading ? (
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-      ) : (
-        Icon && <Icon className="h-4 w-4" />
-      )}
+      {loading
+        ? (
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        )
+        : (
+          Icon && <Icon className="h-4 w-4" />
+        )}
       {children}
     </Button>
   );

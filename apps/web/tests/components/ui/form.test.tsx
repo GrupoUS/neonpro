@@ -36,7 +36,7 @@ vi.mock<typeof import("@neonpro/utils/validation")>(
 );
 
 // Mock theme provider
-const ThemeWrapper = ({ children }: { children: React.ReactNode }) => (
+const ThemeWrapper = ({ children }: { children: React.ReactNode; }) => (
   <div className="neonprov1-theme">{children}</div>
 );
 
@@ -95,7 +95,7 @@ describe("form Component - NeonPro Healthcare", () => {
 
       // Mock validation
       const { validateCPF } = await import("@neonpro/utils/validation");
-      (validateCPF as any).mockImplementation(mockValidateCPF);
+      (validateCPF as unknown).mockImplementation(mockValidateCPF);
 
       render(
         <ThemeWrapper>
@@ -187,8 +187,8 @@ describe("form Component - NeonPro Healthcare", () => {
                         />
                       </FormControl>
                       <FormLabel className="text-sm">
-                        Autorizo o processamento dos meus dados pessoais para
-                        fins de atendimento médico *
+                        Autorizo o processamento dos meus dados pessoais para fins de atendimento
+                        médico *
                       </FormLabel>
                     </FormItem>
                   </FormField>

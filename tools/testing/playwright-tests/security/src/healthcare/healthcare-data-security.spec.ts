@@ -190,11 +190,11 @@ test.describe("Healthcare Data Encryption Tests", () => {
         }
 
         // Intercept the API call to check if data is encrypted
-        let apiRequestData: any;
+        let apiRequestData: unknown;
         page.on("request", (request) => {
           if (
-            request.url().includes("/api/patients") &&
-            request.method() === "POST"
+            request.url().includes("/api/patients")
+            && request.method() === "POST"
           ) {
             apiRequestData = request.postDataJSON();
           }
@@ -214,10 +214,9 @@ test.describe("Healthcare Data Encryption Tests", () => {
             expect(fieldValue).not.toBe(testCase.testValue);
 
             // Should be base64 encoded or have encryption markers
-            const isEncrypted =
-              fieldValue.startsWith("[ENCRYPTED]") ||
-              /^[A-Za-z0-9+/=]+$/.test(fieldValue) || // Base64 pattern
-              fieldValue.length > testCase.testValue.length * 1.5; // Encrypted is typically longer
+            const isEncrypted = fieldValue.startsWith("[ENCRYPTED]")
+              || /^[A-Za-z0-9+/=]+$/.test(fieldValue) // Base64 pattern
+              || fieldValue.length > testCase.testValue.length * 1.5; // Encrypted is typically longer
 
             expect(isEncrypted).toBe(true);
           }
@@ -231,7 +230,7 @@ test.describe("Healthcare Data Encryption Tests", () => {
 
   test("Medical Data Encryption in Transit", async ({ page }) => {
     // Monitor all network requests for encryption
-    const requests: any[] = [];
+    const requests: unknown[] = [];
 
     page.on("request", (request) => {
       if (request.url().includes("/api/")) {
@@ -270,9 +269,9 @@ test.describe("Healthcare Data Encryption Tests", () => {
     // Validate all healthcare API requests use HTTPS
     const healthcareRequests = requests.filter(
       (req) =>
-        req.url.includes("/api/patients") ||
-        req.url.includes("/api/procedures") ||
-        req.url.includes("/api/medical"),
+        req.url.includes("/api/patients")
+        || req.url.includes("/api/procedures")
+        || req.url.includes("/api/medical"),
     );
 
     for (const request of healthcareRequests) {
@@ -298,11 +297,11 @@ test.describe("Healthcare Data Encryption Tests", () => {
     });
 
     // Intercept upload request
-    let uploadData: any;
+    let uploadData: unknown;
     page.on("request", (request) => {
       if (
-        request.url().includes("/api/upload") &&
-        request.method() === "POST"
+        request.url().includes("/api/upload")
+        && request.method() === "POST"
       ) {
         uploadData = request.postData();
       }
@@ -362,12 +361,11 @@ test.describe("Role-Based Access Control Tests", () => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
               },
-              body:
-                testCase.method !== "GET"
-                  ? JSON.stringify({
-                      testData: "security test",
-                    })
-                  : undefined,
+              body: testCase.method !== "GET"
+                ? JSON.stringify({
+                  testData: "security test",
+                })
+                : undefined,
             });
 
             return {
@@ -545,9 +543,7 @@ test.describe("Healthcare Compliance Security Tests", () => {
     await page.fill('[data-testid="professional-registration"]', "INVALID-CFM");
     await page.fill('[data-testid="professional-password"]', "Password123!");
 
-    const response = page.waitForResponse((res) =>
-      res.url().includes("/api/auth/cfm-validate"),
-    );
+    const response = page.waitForResponse((res) => res.url().includes("/api/auth/cfm-validate"));
     await page.click('[data-testid="login-button"]');
     const cfmResponse = await response;
 
@@ -641,10 +637,10 @@ test.describe("Healthcare Compliance Security Tests", () => {
 
       // Should have audit entries for our actions
       const accessLog = logs.find(
-        (log: any) => log.action === "PATIENT_DATA_ACCESS",
+        (log: unknown) => log.action === "PATIENT_DATA_ACCESS",
       );
       const modifyLog = logs.find(
-        (log: any) => log.action === "PATIENT_DATA_MODIFY",
+        (log: unknown) => log.action === "PATIENT_DATA_MODIFY",
       );
 
       expect(accessLog).toBeDefined();

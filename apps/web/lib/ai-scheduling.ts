@@ -78,8 +78,7 @@ interface SchedulingRecommendation {
  */
 
 export class AISchedulingEngine {
-  private readonly professionals: Map<string, HealthcareProfessional> =
-    new Map();
+  private readonly professionals: Map<string, HealthcareProfessional> = new Map();
   private readonly treatments: Map<string, AestheticTreatment> = new Map();
 
   constructor() {
@@ -143,10 +142,9 @@ export class AISchedulingEngine {
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof z.ZodError
-            ? "Dados da solicitação inválidos"
-            : "Falha na otimização do agendamento",
+        error: error instanceof z.ZodError
+          ? "Dados da solicitação inválidos"
+          : "Falha na otimização do agendamento",
       };
     }
   }
@@ -211,11 +209,10 @@ export class AISchedulingEngine {
     recommendations.sort((a, b) => b.confidence_score - a.confidence_score);
 
     const endTime = performance.now();
-    const overallConfidence =
-      recommendations.length > 0
-        ? recommendations.reduce((sum, r) => sum + r.confidence_score, 0) /
-          recommendations.length
-        : 0;
+    const overallConfidence = recommendations.length > 0
+      ? recommendations.reduce((sum, r) => sum + r.confidence_score, 0)
+        / recommendations.length
+      : 0;
 
     return {
       recommendations,
@@ -301,8 +298,8 @@ export class AISchedulingEngine {
 
       // Secondary: Professional expertise
       return (
-        b.optimization_factors.professional_expertise_match -
-        a.optimization_factors.professional_expertise_match
+        b.optimization_factors.professional_expertise_match
+        - a.optimization_factors.professional_expertise_match
       );
     });
   }
@@ -422,12 +419,11 @@ export class AISchedulingEngine {
     request: z.infer<typeof AppointmentRequestSchema>,
   ): number {
     const preferredStart = request.preferred_date_range.start;
-    const slotTime = slot.start;
+    const { start: slotTime } = slot;
 
     // Calculate how close the slot is to preferred time
-    const timeDiffHours =
-      Math.abs(slotTime.getTime() - preferredStart.getTime()) /
-      (1000 * 60 * 60);
+    const timeDiffHours = Math.abs(slotTime.getTime() - preferredStart.getTime())
+      / (1000 * 60 * 60);
 
     // Score decreases with time difference, max 100 for perfect match
     return Math.max(0, 100 - timeDiffHours * 2);
@@ -443,9 +439,9 @@ export class AISchedulingEngine {
 
     // Good hours: 8-9 AM, 11-12 PM, 4-6 PM
     if (
-      (hour >= 8 && hour < 9) ||
-      (hour > 11 && hour < 14) ||
-      (hour > 16 && hour <= 18)
+      (hour >= 8 && hour < 9)
+      || (hour > 11 && hour < 14)
+      || (hour > 16 && hour <= 18)
     ) {
       return 75;
     }
@@ -474,8 +470,8 @@ export class AISchedulingEngine {
 
     // ✅ Boost score if specific professional requested and matched
     if (
-      request.preferred_professional_id &&
-      slot.professional_id === request.preferred_professional_id
+      request.preferred_professional_id
+      && slot.professional_id === request.preferred_professional_id
     ) {
       score += 20;
     }
@@ -497,9 +493,8 @@ export class AISchedulingEngine {
       (spec) => treatment.professional_requirements.includes(spec),
     );
 
-    const matchRatio =
-      matchingSpecializations.length /
-      treatment.professional_requirements.length;
+    const matchRatio = matchingSpecializations.length
+      / treatment.professional_requirements.length;
     return Math.round(matchRatio * 100);
   }
 
@@ -519,7 +514,7 @@ export class AISchedulingEngine {
   ): boolean {
     // ✅ Check if professional has required certifications/specializations
     return treatment.professional_requirements.every((requirement) =>
-      professional.specializations.includes(requirement),
+      professional.specializations.includes(requirement)
     );
   }
 
@@ -597,8 +592,8 @@ export class SchedulingUtils {
     const restrictedWeekendTreatments = ["surgery", "laser_intensive"];
 
     if (
-      (dayOfWeek === 0 || dayOfWeek === 6) &&
-      restrictedWeekendTreatments.includes(appointment.treatment_type)
+      (dayOfWeek === 0 || dayOfWeek === 6)
+      && restrictedWeekendTreatments.includes(appointment.treatment_type)
     ) {
       violations.push("Tratamento não permitido em fins de semana");
     }

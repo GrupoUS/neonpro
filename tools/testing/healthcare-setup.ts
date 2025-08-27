@@ -82,7 +82,7 @@ export const mockANVISACompliance = {
     contraindications: [],
   })),
 
-  reportAdverseEvent: vi.fn(async (_event: any) => ({
+  reportAdverseEvent: vi.fn(async (_event: unknown) => ({
     reportId: "AE-2024-001",
     status: "submitted",
     submissionDate: new Date().toISOString(),
@@ -109,7 +109,7 @@ export const mockCFMValidation = {
     algorithm: "RS256",
   })),
 
-  validatePrescription: vi.fn(async (_prescriptionData: any) => ({
+  validatePrescription: vi.fn(async (_prescriptionData: unknown) => ({
     isValid: true,
     prescriptionId: "PRESC-001",
     validatedAt: new Date().toISOString(),
@@ -119,7 +119,7 @@ export const mockCFMValidation = {
 
 // Mock medical data encryption utilities
 export const mockMedicalEncryption = {
-  encryptPatientData: vi.fn(async (_data: any) => ({
+  encryptPatientData: vi.fn(async (_data: unknown) => ({
     encryptedData: "encrypted-patient-data",
     keyId: "key-123",
     algorithm: "AES-256-GCM",
@@ -131,9 +131,9 @@ export const mockMedicalEncryption = {
     decryptedAt: new Date().toISOString(),
   })),
 
-  generateAuditHash: vi.fn((_data: any) => "audit-hash-123"),
+  generateAuditHash: vi.fn((_data: unknown) => "audit-hash-123"),
 
-  validateDataIntegrity: vi.fn(async (_data: any, _hash: string) => ({
+  validateDataIntegrity: vi.fn(async (_data: unknown, _hash: string) => ({
     isValid: true,
     verifiedAt: new Date().toISOString(),
   })),
@@ -153,7 +153,7 @@ export const mockAuditLogger = {
     }),
   ),
 
-  logDataModification: vi.fn(async (data: any) => ({
+  logDataModification: vi.fn(async (data: unknown) => ({
     auditId: "audit-modify-123",
     changes: data,
     timestamp: new Date().toISOString(),
@@ -172,7 +172,7 @@ export const mockAuditLogger = {
 
 // Mock patient data utilities for testing
 export const mockPatientData = {
-  createMockPatient: (overrides: any = {}) => ({
+  createMockPatient: (overrides: unknown = {}) => ({
     id: "patient-123",
     cpf: "123.456.789-09",
     name: "João Silva Santos",
@@ -236,11 +236,11 @@ export const mockPatientData = {
 // Mock Supabase healthcare operations
 export const mockSupabaseHealthcare = {
   patients: {
-    create: vi.fn(async (_data: any) => ({
+    create: vi.fn(async (_data: unknown) => ({
       data: mockPatientData.createMockPatient(),
       error: undefined,
     })),
-    update: vi.fn(async (_id: string, data: any) => ({
+    update: vi.fn(async (_id: string, data: unknown) => ({
       data: { ...mockPatientData.createMockPatient(), ...data },
       error: undefined,
     })),
@@ -259,11 +259,11 @@ export const mockSupabaseHealthcare = {
   },
 
   treatments: {
-    create: vi.fn(async (_data: any) => ({
+    create: vi.fn(async (_data: unknown) => ({
       data: mockPatientData.createMockTreatment(),
       error: undefined,
     })),
-    update: vi.fn(async (_id: string, data: any) => ({
+    update: vi.fn(async (_id: string, data: unknown) => ({
       data: { ...mockPatientData.createMockTreatment(), ...data },
       error: undefined,
     })),
@@ -274,7 +274,7 @@ export const mockSupabaseHealthcare = {
   },
 
   medicalRecords: {
-    create: vi.fn(async (_data: any) => ({
+    create: vi.fn(async (_data: unknown) => ({
       data: mockPatientData.createMockMedicalRecord(),
       error: undefined,
     })),

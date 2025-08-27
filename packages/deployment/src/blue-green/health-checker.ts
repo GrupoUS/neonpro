@@ -31,7 +31,7 @@ export class HealthChecker {
   private readonly healthHistory: Map<string, HealthCheckResult[]> = new Map();
 
   constructor(
-    private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string },
+    private readonly config: { maxHistoryPerEndpoint: number; baseUrl: string; },
   ) {}
 
   /**

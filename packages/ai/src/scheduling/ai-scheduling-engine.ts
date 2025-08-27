@@ -83,7 +83,7 @@ export class AISchedulingEngine {
       );
 
       // Step 6: Select best slot and detect conflicts
-      const bestSlot = rankedSlots[0];
+      const [bestSlot] = rankedSlots;
       const conflicts = await this.detectConflicts(bestSlot, request);
 
       // Step 7: Resolve conflicts if any
@@ -100,8 +100,7 @@ export class AISchedulingEngine {
       );
 
       // Step 9: Apply final optimizations
-      const optimizedAppointment =
-        await this.applyFinalOptimizations(appointment);
+      const optimizedAppointment = await this.applyFinalOptimizations(appointment);
 
       const processingTime = performance.now() - startTime;
       this.updatePerformanceMetrics(processingTime, true);
@@ -170,7 +169,7 @@ export class AISchedulingEngine {
   private async findOptimalSlots(
     request: SchedulingRequest,
     treatmentDuration: TreatmentDuration,
-    patientContext: any,
+    patientContext: unknown,
   ): Promise<AlternativeSlot[]> {
     const slots: AlternativeSlot[] = [];
     const searchPeriod = this.calculateSearchPeriod(request);
@@ -206,7 +205,7 @@ export class AISchedulingEngine {
   private async scoreAndRankSlots(
     slots: AlternativeSlot[],
     request: SchedulingRequest,
-    patientContext: any,
+    patientContext: unknown,
   ): Promise<AlternativeSlot[]> {
     const scoredSlots = await Promise.all(
       slots.map(async (slot) => {
@@ -229,7 +228,7 @@ export class AISchedulingEngine {
   private async calculateSlotScore(
     slot: AlternativeSlot,
     request: SchedulingRequest,
-    patientContext: any,
+    patientContext: unknown,
   ): Promise<number> {
     let score = 0;
     const weights = this.getScoreWeights();
@@ -489,7 +488,7 @@ export class AISchedulingEngine {
     };
   }
 
-  private async getPatientContext(_patientId: string): Promise<any> {
+  private async getPatientContext(_patientId: string): Promise<unknown> {
     // Get patient history and preferences
     return {};
   }
@@ -509,7 +508,7 @@ export class AISchedulingEngine {
     };
   }
 
-  private async getPatientPreferences(_patientId: string): Promise<any> {
+  private async getPatientPreferences(_patientId: string): Promise<unknown> {
     // Get patient preferences
     return {};
   }
@@ -526,14 +525,14 @@ export class AISchedulingEngine {
   }
 
   private async getAvailableStaff(
-    _period: any,
+    _period: unknown,
     _staffRequired: string[],
   ): Promise<any[]> {
     return [];
   }
 
   private async getAvailableRooms(
-    _period: any,
+    _period: unknown,
     _roomType: RoomType,
   ): Promise<any[]> {
     return [];
@@ -542,8 +541,8 @@ export class AISchedulingEngine {
   private async generateDaySlots(
     _date: Date,
     _duration: TreatmentDuration,
-    _staff: any[],
-    _rooms: any[],
+    _staff: unknown[],
+    _rooms: unknown[],
   ): Promise<AlternativeSlot[]> {
     return [];
   }
@@ -551,7 +550,7 @@ export class AISchedulingEngine {
   private async optimizeSlotSelection(
     slots: AlternativeSlot[],
     _request: SchedulingRequest,
-    _context: any,
+    _context: unknown,
   ): Promise<AlternativeSlot[]> {
     return slots;
   }
@@ -570,7 +569,7 @@ export class AISchedulingEngine {
   private calculatePreferenceScore(
     _slot: AlternativeSlot,
     _request: SchedulingRequest,
-    _context: any,
+    _context: unknown,
   ): number {
     return 80; // Simplified implementation
   }
@@ -603,7 +602,7 @@ export class AISchedulingEngine {
 
   private async calculateRiskMitigationScore(
     _slot: AlternativeSlot,
-    _context: any,
+    _context: unknown,
   ): Promise<number> {
     return 87;
   }
@@ -661,7 +660,7 @@ export class AISchedulingEngine {
 
   private async calculateOptimizationMetrics(
     _slot: AlternativeSlot,
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {};
   }
 
@@ -683,11 +682,11 @@ export class AISchedulingEngine {
     return [];
   }
 
-  private calculateNoShowProbability(_factors: any[]): number {
+  private calculateNoShowProbability(_factors: unknown[]): number {
     return 0.15; // 15% default probability
   }
 
-  private calculatePredictionConfidence(_factors: any[]): number {
+  private calculatePredictionConfidence(_factors: unknown[]): number {
     return 0.85; // 85% confidence
   }
 
@@ -723,7 +722,7 @@ export class AISchedulingEngine {
 
   private async generateRecommendations(
     _appointment: AIAppointment,
-    _context: any,
+    _context: unknown,
   ): Promise<string[]> {
     return [
       "Appointment optimally scheduled",

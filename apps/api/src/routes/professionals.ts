@@ -96,8 +96,8 @@ export const professionalsRoutes = new Hono()
         },
       ].filter((prof) => {
         if (
-          search &&
-          !prof.fullName.toLowerCase().includes(search.toLowerCase())
+          search
+          && !prof.fullName.toLowerCase().includes(search.toLowerCase())
         ) {
           return false;
         }
@@ -110,7 +110,7 @@ export const professionalsRoutes = new Hono()
         return true;
       });
 
-      const total = mockProfessionals.length;
+      const { length: total } = mockProfessionals;
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
       const paginatedProfessionals = mockProfessionals.slice(
@@ -274,7 +274,7 @@ export const professionalsRoutes = new Hono()
 
     try {
       // TODO: Implement actual soft delete
-      const response: ApiResponse<{ id: string }> = {
+      const response: ApiResponse<{ id: string; }> = {
         success: true,
         data: { id },
         message: "Profissional removido com sucesso",
@@ -294,8 +294,6 @@ export const professionalsRoutes = new Hono()
   })
   // 📊 Get professional stats
   .get("/:id/stats", async (c) => {
-    const _id = c.req.param("id");
-
     try {
       // TODO: Implement actual stats query
       const mockStats = {
@@ -328,7 +326,6 @@ export const professionalsRoutes = new Hono()
   })
   // 📅 Get professional availability
   .get("/:id/availability", async (c) => {
-    const _id = c.req.param("id");
     const date = c.req.query("date"); // YYYY-MM-DD format
 
     try {

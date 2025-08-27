@@ -159,16 +159,13 @@ export class AIModelManager {
       // Load model with timeout protection
       const modelPromise = tf.loadLayersModel(config.modelPath);
       const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("Model loading timeout")), 30_000),
+        setTimeout(() => reject(new Error("Model loading timeout")), 30_000)
       );
 
       const model = await Promise.race([modelPromise, timeoutPromise]);
 
       // Validate model structure
       this.validateModelStructure(model, config);
-
-      const _loadTime = performance.now() - startTime;
-
       return model;
     } catch (error) {
       throw new Error(`Model loading failed for ${modelType}: ${error}`);
@@ -184,7 +181,7 @@ export class AIModelManager {
   ): void {
     if ("inputs" in model && model.inputs) {
       const inputShape = model.inputs[0].shape;
-      const expectedInput = config.inputShape;
+      const { inputShape: expectedInput } = config;
 
       if (inputShape && !this.shapesMatch(inputShape, expectedInput)) {
         throw new Error(
@@ -203,8 +200,7 @@ export class AIModelManager {
     }
 
     return actual.every(
-      (dim, index) =>
-        dim === expected[index] || dim === null || expected[index] === null,
+      (dim, index) => dim === expected[index] || dim === null || expected[index] === null,
     );
   }
 
@@ -269,9 +265,9 @@ export class AIModelManager {
    */
   async healthCheck(): Promise<{
     status: "healthy" | "degraded" | "unhealthy";
-    details: Record<string, any>;
+    details: Record<string, unknown>;
   }> {
-    const details: Record<string, any> = {
+    const details: Record<string, unknown> = {
       initialized: this.isInitialized,
       modelsLoaded: this.models.size,
       totalModels: Object.keys(this.MODEL_CONFIGS).length,

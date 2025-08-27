@@ -192,8 +192,7 @@ export class HealthcareRBAC {
     {
       id: "receptionist",
       name: "Receptionist",
-      description:
-        "Front desk staff managing appointments and basic patient info",
+      description: "Front desk staff managing appointments and basic patient info",
       hierarchy_level: 2,
       permissions: [
         "patient:read",
@@ -380,7 +379,7 @@ export class HealthcareRBAC {
 
   // Middleware helper for Next.js API routes
   static createPermissionMiddleware(requiredPermissions: string | string[]) {
-    return async (req: any, res: any, next: any) => {
+    return async (req: unknown, res: unknown, next: unknown) => {
       const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });

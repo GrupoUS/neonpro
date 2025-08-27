@@ -74,14 +74,14 @@ interface ContrastValidatorProps {
 /**
  * Convert hex color to RGB values
  */
-const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
+const hexToRgb = (hex: string): { r: number; g: number; b: number; } | null => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
-        r: Number.parseInt(result[1], 16),
-        g: Number.parseInt(result[2], 16),
-        b: Number.parseInt(result[3], 16),
-      }
+      r: Number.parseInt(result[1], 16),
+      g: Number.parseInt(result[2], 16),
+      b: Number.parseInt(result[3], 16),
+    }
     : undefined;
 };
 
@@ -90,7 +90,7 @@ const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
  */
 const parseColor = (
   color: string,
-): { r: number; g: number; b: number } | null => {
+): { r: number; g: number; b: number; } | null => {
   // Handle hex colors
   if (color.startsWith("#")) {
     return hexToRgb(color);
@@ -292,8 +292,7 @@ const ContrastValidator = React.forwardRef<
 
     const getAccessibilityStatus = () => {
       const status = isValid ? "Compliant" : "Non-compliant";
-      const level =
-        contrastRatio >= 7 ? "AAA" : contrastRatio >= 4.5 ? "AA" : "Failed";
+      const level = contrastRatio >= 7 ? "AAA" : contrastRatio >= 4.5 ? "AA" : "Failed";
       return `${status} - ${level} (${contrastRatio.toFixed(2)}:1)`;
     };
 
@@ -344,12 +343,16 @@ const ContrastValidator = React.forwardRef<
         {/* Screen reader announcement */}
         <div aria-live="polite" className="sr-only" role="status">
           {isValid
-            ? `Contrast ratio ${contrastRatio.toFixed(
+            ? `Contrast ratio ${
+              contrastRatio.toFixed(
                 2,
-              )}:1 meets ${medicalContext} accessibility requirements`
-            : `Contrast ratio ${contrastRatio.toFixed(
+              )
+            }:1 meets ${medicalContext} accessibility requirements`
+            : `Contrast ratio ${
+              contrastRatio.toFixed(
                 2,
-              )}:1 does not meet ${medicalContext} accessibility requirements. Minimum required: ${requiredRatio}:1`}
+              )
+            }:1 does not meet ${medicalContext} accessibility requirements. Minimum required: ${requiredRatio}:1`}
         </div>
       </div>
     );
@@ -398,7 +401,7 @@ export const useContrastValidation = (
  * Batch contrast validation for multiple color combinations
  */
 export const validateColorPalette = (
-  palette: { bg: string; fg: string; context?: string }[],
+  palette: { bg: string; fg: string; context?: string; }[],
 ): {
   bg: string;
   fg: string;
@@ -408,7 +411,7 @@ export const validateColorPalette = (
 }[] => {
   return palette.map(({ bg, fg, context = "general" }) => {
     const ratio = calculateContrastRatio(bg, fg);
-    const requiredRatio = getMinimumRatio("normal", context as any);
+    const requiredRatio = getMinimumRatio("normal", context as unknown);
     const isValid = ratio >= requiredRatio;
 
     return { bg, fg, context, ratio, isValid };
@@ -442,7 +445,7 @@ const ContrastWrapper = React.forwardRef<HTMLElement, ContrastWrapperProps>(
     };
 
     return React.createElement(
-      Element as any,
+      Element as unknown,
       { ref, style: computedStyle },
       <ContrastValidator
         backgroundColor={backgroundColor}

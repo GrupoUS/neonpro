@@ -112,7 +112,7 @@ class PerformanceTestUtils {
     }
 
     const sorted = [...times].sort((a, b) => a - b);
-    const count = times.length;
+    const { length: count } = times;
     const totalRequests = count + errors.length;
 
     return {
@@ -133,14 +133,14 @@ class PerformanceTestUtils {
   }
 
   static async simulateLoad(
-    testFunction: () => Promise<any>,
+    testFunction: () => Promise<unknown>,
     concurrentUsers: number,
     durationMinutes: number,
     rampUpSeconds: number,
     testName: string,
   ): Promise<void> {
-    console.log(`Starting load test: ${testName}`);
-    console.log(
+    // console.log(`Starting load test: ${testName}`);
+    // console.log(
       `Concurrent Users: ${concurrentUsers}, Duration: ${durationMinutes}min, Ramp-up: ${rampUpSeconds}s`,
     );
 
@@ -165,9 +165,7 @@ class PerformanceTestUtils {
           }
 
           // Small delay between requests (100-500ms)
-          await new Promise((resolve) =>
-            setTimeout(resolve, 100 + Math.random() * 400),
-          );
+          await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 400));
         }
       }, i * rampUpInterval);
     }
@@ -177,7 +175,7 @@ class PerformanceTestUtils {
       setTimeout(
         resolve,
         durationMinutes * 60 * 1000 + rampUpSeconds * 1000 + 5000,
-      ),
+      )
     );
   }
 }
@@ -190,7 +188,7 @@ class MockAIServiceClient {
     this.baseUrl = baseUrl;
   }
 
-  async sendChatMessage(sessionId: string, message: string): Promise<any> {
+  async sendChatMessage(sessionId: string, message: string): Promise<unknown> {
     const response = await fetch(
       `${this.baseUrl}/api/ai/universal-chat/message`,
       {
@@ -217,7 +215,7 @@ class MockAIServiceClient {
     return response.json();
   }
 
-  async validateCompliance(data: any): Promise<any> {
+  async validateCompliance(data: unknown): Promise<unknown> {
     const response = await fetch(`${this.baseUrl}/api/ai/compliance/validate`, {
       method: "POST",
       headers: {
@@ -234,7 +232,7 @@ class MockAIServiceClient {
     return response.json();
   }
 
-  async analyzeConversation(sessionId: string): Promise<any> {
+  async analyzeConversation(sessionId: string): Promise<unknown> {
     const response = await fetch(
       `${this.baseUrl}/api/ai/conversation/analyze`,
       {
@@ -264,12 +262,12 @@ describe("aI Services Performance Tests", () => {
 
   beforeAll(async () => {
     client = new MockAIServiceClient();
-    console.log("Performance testing initialized");
+    // console.log("Performance testing initialized");
   });
 
   afterAll(() => {
     PerformanceTestUtils.clearMeasurements();
-    console.log("Performance testing completed");
+    // console.log("Performance testing completed");
   });
 
   describe("universal AI Chat Performance", () => {
@@ -288,8 +286,7 @@ describe("aI Services Performance Tests", () => {
 
     it("should handle single chat requests within performance thresholds", async () => {
       const testSessionId = `perf-test-session-${Date.now()}`;
-      const testMessage =
-        testMessages[Math.floor(Math.random() * testMessages.length)];
+      const testMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
 
       const stopTimer = PerformanceTestUtils.startMeasurement(
         "single_chat_request",
@@ -304,7 +301,7 @@ describe("aI Services Performance Tests", () => {
           PERF_TEST_CONFIG.thresholds.chat_response_p95,
         );
 
-        console.log(
+        // console.log(
           `Single chat request completed in ${duration.toFixed(2)}ms`,
         );
       } catch (error) {
@@ -319,8 +316,7 @@ describe("aI Services Performance Tests", () => {
       await PerformanceTestUtils.simulateLoad(
         async () => {
           const testSessionId = `light-load-session-${Date.now()}-${Math.random()}`;
-          const testMessage =
-            testMessages[Math.floor(Math.random() * testMessages.length)];
+          const testMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
           await client.sendChatMessage(testSessionId, testMessage);
         },
         scenario.concurrent_users,
@@ -331,7 +327,7 @@ describe("aI Services Performance Tests", () => {
 
       const stats = PerformanceTestUtils.getStatistics("chat_light_load");
 
-      console.log("Light Load Chat Performance:", {
+      // console.log("Light Load Chat Performance:", {
         requests: stats.count,
         avgResponseTime: `${stats.avg.toFixed(2)}ms`,
         p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
@@ -355,8 +351,7 @@ describe("aI Services Performance Tests", () => {
       await PerformanceTestUtils.simulateLoad(
         async () => {
           const testSessionId = `normal-load-session-${Date.now()}-${Math.random()}`;
-          const testMessage =
-            testMessages[Math.floor(Math.random() * testMessages.length)];
+          const testMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
           await client.sendChatMessage(testSessionId, testMessage);
         },
         scenario.concurrent_users,
@@ -367,7 +362,7 @@ describe("aI Services Performance Tests", () => {
 
       const stats = PerformanceTestUtils.getStatistics("chat_normal_load");
 
-      console.log("Normal Load Chat Performance:", {
+      // console.log("Normal Load Chat Performance:", {
         requests: stats.count,
         avgResponseTime: `${stats.avg.toFixed(2)}ms`,
         p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
@@ -432,10 +427,9 @@ describe("aI Services Performance Tests", () => {
     ];
 
     it("should process compliance validations quickly", async () => {
-      const testData =
-        complianceTestData[
-          Math.floor(Math.random() * complianceTestData.length)
-        ];
+      const testData = complianceTestData[
+        Math.floor(Math.random() * complianceTestData.length)
+      ];
 
       const stopTimer = PerformanceTestUtils.startMeasurement(
         "single_compliance_check",
@@ -450,7 +444,7 @@ describe("aI Services Performance Tests", () => {
           PERF_TEST_CONFIG.thresholds.compliance_check_p95,
         );
 
-        console.log(
+        // console.log(
           `Single compliance check completed in ${duration.toFixed(2)}ms`,
         );
       } catch (error) {
@@ -467,10 +461,9 @@ describe("aI Services Performance Tests", () => {
 
       await PerformanceTestUtils.simulateLoad(
         async () => {
-          const testData =
-            complianceTestData[
-              Math.floor(Math.random() * complianceTestData.length)
-            ];
+          const testData = complianceTestData[
+            Math.floor(Math.random() * complianceTestData.length)
+          ];
           await client.validateCompliance(testData);
         },
         scenario.concurrent_users,
@@ -484,7 +477,7 @@ describe("aI Services Performance Tests", () => {
       );
       const throughput = stats.count / (scenario.duration_minutes * 60);
 
-      console.log("Compliance Check Performance:", {
+      // console.log("Compliance Check Performance:", {
         requests: stats.count,
         avgResponseTime: `${stats.avg.toFixed(2)}ms`,
         p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
@@ -537,7 +530,7 @@ describe("aI Services Performance Tests", () => {
           PERF_TEST_CONFIG.thresholds.conversation_analysis_p95,
         );
 
-        console.log(
+        // console.log(
           `Conversation analysis completed in ${duration.toFixed(2)}ms`,
         );
       } catch (error) {
@@ -575,7 +568,7 @@ describe("aI Services Performance Tests", () => {
         "conversation_analysis_load",
       );
 
-      console.log("Conversation Analysis Performance:", {
+      // console.log("Conversation Analysis Performance:", {
         requests: stats.count,
         avgResponseTime: `${stats.avg.toFixed(2)}ms`,
         p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
@@ -597,7 +590,7 @@ describe("aI Services Performance Tests", () => {
   describe("system Resource Performance", () => {
     it("should monitor memory usage during load testing", async () => {
       const initialMemory = process.memoryUsage();
-      console.log("Initial memory usage:", {
+      // console.log("Initial memory usage:", {
         rss: `${Math.round(initialMemory.rss / 1024 / 1024)}MB`,
         heapUsed: `${Math.round(initialMemory.heapUsed / 1024 / 1024)}MB`,
       });
@@ -616,10 +609,9 @@ describe("aI Services Performance Tests", () => {
       );
 
       const finalMemory = process.memoryUsage();
-      const memoryIncrease =
-        (finalMemory.rss - initialMemory.rss) / 1024 / 1024; // MB
+      const memoryIncrease = (finalMemory.rss - initialMemory.rss) / 1024 / 1024; // MB
 
-      console.log("Final memory usage:", {
+      // console.log("Final memory usage:", {
         rss: `${Math.round(finalMemory.rss / 1024 / 1024)}MB`,
         heapUsed: `${Math.round(finalMemory.heapUsed / 1024 / 1024)}MB`,
         increase: `${Math.round(memoryIncrease)}MB`,
@@ -632,14 +624,6 @@ describe("aI Services Performance Tests", () => {
 
   describe("end-to-End Performance Scenarios", () => {
     it("should handle complete healthcare workflow efficiently", async () => {
-      const _workflowSteps = [
-        "create_session",
-        "send_message",
-        "validate_compliance",
-        "analyze_conversation",
-        "generate_summary",
-      ];
-
       const stopTimer = PerformanceTestUtils.startMeasurement("e2e_workflow");
 
       try {
@@ -669,7 +653,7 @@ describe("aI Services Performance Tests", () => {
 
         const duration = stopTimer();
 
-        console.log(
+        // console.log(
           `Complete E2E workflow completed in ${duration.toFixed(2)}ms`,
         );
 
@@ -685,9 +669,9 @@ describe("aI Services Performance Tests", () => {
 
 // Performance Report Generation
 afterAll(async () => {
-  console.log(`\n${"=".repeat(60)}`);
-  console.log("AI SERVICES PERFORMANCE TEST REPORT");
-  console.log("=".repeat(60));
+  // console.log(`\n${"=".repeat(60)}`);
+  // console.log("AI SERVICES PERFORMANCE TEST REPORT");
+  // console.log("=".repeat(60));
 
   const allTests = [
     "single_chat_request",
@@ -704,13 +688,13 @@ afterAll(async () => {
   allTests.forEach((testName) => {
     const stats = PerformanceTestUtils.getStatistics(testName);
     if (stats.count > 0) {
-      console.log(`\n${testName.toUpperCase()}:`);
-      console.log(`  Requests: ${stats.count}`);
-      console.log(`  Average: ${stats.avg.toFixed(2)}ms`);
-      console.log(`  P95: ${stats.p95.toFixed(2)}ms`);
-      console.log(`  Error Rate: ${stats.errorRate.toFixed(2)}%`);
+      // console.log(`\n${testName.toUpperCase()}:`);
+      // console.log(`  Requests: ${stats.count}`);
+      // console.log(`  Average: ${stats.avg.toFixed(2)}ms`);
+      // console.log(`  P95: ${stats.p95.toFixed(2)}ms`);
+      // console.log(`  Error Rate: ${stats.errorRate.toFixed(2)}%`);
     }
   });
 
-  console.log(`\n${"=".repeat(60)}`);
+  // console.log(`\n${"=".repeat(60)}`);
 });

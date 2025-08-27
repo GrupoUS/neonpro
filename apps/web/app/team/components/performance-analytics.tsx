@@ -2,13 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -171,46 +165,6 @@ const mockIndividualPerformance = [
     cmeRequired: 12,
   },
 ];
-
-const _mockMonthlyTrends = [
-  {
-    month: "Jan",
-    patientSatisfaction: 8.2,
-    efficiency: 83.1,
-    compliance: 91.5,
-  },
-  {
-    month: "Fev",
-    patientSatisfaction: 8.4,
-    efficiency: 84.3,
-    compliance: 92.8,
-  },
-  {
-    month: "Mar",
-    patientSatisfaction: 8.1,
-    efficiency: 82.9,
-    compliance: 90.2,
-  },
-  {
-    month: "Abr",
-    patientSatisfaction: 8.6,
-    efficiency: 85.7,
-    compliance: 93.4,
-  },
-  {
-    month: "Mai",
-    patientSatisfaction: 8.8,
-    efficiency: 86.2,
-    compliance: 94.1,
-  },
-  {
-    month: "Jun",
-    patientSatisfaction: 8.7,
-    efficiency: 87.3,
-    compliance: 93.8,
-  },
-];
-
 // Helper functions
 const getTrendIcon = (trend: "up" | "down" | "stable") => {
   switch (trend) {
@@ -405,18 +359,15 @@ export function PerformanceAnalytics({
                   {getTrendIcon(mockTeamKPIs.averageResponseTime.trend)}
                   <span>
                     {mockTeamKPIs.averageResponseTime.change > 0 ? "+" : ""}
-                    {Math.abs(mockTeamKPIs.averageResponseTime.change)} min vs
-                    mês anterior
+                    {Math.abs(mockTeamKPIs.averageResponseTime.change)} min vs mês anterior
                   </span>
                 </div>
                 <Progress
                   className="mt-3"
-                  value={
-                    100 -
-                    (mockTeamKPIs.averageResponseTime.current /
-                      mockTeamKPIs.averageResponseTime.target) *
-                      100
-                  }
+                  value={100
+                    - (mockTeamKPIs.averageResponseTime.current
+                        / mockTeamKPIs.averageResponseTime.target)
+                      * 100}
                 />
                 <p className="mt-2 text-muted-foreground text-xs">
                   Meta: ≤ {mockTeamKPIs.averageResponseTime.target} min
@@ -637,9 +588,11 @@ export function PerformanceAnalytics({
               </CardHeader>
               <CardContent>
                 <div
-                  className={`font-bold text-2xl ${getComplianceColor(
-                    mockComplianceData.cfm.complianceRate,
-                  )}`}
+                  className={`font-bold text-2xl ${
+                    getComplianceColor(
+                      mockComplianceData.cfm.complianceRate,
+                    )
+                  }`}
                 >
                   {mockComplianceData.cfm.complianceRate}%
                 </div>
@@ -676,9 +629,11 @@ export function PerformanceAnalytics({
               </CardHeader>
               <CardContent>
                 <div
-                  className={`font-bold text-2xl ${getComplianceColor(
-                    mockComplianceData.clt.complianceRate,
-                  )}`}
+                  className={`font-bold text-2xl ${
+                    getComplianceColor(
+                      mockComplianceData.clt.complianceRate,
+                    )
+                  }`}
                 >
                   {mockComplianceData.clt.complianceRate}%
                 </div>
@@ -715,16 +670,17 @@ export function PerformanceAnalytics({
               </CardHeader>
               <CardContent>
                 <div
-                  className={`font-bold text-2xl ${getComplianceColor(
-                    mockComplianceData.lgpd.complianceRate,
-                  )}`}
+                  className={`font-bold text-2xl ${
+                    getComplianceColor(
+                      mockComplianceData.lgpd.complianceRate,
+                    )
+                  }`}
                 >
                   {mockComplianceData.lgpd.complianceRate}%
                 </div>
                 <div className="mt-1 text-muted-foreground text-xs">
                   {mockComplianceData.lgpd.compliantActivities}/
-                  {mockComplianceData.lgpd.dataProcessingActivities} atividades
-                  conformes
+                  {mockComplianceData.lgpd.dataProcessingActivities} atividades conformes
                 </div>
                 <Progress
                   className="mt-3"
@@ -732,8 +688,7 @@ export function PerformanceAnalytics({
                 />
                 <div className="mt-2 flex items-center justify-between text-xs">
                   <span className="text-yellow-600">
-                    {mockComplianceData.lgpd.pendingConsents} consentimentos
-                    pendentes
+                    {mockComplianceData.lgpd.pendingConsents} consentimentos pendentes
                   </span>
                   <span className="text-green-600">
                     {mockComplianceData.lgpd.dataBreaches} violações
@@ -756,16 +711,17 @@ export function PerformanceAnalytics({
               </CardHeader>
               <CardContent>
                 <div
-                  className={`font-bold text-2xl ${getComplianceColor(
-                    mockComplianceData.anvisa.complianceRate,
-                  )}`}
+                  className={`font-bold text-2xl ${
+                    getComplianceColor(
+                      mockComplianceData.anvisa.complianceRate,
+                    )
+                  }`}
                 >
                   {mockComplianceData.anvisa.complianceRate}%
                 </div>
                 <div className="mt-1 text-muted-foreground text-xs">
                   {mockComplianceData.anvisa.compliantEquipment}/
-                  {mockComplianceData.anvisa.medicalEquipment} equipamentos
-                  conformes
+                  {mockComplianceData.anvisa.medicalEquipment} equipamentos conformes
                 </div>
                 <Progress
                   className="mt-3"
@@ -1059,13 +1015,11 @@ export function PerformanceAnalytics({
                       <TableCell>
                         <Badge
                           className="text-xs"
-                          variant={
-                            professional.cfmLicense.includes("Expira")
-                              ? "destructive"
-                              : professional.cfmLicense === "N/A"
-                                ? "secondary"
-                                : "default"
-                          }
+                          variant={professional.cfmLicense.includes("Expira")
+                            ? "destructive"
+                            : professional.cfmLicense === "N/A"
+                            ? "secondary"
+                            : "default"}
                         >
                           {professional.cfmLicense}
                         </Badge>
@@ -1084,8 +1038,8 @@ export function PerformanceAnalytics({
                             {[1, 2, 3, 4, 5].map((star) => (
                               <Star
                                 className={`h-3 w-3 ${
-                                  star <=
-                                  Math.floor(professional.satisfactionScore)
+                                  star
+                                      <= Math.floor(professional.satisfactionScore)
                                     ? "fill-current text-yellow-400"
                                     : "text-gray-300"
                                 }`}
@@ -1103,9 +1057,11 @@ export function PerformanceAnalytics({
                       <TableCell>
                         <div className="flex items-center space-x-2">
                           <span
-                            className={`font-medium ${getComplianceColor(
-                              professional.complianceRate,
-                            )}`}
+                            className={`font-medium ${
+                              getComplianceColor(
+                                professional.complianceRate,
+                              )
+                            }`}
                           >
                             {professional.complianceRate}%
                           </span>
@@ -1131,8 +1087,8 @@ export function PerformanceAnalytics({
                         <div className="flex items-center space-x-2">
                           <span
                             className={`font-medium text-sm ${
-                              professional.cmeCredits >=
-                              professional.cmeRequired
+                              professional.cmeCredits
+                                  >= professional.cmeRequired
                                 ? "text-green-600"
                                 : "text-red-600"
                             }`}
@@ -1141,11 +1097,9 @@ export function PerformanceAnalytics({
                           </span>
                           <Progress
                             className="h-2 w-12"
-                            value={
-                              (professional.cmeCredits /
-                                professional.cmeRequired) *
-                              100
-                            }
+                            value={(professional.cmeCredits
+                              / professional.cmeRequired)
+                              * 100}
                           />
                         </div>
                       </TableCell>
@@ -1266,9 +1220,8 @@ export function PerformanceAnalytics({
                       Melhoria na Satisfação do Paciente
                     </p>
                     <p className="mt-1 text-green-600 text-xs">
-                      A implementação de protocolos de comunicação resultou em
-                      aumento de 3.6% na satisfação. Continue investindo em
-                      treinamento de comunicação.
+                      A implementação de protocolos de comunicação resultou em aumento de 3.6% na
+                      satisfação. Continue investindo em treinamento de comunicação.
                     </p>
                   </div>
                 </div>
@@ -1280,9 +1233,8 @@ export function PerformanceAnalytics({
                       Eficiência Operacional em Alta
                     </p>
                     <p className="mt-1 text-blue-600 text-xs">
-                      A otimização de escalas e recursos elevou a eficiência em
-                      5.1%. Considere expandir essas práticas para outros
-                      departamentos.
+                      A otimização de escalas e recursos elevou a eficiência em 5.1%. Considere
+                      expandir essas práticas para outros departamentos.
                     </p>
                   </div>
                 </div>
@@ -1294,8 +1246,8 @@ export function PerformanceAnalytics({
                       Atenção: CME em Atraso
                     </p>
                     <p className="mt-1 text-orange-600 text-xs">
-                      25% dos profissionais estão com CME pendente. Implemente
-                      lembretes automáticos e facilite o acesso a cursos online.
+                      25% dos profissionais estão com CME pendente. Implemente lembretes automáticos
+                      e facilite o acesso a cursos online.
                     </p>
                   </div>
                 </div>
@@ -1307,9 +1259,8 @@ export function PerformanceAnalytics({
                       Reconhecimento de Performance
                     </p>
                     <p className="mt-1 text-purple-600 text-xs">
-                      Enf. Ana Paula e Dra. Maria Silva destacam-se
-                      consistentemente. Considere reconhecimento formal e
-                      oportunidades de mentoria.
+                      Enf. Ana Paula e Dra. Maria Silva destacam-se consistentemente. Considere
+                      reconhecimento formal e oportunidades de mentoria.
                     </p>
                   </div>
                 </div>

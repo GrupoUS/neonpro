@@ -24,8 +24,8 @@ const validateSubscriptionStatus = (
     return true;
   }
   if (
-    subscription.status === "expired" ||
-    subscription.status === "cancelled"
+    subscription.status === "expired"
+    || subscription.status === "cancelled"
   ) {
     return false;
   }
@@ -51,8 +51,8 @@ const routeProtection = {
       return false;
     }
     if (
-      routeProtection.isPremiumRoute(route) &&
-      (!subscription || subscription.status !== "active")
+      routeProtection.isPremiumRoute(route)
+      && (!subscription || subscription.status !== "active")
     ) {
       return true;
     }
@@ -61,7 +61,7 @@ const routeProtection = {
 };
 
 const subscriptionCaching = {
-  cache: new Map<string, { data: SubscriptionStatus; expires: number }>(),
+  cache: new Map<string, { data: SubscriptionStatus; expires: number; }>(),
 
   clear: (): void => {
     subscriptionCaching.cache.clear();
@@ -88,15 +88,9 @@ const subscriptionCaching = {
 };
 
 const errorHandling = {
-  handleInvalidResponse: (_response: unknown): SubscriptionStatus | null =>
-    undefined,
+  handleInvalidResponse: (_response: unknown): SubscriptionStatus | null => undefined,
 
   handleNetworkError: (_error: Error): SubscriptionStatus | null => undefined,
 };
 
-export {
-  errorHandling,
-  routeProtection,
-  subscriptionCaching,
-  validateSubscriptionStatus,
-};
+export { errorHandling, routeProtection, subscriptionCaching, validateSubscriptionStatus };

@@ -223,11 +223,10 @@ const extractUserContext = (c: Context) => {
  */
 const extractClientContext = (c: Context) => {
   return {
-    clientIP:
-      c.req.header("CF-Connecting-IP") ||
-      c.req.header("X-Forwarded-For") ||
-      c.req.header("X-Real-IP") ||
-      "unknown",
+    clientIP: c.req.header("CF-Connecting-IP")
+      || c.req.header("X-Forwarded-For")
+      || c.req.header("X-Real-IP")
+      || "unknown",
     userAgent: c.req.header("User-Agent") || "unknown",
     country: c.req.header("CF-IPCountry") || "unknown",
     region: c.req.header("CF-Region") || "unknown",
@@ -262,17 +261,15 @@ const shouldAudit = (method: string, path: string): boolean => {
 export const auditMiddleware = (): MiddlewareHandler => {
   return async (c, next) => {
     const startTime = Date.now();
-    const method = c.req.method;
-    const path = c.req.path;
+    const { method, path } = c.req;
     const operationKey = `${method} ${path}`;
 
     // Generate audit ID
     const auditId = `audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     // Generate request ID if not exists
-    const requestId =
-      c.req.header("X-Request-ID") ||
-      `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const requestId = c.req.header("X-Request-ID")
+      || `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     // Set audit headers
     c.res.headers.set("X-Audit-ID", auditId);
@@ -290,9 +287,11 @@ export const auditMiddleware = (): MiddlewareHandler => {
       let operationConfig = LGPD_SENSITIVE_OPERATIONS[operationKey];
       if (!operationConfig) {
         // Find by pattern matching
-        for (const [pattern, config] of Object.entries(
-          LGPD_SENSITIVE_OPERATIONS,
-        )) {
+        for (
+          const [pattern, config] of Object.entries(
+            LGPD_SENSITIVE_OPERATIONS,
+          )
+        ) {
           const regex = createRouteRegex(pattern);
           if (regex.test(operationKey)) {
             operationConfig = config;
@@ -314,8 +313,7 @@ export const auditMiddleware = (): MiddlewareHandler => {
         level: operationConfig?.level || AuditLevel.INFO,
         category: operationConfig?.category || "general",
         operation: operationKey,
-        description:
-          operationConfig?.description || `${method} operation on ${path}`,
+        description: operationConfig?.description || `${method} operation on ${path}`,
 
         // User context
         ...userContext,

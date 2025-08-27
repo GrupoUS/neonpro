@@ -9,9 +9,6 @@ import { randomBytes, scrypt } from "node:crypto";
 import { promisify } from "node:util";
 import { config } from "./configuration";
 import { monitoring } from "./monitoring";
-
-const _scryptAsync = promisify(scrypt);
-
 // ================================================
 // TYPES AND INTERFACES
 // ================================================
@@ -22,7 +19,7 @@ interface User {
   roles: string[];
   tenantId?: string;
   permissions: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   isActive: boolean;
   lastLoginAt?: Date;
   mfaEnabled: boolean;
@@ -74,7 +71,7 @@ interface RegisterData {
   lastName?: string;
   tenantId?: string;
   roles?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface PasswordResetRequest {
@@ -96,8 +93,8 @@ interface MfaSetupData {
 export class AuthenticationService {
   private static instance: AuthenticationService;
   private readonly supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.SUPABASE_SERVICE_ROLE_KEY || "",
   );
 
   private readonly jwtSecret = process.env.JWT_SECRET || "default-secret";
@@ -125,7 +122,7 @@ export class AuthenticationService {
       ipAddress: string;
       userAgent?: string;
     },
-  ): Promise<{ authToken: AuthToken; user: User; session: Session } | null> {
+  ): Promise<{ authToken: AuthToken; user: User; session: Session; } | null> {
     try {
       monitoring.info("Login attempt", "auth-service", {
         email: credentials.email,
@@ -133,11 +130,10 @@ export class AuthenticationService {
       });
 
       // Authenticate with Supabase
-      const { data: authData, error } =
-        await this.supabase.auth.signInWithPassword({
-          email: credentials.email,
-          password: credentials.password,
-        });
+      const { data: authData, error } = await this.supabase.auth.signInWithPassword({
+        email: credentials.email,
+        password: credentials.password,
+      });
 
       if (error || !authData.user) {
         monitoring.warn("Login failed - invalid credentials", "auth-service", {
@@ -205,7 +201,7 @@ export class AuthenticationService {
 
   async register(
     registerData: RegisterData,
-  ): Promise<{ user: User; requiresVerification: boolean }> {
+  ): Promise<{ user: User; requiresVerification: boolean; }> {
     try {
       monitoring.info("Registration attempt", "auth-service", {
         email: registerData.email,
@@ -213,12 +209,11 @@ export class AuthenticationService {
       });
 
       // Create user in Supabase Auth
-      const { data: authData, error } =
-        await this.supabase.auth.admin.createUser({
-          email: registerData.email,
-          password: registerData.password,
-          email_confirm: false, // We'll handle verification separately
-        });
+      const { data: authData, error } = await this.supabase.auth.admin.createUser({
+        email: registerData.email,
+        password: registerData.password,
+        email_confirm: false, // We'll handle verification separately
+      });
 
       if (error || !authData.user) {
         monitoring.error(
@@ -304,7 +299,7 @@ export class AuthenticationService {
       monitoring.debug("Token refresh attempt", "auth-service");
 
       // Verify refresh token
-      const payload = verify(refreshToken, this.jwtSecret) as any;
+      const payload = verify(refreshToken, this.jwtSecret) as unknown;
 
       // Get session
       const session = await this.getSession(payload.sessionId);
@@ -357,7 +352,7 @@ export class AuthenticationService {
   async validateToken(token: string): Promise<AuthContext | null> {
     try {
       // Verify JWT token
-      const payload = verify(token, this.jwtSecret) as any;
+      const payload = verify(token, this.jwtSecret) as unknown;
 
       // Get session
       const session = await this.getSession(payload.sessionId);
@@ -496,11 +491,10 @@ export class AuthenticationService {
       }
 
       // Verify old password
-      const { error: signInError } =
-        await this.supabase.auth.signInWithPassword({
-          email: user.email,
-          password: oldPassword,
-        });
+      const { error: signInError } = await this.supabase.auth.signInWithPassword({
+        email: user.email,
+        password: oldPassword,
+      });
 
       if (signInError) {
         monitoring.warn(
@@ -514,10 +508,9 @@ export class AuthenticationService {
       }
 
       // Update password
-      const { error: updateError } =
-        await this.supabase.auth.admin.updateUserById(userId, {
-          password: newPassword,
-        });
+      const { error: updateError } = await this.supabase.auth.admin.updateUserById(userId, {
+        password: newPassword,
+      });
 
       if (updateError) {
         monitoring.error(
@@ -570,8 +563,9 @@ export class AuthenticationService {
       const qrCodeUrl = `otpauth://totp/${issuer}:${user.email}?secret=${secret}&issuer=${issuer}`;
 
       // Generate backup codes
-      const backupCodes = Array.from({ length: 10 }, () =>
-        randomBytes(4).toString("hex").toUpperCase(),
+      const backupCodes = Array.from(
+        { length: 10 },
+        () => randomBytes(4).toString("hex").toUpperCase(),
       );
 
       // Store MFA data (temporarily, until user confirms)
@@ -647,11 +641,10 @@ export class AuthenticationService {
       }
 
       // Verify password
-      const { error: signInError } =
-        await this.supabase.auth.signInWithPassword({
-          email: user.email,
-          password,
-        });
+      const { error: signInError } = await this.supabase.auth.signInWithPassword({
+        email: user.email,
+        password,
+      });
 
       if (signInError) {
         monitoring.warn(
@@ -1041,7 +1034,7 @@ export class AuthenticationService {
 
   private async getTempMfaData(
     _userId: string,
-  ): Promise<{ secret: string; backupCodes: string[] } | null> {
+  ): Promise<{ secret: string; backupCodes: string[]; } | null> {
     // Implementation would retrieve temporary MFA data
     return;
   }
@@ -1065,14 +1058,13 @@ export class AuthenticationService {
       .eq("user_id", userId);
   }
 
-  private mapUserFromDb(data: any): User {
+  private mapUserFromDb(data: unknown): User {
     return {
       id: data.id,
       email: data.email,
-      roles: data.user_roles?.map((r: any) => r.role_name) || [],
+      roles: data.user_roles?.map((r: unknown) => r.role_name) || [],
       tenantId: data.tenant_id,
-      permissions:
-        data.role_permissions?.map((p: any) => p.permission_name) || [],
+      permissions: data.role_permissions?.map((p: unknown) => p.permission_name) || [],
       metadata: data.metadata || {},
       isActive: data.is_active,
       lastLoginAt: data.last_login_at
@@ -1085,7 +1077,7 @@ export class AuthenticationService {
     };
   }
 
-  private mapSessionFromDb(data: any): Session {
+  private mapSessionFromDb(data: unknown): Session {
     return {
       id: data.id,
       userId: data.user_id,

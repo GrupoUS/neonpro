@@ -1,4 +1,4 @@
-﻿// Batch Prediction Extended Constants
+// Batch Prediction Extended Constants
 
 const MAGIC_NUMBERS = {
   FIFTY: 50,

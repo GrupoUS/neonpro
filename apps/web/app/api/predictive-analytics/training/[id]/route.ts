@@ -6,7 +6,7 @@ const service = new PredictiveAnalyticsService();
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -23,7 +23,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string; }>; },
 ) {
   try {
     const resolvedParams = await params;
@@ -38,9 +38,6 @@ export async function POST(
         },
       );
     }
-
-    const _result = await service.trainModel(resolvedParams.id, data);
-
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(

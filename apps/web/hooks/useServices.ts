@@ -84,10 +84,10 @@ export function useServices(): ServicesHook {
   }, [activeServices]);
 
   // Total de serviços
-  const totalServices = services.length;
+  const { length: totalServices } = services;
 
   // Total de serviços ativos
-  const activeServicesCount = activeServices.length;
+  const { length: activeServicesCount } = activeServices;
 
   // Função para atualizar a lista de serviços
   const refreshServices = useCallback(async () => {
@@ -118,13 +118,11 @@ export function useServices(): ServicesHook {
               prev.map((service) =>
                 service.id === payload.new.id
                   ? (payload.new as Service)
-                  : service,
-              ),
+                  : service
+              )
             );
           } else if (payload.eventType === "DELETE") {
-            setServices((prev) =>
-              prev.filter((service) => service.id !== payload.old.id),
-            );
+            setServices((prev) => prev.filter((service) => service.id !== payload.old.id));
           }
         },
       )

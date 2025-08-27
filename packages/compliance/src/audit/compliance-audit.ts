@@ -8,20 +8,16 @@
 import { HealthcareRegulation } from "../types";
 import type { ComplianceScore } from "../types";
 import { AuditSeverity } from "./types";
-import type {
-  ComplianceActionItem,
-  ComplianceAuditFinding,
-  ComplianceAuditReport,
-} from "./types";
+import type { ComplianceActionItem, ComplianceAuditFinding, ComplianceAuditReport } from "./types";
 
 /**
  * Constitutional Compliance Audit Service
  * Manages compliance audits for Brazilian healthcare regulations
  */
 export class ComplianceAuditService {
-  private readonly supabaseClient: any;
+  private readonly supabaseClient: unknown;
 
-  constructor(supabaseClient: any) {
+  constructor(supabaseClient: unknown) {
     this.supabaseClient = supabaseClient;
   }
 
@@ -64,8 +60,10 @@ export class ComplianceAuditService {
       let totalScore = 0;
 
       for (const reg of regulations) {
-        const { findings, actionItems, score, regRecommendations } =
-          await this.auditRegulation(tenantId, reg);
+        const { findings, actionItems, score, regRecommendations } = await this.auditRegulation(
+          tenantId,
+          reg,
+        );
         allFindings.push(...findings);
         allActionItems.push(...actionItems);
         recommendations.push(...regRecommendations);
@@ -151,8 +149,6 @@ export class ComplianceAuditService {
     const _findings: ComplianceAuditFinding[] = [];
     const _actionItems: ComplianceActionItem[] = [];
     const _recommendations: string[] = [];
-    const _score = 10;
-
     switch (regulation) {
       case HealthcareRegulation.LGPD: {
         return await this.auditLGPDCompliance(tenantId);
@@ -433,7 +429,7 @@ export class ComplianceAuditService {
   async updateReportStatus(
     reportId: string,
     status: "DRAFT" | "FINAL" | "APPROVED",
-  ): Promise<{ success: boolean; error?: string }> {
+  ): Promise<{ success: boolean; error?: string; }> {
     try {
       const { error } = await this.supabaseClient
         .from("compliance_audit_reports")

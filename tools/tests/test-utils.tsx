@@ -37,7 +37,7 @@ export const renderWithClient = (
 ) => {
   const { client = createTestQueryClient(), renderOptions } = options || {};
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const wrapper = ({ children }: { children: React.ReactNode; }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
 
@@ -59,7 +59,7 @@ export const renderHookWithClient = <TResult, TProps>(
 ) => {
   const { client = createTestQueryClient(), initialProps } = options || {};
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const wrapper = ({ children }: { children: React.ReactNode; }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
 
@@ -73,11 +73,9 @@ export const renderHookWithClient = <TResult, TProps>(
  * Access global test mocks - for compatibility with existing tests
  */
 export const getGlobalMocks = () => ({
-  supabaseClient: (globalThis as any).mockSupabaseClient,
-  notificationService: (globalThis as any).mockNotificationService,
-  lgpdService:
-    (globalThis as any).mockLGPDService || (globalThis as any).mockLgpdService,
-  cpfValidator: (globalThis as any).mockCpfValidator,
-  queryClient:
-    (globalThis as any).testQueryClient || (globalThis as any).queryClient,
+  supabaseClient: (globalThis as unknown).mockSupabaseClient,
+  notificationService: (globalThis as unknown).mockNotificationService,
+  lgpdService: (globalThis as unknown).mockLGPDService || (globalThis as unknown).mockLgpdService,
+  cpfValidator: (globalThis as unknown).mockCpfValidator,
+  queryClient: (globalThis as unknown).testQueryClient || (globalThis as unknown).queryClient,
 });

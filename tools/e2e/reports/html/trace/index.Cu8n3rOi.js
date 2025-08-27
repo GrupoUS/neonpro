@@ -88,7 +88,7 @@ const A = ({
 	N = (n, o, r) => {
 		const a = document.documentElement.clientWidth;
 		if (r === "left") {
-			const d = n.left;
+			const { left: d } = n;
 			return { value: d, inBounds: d + o <= a };
 		}
 		return { value: n.right - o, inBounds: n.right - o >= 0 };

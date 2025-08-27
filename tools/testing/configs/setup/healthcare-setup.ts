@@ -35,8 +35,7 @@ export interface HealthcareTestAppointment {
 // Healthcare Mock Client (Medplum-inspired pattern)
 export class HealthcareMockClient {
   private readonly patients: Map<string, HealthcareTestPatient> = new Map();
-  private readonly appointments: Map<string, HealthcareTestAppointment> =
-    new Map();
+  private readonly appointments: Map<string, HealthcareTestAppointment> = new Map();
   private readonly tenantId: string;
   constructor(tenantId = "test-tenant-healthcare") {
     this.tenantId = tenantId;
@@ -116,7 +115,7 @@ beforeEach(() => {
   healthcareMockClient = new HealthcareMockClient();
 
   // Set global test client
-  (globalThis as any).__HEALTHCARE_MOCK_CLIENT__ = healthcareMockClient;
+  (globalThis as unknown).__HEALTHCARE_MOCK_CLIENT__ = healthcareMockClient;
 
   // Mock fetch for healthcare APIs
   jest.spyOn(global, "fetch").mockImplementation();
@@ -152,7 +151,7 @@ afterEach(() => {
   vi.resetAllMocks();
 
   // Clean up global state
-  (globalThis as any).__HEALTHCARE_MOCK_CLIENT__ = undefined;
+  (globalThis as unknown).__HEALTHCARE_MOCK_CLIENT__ = undefined;
 });
 
 afterAll(() => {});

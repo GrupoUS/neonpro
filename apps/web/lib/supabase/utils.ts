@@ -26,21 +26,12 @@ const queryCache = new Map<string, CachedResult<any>>();
 /**
  * Configurações de cache por tipo de dados
  */
-const _CACHE_CONFIG = {
-  dashboard_metrics: 30, // 30 segundos
-  patients: 60, // 1 minuto
-  appointments: 30, // 30 segundos
-  financial: 120, // 2 minutos
-  staff: 300, // 5 minutos
-  services: 600, // 10 minutos
-} as const;
-
 /**
  * Gera chave de cache baseada em parâmetros
  */
 export const generateCacheKey = (
   prefix: string,
-  params: Record<string, any> = {},
+  params: Record<string, unknown> = {},
 ): string => {
   const sortedParams = Object.keys(params)
     .sort()
@@ -49,7 +40,7 @@ export const generateCacheKey = (
         result[key] = params[key];
         return result;
       },
-      {} as Record<string, any>,
+      {} as Record<string, unknown>,
     );
 
   return `${prefix}:${JSON.stringify(sortedParams)}`;
@@ -140,11 +131,11 @@ export const clearCacheByPattern = (pattern: string): void => {
  * Executa query com retry automático
  */
 export const executeWithRetry = async <T>(
-  queryFn: () => Promise<{ data: T; error: any }>,
+  queryFn: () => Promise<{ data: T; error: unknown; }>,
   maxRetries = 3,
   retryDelayMs = 1000,
 ): Promise<T> => {
-  let lastError: any;
+  let lastError: unknown;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -155,9 +146,7 @@ export const executeWithRetry = async <T>(
 
         // Se não for o último retry, aguarda e tenta novamente
         if (attempt < maxRetries) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)),
-          );
+          await new Promise((resolve) => setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)));
           continue;
         }
 
@@ -169,9 +158,7 @@ export const executeWithRetry = async <T>(
       lastError = error;
 
       if (attempt < maxRetries) {
-        await new Promise((resolve) =>
-          setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)),
-        );
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs * 2 ** (attempt - 1)));
         continue;
       }
 
@@ -287,7 +274,7 @@ export const groupByPeriod = <T>(
 /**
  * Debounce para otimizar queries em tempo real
  */
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => any>(
   func: T,
   waitMs: number,
 ): T => {
@@ -302,7 +289,7 @@ export const debounce = <T extends (...args: any[]) => any>(
 /**
  * Throttle para limitar frequência de execução
  */
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends (...args: unknown[]) => any>(
   func: T,
   limitMs: number,
 ): T => {
@@ -350,9 +337,11 @@ export const generateTimeSlots = (
       const intervalsPerHour = 60 / intervalMinutes;
       for (let i = 1; i < intervalsPerHour; i++) {
         const minutes = i * intervalMinutes;
-        const intervalTime = `${hour.toString().padStart(2, "0")}:${minutes
-          .toString()
-          .padStart(2, "0")}`;
+        const intervalTime = `${hour.toString().padStart(2, "0")}:${
+          minutes
+            .toString()
+            .padStart(2, "0")
+        }`;
         slots.push(intervalTime);
       }
     }
@@ -379,7 +368,7 @@ export const isBusinessHour = (
 /**
  * Converte string de erro para mensagem amigável
  */
-export const getErrorMessage = (error: any): string => {
+export const getErrorMessage = (error: unknown): string => {
   if (typeof error === "string") {
     return error;
   }

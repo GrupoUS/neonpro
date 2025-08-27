@@ -7,25 +7,11 @@
 
 "use client";
 
-import {
-  Camera,
-  Eye,
-  Monitor,
-  Move3d,
-  RotateCcw,
-  ZoomIn,
-  ZoomOut,
-} from "lucide-react";
+import { Camera, Eye, Monitor, Move3d, RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { Badge } from "../Badge";
 import { Button } from "../Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../Card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../Card";
 import { Progress } from "../Progress";
 import { Switch } from "../Switch";
 import { Slider } from "../ui/slider";
@@ -42,7 +28,7 @@ export interface MediaContent {
     studyDate?: Date;
     modality?: string; // CT, MRI, X-Ray, etc.
     bodyPart?: string;
-    dimensions?: { width: number; height: number; depth?: number };
+    dimensions?: { width: number; height: number; depth?: number; };
     fileSize: number;
   };
   annotations?: Annotation[];
@@ -53,7 +39,7 @@ export interface MediaContent {
 export interface Annotation {
   id: string;
   type: "measurement" | "diagnosis" | "note" | "marker";
-  position: { x: number; y: number; z?: number };
+  position: { x: number; y: number; z?: number; };
   content: string;
   author: string;
   timestamp: Date;
@@ -64,7 +50,7 @@ export interface ViewerSettings {
   brightness: number;
   contrast: number;
   zoom: number;
-  rotation: { x: number; y: number; z: number };
+  rotation: { x: number; y: number; z: number; };
   showAnnotations: boolean;
   showGrid: boolean;
   renderQuality: "low" | "medium" | "high";
@@ -93,7 +79,6 @@ export function ARVRViewer({
   fullscreen = false,
   className,
 }: ARVRViewerProps) {
-  const _viewerId = useId();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [_isPlaying, _setIsPlaying] = useState(false);
@@ -113,8 +98,7 @@ export function ARVRViewer({
   };
 
   const [settings, setSettings] = useState(defaultSettings);
-  const [_currentAnnotation, _setCurrentAnnotation] =
-    useState<Partial<Annotation> | null>();
+  const [_currentAnnotation, _setCurrentAnnotation] = useState<Partial<Annotation> | null>();
 
   useEffect(() => {
     // Simulate loading process
@@ -146,7 +130,7 @@ export function ARVRViewer({
   }, [initializeViewer]);
 
   const initializeViewer = async () => {
-    const canvas = canvasRef.current;
+    const { current: canvas } = canvasRef;
     if (!canvas) {
       return;
     }
@@ -310,7 +294,7 @@ export function ARVRViewer({
       return;
     }
 
-    const canvas = canvasRef.current;
+    const { current: canvas } = canvasRef;
     if (!canvas) {
       return;
     }
@@ -364,15 +348,13 @@ export function ARVRViewer({
               {content.type.replace("_", " ").toUpperCase()} •
               {content.metadata.modality && ` ${content.metadata.modality} •`}
               {content.metadata.bodyPart && ` ${content.metadata.bodyPart} •`}
-              {content.metadata.studyDate &&
-                ` ${content.metadata.studyDate.toLocaleDateString()}`}
+              {content.metadata.studyDate
+                && ` ${content.metadata.studyDate.toLocaleDateString()}`}
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Badge
-              variant={
-                content.accessLevel === "restricted" ? "destructive" : "default"
-              }
+              variant={content.accessLevel === "restricted" ? "destructive" : "default"}
             >
               {content.accessLevel}
             </Badge>
@@ -384,32 +366,36 @@ export function ARVRViewer({
       <CardContent className="p-0">
         {/* Main viewer area */}
         <div className="relative bg-black">
-          {isLoading ? (
-            <div className="flex h-96 flex-col items-center justify-center gap-4">
-              <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
-              <div className="text-center text-white">
-                <p>Carregando conteúdo médico...</p>
-                <Progress className="mt-2 w-64" value={loadingProgress} />
-                <p className="mt-1 text-sm">{loadingProgress}%</p>
+          {isLoading
+            ? (
+              <div className="flex h-96 flex-col items-center justify-center gap-4">
+                <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+                <div className="text-center text-white">
+                  <p>Carregando conteúdo médico...</p>
+                  <Progress className="mt-2 w-64" value={loadingProgress} />
+                  <p className="mt-1 text-sm">{loadingProgress}%</p>
+                </div>
               </div>
-            </div>
-          ) : error ? (
-            <div className="flex h-96 flex-col items-center justify-center gap-4 text-red-400">
-              <p>{error}</p>
-              <Button onClick={() => initializeViewer()} variant="outline">
-                Tentar Novamente
-              </Button>
-            </div>
-          ) : (
-            <canvas
-              aria-label={`Visualizador ${mode.toUpperCase()} - ${content.title}`}
-              className="h-auto max-h-96 w-full cursor-crosshair"
-              onClick={handleCanvasClick}
-              ref={canvasRef}
-              role="img"
-              tabIndex={0}
-            />
-          )}
+            )
+            : error
+            ? (
+              <div className="flex h-96 flex-col items-center justify-center gap-4 text-red-400">
+                <p>{error}</p>
+                <Button onClick={() => initializeViewer()} variant="outline">
+                  Tentar Novamente
+                </Button>
+              </div>
+            )
+            : (
+              <canvas
+                aria-label={`Visualizador ${mode.toUpperCase()} - ${content.title}`}
+                className="h-auto max-h-96 w-full cursor-crosshair"
+                onClick={handleCanvasClick}
+                ref={canvasRef}
+                role="img"
+                tabIndex={0}
+              />
+            )}
 
           {/* Overlay controls */}
           {showControls && !isLoading && !error && (
@@ -424,9 +410,7 @@ export function ARVRViewer({
               </Button>
               <Button
                 aria-label="Diminuir zoom"
-                onClick={() =>
-                  handleSettingChange("zoom", Math.max(10, settings.zoom - 10))
-                }
+                onClick={() => handleSettingChange("zoom", Math.max(10, settings.zoom - 10))}
                 size="sm"
                 variant="secondary"
               >
@@ -434,9 +418,7 @@ export function ARVRViewer({
               </Button>
               <Button
                 aria-label="Resetar rotação"
-                onClick={() =>
-                  handleSettingChange("rotation", { x: 0, y: 0, z: 0 })
-                }
+                onClick={() => handleSettingChange("rotation", { x: 0, y: 0, z: 0 })}
                 size="sm"
                 variant="secondary"
               >
@@ -457,9 +439,7 @@ export function ARVRViewer({
                   className="w-full"
                   max={100}
                   min={0}
-                  onValueChange={([value]: number[]) =>
-                    handleSettingChange("brightness", value)
-                  }
+                  onValueChange={([value]: number[]) => handleSettingChange("brightness", value)}
                   step={1}
                   value={[settings.brightness]}
                 />
@@ -472,9 +452,7 @@ export function ARVRViewer({
                   className="w-full"
                   max={100}
                   min={0}
-                  onValueChange={([value]: number[]) =>
-                    handleSettingChange("contrast", value)
-                  }
+                  onValueChange={([value]: number[]) => handleSettingChange("contrast", value)}
                   step={1}
                   value={[settings.contrast]}
                 />
@@ -489,9 +467,7 @@ export function ARVRViewer({
                   className="w-full"
                   max={500}
                   min={10}
-                  onValueChange={([value]: number[]) =>
-                    handleSettingChange("zoom", value)
-                  }
+                  onValueChange={([value]: number[]) => handleSettingChange("zoom", value)}
                   step={10}
                   value={[settings.zoom]}
                 />
@@ -504,9 +480,7 @@ export function ARVRViewer({
                 <Switch
                   checked={settings.showAnnotations}
                   id="annotations"
-                  onCheckedChange={(checked) =>
-                    handleSettingChange("showAnnotations", checked)
-                  }
+                  onCheckedChange={(checked) => handleSettingChange("showAnnotations", checked)}
                 />
                 <label className="text-sm" htmlFor="annotations">
                   Mostrar Anotações
@@ -517,9 +491,7 @@ export function ARVRViewer({
                 <Switch
                   checked={settings.showGrid}
                   id="grid"
-                  onCheckedChange={(checked) =>
-                    handleSettingChange("showGrid", checked)
-                  }
+                  onCheckedChange={(checked) => handleSettingChange("showGrid", checked)}
                 />
                 <label className="text-sm" htmlFor="grid">
                   Mostrar Grade
@@ -537,8 +509,7 @@ export function ARVRViewer({
                     handleSettingChange(
                       "renderQuality",
                       e.target.value as ViewerSettings["renderQuality"],
-                    )
-                  }
+                    )}
                   value={settings.renderQuality}
                 >
                   <option value="low">Baixa</option>

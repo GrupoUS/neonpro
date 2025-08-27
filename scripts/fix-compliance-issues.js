@@ -74,7 +74,7 @@ export class LGPDConsentManager {
 		purpose: string
 		legalBasis: string
 		consentGiven: boolean
-		metadata?: Record<string, any>
+		metadata?: Record<string, unknown>
 	}): Promise<ConsentRecord> {
 		const { data, error } = await supabase
 			.from('consent_records')
@@ -133,7 +133,7 @@ export class LGPDConsentManager {
 		dataSubjectId: string
 		requestType: DataSubjectRightType
 		description?: string
-		metadata?: Record<string, any>
+		metadata?: Record<string, unknown>
 	}): Promise<DataSubjectRequest> {
 		const { data, error } = await supabase
 			.from('data_subject_requests')
@@ -185,7 +185,7 @@ export class LGPDConsentManager {
 		status: 'submitted' | 'in_progress' | 'completed' | 'rejected' | 'under_review',
 		response?: string
 	): Promise<void> {
-		const updateData: any = {
+		const updateData: unknown = {
 			status,
 			updated_at: new Date().toISOString()
 		}
@@ -235,7 +235,7 @@ export class LGPDConsentManager {
 	 * Generate data portability export
 	 */
 	async generateDataExport(dataSubjectId: string): Promise<{
-		personalData: any
+		personalData: unknown
 		consentRecords: ConsentRecord[]
 		requestHistory: DataSubjectRequest[]
 	}> {
@@ -851,7 +851,8 @@ VERCEL_ENV=development
   const supabaseDir = path.resolve(process.cwd(), "supabase");
   if (fs.existsSync(supabaseDir)) {
     const configPath = path.join(supabaseDir, "config.toml");
-    const configContent = `# A string used to distinguish different Supabase projects on the same host. Defaults to the
+    const configContent =
+      `# A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running \`supabase init\`.
 project_id = "neonpro"
 

@@ -4,7 +4,7 @@
  * Healthcare compliance with secure session management
  */
 
-import { createServerClient } from "@neonpro/db";
+import { createServerClient } from "@neonpro/database";
 import { cookies } from "next/headers";
 
 /**

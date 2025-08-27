@@ -41,7 +41,7 @@ describe("analytics Utils", () => {
     });
 
     it("should handle invalid input gracefully", () => {
-      const mrr = calculateMRR(undefined as any);
+      const mrr = calculateMRR(undefined as unknown);
       expect(mrr).toBe(0);
     });
   });
@@ -121,7 +121,7 @@ describe("analytics Utils", () => {
     });
 
     it("should handle null/undefined", () => {
-      const formatted = formatAnalyticsCurrency(undefined as any);
+      const formatted = formatAnalyticsCurrency(undefined as unknown);
       expect(formatted).toBe("$0.00");
     });
   });
@@ -138,7 +138,7 @@ describe("analytics Utils", () => {
     });
 
     it("should handle null/undefined", () => {
-      const formatted = formatAnalyticsPercentage(undefined as any);
+      const formatted = formatAnalyticsPercentage(undefined as unknown);
       expect(formatted).toBe("0.00%");
     });
   });

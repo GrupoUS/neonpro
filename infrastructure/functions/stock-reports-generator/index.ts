@@ -3,8 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 interface ReportConfig {
@@ -13,7 +12,7 @@ interface ReportConfig {
   user_id: string;
   report_name: string;
   report_type: "consumption" | "valuation" | "movement" | "custom";
-  filters: any;
+  filters: unknown;
   schedule_config?: {
     frequency: "daily" | "weekly" | "monthly";
     dayOfWeek?: number;
@@ -53,8 +52,8 @@ serve(async (req) => {
       throw configError;
     }
 
-    const processedReports: any[] = [];
-    const emailQueue: any[] = [];
+    const processedReports: unknown[] = [];
+    const emailQueue: unknown[] = [];
 
     // Process each scheduled report
     for (const config of reportConfigs || []) {
@@ -62,7 +61,7 @@ serve(async (req) => {
         continue;
       }
 
-      const schedule = config.schedule_config;
+      const { schedule_config: schedule } = config;
       let shouldGenerate = false;
 
       // Check if report should be generated now
@@ -74,8 +73,8 @@ serve(async (req) => {
 
         case "weekly": {
           if (
-            schedule.dayOfWeek !== undefined &&
-            currentDay === schedule.dayOfWeek
+            schedule.dayOfWeek !== undefined
+            && currentDay === schedule.dayOfWeek
           ) {
             shouldGenerate = true;
           }
@@ -84,8 +83,8 @@ serve(async (req) => {
 
         case "monthly": {
           if (
-            schedule.dayOfMonth !== undefined &&
-            currentDate === schedule.dayOfMonth
+            schedule.dayOfMonth !== undefined
+            && currentDate === schedule.dayOfMonth
           ) {
             shouldGenerate = true;
           }
@@ -176,9 +175,9 @@ serve(async (req) => {
   }
 });
 
-async function generateReport(supabase: any, config: ReportConfig) {
+async function generateReport(supabase: unknown, config: ReportConfig) {
   const filters = config.filters || {};
-  const clinicId = config.clinic_id;
+  const { clinic_id: clinicId } = config;
 
   // Calculate date range
   const endDate = new Date();
@@ -236,9 +235,9 @@ async function generateReport(supabase: any, config: ReportConfig) {
 }
 
 async function generateConsumptionReport(
-  supabase: any,
+  supabase: unknown,
   clinicId: string,
-  _filters: any,
+  _filters: unknown,
   startDate: Date,
   endDate: Date,
 ) {
@@ -272,8 +271,8 @@ async function generateConsumptionReport(
   let totalConsumption = 0;
   let totalValue = 0;
 
-  movements?.forEach((movement: any) => {
-    const productId = movement.product_id;
+  movements?.forEach((movement: unknown) => {
+    const { product_id: productId } = movement;
     const quantity = movement.quantity_out || 0;
     const value = quantity * (movement.unit_cost || 0);
 
@@ -289,8 +288,7 @@ async function generateConsumptionReport(
       consumptionByProduct.set(productId, {
         productId,
         productName: movement.products?.name || "Produto sem nome",
-        category:
-          movement.products?.product_categories?.name || "Sem categoria",
+        category: movement.products?.product_categories?.name || "Sem categoria",
         quantity,
         value,
         transactions: 1,
@@ -320,9 +318,9 @@ async function generateConsumptionReport(
 }
 
 async function generateValuationReport(
-  supabase: any,
+  supabase: unknown,
   clinicId: string,
-  _filters: any,
+  _filters: unknown,
   startDate: Date,
   endDate: Date,
 ) {
@@ -350,16 +348,14 @@ async function generateValuationReport(
     throw error;
   }
 
-  const totalValue =
-    inventory?.reduce(
-      (sum: number, item: any) =>
-        sum + item.quantity_available * item.unit_cost,
-      0,
-    ) || 0;
+  const totalValue = inventory?.reduce(
+    (sum: number, item: unknown) => sum + item.quantity_available * item.unit_cost,
+    0,
+  ) || 0;
 
   const byCategory = new Map();
 
-  inventory?.forEach((item: any) => {
+  inventory?.forEach((item: unknown) => {
     const category = item.products?.product_categories?.name || "Sem categoria";
     const value = item.quantity_available * item.unit_cost;
 
@@ -390,24 +386,23 @@ async function generateValuationReport(
       categories: byCategory.size,
     },
     byCategory: [...byCategory.values()],
-    topValueProducts:
-      inventory
-        ?.map((item: any) => ({
-          productName: item.products?.name || "Produto sem nome",
-          quantity: item.quantity_available,
-          unitCost: item.unit_cost,
-          totalValue: item.quantity_available * item.unit_cost,
-        }))
-        .sort((a: any, b: any) => b.totalValue - a.totalValue)
-        .slice(0, 20) || [],
+    topValueProducts: inventory
+      ?.map((item: unknown) => ({
+        productName: item.products?.name || "Produto sem nome",
+        quantity: item.quantity_available,
+        unitCost: item.unit_cost,
+        totalValue: item.quantity_available * item.unit_cost,
+      }))
+      .sort((a: unknown, b: unknown) => b.totalValue - a.totalValue)
+      .slice(0, 20) || [],
     generatedAt: new Date().toISOString(),
   };
 }
 
 async function generateMovementReport(
-  supabase: any,
+  supabase: unknown,
   clinicId: string,
-  _filters: any,
+  _filters: unknown,
   startDate: Date,
   endDate: Date,
 ) {
@@ -440,11 +435,11 @@ async function generateMovementReport(
     byType: new Map(),
   };
 
-  movements?.forEach((movement: any) => {
+  movements?.forEach((movement: unknown) => {
     summary.totalIn += movement.quantity_in || 0;
     summary.totalOut += movement.quantity_out || 0;
 
-    const type = movement.movement_type;
+    const { movement_type: type } = movement;
     if (summary.byType.has(type)) {
       const existing = summary.byType.get(type);
       existing.count++;
@@ -475,9 +470,9 @@ async function generateMovementReport(
 }
 
 async function generateCustomReport(
-  _supabase: any,
+  _supabase: unknown,
   _clinicId: string,
-  filters: any,
+  filters: unknown,
   startDate: Date,
   endDate: Date,
 ) {

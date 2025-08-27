@@ -63,14 +63,13 @@ export async function analyzeBundleSize(): Promise<BundleStats> {
 /**
  * Parse Next.js build output to extract size information
  */
-function parseBuildOutput(output: string): any {
+function parseBuildOutput(output: string): unknown {
   const lines = output.split("\n");
-  const sizeRegex =
-    /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/;
+  const sizeRegex = /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/;
 
   let totalSize = 0;
   let gzippedSize = 0;
-  const chunks: Array<{ name: string; size: number; modules: string[] }> = [];
+  const chunks: Array<{ name: string; size: number; modules: string[]; }> = [];
 
   for (const line of lines) {
     const match = line.match(sizeRegex);
@@ -100,7 +99,7 @@ function parseBuildOutput(output: string): any {
 /**
  * Generate optimization recommendations based on bundle analysis
  */
-function generateRecommendations(stats: any): string[] {
+function generateRecommendations(stats: unknown): string[] {
   const recommendations: string[] = [];
 
   // Check total bundle size
@@ -112,12 +111,14 @@ function generateRecommendations(stats: any): string[] {
   }
 
   // Check for large chunks
-  const largeChunks = stats.chunks.filter((chunk: any) => chunk.size > 200);
+  const largeChunks = stats.chunks.filter((chunk: unknown) => chunk.size > 200);
   if (largeChunks.length > 0) {
     recommendations.push(
-      `📦 Large chunks detected: ${largeChunks
-        .map((c: any) => `${c.name} (${c.size}kB)`)
-        .join(", ")}. Consider splitting these chunks.`,
+      `📦 Large chunks detected: ${
+        largeChunks
+          .map((c: unknown) => `${c.name} (${c.size}kB)`)
+          .join(", ")
+      }. Consider splitting these chunks.`,
     );
   }
 
@@ -125,9 +126,11 @@ function generateRecommendations(stats: any): string[] {
   const compressionRatio = stats.gzippedSize / stats.totalSize;
   if (compressionRatio > 0.7) {
     recommendations.push(
-      `🗜️ Poor compression ratio (${Math.round(
-        compressionRatio * 100,
-      )}%). Check for repetitive code or large JSON files.`,
+      `🗜️ Poor compression ratio (${
+        Math.round(
+          compressionRatio * 100,
+        )
+      }%). Check for repetitive code or large JSON files.`,
     );
   }
 
@@ -189,10 +192,10 @@ export async function generateLighthouseReport(
 /**
  * Extract key recommendations from Lighthouse report
  */
-function extractLighthouseRecommendations(lhr: any): string[] {
+function extractLighthouseRecommendations(lhr: unknown): string[] {
   const recommendations: string[] = [];
 
-  const audits = lhr.audits;
+  const { audits: audits } = lhr;
 
   // Check key performance audits
   if (audits["largest-contentful-paint"]?.score < 0.9) {

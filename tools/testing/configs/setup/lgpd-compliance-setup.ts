@@ -121,8 +121,7 @@ export class LGPDComplianceMockService {
     return [...this.consentRecords.values()]
       .filter((consent) => consent.patientId === patientId)
       .sort(
-        (a, b) =>
-          new Date(b.grantedAt).getTime() - new Date(a.grantedAt).getTime(),
+        (a, b) => new Date(b.grantedAt).getTime() - new Date(a.grantedAt).getTime(),
       );
   }
 
@@ -130,8 +129,7 @@ export class LGPDComplianceMockService {
     return [...this.auditLogs.values()]
       .filter((log) => log.resourceId === resourceId)
       .sort(
-        (a, b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
   }
 
@@ -147,7 +145,7 @@ export const createTestConsent = async (
   patientId: string,
   type: LGPDConsentRecord["consentType"] = "data_processing",
 ) => {
-  const service = (globalThis as any)
+  const service = (globalThis as unknown)
     .__LGPD_COMPLIANCE_SERVICE__ as LGPDComplianceMockService;
 
   return await service.grantConsent({
@@ -161,7 +159,7 @@ export const createTestConsent = async (
   });
 };
 
-export const validateLGPDCompliance = (patient: any): boolean => {
+export const validateLGPDCompliance = (patient: unknown): boolean => {
   // LGPD compliance validation rules
   const requiredFields = ["lgpdConsent", "tenantId"];
   const hasRequiredFields = requiredFields.every(
@@ -180,7 +178,7 @@ export const validateLGPDCompliance = (patient: any): boolean => {
 // Setup LGPD compliance service for each test
 export const setupLGPDCompliance = () => {
   lgpdComplianceService = new LGPDComplianceMockService();
-  (globalThis as any).__LGPD_COMPLIANCE_SERVICE__ = lgpdComplianceService;
+  (globalThis as unknown).__LGPD_COMPLIANCE_SERVICE__ = lgpdComplianceService;
 };
 
 // Cleanup LGPD compliance service
@@ -188,5 +186,5 @@ export const cleanupLGPDCompliance = () => {
   if (lgpdComplianceService) {
     lgpdComplianceService.clear();
   }
-  (globalThis as any).__LGPD_COMPLIANCE_SERVICE__ = undefined;
+  (globalThis as unknown).__LGPD_COMPLIANCE_SERVICE__ = undefined;
 };

@@ -16,7 +16,7 @@ import type {
  * Integrates with AI scheduling engine for 60% efficiency improvement
  */
 export class AISchedulingService {
-  private readonly aiEngine: any; // Will be imported from web app
+  private readonly aiEngine: unknown; // Will be imported from web app
   private analytics: SchedulingAnalytics;
   private readonly config: AISchedulingConfig;
   private readonly realtimeListeners: Map<string, Function> = new Map();
@@ -96,7 +96,7 @@ export class AISchedulingService {
   async implementNoShowPrevention(
     appointmentId: string,
     tenantId: string,
-  ): Promise<{ actions: string[]; riskReduction: number }> {
+  ): Promise<{ actions: string[]; riskReduction: number; }> {
     const appointment = await this.getAppointment(appointmentId, tenantId);
     if (!appointment) {
       return { actions: [], riskReduction: 0 };
@@ -144,11 +144,9 @@ export class AISchedulingService {
    */
   async updatePatientPreferences(
     patientId: string,
-    appointmentHistory: any[],
+    appointmentHistory: unknown[],
     tenantId: string,
   ): Promise<void> {
-    const _patient = await this.getPatientData(patientId, tenantId);
-
     // Analyze appointment patterns
     const preferences = this.analyzeAppointmentPatterns(appointmentHistory);
 
@@ -165,7 +163,7 @@ export class AISchedulingService {
    */
   async balanceStaffWorkload(
     tenantId: string,
-    timeRange: { start: Date; end: Date },
+    timeRange: { start: Date; end: Date; },
   ): Promise<{
     rebalancingActions: SchedulingAction[];
     utilizationImprovement: number;
@@ -220,8 +218,7 @@ export class AISchedulingService {
 
     // Execute highest priority actions automatically
     const autoExecuteActions = actions.filter(
-      (action) =>
-        action.impact.efficiencyChange > 10 && action.executionTime < 60,
+      (action) => action.impact.efficiencyChange > 10 && action.executionTime < 60,
     );
 
     for (const action of autoExecuteActions) {
@@ -239,7 +236,7 @@ export class AISchedulingService {
    */
   async getSchedulingAnalytics(
     tenantId: string,
-    timeRange: { start: Date; end: Date },
+    timeRange: { start: Date; end: Date; },
   ): Promise<SchedulingAnalytics> {
     const appointments = await this.getAppointmentsInRange(timeRange, tenantId);
     const staff = await this.getStaffMembers(tenantId);
@@ -253,8 +250,7 @@ export class AISchedulingService {
       averageBookingTime: this.calculateAverageBookingTime(tenantId),
       noShowRate: this.calculateNoShowRate(appointments),
       cancellationRate: this.calculateCancellationRate(appointments),
-      patientSatisfactionScore:
-        await this.calculatePatientSatisfaction(tenantId),
+      patientSatisfactionScore: await this.calculatePatientSatisfaction(tenantId),
       revenueOptimization: this.calculateRevenueOptimization(appointments),
       timeSlotEfficiency: this.calculateTimeSlotEfficiency(
         appointments,
@@ -271,7 +267,7 @@ export class AISchedulingService {
     staffId: string,
     patientId: string,
     tenantId: string,
-  ): Promise<{ predicted: number; confidence: number; factors: string[] }> {
+  ): Promise<{ predicted: number; confidence: number; factors: string[]; }> {
     const historicalData = await this.getHistoricalDurations(
       treatmentTypeId,
       staffId,
@@ -326,7 +322,7 @@ export class AISchedulingService {
    */
   async forecastDemand(
     tenantId: string,
-    forecastPeriod: { start: Date; end: Date },
+    forecastPeriod: { start: Date; end: Date; },
   ): Promise<{
     dailyDemand: {
       date: Date;
@@ -354,9 +350,8 @@ export class AISchedulingService {
       const month = currentDate.getMonth();
 
       // Base demand from historical patterns
-      const baseDemand =
-        seasonalPatterns.weeklyPattern[dayOfWeek] *
-        seasonalPatterns.monthlyPattern[month];
+      const baseDemand = seasonalPatterns.weeklyPattern[dayOfWeek]
+        * seasonalPatterns.monthlyPattern[month];
 
       // Apply trends and external factors
       const trendAdjustment = this.calculateTrendAdjustment(
@@ -519,15 +514,13 @@ export class AISchedulingService {
 
   private updateAnalytics(processingTime: number, success: boolean): void {
     // Update analytics with new scheduling attempt
-    this.analytics.averageBookingTime =
-      this.analytics.averageBookingTime * 0.9 + processingTime * 0.1;
+    this.analytics.averageBookingTime = this.analytics.averageBookingTime * 0.9
+      + processingTime * 0.1;
 
-    // Update success rate tracking
-    const _currentSuccessRate = success ? 1 : 0;
-    // Implementation would store and analyze success rates over time
+    // Update success rate tracking    // Implementation would store and analyze success rates over time
   }
 
-  private calculateNoShowRisk(appointment: any, patient: Patient): number {
+  private calculateNoShowRisk(appointment: unknown, patient: Patient): number {
     // Use AI engine if available, otherwise use simplified calculation
     if (this.aiEngine) {
       return this.aiEngine.calculateNoShowRisk(appointment, patient);
@@ -537,7 +530,7 @@ export class AISchedulingService {
     return patient.noShowProbability || 0.1;
   }
 
-  private analyzeAppointmentPatterns(history: any[]): any {
+  private analyzeAppointmentPatterns(history: unknown[]): unknown {
     const patterns = {
       preferredTimeSlots: [],
       preferredDays: [],
@@ -578,7 +571,7 @@ export class AISchedulingService {
 
   private calculateStaffWorkload(
     staff: Staff[],
-    appointments: any[],
+    appointments: unknown[],
   ): Record<string, number> {
     const workload: Record<string, number> = {};
 
@@ -603,8 +596,7 @@ export class AISchedulingService {
     imbalance: number;
   }[] {
     const values = Object.values(workload);
-    const averageLoad =
-      values.reduce((sum, load) => sum + load, 0) / values.length;
+    const averageLoad = values.reduce((sum, load) => sum + load, 0) / values.length;
     const imbalances = [];
 
     for (const [staffId, load] of Object.entries(workload)) {
@@ -624,8 +616,8 @@ export class AISchedulingService {
   }
 
   private async generateRebalancingActions(
-    imbalances: any[],
-    _appointments: any[],
+    imbalances: unknown[],
+    _appointments: unknown[],
     _staff: Staff[],
   ): Promise<SchedulingAction[]> {
     const actions: SchedulingAction[] = [];
@@ -636,9 +628,11 @@ export class AISchedulingService {
         // Overloaded staff - redistribute appointments
         actions.push({
           type: "reassign_staff",
-          description: `Redistribute ${Math.round(
-            imbalance.imbalance,
-          )} hours from ${imbalance.staffId}`,
+          description: `Redistribute ${
+            Math.round(
+              imbalance.imbalance,
+            )
+          } hours from ${imbalance.staffId}`,
           impact: {
             efficiencyChange: 10,
             patientSatisfactionChange: -2,
@@ -651,9 +645,11 @@ export class AISchedulingService {
         // Underutilized staff - assign more appointments
         actions.push({
           type: "reschedule",
-          description: `Assign ${Math.round(
-            imbalance.imbalance,
-          )} more hours to ${imbalance.staffId}`,
+          description: `Assign ${
+            Math.round(
+              imbalance.imbalance,
+            )
+          } more hours to ${imbalance.staffId}`,
           impact: {
             efficiencyChange: 15,
             patientSatisfactionChange: 5,
@@ -673,10 +669,9 @@ export class AISchedulingService {
     actions: SchedulingAction[],
   ): number {
     // Calculate potential improvement from rebalancing actions
-    const totalActions = actions.length;
-    const avgImpact =
-      actions.reduce((sum, action) => sum + action.impact.efficiencyChange, 0) /
-      totalActions;
+    const { length: totalActions } = actions;
+    const avgImpact = actions.reduce((sum, action) => sum + action.impact.efficiencyChange, 0)
+      / totalActions;
 
     return totalActions > 0 ? avgImpact : 0;
   }
@@ -685,7 +680,7 @@ export class AISchedulingService {
   private async getAppointment(
     _appointmentId: string,
     _tenantId: string,
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Database query implementation
     return;
   }
@@ -700,7 +695,7 @@ export class AISchedulingService {
 
   private async updatePreferenceLearningModel(
     _patientId: string,
-    _preferences: any,
+    _preferences: unknown,
     _tenantId: string,
   ): Promise<void> {
     // Update ML model with new preference data
@@ -708,7 +703,7 @@ export class AISchedulingService {
 
   private async savePatientPreferences(
     _patientId: string,
-    _preferences: any,
+    _preferences: unknown,
     _tenantId: string,
   ): Promise<void> {
     // Save updated preferences to database
@@ -741,7 +736,7 @@ export class AISchedulingService {
   }
 
   private async getAppointmentsInRange(
-    _timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date; },
     _tenantId: string,
   ): Promise<any[]> {
     // Get appointments in date range
@@ -749,9 +744,9 @@ export class AISchedulingService {
   }
 
   private calculateUtilizationRate(
-    _appointments: any[],
+    _appointments: unknown[],
     _staff: Staff[],
-    _timeRange: { start: Date; end: Date },
+    _timeRange: { start: Date; end: Date; },
   ): number {
     // Calculate utilization rate
     return 0.75;
@@ -761,12 +756,12 @@ export class AISchedulingService {
     return this.analytics.averageBookingTime;
   }
 
-  private calculateNoShowRate(appointments: any[]): number {
+  private calculateNoShowRate(appointments: unknown[]): number {
     const noShows = appointments.filter((apt) => apt.noShow).length;
     return appointments.length > 0 ? noShows / appointments.length : 0;
   }
 
-  private calculateCancellationRate(appointments: any[]): number {
+  private calculateCancellationRate(appointments: unknown[]): number {
     const cancellations = appointments.filter((apt) => apt.cancellation).length;
     return appointments.length > 0 ? cancellations / appointments.length : 0;
   }
@@ -778,15 +773,15 @@ export class AISchedulingService {
     return 4.2;
   }
 
-  private calculateRevenueOptimization(_appointments: any[]): number {
+  private calculateRevenueOptimization(_appointments: unknown[]): number {
     // Calculate revenue optimization percentage
     return 0.15;
   }
 
   private calculateTimeSlotEfficiency(
-    _appointments: any[],
-    _timeRange: { start: Date; end: Date },
-  ): any[] {
+    _appointments: unknown[],
+    _timeRange: { start: Date; end: Date; },
+  ): unknown[] {
     // Calculate efficiency by time slot
     return [];
   }
