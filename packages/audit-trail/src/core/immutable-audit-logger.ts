@@ -122,16 +122,16 @@ export class ImmutableAuditLogger {
   private batchTimer: NodeJS.Timeout | null = undefined;
 
   // Immutable chain state
-  private currentChainHash: string = "0";
-  private blockNumber: number = 0;
+  private currentChainHash = "0";
+  private blockNumber = 0;
   private chainId: string;
 
   // Performance metrics
-  private totalEvents: number = 0;
-  private totalProcessingTime: number = 0;
-  private maxProcessingTime: number = 0;
-  private errorCount: number = 0;
-  private verificationCount: number = 0;
+  private totalEvents = 0;
+  private totalProcessingTime = 0;
+  private maxProcessingTime = 0;
+  private errorCount = 0;
+  private verificationCount = 0;
 
   // Real-time monitoring
   private readonly performanceInterval: NodeJS.Timeout;
@@ -328,7 +328,7 @@ export class ImmutableAuditLogger {
   /**
    * Flush event buffer to persistent storage
    */
-  private async flushBuffer(forceCritical: boolean = false): Promise<void> {
+  private async flushBuffer(forceCritical = false): Promise<void> {
     if (this.eventBuffer.length === 0) {
       return;
     }

@@ -149,14 +149,14 @@ export class ComplianceAuditor {
 
   // Compliance rules cache
   private readonly complianceRules: Map<string, ComplianceRule[]> = new Map();
-  private rulesLastLoaded: number = 0;
+  private rulesLastLoaded = 0;
   private readonly rulesRefreshInterval = 300_000; // 5 minutes
 
   // Performance metrics
-  private totalAudits: number = 0;
-  private totalViolations: number = 0;
-  private totalProcessingTime: number = 0;
-  private autoRemediations: number = 0;
+  private totalAudits = 0;
+  private totalViolations = 0;
+  private totalProcessingTime = 0;
+  private autoRemediations = 0;
 
   // Real-time monitoring
   private readonly monitoringInterval: NodeJS.Timeout | null = undefined;

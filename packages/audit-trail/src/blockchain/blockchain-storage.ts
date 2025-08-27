@@ -103,14 +103,14 @@ export class BlockchainStorage {
   private readonly processingInterval: NodeJS.Timeout;
 
   // Metrics tracking
-  private totalTransactions: number = 0;
-  private confirmedTransactions: number = 0;
-  private failedTransactions: number = 0;
+  private totalTransactions = 0;
+  private confirmedTransactions = 0;
+  private failedTransactions = 0;
   private readonly confirmationTimes: number[] = [];
 
   // Mock blockchain for development
   private readonly mockChain: Map<string, BlockchainTransaction> = new Map();
-  private mockBlockNumber: number = 1;
+  private mockBlockNumber = 1;
 
   constructor(config: BlockchainConfig) {
     this.config = BlockchainConfigSchema.parse(config);
