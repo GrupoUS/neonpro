@@ -1,6 +1,6 @@
 "use client";
 
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
 import { formatCurrency, formatDate, reportData } from "./healthcare-data";

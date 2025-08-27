@@ -506,7 +506,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
     return true;
   });
 
-  // Risk category styling      }
+  // Risk category styling helper (fix function structure)
+  const getRiskCategoryStyle = (risk: string) => {
+    switch (risk) {
       case "high": {
         return "destructive";
       }
@@ -517,10 +519,14 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         return "outline";
       }
       default: {
-        return "outline";
+        return "default";
       }
     }
-  };      }
+  };
+
+  // Risk category icon helper
+  const getRiskCategoryIcon = (risk: string) => {
+    switch (risk) {
       case "high": {
         return <AlertTriangle className="h-4 w-4" />;
       }
@@ -534,7 +540,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         return <Minus className="h-4 w-4" />;
       }
     }
-  };      }
+  };
       case "high": {
         return "Alto";
       }

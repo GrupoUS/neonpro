@@ -97,7 +97,7 @@ const AIServicesDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [selectedTimeRange, _setSelectedTimeRange] = useState("1h");
+  const [selectedTimeRange] = useState("1h");
 
   const fetchDashboardData = useCallback(async () => {
     try {

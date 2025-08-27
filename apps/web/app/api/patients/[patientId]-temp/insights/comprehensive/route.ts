@@ -38,17 +38,19 @@ export async function GET(
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const requestedInsights = searchParams.get("insights")?.split(",") || [];
-    const treatmentContext = searchParams.get("context") || undefined;
+    // Comment out unused variables for now
+    // const requestedInsights = searchParams.get("insights")?.split(",") || [];
+    // const treatmentContext = searchParams.get("context") || undefined;
 
-    // Create comprehensive insight request for processing
-      requestedInsights: requestedInsights.length > 0
-        ? (requestedInsights as unknown[])
-        : undefined,
-      treatmentContext,
-      timestamp: new Date(),
-      requestId: `req_${Date.now()}_${patientId}`,
-    };
+    // Comment out unused variable for now
+    // const insightRequest = {
+    //   requestedInsights: requestedInsights.length > 0
+    //     ? (requestedInsights as string[])
+    //     : undefined,
+    //   treatmentContext,
+    //   timestamp: new Date(),
+    //   requestId: `req_${Date.now()}_${patientId}`,
+    // };
 
     // Generate comprehensive insights
     const comprehensiveInsights = await patientInsights.getComprehensiveInsights(patientId);

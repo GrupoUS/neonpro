@@ -1,7 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase client with service role key for server-side operations
 const supabase = createClient(
@@ -15,6 +15,8 @@ const _analyticsQuerySchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   filters: z.record(z.any()).optional(),
+  userId: z.string().optional(),
+  granularity: z.string().optional(),
 });
 
 // Validation schemas
@@ -81,7 +83,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await getRevenueAnalytics(
           startDate,
           endDate,
-          validatedParams.granularity,
+          validatedParams.granularity || "day",
           validatedParams.userId || userId,
         );
         break;
@@ -90,7 +92,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await getSubscriptionAnalytics(
           startDate,
           endDate,
-          validatedParams.granularity,
+          validatedParams.granularity || "day",
           validatedParams.userId || userId,
         );
         break;
@@ -99,7 +101,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await getTrialAnalytics(
           startDate,
           endDate,
-          validatedParams.granularity,
+          validatedParams.granularity || "day",
           validatedParams.userId || userId,
         );
         break;
@@ -108,7 +110,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await getConversionAnalytics(
           startDate,
           endDate,
-          validatedParams.granularity,
+          validatedParams.granularity || "day",
           validatedParams.userId || userId,
         );
         break;
@@ -117,7 +119,7 @@ export async function GET(request: NextRequest) {
         analyticsData = await getChurnAnalytics(
           startDate,
           endDate,
-          validatedParams.granularity,
+          validatedParams.granularity || "day",
           validatedParams.userId || userId,
         );
         break;
@@ -139,8 +141,8 @@ export async function GET(request: NextRequest) {
       metadata: {
         startDate,
         endDate,
-        granularity: validatedParams.granularity,
-        generatedAt: new Date().toISOString,
+        granularity: validatedParams.granularity || "day",
+        generatedAt: new Date().toISOString(),
       },
     });
   } catch (error) {
@@ -356,7 +358,7 @@ async function getDashboardAnalytics(
     conversions,
     summary: {
       totalRevenue: revenue?.reduce(
-        (sum: number, item: unknown) => sum + (item.revenue || 0),
+        (sum: number, item: any) => sum + (item.revenue || 0),
         0,
       ) || 0,
       totalSubscriptions: subscriptions?.length || 0,

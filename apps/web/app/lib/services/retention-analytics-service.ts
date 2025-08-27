@@ -276,7 +276,7 @@ export class RetentionAnalyticsService {
   async createRetentionStrategy(createData: unknown) {
     // Mock implementation for build compatibility
     return {
-      id: "strategy_" + Math.random().toString(36).slice(2, 9),
+      id: `strategy_${Math.random().toString(36).slice(2, 9)}`,
       ...createData,
       status: "active",
       is_active: true,

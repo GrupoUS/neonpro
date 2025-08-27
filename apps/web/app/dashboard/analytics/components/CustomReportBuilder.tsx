@@ -45,16 +45,16 @@ interface ReportTemplate {
   rating: number;
 }
 
-interface ReportSchedule {
-  id: string;
-  reportId: string;
-  name: string;
-  frequency: "daily" | "weekly" | "monthly";
-  time: string;
-  recipients: string[];
-  format: "pdf" | "excel" | "csv";
-  isActive: boolean;
-}
+// interface ReportSchedule {
+//   id: string;
+//   reportId: string;
+//   name: string;
+//   frequency: "daily" | "weekly" | "monthly";
+//   time: string;
+//   recipients: string[];
+//   format: "pdf" | "excel" | "csv";
+//   isActive: boolean;
+// }
 
 // Visual components maintaining NeonPro design
 const NeonGradientCard = ({

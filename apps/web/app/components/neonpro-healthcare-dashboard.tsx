@@ -36,7 +36,7 @@ import {
   TabsContent,
   Textarea,
 } from "@neonpro/ui";
-import format from "date-fns/format";
+import { format } from "date-fns/format";
 import { ptBR } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -72,7 +72,6 @@ import type React from "react";
 import {
   createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -107,7 +106,7 @@ interface Activity {
   action: string;
   target: string;
   timestamp: Date;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 interface Metric {
@@ -267,7 +266,7 @@ const initialAIState: AIState = {
 
 // AI Hook
 const useAIState = () => {
-  const context = React.useContext(AIStateContext);
+  const context = React.useContext(AIContext);
   if (!context) {
     throw new Error("useAIState must be used within an AI provider");
   }
@@ -395,16 +394,11 @@ const MOCK_METRICS: Metric[] = [
 ];
 
 export default function NeonProHealthcareDashboard({
-  userId,
-  tenantId,
+  _userId,
+  _tenantId,
 }: NeonProDashboardProps) {
-  // Existing state
-  const [_selectedDate, _setSelectedDate] = useState<Date>(new Date());
+  // Removed unused state - selectedDate functionality not implemented yet
   const [activeTab, setActiveTab] = useState("overview");
-  const [_notifications, _setNotifications] = useState<Notification[]>([]);
-  const [_activities, _setActivities] = useState<Activity[]>([]);
-  const [_projects, _setProjects] = useState<Project[]>([]);
-  const [_tasks, _setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -523,7 +517,7 @@ export default function NeonProHealthcareDashboard({
   const SmartMetricCard = useMemo(
     () => ({ metric }: { metric: Metric; }) => {
       const smartMetric = metric as SmartMetric;
-      const { prediction: prediction } = smartMetric;
+      const { prediction } = smartMetric;
 
       return (
         <Card className="relative">
@@ -1368,8 +1362,9 @@ export default function NeonProHealthcareDashboard({
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <div className="flex items-center space-x-2">
-                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label htmlFor="ai-insights-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
                         <Switch
+                          id="ai-insights-switch"
                           checked={aiState.featureFlags.aiInsights}
                           onCheckedChange={(checked) =>
                             aiDispatch({
@@ -1381,8 +1376,9 @@ export default function NeonProHealthcareDashboard({
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label htmlFor="predictive-analytics-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
                         <Switch
+                          id="predictive-analytics-switch"
                           checked={aiState.featureFlags.predictiveAnalytics}
                           onCheckedChange={(checked) =>
                             aiDispatch({
@@ -1394,8 +1390,9 @@ export default function NeonProHealthcareDashboard({
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label htmlFor="realtime-alerts-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
                         <Switch
+                          id="realtime-alerts-switch"
                           checked={aiState.featureFlags.realTimeAlerts}
                           onCheckedChange={(checked) =>
                             aiDispatch({
@@ -1407,8 +1404,9 @@ export default function NeonProHealthcareDashboard({
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <label className="flex items-center space-x-2 text-sm cursor-pointer">
+                      <label htmlFor="smart-metrics-switch" className="flex items-center space-x-2 text-sm cursor-pointer">
                         <Switch
+                          id="smart-metrics-switch"
                           checked={aiState.featureFlags.smartMetrics}
                           onCheckedChange={(checked) =>
                             aiDispatch({

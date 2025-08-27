@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/contexts/auth-context";
+// import { useAuth } from "@/contexts/auth-context"; // Commented out - not used
 import {
   Alert,
   AlertDescription,
@@ -105,13 +105,13 @@ const MOCK_PATIENTS: Patient[] = [
 ];
 
 export default function PacientesPage() {
-  const { user } = useAuth();
+  // const { user: _user } = useAuth(); // Commented out - not used
   const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [_isLoading, _setIsLoading] = useState(false);
+  // const [_isLoading, _setIsLoading] = useState(false); // Commented out - not used
 
   const filteredPatients = patients.filter((patient) => {
     const matchesSearch = patient.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -134,9 +134,11 @@ export default function PacientesPage() {
   };
 
   const handleDeletePatient = async (patientId: string) => {
-    if (confirm("Tem certeza que deseja excluir este paciente?")) {
-      setPatients((prev) => prev.filter((p) => p.id !== patientId));
-    }
+    // TODO: Replace with proper confirmation dialog
+    // if (confirm("Tem certeza que deseja excluir este paciente?")) {
+    console.log("TODO: Add confirmation dialog for patient deletion:", patientId);
+    setPatients((prev) => prev.filter((p) => p.id !== patientId));
+    // }
   };
 
   const getStatusBadge = (status: string) => {

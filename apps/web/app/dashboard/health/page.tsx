@@ -12,7 +12,7 @@ interface HealthPageProps {
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
-export default function HealthPage({ searchParams }: HealthPageProps) {
+export default function HealthPage({ searchParams: _searchParams }: HealthPageProps) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6"

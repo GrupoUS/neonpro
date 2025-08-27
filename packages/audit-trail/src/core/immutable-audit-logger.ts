@@ -217,10 +217,10 @@ export class ImmutableAuditLogger {
       // Performance monitoring
       if (processingTime > this.config.performanceTarget) {
         // console.warn(
-          `⚠️ Audit event processing exceeded target: ${
-            processingTime.toFixed(2)
-          }ms > ${this.config.performanceTarget}ms`,
-        );
+        //   `⚠️ Audit event processing exceeded target: ${
+        //     processingTime.toFixed(2)
+        //   }ms > ${this.config.performanceTarget}ms`,
+        // );
       }
 
       return validatedEvent.id;
@@ -359,8 +359,8 @@ export class ImmutableAuditLogger {
       }
 
       // console.log(
-        `📝 Flushed audit block ${block.blockNumber} with ${events.length} events`,
-      );
+      //   `📝 Flushed audit block ${block.blockNumber} with ${events.length} events`,
+      // );
     } catch (error) {
       // console.error("❌ Failed to flush audit buffer:", error);
 
@@ -502,10 +502,10 @@ export class ImmutableAuditLogger {
         this.currentChainHash = latestBlock.current_block_hash;
 
         // console.log(
-          `🔗 Loaded chain state: Block ${this.blockNumber}, Hash ${
-            this.currentChainHash.slice(0, 8)
-          }...`,
-        );
+        //   `🔗 Loaded chain state: Block ${this.blockNumber}, Hash ${
+        //     this.currentChainHash.slice(0, 8)
+        //   }...`,
+        // );
       }
     } catch {
       // console.log("🔗 Starting new audit chain");
@@ -527,8 +527,8 @@ export class ImmutableAuditLogger {
 
       if (error && error.code === "PGRST116") {
         // console.warn(
-          "⚠️ Audit tables may not exist. Please run database migrations.",
-        );
+        //   "⚠️ Audit tables may not exist. Please run database migrations.",
+        // );
       }
     } catch (error) {
       // console.warn("⚠️ Could not verify audit table existence:", error);
@@ -564,26 +564,26 @@ export class ImmutableAuditLogger {
     // Alert on performance degradation
     if (metrics.averageProcessingTime > this.config.performanceTarget * 2) {
       // console.warn(
-        `🚨 Performance degradation detected: ${
-          metrics.averageProcessingTime.toFixed(2)
-        }ms average`,
-      );
+      //   `🚨 Performance degradation detected: ${
+      //     metrics.averageProcessingTime.toFixed(2)
+      //   }ms average`,
+      // );
     }
 
     // Alert on high error rate
     if (metrics.errorRate > 0.05) {
       // 5%
       // console.warn(
-        `🚨 High error rate detected: ${(metrics.errorRate * 100).toFixed(2)}%`,
-      );
+      //   `🚨 High error rate detected: ${(metrics.errorRate * 100).toFixed(2)}%`,
+      // );
     }
 
     // Alert on buffer buildup
     if (metrics.bufferUtilization > 0.8) {
       // 80%
       // console.warn(
-        `🚨 High buffer utilization: ${(metrics.bufferUtilization * 100).toFixed(1)}%`,
-      );
+      //   `🚨 High buffer utilization: ${(metrics.bufferUtilization * 100).toFixed(1)}%`,
+      // );
     }
   }
 
@@ -801,11 +801,11 @@ export class ImmutableAuditLogger {
     // Final metrics report
     const metrics = this.getPerformanceMetrics();
     // console.log("📊 Final performance metrics:", {
-      totalEvents: metrics.totalEvents,
-      averageProcessingTime: `${metrics.averageProcessingTime.toFixed(2)}ms`,
-      complianceScore: `${metrics.complianceScore.toFixed(1)}%`,
-      errorRate: `${(metrics.errorRate * 100).toFixed(2)}%`,
-    });
+    //   totalEvents: metrics.totalEvents,
+    //   averageProcessingTime: `${metrics.averageProcessingTime.toFixed(2)}ms`,
+    //   complianceScore: `${metrics.complianceScore.toFixed(1)}%`,
+    //   errorRate: `${(metrics.errorRate * 100).toFixed(2)}%`,
+    // });
 
     // console.log("✅ Immutable Audit Logger shutdown complete");
   }

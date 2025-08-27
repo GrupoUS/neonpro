@@ -1,6 +1,6 @@
 import { createClient } from "@/app/utils/supabase/server";
-import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
-import { ProfileManager } from "@/lib/patients/profile-manager";
+// import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
+import ProfileManager from "@/lib/patients/profile-manager";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";

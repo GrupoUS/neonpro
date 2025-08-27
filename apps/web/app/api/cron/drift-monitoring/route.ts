@@ -84,10 +84,10 @@ export async function GET(request: NextRequest) {
     // );
 
     if (alerts.length > 0) {
-      const totalRevenue = alerts.reduce(
-        (sum, a) => sum + a.estimatedImpact.revenueAtRisk,
-        0,
-      );
+      // const totalRevenue = alerts.reduce(
+      //   (sum, a) => sum + a.estimatedImpact.revenueAtRisk,
+      //   0,
+      // );
       // console.log(
       //   `💰 Total revenue at risk: $${totalRevenue.toLocaleString()}`,
       // );

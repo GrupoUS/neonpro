@@ -150,7 +150,7 @@ export function HealthcareSidebar() {
               {navigationItems.map((item) => {
                 const { icon: Icon } = item;
                 const isActive = pathname === item.href;
-                const { isEmergency: isEmergency } = item;
+                const { isEmergency } = item;
 
                 return (
                   <SidebarMenuItem key={item.href}>

@@ -262,7 +262,7 @@ export class MfaDatabaseService {
     const valid = codeRecord.code === code && codeRecord.attempts < codeRecord.max_attempts;
 
     // Increment attempts and potentially mark as used
-    const updates: unknown = {
+    const updates: Record<string, unknown> = {
       attempts: codeRecord.attempts + 1,
     };
 
@@ -358,7 +358,7 @@ export class MfaDatabaseService {
     };
   }
 
-  private mapDbDataToSettings(data: unknown): MfaSettings {
+  private mapDbDataToSettings(data: any): MfaSettings {
     return {
       id: data.id,
       userId: data.user_id,
@@ -396,7 +396,7 @@ export class MfaDatabaseService {
     };
   }
 
-  private mapDbDataToCode(data: unknown): MfaVerificationCode {
+  private mapDbDataToCode(data: any): MfaVerificationCode {
     return {
       id: data.id,
       userId: data.user_id,

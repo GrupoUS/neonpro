@@ -18,7 +18,11 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [setupResult, setSetupResult] = useState<any>();
+  const [setupResult, setSetupResult] = useState<{
+    qrCodeUrl?: string;
+    secret?: string;
+    backupCodes?: string[];
+  } | null>(null);
   const [sessionId] = useState(() => crypto.randomUUID());
 
   const handleMethodSelect = (method: MfaMethod) => {

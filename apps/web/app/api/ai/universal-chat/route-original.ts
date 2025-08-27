@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const {
       messages,
       interface_type = "external",
-      session_id,
+      session_id: _session_id,
       user_context,
     } = await request.json();
 

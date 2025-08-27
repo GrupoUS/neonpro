@@ -12,7 +12,7 @@ interface AnalyticsPageProps {
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
-export default function AnalyticsPage({ searchParams }: AnalyticsPageProps) {
+export default function AnalyticsPage({ searchParams: _searchParams }: AnalyticsPageProps) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6 lg:p-8"

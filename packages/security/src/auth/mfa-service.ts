@@ -602,9 +602,9 @@ async function checkLockout(userId: string): Promise<{
 async function getUserTotpSecret(userId: string): Promise<string | null> {
   try {
     const settings = await mfaDb.getMfaSettings(userId);
-    return settings?.totpSecret || undefined;
+    return settings?.totpSecret || null;
   } catch {
-    return;
+    return null;
   }
 }
 
@@ -683,7 +683,7 @@ async function recordSuccessfulMfa(
     // Update last used timestamp
     const settings = await mfaDb.getMfaSettings(userId);
     if (settings) {
-      const updateData: unknown = {};
+      const updateData: Record<string, Date> = {};
 
       switch (method) {
         case MfaMethod.SMS: {

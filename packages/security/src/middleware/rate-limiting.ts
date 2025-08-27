@@ -313,7 +313,7 @@ export class RateLimiter {
         // For now, return a placeholder
         return `jwt:${token.slice(0, TOKEN_DISPLAY_LENGTH)}`;
       } catch {
-        return;
+        return null;
       }
     }
 
@@ -323,7 +323,7 @@ export class RateLimiter {
       return `session:${sessionCookie.value.slice(0, TOKEN_DISPLAY_LENGTH)}`;
     }
 
-    return;
+    return null;
   }
 }
 

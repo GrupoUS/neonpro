@@ -4,7 +4,6 @@ import { AISchedulingEngine } from "@/lib/ai-scheduling";
 import type {
   AppointmentSlot,
   Conflict,
-  DynamicSchedulingEvent,
   OptimizationRecommendation,
   Patient,
   SchedulingRequest,
@@ -31,7 +30,7 @@ interface IntelligentSchedulerProps {
  * Target: 60% scheduling time reduction with sub-second response
  */
 export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
-  tenantId,
+  _tenantId,
   patientId,
   treatmentTypes,
   staff,
@@ -117,9 +116,6 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
   }, [
     selectedTreatment,
     selectedPatient,
-    preferredDate,
-    urgencyLevel,
-    flexibilityDays,
     treatmentTypes,
     aiEngine,
     onError,
@@ -197,9 +193,6 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
       urgencyLevel,
       flexibilityDays,
       aiEngine,
-      staff,
-      patients,
-      treatmentTypes,
       onAppointmentScheduled,
       onError,
     ],
@@ -213,18 +206,10 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
   // Real-time event handling
       // Update UI based on recommended actions
-      if (actions.length > 0) {
-        // Trigger re-loading of slots if needed
-        if (actions.some((action) => action.type === "reschedule")) {
-          await loadAvailableSlots();
-        }
-      }
-    },
-    [aiEngine, availableSlots, staff, loadAvailableSlots],
-  );
+  // Removed unused handleOptimizationResults function
 
-  // Generate mock slots for demonstration
-  function generateMockSlots(): AppointmentSlot[] {
+  // Generate mock slots for demonstration - memoized to prevent re-render issues  
+  const generateMockSlots = useCallback((): AppointmentSlot[] => {
     const slots: AppointmentSlot[] = [];
     const now = new Date();
 
@@ -247,7 +232,8 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
     }
 
     return slots;
-  }
+  }, []);
+
   return (
     <div className="intelligent-scheduler mx-auto max-w-6xl rounded-lg bg-white p-6 shadow-lg">
       {/* Header with AI Status */}
@@ -281,10 +267,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <h3 className="font-semibold text-gray-900">Patient & Treatment</h3>
 
           <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
+            <label htmlFor="patient-select" className="mb-2 block font-medium text-gray-700 text-sm">
               Patient
             </label>
             <select
+              id="patient-select"
               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={!!patientId}
               onChange={(e) => setSelectedPatient(e.target.value)}
@@ -300,10 +287,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
+            <label htmlFor="treatment-select" className="mb-2 block font-medium text-gray-700 text-sm">
               Treatment Type
             </label>
             <select
+              id="treatment-select"
               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setSelectedTreatment(e.target.value)}
               value={selectedTreatment}
@@ -323,10 +311,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           <h3 className="font-semibold text-gray-900">Preferences</h3>
 
           <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
+            <label htmlFor="preferred-date" className="mb-2 block font-medium text-gray-700 text-sm">
               Preferred Date
             </label>
             <input
+              id="preferred-date"
               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setPreferredDate(new Date(e.target.value))}
               type="date"
@@ -335,10 +324,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
+            <label htmlFor="urgency-select" className="mb-2 block font-medium text-gray-700 text-sm">
               Urgency Level
             </label>
             <select
+              id="urgency-select"
               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onChange={(e) => setUrgencyLevel(e.target.value as unknown)}
               value={urgencyLevel}
@@ -351,10 +341,11 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block font-medium text-gray-700 text-sm">
+            <label htmlFor="flexibility-range" className="mb-2 block font-medium text-gray-700 text-sm">
               Flexibility (days)
             </label>
             <input
+              id="flexibility-range"
               className="w-full"
               max="14"
               min="0"
@@ -451,6 +442,14 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                   }`}
                   key={slot.id}
                   onClick={() => scheduleAppointment(slot)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      scheduleAppointment(slot);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <div className="font-medium text-gray-900">

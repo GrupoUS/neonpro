@@ -419,7 +419,7 @@ export function CommunicationHub({
   >("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
-  const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>();
+  // const [_selectedMessage, setSelectedMessage] = useState<TeamMessage | null>(); // Commented out - not used
   const [isComposeDialogOpen, setIsComposeDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState({
     subject: "",
@@ -642,6 +642,14 @@ export function CommunicationHub({
                       } ${message.isEmergency ? "border-red-400 ring-2 ring-red-300" : ""}`}
                       key={message.id}
                       onClick={() => setSelectedMessage(message)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setSelectedMessage(message);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
                     >
                       <div className="flex items-start space-x-3">
                         {/* Sender Avatar */}
@@ -1325,11 +1333,11 @@ export function CommunicationHub({
           <div className="space-y-4">
             {/* Recipients */}
             <div>
-              <label className="mb-2 block font-medium text-sm">
+              <label htmlFor="recipients-select" className="mb-2 block font-medium text-sm">
                 Destinatários
               </label>
               <Select>
-                <SelectTrigger>
+                <SelectTrigger id="recipients-select">
                   <SelectValue placeholder="Selecionar profissionais..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -1344,7 +1352,7 @@ export function CommunicationHub({
 
             {/* Priority */}
             <div>
-              <label className="mb-2 block font-medium text-sm">
+              <label htmlFor="priority-select" className="mb-2 block font-medium text-sm">
                 Prioridade
               </label>
               <Select
@@ -1355,7 +1363,7 @@ export function CommunicationHub({
                   }))}
                 value={newMessage.priority}
               >
-                <SelectTrigger>
+                <SelectTrigger id="priority-select">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1370,8 +1378,9 @@ export function CommunicationHub({
 
             {/* Subject */}
             <div>
-              <label className="mb-2 block font-medium text-sm">Assunto</label>
+              <label htmlFor="subject-input" className="mb-2 block font-medium text-sm">Assunto</label>
               <Input
+                id="subject-input"
                 onChange={(e) =>
                   setNewMessage((prev) => ({
                     ...prev,
@@ -1384,8 +1393,9 @@ export function CommunicationHub({
 
             {/* Content */}
             <div>
-              <label className="mb-2 block font-medium text-sm">Mensagem</label>
+              <label htmlFor="message-textarea" className="mb-2 block font-medium text-sm">Mensagem</label>
               <Textarea
+                id="message-textarea"
                 onChange={(e) =>
                   setNewMessage((prev) => ({
                     ...prev,

@@ -469,7 +469,6 @@ async function storeChatMessage(
   // Mock implementation - replace with actual database call
   // TODO: Implement chat message storage
 }
-}
 
 async function _getPatientContext(patientId: string): Promise<unknown> {
   // Implementation would fetch patient context from database

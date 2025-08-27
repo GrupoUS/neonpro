@@ -6,7 +6,7 @@
 
 import { Hono } from "hono";
 import arSimulatorRoutes from "./ai/ar-simulator-endpoints";
-import batchPredictionRoutes from "./ai/batch-prediction-endpoints";
+import { batchPredictionRoutes } from "./ai/batch-prediction-endpoints";
 import healthcareMonitoringRoutes from "./ai/healthcare-monitoring-endpoints";
 import mlPipelineRoutes from "./ai/ml-pipeline-endpoints";
 import monitoringRoutes from "./ai/monitoring-endpoints";

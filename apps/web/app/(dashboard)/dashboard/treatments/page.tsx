@@ -20,9 +20,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 // Import our treatment components
-import AestheticTreatmentPlan from "@/components/treatments/AestheticTreatmentPlan";
-import BeforeAfterSecureGallery from "@/components/treatments/BeforeAfterSecureGallery";
-import CosmeticConsentBrazilian from "@/components/treatments/CosmeticConsentBrazilian";
+import { AestheticTreatmentPlan } from "@/components/treatments/AestheticTreatmentPlan";
+import { BeforeAfterSecureGallery } from "@/components/treatments/BeforeAfterSecureGallery";
+import { CosmeticConsentBrazilian } from "@/components/treatments/CosmeticConsentBrazilian";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

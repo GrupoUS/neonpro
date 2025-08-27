@@ -8,7 +8,7 @@ import { Suspense } from "react";
 
 // Mock components for undefined imports
 function ImportStatementButton({
-  canImport,
+  canImport: _canImport,
   ...props
 }: {
   canImport: boolean;

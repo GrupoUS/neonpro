@@ -1,5 +1,6 @@
 import { SignupForm } from "@/components/auth/signup-form";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Cadastro - NeonPro Healthcare",
@@ -113,32 +114,26 @@ export default function SignupPage() {
           <div className="space-y-4">
             <p className="px-4 text-center text-muted-foreground text-xs leading-relaxed">
               Ao criar sua conta, você concorda com nossos{" "}
-              <a
+              <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/terms"
-                rel="noopener"
-                target="_blank"
               >
                 Termos de Serviço
-              </a>
+              </Link>
               ,{" "}
-              <a
+              <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/privacy"
-                rel="noopener"
-                target="_blank"
               >
                 Política de Privacidade LGPD
-              </a>{" "}
+              </Link>{" "}
               e confirma estar ciente das{" "}
-              <a
+              <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/compliance"
-                rel="noopener"
-                target="_blank"
               >
                 Diretrizes de Conformidade ANVISA/CFM
-              </a>
+              </Link>
               .
             </p>
 

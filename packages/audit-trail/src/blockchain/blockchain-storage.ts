@@ -185,15 +185,15 @@ export class BlockchainStorage {
       });
 
       // console.log(
-        `📝 Submitted block ${blockId} for blockchain verification (${priority} priority)`,
-      );
+      //   `📝 Submitted block ${blockId} for blockchain verification (${priority} priority)`,
+      // );
 
       return proofOfIntegrity.proofHash;
     } catch (error) {
       // console.error(
-        `❌ Failed to submit block ${blockId} for verification:`,
-        error,
-      );
+      //   `❌ Failed to submit block ${blockId} for verification:`,
+      //   error,
+      // );
       throw error;
     }
   }
@@ -260,10 +260,10 @@ export class BlockchainStorage {
       await this.updateProofVerification(blockId, verificationResult);
 
       // console.log(
-        `✅ Block ${blockId} verification completed: ${
-          verificationResult.verified ? "VERIFIED" : "FAILED"
-        }`,
-      );
+      //   `✅ Block ${blockId} verification completed: ${
+      //     verificationResult.verified ? "VERIFIED" : "FAILED"
+      //   }`,
+      // );
 
       return verificationResult;
     } catch (error) {
@@ -559,9 +559,9 @@ export class BlockchainStorage {
 
     if (error) {
       // console.error(
-        `Failed to update proof verification for ${blockId}:`,
-        error,
-      );
+      //   `Failed to update proof verification for ${blockId}:`,
+      //   error,
+      // );
     }
   }
 
@@ -612,9 +612,9 @@ export class BlockchainStorage {
 
     if (error) {
       // console.error(
-        `Failed to update blockchain transaction ${transaction.id}:`,
-        error,
-      );
+      //   `Failed to update blockchain transaction ${transaction.id}:`,
+      //   error,
+      // );
     }
   }
 
@@ -678,8 +678,8 @@ export class BlockchainStorage {
         }
 
         // console.log(
-          `📋 Loaded ${this.pendingQueue.length} pending blockchain verifications`,
-        );
+        //   `📋 Loaded ${this.pendingQueue.length} pending blockchain verifications`,
+        // );
       }
     } catch (error) {
       // console.error("⚠️ Failed to load pending transactions:", error);
@@ -787,9 +787,9 @@ export class BlockchainStorage {
             && confirmations >= this.config.requiredConfirmations;
         } catch (error) {
           // console.error(
-            `Failed to get transaction details for ${proof.blockchainTxId}:`,
-            error,
-          );
+          //   `Failed to get transaction details for ${proof.blockchainTxId}:`,
+          //   error,
+          // );
         }
       }
 

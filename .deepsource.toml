@@ -46,11 +46,6 @@ globals = ["HL7", "FHIR", "globalThis", "structuredClone"]
 name = "secrets"
 enabled = true
 
-# Dockerfile(s) se existirem no repo (inofensivo se não houver)
-[[analyzers]]
-name = "docker"
-enabled = true
-
 # Permite publicar cobertura (Vitest/Jest) via CLI
 [[analyzers]]
 name = "test-coverage"

@@ -57,7 +57,7 @@ export async function generateComplianceReportSummary(
   endDate: Date,
   periodDays: number,
   reportType: string,
-  tenantId: string,
+  _tenantId: string,
 ) {
   return {
     compliance_overview: {

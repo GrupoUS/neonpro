@@ -12,7 +12,7 @@ interface DashboardPageProps {
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
-export default function DashboardPage({ searchParams }: DashboardPageProps) {
+export default function DashboardPage({ searchParams: _searchParams }: DashboardPageProps) {
   return (
     <main
       className="min-h-screen bg-background p-4 md:p-6 lg:p-8"

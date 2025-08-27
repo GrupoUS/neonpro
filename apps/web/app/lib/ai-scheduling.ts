@@ -485,7 +485,7 @@ export class AISchedulingEngine {
 
     // Seasonal adjustments
     const month = slot.start.getMonth();
-    let seasonalMultiplier = 1.0;
+    let seasonalMultiplier = 1;
 
     // Aesthetic treatments peak before holidays and summer
     if ([4, 5, 11].includes(month)) {
@@ -829,7 +829,7 @@ export class AISchedulingEngine {
 
   private getWeatherImpact(_date: Date): number {
     // Simplified weather impact - would integrate with weather API
-    return 1.0; // Neutral impact for now
+    return 1; // Neutral impact for now
   }
 
   private getTreatmentValue(category: string): number {
@@ -843,18 +843,7 @@ export class AISchedulingEngine {
     return values[category] || 0.7;
   }
 
-  private;
-  getHourlyUtilization(hour: number): number {
-    return this.realTimeMetrics.get(`hourly_utilization_${hour}`) || 0.6;
-  }
-
-  private getTimeSlotUtilization(time: Date): number {
-    const hour = time.getHours();
-    return this.getHourlyUtilization(hour);
-  }
-
-  private;
-  getHourlyUtilization(hour: number): number {
+  private getHourlyUtilization(hour: number): number {
     // Implementation would track actual hourly utilization
     const utilization = {
       9: 0.8,

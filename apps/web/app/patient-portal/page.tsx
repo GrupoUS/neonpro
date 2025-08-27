@@ -127,10 +127,10 @@ const MOCK_TEST_RESULTS: TestResult[] = [
 
 export default function PatientPortalPage() {
   const { user, loading } = useAuth();
-  const [appointments, _setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
-  const [records, _setRecords] = useState<MedicalRecord[]>(MOCK_RECORDS);
-  const [testResults, _setTestResults] = useState<TestResult[]>(MOCK_TEST_RESULTS);
-  const [_selectedDate, _setSelectedDate] = useState<Date>(new Date());
+  const [appointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const [records] = useState<MedicalRecord[]>(MOCK_RECORDS);
+  const [testResults] = useState<TestResult[]>(MOCK_TEST_RESULTS);
+  // const [_selectedDate, _setSelectedDate] = useState<Date>(new Date()); // Commented out - not used
 
   const getStatusBadge = (status: string) => {
     const variants = {

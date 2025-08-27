@@ -474,6 +474,14 @@ export default function BehavioralCRM() {
                         : "hover:bg-muted/50"
                     }`}
                     onClick={() => setSelectedPatient(patient)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedPatient(patient);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                   >
                     <div className="flex items-center justify-between">
                       <div>

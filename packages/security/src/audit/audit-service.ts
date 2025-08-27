@@ -319,7 +319,7 @@ export class AuditService {
     eventData: Omit<AuditEvent, "id" | "hash" | "previousHash">,
   ): Promise<string | null> {
     if (!this.config.enabled) {
-      return;
+      return null;
     }
 
     // Check minimum severity
@@ -327,13 +327,13 @@ export class AuditService {
       this.getSeverityLevel(eventData.severity)
         < this.getSeverityLevel(this.config.minSeverity)
     ) {
-      return;
+      return null;
     }
 
     // Validate event data
     const validationResult = auditEventSchema.safeParse(eventData);
     if (!validationResult.success) {
-      return;
+      return null;
     }
 
     const event: AuditEvent = validationResult.data;
@@ -349,7 +349,7 @@ export class AuditService {
       const eventId = await this.store.store(event);
       return eventId;
     } catch {
-      return;
+      return null;
     }
   }
 

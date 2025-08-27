@@ -60,7 +60,7 @@ export async function PUT(request: NextRequest, { params }: { params: { credenti
 		const { name, counter } = body;
 
 		// Build update object
-		const updates: unknown = {};
+		const updates: any = {};
 		if (name !== undefined) {
 			updates.name = name;
 		}

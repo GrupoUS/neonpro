@@ -65,7 +65,8 @@ export async function getPredictions(filters?: {
     return await response.json();
   } catch (error) {
     // console.error("Error fetching no-show predictions:", error);
-    throw error;
+    console.error("Error fetching no-show predictions:", error);
+    throw new Error("Failed to fetch no-show predictions");
   }
 }
 
@@ -86,7 +87,8 @@ export async function getDashboardStats(
     return await response.json();
   } catch (error) {
     // console.error("Error fetching dashboard stats:", error);
-    throw error;
+    console.error("Error fetching dashboard stats:", error);
+    throw new Error("Failed to fetch dashboard stats");
   }
 }
 
@@ -109,7 +111,8 @@ export async function triggerPrediction(
     return await response.json();
   } catch (error) {
     // console.error("Error triggering prediction:", error);
-    throw error;
+    console.error("Error triggering prediction:", error);
+    throw new Error("Failed to trigger prediction");
   }
 }
 
@@ -131,7 +134,8 @@ export async function updatePrediction(
     }
   } catch (error) {
     // console.error("Error updating prediction feedback:", error);
-    throw error;
+    console.error("Error updating prediction feedback:", error);
+    throw new Error("Failed to update prediction feedback");
   }
 }
 

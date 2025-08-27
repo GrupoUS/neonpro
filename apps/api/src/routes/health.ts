@@ -41,7 +41,7 @@ class HealthCheckService {
       );
 
       // Test basic database connectivity
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from("patients")
         .select("count")
         .limit(1);
@@ -92,7 +92,7 @@ class HealthCheckService {
       );
 
       // Test Supabase API connectivity
-      const { data, error } = await supabase.auth.getSession();
+      const { data: _data, error } = await supabase.auth.getSession();
       const responseTime = Date.now() - startTime;
 
       return {

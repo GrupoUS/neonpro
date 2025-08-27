@@ -50,7 +50,7 @@ interface UseAISchedulingReturn {
   forecastDemand: (days: number) => Promise<unknown>;
 
   // Configuration
-  updateConfig: (config: Partial<any>) => void;
+  updateConfig: (config: Partial<AIEngineConfig>) => void;
   resetState: () => void;
 }
 
@@ -389,7 +389,7 @@ export const useAIScheduling = (
   );
 
   // Update AI engine configuration
-  const updateConfig = useCallback((_config: Partial<any>) => {
+  const updateConfig = useCallback((_config: Partial<AIEngineConfig>) => {
     if (aiEngineRef.current) {
     }
   }, []);

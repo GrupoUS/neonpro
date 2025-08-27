@@ -404,9 +404,9 @@ export class ComplianceAuditor {
       return ComplianceViolationSchema.parse(violation);
     } catch (error) {
       // console.error(
-        `Failed to evaluate rule ${rule.id} for event ${event.id}:`,
-        error,
-      );
+      //   `Failed to evaluate rule ${rule.id} for event ${event.id}:`,
+      //   error,
+      // );
       return;
     }
   }
@@ -601,9 +601,9 @@ export class ComplianceAuditor {
       return false;
     } catch (error) {
       // console.error(
-        `Failed to evaluate generic validation logic: ${validationLogic}`,
-        error,
-      );
+      //   `Failed to evaluate generic validation logic: ${validationLogic}`,
+      //   error,
+      // );
       return false;
     }
   }
@@ -653,8 +653,8 @@ export class ComplianceAuditor {
     );
 
     // console.log(
-      `📋 Loaded ${totalRules} compliance rules across ${this.complianceRules.size} frameworks`,
-    );
+    //   `📋 Loaded ${totalRules} compliance rules across ${this.complianceRules.size} frameworks`,
+    // );
   }
 
   /**
@@ -801,9 +801,9 @@ export class ComplianceAuditor {
         this.autoRemediations++;
       } catch (error) {
         // console.error(
-          `Failed auto-remediation for violation ${violation.id}:`,
-          error,
-        );
+        //   `Failed auto-remediation for violation ${violation.id}:`,
+        //   error,
+        // );
       }
     }
   }
@@ -1136,11 +1136,11 @@ export class ComplianceAuditor {
     // Final metrics
     const metrics = this.getComplianceMetrics();
     // console.log("📊 Final compliance metrics:", {
-      totalAudits: this.totalAudits,
-      totalViolations: this.totalViolations,
-      autoRemediations: this.autoRemediations,
-      averageProcessingTime: `${(this.totalProcessingTime / this.totalAudits).toFixed(2)}ms`,
-    });
+    //   totalAudits: this.totalAudits,
+    //   totalViolations: this.totalViolations,
+    //   autoRemediations: this.autoRemediations,
+    //   averageProcessingTime: `${(this.totalProcessingTime / this.totalAudits).toFixed(2)}ms`,
+    // });
 
     // console.log("✅ Compliance Auditor shutdown complete");
   }

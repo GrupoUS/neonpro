@@ -73,7 +73,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
  */
 export const SchedulingAnalyticsDashboard: React.FC<
   SchedulingAnalyticsDashboardProps
-> = ({ tenantId, timeRange, onTimeRangeChange }) => {
+> = ({ timeRange, onTimeRangeChange }) => {
   const [analytics, setAnalytics] = useState<SchedulingAnalytics | null>();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedView, setSelectedView] = useState<

@@ -283,7 +283,7 @@ function getClientIP(request: NextRequest): string {
   return (
     request.headers.get("x-forwarded-for")?.split(",")[0]
     || request.headers.get("x-real-ip")
-    || (request as any).ip
+    || (request as { ip?: string }).ip
     || "unknown"
   );
 }
@@ -356,13 +356,14 @@ function _calculateAggregatedStats(metrics: DbMetricRecord[]): Record<string, Me
     };
 
     // Remove raw values to reduce response size
-    delete statsByMetric[metricName].values;
+    const { values: _, ...statWithoutValues } = statsByMetric[metricName];
+    statsByMetric[metricName] = statWithoutValues as any;
   }
 
   return statsByMetric;
 }
 
-async function checkPerformanceAlerts(metrics: PerformanceMetric[], supabase: ReturnType<typeof createClient>) {
+async function checkPerformanceAlerts(metrics: PerformanceMetric[], _supabase: Awaited<ReturnType<typeof createClient>>) {
   for (const metric of metrics) {
     const threshold = PERFORMANCE_ALERTS[
       metric.name as keyof typeof PERFORMANCE_ALERTS

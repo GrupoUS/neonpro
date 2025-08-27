@@ -138,7 +138,8 @@
         "./lib/placeholders/qrcode-react"
       ]
     },
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "noEmit": true
   },
   "include": [
     "**/*.ts",

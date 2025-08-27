@@ -192,12 +192,8 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
 
   // Use the AI scheduling hook
   const {
-    scheduleAppointment,
     isLoading,
-    error,
-    lastResult,
     optimizationScore,
-    analytics,
     processingTime,
   } = useAIScheduling({
     tenantId,
@@ -209,14 +205,20 @@ export const AISchedulingDemo: React.FC<AISchedulingDemoProps> = ({
   const handleAppointmentScheduled = (result: SchedulingResult) => {
     // Show success notification
     if (result.success) {
-      alert(
+      // TODO: Replace with proper toast notification
+      // alert(
+      //   `Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0)}ms`,
+      // );
+      console.log(
         `Appointment scheduled successfully! Processing time: ${processingTime.toFixed(0)}ms`,
       );
     }
   };
 
   const handleError = (errorMessage: string) => {
-    alert(`Scheduling error: ${errorMessage}`);
+    // TODO: Replace with proper toast notification
+    // alert(`Scheduling error: ${errorMessage}`);
+    console.error(`Scheduling error: ${errorMessage}`);
   };
 
   return (

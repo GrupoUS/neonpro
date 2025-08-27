@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const filters = {
       patient_id: searchParams.get("patient_id") || undefined,
       treatment_type: searchParams.get("treatment_type") || undefined,
@@ -153,7 +153,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const id = searchParams.get("id");
 
     if (!id) {

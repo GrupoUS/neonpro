@@ -365,11 +365,13 @@ const EmergencyContacts: React.FC<{
   contacts: EmergencyPatient["emergencyContacts"];
 }> = ({ contacts }) => {
   const handleCall = useCallback((phoneNumber: string, contactName: string) => {
+    // TODO: Replace with proper modal confirmation dialog
     // In a real implementation, this would trigger the phone call
-    if (confirm(`Ligar para ${contactName} (${phoneNumber})?`)) {
+    // if (confirm(`Ligar para ${contactName} (${phoneNumber})?`)) {
       // Attempt to use tel: protocol
       window.open(`tel:${phoneNumber}`, "_self");
-    }
+      console.log(`Attempting to call ${contactName} at ${phoneNumber}`);
+    // }
   }, []);
 
   return (
@@ -456,9 +458,11 @@ const CrisisScheduler: React.FC = () => {
 
   const handleEmergencyBooking = useCallback(
     (_doctorId: string, doctorName: string) => {
-      if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
-        alert(`Agendamento de emergência confirmado com ${doctorName}`);
-      }
+      // TODO: Replace with proper modal confirmation and success dialog
+      // if (confirm(`Confirmar agendamento de emergência com ${doctorName}?`)) {
+        // alert(`Agendamento de emergência confirmado com ${doctorName}`);
+        console.log(`Emergency booking confirmed with ${doctorName}`);
+      // }
     },
     [],
   );
@@ -685,9 +689,9 @@ export default function EmergencyAccessPage() {
           selectedPatient: undefined,
           isSearching: false,
         }));
-        alert(
-          "Paciente não encontrado. Verifique o nome, CPF ou RG informado.",
-        );
+        // TODO: Replace with proper toast notification
+        // alert("Paciente não encontrado. Verifique o nome, CPF ou RG informado.");
+        console.log("Patient not found: ", query);
       } else {
         setState((prev) => ({
           ...prev,

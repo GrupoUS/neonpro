@@ -476,6 +476,14 @@ export function DigitalSignature({
                         }`}
                         key={cert.id}
                         onClick={() => handleCertificateSelect(cert)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleCertificateSelect(cert);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">

@@ -81,7 +81,7 @@ export async function PATCH(
     );
 
     return NextResponse.json(tracking);
-  } catch (error: unknown) {
+  } catch (error: any) {
     if (error.name === "ZodError") {
       return NextResponse.json(
         { error: "Invalid request data", details: error.errors },

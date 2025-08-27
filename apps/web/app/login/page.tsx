@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import type { Metadata } from "next";
+import Link from "next/link";
+
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
@@ -105,26 +108,26 @@ export default function LoginPage() {
           <div className="space-y-4">
             <p className="px-4 text-center text-muted-foreground text-xs leading-relaxed">
               Ao continuar, você concorda com nossos{" "}
-              <a
+              <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/terms"
               >
                 Termos de Serviço
-              </a>
+              </Link>
               ,{" "}
-              <a
+              <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/privacy"
               >
                 Política de Privacidade LGPD
-              </a>{" "}
+              </Link>{" "}
               e{" "}
-              <a
+              <Link
                 className="font-medium underline underline-offset-4 hover:text-primary"
                 href="/compliance"
               >
                 Diretrizes de Conformidade
-              </a>
+              </Link>
               .
             </p>
 

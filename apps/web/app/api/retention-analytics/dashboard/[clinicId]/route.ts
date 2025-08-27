@@ -159,7 +159,7 @@ export async function GET(
       );
 
       // Filter metrics by date range
-      const filteredMetrics = metrics.metrics.filter((metric: unknown) => {
+      const filteredMetrics = metrics.metrics.filter((metric: any) => {
         const metricDate = new Date(metric.last_appointment_date);
         return (
           metricDate >= new Date(periodStart)

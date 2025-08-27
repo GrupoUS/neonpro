@@ -261,7 +261,7 @@ export class HealthcareEncryption {
 /**
  * Factory function to create encryption service
  */
-export default function createHealthcareEncryption(
+export function createHealthcareEncryption(
   masterKey?: Buffer,
 ): HealthcareEncryption {
   return new HealthcareEncryption(masterKey);
