@@ -278,7 +278,7 @@ export class ArchonKnowledgeService {
 
   async performRAGQuery(
     query: string,
-    matchCount: number = 5,
+    matchCount = 5,
     sourceDomain?: string,
   ): Promise<ArchonQueryResult> {
     const cacheKey = `rag_${query}_${matchCount}_${sourceDomain || "all"}`;
@@ -338,7 +338,7 @@ export class ArchonKnowledgeService {
 
   async searchCodeExamples(
     query: string,
-    matchCount: number = 3,
+    matchCount = 3,
     sourceDomain?: string,
   ): Promise<ArchonQueryResult> {
     const cacheKey = `code_${query}_${matchCount}_${sourceDomain || "all"}`;
@@ -448,7 +448,7 @@ export class ArchonKnowledgeService {
 
   async searchTaskData(
     query: string,
-    matchCount: number = 3,
+    matchCount = 3,
   ): Promise<ArchonQueryResult> {
     try {
       if (!this.isAvailable) {
