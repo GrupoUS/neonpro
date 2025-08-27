@@ -65,7 +65,7 @@ export async function analyzeBundleSize(): Promise<BundleStats> {
  */
 function parseBuildOutput(output: string): unknown {
   const lines = output.split("\n");
-  const sizeRegex = /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/;
+  const sizeRegex = /│\s*(\S+)\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│\s*(\d+(?:\.\d+)?)\s*kB\s*│/u;
 
   let totalSize = 0;
   let gzippedSize = 0;

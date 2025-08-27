@@ -127,7 +127,7 @@ test.describe("Pricing Page - Feature Comparison", () => {
       // Should show feature rows
       const featureRows = page
         .locator("tr")
-        .filter({ hasText: /✓|✗|Incluído|Não incluído/ });
+        .filter({ hasText: /✓|✗|Incluído|Não incluído/u });
       if ((await featureRows.count()) > 0) {
         await expect(featureRows.first()).toBeVisible();
       }
