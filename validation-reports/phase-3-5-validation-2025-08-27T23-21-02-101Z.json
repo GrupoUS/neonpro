@@ -1,0 +1,512 @@
+{
+  "suiteName": "Phase 3.5: AI-Powered Healthcare Analytics",
+  "results": [
+    {
+      "testName": "File: types/analytics.ts",
+      "status": "PASS",
+      "message": "File exists (13KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\types\\analytics.ts",
+        "size": 13369
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: components/analytics/AIAnalyticsDashboard.tsx",
+      "status": "PASS",
+      "message": "File exists (30KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\components\\analytics\\AIAnalyticsDashboard.tsx",
+        "size": 30278
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: components/analytics/PredictivePatientIntelligence.tsx",
+      "status": "PASS",
+      "message": "File exists (28KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\components\\analytics\\PredictivePatientIntelligence.tsx",
+        "size": 28426
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: components/analytics/RealTimeHealthMonitor.tsx",
+      "status": "PASS",
+      "message": "File exists (26KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\components\\analytics\\RealTimeHealthMonitor.tsx",
+        "size": 26278
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: components/analytics/BrazilianHealthcareIntelligence.tsx",
+      "status": "PASS",
+      "message": "File exists (41KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\components\\analytics\\BrazilianHealthcareIntelligence.tsx",
+        "size": 42492
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: components/analytics/index.tsx",
+      "status": "PASS",
+      "message": "File exists (1KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\components\\analytics\\index.tsx",
+        "size": 923
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: lib/analytics/ai-analytics-service.ts",
+      "status": "PASS",
+      "message": "File exists (20KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\lib\\analytics\\ai-analytics-service.ts",
+        "size": 20864
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: lib/analytics/predictive-patient-service.ts",
+      "status": "PASS",
+      "message": "File exists (26KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\lib\\analytics\\predictive-patient-service.ts",
+        "size": 26123
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: lib/analytics/real-time-monitoring-service.ts",
+      "status": "PASS",
+      "message": "File exists (24KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\lib\\analytics\\real-time-monitoring-service.ts",
+        "size": 24734
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: lib/analytics/brazilian-healthcare-intelligence-service.ts",
+      "status": "PASS",
+      "message": "File exists (26KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\lib\\analytics\\brazilian-healthcare-intelligence-service.ts",
+        "size": 26612
+      },
+      "critical": true
+    },
+    {
+      "testName": "File: lib/analytics/index.ts",
+      "status": "PASS",
+      "message": "File exists (2KB)",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\lib\\analytics\\index.ts",
+        "size": 2253
+      },
+      "critical": true
+    },
+    {
+      "testName": "Directory: components/analytics",
+      "status": "PASS",
+      "message": "Directory exists with 5 files",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\components\\analytics",
+        "fileCount": 5
+      },
+      "critical": false
+    },
+    {
+      "testName": "Directory: lib/analytics",
+      "status": "PASS",
+      "message": "Directory exists with 5 files",
+      "details": {
+        "path": "D:\\neonpro\\apps\\web\\src\\lib\\analytics",
+        "fileCount": 5
+      },
+      "critical": false
+    },
+    {
+      "testName": "Type Definitions",
+      "status": "PASS",
+      "message": "All required types are defined",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Type Guards",
+      "status": "PASS",
+      "message": "All required type guards are defined",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsDashboard Props",
+      "status": "PASS",
+      "message": "All required props found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsDashboard Hooks",
+      "status": "PASS",
+      "message": "Uses React hooks: useState, useEffect, useCallback, useMemo",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsDashboard TypeScript",
+      "status": "PASS",
+      "message": "TypeScript interfaces/types found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsDashboard Error Handling",
+      "status": "PASS",
+      "message": "Error handling implemented",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientIntelligence Props",
+      "status": "PASS",
+      "message": "All required props found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientIntelligence Hooks",
+      "status": "PASS",
+      "message": "Uses React hooks: useState, useEffect, useCallback, useMemo",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientIntelligence TypeScript",
+      "status": "PASS",
+      "message": "TypeScript interfaces/types found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientIntelligence Error Handling",
+      "status": "WARNING",
+      "message": "Limited error handling detected",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeHealthMonitor Props",
+      "status": "PASS",
+      "message": "All required props found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeHealthMonitor Hooks",
+      "status": "PASS",
+      "message": "Uses React hooks: useState, useEffect, useCallback",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeHealthMonitor TypeScript",
+      "status": "PASS",
+      "message": "TypeScript interfaces/types found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeHealthMonitor Error Handling",
+      "status": "PASS",
+      "message": "Error handling implemented",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligence Props",
+      "status": "PASS",
+      "message": "All required props found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligence Hooks",
+      "status": "PASS",
+      "message": "Uses React hooks: useState, useEffect, useCallback, useMemo",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligence TypeScript",
+      "status": "PASS",
+      "message": "TypeScript interfaces/types found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligence Error Handling",
+      "status": "PASS",
+      "message": "Error handling implemented",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Component Index",
+      "status": "PASS",
+      "message": "All components properly exported",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsService Methods",
+      "status": "PASS",
+      "message": "All required methods found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsService Singleton",
+      "status": "PASS",
+      "message": "Singleton instance exported",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsService Structure",
+      "status": "PASS",
+      "message": "Class-based service structure",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "AIAnalyticsService Async",
+      "status": "PASS",
+      "message": "Async/await patterns used",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientService Methods",
+      "status": "PASS",
+      "message": "All required methods found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientService Singleton",
+      "status": "PASS",
+      "message": "Singleton instance exported",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientService Structure",
+      "status": "PASS",
+      "message": "Class-based service structure",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "PredictivePatientService Async",
+      "status": "PASS",
+      "message": "Async/await patterns used",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeMonitoringService Methods",
+      "status": "PASS",
+      "message": "All required methods found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeMonitoringService Singleton",
+      "status": "PASS",
+      "message": "Singleton instance exported",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeMonitoringService Structure",
+      "status": "PASS",
+      "message": "Class-based service structure",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "RealTimeMonitoringService Async",
+      "status": "PASS",
+      "message": "Async/await patterns used",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligenceService Methods",
+      "status": "PASS",
+      "message": "All required methods found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligenceService Singleton",
+      "status": "PASS",
+      "message": "Singleton instance exported",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligenceService Structure",
+      "status": "PASS",
+      "message": "Class-based service structure",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "BrazilianHealthcareIntelligenceService Async",
+      "status": "PASS",
+      "message": "Async/await patterns used",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Service Orchestrator",
+      "status": "PASS",
+      "message": "Analytics orchestrator function found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Supabase Integration",
+      "status": "PASS",
+      "message": "Supabase used in 4 service files",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "API Integration",
+      "status": "PASS",
+      "message": "API client available for integration",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "State Integration",
+      "status": "PASS",
+      "message": "State management directory found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "UI Integration",
+      "status": "PASS",
+      "message": "UI components used in 4 files",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "LGPD Compliance",
+      "status": "PASS",
+      "message": "LGPD considerations in 2 files",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "ANVISA Compliance",
+      "status": "PASS",
+      "message": "ANVISA considerations in 3 files",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "CFM Compliance",
+      "status": "PASS",
+      "message": "CFM considerations in 3 files",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Brazilian Localization",
+      "status": "PASS",
+      "message": "6 localization features found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "File Sizes",
+      "status": "PASS",
+      "message": "All files within size limits",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Import Structure",
+      "status": "PASS",
+      "message": "Good import structure practices",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Performance Optimizations",
+      "status": "WARNING",
+      "message": "Limited performance optimizations detected",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "ARIA Usage",
+      "status": "WARNING",
+      "message": "Limited ARIA attribute usage",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Keyboard Navigation",
+      "status": "WARNING",
+      "message": "Limited keyboard navigation support",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Color Contrast",
+      "status": "PASS",
+      "message": "Color contrast considerations found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Input Sanitization",
+      "status": "WARNING",
+      "message": "Limited input sanitization detected",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Authentication Handling",
+      "status": "PASS",
+      "message": "Authentication considerations found",
+      "details": {},
+      "critical": false
+    },
+    {
+      "testName": "Data Encryption",
+      "status": "WARNING",
+      "message": "Limited data encryption considerations",
+      "details": {},
+      "critical": false
+    }
+  ],
+  "totalTests": 66,
+  "passedTests": 60,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "warningTests": 6,
+  "duration": 12
+}

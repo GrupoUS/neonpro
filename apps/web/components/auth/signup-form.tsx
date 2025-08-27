@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { toastHelpers } from "@/lib/toast-helpers";
 import { AlertCircle, Check, Eye, EyeOff, UserPlus } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Separator } from "../ui/separator";
@@ -558,12 +559,12 @@ export function SignupForm() {
       <div className="pt-4 text-center">
         <p className="text-muted-foreground text-sm">
           Já tem uma conta?{" "}
-          <a
+          <Link
             className="font-semibold text-primary underline underline-offset-4 transition-colors hover:text-primary/80 hover:no-underline"
             href="/login"
           >
             Fazer login agora
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -1,0 +1,398 @@
+<testsuites id="" name="" tests="24" failures="24" skipped="0" errors="0" time="2.689889">
+<testsuite name="healthcare-auth-flow.spec.ts" timestamp="2025-08-27T22:50:59.431Z" hostname="chromium" tests="4" failures="4" skipped="0" time="0.016" errors="0">
+<testcase name="Healthcare Authentication Flow › should complete patient registration with LGPD consent" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:13:7 should complete patient registration with LGPD consent" type="FAILURE">
+<![CDATA[  [chromium] › healthcare-auth-flow.spec.ts:13:7 › Healthcare Authentication Flow › should complete patient registration with LGPD consent 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle patient authentication with healthcare validation" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:47:7 should handle patient authentication with healthcare validation" type="FAILURE">
+<![CDATA[  [chromium] › healthcare-auth-flow.spec.ts:47:7 › Healthcare Authentication Flow › should handle patient authentication with healthcare validation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should enforce LGPD data subject rights" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:67:7 should enforce LGPD data subject rights" type="FAILURE">
+<![CDATA[  [chromium] › healthcare-auth-flow.spec.ts:67:7 › Healthcare Authentication Flow › should enforce LGPD data subject rights 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle healthcare professional authentication" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:99:7 should handle healthcare professional authentication" type="FAILURE">
+<![CDATA[  [chromium] › healthcare-auth-flow.spec.ts:99:7 › Healthcare Authentication Flow › should handle healthcare professional authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="healthcare-auth-flow.spec.ts" timestamp="2025-08-27T22:50:59.431Z" hostname="firefox" tests="4" failures="4" skipped="0" time="0.017" errors="0">
+<testcase name="Healthcare Authentication Flow › should complete patient registration with LGPD consent" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:13:7 should complete patient registration with LGPD consent" type="FAILURE">
+<![CDATA[  [firefox] › healthcare-auth-flow.spec.ts:13:7 › Healthcare Authentication Flow › should complete patient registration with LGPD consent 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle patient authentication with healthcare validation" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:47:7 should handle patient authentication with healthcare validation" type="FAILURE">
+<![CDATA[  [firefox] › healthcare-auth-flow.spec.ts:47:7 › Healthcare Authentication Flow › should handle patient authentication with healthcare validation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should enforce LGPD data subject rights" classname="healthcare-auth-flow.spec.ts" time="0.006">
+<failure message="healthcare-auth-flow.spec.ts:67:7 should enforce LGPD data subject rights" type="FAILURE">
+<![CDATA[  [firefox] › healthcare-auth-flow.spec.ts:67:7 › Healthcare Authentication Flow › should enforce LGPD data subject rights 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle healthcare professional authentication" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:99:7 should handle healthcare professional authentication" type="FAILURE">
+<![CDATA[  [firefox] › healthcare-auth-flow.spec.ts:99:7 › Healthcare Authentication Flow › should handle healthcare professional authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\firefox-1490\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="healthcare-auth-flow.spec.ts" timestamp="2025-08-27T22:50:59.431Z" hostname="webkit" tests="4" failures="4" skipped="0" time="0.013" errors="0">
+<testcase name="Healthcare Authentication Flow › should complete patient registration with LGPD consent" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:13:7 should complete patient registration with LGPD consent" type="FAILURE">
+<![CDATA[  [webkit] › healthcare-auth-flow.spec.ts:13:7 › Healthcare Authentication Flow › should complete patient registration with LGPD consent 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle patient authentication with healthcare validation" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:47:7 should handle patient authentication with healthcare validation" type="FAILURE">
+<![CDATA[  [webkit] › healthcare-auth-flow.spec.ts:47:7 › Healthcare Authentication Flow › should handle patient authentication with healthcare validation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should enforce LGPD data subject rights" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:67:7 should enforce LGPD data subject rights" type="FAILURE">
+<![CDATA[  [webkit] › healthcare-auth-flow.spec.ts:67:7 › Healthcare Authentication Flow › should enforce LGPD data subject rights 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle healthcare professional authentication" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:99:7 should handle healthcare professional authentication" type="FAILURE">
+<![CDATA[  [webkit] › healthcare-auth-flow.spec.ts:99:7 › Healthcare Authentication Flow › should handle healthcare professional authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="healthcare-auth-flow.spec.ts" timestamp="2025-08-27T22:50:59.431Z" hostname="Mobile Chrome" tests="4" failures="4" skipped="0" time="0.018" errors="0">
+<testcase name="Healthcare Authentication Flow › should complete patient registration with LGPD consent" classname="healthcare-auth-flow.spec.ts" time="0.005">
+<failure message="healthcare-auth-flow.spec.ts:13:7 should complete patient registration with LGPD consent" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › healthcare-auth-flow.spec.ts:13:7 › Healthcare Authentication Flow › should complete patient registration with LGPD consent 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle patient authentication with healthcare validation" classname="healthcare-auth-flow.spec.ts" time="0.006">
+<failure message="healthcare-auth-flow.spec.ts:47:7 should handle patient authentication with healthcare validation" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › healthcare-auth-flow.spec.ts:47:7 › Healthcare Authentication Flow › should handle patient authentication with healthcare validation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should enforce LGPD data subject rights" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:67:7 should enforce LGPD data subject rights" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › healthcare-auth-flow.spec.ts:67:7 › Healthcare Authentication Flow › should enforce LGPD data subject rights 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle healthcare professional authentication" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:99:7 should handle healthcare professional authentication" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › healthcare-auth-flow.spec.ts:99:7 › Healthcare Authentication Flow › should handle healthcare professional authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="healthcare-auth-flow.spec.ts" timestamp="2025-08-27T22:50:59.431Z" hostname="Mobile Safari" tests="4" failures="4" skipped="0" time="0.014" errors="0">
+<testcase name="Healthcare Authentication Flow › should complete patient registration with LGPD consent" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:13:7 should complete patient registration with LGPD consent" type="FAILURE">
+<![CDATA[  [Mobile Safari] › healthcare-auth-flow.spec.ts:13:7 › Healthcare Authentication Flow › should complete patient registration with LGPD consent 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle patient authentication with healthcare validation" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:47:7 should handle patient authentication with healthcare validation" type="FAILURE">
+<![CDATA[  [Mobile Safari] › healthcare-auth-flow.spec.ts:47:7 › Healthcare Authentication Flow › should handle patient authentication with healthcare validation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should enforce LGPD data subject rights" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:67:7 should enforce LGPD data subject rights" type="FAILURE">
+<![CDATA[  [Mobile Safari] › healthcare-auth-flow.spec.ts:67:7 › Healthcare Authentication Flow › should enforce LGPD data subject rights 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle healthcare professional authentication" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:99:7 should handle healthcare professional authentication" type="FAILURE">
+<![CDATA[  [Mobile Safari] › healthcare-auth-flow.spec.ts:99:7 › Healthcare Authentication Flow › should handle healthcare professional authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\webkit-2203\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="healthcare-auth-flow.spec.ts" timestamp="2025-08-27T22:50:59.431Z" hostname="chromium-accessibility" tests="4" failures="4" skipped="0" time="0.017" errors="0">
+<testcase name="Healthcare Authentication Flow › should complete patient registration with LGPD consent" classname="healthcare-auth-flow.spec.ts" time="0.006">
+<failure message="healthcare-auth-flow.spec.ts:13:7 should complete patient registration with LGPD consent" type="FAILURE">
+<![CDATA[  [chromium-accessibility] › healthcare-auth-flow.spec.ts:13:7 › Healthcare Authentication Flow › should complete patient registration with LGPD consent 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle patient authentication with healthcare validation" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:47:7 should handle patient authentication with healthcare validation" type="FAILURE">
+<![CDATA[  [chromium-accessibility] › healthcare-auth-flow.spec.ts:47:7 › Healthcare Authentication Flow › should handle patient authentication with healthcare validation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should enforce LGPD data subject rights" classname="healthcare-auth-flow.spec.ts" time="0.004">
+<failure message="healthcare-auth-flow.spec.ts:67:7 should enforce LGPD data subject rights" type="FAILURE">
+<![CDATA[  [chromium-accessibility] › healthcare-auth-flow.spec.ts:67:7 › Healthcare Authentication Flow › should enforce LGPD data subject rights 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="Healthcare Authentication Flow › should handle healthcare professional authentication" classname="healthcare-auth-flow.spec.ts" time="0.003">
+<failure message="healthcare-auth-flow.spec.ts:99:7 should handle healthcare professional authentication" type="FAILURE">
+<![CDATA[  [chromium-accessibility] › healthcare-auth-flow.spec.ts:99:7 › Healthcare Authentication Flow › should handle healthcare professional authentication 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Mauri\AppData\Local\ms-playwright\chromium_headless_shell-1187\chrome-win\headless_shell.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     pnpm exec playwright install                                        ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

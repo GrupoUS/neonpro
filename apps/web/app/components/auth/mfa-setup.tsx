@@ -45,7 +45,7 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
     }
 
     try {
-      const options: Record<string, any> = {};
+      const options: Record<string, unknown> = {};
       if (mfaMethod === MfaMethod.SMS) {
         options.phoneNumber = phoneNumber;
       } else if (mfaMethod === MfaMethod.EMAIL) {

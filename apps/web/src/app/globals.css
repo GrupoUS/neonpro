@@ -6,137 +6,137 @@
 @layer base {
   :root {
     /* TweakCN NEONPRO Base Colors */
-    --background: 0 0% 98.8%;              /* #fcfcfc - Clean medical white */
-    --foreground: 0 0% 9.0%;               /* #171717 - Professional dark */
-    --card: 0 0% 98.8%;                    /* #fcfcfc - Card background */
-    --card-foreground: 0 0% 9.0%;          /* #171717 - Card text */
-    --popover: 0 0% 98.8%;                 /* #fcfcfc - Popover background */
-    --popover-foreground: 0 0% 32.2%;      /* #525252 - Popover text */
-    
+    --background: 0 0% 98.8%; /* #fcfcfc - Clean medical white */
+    --foreground: 0 0% 9.0%; /* #171717 - Professional dark */
+    --card: 0 0% 98.8%; /* #fcfcfc - Card background */
+    --card-foreground: 0 0% 9.0%; /* #171717 - Card text */
+    --popover: 0 0% 98.8%; /* #fcfcfc - Popover background */
+    --popover-foreground: 0 0% 32.2%; /* #525252 - Popover text */
+
     /* TweakCN Primary - Professional Medical Green */
-    --primary: 153 76% 67%;                /* #72e3ad - Medical green professional */
-    --primary-foreground: 153 30% 15%;     /* #1e2723 - Dark green foreground */
-    
+    --primary: 153 76% 67%; /* #72e3ad - Medical green professional */
+    --primary-foreground: 153 30% 15%; /* #1e2723 - Dark green foreground */
+
     /* TweakCN Secondary & Accent */
-    --secondary: 0 0% 99.2%;               /* #fdfdfd - Secondary background */
-    --secondary-foreground: 0 0% 9.0%;     /* #171717 - Secondary text */
-    --accent: 0 0% 92.9%;                  /* #ededed - Accent background */
-    --accent-foreground: 0 0% 12.5%;       /* #202020 - Accent text */
-    --muted: 0 0% 92.9%;                   /* #ededed - Muted background */
-    --muted-foreground: 0 0% 12.5%;        /* #202020 - Muted text */
-    
+    --secondary: 0 0% 99.2%; /* #fdfdfd - Secondary background */
+    --secondary-foreground: 0 0% 9.0%; /* #171717 - Secondary text */
+    --accent: 0 0% 92.9%; /* #ededed - Accent background */
+    --accent-foreground: 0 0% 12.5%; /* #202020 - Accent text */
+    --muted: 0 0% 92.9%; /* #ededed - Muted background */
+    --muted-foreground: 0 0% 12.5%; /* #202020 - Muted text */
+
     /* TweakCN Form & Interaction */
-    --border: 0 0% 87.5%;                  /* #dfdfdf - Border color */
-    --input: 0 0% 96.5%;                   /* #f6f6f6 - Input background */
-    --ring: 153 76% 67%;                   /* #72e3ad - Focus ring */
-    --radius: 0.5rem;                      /* Border radius */
-    
+    --border: 0 0% 87.5%; /* #dfdfdf - Border color */
+    --input: 0 0% 96.5%; /* #f6f6f6 - Input background */
+    --ring: 153 76% 67%; /* #72e3ad - Focus ring */
+    --radius: 0.5rem; /* Border radius */
+
     /* TweakCN Status & Feedback Colors */
-    --destructive: 14 79% 44%;             /* #ca3214 - Emergency/Critical */
-    --destructive-foreground: 0 0% 99.8%;  /* #fffcfc - Light text on red */
-    
+    --destructive: 14 79% 44%; /* #ca3214 - Emergency/Critical */
+    --destructive-foreground: 0 0% 99.8%; /* #fffcfc - Light text on red */
+
     /* TweakCN Chart & Visualization Colors */
-    --chart-1: 153 76% 67%;                /* #72e3ad - Primary data */
-    --chart-2: 217 91% 60%;                /* #3b82f6 - Information */
-    --chart-3: 262 83% 68%;                /* #8b5cf6 - Analysis */
-    --chart-4: 32 95% 48%;                 /* #f59e0b - Attention/Warning */
-    --chart-5: 160 84% 39%;                /* #10b981 - Success/Positive */
-    
+    --chart-1: 153 76% 67%; /* #72e3ad - Primary data */
+    --chart-2: 217 91% 60%; /* #3b82f6 - Information */
+    --chart-3: 262 83% 68%; /* #8b5cf6 - Analysis */
+    --chart-4: 32 95% 48%; /* #f59e0b - Attention/Warning */
+    --chart-5: 160 84% 39%; /* #10b981 - Success/Positive */
+
     /* TweakCN Sidebar & Navigation */
-    --sidebar-background: 0 0% 98.8%;      /* #fcfcfc - Sidebar background */
-    --sidebar-foreground: 0 0% 43.9%;      /* #707070 - Sidebar text */
-    --sidebar-primary: 153 76% 67%;        /* #72e3ad - Sidebar active */
+    --sidebar-background: 0 0% 98.8%; /* #fcfcfc - Sidebar background */
+    --sidebar-foreground: 0 0% 43.9%; /* #707070 - Sidebar text */
+    --sidebar-primary: 153 76% 67%; /* #72e3ad - Sidebar active */
     --sidebar-primary-foreground: 153 30% 15%; /* #1e2723 - Sidebar active text */
 
     /* NEONPRO Healthcare-Specific Extensions */
-    --healthcare-success: 160 84% 39%;     /* #10b981 - Medical success */
-    --healthcare-warning: 32 95% 48%;      /* #f59e0b - Medical warning */
-    --healthcare-error: 14 79% 44%;        /* #ca3214 - Medical emergency */
-    --healthcare-info: 217 91% 60%;        /* #3b82f6 - Medical information */
-    --healthcare-critical: 0 84% 50%;      /* Critical patient alerts */
+    --healthcare-success: 160 84% 39%; /* #10b981 - Medical success */
+    --healthcare-warning: 32 95% 48%; /* #f59e0b - Medical warning */
+    --healthcare-error: 14 79% 44%; /* #ca3214 - Medical emergency */
+    --healthcare-info: 217 91% 60%; /* #3b82f6 - Medical information */
+    --healthcare-critical: 0 84% 50%; /* Critical patient alerts */
 
     /* Brazilian Compliance Color Coding */
-    --lgpd-consent-granted: 160 84% 39%;   /* #10b981 - Active consent */
-    --lgpd-consent-pending: 32 95% 48%;    /* #f59e0b - Pending consent */
-    --lgpd-consent-denied: 14 79% 44%;     /* #ca3214 - Denied consent */
-    --lgpd-consent-expired: 0 0% 61%;      /* #9ca3af - Expired consent */
-    
-    --cfm-license-active: 153 76% 67%;     /* #72e3ad - Active license */
-    --cfm-license-suspended: 32 95% 48%;   /* #f59e0b - Suspended license */
-    --cfm-license-revoked: 14 79% 44%;     /* #ca3214 - Revoked license */
+    --lgpd-consent-granted: 160 84% 39%; /* #10b981 - Active consent */
+    --lgpd-consent-pending: 32 95% 48%; /* #f59e0b - Pending consent */
+    --lgpd-consent-denied: 14 79% 44%; /* #ca3214 - Denied consent */
+    --lgpd-consent-expired: 0 0% 61%; /* #9ca3af - Expired consent */
+
+    --cfm-license-active: 153 76% 67%; /* #72e3ad - Active license */
+    --cfm-license-suspended: 32 95% 48%; /* #f59e0b - Suspended license */
+    --cfm-license-revoked: 14 79% 44%; /* #ca3214 - Revoked license */
 
     /* Emergency Interface High-Contrast Mode */
-    --emergency-background: 0 0% 100%;     /* Pure white for emergency */
-    --emergency-foreground: 0 0% 0%;       /* Pure black for emergency */
-    --emergency-critical: 0 100% 50%;      /* Pure red for life-critical */
-    --emergency-contrast-ratio: 21:1;      /* Maximum contrast for emergency */
+    --emergency-background: 0 0% 100%; /* Pure white for emergency */
+    --emergency-foreground: 0 0% 0%; /* Pure black for emergency */
+    --emergency-critical: 0 100% 50%; /* Pure red for life-critical */
+    --emergency-contrast-ratio: 21:1; /* Maximum contrast for emergency */
   }
 
   .dark {
     /* TweakCN NEONPRO Dark Mode - Professional Medical Night Theme */
-    --background: 0 0% 3.9%;               /* #0a0a0a - Deep dark medical */
-    --foreground: 0 0% 98%;                /* #fafafa - Light text */
-    --card: 0 0% 7.8%;                     /* #141414 - Dark cards */
-    --card-foreground: 0 0% 98%;           /* #fafafa - Light card text */
-    --popover: 0 0% 3.9%;                  /* #0a0a0a - Dark popover */
-    --popover-foreground: 0 0% 98%;        /* #fafafa - Light popover text */
-    
+    --background: 0 0% 3.9%; /* #0a0a0a - Deep dark medical */
+    --foreground: 0 0% 98%; /* #fafafa - Light text */
+    --card: 0 0% 7.8%; /* #141414 - Dark cards */
+    --card-foreground: 0 0% 98%; /* #fafafa - Light card text */
+    --popover: 0 0% 3.9%; /* #0a0a0a - Dark popover */
+    --popover-foreground: 0 0% 98%; /* #fafafa - Light popover text */
+
     /* TweakCN Primary - Medical Green (adjusted for dark) */
-    --primary: 153 76% 67%;                /* #72e3ad - Maintained green visibility */
-    --primary-foreground: 0 0% 3.9%;       /* #0a0a0a - Dark foreground */
-    
+    --primary: 153 76% 67%; /* #72e3ad - Maintained green visibility */
+    --primary-foreground: 0 0% 3.9%; /* #0a0a0a - Dark foreground */
+
     /* TweakCN Secondary & Accent (Dark) */
-    --secondary: 0 0% 14.9%;               /* #262626 - Dark secondary */
-    --secondary-foreground: 0 0% 98%;      /* #fafafa - Light secondary text */
-    --accent: 0 0% 14.9%;                  /* #262626 - Dark accent */
-    --accent-foreground: 0 0% 98%;         /* #fafafa - Light accent text */
-    --muted: 0 0% 14.9%;                   /* #262626 - Dark muted */
-    --muted-foreground: 0 0% 63.9%;        /* #a3a3a3 - Medium muted text */
-    
+    --secondary: 0 0% 14.9%; /* #262626 - Dark secondary */
+    --secondary-foreground: 0 0% 98%; /* #fafafa - Light secondary text */
+    --accent: 0 0% 14.9%; /* #262626 - Dark accent */
+    --accent-foreground: 0 0% 98%; /* #fafafa - Light accent text */
+    --muted: 0 0% 14.9%; /* #262626 - Dark muted */
+    --muted-foreground: 0 0% 63.9%; /* #a3a3a3 - Medium muted text */
+
     /* TweakCN Form & Interaction (Dark) */
-    --border: 0 0% 14.9%;                  /* #262626 - Dark border */
-    --input: 0 0% 14.9%;                   /* #262626 - Dark input */
-    --ring: 153 76% 67%;                   /* #72e3ad - Green focus ring */
-    
+    --border: 0 0% 14.9%; /* #262626 - Dark border */
+    --input: 0 0% 14.9%; /* #262626 - Dark input */
+    --ring: 153 76% 67%; /* #72e3ad - Green focus ring */
+
     /* TweakCN Status & Feedback Colors (Dark adjusted) */
-    --destructive: 14 79% 54%;             /* #ef4444 - Brighter red for dark */
-    --destructive-foreground: 0 0% 98%;    /* #fafafa - Light text on red */
-    
+    --destructive: 14 79% 54%; /* #ef4444 - Brighter red for dark */
+    --destructive-foreground: 0 0% 98%; /* #fafafa - Light text on red */
+
     /* TweakCN Chart & Visualization Colors (Dark) */
-    --chart-1: 153 76% 67%;                /* #72e3ad - Primary data */
-    --chart-2: 217 91% 70%;                /* #60a5fa - Information (brighter) */
-    --chart-3: 262 83% 78%;                /* #a78bfa - Analysis (brighter) */
-    --chart-4: 32 95% 58%;                 /* #fbbf24 - Warning (brighter) */
-    --chart-5: 160 84% 49%;                /* #34d399 - Success (brighter) */
-    
+    --chart-1: 153 76% 67%; /* #72e3ad - Primary data */
+    --chart-2: 217 91% 70%; /* #60a5fa - Information (brighter) */
+    --chart-3: 262 83% 78%; /* #a78bfa - Analysis (brighter) */
+    --chart-4: 32 95% 58%; /* #fbbf24 - Warning (brighter) */
+    --chart-5: 160 84% 49%; /* #34d399 - Success (brighter) */
+
     /* TweakCN Sidebar & Navigation (Dark) */
-    --sidebar-background: 0 0% 3.9%;       /* #0a0a0a - Dark sidebar */
-    --sidebar-foreground: 0 0% 63.9%;      /* #a3a3a3 - Medium sidebar text */
-    --sidebar-primary: 153 76% 67%;        /* #72e3ad - Sidebar active */
+    --sidebar-background: 0 0% 3.9%; /* #0a0a0a - Dark sidebar */
+    --sidebar-foreground: 0 0% 63.9%; /* #a3a3a3 - Medium sidebar text */
+    --sidebar-primary: 153 76% 67%; /* #72e3ad - Sidebar active */
     --sidebar-primary-foreground: 0 0% 3.9%; /* #0a0a0a - Dark active text */
 
     /* NEONPRO Healthcare-Specific Extensions (Dark) */
-    --healthcare-success: 160 84% 49%;     /* #34d399 - Brighter success */
-    --healthcare-warning: 32 95% 58%;      /* #fbbf24 - Brighter warning */
-    --healthcare-error: 14 79% 54%;        /* #ef4444 - Brighter error */
-    --healthcare-info: 217 91% 70%;        /* #60a5fa - Brighter info */
-    --healthcare-critical: 0 100% 60%;     /* Brighter critical alerts */
+    --healthcare-success: 160 84% 49%; /* #34d399 - Brighter success */
+    --healthcare-warning: 32 95% 58%; /* #fbbf24 - Brighter warning */
+    --healthcare-error: 14 79% 54%; /* #ef4444 - Brighter error */
+    --healthcare-info: 217 91% 70%; /* #60a5fa - Brighter info */
+    --healthcare-critical: 0 100% 60%; /* Brighter critical alerts */
 
     /* Brazilian Compliance Color Coding (Dark) */
-    --lgpd-consent-granted: 160 84% 49%;   /* #34d399 - Bright success */
-    --lgpd-consent-pending: 32 95% 58%;    /* #fbbf24 - Bright warning */
-    --lgpd-consent-denied: 14 79% 54%;     /* #ef4444 - Bright error */
-    --lgpd-consent-expired: 0 0% 52%;      /* #858585 - Medium gray */
-    
-    --cfm-license-active: 153 76% 67%;     /* #72e3ad - Active license */
-    --cfm-license-suspended: 32 95% 58%;   /* #fbbf24 - Suspended */
-    --cfm-license-revoked: 14 79% 54%;     /* #ef4444 - Revoked */
+    --lgpd-consent-granted: 160 84% 49%; /* #34d399 - Bright success */
+    --lgpd-consent-pending: 32 95% 58%; /* #fbbf24 - Bright warning */
+    --lgpd-consent-denied: 14 79% 54%; /* #ef4444 - Bright error */
+    --lgpd-consent-expired: 0 0% 52%; /* #858585 - Medium gray */
+
+    --cfm-license-active: 153 76% 67%; /* #72e3ad - Active license */
+    --cfm-license-suspended: 32 95% 58%; /* #fbbf24 - Suspended */
+    --cfm-license-revoked: 14 79% 54%; /* #ef4444 - Revoked */
 
     /* Emergency Interface High-Contrast Mode (Dark) */
-    --emergency-background: 0 0% 0%;       /* Pure black for emergency */
-    --emergency-foreground: 0 0% 100%;     /* Pure white for emergency */
-    --emergency-critical: 0 100% 70%;      /* Bright red for dark mode emergency */
-    --emergency-contrast-ratio: 21:1;      /* Maximum contrast maintained */
+    --emergency-background: 0 0% 0%; /* Pure black for emergency */
+    --emergency-foreground: 0 0% 100%; /* Pure white for emergency */
+    --emergency-critical: 0 100% 70%; /* Bright red for dark mode emergency */
+    --emergency-contrast-ratio: 21:1; /* Maximum contrast maintained */
   }
 }
 
@@ -338,12 +338,12 @@
       --font-size-critical: 18px;
       gap: 1rem;
     }
-    
+
     .mobile-emergency-button {
       @apply min-h-[56px] min-w-[56px] text-lg font-bold;
       touch-action: manipulation;
     }
-    
+
     .mobile-emergency-text {
       @apply text-lg leading-relaxed;
       font-size: var(--font-size-critical);
@@ -363,19 +363,41 @@
   }
 
   /* TweakCN Chart Colors Utilities */
-  .chart-primary { color: hsl(var(--chart-1)); }
-  .chart-info { color: hsl(var(--chart-2)); }
-  .chart-analysis { color: hsl(var(--chart-3)); }
-  .chart-warning { color: hsl(var(--chart-4)); }
-  .chart-success { color: hsl(var(--chart-5)); }
+  .chart-primary {
+    color: hsl(var(--chart-1));
+  }
+  .chart-info {
+    color: hsl(var(--chart-2));
+  }
+  .chart-analysis {
+    color: hsl(var(--chart-3));
+  }
+  .chart-warning {
+    color: hsl(var(--chart-4));
+  }
+  .chart-success {
+    color: hsl(var(--chart-5));
+  }
 
   /* Brazilian Healthcare Status Indicators */
-  .status-lgpd-granted { color: hsl(var(--lgpd-consent-granted)); }
-  .status-lgpd-pending { color: hsl(var(--lgpd-consent-pending)); }
-  .status-lgpd-denied { color: hsl(var(--lgpd-consent-denied)); }
-  .status-cfm-active { color: hsl(var(--cfm-license-active)); }
-  .status-cfm-suspended { color: hsl(var(--cfm-license-suspended)); }
-  .status-cfm-revoked { color: hsl(var(--cfm-license-revoked)); }
+  .status-lgpd-granted {
+    color: hsl(var(--lgpd-consent-granted));
+  }
+  .status-lgpd-pending {
+    color: hsl(var(--lgpd-consent-pending));
+  }
+  .status-lgpd-denied {
+    color: hsl(var(--lgpd-consent-denied));
+  }
+  .status-cfm-active {
+    color: hsl(var(--cfm-license-active));
+  }
+  .status-cfm-suspended {
+    color: hsl(var(--cfm-license-suspended));
+  }
+  .status-cfm-revoked {
+    color: hsl(var(--cfm-license-revoked));
+  }
 
   /* Smooth Transitions */
   .healthcare-transition {
