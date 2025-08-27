@@ -363,14 +363,14 @@ export function SignupForm() {
           <div className="text-sm leading-5">
             <label className="cursor-pointer" htmlFor="lgpdConsent">
               Aceito os{" "}
-              <a
+              <Link
                 className="text-primary underline"
                 href="/privacy"
                 rel="noopener"
                 target="_blank"
               >
                 Termos de Privacidade LGPD
-              </a>{" "}
+              </Link>{" "}
               e autorizo o tratamento dos meus dados pessoais conforme a Lei 13.709/2018.
             </label>
             {errors.lgpdConsent && <p className="mt-1 text-destructive">{errors.lgpdConsent}</p>}
@@ -386,23 +386,23 @@ export function SignupForm() {
           <div className="text-sm leading-5">
             <label className="cursor-pointer" htmlFor="terms">
               Aceito os{" "}
-              <a
+              <Link
                 className="text-primary underline"
                 href="/terms"
                 rel="noopener"
                 target="_blank"
               >
                 Termos de Uso
-              </a>{" "}
+              </Link>{" "}
               e{" "}
-              <a
+              <Link
                 className="text-primary underline"
                 href="/compliance"
                 rel="noopener"
                 target="_blank"
               >
                 Diretrizes de Conformidade ANVISA/CFM
-              </a>
+              </Link>
               .
             </label>
             {errors.terms && <p className="mt-1 text-destructive">{errors.terms}</p>}

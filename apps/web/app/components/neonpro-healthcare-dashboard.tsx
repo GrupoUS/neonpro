@@ -69,7 +69,7 @@ import {
   Zap,
 } from "lucide-react";
 import type React from "react";
-import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 // Constants for time calculations
 const MILLISECONDS_PER_SECOND = 1000;
@@ -93,14 +93,6 @@ interface User {
   lastSeen: Date;
 }
 
-interface Activity {
-  id: string;
-  user: User;
-  action: string;
-  target: string;
-  timestamp: Date;
-  metadata?: Record<string, string | number | boolean>;
-}
 
 interface Metric {
   id: string;
@@ -125,19 +117,7 @@ interface Task {
   progress: number;
 }
 
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  status: "planning" | "active" | "on-hold" | "completed";
-  progress: number;
-  startDate: Date;
-  endDate: Date;
-  team: User[];
-  budget: number;
-  spent: number;
-  tasks: Task[];
-}
+
 
 interface Notification {
   id: string;

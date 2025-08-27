@@ -97,11 +97,12 @@ export const useAIScheduling = (
   const wsConnectionRef = useRef<WebSocket | null>(null);
 
   // Handle real-time updates from WebSocket
-  const handleRealtimeUpdate = useCallback((data: any) => {
-    switch (data.type) {
+  const handleRealtimeUpdate = useCallback((data: unknown) => {
+    const updateData = data as { type?: string; affectedSlots?: unknown };
+    switch (updateData.type) {
       case "schedule_change": {
         // Refresh available slots
-        if (data.affectedSlots) {
+        if (updateData.affectedSlots) {
         }
         break;
       }
@@ -213,7 +214,7 @@ export const useAIScheduling = (
           fetch(`/api/treatments/${tenantId}`),
         ]);
 
-        const [slots, staff, patient, treatments] = await Promise.all([
+        const [_slots, _staff, _patient, _treatments] = await Promise.all([
           slotsResponse.json(),
           staffResponse.json(),
           patientsResponse.json(),
@@ -229,8 +230,8 @@ export const useAIScheduling = (
         const adaptedResult = {
           ...result,
           confidenceScore: 0.8, // Default confidence score
-          appointmentSlot: result.recommendations?.[0] as any,
-          alternatives: result.recommendations?.slice(1) as any[],
+          appointmentSlot: result.recommendations?.[0] as unknown,
+          alternatives: result.recommendations?.slice(1) as unknown[],
         };
 
         setLastResult(adaptedResult);
