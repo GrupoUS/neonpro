@@ -154,14 +154,15 @@ CONSTITUTIONAL_FRAMEWORK:
 
 ### **🔧 Maintenance Simplification**
 - **Single Source**: Only APEX agents in Ruler configuration
-- **Auto-Loading**: Copilot handles its own configurations
+- **Auto-Loading**: Copilot and Claude code handles its own configurations
 - **Clear Separation**: Healthcare vs general development concerns
 
 ## 📚 References
 
-- **Primary Workflow**: [`../core-workflow.md`](../core-workflow.md)
-- **NeonPro Rules**: [`../neonpro.md`](../neonpro.md)
-- **Architecture**: [`../../docs/architecture/`](../../docs/architecture/)
+- **🌟 Complete Workflow**: [`core-workflow.md`](core-workflow.md)
+- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../../docs/architecture/tech-stack.md)
+- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
+- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../../docs/architecture/coding-standards.md)
 - **Ruler Documentation**: https://ai.intellectronica.net/ruler
 
 ---

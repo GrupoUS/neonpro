@@ -6,20 +6,20 @@ applyTo: "**/*"
 
 ## 🧠 CORE PHILOSOPHY
 
-**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate" Follow the @core-workflow.md without skipping steps.* 
-**Mission**: Research first, think systematically, implement flawlessly, optimize relentlessly and *ALWAYS USE THE RIGHT SUB AGENT FOR EACH TASK AT @.claude\agents\ .* 
-**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md  *. 
-**RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles. 
-**COMPLETE EXECUTION**: Execute the ENTIRE workflow from start to finish without interruption, continue through ALL steps without stopping for user input. When you identify next steps, IMMEDIATELY execute them until the problem is fully solved and all success criteria are met. 
+**Mantra**: *"Think → Research → Decompose → Plan → Implement → Validate" Follow the @core-workflow.md without skipping steps.*
+**Mission**: Research first, think systematically, implement flawlessly, optimize relentlessly and *ALWAYS USE THE RIGHT SUB AGENT FOR EACH TASK AT @.claude\agents\ .*
+**Approach**: Context-aware orchestration + Progressive quality enforcement + Strategic MCP coordination and *ALWAYS READ, ADD TO CONTEXT AND FOLLOW @.claude\workflows\core-workflow.md  *.
+**RELENTLESS PERSISTENCE**: Continue working until ABSOLUTE completion regardless of obstacles.
+**COMPLETE EXECUTION**: Execute the ENTIRE workflow from start to finish without interruption, continue through ALL steps without stopping for user input. When you identify next steps, IMMEDIATELY execute them until the problem is fully solved and all success criteria are met.
 **ONLY TERMINATE YOUR TURN WHEN**: User query COMPLETELY resolved, there are no more steps to execute and the Problem is 100% solved.
 **RIGHT TOOL FOR JOB**: Always understand the full picture before changes and Choose appropriate technology, mcp and chatmodes/agents for each use case in each fase. Measure twice, cut once. Plan carefully, implement systematically, Always use todos, tasks lists, and project management tools to organize the plan in phases and steps.
 **MANDATORY FIRST STEP**: Always begin with sequential thinking tool (sequentialthinking) and the `think` native tool before any other action to break down problems, plan approaches, and verify
-solutions, use `think` each 5 steps to outline next steps and strategies. 
-**CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation. 
+solutions, use `think` each 5 steps to outline next steps and strategies.
+**CRITICAL OPERATING PRINCIPLES**:All violations trigger immediate halt + constitutional remediation. NEVER assume, always validate and verify before implementation.
 **PNPM over NPM**: Use PNPM instead of NPM to manage dependencies, run builds and tests. PNPM is faster, more efficient, and uses less disk space.
-**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting. 
-**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do * @docs\architecture\source-tree.md .* 
-**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento. 
+**ARCHON-FIRST RULE**: Always use Archon MCP server for task management, knowledge management, and project organization. It is the primary system for all tasks and project management and docs consulting.
+**Sempre mantenha a arquitetura definida no source-tree**: Sempre que for criar um arquivo, use a pasta e arquitetura correta do * @docs\architecture\source-tree.md .*
+**CLEAN UP CONSTANTLY**: Sem que terminar uma task busque por arquivos e códigos duplicados, redundantes, inutilizados ou obsoletos para limpar, incorporar mantendo sempre o sistema limpo e organizado. Sempre corrija os paths necessários para evitar erros de redirecionamento.
 ** Sempre use o todos task list nativo para criar, atualizar, acompanhar e executar as tarefas**
 </system-rules>
 
@@ -340,6 +340,68 @@ AGENT_DELEGATION_SYSTEM:
     ui_ux: "@apex-ui-ux-designer.md → Design, components, user experience"
     research: "@apex-researcher.md → Investigation, analysis, documentation"
 ```
+# AI Agents Configuration
+
+**Centralized AI agent instructions with redirection to authoritative sources.**
+
+## 🎯 **Primary Reference**
+
+**For complete workflow and guidelines**: See [`core-workflow.md`](core-workflow.md)
+
+## 🎯 MASTER ORCHESTRATION ENGINE
+
+### **Intelligent Agent Delegation System**
+
+```markdown
+# OPTIMIZED: Only APEX Healthcare Agents
+default_agents = ["apex-dev"]
+
+[agents.apex-dev]
+enabled = true
+output_path = ".claude/agents/apex-dev.md"
+source_path = ".ruler/agents/apex-dev.md"
+description = "Always Active - Coding, implementation, debugging"
+
+[agents.apex-researcher]
+enabled = true
+output_path = ".claude/agents/apex-researcher.md"
+source_path = ".ruler/agents/apex-researcher.md"
+description = "On-Demand - Investigation, analysis, documentation"
+
+[agents.apex-ui-ux-designer]
+enabled = true
+output_path = ".claude/agents/apex-ui-ux-designer.md"
+source_path = ".ruler/agents/apex-ui-ux-designer.md"
+description = "On-Demand - Design, components, user experience"
+```
+
+### **Usage Commands**
+```bash
+# Generate base coordinator (apex-dev always active)
+ruler
+
+# Activate researcher for planning/analysis tasks
+ruler --agents apex-dev,apex-researcher
+
+# Activate UI/UX designer for interface work
+ruler --agents apex-dev,apex-ui-ux-designer
+
+# Full healthcare team activation
+ruler --agents apex-dev,apex-researcher,apex-ui-ux-designer
+```
+
+## 📚 **Essential References**
+
+Instead of duplicating content, refer to these authoritative sources:
+
+- **⚙️ Tech Stack**: [`docs/architecture/tech-stack.md`](../../docs/architecture/tech-stack.md)
+- **📁 Source Structure**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
+- **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../../docs/architecture/coding-standards.md)
+
+---
+
+> **📝 Note**: This file provides minimal configuration. All detailed rules, workflows, and standards are maintained in the referenced documentation to avoid duplication and ensure consistency.
+
 
 ## 📋 MANDATORY EXECUTION WORKFLOW
 

@@ -4,7 +4,7 @@
  * LGPD/ANVISA compliant caching with advanced monitoring and audit capabilities
  */
 
-import { MultiLayerCacheManager } from "./cache-manager";
+import type { MultiLayerCacheManager } from "./cache-manager";
 import type { CacheLayer, CacheStats } from "./types";
 
 /**
@@ -12,7 +12,7 @@ import type { CacheLayer, CacheStats } from "./types";
  */
 export class EnterpriseCacheService {
   private readonly cacheManager: MultiLayerCacheManager;
-  private readonly auditLog: Array<{
+  private readonly auditLog: {
     timestamp: string;
     operation: string;
     key: string;
@@ -20,7 +20,7 @@ export class EnterpriseCacheService {
     success: boolean;
     executionTime: number;
     metadata?: any;
-  }> = [];
+  }[] = [];
 
   private metrics = {
     totalOperations: 0,
@@ -127,7 +127,7 @@ export class EnterpriseCacheService {
     cache: any;
     audit: {
       totalEntries: number;
-      recentEntries: Array<{
+      recentEntries: {
         timestamp: string;
         operation: string;
         key: string;
@@ -135,7 +135,7 @@ export class EnterpriseCacheService {
         success: boolean;
         executionTime: number;
         metadata?: any;
-      }>;
+      }[];
       successRate: number;
     };
   } {
@@ -270,8 +270,8 @@ export class EnterpriseCacheService {
     });
 
     // Maintain audit log size (keep last 10000 entries)
-    if (this.auditLog.length > 10000) {
-      this.auditLog.splice(0, this.auditLog.length - 10000);
+    if (this.auditLog.length > 10_000) {
+      this.auditLog.splice(0, this.auditLog.length - 10_000);
     }
   }
 

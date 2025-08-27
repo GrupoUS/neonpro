@@ -18,7 +18,7 @@ export class EdgeCacheLayer implements CacheOperation {
       defaultTTL: 10 * 60, // 10 minutes in seconds
       maxTTL: 60 * 60, // 1 hour in seconds
       compressionThreshold: 1024, // 1KB
-      maxSize: 10000, // Max 10k entries
+      maxSize: 10_000, // Max 10k entries
       encryption: true,
     },
   ) {}

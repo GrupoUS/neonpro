@@ -52,13 +52,13 @@ const defaultMultiLayerConfig: MultiLayerCacheConfig = {
     encryption: true,
   },
   aiContext: {
-    maxContextSize: 10000,
+    maxContextSize: 10_000,
     defaultTTL: 24 * 60 * 60 * 1000,
     maxTTL: 7 * 24 * 60 * 60 * 1000,
     compressionEnabled: true,
     targetHitRate: 95,
     contextRetention: true,
-    maxTokensPerContext: 32000,
+    maxTokensPerContext: 32_000,
   },
 };
 
@@ -91,7 +91,7 @@ const defaultConfig: CacheConfig = {
     enableGracefulDegradation: true,
     fallbackLayers: [CacheLayer.BROWSER, CacheLayer.EDGE],
     errorThreshold: 5,
-    recoveryTimeMs: 30000,
+    recoveryTimeMs: 30_000,
   },
 };
 

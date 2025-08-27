@@ -9,26 +9,15 @@ This `.ruler` folder provides simple configuration for AI assistants working on 
 ### 🔗 **Primary References**
 
 - **🌟 MAIN WORKFLOW**: See [`core-workflow.md`](core-workflow.md) for complete execution framework
-- **🏗️ ARCHITECTURE**: See [`docs/architecture/`](../docs/architecture/) for all technical decisions
 - **⚙️ TECH STACK**: See [`docs/architecture/tech-stack.md`](../docs/architecture/tech-stack.md)
-- **📁 PROJECT STRUCTURE**: See [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)  
+- **📁 PROJECT STRUCTURE**: See [`docs/architecture/source-tree.md`](../docs/architecture/source-tree.md)
 - **🎨 CODING STANDARDS**: See [`docs/architecture/coding-standards.md`](../docs/architecture/coding-standards.md)
-
-### 🤖 **AI Assistant Setup**
-
-Configure your AI assistant by reading the appropriate file:
-- **Claude**: [`agents/claude-config.md`](agents/claude-config.md)
-- **Copilot**: [`agents/copilot-config.md`](agents/copilot-config.md)
-- **Trae**: [`agents/trae-config.md`](agents/trae-config.md)
 
 ## 📋 **Quick Commands**
 
 ```bash
 # Follow the main workflow
 See: .ruler/core-workflow.md
-
-# Check architecture decisions  
-See: docs/architecture/
 
 # Review coding standards
 See: docs/architecture/coding-standards.md
@@ -39,9 +28,9 @@ See: docs/architecture/tech-stack.md
 
 ## 🎯 **Core Principles**
 
-**ARCHON-FIRST**: Always use Archon MCP for task management and knowledge base  
-**SIMPLICITY**: Follow existing docs rather than creating new rules  
-**REDIRECTION**: Point to authoritative sources, avoid duplication  
+**ARCHON-FIRST**: Always use Archon MCP for task management and knowledge base
+**SIMPLICITY**: Follow existing docs rather than creating new rules
+**REDIRECTION**: Point to authoritative sources, avoid duplication
 
 ---
 

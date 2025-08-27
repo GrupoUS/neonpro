@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import type { CacheOperation, CacheStats, SupabaseCacheConfig } from "./types";
 
 export class SupabaseCacheLayer implements CacheOperation {

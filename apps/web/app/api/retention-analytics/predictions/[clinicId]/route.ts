@@ -7,7 +7,8 @@
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
-import { type DatabaseRow, type RetentionPrediction, safeParseNumber } from "@/src/types/analytics";
+import { safeParseNumber } from "@/src/types/analytics";
+import type { DatabaseRow, RetentionPrediction } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";

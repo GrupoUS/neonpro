@@ -32,7 +32,8 @@ tmp.drivedownload/
 
 # IDE and tooling
 archon/
-serena/
+/archon/
+*archon/*
 
 
 # logs

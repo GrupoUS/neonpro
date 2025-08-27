@@ -222,7 +222,7 @@ export const useAIScheduling = (
 
         // AI-powered scheduling
         const result = await aiEngineRef.current.optimizeSchedule(
-          request
+          request,
         );
 
         // Adapt result to match SchedulingResult interface
@@ -292,7 +292,7 @@ export const useAIScheduling = (
               new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days ahead
               request.treatmentType,
             );
-            
+
             // Convert TimeSlot[] to AppointmentSlot[]
             return timeSlots.map((timeSlot, index) => ({
               id: `slot-${index}`,
@@ -305,7 +305,6 @@ export const useAIScheduling = (
               conflictScore: 0,
               optimizationScore: 0.8,
             }));
-            );
           }
         }
 

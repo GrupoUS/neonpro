@@ -12,7 +12,7 @@ module.exports = {
       ],
       startServerCommand: "pnpm dev",
       startServerReadyPattern: "ready",
-      startServerReadyTimeout: 60000,
+      startServerReadyTimeout: 60_000,
       numberOfRuns: 3,
       settings: {
         chromeFlags: "--no-sandbox --disable-dev-shm-usage --disable-gpu",
@@ -41,11 +41,11 @@ module.exports = {
               { resourceType: "font", budget: 8 },
             ],
             resourceSizes: [
-              { resourceType: "script", budget: 400000 }, // 400KB
-              { resourceType: "image", budget: 1000000 }, // 1MB
-              { resourceType: "stylesheet", budget: 150000 }, // 150KB
-              { resourceType: "font", budget: 200000 }, // 200KB
-              { resourceType: "total", budget: 2000000 }, // 2MB
+              { resourceType: "script", budget: 400_000 }, // 400KB
+              { resourceType: "image", budget: 1_000_000 }, // 1MB
+              { resourceType: "stylesheet", budget: 150_000 }, // 150KB
+              { resourceType: "font", budget: 200_000 }, // 200KB
+              { resourceType: "total", budget: 2_000_000 }, // 2MB
             ],
           },
           {
@@ -147,7 +147,7 @@ module.exports = {
     hipaaCompliance: {
       requireHttps: true,
       requireSecurityHeaders: true,
-      maxSessionTimeout: 1800000, // 30 minutes
+      maxSessionTimeout: 1_800_000, // 30 minutes
       auditTrailRequired: true,
     },
 

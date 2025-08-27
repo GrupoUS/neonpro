@@ -26,14 +26,14 @@ export class MultiLayerCacheManager {
   private readonly supabase: SupabaseCacheLayer;
   private readonly aiContext: AIContextCacheLayer;
 
-  private readonly auditTrail: Array<{
+  private readonly auditTrail: {
     timestamp: string;
     operation: string;
     key: string;
     layer?: CacheLayer;
     success: boolean;
     executionTime: number;
-  }> = [];
+  }[] = [];
 
   private readonly stats = {
     browser: { hits: 0, misses: 0, hitRate: 0, totalRequests: 0, averageResponseTime: 0 },
@@ -70,13 +70,13 @@ export class MultiLayerCacheManager {
     };
 
     const defaultAIContextConfig: AIContextCacheConfig = {
-      maxContextSize: 10000,
+      maxContextSize: 10_000,
       defaultTTL: 24 * 60 * 60 * 1000,
       maxTTL: 7 * 24 * 60 * 60 * 1000,
       compressionEnabled: true,
       targetHitRate: 95,
       contextRetention: true,
-      maxTokensPerContext: 32000,
+      maxTokensPerContext: 32_000,
     };
 
     this.browser = new BrowserCacheLayer(
@@ -403,7 +403,7 @@ export class MultiLayerCacheManager {
 
   // Batch operations
   async setBatch<T>(
-    entries: Array<{ key: string; value: T; ttl?: number; }>,
+    entries: { key: string; value: T; ttl?: number; }[],
     layers?: CacheLayer[],
   ): Promise<void> {
     const promises = entries.map(({ key, value, ttl }) => this.set(key, value, layers, { ttl }));
@@ -490,9 +490,7 @@ export class MultiLayerCacheManager {
    */
   getHealthcareAuditTrail(): any[] {
     // Return audit trail from all layers
-    return [
-      ...this.auditTrail.slice(-100), // Last 100 operations
-    ];
+    return this.auditTrail.slice(-100);
   }
 
   /**

@@ -84,7 +84,7 @@ const MAX_PROFILE_IMAGE_URL_LENGTH = 500;
 
 // Billing and Financial Limits
 const MIN_AMOUNT = 0;
-const MAX_AMOUNT = 999999;
+const MAX_AMOUNT = 999_999;
 const CURRENCY_CODE_LENGTH = 3;
 const MAX_INVOICE_NUMBER_LENGTH = 50;
 const MAX_CLAIM_NUMBER_LENGTH = 50;

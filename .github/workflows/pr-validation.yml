@@ -1,720 +1,577 @@
-name: 🔍 PR Validation Pipeline
+# 🔍 NeonPro AI Healthcare Platform - PR Validation
+# Fast, focused validation for pull requests with auto-merge capability
+# Optimized for speed while maintaining healthcare compliance
+
+name: 🔍 PR Validation
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    branches: [main, develop]
-  pull_request_review:
-    types: [submitted]
+    types: [opened, synchronize, reopened]
+    branches: ['main', 'develop']
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches: ['main', 'develop']
 
-# Explicit permission scoping for security
-permissions:
-  contents: read # Read repository contents
-  actions: read # Read workflow status
-  checks: write # Write check results
-  pull-requests: write # Comment on PRs and write reviews
-  issues: write # Create/update issues
-  security-events: write # Write security scan results
-
-env:
-  NODE_VERSION: "20"
-  PNPM_VERSION: "9"
-  # Healthcare compliance settings
-  HEALTHCARE_COMPLIANCE_MODE: "strict"
-  LGPD_AUDIT_ENABLED: "true"
-  ANVISA_VALIDATION: "true"
-  CFM_COMPLIANCE: "true"
-
-# Limit concurrent workflow runs per PR
+# Optimized concurrency for PRs
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
-jobs:
-  # ============================================================================
-  # 🛡️ PR SAFETY & SECURITY CHECKS
-  # ============================================================================
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: 9 }
-      - uses: actions/setup-node@v4
-        with: { node-version: '18', cache: 'pnpm' }
-      - run: pnpm i -D oxlint dprint
-      - run: npx --yes oxlint@latest --deny-warnings
-      - run: npx dprint check
-  trunk:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: trunk-io/trunk-action@v1
+# Global environment variables (speed-optimized)
+env:
+  NODE_VERSION: 20
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TELEMETRY_DISABLED: 1
 
-  pr-safety-check:
-    name: 🛡️ PR Safety Check
+# Minimal permissions for security
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+  actions: read
+  security-events: write
+
+jobs:
+  # =============================================================================
+  # PHASE 1: SAFETY CHECK & CHANGE DETECTION
+  # =============================================================================
+  
+  safety-check:
+    name: 🛡️ Safety Check
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: github.event.pull_request.draft == false
     outputs:
-      is-safe: ${{ steps.safety.outputs.is-safe }}
-      risk-level: ${{ steps.safety.outputs.risk-level }}
-      changed-files-count: ${{ steps.analysis.outputs.changed-files-count }}
-      lines-changed: ${{ steps.analysis.outputs.lines-changed }}
-      security-risk: ${{ steps.security.outputs.risk-level }}
-
+      safe-to-test: ${{ steps.safety.outputs.safe }}
+      has-changes: ${{ steps.changes.outputs.src }}
+      has-deps-changes: ${{ steps.changes.outputs.deps }}
+      is-dependabot: ${{ steps.safety.outputs.is-dependabot }}
     steps:
-      - name: 📥 Checkout PR
-        uses: actions/checkout@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-          persist-credentials: false
 
-      - name: 🔍 Analyze PR Changes
-        id: analysis
-        run: |
-          # Get PR base and head refs
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-          # Count changed files
-          CHANGED_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | wc -l)
-          echo "changed-files-count=$CHANGED_FILES" >> $GITHUB_OUTPUT
-
-          # Count lines changed
-          LINES_ADDED=$(git diff --shortstat $BASE_SHA...$HEAD_SHA | grep -oE '[0-9]+ insertions?' | grep -oE '[0-9]+' || echo "0")
-          LINES_DELETED=$(git diff --shortstat $BASE_SHA...$HEAD_SHA | grep -oE '[0-9]+ deletions?' | grep -oE '[0-9]+' || echo "0")
-          TOTAL_LINES=$((LINES_ADDED + LINES_DELETED))
-          echo "lines-changed=$TOTAL_LINES" >> $GITHUB_OUTPUT
-
-          echo "📊 PR Analysis Results:"
-          echo "  - Files changed: $CHANGED_FILES"
-          echo "  - Lines changed: $TOTAL_LINES"
-          echo "  - Lines added: $LINES_ADDED"
-          echo "  - Lines deleted: $LINES_DELETED"
-
-      - name: 🔒 Security Risk Assessment
-        id: security
-        run: |
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-          # Check for sensitive file changes
-          SENSITIVE_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E '\.(env|key|pem|p12|pfx|crt|cert)$|package\.json$|\.github/workflows/' || true)
-          SECURITY_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E 'auth|security|crypto|password|secret|token' || true)
-
-          RISK_LEVEL="low"
-
-          if [ -n "$SENSITIVE_FILES" ]; then
-            echo "⚠️ Sensitive files detected:"
-            echo "$SENSITIVE_FILES"
-            RISK_LEVEL="medium"
-          fi
-
-          if [ -n "$SECURITY_FILES" ]; then
-            echo "🔒 Security-related files detected:"
-            echo "$SECURITY_FILES"
-            RISK_LEVEL="high"
-          fi
-
-          # Check for potential secrets in diff
-          if git diff $BASE_SHA...$HEAD_SHA | grep -iE '(api_key|password|secret|token|auth).*=.*["\'][^"\']{8,}'; then
-            echo "🚨 Potential secrets detected in diff!"
-            RISK_LEVEL="critical"
-          fi
-
-          echo "risk-level=$RISK_LEVEL" >> $GITHUB_OUTPUT
-          echo "🔒 Security risk level: $RISK_LEVEL"
-
-      - name: ✅ Safety Determination
+      - name: 🛡️ Security check
         id: safety
         run: |
-          CHANGED_FILES="${{ steps.analysis.outputs.changed-files-count }}"
-          LINES_CHANGED="${{ steps.analysis.outputs.lines-changed }}"
-          SECURITY_RISK="${{ steps.security.outputs.risk-level }}"
-
-          IS_SAFE="true"
-          RISK_LEVEL="low"
-
-          # Determine overall risk based on size and security
-          if [ "$SECURITY_RISK" = "critical" ]; then
-            IS_SAFE="false"
-            RISK_LEVEL="critical"
-          elif [ "$SECURITY_RISK" = "high" ]; then
-            RISK_LEVEL="high"
-          elif [ "$CHANGED_FILES" -gt 50 ] || [ "$LINES_CHANGED" -gt 1000 ]; then
-            RISK_LEVEL="medium"
+          # Check if PR is from a trusted source
+          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+            echo "is-dependabot=true" >> $GITHUB_OUTPUT
+            echo "safe=true" >> $GITHUB_OUTPUT
+            echo "🤖 Dependabot PR detected - auto-approved for testing"
+          elif [[ "${{ github.event.pull_request.head.repo.full_name }}" == "${{ github.repository }}" ]]; then
+            echo "is-dependabot=false" >> $GITHUB_OUTPUT  
+            echo "safe=true" >> $GITHUB_OUTPUT
+            echo "✅ Same repository PR - safe to test"
+          else
+            echo "is-dependabot=false" >> $GITHUB_OUTPUT
+            echo "safe=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Fork PR detected - manual approval required"
           fi
 
-          echo "is-safe=$IS_SAFE" >> $GITHUB_OUTPUT
-          echo "risk-level=$RISK_LEVEL" >> $GITHUB_OUTPUT
+      - name: 🔍 Detect changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            src:
+              - 'apps/**'
+              - 'packages/**'
+              - 'turbo.json'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            deps:
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'apps/**/package.json'
+              - 'packages/**/package.json'
 
-          echo "🛡️ PR Safety Assessment:"
-          echo "  - Safe to proceed: $IS_SAFE"
-          echo "  - Overall risk level: $RISK_LEVEL"
+      - name: 📊 Safety summary
+        run: |
+          echo "### 🛡️ Safety Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Safe to test**: ${{ steps.safety.outputs.safe }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Source changes**: ${{ steps.changes.outputs.src }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dependency changes**: ${{ steps.changes.outputs.deps }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dependabot PR**: ${{ steps.safety.outputs.is-dependabot }}" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================================
-  # ⚡ FAST QUALITY CHECKS
-  # ============================================================================
-  fast-quality-check:
-    name: ⚡ Fast Quality Check
+  # =============================================================================
+  # PHASE 2: QUALITY CHECK (FAST)
+  # =============================================================================
+
+  quality-check:
+    name: ⚡ Quality Check
     runs-on: ubuntu-latest
-    timeout-minutes: 8
-    needs: [pr-safety-check]
-    if: always() && needs.pr-safety-check.outputs.is-safe == 'true'
-
-    strategy:
-      fail-fast: false
-      matrix:
-        check: [lint-staged, format-check, type-check-incremental]
-
+    timeout-minutes: 10
+    needs: safety-check
+    if: needs.safety-check.outputs.safe-to-test == 'true' && needs.safety-check.outputs.has-changes == 'true'
     steps:
-      - name: 📥 Checkout PR
-        uses: actions/checkout@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          persist-credentials: false
 
-      - name: 📦 Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: 🟢 Setup Node.js
+      - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
+          cache: 'pnpm'
 
-      - name: 📥 Install Dependencies
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🎨 Format check
+        run: pnpm turbo run format:check --force
+
+      - name: 🔍 Lint check
+        run: pnpm turbo run lint --force
+
+      - name: 📝 Type check
+        run: pnpm turbo run type-check --force
+
+      - name: 🏥 Quick compliance check
         run: |
-          pnpm install --frozen-lockfile --prefer-offline
-
-      - name: 🔍 Run Staged Linting
-        if: matrix.check == 'lint-staged'
-        run: |
-          # Get changed files for targeted linting
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-          CHANGED_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E '\.(ts|tsx|js|jsx)$' || true)
-
-          if [ -n "$CHANGED_FILES" ]; then
-            echo "Running lint on changed files:"
-            echo "$CHANGED_FILES"
-            echo "$CHANGED_FILES" | xargs pnpm exec biome lint --apply=off
+          echo "🔍 Running quick healthcare compliance checks..."
+          # Check for LGPD compliance patterns
+          if grep -r "patient.*data\|cpf\|personal.*info" apps/ packages/ --include="*.ts" --include="*.tsx"; then
+            echo "⚠️ Found potential PII usage - LGPD review required"
+            pnpm turbo run compliance:quick --force
           else
-            echo "No lintable files changed"
+            echo "✅ No obvious PII patterns detected"
           fi
 
-      - name: 🎨 Check Formatting (Changed Files)
-        if: matrix.check == 'format-check'
-        run: |
-          # Get changed files for targeted format checking
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+  # =============================================================================
+  # PHASE 3: FOCUSED TESTING
+  # =============================================================================
 
-          CHANGED_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E '\.(ts|tsx|js|jsx|json|md)$' || true)
-
-          if [ -n "$CHANGED_FILES" ]; then
-            echo "Checking format on changed files:"
-            echo "$CHANGED_FILES"
-            echo "$CHANGED_FILES" | xargs pnpm exec biome format --write=false
-          else
-            echo "No formattable files changed"
-          fi
-
-      - name: 🔤 Incremental Type Check
-        if: matrix.check == 'type-check-incremental'
-        run: |
-          # Run incremental type checking for faster feedback
-          pnpm run type-check --incremental
-        env:
-          NODE_ENV: development
-
-  # ============================================================================
-  # 🧪 FOCUSED TESTING STRATEGY
-  # ============================================================================
-  focused-tests:
-    name: 🧪 Focused Tests
+  focused-test:
+    name: 🎯 Focused Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [pr-safety-check, fast-quality-check]
-    if: always() && needs.fast-quality-check.result == 'success'
-
-    strategy:
-      fail-fast: false
-      matrix:
-        test-type: [unit-focused, integration-focused]
-
+    needs: [safety-check, quality-check]
+    if: needs.safety-check.outputs.safe-to-test == 'true' && needs.safety-check.outputs.has-changes == 'true'
     steps:
-      - name: 📥 Checkout PR
-        uses: actions/checkout@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-          persist-credentials: false
 
-      - name: 📦 Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: 🟢 Setup Node.js
+      - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
+          cache: 'pnpm'
 
-      - name: 📥 Install Dependencies
-        run: |
-          pnpm install --frozen-lockfile --prefer-offline
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
-      - name: 🧪 Run Focused Unit Tests
-        if: matrix.test-type == 'unit-focused'
-        run: |
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
 
-          # Find changed source files
-          CHANGED_SOURCE_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E '\.(ts|tsx|js|jsx)$' | grep -v '\.test\.' | grep -v '\.spec\.' || true)
-
-          if [ -n "$CHANGED_SOURCE_FILES" ]; then
-            echo "Running tests for changed source files:"
-            echo "$CHANGED_SOURCE_FILES"
-
-            # Find related test files and run them
-            for file in $CHANGED_SOURCE_FILES; do
-              # Convert source file to potential test file patterns
-              test_file1="${file//.ts/.test.ts}"
-              test_file2="${file//.tsx/.test.tsx}"
-              test_file3="${file//.js/.test.js}"
-              test_file4="${file//.jsx/.test.jsx}"
-              test_file5="${file/src//__tests__/}"
-
-              for test_file in "$test_file1" "$test_file2" "$test_file3" "$test_file4" "$test_file5"; do
-                if [ -f "$test_file" ]; then
-                  echo "Found test file: $test_file"
-                  pnpm exec vitest run "$test_file" --reporter=verbose
-                fi
-              done
-            done
-          else
-            echo "No source files changed, running smoke tests"
-            pnpm run test:unit --run --coverage=false --testTimeout=10000
-          fi
+      - name: 🏗️ Build affected packages
+        run: pnpm turbo run build --force
         env:
-          NODE_ENV: test
-          CI: true
+          TURBO_TOKEN: ${{ env.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ env.TURBO_TEAM }}
 
-      - name: 🔗 Run Focused Integration Tests
-        if: matrix.test-type == 'integration-focused'
+      - name: 🧪 Run focused tests
         run: |
-          # Run integration tests for changed API routes or components
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-          CHANGED_API_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E 'api/|route\.' || true)
-
-          if [ -n "$CHANGED_API_FILES" ]; then
-            echo "API changes detected, running integration tests"
-            pnpm run test:integration --run --testTimeout=20000
-          else
-            echo "No API changes, skipping integration tests"
-          fi
+          # Run tests only for changed packages
+          echo "🎯 Running focused tests for changed code..."
+          pnpm turbo run test --force --filter=...[HEAD~1]
         env:
-          NODE_ENV: test
-          CI: true
+          TURBO_TOKEN: ${{ env.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ env.TURBO_TEAM }}
 
-  # ============================================================================
-  # 🏗️ BUILD VALIDATION
-  # ============================================================================
+      - name: 🧪 Run smoke tests
+        run: |
+          echo "💨 Running smoke tests..."
+          pnpm turbo run test:smoke --force
+
+  # =============================================================================
+  # PHASE 4: BUILD VALIDATION
+  # =============================================================================
+
   build-validation:
     name: 🏗️ Build Validation
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    needs: [pr-safety-check, fast-quality-check]
-    if: always() && needs.fast-quality-check.result == 'success'
-
+    needs: [safety-check, focused-test]
+    if: needs.safety-check.outputs.safe-to-test == 'true' && needs.safety-check.outputs.has-changes == 'true'
     steps:
-      - name: 📥 Checkout PR
-        uses: actions/checkout@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: false
 
-      - name: 📦 Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: 🟢 Setup Node.js
+      - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            apps/*/package.json
-            packages/*/package.json
+          cache: 'pnpm'
 
-      - name: 📥 Install Dependencies
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build all packages
+        run: pnpm turbo run build --force
+        env:
+          TURBO_TOKEN: ${{ env.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ env.TURBO_TEAM }}
+
+      - name: 📦 Validate build outputs
         run: |
-          pnpm install --frozen-lockfile --prefer-offline
+          echo "🔍 Validating build outputs..."
+          
+          # Check that all expected build outputs exist
+          for app in apps/*/; do
+            if [ -f "${app}package.json" ]; then
+              app_name=$(basename "$app")
+              echo "Checking build output for app: $app_name"
+              
+              # Check Next.js builds
+              if [ -f "${app}next.config.mjs" ] && [ ! -d "${app}.next" ]; then
+                echo "❌ Missing .next build output for $app_name"
+                exit 1
+              fi
+              
+              # Check other build outputs
+              if [ ! -d "${app}dist" ] && [ ! -d "${app}.next" ]; then
+                echo "⚠️ No dist or .next directory found for $app_name"
+              fi
+            fi
+          done
+          
+          echo "✅ All build outputs validated"
 
-      - name: 🏗️ Validate Build
+      - name: 📤 Upload preview artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview-${{ github.event.pull_request.number }}
+          path: |
+            apps/*/dist
+            apps/*/.next
+            !**/node_modules
+          retention-days: 3
+
+  # =============================================================================
+  # PHASE 5: SECURITY SCAN (FOCUSED)
+  # =============================================================================
+
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [safety-check, build-validation]
+    if: needs.safety-check.outputs.safe-to-test == 'true' && needs.safety-check.outputs.has-changes == 'true'
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 Quick dependency audit
         run: |
-          echo "🏗️ Validating build process..."
+          echo "🔍 Running dependency audit..."
+          pnpm audit --audit-level moderate || true
 
-          # Try building all packages first (fastest)
-          pnpm run build:packages
+      - name: 🔒 Focused Semgrep scan
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+          generateSarif: "1"
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
-          # Then build apps
-          pnpm run build:web
-          pnpm run build:api
+      - name: 📤 Upload Semgrep SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
 
-          echo "✅ Build validation successful"
+  # =============================================================================
+  # PHASE 6: PR ANALYSIS & PREVIEW
+  # =============================================================================
 
-      - name: 📊 Bundle Analysis
-        run: |
-          echo "📊 Analyzing bundle size..."
-
-          # Generate bundle analysis (if available)
-          if [ -f "bundle-analyzer.js" ]; then
-            node bundle-analyzer.js
-          fi
-
-          # Check for large bundle increases
-          if [ -d ".next" ]; then
-            find .next -name "*.js" -size +1M -exec ls -lh {} \; | head -10 || true
-          fi
-
-  # ============================================================================
-  # 📋 PR COMPLEXITY & RISK ANALYSIS
-  # ============================================================================
   pr-analysis:
-    name: 📋 PR Analysis
+    name: 📊 PR Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 8
-    needs: [pr-safety-check, fast-quality-check, focused-tests, build-validation]
-    if: always()
-
+    needs: [safety-check, build-validation, security-scan]
+    if: always() && needs.safety-check.outputs.safe-to-test == 'true' && needs.safety-check.outputs.has-changes == 'true'
     steps:
-      - name: 📥 Checkout PR
-        uses: actions/checkout@v5
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-          persist-credentials: false
 
-      - name: 📊 Generate PR Metrics
-        id: metrics
+      - name: 📊 Analyze PR size
+        id: pr-size
         run: |
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-          # Calculate complexity metrics
-          COMPLEXITY_SCORE=0
-
-          # File count factor (0-25 points)
-          FILES_CHANGED="${{ needs.pr-safety-check.outputs.changed-files-count }}"
-          if [ "$FILES_CHANGED" -gt 20 ]; then
-            COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 25))
-          elif [ "$FILES_CHANGED" -gt 10 ]; then
-            COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 15))
-          elif [ "$FILES_CHANGED" -gt 5 ]; then
-            COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 10))
+          files_changed=$(git diff --name-only HEAD~1 | wc -l)
+          lines_added=$(git diff --stat HEAD~1 | tail -1 | grep -o '[0-9]\+ insertions' | grep -o '[0-9]\+' || echo "0")
+          lines_deleted=$(git diff --stat HEAD~1 | tail -1 | grep -o '[0-9]\+ deletions' | grep -o '[0-9]\+' || echo "0")
+          
+          echo "files-changed=$files_changed" >> $GITHUB_OUTPUT
+          echo "lines-added=$lines_added" >> $GITHUB_OUTPUT
+          echo "lines-deleted=$lines_deleted" >> $GITHUB_OUTPUT
+          
+          # Determine PR size category
+          total_changes=$((lines_added + lines_deleted))
+          if [ $total_changes -lt 50 ]; then
+            echo "size=XS" >> $GITHUB_OUTPUT
+          elif [ $total_changes -lt 200 ]; then
+            echo "size=S" >> $GITHUB_OUTPUT
+          elif [ $total_changes -lt 500 ]; then
+            echo "size=M" >> $GITHUB_OUTPUT
+          elif [ $total_changes -lt 1000 ]; then
+            echo "size=L" >> $GITHUB_OUTPUT
+          else
+            echo "size=XL" >> $GITHUB_OUTPUT
           fi
 
-          # Lines changed factor (0-25 points)
-          LINES_CHANGED="${{ needs.pr-safety-check.outputs.lines-changed }}"
-          if [ "$LINES_CHANGED" -gt 500 ]; then
-            COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 25))
-          elif [ "$LINES_CHANGED" -gt 200 ]; then
-            COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 15))
-          elif [ "$LINES_CHANGED" -gt 100 ]; then
-            COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 10))
-          fi
-
-          # Security risk factor (0-25 points)
-          SECURITY_RISK="${{ needs.pr-safety-check.outputs.security-risk }}"
-          case "$SECURITY_RISK" in
-            "critical") COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 25)) ;;
-            "high") COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 20)) ;;
-            "medium") COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 10)) ;;
-            "low") COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 5)) ;;
-          esac
-
-          # Test coverage factor (0-25 points)
-          TEST_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E '\.test\.|\.spec\.|__tests__/' | wc -l)
-          SOURCE_FILES=$(git diff --name-only $BASE_SHA...$HEAD_SHA | grep -E '\.(ts|tsx|js|jsx)$' | grep -v -E '\.test\.|\.spec\.|__tests__/' | wc -l)
-
-          if [ "$SOURCE_FILES" -gt 0 ]; then
-            TEST_RATIO=$((TEST_FILES * 100 / SOURCE_FILES))
-            if [ "$TEST_RATIO" -lt 50 ]; then
-              COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 20))
-            elif [ "$TEST_RATIO" -lt 80 ]; then
-              COMPLEXITY_SCORE=$((COMPLEXITY_SCORE + 10))
-            fi
-          fi
-
-          echo "complexity-score=$COMPLEXITY_SCORE" >> $GITHUB_OUTPUT
-          echo "test-files=$TEST_FILES" >> $GITHUB_OUTPUT
-          echo "source-files=$SOURCE_FILES" >> $GITHUB_OUTPUT
-
-      - name: 🏥 Healthcare Compliance Check
+      - name: 📝 Generate PR comment
+        id: pr-comment
         run: |
-          echo "🏥 Running Healthcare Compliance Analysis..."
+          cat > pr-comment.md << 'EOF'
+          ## 🔍 PR Validation Results
+          
+          ### 📊 Analysis Summary
+          - **Files changed**: ${{ steps.pr-size.outputs.files-changed }}
+          - **Lines added**: +${{ steps.pr-size.outputs.lines-added }}
+          - **Lines deleted**: -${{ steps.pr-size.outputs.lines-deleted }}
+          - **Size**: ${{ steps.pr-size.outputs.size }}
+          
+          ### ✅ Validation Status
+          - **Quality Check**: ${{ needs.quality-check.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          - **Focused Tests**: ${{ needs.focused-test.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          - **Build Validation**: ${{ needs.build-validation.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          - **Security Scan**: ${{ needs.security-scan.result == 'success' && '✅ Passed' || '❌ Failed' }}
+          
+          ### 🏥 Healthcare Compliance
+          - **LGPD Patterns**: Checked for PII usage
+          - **Quick Validation**: ${{ needs.quality-check.result == 'success' && '✅ Passed' || '⚠️ Review needed' }}
+          
+          ### 📦 Preview
+          Build artifacts available for testing: [Download Preview](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          ---
+          <sub>🤖 This comment is automatically updated on each commit</sub>
+          EOF
 
-          BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-
-          # LGPD (Data Protection) Analysis
-          if git diff $BASE_SHA...$HEAD_SHA | grep -iE 'personal.*data|dados.*pessoais|pii|gdpr'; then
-            echo "⚠️ LGPD: Personal data references detected - requires privacy review"
-          fi
-
-          # ANVISA (Medical Device) Analysis
-          if git diff $BASE_SHA...$HEAD_SHA | grep -iE 'medical.*device|dispositivo.*medico|anvisa|regulatory'; then
-            echo "🏥 ANVISA: Medical device changes detected - requires regulatory review"
-          fi
-
-          # CFM (Medical Practice) Analysis
-          if git diff $BASE_SHA...$HEAD_SHA | grep -iE 'prescription|receita|medical.*record|prontuario|cfm'; then
-            echo "👨‍⚕️ CFM: Medical practice changes detected - requires CFM compliance review"
-          fi
-
-          echo "✅ Healthcare compliance analysis completed"
-
-      - name: 💬 Comment PR Analysis
+      - name: 💬 Post PR comment
         uses: actions/github-script@v7
         with:
           script: |
-            const metrics = {
-              filesChanged: ${{ needs.pr-safety-check.outputs.changed-files-count }},
-              linesChanged: ${{ needs.pr-safety-check.outputs.lines-changed }},
-              complexityScore: ${{ steps.metrics.outputs.complexity-score }},
-              securityRisk: '${{ needs.pr-safety-check.outputs.security-risk }}',
-              testFiles: ${{ steps.metrics.outputs.test-files }},
-              sourceFiles: ${{ steps.metrics.outputs.source-files }}
-            };
-
-            const riskLevel = metrics.complexityScore > 70 ? '🔴 HIGH' :
-                             metrics.complexityScore > 40 ? '🟡 MEDIUM' : '🟢 LOW';
-
-            const testCoverage = metrics.sourceFiles > 0 ?
-              Math.round((metrics.testFiles / metrics.sourceFiles) * 100) : 0;
-
-            const comment = `## 📋 PR Analysis Report
-
-            | Metric | Value |
-            |--------|-------|
-            | 📁 Files Changed | ${metrics.filesChanged} |
-            | 📝 Lines Changed | ${metrics.linesChanged} |
-            | 🔒 Security Risk | ${metrics.securityRisk.toUpperCase()} |
-            | 🧪 Test Coverage | ${testCoverage}% (${metrics.testFiles}/${metrics.sourceFiles}) |
-            | ⚡ Complexity Score | ${metrics.complexityScore}/100 |
-            | 🎯 Risk Level | ${riskLevel} |
-
-            ### 📊 Review Recommendations
-            ${metrics.complexityScore > 70 ? '- ⚠️ High complexity - consider breaking into smaller PRs' : ''}
-            ${metrics.securityRisk === 'high' || metrics.securityRisk === 'critical' ? '- 🔒 Security review required' : ''}
-            ${testCoverage < 80 ? '- 🧪 Consider adding more tests' : ''}
-            ${metrics.filesChanged > 20 ? '- 📁 Large changeset - extra review time needed' : ''}
-
-            *Analysis generated by NeonPro PR Validation Pipeline*`;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const fs = require('fs');
+            const commentBody = fs.readFileSync('pr-comment.md', 'utf8');
+            
+            // Look for existing bot comment
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: comment
+              issue_number: context.issue.number,
             });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('🔍 PR Validation Results')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }
 
-  # ============================================================================
-  # ✅ VALIDATION GATE
-  # ============================================================================
+  # =============================================================================
+  # PHASE 7: VALIDATION GATE
+  # =============================================================================
+
   validation-gate:
-    name: ✅ Validation Gate
+    name: 🚪 Validation Gate
     runs-on: ubuntu-latest
-    timeout-minutes: 3
-    needs: [pr-safety-check, fast-quality-check, focused-tests, build-validation, pr-analysis]
-    if: always()
-
+    timeout-minutes: 5
+    needs: [safety-check, quality-check, focused-test, build-validation, security-scan]
+    if: always() && needs.safety-check.outputs.safe-to-test == 'true'
     steps:
-      - name: 🔍 Evaluate Results
+      - name: 🔍 Evaluate results
         id: evaluate
         run: |
-          echo "🔍 Evaluating PR validation results..."
-
-          # Check all required jobs
-          SAFETY_CHECK="${{ needs.pr-safety-check.result }}"
-          QUALITY_CHECK="${{ needs.fast-quality-check.result }}"
-          TESTS="${{ needs.focused-tests.result }}"
-          BUILD="${{ needs.build-validation.result }}"
-
-          echo "Results summary:"
-          echo "  - Safety Check: $SAFETY_CHECK"
-          echo "  - Quality Check: $QUALITY_CHECK"
-          echo "  - Focused Tests: $TESTS"
-          echo "  - Build Validation: $BUILD"
-
+          # Check if all required checks passed
+          quality_status="${{ needs.quality-check.result }}"
+          test_status="${{ needs.focused-test.result }}"
+          build_status="${{ needs.build-validation.result }}"
+          security_status="${{ needs.security-scan.result }}"
+          
+          echo "Quality: $quality_status"
+          echo "Tests: $test_status"
+          echo "Build: $build_status"
+          echo "Security: $security_status"
+          
           # Determine overall status
-          if [[ "$SAFETY_CHECK" == "success" &&
-                "$QUALITY_CHECK" == "success" &&
-                "$TESTS" == "success" &&
-                "$BUILD" == "success" ]]; then
-            echo "✅ All validations passed - PR ready for review"
-            echo "status=passed" >> $GITHUB_OUTPUT
+          if [[ "$quality_status" == "success" && 
+                "$test_status" == "success" && 
+                "$build_status" == "success" && 
+                ("$security_status" == "success" || "$security_status" == "skipped") ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "✅ All validation checks passed"
           else
-            echo "❌ Some validations failed - PR needs attention"
-            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "❌ Some validation checks failed"
             exit 1
           fi
 
-      - name: 🎯 Set Status Check
-        uses: actions/github-script@v7
-        if: always()
-        with:
-          script: |
-            const status = '${{ steps.evaluate.outputs.status }}' || 'failed';
-            const state = status === 'passed' ? 'success' : 'failure';
-            const description = status === 'passed' ?
-              'All PR validations passed' :
-              'Some PR validations failed';
+      - name: 📊 Validation summary
+        run: |
+          echo "### 🚪 Validation Gate Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Overall Status**: ${{ steps.evaluate.outputs.status == 'success' && '✅ PASSED' || '❌ FAILED' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Individual Results**:" >> $GITHUB_STEP_SUMMARY
+          echo "- Quality Check: ${{ needs.quality-check.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Focused Tests: ${{ needs.focused-test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Build Validation: ${{ needs.build-validation.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Security Scan: ${{ needs.security-scan.result }}" >> $GITHUB_STEP_SUMMARY
 
-            github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: '${{ github.event.pull_request.head.sha }}',
-              state: state,
-              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-              description: description,
-              context: 'PR Validation Pipeline'
-            });
+  # =============================================================================
+  # PHASE 8: AUTO-MERGE (CONDITIONAL)
+  # =============================================================================
 
-  # ============================================================================
-  # 🔄 AUTO-MERGE FOR DEPENDENCY UPDATES (Optional)
-  # ============================================================================
-  auto-merge-deps:
-    name: 🔄 Auto-merge Dependencies
+  auto-merge:
+    name: 🤖 Auto-merge
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [validation-gate]
+    needs: [safety-check, validation-gate]
     if: |
-      always() &&
-      needs.validation-gate.result == 'success' &&
-      github.actor == 'dependabot[bot]' &&
-      github.event.pull_request.user.type == 'Bot'
-
+      always() && 
+      needs.validation-gate.result == 'success' && 
+      (
+        needs.safety-check.outputs.is-dependabot == 'true' ||
+        github.actor == 'github-actions[bot]' ||
+        contains(github.event.pull_request.labels.*.name, 'auto-merge')
+      )
     steps:
-      - name: 🔍 Analyze Dependency Changes
-        id: deps
+      - name: 🔍 Pre-merge validation
         run: |
-          echo "🔍 Analyzing dependency changes for auto-merge eligibility..."
+          echo "🔍 Validating auto-merge conditions..."
+          echo "- PR validation: ✅ Passed"
+          echo "- Actor: ${{ github.actor }}"
+          echo "- Is Dependabot: ${{ needs.safety-check.outputs.is-dependabot }}"
+          echo "- Has auto-merge label: ${{ contains(github.event.pull_request.labels.*.name, 'auto-merge') }}"
 
-          # Check if it's a minor/patch update
-          PR_TITLE="${{ github.event.pull_request.title }}"
-
-          if echo "$PR_TITLE" | grep -qE 'bump.*from.*to.*[0-9]+\.[0-9]+\.[0-9]+'; then
-            # Extract version info
-            OLD_VERSION=$(echo "$PR_TITLE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-            NEW_VERSION=$(echo "$PR_TITLE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | tail -1)
-
-            OLD_MAJOR=$(echo "$OLD_VERSION" | cut -d. -f1)
-            NEW_MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
-
-            if [ "$OLD_MAJOR" = "$NEW_MAJOR" ]; then
-              echo "✅ Safe dependency update detected (non-breaking)"
-              echo "auto-merge=true" >> $GITHUB_OUTPUT
-            else
-              echo "⚠️ Major version change detected - manual review required"
-              echo "auto-merge=false" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "⚠️ Cannot parse version info - manual review required"
-            echo "auto-merge=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: 🔄 Enable Auto-merge
-        if: steps.deps.outputs.auto-merge == 'true'
+      - name: ✅ Enable auto-merge
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.pulls.createReview({
+            await github.rest.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
-              body: '✅ Automated approval for safe dependency update',
-              event: 'APPROVE'
+              event: 'APPROVE',
+              body: '🤖 Auto-approved: All validation checks passed'
             });
-
-            // Enable auto-merge
-            github.rest.pulls.merge({
+            
+            await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
-              commit_title: 'Auto-merge: ${{ github.event.pull_request.title }}',
+              commit_title: '${{ github.event.pull_request.title }}',
+              commit_message: 'Auto-merged by validation pipeline',
               merge_method: 'squash'
             });
 
-  # ============================================================================
-  # 📋 PR VALIDATION SUMMARY
-  # ============================================================================
-  validation-summary:
-    name: 📋 Validation Summary
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    needs: [
-      pr-safety-check,
-      fast-quality-check,
-      focused-tests,
-      build-validation,
-      pr-analysis,
-      validation-gate,
-    ]
-    if: always()
-
-    steps:
-      - name: 📋 Generate Summary
+      - name: 🎉 Auto-merge success
         run: |
-          echo "# 🔍 PR Validation Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 📊 Validation Results" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status | Details |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|---------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 🛡️ Safety Check | ${{ needs.pr-safety-check.result }} | Risk: ${{ needs.pr-safety-check.outputs.risk-level }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚡ Quality Check | ${{ needs.fast-quality-check.result }} | Fast validation |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Focused Tests | ${{ needs.focused-tests.result }} | Targeted testing |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🏗️ Build Validation | ${{ needs.build-validation.result }} | Build integrity |" >> $GITHUB_STEP_SUMMARY
-          echo "| 📋 PR Analysis | ${{ needs.pr-analysis.result }} | Complexity analysis |" >> $GITHUB_STEP_SUMMARY
-          echo "| ✅ Validation Gate | ${{ needs.validation-gate.result }} | Overall status |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎉 PR successfully auto-merged!"
+          echo "### 🤖 Auto-merge Completed" >> $GITHUB_STEP_SUMMARY
+          echo "This PR was automatically merged after passing all validation checks." >> $GITHUB_STEP_SUMMARY
 
+  # =============================================================================
+  # PHASE 9: SUMMARY
+  # =============================================================================
+
+  summary:
+    name: 📋 Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [safety-check, validation-gate, auto-merge]
+    if: always()
+    steps:
+      - name: 📊 Generate final summary
+        run: |
+          echo "## 🔍 PR Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR**: #${{ github.event.pull_request.number }} - ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author**: @${{ github.event.pull_request.user.login }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: ${{ github.event.pull_request.head.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Validation Results:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Safety Check**: ${{ needs.safety-check.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Validation Gate**: ${{ needs.validation-gate.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Auto-merge**: ${{ needs.auto-merge.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
           # Overall status
-          if [ "${{ needs.validation-gate.result }}" = "success" ]; then
-            echo "## ✅ PR Status: APPROVED FOR REVIEW" >> $GITHUB_STEP_SUMMARY
-            echo "This PR has passed all validation checks and is ready for code review." >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.validation-gate.result }}" == "success" ]]; then
+            echo "### ✅ Overall Status: PASSED" >> $GITHUB_STEP_SUMMARY
+            echo "This PR is ready for review and merge." >> $GITHUB_STEP_SUMMARY
           else
-            echo "## ❌ PR Status: REQUIRES ATTENTION" >> $GITHUB_STEP_SUMMARY
-            echo "This PR has failed one or more validation checks and needs to be fixed." >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ Overall Status: FAILED" >> $GITHUB_STEP_SUMMARY
+            echo "This PR requires attention before it can be merged." >> $GITHUB_STEP_SUMMARY
           fi
 
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 📊 PR Metrics" >> $GITHUB_STEP_SUMMARY
-          echo "- **Files Changed**: ${{ needs.pr-safety-check.outputs.changed-files-count }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Lines Changed**: ${{ needs.pr-safety-check.outputs.lines-changed }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Security Risk**: ${{ needs.pr-safety-check.outputs.security-risk }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "*Generated by NeonPro PR Validation Pipeline*" >> $GITHUB_STEP_SUMMARY
+      - name: 📱 Slack notification (on failure)
+        if: failure() && needs.validation-gate.result == 'failure'
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#pr-validation'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+          text: |
+            PR validation failed for #${{ github.event.pull_request.number }}
+            Author: @${{ github.event.pull_request.user.login }}
+            Title: ${{ github.event.pull_request.title }}

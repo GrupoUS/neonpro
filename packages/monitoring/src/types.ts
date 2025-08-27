@@ -338,7 +338,7 @@ export interface ANVISAComplianceConfig {
 // UTILITY TYPES
 // ============================================================================
 
-export type HealthCheckResult = {
+export interface HealthCheckResult {
   status: "healthy" | "degraded" | "unhealthy";
   checks: {
     name: string;
@@ -347,9 +347,9 @@ export type HealthCheckResult = {
     error?: string;
   }[];
   timestamp: string;
-};
+}
 
-export type PerformanceInsight = {
+export interface PerformanceInsight {
   type: "optimization" | "alert" | "trend" | "anomaly";
   title: string;
   description: string;
@@ -357,4 +357,4 @@ export type PerformanceInsight = {
   recommendation: string;
   metrics: PerformanceMetric[];
   timestamp: string;
-};
+}

@@ -505,9 +505,7 @@ export class CFMCompliance {
           active: professionals.data?.filter(
             (p: any) => p.license_status === "active",
           ).length || 0,
-          telemedicine_certified: professionals.data?.filter((p: any) =>
-            p.telemedicine_certified
-          )
+          telemedicine_certified: professionals.data?.filter((p: any) => p.telemedicine_certified)
             .length || 0,
           digital_signature_enabled: professionals.data?.filter((p: any) =>
             p.digital_signature_cert

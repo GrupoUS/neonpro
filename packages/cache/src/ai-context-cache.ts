@@ -25,7 +25,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
   constructor(
     private readonly config = {
-      maxContextSize: 50000, // 50k contexts
+      maxContextSize: 50_000, // 50k contexts
       defaultTTL: 24 * 60 * 60, // 24 hours in seconds
       maxTTL: 7 * 24 * 60 * 60, // 7 days in seconds
       compressionEnabled: true,
@@ -371,7 +371,7 @@ export class AIContextCacheLayer implements CacheOperation {
 
     // Lower score = more likely to be evicted
     return (age / 1000) + (accessRecency / 1000) - (accessFrequency * 1000)
-      - (importanceWeight * 10000);
+      - (importanceWeight * 10_000);
   }
 
   private updateStats(startTime: number): void {
