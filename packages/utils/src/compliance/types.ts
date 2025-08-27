@@ -14,7 +14,7 @@ import { z } from "zod";
 // Constants for compliance scoring
 const MIN_SCORE = 0;
 const MAX_SCORE = 10;
-const { 9: REQUIRED_COMPLIANCE_THRESHOLD } = 9;
+const REQUIRED_COMPLIANCE_THRESHOLD = 9;
 const MIN_STRING_LENGTH = 1;
 
 /**

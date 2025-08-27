@@ -1,4 +1,3 @@
-
 /**
  * Complete System Validation Script
  * Validates Archon integration and all healthcare components

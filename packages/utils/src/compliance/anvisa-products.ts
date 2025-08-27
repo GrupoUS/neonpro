@@ -34,7 +34,7 @@ export class ANVISAProductManager {
 
       return data;
     } catch {
-      return;
+      return null;
     }
   }
 
@@ -94,7 +94,7 @@ export class ANVISAProductManager {
 
       return data || undefined;
     } catch {
-      return;
+      return null;
     }
   }
 

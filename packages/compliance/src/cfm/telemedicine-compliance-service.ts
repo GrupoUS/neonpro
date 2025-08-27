@@ -758,7 +758,8 @@ export class TelemedicineComplianceService {
       issues.push("Informed consent required per Resolution 2.314/2022");
     }
 
-    // Consultation type validation    if (
+    // Consultation type validation
+    if (
       params.consultation_type === "telediagnosis"
       && !params.constitutional_requirements.includes("emergency_exception")
     ) {

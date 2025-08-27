@@ -1,4 +1,3 @@
-
 /**
  * Supabase MCP Server Verification Script
  * Verifies the MCP configuration and connectivity

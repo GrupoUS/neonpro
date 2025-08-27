@@ -240,8 +240,8 @@ const aiReducer = (state: AIState, action: AIAction): AIState => {
 const initialAIState: AIState = {
   insights: [],
   isLoading: false,
-  lastUpdate: undefined,
-  error: undefined,
+  lastUpdate: null,
+  error: null,
   featureFlags: {
     aiInsights: true,
     predictiveAnalytics: true,
@@ -374,8 +374,8 @@ const MOCK_METRICS: Metric[] = [
 ];
 
 export default function NeonProHealthcareDashboard({
-  _userId,
-  _tenantId,
+  userId,
+  tenantId,
 }: NeonProDashboardProps) {
   // Removed unused state - selectedDate functionality not implemented yet
   const [activeTab, setActiveTab] = useState("overview");
@@ -705,7 +705,7 @@ export default function NeonProHealthcareDashboard({
                     >
                       <Brain className="mr-2 h-4 w-4" />
                       IA Insights
-                      {aiState.insights.some((i) => i.impact === "critical")
+                      {aiState.insights.filter((i) => i.impact === "critical")
                             .length > 0 && (
                         <Badge className="ml-auto" variant="destructive">
                           {aiState.insights.filter(

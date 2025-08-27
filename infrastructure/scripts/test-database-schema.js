@@ -1,4 +1,3 @@
-
 /**
  * Script de Teste do Schema do Banco de Dados - Assinaturas
  *

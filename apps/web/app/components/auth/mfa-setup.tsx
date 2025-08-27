@@ -142,9 +142,9 @@ export function MfaSetup({ onComplete, onCancel }: MfaSetupProps) {
         {selectedMethod === MfaMethod.TOTP && (
           <div className="space-y-4">
             <p>Scan this QR code with your authenticator app:</p>
-            {setupResult?.qrCode && (
+            {setupResult?.qrCodeUrl && (
               <div className="flex justify-center">
-                <QRCodeSVG size={200} value={setupResult.qrCode} />
+                <QRCodeSVG size={200} value={setupResult.qrCodeUrl} />
               </div>
             )}
             {setupResult?.secret && (

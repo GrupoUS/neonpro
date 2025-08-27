@@ -1,4 +1,3 @@
-
 /**
  * Script to test Supabase MCP server connection
  * Tests basic connectivity and authentication

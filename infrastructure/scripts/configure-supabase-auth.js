@@ -1,4 +1,3 @@
-
 /**
  * Script para configurar automaticamente as URLs de redirect no Supabase
  * Uso: node configure-supabase-auth.js

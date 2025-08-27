@@ -1,4 +1,3 @@
-
 /**
  * Supabase Database Schema Validation Script
  * Validates healthcare-compliant database schema and RLS policies

@@ -1,4 +1,3 @@
-
 /**
  * Script para testar a configuração de autenticação
  * Verifica se todas as rotas e arquivos necessários estão criados

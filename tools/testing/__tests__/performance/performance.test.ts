@@ -72,7 +72,8 @@ describe("subscription System Performance", () => {
       // Simulate 1000 subscription operations
       for (let i = 0; i < 1000; i++) {
         const subscription = createMockSubscription({ id: `test-${i}` });
-        // Simulate processing      }
+        // Simulate processing the subscription
+      }
 
       // Force garbage collection if available
       if (global.gc) {

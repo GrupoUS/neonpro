@@ -449,6 +449,7 @@ describe("⚡ NEONPRO Healthcare - Performance Validation", () => {
         / normalRequests;
 
       expect(spikeSuccessRate).toBeGreaterThan(0.9); // 90% during spike
-      expect(normalSuccessRate).toBeGreaterThan(0.95); // Should recover to 95%    });
+      expect(normalSuccessRate).toBeGreaterThan(0.95); // Should recover to 95%
+    });
   });
 });

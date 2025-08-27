@@ -1,4 +1,3 @@
-
 /**
  * NeonPro Backup System Setup Script
  * Story 1.8: Sistema de Backup e Recovery

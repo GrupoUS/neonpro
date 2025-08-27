@@ -1,4 +1,3 @@
-
 /**
  * Script de Setup Automático do Sistema de Assinaturas
  *

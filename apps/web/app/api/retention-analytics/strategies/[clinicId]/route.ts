@@ -7,14 +7,10 @@
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { RetentionStrategyStatus, RetentionStrategyType } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
+import { type DatabaseRow, type RetentionStrategy, safeParseNumber } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
-import { 
-  type RetentionStrategy, 
-  type DatabaseRow,
-  safeParseNumber 
-} from "@/src/types/analytics";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -40,22 +36,22 @@ interface StrategyData {
 // Type guard for strategy data
 function isStrategyData(obj: unknown): obj is StrategyData {
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    typeof (obj as StrategyData).id === 'string' &&
-    typeof (obj as StrategyData).name === 'string' &&
-    typeof (obj as StrategyData).type === 'string' &&
-    typeof (obj as StrategyData).strategy_type === 'string' &&
-    typeof (obj as StrategyData).status === 'string' &&
-    typeof (obj as StrategyData).target_risk_level === 'string' &&
-    typeof (obj as StrategyData).effectiveness_score === 'number' &&
-    typeof (obj as StrategyData).is_active === 'boolean' &&
-    typeof (obj as StrategyData).execution_count === 'number' &&
-    typeof (obj as StrategyData).successful_executions === 'number' &&
-    typeof (obj as StrategyData).success_rate === 'number' &&
-    typeof (obj as StrategyData).created_at === 'string' &&
-    typeof (obj as StrategyData).updated_at === 'string' &&
-    typeof (obj as StrategyData).last_executed === 'string'
+    typeof obj === "object"
+    && obj !== null
+    && typeof (obj as StrategyData).id === "string"
+    && typeof (obj as StrategyData).name === "string"
+    && typeof (obj as StrategyData).type === "string"
+    && typeof (obj as StrategyData).strategy_type === "string"
+    && typeof (obj as StrategyData).status === "string"
+    && typeof (obj as StrategyData).target_risk_level === "string"
+    && typeof (obj as StrategyData).effectiveness_score === "number"
+    && typeof (obj as StrategyData).is_active === "boolean"
+    && typeof (obj as StrategyData).execution_count === "number"
+    && typeof (obj as StrategyData).successful_executions === "number"
+    && typeof (obj as StrategyData).success_rate === "number"
+    && typeof (obj as StrategyData).created_at === "string"
+    && typeof (obj as StrategyData).updated_at === "string"
+    && typeof (obj as StrategyData).last_executed === "string"
   );
 }
 
@@ -253,16 +249,17 @@ export async function GET(
       })),
       average_success_rate: filteredStrategies.length > 0
         ? filteredStrategies.reduce(
-            (sum: number, s: StrategyData) => sum + safeParseNumber(s.success_rate, 0),
-            0,
-          ) / filteredStrategies.length
+          (sum: number, s: StrategyData) => sum + safeParseNumber(s.success_rate, 0),
+          0,
+        ) / filteredStrategies.length
         : 0,
       total_executions: filteredStrategies.reduce(
         (sum: number, s: StrategyData) => sum + safeParseNumber((s as any).execution_count, 0),
         0,
       ),
       successful_executions: filteredStrategies.reduce(
-        (sum: number, s: StrategyData) => sum + safeParseNumber((s as any).successful_executions, 0),
+        (sum: number, s: StrategyData) =>
+          sum + safeParseNumber((s as any).successful_executions, 0),
         0,
       ),
     };

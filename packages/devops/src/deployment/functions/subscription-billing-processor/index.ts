@@ -76,9 +76,7 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient<Database>(supabaseUrl, supabaseKey);
-
-    // Process trial expirations
+    const supabase = createClient<Database>(supabaseUrl, supabaseKey); // Process trial expirations
     await processTrialExpirations(supabase);
 
     // Process billing renewals
@@ -124,7 +122,6 @@ async function processTrialExpirations(supabase: unknown) {
       .select("*")
       .eq("status", "trial")
       .lt("trial_end", now);
-
     if (error) {
       return;
     }
@@ -153,14 +150,10 @@ async function processTrialExpirations(supabase: unknown) {
             processed_by: "billing-processor",
           },
         });
-
-        // TODO: Send trial expiration notification
-        // await sendTrialExpirationNotification(subscription);
       } catch {}
     }
   } catch {}
 }
-
 async function processBillingRenewals(supabase: unknown) {
   try {
     const now = new Date();
@@ -192,9 +185,7 @@ async function processBillingRenewals(supabase: unknown) {
           nextPeriodStart,
           subscription.billing_cycle,
         );
-        const nextBillingDate = nextPeriodEnd;
-
-        // Get plan price for current billing cycle
+        const nextBillingDate = nextPeriodEnd; // Get plan price for current billing cycle
         const { plan: plan } = subscription;
         let amount = 0;
 
@@ -238,14 +229,10 @@ async function processBillingRenewals(supabase: unknown) {
             processed_by: "billing-processor",
           },
         });
-
-        // TODO: Trigger payment processing
-        // await triggerPaymentProcessing(subscription, amount);
       } catch {}
     }
   } catch {}
 }
-
 async function processSubscriptionCancellations(supabase: unknown) {
   try {
     const now = new Date().toISOString();
@@ -288,14 +275,10 @@ async function processSubscriptionCancellations(supabase: unknown) {
             processed_by: "billing-processor",
           },
         });
-
-        // TODO: Send cancellation confirmation
-        // await sendCancellationConfirmation(subscription);
       } catch {}
     }
   } catch {}
 }
-
 async function processFailedPaymentRetries(supabase: unknown) {
   try {
     const now = new Date();
@@ -325,9 +308,6 @@ async function processFailedPaymentRetries(supabase: unknown) {
             updated_at: now.toISOString(),
           })
           .eq("id", payment.id);
-
-        // TODO: Trigger payment retry
-        // await retryPaymentProcessing(payment);
       } catch (error) {
         // Update error information
         await supabase

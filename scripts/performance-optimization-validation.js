@@ -1,4 +1,3 @@
-
 /**
  * NeonPro Performance Optimization Validation Script
  * Constitutional-grade validation of all performance optimization systems

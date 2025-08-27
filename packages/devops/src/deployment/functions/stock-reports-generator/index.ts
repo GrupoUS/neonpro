@@ -33,9 +33,7 @@ serve(async (req) => {
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Get current date/time info
+    const supabase = createClient(supabaseUrl, supabaseServiceKey); // Get current date/time info
     const now = new Date();
     const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
     const currentDate = now.getDate();
@@ -174,7 +172,6 @@ serve(async (req) => {
     );
   }
 });
-
 async function generateReport(supabase: unknown, config: ReportConfig) {
   const filters = config.filters || {};
   const { clinic_id: clinicId } = config;
@@ -233,7 +230,6 @@ async function generateReport(supabase: unknown, config: ReportConfig) {
     }
   }
 }
-
 async function generateConsumptionReport(
   supabase: unknown,
   clinicId: string,
@@ -316,7 +312,6 @@ async function generateConsumptionReport(
     generatedAt: new Date().toISOString(),
   };
 }
-
 async function generateValuationReport(
   supabase: unknown,
   clinicId: string,
@@ -398,7 +393,6 @@ async function generateValuationReport(
     generatedAt: new Date().toISOString(),
   };
 }
-
 async function generateMovementReport(
   supabase: unknown,
   clinicId: string,

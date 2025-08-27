@@ -14,7 +14,7 @@ import type {
 
 // Constants
 const SAMPLE_SIZE = 10;
-const { 1: HIGH_RISK_THRESHOLD } = 0;
+const HIGH_RISK_THRESHOLD = 1;
 const MIN_USERS_THRESHOLD = 5;
 
 /**

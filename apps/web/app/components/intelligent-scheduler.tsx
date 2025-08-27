@@ -30,7 +30,7 @@ interface IntelligentSchedulerProps {
  * Target: 60% scheduling time reduction with sub-second response
  */
 export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
-  _tenantId,
+  tenantId,
   patientId,
   treatmentTypes,
   staff,
@@ -73,7 +73,29 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
 
     try {
       // Simulate loading available slots (would be API call)
-      const mockSlots: AppointmentSlot[] = generateMockSlots();
+      const mockSlots: AppointmentSlot[] = (() => {
+        const slots: AppointmentSlot[] = [];
+        const now = new Date();
+
+        for (let i = 0; i < 20; i++) {
+          const slotDate = new Date(now);
+          slotDate.setDate(now.getDate() + Math.floor(i / 8));
+          slotDate.setHours(9 + (i % 8), 0, 0, 0);
+
+          slots.push({
+            id: `slot-${i}`,
+            start: slotDate,
+            end: new Date(slotDate.getTime() + 60 * 60 * 1000), // 1 hour
+            duration: 60,
+            isAvailable: true,
+            staffId: staff[i % staff.length]?.id || "staff-1",
+            treatmentTypeId: selectedTreatment,
+            conflictScore: Math.random() * 0.3,
+            optimizationScore: 0.7 + Math.random() * 0.3,
+          });
+        }
+        return slots;
+      })();
 
       // AI-powered slot optimization
       const treatment = treatmentTypes.find((t) => t.id === selectedTreatment);
@@ -119,7 +141,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
     treatmentTypes,
     aiEngine,
     onError,
-    generateMockSlots,
+    staff,
   ]);
 
   // AI-powered appointment scheduling
@@ -207,32 +229,6 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
   // Real-time event handling
   // Update UI based on recommended actions
   // Removed unused handleOptimizationResults function
-
-  // Generate mock slots for demonstration - memoized to prevent re-render issues
-  const generateMockSlots = useCallback((): AppointmentSlot[] => {
-    const slots: AppointmentSlot[] = [];
-    const now = new Date();
-
-    for (let i = 0; i < 20; i++) {
-      const slotDate = new Date(now);
-      slotDate.setDate(now.getDate() + Math.floor(i / 8));
-      slotDate.setHours(9 + (i % 8), 0, 0, 0);
-
-      slots.push({
-        id: `slot-${i}`,
-        start: slotDate,
-        end: new Date(slotDate.getTime() + 60 * 60 * 1000), // 1 hour
-        duration: 60,
-        isAvailable: true,
-        staffId: staff[i % staff.length]?.id || "staff-1",
-        treatmentTypeId: selectedTreatment,
-        conflictScore: Math.random() * 0.3,
-        optimizationScore: 0.7 + Math.random() * 0.3,
-      });
-    }
-
-    return slots;
-  }, []);
 
   return (
     <div className="intelligent-scheduler mx-auto max-w-6xl rounded-lg bg-white p-6 shadow-lg">
@@ -342,7 +338,8 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
             <select
               id="urgency-select"
               className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) => setUrgencyLevel(e.target.value as unknown)}
+              onChange={(e) =>
+                setUrgencyLevel(e.target.value as "low" | "medium" | "high" | "emergency")}
               value={urgencyLevel}
             >
               <option value="low">Low Priority</option>

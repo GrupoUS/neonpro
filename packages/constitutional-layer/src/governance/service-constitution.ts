@@ -209,7 +209,7 @@ export class ServiceConstitution {
         .eq("active", true);
 
       if (error) {
-        // console.warn(
+        console.warn(
           `Failed to load ${framework} requirements:`,
           error.message,
         );
@@ -223,7 +223,7 @@ export class ServiceConstitution {
       this.complianceRequirements.set(framework, validatedRequirements);
     }
 
-    // console.log(
+    console.log(
       `🏥 Loaded compliance requirements for ${this.complianceRequirements.size} frameworks`,
     );
   }

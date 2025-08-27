@@ -1,4 +1,3 @@
-
 /**
  * VIBECODE V1.0 - Supabase Configuration Validator
  * Ensures NeonPro always uses the correct Supabase project

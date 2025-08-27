@@ -1,4 +1,3 @@
-
 /**
  * Fix LGPD and Healthcare Table Issues Script
  * Creates missing LGPD files and healthcare tables to fix validation issues

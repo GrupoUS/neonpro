@@ -1,4 +1,3 @@
-
 /**
  * Automated cleanup script for .disabled files
  * NEONPRO System Maintenance

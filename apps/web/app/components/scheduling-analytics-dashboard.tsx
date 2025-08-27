@@ -217,7 +217,10 @@ export const SchedulingAnalyticsDashboard: React.FC<
             {/* Time Range Selector */}
             <select
               className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onChange={(e) => setSelectedView(e.target.value as unknown)}
+              onChange={(e) =>
+                setSelectedView(
+                  e.target.value as "staff" | "efficiency" | "overview" | "predictions",
+                )}
               value={selectedView}
             >
               <option value="overview">Overview</option>

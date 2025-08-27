@@ -78,6 +78,7 @@ interface DashboardStats {
   noShowRate: number;
   prevented: number;
   cost_savings: number;
+  modelAccuracy: number;
 }
 
 // ML Pipeline interfaces
@@ -87,6 +88,16 @@ interface ModelVersion {
   status: string;
   accuracy?: number;
   created_at: string;
+  version_id?: string;
+  version_number?: string;
+  deployment_status?: string;
+  traffic_percentage?: number;
+  performance_metrics?: {
+    accuracy: number;
+    precision: number;
+    recall: number;
+    f1_score: number;
+  };
 }
 
 interface ABTest {
@@ -95,6 +106,25 @@ interface ABTest {
   status: string;
   confidence?: number;
   created_at: string;
+  test_id?: string;
+  model_a_version?: string;
+  model_b_version?: string;
+  traffic_split?: number;
+  start_date?: string;
+  end_date?: string;
+  sample_size?: number;
+  metrics_comparison?: {
+    model_a: { accuracy: number; };
+    model_b: { accuracy: number; };
+    improvement_percentage?: number;
+  };
+  statistical_significance?: boolean;
+  winner?: string;
+  results?: {
+    model_a_performance: number;
+    model_b_performance: number;
+    winner?: string;
+  };
 }
 
 interface DriftStatus {
@@ -103,6 +133,10 @@ interface DriftStatus {
   last_check: string;
   alerts?: string[];
   modelAccuracy: number;
+  drift_detected?: boolean;
+  drift_severity?: string;
+  detection_timestamp?: string;
+  recommendations?: string[];
 }
 
 interface AntiNoShowDashboardProps {
@@ -402,6 +436,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
       // Mock model versions
       setModelVersions([
         {
+          id: "model_v1.2.0",
+          version: "v1.2.0",
+          status: "production",
           version_id: "model_v1.2.0",
           version_number: "v1.2.0",
           deployment_status: "production",
@@ -415,6 +452,9 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
           created_at: "2024-01-15T10:00:00Z",
         },
         {
+          id: "model_v1.3.0",
+          version: "v1.3.0",
+          status: "staging",
           version_id: "model_v1.3.0",
           version_number: "v1.3.0",
           deployment_status: "staging",
@@ -432,6 +472,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
       // Mock A/B tests
       setActiveABTests([
         {
+          id: "ab_test_001",
+          name: "Model v1.2.0 vs v1.3.0 Comparison",
           test_id: "ab_test_001",
           model_a_version: "v1.2.0",
           model_b_version: "v1.3.0",
@@ -441,15 +483,16 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
           metrics_comparison: {
             model_a: { accuracy: 0.87 },
             model_b: { accuracy: 0.91 },
-            improvement_percentage: 4.6,
           },
-          statistical_significance: true,
-          winner: "model_b",
+          created_at: "2024-01-20T00:00:00Z",
         },
       ]);
 
       // Mock drift status
       setDriftStatus({
+        status: "stable",
+        last_check: new Date().toISOString(),
+        modelAccuracy: 0.87,
         drift_detected: false,
         drift_severity: "low",
         detection_timestamp: new Date().toISOString(),
@@ -902,7 +945,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           </span>
                           <div className="font-semibold text-green-600">
                             {(
-                              version.performance_metrics.accuracy * 100
+                              (version.performance_metrics?.accuracy ?? 0) * 100
                             ).toFixed(1)}
                             %
                           </div>
@@ -913,7 +956,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                           </span>
                           <div className="font-semibold">
                             {(
-                              version.performance_metrics.f1_score * 100
+                              (version.performance_metrics?.f1_score ?? 0) * 100
                             ).toFixed(1)}
                             %
                           </div>
@@ -970,7 +1013,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         Recomendações:
                       </span>
                       <ul className="space-y-1">
-                        {driftStatus.recommendations.map(
+                        {(driftStatus.recommendations ?? []).map(
                           (rec: string, index: number) => (
                             <li
                               key={index}
@@ -984,9 +1027,11 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     </div>
 
                     <div className="pt-2 text-xs text-muted-foreground">
-                      Última verificação: {new Date(driftStatus.detection_timestamp).toLocaleString(
-                        "pt-BR",
-                      )}
+                      Última verificação:{" "}
+                      {new Date(driftStatus.detection_timestamp || driftStatus.last_check)
+                        .toLocaleString(
+                          "pt-BR",
+                        )}
                     </div>
                   </CardContent>
                 </Card>
@@ -1027,7 +1072,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         </div>
                         <div className="font-semibold text-lg">
                           {(
-                            test.metrics_comparison.model_a.accuracy * 100
+                            (test.metrics_comparison?.model_a.accuracy ?? 0) * 100
                           ).toFixed(1)}
                           %
                         </div>
@@ -1043,15 +1088,15 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         <div
                           className={cn(
                             "font-semibold text-lg",
-                            test.metrics_comparison.improvement_percentage > 0
+                            (test.metrics_comparison?.improvement_percentage ?? 0) > 0
                               ? "text-green-600"
                               : "text-red-600",
                           )}
                         >
-                          {test.metrics_comparison.improvement_percentage > 0
+                          {(test.metrics_comparison?.improvement_percentage ?? 0) > 0
                             ? "+"
                             : ""}
-                          {test.metrics_comparison.improvement_percentage.toFixed(
+                          {(test.metrics_comparison?.improvement_percentage ?? 0).toFixed(
                             1,
                           )}
                           %
@@ -1067,7 +1112,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                         </div>
                         <div className="font-semibold text-lg">
                           {(
-                            test.metrics_comparison.model_b.accuracy * 100
+                            (test.metrics_comparison?.model_b.accuracy ?? 0) * 100
                           ).toFixed(1)}
                           %
                         </div>
@@ -1081,7 +1126,7 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                       <div className="flex justify-between items-center">
                         <span className="text-sm">Amostras coletadas:</span>
                         <span className="font-medium">
-                          {test.sample_size.toLocaleString("pt-BR")}
+                          {(test.sample_size ?? 0).toLocaleString("pt-BR")}
                         </span>
                       </div>
 
@@ -1113,7 +1158,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
                     </div>
 
                     <div className="pt-2 text-xs text-muted-foreground">
-                      Iniciado: {new Date(test.start_date).toLocaleDateString("pt-BR")}
+                      Iniciado:{" "}
+                      {new Date(test.start_date || test.created_at).toLocaleDateString("pt-BR")}
                     </div>
                   </CardContent>
                 </Card>

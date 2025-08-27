@@ -7,14 +7,10 @@
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
 import { createClient } from "@/app/utils/supabase/server";
+import { type DatabaseRow, type RetentionPrediction, safeParseNumber } from "@/src/types/analytics";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
-import { 
-  type RetentionPrediction, 
-  type DatabaseRow,
-  safeParseNumber 
-} from "@/src/types/analytics";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -23,7 +19,7 @@ import {
 interface ChurnPredictionData {
   patient_id: string;
   churn_probability: number;
-  risk_level: 'low' | 'medium' | 'high' | 'critical';
+  risk_level: "low" | "medium" | "high" | "critical";
   days_since_last_visit: number;
   predicted_churn_date: string;
   prediction_date: string;
@@ -32,14 +28,14 @@ interface ChurnPredictionData {
 // Type guard for churn prediction data
 function isChurnPredictionData(obj: unknown): obj is ChurnPredictionData {
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    typeof (obj as ChurnPredictionData).patient_id === 'string' &&
-    typeof (obj as ChurnPredictionData).churn_probability === 'number' &&
-    ['low', 'medium', 'high', 'critical'].includes((obj as ChurnPredictionData).risk_level) &&
-    typeof (obj as ChurnPredictionData).days_since_last_visit === 'number' &&
-    typeof (obj as ChurnPredictionData).predicted_churn_date === 'string' &&
-    typeof (obj as ChurnPredictionData).prediction_date === 'string'
+    typeof obj === "object"
+    && obj !== null
+    && typeof (obj as ChurnPredictionData).patient_id === "string"
+    && typeof (obj as ChurnPredictionData).churn_probability === "number"
+    && ["low", "medium", "high", "critical"].includes((obj as ChurnPredictionData).risk_level)
+    && typeof (obj as ChurnPredictionData).days_since_last_visit === "number"
+    && typeof (obj as ChurnPredictionData).predicted_churn_date === "string"
+    && typeof (obj as ChurnPredictionData).prediction_date === "string"
   );
 }
 
@@ -171,16 +167,18 @@ export async function GET(
 
     // Date filtering
     if (startDate || endDate) {
-      filteredPredictions = (predictions.predictions as ChurnPredictionData[]).filter((prediction: ChurnPredictionData) => {
-        const predictionDate = new Date(prediction.prediction_date);
-        if (startDate && predictionDate < new Date(startDate)) {
-          return false;
-        }
-        if (endDate && predictionDate > new Date(endDate)) {
-          return false;
-        }
-        return true;
-      });
+      filteredPredictions = (predictions.predictions as ChurnPredictionData[]).filter(
+        (prediction: ChurnPredictionData) => {
+          const predictionDate = new Date(prediction.prediction_date);
+          if (startDate && predictionDate < new Date(startDate)) {
+            return false;
+          }
+          if (endDate && predictionDate > new Date(endDate)) {
+            return false;
+          }
+          return true;
+        },
+      );
     }
 
     // Sorting
@@ -245,8 +243,10 @@ export async function GET(
         ).length,
       },
       average_churn_probability: filteredPredictions.length > 0
-        ? filteredPredictions.reduce((sum: number, p: ChurnPredictionData) =>
-            sum + safeParseNumber(p.churn_probability), 0) / filteredPredictions.length
+        ? filteredPredictions.reduce(
+          (sum: number, p: ChurnPredictionData) => sum + safeParseNumber(p.churn_probability),
+          0,
+        ) / filteredPredictions.length
         : 0,
       high_risk_patients: filteredPredictions.filter((p: ChurnPredictionData) =>
         ["high", "critical"].includes(p.risk_level)
@@ -467,7 +467,9 @@ export async function POST(
     return NextResponse.json({
       success: true,
       data: {
-        predictions: results.map((r: DatabaseRow) => (r as any).prediction),
+        predictions: results.map((r: DatabaseRow) =>
+          (r as any).prediction
+        ),
         summary,
         errors: errors.length > 0 ? errors : undefined,
       },

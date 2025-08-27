@@ -83,7 +83,10 @@ const mockAppointment = {
   clinic_id: "clinic-1",
   scheduled_at: new Date().toISOString(),
   status: "scheduled",
-}; // Test wrapper component }) => {
+};
+
+// Test wrapper component
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {

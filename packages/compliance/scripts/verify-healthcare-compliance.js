@@ -1,4 +1,3 @@
-
 /**
  * Healthcare Compliance Verification Script for NeonPro
  * Ensures LGPD, ANVISA, and CFM compliance maintained after optimization

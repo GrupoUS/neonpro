@@ -237,7 +237,7 @@ export default function CustomReportBuilder() {
   const addElement = (type: string) => {
     const newElement: ReportElement = {
       id: Date.now().toString(),
-      type: type as unknown,
+      type: type as "chart" | "table" | "text" | "image" | "metric",
       title: `Novo ${type}`,
       config: {},
       position: { x: 50, y: 50 },

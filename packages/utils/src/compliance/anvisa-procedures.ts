@@ -31,7 +31,7 @@ export class ANVISAProcedureManager {
 
       return data;
     } catch {
-      return;
+      return null;
     }
   }
 

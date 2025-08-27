@@ -17,13 +17,16 @@
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_PROJECT_ID",
     "DATABASE_URL",
     "DIRECT_URL",
     "LGPD_COMPLIANCE_KEY",
     "ANVISA_API_KEY",
     "CFM_VALIDATION_KEY",
     "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY"
   ],
   "remoteCache": {
     "signature": true
@@ -43,7 +46,13 @@
         "!**/*.test.*",
         "!**/*.spec.*"
       ],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
+      "env": [
+        "NODE_ENV",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY"
+      ]
     },
 
     // Healthcare Foundation Packages (Build Order Critical)
@@ -189,11 +198,112 @@
       "outputs": ["dist/**"]
     },
 
-    // Skip build for core-services (no build needed)
     "@neonpro/core-services#build": {
-      "cache": false,
-      "inputs": [],
-      "outputs": []
+      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/shared#build"],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    // Additional Core Packages
+    "@neonpro/config#build": {
+      "dependsOn": ["@neonpro/types#build"],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/utils#build": {
+      "dependsOn": ["@neonpro/types#build"],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/security#build": {
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/audit-trail#build"
+      ],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/integrations#build": {
+      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/auth#build"],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/brazilian-healthcare-ui#build": {
+      "dependsOn": ["@neonpro/types#build", "@neonpro/ui#build", "@neonpro/shared#build"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "styles/**/*.{css,scss}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/health-dashboard#build": {
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/ui#build",
+        "@neonpro/brazilian-healthcare-ui#build",
+        "@neonpro/monitoring#build"
+      ],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "styles/**/*.{css,scss}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/enterprise#build": {
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/auth#build",
+        "@neonpro/security#build",
+        "@neonpro/compliance#build"
+      ],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
+    },
+
+    "@neonpro/docs#build": {
+      "dependsOn": ["@neonpro/types#build"],
+      "inputs": [
+        "src/**/*.{ts,js}",
+        "package.json",
+        "tsconfig.json"
+      ],
+      "outputs": ["dist/**"]
     },
 
     // Quality Tasks
@@ -333,10 +443,35 @@
       "persistent": true
     },
 
+    // Supabase Tasks (Optimized for Healthcare)
+    "supabase:build": {
+      "dependsOn": ["@neonpro/database#build"],
+      "inputs": [
+        "supabase/**/*.sql",
+        "packages/database/prisma/**/*.prisma",
+        "infrastructure/database/**/*.sql"
+      ],
+      "outputs": ["supabase/generated/**"],
+      "env": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "DATABASE_URL"]
+    },
+
+    "supabase:generate": {
+      "dependsOn": ["supabase:build"],
+      "cache": true,
+      "inputs": ["packages/database/prisma/schema.prisma"],
+      "outputs": ["packages/database/prisma/generated/**"]
+    },
+
     // Development Tasks
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "NODE_ENV",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+        "SUPABASE_SERVICE_ROLE_KEY"
+      ]
     },
 
     "clean": {

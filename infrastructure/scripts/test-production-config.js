@@ -1,4 +1,3 @@
-
 /**
  * Script para testar configurações de produção
  * Verifica conectividade com Supabase e URLs de callback

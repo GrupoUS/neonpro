@@ -1,4 +1,3 @@
-
 /**
  * ANVISA Compliance Validation Script
  * Validates ANVISA compliance for Brazilian healthcare regulation

@@ -36,10 +36,10 @@ export class ANVISACompliance {
 
   // Product Management
   registerProduct(data: unknown) {
-    return this.productManager.registerProduct(data);
+    return this.productManager.registerProduct(data as any);
   }
   validateProductCompliance(data: unknown) {
-    return this.productManager.validateProductCompliance(data);
+    return this.productManager.validateProductCompliance(data as string);
   }
   getExpiringSoonProducts() {
     return this.productManager.getExpiringSoonProducts();
@@ -53,7 +53,7 @@ export class ANVISACompliance {
 
   // Procedure Management
   classifyProcedure(data: unknown) {
-    return this.procedureManager.classifyProcedure(data);
+    return this.procedureManager.classifyProcedure(data as any);
   }
   validateProcedureQualifications(
     procedureId: string,
@@ -67,7 +67,7 @@ export class ANVISACompliance {
 
   // Adverse Event Management
   reportAdverseEvent(data: unknown) {
-    return this.adverseEventManager.reportAdverseEvent(data);
+    return this.adverseEventManager.reportAdverseEvent(data as any);
   }
   getPendingANVISAReports() {
     return this.adverseEventManager.getPendingANVISAReports();

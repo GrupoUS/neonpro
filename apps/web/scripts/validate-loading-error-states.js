@@ -1,4 +1,3 @@
-
 /**
  * Script de Validação de Loading & Error States
  *

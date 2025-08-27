@@ -731,7 +731,10 @@ export class RiskScoringEngine {
     action: "CREATED" | "VIEWED" | "MODIFIED" | "CACHED_RESULT",
     performedBy: string,
   ): Promise<void> {
-    // This would integrate with the audit trail service  }
+    // This would integrate with the audit trail service
+    // Implementation placeholder for audit trail integration
+    console.log(`Audit: ${action} by ${performedBy} for patient ${result.patientId}`);
+  }
 
   private updateAuditTrail(
     result: RiskAssessmentResult,

@@ -56,7 +56,7 @@ export class ANVISAComplianceReporter {
         products: this.buildProductsReport(productData, expiringSoon),
       };
     } catch {
-      return;
+      return null;
     }
   }
 

@@ -348,7 +348,7 @@ export function setupIntegrationTests() {
   afterEach(() => {
     // Clean up individual test state
   });
-};
+}
 
 // Export all utilities for easy importing in tests
 export default {

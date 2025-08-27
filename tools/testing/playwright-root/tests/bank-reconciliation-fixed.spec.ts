@@ -488,7 +488,8 @@ test("should maintain security throughout reconciliation with healthcare standar
     expect(headers["content-type"]).toContain("application/json");
     expect(route.request().url()).toMatch(/^https:\/\//);
 
-    // Verify healthcare-specific security headers includeSubDomains",
+    // Verify healthcare-specific security headers
+    const expectedHeaders = {
       "x-content-type-options": "nosniff",
       "x-frame-options": "DENY",
       "x-xss-protection": "1; mode=block",

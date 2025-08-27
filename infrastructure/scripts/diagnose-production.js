@@ -1,4 +1,3 @@
-
 /**
  * Script de diagnóstico para problemas de produção no Vercel
  * Verifica configurações, variáveis de ambiente e rotas

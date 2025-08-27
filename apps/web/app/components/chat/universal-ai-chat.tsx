@@ -349,7 +349,7 @@ export function UniversalAIChat({
       } catch (error: unknown) {
         // console.error("Chat error:", error);
 
-        if (error.name === "AbortError") {
+        if (error instanceof Error && error.name === "AbortError") {
           return; // Request was cancelled
         }
 
@@ -368,7 +368,9 @@ export function UniversalAIChat({
 
         toast({
           title: "Erro no chat",
-          description: error.message || "Não foi possível enviar a mensagem.",
+          description: error instanceof Error
+            ? error.message
+            : "Não foi possível enviar a mensagem.",
           variant: "destructive",
         });
       } finally {
@@ -405,7 +407,7 @@ export function UniversalAIChat({
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        handleSubmit(e as unknown);
+        handleSubmit(e as React.FormEvent<Element>);
       }
     },
     [handleSubmit],

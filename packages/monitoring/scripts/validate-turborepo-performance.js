@@ -1,4 +1,3 @@
-
 /**
  * Turborepo Performance Validation Script for NeonPro Aesthetic Clinic SaaS
  * Validates build time improvements and healthcare compliance maintenance

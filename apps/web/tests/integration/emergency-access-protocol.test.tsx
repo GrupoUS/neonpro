@@ -151,7 +151,7 @@ const mockEmergencyGrant: EmergencyAccessGrant = {
 };
 
 // Test wrapper component
-const TestWrapper = ({ children }: { children: React.ReactNode }) => {
+const TestWrapper = ({ children }: { children: React.ReactNode; }) => {
   // Use the global mock QueryClient instead of creating a new one
   const { queryClient } = globalThis;
 

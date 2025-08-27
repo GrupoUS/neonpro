@@ -97,7 +97,7 @@ export class SecurityAPI {
     _updates: Partial<SecurityAlert>,
   ): Promise<SecurityAlert | null> {
     // Placeholder - replace with actual database update
-    return;
+    return null;
   }
 
   async getSecurityMetrics(_period: { start: Date; end: Date; }): Promise<{

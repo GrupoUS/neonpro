@@ -301,7 +301,7 @@ describe("aI Services Performance Tests", () => {
           PERF_TEST_CONFIG.thresholds.chat_response_p95,
         );
 
-        // console.log(
+        console.log(
           `Single chat request completed in ${duration.toFixed(2)}ms`,
         );
       } catch (error) {
@@ -327,7 +327,7 @@ describe("aI Services Performance Tests", () => {
 
       const stats = PerformanceTestUtils.getStatistics("chat_light_load");
 
-      // console.log("Light Load Chat Performance:", {
+      console.log("Light Load Chat Performance:", {
         requests: stats.count,
         avgResponseTime: `${stats.avg.toFixed(2)}ms`,
         p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
@@ -362,7 +362,7 @@ describe("aI Services Performance Tests", () => {
 
       const stats = PerformanceTestUtils.getStatistics("chat_normal_load");
 
-      // console.log("Normal Load Chat Performance:", {
+      console.log("Normal Load Chat Performance:", {
         requests: stats.count,
         avgResponseTime: `${stats.avg.toFixed(2)}ms`,
         p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
@@ -445,8 +445,8 @@ describe("aI Services Performance Tests", () => {
         );
 
         // console.log(
-          `Single compliance check completed in ${duration.toFixed(2)}ms`,
-        );
+        //   `Single compliance check completed in ${duration.toFixed(2)}ms`,
+        // );
       } catch (error) {
         PerformanceTestUtils.recordError(
           "single_compliance_check",
@@ -478,12 +478,12 @@ describe("aI Services Performance Tests", () => {
       const throughput = stats.count / (scenario.duration_minutes * 60);
 
       // console.log("Compliance Check Performance:", {
-        requests: stats.count,
-        avgResponseTime: `${stats.avg.toFixed(2)}ms`,
-        p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
-        errorRate: `${stats.errorRate.toFixed(2)}%`,
-        throughput: `${throughput.toFixed(2)} req/s`,
-      });
+      //   requests: stats.count,
+      //   avgResponseTime: `${stats.avg.toFixed(2)}ms`,
+      //   p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
+      //   errorRate: `${stats.errorRate.toFixed(2)}%`,
+      //   throughput: `${throughput.toFixed(2)} req/s`,
+      // });
 
       expect(stats.avg).toBeLessThan(
         PERF_TEST_CONFIG.thresholds.compliance_check_avg,
@@ -531,8 +531,8 @@ describe("aI Services Performance Tests", () => {
         );
 
         // console.log(
-          `Conversation analysis completed in ${duration.toFixed(2)}ms`,
-        );
+        //   `Conversation analysis completed in ${duration.toFixed(2)}ms`,
+        // );
       } catch (error) {
         PerformanceTestUtils.recordError(
           "single_conversation_analysis",
@@ -569,11 +569,11 @@ describe("aI Services Performance Tests", () => {
       );
 
       // console.log("Conversation Analysis Performance:", {
-        requests: stats.count,
-        avgResponseTime: `${stats.avg.toFixed(2)}ms`,
-        p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
-        errorRate: `${stats.errorRate.toFixed(2)}%`,
-      });
+      //   requests: stats.count,
+      //   avgResponseTime: `${stats.avg.toFixed(2)}ms`,
+      //   p95ResponseTime: `${stats.p95.toFixed(2)}ms`,
+      //   errorRate: `${stats.errorRate.toFixed(2)}%`,
+      // });
 
       expect(stats.avg).toBeLessThan(
         PERF_TEST_CONFIG.thresholds.conversation_analysis_avg * 1.5,
@@ -591,9 +591,9 @@ describe("aI Services Performance Tests", () => {
     it("should monitor memory usage during load testing", async () => {
       const initialMemory = process.memoryUsage();
       // console.log("Initial memory usage:", {
-        rss: `${Math.round(initialMemory.rss / 1024 / 1024)}MB`,
-        heapUsed: `${Math.round(initialMemory.heapUsed / 1024 / 1024)}MB`,
-      });
+      //   rss: `${Math.round(initialMemory.rss / 1024 / 1024)}MB`,
+      //   heapUsed: `${Math.round(initialMemory.heapUsed / 1024 / 1024)}MB`,
+      // });
 
       // Simulate moderate load for memory monitoring
       await PerformanceTestUtils.simulateLoad(
@@ -612,10 +612,10 @@ describe("aI Services Performance Tests", () => {
       const memoryIncrease = (finalMemory.rss - initialMemory.rss) / 1024 / 1024; // MB
 
       // console.log("Final memory usage:", {
-        rss: `${Math.round(finalMemory.rss / 1024 / 1024)}MB`,
-        heapUsed: `${Math.round(finalMemory.heapUsed / 1024 / 1024)}MB`,
-        increase: `${Math.round(memoryIncrease)}MB`,
-      });
+      //   rss: `${Math.round(finalMemory.rss / 1024 / 1024)}MB`,
+      //   heapUsed: `${Math.round(finalMemory.heapUsed / 1024 / 1024)}MB`,
+      //   increase: `${Math.round(memoryIncrease)}MB`,
+      // });
 
       // Memory increase should be reasonable (less than 200MB for this test)
       expect(memoryIncrease).toBeLessThan(200);
@@ -654,8 +654,8 @@ describe("aI Services Performance Tests", () => {
         const duration = stopTimer();
 
         // console.log(
-          `Complete E2E workflow completed in ${duration.toFixed(2)}ms`,
-        );
+        //   `Complete E2E workflow completed in ${duration.toFixed(2)}ms`,
+        // );
 
         // E2E workflow should complete in reasonable time
         expect(duration).toBeLessThan(5000); // 5 seconds max for complete workflow

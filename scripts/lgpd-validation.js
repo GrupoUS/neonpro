@@ -1,4 +1,3 @@
-
 /**
  * LGPD (Lei Geral de Proteção de Dados) Compliance Validation Script
  * Validates LGPD compliance for Brazilian data protection regulations

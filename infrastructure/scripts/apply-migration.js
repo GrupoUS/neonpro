@@ -1,4 +1,3 @@
-
 /**
  * Apply Subscriptions Migration Script
  * Applies the corrected subscriptions table migration and validates system

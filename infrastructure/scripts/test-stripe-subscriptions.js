@@ -1,4 +1,3 @@
-
 /**
  * Script de Teste Completo do Sistema de Assinaturas Stripe
  *

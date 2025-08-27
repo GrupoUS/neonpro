@@ -1,4 +1,3 @@
-
 /**
  * CFM (Conselho Federal de Medicina) Compliance Validation Script
  * Validates CFM compliance for Brazilian medical professional standards

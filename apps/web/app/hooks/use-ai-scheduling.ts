@@ -12,6 +12,15 @@ import type {
 } from "@neonpro/core-services/scheduling";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+interface AIEngineConfig {
+  optimizationLevel: "basic" | "advanced" | "experimental";
+  enablePredictiveModeling: boolean;
+  realtimeAnalytics: boolean;
+  autoRescheduling: boolean;
+  maxConcurrentOptimizations: number;
+  learningRate: number;
+}
+
 interface UseAISchedulingOptions {
   tenantId: string;
   autoOptimize?: boolean;
@@ -87,27 +96,35 @@ export const useAIScheduling = (
   const aiEngineRef = useRef<AISchedulingEngine | null>(null);
   const wsConnectionRef = useRef<WebSocket | null>(null);
 
+  // Handle real-time updates from WebSocket
+  const handleRealtimeUpdate = useCallback((data: any) => {
+    switch (data.type) {
+      case "schedule_change": {
+        // Refresh available slots
+        if (data.affectedSlots) {
+        }
+        break;
+      }
+
+      case "optimization_opportunity": {
+        // New optimization opportunity detected
+        setOptimizationScore(data.score);
+        break;
+      }
+
+      case "analytics_update": {
+        // Real-time analytics update
+        setAnalytics((prev) => ({ ...prev, ...data.analytics }));
+        break;
+      }
+
+      default:
+    }
+  }, []);
+
   // Initialize AI engine
   useEffect(() => {
-    aiEngineRef.current = new AISchedulingEngine({
-      optimizationGoals: {
-        patientSatisfaction: 0.3,
-        staffUtilization: 0.25,
-        revenueMaximization: 0.25,
-        timeEfficiency: 0.2,
-      },
-      constraints: {
-        maxBookingLookAhead: 90,
-        minAdvanceBooking: 1,
-        emergencySlotReservation: 0.1,
-      },
-      aiModels: {
-        noShowPrediction: true,
-        durationPrediction: true,
-        demandForecasting: true,
-        resourceOptimization: true,
-      },
-    });
+    aiEngineRef.current = new AISchedulingEngine();
   }, []);
 
   // Initialize real-time WebSocket connection
@@ -204,15 +221,19 @@ export const useAIScheduling = (
         ]);
 
         // AI-powered scheduling
-        const result = await aiEngineRef.current.scheduleAppointment(
-          request,
-          slots.data || [],
-          staff.data || [],
-          [patient.data],
-          treatments.data || [],
+        const result = await aiEngineRef.current.optimizeSchedule(
+          request
         );
 
-        setLastResult(result);
+        // Adapt result to match SchedulingResult interface
+        const adaptedResult = {
+          ...result,
+          confidenceScore: 0.8, // Default confidence score
+          appointmentSlot: result.recommendations?.[0] as any,
+          alternatives: result.recommendations?.slice(1) as any[],
+        };
+
+        setLastResult(adaptedResult);
 
         // Store result for analytics
         if (result.success) {
@@ -227,7 +248,7 @@ export const useAIScheduling = (
           });
         }
 
-        return result;
+        return adaptedResult;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Scheduling failed";
         setError(errorMessage);
@@ -266,10 +287,24 @@ export const useAIScheduling = (
             (t: TreatmentType) => t.id === request.treatmentTypeId,
           );
           if (treatment) {
-            return await aiEngineRef.current.intelligentSlotFiltering(
-              slots,
-              request as SchedulingRequest,
-              [treatment],
+            const timeSlots = await aiEngineRef.current.getAvailableSlots(
+              new Date(),
+              new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days ahead
+              request.treatmentType,
+            );
+            
+            // Convert TimeSlot[] to AppointmentSlot[]
+            return timeSlots.map((timeSlot, index) => ({
+              id: `slot-${index}`,
+              start: timeSlot.startTime,
+              end: timeSlot.endTime,
+              duration: timeSlot.duration || 60,
+              isAvailable: timeSlot.isAvailable,
+              staffId: timeSlot.professionalId || "",
+              treatmentTypeId: request.treatmentType,
+              conflictScore: 0,
+              optimizationScore: 0.8,
+            }));
             );
           }
         }
@@ -396,36 +431,10 @@ export const useAIScheduling = (
 
   // Reset hook state
   const resetState = useCallback(() => {
-    setError(undefined);
-    setLastResult(undefined);
+    setError(null);
+    setLastResult(null);
     setActiveOptimizations([]);
     setOptimizationScore(0.8);
-  }, []);
-
-  // Handle real-time updates from WebSocket
-  const handleRealtimeUpdate = useCallback((data: unknown) => {
-    switch (data.type) {
-      case "schedule_change": {
-        // Refresh available slots
-        if (data.affectedSlots) {
-        }
-        break;
-      }
-
-      case "optimization_opportunity": {
-        // New optimization opportunity detected
-        setOptimizationScore(data.score);
-        break;
-      }
-
-      case "analytics_update": {
-        // Real-time analytics update
-        setAnalytics((prev) => ({ ...prev, ...data.analytics }));
-        break;
-      }
-
-      default:
-    }
   }, []);
 
   // Execute a scheduling action

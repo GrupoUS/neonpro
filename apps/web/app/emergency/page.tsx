@@ -566,7 +566,7 @@ export default function EmergencyAccessPage() {
     cacheStatus: "fresh",
     lastSync: new Date().toLocaleString("pt-BR"),
     searchQuery: "",
-    selectedPatient: undefined,
+    selectedPatient: null,
     recentPatients: [],
     isSearching: false,
     voiceActive: false,
@@ -686,7 +686,7 @@ export default function EmergencyAccessPage() {
       } else if (query.length > 0) {
         setState((prev) => ({
           ...prev,
-          selectedPatient: undefined,
+          selectedPatient: null,
           isSearching: false,
         }));
         // TODO: Replace with proper toast notification
@@ -695,7 +695,7 @@ export default function EmergencyAccessPage() {
       } else {
         setState((prev) => ({
           ...prev,
-          selectedPatient: undefined,
+          selectedPatient: null,
           isSearching: false,
         }));
       }

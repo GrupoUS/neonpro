@@ -1,4 +1,3 @@
-
 /**
  * RBAC Setup Script
  * Story 1.2: Role-Based Access Control Implementation

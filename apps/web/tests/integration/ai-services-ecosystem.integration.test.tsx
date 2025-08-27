@@ -797,9 +797,11 @@ class AIServicesEcosystemTester {
     expect(avgResponseTime).toBeLessThan(5000); // Average response time under 5 seconds
 
     console.log(
-      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${avgResponseTime.toFixed(
-        2,
-      )}ms avg response time`,
+      `Load Test Results: ${successRate.toFixed(2)}% success rate, ${
+        avgResponseTime.toFixed(
+          2,
+        )
+      }ms avg response time`,
     );
 
     AIServicesEcosystemTester.context.serviceMetrics.set(
