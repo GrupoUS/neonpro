@@ -113,13 +113,12 @@ class ot {
 	}
 	_onBegin() {
 		let t, e;
-		(e = (t = this._reporter).onBegin) === undefined ||
-			e.call(t, this._rootSuite);
+		
 	}
 	_onTestBegin(t, e) {
 		let c, n;
 		const s = this._tests.get(t);
-		this._options.clearPreviousResultsWhenTestBegins && (s.results = []);
+		
 		const i = s._createTestResult(e.id);
 		(i.retry = e.retry),
 			(i.workerIndex = e.workerIndex),
@@ -184,7 +183,7 @@ class ot {
 	}
 	_onError(t) {
 		let e, s;
-		(s = (e = this._reporter).onError) === undefined || s.call(e, t);
+		
 	}
 	_onStdIO(t, e, s, i, c) {
 		let _, a, h, v;
@@ -291,7 +290,7 @@ class ot {
 	}
 	_absoluteAnnotationLocationsInplace(t) {
 		for (const e of t) {
-			e.location && (e.location = this._absoluteLocation(e.location));
+			
 		}
 	}
 	_absoluteLocation(t) {
@@ -485,11 +484,7 @@ function ie(r) {
 		e = 0,
 		s = 0;
 	for (const i of r.results) {
-		i.status === "interrupted" ||
-			(i.status === "skipped" && r.expectedStatus === "skipped"
-				? ++t
-				: i.status === "skipped" ||
-					(i.status === r.expectedStatus ? ++e : ++s));
+		
 	}
 	return e === 0 && s === 0
 		? "skipped"
@@ -545,22 +540,7 @@ class nt {
 			for (const h of _.tests) {
 				const { title: v } = h;
 				let u = a.children.find((C) => C.kind !== "group" && C.title === v);
-				u ||
-					((u = {
-						kind: "case",
-						id: `test:${h.titlePath().join("")}`,
-						title: v,
-						parent: a,
-						children: [],
-						tests: [],
-						location: h.location,
-						duration: 0,
-						status: "none",
-						project: void 0,
-						test: void 0,
-						tags: h.tags,
-					}),
-					this._addChild(a, u));
+				
 				const b = h.results[0];
 				let S = "none";
 				(b === undefined ? void 0 : b[X]) === "scheduled"
@@ -908,7 +888,7 @@ const ne = ({ source: r }) => {
 						if (n.current && n.current.terminal.options.theme === v) {
 							return;
 						}
-						n.current && (h.textContent = "");
+						
 						const u = new _({
 								convertEol: !0,
 								fontSize: 13,
@@ -938,9 +918,7 @@ const ne = ({ source: r }) => {
 			}, [c, n, e, r, s]),
 			K.useEffect(() => {
 				setTimeout(() => {
-					n.current &&
-						(n.current.fitAddon.fit(),
-						r.resize(n.current.terminal.cols, n.current.terminal.rows));
+					
 				}, 250);
 			}, [t, r]),
 			o.jsx("div", {
@@ -1011,7 +989,7 @@ const ne = ({ source: r }) => {
 			a = d.useRef();
 		d.useEffect(() => {
 			let u;
-			(u = a.current) === undefined || u.focus();
+			
 		}, []);
 		const h =
 				[...e.entries()]
@@ -1233,7 +1211,7 @@ const he = Wt,
 			d.useEffect(() => {
 				if (!_) {
 					if (n) {
-						e === undefined || e.watchNoReply({ fileNames: s.fileNames() });
+						
 					} else {
 						const f = new Set();
 						for (const E of g.value) {
@@ -1241,7 +1219,7 @@ const he = Wt,
 								M = x === undefined ? void 0 : x.location.file;
 							M && f.add(M);
 						}
-						e === undefined || e.watchNoReply({ fileNames: [...f] });
+						
 					}
 				}
 			}, [_, s, n, g, e]);
@@ -1497,9 +1475,7 @@ const I = {
 	reporters: A.has("reporter") ? A.getAll("reporter") : void 0,
 	pathSeparator: A.get("pathSeparator") || "/",
 };
-I.updateSnapshots &&
-	!["all", "none", "missing"].includes(I.updateSnapshots) &&
-	(I.updateSnapshots = void 0);
+
 const wt = navigator.platform === "MacIntel",
 	ve = ({}) => {
 		let gt;
@@ -1644,10 +1620,10 @@ const wt = navigator.platform === "MacIntel",
 						: void 0,
 					y = new Map(l);
 				for (const P of y.keys()) {
-					m.suites.find((U) => U.title === P) || y.delete(P);
+					
 				}
 				for (const P of m.suites) {
-					y.has(P.title) || y.set(P.title, Boolean(k?.includes(P.title)));
+					
 				}
 				!k &&
 					y.size &&
@@ -1681,51 +1657,7 @@ const wt = navigator.platform === "MacIntel",
 			}, [r, a, n, l, C, O, N]),
 			V = d.useCallback(
 				(p, m) => {
-					!(w && a) ||
-						(p === "bounce-if-busy" && N) ||
-						((x.current = new Set([...x.current, ...m])),
-						(E.current = E.current.then(async () => {
-							let P, U, D;
-							const { current: k } = x;
-							if (((x.current = new Set()), k.size === 0)) {
-								return;
-							}
-							for (const j of ((P = a.rootSuite) === undefined
-								? void 0
-								: P.allTests()) || []) {
-								if (k.has(j.id)) {
-									j.results = [];
-									const W = j._createTestResult("pending");
-									W[X] = "scheduled";
-								}
-							}
-							h({ ...a });
-							const y = `  [${new Date().toLocaleTimeString()}]`;
-							z.write(
-								`${"\u001B[2m—".repeat(Math.max(0, _t.cols - y.length)) + y}\u001B[22m`,
-							),
-								u({ total: 0, passed: 0, failed: 0, skipped: 0 }),
-								$({ testIds: k }),
-								await w.runTests({
-									locations: I.args,
-									grep: I.grep,
-									grepInvert: I.grepInvert,
-									testIds: [...k],
-									projects: [...l].filter(([_j, W]) => W).map(([j]) => j),
-									...(ht ? { workers: "1" } : {}),
-									...(ft ? { headed: !0 } : {}),
-									...(pt ? { updateSnapshots: "all" } : {}),
-									reporters: I.reporters,
-									trace: "on",
-								});
-							for (const j of ((U = a.rootSuite) === undefined
-								? void 0
-								: U.allTests()) || []) {
-								((D = j.results[0]) === undefined ? void 0 : D.duration) ===
-									-1 && (j.results = []);
-							}
-							h({ ...a }), $((j) => (j ? { ...j, completed: !0 } : void 0));
-						})));
+					
 				},
 				[l, N, a, w, ht, ft, pt],
 			);

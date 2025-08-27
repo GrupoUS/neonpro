@@ -40,13 +40,10 @@ const A = ({
 		return (
 			s.useEffect(() => {
 				const g = (j) => {
-						!(w.current && j.target instanceof Node) ||
-							w.current.contains(j.target) ||
-							u === undefined ||
-							u();
+						
 					},
 					p = (j) => {
-						j.key === "Escape" && (u === undefined || u());
+						
 					};
 				return r
 					? (document.addEventListener("mousedown", g),
@@ -216,7 +213,7 @@ const A = ({
 				}),
 					m.initialize({}).catch(() => {});
 			} else {
-				c.some((l) => l.startsWith("blob:")) || a(c);
+				
 			}
 		}, []),
 			s.useEffect(() => {

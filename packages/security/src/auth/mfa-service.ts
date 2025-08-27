@@ -213,7 +213,7 @@ function generateHotp(secret: string, counter: number): string {
     | ((digest[offset + 1] & BYTE_MASK) << 16)
     | ((digest[offset + 2] & BYTE_MASK) << 8)
     | (digest[offset + 3] & BYTE_MASK);
-  digest[offset + HOTP_OFFSET_BYTES] & BYTE_MASK;
+  
 
   return (code % 10 ** TOTP_DIGITS).toString().padStart(TOTP_DIGITS, "0");
 }
