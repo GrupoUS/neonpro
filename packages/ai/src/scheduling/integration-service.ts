@@ -447,7 +447,7 @@ export class SchedulingIntegrationService {
         userId: updates.updatedBy || "",
         appointmentId,
         changes: updates,
-        aiDecision: !!conflictResolution,
+        aiDecision: Boolean(conflictResolution),
         confidence: conflictResolution?.confidence || 0.5,
         outcome: "success",
       });
@@ -674,12 +674,10 @@ export class SchedulingIntegrationService {
     _current: AIAppointment,
     updates: Partial<AIAppointment>,
   ): boolean {
-    return !!(
-      updates.scheduledStart
+    return Boolean(updates.scheduledStart
       || updates.scheduledEnd
       || updates.staffId
-      || updates.roomId
-    );
+      || updates.roomId);
   }
 
   private async processIndividualScheduling(

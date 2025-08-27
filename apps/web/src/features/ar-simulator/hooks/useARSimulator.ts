@@ -158,7 +158,7 @@ export function useARSimulator(patientId: string) {
   } = useQuery({
     queryKey: ["ar-simulations", patientId],
     queryFn: () => getSimulationsByPatient(patientId),
-    enabled: !!patientId,
+    enabled: Boolean(patientId),
   });
 
   // Query for current simulation details
@@ -169,7 +169,7 @@ export function useARSimulator(patientId: string) {
   } = useQuery({
     queryKey: ["ar-simulation", currentSimulation?.id],
     queryFn: () => getSimulation(currentSimulation?.id),
-    enabled: !!currentSimulation?.id,
+    enabled: Boolean(currentSimulation?.id),
     refetchInterval: isPolling ? 2000 : false, // Poll every 2 seconds when processing
   });
 

@@ -186,9 +186,9 @@ app.get("/health", async (context) => {
       environment: ENVIRONMENT,
       memory: process.memoryUsage(),
       services: {
-        auth: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+        auth: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
         database: dbHealth.connected,
-        supabase: !!process.env.SUPABASE_URL,
+        supabase: Boolean(process.env.SUPABASE_URL),
       },
       status: healthStatus,
       timestamp: new Date().toISOString(),

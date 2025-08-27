@@ -932,7 +932,7 @@ export class MonitoringService extends EnhancedAIService<
           < rule.cooldown_minutes * 60 * 1000,
     );
 
-    return !!existingAlert;
+    return Boolean(existingAlert);
   }
 
   private async triggerAlert(

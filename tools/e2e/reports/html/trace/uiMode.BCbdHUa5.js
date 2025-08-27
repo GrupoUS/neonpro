@@ -406,7 +406,7 @@ class te {
 		return new Date(this._startTime);
 	}
 	set startTime(t) {
-		this._startTime = +t;
+		this._startTime = Number(t);
 	}
 	get attachments() {
 		let t, e;
@@ -448,7 +448,7 @@ class ee {
 		return new Date(this._startTime);
 	}
 	set startTime(t) {
-		this._startTime = +t;
+		this._startTime = Number(t);
 	}
 }
 const se = {
@@ -1302,7 +1302,7 @@ const he = Wt,
 									: undefined,
 							],
 						}),
-						!!f.duration &&
+						Boolean(f.duration) &&
 							f.status !== "skipped" &&
 							o.jsx("div", {
 								id: M,
@@ -1317,7 +1317,7 @@ const he = Wt,
 									icon: "play",
 									title: "Run",
 									onClick: () => J(f),
-									disabled: !!c && !c.completed,
+									disabled: Boolean(c) && !c.completed,
 								}),
 								o.jsx(F, {
 									icon: "go-to-file",
@@ -1647,7 +1647,7 @@ const wt = navigator.platform === "MacIntel",
 					m.suites.find((U) => U.title === P) || y.delete(P);
 				}
 				for (const P of m.suites) {
-					y.has(P.title) || y.set(P.title, !!k?.includes(P.title));
+					y.has(P.title) || y.set(P.title, Boolean(k?.includes(P.title)));
 				}
 				!k &&
 					y.size &&

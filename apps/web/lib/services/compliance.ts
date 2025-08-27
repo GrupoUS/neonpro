@@ -208,7 +208,7 @@ export class ComplianceService {
       .eq("id", tenantId)
       .single();
 
-    return !!data?.data_retention_policy;
+    return Boolean(data?.data_retention_policy);
   }
 
   private async verifyBreachNotificationProcess(

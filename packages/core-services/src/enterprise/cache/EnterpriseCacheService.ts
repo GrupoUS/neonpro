@@ -284,7 +284,7 @@ export class EnterpriseCacheService {
           ttl: 5 * 60 * 1000, // 5 minutes
         },
         redis: {
-          enabled: !!process.env.REDIS_URL,
+          enabled: Boolean(process.env.REDIS_URL),
           host: process.env.REDIS_HOST || "localhost",
           port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
           ttl: 30 * 60 * 1000, // 30 minutes

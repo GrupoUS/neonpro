@@ -136,9 +136,7 @@ async function checkDatabase(): Promise<HealthStatus> {
   try {
     // Simulate database connectivity check
     // In production, this would use Supabase MCP to validate connection
-    const hasSupabaseConfig = !!(
-      process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY
-    );
+    const hasSupabaseConfig = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
 
     if (!hasSupabaseConfig) {
       return {
@@ -169,9 +167,7 @@ async function checkAIServices(): Promise<HealthStatus> {
   const startTime = performance.now();
   try {
     // Validate AI service configuration
-    const hasAIConfig = !!(
-      process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY
-    );
+    const hasAIConfig = Boolean(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY);
 
     return {
       status: hasAIConfig ? "healthy" : "degraded",
@@ -234,7 +230,7 @@ async function checkSecurityStatus(): Promise<HealthStatus> {
     const securityChecks = {
       httpsEnabled: true,
       corsConfigured: true,
-      authConfigured: !!process.env.JWT_SECRET,
+      authConfigured: Boolean(process.env.JWT_SECRET),
       environmentSecured: process.env.NODE_ENV === "production",
     };
 

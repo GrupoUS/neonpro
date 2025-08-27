@@ -30,7 +30,7 @@ export function RouterProvider({ children }: RouterProviderProps) {
         queryClient,
         auth: {
           user: auth.user,
-          isAuthenticated: !!auth.user && !auth.loading,
+          isAuthenticated: Boolean(auth.user) && !auth.loading,
           hasRole: (roles) => {
             if (!auth.user) {
               return false;
@@ -167,7 +167,7 @@ export function useRoutePermissions() {
     },
 
     canAccessSettings: () => {
-      return !!user;
+      return Boolean(user);
     },
 
     canAccessClinicSettings: () => {

@@ -239,7 +239,7 @@ class AuthTokenManager {
   }
 
   shouldRefresh(): boolean {
-    return !!this.refreshToken && !this.isTokenValid();
+    return Boolean(this.refreshToken) && !this.isTokenValid();
   }
 
   clearTokens() {
@@ -660,7 +660,7 @@ export function createApiClient(config: Partial<ApiClientConfig> = {}) {
 
       clearTokens: () => tokenManager.clearTokens(),
 
-      isAuthenticated: () => !!tokenManager.getAccessToken(),
+      isAuthenticated: () => Boolean(tokenManager.getAccessToken()),
 
       shouldRefresh: () => tokenManager.shouldRefresh(),
 

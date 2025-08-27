@@ -112,7 +112,7 @@ export function useAppointment(appointmentId: string | undefined) {
 
       return result.data as Appointment;
     },
-    enabled: !!appointmentId,
+    enabled: Boolean(appointmentId),
     staleTime: 1000 * 60, // 1 minute
     gcTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -367,12 +367,10 @@ export function useAvailability(params: AvailabilitySearch | undefined) {
 
       return result.data as TimeSlot[];
     },
-    enabled: !!(
-      params?.professionalId
+    enabled: Boolean(params?.professionalId
       && params?.startDate
       && params?.endDate
-      && params?.duration
-    ),
+      && params?.duration),
     staleTime: 1000 * 30, // 30 seconds
     gcTime: 1000 * 60, // 1 minute
   });

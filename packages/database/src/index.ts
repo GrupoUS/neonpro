@@ -168,7 +168,7 @@ export const dbUtils = {
       'NEXT_PUBLIC_SUPABASE_ANON_KEY'
     ];
     
-    return required.every(env => !!process.env[env]);
+    return required.every(env => Boolean(process.env[env]));
   },
   
   // Connection testing

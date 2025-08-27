@@ -19,7 +19,7 @@ export default defineConfig({
 
   // Test execution settings
   fullyParallel: false, // Sequential for consistent visual capture
-  forbidOnly: !!process.env.CI,
+  forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
   workers: 1, // Single worker for visual consistency
 

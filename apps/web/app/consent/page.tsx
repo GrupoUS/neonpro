@@ -1507,7 +1507,7 @@ export default function ConsentManagementPage() {
             aria-describedby="consent-details-description"
             aria-labelledby="consent-details-title"
             onOpenChange={() => setSelectedConsent(undefined)}
-            open={!!selectedConsent}
+            open={Boolean(selectedConsent)}
           >
             <DialogContent
               aria-modal="true"

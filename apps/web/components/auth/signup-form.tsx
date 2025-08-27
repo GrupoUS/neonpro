@@ -358,7 +358,7 @@ export function SignupForm() {
           <Checkbox
             checked={formData.lgpdConsent}
             id="lgpdConsent"
-            onCheckedChange={(checked) => handleInputChange("lgpdConsent", !!checked)}
+            onCheckedChange={(checked) => handleInputChange("lgpdConsent", Boolean(checked))}
           />
           <div className="text-sm leading-5">
             <label className="cursor-pointer" htmlFor="lgpdConsent">
@@ -381,7 +381,7 @@ export function SignupForm() {
           <Checkbox
             checked={formData.terms}
             id="terms"
-            onCheckedChange={(checked) => handleInputChange("terms", !!checked)}
+            onCheckedChange={(checked) => handleInputChange("terms", Boolean(checked))}
           />
           <div className="text-sm leading-5">
             <label className="cursor-pointer" htmlFor="terms">
