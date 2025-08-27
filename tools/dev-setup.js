@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * NeonPro Healthcare Development Setup Script
  * Sets up development environment with healthcare compliance validation

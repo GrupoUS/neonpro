@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * VIBECODE V1.0 - Supabase Configuration Validator

@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 
 /**
  * NeonPro Healthcare Platform - Final Validation Test Runner

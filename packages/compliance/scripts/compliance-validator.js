@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * NeonPro Healthcare Compliance Validation Script
  * Validates LGPD, ANVISA, and CFM compliance readiness

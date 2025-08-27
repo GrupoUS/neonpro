@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * 🛡️ NEONPRO SECURITY SCANNER
  * Detecta API keys expostas antes de commits

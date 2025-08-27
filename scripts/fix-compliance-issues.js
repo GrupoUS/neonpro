@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Fix LGPD and Healthcare Table Issues Script

@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 // Behavioral CRM System Validation Script
 // Comprehensive testing of behavioral analytics, personalization, and campaign automation

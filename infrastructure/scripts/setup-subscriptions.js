@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script de Setup Automático do Sistema de Assinaturas

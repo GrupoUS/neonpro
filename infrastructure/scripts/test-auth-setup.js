@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script para testar a configuração de autenticação

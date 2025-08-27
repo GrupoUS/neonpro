@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script de diagnóstico para problemas de produção no Vercel

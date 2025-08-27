@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * NeonPro Healthcare Development Health Check
  * Validates development environment health and compliance

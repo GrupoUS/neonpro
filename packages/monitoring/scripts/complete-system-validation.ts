@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 
 /**
  * Complete System Validation Script

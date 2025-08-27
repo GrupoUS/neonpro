@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * FASE 4 Component Validation Script
  * Validates all frontend components for compliance and functionality

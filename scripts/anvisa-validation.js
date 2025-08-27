@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * ANVISA Compliance Validation Script

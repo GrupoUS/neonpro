@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Script para testar configurações de produção

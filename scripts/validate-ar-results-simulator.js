@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 // =============================================================================
 // 🎭 AR RESULTS SIMULATOR VALIDATION SCRIPT

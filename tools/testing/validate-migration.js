@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Migration Validation Script
  * Validates that all test files have been successfully migrated

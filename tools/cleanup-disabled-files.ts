@@ -1,4 +1,3 @@
-#!/usr/bin/env tsx
 
 /**
  * Automated cleanup script for .disabled files

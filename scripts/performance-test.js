@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 /**
  * Performance Testing Suite for NeonPro
