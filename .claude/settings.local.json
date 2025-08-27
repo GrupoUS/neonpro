@@ -89,9 +89,7 @@
       "mcp__vercel__get_project",
       "mcp__vercel__list_teams",
       "mcp__vercel__list_projects",
-      "mcp__archon__update_task",
-      "mcp__supabase-mcp__generate_typescript_types",
-      "mcp__vercel__search_vercel_documentation"
+      "mcp__archon__update_task"
     ],
     "deny": [
       "Edit",

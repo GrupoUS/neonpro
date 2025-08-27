@@ -1,5 +1,4 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
-  "projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB"
+	"projectId": "prj_64FCmux5AJquGaiteZ0h8tbV55iB",
+	"orgId": "team_bjVDLqo42Gb3p28RelxJia6x"
 }

@@ -2,6 +2,18 @@
 
 **Centralized AI agent instructions with redirection to authoritative sources.**
 
+## 🎯 **Primary Reference**
+
+**For complete workflow and guidelines**: See [`core-workflow.md`](core-workflow.md)
+
+## 🤖 **Agent-Specific Configurations**
+
+Choose your AI assistant configuration:
+
+- **Claude (Anthropic)**: [`agents/claude-config.md`](agents/claude-config.md)
+- **GitHub Copilot**: [`agents/copilot-config.md`](agents/copilot-config.md)  
+- **Trae**: [`agents/trae-config.md`](agents/trae-config.md)
+
 ## 📚 **Essential References**
 
 Instead of duplicating content, refer to these authoritative sources:
@@ -12,9 +24,6 @@ Instead of duplicating content, refer to these authoritative sources:
 - **📁 Source Structure**: [`docs/architecture/source-tree.md`](../../docs/architecture/source-tree.md)
 - **🎨 Coding Standards**: [`docs/architecture/coding-standards.md`](../../docs/architecture/coding-standards.md)
 
-
-## 🎯 **Primary Reference**
-- **🤖 AI Agents**: [`core-workflow.md`](core-workflow.md) - Master workflow orchestrator with complete VIBECODER integration, contextual agent specialization matrix, optimized agent loading, cognitive intelligence, progressive quality standards, constitutional excellence, and bilingual accessibility - Ultimate single source of truth for all project execution with intelligent contextual coordination
 ---
 
 > **📝 Note**: This file provides minimal configuration. All detailed rules, workflows, and standards are maintained in the referenced documentation to avoid duplication and ensure consistency.

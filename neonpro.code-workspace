@@ -1,10 +1,7 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"oxc.enable": true
-	}
+    "folders": [
+        {
+            "path": "."
+        }
+    ]
 }

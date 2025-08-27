@@ -7,7 +7,7 @@
       "command": "pnpm",
       "args": ["format"],
       "group": "build",
-      "detail": "Format all code using dprint (respects dprint.json config and ignores)",
+      "detail": "Format all code using dprint",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -15,12 +15,12 @@
       }
     },
     {
-      "label": "🔍 Check Format", 
-      "type": "shell",
+      "label": "🔍 Check Format",
+      "type": "shell", 
       "command": "pnpm",
       "args": ["format:check"],
       "group": "build",
-      "detail": "Check code formatting without making changes (dprint check)",
+      "detail": "Check code formatting without making changes",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -31,9 +31,9 @@
       "label": "🔍 Lint Code",
       "type": "shell",
       "command": "pnpm", 
-      "args": ["lint"],
+      "args": ["lint:oxlint"],
       "group": "build",
-      "detail": "Run oxlint to check for linting issues (respects .oxlintrc.json config and ignores)",
+      "detail": "Run oxlint to check for linting issues",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -44,7 +44,7 @@
       "label": "🔧 Fix Lint Issues",
       "type": "shell",
       "command": "pnpm",
-      "args": ["lint:fix"],
+      "args": ["oxlint:fix"],
       "group": "build", 
       "detail": "Automatically fix linting issues with oxlint",
       "presentation": {
@@ -59,7 +59,7 @@
       "command": "pnpm",
       "args": ["type-check"],
       "group": "build",
-      "detail": "Run TypeScript type checking (tsc --noEmit)",
+      "detail": "Run TypeScript type checking",
       "presentation": {
         "echo": true,
         "reveal": "always", 
@@ -83,80 +83,15 @@
       }
     },
     {
-      "label": "🔧 Fix All Issues",
+      "label": "🧪 Run Tests",
       "type": "shell",
-      "command": "pnpm",
-      "args": ["ci:fix"],
-      "group": "build",
-      "detail": "Automatically fix all issues (format + lint fix + type check)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🌳 Trunk Check",
-      "type": "shell",
-      "command": "powershell",
-      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1", "check"],
-      "group": "build",
-      "detail": "Run Trunk multi-linter check (includes dprint, prettier, security checks)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🌳 Trunk Format",
-      "type": "shell",
-      "command": "powershell",
-      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1", "fmt"],
-      "group": "build",
-      "detail": "Format code using Trunk (dprint + prettier + other formatters)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🌳 Trunk Fix",
-      "type": "shell",
-      "command": "powershell",
-      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1", "check", "--fix"],
-      "group": "build",
-      "detail": "Auto-fix issues using Trunk (security, formatting, linting)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "⚡ Super Fix All",
-      "type": "shell",
-      "command": "powershell",
-      "args": ["-ExecutionPolicy", "ByPass", "-Command", "c:\\Users\\Mauri\\.cache\\trunk\\launcher\\trunk.ps1 fmt; if ($LASTEXITCODE -eq 0) { pnpm ci:fix }"],
-      "group": "build",
-      "detail": "Ultimate fix: Trunk format + dprint + oxlint + type check",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 Run Unit Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:unit"],
+      "command": "npx",
+      "args": ["vitest", "run", "--reporter=verbose"],
       "group": {
         "kind": "test",
         "isDefault": true
       },
-      "detail": "Run unit tests using Vitest (respects vitest.config.ts)",
+      "detail": "Run all tests using Vitest with verbose output",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -164,12 +99,12 @@
       }
     },
     {
-      "label": "🧪 Watch Unit Tests",
+      "label": "🧪 Watch Tests",
       "type": "shell",
-      "command": "pnpm",
-      "args": ["test:unit:watch"],
+      "command": "npx",
+      "args": ["vitest", "--watch", "--reporter=verbose"],
       "group": "test",
-      "detail": "Watch and run unit tests using Vitest",
+      "detail": "Watch and run tests using Vitest",
       "isBackground": true,
       "presentation": {
         "echo": true,
@@ -178,12 +113,12 @@
       }
     },
     {
-      "label": "🧪 Unit Tests UI",
+      "label": "🧪 Test Current File",
       "type": "shell",
-      "command": "pnpm",
-      "args": ["test:unit:ui"],
+      "command": "npx",
+      "args": ["vitest", "run", "${relativeFile}", "--reporter=verbose"],
       "group": "test",
-      "detail": "Run unit tests with Vitest UI interface",
+      "detail": "Run tests in the currently active file",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -193,23 +128,10 @@
     {
       "label": "📊 Test Coverage",
       "type": "shell",
-      "command": "pnpm", 
-      "args": ["test:unit:coverage"],
+      "command": "npx", 
+      "args": ["vitest", "run", "--coverage"],
       "group": "test",
-      "detail": "Run unit tests with coverage report",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 Integration Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:integration"],
-      "group": "test",
-      "detail": "Run integration tests using Vitest",
+      "detail": "Run tests with coverage report",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -219,23 +141,10 @@
     {
       "label": "🎭 E2E Tests",
       "type": "shell",
-      "command": "pnpm",
-      "args": ["test:e2e"],
+      "command": "npx",
+      "args": ["playwright", "test", "--reporter=html"],
       "group": "test",
-      "detail": "Run all E2E tests using Playwright (respects playwright.config.ts)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🎭 E2E Tests (UI)",
-      "type": "shell", 
-      "command": "pnpm",
-      "args": ["test:e2e:ui"],
-      "group": "test",
-      "detail": "Run E2E tests with Playwright UI interface",
+      "detail": "Run all E2E tests using Playwright with HTML report",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -245,8 +154,8 @@
     {
       "label": "🎭 E2E Tests (Headed)",
       "type": "shell", 
-      "command": "pnpm",
-      "args": ["test:e2e:headed"],
+      "command": "npx",
+      "args": ["playwright", "test", "--headed"],
       "group": "test",
       "detail": "Run E2E tests in headed mode (visible browser)",
       "presentation": {
@@ -258,36 +167,10 @@
     {
       "label": "🎭 E2E Tests (Debug)",
       "type": "shell",
-      "command": "pnpm", 
-      "args": ["test:e2e:debug"],
+      "command": "npx", 
+      "args": ["playwright", "test", "--debug"],
       "group": "test",
-      "detail": "Run E2E tests in debug mode (interactive debugging)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 Safe Test Suite",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:safe"],
-      "group": "test",
-      "detail": "Run safe test suite (CI check + safe unit tests)",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "panel": "shared"
-      }
-    },
-    {
-      "label": "🧪 All Tests",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:all"],
-      "group": "test",
-      "detail": "Run all tests (unit + integration + E2E)",
+      "detail": "Run E2E tests in debug mode",
       "presentation": {
         "echo": true,
         "reveal": "always",
