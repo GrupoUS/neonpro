@@ -81,11 +81,16 @@ export async function PATCH(
     );
 
     return NextResponse.json(tracking);
+<<<<<<< Updated upstream
+  } catch (error: any) {
+    if (error.name === "ZodError") {
+=======
   } catch (error: unknown) {
-    const errorObj = error as { name?: string; errors?: unknown };
+    const errorObj = error as { name?: string; errors?: unknown; };
     if (errorObj.name === "ZodError") {
+>>>>>>> Stashed changes
       return NextResponse.json(
-        { error: "Invalid request data", details: errorObj.errors },
+        { error: "Invalid request data", details: error.errors },
         {
           status: 400,
         },

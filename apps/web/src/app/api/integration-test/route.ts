@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       backendHealth: data,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     console.error("Integration test failed:", error);
 
     return NextResponse.json(

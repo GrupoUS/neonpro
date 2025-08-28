@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       message: "Prediction feedback recorded successfully",
       predictionCorrect: wasCorrect,
     });
-  } catch (error) {
+  } catch (_error) {
     // console.error("Error processing prediction feedback:", error);
     return NextResponse.json(
       { error: "Failed to process feedback" },

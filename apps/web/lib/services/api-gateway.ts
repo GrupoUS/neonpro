@@ -207,7 +207,7 @@ export class CircuitBreaker {
       const result = await operation();
       this.onSuccess(serviceKey);
       return result;
-    } catch (error) {
+    } catch (_error) {
       this.onFailure(serviceKey);
       throw error;
     }
@@ -408,7 +408,7 @@ export class RequestRouter {
         statusText: response.statusText,
         headers: responseHeaders,
       });
-    } catch (error) {
+    } catch (_error) {
       if (error.name === "AbortError") {
         return NextResponse.json(
           {

@@ -11,6 +11,7 @@
 import { LoginForm } from "@/app/login/login-form";
 import { useSearch } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
+import Link from "next/link";
 
 export function LoginPage() {
   const search = useSearch({ from: "/login" });
@@ -54,19 +55,19 @@ export function LoginPage() {
           <LoginForm redirectUrl={redirectUrl} />
           <p className="px-8 text-center text-muted-foreground text-sm">
             Ao clicar em continuar, você concorda com nossos{" "}
-            <a
+            <Link
               className="underline underline-offset-4 hover:text-primary"
               href="/terms"
             >
               Termos de Serviço
-            </a>{" "}
+            </Link>{" "}
             e{" "}
-            <a
+            <Link
               className="underline underline-offset-4 hover:text-primary"
               href="/privacy"
             >
               Política de Privacidade
-            </a>
+            </Link>
             .
           </p>
         </div>

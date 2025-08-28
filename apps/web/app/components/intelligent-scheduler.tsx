@@ -15,7 +15,6 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface IntelligentSchedulerProps {
-  tenantId: string;
   patientId?: string;
   treatmentTypes: TreatmentType[];
   staff: Staff[];
@@ -30,7 +29,6 @@ interface IntelligentSchedulerProps {
  * Target: 60% scheduling time reduction with sub-second response
  */
 export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
-  tenantId,
   patientId,
   treatmentTypes,
   staff,
@@ -446,22 +444,15 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
               const isRecommended = slot.optimizationScore > 0.8;
 
               return (
-                <div
-                  className={`cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
+                <button
+                  className={`w-full cursor-pointer rounded-lg border p-4 transition-all hover:shadow-md ${
                     isRecommended
                       ? "border-green-400 bg-green-50 ring-2 ring-green-200"
                       : "border-gray-200 hover:border-blue-300"
                   }`}
                   key={slot.id}
                   onClick={() => scheduleAppointment(slot)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      scheduleAppointment(slot);
-                    }
-                  }}
-                  role="button"
-                  tabIndex={0}
+                  type="button"
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <div className="font-medium text-gray-900">
@@ -503,7 +494,7 @@ export const IntelligentScheduler: React.FC<IntelligentSchedulerProps> = ({
                       {(slot.optimizationScore * 100).toFixed(0)}% match
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>

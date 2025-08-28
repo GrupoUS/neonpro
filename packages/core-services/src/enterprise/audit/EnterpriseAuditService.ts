@@ -98,6 +98,38 @@ export class EnterpriseAuditService {
    * Log audit event with immutable trail
    */
   async logEvent(event: AuditEvent): Promise<void> {
+    return this.log(event);
+  }
+
+  /**
+   * Alias for logEvent - for backward compatibility
+   */
+  async log(event: AuditEvent): Promise<void>;
+  async log(eventType: string, data: unknown): Promise<void>;
+  async log(eventOrType: AuditEvent | string, data?: unknown): Promise<void> {
+    let event: AuditEvent;
+    
+    if (typeof eventOrType === 'string') {
+      event = {
+        id: crypto.randomUUID(),
+        timestamp: new Date(),
+        userId: 'system',
+        action: eventOrType,
+        resource: 'unknown',
+        outcome: 'success',
+        details: data
+      };
+    } else {
+      event = eventOrType;
+    }
+
+    return this._logEvent(event);
+  }
+
+  /**
+   * Internal log implementation
+   */
+  private async _logEvent(event: AuditEvent): Promise<void> {
     try {
       const category = this.categorizeEvent(event);
       const policy = this.getRetentionPolicy(category);

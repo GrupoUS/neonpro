@@ -1,6 +1,5 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalPassThroughEnv": ["NODE_ENV", "VERCEL_ENV", "CI"],
   "globalDependencies": [
     "**/.env.*local",
     "**/package.json",
@@ -31,9 +30,16 @@
   "remoteCache": {
     "signature": true
   },
-  "pipeline": {
+  "globalPassThroughEnv": [
+    "CI",
+    "NODE_ENV",
+    "VERCEL_ENV"
+  ],
+  "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "styles/**/*.{css,scss}",
@@ -42,31 +48,38 @@
         "tsconfig.json",
         "next.config.*",
         "tailwind.config.*",
-        "!**/__tests__/**",
-        "!**/*.test.*",
-        "!**/*.spec.*"
+        "!*/**/__tests__/**",
+        "!*/**/*.test.*",
+        "!*/**/*.spec.*"
       ],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "dist/**",
+        "build/**"
+      ],
       "env": [
         "NODE_ENV",
         "NEXT_PUBLIC_SUPABASE_URL",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY",
         "SUPABASE_SERVICE_ROLE_KEY"
-      ]
+      ],
+      "outputLogs": "hash-only"
     },
-
-    // Healthcare Foundation Packages (Build Order Critical)
     "@neonpro/types#build": {
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/database#build": {
-      "dependsOn": ["@neonpro/types#build"],
+      "dependsOn": [
+        "@neonpro/types#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "prisma/**/*.prisma",
@@ -75,39 +88,53 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**", "prisma/generated/**"]
+      "outputs": [
+        "dist/**",
+        "prisma/generated/**"
+      ]
     },
-
     "@neonpro/cache#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/audit-trail#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/compliance#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/audit-trail#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/audit-trail#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/constitutional-layer#build": {
       "dependsOn": [
         "@neonpro/types#build",
@@ -119,71 +146,99 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/auth#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/shared#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/auth#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/auth#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/monitoring#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/shared#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/shared#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/devops#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/monitoring#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/monitoring#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
-    // UI and Domain Packages
     "@neonpro/ui#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/shared#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/shared#build"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "styles/**/*.{css,scss}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/domain#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/shared#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/shared#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/ai#build": {
       "dependsOn": [
         "@neonpro/types#build",
@@ -195,40 +250,51 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/core-services#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/shared#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/shared#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
-    // Additional Core Packages
     "@neonpro/config#build": {
-      "dependsOn": ["@neonpro/types#build"],
+      "dependsOn": [
+        "@neonpro/types#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/utils#build": {
-      "dependsOn": ["@neonpro/types#build"],
+      "dependsOn": [
+        "@neonpro/types#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/security#build": {
       "dependsOn": [
         "@neonpro/types#build",
@@ -240,30 +306,41 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/integrations#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build", "@neonpro/auth#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/database#build",
+        "@neonpro/auth#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/brazilian-healthcare-ui#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/ui#build", "@neonpro/shared#build"],
+      "dependsOn": [
+        "@neonpro/types#build",
+        "@neonpro/ui#build",
+        "@neonpro/shared#build"
+      ],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "styles/**/*.{css,scss}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/health-dashboard#build": {
       "dependsOn": [
         "@neonpro/types#build",
@@ -277,9 +354,10 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/enterprise#build": {
       "dependsOn": [
         "@neonpro/types#build",
@@ -293,67 +371,98 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
     "@neonpro/docs#build": {
-      "dependsOn": ["@neonpro/types#build"],
+      "dependsOn": [
+        "@neonpro/types#build"
+      ],
       "inputs": [
         "src/**/*.{ts,js}",
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["dist/**"]
+      "outputs": [
+        "dist/**"
+      ]
     },
-
-    // Quality Tasks
     "lint": {
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"],
-      "outputs": []
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "biome.jsonc"
+      ],
+      "outputs": [],
+      "outputLogs": "new-only"
     },
-
     "type-check": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "**/*.{ts,tsx}",
         "**/tsconfig.json"
       ],
-      "outputs": ["**/*.tsbuildinfo"]
+      "outputs": [
+        "**/*.tsbuildinfo"
+      ],
+      "outputLogs": "errors-only"
     },
-
     "format": {
-      "inputs": ["**/*.{ts,tsx,js,jsx,json,md}", "biome.jsonc"],
-      "outputs": []
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx,json,md}",
+        "biome.jsonc"
+      ],
+      "outputs": [],
+      "outputLogs": "new-only"
     },
-
-    // Testing Tasks
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "inputs": [
         "**/*.test.*",
         "**/*.spec.*",
         "**/vitest.config.*"
       ],
-      "outputs": ["coverage/**", "tools/testing/reports/**"]
+      "outputs": [
+        "coverage/**",
+        "tools/testing/reports/**"
+      ],
+      "outputLogs": "full"
     },
-
     "test:unit": {
-      "dependsOn": ["build"],
-      "inputs": ["**/*.test.*", "**/*.spec.*", "vitest.config.*"],
-      "outputs": ["coverage/**"]
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "vitest.config.*"
+      ],
+      "outputs": [
+        "coverage/**"
+      ]
     },
-
     "test:e2e": {
-      "dependsOn": ["build"],
-      "inputs": ["**/*.e2e.*", "**/e2e/**", "playwright.config.*"],
-      "outputs": ["playwright-report/**", "test-results/**"]
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "**/*.e2e.*",
+        "**/e2e/**",
+        "playwright.config.*"
+      ],
+      "outputs": [
+        "playwright-report/**",
+        "test-results/**"
+      ]
     },
-
     "test:e2e:install": {
       "cache": false,
       "outputs": []
     },
-
     "test:healthcare": {
       "dependsOn": [
         "@neonpro/compliance#build",
@@ -366,10 +475,10 @@
         "**/anvisa*.test.*",
         "**/lgpd*.spec.*"
       ],
-      "outputs": ["coverage/healthcare/**"]
+      "outputs": [
+        "coverage/healthcare/**"
+      ]
     },
-
-    // Healthcare Compliance Tasks
     "compliance:validate": {
       "dependsOn": [
         "@neonpro/compliance#build",
@@ -381,31 +490,52 @@
         "packages/audit-trail/src/**/*.{ts,js}",
         "packages/constitutional-layer/src/**/*.{ts,js}"
       ],
-      "outputs": ["compliance-reports/**"]
+      "outputs": [
+        "compliance-reports/**"
+      ]
     },
-
     "compliance:lgpd": {
-      "dependsOn": ["@neonpro/compliance#build"],
-      "inputs": ["packages/compliance/src/lgpd/**/*.{ts,js}"],
-      "outputs": ["compliance-reports/lgpd/**"]
+      "dependsOn": [
+        "@neonpro/compliance#build"
+      ],
+      "inputs": [
+        "packages/compliance/src/lgpd/**/*.{ts,js}"
+      ],
+      "outputs": [
+        "compliance-reports/lgpd/**"
+      ]
     },
-
     "compliance:anvisa": {
-      "dependsOn": ["@neonpro/compliance#build"],
-      "inputs": ["packages/compliance/src/anvisa/**/*.{ts,js}"],
-      "outputs": ["compliance-reports/anvisa/**"]
+      "dependsOn": [
+        "@neonpro/compliance#build"
+      ],
+      "inputs": [
+        "packages/compliance/src/anvisa/**/*.{ts,js}"
+      ],
+      "outputs": [
+        "compliance-reports/anvisa/**"
+      ]
     },
-
-    // CI/CD Tasks
     "ci-check": {
-      "dependsOn": ["lint", "type-check", "test:healthcare"],
-      "inputs": ["**/*.{ts,tsx,js,jsx}", "biome.jsonc"],
-      "outputs": []
+      "dependsOn": [
+        "lint",
+        "type-check",
+        "test:healthcare"
+      ],
+      "inputs": [
+        "**/*.{ts,tsx,js,jsx}",
+        "biome.jsonc"
+      ],
+      "outputs": [],
+      "outputLogs": "full"
     },
-
-    // Deployment Tasks (Healthcare-Optimized)
     "deploy:blue-green": {
-      "dependsOn": ["@neonpro/devops#build", "build", "test:healthcare", "compliance:validate"],
+      "dependsOn": [
+        "@neonpro/devops#build",
+        "build",
+        "test:healthcare",
+        "compliance:validate"
+      ],
       "cache": false,
       "inputs": [
         "packages/devops/src/deployment/**/*.{ts,js}",
@@ -413,22 +543,27 @@
       ],
       "outputs": []
     },
-
     "deploy:staging": {
-      "dependsOn": ["deploy:blue-green"],
+      "dependsOn": [
+        "deploy:blue-green"
+      ],
       "cache": false,
       "outputs": []
     },
-
     "deploy:production": {
-      "dependsOn": ["deploy:blue-green", "test:healthcare", "compliance:validate"],
+      "dependsOn": [
+        "deploy:blue-green",
+        "test:healthcare",
+        "compliance:validate"
+      ],
       "cache": false,
       "outputs": []
     },
-
-    // Monitoring and Health Tasks
     "health:check": {
-      "dependsOn": ["@neonpro/devops#build", "@neonpro/monitoring#build"],
+      "dependsOn": [
+        "@neonpro/devops#build",
+        "@neonpro/monitoring#build"
+      ],
       "cache": false,
       "inputs": [
         "packages/devops/src/deployment/**/*.{ts,js}",
@@ -436,33 +571,43 @@
       ],
       "outputs": []
     },
-
     "monitoring:start": {
-      "dependsOn": ["@neonpro/monitoring#build"],
+      "dependsOn": [
+        "@neonpro/monitoring#build"
+      ],
       "cache": false,
       "persistent": true
     },
-
-    // Supabase Tasks (Optimized for Healthcare)
     "supabase:build": {
-      "dependsOn": ["@neonpro/database#build"],
+      "dependsOn": [
+        "@neonpro/database#build"
+      ],
       "inputs": [
         "supabase/**/*.sql",
         "packages/database/prisma/**/*.prisma",
         "infrastructure/database/**/*.sql"
       ],
-      "outputs": ["supabase/generated/**"],
-      "env": ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "DATABASE_URL"]
+      "outputs": [
+        "supabase/generated/**"
+      ],
+      "env": [
+        "SUPABASE_URL",
+        "SUPABASE_SERVICE_ROLE_KEY",
+        "DATABASE_URL"
+      ]
     },
-
     "supabase:generate": {
-      "dependsOn": ["supabase:build"],
+      "dependsOn": [
+        "supabase:build"
+      ],
       "cache": true,
-      "inputs": ["packages/database/prisma/schema.prisma"],
-      "outputs": ["packages/database/prisma/generated/**"]
+      "inputs": [
+        "packages/database/prisma/schema.prisma"
+      ],
+      "outputs": [
+        "packages/database/prisma/generated/**"
+      ]
     },
-
-    // Development Tasks
     "dev": {
       "cache": false,
       "persistent": true,
@@ -473,7 +618,6 @@
         "SUPABASE_SERVICE_ROLE_KEY"
       ]
     },
-
     "clean": {
       "cache": false,
       "outputs": []

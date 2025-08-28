@@ -19,17 +19,14 @@ import {
   Brain,
   Calendar,
   CheckCircle,
-  CheckCircle2,
   Clock,
   Filter,
   Info,
-  Minus,
   RefreshCw,
   Shield,
   Target,
   TrendingDown,
   Users,
-  XCircle,
   Zap,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -408,8 +405,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
         description:
           `${formattedData.length} pacientes analisados. ${dashboardStats.predictedNoShows} em alto risco.`,
       });
-    } catch (error) {
-      // console.error("Error loading predictions:", error);
+    } catch (_error) {
+      // console.error("Error loading predictions:", _error);
 
       // Fallback to mock data if API is not available
       const mockData = generateMockData();
@@ -501,8 +498,8 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
           "Continue regular monitoring",
         ],
       });
-    } catch (error) {
-      // console.error("Failed to load ML pipeline data:", error);
+    } catch (_error) {
+      // console.error("Failed to load ML pipeline data:", _error);
     }
   }, []);
 
@@ -574,58 +571,6 @@ export function AntiNoShowDashboard({ className }: AntiNoShowDashboardProps) {
   });
 
   // Risk category styling helper (fix function structure)
-  const getRiskCategoryStyle = (risk: string) => {
-    switch (risk) {
-      case "high": {
-        return "destructive";
-      }
-      case "medium": {
-        return "secondary";
-      }
-      case "low": {
-        return "outline";
-      }
-      default: {
-        return "default";
-      }
-    }
-  };
-
-  // Risk category icon helper
-  const getRiskCategoryIcon = (risk: string) => {
-    switch (risk) {
-      case "high": {
-        return <AlertTriangle className="h-4 w-4" />;
-      }
-      case "medium": {
-        return <AlertCircle className="h-4 w-4" />;
-      }
-      case "low": {
-        return <CheckCircle2 className="h-4 w-4" />;
-      }
-      default: {
-        return <Minus className="h-4 w-4" />;
-      }
-    }
-  };
-
-  const getRiskLevelText = (level: string) => {
-    switch (level) {
-      case "high": {
-        return "Alto";
-      }
-      case "medium": {
-        return "Médio";
-      }
-      case "low": {
-        return "Baixo";
-      }
-      default: {
-        return "Indefinido";
-      }
-    }
-  };
-
   return (
     <div className={cn("space-y-6", className)}>
       {/* Header */}

@@ -154,7 +154,7 @@ export const executeWithRetry = async <T>(
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       lastError = error;
 
       if (attempt < maxRetries) {

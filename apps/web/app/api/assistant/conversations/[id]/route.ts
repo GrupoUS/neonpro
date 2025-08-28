@@ -92,7 +92,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     // Preparar dados para atualização
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (title !== undefined) {
       updateData.title = title;
     }

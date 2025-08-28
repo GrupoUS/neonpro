@@ -358,7 +358,7 @@ async function getDashboardAnalytics(
     conversions,
     summary: {
       totalRevenue: revenue?.reduce(
-        (sum: number, item: any) => sum + (item.revenue || 0),
+        (sum: number, item: unknown) => sum + ((item as { revenue?: number; })?.revenue || 0),
         0,
       ) || 0,
       totalSubscriptions: subscriptions?.length || 0,

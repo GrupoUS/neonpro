@@ -45,7 +45,7 @@ export function useRealtimeAppointments(clinicId?: string) {
         throw error;
       }
       setAppointments(data || []);
-    } catch (error) {
+    } catch (_error) {
       setError(
         error instanceof Error ? error.message : "Failed to fetch appointments",
       );

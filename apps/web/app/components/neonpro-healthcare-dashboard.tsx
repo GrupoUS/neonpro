@@ -69,7 +69,7 @@ import {
   Zap,
 } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useReducer, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 
 // Constants for time calculations
 const MILLISECONDS_PER_SECOND = 1000;
@@ -93,7 +93,36 @@ interface User {
   lastSeen: Date;
 }
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+interface Activity {
+  id: string;
+  user: User;
+  action: string;
+  target: string;
+  timestamp: Date;
+  metadata?: Record<string, string | number | boolean>;
+}
 
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 interface Metric {
   id: string;
   label: string;
@@ -105,6 +134,13 @@ interface Metric {
   icon: React.ComponentType<{ className?: string; }>;
 }
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 interface Task {
   id: string;
   title: string;
@@ -117,7 +153,19 @@ interface Task {
   progress: number;
 }
 
-
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  status: "planning" | "active" | "on-hold" | "completed";
+  progress: number;
+  startDate: Date;
+  endDate: Date;
+  team: User[];
+  budget: number;
+  spent: number;
+  tasks: Task[];
+}
 
 interface Notification {
   id: string;
@@ -132,6 +180,20 @@ interface Notification {
   };
 }
 
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 // AI Enhancement Types
 interface AIInsight {
   id: string;
@@ -354,8 +416,8 @@ const MOCK_METRICS: Metric[] = [
 ];
 
 export default function NeonProHealthcareDashboard({
-  userId,
-  tenantId,
+  userId: _userId,
+  tenantId: _tenantId,
 }: NeonProDashboardProps) {
   // Removed unused state - selectedDate functionality not implemented yet
   const [activeTab, setActiveTab] = useState("overview");

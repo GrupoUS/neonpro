@@ -184,7 +184,7 @@ export async function GET(
 
     // Sorting
     filteredPredictions.sort((a: ChurnPredictionData, b: ChurnPredictionData) => {
-      let valueA: any, valueB: any;
+      let valueA: unknown, valueB: unknown;
 
       switch (sortBy) {
         case "prediction_date": {
@@ -461,7 +461,9 @@ export async function POST(
       success_rate: results.length / targetPatientIds.length,
       model_type: modelType,
       high_risk_detected: results.filter((r: DatabaseRow) =>
-        ["high", "critical"].includes((r as any).prediction?.risk_level)
+        ["high", "critical"].includes(
+          (r as unknown as { prediction?: { risk_level: string; }; }).prediction?.risk_level,
+        )
       ).length,
     };
 
@@ -469,7 +471,7 @@ export async function POST(
       success: true,
       data: {
         predictions: results.map((r: DatabaseRow) =>
-          (r as any).prediction
+          (r as unknown as { prediction: unknown; }).prediction
         ),
         summary,
         errors: errors.length > 0 ? errors : undefined,

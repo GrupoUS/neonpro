@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
           controller.enqueue(encoder.encode(`data: ${completeData}\\n\\n`));
 
           controller.close();
-        } catch (error) {
+        } catch (_error) {
           // console.error("Streaming error:", error);
           const errorData = JSON.stringify({
             type: "error",

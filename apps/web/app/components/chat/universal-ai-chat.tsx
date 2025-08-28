@@ -163,7 +163,7 @@ export function UniversalAIChat({
         title: "Chat conectado",
         description: "Sessão de chat iniciada com sucesso.",
       });
-    } catch (error) {
+    } catch (_error) {
       // console.error("Failed to initialize session:", error);
       setConnectionStatus("disconnected");
       toast({
@@ -337,7 +337,7 @@ export function UniversalAIChat({
                       throw new Error(parsedData.error || "Erro desconhecido");
                     }
                   }
-                } catch (error) {
+                } catch (_error) {
                   // console.error("Error parsing SSE data:", error);
                 }
               }
